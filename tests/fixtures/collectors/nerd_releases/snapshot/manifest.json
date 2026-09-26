@@ -1,0 +1,43 @@
+{
+  "collector_version": 1,
+  "complete": true,
+  "data_date": "2026-09-26",
+  "date": "2026-09-26",
+  "extracts": [
+    {
+      "bytes": 575,
+      "path": "assets.jsonl.gz",
+      "rows": 24,
+      "sha256": "36d859d0a18368aaaf005b4984b574060976ea56c35700aa1ee06d48f643f113"
+    }
+  ],
+  "fetched": [
+    {
+      "bytes": 6511,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "f985ba8ccc41cc66febd6e6258e4e44d9eb16a67ee222da0e461d8f07099533c",
+      "status": 200,
+      "url": "https://api.github.com/graphql"
+    },
+    {
+      "bytes": 1730,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "619539ea6e41d00320cddc2980aff226d2567a59ba5273529326e772ee271b99",
+      "status": 200,
+      "url": "https://api.github.com/graphql"
+    }
+  ],
+  "notes": [
+    "6 releases, 5 with font assets; 24 of 30 assets kept"
+  ],
+  "schema": 1,
+  "source": "nerd_releases",
+  "stale_of": null,
+  "window": null
+}

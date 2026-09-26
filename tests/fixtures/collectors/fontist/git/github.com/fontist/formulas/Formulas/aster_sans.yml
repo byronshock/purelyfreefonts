@@ -1,0 +1,46 @@
+schema_version: 5
+name: Aster Sans
+description: SENTINEL-DESCRIPTION synthetic humanist sans.
+homepage: https://aster.synth.example/
+resources:
+  AsterSans.zip:
+    urls:
+    - http://mirror.synth.example/aster/AsterSans-2.1.zip
+    - https://code.synth.example/foundry/aster-sans/releases/download/v2.1/AsterSans-2.1.zip
+    sha256: 1111111111111111111111111111111111111111111111111111111111111111
+    file_size: 204800
+fonts:
+- name: Aster Sans
+  styles:
+  - family_name: Aster Sans
+    type: Regular
+    full_name: Aster Sans Regular
+    post_script_name: AsterSans-Regular
+    version: '2.100'
+    copyright: SENTINEL-COPYRIGHT Synth Foundry
+    font: AsterSans-Regular.ttf
+  - family_name: Aster Sans
+    type: Italic
+    full_name: Aster Sans Italic
+    post_script_name: AsterSans-Italic
+    version: 2.1
+    font: AsterSans-Italic.ttf
+- name: Aster Sans Light
+  styles:
+  - family_name: Aster Sans Light
+    type: Regular
+    preferred_family_name: Aster Sans
+    preferred_type: Light
+    full_name: Aster Sans Light
+    post_script_name: AsterSans-Light
+    version: '2.100'
+    font: AsterSans-Light.ttf
+extract:
+  format: zip
+copyright: SENTINEL-COPYRIGHT Synth Foundry
+spdx_license: OFL-1.1-RFN
+license_url: https://aster.synth.example/OFL.txt
+open_license: |-
+  SENTINEL-LICENSE-TEXT Copyright 2026 Synth Foundry.
+  This Font Software is licensed under the SIL Open Font License, Version 1.1.
+command: create-formula https://code.synth.example/foundry/aster-sans/releases/download/v2.1/AsterSans-2.1.zip

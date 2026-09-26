@@ -1,0 +1,22 @@
+[
+  {"raw": "Inter", "canonical": "Inter", "status": "free", "note": "OFL"},
+  {"raw": "Muli", "canonical": "Mulish", "status": "free", "note": "the old name of Mulish"},
+  {"raw": "Geist Sans", "canonical": "Geist", "status": "free", "note": "an older name"},
+  {"raw": "GNU FreeFont", "canonical": "FreeFont", "status": "free", "note": "another name"},
+  {"raw": "IBM Plex", "canonical": "IBM Plex Sans", "status": "free", "note": "umbrella name"},
+  {"raw": "Ubuntu (Sans/Mono)", "canonical": "Ubuntu", "status": "free", "note": "a description"},
+  {"raw": "Lato Hairline", "canonical": "Lato", "status": "free", "note": "a weight"},
+  {"raw": "Pretendard Variable", "canonical": "Pretendard", "status": "free", "note": "variable build"},
+  {"raw": "Noto Sans CJK JP", "canonical": "Noto Sans JP", "status": "free", "note": "CJK build"},
+  {"raw": "源ノ角ゴシック JP", "canonical": "Noto Sans JP", "status": "free", "note": "Japanese name"},
+  {"raw": "Futura PT Web", "canonical": "Futura PT", "status": "proprietary", "note": "commercial"},
+  {"raw": "Futura PT", "canonical": "Futura PT", "status": "proprietary", "note": "commercial"},
+  {"raw": "Font Awesome (Free)", "canonical": "Font Awesome Free", "status": "icon_font", "note": "icons"},
+  {"raw": "fa-brands", "canonical": "Font Awesome Brands", "status": "icon_font", "note": "icons"},
+  {"raw": "icomoon", "canonical": "IcoMoon", "status": "icon_font", "note": "icons"},
+  {"raw": "Copyright Example Type Co", "canonical": "Example Type Co (metadata string)", "status": "proprietary", "note": "not a family name"},
+  {"raw": "Mystery Grotesk", "canonical": "Mystery Grotesk", "status": "unclear", "note": "not recognised"},
+  {"raw": "My Font", "canonical": "My Font", "status": "system_or_generic", "note": "placeholder"},
+  {"raw": "Satoshi", "canonical": "Satoshi", "status": "free", "note": "Fontshare ITF Free Font License"},
+  {"raw": "Symbols Nerd Font", "canonical": "Symbols Nerd Font", "status": "free", "note": "icon glyphs", "...": null}
+]

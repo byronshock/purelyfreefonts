@@ -1,0 +1,26 @@
+{
+  "format": "tff-mockhttp",
+  "responses": [
+    {
+      "body": "commits.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "etag": "\"4f1c2e0a9b7d4c3e8f6a5b2d1c0e9f8a\""
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/commits?path=bin/scripts/lib/fonts.json&per_page=1&sha=master"
+    },
+    {
+      "body": "fonts.json",
+      "headers": {
+        "content-type": "text/plain; charset=utf-8",
+        "etag": "\"a3f9d2c47b1e6f085c9a2d4e7b3f1a6c\""
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json"
+    }
+  ],
+  "version": 1
+}

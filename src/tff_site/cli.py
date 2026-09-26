@@ -12,6 +12,11 @@ value is the exit code: 0 success, 1 a failed check or not implemented yet, 2 us
 | ``fetch-fonts [--data F] [--cache D]`` | ``tff_site.fonts.fetch_fonts`` |
 | ``validate [FILE]`` | ``tff_site.data.validate_file`` |
 | ``linkcheck [--data F] [--ids a,b] [--rate R]`` | ``tff_site.linkcheck.linkcheck`` |
+
+A command that fails on bad input (``CatalogError``, ``BuildError``, ``AssetError``,
+``PageError``, ``PackError`` or a Jinja2 ``TemplateError``) prints ``tff-site <command>:
+failed`` and each problem, at most ``MAX_ERRORS_SHOWN``, to stderr and returns 1, with no
+traceback. Any other exception is a bug and keeps its traceback.
 """
 
 import argparse
@@ -20,9 +25,31 @@ from collections.abc import Callable
 from pathlib import Path
 
 from tff_catalog import __version__
-from tff_site import budgets, build, data, fonts, linkcheck, pack, serve
+from tff_site import assets, budgets, build, data, fonts, linkcheck, pack, pages, serve
 
 MAX_ERRORS_SHOWN = 50
+# Bad input, not bugs: each carries its problems as ``errors`` or ``problems`` (module docstring).
+_FAILURES: tuple[type[Exception], ...] = (
+    data.CatalogError,
+    build.BuildError,
+    assets.AssetError,
+    pages.PageError,
+    pack.PackError,
+)
+
+
+def _template_error() -> type[Exception]:
+    """``jinja2.TemplateError``, imported only once an exception needs matching."""
+    import jinja2
+
+    return jinja2.TemplateError
+
+
+def _print_lines(lines: list[str]) -> None:
+    for line in lines[:MAX_ERRORS_SHOWN]:
+        print(f"  {line}", file=sys.stderr)
+    if len(lines) > MAX_ERRORS_SHOWN:
+        print(f"  ... and {len(lines) - MAX_ERRORS_SHOWN} more", file=sys.stderr)
 
 
 def _cmd_build(ns: argparse.Namespace) -> int:
@@ -81,10 +108,7 @@ def _cmd_validate(ns: argparse.Namespace) -> int:
         result = data.validate_file(ns.path)
     except data.CatalogError as exc:
         print(f"{ns.path}: invalid", file=sys.stderr)
-        for line in exc.errors[:MAX_ERRORS_SHOWN]:
-            print(f"  {line}", file=sys.stderr)
-        if len(exc.errors) > MAX_ERRORS_SHOWN:
-            print(f"  ... and {len(exc.errors) - MAX_ERRORS_SHOWN} more", file=sys.stderr)
+        _print_lines(exc.errors)
         return 1
     print(f"valid ({result.version}), {result.fonts} fonts")
     return 0
@@ -173,4 +197,13 @@ def main(argv: list[str] | None = None) -> int:
         return ns.func(ns)
     except NotImplementedError as exc:
         print(f"tff-site {ns.command}: not implemented yet ({exc})", file=sys.stderr)
+        return 1
+    except _FAILURES as exc:
+        lines = getattr(exc, "errors", None) or getattr(exc, "problems", None) or [str(exc)]
+        print(f"tff-site {ns.command}: failed", file=sys.stderr)
+        _print_lines([str(line) for line in lines])
+        return 1
+    except _template_error() as exc:
+        print(f"tff-site {ns.command}: failed", file=sys.stderr)
+        _print_lines([f"template error: {exc}"])
         return 1

@@ -1,0 +1,493 @@
+{
+  "format": "tff-mockhttp",
+  "responses": [
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/0xType/0xProto/releases?page=1&per_page=100"
+    },
+    {
+      "body": "adobe-fonts__source-code-pro-p1.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/adobe-fonts/source-code-pro/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/adobe-fonts/source-sans/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/adobe-fonts/source-serif/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/ahatem/IoskeleyMono/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/alerque/libertinus/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/antijingoist/opendyslexic/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/arrowtype/recursive/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/arrowtype/shantell-sans/releases?page=1&per_page=100"
+    },
+    {
+      "body": "graphql-67c9fc278f07.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "POST",
+      "request_json": {
+        "query": "query($owner: String!, $name: String!, $first: Int!, $assets: Int!, $after: String) {\n  repository(owner: $owner, name: $name) {\n    nameWithOwner\n    releases(first: $first, after: $after, orderBy: {field: CREATED_AT, direction: DESC}) {\n      totalCount\n      pageInfo { hasNextPage endCursor }\n      nodes {\n        tagName\n        publishedAt\n        isPrerelease\n        isDraft\n        releaseAssets(first: $assets) { pageInfo { hasNextPage endCursor } nodes { name downloadCount createdAt } }\n      }\n    }\n  }\n}\n",
+        "variables": {
+          "after": null,
+          "assets": 100,
+          "first": 5,
+          "name": "Iosevka",
+          "owner": "be5invis"
+        }
+      },
+      "status": 200,
+      "url": "https://api.github.com/graphql"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/belluzj/fantasque-sans/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/blobject/agave/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/calcom/sans/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/canonical/Ubuntu-Sans-fonts/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/canonical/Ubuntu-Sans-Mono-fonts/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/cormullion/juliamono/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/crozynski/comicneue/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/dejavu-fonts/dejavu-fonts/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/eigilnikolajsen/commit-mono/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/evilmartians/mono/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/fcambus/spleen/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/github/hubot-sans/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/github/mona-sans/releases?page=1&per_page=100"
+    },
+    {
+      "body": "githubnext__monaspace-p1.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/githubnext/monaspace/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/googlefonts/googlesans-code/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/i-tu/Hasklig/releases?page=1&per_page=100"
+    },
+    {
+      "body": "IBM__plex-p1.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/IBM/plex/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/IdreesInc/Monocraft/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/intel/intel-one-mono/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/jenskutilek/sudo-font/releases?page=1&per_page=100"
+    },
+    {
+      "body": "JetBrains__JetBrainsMono-p1.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/JetBrains/JetBrainsMono/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/kaspernordkvist/uncut_sans/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/lauridskern/open-runde/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/madmalik/mononoki/releases?page=1&per_page=100"
+    },
+    {
+      "body": "microsoft__cascadia-code-p1.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/microsoft/cascadia-code/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/mishamyrt/Lilex/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/oppiliappan/scientifica/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/psb1558/Junicode-font/releases?page=1&per_page=100"
+    },
+    {
+      "body": "rbanffy__3270font-p1.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/rbanffy/3270font/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/RedHatOfficial/Overpass/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/rektdeckard/departure-mono/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/romeovs/creep/releases?page=1&per_page=100"
+    },
+    {
+      "body": "rsms__inter-p1.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/rsms/inter/releases?page=1&per_page=100"
+    },
+    {
+      "body": "source-foundry__Hack-p1.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/source-foundry/Hack/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/subframe7536/maple-font/releases?page=1&per_page=100"
+    },
+    {
+      "body": "the-moonwitch__Cozette-p1.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/the-moonwitch/Cozette/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/theleagueof/league-gothic/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/theleagueof/league-mono/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/theleagueof/league-spartan/releases?page=1&per_page=100"
+    },
+    {
+      "body": "tonsky__FiraCode-p1.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/tonsky/FiraCode/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/uswds/public-sans/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/vercel/geist-font/releases?page=1&per_page=100"
+    },
+    {
+      "body": "empty.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/zed-industries/zed-fonts/releases?page=1&per_page=100"
+    }
+  ],
+  "version": 1
+}

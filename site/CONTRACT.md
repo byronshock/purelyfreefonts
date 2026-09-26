@@ -20,10 +20,11 @@ Contents:
 ## 1. Data in
 
 - **`catalog-site.json`**, draft schema `schemas/catalog-site.schema.json` (`schema_version` `1.0.0-draft`; Milestone 1 step 20 freezes v1). `tff_site.data.validate` runs the schema and then the cross-reference checks the schema can't express (`semantic_errors`). `tff-site validate FILE` prints `valid (1.0.0-draft), N fonts`.
+  - **Stricter than JSON:** a key repeated in one object, `NaN` and `Infinity` make the file invalid (`tff_site.data.loads`), because the schema would check only one of the repeated values while the page showed another.
 - **Wording** in the catalog (view labels and measures lines, tiers, license classes, source credits, system labels) comes from `config/site.toml`, the one home for the owner's wording rulings; Milestone 1's export copies it, and a contract test keeps the sample equal to it.
 - **The sample**, `tests/fixtures/catalog-site.sample.json`: 40 invented fonts (`"synthetic": true`, ids `sample-*`, families `Sample …`). Five of them point `font_file` at the real OFL files pinned in `tests/fixtures/specimen-fonts.toml`, so specimens and "Type your own text" run on real outlines: `sample-sans-01` (Inter), `sample-mono-02` (JetBrains Mono), `sample-sans-05` (Source Sans 3, CFF), `sample-display-10` (Orbitron, basic Latin only) and `sample-script-12` (Lobster).
-- **Specimens.** `preview.path` is `specimens/<id>.svg`, relative to the directory holding the data file: `build/specimens/` for real data, `tests/fixtures/specimens/` for the sample. The build copies each one after checking its sha256.
-  - **Placeholder:** a `preview.sha256` of 64 zeros means "not rendered yet". The build treats it as no preview ("Preview not available yet") instead of failing. The sample uses it until the specimen stage commits `tests/fixtures/specimens/*.svg` and writes the real hashes; the contract test then requires the two to match.
+- **Specimens.** `preview.path` is `specimens/<id>.svg`, relative to the directory holding the data file: `build/specimens/` for real data, `tests/fixtures/specimens/` for the sample. The build copies each one after checking its sha256. A specimen may not contain `<script`, `<foreignObject`, an `on…=` handler, or an `href` other than `#…` (a link inside the file); the build refuses it.
+  - **Placeholder:** a `preview.sha256` of 64 zeros means "not rendered yet". The build treats it as no preview ("Preview not available yet") instead of failing. In the sample, the five fonts with real font files carry the hashes of their committed specimens, `tests/fixtures/specimens/*.svg`, and the contract test requires the two to match (a changed sample line means regenerating both with `tests.specimens.regen`); the other fonts keep the placeholder.
 - **Font files** for "Type your own text" come from the cache `~/.cache/tff/fonts/<sha256>`, filled by `tff-site fetch-fonts`. The build never downloads anything.
 - **Wording for enums** lives in `tff_site.data` (`UNRANKED_LABELS`, `STATE_LABELS`) and reaches the page through the JSON payloads, so the script holds no copy. The per-source state `censored` reads "below the floor".
 - **Destination names** for links ("links name their destination"), used by the build for row links and by `Details` for panel links:
@@ -42,8 +43,8 @@ Contents:
 | `methodology/index.html`, `privacy/index.html`, `about/index.html` | the content pages | `no-cache, no-transform` |
 | `404.html` | served with status 404 by Caddy's `handle_errors` | `no-cache, no-transform` |
 | `robots.txt`, `sitemap.xml` | per M2-D8 | `no-cache, no-transform` |
-| `version.txt` | `commit=`, `run_date=`, `method_version=`, `catalog_sha256=`, `schema=catalog-site/1`, one per line; never a build time | `no-cache, no-transform` |
-| `favicon.ico`, `favicon.svg`, `apple-touch-icon.png`, `share.png` | copied from `site/static/` | `no-cache, no-transform` |
+| `version.txt` | `commit=`, `run_date=`, `method_version=`, `catalog_sha256=` (the sha256 of the `catalog-site.json` file's bytes), `schema=catalog-site/1`, one per line; never a build time | `no-cache, no-transform` |
+| `favicon.ico`, `favicon.svg`, `apple-touch-icon.png`, `share.png` | copied from `site/static/` (these four files only; `site/static/_src/` holds their generator and sources and is never published) | `no-cache, no-transform` |
 | `assets/app.<h>.js` | the one script: `site/js/*.js` concatenated (section 5) | `public, max-age=31536000, immutable` |
 | `assets/style.<h>.css` | the one stylesheet: `site/css/*.css` concatenated (section 6) | immutable |
 | `assets/list.<h>.json` | the list index (section 7) | immutable |
@@ -56,6 +57,8 @@ Contents:
 Jinja2 with `autoescape=True`, `StrictUndefined`, `trim_blocks`, `lstrip_blocks` and `keep_trailing_newline`. No template may contain an inline `<script>` (only `<script type="module" src>`), a `<style>` element, a `style=""` or `on…=""` attribute, or a `<form>` (the CSP has `form-action 'none'`).
 
 **Files:** `base.html.j2` (the shell); `index.html.j2`, `_list.html.j2`, `_row.html.j2`, `_filters.html.j2` (the list; `_list.html.j2` holds the whole list so a later `/check/` page can include it unchanged); `methodology.html.j2`, `privacy.html.j2`, `about.html.j2`, `404.html.j2`; `sitemap.xml.j2`, `robots.txt.j2`.
+
+**Pages.** The list page `/` is `index.html.j2` with the `list` context below. Every other page comes from `tff_site.pages.page_contexts(doc)`, keyed by URL path, and its template and output file follow from the path: `/x/` → `x.html.j2` → `x/index.html`, and `/f.ext` → `f.ext.j2` → `f.ext`. `/404.html`, `/robots.txt` and `/sitemap.xml` get a default context when `page_contexts` leaves them out. Content pages, the 404 included, also get `heading`, plus `content` (rendered Markdown) or, on `/methodology/`, `method`.
 
 **Blocks in `base.html.j2`:**
 
@@ -79,6 +82,7 @@ Jinja2 with `autoescape=True`, `StrictUndefined`, `trim_blocks`, `lstrip_blocks`
 | `page` | `path` ("/", "/methodology/" …), `title`, `description`, `canonical` (false on the 404 page) |
 | `assets` | `css`, `js` (hashed URLs) |
 | `build` | `commit`, `run_date` |
+| `urls` | the absolute URLs of the canonical pages, sorted by path, for the sitemap |
 
 **Extra context for `index.html.j2`**, as `list`:
 
@@ -90,7 +94,7 @@ Jinja2 with `autoescape=True`, `StrictUndefined`, `trim_blocks`, `lstrip_blocks`
 | `systems_os` | `{value, label}`: `windows` Windows, `macos` macOS, `linux` Linux, `android` Android |
 | `total` | number of fonts |
 | `index_url`, `details_url` | hashed URLs of the two payloads |
-| `rows` | one per font, in server order (section 7): `id`, `family`, `label` (the Overall rank label), `category_label`, `license_name`, `badges` [{`key`, `text`}], `specimen` {`url`, `width`, `height`} or none, `fallback` (none, `"license"` or `"failed"`), `download` {`url`, `label`} |
+| `rows` | one per font, in server order (section 7): `id`, `family`, `label` (the Overall rank label), `category_label`, `license_name`, `badges` [{`key`, `text`}], `specimen` {`url`, `width`, `height`} or none (`width` and `height` are the no-script `<img>`'s display size: 48 px high, the `--spec-h` box, and as wide as the SVG's aspect ratio makes it), `fallback` (none, `"license"` or `"failed"`), `download` {`url`, `label`} |
 
 Badge keys, in this order: `variable`, `monospace`, `limited` ("Limited accents"), `attribution` ("Attribution required"), `noredist` ("Not redistributable"), `preinstalled` ("Comes with Windows 11, macOS"), `pulled` ("Pulled in by sample-office-common on Debian", from `pulled_in_by`; several are joined with "; "), `new` ("New"). `preinstalled` and `pulled` are the tags that explain "Not ranked: no evidence of deliberate installs" in *most chosen* (Milestone 2 step 3).
 
@@ -150,6 +154,8 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
     <section id="results" class="results" aria-labelledby="results-h">
       <h2 id="results-h">Fonts</h2>
       <p id="ext-summary" class="ext-summary" hidden></p>             <!-- Milestone 3: tff.list.setSummary -->
+      <!-- Main inserts <p id="load-note" class="noscript-note"> here, before #count, when the
+           list index fails to load or doesn't match the rows; the server's list stays. -->
       <p id="count" class="count">Showing 540 of 540 fonts</p>
       <div id="status" class="visually-hidden" role="status"></div>  <!-- Announce's only live region -->
       <div id="no-results" class="no-results" hidden>
@@ -195,6 +201,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 ```
 
 - Font index `i` (section 7) is the `i`-th `li.font` in the server-rendered `#list`.
+- `span.spec[data-src]` is always `/assets/specimens/<id>.<h>.svg`. `Specimens` ignores any other value, so a `data-src` can never break out of the CSS `url("…")` it becomes.
 - `Render` moves rows in and out of `#list` (hidden rows are detached, not given `hidden`) and changes only `.rank` text. Rows carry `content-visibility: auto`, so they must not change height when their specimen arrives.
 - **States set by scripts:** `html[data-js]` once the script runs; `span.spec[data-state="set"]` once its mask is set; `li.font.is-dim` for a row a Milestone 3 filter dims.
 - **The Milestone 3 slot** (section 10). For each filter whose `note` gives a row something to show, `Render` adds one `<div class="ext" data-filter="<filter id>">` at the end of `.font-row` (created on demand, removed when that filter no longer has a note for the row), built with `Core.el` only:
@@ -214,26 +221,27 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 The build concatenates `site/js/*.js` in filename order into one ES module, `/assets/app.<h>.js`, loaded by `<script type="module" src>`. The rule, which the build's lint enforces:
 
 - Each part declares **exactly one** top-level binding: `const <Name> = …;`, usually an IIFE that returns a frozen object. Top-level lines start at column 0; everything inside is indented.
-- No other top-level declaration (`let`, `var`, `function`, `class`, a second `const`), and no `import` or `export`. The one top-level statement allowed besides the declarations is `Main.start();`, the last line of `90-main.js`.
+- No other top-level declaration (`let`, `var`, `function`, `class`, a second `const`), and no `import`, `export` or dynamic `import(`. The one top-level statement allowed besides the declarations is `Main.start();`, exactly once, as the last top-level line of `90-main.js`.
+- Any other top-level line only closes the declaration: closing brackets, a call's parentheses and arguments, and one final `;` (`})();`, `})(Core);`), so no second statement can hide behind it.
 - A part's initializer may use only lower-numbered parts. Its functions may call any part once `Main.start()` runs.
 - Never, anywhere, comments included: `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `eval(`, `Function(`, `document.write`. Build nodes with `Core.el` and `textContent`.
-- `fetch()` takes only relative URLs read from the DOM (`#list[data-index]`, `#list[data-details]`).
+- `fetch()` takes only relative URLs read from the DOM (`#list[data-index]`, `#list[data-details]`). No other request API: no `sendBeacon`, `XMLHttpRequest`, `WebSocket` or `EventSource`. No `setAttribute('style'` either (the CSP blocks style attributes; set styles through CSSOM).
 - Nothing is stored: no `localStorage`, `sessionStorage`, `indexedDB`, `document.cookie`, `caches`, service workers or `cookieStore`. The privacy tests fail on any use.
 
 | File | Const | Owner | Status | Responsibilities |
 |---|---|---|---|---|
 | `00-core.js` | `Core` | wave 0 | written | DOM helpers: `$`, `$$`, `el`, `append`, `text`, `clear`, `setHidden`, `on` (delegation), `debounce`, `idle`, `painted`, `formatBytes`, `formatCount`, `plural` |
-| `05-keys.js` | `Keys` | A7 | to be written in wave 1 | `matchKey(s)`, `searchKey(s)`, `DROP_CODEPOINTS` and `CASEFOLD_EXTRA` (equal to `tests/vectors/name-keys.json`'s `spec`; casefold is the table, then `toLowerCase()`) |
-| `10-data.js` | `Data` | A3 | to be written in wave 1 | `loadIndex()` and `loadDetails()` (memoised promises; details only on first use; a 404 rejects with `Data.Stale`, shown as "The list was updated. Reload to see details.") |
-| `15-state.js` | `State` | A3 | to be written in wave 1 | the state object, hash parse and serialise (section 9), `pushState` for discrete changes, `replaceState` for search (300 ms), `popstate`/`hashchange` |
-| `20-view.js` | `View` | A3 | to be written in wave 1 | pure `compute(state, index, filters)` → `{order, labels, dimmed, notes, shown, total}` (below) |
-| `25-render.js` | `Render` | A3 | to be written in wave 1 | reorders server-rendered rows through a `DocumentFragment`, updates `.rank`, `#count`, `#no-results`, keeps focus |
-| `30-filters-ui.js` | `FiltersUI` | A3 | to be written in wave 1 | the controls in `#filters`: reads and reflects state, the phone disclosure, `#f-rank-measures` |
-| `35-announce.js` | `Announce` | A3 | to be written in wave 1 | `#status`: immediate for discrete changes (coalesced per microtask), 500 ms debounce for search, silent on first load |
-| `40-details.js` | `Details` | A4 | to be written in wave 1 | `open(id, {focus})`, `close()`, the panel built with `Core.el`, "Type your own text" (`FontFace` + CSSOM `style.fontFamily`) |
-| `45-specimens.js` | `Specimens` | A6 | to be written in wave 1 | IntersectionObserver on `li.font` (`rootMargin: '600px 0px'`) setting `mask-image`; `pause()`, `resume()`, `paused` |
-| `50-ext.js` | `Ext` | A12 | to be written in wave 1 | builds `globalThis.tff` (section 10), keeps the external filters list, dispatches `tff:list-ready` |
-| `90-main.js` | `Main` | A3 | to be written in wave 1 | `start()`: sets `html[data-js]`, wires the parts, event delegation on `#list` (including `button.ext-action`, section 10), indexing in idle callbacks |
+| `05-keys.js` | `Keys` | A7 | written | `matchKey(s)`, `searchKey(s)`, `DROP_CODEPOINTS` and `CASEFOLD_EXTRA` (equal to `tests/vectors/name-keys.json`'s `spec`; casefold is the table, then `toLowerCase()` with ß→ss and ς→σ, one code point at a time) |
+| `10-data.js` | `Data` | A3 | written | `loadIndex()` and `loadDetails()` (memoised promises; details only on first use; a 404 rejects with `Data.Stale`, shown as "The list was updated. Reload to see details.") |
+| `15-state.js` | `State` | A3 | written | the state object, hash parse and serialise (section 9), `pushState` for discrete changes, `replaceState` for search (300 ms), `popstate`/`hashchange` |
+| `20-view.js` | `View` | A3 | written | pure `compute(state, index, filters)` → `{order, labels, dimmed, notes, shown, total}` (below) |
+| `25-render.js` | `Render` | A3 | written | reorders server-rendered rows through a `DocumentFragment`, updates `.rank`, `#count`, `#no-results`, keeps focus |
+| `30-filters-ui.js` | `FiltersUI` | A3 | written | the controls in `#filters`: reads and reflects state, the phone disclosure, `#f-rank-measures` |
+| `35-announce.js` | `Announce` | A3 | written | `#status`: immediate for discrete changes (coalesced per microtask), 500 ms debounce for search, silent on first load |
+| `40-details.js` | `Details` | A4 | written | `open(id, {focus})`, `close()`, the panel built with `Core.el`, "Type your own text" (`FontFace` + CSSOM `style.fontFamily`). Owns `.details-toggle` clicks. Before `tff:list-ready` it writes the hash's `font` pair itself, keeping every other pair as written. After it, it records `font` through `State.set` and follows `State.subscribe`, having subscribed after `Main` |
+| `45-specimens.js` | `Specimens` | A6 | written | IntersectionObserver on `li.font` (`rootMargin: '600px 0px'`) setting `mask-image`; `start()`, `pause()`, `resume()`, `paused` |
+| `50-ext.js` | `Ext` | A12 | written | builds `globalThis.tff` (section 10) and dispatches `tff:list-ready`; keeps the external filters, read by `View.compute` through `Ext.filters()`; `Ext.start(host)` takes `Main`'s `{ refresh, onChange, ready }` |
+| `90-main.js` | `Main` | A3 | written | `start()`: sets `html[data-js]`, wires the parts, event delegation on `#list` (including `button.ext-action`, section 10), indexing in idle callbacks |
 
 **`View.compute(state, index, filters)`** is pure and unit-tested through `page.evaluate`:
 
@@ -253,7 +261,8 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 - Colours come only from the tokens; no other part writes a colour value.
 - Focus: `outline: var(--focus-ring); outline-offset: var(--focus-offset);` on `:focus-visible`. No sticky header, so focus is never hidden (2.4.11).
 - Breakpoints (custom properties don't work in media queries, so these are fixed): narrow below `60rem` (filters behind the button), phone below `40rem` (specimen box 40 px).
-- Specimens: `.spec { background-color: var(--c-spec); mask-size: contain; mask-repeat: no-repeat; mask-position: left center; height: var(--spec-h); }`; under `forced-colors`, `forced-color-adjust: none` (the token becomes `CanvasText`). The noscript image gets `filter: invert(1)` in dark mode.
+- Specimens: `.spec { mask-size: contain; mask-repeat: no-repeat; mask-position: left center; height: var(--spec-h); }` and `.spec[data-state="set"] { background-color: var(--c-spec); }`, so the box fills only once its mask is set (an unmasked fill is a solid bar); `.spec` is hidden under `(scripting: none)`, where the `<noscript>` image shows instead; under `forced-colors`, `forced-color-adjust: none` (the token becomes `CanvasText`). The noscript image gets `filter: invert(1)` in dark mode.
+- No `@import`, no `@font-face`, and no `url()` with a scheme or another host, a `data:` URL included: the page loads only its own files. The build's lint refuses them.
 - Rows: `li.font { content-visibility: auto; contain-intrinsic-size: auto var(--row-est-h); }`.
 
 **Tokens** (defined in `00-tokens.css` on `:root`; every `--c-` token is redefined for dark mode and for forced colours):
@@ -328,7 +337,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 | `why_labels` | string[] | unranked-reason labels, in the order `no_deliberate_evidence`, `no_evidence`, `too_new` |
 | `r` | object | one entry per view with `available: true`, keyed by rank key, below |
 
-**`bits`**: 1 monospace (`is_monospace`), 2 variable, 4 limited accents (`latin.coverage` basic), 8 attribution required, 16 not redistributable, 32 has a specimen, 64 "Type your own text" available, 128 comes with Windows, 256 macOS, 512 Linux, 1024 Android (from `preinstalled_on` systems' `os`; `pulled_in_by` doesn't count), 2048 new (flag `too_new`), 4096 pulled in by a package (`pulled_in_by` is not empty; no filter hides by it). Spacing Proportional hides the fonts with bit 1 and Monospaced keeps only them (site ruling 2026-09-25).
+**`bits`**: 1 monospace (`is_monospace`), 2 variable, 4 limited accents (`latin.coverage` basic), 8 attribution required, 16 not redistributable, 32 has a specimen, 64 "Type your own text" available, 128 comes with Windows, 256 macOS, 512 Linux, 1024 Android (from `preinstalled_on` systems' `os`; a system with `os` `app`, an application's own bundle such as LibreOffice's, sets none; `pulled_in_by` doesn't count), 2048 new (flag `too_new`), 4096 pulled in by a package (`pulled_in_by` is not empty; no filter hides by it). Spacing Proportional hides the fonts with bit 1 and Monospaced keeps only them (site ruling 2026-09-25).
 
 **`r.<rank key>`:**
 
@@ -380,9 +389,11 @@ key   = "rank" / "cat" / "lic" / "spacing" / "var" / "hide" / "redist" / "q" / "
 | `sort` | `name` | `rank` |
 | `font` | a font id: its details panel is open | none |
 
-- **Writing:** keys in the table's order, defaults left out; the default view is the empty hash, restored with `history.replaceState(null, '', location.pathname)`. Discrete changes use `pushState`; search typing uses `replaceState`, debounced 300 ms.
+- **Writing:** keys in the table's order, defaults left out; the default view is the empty hash, restored with `history.replaceState(null, '', location.pathname + location.search)`. Discrete changes use `pushState`; search typing uses `replaceState`, debounced 300 ms.
 - **Reading:** split on `&`, then each pair at its first `=`; a key seen twice keeps the last value; for the keys in the table, undecodable and invalid values fall back to the default. If the canonical form differs from `location.hash`, it is rewritten with `replaceState`. `popstate` and `hashchange` apply the hash without pushing.
 - **Extension keys.** A key not in the table belongs to someone else, for example Milestone 3's system tabs (`os=linux`). `State` never interprets or drops one: when it reads, canonicalises or writes the hash, it keeps every extension pair exactly as written (key and raw value), in its original order, after its own keys. When it writes, it takes the extension pairs from `location.hash` as they stand at that moment, so a change Milestone 3 made meanwhile survives. The default view with extension keys is `#` plus those pairs. `State`'s tests must show that `#rank=project&os=linux` survives the first load, a filter change and Back.
+- **In-page anchors.** `State` runs only on pages with `#list`. A hash of one token with no `=` or `&` that names an element in the document (the skip link's `#main`, `#font-<id>`) is not a view: `State` leaves `location.hash` alone for it, and its next write drops the anchor. A single token that names no element is read as a hash like any other.
+- **`font`.** A font the current view hides stays in the hash; its panel opens when a later view shows it.
 - `rank=rising` while Rising has `available: false` means `overall`.
 - Example: `#rank=project&cat=serif&spacing=proportional&hide=limited,windows&redist=1&font=inter`.
 
@@ -413,9 +424,11 @@ globalThis.tff = Object.freeze({
 document.dispatchEvent(new CustomEvent('tff:list-ready', { detail: globalThis.tff }));
 ```
 
+- **Edge cases.** `addFilter` with an existing id replaces that filter in place; bad arguments throw `TypeError`. `classify` and `note` are called with the options object as `this`. A `classify` that throws or returns anything but `show`, `dim` or `hide` counts as `show`, and a `note` that throws gives no note; each is reported once per filter through `reportError`. Note links keep only relative same-site or `https://` hrefs. `on` knows only `'change'`. `setSummary('')` hides like `null`. `index()` is a deep-frozen copy, loaded once.
 - Filters run in the order added; `hide` from any filter wins over `dim`. `affectsNumbering: false` keeps the published numbers (View step 6); `true` renumbers (View step 3).
 - `dim` rows get `li.font.is-dim`; dimmed text must keep 4.5:1 contrast (no opacity). A note shows on any row that is shown, dimmed or not; when several filters give a note, each gets its own `div.ext`, in the order the filters were added.
 - A click on `button.ext-action` dispatches `document` event `tff:row-action` with `detail: { filterId, fontId, actionId }` (delegated from `#list`). Focus stays on the button; if the action hides its row, focus moves to the `.details-toggle` of the next shown row, or to `#main` when none is left.
 - `index()` gives what Milestone 3 needs for counts such as "You have 41 of the top 100 in this view": `r[rank].top[i] > 0` marks the exact top 100 of a view, and `ids[i]` names font `i`.
 - Milestone 3 keeps its own URL state in extension keys (section 9), which `State` preserves.
 - The hook works for either Milestone 3 design (M3-D8): the same list markup (`_list.html.j2`) on the home page or on a `/check/` page.
+- **Open for Milestone 3 step 0:** the hook has no way to announce a change it makes (WCAG 4.1.3), for example `refresh({ announce })` or `announce(text)` routed to `Announce`. It is added then, as an additive v1 field, not by changing the frozen hook now.

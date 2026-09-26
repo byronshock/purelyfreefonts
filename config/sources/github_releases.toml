@@ -1,0 +1,281 @@
+# Ranking collector github_releases: lifetime download counts of the release
+# assets of main-channel repos (ruling M2; open data, ruling T1). The engine
+# source `github` in ranking.toml counts the growth between snapshots.
+enabled = true
+
+# REST paging: GitHub's largest page, and a cap per repo (older releases past
+# it are left out, with a note in the manifest).
+per_page = 100
+max_pages = 20
+
+# GraphQL repos: assets per release per page, the assets one query may ask
+# for (GitHub cut a query of 960 short on 2026-09-26 with
+# RESOURCE_LIMITS_EXCEEDED; 600 passed), and a cap on asset pages per release.
+asset_page = 100
+graphql_nodes = 500
+max_asset_pages = 20
+
+# This collector's share of the run's github budget (fetch.GITHUB_BUDGET, 900
+# with an Actions token); nerd_releases and the others need the rest. The
+# fetch of 2026-09-26 used 77 (52 REST pages, 25 GraphQL queries for Iosevka).
+max_requests = 300
+
+# A repo whose asset count falls under this share of the previous snapshot's
+# is noted; all repos together under it fail the fetch (the stale policy then
+# reuses the last good snapshot).
+min_share = 0.5
+
+# Release files that are not fonts: checksums, signatures, notes, previews,
+# license files, FontForge and editor sources, source archives.
+skip_assets = '(?i)(\.(asc|sig|minisig|sha1|sha256|sha512|md5|txt|md|json|ya?ml|pdf|png|jpe?g|gif|svg|html?|sfd|vim)$|sha\d*sums?|checksums?|^(licen[cs]e|copying|readme|notice)(\.\w+)?$|^sources?\.(zip|7z|tar\.\w+)$)'
+
+# --- Main-channel repos --------------------------------------------------------
+# A repo is listed when its GitHub releases are an official download of the
+# font: the font's site or README points there. Seeded from the old library's
+# repo table and the scouts (2026-09-25); the owner reviews the list.
+# Left out on purpose:
+# - ryanoasis/nerd-fonts: the nerd_releases collector counts it;
+# - repos whose releases carry no assets (checked 2026-09-26): Meslo LG,
+#   Liberation, Red Hat, Victor Mono, STIX Two, Monoid, Fira Sans (mozilla/Fira),
+#   iA Writer, Comic Shanns, Tamzen, Hermit, Gohu, Reddit Sans, Open Sauce,
+#   Twilio Sans Mono;
+# - google/fonts builds and googlefonts/* repos whose official download is
+#   Google Fonts (Inconsolata, Atkinson Hyperlegible);
+# - CJK-primary families that the Latin gate (D4) excludes anyway (Source Han,
+#   Sarasa Gothic, LXGW, Pretendard, HackGen, PlemolJP, UDEV Gothic, pixel CJK);
+# - icon and emoji fonts (Font Awesome, Twemoji, OpenMoji).
+#
+# Each [[repos]] table:
+#   repo    "owner/name" as GitHub spells it; the key prefix (keys keep it after a rename)
+#   family  the family it publishes (a hint for the github_repos alias miner)
+#   api     "rest" (default) or "graphql" (repos with hundreds of assets per release)
+#   latest  0 = every release, no cap by date (ruling M2); N = only the newest N
+#   assets  keep only assets whose name matches this regex ("" keeps all)
+#   strip   extra regexes removed from asset names to form the key, for
+#           versions the generic rule (tag version, dotted versions, commit
+#           hashes) misses
+#
+# Adding or removing a repo changes the contract fixture's recorded requests:
+# rebuild it with `uv run python -m tests.collectors.github_releases.build_fixture`.
+
+[[repos]]
+repo = "0xType/0xProto"
+family = "0xProto"
+
+[[repos]]
+repo = "adobe-fonts/source-code-pro"
+family = "Source Code Pro"
+# Adobe versions: 2.042R-u_1.062R-i_1.026Rvf, 3v028R, _v1020
+strip = ['(?:[-_]v?|v)\d+(?:\.\d+)*R(?:-(?:ro|it|u|i)|vf)?', '_v\d+$']
+
+[[repos]]
+repo = "adobe-fonts/source-sans"
+family = "Source Sans 3"
+# Adobe versions: 2.042R-u_1.062R-i_1.026Rvf, 3v028R, _v1020
+strip = ['(?:[-_]v?|v)\d+(?:\.\d+)*R(?:-(?:ro|it|u|i)|vf)?', '_v\d+$']
+
+[[repos]]
+repo = "adobe-fonts/source-serif"
+family = "Source Serif 4"
+# Adobe versions: 2.042R-u_1.062R-i_1.026Rvf, 3v028R, _v1020
+strip = ['(?:[-_]v?|v)\d+(?:\.\d+)*R(?:-(?:ro|it|u|i)|vf)?', '_v\d+$']
+
+[[repos]]
+repo = "ahatem/IoskeleyMono"
+family = "Ioskeley Mono"
+
+[[repos]]
+repo = "alerque/libertinus"
+family = "Libertinus"
+
+[[repos]]
+repo = "antijingoist/opendyslexic"
+family = "OpenDyslexic"
+
+[[repos]]
+repo = "arrowtype/recursive"
+family = "Recursive"
+
+[[repos]]
+repo = "arrowtype/shantell-sans"
+family = "Shantell Sans"
+
+[[repos]]
+repo = "be5invis/Iosevka"
+family = "Iosevka"
+api = "graphql"
+latest = 24  # ruling M2: 400+ releases of about 450 assets each
+
+[[repos]]
+repo = "belluzj/fantasque-sans"
+family = "Fantasque Sans Mono"
+
+[[repos]]
+repo = "blobject/agave"
+family = "Agave"
+
+[[repos]]
+repo = "calcom/sans"
+family = "Cal Sans"
+
+[[repos]]
+repo = "canonical/Ubuntu-Sans-fonts"
+family = "Ubuntu Sans"
+
+[[repos]]
+repo = "canonical/Ubuntu-Sans-Mono-fonts"
+family = "Ubuntu Sans Mono"
+
+[[repos]]
+repo = "cormullion/juliamono"
+family = "JuliaMono"
+
+[[repos]]
+repo = "crozynski/comicneue"
+family = "Comic Neue"
+
+[[repos]]
+repo = "dejavu-fonts/dejavu-fonts"
+family = "DejaVu"
+
+[[repos]]
+repo = "eigilnikolajsen/commit-mono"
+family = "Commit Mono"
+
+[[repos]]
+repo = "evilmartians/mono"
+family = "Martian Mono"
+
+[[repos]]
+repo = "fcambus/spleen"
+family = "Spleen"
+
+[[repos]]
+repo = "github/hubot-sans"
+family = "Hubot Sans"
+
+[[repos]]
+repo = "github/mona-sans"
+family = "Mona Sans"
+
+[[repos]]
+repo = "githubnext/monaspace"
+family = "Monaspace"
+
+[[repos]]
+repo = "googlefonts/googlesans-code"
+family = "Google Sans Code"
+
+[[repos]]
+repo = "i-tu/Hasklig"
+family = "Hasklig"
+
+[[repos]]
+repo = "IBM/plex"
+family = "IBM Plex"
+
+[[repos]]
+repo = "IdreesInc/Monocraft"
+family = "Monocraft"
+
+[[repos]]
+repo = "intel/intel-one-mono"
+family = "Intel One Mono"
+
+[[repos]]
+repo = "jenskutilek/sudo-font"
+family = "Sudo"
+
+[[repos]]
+repo = "JetBrains/JetBrainsMono"
+family = "JetBrains Mono"
+
+[[repos]]
+repo = "kaspernordkvist/uncut_sans"
+family = "Uncut Sans"
+strip = ['-v\d+$']
+
+[[repos]]
+repo = "lauridskern/open-runde"
+family = "Open Runde"
+
+[[repos]]
+repo = "madmalik/mononoki"
+family = "mononoki"
+
+[[repos]]
+repo = "microsoft/cascadia-code"
+family = "Cascadia Code"
+
+[[repos]]
+repo = "mishamyrt/Lilex"
+family = "Lilex"
+
+[[repos]]
+repo = "oppiliappan/scientifica"
+family = "scientifica"
+
+[[repos]]
+repo = "psb1558/Junicode-font"
+family = "Junicode"
+
+[[repos]]
+repo = "rbanffy/3270font"
+family = "IBM 3270"
+
+[[repos]]
+repo = "RedHatOfficial/Overpass"
+family = "Overpass"
+
+[[repos]]
+repo = "rektdeckard/departure-mono"
+family = "Departure Mono"
+
+[[repos]]
+repo = "romeovs/creep"
+family = "creep"
+
+[[repos]]
+repo = "rsms/inter"
+family = "Inter"
+
+[[repos]]
+repo = "source-foundry/Hack"
+family = "Hack"
+
+[[repos]]
+repo = "subframe7536/maple-font"
+family = "Maple Mono"
+
+[[repos]]
+repo = "the-moonwitch/Cozette"
+family = "Cozette"
+strip = ['-v(?:-\d+)+']
+
+[[repos]]
+repo = "theleagueof/league-gothic"
+family = "League Gothic"
+
+[[repos]]
+repo = "theleagueof/league-mono"
+family = "League Mono"
+
+[[repos]]
+repo = "theleagueof/league-spartan"
+family = "League Spartan"
+
+[[repos]]
+repo = "tonsky/FiraCode"
+family = "Fira Code"
+
+[[repos]]
+repo = "uswds/public-sans"
+family = "Public Sans"
+
+[[repos]]
+repo = "vercel/geist-font"
+family = "Geist"
+
+[[repos]]
+repo = "zed-industries/zed-fonts"
+family = "Zed Mono"

@@ -1,0 +1,34 @@
+schema_version: 5
+name: Iris SIL
+description: Synthetic SIL-style family with two direct font files.
+homepage: https://software.synth.example/fonts/iris
+resources:
+  IrisSIL-Regular.ttf:
+    urls:
+    - https://code.synth.example/sil/iris/releases/download/v2.000/IrisSIL-Regular.ttf
+    sha256: 9999999999999999999999999999999999999999999999999999999999999999
+    file_size: 512000
+  IrisSIL-Italic.ttf:
+    urls:
+    - https://code.synth.example/sil/iris/releases/download/v2.000/IrisSIL-Italic.ttf
+    sha256: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    file_size: 498000
+fonts:
+- name: Iris SIL
+  styles:
+  - family_name: Iris SIL
+    type: Regular
+    full_name: Iris SIL Regular
+    post_script_name: IrisSIL-Regular
+    version: '2.000'
+    font: IrisSIL-Regular.ttf
+  - family_name: Iris SIL
+    type: Italic
+    full_name: Iris SIL Italic
+    post_script_name: IrisSIL-Italic
+    version: '2.000'
+    font: IrisSIL-Italic.ttf
+extract: {}
+spdx_license: OFL-1.1-RFN
+license_url: https://software.synth.example/fonts/iris/OFL.txt
+open_license: SENTINEL-LICENSE-TEXT OFL.

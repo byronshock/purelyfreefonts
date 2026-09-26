@@ -68,3 +68,336 @@ jobs:
       - name: Scan the full history
         run: |
           "$RUNNER_TEMP/gitleaks" git --redact -v
+
+  # ---- Site jobs (Milestone 2 steps 1, 9, 10 and 11; design-m2 §4 and §6) ----------------
+  # Each job looks for its tests first and skips its remaining steps while they are absent,
+  # so the check still reports (a skipped matrix job would leave its checks pending). The
+  # browser jobs serve the built site with real Caddy (ops/caddy/ci.Caddyfile, the production
+  # headers, compression), which tests/site/conftest.py uses when TFF_CADDY=1.
+
+  site-build:
+    name: site-build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+    env:
+      SAMPLE: tests/fixtures/catalog-site.sample.json
+    outputs:
+      built: ${{ steps.tests.outputs.present }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Look for the build tests
+        id: tests
+        run: |
+          if [ -f tests/site/test_build.py ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "No tests/site/test_build.py yet: nothing to build." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        if: steps.tests.outputs.present == 'true'
+        with:
+          enable-cache: true
+      - if: steps.tests.outputs.present == 'true'
+        run: uv sync --locked
+      - name: Cache the sample's font files
+        if: steps.tests.outputs.present == 'true'
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/tff/fonts
+          key: tff-fonts-${{ hashFiles('tests/fixtures/specimen-fonts.toml', 'tests/fixtures/catalog-site.sample.json') }}
+      - name: Fetch the sample's font files (for "Type your own text")
+        if: steps.tests.outputs.present == 'true'
+        run: uv run --locked tff-site fetch-fonts --data "$SAMPLE"
+      - name: Check the committed specimens against the pinned real fonts
+        if: steps.tests.outputs.present == 'true'
+        run: |
+          uv run --locked python -m tests.specimens.regen --fetch --check
+          uv run --locked tff-catalog specimens --check
+      - name: Build the sample twice; the two builds must be byte-identical
+        if: steps.tests.outputs.present == 'true'
+        run: |
+          uv run --locked tff-site validate "$SAMPLE"
+          uv run --locked tff-site build --data "$SAMPLE" --out "$RUNNER_TEMP/site" --commit "$GITHUB_SHA"
+          uv run --locked tff-site build --data "$SAMPLE" --out "$RUNNER_TEMP/again" --commit "$GITHUB_SHA"
+          diff -r "$RUNNER_TEMP/site" "$RUNNER_TEMP/again"
+          echo "Two builds of the sample are byte-identical." >> "$GITHUB_STEP_SUMMARY"
+      - name: Check the size budgets and the CSP rules
+        if: steps.tests.outputs.present == 'true'
+        run: uv run --locked tff-site check "$RUNNER_TEMP/site"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: steps.tests.outputs.present == 'true'
+        with:
+          name: site-sample
+          path: ${{ runner.temp }}/site
+          if-no-files-found: error
+          retention-days: 3
+
+  site-browser:
+    name: site-browser (${{ matrix.browser }})
+    needs: site-build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox]
+    defaults:
+      run:
+        shell: bash
+    env:
+      BROWSER: ${{ matrix.browser }}
+      BUILT: ${{ needs.site-build.outputs.built }}
+      CADDY_VERSION: 2.11.4
+      # sha256 of caddy_2.11.4_linux_amd64.tar.gz (checked against the release's sha512 list).
+      CADDY_SHA256: 527fbf917c39189a1e3b31d34fa955601680b2d5c8055d2a87b8b9588dec7bb9
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          enable-cache: true
+      - run: uv sync --locked --group browser
+      - name: Look for the browser tests (steps 3, 6 and 9)
+        id: tests
+        run: |
+          echo "TFF_SITE_DIR=$RUNNER_TEMP/site" >> "$GITHUB_ENV"
+          # pytest exits with 5 when it collects nothing.
+          status=0
+          uv run --locked pytest tests/site -q --collect-only -m browser \
+            --ignore=tests/site/test_perf.py > "$RUNNER_TEMP/collected.txt" || status=$?
+          if [ "$BUILT" = true ] && [ "$status" -eq 0 ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          elif [ "$status" -eq 0 ] || [ "$status" -eq 5 ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "No site build or no browser tests yet: nothing to run." >> "$GITHUB_STEP_SUMMARY"
+          else
+            cat "$RUNNER_TEMP/collected.txt"
+            exit "$status"
+          fi
+      - name: Find the Playwright version
+        id: pw
+        if: steps.tests.outputs.present == 'true'
+        run: |
+          version=$(uv run --locked python -c "import importlib.metadata as m; print(m.version('playwright'))")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Cache Playwright's browsers
+        if: steps.tests.outputs.present == 'true'
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-${{ runner.os }}-${{ steps.pw.outputs.version }}
+      # Browsers skip the download on a cache hit; the system packages they need still install.
+      - name: Install the browsers
+        if: steps.tests.outputs.present == 'true'
+        run: uv run --locked playwright install --with-deps chromium firefox
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        if: steps.tests.outputs.present == 'true'
+        with:
+          name: site-sample
+          path: ${{ runner.temp }}/site
+      - name: Install Caddy
+        if: steps.tests.outputs.present == 'true'
+        run: |
+          tarball="caddy_${CADDY_VERSION}_linux_amd64.tar.gz"
+          curl -sSfL -o "$RUNNER_TEMP/$tarball" \
+            "https://github.com/caddyserver/caddy/releases/download/v${CADDY_VERSION}/${tarball}"
+          echo "${CADDY_SHA256}  $RUNNER_TEMP/$tarball" | sha256sum --check --strict -
+          mkdir -p "$RUNNER_TEMP/bin"
+          tar -xzf "$RUNNER_TEMP/$tarball" -C "$RUNNER_TEMP/bin" caddy
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+      - name: Serve the site with Caddy on 127.0.0.1:8080
+        if: steps.tests.outputs.present == 'true'
+        run: |
+          caddy start --config ops/caddy/ci.Caddyfile --adapter caddyfile > "$RUNNER_TEMP/caddy.log" 2>&1
+          curl -sSf -o /dev/null http://127.0.0.1:8080/version.txt
+      - name: Run the browser tests in ${{ matrix.browser }}
+        if: steps.tests.outputs.present == 'true'
+        env:
+          TFF_CADDY: "1"
+        run: |
+          uv run --locked pytest tests/site -m browser --ignore=tests/site/test_perf.py \
+            --browser "$BROWSER"
+      - name: Keep Caddy's log
+        if: failure() && steps.tests.outputs.present == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: caddy-log-${{ matrix.browser }}
+          path: ${{ runner.temp }}/caddy.log
+          retention-days: 7
+
+  site-perf:
+    name: site-perf
+    needs: site-build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    env:
+      BUILT: ${{ needs.site-build.outputs.built }}
+      CADDY_VERSION: 2.11.4
+      # sha256 of caddy_2.11.4_linux_amd64.tar.gz (checked against the release's sha512 list).
+      CADDY_SHA256: 527fbf917c39189a1e3b31d34fa955601680b2d5c8055d2a87b8b9588dec7bb9
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Look for the performance tests (step 10)
+        id: tests
+        run: |
+          echo "TFF_SITE_DIR=$RUNNER_TEMP/site" >> "$GITHUB_ENV"
+          echo "TFF_SITE_DATA=$RUNNER_TEMP/large/catalog-site.json" >> "$GITHUB_ENV"
+          if [ "$BUILT" = true ] && [ -f tests/site/test_perf.py ] \
+            && [ -f tests/fixtures/make_large_catalog.py ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "No site build or no tests/site/test_perf.py yet: nothing to run." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        if: steps.tests.outputs.present == 'true'
+        with:
+          enable-cache: true
+      - if: steps.tests.outputs.present == 'true'
+        run: uv sync --locked --group browser
+      - name: Build a synthetic 540-font catalog and check its budgets
+        if: steps.tests.outputs.present == 'true'
+        run: |
+          uv run --locked python tests/fixtures/make_large_catalog.py "$RUNNER_TEMP/large"
+          uv run --locked tff-site build --data "$TFF_SITE_DATA" --out "$TFF_SITE_DIR" \
+            --commit "$GITHUB_SHA" --no-font-files
+          uv run --locked tff-site check "$TFF_SITE_DIR"
+      - name: Find the Playwright version
+        id: pw
+        if: steps.tests.outputs.present == 'true'
+        run: |
+          version=$(uv run --locked python -c "import importlib.metadata as m; print(m.version('playwright'))")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Cache Playwright's browsers
+        if: steps.tests.outputs.present == 'true'
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-${{ runner.os }}-${{ steps.pw.outputs.version }}
+      - name: Install the browsers
+        if: steps.tests.outputs.present == 'true'
+        run: uv run --locked playwright install --with-deps chromium firefox
+      - name: Install Caddy
+        if: steps.tests.outputs.present == 'true'
+        run: |
+          tarball="caddy_${CADDY_VERSION}_linux_amd64.tar.gz"
+          curl -sSfL -o "$RUNNER_TEMP/$tarball" \
+            "https://github.com/caddyserver/caddy/releases/download/v${CADDY_VERSION}/${tarball}"
+          echo "${CADDY_SHA256}  $RUNNER_TEMP/$tarball" | sha256sum --check --strict -
+          mkdir -p "$RUNNER_TEMP/bin"
+          tar -xzf "$RUNNER_TEMP/$tarball" -C "$RUNNER_TEMP/bin" caddy
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+      - name: Serve the site with Caddy on 127.0.0.1:8080
+        if: steps.tests.outputs.present == 'true'
+        run: |
+          caddy start --config ops/caddy/ci.Caddyfile --adapter caddyfile > "$RUNNER_TEMP/caddy.log" 2>&1
+          curl -sSf -o /dev/null http://127.0.0.1:8080/version.txt
+      - name: Run the performance tests in Chromium
+        if: steps.tests.outputs.present == 'true'
+        env:
+          TFF_CADDY: "1"
+        run: uv run --locked pytest tests/site/test_perf.py --browser chromium
+
+  caddy:
+    name: caddy
+    needs: site-build
+    # The Caddyfile checks don't need the build, so they run even when it failed.
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+    env:
+      BUILT: ${{ needs.site-build.result == 'success' && needs.site-build.outputs.built == 'true' }}
+      CADDY_VERSION: 2.11.4
+      # sha256 of caddy_2.11.4_linux_amd64.tar.gz (checked against the release's sha512 list).
+      CADDY_SHA256: 527fbf917c39189a1e3b31d34fa955601680b2d5c8055d2a87b8b9588dec7bb9
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Look for the Caddy tests
+        id: tests
+        run: |
+          echo "TFF_SITE_DIR=$RUNNER_TEMP/site" >> "$GITHUB_ENV"
+          if [ -f tests/test_caddy_config.py ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "No tests/test_caddy_config.py yet: nothing to run." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Install Caddy
+        if: steps.tests.outputs.present == 'true'
+        run: |
+          tarball="caddy_${CADDY_VERSION}_linux_amd64.tar.gz"
+          curl -sSfL -o "$RUNNER_TEMP/$tarball" \
+            "https://github.com/caddyserver/caddy/releases/download/v${CADDY_VERSION}/${tarball}"
+          echo "${CADDY_SHA256}  $RUNNER_TEMP/$tarball" | sha256sum --check --strict -
+          mkdir -p "$RUNNER_TEMP/bin"
+          tar -xzf "$RUNNER_TEMP/$tarball" -C "$RUNNER_TEMP/bin" caddy
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+          echo "TFF_CADDY_BIN=$RUNNER_TEMP/bin/caddy" >> "$GITHUB_ENV"
+      # The same check as the deploy line at the top of ops/Caddyfile, with stand-ins for the
+      # server's files: a self-signed origin certificate and a Cloudflare ranges snippet.
+      - name: Validate ops/Caddyfile with ops/caddy/site.caddy, as on the server
+        if: steps.tests.outputs.present == 'true'
+        run: |
+          openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -nodes -days 2 \
+            -subj /CN=trulyfreefonts.com \
+            -addext 'subjectAltName=DNS:trulyfreefonts.com,DNS:*.trulyfreefonts.com' \
+            -keyout "$RUNNER_TEMP/origin.key" -out "$RUNNER_TEMP/origin.pem" 2> /dev/null
+          sudo install -d -m 755 /etc/caddy/certs
+          sudo install -m 644 "$RUNNER_TEMP/origin.pem" "$RUNNER_TEMP/origin.key" /etc/caddy/certs/
+          echo 'trusted_proxies static 173.245.48.0/20 2400:cb00::/32' \
+            | sudo tee /etc/caddy/cloudflare-ips.caddy > /dev/null
+          sudo install -d -m 755 -o "$(id -u)" /var/log/caddy
+          mkdir -p "$RUNNER_TEMP/caddy-new"
+          cp ops/Caddyfile ops/caddy/site.caddy "$RUNNER_TEMP/caddy-new/"
+          caddy validate --config "$RUNNER_TEMP/caddy-new/Caddyfile" --adapter caddyfile
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        if: steps.tests.outputs.present == 'true'
+        with:
+          enable-cache: true
+      - if: steps.tests.outputs.present == 'true'
+        run: uv sync --locked
+      - name: Test the Caddy configuration and tff-site serve against real Caddy
+        if: steps.tests.outputs.present == 'true'
+        run: uv run --locked pytest tests/test_caddy_config.py -v
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        if: steps.tests.outputs.present == 'true' && env.BUILT == 'true'
+        with:
+          name: site-sample
+          path: ${{ runner.temp }}/site
+      - name: The built site through ci.Caddyfile is compressed and has the headers
+        if: steps.tests.outputs.present == 'true' && env.BUILT == 'true'
+        run: |
+          caddy start --config ops/caddy/ci.Caddyfile --adapter caddyfile > "$RUNNER_TEMP/caddy.log" 2>&1
+          base=http://127.0.0.1:8080
+          head=$(curl -sS -D - -o "$RUNNER_TEMP/index.gz" -H 'Accept-Encoding: gzip' "$base/")
+          printf '%s\n' "$head"
+          grep -qi '^content-encoding: gzip' <<< "$head"
+          grep -qi '^cache-control: no-cache, no-transform' <<< "$head"
+          grep -qi "^content-security-policy: default-src 'none';" <<< "$head"
+          if grep -qi '^server:' <<< "$head"; then exit 1; fi
+          gzip -dc "$RUNNER_TEMP/index.gz" | cmp - "$TFF_SITE_DIR/index.html"
+          js=$(cd "$TFF_SITE_DIR" && ls assets/app.*.js)
+          curl -sS -D - -o /dev/null "$base/$js" \
+            | grep -qi '^cache-control: public, max-age=31536000, immutable'
+          missing=$(curl -sS -D - -o /dev/null "$base/no-such-page/")
+          grep -q '^HTTP/1.1 404' <<< "$missing"
+          grep -qi '^cache-control: no-cache, no-transform' <<< "$missing"
+          grep -qi '^content-security-policy: ' <<< "$missing"
+          echo "Caddy serves the built site compressed, with the production headers." >> "$GITHUB_STEP_SUMMARY"

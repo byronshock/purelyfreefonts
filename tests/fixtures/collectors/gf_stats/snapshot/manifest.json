@@ -1,0 +1,38 @@
+{
+  "collector_version": 1,
+  "complete": true,
+  "data_date": "2026-10-01",
+  "date": "2026-10-01",
+  "extracts": [
+    {
+      "bytes": 327,
+      "path": "views.jsonl.gz",
+      "rows": 10,
+      "sha256": "1f398bb7088dd44528b87f7f814b428677989cb512e852aa582cacc7cdcbfe68"
+    }
+  ],
+  "fetched": [
+    {
+      "bytes": 8694,
+      "etag": null,
+      "fetched_at": "2026-10-01T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "75bba685a4180d74769ba938db875ec91be037d0e4cd6988470f2c454bc3a780",
+      "status": 200,
+      "url": "https://fonts.google.com/metadata/stats"
+    }
+  ],
+  "notes": [
+    "rows without a family name skipped: 3",
+    "repeated families kept once: Aster Sans",
+    "unknown date ranges ignored: 1day"
+  ],
+  "schema": 1,
+  "source": "gf_stats",
+  "stale_of": null,
+  "window": {
+    "end": "2026-10-01",
+    "start": "2025-10-02"
+  }
+}

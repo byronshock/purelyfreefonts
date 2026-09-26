@@ -1,22 +1,703 @@
 # Families from foundries outside the big directories (methodology §2
-# universe; gate M12 (rec): a hand list, seeded once from the foundry sites).
-# SKELETON.
+# universe; gate M12 (rec): a hand list, seeded once from the foundries and
+# not scraped each month).
 #
-# Filled in wave 1 by agent I3: League of Moveable Type, Velvetyne,
-# Collletttivo, Open Foundry and Roundo. The collector u/foundries reads it and
-# HEAD-checks every URL. Loaded strictly by tff_catalog.config into
-# config_model.FoundriesConfig: unknown or missing keys fail.
+# Seeded on 2026-09-25 by agent I3; the owner reviews it with preinstalled.toml
+# (gate C). The collector u/foundries reads it and HEAD-checks every URL.
+# Loaded strictly by tff_catalog.config into config_model.FoundriesConfig:
+# unknown or missing keys fail.
 #
-# [foundries.velvetyne]             # foundry id
-# name = "Velvetyne"
+# - Being on this list is never popularity; it only adds candidates to the
+#   universe. A family that is also on Google Fonts or Fontsource merges with it
+#   there by name.
+# - license is the foundry's own wording; L1 (config/license-aliases.toml)
+#   normalises it, and the license gates decide. "NOASSERTION" means the foundry
+#   states none.
+# - url is the family's page at the foundry. Where the foundry's website blocks
+#   AI agents (Velvetyne, Collletttivo), it is the family's repository under the
+#   foundry's own account instead.
+# - The milestone's "Roundo" is a family, not a foundry: Roundo by the Indian
+#   Type Foundry, published on Fontshare under the OFL.
+#
+# [foundries.<id>]                  # foundry id: lower case, digits, "-" or "_"
+# name = "Velvetyne Type Foundry"
 # url = "https://velvetyne.fr"
 #
-# [[foundries.velvetyne.families]]
-# name = "Example Sans"
-# url = "https://velvetyne.fr/fonts/example-sans/"
-# license = "OFL-1.1"               # as the foundry states it; L1 normalises it
-# repository = ""                   # optional
+# [[foundries.<id>.families]]       # sorted by name, ignoring case
+# name = "Sligoil"
+# url = "https://gitlab.com/velvetyne/sligoil"
+# license = "SIL Open Font License 1.1"
+# repository = "https://gitlab.com/velvetyne/sligoil"   # optional
 
 schema = 1
 
-[foundries]
+[foundries.league-of-moveable-type]
+# Seeded from the family pages (18 families, fetched 2026-09-25). Every page says
+# "Open Font License" and links the family's GitHub repository.
+name = "The League of Moveable Type"
+url = "https://www.theleagueofmoveabletype.com"
+
+[[foundries.league-of-moveable-type.families]]
+name = "Blackout"
+url = "https://www.theleagueofmoveabletype.com/blackout"
+license = "Open Font License"
+repository = "https://github.com/theleagueof/blackout"
+
+[[foundries.league-of-moveable-type.families]]
+name = "Chunk"
+url = "https://www.theleagueofmoveabletype.com/chunk"
+license = "Open Font License"
+repository = "https://github.com/theleagueof/chunk"
+
+[[foundries.league-of-moveable-type.families]]
+name = "Fanwood"
+url = "https://www.theleagueofmoveabletype.com/fanwood"
+license = "Open Font License"
+repository = "https://github.com/theleagueof/fanwood"
+
+[[foundries.league-of-moveable-type.families]]
+name = "Goudy Bookletter 1911"
+url = "https://www.theleagueofmoveabletype.com/goudy-bookletter-1911"
+license = "Open Font License"
+repository = "https://github.com/theleagueof/goudy-bookletter-1911"
+
+[[foundries.league-of-moveable-type.families]]
+name = "Junction"
+url = "https://www.theleagueofmoveabletype.com/junction"
+license = "Open Font License"
+repository = "https://github.com/theleagueof/junction"
+
+[[foundries.league-of-moveable-type.families]]
+name = "Knewave"
+url = "https://www.theleagueofmoveabletype.com/knewave"
+license = "Open Font License"
+repository = "https://github.com/theleagueof/knewave"
+
+[[foundries.league-of-moveable-type.families]]
+name = "League Gothic"
+url = "https://www.theleagueofmoveabletype.com/league-gothic"
+license = "Open Font License"
+repository = "https://github.com/theleagueof/league-gothic"
+
+[[foundries.league-of-moveable-type.families]]
+name = "League Mono"
+url = "https://www.theleagueofmoveabletype.com/league-mono"
+license = "Open Font License"
+repository = "https://github.com/theleagueof/league-mono"
+
+[[foundries.league-of-moveable-type.families]]
+name = "League Script"
+url = "https://www.theleagueofmoveabletype.com/league-script"
+license = "Open Font License"
+repository = "https://github.com/theleagueof/league-script-number-one"
+
+[[foundries.league-of-moveable-type.families]]
+name = "League Spartan"
+url = "https://www.theleagueofmoveabletype.com/league-spartan"
+license = "Open Font License"
+repository = "https://github.com/theleagueof/league-spartan"
+
+[[foundries.league-of-moveable-type.families]]
+name = "Linden Hill"
+url = "https://www.theleagueofmoveabletype.com/linden-hill"
+license = "Open Font License"
+repository = "https://github.com/theleagueof/linden-hill"
+
+[[foundries.league-of-moveable-type.families]]
+name = "Orbitron"
+url = "https://www.theleagueofmoveabletype.com/orbitron"
+license = "Open Font License"
+repository = "https://github.com/theleagueof/orbitron"
+
+[[foundries.league-of-moveable-type.families]]
+name = "Ostrich Sans"
+url = "https://www.theleagueofmoveabletype.com/ostrich-sans"
+license = "Open Font License"
+repository = "https://github.com/theleagueof/ostrich-sans"
+
+[[foundries.league-of-moveable-type.families]]
+name = "Prociono"
+url = "https://www.theleagueofmoveabletype.com/prociono"
+license = "Open Font License"
+repository = "https://github.com/theleagueof/prociono"
+
+[[foundries.league-of-moveable-type.families]]
+name = "Raleway"
+url = "https://www.theleagueofmoveabletype.com/raleway"
+license = "Open Font License"
+repository = "https://github.com/theleagueof/raleway"
+
+[[foundries.league-of-moveable-type.families]]
+name = "Sniglet"
+url = "https://www.theleagueofmoveabletype.com/sniglet"
+license = "Open Font License"
+repository = "https://github.com/theleagueof/sniglet"
+
+[[foundries.league-of-moveable-type.families]]
+name = "Sorts Mill Goudy"
+url = "https://www.theleagueofmoveabletype.com/sorts-mill-goudy"
+license = "Open Font License"
+repository = "https://github.com/theleagueof/sorts-mill-goudy"
+
+[[foundries.league-of-moveable-type.families]]
+name = "The Neue Black"
+url = "https://www.theleagueofmoveabletype.com/the-neue-black"
+license = "Open Font License"
+repository = "https://github.com/theleagueof/the-neue-black"
+
+[foundries.velvetyne]
+# Seeded from the foundry's own repositories (gitlab.com/velvetyne, 30 families, and
+# github.com/velvetyne, 13 more), not from velvetyne.fr: that site's robots.txt blocks AI
+# agents, Claude by name. The site lists more families than the repositories hold, and the
+# family pages there would be better URLs; the owner can add both from the site.
+# Left out: the Velvetyne notdef and character-set tools, 3D models, a list of other
+# foundries, the Pictoporn pictograms and an empty 2012 "marcel" repository.
+# License strings are the repository's license file (SIL Open Font License 1.1) unless a
+# comment says otherwise.
+name = "Velvetyne Type Foundry"
+url = "https://velvetyne.fr"
+
+[[foundries.velvetyne.families]]
+name = "Amdal"
+url = "https://gitlab.com/velvetyne/amdal"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/amdal"
+
+[[foundries.velvetyne.families]]
+name = "Anthony"
+url = "https://gitlab.com/velvetyne/anthony"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/anthony"
+
+# FONTINFO.json and the README state the license; the repository has no license file.
+[[foundries.velvetyne.families]]
+name = "Avara"
+url = "https://gitlab.com/velvetyne/Avara"
+license = "OFL"
+repository = "https://gitlab.com/velvetyne/Avara"
+
+[[foundries.velvetyne.families]]
+name = "BackOut"
+url = "https://gitlab.com/velvetyne/backout"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/backout"
+
+[[foundries.velvetyne.families]]
+name = "Basteleur"
+url = "https://gitlab.com/velvetyne/basteleur"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/basteleur"
+
+# Non-commercial: the license gate excludes it.
+[[foundries.velvetyne.families]]
+name = "BilboINC"
+url = "https://github.com/velvetyne/BilboINC"
+license = "Creative Commons BY-NC-SA 4.0"
+repository = "https://github.com/velvetyne/BilboINC"
+
+[[foundries.velvetyne.families]]
+name = "Bluu Next"
+url = "https://github.com/velvetyne/BluuNext"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/jbmorizot/BluuNext"
+
+[[foundries.velvetyne.families]]
+name = "Boeticher"
+url = "https://github.com/velvetyne/Boeticher"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/velvetyne/Boeticher"
+
+[[foundries.velvetyne.families]]
+name = "Cantique"
+url = "https://gitlab.com/velvetyne/cantique"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/cantique"
+
+[[foundries.velvetyne.families]]
+name = "Commune Nuit Debout"
+url = "https://github.com/velvetyne/Commune-Nuit-Debout"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/velvetyne/Commune-Nuit-Debout"
+
+[[foundries.velvetyne.families]]
+name = "Compagnon"
+url = "https://gitlab.com/velvetyne/compagnon"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/compagnon"
+
+[[foundries.velvetyne.families]]
+name = "Courrrier"
+url = "https://github.com/velvetyne/courrrier"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/velvetyne/courrrier"
+
+[[foundries.velvetyne.families]]
+name = "Daubenton"
+url = "https://github.com/velvetyne/Daubenton"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/velvetyne/Daubenton"
+
+# The font files name the family "Facade".
+[[foundries.velvetyne.families]]
+name = "Façade"
+url = "https://gitlab.com/velvetyne/Facade-font"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/Facade-font"
+
+[[foundries.velvetyne.families]]
+name = "Feroniapi"
+url = "https://gitlab.com/velvetyne/feroniapi"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/feroniapi"
+
+[[foundries.velvetyne.families]]
+name = "Flor de Ruina"
+url = "https://gitlab.com/velvetyne/flor-des-ruina"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/flor-des-ruina"
+
+[[foundries.velvetyne.families]]
+name = "Format 1452"
+url = "https://gitlab.com/velvetyne/format-1452"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/format-1452"
+
+# Derived from DejaVu Sans, so it keeps the Bitstream Vera license.
+[[foundries.velvetyne.families]]
+name = "Fungal"
+url = "https://gitlab.com/velvetyne/fungal"
+license = "Bitstream Vera Font License"
+repository = "https://gitlab.com/velvetyne/fungal"
+
+[[foundries.velvetyne.families]]
+name = "Grotesk"
+url = "https://gitlab.com/velvetyne/grotesk"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/grotesk"
+
+[[foundries.velvetyne.families]]
+name = "Gulax"
+url = "https://gitlab.com/velvetyne/Gulax"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/Gulax"
+
+# The font files name the family "vtf_hngl".
+[[foundries.velvetyne.families]]
+name = "Hangul"
+url = "https://github.com/velvetyne/Hangul"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/velvetyne/Hangul"
+
+[[foundries.velvetyne.families]]
+name = "Happy Times at the IKOB"
+url = "https://gitlab.com/velvetyne/Happy-Times-at-the-IKOB"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/Happy-Times-at-the-IKOB"
+
+[[foundries.velvetyne.families]]
+name = "Imago Mundi Mei"
+url = "https://gitlab.com/velvetyne/imago-mundi-mei"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/imago-mundi-mei"
+
+[[foundries.velvetyne.families]]
+name = "Interlope"
+url = "https://gitlab.com/velvetyne/interlope"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/interlope"
+
+[[foundries.velvetyne.families]]
+name = "Jgs"
+url = "https://gitlab.com/velvetyne/jgs"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/jgs"
+
+[[foundries.velvetyne.families]]
+name = "Kaeru Kaeru"
+url = "https://gitlab.com/velvetyne/kaerukaeru"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/kaerukaeru"
+
+# No license file; the font says "All rights reserved". Check the Velvetyne page.
+[[foundries.velvetyne.families]]
+name = "Lack"
+url = "https://gitlab.com/velvetyne/lack"
+license = "NOASSERTION"
+repository = "https://gitlab.com/velvetyne/lack"
+
+[[foundries.velvetyne.families]]
+name = "Le Murmure"
+url = "https://gitlab.com/velvetyne/murmure"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/murmure"
+
+# The repository's LICENSE.txt is the OFL; the font's license field says "Creative Commons".
+[[foundries.velvetyne.families]]
+name = "Letters"
+url = "https://gitlab.com/velvetyne/letters"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/letters"
+
+[[foundries.velvetyne.families]]
+name = "Lineal"
+url = "https://gitlab.com/velvetyne/lineal"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/lineal"
+
+[[foundries.velvetyne.families]]
+name = "Lment"
+url = "https://github.com/velvetyne/Lment_"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/velvetyne/Lment_"
+
+[[foundries.velvetyne.families]]
+name = "Mess"
+url = "https://gitlab.com/velvetyne/Mess"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/Mess"
+
+[[foundries.velvetyne.families]]
+name = "Mourier"
+url = "https://gitlab.com/velvetyne/mourier"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/mourier"
+
+[[foundries.velvetyne.families]]
+name = "Ouroboros"
+url = "https://gitlab.com/velvetyne/ouroboros"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/ouroboros"
+
+[[foundries.velvetyne.families]]
+name = "Runic Sans"
+url = "https://github.com/velvetyne/runic"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/velvetyne/runic"
+
+# The font files name the family "Resistance".
+[[foundries.velvetyne.families]]
+name = "Résistance Générale"
+url = "https://github.com/velvetyne/resistance-generale"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/velvetyne/resistance-generale"
+
+[[foundries.velvetyne.families]]
+name = "Saintjean"
+url = "https://github.com/velvetyne/saintjean"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/velvetyne/saintjean"
+
+[[foundries.velvetyne.families]]
+name = "Sligoil"
+url = "https://gitlab.com/velvetyne/sligoil"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/sligoil"
+
+[[foundries.velvetyne.families]]
+name = "Sporting Grotesque"
+url = "https://gitlab.com/velvetyne/Sporting-Grotesque"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/Sporting-Grotesque"
+
+[[foundries.velvetyne.families]]
+name = "Trickster"
+url = "https://gitlab.com/velvetyne/Trickster"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/Trickster"
+
+[[foundries.velvetyne.families]]
+name = "Typefesse"
+url = "https://github.com/velvetyne/Typefesse"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/velvetyne/Typefesse"
+
+[[foundries.velvetyne.families]]
+name = "VG5000"
+url = "https://gitlab.com/velvetyne/vg5000"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/velvetyne/vg5000"
+
+# The font files name the family "VTF Victorianna".
+[[foundries.velvetyne.families]]
+name = "Victorianna"
+url = "https://github.com/velvetyne/Victorianna"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/velvetyne/Victorianna"
+
+[foundries.collletttivo]
+# Seeded from the foundry's GitHub account (github.com/collletttivo, 16 font repositories),
+# not from collletttivo.it: that site's robots.txt blocks AI agents (Claude-Web,
+# anthropic-ai, ChatGPT-User). The site may list more families; the owner can add them.
+# Every repository's LICENSE.txt is the SIL Open Font License 1.1.
+name = "Collletttivo"
+url = "https://www.collletttivo.it"
+
+[[foundries.collletttivo.families]]
+name = "Absans"
+url = "https://github.com/collletttivo/absans"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/collletttivo/absans"
+
+[[foundries.collletttivo.families]]
+name = "Apfel Grotezk"
+url = "https://github.com/collletttivo/apfel-grotezk"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/collletttivo/apfel-grotezk"
+
+[[foundries.collletttivo.families]]
+name = "Aujournuit"
+url = "https://github.com/collletttivo/aujournuit"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/collletttivo/aujournuit"
+
+[[foundries.collletttivo.families]]
+name = "Borges"
+url = "https://github.com/collletttivo/borges"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/collletttivo/borges"
+
+[[foundries.collletttivo.families]]
+name = "Coconat"
+url = "https://github.com/collletttivo/coconat"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/collletttivo/coconat"
+
+[[foundries.collletttivo.families]]
+name = "Halibut"
+url = "https://github.com/collletttivo/halibut"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/collletttivo/halibut"
+
+[[foundries.collletttivo.families]]
+name = "Mattone"
+url = "https://github.com/collletttivo/mattone"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/collletttivo/mattone"
+
+[[foundries.collletttivo.families]]
+name = "Mazius Display"
+url = "https://github.com/collletttivo/mazius-display"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/collletttivo/mazius-display"
+
+[[foundries.collletttivo.families]]
+name = "Messapia"
+url = "https://github.com/collletttivo/messapia"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/collletttivo/messapia"
+
+[[foundries.collletttivo.families]]
+name = "Necto Mono"
+url = "https://github.com/collletttivo/necto-mono"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/collletttivo/necto-mono"
+
+# Two families in the files: Ortica Linear and Ortica Angular.
+[[foundries.collletttivo.families]]
+name = "Ortica"
+url = "https://github.com/collletttivo/ortica"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/collletttivo/ortica"
+
+[[foundries.collletttivo.families]]
+name = "Ribes"
+url = "https://github.com/collletttivo/ribes"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/collletttivo/ribes"
+
+[[foundries.collletttivo.families]]
+name = "Ronzino"
+url = "https://github.com/collletttivo/ronzino"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/collletttivo/ronzino"
+
+[[foundries.collletttivo.families]]
+name = "Sinistre"
+url = "https://github.com/collletttivo/sinistre"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/collletttivo/sinistre"
+
+# The font files name the family "Sneaky".
+[[foundries.collletttivo.families]]
+name = "Sneaky Times"
+url = "https://github.com/collletttivo/sneaky-times"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/collletttivo/sneaky-times"
+
+# Collletttivo's copy of Ethan Nakache's repository.
+[[foundries.collletttivo.families]]
+name = "Sprat"
+url = "https://github.com/collletttivo/sprat"
+license = "SIL Open Font License 1.1"
+repository = "https://github.com/EthanNakache/Sprat-type"
+
+[foundries.open-foundry]
+# A curated showcase of open fonts by other designers (25 families, fetched 2026-09-25).
+# License strings are the ones each family page states. Its robots.txt blocks AI training
+# crawlers (GPTBot, ClaudeBot and others), not user-directed fetches.
+name = "Open Foundry"
+url = "https://open-foundry.com"
+
+[[foundries.open-foundry.families]]
+name = "Aileron"
+url = "https://open-foundry.com/fonts/aileron"
+license = "CC0 1.0 Universal"
+
+[[foundries.open-foundry.families]]
+name = "Archivo"
+url = "https://open-foundry.com/fonts/archivo"
+license = "SIL Open Font License v.1.1"
+repository = "https://github.com/Omnibus-Type/Archivo"
+
+[[foundries.open-foundry.families]]
+name = "Bagnard"
+url = "https://open-foundry.com/fonts/bagnard"
+license = "SIL Open Font License v.1.1"
+repository = "https://github.com/sebsan/bagnard"
+
+[[foundries.open-foundry.families]]
+name = "Bluu Next"
+url = "https://open-foundry.com/fonts/bluu-next"
+license = "SIL Open Font License v.1.1"
+repository = "https://github.com/jbmorizot/BluuNext"
+
+[[foundries.open-foundry.families]]
+name = "Cooper Hewitt"
+url = "https://open-foundry.com/fonts/cooper-hewitt"
+license = "SIL Open Font License v.1.1"
+repository = "https://github.com/cooperhewitt/cooperhewitt-typeface"
+
+[[foundries.open-foundry.families]]
+name = "Cotham Sans"
+url = "https://open-foundry.com/fonts/cotham-sans"
+license = "SIL Open Font License v.1.1"
+repository = "https://github.com/sebsan/Cotham"
+
+[[foundries.open-foundry.families]]
+name = "EB Garamond"
+url = "https://open-foundry.com/fonts/eb-garamond"
+license = "SIL Open Font License v.1.1"
+repository = "https://github.com/georgd/EB-Garamond"
+
+[[foundries.open-foundry.families]]
+name = "Gap Sans"
+url = "https://open-foundry.com/fonts/gap-sans"
+license = "SIL Open Font License v.1.1"
+repository = "https://github.com/Interstices-/GapSans"
+
+[[foundries.open-foundry.families]]
+name = "Inter"
+url = "https://open-foundry.com/fonts/inter"
+license = "SIL Open Font License v.1.1"
+repository = "https://github.com/rsms/inter"
+
+[[foundries.open-foundry.families]]
+name = "Junicode"
+url = "https://open-foundry.com/fonts/junicode"
+license = "SIL Open Font License v.1.1"
+repository = "https://github.com/Fromager/junicode"
+
+[[foundries.open-foundry.families]]
+name = "League Gothic"
+url = "https://open-foundry.com/fonts/league-gothic"
+license = "SIL Open Font License v.1.1"
+repository = "https://github.com/theleagueof/league-gothic"
+
+# Open Foundry links the liberationfonts organisation; this is its font repository.
+[[foundries.open-foundry.families]]
+name = "Liberation Sans"
+url = "https://open-foundry.com/fonts/liberation-sans"
+license = "SIL Open Font License v.1.1"
+repository = "https://github.com/liberationfonts/liberation-fonts"
+
+[[foundries.open-foundry.families]]
+name = "Libre Baskerville"
+url = "https://open-foundry.com/fonts/libre-baskerville"
+license = "SIL Open Font License v.1.1"
+repository = "https://github.com/impallari/Libre-Baskerville"
+
+[[foundries.open-foundry.families]]
+name = "M+ M Type-1"
+url = "https://open-foundry.com/fonts/mplus-mtype-1"
+license = "SIL Open Font License v.1.1"
+
+# URW's Nimbus Sans L; the license gate decides on the GPL.
+[[foundries.open-foundry.families]]
+name = "Nimbus Sans L"
+url = "https://open-foundry.com/fonts/nimbus-sans-l"
+license = "GNU General Public License v.3.0"
+
+# Open Foundry's repository link (github.com/nathco/Office-Code-Pro) returned 404 on 2026-09-25.
+[[foundries.open-foundry.families]]
+name = "Office Code Pro"
+url = "https://open-foundry.com/fonts/office-code-pro"
+license = "SIL Open Font License v.1.1"
+
+[[foundries.open-foundry.families]]
+name = "Ostrich Sans"
+url = "https://open-foundry.com/fonts/ostrich-sans"
+license = "SIL Open Font License v.1.1"
+repository = "https://github.com/theleagueof/ostrich-sans"
+
+[[foundries.open-foundry.families]]
+name = "Oswald"
+url = "https://open-foundry.com/fonts/oswald"
+license = "SIL Open Font License v.1.1"
+repository = "https://github.com/googlefonts/OswaldFont"
+
+[[foundries.open-foundry.families]]
+name = "Poppins"
+url = "https://open-foundry.com/fonts/poppins"
+license = "SIL Open Font License v.1.1"
+repository = "https://github.com/itfoundry/poppins"
+
+[[foundries.open-foundry.families]]
+name = "Reglo"
+url = "https://open-foundry.com/fonts/reglo"
+license = "SIL Open Font License v.1.1"
+repository = "https://github.com/sebsan/Reglo"
+
+[[foundries.open-foundry.families]]
+name = "Roboto"
+url = "https://open-foundry.com/fonts/roboto"
+license = "SIL Open Font License v.1.1"
+repository = "https://github.com/googlefonts/roboto-2"
+
+# Open Foundry's page is "terminal-grotesque-open"; Velvetyne publishes the family.
+[[foundries.open-foundry.families]]
+name = "Terminal Grotesque"
+url = "https://open-foundry.com/fonts/terminal-grotesque-open"
+license = "SIL Open Font License v.1.1"
+repository = "https://gitlab.com/raphaelbastide/Terminal-Grotesque"
+
+[[foundries.open-foundry.families]]
+name = "Tex Gyre Heros"
+url = "https://open-foundry.com/fonts/tex-gyre-heros"
+license = "GUST Font License v.1.0"
+
+[[foundries.open-foundry.families]]
+name = "Work Sans"
+url = "https://open-foundry.com/fonts/work-sans"
+license = "SIL Open Font License v.1.1"
+repository = "https://github.com/weiweihuanghuang/Work-Sans"
+
+[[foundries.open-foundry.families]]
+name = "Young Serif"
+url = "https://open-foundry.com/fonts/young-serif"
+license = "SIL Open Font License v.1.1"
+repository = "https://github.com/noirblancrouge/YoungSerif"
+
+[foundries.fontshare]
+# Only Roundo: of Fontshare's 36 OFL families it is the one not on Google Fonts. Fontshare's
+# other 64 families use the ITF Free Font License, which AUTHORITY Rule 4 excludes. The license
+# string is the Fontshare API's license_type.
+name = "Fontshare (Indian Type Foundry)"
+url = "https://www.fontshare.com"
+
+# Fontshare's page links this repository; it has no license file, so only Fontshare
+# states the OFL. Fontshare answers 200 for any /fonts/<slug>, even a missing one.
+[[foundries.fontshare.families]]
+name = "Roundo"
+url = "https://www.fontshare.com/fonts/roundo"
+license = "sil_ofl"
+repository = "https://github.com/itfoundry/roundo"

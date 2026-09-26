@@ -1,0 +1,44 @@
+import json, re, collections, sys
+S = '/tmp/old-run/scratchpad/'
+raise SystemExit('fixture: the oldlib miner must parse this file, never run it')
+
+# ---------------- Nerd Fonts (synthetic rows, shaped like the old run's) ----------------
+NF = {
+ 'JetBrainsMono':'JetBrains Mono','CascadiaMono':'Cascadia Code','IosevkaTerm':'Iosevka',
+ 'iA-Writer':'iA Writer Mono',
+}
+NF_FLOOR = 320000
+def load_nf():
+    d = json.load(open(S+'nf_multi.json'))
+    return collections.Counter(d)
+
+# ---------------- Homebrew casks ----------------
+def brew_family(tok):
+    t = tok[5:]
+    return re.sub(r'-(nerd-font|nf)$', '', t)
+BREW_MAP = [
+ (r'^jetbrains-mono$|^jetbrains-mono-', 'JetBrains Mono'),
+ (r'^inter$', 'Inter'),
+ (r'^(source-code-pro|sauce-code-pro)', 'Source Code Pro'),
+ (r'^lexend', 'Lexend'),
+ (r'^roboto$', 'Roboto'),
+ (r'^roboto-slab', 'Roboto Slab'),
+ (r'^liberation', 'Liberation Sans'),
+ (r'^symbols-only|^powerline-symbols', 'ICON'),
+]
+
+# ---------------- Arch ----------------
+ARCH_MAP = {
+ 'ttf-hack':'Hack','ttf-hack-nerd':'Hack','ttf-meslo-nerd-font-powerlevel10k':'Meslo LG',
+ 'ttf-croscore':'Arimo','ttf-nerd-fonts-symbols':'ICON','noto-fonts-extra':None,
+ 'ttf-rubik-vf':'Rubik','gnu-free-fonts':'GNU FreeFont',
+}
+
+# ---------------- Debian ----------------
+DEB_MAP = {
+ 'fonts-hack':'Hack','fonts-firacode':'Fira Code','fonts-roboto-slab':'Roboto Slab',
+ 'fonts-firacode':'Fira Code','fonts-font-awesome':'ICON','fonts-urw-base35':None,
+ 'fonts-droid-fallback':'Droid Sans','fonts-go':'Go Mono',
+}
+
+STARS = {'Fira Code':70123,'Hack':15321}

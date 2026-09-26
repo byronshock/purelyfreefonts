@@ -1,0 +1,32 @@
+[
+ {
+  "assets": [
+   {
+    "created_at": "2024-11-27T16:20:11Z",
+    "download_count": 337349,
+    "name": "CascadiaCode-2407.24.zip",
+    "state": "uploaded"
+   }
+  ],
+  "draft": false,
+  "html_url": "https://github.com/microsoft/cascadia-code/releases/tag/v2407.24",
+  "prerelease": false,
+  "published_at": "2024-11-27T16:20:51Z",
+  "tag_name": "v2407.24"
+ },
+ {
+  "assets": [
+   {
+    "created_at": "2024-08-29T17:23:38Z",
+    "download_count": 6799,
+    "name": "CascadiaNextJP.wght.ttf",
+    "state": "uploaded"
+   }
+  ],
+  "draft": false,
+  "html_url": "https://github.com/microsoft/cascadia-code/releases/tag/cascadia-next",
+  "prerelease": true,
+  "published_at": "2024-08-28T18:51:40Z",
+  "tag_name": "cascadia-next"
+ }
+]

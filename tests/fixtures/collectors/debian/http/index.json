@@ -1,0 +1,36 @@
+{
+  "format": "tff-mockhttp",
+  "responses": [
+    {
+      "body": "Packages.xz",
+      "headers": {
+        "content-type": "application/x-xz",
+        "etag": "\"93ae2c-65b442aad5439\"",
+        "last-modified": "Sat, 12 Sep 2026 07:29:52 GMT"
+      },
+      "url": "https://deb.debian.org/debian/dists/trixie/main/binary-amd64/Packages.xz"
+    },
+    {
+      "body": "by_inst.gz",
+      "headers": {
+        "content-type": "application/x-gzip",
+        "etag": "\"33ca4d-65c4f1da00344\"",
+        "last-modified": "Fri, 25 Sep 2026 13:58:49 GMT"
+      },
+      "url": "https://popcon.debian.org/by_inst.gz"
+    },
+    {
+      "body": "all-popcon-results-head.gz",
+      "headers": {
+        "content-type": "application/x-gzip",
+        "last-modified": "Fri, 25 Sep 2026 13:55:13 GMT"
+      },
+      "request_headers": {
+        "range": "bytes=0-4095"
+      },
+      "status": 206,
+      "url": "https://popcon.debian.org/all-popcon-results.gz"
+    }
+  ],
+  "version": 1
+}

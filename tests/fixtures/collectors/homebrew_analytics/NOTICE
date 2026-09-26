@@ -1,0 +1,16 @@
+Trimmed real data, fetched 2026-09-26 (ruling T1: Homebrew is an open source;
+small trimmed real fixtures are allowed). Rows were only removed, and fields
+dropped where noted; no value was changed.
+
+- http/cask-install-{30d,90d,365d}.json: rows of
+  https://formulae.brew.sh/api/analytics/cask-install/{30d,90d,365d}.json,
+  Homebrew's aggregate install analytics. The formulae.brew.sh site is
+  BSD-2-Clause, Copyright (c) 2009-present, Homebrew contributors; see
+  https://github.com/Homebrew/formulae.brew.sh and https://docs.brew.sh/Analytics.
+  The analytics data itself states no licence.
+- http/tree-*.json, http/commits-*.json, http/cask_renames.json: from the
+  GitHub API and raw files of https://github.com/Homebrew/homebrew-cask
+  (BSD-2-Clause, Copyright (c) 2013 Paul Hinze & Contributors). The tree
+  listings keep only the casks used here; the commit lists keep only each
+  commit's sha and committer date (no names or emails).
+- snapshot/ and expected.jsonl are derived from those files by the collector.

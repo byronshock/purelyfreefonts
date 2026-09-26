@@ -1,0 +1,83 @@
+{
+  "collector_version": 1,
+  "complete": true,
+  "data_date": "2026-10-03",
+  "date": "2026-10-03",
+  "extracts": [
+    {
+      "bytes": 2964,
+      "path": "families.jsonl.gz",
+      "rows": 11,
+      "sha256": "c2f2c24d33a67aaebc843a53e0c38b50e35890d1bca199d6387c3714ba7bb70e"
+    },
+    {
+      "bytes": 944,
+      "path": "repo.json",
+      "rows": null,
+      "sha256": "1f269607ffa23cc488b6e3c47190fa0d13a3ae24ab6e44e482a07cf3d5dd5ab0"
+    }
+  ],
+  "fetched": [
+    {
+      "bytes": 517,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "9015eca8d7aa1a7df6f2bdbf59ef2dede9d5c7d4a180e6491f56ded77a59cd52",
+      "status": 200,
+      "url": "https://api.github.com/repos/google/fonts/git/commits/26b59081ff4ae5cc8bd244575fb8816a1714ef7b"
+    },
+    {
+      "bytes": 2033,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "f255b6e06876e7effc5fa81ccfe6457268dee535b3b05ffed275513986c5bde1",
+      "status": 200,
+      "url": "https://api.github.com/repos/google/fonts/git/trees/65b813f5591514c196f39077b0b7bff3749d9f9f"
+    },
+    {
+      "bytes": 12212,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "6f4cc8181ebf3cfe464ba0443d6b27a278ee94d80872d4466b056370372616e0",
+      "status": 200,
+      "url": "https://api.github.com/repos/google/fonts/git/trees/6d96e5075b55808df8b38d8c6bc24e29fbebabb4?recursive=1"
+    },
+    {
+      "bytes": 1310,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "0ce99ecbc09e826d642866a4c01fb55063bc90fac28c85307e72c67459ea18f1",
+      "status": 200,
+      "url": "https://api.github.com/repos/google/fonts/git/trees/6452f3d4cc02a646cc3ff0d13231648a2e3765e6?recursive=1"
+    },
+    {
+      "bytes": 3556,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "caf7486c63cf073c926883beb9e8c12f185ae7de9a627db62b0b1f08be7281df",
+      "status": 200,
+      "url": "https://api.github.com/repos/google/fonts/git/trees/971efc84ae9bf3f18b91b7ced2dd1b19f36713de?recursive=1"
+    }
+  ],
+  "notes": [
+    "git: sparse depth-1 clone of https://github.com/google/fonts main at 26b59081ff4ae5cc8bd244575fb8816a1714ef7b",
+    "METADATA.pb unreadable, family skipped: ofl/brokenfam",
+    "METADATA.pb fields unknown to gfmetadata skipped in: ofl/birchmono",
+    "font files named in METADATA.pb but not in the tree: 1 (ofl/birchmono/BirchMono-Italic[wght].ttf)",
+    "folders without METADATA.pb ignored: 1"
+  ],
+  "schema": 1,
+  "source": "google_repo",
+  "stale_of": null,
+  "window": null
+}

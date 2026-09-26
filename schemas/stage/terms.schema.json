@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://trulyfreefonts.com/schemas/stage/terms/1",
   "title": "Evidence terms",
-  "description": "build/stage/terms.json from stage 'correct': {rank key: {engine source: {family id: term}}}. value is after credits and floors; a Linux source that abstains has no entry in that view. group is the family's independence group for the source (gate M5 makes it per family); factor multiplies the source's weight for the family (w' = w_eff * factor * guard factor); flags are corrections.TERM_FLAGS.",
+  "description": "build/stage/terms.json from stage 'correct': {rank key: {engine source: {family id: term}}}. value is after credits and floors; a Linux source that abstains has no entry in that view. group is the family's independence group for the source (gate M5 makes it per family); factor multiplies the source's weight for the family (w' = w_eff * factor * guard factor); flags are corrections.TERM_FLAGS. 'rising' holds each Rising source's recent-window value per family (corrections.RISING_WINDOWS: Homebrew's 30d, the latest YYYY-MM month of a monthly series, Google's 30day), with abstentions as in desktop_chosen and the same credits, key floors, floor and censoring as the 12-month terms; stage 'rank' compares its shares with the 12-month ones.",
   "type": "object",
   "propertyNames": {
     "enum": [

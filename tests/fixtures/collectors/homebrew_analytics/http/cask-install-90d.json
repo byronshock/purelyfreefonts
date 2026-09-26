@@ -1,0 +1,147 @@
+{
+ "category": "cask_install",
+ "end_date": "2026-09-26",
+ "items": [
+  {
+   "cask": "claude-code",
+   "count": "180,974",
+   "number": 2,
+   "percent": "3.17"
+  },
+  {
+   "cask": "font-jetbrains-mono-nerd-font",
+   "count": "36,931",
+   "number": 24,
+   "percent": "0.65"
+  },
+  {
+   "cask": "font-meslo-lg-nerd-font",
+   "count": "18,239",
+   "number": 56,
+   "percent": "0.32"
+  },
+  {
+   "cask": "font-hack-nerd-font",
+   "count": "11,023",
+   "number": 94,
+   "percent": "0.19"
+  },
+  {
+   "cask": "font-fira-code-nerd-font",
+   "count": "10,351",
+   "number": 102,
+   "percent": "0.18"
+  },
+  {
+   "cask": "font-jetbrains-mono",
+   "count": "9,641",
+   "number": 113,
+   "percent": "0.17"
+  },
+  {
+   "cask": "font-symbols-only-nerd-font",
+   "count": "6,121",
+   "number": 160,
+   "percent": "0.11"
+  },
+  {
+   "cask": "font-fira-code",
+   "count": "4,437",
+   "number": 200,
+   "percent": "0.08"
+  },
+  {
+   "cask": "font-source-code-pro",
+   "count": "3,459",
+   "number": 241,
+   "percent": "0.06"
+  },
+  {
+   "cask": "font-maple-mono-nf-cn",
+   "count": "3,192",
+   "number": 266,
+   "percent": "0.06"
+  },
+  {
+   "cask": "font-inter",
+   "count": "2,728",
+   "number": 296,
+   "percent": "0.05"
+  },
+  {
+   "cask": "font-ibm-plex-mono",
+   "count": "1,367",
+   "number": 464,
+   "percent": "0.02"
+  },
+  {
+   "cask": "font-roboto",
+   "count": "952",
+   "number": 591,
+   "percent": "0.02"
+  },
+  {
+   "cask": "font-opendyslexic-nerd-font",
+   "count": "470",
+   "number": 943,
+   "percent": "0.01"
+  },
+  {
+   "cask": "font-ioskeley-mono",
+   "count": "285",
+   "number": 1323,
+   "percent": "0"
+  },
+  {
+   "cask": "font-dejavu-sans",
+   "count": "231",
+   "number": 1503,
+   "percent": "0"
+  },
+  {
+   "cask": "font-ibm-plex",
+   "count": "142",
+   "number": 1940,
+   "percent": "0"
+  },
+  {
+   "cask": "fontbase",
+   "count": "116",
+   "number": 2170,
+   "percent": "0"
+  },
+  {
+   "cask": "font-opendyslexic",
+   "count": "19",
+   "number": 4856,
+   "percent": "0"
+  },
+  {
+   "cask": "font-akt",
+   "count": "4",
+   "number": 9216,
+   "percent": "0"
+  },
+  {
+   "cask": "neodgm/neodgm/font-neodunggeunmo-code",
+   "count": "3",
+   "number": 10279,
+   "percent": "0"
+  },
+  {
+   "cask": "homebrew/cask-fonts/font-lekton-nerd-font",
+   "count": "1",
+   "number": 13437,
+   "percent": "0"
+  },
+  {
+   "cask": "homebrew/cask-fonts/font-space-mono-nerd-font",
+   "count": "1",
+   "number": 14637,
+   "percent": "0"
+  }
+ ],
+ "start_date": "2026-06-28",
+ "total_count": 5702987,
+ "total_items": 16681
+}

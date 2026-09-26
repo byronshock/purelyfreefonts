@@ -1,0 +1,90 @@
+{
+  "collector_version": 1,
+  "complete": true,
+  "data_date": "2026-10-01",
+  "date": "2026-10-01",
+  "extracts": [
+    {
+      "bytes": 977,
+      "path": "checks.jsonl",
+      "rows": 7,
+      "sha256": "5a418a596f4d678f395cb742d40a3c1ccd13781915b8c0a5630aca0bc69f5396"
+    },
+    {
+      "bytes": 1390,
+      "path": "foundries.json",
+      "rows": 5,
+      "sha256": "3aec8356d2c1cd81339a06cbfc666335d3618cbf65cdb18289ef147f3731e080"
+    }
+  ],
+  "fetched": [
+    {
+      "bytes": 0,
+      "etag": null,
+      "fetched_at": "2026-10-01T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": 200,
+      "url": "https://github.com/aster-type/aster-sans"
+    },
+    {
+      "bytes": 0,
+      "etag": null,
+      "fetched_at": "2026-10-01T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": 200,
+      "url": "https://github.com/birch-foundry/dune-display"
+    },
+    {
+      "bytes": 0,
+      "etag": null,
+      "fetched_at": "2026-10-01T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": 200,
+      "url": "https://gitlab.com/aster-type/birch-mono"
+    },
+    {
+      "bytes": 0,
+      "etag": null,
+      "fetched_at": "2026-10-01T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": 200,
+      "url": "https://open-foundry.com/fonts/aster-sans"
+    },
+    {
+      "bytes": 0,
+      "etag": null,
+      "fetched_at": "2026-10-01T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": 200,
+      "url": "https://www.fontshare.com/fonts/dune-display"
+    },
+    {
+      "bytes": 0,
+      "etag": null,
+      "fetched_at": "2026-10-01T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": 200,
+      "url": "https://www.theleagueofmoveabletype.com/aster-sans"
+    }
+  ],
+  "notes": [
+    "listed by several foundries: Aster Sans (aster-type, birch-foundry)",
+    "not checked (host not in hosts): https://velvetyne.fr/fonts/cobalt-serif"
+  ],
+  "schema": 1,
+  "source": "foundries",
+  "stale_of": null,
+  "window": null
+}

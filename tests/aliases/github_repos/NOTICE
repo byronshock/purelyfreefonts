@@ -1,0 +1,16 @@
+Trimmed real data (ruling T1: GitHub download counts are open data).
+
+assets.jsonl holds 18 release assets of 6 repositories (JetBrains/JetBrainsMono,
+IBM/plex, subframe7536/maple-font, microsoft/cascadia-code, be5invis/Iosevka,
+githubnext/monaspace), copied from the github_releases snapshot of 2026-09-26
+in the extract format of assets.jsonl.gz: repository, release tag, publish
+time, prerelease flag, asset name, asset creation time and download count.
+Nothing else is kept: no author, uploader, release notes or URLs, so no
+personal data. The tests add a few synthetic rows (repositories under
+example-org, googlefonts/Inconsolata's asset, and asset names no release
+carries), marked as such in test_github_repos.py.
+
+Source: https://docs.github.com/en/rest/releases/releases and
+https://docs.github.com/en/graphql (the repositories' public releases).
+GitHub's Acceptable Use Policies allow collecting public, non-personal
+information through the API.

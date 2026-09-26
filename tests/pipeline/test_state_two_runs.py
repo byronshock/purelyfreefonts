@@ -11,27 +11,122 @@ state S0 (``tests/helpers/synth.py``):
 4. merging either of two identical October runs, then running November,
    gives the same output, which differs from November on S0.
 
-Each test runs twice: on the stub pipeline in ``synth`` (which passes today)
-and on the real ``refresh`` with ``tff_catalog.state``, which is xfail until
-M1 step 18. When the real one passes, strict xfail fails the suite: then drop
-the mark and point ``synth.make_store``'s data at the real collectors' formats.
+Each test runs three ways:
+
+- ``stub``: the stub pipeline in ``synth``, with its own state reader and merge;
+- ``store+state``: the same stub pipeline, but reading the store through
+  ``tff_catalog.store``, choosing snapshots and writing records and the
+  ``stale`` state part with the real "parse" stage (``SynthCollector`` reads
+  the synthetic extracts back), and loading, writing and merging state with
+  ``tff_catalog.state`` (M1 step 3);
+- ``real``: the real ``refresh`` with the real collectors, xfail until M1
+  step 18 (no real collector reads the synthetic store yet). When it passes,
+  strict xfail fails the suite: then drop the mark and point
+  ``synth.make_store``'s data at the real collectors' formats.
 """
 
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pytest
 from tests.helpers import ROOT, synth
 from tests.helpers.treehash import tree_diff, treehash
 
-from tff_catalog import refresh, state
+from tff_catalog import jsonio, parse, refresh, stages, state
+from tff_catalog.collectors.base import Collector, CollectorBase, ParseContext
+from tff_catalog.config_model import Config, RankingConfig, from_mapping, load_toml
 from tff_catalog.paths import Paths
+from tff_catalog.records import (
+    RECORD_TYPES,
+    Record,
+    from_json,
+    read_jsonl,
+)
 
 OCT = date(2026, 10, 3)
 NOV = date(2026, 11, 3)
+
+RANKING = from_mapping(
+    RankingConfig, load_toml(ROOT / "config" / "ranking.toml"), where="ranking.toml"
+)
+# "parse" reads only the ranking config; the other files belong to other steps.
+CONFIG = cast("Config", Config(RANKING, *([None] * 5), sources={}))  # type: ignore[arg-type]
+
+
+class SynthCollector(CollectorBase):
+    """Reads a synthetic snapshot's ``records.jsonl`` back into records."""
+
+    kind = "universe"
+    hosts = ("synth.example",)
+    emits = tuple(RECORD_TYPES.values())
+
+    def fetch(self, ctx: object) -> None:
+        raise AssertionError("replay never fetches")
+
+    def parse(self, ctx: ParseContext) -> Iterator[Record]:
+        for row in ctx.snapshot.iter_jsonl(synth.EXTRACT):
+            yield from_json(row)
+
+
+# synth_installs stands in for a lifetime counter, so baselines are exercised too.
+SYNTH_COLLECTORS: dict[str, Collector] = {
+    name: cast(
+        "Collector",
+        type(
+            f"Synth_{name}",
+            (SynthCollector,),
+            {"name": name, "needs_baseline": name == synth.INSTALLS},
+        )(),
+    )
+    for name in synth.SOURCES
+}
+
+
+def store_state_refresh(
+    paths: Paths,
+    run_date: date,
+    from_snapshots: date | None = None,
+    *,
+    options: object = None,
+) -> refresh.RunResult:
+    """``synth.stub_refresh`` on the real store, "parse" stage and state module."""
+    del options
+    paths = paths.with_(config=paths.build.parent / "config")
+    paths.sources_config.mkdir(parents=True, exist_ok=True)
+    for name in SYNTH_COLLECTORS:
+        (paths.sources_config / f"{name}.toml").write_text("enabled = true\n")
+    ctx = stages.make_context(
+        paths,
+        CONFIG,
+        run_date,
+        stages.RunOptions(from_snapshots=from_snapshots),
+        network=False,
+    )
+    stages.run_stage("parse", ctx)
+    used = parse.load_snapshots(paths)
+    inputs = synth.Inputs(
+        records={name: read_jsonl(paths.records / f"{name}.jsonl") for name in used},
+        snapshots={name: s.snapshot for name, s in used.items()},
+        stale=tuple(sorted(parse.load_stale(paths))),
+    )
+    files, catalog = synth.advance(ctx.state, inputs, run_date)
+    assert state.read_part(paths, "stale") == files["stale"], "parse's stale part differs"
+    nxt = state.NextState.from_state(ctx.state)
+    for name, value in files.items():
+        setattr(nxt, name, value)
+    state.write_next_state(nxt, paths.next_state)
+    jsonio.dump(catalog, paths.build / "catalog.json")
+    return refresh.RunResult(
+        run_date=run_date,
+        build=paths.build,
+        stages=synth.STUB_STAGES,
+        stale=inputs.stale,
+        failures=(),
+        seconds=0.0,
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -39,23 +134,34 @@ class Pipeline:
     refresh: Callable[..., Any]
     apply_state: Callable[..., Path]
     load_state: Callable[[Path], state.State]
+    collectors: dict[str, Collector] | None = None  # patched in for collectors.discover
 
 
 PIPELINES = [
     pytest.param(Pipeline(synth.stub_refresh, synth.apply_state, synth.read_state), id="stub"),
     pytest.param(
+        Pipeline(store_state_refresh, state.apply_state, state.load_state, SYNTH_COLLECTORS),
+        id="store+state",
+    ),
+    pytest.param(
         Pipeline(refresh.refresh, state.apply_state, state.load_state),
         id="real",
+        # Any exception: refresh itself exists now, but no real collector reads the
+        # synthetic store until M1 step 18, so the pipeline stops at "universe".
         marks=pytest.mark.xfail(
-            strict=True, raises=NotImplementedError, reason="M1 step 18: real refresh"
+            strict=True, reason="M1 step 18: real collectors over the synthetic store"
         ),
     ),
 ]
 
 
 @pytest.fixture(params=PIPELINES)
-def pipeline(request: pytest.FixtureRequest) -> Pipeline:
-    return request.param
+def pipeline(request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch) -> Pipeline:
+    chosen: Pipeline = request.param
+    if chosen.collectors is not None:
+        found = dict(sorted(chosen.collectors.items()))
+        monkeypatch.setattr(parse, "discover", lambda kind=None: found)
+    return chosen
 
 
 @dataclass
@@ -173,3 +279,33 @@ def test_stub_marks_a_missing_snapshot_stale(synth_store: Path) -> None:
     assert inputs.stale == (synth.PACKAGES,)
     assert inputs.snapshots[synth.PACKAGES] == OCT
     assert synth.load_inputs(synth_store, OCT).stale == ()
+
+
+def test_store_and_state_match_the_stub(
+    tmp_path: Path, synth_store: Path, synth_state: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The real store, parse stage and state module give the stub's state, byte for byte."""
+    monkeypatch.setattr(parse, "discover", lambda kind=None: dict(sorted(SYNTH_COLLECTORS.items())))
+    for day in (OCT, NOV):
+        stub = Runner(PIPELINES[0].values[0], tmp_path / "stub", synth_store)
+        real = Runner(PIPELINES[1].values[0], tmp_path / "real", synth_store)
+        a = stub.run(f"a-{day}", synth_state, day)
+        b = real.run(f"b-{day}", synth_state, day)
+        assert_same_tree(a / "state", b / "state")
+        assert (a / "catalog.json").read_bytes() == (b / "catalog.json").read_bytes()
+
+
+def test_store_and_state_parse_baselines_from_run_history(
+    tmp_path: Path, synth_store: Path, synth_state: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(parse, "discover", lambda kind=None: dict(sorted(SYNTH_COLLECTORS.items())))
+    runner = Runner(PIPELINES[1].values[0], tmp_path / "runs", synth_store)
+    build = runner.run("oct", synth_state, OCT)
+    s0_day = synth.DAYS[0].isoformat()
+    assert (build / "stage" / "records" / f"{synth.INSTALLS}@{s0_day}.jsonl").is_file()
+    stale = parse.load_stale(Paths.for_root(ROOT, build=build))
+    assert stale == {}
+    nov = runner.run("nov", synth_state, NOV)
+    stale = parse.load_stale(Paths.for_root(ROOT, build=nov))
+    assert list(stale) == [synth.PACKAGES]
+    assert (stale[synth.PACKAGES].snapshot, stale[synth.PACKAGES].stale_runs) == (OCT, 1)

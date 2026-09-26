@@ -1,0 +1,156 @@
+{
+  "collector_version": 1,
+  "complete": true,
+  "data_date": "2026-10-02",
+  "date": "2026-10-03",
+  "extracts": [
+    {
+      "bytes": 536,
+      "path": "downloads.csv.gz",
+      "rows": 9,
+      "sha256": "911360c3869d09bf3e2df595d96d586e4153a49cbc33444157fc2fe9e6e40868"
+    }
+  ],
+  "fetched": [
+    {
+      "bytes": 65,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "8d17537f7b597665bae067cbca5fa8286aa29041bdd260d8d29377c6a21a6dd9",
+      "status": 200,
+      "url": "https://api.npmjs.org/downloads/point/last-day"
+    },
+    {
+      "bytes": 172,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "88b9388a366fce92f763862d8ef12c2d2867c261cfa935a9677104e0f2dc075b",
+      "status": 200,
+      "url": "https://registry.npmjs.org/-/org/fontsource/package"
+    },
+    {
+      "bytes": 85,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "89362dd947c0ee1e7847fdf6e9415feff1d6745d2c8ec1daa27a5b76fe63e31c",
+      "status": 200,
+      "url": "https://registry.npmjs.org/-/org/fontsource-variable/package"
+    },
+    {
+      "bytes": 114,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "d6596afcb46bbf50662602c541c5a391e63a67490d0c2f2ed2e499bf4f4327e5",
+      "status": 200,
+      "url": "https://registry.npmjs.org/-/org/expo-google-fonts/package"
+    },
+    {
+      "bytes": 20895,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "f25cbd3f8b6674ab5ad87dc831b9cd025ff53f080cab9bc4d2e0b78e52bb46e2",
+      "status": 200,
+      "url": "https://api.npmjs.org/downloads/range/2025-04-11:2026-10-02/@fontsource/aster-sans"
+    },
+    {
+      "bytes": 19530,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "cd291a21cc5a38721492d6087bc01f71611022b0c3d8e5534988f6fcc5781ca1",
+      "status": 200,
+      "url": "https://api.npmjs.org/downloads/range/2025-04-11:2026-10-02/@fontsource/birch-mono"
+    },
+    {
+      "bytes": 18992,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "0b51d1abf780aea10e02b67934b1df7634a71b198ab61be3576c88cc4a4f63e4",
+      "status": 200,
+      "url": "https://api.npmjs.org/downloads/range/2025-04-11:2026-10-02/@fontsource/cobalt-serif"
+    },
+    {
+      "bytes": 19092,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "e59ea9801780869aacc1462c0920040752a9b2a393691154636852e731317f13",
+      "status": 200,
+      "url": "https://api.npmjs.org/downloads/range/2025-04-11:2026-10-02/@fontsource/dune-display"
+    },
+    {
+      "bytes": 54,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "cfb74ecaacebbf08f666ea00c14279d33a7af05808d8297475cf2090eccc10dc",
+      "status": 404,
+      "url": "https://api.npmjs.org/downloads/range/2025-04-11:2026-10-02/@fontsource/ember-script"
+    },
+    {
+      "bytes": 20686,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "e8399201c12b8e8bfa5f5ae0ebd1e4725aa12b771d2fb1fd58133fae3597ee6f",
+      "status": 200,
+      "url": "https://api.npmjs.org/downloads/range/2025-04-11:2026-10-02/@fontsource-variable/aster-sans"
+    },
+    {
+      "bytes": 18999,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "b0bb78bdce0b7464d0be7afe0210caeeaef41dc55bc20396eb85bc1119fd04c8",
+      "status": 200,
+      "url": "https://api.npmjs.org/downloads/range/2025-04-11:2026-10-02/@fontsource-variable/fjord-sans"
+    },
+    {
+      "bytes": 20491,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "f0d0d2bbd96d73f1c3c6a06097c6ea907f7ad2ad34f2a5cbf5fa4a6e36751a4c",
+      "status": 200,
+      "url": "https://api.npmjs.org/downloads/range/2025-04-11:2026-10-02/@expo-google-fonts/aster-sans"
+    },
+    {
+      "bytes": 19922,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "bfcdc8f3d33d46d7637b0fe9641b047ded95ab86112155ca9b6f81d96350c5ad",
+      "status": 200,
+      "url": "https://api.npmjs.org/downloads/range/2025-04-11:2026-10-02/@expo-google-fonts/birch-mono"
+    }
+  ],
+  "notes": [
+    "npm has no counts for 1: @fontsource/ember-script"
+  ],
+  "schema": 1,
+  "source": "npm",
+  "stale_of": null,
+  "window": {
+    "end": "2026-10-02",
+    "start": "2025-04-11"
+  }
+}

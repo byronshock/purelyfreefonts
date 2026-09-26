@@ -1,0 +1,23 @@
+Trimmed real data (ruling T1), fetched on 2026-09-26. These files are data,
+not code: they are NOT under the project's MIT code license.
+
+http/bulk-0001.json, snapshot/dependents.csv and expected.jsonl
+    Data from ecosyste.ms (https://ecosyste.ms), licensed under the Creative
+    Commons Attribution-ShareAlike 4.0 International license (CC BY-SA 4.0,
+    https://creativecommons.org/licenses/by-sa/4.0/). Source: the answer of
+    POST https://packages.ecosyste.ms/api/v1/packages/bulk_lookup for the 25
+    purls listed in http/index.json. Changes: only 8 fields of each package
+    object are kept (name, ecosystem, purl, dependent_repos_count,
+    dependent_packages_count, downloads, downloads_period, last_synced_at);
+    the rest, maintainers and repository metadata included, were removed. The
+    answer's order is kept. ecosyste.ms does not endorse this project. These
+    derived files are shared under the same license.
+
+http/org-fontsource.json and http/org-fontsource-variable.json
+    The npm public registry's package lists of the fontsource and
+    fontsource-variable organisations
+    (https://registry.npmjs.org/-/org/<org>/package), trimmed to the 18 and 7
+    package names used here, in the registry's order. Package names only.
+
+snapshot/manifest.json is what the collector's fetch() writes for these
+responses (tests/helpers/regen.py).

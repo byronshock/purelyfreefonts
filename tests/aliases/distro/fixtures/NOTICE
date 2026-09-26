@@ -1,0 +1,10 @@
+Synthetic fixtures for the "distro" alias miner (tests/aliases/distro/).
+
+Written by hand in the extract formats of the arch_repos, pkgstats, debian and
+debian_copyright collectors. No row is copied from a snapshot: the package
+names, versions, URLs and counts are made up or are public facts (the names of
+fonts and of the packages that ship them), chosen to exercise the miner's
+rules. The Debian copyright rows are synthetic, as ruling T1 requires for
+DEP-5 data (BRIEF item 12); two of them reproduce, with invented values, the
+shape of a real DEP-5 mistake: a header's Upstream-Name copied from another
+package. No personal data, e-mail address or token appears here.

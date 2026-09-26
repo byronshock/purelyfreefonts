@@ -1,0 +1,13 @@
+# Upgrade
+ofl/astersans # https://github.com/google/fonts/pull/10003
+
+# A note on why ofl/birchmono is held back: its registry overrides were
+# removed, so the entry is commented out below.
+# ofl/birchmono # https://github.com/google/fonts/pull/10004
+
+# New
+ofl/dunesans # https://github.com/google/fonts/pull/10005
+ofl/dunesans/DESCRIPTION.en_us.html # https://github.com/google/fonts/pull/10005
+
+# Metadata / Description / License
+ofl/embercolor/METADATA.pb # https://github.com/google/fonts/pull/10006

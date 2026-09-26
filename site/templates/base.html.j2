@@ -2,6 +2,10 @@
   base.html.j2: the shell every page extends. Block names and the template context are
   frozen in site/CONTRACT.md ("Templates"). No inline <script>, <style>, style="" or on*=""
   anywhere: the CSP blocks them. Rendered with autoescape and StrictUndefined.
+
+  Every page gets the same header, the same footer and, in the footer, the one feedback spot
+  (M2-D10; WCAG 3.2.6 wants help in the same place on every page). The page's one <h1> is the
+  first thing in its `main` block. Styles: site/css/10-base.css.
 -#}
 <!doctype html>
 <html lang="en">
@@ -14,15 +18,21 @@
 <link rel="canonical" href="{{ site.base_url }}{{ page.path }}">
 {% endif %}
 <meta name="color-scheme" content="light dark">
+{# Share previews. The image lives on our own domain; nothing is fetched from anywhere else. #}
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="{{ site.name }}">
 <meta property="og:title" content="{{ self.title() }}">
 <meta property="og:description" content="{{ self.description() }}">
+{% if page.canonical %}
 <meta property="og:url" content="{{ site.base_url }}{{ page.path }}">
+{% endif %}
 <meta property="og:image" content="{{ site.base_url }}/share.png">
+<meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{{ site.name }}: the most popular fonts whose licenses allow all personal and commercial use.">
 <meta name="twitter:card" content="summary_large_image">
+{# The .ico's sizes="32x32" keeps browsers that understand SVG icons on the SVG. #}
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -36,7 +46,7 @@
 <a class="skip-link" href="#main">Skip to main content</a>
 <header class="site-header">
 {% block header %}
-<a class="site-name" href="/">{{ site.name }}</a>
+<a class="site-name" href="/"><img class="site-mark" src="/favicon.svg" alt="" width="32" height="32">{{ site.name }}</a>
 <nav class="site-nav" aria-label="Site">
 <ul>
 {% for href, label in [("/", "Fonts"), ("/methodology/", "How we rank"), ("/about/", "About"), ("/privacy/", "Privacy")] %}
@@ -44,6 +54,8 @@
 {% endfor %}
 </ul>
 </nav>
+{# Milestone 2 step 14: the page says it is an early version and what comes next. Milestone 3 removes it. #}
+<p class="site-status">Early version. Coming next: hiding the fonts you already have.</p>
 {% endblock %}
 </header>
 <main id="main" tabindex="-1">
@@ -56,9 +68,10 @@
 <p>Something wrong or missing? <a href="{{ site.feedback.issues_url }}">Report it on GitHub</a>, or email <a href="{{ site.feedback.mailto }}">{{ site.feedback.email }}</a>.</p>
 {% endblock %}
 </div>
+{# ops/DONATIONS.md step 11: one plain link to Stripe's hosted page; no Stripe script, no cookie. A tip, never a donation. #}
 {% block tip_link %}
 {% if site.tip_url %}
-<p class="tip" id="tip"><a href="{{ site.tip_url }}">Buy me a coffee ($5)</a>: a tip for keeping the list up to date, paid on Stripe's page.</p>
+<p class="tip" id="tip">Find the list useful? <a href="{{ site.tip_url }}">Leave a tip ($5)</a> on Stripe's payment page.</p>
 {% endif %}
 {% endblock %}
 <p class="footer-meta">Data from {{ build.run_date }}. <a href="{{ site.repo_url }}">Source code on GitHub</a>.</p>

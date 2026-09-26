@@ -1,0 +1,23 @@
+[
+ {
+  "assets": [
+   {
+    "created_at": "2018-03-06T02:14:22Z",
+    "download_count": 776753,
+    "name": "Hack-v3.003-ttf.zip",
+    "state": "uploaded"
+   },
+   {
+    "created_at": "2018-03-06T02:14:23Z",
+    "download_count": 9912,
+    "name": "Hack-v3.003-webfonts.zip",
+    "state": "uploaded"
+   }
+  ],
+  "draft": false,
+  "html_url": "https://github.com/source-foundry/Hack/releases/tag/v3.003",
+  "prerelease": false,
+  "published_at": "2018-03-06T02:14:07Z",
+  "tag_name": "v3.003"
+ }
+]

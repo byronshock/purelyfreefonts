@@ -1,0 +1,95 @@
+{
+  "collector_version": 1,
+  "complete": true,
+  "data_date": "2026-10-03",
+  "date": "2026-10-03",
+  "extracts": [
+    {
+      "bytes": 622,
+      "path": "copyright.jsonl.gz",
+      "rows": 6,
+      "sha256": "679254c424c2711f6a8c222e051eee8d8bd9f728b82fb4cbabc89306aff25940"
+    }
+  ],
+  "fetched": [
+    {
+      "bytes": 592,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": "Tue, 01 Sep 2026 00:00:00 GMT",
+      "sha256": "8d688cf7361f93190e4768fcb6097c403edb2a42b09ab9e6a6c5c9c9c5cba973",
+      "status": 200,
+      "url": "https://deb.debian.org/debian/dists/sid/main/source/Sources.xz"
+    },
+    {
+      "bytes": 689,
+      "etag": "\"synth-0\"",
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": "Tue, 01 Sep 2026 00:00:00 GMT",
+      "sha256": "e71a8587dd98f3d89b75a67c9f95387d2bb248ce830aafbae11a04a84b90e8ec",
+      "status": 200,
+      "url": "https://metadata.ftp-master.debian.org/changelogs/main/f/fonts-aster-sans/unstable_copyright"
+    },
+    {
+      "bytes": 660,
+      "etag": "\"synth-1\"",
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": "Tue, 01 Sep 2026 00:00:00 GMT",
+      "sha256": "1b1af0a8bebe6356e919483bd904f3a400cd24e31c588513dd6580beb826d011",
+      "status": 200,
+      "url": "https://metadata.ftp-master.debian.org/changelogs/main/f/fonts-birch-mono/unstable_copyright"
+    },
+    {
+      "bytes": 0,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": 404,
+      "url": "https://metadata.ftp-master.debian.org/changelogs/main/f/fonts-cobalt-serif/unstable_copyright"
+    },
+    {
+      "bytes": 185,
+      "etag": "\"synth-2\"",
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": "Tue, 01 Sep 2026 00:00:00 GMT",
+      "sha256": "8f8de9a4c36133f148bbec837d37f1354805273e5e902a952bb6758b94379701",
+      "status": 200,
+      "url": "https://metadata.ftp-master.debian.org/changelogs/main/f/fonts-delta-grotesk/unstable_copyright"
+    },
+    {
+      "bytes": 523,
+      "etag": "\"synth-3\"",
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": "Tue, 01 Sep 2026 00:00:00 GMT",
+      "sha256": "2dda1d898def4481dc92e3f2ae5262e30954b9e1a7356ccf90e168f064b4f853",
+      "status": 200,
+      "url": "https://metadata.ftp-master.debian.org/changelogs/main/f/fonts-ember-slab/unstable_copyright"
+    },
+    {
+      "bytes": 250,
+      "etag": "\"synth-4\"",
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": "Tue, 01 Sep 2026 00:00:00 GMT",
+      "sha256": "21ead0ce790d2e96e73d139cb9aeb5c3b02c14a884e81904f43d4da4ef0f3f8b",
+      "status": 200,
+      "url": "https://metadata.ftp-master.debian.org/changelogs/main/x/xfonts-fjord/unstable_copyright"
+    }
+  ],
+  "notes": [
+    "font source packages: 6; rows: 6",
+    "copyright files not in DEP-5 format (no facts): 1",
+    "copyright files missing (404): 1"
+  ],
+  "schema": 1,
+  "source": "debian_copyright",
+  "stale_of": null,
+  "window": null
+}

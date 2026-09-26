@@ -1,0 +1,25 @@
+Trimmed real data (ruling T1) for the Arch databases; synthetic data for CachyOS.
+
+http/core.db, http/extra.db and http/multilib.db hold 42 packages of Arch
+Linux's core, extra and multilib sync databases as served by
+https://geo.mirror.pkgbuild.com on 2026-09-25 (x86_64). Edits: only the fields
+NAME, BASE, VERSION, ARCH, URL, LICENSE, GROUPS, PROVIDES, REPLACES, DEPENDS
+and OPTDEPENDS are kept (no packager names, signatures, checksums, sizes or
+build dates); web addresses are kept only for organisations' sites; long
+dependency and optional-dependency lists are cut to a few entries. The
+databases are rebuilt as gzip tars with fixed timestamps, and the Last-Modified
+and ETag answers in http/index.json are invented. The package metadata comes
+from Arch Linux's PKGBUILDs, published under the 0BSD license (not
+re-verified for this fixture).
+
+http/cachyos.db is synthetic (ruling T1): every package named "synth-...",
+"...-synth" or "...-synth-bin", and ttf-aster-mono, are invented, as are every
+version, license and packager line in that file (the packager lines hold no
+address). Real Arch font packages appear only as dependencies, and ttf-hack
+once more as a rebuild with an invented version. It imitates
+https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos.db, a zstd tar,
+including one old-style entry with a separate "depends" file.
+
+snapshot/ is what fetch() writes from http/, and expected.jsonl is parse() of
+snapshot/. Rebuild all three with:
+uv run python -m tests.collectors.arch_repos.build_fixture

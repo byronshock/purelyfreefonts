@@ -1,0 +1,15 @@
+{
+  "format": "tff-mockhttp",
+  "responses": [
+    {
+      "body": "page-2026-08.json",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://pkgstats.archlinux.de/api/packages?startMonth=202608&endMonth=202608&limit=10000&offset=0"
+    }
+  ],
+  "version": 1
+}

@@ -12,7 +12,11 @@ from tests.helpers import ROOT
 
 from tff_catalog import __version__, cli, stages
 from tff_catalog.config import config_hash, load_config
+from tff_catalog.fetch import BudgetExceeded, FetchError, HostNotAllowed
+from tff_catalog.gitsrc import GitError
 from tff_catalog.paths import Paths
+from tff_catalog.stageio import StageFileError
+from tff_catalog.store import SnapshotFrozen
 
 # design-m1 §1.2, plus the stages the core agent registered and M3's "match" slot.
 DESIGN_COMMANDS = {
@@ -195,3 +199,82 @@ def test_importing_the_cli_stays_light() -> None:
         [sys.executable, "-c", code], capture_output=True, text=True, check=False, timeout=60
     )
     assert result.returncode == 0, f"tff_catalog.cli imports {result.stdout.strip()}"
+
+
+EXPECTED_FAILURES = [
+    FetchError("https://example.org/x: HTTP 503 after 4 retries"),
+    HostNotAllowed("https://other.org/x: host 'other.org' is not in this fetcher's hosts"),
+    BudgetExceeded("the 'github' budget of 900 requests is spent"),
+    SnapshotFrozen("--refetch 2026-10-03: a merged run used it"),
+    GitError("git clone failed: repository not found"),
+    StageFileError("$.inter: Facts unknown ['x'], missing []"),
+    FileNotFoundError("build/stage/universe.json: missing; run stage 'universe' first"),
+]
+
+
+@pytest.mark.parametrize("exc", EXPECTED_FAILURES, ids=lambda e: type(e).__name__)
+def test_expected_failures_end_in_one_line(
+    exc: Exception, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    def fail(args: argparse.Namespace) -> int:
+        raise exc
+
+    monkeypatch.setattr(cli, "_cmd_stage", fail)
+    assert cli.main(["map"]) == 1
+    assert capsys.readouterr().err == f"tff-catalog map: {exc}\n"
+
+
+def test_validation_failures_print_one_line_each(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from tff_catalog.validate import Failure, ValidationFailed
+
+    failures = (Failure("schema", "catalog.json is invalid"), Failure("ineligible", "ranked", "x"))
+
+    def fail(args: argparse.Namespace) -> int:
+        raise ValidationFailed(failures)
+
+    monkeypatch.setattr(cli, "_cmd_stage", fail)
+    assert cli.main(["validate"]) == 1
+    assert capsys.readouterr().err.splitlines() == [
+        "tff-catalog validate: schema: catalog.json is invalid",
+        "tff-catalog validate: ineligible [x]: ranked",
+    ]
+
+
+def test_a_bug_keeps_its_traceback(monkeypatch: pytest.MonkeyPatch) -> None:
+    def fail(args: argparse.Namespace) -> int:
+        raise KeyError("a bug")
+
+    monkeypatch.setattr(cli, "_cmd_stage", fail)
+    with pytest.raises(KeyError, match="a bug"):
+        cli.main(["map"])
+
+
+def test_a_stage_closes_its_fetcher(monkeypatch: pytest.MonkeyPatch) -> None:
+    closed: list[bool] = []
+
+    class FakeFetcher:
+        def close(self) -> None:
+            closed.append(True)
+
+    def context(*args: object, **kwargs: object) -> object:
+        return argparse.Namespace(fetcher=FakeFetcher())
+
+    def run_stage(name: str, ctx: object) -> None:
+        raise FetchError("every source failed to fetch")
+
+    monkeypatch.setattr(Paths, "from_env", classmethod(lambda cls, root=None, env=None: None))
+    monkeypatch.setattr("tff_catalog.config.load_config", lambda paths: None)
+    monkeypatch.setattr(stages, "make_context", context)
+    monkeypatch.setattr(stages, "run_stage", run_stage)
+    assert cli.main(["fetch"]) == 1
+    assert closed == [True]
+
+
+def test_httpx_request_logs_stay_quiet(monkeypatch: pytest.MonkeyPatch) -> None:
+    import logging
+
+    monkeypatch.setattr(cli, "_cmd_config", lambda args: 0)
+    assert cli.main(["-v", "config"]) == 0
+    assert logging.getLogger("httpx").getEffectiveLevel() >= logging.WARNING

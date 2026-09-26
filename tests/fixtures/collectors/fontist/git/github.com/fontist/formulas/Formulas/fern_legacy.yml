@@ -1,0 +1,17 @@
+schema_version: 4
+name: Fern Legacy
+homepage: https://fern.synth.example
+resources:
+  Fern.zip:
+    urls:
+    - https://fern.synth.example/Fern.zip
+    sha256: 7777777777777777777777777777777777777777777777777777777777777777
+    file_size: 1024
+fonts:
+- name: Fern
+  styles:
+  - family_name: Fern
+    type: Regular
+    font: Fern.ttf
+spdx_license: OFL-1.1-RFN
+open_license: SENTINEL-LICENSE-TEXT OFL.

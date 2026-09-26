@@ -1,0 +1,18 @@
+# Ranking collector ecosystems: dependent-repository counts from
+# packages.ecosyste.ms (bulk_lookup), for every package the npm registry lists
+# in the scopes below. The data is CC BY-SA 4.0 and credited to "ecosyste.ms"
+# (ruling T1); the downloads field is ignored (npm's own counts are used).
+enabled = true
+
+# Gate M7 (rec), owner ruling 2026-09-25: Fontsource packages only. Option (b)
+# adds "@expo-google-fonts" here and in ranking.toml [sources.ecosystems] scopes.
+scopes = ["@fontsource", "@fontsource-variable"]
+
+# purls per bulk_lookup call; the API allows at most 100 (ruling M7). About
+# 2,700 packages: 27 calls at 1 a second, well inside the anonymous 5,000 an hour.
+batch_size = 100
+
+# A run with fewer than this share of the previous snapshot's packages, or of
+# its packages with a count, is a broken answer: the fetch fails and the stale
+# policy reuses the last good snapshot.
+min_share = 0.5

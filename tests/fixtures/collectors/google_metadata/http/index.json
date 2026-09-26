@@ -1,0 +1,14 @@
+{
+  "format": "tff-mockhttp",
+  "responses": [
+    {
+      "body": "metadata-fonts.json",
+      "headers": {
+        "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "url": "https://fonts.google.com/metadata/fonts"
+    }
+  ],
+  "version": 1
+}

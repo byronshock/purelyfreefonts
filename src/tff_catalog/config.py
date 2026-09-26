@@ -171,6 +171,12 @@ def check_ranking(r: RankingConfig) -> None:
     for key in m.extra_ranks:
         if key not in RANK_KEYS:
             _fail("ranking.toml: membership.extra_ranks", f"unknown rank key {key!r}")
+    if m.l3_overall_max < m.leave or m.l3_extra_top < m.extra_top:
+        _fail(
+            "ranking.toml: membership",
+            "need l3_overall_max >= leave and l3_extra_top >= extra_top (L3 checks every "
+            "font that can enter)",
+        )
     t = m.top100
     if not t.enter <= d.exact_top <= t.leave or t.leave_runs < 1:
         _fail("ranking.toml: membership.top100", "need enter <= exact_top <= leave")

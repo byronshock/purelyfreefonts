@@ -1,0 +1,16 @@
+{#-
+  index.html.j2: the list page (Milestone 2 step 3). Server-rendered in Overall order, so the
+  page works without JavaScript; the script then filters and reorders these rows. Context:
+  site/CONTRACT.md, "Templates" (every page's context plus `list`). The list itself, filters
+  included, is in _list.html.j2 so a later /check/ page can include it unchanged.
+-#}
+{% extends "base.html.j2" %}
+{% block head %}
+<link rel="preload" href="{{ list.index_url }}" as="fetch" crossorigin>
+{% endblock %}
+{% block main %}
+<h1>The most popular truly free fonts</h1>
+<p class="lead">Every font here is free for any personal or commercial use. They are ranked by how many people install them and use them in their work.</p>
+<p class="privacy-note">No cookies, no tracking, and the page loads only its own files. <a href="/privacy/">Check the Network tab</a>.</p>
+{% include "_list.html.j2" %}
+{% endblock %}

@@ -1,0 +1,63 @@
+{
+  "collector_version": 1,
+  "complete": true,
+  "data_date": "2026-09-25",
+  "date": "2026-09-26",
+  "extracts": [
+    {
+      "bytes": 609,
+      "path": "meta.json",
+      "rows": null,
+      "sha256": "00af27753c34de17f2d555165d1731c3f70d122c3765e4c938e132bf1bfb1f77"
+    },
+    {
+      "bytes": 1568,
+      "path": "packages.jsonl.gz",
+      "rows": 19,
+      "sha256": "bf202f198428b9dc7ed66bbd9c64cad852cb23d4ec07117ba2948fd5cf4335b0"
+    },
+    {
+      "bytes": 776,
+      "path": "popcon.jsonl.gz",
+      "rows": 22,
+      "sha256": "cf485b156d6b2da472c1039b3642d5a201d90bea189f1b99917840f1dc720456"
+    }
+  ],
+  "fetched": [
+    {
+      "bytes": 2612,
+      "etag": "\"93ae2c-65b442aad5439\"",
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": "Sat, 12 Sep 2026 07:29:52 GMT",
+      "sha256": "a4f2f4dce6010d91bb5e408e302503177c629602bc134309cd71d2829cdbcddd",
+      "status": 200,
+      "url": "https://deb.debian.org/debian/dists/trixie/main/binary-amd64/Packages.xz"
+    },
+    {
+      "bytes": 1116,
+      "etag": "\"33ca4d-65c4f1da00344\"",
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": "Fri, 25 Sep 2026 13:58:49 GMT",
+      "sha256": "d7bb9a0f44ca6950922301faf8c652018ecd6b2ab0bdbf0b77823cd38e5d8f74",
+      "status": 200,
+      "url": "https://popcon.debian.org/by_inst.gz"
+    },
+    {
+      "bytes": 71,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": "Fri, 25 Sep 2026 13:55:13 GMT",
+      "sha256": "236f88ea304b1ad2d322791a2ee4bc7e2b673ab7dc5f334ac16c2a4e01dfe3e4",
+      "status": 206,
+      "url": "https://popcon.debian.org/all-popcon-results.gz"
+    }
+  ],
+  "notes": [],
+  "schema": 1,
+  "source": "debian",
+  "stale_of": null,
+  "window": null
+}

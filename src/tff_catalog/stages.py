@@ -10,7 +10,7 @@ Each writes only the ``build/state/`` files it owns, with
 reads the earlier one's with ``state.read_part``. Other stage outputs go through
 ``stageio`` (``STAGE_FILES``).
 
-``STAGES`` is in pipeline order. ``refresh`` runs every stage whose
+``STAGES`` is in pipeline order, "validate" last. ``refresh`` runs every stage whose
 ``pipeline`` is true, skipping ``fetch`` in replay; stage "verify" can ask for
 one rerun of "rank" and "membership" (refresh.py handles that). "backtest"
 runs only on its own. The Milestone 3 slot "match" (``tff_catalog.match``) is
@@ -114,8 +114,11 @@ STAGES: tuple[Stage, ...] = (
     Stage("specimens", "15b", "tff_catalog.specimens.stage:run", "M2 step 5", network=True),
     Stage("export-site", "15c", "tff_catalog.export:run_site", "M1 step 15"),
     Stage("match", "15d", "tff_catalog.match:run", "M3 step 3"),
-    Stage("validate", "16", "tff_catalog.validate:run", "M1 step 15"),
+    # "review" before "validate": validate scans the committed build/*.md reports for
+    # hidden values, so this run's review.md is checked in this run, and a hard failure
+    # still leaves the review. The numbers stay the design table's.
     Stage("review", "17", "tff_catalog.review:run", "M1 step 15"),
+    Stage("validate", "16", "tff_catalog.validate:run", "M1 step 15"),
     Stage("backtest", "-", "tff_catalog.backtest:run", "M1 step 13", pipeline=False),
 )
 _BY_NAME = {s.name: s for s in STAGES}

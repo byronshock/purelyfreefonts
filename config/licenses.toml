@@ -1,29 +1,344 @@
-# License classes (D3 in AUTHORITY.md and methodology §2). SKELETON.
+# License classes (D3 in AUTHORITY.md, methodology §2, milestone-1 steps 2 and 6a).
 #
-# Filled in wave 1 by agent I3 (config.py and the config files); the owner
-# reviews it at gate C. Loaded strictly by tff_catalog.config into
-# config_model.LicensesConfig: unknown or missing keys fail.
+# Filled by agent P3 with tff_catalog.licenses; the owner reviews it at gate C.
+# Loaded strictly by tff_catalog.config into config_model.LicensesConfig:
+# unknown or missing keys fail, and no id may sit in two classes.
 #
-# Keys are SPDX ids, or LicenseRef-<name> for licenses SPDX lacks. A license
-# listed nowhere is excluded.
+# Keys are SPDX license ids, SPDX "<id> WITH <exception>" pairs, or
+# LicenseRef-<name> for licenses SPDX lacks. Operators (AND, OR) never appear
+# here: tff_catalog.licenses.classify combines the classes (OR takes the best
+# branch, AND needs every part to pass).
 #
-# [allowed."OFL-1.1"]
-# name = "SIL Open Font License 1.1"
-# group = "open-font"             # license-class filter group on the site
-# redistributable = true
-# attribution_required = false
-# note = ""                       # optional
+# Three classes:
+# - allowed: qualifies (Rule 1: all personal and commercial use, no use
+#   restrictions). `group` is the license-class filter on the site and must be
+#   an id in site.toml [[license_classes]]. `redistributable` feeds the
+#   "Redistributable fonts only" option (Rule 3) and preview_ok (D3).
+#   `attribution_required` is the CC BY badge (D3), not the notice that most
+#   licenses ask to keep with redistributed copies.
+# - excluded: never qualifies; `reason` names the rule.
+# - ruling: the owner decides at gate LIC (data/reviews/licenses/); until then
+#   every font that depends on it waits in the review queue.
 #
-# [excluded."CC-BY-SA-4.0"]
-# reason = "copyleft without a font exception (D3)"
-#
-# [ruling."LicenseRef-Ubuntu-Font-1.0"]
-# question = "Does the Ubuntu Font Licence allow all personal and commercial use?"
+# **Anything not listed is excluded (D3).** L1 (config/license-aliases.toml)
+# maps every string a source writes onto the ids below; a string it cannot map
+# goes to the review queue instead of being guessed.
 
 schema = 1
 
-[allowed]
+# --- allowed ------------------------------------------------------------------
 
-[excluded]
+[allowed."OFL-1.1"]
+name = "SIL Open Font License 1.1"
+group = "open-font"
+redistributable = true
+attribution_required = false
+note = "With or without Reserved Font Names: RFN only restricts the names of modified versions."
 
-[ruling]
+[allowed."OFL-1.0"]
+name = "SIL Open Font License 1.0"
+group = "open-font"
+redistributable = true
+attribution_required = false
+
+[allowed."GPL-2.0-only WITH Font-exception-2.0"]
+name = "GNU GPL 2.0 with the font exception"
+group = "open-font"
+redistributable = true
+attribution_required = false
+note = "D3 excludes copyleft only without a font exception; the exception lets documents embed the font."
+
+[allowed."GPL-2.0-or-later WITH Font-exception-2.0"]
+name = "GNU GPL 2.0 or later with the font exception"
+group = "open-font"
+redistributable = true
+attribution_required = false
+note = "D3 excludes copyleft only without a font exception; the exception lets documents embed the font."
+
+[allowed."GPL-3.0-only WITH Font-exception-2.0"]
+name = "GNU GPL 3.0 with the font exception"
+group = "open-font"
+redistributable = true
+attribution_required = false
+note = "D3 excludes copyleft only without a font exception; the exception lets documents embed the font."
+
+[allowed."GPL-3.0-or-later WITH Font-exception-2.0"]
+name = "GNU GPL 3.0 or later with the font exception"
+group = "open-font"
+redistributable = true
+attribution_required = false
+note = "D3 excludes copyleft only without a font exception; the exception lets documents embed the font."
+
+[allowed."GPL-1.0-or-later WITH Font-exception-2.0"]
+name = "GNU GPL (any version) with the font exception"
+group = "open-font"
+redistributable = true
+attribution_required = false
+note = "D3 excludes copyleft only without a font exception; the exception lets documents embed the font."
+
+[allowed."LGPL-2.1-only WITH Font-exception-2.0"]
+name = "GNU LGPL 2.1 with the font exception"
+group = "open-font"
+redistributable = true
+attribution_required = false
+note = "D3 excludes copyleft only without a font exception; the exception lets documents embed the font."
+
+[allowed."LGPL-2.1-or-later WITH Font-exception-2.0"]
+name = "GNU LGPL 2.1 or later with the font exception"
+group = "open-font"
+redistributable = true
+attribution_required = false
+note = "D3 excludes copyleft only without a font exception; the exception lets documents embed the font."
+
+[allowed."LGPL-3.0-only WITH Font-exception-2.0"]
+name = "GNU LGPL 3.0 with the font exception"
+group = "open-font"
+redistributable = true
+attribution_required = false
+note = "D3 excludes copyleft only without a font exception; the exception lets documents embed the font."
+
+[allowed."LGPL-3.0-or-later WITH Font-exception-2.0"]
+name = "GNU LGPL 3.0 or later with the font exception"
+group = "open-font"
+redistributable = true
+attribution_required = false
+note = "D3 excludes copyleft only without a font exception; the exception lets documents embed the font."
+
+[allowed."Apache-2.0"]
+name = "Apache License 2.0"
+group = "permissive"
+redistributable = true
+attribution_required = false
+
+[allowed."MIT"]
+name = "MIT License"
+group = "permissive"
+redistributable = true
+attribution_required = false
+
+[allowed."MIT-0"]
+name = "MIT No Attribution"
+group = "permissive"
+redistributable = true
+attribution_required = false
+
+[allowed."BSD-2-Clause"]
+name = "BSD 2-Clause License"
+group = "permissive"
+redistributable = true
+attribution_required = false
+
+[allowed."BSD-3-Clause"]
+name = "BSD 3-Clause License"
+group = "permissive"
+redistributable = true
+attribution_required = false
+
+[allowed."BSD-3-Clause-Clear"]
+name = "BSD 3-Clause Clear License"
+group = "permissive"
+redistributable = true
+attribution_required = false
+
+[allowed."ISC"]
+name = "ISC License"
+group = "permissive"
+redistributable = true
+attribution_required = false
+
+[allowed."0BSD"]
+name = "BSD Zero Clause License"
+group = "permissive"
+redistributable = true
+attribution_required = false
+
+[allowed."Zlib"]
+name = "zlib License"
+group = "permissive"
+redistributable = true
+attribution_required = false
+
+[allowed."Unlicense"]
+name = "The Unlicense"
+group = "permissive"
+redistributable = true
+attribution_required = false
+
+[allowed."CC0-1.0"]
+name = "Creative Commons Zero 1.0"
+group = "permissive"
+redistributable = true
+attribution_required = false
+
+[allowed."CC-BY-2.0"]
+name = "Creative Commons Attribution 2.0"
+group = "attribution"
+redistributable = true
+attribution_required = true
+note = "D3: CC BY qualifies, with the attribution badge."
+
+[allowed."CC-BY-2.5"]
+name = "Creative Commons Attribution 2.5"
+group = "attribution"
+redistributable = true
+attribution_required = true
+note = "D3: CC BY qualifies, with the attribution badge."
+
+[allowed."CC-BY-3.0"]
+name = "Creative Commons Attribution 3.0"
+group = "attribution"
+redistributable = true
+attribution_required = true
+note = "D3: CC BY qualifies, with the attribution badge."
+
+[allowed."CC-BY-4.0"]
+name = "Creative Commons Attribution 4.0"
+group = "attribution"
+redistributable = true
+attribution_required = true
+note = "D3: CC BY qualifies, with the attribution badge."
+
+# --- excluded -----------------------------------------------------------------
+
+[excluded."CC-BY-SA-1.0"]
+reason = "copyleft without a font exception (D3)"
+
+[excluded."CC-BY-SA-2.0"]
+reason = "copyleft without a font exception (D3)"
+
+[excluded."CC-BY-SA-2.5"]
+reason = "copyleft without a font exception (D3)"
+
+[excluded."CC-BY-SA-3.0"]
+reason = "copyleft without a font exception (D3)"
+
+[excluded."CC-BY-SA-4.0"]
+reason = "copyleft without a font exception (D3)"
+
+[excluded."CC-BY-ND-2.0"]
+reason = "bans modification (D3, Rule 4 extended)"
+
+[excluded."CC-BY-ND-2.5"]
+reason = "bans modification (D3, Rule 4 extended)"
+
+[excluded."CC-BY-ND-3.0"]
+reason = "bans modification (D3, Rule 4 extended)"
+
+[excluded."CC-BY-ND-4.0"]
+reason = "bans modification (D3, Rule 4 extended)"
+
+[excluded."CC-BY-NC-3.0"]
+reason = "non-commercial use only (Rule 1)"
+
+[excluded."CC-BY-NC-4.0"]
+reason = "non-commercial use only (Rule 1)"
+
+[excluded."CC-BY-NC-SA-3.0"]
+reason = "non-commercial use only (Rule 1)"
+
+[excluded."CC-BY-NC-SA-4.0"]
+reason = "non-commercial use only (Rule 1)"
+
+[excluded."CC-BY-NC-ND-3.0"]
+reason = "non-commercial use only, and bans modification (Rule 1, D3)"
+
+[excluded."CC-BY-NC-ND-4.0"]
+reason = "non-commercial use only, and bans modification (Rule 1, D3)"
+
+[excluded."GPL-1.0-only"]
+reason = "copyleft without a font exception (D3)"
+
+[excluded."GPL-1.0-or-later"]
+reason = "copyleft without a font exception (D3)"
+
+[excluded."GPL-2.0-only"]
+reason = "copyleft without a font exception (D3)"
+
+[excluded."GPL-2.0-or-later"]
+reason = "copyleft without a font exception (D3)"
+
+[excluded."GPL-3.0-only"]
+reason = "copyleft without a font exception (D3)"
+
+[excluded."GPL-3.0-or-later"]
+reason = "copyleft without a font exception (D3)"
+
+[excluded."LGPL-2.0-only"]
+reason = "copyleft without a font exception (D3)"
+
+[excluded."LGPL-2.0-or-later"]
+reason = "copyleft without a font exception (D3)"
+
+[excluded."LGPL-2.1-only"]
+reason = "copyleft without a font exception (D3)"
+
+[excluded."LGPL-2.1-or-later"]
+reason = "copyleft without a font exception (D3)"
+
+[excluded."LGPL-3.0-only"]
+reason = "copyleft without a font exception (D3)"
+
+[excluded."LGPL-3.0-or-later"]
+reason = "copyleft without a font exception (D3)"
+
+[excluded."AGPL-3.0-only"]
+reason = "copyleft without a font exception (D3)"
+
+[excluded."AGPL-3.0-or-later"]
+reason = "copyleft without a font exception (D3)"
+
+[excluded."AGPL-3.0-only WITH PS-or-PDF-font-exception-20170817"]
+reason = "URW Base 35's AGPL: its exception covers only embedding in PostScript and PDF files, not a general font exception (D3)"
+
+[excluded."AGPL-3.0-or-later WITH PS-or-PDF-font-exception-20170817"]
+reason = "URW Base 35's AGPL: its exception covers only embedding in PostScript and PDF files, not a general font exception (D3)"
+
+[excluded."LicenseRef-Microsoft-EULA"]
+reason = "Microsoft's font EULAs (the MS Core Fonts EULA and its kin) ban modification (D3, Rule 4 extended)"
+
+[excluded."LicenseRef-Apple-EULA"]
+reason = "Apple's font licenses limit use to Apple platforms and mock-ups (Rule 1)"
+
+[excluded."LicenseRef-ITF-FFL"]
+reason = "ITF Free Font License: forbids modification, including subsetting and format conversion, and offering the font to third parties through sites, apps or tools (AUTHORITY Rule 4)"
+
+[excluded."LicenseRef-Personal-Use-Only"]
+reason = "personal use only (Rule 1)"
+
+# --- owner ruling (gate LIC) --------------------------------------------------
+
+[ruling."Bitstream-Vera"]
+question = "The Bitstream Vera Fonts license (DejaVu, Bitstream Vera, and the glyphs Hack and others derive from them) allows use, copying, changes under a new name and redistribution, but forbids selling the fonts on their own. Does it qualify, and may the fonts be redistributed?"
+
+[ruling."Bitstream-Charter"]
+question = "The Bitstream Charter license allows use, copying, changes, sublicensing, sale and redistribution for any purpose, provided the notice stays intact. Does it qualify, and may the fonts be redistributed?"
+
+[ruling."Ubuntu-font-1.0"]
+question = "The Ubuntu Font Licence 1.0 (Ubuntu, Ubuntu Mono, Ubuntu Sans) allows use, copying, embedding, changes and redistribution; changed versions must follow its naming rules. Does it qualify, and may the fonts be redistributed?"
+
+[ruling."WTFPL"]
+question = "The WTFPL puts no conditions on anything. Does it qualify, and may the fonts be redistributed?"
+
+[ruling."LPPL-1.3c"]
+question = "The LaTeX Project Public License 1.3c allows use and redistribution; changed versions must be renamed or clearly marked. Does it qualify, and may the fonts be redistributed?"
+
+[ruling."LicenseRef-GUST-Font-License"]
+question = "The GUST Font License (Latin Modern, TeX Gyre) is the LPPL with a request to rename changed fonts. Does it qualify, and may the fonts be redistributed?"
+
+[ruling."LicenseRef-Monofur"]
+question = "Monofur's own freeware terms (Nerd Fonts id LicenseRef-Monofur). Do they allow all personal and commercial use, and may the fonts be redistributed?"
+
+[ruling."LicenseRef-VicFieger"]
+question = "Vic Fieger's own freeware terms (Nerd Fonts id LicenseRef-VicFieger, for Heavy Data). Do they allow all personal and commercial use, and may the fonts be redistributed?"
+
+[ruling."LicenseRef-PublicDomain"]
+question = "A public-domain dedication without a formal license text (Fontist LicenseRef-PublicDomain, Debian public-domain). Does it qualify, and may the fonts be redistributed?"
+
+[ruling."LicenseRef-Freeware"]
+question = "An informal freeware grant. D3: it qualifies only if it explicitly allows any use. Does this one, and may the fonts be redistributed?"
+
+[ruling."IPA"]
+question = "The IPA Font License 1.0 allows use, copying and redistribution; changed fonts must be renamed and shipped with their source. Does it qualify, and may the fonts be redistributed?"
+
+[ruling."Arphic-1999"]
+question = "The Arphic Public License is a copyleft license written for fonts, with no separate font exception. Does it qualify under D3, and may the fonts be redistributed?"

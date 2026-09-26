@@ -339,10 +339,18 @@ def test_every_settings_file_belongs_to_a_collector() -> None:
         assert path.stem in found, f"{path.name}: no collector of that name"
 
 
+def _drop_source_settings(cfg: ConfigCopy) -> None:
+    """Remove the copied sources/*.toml: with ``discover`` patched to {}, each real
+    settings file would fail as "no collector" before the check under test."""
+    for path in (cfg.config / "sources").glob("*.toml"):
+        path.unlink()
+
+
 def test_strict_check_rejects_a_stray_settings_file(
     cfg: ConfigCopy, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(collectors, "discover", lambda kind=None: {})
+    _drop_source_settings(cfg)
     cfg.write("sources/synth_source.toml", {"enabled": True})
     with pytest.raises(ConfigError, match=r"sources/synth_source\.toml: no collector"):
         check_collectors(cfg.load(), cfg.paths)
@@ -352,6 +360,7 @@ def test_strict_check_needs_a_collector_for_every_enabled_source(
     cfg: ConfigCopy, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(collectors, "discover", lambda kind=None: {})
+    _drop_source_settings(cfg)
     with pytest.raises(ConfigError, match=r"sources\.homebrew\.collector: no collector"):
         check_collectors(cfg.load(), cfg.paths)
 

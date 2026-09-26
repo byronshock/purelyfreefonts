@@ -1,0 +1,54 @@
+# Ranking collector fot: Fonts Over Time's weekly homepage crawl (gate T4 (rec),
+# ruling 2026-09-25): used with credit, ranks only, synthetic test fixtures.
+# Domains are kept only as sha256[:16]; titles and descriptions never.
+enabled = true
+repo = "fcjr/fontsovertime"
+ref = "main"
+weekly_dir = "data/snapshots/weekly"   # <YYYY-Www>.jsonl.gz, one per weekly crawl
+latest_csv = "data/exports/latest.csv"  # read for its header only (the column check)
+
+# The column check: latest.csv's header must be exactly csv_columns, every
+# weekly row must carry row_fields, and every ok row ok_fields (an ok browser
+# row also its "dominant" shares). On a mismatch the fetch fails, and the stale
+# policy reuses the last good snapshot and flags FOT stale (methodology §5).
+csv_columns = ["domain", "category", "body_font", "heading_font", "platform", "sources", "method", "observed"]
+row_fields = ["domain", "category", "crawled_at", "method", "status"]
+ok_fields = ["body_font", "heading_font"]
+
+# The newest weekly files each snapshot keeps: a month of weekly crawls with a
+# week to spare (the engine averages the weeks of the last month).
+keep_weeks = 6
+
+# Keep equal to ranking.toml [sources.fot] (a test checks): the counted crawl
+# methods, preferred first when a site was measured twice, and the share of a
+# page's text at which a family counts besides body and headings.
+methods = ["browser", "static"]
+dominant_share = 0.05
+
+# Names of no particular font, dropped (lower case): CSS generic families and
+# keywords, and browsers' aliases for the system font.
+generic_names = [
+  "-apple-system",
+  "-webkit-body",
+  "-webkit-pictograph",
+  "-webkit-standard",
+  "blinkmacsystemfont",
+  "cursive",
+  "emoji",
+  "fangsong",
+  "fantasy",
+  "inherit",
+  "initial",
+  "math",
+  "monospace",
+  "revert",
+  "revert-layer",
+  "sans-serif",
+  "serif",
+  "system-ui",
+  "ui-monospace",
+  "ui-rounded",
+  "ui-sans-serif",
+  "ui-serif",
+  "unset",
+]

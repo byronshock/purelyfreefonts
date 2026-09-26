@@ -1,0 +1,25 @@
+Trimmed real data (ruling T1), from Arch Linux pkgstats
+(https://pkgstats.archlinux.de/api/packages), fetched on 2026-09-26.
+
+The rows are real monthly counts for a few packages, left unchanged: count
+(reports that month that include the package) and samples (the month's
+largest count). 37 package-months in all:
+
+- previous/ (a snapshot as a run on 2026-08-03 leaves it): ttf-jetbrains-mono
+  and glibc for 2025-08 to 2026-07, and otf-departure-mono-nerd for the months
+  it is listed (2026-05 to 2026-07);
+- http/page-2026-08.json: 10 packages of August 2026;
+- snapshot/: the 2026-09-26 run, which copies 2025-09 to 2026-07 from
+  previous/ and fetches 2026-08.
+
+Each month's list was cut to these packages, so the answer's "total" and
+"count" are the number of rows kept (the real August 2026 list has 34,451
+packages), and "popularity" was recomputed as count / samples x 100 rounded
+to two decimals, as the server does. The manifests were written by running the
+collector against these pages. No personal data: pkgstats publishes only
+aggregate counts.
+
+pkgstats states no license for its data. The site's code
+(https://github.com/archlinux-de/pkgstats.archlinux.de) is GPL-3.0. Its privacy
+policy says: "The data send by the pkgstats command line tool is stored
+anonymously on the server."

@@ -1,0 +1,299 @@
+/* 30-details: the details panel under a row (site/CONTRACT.md section 4, "Details panel"),
+   built by site/js/40-details.js. Colours come only from the tokens. The panel sits inside
+   li.font, whose content-visibility clips painting to the row's padding box, so the panel
+   keeps at least the focus ring's width (3px + 2px offset) of padding around everything
+   focusable in it. Long names, URLs and source names wrap, so 320px screens, 200% zoom and
+   the 1.4.12 text-spacing overrides never scroll sideways or clip. */
+
+.details {
+  container: details / inline-size;
+}
+
+.details:not([hidden]) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "title close"
+    "body body";
+  column-gap: var(--space-3);
+  row-gap: var(--space-3);
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3);
+  border: 1px solid var(--c-divider);
+  border-radius: var(--radius);
+  background: var(--c-surface);
+  color: var(--c-fg);
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 40rem) {
+  .details:not([hidden]) {
+    margin-left: 6rem; /* under the name, clear of the rank column (20-list.css) */
+    padding: var(--space-4);
+  }
+}
+
+.details-title {
+  grid-area: title;
+  align-self: center;
+  justify-self: start; /* so its focus ring hugs the text */
+  margin: 0;
+  font-size: var(--fs-base);
+  line-height: var(--lh-tight);
+}
+
+.details-close,
+.details-retry,
+.details-reload,
+.typeown-load {
+  min-width: var(--target-min);
+  min-height: var(--target-min);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-bg);
+  color: var(--c-fg);
+  font: inherit;
+  line-height: var(--lh-tight);
+  cursor: pointer;
+}
+
+.details-close {
+  grid-area: close;
+  align-self: start;
+}
+
+.details-close:hover,
+.details-retry:hover,
+.details-reload:hover,
+.typeown-load:hover {
+  background: var(--c-bg);
+  border-color: var(--c-fg);
+}
+
+.typeown-load[aria-disabled="true"] {
+  cursor: progress;
+}
+
+.details :focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+/* The heading takes focus only from a #font= link or script; the ring shows where that is. */
+.details-title:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* One column of sections; two balanced columns on a wide panel (below), in reading order.
+   Sources and the report line span both. */
+.details-body {
+  grid-area: body;
+  min-width: 0;
+  font-size: var(--fs-small);
+}
+
+.details-status {
+  margin: 0 0 var(--space-2);
+}
+
+.details-sec {
+  min-width: 0;
+  margin: 0 0 var(--space-4);
+  break-inside: avoid;
+  container-type: inline-size;
+}
+
+.details-h {
+  margin: 0 0 var(--space-2);
+  font-size: var(--fs-base);
+  line-height: var(--lh-tight);
+}
+
+.details a {
+  color: var(--c-link);
+}
+
+.details a:visited {
+  color: var(--c-link-visited);
+}
+
+/* Terms and descriptions: stacked on narrow panels, side by side from 30rem of panel. */
+.details-dl {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.details-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.details-pair dt {
+  font-weight: 600;
+}
+
+.details-pair dd {
+  margin: 0;
+}
+
+.details-place {
+  display: block;
+}
+
+.details-gate {
+  display: block;
+  color: var(--c-muted);
+}
+
+.details-tiers {
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--c-divider);
+  color: var(--c-muted);
+}
+
+.details-tiers dt {
+  color: var(--c-fg);
+}
+
+.details-more,
+.typeown-note {
+  margin: var(--space-2) 0 0;
+  color: var(--c-muted);
+}
+
+.details-more a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+}
+
+/* Per-source results: two columns that wrap rather than scroll. */
+.details-src-table {
+  width: 100%;
+  margin: 0 0 var(--space-3);
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.details-src-table caption {
+  padding: 0 0 var(--space-1);
+  font-weight: 600;
+  text-align: left;
+}
+
+.details-src-table th,
+.details-src-table td {
+  padding: var(--space-1) var(--space-2) var(--space-1) 0;
+  border-bottom: 1px solid var(--c-divider);
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.details-src-table thead th {
+  color: var(--c-muted);
+  font-weight: 400;
+}
+
+.details-src-table tbody th {
+  font-weight: 400;
+}
+
+.details-src-table tbody th a {
+  display: inline-block;
+  min-height: var(--target-min);
+  padding-block: 1px;
+}
+
+/* "Type your own text": the input shows the loaded font, so it is large. */
+.typeown {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+}
+
+.typeown-note {
+  margin: 0;
+}
+
+.typeown-label {
+  font-weight: 600;
+}
+
+.typeown-input {
+  justify-self: stretch;
+  width: 100%;
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-bg);
+  color: var(--c-fg);
+  font-size: var(--fs-2xl);
+  line-height: var(--lh-tight);
+}
+
+.typeown-error {
+  margin: 0;
+  color: var(--c-warn-fg);
+  background: var(--c-warn-bg);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius);
+}
+
+/* One sentence, so its two links stay inline (the 2.5.8 inline exception); as inline-blocks
+   they left the comma stranded on a line of its own on phones. */
+.details-report {
+  margin: 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--c-divider);
+  line-height: var(--lh-body);
+}
+
+/* Container queries, so the width of the panel (not the window) decides. A section wide
+   enough puts each term beside its description. */
+@container (min-width: 19rem) {
+  .details-pair {
+    grid-template-columns: 8.5rem minmax(0, 1fr);
+    column-gap: var(--space-3);
+  }
+}
+
+@container details (min-width: 44rem) {
+  .details-body {
+    column-count: 2;
+    column-gap: var(--space-6);
+  }
+
+  .details-sources,
+  .details-report {
+    column-span: all;
+  }
+
+  /* The desktop and project tables side by side. */
+  .details-sources {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-6);
+    align-items: start;
+  }
+
+  .details-sources > .details-h,
+  .details-sources > .details-more {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Forced colours: the divider token turns GrayText, so outline the panel in the border one. */
+@media (forced-colors: active) {
+  .details:not([hidden]) {
+    border-color: var(--c-border);
+  }
+
+  .typeown-error {
+    border: 1px solid var(--c-border);
+  }
+}

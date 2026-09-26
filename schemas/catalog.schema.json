@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://trulyfreefonts.com/schemas/catalog/0.1.0-draft",
   "title": "catalog.json",
-  "description": "The full ranked catalog (methodology §7, milestone-1 step 15). Draft v0: stage owners tighten it through the lead. catalog-site.json is derived from it.",
+  "description": "The full ranked catalog (methodology §7, milestone-1 step 15), written by stage 'export' (src/tff_catalog/export.py) and documented in docs/catalog-schema.md. catalog-site.json is derived from it. Cross-file rules (every font's sources object names exactly the sources in sources[], value only where publish_raw allows, the §9 hard checks) are checked by tff_catalog.validate, not here.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -198,12 +198,13 @@
             "type": "boolean"
           },
           "superfamily_id": {
+            "description": "The superfamily from data/superfamilies.csv, or null.",
             "oneOf": [
               {
                 "type": "null"
               },
               {
-                "$ref": "#/$defs/token"
+                "$ref": "#/$defs/id"
               }
             ]
           },
@@ -328,6 +329,27 @@
                   }
                 ]
               }
+            },
+            "if": {
+              "properties": {
+                "attribution_required": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "attribution": {
+                  "type": "string"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "attribution": {
+                  "const": null
+                }
+              }
             }
           },
           "font_file": {
@@ -403,6 +425,16 @@
               },
               "static": {
                 "type": "boolean"
+              }
+            },
+            "not": {
+              "properties": {
+                "variable": {
+                  "const": false
+                },
+                "static": {
+                  "const": false
+                }
               }
             }
           },
@@ -534,7 +566,8 @@
             "uniqueItems": true,
             "items": {
               "$ref": "#/$defs/token"
-            }
+            },
+            "description": "Sorted tokens: too_new, gate_held, no_deliberate_evidence, the correction flags (parent_merge, bundle_only, dependency_review, stale_sync) and the specimen flags (specimen_failed, specimen_name_only, specimen_hash_mismatch)."
           },
           "ranks": {
             "type": "object",
@@ -546,7 +579,8 @@
             },
             "additionalProperties": {
               "$ref": "#/$defs/rank_entry"
-            }
+            },
+            "description": "One entry per rank key published this run whose universe includes the font: every key, except coding (monospace fonts only) and rising (from the third month of history)."
           },
           "sources": {
             "type": "object",
@@ -589,45 +623,124 @@
               }
             }
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "preview_ok": {
+                  "const": false
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "preview": {
+                  "const": null
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "preview_ok": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "license": {
+                  "properties": {
+                    "redistributable": {
+                      "const": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "is_monospace": {
+                  "const": false
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "ranks": {
+                  "not": {
+                    "required": [
+                      "coding"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
       }
     }
   },
   "$defs": {
     "date": {
       "type": "string",
-      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$"
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$",
+      "not": {
+        "pattern": "[\\u0000-\\u001f\\u007f]"
+      }
     },
     "sha256": {
       "type": "string",
-      "pattern": "^[0-9a-f]{64}$"
+      "pattern": "^[0-9a-f]{64}$",
+      "not": {
+        "pattern": "[\\u0000-\\u001f\\u007f]"
+      }
     },
     "https_url": {
       "type": "string",
       "maxLength": 2048,
-      "pattern": "^https://[^\\s\"<>]+$"
+      "pattern": "^https://[^\\s\"<>]+$",
+      "not": {
+        "pattern": "[\\u0000-\\u001f\\u007f]"
+      }
     },
     "id": {
       "type": "string",
       "maxLength": 80,
-      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "not": {
+        "pattern": "[\\u0000-\\u001f\\u007f]"
+      }
     },
     "token": {
       "type": "string",
       "maxLength": 64,
-      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+      "pattern": "^[a-z0-9][a-z0-9_-]*$",
+      "not": {
+        "pattern": "[\\u0000-\\u001f\\u007f]"
+      }
     },
     "text": {
       "type": "string",
       "minLength": 1,
       "maxLength": 500,
-      "pattern": "^\\S(.*\\S)?$"
+      "pattern": "^\\S(.*\\S)?$",
+      "not": {
+        "pattern": "[\\u0000-\\u001f\\u007f]"
+      }
     },
     "name": {
       "type": "string",
       "minLength": 1,
       "maxLength": 200,
-      "pattern": "^\\S(.*\\S)?$"
+      "pattern": "^\\S(.*\\S)?$",
+      "not": {
+        "pattern": "[\\u0000-\\u001f\\u007f]"
+      }
     },
     "rank_key": {
       "enum": [
@@ -668,7 +781,8 @@
             "string",
             "null"
           ],
-          "minLength": 1
+          "minLength": 1,
+          "description": "The band label ('101–250', '251–500', '501+') for an order past the exact top."
         },
         "order": {
           "type": [
@@ -728,6 +842,74 @@
             null
           ]
         }
+      },
+      "description": "A font's place in one rank. Ranked: an exact rank (1-100) or a band, plus order, tier and range. Unranked: every placement field null and a reason. score and groups describe the fused score either way.",
+      "if": {
+        "properties": {
+          "unranked": {
+            "type": "string"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "rank": {
+            "const": null
+          },
+          "band": {
+            "const": null
+          },
+          "order": {
+            "const": null
+          },
+          "tier": {
+            "const": null
+          },
+          "range": {
+            "const": null
+          },
+          "gate_held": {
+            "const": false
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "order": {
+            "type": "integer"
+          },
+          "tier": {
+            "type": "string"
+          },
+          "range": {
+            "type": "array"
+          }
+        },
+        "oneOf": [
+          {
+            "properties": {
+              "rank": {
+                "type": "integer"
+              },
+              "band": {
+                "const": null
+              },
+              "gate_held": {
+                "const": false
+              }
+            }
+          },
+          {
+            "properties": {
+              "rank": {
+                "const": null
+              },
+              "band": {
+                "type": "string"
+              }
+            }
+          }
+        ]
       }
     },
     "source_entry": {
@@ -755,7 +937,8 @@
             "integer",
             "null"
           ],
-          "minimum": 1
+          "minimum": 1,
+          "description": "Competition rank (1, 2, 2, 4) among the source's observed values; null unless observed or when the terms ruling hides ranks."
         },
         "z": {
           "type": [
@@ -773,7 +956,7 @@
           "description": "The weight this source's term carried in the overall rank for this font: v_s = M_g * w'_s / W_g after the outlier guard and the term's factor. Null when the source had no term in overall (not covered, too new, or abstaining)."
         },
         "value": {
-          "description": "The raw value; present only when the source's publish_raw allows it.",
+          "description": "The value after alias sums, credits and floors; present only when the source's publish_raw allows it (never for google or fot).",
           "type": [
             "number",
             "null"
@@ -796,7 +979,118 @@
             "$ref": "#/$defs/rank_key"
           }
         }
-      }
+      },
+      "description": "One font in one source, as the source's own survey view sees it (desktop_installed or project, where nothing abstains). abstains_in lists the font's views where a Linux source leaves it out (never desktop_installed).",
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "observed"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "reason": {
+                "const": null
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "rank_in_source": {
+                "const": null
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "censored"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "reason": {
+                "enum": [
+                  "below_floor",
+                  "no_value"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "not_covered"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "reason": {
+                "enum": [
+                  "no_package",
+                  "outside_frame",
+                  "merged_into_parent"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "enum": [
+                  "not_covered",
+                  "too_new"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "abstains_in": {
+                "maxItems": 0
+              },
+              "z": {
+                "const": null
+              },
+              "weight_used": {
+                "const": null
+              }
+            },
+            "not": {
+              "required": [
+                "value"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "too_new"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "reason": {
+                "const": null
+              }
+            }
+          }
+        }
+      ]
     }
   }
 }

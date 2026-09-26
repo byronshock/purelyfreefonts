@@ -479,6 +479,14 @@ def test_validate_command_rejects_a_non_json_file(tmp_path, capsys):
     assert "invalid" in capsys.readouterr().err
 
 
+def test_a_failed_build_prints_its_problems_not_a_traceback(tmp_path, capsys):
+    missing = tmp_path / "missing.json"
+    assert main(["build", "--data", str(missing), "--out", str(tmp_path / "site")]) == 1
+    err = capsys.readouterr().err
+    assert err.startswith("tff-site build: failed\n")
+    assert str(missing) in err
+
+
 def test_help_lists_every_command(capsys):
     assert main(["--help"]) == 0
     out = capsys.readouterr().out
@@ -495,42 +503,11 @@ def test_each_command_has_help(command, capsys):
 # ---------------------------------------------------------------- JS parts
 
 
-TOP_DECLARATION = re.compile(
-    r"^(?:export\s+)?(const|let|var|class|function\*?|async\s+function)\s+([A-Za-z_$][\w$]*)",
-    re.MULTILINE,
-)
-STORAGE_APIS = (
-    "localStorage",
-    "sessionStorage",
-    "indexedDB",
-    "document.cookie",
-    "caches.",
-    "serviceWorker",
-    "cookieStore",
-)
-
-
 def lint_part(filename: str, const: str, source: str) -> list[str]:
-    """The parts rule (site/CONTRACT.md section 5), as a plain text check."""
-    problems = []
-    declarations = TOP_DECLARATION.findall(source)
-    if declarations != [("const", const)]:
-        problems.append(f"top-level declarations {declarations}, want one const {const}")
-    for line in source.splitlines():
-        if not line or line[0].isspace() or line.startswith(("//", "/*", "*")):
-            continue
-        if line.startswith(f"const {const} = ") or re.match(r"^[)\]}]", line):
-            continue
-        if filename == "90-main.js" and line == "Main.start();":
-            continue
-        problems.append(f"top-level statement: {line[:60]}")
-    if re.search(r"^\s*(import|export)\b", source, re.MULTILINE):
-        problems.append("import or export")
-    problems += [f"forbidden: {bad}" for bad in assets.FORBIDDEN_JS if bad in source]
-    problems += [f"storage API: {api}" for api in STORAGE_APIS if api in source]
-    if re.search(r"fetch\(\s*['\"`](?:[a-z]+:)?//", source):
-        problems.append("fetch with an absolute URL")
-    return problems
+    """The parts rule (site/CONTRACT.md section 5): the build's own lint, so a part that
+    passes this test also passes the build. ``const`` must be the table's name for it."""
+    assert dict(assets.JS_PARTS).get(filename) == const, (filename, const)
+    return assets.lint_js_part(filename, source)
 
 
 JS_TABLE = table_after(section(CONTRACT, "5. JS parts"), "| File | Const |")
@@ -560,20 +537,50 @@ def test_js_part_follows_the_rule(filename, const):
     assert lint_part(filename, const, (JS_DIR / filename).read_text(encoding="utf-8")) == []
 
 
-@pytest.mark.parametrize(
-    "source",
-    [
-        "const Core = 1;\nconst Extra = 2;\n",
-        "const Core = 1;\nfunction helper() {}\n",
-        "const Core = 1;\ndocument.title = 'x';\n",
-        "import x from './x.js';\nconst Core = 1;\n",
-        "const Core = (() => {\n  node.innerHTML = s;\n})();\n",
-        "const Core = (() => {\n  fetch('https://example.com/x');\n})();\n",
-        "const Core = (() => {\n  localStorage.setItem('a', 1);\n})();\n",
-    ],
-)
-def test_the_parts_lint_catches(source):
-    assert lint_part("00-core.js", "Core", source) != []
+# One example per refusal in site/CONTRACT.md sections 5 and 6.
+BAD_JS = [
+    ("00-core.js", "const Core = 1;\nconst Extra = 2;\n"),
+    ("00-core.js", "const Core = 1;\nfunction helper() {}\n"),
+    ("00-core.js", "const Core = 1;\ndocument.title = 'x';\n"),
+    ("00-core.js", "import x from './x.js';\nconst Core = 1;\n"),
+    ("00-core.js", "const Core = (() => {\n  import('./x.js');\n})();\n"),
+    ("00-core.js", "const Core = (() => {\n  node.innerHTML = s;\n})();\n"),
+    ("00-core.js", "const Core = (() => {\n  fetch('https://example.com/x');\n})();\n"),
+    ("00-core.js", "const Core = (() => {\n  localStorage.setItem('a', 1);\n})();\n"),
+    ("00-core.js", "const Core = (() => {\n  return 1;\n})(); alert(1);\n"),
+    ("00-core.js", "const Core = (() => {\n  navigator.sendBeacon('/x', d);\n})();\n"),
+    ("00-core.js", "const Core = (() => {\n  new XMLHttpRequest();\n})();\n"),
+    ("00-core.js", "const Core = (() => {\n  new WebSocket('/x');\n})();\n"),
+    ("00-core.js", "const Core = (() => {\n  new EventSource('/x');\n})();\n"),
+    ("00-core.js", "const Core = (() => {\n  n.setAttribute('style', s);\n})();\n"),
+    ("90-main.js", "const Main = 1;\n"),
+    ("90-main.js", "const Main = 1;\nMain.start();\nMain.start();\n"),
+    ("90-main.js", "Main.start();\nconst Main = 1;\n"),
+]
+BAD_CSS = [
+    "@import url(other.css);\n",
+    "@font-face { font-family: X; src: url(/x.woff2); }\n",
+    "a { background: url(https://example.com/x.png); }\n",
+    "a { background: url(//example.com/x.png); }\n",
+    "a { background: url(data:image/png;base64,AAAA); }\n",
+]
+
+
+@pytest.mark.parametrize(("filename", "source"), BAD_JS)
+def test_the_parts_lint_catches(filename, source):
+    assert lint_part(filename, dict(assets.JS_PARTS)[filename], source) != []
+
+
+@pytest.mark.parametrize("name", assets.CSS_PARTS)
+def test_css_part_follows_the_rule(name):
+    path = ROOT / "site" / "css" / name
+    if path.is_file():
+        assert assets.lint_css_part(name, path.read_text(encoding="utf-8")) == []
+
+
+@pytest.mark.parametrize("source", BAD_CSS)
+def test_the_css_lint_catches(source):
+    assert assets.lint_css_part("10-base.css", source) != []
 
 
 # ---------------------------------------------------------------- CSS parts and tokens

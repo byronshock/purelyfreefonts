@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily check that the monthly catalog refresh is still running
+
+[Timer]
+OnCalendar=daily
+RandomizedDelaySec=1h
+Persistent=true
+
+[Install]
+WantedBy=timers.target

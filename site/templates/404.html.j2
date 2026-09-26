@@ -1,0 +1,21 @@
+{#-
+  404.html.j2: /404.html, which Caddy serves with status 404 for any missing path
+  (handle_errors in ops/caddy/site.caddy). It can appear at any depth, so every URL here is
+  absolute. Not canonical and not in the sitemap. Context: every page's, plus `heading`, from
+  tff_site.pages (NOT_FOUND_PAGE); build.NOT_FOUND_PAGE is the fallback, whose title is the
+  heading. No script. Page text is a draft for the owner's approval.
+-#}
+{% extends "base.html.j2" %}
+{% block scripts %}{% endblock %}
+{% block main %}
+<article class="page page-prose page-not-found">
+<h1>{{ heading | default(page.title) }}</h1>
+<p>There is no page at this address. The link may have a typo, or the page may have moved.</p>
+<ul>
+<li><a href="/">The list of truly free fonts</a></li>
+<li><a href="/methodology/">How we rank the fonts</a></li>
+<li><a href="/about/">About Truly Free Fonts</a></li>
+</ul>
+<p>If a link on this site brought you here, please tell us, using the links at the bottom of the page.</p>
+</article>
+{% endblock %}

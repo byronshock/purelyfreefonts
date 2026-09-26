@@ -1,0 +1,185 @@
+{
+ "sha": "53c54f1150ef03f2966a0a2d53cbbceda6f0f48e",
+ "tree": [
+  {
+   "mode": "040000",
+   "path": "font-a",
+   "sha": "71ae93c1a645d9a3272fdfa47fe19c7dd32f6f36",
+   "type": "tree"
+  },
+  {
+   "mode": "100644",
+   "path": "font-a/font-akt.rb",
+   "sha": "8074e3c7ea5317618bc6b54c0b6ddd2890cc575a",
+   "size": 252,
+   "type": "blob"
+  },
+  {
+   "mode": "040000",
+   "path": "font-d",
+   "sha": "244195fb3fafd424c3569697a14d7835bd57cf09",
+   "type": "tree"
+  },
+  {
+   "mode": "100644",
+   "path": "font-d/font-dejavu-sans.rb",
+   "sha": "3fba9ca08da08e788f0785eafc26ccede9d82825",
+   "size": 659,
+   "type": "blob"
+  },
+  {
+   "mode": "040000",
+   "path": "font-f",
+   "sha": "1f77d937e90a362640302495a1bd020319830733",
+   "type": "tree"
+  },
+  {
+   "mode": "100644",
+   "path": "font-f/font-fira-code-nerd-font.rb",
+   "sha": "af265054eb1d492224aefd7eb40597f5cfba6a43",
+   "size": 1178,
+   "type": "blob"
+  },
+  {
+   "mode": "100644",
+   "path": "font-f/font-fira-code.rb",
+   "sha": "1a42891214ad36636f66c271ce7c5c8dd3ca0bce",
+   "size": 552,
+   "type": "blob"
+  },
+  {
+   "mode": "040000",
+   "path": "font-h",
+   "sha": "cffc191bbc9034666867d7f9e568407aab677ba2",
+   "type": "tree"
+  },
+  {
+   "mode": "100644",
+   "path": "font-h/font-hack-nerd-font.rb",
+   "sha": "bbd7c03348cda7744c27ff5d7d8a6e1488e98a69",
+   "size": 881,
+   "type": "blob"
+  },
+  {
+   "mode": "040000",
+   "path": "font-i",
+   "sha": "afc40733485080b8d19710c8a191b711b43a7e8f",
+   "type": "tree"
+  },
+  {
+   "mode": "100644",
+   "path": "font-i/font-ibm-plex-mono.rb",
+   "sha": "c7b91557d1ed220dd1c9e47932d28d44e7f11b24",
+   "size": 1861,
+   "type": "blob"
+  },
+  {
+   "mode": "100644",
+   "path": "font-i/font-inter.rb",
+   "sha": "e6eabb8ed3baa216e0760b7a65db2f9ad3d50006",
+   "size": 1916,
+   "type": "blob"
+  },
+  {
+   "mode": "100644",
+   "path": "font-i/font-ioskeley-mono.rb",
+   "sha": "7630ab3f377022570996401929229609fd5cc1b2",
+   "size": 2923,
+   "type": "blob"
+  },
+  {
+   "mode": "040000",
+   "path": "font-j",
+   "sha": "6529ffcbe322faaf6d1f2a8af6e483eeaa92c38f",
+   "type": "tree"
+  },
+  {
+   "mode": "100644",
+   "path": "font-j/font-jetbrains-mono-nerd-font.rb",
+   "sha": "9a17149aba39961d9c9ee8f88f4113d59cba4cba",
+   "size": 5209,
+   "type": "blob"
+  },
+  {
+   "mode": "100644",
+   "path": "font-j/font-jetbrains-mono.rb",
+   "sha": "d5cb37b9647714ef3c83a068e47b86694c86e903",
+   "size": 2047,
+   "type": "blob"
+  },
+  {
+   "mode": "040000",
+   "path": "font-m",
+   "sha": "d5cfb22a0093904366645286902d0987ed26cf53",
+   "type": "tree"
+  },
+  {
+   "mode": "100644",
+   "path": "font-m/font-maple-mono-nf-cn.rb",
+   "sha": "e00db35d7557bf90db3644248b304955f1228c7a",
+   "size": 1009,
+   "type": "blob"
+  },
+  {
+   "mode": "100644",
+   "path": "font-m/font-meslo-lg-nerd-font.rb",
+   "sha": "645fb90c6bc0bc3529ac9c994aa34aa4eb236c75",
+   "size": 3467,
+   "type": "blob"
+  },
+  {
+   "mode": "040000",
+   "path": "font-o",
+   "sha": "c0d18e0525d703517a3f5d0315a44acc6014102d",
+   "type": "tree"
+  },
+  {
+   "mode": "100644",
+   "path": "font-o/font-opendyslexic-nerd-font.rb",
+   "sha": "ae9363e1c7c52ac35592f9a63417efb7bd99ebbf",
+   "size": 1351,
+   "type": "blob"
+  },
+  {
+   "mode": "100644",
+   "path": "font-o/font-opendyslexic.rb",
+   "sha": "f36d2b72f8be955c0edd11c3806db5c344080e0b",
+   "size": 1688,
+   "type": "blob"
+  },
+  {
+   "mode": "040000",
+   "path": "font-r",
+   "sha": "8b564da37aaba1511c9fabf6945bb1b4c4f24530",
+   "type": "tree"
+  },
+  {
+   "mode": "100644",
+   "path": "font-r/font-roboto.rb",
+   "sha": "0b3cc88edd92ecee1a930fbf20d63ac3738917ac",
+   "size": 332,
+   "type": "blob"
+  },
+  {
+   "mode": "040000",
+   "path": "font-s",
+   "sha": "b677cc6206d00f03f22babe2a3ea662fcfe49d0f",
+   "type": "tree"
+  },
+  {
+   "mode": "100644",
+   "path": "font-s/font-source-code-pro.rb",
+   "sha": "3c54de930aa54157a3404dfc9b12f5afcb39fc6f",
+   "size": 370,
+   "type": "blob"
+  },
+  {
+   "mode": "100644",
+   "path": "font-s/font-symbols-only-nerd-font.rb",
+   "sha": "529f5d7543c638ee7c9cb01087e86b335e1c176d",
+   "size": 553,
+   "type": "blob"
+  }
+ ],
+ "truncated": false
+}

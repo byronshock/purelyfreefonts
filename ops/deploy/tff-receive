@@ -1,0 +1,1057 @@
+#!/usr/bin/python3 -I
+"""tff-receive: the one program the deploy keys can run on the server (design-m2 §5).
+
+Installed as /usr/local/sbin/tff-receive (root:root 0755). Python 3.13, standard library only.
+
+sshd's ``ForceCommand`` fixes argv to ``tff-receive production`` (user ``deploy``) or
+``tff-receive staging`` (user ``deploy-staging``), and the verb comes from
+``SSH_ORIGINAL_COMMAND``, matched against a strict pattern. The laptop fallback,
+``ssh tff sudo -u deploy /usr/local/sbin/tff-receive production VERB ...``, passes the verb in
+argv instead. The same grammar applies either way.
+
+Layout of an environment directory (``/srv/trulyfreefonts/prod`` or ``.../staging``)::
+
+    releases/<sha40>/                 one complete built site
+    releases/<sha40>.manifest.json    its manifest, outside the served tree
+    current -> releases/<sha40>       replaced atomically with os.replace
+    incoming/                         plans and partial uploads (0700)
+    history.log                       one line per upload, activation, rollback, hold, unhold
+    .lock                             flock: one command at a time
+    .hold                             present after "rollback --hold"
+
+Verbs:
+
+- ``plan SHA``: stdin is ``site.manifest.json`` (``{"commit", "files": {path: {"sha256",
+  "size"}}}``, at most 2 MB). Prints the paths whose sha256 is in no kept release.
+- ``upload SHA``: stdin is a plain tar, read as a stream. Only regular files and directories,
+  paths matching ``PATH_RE`` with an allowed extension, no setuid, setgid or sticky bit,
+  at most 20 MB per file, and only paths the plan's manifest lists, with matching size and
+  sha256. Files not sent are hardlinked from kept releases. The release must be complete and
+  its ``version.txt`` must say ``commit=SHA``; it is then renamed into ``releases/SHA``.
+  Uploading a release that already exists succeeds and changes nothing.
+- ``activate SHA``: hardlinks the current release's ``assets/`` files that the new one lacks
+  (so open tabs can still load them), points ``current`` at the new release in one rename,
+  logs it, keeps the newest 3 releases by history (never current or previous) and clears
+  ``incoming/`` entries older than a day. Refused while held.
+
+Disk use stays bounded even if a key is misused: at most 4 plans wait in ``incoming/``, and
+at most 2 uploads that were never activated are kept (for a day), besides the 3 above.
+- ``rollback [SHA] [--hold]``: activates the previous release (or the named kept one).
+  ``--hold`` blocks ``activate`` until ``unhold``.
+- ``unhold``, ``status``.
+
+Exit codes: 0 done, 2 usage, 3 invalid input, 4 locked or held, 5 internal error.
+Each command is logged to syslog as ``tff-receive`` (or to ``--log-file``, for tests).
+"""
+
+import contextlib
+import fcntl
+import hashlib
+import json
+import os
+import pwd
+import re
+import shutil
+import stat
+import sys
+import syslog
+import tarfile
+import tempfile
+import time
+import traceback
+from pathlib import Path
+
+DEFAULT_ROOT = Path("/srv/trulyfreefonts")
+# environment -> (directory under the root, the only user allowed to run it)
+ENVIRONMENTS = {"production": ("prod", "deploy"), "staging": ("staging", "deploy-staging")}
+
+SHA_RE = re.compile(r"[0-9a-f]{40}")
+SHA256_RE = re.compile(r"[0-9a-f]{64}")
+PATH_RE = re.compile(r"([a-z0-9][a-z0-9._-]*/)*[a-z0-9][a-z0-9._-]*")
+EXTENSIONS = frozenset(
+    {"html", "css", "js", "json", "svg", "png", "ico", "txt", "xml", "ttf", "otf", "woff2", "woff"}
+)
+COMMAND_RE = re.compile(
+    r"(?P<verb>plan|upload|activate) (?P<sha>[0-9a-f]{40})"
+    r"|(?P<rollback>rollback)(?: (?P<target>[0-9a-f]{40}))?(?P<hold> --hold)?"
+    r"|(?P<simple>status|unhold)"
+)
+
+MAX_MANIFEST_BYTES = 2_000_000
+MAX_FILE_BYTES = 20_000_000
+MAX_TOTAL_BYTES = 400_000_000
+MAX_FILES = 20_000
+MAX_MEMBERS = 2 * MAX_FILES  # files plus directories
+MAX_STREAM_BYTES = MAX_TOTAL_BYTES + 64 * 1024 * 1024  # headers and padding on top of data
+MAX_EXTENDED_BYTES = 64 * 1024  # one pax or GNU long-name header's data, read into memory
+MAX_VERSION_BYTES = 4096
+KEEP = 3
+# Disk bounds against a misused key: uploads never activated, and plans waiting for an upload.
+KEEP_UNACTIVATED = 2
+KEEP_PLANS = 4
+INCOMING_MAX_AGE = 24 * 3600
+LOCK_WAIT = 10.0
+
+EXIT_OK, EXIT_USAGE, EXIT_INVALID, EXIT_BUSY, EXIT_INTERNAL = 0, 2, 3, 4, 5
+
+USAGE = """\
+usage: tff-receive [--root DIR] [--log-file FILE] [--lock-wait SECONDS] production|staging COMMAND
+commands (over SSH, the command comes from SSH_ORIGINAL_COMMAND):
+  plan SHA                 read site.manifest.json on stdin; print the paths to upload
+  upload SHA               read a tar on stdin; check it and store it as releases/SHA
+  activate SHA             switch the site to releases/SHA
+  rollback [SHA] [--hold]  switch back to the previous (or named) release; --hold blocks activate
+  unhold                   allow activate again
+  status                   show the current release and the kept ones
+exit codes: 0 done, 2 usage, 3 invalid input, 4 locked or held, 5 internal error"""
+
+
+class UsageError(Exception):
+    code = EXIT_USAGE
+
+
+class InvalidInput(Exception):
+    code = EXIT_INVALID
+
+
+class Busy(Exception):
+    code = EXIT_BUSY
+
+
+class Internal(Exception):
+    code = EXIT_INTERNAL
+
+
+# Named tuples, not "except (A, B):", which ruff format (target py314) would unparenthesise
+# into syntax Python 3.13 on the server cannot read.
+REFUSALS = (UsageError, InvalidInput, Busy, Internal)
+SKIP_RELEASE = (OSError, InvalidInput)
+SKIP_CARRY = (OSError, InvalidInput)
+BAD_TAR = (tarfile.TarError, EOFError, UnicodeError)
+BAD_JSON = (UnicodeDecodeError, ValueError)
+
+
+# --- command line ----------------------------------------------------------------------------
+
+
+class Command:
+    """A parsed invocation: options, environment, verb and its arguments."""
+
+    def __init__(self) -> None:
+        self.root = DEFAULT_ROOT
+        self.root_given = False
+        self.log_file: Path | None = None
+        self.lock_wait = LOCK_WAIT
+        self.env = ""
+        self.verb = ""
+        self.sha: str | None = None
+        self.hold = False
+        self.via = "local"
+
+
+def parse_verb(text: str, cmd: Command) -> None:
+    """Fill ``cmd`` from a command line such as ``plan <sha>``; anything else is a usage error."""
+    m = COMMAND_RE.fullmatch(text)
+    if m is None:
+        shown = text if len(text) <= 80 else text[:77] + "..."
+        raise UsageError(f"not an allowed command: {shown!r}")
+    if m["verb"]:
+        cmd.verb, cmd.sha = m["verb"], m["sha"]
+    elif m["rollback"]:
+        cmd.verb, cmd.sha, cmd.hold = "rollback", m["target"], bool(m["hold"])
+    else:
+        cmd.verb = m["simple"]
+
+
+def parse_options(argv: list[str]) -> tuple[Command, list[str]]:
+    """Read the leading options (argv only, so an SSH client can never set them)."""
+    cmd = Command()
+    args = list(argv)
+    while args and args[0].startswith("--"):
+        option = args.pop(0)
+        if option not in ("--root", "--log-file", "--lock-wait") or not args:
+            raise UsageError(f"unknown option {option!r}")
+        value = args.pop(0)
+        if option == "--root":
+            cmd.root, cmd.root_given = Path(value), True
+        elif option == "--log-file":
+            cmd.log_file = Path(value)
+        else:
+            try:
+                cmd.lock_wait = max(0.0, float(value))
+            except ValueError:
+                raise UsageError(f"--lock-wait wants seconds, not {value!r}") from None
+    return cmd, args
+
+
+def parse_command(cmd: Command, args: list[str], environ: dict[str, str]) -> None:
+    """Fill in the environment and the verb, from argv or ``SSH_ORIGINAL_COMMAND``."""
+    if not args or args[0] not in ENVIRONMENTS:
+        raise UsageError("the first argument must be production or staging")
+    cmd.env = args[0]
+    args = args[1:]
+    original = environ.get("SSH_ORIGINAL_COMMAND")
+    if original is not None:
+        if args:
+            raise UsageError("unexpected arguments after the environment")
+        cmd.via = "ssh"
+        parse_verb(original, cmd)
+    else:
+        if not args:
+            raise UsageError("no command given")
+        if any(not a or any(c.isspace() for c in a) for a in args):
+            raise UsageError("arguments may not be empty or contain spaces")
+        sudo_user = environ.get("SUDO_USER", "")
+        cmd.via = (
+            f"sudo:{sudo_user}" if re.fullmatch(r"[a-z_][a-z0-9_-]{0,31}", sudo_user) else "local"
+        )
+        parse_verb(" ".join(args), cmd)
+    if not cmd.root_given:
+        expected = ENVIRONMENTS[cmd.env][1]
+        try:
+            actual = pwd.getpwuid(os.geteuid()).pw_name
+        except KeyError:
+            actual = str(os.geteuid())
+        if actual != expected:
+            raise UsageError(f"{cmd.env} is deployed as {expected}, not {actual}")
+
+
+# --- logging ---------------------------------------------------------------------------------
+
+
+class Log:
+    """Syslog as ``tff-receive``, or a plain file when ``--log-file`` is given."""
+
+    def __init__(self, env: str, file: Path | None) -> None:
+        self.env = env
+        self.file = file
+        if file is None:
+            syslog.openlog("tff-receive", syslog.LOG_PID, syslog.LOG_USER)
+
+    def __call__(self, message: str, *, error: bool = False) -> None:
+        line = f"{self.env}: {message}"
+        if self.file is None:
+            syslog.syslog(syslog.LOG_ERR if error else syslog.LOG_INFO, line)
+        else:
+            with self.file.open("a", encoding="utf-8") as fh:
+                fh.write(f"{utc_now()} {'ERROR ' if error else ''}{line}\n")
+
+
+def utc_now() -> str:
+    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+
+
+# --- manifests -------------------------------------------------------------------------------
+
+
+def _no_duplicates(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    out: dict[str, object] = {}
+    for key, value in pairs:
+        if key in out:
+            raise InvalidInput(f"manifest: duplicate key {key!r}")
+        out[key] = value
+    return out
+
+
+def _no_constants(name: str) -> object:
+    raise InvalidInput(f"manifest: {name} is not allowed")
+
+
+def path_problem(path: str) -> str | None:
+    """Why ``path`` may not be in a release, or None when it may."""
+    if not PATH_RE.fullmatch(path):
+        return "path not allowed"
+    extension = path.rsplit("/", 1)[-1].rpartition(".")[2]
+    if "." not in path.rsplit("/", 1)[-1] or extension not in EXTENSIONS:
+        return "extension not allowed"
+    return None
+
+
+def ancestors(path: str) -> list[str]:
+    parts = path.split("/")[:-1]
+    return ["/".join(parts[: i + 1]) for i in range(len(parts))]
+
+
+def parse_manifest(data: bytes, sha: str) -> dict:
+    """Parse and check a manifest for release ``sha``; raise InvalidInput when it is wrong."""
+    if len(data) > MAX_MANIFEST_BYTES:
+        raise InvalidInput(f"manifest: larger than {MAX_MANIFEST_BYTES} bytes")
+    try:
+        doc = json.loads(
+            data.decode("utf-8"), object_pairs_hook=_no_duplicates, parse_constant=_no_constants
+        )
+    except BAD_JSON as exc:
+        raise InvalidInput(f"manifest: not valid JSON ({exc})") from None
+    if not isinstance(doc, dict) or set(doc) != {"commit", "files"}:
+        raise InvalidInput('manifest: must be an object with exactly "commit" and "files"')
+    if doc["commit"] != sha:
+        raise InvalidInput(f"manifest: commit {doc['commit']!r} is not {sha}")
+    files = doc["files"]
+    if not isinstance(files, dict) or not files:
+        raise InvalidInput('manifest: "files" must be a non-empty object')
+    if len(files) > MAX_FILES:
+        raise InvalidInput(f"manifest: more than {MAX_FILES} files")
+    total = 0
+    dirs: set[str] = set()
+    for path, entry in files.items():
+        problem = path_problem(path)
+        if problem:
+            raise InvalidInput(f"manifest: {path!r}: {problem}")
+        if not isinstance(entry, dict) or set(entry) != {"sha256", "size"}:
+            raise InvalidInput(f'manifest: {path}: needs exactly "sha256" and "size"')
+        digest, size = entry["sha256"], entry["size"]
+        if not isinstance(digest, str) or not SHA256_RE.fullmatch(digest):
+            raise InvalidInput(f"manifest: {path}: bad sha256")
+        if type(size) is not int or size < 0:
+            raise InvalidInput(f"manifest: {path}: bad size")
+        if size > MAX_FILE_BYTES:
+            raise InvalidInput(f"manifest: {path}: too large ({size} > {MAX_FILE_BYTES} bytes)")
+        total += size
+        dirs.update(ancestors(path))
+    if total > MAX_TOTAL_BYTES:
+        raise InvalidInput(f"manifest: too large in total ({total} > {MAX_TOTAL_BYTES} bytes)")
+    clash = sorted(dirs.intersection(files))
+    if clash:
+        raise InvalidInput(f"manifest: {clash[0]} is both a file and a directory")
+    if "version.txt" not in files:
+        raise InvalidInput("manifest: no version.txt")
+    return {"commit": sha, "files": {p: dict(files[p]) for p in sorted(files)}}
+
+
+def manifest_bytes(manifest: dict) -> bytes:
+    return (json.dumps(manifest, sort_keys=True, separators=(",", ":")) + "\n").encode("utf-8")
+
+
+# --- files -----------------------------------------------------------------------------------
+
+
+def file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC)
+    with os.fdopen(fd, "rb") as fh:
+        for block in iter(lambda: fh.read(1 << 20), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def atomic_write(path: Path, data: bytes, mode: int = 0o644) -> None:
+    fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=f".{path.name}.", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "wb") as fh:
+            fh.write(data)
+            fh.flush()
+            os.fsync(fh.fileno())
+        Path(tmp).chmod(mode)
+        Path(tmp).replace(path)
+    except BaseException:
+        Path(tmp).unlink(missing_ok=True)
+        raise
+
+
+def fsync_dir(path: Path) -> None:
+    fd = os.open(path, os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC)
+    try:
+        os.fsync(fd)
+    finally:
+        os.close(fd)
+
+
+def make_dirs(base: Path, rel: str) -> None:
+    """Create directory ``rel`` (and its parents) under ``base``, never following a symlink."""
+    current = base
+    for part in rel.split("/"):
+        current = current / part
+        try:
+            current.mkdir(0o755)
+        except FileExistsError:
+            if not stat.S_ISDIR(os.lstat(current).st_mode):
+                raise InvalidInput(f"{rel}: clashes with a file") from None
+
+
+def remove_tree(path: Path) -> None:
+    if path.is_symlink() or not path.is_dir():
+        path.unlink(missing_ok=True)
+    else:
+        shutil.rmtree(path)
+
+
+EXTENDED_TYPES = (
+    tarfile.XHDTYPE,
+    tarfile.XGLTYPE,
+    tarfile.SOLARIS_XHDTYPE,
+    tarfile.GNUTYPE_LONGNAME,
+    tarfile.GNUTYPE_LONGLINK,
+)
+
+
+class SafeTarInfo(tarfile.TarInfo):
+    """tarfile reads a pax or GNU long-name header's whole data into memory, and a sparse
+    map entry by entry, before it hands the member over. Refuse both up front."""
+
+    def _proc_member(self, tar):
+        if self.type in EXTENDED_TYPES and self.size > MAX_EXTENDED_BYTES:
+            raise InvalidInput(f"tar: extended header of {self.size} bytes")
+        if self.type == tarfile.GNUTYPE_SPARSE:
+            raise InvalidInput("tar: sparse file")
+        return super()._proc_member(tar)
+
+    def _refuse_sparse(self, *args):
+        raise InvalidInput("tar: sparse file")
+
+    # pax sparse formats 0.0, 0.1 and 1.0
+    _proc_gnusparse_00 = _proc_gnusparse_01 = _proc_gnusparse_10 = _refuse_sparse
+
+
+class LimitedReader:
+    """A read-only stream that fails once more than ``limit`` bytes have been read."""
+
+    def __init__(self, raw, limit: int) -> None:
+        self.raw = raw
+        self.limit = limit
+        self.count = 0
+
+    def read(self, size: int = -1) -> bytes:
+        room = self.limit - self.count + 1
+        data = self.raw.read(room if size is None or size < 0 else min(size, room))
+        self.count += len(data)
+        if self.count > self.limit:
+            raise InvalidInput(f"input larger than {self.limit} bytes")
+        return data
+
+    def drain(self) -> None:
+        while self.read(1 << 16):
+            pass
+
+
+# --- the environment directory ---------------------------------------------------------------
+
+
+class HistoryEntry:
+    def __init__(self, when: str, verb: str, sha: str, fields: dict[str, str]) -> None:
+        self.when, self.verb, self.sha, self.fields = when, verb, sha, fields
+
+
+class Site:
+    """One environment's directory on the server."""
+
+    def __init__(self, root: Path, env: str) -> None:
+        self.env = env
+        self.dir = root / ENVIRONMENTS[env][0]
+        self.releases = self.dir / "releases"
+        self.incoming = self.dir / "incoming"
+        self.current = self.dir / "current"
+        self.history = self.dir / "history.log"
+        self.lockfile = self.dir / ".lock"
+        self.holdfile = self.dir / ".hold"
+
+    def check(self) -> None:
+        try:
+            st = os.lstat(self.dir)
+        except FileNotFoundError:
+            raise Internal(f"{self.dir} does not exist; run setup-server.sh") from None
+        if not stat.S_ISDIR(st.st_mode):
+            raise Internal(f"{self.dir} is not a directory")
+        self.releases.mkdir(0o755, exist_ok=True)
+        self.incoming.mkdir(0o700, exist_ok=True)
+        for sub in (self.releases, self.incoming):
+            if not stat.S_ISDIR(os.lstat(sub).st_mode):
+                raise Internal(f"{sub} is not a directory")
+        if stat.S_IMODE(os.lstat(self.incoming).st_mode) != 0o700:
+            self.incoming.chmod(0o700)
+
+    @contextlib.contextmanager
+    def locked(self, wait: float):
+        fd = os.open(self.lockfile, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW | os.O_CLOEXEC, 0o644)
+        try:
+            deadline = time.monotonic() + wait
+            while True:
+                try:
+                    fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    break
+                except BlockingIOError:
+                    if time.monotonic() >= deadline:
+                        raise Busy("another tff-receive command is running") from None
+                    time.sleep(0.2)
+            yield
+        finally:
+            os.close(fd)
+
+    def release_dir(self, sha: str) -> Path:
+        return self.releases / sha
+
+    def manifest_path(self, sha: str) -> Path:
+        return self.releases / f"{sha}.manifest.json"
+
+    def plan_path(self, sha: str) -> Path:
+        return self.incoming / f"{sha}.manifest.json"
+
+    def current_sha(self) -> str | None:
+        try:
+            target = str(self.current.readlink())
+        except FileNotFoundError:
+            return None
+        except OSError:
+            raise Internal(f"{self.current} is not a symlink") from None
+        m = re.fullmatch(r"releases/([0-9a-f]{40})", target)
+        if m is None:
+            raise Internal(f"{self.current} points at {target!r}, outside releases/")
+        return m.group(1)
+
+    def kept(self) -> dict[str, dict]:
+        """Every complete release: sha -> manifest."""
+        out: dict[str, dict] = {}
+        for entry in sorted(os.scandir(self.releases), key=lambda e: e.name):
+            if not SHA_RE.fullmatch(entry.name) or not entry.is_dir(follow_symlinks=False):
+                continue
+            try:
+                out[entry.name] = parse_manifest(
+                    self.manifest_path(entry.name).read_bytes(), entry.name
+                )
+            except SKIP_RELEASE:
+                continue
+        return out
+
+    def read_history(self) -> list[HistoryEntry]:
+        try:
+            text = self.history.read_text(encoding="utf-8", errors="replace")
+        except FileNotFoundError:
+            return []
+        entries = []
+        for line in text.splitlines():
+            parts = line.split()
+            if len(parts) < 3:
+                continue
+            fields = dict(p.split("=", 1) for p in parts[3:] if "=" in p)
+            entries.append(HistoryEntry(parts[0], parts[1], parts[2], fields))
+        return entries
+
+    def append_history(self, verb: str, sha: str, **fields: str) -> None:
+        extra = "".join(f" {k}={v}" for k, v in fields.items())
+        line = f"{utc_now()} {verb} {sha}{extra}\n".encode()
+        fd = os.open(
+            self.history,
+            os.O_WRONLY | os.O_APPEND | os.O_CREAT | os.O_NOFOLLOW | os.O_CLOEXEC,
+            0o644,
+        )
+        try:
+            os.write(fd, line)
+            os.fsync(fd)
+        finally:
+            os.close(fd)
+
+    def hold_info(self) -> str | None:
+        try:
+            return self.holdfile.read_text(encoding="utf-8", errors="replace").strip() or "held"
+        except FileNotFoundError:
+            return None
+
+
+def activations(history: list[HistoryEntry]) -> list[HistoryEntry]:
+    return [e for e in history if e.verb in ("activate", "rollback") and SHA_RE.fullmatch(e.sha)]
+
+
+def rollback_target(history: list[HistoryEntry], current: str | None, kept: set[str]) -> str | None:
+    """The release ``rollback`` goes back to: the newest earlier live release still kept.
+
+    Walking the history backwards, a release that a rollback left counts as bad for every
+    older line, so two rollbacks in a row go back two releases instead of flipping between two.
+    """
+    bad: set[str] = set()
+    for entry in reversed(activations(history)):
+        if entry.sha != current and entry.sha not in bad and entry.sha in kept:
+            return entry.sha
+        if entry.verb == "rollback" and SHA_RE.fullmatch(entry.fields.get("prev", "")):
+            bad.add(entry.fields["prev"])
+    return None
+
+
+def pending_uploads(history: list[HistoryEntry], kept: set[str]) -> set[str]:
+    """Kept releases uploaded since their last activation, or never activated.
+
+    A release activated long ago, pruned and uploaded again (to go back to an old commit)
+    counts as pending, not by its old activation."""
+    last: dict[str, str] = {}
+    for entry in history:
+        if entry.verb in ("upload", "activate", "rollback"):
+            last[entry.sha] = entry.verb
+    return {sha for sha in kept if last.get(sha, "upload") == "upload"}
+
+
+def last_activated(history: list[HistoryEntry]) -> dict[str, str]:
+    out: dict[str, str] = {}
+    for entry in activations(history):
+        out[entry.sha] = entry.when
+    return out
+
+
+# --- verbs -----------------------------------------------------------------------------------
+
+
+def cmd_plan(site: Site, cmd: Command, log: Log) -> int:
+    assert cmd.sha is not None
+    data = LimitedReader(sys.stdin.buffer, MAX_MANIFEST_BYTES).read()
+    manifest = parse_manifest(data, cmd.sha)
+    with site.locked(cmd.lock_wait):
+        kept = site.kept()
+        if cmd.sha in kept:
+            if kept[cmd.sha]["files"] != manifest["files"]:
+                raise InvalidInput(f"release {cmd.sha} exists with a different manifest")
+            need: list[str] = []
+        else:
+            have = set()
+            for sha, other in kept.items():
+                for path, entry in other["files"].items():
+                    if entry["sha256"] in have:
+                        continue
+                    with contextlib.suppress(OSError):
+                        st = os.lstat(site.release_dir(sha) / path)
+                        if stat.S_ISREG(st.st_mode) and st.st_size == entry["size"]:
+                            have.add(entry["sha256"])
+            need = [p for p, e in manifest["files"].items() if e["sha256"] not in have]
+            atomic_write(site.plan_path(cmd.sha), manifest_bytes(manifest), 0o600)
+            trim_plans(site, cmd.sha)
+    sys.stdout.write("".join(f"{p}\n" for p in need))
+    sys.stdout.flush()
+    print(
+        f"plan {cmd.sha}: {len(need)} of {len(manifest['files'])} files to upload", file=sys.stderr
+    )
+    log(f"plan {cmd.sha}: {len(need)} of {len(manifest['files'])} files to upload (via {cmd.via})")
+    return EXIT_OK
+
+
+def trim_plans(site: Site, sha: str) -> None:
+    """Keep only the newest KEEP_PLANS plans in incoming/ (each can be 2 MB)."""
+    plans = []
+    for entry in os.scandir(site.incoming):
+        if entry.name.endswith(".manifest.json") and entry.name != site.plan_path(sha).name:
+            with contextlib.suppress(OSError):
+                plans.append((entry.stat(follow_symlinks=False).st_mtime, entry.name))
+    for _, name in sorted(plans, reverse=True)[KEEP_PLANS - 1 :]:
+        (site.incoming / name).unlink(missing_ok=True)
+
+
+def check_member(member: tarfile.TarInfo) -> str | None:
+    """Why this tar member is refused, or None."""
+    if member.issym():
+        return "symlink"
+    if member.islnk():
+        return "hard link"
+    if member.ischr() or member.isblk():
+        return "device"
+    if member.isfifo():
+        return "fifo"
+    if member.type not in (tarfile.REGTYPE, tarfile.AREGTYPE, tarfile.DIRTYPE):
+        return f"member type {member.type!r} not allowed"
+    if member.type != tarfile.DIRTYPE and member.sparse is not None:
+        return "sparse file"
+    if member.mode & 0o7000:
+        return "setuid, setgid or sticky bit"
+    if member.isdir():
+        if not PATH_RE.fullmatch(member.name):
+            return "path not allowed"
+        return None
+    return path_problem(member.name)
+
+
+def write_member(fileobj, dest: Path, size: int) -> str:
+    fd = os.open(dest, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW | os.O_CLOEXEC, 0o644)
+    digest = hashlib.sha256()
+    with os.fdopen(fd, "wb") as fh:
+        remaining = size
+        while remaining:
+            chunk = fileobj.read(min(1 << 20, remaining))
+            if not chunk:
+                raise InvalidInput("tar: unexpected end of data")
+            fh.write(chunk)
+            digest.update(chunk)
+            remaining -= len(chunk)
+        fh.flush()
+        os.fsync(fh.fileno())
+    return digest.hexdigest()
+
+
+def receive_tar(stream: LimitedReader, dest: Path, files: dict[str, dict]) -> dict[str, str]:
+    """Unpack the tar on ``stream`` into ``dest``, checking every member; return path -> sha256."""
+    allowed_dirs = {d for p in files for d in ancestors(p)}
+    received: dict[str, str] = {}
+    members = 0
+    try:
+        with tarfile.open(fileobj=stream, mode="r|", tarinfo=SafeTarInfo) as tar:
+            for member in tar:
+                members += 1
+                if members > MAX_MEMBERS:
+                    raise InvalidInput(f"tar: more than {MAX_MEMBERS} members")
+                name = member.name
+                problem = check_member(member)
+                if problem:
+                    raise InvalidInput(f"tar: {name!r}: {problem}")
+                if member.isdir():
+                    if name not in allowed_dirs:
+                        raise InvalidInput(f"tar: {name}: directory not in the manifest")
+                    make_dirs(dest, name)
+                    continue
+                if member.size > MAX_FILE_BYTES:
+                    raise InvalidInput(f"tar: {name}: too large ({member.size} bytes)")
+                entry = files.get(name)
+                if entry is None:
+                    raise InvalidInput(f"tar: {name}: not in the manifest")
+                if name in received:
+                    raise InvalidInput(f"tar: {name}: sent twice")
+                if member.size != entry["size"]:
+                    raise InvalidInput(
+                        f"tar: {name}: size {member.size}, manifest says {entry['size']}"
+                    )
+                parent = name.rpartition("/")[0]
+                if parent:
+                    make_dirs(dest, parent)
+                fileobj = tar.extractfile(member)
+                if fileobj is None:
+                    raise InvalidInput(f"tar: {name}: no data")
+                try:
+                    digest = write_member(fileobj, dest / name, member.size)
+                except FileExistsError:
+                    raise InvalidInput(f"tar: {name}: clashes with a directory") from None
+                if digest != entry["sha256"]:
+                    raise InvalidInput(f"tar: {name}: sha256 mismatch")
+                received[name] = digest
+    except tarfile.ReadError as exc:
+        if stream.count == 0 or str(exc) == "empty file":
+            return received  # nothing sent: every file comes from kept releases
+        raise InvalidInput(f"tar: unreadable ({exc})") from None
+    except BAD_TAR as exc:
+        raise InvalidInput(f"tar: unreadable ({exc})") from None
+    stream.drain()
+    return received
+
+
+def link_missing(
+    site: Site, dest: Path, manifest: dict, kept: dict[str, dict], received: dict[str, str]
+) -> int:
+    """Hardlink every manifest file not uploaded from a kept release (or this upload)."""
+    sources: dict[str, list[Path]] = {}
+    for path in received:
+        sources.setdefault(received[path], []).append(dest / path)
+    for sha, other in sorted(kept.items()):
+        for path, entry in other["files"].items():
+            sources.setdefault(entry["sha256"], []).append(site.release_dir(sha) / path)
+    verified: dict[Path, str | None] = {}
+    missing: list[str] = []
+    linked = 0
+    for path, entry in manifest["files"].items():
+        if path in received:
+            continue
+        for src in sources.get(entry["sha256"], []):
+            try:
+                st = os.lstat(src)
+                if not stat.S_ISREG(st.st_mode) or st.st_size != entry["size"]:
+                    continue
+                if src not in verified:
+                    verified[src] = file_sha256(src)
+                if verified[src] != entry["sha256"]:
+                    continue
+                parent = path.rpartition("/")[0]
+                if parent:
+                    make_dirs(dest, parent)
+                os.link(src, dest / path, follow_symlinks=False)
+            except OSError:
+                continue
+            linked += 1
+            break
+        else:
+            missing.append(path)
+    if missing:
+        raise InvalidInput(
+            f"{len(missing)} files neither uploaded nor in a kept release, e.g. {missing[0]}"
+        )
+    return linked
+
+
+def read_version(release: Path) -> list[str]:
+    fd = os.open(release / "version.txt", os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC)
+    with os.fdopen(fd, "rb") as fh:
+        data = fh.read(MAX_VERSION_BYTES + 1)
+    if len(data) > MAX_VERSION_BYTES:
+        raise InvalidInput("version.txt is too large")
+    return data.decode("utf-8", errors="replace").splitlines()
+
+
+def check_release(release: Path, manifest: dict) -> None:
+    """Every manifest file is present with its size, and version.txt names the commit."""
+    for path, entry in manifest["files"].items():
+        try:
+            st = os.lstat(release / path)
+        except OSError:
+            raise InvalidInput(f"release incomplete: {path} is missing") from None
+        if not stat.S_ISREG(st.st_mode) or st.st_size != entry["size"]:
+            raise InvalidInput(f"release incomplete: {path} is wrong")
+    if f"commit={manifest['commit']}" not in read_version(release):
+        raise InvalidInput(f"version.txt does not say commit={manifest['commit']}")
+
+
+def cmd_upload(site: Site, cmd: Command, log: Log) -> int:
+    sha = cmd.sha
+    assert sha is not None
+    stream = LimitedReader(sys.stdin.buffer, MAX_STREAM_BYTES)
+    with site.locked(cmd.lock_wait):
+        kept = site.kept()
+        if sha in kept:
+            stream.drain()
+            print(f"upload {sha}: already stored, nothing to do")
+            return EXIT_OK
+        try:
+            manifest = parse_manifest(site.plan_path(sha).read_bytes(), sha)
+        except FileNotFoundError:
+            raise InvalidInput(f"no plan for {sha}: run plan first") from None
+        for stale in site.incoming.glob(f"{sha}.*.partial"):
+            remove_tree(stale)
+        if os.path.lexists(site.release_dir(sha)):
+            # A directory without a usable manifest (left by a crash): not a release.
+            if sha == site.current_sha():
+                raise Internal(f"{site.release_dir(sha)} is live but has no manifest")
+            discard(site, sha)
+        tmp = Path(tempfile.mkdtemp(prefix=f"{sha}.", suffix=".partial", dir=site.incoming))
+        manifest_written = False
+        try:
+            received = receive_tar(stream, tmp, manifest["files"])
+            linked = link_missing(site, tmp, manifest, kept, received)
+            check_release(tmp, manifest)
+            tmp.chmod(0o755)
+            atomic_write(site.manifest_path(sha), manifest_bytes(manifest))
+            manifest_written = True
+            tmp.rename(site.release_dir(sha))
+            fsync_dir(site.releases)
+        except BaseException:
+            remove_tree(tmp)
+            if manifest_written:
+                site.manifest_path(sha).unlink(missing_ok=True)
+            raise
+        site.plan_path(sha).unlink(missing_ok=True)
+        site.append_history(
+            "upload", sha, received=str(len(received)), linked=str(linked), via=cmd.via
+        )
+        tidy(site, log)
+    print(f"upload {sha}: stored, {len(received)} files received, {linked} linked")
+    log(f"upload {sha}: {len(received)} received, {linked} linked (via {cmd.via})")
+    return EXIT_OK
+
+
+def carry_over(site: Site, old: str, old_manifest: dict, new: str, new_manifest: dict) -> int:
+    """Hardlink the old release's assets/ files that the new one lacks, for open tabs."""
+    count = 0
+    new_dir, old_dir = site.release_dir(new), site.release_dir(old)
+    for path in old_manifest["files"]:
+        if not path.startswith("assets/") or path in new_manifest["files"]:
+            continue
+        dest = new_dir / path
+        if os.path.lexists(dest):
+            continue
+        try:
+            if not stat.S_ISREG(os.lstat(old_dir / path).st_mode):
+                continue
+            make_dirs(new_dir, path.rpartition("/")[0])
+            os.link(old_dir / path, dest, follow_symlinks=False)
+        except SKIP_CARRY:
+            continue
+        count += 1
+    return count
+
+
+def switch(site: Site, sha: str) -> None:
+    tmp = site.dir / "current.tmp"
+    tmp.unlink(missing_ok=True)
+    tmp.symlink_to(f"releases/{sha}")
+    tmp.replace(site.current)
+    fsync_dir(site.dir)
+
+
+def discard(site: Site, sha: str) -> None:
+    """Remove release ``sha``, crash-safe: one rename takes it out of releases/ (a crash then
+    leaves it in incoming/, cleared after a day), then its manifest goes, then its files."""
+    trash = Path(tempfile.mkdtemp(prefix=f"{sha}.", suffix=".removed", dir=site.incoming))
+    with contextlib.suppress(FileNotFoundError):
+        site.release_dir(sha).rename(trash / sha)
+    site.manifest_path(sha).unlink(missing_ok=True)
+    remove_tree(trash)
+
+
+def prune(site: Site, log: Log) -> list[str]:
+    """Keep the newest KEEP releases by history, the current and previous ones, and the newest
+    KEEP_UNACTIVATED uploads never activated that are less than a day old; remove the rest."""
+    kept = site.kept()
+    history = site.read_history()
+    current = site.current_sha()
+    previous = rollback_target(history, current, set(kept))
+    newest: list[str] = []
+    for entry in reversed(activations(history)):
+        if entry.sha in kept and entry.sha not in newest:
+            newest.append(entry.sha)
+    keep = set(newest[:KEEP]) | {current, previous}
+    now = time.time()
+    fresh: list[tuple[float, str]] = []
+    for sha in pending_uploads(history, set(kept)) - keep:
+        with contextlib.suppress(OSError):
+            age = now - os.lstat(site.manifest_path(sha)).st_mtime
+            if age < INCOMING_MAX_AGE:
+                fresh.append((age, sha))
+    keep.update(sha for _, sha in sorted(fresh)[:KEEP_UNACTIVATED])
+    removed = []
+    for sha in kept:
+        if sha in keep:
+            continue
+        discard(site, sha)
+        removed.append(sha)
+    if removed:
+        log(f"pruned {' '.join(removed)}")
+    return removed
+
+
+def tidy(site: Site, log: Log) -> None:
+    """Prune and clear incoming/. The upload or switch before it already happened, so a
+    failure here is logged, not reported as a failed command."""
+    try:
+        prune(site, log)
+        clear_incoming(site)
+    except OSError as exc:
+        log(f"tidying up failed: {exc!r}", error=True)
+
+
+def clear_incoming(site: Site) -> None:
+    now = time.time()
+    for entry in os.scandir(site.incoming):
+        with contextlib.suppress(OSError):
+            if now - entry.stat(follow_symlinks=False).st_mtime > INCOMING_MAX_AGE:
+                remove_tree(Path(entry.path))
+
+
+def do_activate(site: Site, cmd: Command, log: Log, target: str, verb: str) -> int:
+    kept = site.kept()
+    if target not in kept:
+        raise InvalidInput(f"no release {target}; upload it first")
+    check_release(site.release_dir(target), kept[target])
+    current = site.current_sha()
+    if current == target:
+        if cmd.hold:
+            atomic_write(site.holdfile, f"{target} {utc_now()} via={cmd.via}\n".encode())
+            site.append_history("hold", target, via=cmd.via)
+        print(f"{verb} {target}: already current")
+        return EXIT_OK
+    carried = 0
+    if current is not None and current in kept:
+        carried = carry_over(site, current, kept[current], target, kept[target])
+    switch(site, target)
+    site.append_history(verb, target, prev=current or "-", carried=str(carried), via=cmd.via)
+    if cmd.hold:
+        atomic_write(site.holdfile, f"{target} {utc_now()} via={cmd.via}\n".encode())
+        site.append_history("hold", target, via=cmd.via)
+    print(f"{verb} {target}: now current (was {current or 'none'}; {carried} assets carried over)")
+    log(f"{verb} {target} (was {current or 'none'}, carried {carried}, via {cmd.via})")
+    return EXIT_OK
+
+
+def cmd_activate(site: Site, cmd: Command, log: Log) -> int:
+    assert cmd.sha is not None
+    with site.locked(cmd.lock_wait):
+        held = site.hold_info()
+        if held is not None:
+            raise Busy(f"held ({held}); run unhold first")
+        code = do_activate(site, cmd, log, cmd.sha, "activate")
+        tidy(site, log)
+    return code
+
+
+def cmd_rollback(site: Site, cmd: Command, log: Log) -> int:
+    with site.locked(cmd.lock_wait):
+        kept = site.kept()
+        target = cmd.sha
+        if target is None:
+            target = rollback_target(site.read_history(), site.current_sha(), set(kept))
+            if target is None:
+                raise InvalidInput("no earlier release to roll back to")
+        return do_activate(site, cmd, log, target, "rollback")
+
+
+def cmd_unhold(site: Site, cmd: Command, log: Log) -> int:
+    with site.locked(cmd.lock_wait):
+        if site.hold_info() is None:
+            print("unhold: not held")
+            return EXIT_OK
+        site.holdfile.unlink(missing_ok=True)
+        site.append_history("unhold", site.current_sha() or "-", via=cmd.via)
+    print("unhold: activate is allowed again")
+    log(f"unhold (via {cmd.via})")
+    return EXIT_OK
+
+
+def cmd_status(site: Site, cmd: Command, log: Log) -> int:
+    kept = site.kept()
+    history = site.read_history()
+    current = site.current_sha()
+    previous = rollback_target(history, current, set(kept))
+    when = last_activated(history)
+    lines = [
+        f"environment: {site.env}",
+        f"current: {current or 'none'}",
+        f"previous: {previous or 'none'}",
+        f"hold: {site.hold_info() or 'no'}",
+        "version.txt:",
+    ]
+    if current is not None:
+        with contextlib.suppress(*SKIP_RELEASE):
+            lines += [f"  {line}" for line in read_version(site.release_dir(current))]
+    lines.append("releases (newest activation first):")
+    order = sorted(kept, key=lambda s: (when.get(s, ""), s), reverse=True)
+    for sha in order:
+        mark = " current" if sha == current else " previous" if sha == previous else ""
+        lines.append(
+            f"  {sha} {when.get(sha, 'never-activated')} {len(kept[sha]['files'])} files{mark}"
+        )
+    print("\n".join(lines))
+    return EXIT_OK
+
+
+VERBS = {
+    "plan": cmd_plan,
+    "upload": cmd_upload,
+    "activate": cmd_activate,
+    "rollback": cmd_rollback,
+    "unhold": cmd_unhold,
+    "status": cmd_status,
+}
+
+
+def main(argv: list[str] | None = None, environ: dict[str, str] | None = None) -> int:
+    os.umask(0o022)
+    env = dict(os.environ if environ is None else environ)
+    try:
+        cmd, rest = parse_options(sys.argv[1:] if argv is None else argv)
+    except UsageError as exc:
+        print(f"tff-receive: {exc}\n{USAGE}", file=sys.stderr)
+        return EXIT_USAGE
+    try:
+        parse_command(cmd, rest, env)
+    except UsageError as exc:
+        print(f"tff-receive: {exc}\n{USAGE}", file=sys.stderr)
+        # Refused commands are logged for the audit trail; repr() keeps them on one line.
+        original = env.get("SSH_ORIGINAL_COMMAND")
+        asked = repr(original[:200]) if original is not None else repr(" ".join(rest)[:200])
+        Log(cmd.env or "-", cmd.log_file)(f"refused {asked}: {exc}", error=True)
+        return EXIT_USAGE
+    log = Log(cmd.env, cmd.log_file)
+    what = f"{cmd.verb} {cmd.sha or ''}".strip()
+    try:
+        site = Site(cmd.root, cmd.env)
+        site.check()
+        os.chdir(site.dir)
+        return VERBS[cmd.verb](site, cmd, log)
+    except REFUSALS as exc:
+        print(f"tff-receive: {what}: {exc}", file=sys.stderr)
+        log(f"{what}: refused: {exc} (via {cmd.via})", error=True)
+        return exc.code
+    except Exception as exc:
+        print(f"tff-receive: {what}: internal error: {exc}", file=sys.stderr)
+        log(f"{what}: internal error: {exc!r} {traceback.format_exc(limit=3)!r}", error=True)
+        return EXIT_INTERNAL
+
+
+if __name__ == "__main__":
+    sys.exit(main())

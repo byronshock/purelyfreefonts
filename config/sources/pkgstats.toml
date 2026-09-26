@@ -1,0 +1,24 @@
+# Ranking collector pkgstats: Arch Linux package installs per complete month,
+# from pkgstats.archlinux.de/api/packages (no data license stated; aggregate
+# counts, ruling T1). Every package is kept, fonts or not: the correction stage
+# needs the installs of the packages that pull fonts in.
+enabled = true
+
+# Complete months the snapshot holds. The engine averages 12 monthly shares
+# (ranking.toml [sources.arch] months); months the previous snapshot already
+# holds are copied, so a monthly run requests only the newest one.
+months = 12
+
+# A month counts as complete this many days after it ends. The API lets shared
+# caches keep a month's answer until the next month starts (server time) and
+# serve it stale for a day more, so an answer fetched on the 1st may be partial.
+settle_days = 2
+
+# Rows per request (the API allows 1 to 10,000). A month had 34,451 packages in
+# August 2026: 4 requests.
+page_size = 10000
+
+# A month with fewer than this share of the month before's packages or samples
+# is a broken answer: the fetch fails and the stale policy reuses the last good
+# snapshot. Months moved by up to 20% in 2025-26.
+min_share = 0.5

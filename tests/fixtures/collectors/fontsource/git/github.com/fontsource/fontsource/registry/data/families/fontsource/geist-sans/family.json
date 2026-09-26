@@ -1,0 +1,121 @@
+{
+	"classifications": [
+		"sans-serif"
+	],
+	"family": "Geist Sans",
+	"languages": [
+		"aa_Latn",
+		"abq_Cyrl",
+		"ace_Latn",
+		"acf_Latn",
+		"ach_Latn",
+		"ady_Cyrl"
+	],
+	"license": {
+		"attribution": "Copyright 2024 The Geist Project Authors",
+		"id": "OFL-1.1",
+		"url": "https://raw.githubusercontent.com/vercel/geist-font/a73329da8fc62afc917f796555202e4997f79b7c/OFL.txt"
+	},
+	"primaryScript": "Latn",
+	"project": {
+		"repository": "https://github.com/vercel/geist-font",
+		"revision": "a73329da8fc62afc917f796555202e4997f79b7c"
+	},
+	"provenance": {
+		"directory": "sources/geist-sans",
+		"repository": "fontsource/font-files",
+		"revision": "31a5e47789d233c65b9165435864496aeb0f86dd",
+		"type": "github"
+	},
+	"sourceModified": "2026-07-30",
+	"sources": [
+		{
+			"inspection": {
+				"axes": [
+					{
+						"default": 400,
+						"max": 900,
+						"min": 100,
+						"tag": "wght"
+					}
+				],
+				"codepoints": 232,
+				"colorTables": [],
+				"features": {
+					"gpos": [
+						"kern",
+						"mark",
+						"mkmk"
+					],
+					"gsub": [
+						"aalt",
+						"case",
+						"ccmp"
+					]
+				},
+				"fontVersion": "Version 1.800",
+				"glyphs": 975,
+				"outline": "glyf",
+				"style": "italic",
+				"unicodeRange": "U+0020-007E, U+00A0-00AC, U+00AE-0113, U+0116-012B",
+				"weight": {
+					"default": 400,
+					"max": 900,
+					"min": 100
+				}
+			},
+			"path": "sources/geist-sans/files/Geist-Italic[wght].ttf",
+			"sha256": "a464348abe41a6392f18d04c0ac2ad3c26619357ff5fdd76aff3059116f45e62",
+			"size": 174584,
+			"variant": {
+				"style": "italic",
+				"weight": 400
+			}
+		},
+		{
+			"inspection": {
+				"axes": [
+					{
+						"default": 400,
+						"max": 900,
+						"min": 100,
+						"tag": "wght"
+					}
+				],
+				"codepoints": 232,
+				"colorTables": [],
+				"features": {
+					"gpos": [
+						"kern",
+						"mark",
+						"mkmk"
+					],
+					"gsub": [
+						"aalt",
+						"case",
+						"ccmp"
+					]
+				},
+				"fontVersion": "Version 1.800",
+				"glyphs": 975,
+				"outline": "glyf",
+				"style": "normal",
+				"unicodeRange": "U+0020-007E, U+00A0-00AC, U+00AE-0113, U+0116-012B",
+				"weight": {
+					"default": 400,
+					"max": 900,
+					"min": 100
+				}
+			},
+			"path": "sources/geist-sans/files/Geist[wght].ttf",
+			"sha256": "73894e0448cae90a92b6c2f8732b7bb9acb7b94c418bff559dad4a18e1de9659",
+			"size": 169056,
+			"variant": {
+				"style": "normal",
+				"weight": 400
+			}
+		}
+	],
+	"status": "deprecated",
+	"tags": []
+}

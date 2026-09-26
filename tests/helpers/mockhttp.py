@@ -186,7 +186,13 @@ _GIT_IDENTITY = {"name": "tff fixture", "email": "fixture@trulyfreefonts.invalid
 
 
 def git_remotes(git_dir: Path, work_dir: Path, day: date) -> dict[str, str]:
-    """Build a local repository for each ``git/<host>/<owner>/<repo>/``; return the rewrite env."""
+    """Build a local repository for each ``git/<host>/<owner>/<repo>/``; return the rewrite env.
+
+    Each repository has one commit on ``main``, its default branch. An optional
+    sibling file ``git/<host>/<owner>/<repo>.branches`` names more branches, one
+    per line (blank lines and ``#`` comments skipped), created at that commit, so
+    a collector can pin a named branch (fontist's ``v5``).
+    """
     git_dir = Path(git_dir)
     stamp = f"{day.isoformat()}T00:00:00+00:00"
     # Drop inherited GIT_* variables: under a git hook, GIT_DIR would redirect every command.
@@ -214,6 +220,8 @@ def git_remotes(git_dir: Path, work_dir: Path, day: date) -> dict[str, str]:
             ["commit", "-q", "--no-gpg-sign", "-m", f"fixture {rel.as_posix()}"],
         ):
             subprocess.run(["git", "-C", str(local), *args], env=env, check=True)
+        for branch in _branches(repo.with_name(repo.name + ".branches")):
+            subprocess.run(["git", "-C", str(local), "branch", branch], env=env, check=True)
         remote = f"https://{rel.as_posix()}"
         rules += [(local.as_uri(), remote + ".git"), (local.as_uri(), remote)]
     out = {"GIT_CONFIG_COUNT": str(len(rules))}
@@ -221,6 +229,13 @@ def git_remotes(git_dir: Path, work_dir: Path, day: date) -> dict[str, str]:
         out[f"GIT_CONFIG_KEY_{i}"] = f"url.{local_uri}.insteadOf"
         out[f"GIT_CONFIG_VALUE_{i}"] = remote
     return out
+
+
+def _branches(path: Path) -> list[str]:
+    if not path.is_file():
+        return []
+    lines = (line.strip() for line in path.read_text(encoding="utf-8").splitlines())
+    return [line for line in lines if line and not line.startswith("#")]
 
 
 def _copy_tree(src: Path, dest: Path) -> None:

@@ -1,0 +1,13 @@
+# Issue chooser (Milestone 2 step 12, M2-D10). Blank issues are off, so every
+# report goes through a form that applies its own label.
+#
+# The contact link is for people without a GitHub account. GitHub accepts only
+# http(s) URLs here and silently drops a mailto: link from the chooser, so the
+# address is written into `about`, and the link opens the footer's feedback
+# spot (id="feedback", on every page per site/CONTRACT.md), which has the
+# mailto: link.
+blank_issues_enabled: false
+contact_links:
+  - name: No GitHub account? Email us
+    url: https://trulyfreefonts.com/about/#feedback
+    about: Write to admin@trulyfreefonts.com. Emails stay private; one becomes a public issue only if you agree.

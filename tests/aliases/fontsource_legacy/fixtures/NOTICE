@@ -1,0 +1,51 @@
+Trimmed real data (ruling T1), edited where noted. Package names and font
+names only: no people, email addresses or personal sites.
+
+snapshot/ is the part of a "fontsource" collector snapshot this miner reads,
+from the Fontsource registry (registry/data/ of
+https://github.com/fontsource/fontsource at commit
+43cfc04f7f53ef63cc5781c018c4058d8908f485, 2026-09-23):
+
+- replacements.json: 5 of its 16 entries, unchanged;
+- families-google.jsonl and families-fontsource.jsonl: 13 of the 2,168
+  families, each family.json cut to "family" and "status" (the test writes
+  them as the snapshot's families/<group>.jsonl.gz);
+- api-missing.json: 1 of the 3 rows of https://api.fontsource.org/v1/fonts
+  (2026-09-25) that the registry lacks, cut to "family", "id" and "type";
+- registry.json: as the collector wrote it.
+
+http/org-fontsource.json and http/org-fontsource-variable.json: 18 of the
+2,126 and 7 of the 570 packages of
+https://registry.npmjs.org/-/org/fontsource/package and
+https://registry.npmjs.org/-/org/fontsource-variable/package (2026-09-26),
+unchanged otherwise. npm public registry data.
+
+http/metadata-*.json: the metadata.json of five retired @fontsource packages,
+as https://cdn.jsdelivr.net/npm/@fontsource/<id>/metadata.json served them on
+2026-09-26, cut to "fontId", "fontName", "type", "category", "version" and
+"lastModified". The x-jsd-version headers in http/index.json are the real
+ones. The packages declare the MIT License.
+
+The registry and the packages are Fontsource's, under the MIT License:
+
+MIT License
+
+Copyright (c) 2024 Ayuhito
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

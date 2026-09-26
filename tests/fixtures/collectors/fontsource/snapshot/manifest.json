@@ -1,0 +1,63 @@
+{
+  "collector_version": 1,
+  "complete": true,
+  "data_date": null,
+  "date": "2026-09-25",
+  "extracts": [
+    {
+      "bytes": 844,
+      "path": "api-missing.json",
+      "rows": 2,
+      "sha256": "e17414fbbf10db1d4dba47cf67926146fe0b2f308882b106e53cf6c176d413a1"
+    },
+    {
+      "bytes": 1638,
+      "path": "families/fontsource.jsonl.gz",
+      "rows": 4,
+      "sha256": "ed2278ffdc23a59b4518bd126640127f227aed8a36a79cb59676b1712c722cfa"
+    },
+    {
+      "bytes": 511,
+      "path": "families/google-icons.jsonl.gz",
+      "rows": 1,
+      "sha256": "0ce94ca5c3aeb82f00dabdc30b4f312295dd3d2cd1a30533f7b9d8ea4166598a"
+    },
+    {
+      "bytes": 1608,
+      "path": "families/google.jsonl.gz",
+      "rows": 4,
+      "sha256": "be618c74bea1edc03426478ba0a5c3e22a2834726addfe040f41c00ef66c0a79"
+    },
+    {
+      "bytes": 136,
+      "path": "registry.json",
+      "rows": null,
+      "sha256": "a3b748f8e4b6b6774ae96b1e8f2a62cf018b4d0b0565d8f89ae31b1029d89031"
+    },
+    {
+      "bytes": 94,
+      "path": "replacements.json",
+      "rows": null,
+      "sha256": "6ae03fa28126d00172d270643ab2aaa89ddb92634e2b959a75ad0aa51c1cac0a"
+    }
+  ],
+  "fetched": [
+    {
+      "bytes": 1315,
+      "etag": "W/\"fixture-v1-fonts\"",
+      "fetched_at": "2026-09-25T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "86b45fadd23b8f4564d352c10f35214f81381ddc0d2e744a7b556a634a45257f",
+      "status": 200,
+      "url": "https://api.fontsource.org/v1/fonts"
+    }
+  ],
+  "notes": [
+    "git https://github.com/fontsource/fontsource main at da63dace332fa6f8526ef75d59ed26d05603c538"
+  ],
+  "schema": 1,
+  "source": "fontsource",
+  "stale_of": null,
+  "window": null
+}

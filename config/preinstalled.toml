@@ -1,21 +1,349 @@
-# Fonts that systems ship preinstalled (D8, milestone-1 step 2). SKELETON.
+# Fonts that systems ship preinstalled (D8, milestone-1 step 2).
 #
-# Filled in wave 1 by agent I3 from the research: Linux defaults, Cascadia on
-# Windows 11, the macOS list, GNOME's Adwaita fonts, Android, the LibreOffice
-# bundle, and EndeavourOS's eos-base-group (gate C2 (rec)). The owner reviews it
-# at gate C1. Loaded strictly by tff_catalog.config into
+# Seeded on 2026-09-25 by agent I3 from the sources named in each entry. The
+# owner reviews it at gate C1. Loaded strictly by tff_catalog.config into
 # config_model.PreinstalledConfig: unknown or missing keys fail.
 #
-# Only entries with os = "linux" make a Linux source abstain; the others only
-# add preinstalled_on tags.
+# What an entry does:
+# - os = "linux": every Linux source (Arch pkgstats, Debian popcon) abstains for
+#   these families in every rank except *most installed*, and the families get
+#   a preinstalled_on tag. One Linux entry is enough for all Linux sources to
+#   abstain (D8), so a family belongs here only if the system installs it
+#   without the user choosing it.
+# - any other os: a preinstalled_on tag only, never an abstention.
 #
-# [systems.ubuntu-desktop]          # system id: lower case, digits, "-" or "_"
-# label = "Ubuntu desktop"
+# How the lists were made:
+# - Family names are written as the system ships them; the aliases map them to
+#   catalog families (for example "MesloLGS Nerd Font" to Meslo LG).
+# - Only text families are listed. Emoji, symbol and math fonts are left out.
+# - Noto's script-specific families (Noto Sans Arabic, Noto Serif Lao and
+#   about 150 more) and CJK families (Noto CJK, BIZ UD, Nanum) are left out
+#   too: the Latin gate fails them, so they could only ever show up as
+#   "Preinstalled names with no family" in build/corrections.md. Each entry's
+#   note says when a system ships them. Dual-script families that can still
+#   pass the Latin gate (Thai, Indic, Hebrew and Arabic families with a Latin
+#   set, through gate L) are kept.
+# - Dependencies the parsers already see (Arch, CachyOS and Debian package
+#   databases) are listed here only when a system installs them by default.
+#
+# Not listed, with the reason:
+# - Arch Linux: no default desktop. archinstall asks for extra fonts in an
+#   opt-in menu; only its awesome and LXQt profiles add fonts (terminus-font,
+#   gnu-free-fonts, ttf-liberation; ttf-freefont).
+# - GNOME 47 and earlier defaulted to Cantarell and Source Code Pro (the
+#   gnome entry lists GNOME 48 and later).
+# - Fonts that Windows 11 installs only with a language pack (the "Supplemental
+#   Fonts" sections, for example BIZ UDGothic).
+#
+# [systems.<id>]                    # system id: lower case, digits, "-" or "_"
+# label = "Ubuntu"                  # shown on the site; must match site.toml
+#                                   # package_systems.<id>.label when both exist
 # os = "linux"                      # windows | macos | linux | android
-# families = ["Ubuntu", "DejaVu Sans"]  # family names as the system ships them
+# families = ["Ubuntu"]             # sorted, ignoring case
 # source = "https://..."            # where the list comes from
 # note = ""                         # optional
 
 schema = 1
 
-[systems]
+# --- Linux: these entries make the Linux sources abstain ----------------------
+
+[systems.cachyos]
+label = "CachyOS"
+os = "linux"
+families = [
+  "Bitstream Vera Sans",
+  "Bitstream Vera Sans Mono",
+  "Bitstream Vera Serif",
+  "Cantarell",
+  "DejaVu Sans",
+  "DejaVu Sans Mono",
+  "DejaVu Serif",
+  "Liberation Mono",
+  "Liberation Sans",
+  "Liberation Serif",
+  "MesloLGL Nerd Font",
+  "MesloLGM Nerd Font",
+  "MesloLGS Nerd Font",
+  "Noto Sans",
+  "Noto Sans Mono",
+  "Noto Serif",
+  "Noto Serif Display",
+  "Open Sans",
+]
+source = "https://github.com/CachyOS/cachyos-calamares/blob/cachyos/src/modules/netinstall/netinstall.yaml"
+note = """
+The installer's "fonts" group, selected by default: cantarell-fonts, noto-fonts, \
+noto-fonts-cjk, noto-fonts-emoji, ttf-bitstream-vera, ttf-dejavu, ttf-liberation, \
+ttf-opensans, ttf-meslo-nerd (Meslo LG in its L, M and S sizes, each also as DZ, Mono \
+and Propo builds) and awesome-terminal-fonts. The CLI installer's net-profiles.toml has \
+the same list. The CachyOS settings packages' font dependencies (ttf-fantasque-nerd, \
+ttf-fira-sans, noto-fonts) come from the dependency parser, not from here."""
+
+[systems.debian]
+label = "Debian"
+os = "linux"
+families = [
+  "Cantarell",
+  "DejaVu Sans",
+  "DejaVu Sans Mono",
+  "DejaVu Serif",
+]
+source = "https://packages.debian.org/trixie/gnome-core"
+note = """
+Debian 13 (trixie) with its default GNOME desktop task: gnome-core depends on \
+fonts-cantarell, and fontconfig-config depends on fonts-dejavu-core as its first \
+alternative (https://packages.debian.org/trixie/fontconfig-config), which depends on \
+fonts-dejavu-mono. task-desktop also recommends fonts-symbola (symbols, not listed). \
+The Debian dependency parser sees these edges as well."""
+
+# gate C2 (rec): EndeavourOS has no font dependencies, so its installer list goes here.
+[systems.endeavouros]
+label = "EndeavourOS"
+os = "linux"
+families = [
+  "Bitstream Vera Sans",
+  "Bitstream Vera Sans Mono",
+  "Bitstream Vera Serif",
+  "Cantarell",
+  "DejaVu Sans",
+  "DejaVu Sans Mono",
+  "DejaVu Serif",
+  "Liberation Mono",
+  "Liberation Sans",
+  "Liberation Serif",
+  "Noto Sans",
+  "Noto Sans Mono",
+  "Noto Serif",
+  "Noto Serif Display",
+  "Open Sans",
+]
+source = "https://github.com/endeavouros-team/EndeavourOS-packages-lists/blob/master/eos-base-group"
+note = """
+The installer's base list (eos-base-group): cantarell-fonts, noto-fonts, noto-fonts-emoji, \
+noto-fonts-cjk, noto-fonts-extra, ttf-bitstream-vera, ttf-dejavu, ttf-liberation and \
+ttf-opensans. The desktop lists add no fonts, except awesome-terminal-fonts (icons) for \
+i3. Family names checked against the Arch packages' file lists."""
+
+[systems.fedora-workstation]
+label = "Fedora Workstation"
+os = "linux"
+families = [
+  "Cantarell",
+  "Noto Sans",
+  "Noto Sans Mono",
+  "Noto Serif",
+  "STIX Two Text",
+]
+source = "https://packages.fedoraproject.org/pkgs/langpacks/default-fonts-core/fedora-44.html"
+note = """
+Fedora 44's default-fonts-core metapackage: default-fonts-core-sans requires \
+abattis-cantarell-vf-fonts and google-noto-sans-vf-fonts, -serif requires \
+google-noto-serif-vf-fonts, -mono requires google-noto-sans-mono-vf-fonts, and -math \
+requires stix-fonts (STIX Two Math and Text) and Noto math and symbol fonts. GNOME's \
+Adwaita fonts are in the gnome entry. Fedora's comps groups were not checked: pagure.io \
+refused the request and dl.fedoraproject.org's robots.txt disallows automated access."""
+
+[systems.gnome]
+label = "GNOME"
+os = "linux"
+families = [
+  "Adwaita Mono",
+  "Adwaita Sans",
+]
+source = "https://github.com/GNOME/gsettings-desktop-schemas/blob/master/schemas/org.gnome.desktop.interface.gschema.xml.in"
+note = """
+GNOME 48 and later (March 2025 on): font-name and document-font-name default to \
+Adwaita Sans, monospace-font-name to Adwaita Mono. Adwaita Sans is derived from Inter \
+and Adwaita Mono from Iosevka. GNOME 47 defaulted to Cantarell and Source Code Pro."""
+
+[systems.kde-plasma]
+label = "KDE Plasma"
+os = "linux"
+families = [
+  "Hack",
+  "Noto Sans",
+]
+source = "https://github.com/KDE/plasma-integration/blob/master/qt6/src/platformtheme/kfontsettingsdata.cpp"
+note = """
+Plasma's default font is Noto Sans and its fixed-width font is Hack; plasma-integration \
+lists both as runtime dependencies (with Noto Color Emoji)."""
+
+[systems.ubuntu]
+label = "Ubuntu"
+os = "linux"
+families = [
+  "DejaVu Sans",
+  "DejaVu Sans Mono",
+  "DejaVu Serif",
+  "Liberation Mono",
+  "Liberation Sans",
+  "Liberation Serif",
+  "Noto Sans",
+  "Noto Sans Display",
+  "Noto Serif",
+  "Noto Serif Display",
+  "Ubuntu",
+  "Ubuntu Mono",
+  "Ubuntu Sans",
+  "Ubuntu Sans Mono",
+]
+source = "https://packages.ubuntu.com/resolute/ubuntu-desktop-minimal"
+note = """
+Ubuntu 26.04 LTS: ubuntu-desktop-minimal depends on fonts-dejavu-core (with \
+fonts-dejavu-mono) and recommends fonts-liberation, fonts-noto-core, fonts-noto-cjk, \
+fonts-noto-color-emoji, fonts-ubuntu and fonts-ubuntu-classic. fonts-noto-core also \
+ships Noto's script-specific families. Some Ubuntu machines also report to Debian's \
+popcon."""
+
+# --- other systems: preinstalled_on tags only -----------------------------------
+
+[systems.android]
+label = "Android"
+os = "android"
+families = [
+  "Carrois Gothic SC",
+  "Coming Soon",
+  "Cutive Mono",
+  "Dancing Script",
+  "Droid Sans Mono",
+  "Noto Serif",
+  "Roboto",
+  "Roboto Flex",
+  "Source Sans Pro",
+]
+source = "https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/data/fonts/fonts.xml"
+note = """
+AOSP's named families: sans-serif (Roboto), serif (Noto Serif), monospace (Droid Sans \
+Mono), serif-monospace (Cutive Mono), casual (Coming Soon), cursive (Dancing Script), \
+sans-serif-smallcaps (Carrois Gothic SC), source-sans-pro and roboto-flex. AOSP also \
+ships Noto's script-specific and CJK families. Phone makers often replace the defaults \
+with their own fonts."""
+
+[systems.libreoffice]  # gate C1: (b) removes this entry
+label = "LibreOffice"
+os = "app"
+families = [
+  "Agdasima",
+  "Alef",
+  "Amiri",
+  "Bacasime Antique",
+  "Belanosima",
+  "Caladea",
+  "Caprasimo",
+  "Carlito",
+  "David CLM",
+  "David Libre",
+  "DejaVu Sans",
+  "DejaVu Sans Mono",
+  "DejaVu Serif",
+  "Frank Ruehl CLM",
+  "Frank Ruhl Hofshi",
+  "Liberation Mono",
+  "Liberation Sans",
+  "Liberation Sans Narrow",
+  "Liberation Serif",
+  "Linux Biolinum G",
+  "Linux Libertine G",
+  "Lugrasimo",
+  "Lumanosimo",
+  "Lunasima",
+  "Miriam CLM",
+  "Miriam Libre",
+  "Miriam Mono CLM",
+  "Nachlieli CLM",
+  "Noto Sans",
+  "Noto Serif",
+  "Reem Kufi",
+  "Rubik",
+  "Scheherazade",
+]
+source = "https://github.com/LibreOffice/core/tree/libreoffice-26-8/external/more_fonts"
+note = """
+The fonts LibreOffice 26.8 bundles in The Document Foundation's own installers, which \
+make them visible to LibreOffice only; it also bundles Noto's Arabic, Armenian, \
+Georgian, Hebrew, Lao and Lisu families. Linux distributions' LibreOffice packages \
+bundle none: they depend on font packages, which the dependency parser sees. The \
+entry says os = "app": the fonts come with an application, not an operating system, so \
+it tags them without setting any "comes with" filter bit and never makes a Linux source \
+abstain. The installers for Windows and macOS bundle the same fonts."""
+
+[systems.macos]
+label = "macOS"
+os = "macos"
+families = [
+  "AkayaKanadaka",
+  "AkayaTelivigala",
+  "Arima Madurai",
+  "Bai Jamjuree",
+  "Baloo 2",
+  "Baloo Bhai 2",
+  "Baloo Bhaina 2",
+  "Baloo Chettan 2",
+  "Baloo Da 2",
+  "Baloo Paaji 2",
+  "Baloo Tamma 2",
+  "Baloo Tammudu 2",
+  "Baloo Thambi 2",
+  "Catamaran",
+  "Chakra Petch",
+  "Charm",
+  "Charmonman",
+  "Fahkwang",
+  "Gotu",
+  "Hubballi",
+  "Jaini",
+  "Jaini Purva",
+  "K2D",
+  "Kavivanar",
+  "Kodchasan",
+  "KoHo",
+  "Krub",
+  "Mali",
+  "Modak",
+  "Mukta",
+  "Mukta Malar",
+  "Mukta Vaani",
+  "MuktaMahee",
+  "Niramit",
+  "Padyakke Expanded One",
+  "PT Mono",
+  "PT Sans",
+  "PT Sans Caption",
+  "PT Sans Narrow",
+  "PT Serif",
+  "PT Serif Caption",
+  "Sarabun",
+  "Srisakdi",
+  "STIX Two Text",
+  "Tiro Bangla",
+  "Tiro Devanagari Hindi",
+  "Tiro Devanagari Marathi",
+  "Tiro Devanagari Sanskrit",
+  "Tiro Gurmukhi",
+  "Tiro Kannada",
+  "Tiro Tamil",
+  "Tiro Telugu",
+]
+source = "https://support.apple.com/en-us/122869"
+note = """
+macOS 26 Tahoe, "Installed or downloadable fonts": the families on that list that are \
+also on Google Fonts or Fontsource. Apple doesn't say which are installed and which \
+Font Book downloads on request. The list also has Noto's script-specific families and \
+the CJK families BIZ UDGothic, BIZ UDMincho and Nanum (Gothic, Myeongjo, Brush Script, \
+Pen Script), which the Latin gate fails. \
+Left out: "document-support fonts" (only documents that already use them can show them, \
+for example Bebas Neue and Carlito), and Apple's own Arima Koshi and Cambay Devanagari, \
+which have no open-license counterpart of the same name."""
+
+[systems.windows-11]
+label = "Windows 11"
+os = "windows"
+families = [
+  "Cascadia Code",
+  "Cascadia Mono",
+]
+source = "https://learn.microsoft.com/en-us/typography/fonts/windows_11_font_list"
+note = """
+Both are marked "Added in Windows 11". The other open-license fonts on the page (BIZ \
+UDGothic, BIZ UDPGothic, BIZ UDMincho) are Japanese Supplemental Fonts, installed only \
+with Japanese language features."""

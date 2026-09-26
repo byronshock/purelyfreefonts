@@ -1,0 +1,86 @@
+{
+  "collector_version": 1,
+  "complete": true,
+  "data_date": "2026-09-27",
+  "date": "2026-10-03",
+  "extracts": [
+    {
+      "bytes": 1185,
+      "path": "index.json",
+      "rows": null,
+      "sha256": "1fcc6e83777bc0a247aac9ce7626a834fd35a43335ddbbeebaeedb66018ab389"
+    },
+    {
+      "bytes": 607,
+      "path": "weeks/2026-W39.jsonl.gz",
+      "rows": 13,
+      "sha256": "f6dcf4966fb13976423fa951490f6ddd56c6aea2779f3ac43964b792381c75a0"
+    },
+    {
+      "bytes": 493,
+      "path": "weeks/2026-W40.jsonl.gz",
+      "rows": 11,
+      "sha256": "4246b6070b523f8d60f12ba26fa31f5ce33a21c312947cd8f545de8766d8edeb"
+    }
+  ],
+  "fetched": [
+    {
+      "bytes": 310,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "a5daefa3b1a1593c08cf49437769c5a4a6496f987484b2e339b2e7230d186deb",
+      "status": 200,
+      "url": "https://api.github.com/repos/fcjr/fontsovertime/git/ref/heads/main"
+    },
+    {
+      "bytes": 351,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "9134cd5bcdc27dfa6cee7808032f1322834989df1544f22f1dc93f896535ea2d",
+      "status": 206,
+      "url": "https://raw.githubusercontent.com/fcjr/fontsovertime/3a5f9c1e7b2d4f6a8c0e1b3d5f7a9c2e4b6d8f01/data/exports/latest.csv"
+    },
+    {
+      "bytes": 906,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "fb351c3f7b71363e0ab0ed5664bc29fdff6ddfd6f1cba09b1f53d176a3272d47",
+      "status": 200,
+      "url": "https://api.github.com/repos/fcjr/fontsovertime/contents/data/snapshots/weekly?ref=3a5f9c1e7b2d4f6a8c0e1b3d5f7a9c2e4b6d8f01"
+    },
+    {
+      "bytes": 1601,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "0d25df0c730728080866485b7452277a327ce7c74d71ae138e95cafba634da2c",
+      "status": 200,
+      "url": "https://raw.githubusercontent.com/fcjr/fontsovertime/3a5f9c1e7b2d4f6a8c0e1b3d5f7a9c2e4b6d8f01/data/snapshots/weekly/2026-W39.jsonl.gz"
+    },
+    {
+      "bytes": 1186,
+      "etag": null,
+      "fetched_at": "2026-10-03T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "4963eae06438e05d42ee6a2ae20334c130f0757a67493f4d3d9d610b7504c19d",
+      "status": 200,
+      "url": "https://raw.githubusercontent.com/fcjr/fontsovertime/3a5f9c1e7b2d4f6a8c0e1b3d5f7a9c2e4b6d8f01/data/snapshots/weekly/2026-W40.jsonl.gz"
+    }
+  ],
+  "notes": [],
+  "schema": 1,
+  "source": "fot",
+  "stale_of": null,
+  "window": {
+    "end": "2026-09-27",
+    "start": "2026-09-23"
+  }
+}

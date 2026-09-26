@@ -27,15 +27,22 @@ Files (all JSON, written with ``jsonio.dump``)::
     license_hashes.json {id: {text_url, text_sha256, checked_on, font_version, font_file: {url, sha256}, level}}
     stale.json          {source: {last_good: date, stale_runs: int}}
     published_ranks.json {rank_key: {id: order}}
-    smoothing.json      {fot_ewma: {id: z}, rising: {source: {id: [share_m-2, share_m-1, share_m]}}}
+    smoothing.json      {month: "YYYY-MM", fot_ewma: {id: z}, fot_ewma_base: {id: z},
+                         fot_weeks: [week], rising: {source: {id: [share_m-2, share_m-1, share_m]}}}
+                        (month: the run month that wrote it; fot_ewma_base: the EWMA that
+                        month started from, so a rerun in the same month redoes it once;
+                        fot_weeks: the Fonts Over Time weeks seen, for its phase-in)
 
 A missing file reads as empty, so the first run starts from nothing. Snapshot
 baselines (GitHub and Nerd differences) are pointers:
 ``run_history[*].snapshots``. Owner rulings stay in ``data/reviews/``.
 """
 
+import copy
+import json
 import shutil
 from dataclasses import dataclass, field
+from datetime import date
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -106,6 +113,17 @@ def complete_next_state(paths: Paths) -> list[str]:
     return copied
 
 
+def _as_date(value: object, where: str) -> date:
+    if isinstance(value, date):
+        return value
+    if isinstance(value, str):
+        try:
+            return date.fromisoformat(value)
+        except ValueError:
+            pass
+    raise ValueError(f"{where}: not a date (YYYY-MM-DD): {value!r}")
+
+
 @dataclass(frozen=True, slots=True)
 class State:
     """The committed state a run starts from. Never mutated."""
@@ -118,6 +136,32 @@ class State:
     stale: dict[str, dict[str, Any]] = field(default_factory=dict)
     published_ranks: dict[str, dict[str, int]] = field(default_factory=dict)
     smoothing: dict[str, Any] = field(default_factory=dict)
+
+    def snapshot_dates(self, source: str) -> tuple[date, ...]:
+        """The dates of ``source``'s snapshots that merged runs used, sorted.
+
+        These are the baseline pointers (``run_history[*].snapshots``): parse
+        re-parses them for lifetime-counter collectors.
+        """
+        days = set()
+        for i, entry in enumerate(self.run_history):
+            day = (entry.get("snapshots") or {}).get(source)
+            if day is not None:
+                days.add(_as_date(day, f"run_history[{i}].snapshots.{source}"))
+        return tuple(sorted(days))
+
+    def frozen_dates(self, source: str) -> frozenset[date]:
+        """The dates whose ``source`` snapshot is immutable, for ``Store.writer(frozen=...)``.
+
+        Every merged run's date and every snapshot of ``source`` a merged run
+        used: rewriting or adding one would change what a replay of that run reads.
+        """
+        runs = {
+            _as_date(entry["run_date"], f"run_history[{i}].run_date")
+            for i, entry in enumerate(self.run_history)
+            if entry.get("run_date") is not None
+        }
+        return frozenset(runs | set(self.snapshot_dates(source)))
 
 
 @dataclass(slots=True)
@@ -141,17 +185,71 @@ class NextState:
     @classmethod
     def from_state(cls, state: State) -> NextState:
         """Start from a deep copy of ``state``."""
-        raise NotImplementedError("M1 step 3")
+        parts = {name: copy.deepcopy(getattr(state, name)) for name in STATE_FILES}
+        parts["run_history"] = list(parts["run_history"])
+        return cls(base=state, **parts)
+
+
+def _history(entries: list[dict[str, Any]] | tuple[dict[str, Any], ...]) -> list[dict[str, Any]]:
+    """``run_history`` in date order, the newest ``MAX_RUN_HISTORY`` entries.
+
+    Every entry needs a valid ``run_date``, and no two may share one.
+    """
+    days = []
+    for i, entry in enumerate(entries):
+        if not isinstance(entry, dict) or "run_date" not in entry:
+            raise ValueError(f"run_history[{i}]: expected an object with a run_date")
+        days.append(_as_date(entry["run_date"], f"run_history[{i}].run_date"))
+    if len(set(days)) != len(days):
+        twice = sorted({d.isoformat() for d in days if days.count(d) > 1})
+        raise ValueError(f"run_history: more than one entry for {', '.join(twice)}")
+    ordered = [e for _, e in sorted(zip(days, entries, strict=True), key=lambda p: p[0])]
+    return ordered[-MAX_RUN_HISTORY:]
 
 
 def load_state(path: Path) -> State:
-    """Read ``state/`` (or any directory of the same files); missing files read as empty."""
-    raise NotImplementedError("M1 step 3")
+    """Read ``state/`` (or any directory of the same files); missing files read as empty.
+
+    ``run_history.json`` must be a JSON array of entries with distinct, valid
+    ``run_date`` values, and every other file an object; anything else raises
+    ``ValueError`` naming the file.
+    """
+    parts: dict[str, Any] = {}
+    for name, filename in STATE_FILES.items():
+        file = Path(path) / filename
+        if not file.is_file():
+            continue
+        try:
+            value = jsonio.load(file)
+        except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+            raise ValueError(f"{file}: not valid JSON: {exc}") from exc
+        if name == "run_history":
+            if not isinstance(value, list):
+                raise ValueError(f"{file}: expected a JSON array")
+            try:
+                value = tuple(_history(value))
+            except ValueError as exc:
+                raise ValueError(f"{file}: {exc}") from exc
+        elif not isinstance(value, dict):
+            raise ValueError(f"{file}: expected a JSON object")
+        parts[name] = value
+    return State(**parts)
 
 
 def write_next_state(next_state: NextState, path: Path) -> None:
-    """Write every state file to ``path`` (normally ``build/state/``), deterministically."""
-    raise NotImplementedError("M1 step 3")
+    """Write every state file to ``path`` (normally ``build/state/``), deterministically.
+
+    Each file is pretty canonical JSON (``jsonio.dump``, keys sorted);
+    ``run_history`` is sorted by run date and cut to ``MAX_RUN_HISTORY`` entries;
+    a missing or bad ``run_date``, or one listed twice, raises ``ValueError``
+    before anything is written. Every file in ``STATE_FILES`` is written, empty
+    parts included.
+    """
+    path = Path(path)
+    history = _history(next_state.run_history)  # checked before any file is written
+    for name, filename in STATE_FILES.items():
+        value = history if name == "run_history" else getattr(next_state, name)
+        jsonio.dump(value, path / filename)
 
 
 def apply_state(state_dir: Path, next_state_dir: Path, out_dir: Path | None = None) -> Path:
@@ -159,5 +257,32 @@ def apply_state(state_dir: Path, next_state_dir: Path, out_dir: Path | None = No
 
     Writes into ``out_dir`` (a copy) or, when it is None, into ``state_dir``
     itself; returns the directory written.
+
+    Only the files in ``STATE_FILES`` are carried over; a state file missing from
+    ``next_state_dir`` keeps its ``state_dir`` version. ``out_dir`` must not exist
+    yet, so ``state_dir`` is never touched when it is given. Anything else in
+    ``next_state_dir`` raises ``ValueError``: ``build/state/`` holds state files only.
     """
-    raise NotImplementedError("M1 step 3")
+    state_dir, next_state_dir = Path(state_dir), Path(next_state_dir)
+    if not next_state_dir.is_dir():
+        raise FileNotFoundError(f"{next_state_dir}: no proposed state to merge")
+    known = set(STATE_FILES.values())
+    unknown = sorted(p.name for p in next_state_dir.iterdir() if p.name not in known)
+    if unknown:
+        raise ValueError(f"{next_state_dir}: not state files: {unknown}")
+    target = state_dir
+    if out_dir is not None:
+        target = Path(out_dir)
+        if target.exists():
+            raise FileExistsError(f"{target}: already exists")
+        if state_dir.is_dir():
+            shutil.copytree(state_dir, target)
+        else:
+            target.mkdir(parents=True)
+    else:
+        target.mkdir(parents=True, exist_ok=True)
+    for filename in sorted(known):
+        source = next_state_dir / filename
+        if source.is_file():
+            jsonio.atomic_write(target / filename, source.read_bytes())
+    return target

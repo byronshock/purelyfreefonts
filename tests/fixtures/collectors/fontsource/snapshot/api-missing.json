@@ -1,0 +1,53 @@
+[
+  {
+    "category": "sans-serif",
+    "defSubset": "latin",
+    "family": "Google Sans",
+    "id": "google-sans",
+    "lastModified": "2026-07-23",
+    "license": "OFL-1.1",
+    "styles": [
+      "italic",
+      "normal"
+    ],
+    "subsets": [
+      "cyrillic",
+      "greek",
+      "latin",
+      "latin-ext"
+    ],
+    "type": "google",
+    "variable": true,
+    "weights": [
+      400,
+      500,
+      600,
+      700
+    ]
+  },
+  {
+    "category": "monospace",
+    "defSubset": "latin",
+    "family": "Material Symbols",
+    "id": "material-symbols",
+    "lastModified": "2026-09-17",
+    "license": "OFL-1.1",
+    "styles": [
+      "normal"
+    ],
+    "subsets": [
+      "latin"
+    ],
+    "type": "google",
+    "variable": false,
+    "weights": [
+      100,
+      200,
+      300,
+      400,
+      500,
+      600,
+      700
+    ]
+  }
+]

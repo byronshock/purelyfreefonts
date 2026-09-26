@@ -1,0 +1,40 @@
+{"attrs":{},"end":"2026-10-01","key":{"key":"Aster Sans","ns":"gf-family"},"series":"30day","source":"gf_stats","start":"2026-09-02","type":"Observation","unit":"views","value":78500000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Aster Sans","ns":"gf-family"},"series":"7day","source":"gf_stats","start":"2026-09-25","type":"Observation","unit":"views","value":18100000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Aster Sans","ns":"gf-family"},"series":"90day","source":"gf_stats","start":"2026-07-04","type":"Observation","unit":"views","value":231000000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Aster Sans","ns":"gf-family"},"series":"year","source":"gf_stats","start":"2025-10-02","type":"Observation","unit":"views","value":912000000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Birch Mono","ns":"gf-family"},"series":"30day","source":"gf_stats","start":"2026-09-02","type":"Observation","unit":"views","value":402000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Birch Mono","ns":"gf-family"},"series":"7day","source":"gf_stats","start":"2026-09-25","type":"Observation","unit":"views","value":95300000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Birch Mono","ns":"gf-family"},"series":"90day","source":"gf_stats","start":"2026-07-04","type":"Observation","unit":"views","value":1180000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Birch Mono","ns":"gf-family"},"series":"year","source":"gf_stats","start":"2025-10-02","type":"Observation","unit":"views","value":4630000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Cobalt Serif","ns":"gf-family"},"series":"30day","source":"gf_stats","start":"2026-09-02","type":"Observation","unit":"views","value":7050000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Cobalt Serif","ns":"gf-family"},"series":"7day","source":"gf_stats","start":"2026-09-25","type":"Observation","unit":"views","value":1610000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Cobalt Serif","ns":"gf-family"},"series":"90day","source":"gf_stats","start":"2026-07-04","type":"Observation","unit":"views","value":21900000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Cobalt Serif","ns":"gf-family"},"series":"year","source":"gf_stats","start":"2025-10-02","type":"Observation","unit":"views","value":88200000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Dune Display","ns":"gf-family"},"series":"30day","source":"gf_stats","start":"2026-09-02","type":"Observation","unit":"views","value":44100000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Dune Display","ns":"gf-family"},"series":"7day","source":"gf_stats","start":"2026-09-25","type":"Observation","unit":"views","value":null}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Dune Display","ns":"gf-family"},"series":"90day","source":"gf_stats","start":"2026-07-04","type":"Observation","unit":"views","value":130500000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Dune Display","ns":"gf-family"},"series":"year","source":"gf_stats","start":"2025-10-02","type":"Observation","unit":"views","value":512000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Elm Script","ns":"gf-family"},"series":"30day","source":"gf_stats","start":"2026-09-02","type":"Observation","unit":"views","value":5100000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Elm Script","ns":"gf-family"},"series":"7day","source":"gf_stats","start":"2026-09-25","type":"Observation","unit":"views","value":1300000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Elm Script","ns":"gf-family"},"series":"90day","source":"gf_stats","start":"2026-07-04","type":"Observation","unit":"views","value":6400000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Elm Script","ns":"gf-family"},"series":"year","source":"gf_stats","start":"2025-10-02","type":"Observation","unit":"views","value":6400000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Fjord Sans JP","ns":"gf-family"},"series":"30day","source":"gf_stats","start":"2026-09-02","type":"Observation","unit":"views","value":2290000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Fjord Sans JP","ns":"gf-family"},"series":"7day","source":"gf_stats","start":"2026-09-25","type":"Observation","unit":"views","value":530000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Fjord Sans JP","ns":"gf-family"},"series":"90day","source":"gf_stats","start":"2026-07-04","type":"Observation","unit":"views","value":6820000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Fjord Sans JP","ns":"gf-family"},"series":"year","source":"gf_stats","start":"2025-10-02","type":"Observation","unit":"views","value":27300000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Lumen Sans Mono","ns":"gf-family"},"series":"30day","source":"gf_stats","start":"2026-09-02","type":"Observation","unit":"views","value":null}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Lumen Sans Mono","ns":"gf-family"},"series":"7day","source":"gf_stats","start":"2026-09-25","type":"Observation","unit":"views","value":5900000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Lumen Sans Mono","ns":"gf-family"},"series":"90day","source":"gf_stats","start":"2026-07-04","type":"Observation","unit":"views","value":null}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Lumen Sans Mono","ns":"gf-family"},"series":"year","source":"gf_stats","start":"2025-10-02","type":"Observation","unit":"views","value":1020000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Opal Serif","ns":"gf-family"},"series":"30day","source":"gf_stats","start":"2026-09-02","type":"Observation","unit":"views","value":null}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Opal Serif","ns":"gf-family"},"series":"7day","source":"gf_stats","start":"2026-09-25","type":"Observation","unit":"views","value":null}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Opal Serif","ns":"gf-family"},"series":"90day","source":"gf_stats","start":"2026-07-04","type":"Observation","unit":"views","value":null}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Opal Serif","ns":"gf-family"},"series":"year","source":"gf_stats","start":"2025-10-02","type":"Observation","unit":"views","value":null}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Pebble Icons Outlined","ns":"gf-family"},"series":"30day","source":"gf_stats","start":"2026-09-02","type":"Observation","unit":"views","value":121000000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Pebble Icons Outlined","ns":"gf-family"},"series":"7day","source":"gf_stats","start":"2026-09-25","type":"Observation","unit":"views","value":28000000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Pebble Icons Outlined","ns":"gf-family"},"series":"90day","source":"gf_stats","start":"2026-07-04","type":"Observation","unit":"views","value":360000000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Pebble Icons Outlined","ns":"gf-family"},"series":"year","source":"gf_stats","start":"2025-10-02","type":"Observation","unit":"views","value":1450000000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Øresund Serif","ns":"gf-family"},"series":"30day","source":"gf_stats","start":"2026-09-02","type":"Observation","unit":"views","value":null}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Øresund Serif","ns":"gf-family"},"series":"7day","source":"gf_stats","start":"2026-09-25","type":"Observation","unit":"views","value":null}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Øresund Serif","ns":"gf-family"},"series":"90day","source":"gf_stats","start":"2026-07-04","type":"Observation","unit":"views","value":610000000.0}
+{"attrs":{},"end":"2026-10-01","key":{"key":"Øresund Serif","ns":"gf-family"},"series":"year","source":"gf_stats","start":"2025-10-02","type":"Observation","unit":"views","value":2500000000.0}

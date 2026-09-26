@@ -1,0 +1,47 @@
+{
+  "foundries": {
+    "aster-type": {
+      "families": [
+        {
+          "license": "Open Font License",
+          "name": "Aster Sans",
+          "repository": "https://github.com/aster-type/aster-sans",
+          "url": "https://www.theleagueofmoveabletype.com/aster-sans"
+        },
+        {
+          "license": "SIL Open Font License 1.1",
+          "name": "Birch Mono",
+          "repository": "https://gitlab.com/aster-type/birch-mono",
+          "url": "https://gitlab.com/aster-type/birch-mono"
+        },
+        {
+          "license": "NOASSERTION",
+          "name": "Cobalt Serif",
+          "repository": "",
+          "url": "https://velvetyne.fr/fonts/cobalt-serif"
+        }
+      ],
+      "name": "Aster Type",
+      "url": "https://aster.synth.example"
+    },
+    "birch-foundry": {
+      "families": [
+        {
+          "license": "SIL Open Font License v.1.1",
+          "name": "Aster Sans",
+          "repository": "https://github.com/aster-type/aster-sans",
+          "url": "https://open-foundry.com/fonts/aster-sans"
+        },
+        {
+          "license": "",
+          "name": "Dune Display",
+          "repository": "https://github.com/birch-foundry/dune-display",
+          "url": "https://www.fontshare.com/fonts/dune-display"
+        }
+      ],
+      "name": "Birch Foundry",
+      "url": "https://birch.synth.example"
+    }
+  },
+  "schema": 1
+}

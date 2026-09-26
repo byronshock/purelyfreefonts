@@ -1,0 +1,7 @@
+Synthetic. The list in root/config/foundries.toml invents its foundries,
+families, URLs and license strings; the contract test's fetch() reads it
+through FetchContext.paths. The HTTP answers are synthetic too (every checked
+URL answers HEAD 200 with no body).
+
+Rebuild after editing root/config/foundries.toml:
+    uv run python -m tests.collectors.foundries.regen_fixture

@@ -26,6 +26,9 @@ build/site/
 build/cache/
 build/review/
 build/review-pack/
+# tff-site build stages the site here and swaps it in; a killed build leaves one behind,
+# which would make the tree look dirty to the next build's commit check.
+build/.site-*.tmp
 
 # Local research notes, private server notes and secrets.
 research/

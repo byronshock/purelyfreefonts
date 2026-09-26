@@ -1,0 +1,10 @@
+schema_version: 5
+name: Aster Sans (google folder, must not be read)
+fonts:
+- name: Aster Sans Google
+  styles:
+  - family_name: Aster Sans Google
+    type: Regular
+    font: AsterSansGoogle.ttf
+spdx_license: OFL-1.1
+open_license: SENTINEL-LICENSE-TEXT google folder.

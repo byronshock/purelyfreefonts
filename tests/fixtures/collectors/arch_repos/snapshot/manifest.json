@@ -1,0 +1,85 @@
+{
+  "collector_version": 1,
+  "complete": true,
+  "data_date": "2026-09-25",
+  "date": "2026-09-25",
+  "extracts": [
+    {
+      "bytes": 512,
+      "path": "cachyos.jsonl.gz",
+      "rows": 9,
+      "sha256": "e272caa8057e719c016a2de539c512292feac045aada1bd655c3164d39ce8e85"
+    },
+    {
+      "bytes": 20,
+      "path": "core.jsonl.gz",
+      "rows": 0,
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "bytes": 1315,
+      "path": "extra.jsonl.gz",
+      "rows": 32,
+      "sha256": "8836ec454646122a56a027a49916347267546f6c7f5fb71adce3492d1db404e3"
+    },
+    {
+      "bytes": 138,
+      "path": "multilib.jsonl.gz",
+      "rows": 1,
+      "sha256": "6aee9e89d57bb01ef58de32205397993e7b7823236c879a5795e2a28f27e6828"
+    },
+    {
+      "bytes": 866,
+      "path": "repos.json",
+      "rows": 4,
+      "sha256": "e857d8e54a31f3d88d425e526c1418fc9c9ab00aa70782a135038e3e639b3e3d"
+    }
+  ],
+  "fetched": [
+    {
+      "bytes": 424,
+      "etag": "\"6ab74f0a-1fb4d\"",
+      "fetched_at": "2026-09-25T06:00:00Z",
+      "kept": false,
+      "last_modified": "Fri, 25 Sep 2026 01:37:12 GMT",
+      "sha256": "a0a39895fb846b50ba3a8e701d38a2b8b86c9a9b78752536d50254b81890bff0",
+      "status": 200,
+      "url": "https://geo.mirror.pkgbuild.com/core/os/x86_64/core.db"
+    },
+    {
+      "bytes": 3266,
+      "etag": "\"6ab74f0a-873a18\"",
+      "fetched_at": "2026-09-25T06:00:00Z",
+      "kept": false,
+      "last_modified": "Fri, 25 Sep 2026 04:50:18 GMT",
+      "sha256": "3961138b0fe8641dab2a85e99223520e1fff831b2f5d633f4c7eb57337157cc7",
+      "status": 200,
+      "url": "https://geo.mirror.pkgbuild.com/extra/os/x86_64/extra.db"
+    },
+    {
+      "bytes": 411,
+      "etag": "\"6ab4c1e0-14e9a\"",
+      "fetched_at": "2026-09-25T06:00:00Z",
+      "kept": false,
+      "last_modified": "Thu, 24 Sep 2026 19:02:40 GMT",
+      "sha256": "8872b150dfd7a58cd4e520c4ca66984e49ceabcc86fa857509c6b27a322dc4f4",
+      "status": 200,
+      "url": "https://geo.mirror.pkgbuild.com/multilib/os/x86_64/multilib.db"
+    },
+    {
+      "bytes": 1089,
+      "etag": "\"6ab729a2-80dc7\"",
+      "fetched_at": "2026-09-25T06:00:00Z",
+      "kept": false,
+      "last_modified": "Thu, 24 Sep 2026 02:10:42 GMT",
+      "sha256": "ed9b3ae4777fd51ffa91e08ea83b43aadef21410432e63ae44888eaddf922d9f",
+      "status": 200,
+      "url": "https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos.db"
+    }
+  ],
+  "notes": [],
+  "schema": 1,
+  "source": "arch_repos",
+  "stale_of": null,
+  "window": null
+}

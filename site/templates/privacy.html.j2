@@ -1,0 +1,18 @@
+{#-
+  privacy.html.j2: /privacy/ (Milestone 2 step 7). The text is site/content/privacy.md,
+  rendered by tff_site.pages (raw HTML off). Context: every page's, plus `heading` and
+  `content`. The tip section shows only once the tip link is on the site (M2 step 8). No
+  script: the page needs none. Styles: site/css/40-pages.css.
+-#}
+{% extends "base.html.j2" %}
+{% block scripts %}{% endblock %}
+{% block main %}
+<article class="page page-prose">
+<h1>{{ heading }}</h1>
+{{ content }}
+{% if site.tip_url %}
+<h2 id="tips">Tips</h2>
+<p>The tip link at the bottom of each page goes to Stripe's payment page. Nothing from Stripe loads on this site. Stripe's page, and its own privacy policy, come into play only after you click.</p>
+{% endif %}
+</article>
+{% endblock %}

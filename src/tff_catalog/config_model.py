@@ -47,7 +47,9 @@ RANK_KEYS = (
     "rising",
 )
 SURVEYS = ("desktop", "project")
-OS_FAMILIES = ("windows", "macos", "linux", "android")
+# "app": fonts an application bundles for its own use (LibreOffice's installers). Such an
+# entry only tags fonts: no "comes with" bit on the site and never an abstention.
+OS_FAMILIES = ("windows", "macos", "linux", "android", "app")
 
 
 class ConfigError(ValueError):
@@ -405,6 +407,8 @@ class Membership:
     extra_top: int
     extra_ranks: tuple[str, ...]
     top100: Top100Hysteresis
+    l3_overall_max: int  # stage "verify" (L3) checks overall order this or better ...
+    l3_extra_top: int  # ... and the top this many of each extra rank
 
 
 @dataclass(frozen=True, slots=True)
@@ -531,7 +535,7 @@ class LicenseAliasesConfig:
 @dataclass(frozen=True, slots=True)
 class PreinstalledSystem:
     label: str  # "Ubuntu 24.04 desktop"
-    os: Literal["windows", "macos", "linux", "android"]  # only linux entries abstain (D8)
+    os: Literal["windows", "macos", "linux", "android", "app"]  # only linux entries abstain (D8)
     families: tuple[str, ...]  # family names as the system ships them
     source: str  # where the list comes from (https URL)
     note: str = ""

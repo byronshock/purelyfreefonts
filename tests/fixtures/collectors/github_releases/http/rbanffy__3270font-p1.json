@@ -1,0 +1,17 @@
+[
+ {
+  "assets": [
+   {
+    "created_at": "2022-07-29T21:47:21Z",
+    "download_count": 12626,
+    "name": "3270_fonts_d916271.zip",
+    "state": "uploaded"
+   }
+  ],
+  "draft": false,
+  "html_url": "https://github.com/rbanffy/3270font/releases/tag/v3.0.1",
+  "prerelease": false,
+  "published_at": "2022-07-29T21:47:47Z",
+  "tag_name": "v3.0.1"
+ }
+]

@@ -1,0 +1,18 @@
+Trimmed real data (ruling T1: Fontsource and jsDelivr counts are open sources;
+small trimmed real fixtures are allowed). No value was altered; ids were only
+removed.
+
+- http/stats.json: 14 of the 2,120 ids of https://api.fontsource.org/v1/stats,
+  as the Fontsource API served it on 2026-09-26 (fetched 01:56 UTC). The
+  numbers are monthly and lifetime npm download counts (from api.npmjs.org)
+  and jsDelivr CDN hit counts (from data.jsdelivr.com) that Fontsource
+  aggregates per package. The Age header in http/index.json is the real
+  answer's; its other headers are trimmed.
+- snapshot/ is what the collector's fetch() writes from http/ on 2026-09-26;
+  expected.jsonl is what its parse() returns for snapshot/. Rebuild with
+  tests/collectors/fontsource_stats/build_fixture.py.
+
+Source: Fontsource (https://fontsource.org), whose code
+(https://github.com/fontsource/fontsource) is under the MIT License. Its API
+states no license for the statistics, and neither does jsDelivr's data API
+(docs/sources.md). No personal data: the counts are aggregates per package.

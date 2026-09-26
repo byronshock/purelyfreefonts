@@ -1,0 +1,4 @@
+[
+  {"dependents": 1, "distro": "arch", "extract": "extra.jsonl.gz", "fonts": 17, "name": "extra", "packages": 18, "url": "https://geo.mirror.pkgbuild.com/extra/os/x86_64/extra.db"},
+  {"dependents": 0, "distro": "cachyos", "extract": "cachyos.jsonl.gz", "fonts": 1, "name": "cachyos", "packages": 1, "url": "https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos.db"}
+]

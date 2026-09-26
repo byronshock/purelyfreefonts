@@ -1,0 +1,35 @@
+schema_version: 5
+name: Birch Mono
+description: Synthetic coding font with a no-ligature build.
+homepage: http://birch.synth.example
+repository: https://code.synth.example/foundry/birch-mono
+resources:
+  BirchMono.zip:
+    urls:
+    - https://code.synth.example/foundry/birch-mono/releases/download/v1.0/BirchMono-1.0.zip
+    sha256:
+    - 2222222222222222222222222222222222222222222222222222222222222222
+    - 3333333333333333333333333333333333333333333333333333333333333333
+    file_size: 409600
+fonts:
+- name: Birch Mono
+  styles:
+  - family_name: Birch Mono
+    type: Regular
+    full_name: Birch Mono Regular
+    post_script_name: BirchMono-Regular
+    version: '1.000'
+    font: BirchMono-Regular.ttf
+- name: Birch Mono NL
+  styles:
+  - family_name: Birch Mono NL
+    type: Regular
+    full_name: Birch Mono NL Regular
+    post_script_name: BirchMonoNL-Regular
+    version: '1.000'
+    font: BirchMonoNL-Regular.ttf
+extract:
+  format: zip
+spdx_license: MIT OR OFL-1.1-no-RFN
+license_url: https://code.synth.example/foundry/birch-mono/blob/main/LICENSE
+open_license: SENTINEL-LICENSE-TEXT MIT or OFL.

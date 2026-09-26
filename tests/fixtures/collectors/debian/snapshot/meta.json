@@ -1,0 +1,25 @@
+{
+  "architecture": "amd64",
+  "component": "main",
+  "name_pattern": "^(?:fonts|xfonts|ttf|otf|t1)-",
+  "packages": {
+    "dependents": 4,
+    "fonts": 15,
+    "last_modified": "Sat, 12 Sep 2026 07:29:52 GMT",
+    "listed": 20,
+    "url": "https://deb.debian.org/debian/dists/trixie/main/binary-amd64/Packages.xz"
+  },
+  "popcon": {
+    "date": "2026-09-25",
+    "last_modified": "Fri, 25 Sep 2026 13:58:49 GMT",
+    "rows": 24,
+    "submissions": 290748,
+    "url": "https://popcon.debian.org/by_inst.gz"
+  },
+  "schema": 1,
+  "sections": [
+    "fonts"
+  ],
+  "selection_revision": 1,
+  "suite": "trixie"
+}

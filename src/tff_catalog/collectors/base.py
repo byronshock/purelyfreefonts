@@ -17,9 +17,10 @@ Two conventions every collector follows (the contract test checks both):
 - ``Settings`` has a field ``enabled: bool``: the fetch and parse stages run
   only enabled collectors. Subclassing ``CollectorBase.Settings`` gives it.
 - ``fetch()`` records every request it makes in the manifest, by calling
-  ``ctx.out.record_fetch(result.to_record(kept=...))`` right after each
-  ``ctx.fetcher`` call (``kept=True`` when the body itself is saved as an
-  extract). The fetcher does not record on its own.
+  ``for rec in result.to_records(kept=...): ctx.out.record_fetch(rec)`` right
+  after each ``ctx.fetcher`` call (``kept=True`` when the body itself is saved
+  as an extract), so every redirect hop is listed too. The fetcher does not
+  record on its own.
 
 Collector modules keep heavy imports (numpy, fontTools) inside functions, so
 discovery (``tff-catalog config --strict``, the contract test) stays fast.
@@ -52,6 +53,9 @@ class FetchContext:
     previous: Snapshot | None  # latest complete earlier snapshot, for incremental fetches
     settings: object  # instance of type(self).Settings
     log: logging.Logger
+    # The repository's paths, for a collector whose input list lives in config/
+    # (foundries reads config/foundries.toml); None only in tests that need none.
+    paths: Paths | None = None
 
 
 @dataclass(frozen=True, slots=True)

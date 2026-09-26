@@ -1,0 +1,67 @@
+{
+  "format": "tff-mockhttp",
+  "responses": [
+    {
+      "body": "Sources.xz",
+      "headers": {
+        "content-type": "application/x-xz",
+        "last-modified": "Tue, 01 Sep 2026 00:00:00 GMT"
+      },
+      "url": "https://deb.debian.org/debian/dists/sid/main/source/Sources.xz"
+    },
+    {
+      "body": "fonts-aster-sans.copyright",
+      "headers": {
+        "content-type": "text/plain; charset=utf-8",
+        "etag": "\"synth-0\"",
+        "last-modified": "Tue, 01 Sep 2026 00:00:00 GMT"
+      },
+      "url": "https://metadata.ftp-master.debian.org/changelogs/main/f/fonts-aster-sans/unstable_copyright"
+    },
+    {
+      "body": "fonts-birch-mono.copyright",
+      "headers": {
+        "content-type": "text/plain; charset=utf-8",
+        "etag": "\"synth-1\"",
+        "last-modified": "Tue, 01 Sep 2026 00:00:00 GMT"
+      },
+      "url": "https://metadata.ftp-master.debian.org/changelogs/main/f/fonts-birch-mono/unstable_copyright"
+    },
+    {
+      "body": "fonts-delta-grotesk.copyright",
+      "headers": {
+        "content-type": "text/plain; charset=utf-8",
+        "etag": "\"synth-2\"",
+        "last-modified": "Tue, 01 Sep 2026 00:00:00 GMT"
+      },
+      "url": "https://metadata.ftp-master.debian.org/changelogs/main/f/fonts-delta-grotesk/unstable_copyright"
+    },
+    {
+      "body": "fonts-ember-slab.copyright",
+      "headers": {
+        "content-type": "text/plain; charset=utf-8",
+        "etag": "\"synth-3\"",
+        "last-modified": "Tue, 01 Sep 2026 00:00:00 GMT"
+      },
+      "url": "https://metadata.ftp-master.debian.org/changelogs/main/f/fonts-ember-slab/unstable_copyright"
+    },
+    {
+      "body": "xfonts-fjord.copyright",
+      "headers": {
+        "content-type": "text/plain; charset=utf-8",
+        "etag": "\"synth-4\"",
+        "last-modified": "Tue, 01 Sep 2026 00:00:00 GMT"
+      },
+      "url": "https://metadata.ftp-master.debian.org/changelogs/main/x/xfonts-fjord/unstable_copyright"
+    },
+    {
+      "body": null,
+      "headers": {
+        "content-type": "text/html; charset=iso-8859-1"
+      },
+      "status": 404,
+      "url": "https://metadata.ftp-master.debian.org/changelogs/main/f/fonts-cobalt-serif/unstable_copyright"
+    }
+  ],
+  "version": 1
+}

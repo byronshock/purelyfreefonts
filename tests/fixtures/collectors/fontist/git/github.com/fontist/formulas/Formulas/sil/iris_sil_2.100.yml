@@ -1,0 +1,23 @@
+schema_version: 5
+name: Iris SIL
+description: SENTINEL-DESCRIPTION newer version of the synthetic SIL-style family; names no license id.
+homepage: https://software.synth.example/fonts/iris
+resources:
+  IrisSIL-2.100.zip:
+    urls:
+    - https://code.synth.example/sil/iris/releases/download/v2.100/IrisSIL-2.100.zip
+    sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+    file_size: 1048576
+fonts:
+- name: Iris SIL
+  styles:
+  - family_name: Iris SIL
+    type: Regular
+    full_name: Iris SIL Regular
+    post_script_name: IrisSIL-Regular
+    version: '2.100'
+    font: IrisSIL-Regular.ttf
+extract:
+  format: zip
+license_url: https://license.synth.example/
+open_license: SENTINEL-LICENSE-TEXT OFL.

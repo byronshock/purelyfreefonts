@@ -1,0 +1,47 @@
+{
+  "collector_version": 1,
+  "complete": true,
+  "data_date": "2026-09-01",
+  "date": "2026-10-01",
+  "extracts": [
+    {
+      "bytes": 8634,
+      "path": "fonts.json",
+      "rows": 16,
+      "sha256": "fbe2e7eba0d7bfcb8e7300755a81de281964da5d3627293084f5c622feaef0ed"
+    },
+    {
+      "bytes": 209,
+      "path": "pin.json",
+      "rows": null,
+      "sha256": "d18c6ece2ab9899365efb65d9a249c991d9f036709f2a6b695db609338b86cb2"
+    }
+  ],
+  "fetched": [
+    {
+      "bytes": 157,
+      "etag": "\"4f1c2e0a9b7d4c3e8f6a5b2d1c0e9f8a\"",
+      "fetched_at": "2026-10-01T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "92f0ac40eb183424a4cb7e38162b74401e616b8b028a16e0bbcdbbf7aa837277",
+      "status": 200,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/commits?path=bin%2Fscripts%2Flib%2Ffonts.json&per_page=1&sha=master"
+    },
+    {
+      "bytes": 8634,
+      "etag": "\"a3f9d2c47b1e6f085c9a2d4e7b3f1a6c\"",
+      "fetched_at": "2026-10-01T06:00:00Z",
+      "kept": true,
+      "last_modified": null,
+      "sha256": "fbe2e7eba0d7bfcb8e7300755a81de281964da5d3627293084f5c622feaef0ed",
+      "status": 200,
+      "url": "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json"
+    }
+  ],
+  "notes": [],
+  "schema": 1,
+  "source": "nerdfonts",
+  "stale_of": null,
+  "window": null
+}

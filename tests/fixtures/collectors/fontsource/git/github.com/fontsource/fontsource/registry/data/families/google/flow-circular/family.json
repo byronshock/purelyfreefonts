@@ -1,0 +1,62 @@
+{
+	"classifications": [
+		"display",
+		"symbols"
+	],
+	"dateAdded": "2021-10-22",
+	"family": "Flow Circular",
+	"languages": [],
+	"license": {
+		"attribution": "Copyright 2020 The Flow Project Authors",
+		"id": "OFL-1.1",
+		"url": "https://openfontlicense.org/open-font-license-official-text/"
+	},
+	"project": {
+		"repository": "https://github.com/HYPD/flow-typeface",
+		"revision": "44f3478408936f5240cbc4fb3f7b4ed19d22822e"
+	},
+	"provenance": {
+		"directory": "ofl/flowcircular",
+		"repository": "google/fonts",
+		"revision": "03dac7d00bdcc3ade9a1f77b855ae076b94d59f7",
+		"type": "github"
+	},
+	"sampleText": {
+		"short": "Wireframe content"
+	},
+	"sourceModified": "2026-02-27",
+	"sources": [
+		{
+			"inspection": {
+				"axes": [],
+				"codepoints": 210,
+				"colorTables": [],
+				"features": {
+					"gpos": [],
+					"gsub": [
+						"aalt",
+						"dnom",
+						"frac"
+					]
+				},
+				"fontVersion": "Version 1.101; ttfautohint (v1.8.3)",
+				"glyphs": 801,
+				"outline": "glyf",
+				"style": "normal",
+				"unicodeRange": "U+000D, U+0020-007E, U+00A0-0107, U+010A-0113",
+				"weight": 400
+			},
+			"path": "ofl/flowcircular/FlowCircular-Regular.ttf",
+			"sha256": "ea87d5b1d0be7c5a3cf63054ad3e1d5ed54cca7491f9237a1226cb72f6340e78",
+			"size": 45788,
+			"variant": {
+				"style": "normal",
+				"weight": 400
+			}
+		}
+	],
+	"status": "active",
+	"tags": [
+		"special-use/redaction"
+	]
+}

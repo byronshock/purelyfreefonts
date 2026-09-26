@@ -98,6 +98,7 @@
       "additionalProperties": false,
       "required": [
         "codepoints",
+        "git_blob",
         "role",
         "sha256",
         "size",
@@ -144,6 +145,18 @@
           "type": [
             "string",
             "null"
+          ]
+        },
+        "git_blob": {
+          "description": "git blob sha1 of the file, when the source lists it (google/fonts tree): a font-facts cache key",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            }
           ]
         }
       }

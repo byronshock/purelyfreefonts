@@ -1,0 +1,32 @@
+[
+ {
+  "assets": [
+   {
+    "created_at": "2023-01-14T15:20:03Z",
+    "download_count": 587668,
+    "name": "JetBrainsMono-2.304.zip",
+    "state": "uploaded"
+   }
+  ],
+  "draft": false,
+  "html_url": "https://github.com/JetBrains/JetBrainsMono/releases/tag/v2.304",
+  "prerelease": false,
+  "published_at": "2023-01-14T15:22:41Z",
+  "tag_name": "v2.304"
+ },
+ {
+  "assets": [
+   {
+    "created_at": "2021-07-30T15:10:06Z",
+    "download_count": 87892,
+    "name": "JetBrainsMono-2.242.zip",
+    "state": "uploaded"
+   }
+  ],
+  "draft": false,
+  "html_url": "https://github.com/JetBrains/JetBrainsMono/releases/tag/v2.242",
+  "prerelease": false,
+  "published_at": "2021-07-30T15:18:46Z",
+  "tag_name": "v2.242"
+ }
+]

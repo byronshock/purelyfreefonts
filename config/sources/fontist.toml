@@ -1,0 +1,38 @@
+# Universe collector "fontist": Fontist formulas (design-m1 §2.4, scout-universe §6).
+# Loaded strictly into tff_catalog.collectors.universe.fontist.Fontist.Settings.
+# Facts only: the formulas repository has no license (docs/sources.md), so the
+# snapshot keeps license ids, names, URLs and hashes, never formula text.
+
+enabled = true
+repository = "https://github.com/fontist/formulas"
+
+# The v5 branch, the remote's default (checked 2026-09-25), named so that a new
+# default branch for a later schema is never followed silently. schema_version
+# below also makes a formula schema change fail the fetch instead of misreading it.
+ref = "v5"
+schema_version = 5
+
+# Folders under Formulas/ ("." is Formulas/ itself). google/ repeats Google Fonts
+# and macos/ holds proprietary Apple downloads, so neither is read.
+folders = [".", "sil"]
+
+# A clone with fewer than this share of the previous snapshot's formulas fails the
+# fetch (a moved folder, a broken clone), so the stale policy keeps the last good one.
+min_share = 0.9
+
+# Non-text families by name: [code, regex]; the first match gives the drop code.
+# Math: "Libertinus Math", "NewComputerModernMath". Symbol: "Standard Symbols PS",
+# "wx_symbols", the dingbat fonts (URW's is D050000L).
+drop_names = [
+  ["icon", '\bIcons?\b'],
+  ["emoji", '\bEmoji\b'],
+  ["barcode", '\bBarcode\b'],
+  ["math", 'Math\b'],
+  ["music", '\bMusic(?:al)?\b'],
+  ["symbol", '(?i)(?:\b|_)symbols?\b|\b(?:dingbats|marlett|webdings|wingdings)\b|^D050000L$'],
+]
+
+# A formula that asks the user to accept a license agreement, and carries no open
+# license, gives its families the drop code "proprietary" (unless a drop_names code
+# applies first).
+agreement_is_proprietary = true

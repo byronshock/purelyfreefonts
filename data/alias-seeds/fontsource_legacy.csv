@@ -1,0 +1,84 @@
+alias,ns,target_ns,target,relation,detail,source,evidence,auto
+andada,fs-id,gf-family,Andada,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/andada@4.5.2/metadata.json,false
+andika-new-basic,fs-id,gf-family,Andika New Basic,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/andika-new-basic@4.5.6/metadata.json,false
+arima-madurai,fs-id,fs-id,arima,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+bbh-sans-bartle,fs-id,fs-id,bbh-bartle,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+bbh-sans-bogle,fs-id,fs-id,bbh-bogle,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+bbh-sans-hegarty,fs-id,fs-id,bbh-hegarty,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+be-vietnam,fs-id,gf-family,Be Vietnam,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/be-vietnam@4.5.2/metadata.json,false
+bj-cree,fs-id,fs-id,bjcree,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+coda-caption,fs-id,fs-id,coda,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+dseg14,fs-id,font-name,DSEG14,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/dseg14@4.5.3/metadata.json,false
+dseg7,fs-id,font-name,DSEG7,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/dseg7@4.5.4/metadata.json,false
+edu-vic-wa-nt-hand,fs-id,fs-id,edu-au-vic-wa-nt-hand,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+edu-vic-wa-nt-hand-pre,fs-id,fs-id,edu-au-vic-wa-nt-pre,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+ek-mukta,fs-id,fs-id,mukta,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+fredoka-one,fs-id,fs-id,fredoka,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+geist-sans,fs-id,fs-id,geist,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+gentium-basic,fs-id,gf-family,Gentium Basic,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/gentium-basic@4.5.7/metadata.json,false
+gentium-book-basic,fs-id,fs-id,gentium-book-plus,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+golos-ui,fs-id,font-name,Golos UI,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/golos-ui@4.5.3/metadata.json,false
+ia-writer-duospace,fs-id,font-name,iA Writer Duospace,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/ia-writer-duospace@4.5.3/metadata.json,false
+kdam-thmor,fs-id,gf-family,Kdam Thmor,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/kdam-thmor@4.5.7/metadata.json,false
+league-gothic-condensed,fs-id,font-name,League Gothic Condensed,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/league-gothic-condensed@4.5.3/metadata.json,false
+league-mono-condensed,fs-id,font-name,League Mono Condensed,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/league-mono-condensed@4.5.3/metadata.json,false
+league-mono-extended,fs-id,font-name,League Mono Extended,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/league-mono-extended@4.5.3/metadata.json,false
+league-mono-narrow,fs-id,font-name,League Mono Narrow,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/league-mono-narrow@4.5.5/metadata.json,false
+league-mono-wide,fs-id,font-name,League Mono Wide,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/league-mono-wide@4.5.3/metadata.json,false
+material-icons-rounded,fs-id,font-name,Material Icons Rounded,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/material-icons-rounded@4.5.4/metadata.json,false
+merienda-one,fs-id,fs-id,merienda,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+muli,fs-id,gf-family,Muli,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/muli@4.1.0/metadata.json,false
+noto-sans-n-ko,fs-id,gf-family,Noto Sans N Ko,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-n-ko@4.5.11/metadata.json,false
+noto-sans-phags-pa,fs-id,fs-id,noto-sans-phagspa,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+open-sans-condensed,fs-id,gf-family,Open Sans Condensed,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/open-sans-condensed@4.5.5/metadata.json,false
+ostrich-sans-dashed,fs-id,font-name,Ostrich Sans Dashed,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/ostrich-sans-dashed@4.5.3/metadata.json,false
+ostrich-sans-inline,fs-id,font-name,Ostrich Sans Inline,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/ostrich-sans-inline@4.5.3/metadata.json,false
+ostrich-sans-rounded,fs-id,font-name,Ostrich Sans Rounded,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/ostrich-sans-rounded@4.5.3/metadata.json,false
+scheherazade,fs-id,gf-family,Scheherazade,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/scheherazade@4.5.2/metadata.json,false
+source-sans-pro,fs-id,fs-id,source-sans-3,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+source-serif-pro,fs-id,fs-id,source-serif-4,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+spartan,fs-id,gf-family,Spartan,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/spartan@4.5.8/metadata.json,false
+vazir,fs-id,font-name,Vazir,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/vazir@4.5.4/metadata.json,false
+youngserif,fs-id,font-name,YoungSerif,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/youngserif@4.5.2/metadata.json,false
+@fontsource-variable/edu-vic-wa-nt-hand,npm,fs-id,edu-au-vic-wa-nt-hand,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource-variable/edu-vic-wa-nt-hand-pre,npm,fs-id,edu-au-vic-wa-nt-pre,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/andada,npm,gf-family,Andada,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/andada@4.5.2/metadata.json,false
+@fontsource/andika-new-basic,npm,gf-family,Andika New Basic,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/andika-new-basic@4.5.6/metadata.json,false
+@fontsource/arima-madurai,npm,fs-id,arima,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/bbh-sans-bartle,npm,fs-id,bbh-bartle,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/bbh-sans-bogle,npm,fs-id,bbh-bogle,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/bbh-sans-hegarty,npm,fs-id,bbh-hegarty,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/be-vietnam,npm,gf-family,Be Vietnam,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/be-vietnam@4.5.2/metadata.json,false
+@fontsource/bj-cree,npm,fs-id,bjcree,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/coda-caption,npm,fs-id,coda,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/dseg14,npm,font-name,DSEG14,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/dseg14@4.5.3/metadata.json,false
+@fontsource/dseg7,npm,font-name,DSEG7,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/dseg7@4.5.4/metadata.json,false
+@fontsource/edu-vic-wa-nt-hand,npm,fs-id,edu-au-vic-wa-nt-hand,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/edu-vic-wa-nt-hand-pre,npm,fs-id,edu-au-vic-wa-nt-pre,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/fredoka-one,npm,fs-id,fredoka,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/geist-sans,npm,fs-id,geist,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/gentium-basic,npm,gf-family,Gentium Basic,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/gentium-basic@4.5.7/metadata.json,false
+@fontsource/gentium-book-basic,npm,fs-id,gentium-book-plus,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/golos-ui,npm,font-name,Golos UI,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/golos-ui@4.5.3/metadata.json,false
+@fontsource/ia-writer-duospace,npm,font-name,iA Writer Duospace,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/ia-writer-duospace@4.5.3/metadata.json,false
+@fontsource/kdam-thmor,npm,gf-family,Kdam Thmor,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/kdam-thmor@4.5.7/metadata.json,false
+@fontsource/league-gothic-condensed,npm,font-name,League Gothic Condensed,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/league-gothic-condensed@4.5.3/metadata.json,false
+@fontsource/league-mono-condensed,npm,font-name,League Mono Condensed,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/league-mono-condensed@4.5.3/metadata.json,false
+@fontsource/league-mono-extended,npm,font-name,League Mono Extended,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/league-mono-extended@4.5.3/metadata.json,false
+@fontsource/league-mono-narrow,npm,font-name,League Mono Narrow,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/league-mono-narrow@4.5.5/metadata.json,false
+@fontsource/league-mono-wide,npm,font-name,League Mono Wide,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/league-mono-wide@4.5.3/metadata.json,false
+@fontsource/material-icons-rounded,npm,font-name,Material Icons Rounded,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/material-icons-rounded@4.5.4/metadata.json,false
+@fontsource/merienda-one,npm,fs-id,merienda,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/muli,npm,gf-family,Muli,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/muli@4.1.0/metadata.json,false
+@fontsource/noto-sans-n-ko,npm,gf-family,Noto Sans N Ko,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-n-ko@4.5.11/metadata.json,false
+@fontsource/noto-sans-phags-pa,npm,fs-id,noto-sans-phagspa,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/open-sans-condensed,npm,gf-family,Open Sans Condensed,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/open-sans-condensed@4.5.5/metadata.json,false
+@fontsource/ostrich-sans-dashed,npm,font-name,Ostrich Sans Dashed,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/ostrich-sans-dashed@4.5.3/metadata.json,false
+@fontsource/ostrich-sans-inline,npm,font-name,Ostrich Sans Inline,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/ostrich-sans-inline@4.5.3/metadata.json,false
+@fontsource/ostrich-sans-rounded,npm,font-name,Ostrich Sans Rounded,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/ostrich-sans-rounded@4.5.3/metadata.json,false
+@fontsource/scheherazade,npm,gf-family,Scheherazade,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/scheherazade@4.5.2/metadata.json,false
+@fontsource/source-sans-pro,npm,fs-id,source-sans-3,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/source-serif-pro,npm,fs-id,source-serif-4,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/spartan,npm,gf-family,Spartan,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/spartan@4.5.8/metadata.json,false
+@fontsource/vazir,npm,font-name,Vazir,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/vazir@4.5.4/metadata.json,false
+@fontsource/youngserif,npm,font-name,YoungSerif,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/youngserif@4.5.2/metadata.json,false

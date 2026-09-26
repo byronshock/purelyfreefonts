@@ -1,0 +1,87 @@
+{
+	"classifications": [
+		"monospace",
+		"sans-serif"
+	],
+	"family": "Monaspace Neon",
+	"languages": [
+		"aa_Latn",
+		"abq_Cyrl",
+		"ace_Latn",
+		"acf_Latn",
+		"ach_Latn",
+		"be_Cyrl"
+	],
+	"license": {
+		"attribution": "GitHub Next",
+		"id": "OFL-1.1",
+		"url": "https://raw.githubusercontent.com/githubnext/monaspace/f31794b6e9e65698a062262e2f826f679dcb7070/LICENSE"
+	},
+	"primaryScript": "Latn",
+	"project": {
+		"repository": "https://github.com/githubnext/monaspace",
+		"revision": "f31794b6e9e65698a062262e2f826f679dcb7070"
+	},
+	"provenance": {
+		"directory": "sources/monaspace-neon",
+		"repository": "fontsource/font-files",
+		"revision": "0a4ca74c3548ab47d03eb7e9af398b41a86a31ac",
+		"type": "github"
+	},
+	"sourceModified": "2026-07-27",
+	"sources": [
+		{
+			"inspection": {
+				"axes": [
+					{
+						"default": 0,
+						"max": 0,
+						"min": -11,
+						"tag": "slnt"
+					},
+					{
+						"default": 100,
+						"max": 125,
+						"min": 100,
+						"tag": "wdth"
+					},
+					{
+						"default": 200,
+						"max": 800,
+						"min": 200,
+						"tag": "wght"
+					}
+				],
+				"codepoints": 318,
+				"colorTables": [],
+				"features": {
+					"gpos": [],
+					"gsub": [
+						"aalt",
+						"calt",
+						"case"
+					]
+				},
+				"fontVersion": "Version 1.400 (Monaspace Neon Var)",
+				"glyphs": 3606,
+				"outline": "glyf",
+				"style": "normal",
+				"unicodeRange": "U+0020-007E, U+00A0-0148, U+014A-017E, U+0188",
+				"weight": {
+					"default": 200,
+					"max": 800,
+					"min": 200
+				}
+			},
+			"path": "sources/monaspace-neon/files/Monaspace Neon Var.ttf",
+			"sha256": "e3cc8bf1c4a0384309d584c0dce9291166535066c538e60e2d5ac444b76fec4c",
+			"size": 1646548,
+			"variant": {
+				"style": "normal",
+				"weight": 200
+			}
+		}
+	],
+	"status": "active",
+	"tags": []
+}

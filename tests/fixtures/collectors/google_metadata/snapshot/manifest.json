@@ -1,0 +1,34 @@
+{
+  "collector_version": 1,
+  "complete": true,
+  "data_date": "2026-10-01",
+  "date": "2026-10-01",
+  "extracts": [
+    {
+      "bytes": 815,
+      "path": "families.jsonl.gz",
+      "rows": 16,
+      "sha256": "025d96271b047caaac1a18361a6dd048acd8b371269fa18730ba28c7ac467bcf"
+    }
+  ],
+  "fetched": [
+    {
+      "bytes": 13973,
+      "etag": null,
+      "fetched_at": "2026-10-01T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "b40e6c9eb809cfe1266da5a9e7860c72c4e8a4309592ce61c6e0769e23755371",
+      "status": 200,
+      "url": "https://fonts.google.com/metadata/fonts"
+    }
+  ],
+  "notes": [
+    "rows without a family name skipped: 1",
+    "repeated families kept once: Aster Sans"
+  ],
+  "schema": 1,
+  "source": "google_metadata",
+  "stale_of": null,
+  "window": null
+}

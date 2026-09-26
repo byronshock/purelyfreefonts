@@ -1,0 +1,54 @@
+# Ranking collector arch_repos: font dependency, provides and group edges, and
+# package licenses, from the Arch and CachyOS pacman sync databases (ruling T1:
+# Arch package data may be published; CachyOS data is used as facts only).
+enabled = true
+
+# What counts as a font package. A package is font-like when its name matches
+# font_pattern and not not_fonts, it is in one of font_groups, or it provides a
+# name matching font_provides. The extract keeps font-like packages and the
+# packages that depend on them (or on a name they provide, such as ttf-font).
+#
+# Font package names (ttf-*, otf-*, ttc-*, woff-*, *-fonts, *-font, xorg-fonts-*),
+# plus gsfonts and the WenQuanYi packages, whose names do not say so.
+font_pattern = '(?:^|[-_.+])(?:x?fonts?|ttf|otf|ttc|woff2?)(?:[-_.+]|$)|^gsfonts$|^wqy-'
+# Libraries and tools the pattern catches: language bindings, SDL_ttf, the woff2
+# library, font managers and viewers, X font encodings and alias files.
+not_fonts = '^(?:perl|python|haskell|lib32|ruby|lua|nodejs|rust|go)-|^sdl\d?_ttf$|^woff2$|(?:^|-)font-(?:manager|viewer|util)$|^font-v$|^xorg-fonts-(?:encodings|alias-.+)$'
+# gate M4 reads the nerd-fonts group's members for the Arch Nerd floor.
+font_groups = ["nerd-fonts"]
+# The virtual font names: ttf-font, ttf-font-nerd, ttf-font-awesome.
+font_provides = '^ttf-font'
+
+# A fetch with fewer font-like packages than min_fonts, or fewer than min_share
+# of the previous snapshot's, or a repository listing fewer than min_share of
+# its previous packages, is a broken database: it fails, and the stale policy
+# reuses the last good snapshot. There were 228 font-like packages on
+# 2026-09-25; the floor is low enough for the test fixture's 29, and min_share
+# does the real work.
+min_fonts = 20
+min_share = 0.8
+
+# The sync databases read. Each is a compressed tar (gzip for Arch, zstd for
+# CachyOS; the magic bytes decide). `distro` names the package system its
+# dependents belong to (config/site.toml [package_systems]).
+# gate C2 (rec): EndeavourOS is not listed. Its repository has no font
+# dependencies; the fonts its installer adds are in config/preinstalled.toml.
+[[repos]]
+name = "core"
+distro = "arch"
+url = "https://geo.mirror.pkgbuild.com/core/os/x86_64/core.db"
+
+[[repos]]
+name = "extra"
+distro = "arch"
+url = "https://geo.mirror.pkgbuild.com/extra/os/x86_64/extra.db"
+
+[[repos]]
+name = "multilib"
+distro = "arch"
+url = "https://geo.mirror.pkgbuild.com/multilib/os/x86_64/multilib.db"
+
+[[repos]]
+name = "cachyos"
+distro = "cachyos"
+url = "https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos.db"

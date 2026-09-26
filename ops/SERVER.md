@@ -10,7 +10,7 @@ How the Contabo VPS and the three Cloudflare zones are set up. The settled decis
 | IPv4 / IPv6 | in `ops/SERVER.local.md` (not in git) |
 | SSH | `ssh tff` (user `byron`, key `~/.ssh/id_ed25519`, passwordless sudo) |
 | Site root | `/srv/trulyfreefonts/public` |
-| Web server config | [ops/Caddyfile](Caddyfile) → `/etc/caddy/Caddyfile` |
+| Web server config | [ops/Caddyfile](Caddyfile) → `/etc/caddy/Caddyfile`, which imports [ops/caddy/site.caddy](caddy/site.caddy) → `/etc/caddy/site.caddy` (the site's headers) and other sites' snippets from `/etc/caddy/sites/*.caddy` |
 | Access log | `/var/log/caddy/access.log`: IPs masked to /16 (IPv4) and /32 (IPv6), IP headers and port dropped; 14 days kept by logrotate ([ops/logrotate-caddy](logrotate-caddy) → `/etc/logrotate.d/caddy-trulyfreefonts`) |
 | Origin cert | `/etc/caddy/certs/` (Cloudflare Origin CA, 15 years) |
 | Cloudflare zone IDs | in `ops/SERVER.local.md`, or `ops/cf.sh GET /zones` |
@@ -20,7 +20,7 @@ How the Contabo VPS and the three Cloudflare zones are set up. The settled decis
 
 **Deploy the site** (from the project root): `rsync -av --delete public/ tff:/srv/trulyfreefonts/public/`
 
-**Change the web server config:** edit [ops/Caddyfile](Caddyfile), then run the deploy line at the top of that file.
+**Change the web server config:** edit [ops/Caddyfile](Caddyfile) or [ops/caddy/site.caddy](caddy/site.caddy), then run the deploy line at the top of the Caddyfile: it validates both and installs both.
 
 **Cloudflare API:** `ops/cf.sh METHOD /path [json]`, e.g. `ops/cf.sh GET /zones`. It reads the token from the env file and never prints it.
 
@@ -76,6 +76,11 @@ The API token can't reach these two settings: its calls to Bot Management and We
   3. On the same list, check that **AI Labyrinth** (it adds hidden links to pages) and **Set your preference to block training in robots.txt** are Off; both are off by default. If there is a **Precursor** card (it injects a script, and may not exist on Free), check that it is Off too; clear the filter to see it. Leave the AI bot policies (Search, Agent, Training) as they are, but tell Claude what they say and whether a robots.txt sync option is on, since that would add lines to the site's own `robots.txt` in Milestone 2.
   4. Switch to `trulyfreefonts.org` and repeat steps 1–3, then do the same for `trulyfreefonts.net`.
 
+### H. Cache Rule for hashed assets (Byron, then Claude)
+Hashed files under `/assets/` never change, so Cloudflare may cache them for a year. Cloudflare doesn't cache JSON or HTML by default, and the API token can't create Cache Rules yet. HTML stays uncached (M2-D11 (a)).
+- [x] 22. **Byron: add the Cache Rules permission to the token.** *(Done 2026-09-25.)* Cloudflare dashboard → profile icon → **My Profile** → **API Tokens** → **trulyfreefonts-mgmt** → **⋯** → **Edit** → **Permissions** → **+ Add more**: **Zone** · **Cache Rules** · **Edit**. Leave Zone Resources as they are, then **Continue to summary** → **Update token**. The token value stays the same. Tell Claude when it's done.
+- [x] 23. **Claude: create the rule on `trulyfreefonts.com`** through the API (phase `http_request_cache_settings`): "URI path starts with `/assets/`": eligible for cache, edge TTL from the origin's Cache-Control. Record the ruleset id here. (Milestone 2 step 11.) *(Done 2026-09-25: ruleset `86856f17b4ce4ce39bddf524e52e88d1`, rule `0463441450b642bf991f080a7aa91d4e`, expression `starts_with(http.request.uri.path, "/assets/")`, cache on, edge and browser TTL `respect_origin`. HTML stays uncached.)*
+
 ## Verification
 - `ssh tff sudo -n true` works; `ssh root@<IP>` and `ssh -o PubkeyAuthentication=no tff` are refused.
 - `ssh tff 'sudo ufw status verbose; systemctl is-active caddy fail2ban unattended-upgrades'` is all active.
@@ -83,6 +88,7 @@ The API token can't reach these two settings: its calls to Bot Management and We
 - `curl -sI https://trulyfreefonts.com` → 200, `server: cloudflare`. `www.`, `.org` and `.net` URLs → 301 to the same path on `https://trulyfreefonts.com`.
 - SSL mode is `strict` on all 3 zones.
 - `curl -sI https://trulyfreefonts.com` has no `nel` or `report-to` header.
+- `ops/cf.sh GET /zones/<id>/rulesets/phases/http_request_cache_settings/entrypoint` on the `.com` zone shows the one `/assets/` rule, enabled. `curl -sI https://trulyfreefonts.com/` shows `cf-cache-status: DYNAMIC` (HTML is never edge-cached); once the site is live, a second request for a hashed `/assets/` file shows `cf-cache-status: HIT`.
 - On each zone, `ops/cf.sh GET /zones/<id>/settings/<name>` gives `email_obfuscation` off, `rocket_loader` off, `always_online` off and `browser_cache_ttl` 0.
 - Injection checks must send a browser's `Accept: text/html` header. Plain `curl` sends `Accept: */*`, and Cloudflare injects nothing into that response, so it misses the beacon. `curl -s -H 'Accept: text/html' https://trulyfreefonts.com/ | grep -c -E 'cloudflareinsights|data-cf-beacon|/cdn-cgi/'` gives 0, and the same request with `-D - -o /dev/null` shows no `set-cookie`. First confirm that `curl -s https://trulyfreefonts.com/cdn-cgi/trace` shows `loc=US`: the default Web Analytics setting skips visitors in the EU, EEA, UK and Switzerland, so a clean result from there proves nothing.
 - `ssh tff 'sudo tail -1 /var/log/caddy/access.log'` shows a masked `client_ip` (ending `.0.0` or `::`), no `remote_port`, and no `Cf-Connecting-Ip` or `X-Forwarded-For` header. `sudo logrotate --debug /etc/logrotate.d/caddy-trulyfreefonts` reports no errors.

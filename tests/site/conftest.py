@@ -14,7 +14,7 @@
 - ``guarded_context``: a factory for contexts that load ``guards.js`` before any page
   script, record every request, abort requests to any other origin and collect console
   messages and page errors. Routing turns off the HTTP cache, so performance tests use plain
-  contexts instead.
+  contexts instead. A page it opens keeps the context's ``color_scheme`` (``keep_scheme``).
 - ``no_network``: fails any connection or name lookup that isn't the loopback interface.
 """
 
@@ -40,6 +40,7 @@ LOOPBACK = frozenset({"127.0.0.1", "::1", "localhost"})
 # Chromium: "... violates the following Content Security Policy directive ..." or "Refused to
 # load ..."; Firefox: "Content-Security-Policy: The page's settings blocked ...".
 CSP_MESSAGE = re.compile(r"content[- ]security[- ]policy|refused to", re.IGNORECASE)
+SCHEME_JS = "(dark) => matchMedia('(prefers-color-scheme: dark)').matches === dark"
 
 # Requesting any of these makes a test a browser test.
 BROWSER_FIXTURES = frozenset(
@@ -128,6 +129,7 @@ class Guarded:
 
     context: Any
     origin: str
+    color_scheme: str | None = None  # the context's, re-applied to each page (keep_scheme)
     requests: list[str] = field(default_factory=list)
     blocked: list[str] = field(default_factory=list)
     responses: list[Any] = field(default_factory=list)
@@ -146,9 +148,12 @@ class Guarded:
         self.context.route("**/*", lambda route: self._route(route))
 
     def new_page(self) -> Any:
-        """Open a page in this context, with console and error capture."""
+        """Open a page in this context, with console and error capture, keeping the
+        context's colour scheme (``keep_scheme``)."""
         page = self.context.new_page()
         self._watch(page)
+        if self.color_scheme in ("light", "dark"):
+            keep_scheme(page, self.color_scheme)
         return page
 
     def records(self, page: Any) -> dict[str, list]:
@@ -191,6 +196,32 @@ class Guarded:
             route.abort()
 
 
+def keep_scheme(page: Any, scheme: str) -> None:
+    """Make ``page``'s first ``goto`` end in ``scheme`` (light or dark), and check it.
+
+    Playwright's Firefox drops the context's ``color_scheme`` when a navigation lands on a
+    page sent with ``Cross-Origin-Opener-Policy: same-origin`` (site.caddy's header: the
+    process swap loses it, while ``forced_colors`` and ``reduced_motion`` survive), so a
+    "dark" test would silently run light. A page-level scheme set after that sticks, so the
+    first ``goto`` sets it and reloads when the page isn't in the scheme already.
+    """
+    goto = page.goto
+    first = True
+
+    def goto_in_scheme(url: str, **kwargs: Any) -> Any:
+        nonlocal first
+        response = goto(url, **kwargs)
+        if first:
+            first = False
+            if not page.evaluate(SCHEME_JS, scheme == "dark"):
+                page.emulate_media(color_scheme=scheme)
+                page.reload(wait_until=kwargs.get("wait_until", "load"))
+            assert page.evaluate(SCHEME_JS, scheme == "dark"), f"the {scheme} scheme isn't on"
+        return response
+
+    page.goto = goto_in_scheme
+
+
 def _origin(url: str) -> str:
     parts = urlsplit(url)
     return f"{parts.scheme}://{parts.netloc}"
@@ -204,7 +235,8 @@ def guarded_context(browser: Any, site_url: str) -> Iterator[Callable[..., Guard
     def make(**kwargs: Any) -> Guarded:
         context = browser.new_context(base_url=site_url, **kwargs)
         made.append(context)
-        guarded = Guarded(context=context, origin=_origin(site_url))
+        scheme = kwargs.get("color_scheme")
+        guarded = Guarded(context=context, origin=_origin(site_url), color_scheme=scheme)
         guarded.attach()
         return guarded
 

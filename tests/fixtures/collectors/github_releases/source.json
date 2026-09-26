@@ -1,0 +1,274 @@
+{
+ "date": "2026-09-26",
+ "repos": {
+  "adobe-fonts/source-code-pro": [
+   {
+    "tag": "2.042R-u/1.062R-i/1.026R-vf",
+    "published_at": "2023-04-12T09:30:08Z",
+    "prerelease": false,
+    "assets": [
+     [
+      "OTF-source-code-pro-2.042R-u_1.062R-i.zip",
+      45068,
+      "2023-04-12T09:29:28Z"
+     ],
+     [
+      "VF-source-code-VF-1.026R.zip",
+      9981,
+      "2023-04-12T09:29:38Z"
+     ],
+     [
+      "WOFF2-source-code-pro-2.042R-u_1.062R-i_1.026Rvf.zip",
+      195120,
+      "2023-04-12T09:29:43Z"
+     ]
+    ]
+   }
+  ],
+  "be5invis/Iosevka": [
+   {
+    "tag": "v34.8.1",
+    "published_at": "2026-08-22T14:51:50Z",
+    "prerelease": false,
+    "assets": [
+     [
+      "PkgTTC-Iosevka-34.8.1.zip",
+      1494,
+      "2026-08-22T14:39:28Z"
+     ],
+     [
+      "PkgTTC-IosevkaAile-34.8.1.zip",
+      1847,
+      "2026-08-22T14:39:28Z"
+     ],
+     [
+      "PkgTTC-IosevkaSS01-34.8.1.zip",
+      280,
+      "2026-08-22T14:39:43Z"
+     ]
+    ]
+   },
+   {
+    "tag": "v34.8.0",
+    "published_at": "2026-07-26T12:51:06Z",
+    "prerelease": false,
+    "assets": [
+     [
+      "PkgTTC-Iosevka-34.8.0.zip",
+      1419,
+      "2026-07-26T12:38:45Z"
+     ],
+     [
+      "PkgTTC-IosevkaAile-34.8.0.zip",
+      1421,
+      "2026-07-26T12:38:45Z"
+     ],
+     [
+      "PkgTTC-IosevkaSS01-34.8.0.zip",
+      245,
+      "2026-07-26T12:38:59Z"
+     ]
+    ]
+   }
+  ],
+  "githubnext/monaspace": [
+   {
+    "tag": "v1.400",
+    "published_at": "2026-03-28T00:19:59Z",
+    "prerelease": false,
+    "assets": [
+     [
+      "monaspace-nerdfonts-v1.400.zip",
+      17480,
+      "2026-03-27T23:12:24Z"
+     ],
+     [
+      "monaspace-static-v1.400.zip",
+      108998,
+      "2026-03-27T23:12:24Z"
+     ]
+    ]
+   }
+  ],
+  "IBM/plex": [
+   {
+    "tag": "@ibm/plex-mono@2.5.0",
+    "published_at": "2026-06-11T19:24:51Z",
+    "prerelease": false,
+    "assets": [
+     [
+      "ibm-plex-mono.zip",
+      25634,
+      "2026-06-11T19:20:12Z"
+     ]
+    ]
+   }
+  ],
+  "JetBrains/JetBrainsMono": [
+   {
+    "tag": "v2.304",
+    "published_at": "2023-01-14T15:22:41Z",
+    "prerelease": false,
+    "assets": [
+     [
+      "JetBrainsMono-2.304.zip",
+      587668,
+      "2023-01-14T15:20:03Z"
+     ]
+    ]
+   },
+   {
+    "tag": "v2.242",
+    "published_at": "2021-07-30T15:18:46Z",
+    "prerelease": false,
+    "assets": [
+     [
+      "JetBrainsMono-2.242.zip",
+      87892,
+      "2021-07-30T15:10:06Z"
+     ]
+    ]
+   }
+  ],
+  "microsoft/cascadia-code": [
+   {
+    "tag": "v2407.24",
+    "published_at": "2024-11-27T16:20:51Z",
+    "prerelease": false,
+    "assets": [
+     [
+      "CascadiaCode-2407.24.zip",
+      337349,
+      "2024-11-27T16:20:11Z"
+     ]
+    ]
+   },
+   {
+    "tag": "cascadia-next",
+    "published_at": "2024-08-28T18:51:40Z",
+    "prerelease": true,
+    "assets": [
+     [
+      "CascadiaNextJP.wght.ttf",
+      6799,
+      "2024-08-29T17:23:38Z"
+     ]
+    ]
+   }
+  ],
+  "rbanffy/3270font": [
+   {
+    "tag": "v3.0.1",
+    "published_at": "2022-07-29T21:47:47Z",
+    "prerelease": false,
+    "assets": [
+     [
+      "3270_fonts_d916271.zip",
+      12626,
+      "2022-07-29T21:47:21Z"
+     ]
+    ]
+   }
+  ],
+  "rsms/inter": [
+   {
+    "tag": "v4.1",
+    "published_at": "2024-11-16T00:27:07Z",
+    "prerelease": false,
+    "assets": [
+     [
+      "Inter-4.1.zip",
+      1303595,
+      "2024-11-16T00:27:02Z"
+     ]
+    ]
+   },
+   {
+    "tag": "v4.0-beta9h",
+    "published_at": "2023-07-13T14:54:27Z",
+    "prerelease": true,
+    "assets": [
+     [
+      "Inter-4.0-beta9h.zip",
+      5116,
+      "2023-07-13T15:07:20Z"
+     ]
+    ]
+   }
+  ],
+  "source-foundry/Hack": [
+   {
+    "tag": "v3.003",
+    "published_at": "2018-03-06T02:14:07Z",
+    "prerelease": false,
+    "assets": [
+     [
+      "Hack-v3.003-ttf.zip",
+      776753,
+      "2018-03-06T02:14:22Z"
+     ],
+     [
+      "Hack-v3.003-webfonts.zip",
+      9912,
+      "2018-03-06T02:14:23Z"
+     ]
+    ]
+   }
+  ],
+  "the-moonwitch/Cozette": [
+   {
+    "tag": "v.1.30.0",
+    "published_at": "2025-07-30T07:36:51Z",
+    "prerelease": false,
+    "assets": [
+     [
+      "CozetteFonts-v-1-30-0.zip",
+      6424,
+      "2025-07-30T07:36:51Z"
+     ],
+     [
+      "CozetteVector.ttf",
+      4696,
+      "2025-07-30T07:37:06Z"
+     ],
+     [
+      "LICENSE",
+      233,
+      "2025-07-30T07:37:02Z"
+     ],
+     [
+      "cozette.otb",
+      2146,
+      "2025-07-30T07:37:00Z"
+     ]
+    ]
+   }
+  ],
+  "tonsky/FiraCode": [
+   {
+    "tag": "6.2",
+    "published_at": "2021-12-06T20:58:58Z",
+    "prerelease": false,
+    "assets": [
+     [
+      "Fira_Code_v6.2.zip",
+      2918154,
+      "2021-12-06T20:58:53Z"
+     ]
+    ]
+   },
+   {
+    "tag": "6.1",
+    "published_at": "2021-12-03T16:53:13Z",
+    "prerelease": false,
+    "assets": [
+     [
+      "Fira_Code_v6.1.zip",
+      11193,
+      "2021-12-03T16:58:34Z"
+     ]
+    ]
+   }
+  ]
+ }
+}

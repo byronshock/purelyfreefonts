@@ -1,0 +1,30 @@
+schema_version: 5
+name: Kelp Marks
+description: SENTINEL-DESCRIPTION synthetic bundle with a text face, a math face and a dingbat face.
+homepage: https://kelp.synth.example
+resources:
+  kelp.exe:
+    urls:
+    - https://downloads.kelp.synth.example/kelp.exe
+    sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+    file_size: 65536
+fonts:
+- name: Kelp Sans
+  styles:
+  - family_name: Kelp Sans
+    type: Regular
+    font: KELPSANS.TTF
+- name: Kelp Math
+  styles:
+  - family_name: KelpMath
+    type: Regular
+    font: KELPMATH.TTF
+- name: Kelp Dingbats
+  styles:
+  - family_name: Kelp Dingbats
+    type: Regular
+    font: KELPDING.TTF
+extract:
+  format: exe
+requires_license_agreement: SENTINEL-LICENSE-TEXT End-user license agreement.
+spdx_license: LicenseRef-Synth-Kelp

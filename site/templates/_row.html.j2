@@ -1,0 +1,33 @@
+{#-
+  _row.html.j2: one font (site/CONTRACT.md, "A row"), included once per `row` of list.rows.
+  Render moves whole li.font nodes and rewrites only the .rank text, so .rank holds text and
+  nothing else. The specimen box keeps its height whether or not the mask has arrived, since
+  rows use content-visibility. Kept compact: 540 of these ship in the no-cache HTML.
+-#}
+<li class="font" id="font-{{ row.id }}" data-id="{{ row.id }}">
+<div class="font-row">
+<span class="rank">{{ row.label }}</span>
+<h3 class="font-name" id="font-{{ row.id }}-name">{{ row.family }}</h3>
+<div class="font-spec">
+{% if row.specimen %}
+<span class="spec" role="img" aria-label="{{ row.family }} sample" data-src="{{ row.specimen.url }}"></span>
+<noscript><img class="spec-img" src="{{ row.specimen.url }}" alt="{{ row.family }} sample" width="{{ row.specimen.width }}" height="{{ row.specimen.height }}" loading="lazy"></noscript>
+{% elif row.fallback == "license" %}
+<p class="spec-fallback">No preview: this font's license doesn't let us host its files. See it on <a href="{{ row.download.url }}">{{ row.download.label }}</a>.</p>
+{% else %}
+<p class="spec-fallback">Preview not available yet.</p>
+{% endif %}
+</div>
+<p class="font-meta"><span class="font-cat">{{ row.category_label }}</span> <span class="font-lic">{{ row.license_name }}</span></p>
+{% if row.badges %}
+<ul class="badges" role="list" aria-label="Tags">
+{% for badge in row.badges %}
+<li class="badge" data-badge="{{ badge.key }}">{{ badge.text }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+<a class="download" href="{{ row.download.url }}">Download from {{ row.download.label }}<span class="visually-hidden"> ({{ row.family }})</span></a>
+<button type="button" class="details-toggle" aria-expanded="false" aria-controls="details-{{ row.id }}">Details<span class="visually-hidden"> for {{ row.family }}</span></button>
+</div>
+<div class="details" id="details-{{ row.id }}" hidden></div>
+</li>

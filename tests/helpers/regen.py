@@ -18,6 +18,8 @@ A fixture directory holds:
 - ``http/``: recorded responses for ``fetch()`` (``mockhttp``), and/or
   ``git/<host>/<owner>/<repo>/``: files served as a local git remote;
 - ``previous/`` (optional): an earlier snapshot, passed as ``ctx.previous``;
+- ``root/`` (optional): the repository ``fetch()`` sees (``ctx.paths``), for a
+  collector whose input list lives under ``config/`` (foundries);
 - ``NOTICE``: the source and license of trimmed real data, or "Synthetic".
 """
 

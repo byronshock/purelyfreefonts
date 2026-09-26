@@ -1,0 +1,10 @@
+Format-Specification: http://svn.debian.org/wsvn/dep/web/deps/dep5.mdwn?op=file&rev=135
+Name: xfonts-fjord
+
+Files: *
+Copyright: 2009 Synthetic Bitmap Works
+License: OFL-1.1-no-RFN
+
+Files: debian/*
+Copyright: 2010 Synthetic Fonts Team
+License: GPL-2+

@@ -95,7 +95,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - a new run replaces an unmerged refresh pull request;
   - test: two runs without a merge give the same state as one run.
 - [ ] Stale-data policy: reuse the last snapshot for up to 2 months, flagged.
-- [ ] Terms audit, one row per source, recording whether raw values and fixtures may be republished. The result goes in `docs/sources.md`. *(Rulings T1–T5 given 2026-09-25, in `data/reviews/terms/`; `docs/sources.md` still to write.)* Rows:
+- [x] Terms audit, one row per source, recording whether raw values and fixtures may be republished. The result goes in `docs/sources.md`. *(Rulings T1–T5 given 2026-09-25, in `data/reviews/terms/`; `docs/sources.md` written and its links and quotes checked 2026-09-25. Its open points still need the owner: ecosyste.ms terms §9 and §11(c), and Google shares kept in `state/smoothing.json`.)* Rows:
   - Google's undocumented endpoints;
   - Fonts Over Time (no license file);
   - ecosyste.ms (data CC BY-SA 4.0, verified 2026-09-25);
@@ -107,7 +107,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - jsDelivr;
   - Chocolatey;
   - GitHub.
-- [ ] Claude drafts a request to the Fonts Over Time author for an explicit data license (for example CC BY 4.0); the owner posts it. *(Drafted 2026-09-25; waiting for the owner to post it.)*
+- [x] Claude drafts a request to the Fonts Over Time author for an explicit data license (for example CC BY 4.0); the owner posts it. *(Posted 2026-09-25 as [fcjr/fontsovertime#1](https://github.com/fcjr/fontsovertime/issues/1).)*
 
 **Done when:**
 - fetching one real source twice leaves exactly one snapshot per date, with no duplicates;
@@ -200,7 +200,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 
 ### Step 8: One collector per ranking source
 **Who:** Claude. **Depends on:** 3; runs alongside steps 5–7. Each collector writes a dated snapshot and parsed values, and has a test built from a fixture the terms ruling allows (synthetic if not).
-- [ ] Homebrew analytics for 30, 90 and 365 days. Cask add dates come from a blobless clone of homebrew-cask (`git log --diff-filter=A`), not the API.
+- [ ] Homebrew analytics for 30, 90 and 365 days. Cask add dates come from a tree diff of `Casks/font` at the window start and end, plus the commits API for added casks (design-m1 C4).
 - [ ] Arch pkgstats: monthly shares for the last 12 complete months, for all font-like packages.
 - [ ] Dependency data:
   - Arch core/extra `.db`;
@@ -213,7 +213,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - [ ] Fonts Over Time weekly JSONL and `latest.csv`, with a column check that marks the source stale on mismatch.
 - [ ] Web Almanac 2025 sheets: find the header row, validate the columns, and pin the sheet id and tabs per edition in config.
 - [ ] Google Fonts `/metadata/stats`, falling back to the popularity field.
-- [ ] npm `downloads/point/last-year` for @fontsource, @fontsource-variable and @expo-google-fonts packages above the floor, at most 1 request a second with backoff on 429.
+- [ ] npm downloads for every @fontsource, @fontsource-variable and @expo-google-fonts package: one `downloads/range` request per package over 540 days (last-year total, complete months and first download day), at most 1 request a second with backoff on 429.
 - [ ] ecosyste.ms dependent-repository counts for the @fontsource and @fontsource-variable packages only (packages.ecosyste.ms API; ruling M7), credited as CC BY-SA 4.0.
 - [ ] Fontsource `/v1/stats` (jsDelivr).
 - [ ] Flutter code search: deferred until a token is chosen.
@@ -251,7 +251,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - [ ] Property tests:
   - determinism;
   - adding an ineligible font moves nothing;
-  - a higher count never lowers a rank, except where the guard fires.
+  - a higher count never lowers a rank, except when the guard changes for that font or for a font that overtakes it, or through the ruler's scale.
 - [ ] The worked example (2.53 / 2.15 / 1.98, with the outlier guard on; ruling M1) as a fixture.
 - [ ] Cross-checks: coverage-aware RRF (k=60) and the Fontsource ruler.
 
@@ -350,16 +350,14 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 
 ### Step 18: One-command refresh
 **Who:** Claude. **Depends on:** 15.
-- [ ] `uv run tff-catalog refresh` runs fetch → map → correct → rank → confidence → links → validate → export → `review.md`.
+- [ ] `uv run tff-catalog refresh` runs fetch → map → correct → rank → confidence → links → export → `review.md` → validate, so validate's scan of the committed reports covers this run's `review.md`.
 - [ ] `--from-snapshots <date>` replays a run offline.
 
 **Done when:** a clean clone produces identical output from the same snapshots, and the run time is recorded.
 
 ### Step 19: Monthly GitHub Actions workflow
 **Who:** Claude builds it; the owner sets up access and merges. **Depends on:** 18 and D15.
-- [ ] Owner: let refresh pull requests trigger CI. Either:
-  - create a GitHub App or fine-grained token for opening them (recommended); or
-  - turn on "Allow GitHub Actions to create and approve pull requests" and accept a monthly "Approve and run". The repository currently has it off.
+- [ ] Owner: let refresh pull requests trigger CI (gate CI1): turn on "Allow GitHub Actions to create and approve pull requests", which the repository currently has off. The refresh job opens the pull request with `GITHUB_TOKEN` and then dispatches `ci.yml` on `refresh/monthly`, because pull requests that `GITHUB_TOKEN` opens trigger no workflows. No GitHub App or personal token is needed.
 - [ ] Owner: add the secrets:
   - access to the private snapshot store if D15 is (a), with a deploy key or App;
   - a token for Flutter code search only if that is turned on.
@@ -367,7 +365,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - runs on a monthly cron at an off-minute (for example `17 6 3 * *`) and on `workflow_dispatch`;
   - uses a uv cache and a concurrency group;
   - has write permission for `contents`, `pull-requests` and `issues`.
-- [ ] It opens or updates a pull request on the fixed branch `refresh/monthly`, with `catalog.json`, `catalog-site.json`, `review.md` and the `state/` changes. A hard failure fails the job and opens an issue instead.
+- [ ] It opens or updates a pull request on the fixed branch `refresh/monthly`, with `catalog.json`, `catalog-site.json`, `review.md`, the `state/` changes, and the alias rows and seeds the run added to `data/`. A hard failure fails the job and opens an issue instead.
 - [ ] Check the collectors on GitHub's runners: rate limits, the GitHub API budget, and whether Google's endpoints respond.
 - [ ] A watchdog for GitHub's rule that disables scheduled workflows in public repositories after 60 days without activity. It runs outside this repository's schedule (for example a timer on the VPS reading GitHub's public API, which the rule can't disable), and warns the owner if no refresh pull request has appeared for 35 days, or `main` has had no commit for 50 days.
 

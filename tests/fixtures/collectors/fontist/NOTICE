@@ -1,0 +1,7 @@
+Synthetic.
+
+Fontist formulas (github.com/fontist/formulas) carry no license, so this fixture
+copies nothing from them (design BRIEF item 12, ruling T1; docs/sources.md). The
+formula files under git/ imitate the repository's layout and schema_version 5
+fields, but every name, URL, hash and text in them is invented. snapshot/ is what
+fetch() writes from them, and expected.jsonl is parse() of snapshot/.

@@ -1,0 +1,36 @@
+client,service,family,count,total,proportion,rank
+desktop,Adobe,Proxima Nova,"543,647","58,750,886",0.93%,1
+desktop,Adobe,Futura PT Web,"329,283","58,750,886",0.56%,2
+desktop,Adobe,Roboto,"14,105","58,750,886",0.02%,28
+desktop,Adobe,,"13,321","58,750,886",0.02%,31
+desktop,Google,Roboto,"5,409,236","58,750,886",9.21%,1
+desktop,Google,Noto Sans JP,"4,193,231","58,750,886",7.14%,2
+desktop,Google,Open Sans,"1,908,242","58,750,886",3.25%,4
+desktop,fontawesome.com,Font Awesome,"885,793","58,750,886",1.51%,1
+desktop,fontplus.jp,FOT-筑紫A丸ゴシック Std,"2,315","58,750,886",0.00%,1
+desktop,fontplus.jp,,"1,401","58,750,886",0.00%,7
+desktop,self-hosted,Font Awesome,"4,997,906","58,750,886",8.51%,1
+desktop,self-hosted,,"2,021,861","58,750,886",3.44%,2
+desktop,self-hosted,Roboto,"1,284,559","58,750,886",2.19%,3
+desktop,self-hosted,Flaticon,"70,065","58,750,886",0.12%,45
+desktop,self-hosted,flaticon,"26,597","58,750,886",0.05%,95
+desktop,typenetwork.com,Alright Web,41,"58,750,886",0.00%,3
+desktop,typenetwork.com,Alright Web,41,"58,750,886",0.00%,5
+desktop,typesquare.com,,"15,258","58,750,886",0.03%,1
+desktop,typesquare.com,Adobe Blank,"2,201","58,750,886",0.00%,2
+desktop,typotheque.com,Fedra Sans Pro,29,"58,750,886",0.00%,1
+mobile,Adobe,Proxima Nova,"549,972","69,999,582",0.79%,1
+mobile,Adobe,Roboto,"14,185","69,999,582",0.02%,30
+mobile,Google,Noto Sans JP,"4,493,362","69,999,582",6.42%,1
+mobile,Google,Roboto,"2,875,717","69,999,582",4.11%,2
+mobile,Google,Open Sans,"2,604,632","69,999,582",3.72%,4
+mobile,fontawesome.com,Font Awesome,"992,319","69,999,582",1.42%,1
+mobile,fontplus.jp,ヒラギノ角ゴ ProN W6,"2,977","69,999,582",0.00%,1
+mobile,self-hosted,Font Awesome,"6,538,892","69,999,582",9.34%,1
+mobile,self-hosted,,"2,579,185","69,999,582",3.68%,2
+mobile,self-hosted,Roboto,"1,704,684","69,999,582",2.44%,3
+mobile,self-hosted,Flaticon,"96,671","69,999,582",0.14%,42
+mobile,self-hosted,flaticon,"36,525","69,999,582",0.05%,93
+mobile,typenetwork.com,Alright Web,40,"69,999,582",0.00%,4
+mobile,typesquare.com,,"16,231","69,999,582",0.02%,1
+mobile,typotheque.com,November LCG,1,"69,999,582",0.00%,84

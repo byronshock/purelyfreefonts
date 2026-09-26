@@ -1,0 +1,43 @@
+Trimmed real data (ruling T1), edited where noted.
+
+git/github.com/fontsource/fontsource/ holds 9 of the 2,168 families of the
+Fontsource registry (registry/data/families/*/*/family.json) and trimmed copies
+of registry/data/{replacements,family-tags,family-overrides}.json, from
+https://github.com/fontsource/fontsource at commit
+43cfc04f7f53ef63cc5781c018c4058d8908f485 (2026-09-23). Edits: designer names
+left out (two families carry the placeholder "Fixture Designer"); web and email
+addresses cut from license attributions; each family's language list cut to at
+most six entries; only some source files kept; each kept file's unicodeRange
+cut to its first four ranges, with codepoints set to match; OpenType feature
+lists cut to three tags. The license.txt, description.en-US.md and
+languages.json files are synthetic stand-ins for files the collector does not
+check out.
+
+http/fonts.json is five rows shaped like https://api.fontsource.org/v1/fonts:
+google-sans and material-symbols are the API's rows of 2026-09-25 (google-sans
+with fewer subsets); the other three are written from the registry data above.
+The ETag in http/index.json is invented.
+
+The registry is part of the Fontsource repository, under the MIT License:
+
+MIT License
+
+Copyright (c) 2024 Ayuhito
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

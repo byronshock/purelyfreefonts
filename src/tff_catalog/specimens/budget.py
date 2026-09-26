@@ -3,14 +3,24 @@
 At least half the files at or under 5 KB gzip -9, none over 30 KB (those are
 re-rendered with the name only and flagged ``specimen_name_only``), and under
 10 MB in total. Projected: about 4.5 MB raw, 1.5 MB gzip.
+
+Sizes are decimal (1 KB = 1,000 bytes), as in ``tff_site.budgets``. The 5 KB
+share is measured gzip -9 (fixed mtime); the 30 KB cap and the 10 MB total are
+raw bytes, the stricter reading for SVG text, which always compresses. An
+empty directory passes.
 """
 
+import gzip
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from tff_catalog.specimens import MAX_FILE_BYTES, MAX_TOTAL_BYTES, SMALL_GZIP_BYTES
+
 if TYPE_CHECKING:
     from tff_catalog.stages import StageContext
+
+MIN_SMALL_SHARE = 0.5
 
 
 @dataclass(frozen=True, slots=True)
@@ -22,14 +32,46 @@ class BudgetReport:
 
     @property
     def ok(self) -> bool:
-        raise NotImplementedError("M2 step 5")
+        return (
+            self.small_share >= MIN_SMALL_SHARE
+            and not self.over_limit
+            and self.total_bytes < MAX_TOTAL_BYTES
+        )
+
+    def summary(self) -> str:
+        """One line for people: every measure against its limit, then ok or FAILED."""
+        return (
+            f"specimens: {self.files} files; {self.small_share:.0%} at or under "
+            f"{SMALL_GZIP_BYTES} B gzip -9 (need {MIN_SMALL_SHARE:.0%}); "
+            f"{len(self.over_limit)} over {MAX_FILE_BYTES} B; "
+            f"{self.total_bytes} B in total (limit {MAX_TOTAL_BYTES} B): "
+            f"{'ok' if self.ok else 'FAILED'}"
+        )
+
+
+def gzip_size(data: bytes) -> int:
+    return len(gzip.compress(data, compresslevel=9, mtime=0))
 
 
 def check(directory: Path) -> BudgetReport:
     """Measure every ``*.svg`` in ``directory``."""
-    raise NotImplementedError("M2 step 5")
+    paths = sorted(directory.glob("*.svg")) if directory.is_dir() else []
+    small = total = 0
+    over: list[str] = []
+    for path in paths:
+        data = path.read_bytes()
+        total += len(data)
+        small += gzip_size(data) <= SMALL_GZIP_BYTES
+        if len(data) > MAX_FILE_BYTES:
+            over.append(path.name)
+    share = small / len(paths) if paths else 1.0
+    return BudgetReport(len(paths), share, tuple(over), total)
 
 
 def cmd_check(ctx: StageContext) -> int:
     """``tff-catalog specimens --check``: non-zero when the budget fails."""
-    raise NotImplementedError("M2 step 5")
+    report = check(ctx.paths.specimens)
+    print(report.summary())
+    for name in report.over_limit:
+        print(f"  over {MAX_FILE_BYTES} B: {name}")
+    return 0 if report.ok else 1

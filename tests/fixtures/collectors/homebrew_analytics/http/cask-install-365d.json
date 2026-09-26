@@ -1,0 +1,219 @@
+{
+ "category": "cask_install",
+ "end_date": "2026-09-26",
+ "items": [
+  {
+   "cask": "claude-code",
+   "count": "1,133,774",
+   "number": 1,
+   "percent": "4.58"
+  },
+  {
+   "cask": "font-jetbrains-mono-nerd-font",
+   "count": "144,631",
+   "number": 25,
+   "percent": "0.58"
+  },
+  {
+   "cask": "font-meslo-lg-nerd-font",
+   "count": "85,278",
+   "number": 55,
+   "percent": "0.34"
+  },
+  {
+   "cask": "font-hack-nerd-font",
+   "count": "60,679",
+   "number": 78,
+   "percent": "0.24"
+  },
+  {
+   "cask": "font-fira-code-nerd-font",
+   "count": "57,081",
+   "number": 84,
+   "percent": "0.23"
+  },
+  {
+   "cask": "font-jetbrains-mono",
+   "count": "43,163",
+   "number": 113,
+   "percent": "0.17"
+  },
+  {
+   "cask": "font-symbols-only-nerd-font",
+   "count": "35,303",
+   "number": 123,
+   "percent": "0.14"
+  },
+  {
+   "cask": "font-fira-code",
+   "count": "27,837",
+   "number": 149,
+   "percent": "0.11"
+  },
+  {
+   "cask": "font-source-code-pro",
+   "count": "19,966",
+   "number": 187,
+   "percent": "0.08"
+  },
+  {
+   "cask": "font-maple-mono-nf-cn",
+   "count": "14,318",
+   "number": 251,
+   "percent": "0.06"
+  },
+  {
+   "cask": "font-inter",
+   "count": "10,639",
+   "number": 301,
+   "percent": "0.04"
+  },
+  {
+   "cask": "font-ibm-plex-mono",
+   "count": "4,974",
+   "number": 508,
+   "percent": "0.02"
+  },
+  {
+   "cask": "font-roboto",
+   "count": "4,388",
+   "number": 553,
+   "percent": "0.02"
+  },
+  {
+   "cask": "font-opendyslexic-nerd-font",
+   "count": "2,700",
+   "number": 816,
+   "percent": "0.01"
+  },
+  {
+   "cask": "font-open-dyslexic-nerd-font",
+   "count": "1,271",
+   "number": 1326,
+   "percent": "0.01"
+  },
+  {
+   "cask": "font-ibm-plex",
+   "count": "853",
+   "number": 1663,
+   "percent": "0"
+  },
+  {
+   "cask": "fontbase",
+   "count": "661",
+   "number": 1916,
+   "percent": "0"
+  },
+  {
+   "cask": "font-dejavu-sans",
+   "count": "638",
+   "number": 1952,
+   "percent": "0"
+  },
+  {
+   "cask": "font-ioskeley-mono",
+   "count": "625",
+   "number": 1976,
+   "percent": "0"
+  },
+  {
+   "cask": "font-open-dyslexic",
+   "count": "125",
+   "number": 4194,
+   "percent": "0"
+  },
+  {
+   "cask": "font-opendyslexic",
+   "count": "39",
+   "number": 6689,
+   "percent": "0"
+  },
+  {
+   "cask": "font-akt",
+   "count": "28",
+   "number": 7630,
+   "percent": "0"
+  },
+  {
+   "cask": "font-bbh-sans-hegarty",
+   "count": "23",
+   "number": 8238,
+   "percent": "0"
+  },
+  {
+   "cask": "neodgm/neodgm/font-neodunggeunmo",
+   "count": "18",
+   "number": 9115,
+   "percent": "0"
+  },
+  {
+   "cask": "neodgm/neodgm/font-neodunggeunmo-code",
+   "count": "17",
+   "number": 9194,
+   "percent": "0"
+  },
+  {
+   "cask": "neodgm/neodgm/font-neodunggeunmo-pro",
+   "count": "12",
+   "number": 10121,
+   "percent": "0"
+  },
+  {
+   "cask": "fontforge",
+   "count": "12",
+   "number": 10143,
+   "percent": "0"
+  },
+  {
+   "cask": "font-monaspace-nerd-font",
+   "count": "9",
+   "number": 10929,
+   "percent": "0"
+  },
+  {
+   "cask": "caskroom/cask/font-fira-code-nerd-font",
+   "count": "5",
+   "number": 12877,
+   "percent": "0"
+  },
+  {
+   "cask": "fonts-google",
+   "count": "3",
+   "number": 15027,
+   "percent": "0"
+  },
+  {
+   "cask": "caskroom/cask/font-hack-nerd-font",
+   "count": "2",
+   "number": 16158,
+   "percent": "0"
+  },
+  {
+   "cask": "homebrew/cask-fonts/font-space-mono-nerd-font",
+   "count": "1",
+   "number": 20384,
+   "percent": "0"
+  },
+  {
+   "cask": "caskroom/fonts/font-fira-code-nerd-font",
+   "count": "1",
+   "number": 20610,
+   "percent": "0"
+  },
+  {
+   "cask": "homebrew/cask-fonts/font-lekton-nerd-font",
+   "count": "1",
+   "number": 21738,
+   "percent": "0"
+  },
+  {
+   "cask": "homebrew/cask-fonts/font-sarasa-gothic",
+   "count": "1",
+   "number": 22606,
+   "percent": "0"
+  }
+ ],
+ "start_date": "2025-09-26",
+ "total_count": 24772689,
+ "total_items": 23898
+}

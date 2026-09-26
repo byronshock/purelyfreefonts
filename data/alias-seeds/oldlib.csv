@@ -1,0 +1,417 @@
+alias,ns,target_ns,target,relation,detail,source,evidence,auto
+adobe-source-code-pro-fonts,arch-pkg,font-name,Source Code Pro,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+adobe-source-han-sans-cn-fonts,arch-pkg,font-name,Source Han Sans,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+adobe-source-han-sans-jp-fonts,arch-pkg,font-name,Source Han Sans,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+adobe-source-sans-fonts,arch-pkg,font-name,Source Sans 3,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+adobe-source-serif-fonts,arch-pkg,font-name,Source Serif 4,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+cantarell-fonts,arch-pkg,font-name,Cantarell,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+gnu-free-fonts,arch-pkg,font-name,FreeFont,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP | $TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json GNU FreeFont -> FreeFont (free),false
+inter-font,arch-pkg,font-name,Inter,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+noto-fonts-emoji,arch-pkg,arch-pkg,noto-fonts-emoji,ineligible,icon,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+otf-atkinson-hyperlegible-next,arch-pkg,font-name,Atkinson Hyperlegible Next,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+otf-atkinsonhyperlegiblemono-nerd,arch-pkg,font-name,Atkinson Hyperlegible Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+otf-comicshanns-nerd,arch-pkg,font-name,Comic Shanns Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+otf-commit-mono-nerd,arch-pkg,font-name,Commit Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+otf-droid-nerd,arch-pkg,font-name,Droid Sans Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+otf-fira-mono,arch-pkg,font-name,Fira Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+otf-fira-sans,arch-pkg,font-name,Fira Sans,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+otf-firamono-nerd,arch-pkg,font-name,Fira Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+otf-font-awesome,arch-pkg,arch-pkg,otf-font-awesome,ineligible,icon,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+otf-geist-mono-nerd,arch-pkg,font-name,Geist Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+otf-hasklig-nerd,arch-pkg,font-name,Hasklig,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+otf-libertinus,arch-pkg,font-name,Libertinus,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+otf-monaspace-nerd,arch-pkg,font-name,Monaspace,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-0xproto-nerd,arch-pkg,font-name,0xProto,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-3270-nerd,arch-pkg,font-name,IBM 3270,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-anonymous-pro,arch-pkg,font-name,Anonymous Pro,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-anonymouspro-nerd,arch-pkg,font-name,Anonymous Pro,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-arimo-nerd,arch-pkg,font-name,Arimo,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-atkinson-hyperlegible,arch-pkg,font-name,Atkinson Hyperlegible,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-bitstream-vera-mono-nerd,arch-pkg,font-name,Bitstream Vera Sans Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-caladea,arch-pkg,font-name,Caladea,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-carlito,arch-pkg,font-name,Carlito,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-cascadia-code-nerd,arch-pkg,font-name,Cascadia Code,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-cascadia-mono-nerd,arch-pkg,font-name,Cascadia Code,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-cousine-nerd,arch-pkg,font-name,Cousine,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-d2coding-nerd,arch-pkg,font-name,D2Coding,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-dejavu-nerd,arch-pkg,font-name,DejaVu Sans Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-fantasque-nerd,arch-pkg,font-name,Fantasque Sans Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-fantasque-sans-mono,arch-pkg,font-name,Fantasque Sans Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-fira-code,arch-pkg,font-name,Fira Code,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-fira-mono,arch-pkg,font-name,Fira Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-fira-sans,arch-pkg,font-name,Fira Sans,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-firacode-nerd,arch-pkg,font-name,Fira Code,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-gentium-plus,arch-pkg,font-name,Gentium Plus,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-go-nerd,arch-pkg,font-name,Go Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-hack,arch-pkg,font-name,Hack,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-hack-nerd,arch-pkg,font-name,Hack,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-ibmplex-mono-nerd,arch-pkg,font-name,IBM Plex Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-inconsolata,arch-pkg,font-name,Inconsolata,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-inconsolata-go-nerd,arch-pkg,font-name,Inconsolata,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-inconsolata-lgc-nerd,arch-pkg,font-name,Inconsolata,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-inconsolata-nerd,arch-pkg,font-name,Inconsolata,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-input,arch-pkg,font-name,Input,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-intone-nerd,arch-pkg,font-name,Intel One Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-iosevka-nerd,arch-pkg,font-name,Iosevka,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-iosevkaterm-nerd,arch-pkg,font-name,Iosevka,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-iosevkatermslab-nerd,arch-pkg,font-name,Iosevka,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-jetbrains-mono,arch-pkg,font-name,JetBrains Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-jetbrains-mono-nerd,arch-pkg,font-name,JetBrains Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-junicode,arch-pkg,font-name,Junicode,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-lato,arch-pkg,font-name,Lato,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-liberation-mono-nerd,arch-pkg,font-name,Liberation Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-lilex-nerd,arch-pkg,font-name,Lilex,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-martian-mono-nerd,arch-pkg,font-name,Martian Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-merriweather,arch-pkg,font-name,Merriweather,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-merriweather-sans,arch-pkg,font-name,Merriweather Sans,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-meslo-nerd,arch-pkg,font-name,Meslo LG,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-meslo-nerd-font-powerlevel10k,arch-pkg,font-name,Meslo LG,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-monoid-nerd,arch-pkg,font-name,Monoid,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-mononoki-nerd,arch-pkg,font-name,Mononoki,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-nerd-fonts-symbols,arch-pkg,arch-pkg,ttf-nerd-fonts-symbols,ineligible,icon,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-nerd-fonts-symbols-common,arch-pkg,arch-pkg,ttf-nerd-fonts-symbols-common,ineligible,icon,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-nerd-fonts-symbols-mono,arch-pkg,arch-pkg,ttf-nerd-fonts-symbols-mono,ineligible,icon,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-opensans,arch-pkg,font-name,Open Sans,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-oswald,arch-pkg,font-name,Oswald,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-recursive-nerd,arch-pkg,font-name,Recursive,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-roboto,arch-pkg,font-name,Roboto,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-roboto-mono,arch-pkg,font-name,Roboto Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-roboto-mono-nerd,arch-pkg,font-name,Roboto Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-rubik-vf,arch-pkg,font-name,Rubik,build,variable,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-sarasa-gothic,arch-pkg,font-name,Sarasa Gothic,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-sourcecodepro-nerd,arch-pkg,font-name,Source Code Pro,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-space-mono-nerd,arch-pkg,font-name,Space Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-terminus-nerd,arch-pkg,font-name,Terminus,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-tinos-nerd,arch-pkg,font-name,Tinos,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-ubuntu-mono-nerd,arch-pkg,font-name,Ubuntu Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-ubuntu-nerd,arch-pkg,font-name,Ubuntu,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-victor-mono-nerd,arch-pkg,font-name,Victor Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+ttf-zed-mono-nerd,arch-pkg,font-name,Zed Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py ARCH_MAP,false
+font-0xproto,brew-cask,font-name,0xProto,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^0xproto,false
+font-anonymous-pro,brew-cask,font-name,Anonymous Pro,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^anonymous-pro|^anonymice,false
+font-atkinson-hyperlegible,brew-cask,font-name,Atkinson Hyperlegible,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^atkinson-hyperlegible,false
+font-atkinson-hyperlegible-mono,brew-cask,font-name,Atkinson Hyperlegible Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^atkinson-hyperlegible-mono,false
+font-cabin,brew-cask,font-name,Cabin,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^cabin$,false
+font-cantarell,brew-cask,font-name,Cantarell,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^cantarell,false
+font-carlito,brew-cask,font-name,Carlito,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^carlito,false
+font-comic-mono,brew-cask,font-name,Comic Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^comic-mono,false
+font-commit-mono,brew-cask,font-name,Commit Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^commit-mono,false
+font-cormorant-garamond,brew-cask,font-name,Cormorant Garamond,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^cormorant-garamond,false
+font-d2coding,brew-cask,font-name,D2Coding,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^d2coding,false
+font-dejavu-sans,brew-cask,font-name,DejaVu Sans,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^dejavu$|^dejavu-sans$,false
+font-departure-mono,brew-cask,font-name,Departure Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^departure-mono,false
+font-dm-sans,brew-cask,font-name,DM Sans,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^dm-sans,false
+font-eb-garamond,brew-cask,font-name,EB Garamond,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^eb-garamond,false
+font-fira-code,brew-cask,font-name,Fira Code,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^fira-code,false
+font-fira-mono,brew-cask,font-name,Fira Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^fira-mono,false
+font-fira-sans,brew-cask,font-name,Fira Sans,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^fira-sans,false
+font-fontawesome,brew-cask,brew-cask,font-fontawesome,ineligible,icon,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^symbols-only|^powerline-symbols|^sketchybar|^fontawesome|^awesome-terminal,false
+font-fraunces,brew-cask,font-name,Fraunces,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^fraunces,false
+font-geist,brew-cask,font-name,Geist,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^geist$,false
+font-geist-mono,brew-cask,font-name,Geist Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^geist-mono,false
+font-google-sans-code,brew-cask,font-name,Google Sans Code,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^google-sans-code,false
+font-hack,brew-cask,font-name,Hack,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^hack$|^hack-,false
+font-hackgen,brew-cask,font-name,HackGen,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^hackgen,false
+font-hubot-sans,brew-cask,font-name,Hubot Sans,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^hubot-sans,false
+font-ia-writer-mono,brew-cask,font-name,iA Writer Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^ia-writer-mono,false
+font-ibm-plex-mono,brew-cask,font-name,IBM Plex Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^(ibm-plex-mono|blex-mono),false
+font-ibm-plex-sans,brew-cask,font-name,IBM Plex Sans,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^ibm-plex-sans$,false
+font-ibm-plex-serif,brew-cask,font-name,IBM Plex Serif,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^ibm-plex-serif,false
+font-inconsolata,brew-cask,font-name,Inconsolata,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^inconsolata,false
+font-input,brew-cask,font-name,Input,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^input,false
+font-intel-one-mono,brew-cask,font-name,Intel One Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^intel-one-mono,false
+font-inter,brew-cask,font-name,Inter,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^inter$,false
+font-iosevka,brew-cask,font-name,Iosevka,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^iosevka,false
+font-jetbrains-maple-mono,brew-cask,font-name,Maple Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^jetbrains-maple-mono,false
+font-jetbrains-mono,brew-cask,font-name,JetBrains Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^jetbrains-mono$|^jetbrains-mono-,false
+font-juliamono,brew-cask,font-name,JuliaMono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^juliamono,false
+font-lato,brew-cask,font-name,Lato,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^lato$,false
+font-lexend,brew-cask,font-name,Lexend,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^lexend,false
+font-libertinus,brew-cask,font-name,Libertinus,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^libertinus,false
+font-lilex,brew-cask,font-name,Lilex,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^lilex,false
+font-linux-libertine,brew-cask,font-name,Linux Libertine,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^linux-libertine,false
+font-lora,brew-cask,font-name,Lora,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^lora$,false
+font-lxgw-wenkai,brew-cask,font-name,LXGW WenKai,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^lxgw-wenkai,false
+font-manrope,brew-cask,font-name,Manrope,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^manrope,false
+font-maple-mono,brew-cask,font-name,Maple Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^maple-mono,false
+font-martian-mono,brew-cask,font-name,Martian Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^martian-mono,false
+font-merriweather,brew-cask,font-name,Merriweather,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^merriweather$,false
+font-mona-sans,brew-cask,font-name,Mona Sans,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^mona-sans,false
+font-monaspace,brew-cask,font-name,Monaspace,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^(monaspace|monaspice),false
+font-mononoki,brew-cask,font-name,Mononoki,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^mononoki,false
+font-montserrat,brew-cask,font-name,Montserrat,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^montserrat,false
+font-nanum-gothic,brew-cask,font-name,Nanum Gothic,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^nanum-gothic$,false
+font-nanum-gothic-coding,brew-cask,font-name,Nanum Gothic Coding,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^nanum-gothic-coding,false
+font-noto-sans,brew-cask,font-name,Noto Sans,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^noto-sans$,false
+font-noto-sans-cjk,brew-cask,font-name,Noto Sans CJK,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^noto-sans-cjk|^noto-sans-(jp|sc|kr|tc)$,false
+font-noto-sans-jp,brew-cask,font-name,Noto Sans CJK,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^noto-sans-cjk|^noto-sans-(jp|sc|kr|tc)$,false
+font-noto-sans-kr,brew-cask,font-name,Noto Sans CJK,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^noto-sans-cjk|^noto-sans-(jp|sc|kr|tc)$,false
+font-noto-sans-mono,brew-cask,font-name,Noto Sans Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^noto-sans-mono$|^noto-nerd,false
+font-noto-sans-sc,brew-cask,font-name,Noto Sans CJK,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^noto-sans-cjk|^noto-sans-(jp|sc|kr|tc)$,false
+font-noto-sans-tc,brew-cask,font-name,Noto Sans CJK,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^noto-sans-cjk|^noto-sans-(jp|sc|kr|tc)$,false
+font-noto-serif,brew-cask,font-name,Noto Serif,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^noto-serif$,false
+font-nunito,brew-cask,font-name,Nunito,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^nunito$,false
+font-open-sans,brew-cask,font-name,Open Sans,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^open-sans$,false
+font-oswald,brew-cask,font-name,Oswald,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^oswald$,false
+font-outfit,brew-cask,font-name,Outfit,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^outfit,false
+font-playfair-display,brew-cask,font-name,Playfair Display,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^playfair-display,false
+font-poppins,brew-cask,font-name,Poppins,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^poppins,false
+font-powerline-symbols,brew-cask,brew-cask,font-powerline-symbols,ineligible,icon,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^symbols-only|^powerline-symbols|^sketchybar|^fontawesome|^awesome-terminal,false
+font-pretendard,brew-cask,font-name,Pretendard,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^pretendard,false
+font-raleway,brew-cask,font-name,Raleway,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^raleway,false
+font-recursive,brew-cask,font-name,Recursive,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^recursive,false
+font-roboto,brew-cask,font-name,Roboto,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^roboto$,false
+font-roboto-condensed,brew-cask,font-name,Roboto Condensed,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^roboto-condensed,false
+font-roboto-mono,brew-cask,font-name,Roboto Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^roboto-mono,false
+font-roboto-slab,brew-cask,font-name,Roboto Slab,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^roboto-slab,false
+font-rubik,brew-cask,font-name,Rubik,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^rubik$,false
+font-sarasa-gothic,brew-cask,font-name,Sarasa Gothic,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^sarasa-gothic,false
+font-source-code-pro,brew-cask,font-name,Source Code Pro,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^(source-code-pro|sauce-code-pro),false
+font-source-sans-3,brew-cask,font-name,Source Sans 3,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^source-sans-3$,false
+font-source-serif-4,brew-cask,font-name,Source Serif 4,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^source-serif-4$,false
+font-space-grotesk,brew-cask,font-name,Space Grotesk,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^space-grotesk,false
+font-space-mono,brew-cask,font-name,Space Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^space-mono,false
+font-terminus,brew-cask,font-name,Terminus,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^terminus|^terminess,false
+font-ubuntu,brew-cask,font-name,Ubuntu,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^ubuntu$|^ubuntu-condensed,false
+font-ubuntu-condensed,brew-cask,font-name,Ubuntu,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^ubuntu$|^ubuntu-condensed,false
+font-ubuntu-mono,brew-cask,font-name,Ubuntu Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^ubuntu-mono,false
+font-ubuntu-sans,brew-cask,font-name,Ubuntu Sans,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^ubuntu-sans,false
+font-victor-mono,brew-cask,font-name,Victor Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^victor-mono,false
+font-zed-mono,brew-cask,font-name,Zed Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py BREW_MAP ^zed-mono,false
+fonts-adobe-sourcesans3,deb-pkg,font-name,Source Sans 3,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-adwaita-sans,deb-pkg,font-name,Adwaita Sans,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-anonymous-pro,deb-pkg,font-name,Anonymous Pro,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-cabin,deb-pkg,font-name,Cabin,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-cantarell,deb-pkg,font-name,Cantarell,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-comfortaa,deb-pkg,font-name,Comfortaa,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-comic-neue,deb-pkg,font-name,Comic Neue,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-crosextra-caladea,deb-pkg,font-name,Caladea,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-crosextra-carlito,deb-pkg,font-name,Carlito,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-dejavu-mono,deb-pkg,font-name,DejaVu Sans Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-ebgaramond,deb-pkg,font-name,EB Garamond,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-fira-mono,deb-pkg,font-name,Fira Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-fira-sans,deb-pkg,font-name,Fira Sans,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-firacode,deb-pkg,font-name,Fira Code,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-font-awesome,deb-pkg,deb-pkg,fonts-font-awesome,ineligible,icon,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-freefont-ttf,deb-pkg,font-name,FreeFont,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP | $TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json GNU FreeFont -> FreeFont (free),false
+fonts-hack,deb-pkg,font-name,Hack,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-inconsolata,deb-pkg,font-name,Inconsolata,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-inter,deb-pkg,font-name,Inter,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-jetbrains-mono,deb-pkg,font-name,JetBrains Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-lato,deb-pkg,font-name,Lato,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-lmodern,deb-pkg,font-name,Latin Modern,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-mathjax,deb-pkg,deb-pkg,fonts-mathjax,ineligible,icon,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-noto-color-emoji,deb-pkg,deb-pkg,fonts-noto-color-emoji,ineligible,icon,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-noto-mono,deb-pkg,font-name,Noto Sans Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-open-sans,deb-pkg,font-name,Open Sans,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-opendyslexic,deb-pkg,font-name,OpenDyslexic,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-opensymbol,deb-pkg,deb-pkg,fonts-opensymbol,ineligible,icon,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-quicksand,deb-pkg,font-name,Quicksand,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-roboto,deb-pkg,font-name,Roboto,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-roboto-fontface,deb-pkg,font-name,Roboto,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-roboto-slab,deb-pkg,font-name,Roboto Slab,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-roboto-unhinted,deb-pkg,font-name,Roboto,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-source-sans-pro,deb-pkg,font-name,Source Sans 3,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-symbola,deb-pkg,deb-pkg,fonts-symbola,ineligible,icon,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-terminus,deb-pkg,font-name,Terminus,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+fonts-ubuntu-console,deb-pkg,font-name,Ubuntu Mono,package,,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py DEB_MAP,false
+Acumin Pro,font-name,font-name,Acumin Pro,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Acumin Pro (proprietary),false
+Adelle Sans,font-name,font-name,Adelle Sans,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Adelle Sans (proprietary),false
+Adobe Caslon Pro,font-name,font-name,Adobe Caslon Pro,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Adobe Caslon Pro (proprietary),false
+Adobe Garamond Pro,font-name,font-name,Adobe Garamond Pro,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Adobe Garamond Pro (proprietary),false
+Aktiv Grotesk,font-name,font-name,Aktiv Grotesk,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Aktiv Grotesk (proprietary),false
+Astra,font-name,font-name,Astra,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Astra (icon_font),false
+Author,font-name,font-name,Author,ineligible,itf,oldlib,"$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Author (free), ITF Free Font License",false
+Bespoke Serif,font-name,font-name,Bespoke Serif,ineligible,itf,oldlib,"$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Bespoke Serif (free), ITF Free Font License",false
+Boska,font-name,font-name,Boska,ineligible,itf,oldlib,"$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Boska (free), ITF Free Font License",false
+Brandon Grotesque,font-name,font-name,Brandon Grotesque,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Brandon Grotesque (proprietary),false
+Cabinet Grotesk,font-name,font-name,Cabinet Grotesk,ineligible,itf,oldlib,"$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Cabinet Grotesk (free), ITF Free Font License",false
+Calluna,font-name,font-name,Calluna,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Calluna (proprietary),false
+Century Gothic Pro,font-name,font-name,Century Gothic Pro,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Century Gothic Pro (proprietary),false
+Chillax,font-name,font-name,Chillax,ineligible,itf,oldlib,"$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Chillax (free), ITF Free Font License",false
+Clash Display,font-name,font-name,Clash Display,ineligible,itf,oldlib,"$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Clash Display (free), ITF Free Font License",false
+Clash Grotesk,font-name,font-name,Clash Grotesk,ineligible,itf,oldlib,"$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Clash Grotesk (free), ITF Free Font License",false
+Copyright Klim Type Foundry,font-name,font-name,Copyright Klim Type Foundry,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Copyright Klim Type Foundry -> Klim Type Foundry (metadata string) (proprietary),false
+DIN 2014,font-name,font-name,DIN 2014,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json DIN 2014 (proprietary),false
+DIN Condensed,font-name,font-name,DIN Condensed,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json DIN Condensed Web -> DIN Condensed (proprietary),false
+DIN Condensed Web,font-name,font-name,DIN Condensed Web,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json DIN Condensed Web -> DIN Condensed (proprietary),false
+Degular,font-name,font-name,Degular,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Degular (proprietary),false
+DejaVu Mono,font-name,font-name,DejaVu Sans Mono,rename,,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json DejaVu Mono -> DejaVu Sans Mono (free),false
+ETmodules,font-name,font-name,ETmodules,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json ETmodules (icon_font),false
+Effra,font-name,font-name,Effra,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Effra (proprietary),false
+ElegantIcons,font-name,font-name,ElegantIcons,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json ElegantIcons (icon_font),false
+ElementsKit Icons,font-name,font-name,ElementsKit Icons,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json elementskit -> ElementsKit Icons (icon_font),false
+Entypo,font-name,font-name,Entypo,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json entypo-fontello -> Entypo (icon_font),false
+Europa,font-name,font-name,Europa,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Europa (proprietary),false
+Flaticon,font-name,font-name,Flaticon,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Flaticon (icon_font),false
+Font Awesome,font-name,font-name,Font Awesome,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Font Awesome (icon_font),false
+Font Awesome Brands,font-name,font-name,Font Awesome Brands,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json fa-brands -> Font Awesome Brands (icon_font),false
+Font Awesome Free,font-name,font-name,Font Awesome Free,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Font Awesome (Free) -> Font Awesome Free (icon_font),false
+Freight Display Pro,font-name,font-name,Freight Display Pro,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json FreightDisp Pro -> Freight Display Pro (proprietary),false
+FreightBig Pro,font-name,font-name,FreightBig Pro,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json FreightBig Pro -> Freight Big Pro (proprietary),false
+FreightDisp Pro,font-name,font-name,FreightDisp Pro,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json FreightDisp Pro -> Freight Display Pro (proprietary),false
+FreightSans Pro,font-name,font-name,FreightSans Pro,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json FreightSans Pro -> Freight Sans Pro (proprietary),false
+FreightText Pro,font-name,font-name,FreightText Pro,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json FreightText Pro -> Freight Text Pro (proprietary),false
+Futura PT,font-name,font-name,Futura PT,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Futura PT (proprietary); Futura PT Web -> Futura PT (proprietary),false
+Futura PT Web,font-name,font-name,Futura PT Web,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Futura PT Web -> Futura PT (proprietary),false
+GLYPHICONS Halflings,font-name,font-name,GLYPHICONS Halflings,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json GLYPHICONS Halflings -> Glyphicons Halflings (icon_font),false
+GNU FreeFont,font-name,font-name,FreeFont,rename,,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json GNU FreeFont -> FreeFont (free),false
+Gambetta,font-name,font-name,Gambetta,ineligible,itf,oldlib,"$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Gambetta (free), ITF Free Font License",false
+Geist Sans,font-name,font-name,Geist,rename,,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Geist Sans -> Geist (free),false
+General Sans,font-name,font-name,General Sans,ineligible,itf,oldlib,"$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json General Sans (free), ITF Free Font License",false
+Genericons,font-name,font-name,Genericons,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Genericons (icon_font),false
+Geomanist,font-name,font-name,Geomanist,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Geomanist (proprietary),false
+Gibson,font-name,font-name,Gibson,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Gibson (proprietary),false
+Gill Sans Nova,font-name,font-name,Gill Sans Nova,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Gill Sans Nova (proprietary),false
+Gilroy,font-name,font-name,Gilroy,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Gilroy (proprietary),false
+Gotham,font-name,font-name,Gotham,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Gotham (proprietary),false
+Halyard Display,font-name,font-name,Halyard Display,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Halyard Display (proprietary),false
+Hypatia Sans Pro,font-name,font-name,Hypatia Sans Pro,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Hypatia Sans Pro (proprietary),false
+ITC Avant Garde Gothic,font-name,font-name,ITC Avant Garde Gothic,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json ITC Avant Garde Pro Md -> ITC Avant Garde Gothic (proprietary),false
+ITC Avant Garde Pro Md,font-name,font-name,ITC Avant Garde Pro Md,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json ITC Avant Garde Pro Md -> ITC Avant Garde Gothic (proprietary),false
+Interstate,font-name,font-name,Interstate,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Interstate (proprietary),false
+Ionicons,font-name,font-name,Ionicons,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Ionicons (icon_font),false
+IvyPresto Display,font-name,font-name,IvyPresto Display,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json IvyPresto Display -> Ivy Presto Display (proprietary),false
+Kepler Std,font-name,font-name,Kepler Std,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Kepler Std (proprietary),false
+LTC Bodoni 175,font-name,font-name,LTC Bodoni 175,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json LTC Bodoni 175 (proprietary); LTC Bodoni 175 Pro -> LTC Bodoni 175 (proprietary),false
+LTC Bodoni 175 Pro,font-name,font-name,LTC Bodoni 175 Pro,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json LTC Bodoni 175 Pro -> LTC Bodoni 175 (proprietary),false
+Lato Hairline,font-name,font-name,Lato,build,,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Lato Hairline -> Lato (free),false
+Line Awesome,font-name,font-name,Line Awesome,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json la-solid -> Line Awesome (icon_font),false
+Material Design Icons,font-name,font-name,Material Design Icons,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Material Design Icons (icon_font),false
+Material Icons,font-name,font-name,Material Icons,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Material Icons (icon_font); Material Icons Outlined -> Material Icons (icon_font),false
+Material Icons Outlined,font-name,font-name,Material Icons Outlined,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Material Icons Outlined -> Material Icons (icon_font),false
+Material Symbols,font-name,font-name,Material Symbols,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Material Symbols Outlined -> Material Symbols (icon_font); Material Symbols Rounded -> Material Symbols (icon_font),false
+Material Symbols Outlined,font-name,font-name,Material Symbols Outlined,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Material Symbols Outlined -> Material Symbols (icon_font),false
+Material Symbols Rounded,font-name,font-name,Material Symbols Rounded,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Material Symbols Rounded -> Material Symbols (icon_font),false
+MinervaModern,font-name,font-name,MinervaModern,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json MinervaModern -> Minerva Modern (proprietary),false
+Minion Pro,font-name,font-name,Minion Pro,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Minion Pro (proprietary),false
+Muli,font-name,font-name,Mulish,rename,,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Muli -> Mulish (free),false
+Museo Sans,font-name,font-name,Museo Sans,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Museo Sans (proprietary),false
+Museo Sans Rounded,font-name,font-name,Museo Sans Rounded,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Museo Sans Rounded (proprietary),false
+Museo Slab,font-name,font-name,Museo Slab,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Museo Slab (proprietary),false
+My Font,font-name,font-name,My Font,ineligible,generic,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json My Font (system_or_generic),false
+Myriad Pro,font-name,font-name,Myriad Pro,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Myriad Pro (proprietary),false
+Neue Haas Grotesk Display,font-name,font-name,Neue Haas Grotesk Display,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json NeueHaasGroteskDisp Pro -> Neue Haas Grotesk Display (proprietary); NeueHaasGroteskDisp Pro Lt -> Neue Haas Grotesk Display (proprietary),false
+Neue Haas Grotesk Text,font-name,font-name,Neue Haas Grotesk Text,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json NeueHaasGroteskText Pro -> Neue Haas Grotesk Text (proprietary),false
+Neue Haas Unica,font-name,font-name,Neue Haas Unica,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Neue Haas Unica W1G -> Neue Haas Unica (proprietary),false
+Neue Haas Unica W1G,font-name,font-name,Neue Haas Unica W1G,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Neue Haas Unica W1G -> Neue Haas Unica (proprietary),false
+NeueHaasGroteskDisp Pro,font-name,font-name,NeueHaasGroteskDisp Pro,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json NeueHaasGroteskDisp Pro -> Neue Haas Grotesk Display (proprietary),false
+NeueHaasGroteskDisp Pro Lt,font-name,font-name,NeueHaasGroteskDisp Pro Lt,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json NeueHaasGroteskDisp Pro Lt -> Neue Haas Grotesk Display (proprietary),false
+NeueHaasGroteskText Pro,font-name,font-name,NeueHaasGroteskText Pro,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json NeueHaasGroteskText Pro -> Neue Haas Grotesk Text (proprietary),false
+Noto Sans CJK JP,font-name,font-name,Noto Sans JP,build,cjk,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Noto Sans CJK JP -> Noto Sans JP (free),false
+Omnes,font-name,font-name,Omnes,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Omnes (proprietary),false
+Orpheus Pro,font-name,font-name,Orpheus Pro,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Orpheus Pro (proprietary),false
+Panchang,font-name,font-name,Panchang,ineligible,itf,oldlib,"$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Panchang (free), ITF Free Font License",false
+Pe-icon-7-stroke,font-name,font-name,Pe-icon-7-stroke,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Pe-icon-7-stroke (icon_font),false
+Pretendard Variable,font-name,font-name,Pretendard,build,variable,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Pretendard Variable -> Pretendard (free),false
+Proxima Nova,font-name,font-name,Proxima Nova,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Proxima Nova (proprietary),false
+Ranade,font-name,font-name,Ranade,ineligible,itf,oldlib,"$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Ranade (free), ITF Free Font License",false
+Redaction 70,font-name,font-name,Redaction,build,,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Redaction 70 -> Redaction (free),false
+Roc Grotesk,font-name,font-name,Roc Grotesk,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Roc Grotesk (proprietary),false
+Rounded Mplus 1c,font-name,font-name,M PLUS Rounded 1c,rename,,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Rounded Mplus 1c -> M PLUS Rounded 1c (free),false
+Satoshi,font-name,font-name,Satoshi,ineligible,itf,oldlib,"$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Satoshi (free), ITF Free Font License",false
+Sentient,font-name,font-name,Sentient,ineligible,itf,oldlib,"$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Sentient (free), ITF Free Font License",false
+Sofia Pro,font-name,font-name,Sofia Pro,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Sofia Pro (proprietary); Sofia Pro Soft -> Sofia Pro (proprietary),false
+Sofia Pro Soft,font-name,font-name,Sofia Pro Soft,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Sofia Pro Soft -> Sofia Pro (proprietary),false
+Source Sans Pro,font-name,font-name,Source Sans 3,rename,,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Source Sans Pro -> Source Sans 3 (free),false
+Stardom,font-name,font-name,Stardom,ineligible,itf,oldlib,"$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Stardom (free), ITF Free Font License",false
+Suisse Int'l,font-name,font-name,Suisse Int'l,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Suisse Int'l (proprietary),false
+Supreme,font-name,font-name,Supreme,ineligible,itf,oldlib,"$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Supreme (free), ITF Free Font License",false
+Switzer,font-name,font-name,Switzer,ineligible,itf,oldlib,"$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Switzer (free), ITF Free Font License",false
+Tanker,font-name,font-name,Tanker,ineligible,itf,oldlib,"$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Tanker (free), ITF Free Font License",false
+Telma,font-name,font-name,Telma,ineligible,itf,oldlib,"$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Telma (free), ITF Free Font License",false
+Themify Icons,font-name,font-name,Themify Icons,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json themify -> Themify Icons (icon_font),false
+URW DIN,font-name,font-name,URW DIN,ineligible,proprietary,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json URW DIN (proprietary),false
+WooCommerce,font-name,font-name,WooCommerce,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json WooCommerce (icon_font),false
+Zodiak,font-name,font-name,Zodiak,ineligible,itf,oldlib,"$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json Zodiak (free), ITF Free Font License",false
+awb-icons,font-name,font-name,awb-icons,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json awb-icons (icon_font),false
+bootstrap-icons,font-name,font-name,bootstrap-icons,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json bootstrap-icons -> Bootstrap Icons (icon_font),false
+dm-common-icons,font-name,font-name,dm-common-icons,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json dm-common-icons (icon_font),false
+dm-social-icons,font-name,font-name,dm-social-icons,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json dm-social-icons (icon_font),false
+eicons,font-name,font-name,eicons,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json eicons (icon_font),false
+elementskit,font-name,font-name,elementskit,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json elementskit -> ElementsKit Icons (icon_font),false
+entypo-fontello,font-name,font-name,entypo-fontello,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json entypo-fontello -> Entypo (icon_font),false
+fa-brands,font-name,font-name,fa-brands,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json fa-brands -> Font Awesome Brands (icon_font),false
+fl-icons,font-name,font-name,fl-icons,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json fl-icons (icon_font),false
+flexslider-icon,font-name,font-name,flexslider-icon,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json flexslider-icon (icon_font),false
+fontello,font-name,font-name,fontello,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json fontello -> Fontello (icon_font),false
+icomoon,font-name,font-name,icomoon,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json icomoon -> IcoMoon (icon_font),false
+iconfont,font-name,font-name,iconfont,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json iconfont (icon_font),false
+icons,font-name,font-name,icons,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json icons (icon_font),false
+la-solid,font-name,font-name,la-solid,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json la-solid -> Line Awesome (icon_font),false
+mfn-icons,font-name,font-name,mfn-icons,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json mfn-icons (icon_font),false
+revicons,font-name,font-name,revicons,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json revicons -> Revicons (icon_font),false
+simple-line-icons,font-name,font-name,simple-line-icons,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json simple-line-icons -> Simple Line Icons (icon_font),false
+slick,font-name,font-name,slick,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json slick (icon_font),false
+themify,font-name,font-name,themify,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json themify -> Themify Icons (icon_font),false
+woodmart-icons,font-name,font-name,woodmart-icons,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json woodmart-icons-style-1 -> woodmart-icons (icon_font),false
+woodmart-icons-style-1,font-name,font-name,woodmart-icons-style-1,ineligible,icon,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json woodmart-icons-style-1 -> woodmart-icons (icon_font),false
+源ノ角ゴシック JP,font-name,font-name,Noto Sans JP,build,cjk,oldlib,$TFF_STORE/_seed/probe-2026-09-25/oldlib/canon_items.json 源ノ角ゴシック JP -> Noto Sans JP (free),false
+0xProto,nerd-folder,font-name,0xProto,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+3270,nerd-folder,font-name,IBM 3270,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+AdwaitaMono,nerd-folder,font-name,Adwaita Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Agave,nerd-folder,font-name,Agave,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+AnonymousPro,nerd-folder,font-name,Anonymous Pro,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Arimo,nerd-folder,font-name,Arimo,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+AtkinsonHyperlegibleMono,nerd-folder,font-name,Atkinson Hyperlegible Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+AurulentSansMono,nerd-folder,font-name,Aurulent Sans Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+BigBlueTerminal,nerd-folder,font-name,Big Blue Terminal,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+BitstreamVeraSansMono,nerd-folder,font-name,Bitstream Vera Sans Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+CascadiaCode,nerd-folder,font-name,Cascadia Code,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+CascadiaMono,nerd-folder,font-name,Cascadia Code,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+CodeNewRoman,nerd-folder,font-name,Code New Roman,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+ComicShannsMono,nerd-folder,font-name,Comic Shanns Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+CommitMono,nerd-folder,font-name,Commit Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Cousine,nerd-folder,font-name,Cousine,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+D2Coding,nerd-folder,font-name,D2Coding,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+DaddyTimeMono,nerd-folder,font-name,DaddyTimeMono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+DejaVuSansMono,nerd-folder,font-name,DejaVu Sans Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+DepartureMono,nerd-folder,font-name,Departure Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+DroidSansMono,nerd-folder,font-name,Droid Sans Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+EnvyCodeR,nerd-folder,font-name,Envy Code R,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+FantasqueSansMono,nerd-folder,font-name,Fantasque Sans Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+FiraCode,nerd-folder,font-name,Fira Code,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+FiraMono,nerd-folder,font-name,Fira Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+GeistMono,nerd-folder,font-name,Geist Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Go-Mono,nerd-folder,font-name,Go Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Gohu,nerd-folder,font-name,GohuFont,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+GoogleSansCode,nerd-folder,font-name,Google Sans Code,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Hack,nerd-folder,font-name,Hack,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Hasklig,nerd-folder,font-name,Hasklig,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+HeavyData,nerd-folder,font-name,Heavy Data,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Hermit,nerd-folder,font-name,Hermit,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+IBMPlexMono,nerd-folder,font-name,IBM Plex Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Inconsolata,nerd-folder,font-name,Inconsolata,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+InconsolataGo,nerd-folder,font-name,Inconsolata,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+InconsolataLGC,nerd-folder,font-name,Inconsolata,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+IntelOneMono,nerd-folder,font-name,Intel One Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Iosevka,nerd-folder,font-name,Iosevka,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+IosevkaTerm,nerd-folder,font-name,Iosevka,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+IosevkaTermSlab,nerd-folder,font-name,Iosevka,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+JetBrainsMono,nerd-folder,font-name,JetBrains Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Lekton,nerd-folder,font-name,Lekton,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+LiberationMono,nerd-folder,font-name,Liberation Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Lilex,nerd-folder,font-name,Lilex,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+MPlus,nerd-folder,font-name,M PLUS,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+MartianMono,nerd-folder,font-name,Martian Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Meslo,nerd-folder,font-name,Meslo LG,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Monaspace,nerd-folder,font-name,Monaspace,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Monofur,nerd-folder,font-name,Monofur,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Monoid,nerd-folder,font-name,Monoid,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Mononoki,nerd-folder,font-name,Mononoki,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+OpenDyslexic,nerd-folder,font-name,OpenDyslexic,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Overpass,nerd-folder,font-name,Overpass,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+ProFont,nerd-folder,font-name,ProFont,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+ProggyClean,nerd-folder,font-name,ProggyClean,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Recursive,nerd-folder,font-name,Recursive,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+RobotoMono,nerd-folder,font-name,Roboto Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+ShareTechMono,nerd-folder,font-name,Share Tech Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+SourceCodePro,nerd-folder,font-name,Source Code Pro,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+SpaceMono,nerd-folder,font-name,Space Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Terminus,nerd-folder,font-name,Terminus,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Tinos,nerd-folder,font-name,Tinos,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+Ubuntu,nerd-folder,font-name,Ubuntu,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+UbuntuMono,nerd-folder,font-name,Ubuntu Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+UbuntuSans,nerd-folder,font-name,Ubuntu Sans,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+VictorMono,nerd-folder,font-name,Victor Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false
+ZedMono,nerd-folder,font-name,Zed Mono,build,nerd,oldlib,$TFF_STORE/_seed/oldlib-2026-09-23/agg_mono.py NF,false

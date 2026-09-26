@@ -1,0 +1,37 @@
+# Universe collector google_repo: the google/fonts repository (METADATA.pb,
+# license texts, pending lists), read through a sparse depth-1 clone plus the
+# GitHub git data API. Public data (ruling T1).
+enabled = true
+repository = "https://github.com/google/fonts"
+ref = "main"
+
+# License folders to read, each with its license text (OFL.txt, LICENSE.txt,
+# UFL.txt). cc-by-sa/ holds articles, not fonts.
+folders = ["ofl", "apache", "ufl"]
+
+# Font files kept from the tree listing (with their size and git blob sha).
+font_extensions = [".ttf", ".otf"]
+
+# gftools headings of to_production.txt and to_sandbox.txt (casefolded) whose
+# families are not on fonts.google.com yet: status "queued". "Upgrade" families
+# are live. Other comments in the lists are notes and never start a section.
+queued_sections = ["new"]
+
+# A clone with fewer than this share of the previous snapshot's families is
+# broken: the fetch fails and the stale policy reuses the last good snapshot.
+min_share = 0.9
+
+# Non-text families, as universe drop codes (records.DROP_REASONS): the same
+# rules as google_metadata. A family name matching a pattern takes its code;
+# the first match wins.
+drop_names = [
+  ["icon", '^Material (Icons|Symbols)\b'],
+  ["barcode", '\bBarcode\b'],
+  ["math", '\bMath\b'],
+  ["music", '\bMusic(al)?\b'],
+  ["emoji", '\bEmoji\b'],
+]
+
+# METADATA.pb's classification of symbol, placeholder and pictograph fonts
+# (Noto Sans Symbols, Redacted, Wavefont, Yarndings): drop code "symbol".
+symbol_classifications = ["SYMBOLS"]

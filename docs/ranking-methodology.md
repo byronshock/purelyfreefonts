@@ -87,7 +87,7 @@ Unknown IDs are excluded.
 In every option:
 
 - The 191 families that cover basic Latin only are kept, with a "limited accents" badge.
-- A non-Google font qualifies if it covers GF_Latin_Kernel, at least 50% of its letters are Latin, and it has fewer than 1,000 CJK code points. These thresholds are untested.
+- A non-Google font qualifies if it covers GF_Latin_Kernel, enough of its letters are Latin, and it has fewer than 1,000 CJK code points. A letter's script is its Unicode Script property, and letters of the Common, Inherited and Unknown scripts are not counted. The minimum Latin share is `latin_share_min` in `config/ranking.toml [latin]`: 0.40 until the owner rules on gate L1, which sets all these thresholds.
 - Families that are mainly CJK (Sarasa, LXGW WenKai, D2Coding) are out.
 
 **Text only.** Excluded:
@@ -175,12 +175,12 @@ Each font also shows its rank in every source. The site data carries an internal
 
 ### Desktop: two views
 
-Both views use the sources below. They differ only in how fonts that Linux systems install automatically are counted (decision D8):
+Both views use the sources below. They differ only in how fonts that Linux systems install automatically are counted:
 
-- **Most chosen** (`desktop_chosen`): fonts people deliberately install. Linux sources abstain for fonts that a Linux system preinstalls or another package pulls in (see the dependency note); those fonts are still ranked on their other sources. **This view feeds the overall rank.**
-- **Most installed** (`desktop_installed`): fonts on the most computers. Every install counts as it is, automatic or not. Published as its own view; it does not affect the overall rank.
+- **Most chosen**: fonts people deliberately install. A Linux source leaves out a font that a Linux system preinstalls, or that one other package pulls in for at least half of its installs; the font is still ranked on its other sources. **This view feeds the overall rank.**
+- **Most installed**: fonts on the most computers. Every install counts as it is, automatic or not. Published as its own view; it does not affect the overall rank.
 
-In both views, affected fonts carry a tag naming the systems they come with (`preinstalled_on`) or the packages that pull them in (`pulled_in_by`).
+In both views, affected fonts carry a tag naming the systems they come with or the packages that pull them in.
 
 
 | Source | Weight | Handling |
@@ -430,7 +430,7 @@ Source weights and fixed floors are in the §5 tables.
   - Sauce Code Pro → Source Code Pro;
   - Roboto Slab gets no Roboto counts;
   - a renamed family keeps its `id`;
-- a higher count lowers a rank when the outlier guard didn't fire;
+- a higher count lowers a rank, except when the outlier guard changes for that font or for a font that overtakes it, or through the ruler's scale;
 - the two desktop views differ for any reason other than Linux abstentions;
 - changing a Linux source's count for a font that abstains in *most chosen* changes the overall rank.
 
@@ -467,9 +467,9 @@ The monthly pull request asks the owner only to review what it flags: new aliase
 - **Thin platform coverage.** There is no Windows source in v1: Chocolatey's terms forbid automated access, so it was dropped. Windows users, and designers who download zips, show up only through GitHub counters.
 - **Defaults.** Installs driven by tool defaults count in both desktop views (Meslo via Powerlevel10k). Installs that Linux systems make automatically count fully in *most installed*. In *most chosen* they are left out, and those fonts are ranked on their other sources. The preinstalled list is kept by hand, and derivative distributions we don't parse leak through into *most chosen*.
 - **Web data.**
-  - FOT crawls US homepages only, and half of them are startups.
+  - Fonts Over Time crawls US homepages only, and half of them are startups.
   - The Almanac is yearly, covers only the top 100, and folds width cuts into their parents.
   - Google's views are weighted by traffic and can't see self-hosted fonts.
   - CI runs inflate npm.
-- **The ruler.** Homebrew is the ruler, so it decides how popular each source's fonts count as a group. The Fontsource-ruler rerun checks this.
+- **The ruler.** Homebrew is the ruler, so it decides how popular each source's fonts count as a group. As a check, each run also ranks the fonts with Fontsource as the ruler.
 - **Not measured.** Print use is unmeasured, and the site itself will nudge installs.

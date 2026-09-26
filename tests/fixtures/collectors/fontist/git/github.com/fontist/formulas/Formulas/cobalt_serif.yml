@@ -1,0 +1,23 @@
+schema_version: 5
+name: Cobalt Serif
+description: Synthetic proprietary serif behind a click-through agreement.
+homepage: https://www.cobalt.synth.example
+resources:
+  cobalt32.exe:
+    urls:
+    - https://downloads.cobalt.synth.example/cobalt32.exe
+    sha256: 4444444444444444444444444444444444444444444444444444444444444444
+    file_size: 198384
+fonts:
+- name: Cobalt Serif
+  styles:
+  - family_name: Cobalt Serif
+    type: Regular
+    full_name: Cobalt Serif
+    post_script_name: CobaltSerif
+    version: '2.00'
+    font: COBALT.TTF
+extract:
+  format: cab
+requires_license_agreement: SENTINEL-LICENSE-TEXT End-user license agreement.
+spdx_license: LicenseRef-Synth-EULA

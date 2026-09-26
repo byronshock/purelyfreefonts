@@ -1,0 +1,32 @@
+[
+ {
+  "name": "README.md",
+  "path": "data/snapshots/weekly/README.md",
+  "type": "file",
+  "sha": "77f17d8237fe836ae2032397a1660785c4d68d4a",
+  "size": 14
+ },
+ {
+  "name": "archive",
+  "path": "data/snapshots/weekly/archive",
+  "type": "dir",
+  "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+  "size": 0
+ },
+ {
+  "name": "2026-W39.jsonl.gz",
+  "path": "data/snapshots/weekly/2026-W39.jsonl.gz",
+  "sha": "98df2455a812a73c473be7900d501d758ede1fa1",
+  "size": 1601,
+  "type": "file",
+  "download_url": "https://raw.githubusercontent.com/fcjr/fontsovertime/main/data/snapshots/weekly/2026-W39.jsonl.gz"
+ },
+ {
+  "name": "2026-W40.jsonl.gz",
+  "path": "data/snapshots/weekly/2026-W40.jsonl.gz",
+  "sha": "213ba2e0399fba65decc3ed056f21b1c0f9ad46b",
+  "size": 1186,
+  "type": "file",
+  "download_url": "https://raw.githubusercontent.com/fcjr/fontsovertime/main/data/snapshots/weekly/2026-W40.jsonl.gz"
+ }
+]

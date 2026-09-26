@@ -1,0 +1,21 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: ember-slab
+Source: https://code.ember.example/ember-slab (tagged releases)
+License: OFL-1.1
+
+Files: *
+Copyright: 2023-2024 Synthetic Slab Studio
+License: OFL-1.1 or GPL-3+ with Font exception
+
+Files: tools/*.py
+ scripts/*
+Copyright: 2023 Synthetic Slab Studio
+License: GPL-2+
+
+Files: appstream/* debian/*
+Copyright: 2024 Synthetic Fonts Team
+License: CC0-1.0
+
+Files: doc/*
+Copyright: 2023 Synthetic Slab Studio
+License: CC-BY-SA-4.0

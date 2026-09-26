@@ -1,0 +1,47 @@
+alias,ns,target_ns,target,relation,detail,source,evidence,auto
+3270,font-name,nerd-folder,3270,postscript,,name_tables,https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/src/unpatched-fonts/3270/3270-Regular.ttf,false
+Aptos Display,font-name,font-name,Aptos,build,opsz,name_tables,https://download.microsoft.com/download/8/6/0/860a94fa-7feb-44ef-ac79-c072d9113d69/Microsoft%20Aptos%20Fonts.zip#Aptos-Display-Bold-Italic.ttf,false
+Argentum Sans VF,font-name,fs-id,argentum-sans,build,variable,name_tables,https://raw.githubusercontent.com/fontsource/font-files/0a4ca74c3548ab47d03eb7e9af398b41a86a31ac/sources/argentum-sans/files/ArgentumSans-VF.ttf,false
+D2Coding ligature,font-name,nerd-folder,D2Coding,build,,name_tables,https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/src/unpatched-fonts/D2Coding/D2Coding-Ver1.3.2-20180524-ligature.ttf,false
+DMCAsansserifv1000dev1i,font-name,font-name,DMCA Sans Serif 10.0 dev1,postscript,,name_tables,https://typedesign.replit.app/DMCAsansserifv1000dev2_.zip#DMCAsansserifv1000dev2i-bold.ttf,false
+DejaVu Sans Condensed,font-name,font-name,DejaVu Sans,build,static,name_tables,https://github.com/dejavu-fonts/dejavu-fonts/releases/download/version_2_37/dejavu-fonts-ttf-2.37.zip#DejaVuSansCondensed-Bold.ttf,false
+DejaVu Serif Condensed,font-name,font-name,DejaVu Serif,build,static,name_tables,https://github.com/dejavu-fonts/dejavu-fonts/releases/download/version_2_37/dejavu-fonts-ttf-2.37.zip#DejaVuSerifCondensed-Bold.ttf,false
+Droid Sans Mono for Powerline,font-name,nerd-folder,DroidSansMono,build,powerline,name_tables,https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/src/unpatched-fonts/DroidSansMono/Droid%20Sans%20Mono%20for%20Powerline.otf,false
+EB Garamond 08,font-name,font-name,EB Garamond,build,static,name_tables,https://bitbucket.org/georgd/eb-garamond/downloads/EBGaramond-0.016.zip#EBGaramond08-Italic.otf,false
+EB Garamond 12,font-name,font-name,EB Garamond,build,static,name_tables,https://bitbucket.org/georgd/eb-garamond/downloads/EBGaramond-0.016.zip#EBGaramond12-Italic.otf,false
+EB Garamond SC 08,font-name,font-name,EB Garamond SC,build,static,name_tables,https://bitbucket.org/georgd/eb-garamond/downloads/EBGaramond-0.016.zip#EBGaramondSC08-Regular.otf,false
+EB Garamond SC 12,font-name,font-name,EB Garamond SC,build,static,name_tables,https://bitbucket.org/georgd/eb-garamond/downloads/EBGaramond-0.016.zip#EBGaramondSC12-Regular.otf,false
+Fira Code Retina,font-name,font-name,Fira Code,build,static,name_tables,https://github.com/tonsky/FiraCode/releases/download/5.2/Fira_Code_v5.2.zip#FiraCode-Retina.ttf,false
+Inter Display,font-name,font-name,Inter,build,opsz,name_tables,https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip#Inter.ttc,false
+Inter Variable,font-name,font-name,Inter,build,variable,name_tables,https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip#InterVariable-Italic.ttf,false
+JetBrains Mono NL,font-name,font-name,JetBrains Mono,build,nl,name_tables,https://github.com/JetBrains/JetBrainsMono/releases/download/v2.304/JetBrainsMono-2.304.zip#JetBrainsMonoNL-Bold.ttf,false
+LastResortHE,font-name,brew-cask,font-last-resort-high-efficiency,postscript,,name_tables,https://github.com/unicode-org/last-resort-font/releases/download/18.000/LastResortHE-Regular.ttf,false
+League Mono Thin Condensed,font-name,fs-id,league-mono,build,static,name_tables,https://raw.githubusercontent.com/fontsource/font-files/0a4ca74c3548ab47d03eb7e9af398b41a86a31ac/sources/league-mono/files/LeagueMonoVariable.ttf,false
+Libertinus Serif Display,font-name,font-name,Libertinus Serif,build,opsz,name_tables,https://github.com/alerque/libertinus/releases/download/v7.051/Libertinus-7.051.zip#LibertinusSerifDisplay-Regular.otf,false
+LogoSCLongZhuTi,font-name,font-name,LongZhuTi,postscript,,name_tables,https://github.com/maoken-fonts/LongZhuTi/releases/download/v1.000/LongZhuTi-Regular.ttf#LongZhuTi-Regular.ttf,false
+Martian Mono Cn,font-name,font-name,Martian Mono,build,static,name_tables,https://github.com/evilmartians/mono/releases/download/v1.0.0/martian-mono-1.0.0-otf.zip#MartianMono-CnBd.otf,false
+Martian Mono Nr,font-name,font-name,Martian Mono,build,static,name_tables,https://github.com/evilmartians/mono/releases/download/v1.0.0/martian-mono-1.0.0-otf.zip#MartianMono-NrBd.otf,false
+Martian Mono Std,font-name,font-name,Martian Mono,build,static,name_tables,https://github.com/evilmartians/mono/releases/download/v1.0.0/martian-mono-1.0.0-otf.zip#MartianMono-StdBd.otf,false
+Martian Mono Std,font-name,nerd-folder,MartianMono,build,static,name_tables,https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/src/unpatched-fonts/MartianMono/Std/MartianMono-Regular.ttf,false
+Martian Mono sWd,font-name,font-name,Martian Mono,build,static,name_tables,https://github.com/evilmartians/mono/releases/download/v1.0.0/martian-mono-1.0.0-otf.zip#MartianMono-sWdBd.otf,false
+Monaspace Argon Var,font-name,fs-id,monaspace-argon,build,variable,name_tables,https://raw.githubusercontent.com/fontsource/font-files/0a4ca74c3548ab47d03eb7e9af398b41a86a31ac/sources/monaspace-argon/files/Monaspace%20Argon%20Var.ttf,false
+Monaspace Krypton Var,font-name,fs-id,monaspace-krypton,build,variable,name_tables,https://raw.githubusercontent.com/fontsource/font-files/0a4ca74c3548ab47d03eb7e9af398b41a86a31ac/sources/monaspace-krypton/files/Monaspace%20Krypton%20Var.ttf,false
+Monaspace Neon Var,font-name,fs-id,monaspace-neon,build,variable,name_tables,https://raw.githubusercontent.com/fontsource/font-files/0a4ca74c3548ab47d03eb7e9af398b41a86a31ac/sources/monaspace-neon/files/Monaspace%20Neon%20Var.ttf,false
+Monaspace Radon Var,font-name,fs-id,monaspace-radon,build,variable,name_tables,https://raw.githubusercontent.com/fontsource/font-files/0a4ca74c3548ab47d03eb7e9af398b41a86a31ac/sources/monaspace-radon/files/Monaspace%20Radon%20Var.ttf,false
+Monaspace Xenon Var,font-name,fs-id,monaspace-xenon,build,variable,name_tables,https://raw.githubusercontent.com/fontsource/font-files/0a4ca74c3548ab47d03eb7e9af398b41a86a31ac/sources/monaspace-xenon/files/Monaspace%20Xenon%20Var.ttf,false
+NewCM08,font-name,font-name,NewComputerModern08,postscript,,name_tables,https://download.gnu.org.ua/release/newcm/newcm-7.1.1.txz#NewCM08-Book.otf,false
+NewCM10,font-name,font-name,NewComputerModern10,postscript,,name_tables,https://download.gnu.org.ua/release/newcm/newcm-7.1.1.txz#NewCM10-Bold.otf,false
+NewCM10Devanagari,font-name,font-name,NewComputerModern 10 Devanagari,postscript,,name_tables,https://download.gnu.org.ua/release/newcm/newcm-7.1.1.txz#NewCM10Devanagari-Bold.otf,false
+NewCMMath,font-name,font-name,NewComputerModernMath,postscript,,name_tables,https://download.gnu.org.ua/release/newcm/newcm-7.1.1.txz#NewCMMath-Bold.otf,false
+NewCMMono10,font-name,font-name,NewComputerModernMono10,postscript,,name_tables,https://download.gnu.org.ua/release/newcm/newcm-7.1.1.txz#NewCMMono10-Bold.otf,false
+NewCMSans08,font-name,font-name,NewComputerModernSans08,postscript,,name_tables,https://download.gnu.org.ua/release/newcm/newcm-7.1.1.txz#NewCMSans08-Book.otf,false
+NewCMSans10,font-name,font-name,NewComputerModernSans10,postscript,,name_tables,https://download.gnu.org.ua/release/newcm/newcm-7.1.1.txz#NewCMSans10-Bold.otf,false
+NewCMSansMath,font-name,font-name,NewComputerModernSansMath,postscript,,name_tables,https://download.gnu.org.ua/release/newcm/newcm-7.1.1.txz#NewCMSansMath-Regular.otf,false
+Noto Sans Condensed,font-name,font-name,Noto Sans,build,static,name_tables,https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSans-v2.013/NotoSans-v2.013.zip#NotoSans-Condensed.ttf,false
+Noto Sans ExtraCondensed,font-name,font-name,Noto Sans,build,static,name_tables,https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSans-v2.013/NotoSans-v2.013.zip#NotoSans-ExtraCondensed.ttf,false
+Noto Sans SemiCondensed,font-name,font-name,Noto Sans,build,static,name_tables,https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSans-v2.013/NotoSans-v2.013.zip#NotoSans-SemiCondensed.ttf,false
+Open Sans Condensed,font-name,font-name,Open Sans,build,static,name_tables,https://github.com/googlefonts/opensans/archive/refs/heads/main.zip#OpenSans-CondensedBold.ttf,false
+Pretendard Variable,font-name,fs-id,pretendard,build,variable,name_tables,https://raw.githubusercontent.com/fontsource/font-files/b93e5ae6abc42a1a0e29fb8cd0395aa4b730314d/sources/pretendard/files/PretendardVariable.ttf,false
+TeXGyreHerosCondensed,font-name,font-name,TeX Gyre Heros Cn,postscript,,name_tables,https://distfiles.gentoo.org/distfiles/1c/tg2_501otf.zip#texgyreheroscn-bold.otf,false
+Uncut Sans Variable,font-name,fs-id,uncut-sans,build,variable,name_tables,https://raw.githubusercontent.com/fontsource/font-files/0a4ca74c3548ab47d03eb7e9af398b41a86a31ac/sources/uncut-sans/files/UncutSans-Variable.ttf,false
+monofur for Powerline,font-name,nerd-folder,Monofur,build,powerline,name_tables,https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/src/unpatched-fonts/Monofur/Monofur%20for%20Powerline.ttf,false

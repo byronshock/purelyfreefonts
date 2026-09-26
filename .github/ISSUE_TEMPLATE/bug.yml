@@ -1,0 +1,57 @@
+# "Something's broken" (Milestone 2 step 12, M2-D10).
+name: Something's broken
+description: A page, filter, search, preview or link on the site doesn't work as it should.
+title: "Broken: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Reports are public:** anyone can read them, so please leave out anything private. No GitHub account? Email admin@trulyfreefonts.com instead.
+
+        A wrong license or download link has its own form, "Wrong license or link".
+  - type: input
+    id: page
+    attributes:
+      label: Page address
+      description: Copy it from the address bar. It includes your filters.
+      placeholder: https://trulyfreefonts.com/
+    validations:
+      required: true
+  - type: textarea
+    id: happened
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to see it again
+      placeholder: |
+        1. Open …
+        2. Choose …
+        3. …
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      description: For example, Firefox 143 on Windows 11, or Safari on an iPhone.
+    validations:
+      required: true
+  - type: textarea
+    id: version
+    attributes:
+      label: Site version
+      description: Optional. Open https://trulyfreefonts.com/version.txt and paste its commit= and run_date= lines.
+      render: text
+  - type: textarea
+    id: console
+    attributes:
+      label: Browser console errors
+      description: Optional. Any red lines from the browser's developer tools (Console tab).
+      render: text

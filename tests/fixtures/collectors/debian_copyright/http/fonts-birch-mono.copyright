@@ -1,0 +1,26 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Birch Mono
+Source: https://birch.example/mono/
+
+Files: *
+Copyright: 2018 Synthetic Type Collective
+License: Expat
+
+Files: *.ttf source/*
+Copyright: 2003 Synthetic Vera Foundry
+License: BitstreamVera
+
+Files: postbuild/*
+Copyright: 2018 Synthetic Type Collective
+License: Expat
+
+Files: debian/*
+Copyright: 2019 Synthetic Fonts Team
+License: GPL-3+
+
+License: Expat
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software (synthetic excerpt).
+
+License: BitstreamVera
+ Permission is hereby granted, free of charge (synthetic excerpt).

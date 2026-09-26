@@ -1,0 +1,103 @@
+{
+  "collector_version": 1,
+  "complete": true,
+  "data_date": "2026-08-31",
+  "date": "2026-09-26",
+  "extracts": [
+    {
+      "bytes": 79,
+      "path": "month-2025-09.csv.gz",
+      "rows": 2,
+      "sha256": "f7bce91f805f6847c6c11a40f154eade0c1946307ef77d7d97cb09f7ed426bcc"
+    },
+    {
+      "bytes": 79,
+      "path": "month-2025-10.csv.gz",
+      "rows": 2,
+      "sha256": "c9c279583df938ebd377b04e49ddebe0892478b3e5a9364962ec5922efe3668d"
+    },
+    {
+      "bytes": 80,
+      "path": "month-2025-11.csv.gz",
+      "rows": 2,
+      "sha256": "f27a0b70114f992bc8e650ea5152d6269891573e71d4f121903282c1d95605b8"
+    },
+    {
+      "bytes": 80,
+      "path": "month-2025-12.csv.gz",
+      "rows": 2,
+      "sha256": "318e1504523395ddf329fe16a7422ac386489f5515fd346b1976021b710c36a6"
+    },
+    {
+      "bytes": 78,
+      "path": "month-2026-01.csv.gz",
+      "rows": 2,
+      "sha256": "5bc1fb48278f8856532c25411acea36c0e4ab9adce40d0f926122ed5849daf5e"
+    },
+    {
+      "bytes": 79,
+      "path": "month-2026-02.csv.gz",
+      "rows": 2,
+      "sha256": "da3983e6e833976ac75217fd8c55824ae37479af6765f3d4120df5e6c39f8333"
+    },
+    {
+      "bytes": 79,
+      "path": "month-2026-03.csv.gz",
+      "rows": 2,
+      "sha256": "8dee2cfa939053645861a87c1317397fb22f44f668bb98bf060117f10ea83c54"
+    },
+    {
+      "bytes": 80,
+      "path": "month-2026-04.csv.gz",
+      "rows": 2,
+      "sha256": "f9334ba63681474115342ec252a879ab6ad689b0ec745ee6d3993cf2e4801268"
+    },
+    {
+      "bytes": 99,
+      "path": "month-2026-05.csv.gz",
+      "rows": 3,
+      "sha256": "6766a925d2a62900fd2d2c36084828d0622e33512c3d430385dcd471e6b6e079"
+    },
+    {
+      "bytes": 99,
+      "path": "month-2026-06.csv.gz",
+      "rows": 3,
+      "sha256": "b43d7fe4a348b47b61adc36ae361f8157b29368c29b30485ce1233633534806b"
+    },
+    {
+      "bytes": 100,
+      "path": "month-2026-07.csv.gz",
+      "rows": 3,
+      "sha256": "67fd889da24da9fb6d4087594a39468a02e295d50c40380ddcc09fa56a6e41c7"
+    },
+    {
+      "bytes": 181,
+      "path": "month-2026-08.csv.gz",
+      "rows": 10,
+      "sha256": "31fb0fcd4fcaf76d921b9da5b4ac29bff7189e8103e2e3146dd6cff59f2a4cd1"
+    }
+  ],
+  "fetched": [
+    {
+      "bytes": 1197,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "4bc938f8523766a8f86053ddd88e4447c56e35665fbfdf2afd85d566ff05aec6",
+      "status": 200,
+      "url": "https://pkgstats.archlinux.de/api/packages?startMonth=202608&endMonth=202608&limit=10000&offset=0"
+    }
+  ],
+  "notes": [
+    "copied from the 2026-08-03 snapshot: 11 months: 2025-09 to 2026-07",
+    "fetched 1 month: 2026-08"
+  ],
+  "schema": 1,
+  "source": "pkgstats",
+  "stale_of": null,
+  "window": {
+    "end": "2026-08-31",
+    "start": "2025-09-01"
+  }
+}

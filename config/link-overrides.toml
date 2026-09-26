@@ -1,0 +1,170 @@
+# Official-link overrides (milestone-1 step 14; owner gate K). Read by tff_catalog.links.
+#
+# The link policy picks each family's links on its own: a live Google family links
+# its Google Fonts specimen page, and any other family the designer's homepage or
+# the repository's releases page that two sources agree on. An override replaces
+# that choice for one family, for example when the designer's own release is
+# fuller than the build Google Fonts serves.
+#
+# An override is only a proposal until the owner rules on its gate K question:
+# it applies when the latest data/reviews/links/<YYYY-MM-DD>.toml answers
+# `question` with `choice` ("a" = approve). Several families can share one
+# question. For a catalog family the links queue left undecided
+# (build/stage/queues/links.json), gate K asks the owner to pick one of its
+# candidates on question "K-<family id>". When the owner picks one (the queue's
+# `overrides.answered`), add an entry with that question, the picked letter as
+# `choice` and the candidate's URL. When the owner asks for research, add the
+# researched link under a new question id, such as "K-<family id>-page".
+#
+# Fields (loaded strictly: unknown or missing keys fail):
+#   family          family id (state/ids.json), listed once
+#   name            display name, for the owner
+#   question        the gate K question that approves it
+#   choice          the answer that applies it (default "a")
+#   primary         the official download link: https, never a release asset,
+#                   /releases/latest, the googlefontdirectory-hg mirror or an aggregator
+#   designer        optional second link, same rules
+#   primary_label, designer_label
+#                   optional destination names; by default the site derives one
+#                   ("GitHub: rsms/inter", or the host name)
+#   reason          why the override is needed
+#
+# All URLs below answered HTTP 200 on 2026-09-25.
+
+schema = 1
+
+# --- K-inter ---------------------------------------------------------------------------------
+
+[[override]]
+family = "inter"
+name = "Inter"
+question = "K-inter"
+primary = "https://rsms.me/inter/"
+designer = "https://github.com/rsms/inter/releases"
+reason = "The designer's site offers the full release (static and variable, desktop and web). Google Fonts serves its own build (Inter-4.1-GoogleFonts.zip in its METADATA.pb)."
+
+# --- K-jetbrains-mono ------------------------------------------------------------------------
+
+[[override]]
+family = "jetbrains-mono"
+name = "JetBrains Mono"
+question = "K-jetbrains-mono"
+primary = "https://www.jetbrains.com/lp/mono/"
+designer = "https://github.com/JetBrains/JetBrainsMono/releases"
+reason = "The designer's page offers JetBrains' own release. Google Fonts serves its own build and does not list the NL (no ligatures) cut that JetBrains' repository carries."
+
+# --- K-ibm-plex: every IBM Plex family on Google Fonts -------------------------------------------
+
+[[override]]
+family = "ibm-plex-sans"
+name = "IBM Plex Sans"
+question = "K-ibm-plex"
+primary = "https://www.ibm.com/plex/"
+designer = "https://github.com/IBM/plex/releases"
+reason = "IBM publishes every Plex family on its own site and releases page (desktop, variable and web files); Google Fonts serves its own builds."
+
+[[override]]
+family = "ibm-plex-sans-condensed"
+name = "IBM Plex Sans Condensed"
+question = "K-ibm-plex"
+primary = "https://www.ibm.com/plex/"
+designer = "https://github.com/IBM/plex/releases"
+reason = "IBM publishes every Plex family on its own site and releases page (desktop, variable and web files); Google Fonts serves its own builds."
+
+[[override]]
+family = "ibm-plex-serif"
+name = "IBM Plex Serif"
+question = "K-ibm-plex"
+primary = "https://www.ibm.com/plex/"
+designer = "https://github.com/IBM/plex/releases"
+reason = "IBM publishes every Plex family on its own site and releases page (desktop, variable and web files); Google Fonts serves its own builds."
+
+[[override]]
+family = "ibm-plex-mono"
+name = "IBM Plex Mono"
+question = "K-ibm-plex"
+primary = "https://www.ibm.com/plex/"
+designer = "https://github.com/IBM/plex/releases"
+reason = "IBM publishes every Plex family on its own site and releases page (desktop, variable and web files); Google Fonts serves its own builds."
+
+[[override]]
+family = "ibm-plex-sans-arabic"
+name = "IBM Plex Sans Arabic"
+question = "K-ibm-plex"
+primary = "https://www.ibm.com/plex/"
+designer = "https://github.com/IBM/plex/releases"
+reason = "IBM publishes every Plex family on its own site and releases page (desktop, variable and web files); Google Fonts serves its own builds."
+
+[[override]]
+family = "ibm-plex-sans-devanagari"
+name = "IBM Plex Sans Devanagari"
+question = "K-ibm-plex"
+primary = "https://www.ibm.com/plex/"
+designer = "https://github.com/IBM/plex/releases"
+reason = "IBM publishes every Plex family on its own site and releases page (desktop, variable and web files); Google Fonts serves its own builds."
+
+[[override]]
+family = "ibm-plex-sans-hebrew"
+name = "IBM Plex Sans Hebrew"
+question = "K-ibm-plex"
+primary = "https://www.ibm.com/plex/"
+designer = "https://github.com/IBM/plex/releases"
+reason = "IBM publishes every Plex family on its own site and releases page (desktop, variable and web files); Google Fonts serves its own builds."
+
+[[override]]
+family = "ibm-plex-sans-jp"
+name = "IBM Plex Sans JP"
+question = "K-ibm-plex"
+primary = "https://www.ibm.com/plex/"
+designer = "https://github.com/IBM/plex/releases"
+reason = "IBM publishes every Plex family on its own site and releases page (desktop, variable and web files); Google Fonts serves its own builds."
+
+[[override]]
+family = "ibm-plex-sans-kr"
+name = "IBM Plex Sans KR"
+question = "K-ibm-plex"
+primary = "https://www.ibm.com/plex/"
+designer = "https://github.com/IBM/plex/releases"
+reason = "IBM publishes every Plex family on its own site and releases page (desktop, variable and web files); Google Fonts serves its own builds."
+
+[[override]]
+family = "ibm-plex-sans-thai"
+name = "IBM Plex Sans Thai"
+question = "K-ibm-plex"
+primary = "https://www.ibm.com/plex/"
+designer = "https://github.com/IBM/plex/releases"
+reason = "IBM publishes every Plex family on its own site and releases page (desktop, variable and web files); Google Fonts serves its own builds."
+
+[[override]]
+family = "ibm-plex-sans-thai-looped"
+name = "IBM Plex Sans Thai Looped"
+question = "K-ibm-plex"
+primary = "https://www.ibm.com/plex/"
+designer = "https://github.com/IBM/plex/releases"
+reason = "IBM publishes every Plex family on its own site and releases page (desktop, variable and web files); Google Fonts serves its own builds."
+
+# --- K-adobe-source: the Adobe Source families on Google Fonts ---------------------------------
+
+[[override]]
+family = "source-sans-3"
+name = "Source Sans 3"
+question = "K-adobe-source"
+primary = "https://github.com/adobe-fonts/source-sans/releases"
+designer = "https://adobe-fonts.github.io/source-sans/"
+reason = "Adobe's releases carry the desktop and web builds; Google Fonts serves its own build. Adobe's project page links only the repository, so the releases page is the primary."
+
+[[override]]
+family = "source-serif-4"
+name = "Source Serif 4"
+question = "K-adobe-source"
+primary = "https://github.com/adobe-fonts/source-serif/releases"
+designer = "https://adobe-fonts.github.io/source-serif/"
+reason = "Adobe's releases carry the desktop and web builds; Google Fonts serves its own build. Adobe's project page links only the repository, so the releases page is the primary."
+
+[[override]]
+family = "source-code-pro"
+name = "Source Code Pro"
+question = "K-adobe-source"
+primary = "https://github.com/adobe-fonts/source-code-pro/releases"
+designer = "https://adobe-fonts.github.io/source-code-pro/"
+reason = "Adobe's releases carry the desktop and web builds; Google Fonts serves its own build. Adobe's project page links only the repository, so the releases page is the primary."

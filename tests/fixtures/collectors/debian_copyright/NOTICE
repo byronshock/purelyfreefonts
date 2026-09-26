@@ -1,0 +1,10 @@
+Synthetic data. Every package, name, version, homepage, source URL and license
+statement in these files was made up for the tests; none is copied from Debian.
+The only real URLs are Debian's own: the endpoints the collector reads and the
+DEP-5 format URIs that a copyright file's header names. Made-up hosts use the
+reserved .example domain.
+
+The collector reads the DEP-5 copyright files of Debian's font source packages
+(metadata.ftp-master.debian.org) and sid's Sources index (deb.debian.org). Its
+real snapshots stay in the private data store: the copyright files belong to
+their packages, so only license identifiers are used, as facts (docs/sources.md).

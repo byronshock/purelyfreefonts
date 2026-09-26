@@ -1,0 +1,32 @@
+# Ranking collector npm: daily downloads of the Fontsource and Expo font
+# packages, from api.npmjs.org/downloads/range (open data, ruling T1). One
+# request per package, one every 1.5 seconds (fetch.HOST_MIN_INTERVAL): about
+# 4,700 requests. At one a second npm answered one in five with a 429 (the
+# fetcher retries), so a full run takes about two hours.
+enabled = true
+
+# npm organisations whose packages are fetched. ranking.toml's engine sources
+# split them: npm_fontsource reads @fontsource and @fontsource-variable,
+# npm_expo reads @expo-google-fonts.
+scopes = ["@fontsource", "@fontsource-variable", "@expo-google-fonts"]
+
+# Packages never fetched: @expo-google-fonts/dev is a meta package that
+# depends on every Expo font, so its downloads say nothing about any one font.
+exclude = ["@expo-google-fonts/dev"]
+
+# Days each range covers, ending at npm's last counted day. npm answers at most
+# 18 months (546 days at the shortest); 540 days give 17 or more complete
+# months, enough for the backtest's 12-month windows. The last-year total is
+# always the last 365 of them.
+history_days = 540
+
+# 0 fetches every package. A positive number fetches an evenly spaced sample of
+# that many packages per scope, for local runs (a full run takes over 90
+# minutes); the manifest notes it. Keep 0 here.
+max_packages = 0
+
+# Packages whose request may still fail after the fetcher's retries, or whose
+# answer does not check out, before the whole fetch fails (and the stale policy
+# reuses the last snapshot). Failed packages are asked for once more at the
+# end; the ones that fail again are left out and named in the manifest.
+max_failures = 10

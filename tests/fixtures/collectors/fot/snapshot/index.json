@@ -1,0 +1,48 @@
+{
+  "commit": "3a5f9c1e7b2d4f6a8c0e1b3d5f7a9c2e4b6d8f01",
+  "dominant_share": 0.05,
+  "methods": [
+    "browser",
+    "static"
+  ],
+  "ref": "main",
+  "repo": "fcjr/fontsovertime",
+  "schema": 1,
+  "weeks": [
+    {
+      "blob": "98df2455a812a73c473be7900d501d758ede1fa1",
+      "bytes": 1601,
+      "commit": "3a5f9c1e7b2d4f6a8c0e1b3d5f7a9c2e4b6d8f01",
+      "crawled_from": "2026-09-23",
+      "crawled_to": "2026-09-23",
+      "extract": "weeks/2026-W39.jsonl.gz",
+      "lines": 19,
+      "path": "data/snapshots/weekly/2026-W39.jsonl.gz",
+      "sites": 13,
+      "status": {
+        "blocked": 1,
+        "error": 1,
+        "http_error": 1,
+        "ok": 15,
+        "timeout": 1
+      },
+      "week": "2026-W39"
+    },
+    {
+      "blob": "213ba2e0399fba65decc3ed056f21b1c0f9ad46b",
+      "bytes": 1186,
+      "commit": "3a5f9c1e7b2d4f6a8c0e1b3d5f7a9c2e4b6d8f01",
+      "crawled_from": "2026-09-27",
+      "crawled_to": "2026-09-27",
+      "extract": "weeks/2026-W40.jsonl.gz",
+      "lines": 12,
+      "path": "data/snapshots/weekly/2026-W40.jsonl.gz",
+      "sites": 11,
+      "status": {
+        "ok": 11,
+        "timeout": 1
+      },
+      "week": "2026-W40"
+    }
+  ]
+}

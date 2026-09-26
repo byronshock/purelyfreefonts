@@ -1,0 +1,534 @@
+alias,ns,target_ns,target,relation,detail,source,evidence,auto
+font-0xproto-nerd-font,brew-cask,nerd-folder,0xProto,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#0xProto,true
+font-3270-nerd-font,brew-cask,nerd-folder,3270,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#3270,true
+font-adwaita-mono-nerd-font,brew-cask,nerd-folder,AdwaitaMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AdwaitaMono,true
+font-agave-nerd-font,brew-cask,nerd-folder,Agave,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Agave,true
+font-annotationmono-nerd-font,brew-cask,nerd-folder,AnnotationMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AnnotationMono,true
+font-anonymice-nerd-font,brew-cask,nerd-folder,AnonymousPro,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AnonymousPro,true
+font-arimo-nerd-font,brew-cask,nerd-folder,Arimo,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Arimo,true
+font-atkynson-mono-nerd-font,brew-cask,nerd-folder,AtkinsonHyperlegibleMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AtkinsonHyperlegibleMono,true
+font-aurulent-sans-mono-nerd-font,brew-cask,nerd-folder,AurulentSansMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AurulentSansMono,true
+font-bigblue-terminal-nerd-font,brew-cask,nerd-folder,BigBlueTerminal,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#BigBlueTerminal,true
+font-bitstream-vera-sans-mono-nerd-font,brew-cask,nerd-folder,BitstreamVeraSansMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#BitstreamVeraSansMono,true
+font-blex-mono-nerd-font,brew-cask,nerd-folder,IBMPlexMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IBMPlexMono,true
+font-caskaydia-cove-nerd-font,brew-cask,nerd-folder,CascadiaCode,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CascadiaCode,true
+font-caskaydia-mono-nerd-font,brew-cask,nerd-folder,CascadiaMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CascadiaMono,true
+font-code-new-roman-nerd-font,brew-cask,nerd-folder,CodeNewRoman,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CodeNewRoman,true
+font-comic-shanns-mono-nerd-font,brew-cask,nerd-folder,ComicShannsMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ComicShannsMono,true
+font-commit-mono-nerd-font,brew-cask,nerd-folder,CommitMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CommitMono,true
+font-cousine-nerd-font,brew-cask,nerd-folder,Cousine,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Cousine,true
+font-d2coding-nerd-font,brew-cask,nerd-folder,D2Coding,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#D2Coding,true
+font-daddy-time-mono-nerd-font,brew-cask,nerd-folder,DaddyTimeMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DaddyTimeMono,true
+font-dejavu-sans-mono-nerd-font,brew-cask,nerd-folder,DejaVuSansMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DejaVuSansMono,true
+font-departure-mono-nerd-font,brew-cask,nerd-folder,DepartureMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DepartureMono,true
+font-droid-sans-mono-nerd-font,brew-cask,nerd-folder,DroidSansMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DroidSansMono,true
+font-envy-code-r-nerd-font,brew-cask,nerd-folder,EnvyCodeR,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#EnvyCodeR,true
+font-fantasque-sans-mono-nerd-font,brew-cask,nerd-folder,FantasqueSansMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FantasqueSansMono,true
+font-fira-code-nerd-font,brew-cask,nerd-folder,FiraCode,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FiraCode,true
+font-fira-mono-nerd-font,brew-cask,nerd-folder,FiraMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FiraMono,true
+font-geist-mono-nerd-font,brew-cask,nerd-folder,GeistMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#GeistMono,true
+font-go-mono-nerd-font,brew-cask,nerd-folder,Go-Mono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Go-Mono,true
+font-gohufont-nerd-font,brew-cask,nerd-folder,Gohu,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Gohu,true
+font-googlesanscode-nerd-font,brew-cask,nerd-folder,GoogleSansCode,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#GoogleSansCode,true
+font-hack-nerd-font,brew-cask,nerd-folder,Hack,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hack,true
+font-hasklug-nerd-font,brew-cask,nerd-folder,Hasklig,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hasklig,true
+font-heavy-data-nerd-font,brew-cask,nerd-folder,HeavyData,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#HeavyData,true
+font-hurmit-nerd-font,brew-cask,nerd-folder,Hermit,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hermit,true
+font-im-writing-nerd-font,brew-cask,nerd-folder,iA-Writer,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#iA-Writer,true
+font-inconsolata-go-nerd-font,brew-cask,nerd-folder,InconsolataGo,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#InconsolataGo,true
+font-inconsolata-lgc-nerd-font,brew-cask,nerd-folder,InconsolataLGC,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#InconsolataLGC,true
+font-inconsolata-nerd-font,brew-cask,nerd-folder,Inconsolata,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Inconsolata,true
+font-intone-mono-nerd-font,brew-cask,nerd-folder,IntelOneMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IntelOneMono,true
+font-iosevka-nerd-font,brew-cask,nerd-folder,Iosevka,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Iosevka,true
+font-iosevka-term-nerd-font,brew-cask,nerd-folder,IosevkaTerm,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IosevkaTerm,true
+font-iosevka-term-slab-nerd-font,brew-cask,nerd-folder,IosevkaTermSlab,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IosevkaTermSlab,true
+font-jetbrains-mono-nerd-font,brew-cask,nerd-folder,JetBrainsMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#JetBrainsMono,true
+font-lekton-nerd-font,brew-cask,nerd-folder,Lekton,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Lekton,true
+font-liberation-nerd-font,brew-cask,nerd-folder,LiberationMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#LiberationMono,true
+font-lilex-nerd-font,brew-cask,nerd-folder,Lilex,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Lilex,true
+font-m+-nerd-font,brew-cask,nerd-folder,MPlus,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#MPlus,true
+font-martian-mono-nerd-font,brew-cask,nerd-folder,MartianMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#MartianMono,true
+font-meslo-lg-nerd-font,brew-cask,nerd-folder,Meslo,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Meslo,true
+font-monaspice-nerd-font,brew-cask,nerd-folder,Monaspace,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monaspace,true
+font-monofur-nerd-font,brew-cask,nerd-folder,Monofur,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monofur,true
+font-monoid-nerd-font,brew-cask,nerd-folder,Monoid,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monoid,true
+font-mononoki-nerd-font,brew-cask,nerd-folder,Mononoki,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Mononoki,true
+font-noto-nerd-font,brew-cask,nerd-folder,Noto,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Noto,true
+font-opendyslexic-nerd-font,brew-cask,nerd-folder,OpenDyslexic,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#OpenDyslexic,true
+font-overpass-nerd-font,brew-cask,nerd-folder,Overpass,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Overpass,true
+font-profont-nerd-font,brew-cask,nerd-folder,ProFont,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ProFont,true
+font-proggy-clean-tt-nerd-font,brew-cask,nerd-folder,ProggyClean,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ProggyClean,true
+font-recursive-mono-nerd-font,brew-cask,nerd-folder,Recursive,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Recursive,true
+font-roboto-mono-nerd-font,brew-cask,nerd-folder,RobotoMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#RobotoMono,true
+font-sauce-code-pro-nerd-font,brew-cask,nerd-folder,SourceCodePro,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#SourceCodePro,true
+font-shure-tech-mono-nerd-font,brew-cask,nerd-folder,ShareTechMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ShareTechMono,true
+font-space-mono-nerd-font,brew-cask,nerd-folder,SpaceMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#SpaceMono,true
+font-symbols-only-nerd-font,brew-cask,nerd-folder,NerdFontsSymbolsOnly,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#NerdFontsSymbolsOnly,true
+font-terminess-ttf-nerd-font,brew-cask,nerd-folder,Terminus,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Terminus,true
+font-tinos-nerd-font,brew-cask,nerd-folder,Tinos,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Tinos,true
+font-ubuntu-mono-nerd-font,brew-cask,nerd-folder,UbuntuMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#UbuntuMono,true
+font-ubuntu-nerd-font,brew-cask,nerd-folder,Ubuntu,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Ubuntu,true
+font-ubuntu-sans-nerd-font,brew-cask,nerd-folder,UbuntuSans,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#UbuntuSans,true
+font-victor-mono-nerd-font,brew-cask,nerd-folder,VictorMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#VictorMono,true
+font-zed-mono-nerd-font,brew-cask,nerd-folder,ZedMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ZedMono,true
+0xProto NF,font-name,nerd-folder,0xProto,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#0xProto,true
+0xProto NFM,font-name,nerd-folder,0xProto,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#0xProto,true
+0xProto NFP,font-name,nerd-folder,0xProto,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#0xProto,true
+0xProto Nerd Font,font-name,nerd-folder,0xProto,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#0xProto,true
+0xProto Nerd Font Mono,font-name,nerd-folder,0xProto,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#0xProto,true
+0xProto Nerd Font Propo,font-name,nerd-folder,0xProto,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#0xProto,true
+3270,font-name,nerd-folder,3270,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#3270,true
+3270 NF,font-name,nerd-folder,3270,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#3270,true
+3270 NFM,font-name,nerd-folder,3270,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#3270,true
+3270 NFP,font-name,nerd-folder,3270,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#3270,true
+3270 Nerd Font,font-name,nerd-folder,3270,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#3270,true
+3270 Nerd Font Mono,font-name,nerd-folder,3270,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#3270,true
+3270 Nerd Font Propo,font-name,nerd-folder,3270,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#3270,true
+AdwaitaMono NF,font-name,nerd-folder,AdwaitaMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AdwaitaMono,true
+AdwaitaMono NFM,font-name,nerd-folder,AdwaitaMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AdwaitaMono,true
+AdwaitaMono NFP,font-name,nerd-folder,AdwaitaMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AdwaitaMono,true
+AdwaitaMono Nerd Font,font-name,nerd-folder,AdwaitaMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AdwaitaMono,true
+AdwaitaMono Nerd Font Mono,font-name,nerd-folder,AdwaitaMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AdwaitaMono,true
+AdwaitaMono Nerd Font Propo,font-name,nerd-folder,AdwaitaMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AdwaitaMono,true
+Agave NF,font-name,nerd-folder,Agave,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Agave,true
+Agave NFM,font-name,nerd-folder,Agave,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Agave,true
+Agave NFP,font-name,nerd-folder,Agave,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Agave,true
+Agave Nerd Font,font-name,nerd-folder,Agave,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Agave,true
+Agave Nerd Font Mono,font-name,nerd-folder,Agave,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Agave,true
+Agave Nerd Font Propo,font-name,nerd-folder,Agave,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Agave,true
+AnnotationM,font-name,nerd-folder,AnnotationMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AnnotationMono,true
+AnnotationM NF,font-name,nerd-folder,AnnotationMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AnnotationMono,true
+AnnotationM NFM,font-name,nerd-folder,AnnotationMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AnnotationMono,true
+AnnotationM NFP,font-name,nerd-folder,AnnotationMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AnnotationMono,true
+AnnotationM Nerd Font,font-name,nerd-folder,AnnotationMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AnnotationMono,true
+AnnotationM Nerd Font Mono,font-name,nerd-folder,AnnotationMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AnnotationMono,true
+AnnotationM Nerd Font Propo,font-name,nerd-folder,AnnotationMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AnnotationMono,true
+AnonymicePro,font-name,nerd-folder,AnonymousPro,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AnonymousPro,true
+AnonymicePro NF,font-name,nerd-folder,AnonymousPro,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AnonymousPro,true
+AnonymicePro NFM,font-name,nerd-folder,AnonymousPro,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AnonymousPro,true
+AnonymicePro NFP,font-name,nerd-folder,AnonymousPro,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AnonymousPro,true
+AnonymicePro Nerd Font,font-name,nerd-folder,AnonymousPro,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AnonymousPro,true
+AnonymicePro Nerd Font Mono,font-name,nerd-folder,AnonymousPro,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AnonymousPro,true
+AnonymicePro Nerd Font Propo,font-name,nerd-folder,AnonymousPro,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AnonymousPro,true
+Arimo NF,font-name,nerd-folder,Arimo,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Arimo,true
+Arimo NFM,font-name,nerd-folder,Arimo,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Arimo,true
+Arimo NFP,font-name,nerd-folder,Arimo,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Arimo,true
+Arimo Nerd Font,font-name,nerd-folder,Arimo,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Arimo,true
+Arimo Nerd Font Mono,font-name,nerd-folder,Arimo,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Arimo,true
+Arimo Nerd Font Propo,font-name,nerd-folder,Arimo,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Arimo,true
+AtkynsonMono,font-name,nerd-folder,AtkinsonHyperlegibleMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AtkinsonHyperlegibleMono,true
+AtkynsonMono NF,font-name,nerd-folder,AtkinsonHyperlegibleMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AtkinsonHyperlegibleMono,true
+AtkynsonMono NFM,font-name,nerd-folder,AtkinsonHyperlegibleMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AtkinsonHyperlegibleMono,true
+AtkynsonMono NFP,font-name,nerd-folder,AtkinsonHyperlegibleMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AtkinsonHyperlegibleMono,true
+AtkynsonMono Nerd Font,font-name,nerd-folder,AtkinsonHyperlegibleMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AtkinsonHyperlegibleMono,true
+AtkynsonMono Nerd Font Mono,font-name,nerd-folder,AtkinsonHyperlegibleMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AtkinsonHyperlegibleMono,true
+AtkynsonMono Nerd Font Propo,font-name,nerd-folder,AtkinsonHyperlegibleMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AtkinsonHyperlegibleMono,true
+AurulentSansM,font-name,nerd-folder,AurulentSansMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AurulentSansMono,true
+AurulentSansM NF,font-name,nerd-folder,AurulentSansMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AurulentSansMono,true
+AurulentSansM NFM,font-name,nerd-folder,AurulentSansMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AurulentSansMono,true
+AurulentSansM NFP,font-name,nerd-folder,AurulentSansMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AurulentSansMono,true
+AurulentSansM Nerd Font,font-name,nerd-folder,AurulentSansMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AurulentSansMono,true
+AurulentSansM Nerd Font Mono,font-name,nerd-folder,AurulentSansMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AurulentSansMono,true
+AurulentSansM Nerd Font Propo,font-name,nerd-folder,AurulentSansMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#AurulentSansMono,true
+BigBlueTerm,font-name,nerd-folder,BigBlueTerminal,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#BigBlueTerminal,true
+BigBlueTerm NF,font-name,nerd-folder,BigBlueTerminal,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#BigBlueTerminal,true
+BigBlueTerm NFM,font-name,nerd-folder,BigBlueTerminal,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#BigBlueTerminal,true
+BigBlueTerm NFP,font-name,nerd-folder,BigBlueTerminal,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#BigBlueTerminal,true
+BigBlueTerm Nerd Font,font-name,nerd-folder,BigBlueTerminal,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#BigBlueTerminal,true
+BigBlueTerm Nerd Font Mono,font-name,nerd-folder,BigBlueTerminal,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#BigBlueTerminal,true
+BigBlueTerm Nerd Font Propo,font-name,nerd-folder,BigBlueTerminal,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#BigBlueTerminal,true
+BitstromWera,font-name,nerd-folder,BitstreamVeraSansMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#BitstreamVeraSansMono,true
+BitstromWera NF,font-name,nerd-folder,BitstreamVeraSansMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#BitstreamVeraSansMono,true
+BitstromWera NFM,font-name,nerd-folder,BitstreamVeraSansMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#BitstreamVeraSansMono,true
+BitstromWera NFP,font-name,nerd-folder,BitstreamVeraSansMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#BitstreamVeraSansMono,true
+BitstromWera Nerd Font,font-name,nerd-folder,BitstreamVeraSansMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#BitstreamVeraSansMono,true
+BitstromWera Nerd Font Mono,font-name,nerd-folder,BitstreamVeraSansMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#BitstreamVeraSansMono,true
+BitstromWera Nerd Font Propo,font-name,nerd-folder,BitstreamVeraSansMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#BitstreamVeraSansMono,true
+BlexMono,font-name,nerd-folder,IBMPlexMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IBMPlexMono,true
+BlexMono NF,font-name,nerd-folder,IBMPlexMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IBMPlexMono,true
+BlexMono NFM,font-name,nerd-folder,IBMPlexMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IBMPlexMono,true
+BlexMono NFP,font-name,nerd-folder,IBMPlexMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IBMPlexMono,true
+BlexMono Nerd Font,font-name,nerd-folder,IBMPlexMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IBMPlexMono,true
+BlexMono Nerd Font Mono,font-name,nerd-folder,IBMPlexMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IBMPlexMono,true
+BlexMono Nerd Font Propo,font-name,nerd-folder,IBMPlexMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IBMPlexMono,true
+CaskaydiaCove,font-name,nerd-folder,CascadiaCode,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CascadiaCode,true
+CaskaydiaCove NF,font-name,nerd-folder,CascadiaCode,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CascadiaCode,true
+CaskaydiaCove NFM,font-name,nerd-folder,CascadiaCode,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CascadiaCode,true
+CaskaydiaCove NFP,font-name,nerd-folder,CascadiaCode,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CascadiaCode,true
+CaskaydiaCove Nerd Font,font-name,nerd-folder,CascadiaCode,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CascadiaCode,true
+CaskaydiaCove Nerd Font Mono,font-name,nerd-folder,CascadiaCode,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CascadiaCode,true
+CaskaydiaCove Nerd Font Propo,font-name,nerd-folder,CascadiaCode,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CascadiaCode,true
+CaskaydiaMono,font-name,nerd-folder,CascadiaMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CascadiaMono,true
+CaskaydiaMono NF,font-name,nerd-folder,CascadiaMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CascadiaMono,true
+CaskaydiaMono NFM,font-name,nerd-folder,CascadiaMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CascadiaMono,true
+CaskaydiaMono NFP,font-name,nerd-folder,CascadiaMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CascadiaMono,true
+CaskaydiaMono Nerd Font,font-name,nerd-folder,CascadiaMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CascadiaMono,true
+CaskaydiaMono Nerd Font Mono,font-name,nerd-folder,CascadiaMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CascadiaMono,true
+CaskaydiaMono Nerd Font Propo,font-name,nerd-folder,CascadiaMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CascadiaMono,true
+CodeNewRoman NF,font-name,nerd-folder,CodeNewRoman,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CodeNewRoman,true
+CodeNewRoman NFM,font-name,nerd-folder,CodeNewRoman,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CodeNewRoman,true
+CodeNewRoman NFP,font-name,nerd-folder,CodeNewRoman,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CodeNewRoman,true
+CodeNewRoman Nerd Font,font-name,nerd-folder,CodeNewRoman,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CodeNewRoman,true
+CodeNewRoman Nerd Font Mono,font-name,nerd-folder,CodeNewRoman,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CodeNewRoman,true
+CodeNewRoman Nerd Font Propo,font-name,nerd-folder,CodeNewRoman,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CodeNewRoman,true
+ComicShannsMono NF,font-name,nerd-folder,ComicShannsMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ComicShannsMono,true
+ComicShannsMono NFM,font-name,nerd-folder,ComicShannsMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ComicShannsMono,true
+ComicShannsMono NFP,font-name,nerd-folder,ComicShannsMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ComicShannsMono,true
+ComicShannsMono Nerd Font,font-name,nerd-folder,ComicShannsMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ComicShannsMono,true
+ComicShannsMono Nerd Font Mono,font-name,nerd-folder,ComicShannsMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ComicShannsMono,true
+ComicShannsMono Nerd Font Propo,font-name,nerd-folder,ComicShannsMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ComicShannsMono,true
+CommitMono NF,font-name,nerd-folder,CommitMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CommitMono,true
+CommitMono NFM,font-name,nerd-folder,CommitMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CommitMono,true
+CommitMono NFP,font-name,nerd-folder,CommitMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CommitMono,true
+CommitMono Nerd Font,font-name,nerd-folder,CommitMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CommitMono,true
+CommitMono Nerd Font Mono,font-name,nerd-folder,CommitMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CommitMono,true
+CommitMono Nerd Font Propo,font-name,nerd-folder,CommitMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#CommitMono,true
+Cousine NF,font-name,nerd-folder,Cousine,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Cousine,true
+Cousine NFM,font-name,nerd-folder,Cousine,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Cousine,true
+Cousine NFP,font-name,nerd-folder,Cousine,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Cousine,true
+Cousine Nerd Font,font-name,nerd-folder,Cousine,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Cousine,true
+Cousine Nerd Font Mono,font-name,nerd-folder,Cousine,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Cousine,true
+Cousine Nerd Font Propo,font-name,nerd-folder,Cousine,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Cousine,true
+D2KodingLigature,font-name,nerd-folder,D2Coding,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#D2Coding,true
+D2KodingLigature NF,font-name,nerd-folder,D2Coding,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#D2Coding,true
+D2KodingLigature NFM,font-name,nerd-folder,D2Coding,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#D2Coding,true
+D2KodingLigature NFP,font-name,nerd-folder,D2Coding,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#D2Coding,true
+D2KodingLigature Nerd Font,font-name,nerd-folder,D2Coding,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#D2Coding,true
+D2KodingLigature Nerd Font Mono,font-name,nerd-folder,D2Coding,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#D2Coding,true
+D2KodingLigature Nerd Font Propo,font-name,nerd-folder,D2Coding,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#D2Coding,true
+DaddyTimeMono NF,font-name,nerd-folder,DaddyTimeMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DaddyTimeMono,true
+DaddyTimeMono NFM,font-name,nerd-folder,DaddyTimeMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DaddyTimeMono,true
+DaddyTimeMono NFP,font-name,nerd-folder,DaddyTimeMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DaddyTimeMono,true
+DaddyTimeMono Nerd Font,font-name,nerd-folder,DaddyTimeMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DaddyTimeMono,true
+DaddyTimeMono Nerd Font Mono,font-name,nerd-folder,DaddyTimeMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DaddyTimeMono,true
+DaddyTimeMono Nerd Font Propo,font-name,nerd-folder,DaddyTimeMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DaddyTimeMono,true
+DejaVuSansM,font-name,nerd-folder,DejaVuSansMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DejaVuSansMono,true
+DejaVuSansM NF,font-name,nerd-folder,DejaVuSansMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DejaVuSansMono,true
+DejaVuSansM NFM,font-name,nerd-folder,DejaVuSansMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DejaVuSansMono,true
+DejaVuSansM NFP,font-name,nerd-folder,DejaVuSansMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DejaVuSansMono,true
+DejaVuSansM Nerd Font,font-name,nerd-folder,DejaVuSansMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DejaVuSansMono,true
+DejaVuSansM Nerd Font Mono,font-name,nerd-folder,DejaVuSansMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DejaVuSansMono,true
+DejaVuSansM Nerd Font Propo,font-name,nerd-folder,DejaVuSansMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DejaVuSansMono,true
+DepartureMono NF,font-name,nerd-folder,DepartureMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DepartureMono,true
+DepartureMono NFM,font-name,nerd-folder,DepartureMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DepartureMono,true
+DepartureMono NFP,font-name,nerd-folder,DepartureMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DepartureMono,true
+DepartureMono Nerd Font,font-name,nerd-folder,DepartureMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DepartureMono,true
+DepartureMono Nerd Font Mono,font-name,nerd-folder,DepartureMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DepartureMono,true
+DepartureMono Nerd Font Propo,font-name,nerd-folder,DepartureMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DepartureMono,true
+DroidSansM,font-name,nerd-folder,DroidSansMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DroidSansMono,true
+DroidSansM NF,font-name,nerd-folder,DroidSansMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DroidSansMono,true
+DroidSansM NFM,font-name,nerd-folder,DroidSansMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DroidSansMono,true
+DroidSansM NFP,font-name,nerd-folder,DroidSansMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DroidSansMono,true
+DroidSansM Nerd Font,font-name,nerd-folder,DroidSansMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DroidSansMono,true
+DroidSansM Nerd Font Mono,font-name,nerd-folder,DroidSansMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DroidSansMono,true
+DroidSansM Nerd Font Propo,font-name,nerd-folder,DroidSansMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#DroidSansMono,true
+EnvyCodeR NF,font-name,nerd-folder,EnvyCodeR,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#EnvyCodeR,true
+EnvyCodeR NFM,font-name,nerd-folder,EnvyCodeR,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#EnvyCodeR,true
+EnvyCodeR NFP,font-name,nerd-folder,EnvyCodeR,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#EnvyCodeR,true
+EnvyCodeR Nerd Font,font-name,nerd-folder,EnvyCodeR,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#EnvyCodeR,true
+EnvyCodeR Nerd Font Mono,font-name,nerd-folder,EnvyCodeR,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#EnvyCodeR,true
+EnvyCodeR Nerd Font Propo,font-name,nerd-folder,EnvyCodeR,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#EnvyCodeR,true
+FantasqueSansM,font-name,nerd-folder,FantasqueSansMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FantasqueSansMono,true
+FantasqueSansM NF,font-name,nerd-folder,FantasqueSansMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FantasqueSansMono,true
+FantasqueSansM NFM,font-name,nerd-folder,FantasqueSansMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FantasqueSansMono,true
+FantasqueSansM NFP,font-name,nerd-folder,FantasqueSansMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FantasqueSansMono,true
+FantasqueSansM Nerd Font,font-name,nerd-folder,FantasqueSansMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FantasqueSansMono,true
+FantasqueSansM Nerd Font Mono,font-name,nerd-folder,FantasqueSansMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FantasqueSansMono,true
+FantasqueSansM Nerd Font Propo,font-name,nerd-folder,FantasqueSansMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FantasqueSansMono,true
+FiraCode NF,font-name,nerd-folder,FiraCode,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FiraCode,true
+FiraCode NFM,font-name,nerd-folder,FiraCode,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FiraCode,true
+FiraCode NFP,font-name,nerd-folder,FiraCode,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FiraCode,true
+FiraCode Nerd Font,font-name,nerd-folder,FiraCode,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FiraCode,true
+FiraCode Nerd Font Mono,font-name,nerd-folder,FiraCode,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FiraCode,true
+FiraCode Nerd Font Propo,font-name,nerd-folder,FiraCode,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FiraCode,true
+FiraMono,font-name,nerd-folder,FiraMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FiraMono,true
+FiraMono NF,font-name,nerd-folder,FiraMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FiraMono,true
+FiraMono NFM,font-name,nerd-folder,FiraMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FiraMono,true
+FiraMono NFP,font-name,nerd-folder,FiraMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FiraMono,true
+FiraMono Nerd Font,font-name,nerd-folder,FiraMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FiraMono,true
+FiraMono Nerd Font Mono,font-name,nerd-folder,FiraMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FiraMono,true
+FiraMono Nerd Font Propo,font-name,nerd-folder,FiraMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#FiraMono,true
+GeistMono NF,font-name,nerd-folder,GeistMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#GeistMono,true
+GeistMono NFM,font-name,nerd-folder,GeistMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#GeistMono,true
+GeistMono NFP,font-name,nerd-folder,GeistMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#GeistMono,true
+GeistMono Nerd Font,font-name,nerd-folder,GeistMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#GeistMono,true
+GeistMono Nerd Font Mono,font-name,nerd-folder,GeistMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#GeistMono,true
+GeistMono Nerd Font Propo,font-name,nerd-folder,GeistMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#GeistMono,true
+GoMono NF,font-name,nerd-folder,Go-Mono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Go-Mono,true
+GoMono NFM,font-name,nerd-folder,Go-Mono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Go-Mono,true
+GoMono NFP,font-name,nerd-folder,Go-Mono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Go-Mono,true
+GoMono Nerd Font,font-name,nerd-folder,Go-Mono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Go-Mono,true
+GoMono Nerd Font Mono,font-name,nerd-folder,Go-Mono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Go-Mono,true
+GoMono Nerd Font Propo,font-name,nerd-folder,Go-Mono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Go-Mono,true
+GohuFont,font-name,nerd-folder,Gohu,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Gohu,true
+GohuFont NF,font-name,nerd-folder,Gohu,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Gohu,true
+GohuFont NFM,font-name,nerd-folder,Gohu,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Gohu,true
+GohuFont NFP,font-name,nerd-folder,Gohu,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Gohu,true
+GohuFont Nerd Font,font-name,nerd-folder,Gohu,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Gohu,true
+GohuFont Nerd Font Mono,font-name,nerd-folder,Gohu,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Gohu,true
+GohuFont Nerd Font Propo,font-name,nerd-folder,Gohu,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Gohu,true
+GoogleSansCode NF,font-name,nerd-folder,GoogleSansCode,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#GoogleSansCode,true
+GoogleSansCode NFM,font-name,nerd-folder,GoogleSansCode,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#GoogleSansCode,true
+GoogleSansCode NFP,font-name,nerd-folder,GoogleSansCode,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#GoogleSansCode,true
+GoogleSansCode Nerd Font,font-name,nerd-folder,GoogleSansCode,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#GoogleSansCode,true
+GoogleSansCode Nerd Font Mono,font-name,nerd-folder,GoogleSansCode,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#GoogleSansCode,true
+GoogleSansCode Nerd Font Propo,font-name,nerd-folder,GoogleSansCode,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#GoogleSansCode,true
+Hack NF,font-name,nerd-folder,Hack,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hack,true
+Hack NFM,font-name,nerd-folder,Hack,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hack,true
+Hack NFP,font-name,nerd-folder,Hack,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hack,true
+Hack Nerd Font,font-name,nerd-folder,Hack,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hack,true
+Hack Nerd Font Mono,font-name,nerd-folder,Hack,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hack,true
+Hack Nerd Font Propo,font-name,nerd-folder,Hack,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hack,true
+Hasklug,font-name,nerd-folder,Hasklig,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hasklig,true
+Hasklug NF,font-name,nerd-folder,Hasklig,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hasklig,true
+Hasklug NFM,font-name,nerd-folder,Hasklig,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hasklig,true
+Hasklug NFP,font-name,nerd-folder,Hasklig,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hasklig,true
+Hasklug Nerd Font,font-name,nerd-folder,Hasklig,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hasklig,true
+Hasklug Nerd Font Mono,font-name,nerd-folder,Hasklig,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hasklig,true
+Hasklug Nerd Font Propo,font-name,nerd-folder,Hasklig,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hasklig,true
+HeavyData NF,font-name,nerd-folder,HeavyData,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#HeavyData,true
+HeavyData NFM,font-name,nerd-folder,HeavyData,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#HeavyData,true
+HeavyData NFP,font-name,nerd-folder,HeavyData,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#HeavyData,true
+HeavyData Nerd Font,font-name,nerd-folder,HeavyData,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#HeavyData,true
+HeavyData Nerd Font Mono,font-name,nerd-folder,HeavyData,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#HeavyData,true
+HeavyData Nerd Font Propo,font-name,nerd-folder,HeavyData,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#HeavyData,true
+Hurmit,font-name,nerd-folder,Hermit,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hermit,true
+Hurmit NF,font-name,nerd-folder,Hermit,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hermit,true
+Hurmit NFM,font-name,nerd-folder,Hermit,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hermit,true
+Hurmit NFP,font-name,nerd-folder,Hermit,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hermit,true
+Hurmit Nerd Font,font-name,nerd-folder,Hermit,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hermit,true
+Hurmit Nerd Font Mono,font-name,nerd-folder,Hermit,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hermit,true
+Hurmit Nerd Font Propo,font-name,nerd-folder,Hermit,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Hermit,true
+Inconsolata LGC NF,font-name,nerd-folder,InconsolataLGC,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#InconsolataLGC,true
+Inconsolata LGC NFM,font-name,nerd-folder,InconsolataLGC,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#InconsolataLGC,true
+Inconsolata LGC NFP,font-name,nerd-folder,InconsolataLGC,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#InconsolataLGC,true
+Inconsolata LGC Nerd Font,font-name,nerd-folder,InconsolataLGC,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#InconsolataLGC,true
+Inconsolata LGC Nerd Font Mono,font-name,nerd-folder,InconsolataLGC,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#InconsolataLGC,true
+Inconsolata LGC Nerd Font Propo,font-name,nerd-folder,InconsolataLGC,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#InconsolataLGC,true
+Inconsolata NF,font-name,nerd-folder,Inconsolata,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Inconsolata,true
+Inconsolata NFM,font-name,nerd-folder,Inconsolata,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Inconsolata,true
+Inconsolata NFP,font-name,nerd-folder,Inconsolata,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Inconsolata,true
+Inconsolata Nerd Font,font-name,nerd-folder,Inconsolata,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Inconsolata,true
+Inconsolata Nerd Font Mono,font-name,nerd-folder,Inconsolata,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Inconsolata,true
+Inconsolata Nerd Font Propo,font-name,nerd-folder,Inconsolata,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Inconsolata,true
+InconsolataGo NF,font-name,nerd-folder,InconsolataGo,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#InconsolataGo,true
+InconsolataGo NFM,font-name,nerd-folder,InconsolataGo,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#InconsolataGo,true
+InconsolataGo NFP,font-name,nerd-folder,InconsolataGo,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#InconsolataGo,true
+InconsolataGo Nerd Font,font-name,nerd-folder,InconsolataGo,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#InconsolataGo,true
+InconsolataGo Nerd Font Mono,font-name,nerd-folder,InconsolataGo,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#InconsolataGo,true
+InconsolataGo Nerd Font Propo,font-name,nerd-folder,InconsolataGo,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#InconsolataGo,true
+IntoneMono,font-name,nerd-folder,IntelOneMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IntelOneMono,true
+IntoneMono NF,font-name,nerd-folder,IntelOneMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IntelOneMono,true
+IntoneMono NFM,font-name,nerd-folder,IntelOneMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IntelOneMono,true
+IntoneMono NFP,font-name,nerd-folder,IntelOneMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IntelOneMono,true
+IntoneMono Nerd Font,font-name,nerd-folder,IntelOneMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IntelOneMono,true
+IntoneMono Nerd Font Mono,font-name,nerd-folder,IntelOneMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IntelOneMono,true
+IntoneMono Nerd Font Propo,font-name,nerd-folder,IntelOneMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IntelOneMono,true
+Iosevka NF,font-name,nerd-folder,Iosevka,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Iosevka,true
+Iosevka NFM,font-name,nerd-folder,Iosevka,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Iosevka,true
+Iosevka NFP,font-name,nerd-folder,Iosevka,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Iosevka,true
+Iosevka Nerd Font,font-name,nerd-folder,Iosevka,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Iosevka,true
+Iosevka Nerd Font Mono,font-name,nerd-folder,Iosevka,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Iosevka,true
+Iosevka Nerd Font Propo,font-name,nerd-folder,Iosevka,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Iosevka,true
+IosevkaTerm NF,font-name,nerd-folder,IosevkaTerm,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IosevkaTerm,true
+IosevkaTerm NFM,font-name,nerd-folder,IosevkaTerm,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IosevkaTerm,true
+IosevkaTerm NFP,font-name,nerd-folder,IosevkaTerm,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IosevkaTerm,true
+IosevkaTerm Nerd Font,font-name,nerd-folder,IosevkaTerm,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IosevkaTerm,true
+IosevkaTerm Nerd Font Mono,font-name,nerd-folder,IosevkaTerm,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IosevkaTerm,true
+IosevkaTerm Nerd Font Propo,font-name,nerd-folder,IosevkaTerm,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IosevkaTerm,true
+IosevkaTermSlab NF,font-name,nerd-folder,IosevkaTermSlab,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IosevkaTermSlab,true
+IosevkaTermSlab NFM,font-name,nerd-folder,IosevkaTermSlab,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IosevkaTermSlab,true
+IosevkaTermSlab NFP,font-name,nerd-folder,IosevkaTermSlab,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IosevkaTermSlab,true
+IosevkaTermSlab Nerd Font,font-name,nerd-folder,IosevkaTermSlab,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IosevkaTermSlab,true
+IosevkaTermSlab Nerd Font Mono,font-name,nerd-folder,IosevkaTermSlab,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IosevkaTermSlab,true
+IosevkaTermSlab Nerd Font Propo,font-name,nerd-folder,IosevkaTermSlab,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#IosevkaTermSlab,true
+JetBrainsMono NF,font-name,nerd-folder,JetBrainsMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#JetBrainsMono,true
+JetBrainsMono NFM,font-name,nerd-folder,JetBrainsMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#JetBrainsMono,true
+JetBrainsMono NFP,font-name,nerd-folder,JetBrainsMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#JetBrainsMono,true
+JetBrainsMono Nerd Font,font-name,nerd-folder,JetBrainsMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#JetBrainsMono,true
+JetBrainsMono Nerd Font Mono,font-name,nerd-folder,JetBrainsMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#JetBrainsMono,true
+JetBrainsMono Nerd Font Propo,font-name,nerd-folder,JetBrainsMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#JetBrainsMono,true
+Lekton NF,font-name,nerd-folder,Lekton,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Lekton,true
+Lekton NFM,font-name,nerd-folder,Lekton,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Lekton,true
+Lekton NFP,font-name,nerd-folder,Lekton,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Lekton,true
+Lekton Nerd Font,font-name,nerd-folder,Lekton,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Lekton,true
+Lekton Nerd Font Mono,font-name,nerd-folder,Lekton,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Lekton,true
+Lekton Nerd Font Propo,font-name,nerd-folder,Lekton,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Lekton,true
+Lilex NF,font-name,nerd-folder,Lilex,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Lilex,true
+Lilex NFM,font-name,nerd-folder,Lilex,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Lilex,true
+Lilex NFP,font-name,nerd-folder,Lilex,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Lilex,true
+Lilex Nerd Font,font-name,nerd-folder,Lilex,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Lilex,true
+Lilex Nerd Font Mono,font-name,nerd-folder,Lilex,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Lilex,true
+Lilex Nerd Font Propo,font-name,nerd-folder,Lilex,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Lilex,true
+LiterationMono,font-name,nerd-folder,LiberationMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#LiberationMono,true
+LiterationMono NF,font-name,nerd-folder,LiberationMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#LiberationMono,true
+LiterationMono NFM,font-name,nerd-folder,LiberationMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#LiberationMono,true
+LiterationMono NFP,font-name,nerd-folder,LiberationMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#LiberationMono,true
+LiterationMono Nerd Font,font-name,nerd-folder,LiberationMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#LiberationMono,true
+LiterationMono Nerd Font Mono,font-name,nerd-folder,LiberationMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#LiberationMono,true
+LiterationMono Nerd Font Propo,font-name,nerd-folder,LiberationMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#LiberationMono,true
+M+,font-name,nerd-folder,MPlus,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#MPlus,true
+M+ NF,font-name,nerd-folder,MPlus,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#MPlus,true
+M+ NFM,font-name,nerd-folder,MPlus,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#MPlus,true
+M+ NFP,font-name,nerd-folder,MPlus,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#MPlus,true
+M+ Nerd Font,font-name,nerd-folder,MPlus,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#MPlus,true
+M+ Nerd Font Mono,font-name,nerd-folder,MPlus,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#MPlus,true
+M+ Nerd Font Propo,font-name,nerd-folder,MPlus,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#MPlus,true
+MartianMono NF,font-name,nerd-folder,MartianMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#MartianMono,true
+MartianMono NFM,font-name,nerd-folder,MartianMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#MartianMono,true
+MartianMono NFP,font-name,nerd-folder,MartianMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#MartianMono,true
+MartianMono Nerd Font,font-name,nerd-folder,MartianMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#MartianMono,true
+MartianMono Nerd Font Mono,font-name,nerd-folder,MartianMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#MartianMono,true
+MartianMono Nerd Font Propo,font-name,nerd-folder,MartianMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#MartianMono,true
+MesloLG NF,font-name,nerd-folder,Meslo,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Meslo,true
+MesloLG NFM,font-name,nerd-folder,Meslo,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Meslo,true
+MesloLG NFP,font-name,nerd-folder,Meslo,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Meslo,true
+MesloLG Nerd Font,font-name,nerd-folder,Meslo,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Meslo,true
+MesloLG Nerd Font Mono,font-name,nerd-folder,Meslo,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Meslo,true
+MesloLG Nerd Font Propo,font-name,nerd-folder,Meslo,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Meslo,true
+Monaspice,font-name,nerd-folder,Monaspace,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monaspace,true
+Monaspice NF,font-name,nerd-folder,Monaspace,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monaspace,true
+Monaspice NFM,font-name,nerd-folder,Monaspace,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monaspace,true
+Monaspice NFP,font-name,nerd-folder,Monaspace,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monaspace,true
+Monaspice Nerd Font,font-name,nerd-folder,Monaspace,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monaspace,true
+Monaspice Nerd Font Mono,font-name,nerd-folder,Monaspace,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monaspace,true
+Monaspice Nerd Font Propo,font-name,nerd-folder,Monaspace,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monaspace,true
+Monofur NF,font-name,nerd-folder,Monofur,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monofur,true
+Monofur NFM,font-name,nerd-folder,Monofur,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monofur,true
+Monofur NFP,font-name,nerd-folder,Monofur,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monofur,true
+Monofur Nerd Font,font-name,nerd-folder,Monofur,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monofur,true
+Monofur Nerd Font Mono,font-name,nerd-folder,Monofur,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monofur,true
+Monofur Nerd Font Propo,font-name,nerd-folder,Monofur,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monofur,true
+Monoid NF,font-name,nerd-folder,Monoid,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monoid,true
+Monoid NFM,font-name,nerd-folder,Monoid,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monoid,true
+Monoid NFP,font-name,nerd-folder,Monoid,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monoid,true
+Monoid Nerd Font,font-name,nerd-folder,Monoid,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monoid,true
+Monoid Nerd Font Mono,font-name,nerd-folder,Monoid,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monoid,true
+Monoid Nerd Font Propo,font-name,nerd-folder,Monoid,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Monoid,true
+Mononoki NF,font-name,nerd-folder,Mononoki,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Mononoki,true
+Mononoki NFM,font-name,nerd-folder,Mononoki,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Mononoki,true
+Mononoki NFP,font-name,nerd-folder,Mononoki,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Mononoki,true
+Mononoki Nerd Font,font-name,nerd-folder,Mononoki,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Mononoki,true
+Mononoki Nerd Font Mono,font-name,nerd-folder,Mononoki,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Mononoki,true
+Mononoki Nerd Font Propo,font-name,nerd-folder,Mononoki,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Mononoki,true
+Noto NF,font-name,nerd-folder,Noto,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Noto,true
+Noto NFM,font-name,nerd-folder,Noto,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Noto,true
+Noto NFP,font-name,nerd-folder,Noto,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Noto,true
+Noto Nerd Font,font-name,nerd-folder,Noto,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Noto,true
+Noto Nerd Font Mono,font-name,nerd-folder,Noto,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Noto,true
+Noto Nerd Font Propo,font-name,nerd-folder,Noto,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Noto,true
+OpenDyslexic NF,font-name,nerd-folder,OpenDyslexic,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#OpenDyslexic,true
+OpenDyslexic NFM,font-name,nerd-folder,OpenDyslexic,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#OpenDyslexic,true
+OpenDyslexic NFP,font-name,nerd-folder,OpenDyslexic,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#OpenDyslexic,true
+OpenDyslexic Nerd Font,font-name,nerd-folder,OpenDyslexic,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#OpenDyslexic,true
+OpenDyslexic Nerd Font Mono,font-name,nerd-folder,OpenDyslexic,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#OpenDyslexic,true
+OpenDyslexic Nerd Font Propo,font-name,nerd-folder,OpenDyslexic,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#OpenDyslexic,true
+Overpass NF,font-name,nerd-folder,Overpass,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Overpass,true
+Overpass NFM,font-name,nerd-folder,Overpass,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Overpass,true
+Overpass NFP,font-name,nerd-folder,Overpass,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Overpass,true
+Overpass Nerd Font,font-name,nerd-folder,Overpass,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Overpass,true
+Overpass Nerd Font Mono,font-name,nerd-folder,Overpass,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Overpass,true
+Overpass Nerd Font Propo,font-name,nerd-folder,Overpass,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Overpass,true
+ProFont NF,font-name,nerd-folder,ProFont,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ProFont,true
+ProFont NFM,font-name,nerd-folder,ProFont,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ProFont,true
+ProFont NFP,font-name,nerd-folder,ProFont,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ProFont,true
+ProFont Nerd Font,font-name,nerd-folder,ProFont,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ProFont,true
+ProFont Nerd Font Mono,font-name,nerd-folder,ProFont,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ProFont,true
+ProFont Nerd Font Propo,font-name,nerd-folder,ProFont,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ProFont,true
+ProggyClean,font-name,nerd-folder,ProggyClean,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ProggyClean,true
+ProggyClean NF,font-name,nerd-folder,ProggyClean,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ProggyClean,true
+ProggyClean NFM,font-name,nerd-folder,ProggyClean,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ProggyClean,true
+ProggyClean NFP,font-name,nerd-folder,ProggyClean,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ProggyClean,true
+ProggyClean Nerd Font,font-name,nerd-folder,ProggyClean,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ProggyClean,true
+ProggyClean Nerd Font Mono,font-name,nerd-folder,ProggyClean,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ProggyClean,true
+ProggyClean Nerd Font Propo,font-name,nerd-folder,ProggyClean,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ProggyClean,true
+RecMono,font-name,nerd-folder,Recursive,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Recursive,true
+RecMono NF,font-name,nerd-folder,Recursive,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Recursive,true
+RecMono NFM,font-name,nerd-folder,Recursive,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Recursive,true
+RecMono NFP,font-name,nerd-folder,Recursive,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Recursive,true
+RecMono Nerd Font,font-name,nerd-folder,Recursive,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Recursive,true
+RecMono Nerd Font Mono,font-name,nerd-folder,Recursive,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Recursive,true
+RecMono Nerd Font Propo,font-name,nerd-folder,Recursive,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Recursive,true
+RobotoMono NF,font-name,nerd-folder,RobotoMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#RobotoMono,true
+RobotoMono NFM,font-name,nerd-folder,RobotoMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#RobotoMono,true
+RobotoMono NFP,font-name,nerd-folder,RobotoMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#RobotoMono,true
+RobotoMono Nerd Font,font-name,nerd-folder,RobotoMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#RobotoMono,true
+RobotoMono Nerd Font Mono,font-name,nerd-folder,RobotoMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#RobotoMono,true
+RobotoMono Nerd Font Propo,font-name,nerd-folder,RobotoMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#RobotoMono,true
+SauceCodePro,font-name,nerd-folder,SourceCodePro,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#SourceCodePro,true
+SauceCodePro NF,font-name,nerd-folder,SourceCodePro,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#SourceCodePro,true
+SauceCodePro NFM,font-name,nerd-folder,SourceCodePro,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#SourceCodePro,true
+SauceCodePro NFP,font-name,nerd-folder,SourceCodePro,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#SourceCodePro,true
+SauceCodePro Nerd Font,font-name,nerd-folder,SourceCodePro,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#SourceCodePro,true
+SauceCodePro Nerd Font Mono,font-name,nerd-folder,SourceCodePro,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#SourceCodePro,true
+SauceCodePro Nerd Font Propo,font-name,nerd-folder,SourceCodePro,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#SourceCodePro,true
+ShureTechMono,font-name,nerd-folder,ShareTechMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ShareTechMono,true
+ShureTechMono NF,font-name,nerd-folder,ShareTechMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ShareTechMono,true
+ShureTechMono NFM,font-name,nerd-folder,ShareTechMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ShareTechMono,true
+ShureTechMono NFP,font-name,nerd-folder,ShareTechMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ShareTechMono,true
+ShureTechMono Nerd Font,font-name,nerd-folder,ShareTechMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ShareTechMono,true
+ShureTechMono Nerd Font Mono,font-name,nerd-folder,ShareTechMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ShareTechMono,true
+ShureTechMono Nerd Font Propo,font-name,nerd-folder,ShareTechMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ShareTechMono,true
+SpaceMono NF,font-name,nerd-folder,SpaceMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#SpaceMono,true
+SpaceMono NFM,font-name,nerd-folder,SpaceMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#SpaceMono,true
+SpaceMono NFP,font-name,nerd-folder,SpaceMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#SpaceMono,true
+SpaceMono Nerd Font,font-name,nerd-folder,SpaceMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#SpaceMono,true
+SpaceMono Nerd Font Mono,font-name,nerd-folder,SpaceMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#SpaceMono,true
+SpaceMono Nerd Font Propo,font-name,nerd-folder,SpaceMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#SpaceMono,true
+Symbols,font-name,nerd-folder,NerdFontsSymbolsOnly,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#NerdFontsSymbolsOnly,true
+Symbols NF,font-name,nerd-folder,NerdFontsSymbolsOnly,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#NerdFontsSymbolsOnly,true
+Symbols NFM,font-name,nerd-folder,NerdFontsSymbolsOnly,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#NerdFontsSymbolsOnly,true
+Symbols NFP,font-name,nerd-folder,NerdFontsSymbolsOnly,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#NerdFontsSymbolsOnly,true
+Symbols Nerd Font,font-name,nerd-folder,NerdFontsSymbolsOnly,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#NerdFontsSymbolsOnly,true
+Symbols Nerd Font Mono,font-name,nerd-folder,NerdFontsSymbolsOnly,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#NerdFontsSymbolsOnly,true
+Symbols Nerd Font Propo,font-name,nerd-folder,NerdFontsSymbolsOnly,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#NerdFontsSymbolsOnly,true
+Terminess,font-name,nerd-folder,Terminus,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Terminus,true
+Terminess NF,font-name,nerd-folder,Terminus,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Terminus,true
+Terminess NFM,font-name,nerd-folder,Terminus,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Terminus,true
+Terminess NFP,font-name,nerd-folder,Terminus,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Terminus,true
+Terminess Nerd Font,font-name,nerd-folder,Terminus,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Terminus,true
+Terminess Nerd Font Mono,font-name,nerd-folder,Terminus,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Terminus,true
+Terminess Nerd Font Propo,font-name,nerd-folder,Terminus,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Terminus,true
+Tinos NF,font-name,nerd-folder,Tinos,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Tinos,true
+Tinos NFM,font-name,nerd-folder,Tinos,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Tinos,true
+Tinos NFP,font-name,nerd-folder,Tinos,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Tinos,true
+Tinos Nerd Font,font-name,nerd-folder,Tinos,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Tinos,true
+Tinos Nerd Font Mono,font-name,nerd-folder,Tinos,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Tinos,true
+Tinos Nerd Font Propo,font-name,nerd-folder,Tinos,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Tinos,true
+Ubuntu NF,font-name,nerd-folder,Ubuntu,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Ubuntu,true
+Ubuntu NFM,font-name,nerd-folder,Ubuntu,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Ubuntu,true
+Ubuntu NFP,font-name,nerd-folder,Ubuntu,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Ubuntu,true
+Ubuntu Nerd Font,font-name,nerd-folder,Ubuntu,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Ubuntu,true
+Ubuntu Nerd Font Mono,font-name,nerd-folder,Ubuntu,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Ubuntu,true
+Ubuntu Nerd Font Propo,font-name,nerd-folder,Ubuntu,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#Ubuntu,true
+UbuntuMono NF,font-name,nerd-folder,UbuntuMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#UbuntuMono,true
+UbuntuMono NFM,font-name,nerd-folder,UbuntuMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#UbuntuMono,true
+UbuntuMono NFP,font-name,nerd-folder,UbuntuMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#UbuntuMono,true
+UbuntuMono Nerd Font,font-name,nerd-folder,UbuntuMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#UbuntuMono,true
+UbuntuMono Nerd Font Mono,font-name,nerd-folder,UbuntuMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#UbuntuMono,true
+UbuntuMono Nerd Font Propo,font-name,nerd-folder,UbuntuMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#UbuntuMono,true
+UbuntuSans NF,font-name,nerd-folder,UbuntuSans,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#UbuntuSans,true
+UbuntuSans NFM,font-name,nerd-folder,UbuntuSans,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#UbuntuSans,true
+UbuntuSans NFP,font-name,nerd-folder,UbuntuSans,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#UbuntuSans,true
+UbuntuSans Nerd Font,font-name,nerd-folder,UbuntuSans,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#UbuntuSans,true
+UbuntuSans Nerd Font Mono,font-name,nerd-folder,UbuntuSans,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#UbuntuSans,true
+UbuntuSans Nerd Font Propo,font-name,nerd-folder,UbuntuSans,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#UbuntuSans,true
+VictorMono NF,font-name,nerd-folder,VictorMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#VictorMono,true
+VictorMono NFM,font-name,nerd-folder,VictorMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#VictorMono,true
+VictorMono NFP,font-name,nerd-folder,VictorMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#VictorMono,true
+VictorMono Nerd Font,font-name,nerd-folder,VictorMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#VictorMono,true
+VictorMono Nerd Font Mono,font-name,nerd-folder,VictorMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#VictorMono,true
+VictorMono Nerd Font Propo,font-name,nerd-folder,VictorMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#VictorMono,true
+ZedMono NF,font-name,nerd-folder,ZedMono,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ZedMono,true
+ZedMono NFM,font-name,nerd-folder,ZedMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ZedMono,true
+ZedMono NFP,font-name,nerd-folder,ZedMono,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ZedMono,true
+ZedMono Nerd Font,font-name,nerd-folder,ZedMono,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ZedMono,true
+ZedMono Nerd Font Mono,font-name,nerd-folder,ZedMono,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ZedMono,true
+ZedMono Nerd Font Propo,font-name,nerd-folder,ZedMono,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#ZedMono,true
+iMWriting,font-name,nerd-folder,iA-Writer,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#iA-Writer,true
+iMWriting NF,font-name,nerd-folder,iA-Writer,build,nf,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#iA-Writer,true
+iMWriting NFM,font-name,nerd-folder,iA-Writer,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#iA-Writer,true
+iMWriting NFP,font-name,nerd-folder,iA-Writer,build,nfp,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#iA-Writer,true
+iMWriting Nerd Font,font-name,nerd-folder,iA-Writer,build,nerd,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#iA-Writer,true
+iMWriting Nerd Font Mono,font-name,nerd-folder,iA-Writer,build,nfm,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#iA-Writer,true
+iMWriting Nerd Font Propo,font-name,nerd-folder,iA-Writer,build,propo,nerd,https://github.com/ryanoasis/nerd-fonts/blob/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json#iA-Writer,true

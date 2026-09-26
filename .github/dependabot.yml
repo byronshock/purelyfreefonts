@@ -1,0 +1,17 @@
+# Pull requests that move the workflows' actions to new releases. Every action is pinned by
+# commit sha with its version in a comment; Dependabot updates both. Python dependencies are
+# locked in uv.lock and updated by hand. Caddy and gitleaks, downloaded by version and
+# sha256 in the workflows, are also updated by hand.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: CI
+    groups:
+      actions:
+        patterns: ["*"]

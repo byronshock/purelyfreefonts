@@ -353,6 +353,8 @@ leave = 550                     # ... left after leave_runs runs below 550
 leave_runs = 2
 extra_top = 100                 # plus the top 100 of these ranks
 extra_ranks = ["project", "desktop_chosen", "desktop_installed"]
+l3_overall_max = 700            # L3 license checks (step 6b): overall order 700 or better ...
+l3_extra_top = 150              # ... and the top 150 of each extra rank, so a font is checked before it can enter
 
 [membership.top100]             # hysteresis of each published top-100 list
 enabled = true                  # gate M11 (rec): enter at 90 or better, leave after 2 runs worse than 110; false means none

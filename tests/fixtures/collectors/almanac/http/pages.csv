@@ -1,0 +1,35 @@
+Section,Design,,,,,,,
+Question,Which families are popular in CSS?,,,,,,,
+Normalization,Pages,,,,,,,
+,,,,,,,,
+client,family,count,total,proportion,,SUM of proportion,client,
+desktop,Font Awesome,"4,702,803","12,155,048",38.69%,,family,desktop,mobile
+desktop,Roboto,"2,758,095","12,155,048",22.69%,,Font Awesome,38.69%,38.90%
+desktop,Open Sans,"2,195,300","12,155,048",18.06%,,Roboto,23.44%,24.47%
+desktop,swiper-icons,"1,495,837","12,155,048",12.31%,,Montserrat,13.76%,13.94%
+desktop,Poppins,"1,270,447","12,155,048",10.45%,,swiper-icons,12.31%,13.03%
+desktop,Inter,"814,244","12,155,048",6.70%,,Glyphicons Halflings,8.96%,8.70%
+desktop,Roboto Slab,"750,955","12,155,048",6.18%,,Inter,6.70%,6.58%
+desktop,Source Sans Pro,"425,714","12,155,048",3.50%,,revicons,4.22%,4.36%
+desktop,,"232,739","12,155,048",1.91%,,Noto Sans,2.17%,1.95%
+desktop,Muli,"130,135","12,155,048",1.07%,,fontello,1.17%,1.20%
+desktop,poppins,"117,568","12,155,048",0.97%,,avenir-lt-w01_85-heavy1475544,1.03%,1.10%
+desktop,roboto,"91,613","12,155,048",0.75%,,fl-icons,0.68%,0.70%
+desktop,open sans,"91,565","12,155,048",0.75%,,Open Sans Hebrew,0.64%,0.73%
+desktop,Open Sans Hebrew,"77,374","12,155,048",0.64%,,wixmadefordisplayapp,,0.65%
+mobile,Font Awesome,"6,000,611","15,426,041",38.90%,,Lobster,,0.64%
+mobile,Roboto,"3,658,686","15,426,041",23.72%,,EB Garamond,0.64%,
+mobile,Open Sans,"2,776,255","15,426,041",18.00%,,Dosis,,0.64%
+mobile,Poppins,"1,637,838","15,426,041",10.62%,,,,
+mobile,Roboto Slab,"1,081,014","15,426,041",7.01%,,,,
+mobile,Inter,"1,015,577","15,426,041",6.58%,,,,
+mobile,Source Sans Pro,"530,938","15,426,041",3.44%,,,,
+mobile,Playfair Display,"518,612","15,426,041",3.36%,,,,
+mobile,,"287,174","15,426,041",1.86%,,,,
+mobile,avenir-lt-w01_35-light1475496,"240,893","15,426,041",1.56%,,,,
+mobile,Muli,"171,130","15,426,041",1.11%,,,,
+mobile,poppins,"152,875","15,426,041",0.99%,,,,
+mobile,open sans,"120,540","15,426,041",0.78%,,,,
+mobile,roboto,"115,084","15,426,041",0.75%,,,,
+mobile,playfair display,"98,377","15,426,041",0.64%,,,,
+mobile,VideoJS,"98,070","15,426,041",0.64%,,,,

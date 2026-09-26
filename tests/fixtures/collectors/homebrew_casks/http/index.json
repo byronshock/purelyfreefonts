@@ -1,0 +1,35 @@
+{
+  "format": "tff-mockhttp",
+  "responses": [
+    {
+      "body": "cask.json.gz",
+      "headers": {
+        "cache-control": "max-age=600",
+        "content-encoding": "gzip",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "W/\"6ab75788-1216abd\"",
+        "last-modified": "Sat, 26 Sep 2026 05:26:32 GMT"
+      },
+      "url": "https://formulae.brew.sh/api/cask.json"
+    },
+    {
+      "body": "cask_renames.json",
+      "headers": {
+        "cache-control": "max-age=300",
+        "content-type": "text/plain; charset=utf-8"
+      },
+      "url": "https://raw.githubusercontent.com/Homebrew/homebrew-cask/main/cask_renames.json"
+    },
+    {
+      "body": "cask_tap_migrations.json",
+      "headers": {
+        "cache-control": "max-age=600",
+        "content-type": "application/json; charset=utf-8",
+        "etag": "W/\"6ab75788-4a4\"",
+        "last-modified": "Sat, 26 Sep 2026 05:26:32 GMT"
+      },
+      "url": "https://formulae.brew.sh/api/cask_tap_migrations.json"
+    }
+  ],
+  "version": 1
+}

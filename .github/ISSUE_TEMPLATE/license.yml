@@ -1,0 +1,55 @@
+# "Wrong license or link" (Milestone 2 step 12, M2-D10). Each font's details
+# panel links here as ?template=license.yml&font_id=<id>&data_date=<run_date>
+# (site/CONTRACT.md, section 8). GitHub prefills a field whose id matches a
+# query parameter, so the ids font_id and data_date must not change.
+name: Wrong license or link
+description: A font's license, license link or download link is wrong, or the font isn't truly free.
+title: "Wrong license or link: "
+labels: ["license"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Reports are public:** anyone can read them, so please leave out anything private. No GitHub account? Email admin@trulyfreefonts.com instead.
+
+        A font is listed only if its license lets anyone use it in any personal or commercial project, with no limits on use. We check each report against the license text.
+  - type: input
+    id: font_id
+    attributes:
+      label: Font
+      description: Filled in when you use the report link in a font's details. Otherwise, type the font's name as the list shows it.
+    validations:
+      required: true
+  - type: input
+    id: data_date
+    attributes:
+      label: Data date
+      description: The date of the list you were looking at, also shown at the bottom of every page ("Data from …"). Leave it blank if you're not sure.
+      placeholder: YYYY-MM-DD
+  - type: dropdown
+    id: problem
+    attributes:
+      label: What's wrong?
+      options:
+        - The license is wrong
+        - The license link is broken or goes to the wrong text
+        - The download link is broken or isn't the official source
+        - The font isn't truly free (its license limits how it can be used)
+        - Redistributable (yes or no) is wrong
+        - What to credit is wrong or missing
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: What should it say?
+      description: What the list shows, and what is right instead.
+    validations:
+      required: true
+  - type: input
+    id: evidence
+    attributes:
+      label: Where it says so
+      description: A link to the license text, or to the font's official page that shows it. It lets us fix the list sooner.
+      placeholder: https://

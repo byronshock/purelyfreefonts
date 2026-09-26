@@ -1,0 +1,42 @@
+{
+  "format": "tff-mockhttp",
+  "responses": [
+    {
+      "body": "graphql-01.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "POST",
+      "request_json": {
+        "query": "query($owner: String!, $name: String!, $first: Int!, $after: String, $assets: Int!) { repository(owner: $owner, name: $name) { releases(first: $first, after: $after, orderBy: {field: CREATED_AT, direction: DESC}) { totalCount pageInfo { hasNextPage endCursor } nodes { tagName isDraft isPrerelease publishedAt releaseAssets(first: $assets) { totalCount pageInfo { hasNextPage endCursor } nodes { name downloadCount createdAt } } } } } }",
+        "variables": {
+          "after": null,
+          "assets": 100,
+          "first": 4,
+          "name": "nerd-fonts",
+          "owner": "ryanoasis"
+        }
+      },
+      "url": "https://api.github.com/graphql"
+    },
+    {
+      "body": "graphql-02.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "POST",
+      "request_json": {
+        "query": "query($owner: String!, $name: String!, $first: Int!, $after: String, $assets: Int!) { repository(owner: $owner, name: $name) { releases(first: $first, after: $after, orderBy: {field: CREATED_AT, direction: DESC}) { totalCount pageInfo { hasNextPage endCursor } nodes { tagName isDraft isPrerelease publishedAt releaseAssets(first: $assets) { totalCount pageInfo { hasNextPage endCursor } nodes { name downloadCount createdAt } } } } } }",
+        "variables": {
+          "after": "releases:4",
+          "assets": 100,
+          "first": 4,
+          "name": "nerd-fonts",
+          "owner": "ryanoasis"
+        }
+      },
+      "url": "https://api.github.com/graphql"
+    }
+  ],
+  "version": 1
+}

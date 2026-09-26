@@ -157,7 +157,10 @@
         "properties": {
           "id": {"$ref": "#/$defs/token"},
           "label": {"$ref": "#/$defs/text"},
-          "os": {"enum": ["windows", "macos", "linux", "android"]}
+          "os": {
+            "description": "app: an application's own bundle (LibreOffice); it sets no 'comes with' bit.",
+            "enum": ["windows", "macos", "linux", "android", "app"]
+          }
         }
       }
     },
