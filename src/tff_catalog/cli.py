@@ -189,6 +189,12 @@ def _add_mode_flags(name: str, p: argparse.ArgumentParser) -> None:
         )
     elif name in ("verify", "links", "specimens"):
         p.add_argument("--check", action="store_true", help="check the outputs instead of running")
+    elif name == "validate":
+        p.add_argument(
+            "--committed",
+            action="store_true",
+            help="check only what the committed outputs can show (no build/stage/)",
+        )
 
 
 # --- handlers -------------------------------------------------------------------------
@@ -226,6 +232,8 @@ def _mode(args: argparse.Namespace) -> tuple[str, dict[str, object]] | None:
         return "tff_catalog.links:cmd_check", {}
     if name == "specimens" and args.check:
         return "tff_catalog.specimens.budget:cmd_check", {}
+    if name == "validate" and args.committed:
+        return "tff_catalog.validate:cmd_committed", {}
     return None
 
 

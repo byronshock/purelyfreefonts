@@ -137,8 +137,8 @@ OK_FIELDS = ("body_font", "heading_font")
 KEEP_WEEKS = 6  # covers a month of weekly crawls with a week to spare
 METHODS = ("browser", "static")  # ranking.toml [sources.fot] methods
 DOMINANT_SHARE = 0.05  # ranking.toml [sources.fot] dominant_share
-# CSS generic families and keywords, and browsers' aliases for the system font:
-# names of no particular font.
+# CSS generic families and keywords, browsers' aliases for the system font, and "sans" and
+# "system" (the owner's gate U ruling of 2026-09-26): names of no particular font.
 GENERIC_NAMES = (
     "-apple-system",
     "-webkit-body",
@@ -155,8 +155,10 @@ GENERIC_NAMES = (
     "monospace",
     "revert",
     "revert-layer",
+    "sans",
     "sans-serif",
     "serif",
+    "system",
     "system-ui",
     "ui-monospace",
     "ui-rounded",
@@ -623,6 +625,19 @@ def family_fold(name: str) -> str:
     return match_key(text)
 
 
+def _sites(
+    rows: Iterable[object], extract: str, share: float, generic: frozenset[str]
+) -> list[Site]:
+    """``site_of`` for each row of a weekly extract; an error names the row's position only."""
+    out = []
+    for n, row in enumerate(rows, start=1):
+        try:
+            out.append(site_of(row, share, generic))
+        except ValueError as exc:
+            raise ValueError(f"{extract}: row {n}: {exc}") from None
+    return out
+
+
 @dataclass(frozen=True, slots=True)
 class Site:
     """One counted site of one week, as parse sees it."""
@@ -633,9 +648,16 @@ class Site:
 
 
 def site_of(row: object, share: float, generic: frozenset[str]) -> Site:
-    """The names a site uses for body, headings or ``share`` of its text (``clean_name``)."""
-    if not isinstance(row, dict) or not {"category", "method"} <= set(row):
-        raise ValueError(f"weekly extract row lacks category or method: {row!r}")
+    """The names a site uses for body, headings or ``share`` of its text (``clean_name``).
+
+    A malformed row raises ``ValueError`` naming only the missing keys: Fonts Over Time's
+    rows stay private (ruling T4), and refresh's errors reach the public Actions log.
+    """
+    if not isinstance(row, dict):
+        raise ValueError(f"weekly extract row is a {type(row).__name__}, not an object")
+    missing = sorted({"category", "method"} - set(row))
+    if missing:
+        raise ValueError(f"weekly extract row lacks {' and '.join(missing)}")
     raw = [row.get("body"), row.get("heading")]
     raw += [f for f, s in row.get(DOMINANT) or () if s >= share]
     names = {n for n in (clean_name(r, generic) for r in raw) if n is not None}
@@ -834,10 +856,7 @@ class FontsOverTime(CollectorBase):
             )
         share, generic = settings.dominant_share, frozenset(settings.generic_names)
         weeks = [
-            (
-                entry,
-                [site_of(row, share, generic) for row in ctx.snapshot.iter_jsonl(entry.extract)],
-            )
+            (entry, _sites(ctx.snapshot.iter_jsonl(entry.extract), entry.extract, share, generic))
             for entry in sorted(index.weeks, key=lambda w: w.week)
         ]
         spelling = Spelling.of(s for _, sites in weeks for s in sites)

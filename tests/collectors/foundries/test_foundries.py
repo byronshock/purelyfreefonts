@@ -554,3 +554,15 @@ def test_real_family_urls_answer(tmp_path: Path) -> None:
 def test_run_fetch_freezes_the_clock(tmp_path: Path) -> None:
     snap, _ = synth_fetch(tmp_path)
     assert {f.fetched_at for f in snap.manifest.fetched} == {f"{DAY.isoformat()}T06:00:00Z"}
+
+
+def test_a_family_s_font_files_become_regular_file_refs() -> None:
+    # The list names one pinned Regular file per family, so the Latin gate and L3 can read
+    # a foundry-only family (owner ruling C3 of 2026-09-26: the list must be able to add one).
+    from tff_catalog.collectors.universe.foundries import ListedFamily, family_records
+    from tff_catalog.records import FontFileRef
+
+    url = "https://raw.githubusercontent.com/o/r/" + "a" * 40 + "/fonts/Birch-Regular.otf"
+    fam = ListedFamily("Birch Mono", "https://example.org/birch", "OFL", "", (url,))
+    (record, _) = family_records("Birch Mono", [("birch-foundry", fam)], frozenset())
+    assert record.files == (FontFileRef(url=url, role="regular"),)

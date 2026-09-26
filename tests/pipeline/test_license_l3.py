@@ -43,6 +43,7 @@ from tff_catalog.license_l3 import (
     L3Result,
     L3Ruling,
     TextRef,
+    is_web_page,
 )
 from tff_catalog.licenses import LicenseClass, Verdict
 from tff_catalog.membership import Membership, MemberState
@@ -677,6 +678,11 @@ def test_a_name_table_may_name_every_branch_of_an_or(canon: Canon) -> None:
         ),
         (spdx_text("MIT"), f"license text {TEXT_URL} is MIT, not OFL-1.1"),
         (
+            "<!DOCTYPE html>\n<html><body>SIL Open Font License. Use is prohibited unless"
+            " you agree to the terms of use.</body></html>",
+            f"license text {TEXT_URL} is a web page, not a license text",
+        ),
+        (
             ofl(OFL_NOTICE.replace("Authors", "Authors. Free for personal use only")),
             f"a notice in license text {TEXT_URL} restricts use: 'personal use'",
         ),
@@ -685,13 +691,33 @@ def test_a_name_table_may_name_every_branch_of_an_or(canon: Canon) -> None:
             f"the notice above license text {TEXT_URL} has 50 words besides",
         ),
     ],
-    ids=["missing", "edited", "other-license", "restricting-notice", "long-notice"],
+    ids=["missing", "edited", "other-license", "web-page", "restricting-notice", "long-notice"],
 )
 def test_a_bad_text_fails(canon: Canon, text: str | int, problem: str) -> None:
     result = check(make_inputs(canon), text=text)
     assert result.level == "failed"
     assert fatal(result)[0].startswith(problem)
     assert result.font_file is not None  # the file was still read and recorded
+
+
+def test_a_web_page_says_so_and_nothing_more(canon: Canon) -> None:
+    page = "<!doctype html><html><body>Use is prohibited. Terms of use.</body></html>"
+    result = check(make_inputs(canon), text=page)
+    assert fatal(result) == [f"license text {TEXT_URL} is a web page, not a license text"]
+
+
+@pytest.mark.parametrize(
+    ("text", "page"),
+    [
+        ("<!DOCTYPE html>\n<html lang=en>", True),
+        ("  <!-- mirror -->\n<HTML>", True),
+        ("<html>", True),
+        (ofl(), False),
+        ("Copyright <html> in a notice", False),
+    ],
+)
+def test_is_web_page(text: str, page: bool) -> None:
+    assert is_web_page(text) is page
 
 
 def test_a_text_matching_a_license_not_allowed_fails(canon: Canon) -> None:

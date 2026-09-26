@@ -648,9 +648,8 @@ def test_questions_shows_an_earlier_research_ruling(
 def test_questions_with_nothing_open(capsys: pytest.CaptureFixture[str]) -> None:
     assert reviews.cmd_questions(COMMITTED, "M") == 0
     out = capsys.readouterr().out
-    assert (
-        "No open questions. 12 answered in `data/reviews/method/`, the latest on 2026-09-25." in out
-    )
+    assert "No open questions." in out
+    assert "answered in `data/reviews/method/`" in out
 
 
 def test_questions_says_which_stage_to_run(

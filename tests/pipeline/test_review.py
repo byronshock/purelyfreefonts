@@ -23,6 +23,7 @@ from tff_catalog import backtest, jsonio, records, review, stageio, surveys
 from tff_catalog.collectors.base import CollectorBase, ParseContext
 from tff_catalog.config_model import RankingConfig, from_mapping, load_toml
 from tff_catalog.corrections import Term
+from tff_catalog.engine.order import Placement
 from tff_catalog.facts import Facts
 from tff_catalog.keys import match_key
 from tff_catalog.mapping import IndexEntry
@@ -260,7 +261,8 @@ def test_render_review_sections_summary_and_escaping() -> None:
     assert "| project | 2 | 2 | 0 | 0 | 0 | 0 | 0 |" in text
     assert "Flags: 4 (entry 1, exit 1, stale 1, brand_new_kind 1)." in text
     headings = [line[3:] for line in text.splitlines() if line.startswith("## ")]
-    assert headings == ["Summary", *(h for h, _ in review.KINDS.values()), "Brand new kind"]
+    public = [h for k, (h, _) in review.KINDS.items() if k not in review.PRIVATE_KINDS]
+    assert headings == ["Summary", *public, "Brand new kind"]
     assert "- `fot`: stale \\| odd" in text
     assert "| overall | d enters at 3 (last month not ranked) |" in text
     guard = text.split("## Outlier-guard hits")[1].split("## ")[0]
@@ -853,18 +855,26 @@ def test_stage_writes_review_and_pack_deterministically(tmp_path: Path) -> None:
     )
     assert "Family 40: `homebrew` share up" in text  # the jump, found by re-parsing the store
     assert "`homebrew`: 41 → 48 fonts with a value (+17%)" in text  # coverage change
-    assert "## What if" in text
-    assert f"`ranks.overall.mix.project` {review.TIMES} 2:" in text
+    # The what-if table is the owner's (ruling of 2026-09-26): in the pack, not review.md.
+    assert "## What if" not in text
+    anomalies = pack["anomalies.md"].decode()
+    assert "## What if" in anomalies
+    assert f"`ranks.overall.mix.project` {review.TIMES} 2:" in anomalies
     # no Fonts Over Time weeks yet: its weight this run is the phase-in weight, not its key
     phase = "(phasing in: this run's weight is `sources.fot.phase_in_weight`)"
-    assert f"`surveys.project.weights.fot` {review.TIMES} 2 {phase}:" in text
-    assert f"`surveys.project.weights.almanac` {review.TIMES} 2:" in text
+    assert f"`surveys.project.weights.fot` {review.TIMES} 2 {phase}:" in anomalies
+    assert f"`surveys.project.weights.almanac` {review.TIMES} 2:" in anomalies
     assert "surveys.project.weights.fot (phasing in" in pack["what-if.md"].decode()
+    # One flag total everywhere: review.md's lists are cut, its total is not.
+    total = next(line for line in text.splitlines() if line.startswith("Flags: "))
+    assert total in pack["README.md"].decode()
+    assert total in anomalies
     growth = text.split("## Snapshot growth")[1].split("## ")[0]
     assert f"- `{BREW}`: " in growth
     assert "2026-09-03 → 2026-10-03" in growth
-    for kind in ("entry", "exit", "license", "stale", "term", "what_if"):
+    for kind in ("entry", "exit", "license", "stale", "term"):
         assert any(f.kind == kind for f in review.analyse(ctx).flags), kind
+    assert any(f.kind == "what_if" for f in review.analyse(ctx).all_flags)
 
     sources = pack["sources.md"].decode()
     assert "| homebrew | 2026-09-03 | 2026-10-03 | 41 → 48 |" in sources
@@ -929,6 +939,31 @@ def test_stage_without_store_notes_what_it_skipped(tmp_path: Path) -> None:
     assert not [f for f in a.flags if f.kind in ("spearman", "coverage", "share_jump", "growth")]
 
 
+def test_members_without_an_accepted_link_are_named(tmp_path: Path) -> None:
+    from tff_catalog.links import Link, Links
+
+    ctx = ranked_build(tmp_path)
+    members = stageio.load_stage(ctx.paths, "membership").members()
+    link = Links(Link("https://x.example/"), None, "two_sources")
+    stageio.dump_stage(ctx.paths, "links", dict.fromkeys(members[2:], link))
+    # members[0] has a candidate link, so gate K asks; members[1] has none: Claude researches.
+    candidate = {"candidates": [{"kind": "homepage", "sources": ["x"], "url": "https://y/"}]}
+    jsonio.dump({"undecided": {members[0]: candidate}}, ctx.paths.queues / "links.json")
+    a = review.analyse(ctx)
+    info = [f.message for f in a.flags if f.kind == "info"]
+    held = [m for m in info if m.startswith("Held back from the catalog")]
+    assert held == [
+        "Held back from the catalog until the owner picks a download link at gate K "
+        f"(no two sources agree on one): {NAMES[members[0]]} (`{members[0]}`).",
+        "Held back from the catalog with no candidate download link at all, so gate K has "
+        "nothing to ask yet: Claude researches each official page and proposes an override in "
+        f"config/link-overrides.toml, which gate K then asks about: {NAMES[members[1]]} "
+        f"(`{members[1]}`).",
+    ]
+    stageio.dump_stage(ctx.paths, "links", dict.fromkeys(members, link))
+    assert not [f for f in review.analyse(ctx).flags if "Held back" in f.message]
+
+
 def test_stage_needs_ranks(tmp_path: Path) -> None:
     ctx = stage_ctx(Paths.for_root(tmp_path), SMALL, State(), None)
     with pytest.raises(FileNotFoundError, match="run stage 'rank' first"):
@@ -982,11 +1017,10 @@ def settled_month(root: Path, cfg: RankingConfig) -> StageContext:
 
     first = ranked_build(root, first_run=True, cfg=cfg)
     members = set(stageio.load_stage(first.paths, "membership").members())
-    placed = stageio.load_stage(first.paths, "ranks")
+    # As export published them: a short exact top (dev_apps) moves its unranked places down.
+    placed = review.export_orders(stageio.load_stage(first.paths, "ranks"), cfg.display.exact_top)
     last_month = {
-        k: {f: p.order for f, p in ps.items() if f in members}
-        for k, ps in placed.items()
-        if k != "rising"
+        k: {f: o for f, o in v.items() if f in members} for k, v in placed.items() if k != "rising"
     }
     committed = jsonio.load(first.paths.next_state / "membership.json")
     history = ({"run_date": LAST.isoformat(), "snapshots": {BREW: LAST.isoformat()}},)
@@ -1007,8 +1041,10 @@ def test_an_unchanged_month_raises_no_diff(tmp_path: Path) -> None:
     # the catalog leaves out fonts in coding's exact top: they are ranked, never published
     assert set(review._top(a.now["coding"], cfg.display.exact_top)) - members
     assert len(a.now["overall"]) > len(members)
+    shifted = review.export_orders(a.placements, cfg.display.exact_top)
+    assert shifted["dev_apps"] != a.now["dev_apps"]  # one group only: no font passes the gate
     assert a.published == {
-        k: {f: o for f, o in v.items() if f in members} for k, v in a.now.items()
+        k: {f: o for f, o in v.items() if f in members} for k, v in shifted.items()
     }
     diff = [f for f in a.flags if f.kind in ("entry", "exit", "move", "from_below", "rbo")]
     assert diff == []
@@ -1017,6 +1053,17 @@ def test_an_unchanged_month_raises_no_diff(tmp_path: Path) -> None:
     for key, orders_ in a.prev.items():
         n = len(orders_)
         assert f"| {key} | {n} | {n} | 0 | 0 | 0 | 0 | 0 |" in text
+
+
+def test_export_orders_move_a_short_tops_unranked_places_as_export_does() -> None:
+    placed = {
+        "a": Placement(1, 1, None, False),
+        "b": Placement(2, None, "101-250", True),  # gate held: no rank inside the top
+        "c": Placement(3, None, "101-250", True),
+    }
+    full = {"a": Placement(1, 1, None, False), "d": Placement(101, None, "101-250", False)}
+    got = review.export_orders({"dev_apps": placed, "overall": full}, exact_top=100)
+    assert got == {"dev_apps": {"a": 1, "b": 101, "c": 102}, "overall": {"a": 1, "d": 101}}
 
 
 @pytest.mark.usefixtures("replay_collector")
@@ -1072,3 +1119,38 @@ def test_pack_readme_asks_the_gate_r_question(tmp_path: Path) -> None:
     assert "- (d) Another round." in readme
     assert "`data/reviews/review/<date>.toml`" in readme
     assert "Up to 3 rounds." in readme
+
+
+def test_specimen_failures_and_numbering_gaps_are_flagged(tmp_path: Path) -> None:
+    from tff_catalog.specimens.stage import Preview
+
+    previews = {
+        "a": Preview("specimens/a.svg", "0" * 64),
+        "b": Preview(None, None, ("specimen_failed",), "no font file to draw from"),
+    }
+    flags = review.specimen_flags(previews, {"b": "Bee Sans"})
+    assert [(f.kind, f.message) for f in flags] == [
+        ("specimen", "Bee Sans: no font file to draw from")
+    ]
+    catalog = tmp_path / "catalog.json"
+    ranks = [{"overall": {"rank": r}, "coding": {"rank": None}} for r in (1, 2, 4)]
+    jsonio.dump({"fonts": [{"ranks": r} for r in ranks]}, catalog)
+    gaps = review.rank_gap_flags(catalog)
+    assert [(f.rank_key, f.message) for f in gaps] == [
+        ("overall", "exact ranks 3 are not in the catalog")
+    ]
+
+
+def test_review_md_lists_only_cross_check_moves_of_three_places_or_more() -> None:
+    now = {"overall": {"a": 2, "b": 3, "c": 40}}
+    flags = [
+        review.Flag("crosscheck", "A moves from 2 to 5 (150%) under RRF", "overall", "a"),
+        review.Flag("crosscheck", "B moves from 3 to 2 (33%) under RRF", "overall", "b"),
+        review.Flag("crosscheck", "C moves from 40 to 90 (125%) under RRF", "overall", "c"),
+        review.Flag("what_if", "`w` x 2: nothing moves"),
+    ]
+    public, everything = review._finish(flags, [], [], now, top=10)
+    kept = [f.family_id for f in public if f.kind == "crosscheck"]
+    assert kept == ["a"]  # b moves one place; c is below the exact top
+    assert not [f for f in public if f.kind == "what_if"]
+    assert len([f for f in everything if f.kind != "info"]) == 4

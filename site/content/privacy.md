@@ -27,10 +27,10 @@ To see that nothing is stored, open the **Storage** tab (Firefox and Safari) or 
 
 ## What our server logs
 
-Our web server, Caddy, keeps an access log, so that we can find errors and see which pages are used. For each request it records the time, the address asked for, the response, and the headers your browser sent, such as its name and version, its languages and the page you came from. It also records the country Cloudflare adds to each request.
+Our web server, Caddy, keeps an access log, so that we can find errors and see which pages are used. For each request it records the time, the address asked for, the response, and some of the headers your browser sent, such as its languages. It also records the country Cloudflare adds to each request.
 
 - **Your IP address is cut short before it is written.** An IPv4 address keeps only its first two numbers (203.0.113.7 is stored as 203.0.0.0), and an IPv6 address only its first 32 bits. What's left is shared by tens of thousands of addresses, so it can't point to yours.
-- **The port and the headers that carry your full IP address are dropped.**
+- **Some details are dropped before anything is written:** the port, your browser's name and version, the page you came from, any cookies, and every header that carries your full IP address or a location finer than the country.
 - **Each day's log is deleted after 14 days.**
 
 These settings are public: see the log section of our [Caddyfile on GitHub]({{ caddyfile_url }}), and the [log rotation settings]({{ logrotate_url }}).

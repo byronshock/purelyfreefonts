@@ -9,7 +9,8 @@
 #   ops/deploy.sh status production|staging
 #
 # A deploy builds the commit (default: HEAD) in a temporary git worktree: uv sync,
-# tff-site fetch-fonts, build, check, the site tests (skipped with --fast), then pack.
+# tff-site fetch-fonts, build (staging with --drafts), check, the site tests (skipped with
+# --fast), then pack.
 # It uploads only the files the server lacks, switches the site in one step, and ends with
 # the live test (tests/live) against the site. --dir DIR deploys a directory as it is (the
 # one-time migration of the stub in public/): it adds version.txt when missing and checks
@@ -139,13 +140,36 @@ cmd_deploy() {
 		tools=$work/src
 		(
 			cd "$tools"
+			# The catalog, chosen as deploy.yml chooses it: the committed real one, else (on
+			# staging only, until Milestone 1's first real run) the synthetic sample.
+			data=$tools/build/catalog-site.json
+			if [[ ! -f $data ]]; then
+				[[ $env == staging ]] || die "build/catalog-site.json is missing; production never gets the sample"
+				data=$tools/tests/fixtures/catalog-site.sample.json
+				say "no build/catalog-site.json at $commit; staging gets the synthetic sample"
+			fi
+			if [[ $env == production ]] && grep -q '"synthetic": *true' "$data"; then
+				die "$data is synthetic; production never gets synthetic data"
+			fi
+			# Header phase A strips production's CSP while the stub has an inline style; the
+			# list must never go live without it (/privacy says it is sent). The stub itself
+			# moves with --dir, above.
+			if [[ $env == production && -f ops/Caddyfile ]] &&
+				grep -Eq '^[[:space:]]*header -Content-Security-Policy' ops/Caddyfile; then
+				die "ops/Caddyfile is still in header phase A; do phase B first (ops/deploy/README.md)"
+			fi
 			uv sync --locked --group browser
-			uv run tff-site fetch-fonts
-			uv run tff-site build --out "$site" --commit "$commit"
+			uv run tff-site fetch-fonts --data "$data"
+			# The test site also publishes draft blog posts (Milestone 2 step 7b).
+			drafts=()
+			if [[ $env == staging ]]; then drafts=(--drafts); fi
+			uv run tff-site build --out "$site" --commit "$commit" --data "$data" "${drafts[@]}"
 			uv run tff-site check "$site"
 			if [[ $fast == 0 ]]; then
-				TFF_SITE_DIR=$site uv run --group browser pytest tests/site -q \
-					--browser chromium --browser firefox
+				# The tests compare the page with the catalog it was built from (TFF_SITE_DATA);
+				# the performance budget runs in CI, as deploy.yml leaves it out.
+				TFF_SITE_DIR=$site TFF_SITE_DATA=$data uv run --group browser pytest tests/site -q \
+					--ignore=tests/site/test_perf.py --browser chromium --browser firefox
 			fi
 		)
 	fi

@@ -90,7 +90,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - [ ] Sample: the family name plus an accented (Latin Extended) or basic-Latin line, never a missing-glyph box (a failing font gets a flag); variable fonts at Regular (400), else their default instance. Output is byte-stable, so a refresh changes only fonts that changed.
 - [ ] Budget: half at 5 KB compressed or less, none over 30 KB (else the family name only), all under 10 MB.
 - [ ] Served as immutable `/assets/specimens/<id>.<hash>.svg` files, drawn as a CSS `mask-image` filled with `currentColor` (`CanvasText` with `forced-color-adjust: none` under forced colors), so they read in every theme within `img-src 'self'`. Accessible name "<family> sample", with the name also in text.
-- [ ] The script sets each mask as its row nears the screen, in a fixed-size box; `<noscript>` images load lazily. The loader can pause, for M3-D10 (previews after a comparison).
+- [ ] The script sets each mask as its row nears the screen, in a fixed-size box; `<noscript>` images carry `loading="lazy"` (browsers load them all when scripts are off; the owner's ruling of 2026-09-26 keeps them). The loader can pause, for M3-D10 (previews after a comparison).
 - [ ] Fallbacks: "No preview: this font's license doesn't let us host its files. See it on <official page>." (no `preview_ok`); "Preview not available yet." (render failed).
 - [ ] Under M2-D5 (b), "Type your own text" loads the unchanged upstream file on request, after showing its size. The deploy fetches the files and checks `font_file.sha256`; they are never committed and get no CORS headers.
 
@@ -124,21 +124,21 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 
 ### Step 7b: Blog
 **Who:** Claude builds it; the owner writes and approves posts. **Depends on:** 1, 6, 7 (`render_markdown`); M2-D12.
-- [ ] Each post is one file, `site/content/blog/<yyyy-mm-dd>-<slug>.md`, starting with YAML front matter: `title`, `date` and `description`, plus optional `updated` and `draft`. The build fails on a missing or unknown field, a repeated slug, or a slug that breaks the deploy's path rule (CONTRACT.md §2).
-- [ ] `tff-site build` writes `/blog/` (newest post first), `/blog/<slug>/` and an Atom feed at `/blog/feed.xml`, and adds the posts to `sitemap.xml`. Post text goes through step 7's `render_markdown`, with raw HTML off. Blog pages load no script.
-- [ ] Images sit beside their post and are published as immutable `/assets/blog/<slug>.<h>.<ext>` files. The build fails on an image with no alt text.
-- [ ] Dates come only from the front matter, never from file times or the build time, so the build stays byte-identical.
-- [ ] Posts marked `draft: true` are built only by `tff-site build --drafts`, which the staging deploy uses.
-- [ ] Until the first post is published, the build writes no `/blog/` pages and the nav has no Blog link.
-- [ ] License: `LICENSE-DATA`'s scope gains `site/content/blog/` (text and images), and each post page gives its license, CC BY-SA 4.0.
-- [ ] CONTRACT.md §2 (build output) and §3 (templates) are updated in the same pull request, with their contract tests.
-- [ ] Tests: an offline Atom check on the feed, plus step 6's axe run and step 9's privacy test on `/blog/` and one post.
+- [x] Each post is one file, `site/content/blog/<yyyy-mm-dd>-<slug>.md`, starting with YAML front matter: `title`, `date` and `description`, plus optional `updated` and `draft`. The build fails on a missing or unknown field, a repeated slug, or a slug that breaks the deploy's path rule (CONTRACT.md §2).
+- [x] `tff-site build` writes `/blog/` (newest post first), `/blog/<slug>/` and an Atom feed at `/blog/feed.xml`, and adds the posts to `sitemap.xml`. Post text goes through step 7's `render_markdown`, with raw HTML off. Blog pages load no script.
+- [x] Images sit beside their post and are published as immutable `/assets/blog/<slug>.<h>.<ext>` files. The build fails on an image with no alt text.
+- [x] Dates come only from the front matter, never from file times or the build time, so the build stays byte-identical.
+- [x] Posts marked `draft: true` are built only by `tff-site build --drafts`, which the staging deploy uses.
+- [x] Until the first post is published, the build writes no `/blog/` pages and the nav has no Blog link.
+- [x] License: `LICENSE-DATA`'s scope gains `site/content/blog/` (text and images), and each post page gives its license, CC BY-SA 4.0.
+- [x] CONTRACT.md §2 (build output) and §3 (templates) are updated in the same pull request, with their contract tests.
+- [x] Tests: an offline Atom check on the feed, plus step 6's axe run and step 9's privacy test on `/blog/` and one post.
 
 **Done when:** a sample post builds, passes step 6's and step 9's checks on the test site, and its feed passes the Atom check.
 
 ### Step 8: Tip link
 **Who:** Claude. **Depends on:** 1. [ops/DONATIONS.md](../ops/DONATIONS.md) steps 1–10 are done; the live link is in its Facts table (2026-09-25).
-- [ ] Do DONATIONS.md step 11, ticking it there: one plain link, no Stripe script or cookies, after the results and in the footer, called a tip, not a donation.
+- [ ] Do DONATIONS.md step 11, ticking it there: one plain footer link on every page, worded "Leave a tip ($5 suggested)" (the owner's ruling of 2026-09-26), no Stripe script or cookies, called a tip, not a donation.
 - [ ] Step 9's test sees no Stripe request before a click; the headers need no change.
 
 **Done when:** DONATIONS.md's Verification lines pass on the test site, then on the live site at step 14.
@@ -202,7 +202,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - **Sessions:** remote video, thinking aloud, the owner guiding and taking notes (tasks by email for those who can't join); a consent script at the start; findings anonymized (P1, P2 …).
 - [ ] Each finding becomes an issue labelled `usability`, with severity and no names.
 
-**Done when:** the owner has approved the script and invitation, a test issue through each form arrives with the right labels, and round 1's testers are booked.
+**Done when:** the owner has approved the script and invitation, a test issue through each form arrives with the right labels, and round 1's testers are booked. (GitHub drops a form's label silently when the repository lacks it: the owner creates the five labels first, as `ops/deploy/README.md`, GitHub settings, lists.)
 
 ### Step 13: Usability round 1, before launch
 **Who:** the owner runs sessions; Claude writes up and fixes findings. **Depends on:** 3–7, 9, 11, 12; real data from M1 step 16 or later, even before the freeze.
@@ -218,7 +218,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 **Parallel:** Claude writes up each session while the next is scheduled.
 
 ### Step 14: Soft launch: the list replaces the stub
-**Who:** Claude deploys; the owner gives the go-ahead. **Depends on:** 6, 7b, 8, 9, 10, 11, 13; M2-D8; M1 step 20 (`catalog-site.json` v1 frozen from a merged refresh). Launching without the tip link needs an owner ruling in AUTHORITY.md, whose Funding section ties the link to this release.
+**Who:** Claude deploys; the owner gives the go-ahead. **Depends on:** 6, 7b, 8, 9, 10, 11, 13; M2-D8; M1 step 20 (`catalog-site.json` v1 frozen from a merged refresh); Caddy header phase B live on production (`ops/deploy/README.md`, step 6 of the move into releases), since /privacy says the server sends a CSP and production deploys refuse to run before it. Launching without the tip link needs an owner ruling in AUTHORITY.md, whose Funding section ties the link to this release.
 - [ ] Final checks on the test site: all CI checks, step 9's live test, step 10's numbers, the tip link.
 - [ ] The page says it is an early version and that hiding the fonts you have is coming.
 - [ ] Deploy to production, and remove the stub from `public/` in the repository.

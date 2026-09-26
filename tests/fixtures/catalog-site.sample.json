@@ -22,7 +22,7 @@
     {
       "key": "dev_apps",
       "label": "Developers & apps",
-      "measures": "What builders choose: npm packages, projects that depend on them, and app frameworks.",
+      "measures": "What builders choose: npm packages, projects that depend on them, and app frameworks. Shown in bands only: all its sources come from npm, one kind of evidence, so no font gets an exact rank yet.",
       "available": true
     },
     {"key": "rising", "label": "Rising (beta)", "measures": "Fonts gaining share over the last 3 months.", "available": false}

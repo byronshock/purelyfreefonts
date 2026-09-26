@@ -822,16 +822,13 @@ def test_list_and_web_frames() -> None:
         "source-code-pro",
         "source-sans-3",
     )
-    # Fonts Over Time (gap G11): every web-servable family: Google, Fontsource, foundries
+    # Fonts Over Time: every eligible family, desktop-only ones too (methodology §4: they
+    # get censored crawl terms, not a placeholder); dropped families never.
     assert f["fot"].basis == "web_servable"
     assert "ostrich-sans" in f["fot"]
-    assert "hack" not in f["fot"]
+    assert "hack" in f["fot"]
     assert "material-icons" not in f["fot"]
     assert "material-icons" not in f["google"]
-    recs = scenario()
-    recs["fot"].append(obs("fot", "fot-name", "Hack", 5, series="2026-W39", unit="sites"))
-    idx = dict(IDX) | {("fot-name", "hack"): ("hack", "direct", "")}
-    assert "hack" in mapping.frames(ranking().sources.all(), UNIVERSE, recs, idx)["fot"]
 
 
 def test_frames_skip_sources_without_rows() -> None:
@@ -861,7 +858,7 @@ def test_evidence_states_package_source(
 def test_evidence_states_list_sources() -> None:
     f = frames()
     assert evidence_state(f["google"], "hack", 1.0, 0.0) == ("not_covered", "outside_frame")
-    assert evidence_state(f["fot"], "hack", None, 3.0) == ("not_covered", "outside_frame")
+    assert evidence_state(f["fot"], "hack", None, 3.0) == ("censored", "no_value")
     assert evidence_state(f["fot"], "ostrich-sans", None, 3.0) == ("censored", "no_value")
 
 

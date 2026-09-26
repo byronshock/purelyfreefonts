@@ -32,6 +32,18 @@ The second extract, ``pin.json``, names the repository, ref, path, commit and
 commit time. The manifest's ``data_date`` is the commit's (UTC) day, never
 after the run date.
 
+3. ``api.github.com/repos/<repo>/git/trees/<commit>:<unpatched_dir>?recursive=1``:
+   the files under ``src/unpatched-fonts/`` at the pinned commit, where every
+   folder keeps the original font's license file next to its fonts
+   (``Meslo/LICENSE.txt``, ``Hack/LICENSE.md``). The third extract,
+   ``licenses.json``, keeps the paths whose names look like a license
+   (``LICENSE_NAME``), never the texts; stage "verify" (L3) reads the texts,
+   pinned to the commit, as the text a Nerd folder's original is shipped
+   under. When the previous snapshot listed them for the same commit, its
+   extract is copied instead. The list is an extra: a failed or truncated
+   tree answer is noted and leaves the extract out, and the snapshot still
+   stands (version 1 snapshots have none either).
+
 **Parse** (offline, pure), for each folder of ``fonts.json`` (a folder listed
 twice keeps its first entry, with a warning):
 
@@ -46,7 +58,12 @@ twice keeps its first entry, with a warning):
 - a ``LicenseFact`` with ``raw`` = ``licenseId``, ``spdx`` = the same string
   only when it is a well-formed SPDX expression (the file's
   ``OFL-1.1-no-RFN or LGPL-2.1-only`` is not: lower-case operator), ``rfn``
-  from ``RFN`` and the ``RFNException`` URL as attr ``rfn_exception``.
+  from ``RFN`` and the ``RFNException`` URL as attr ``rfn_exception``, and as
+  ``text_url`` the folder's license file at the pinned commit
+  (``license_path``): from the preview file's own directory up to the
+  folder, the first directory holding a license file; in it, a file named
+  just LICENSE or LICENCE first, then OFL, then the rest, by path. FAQs,
+  copyright notes and read-mes are not license texts.
 """
 
 import json
@@ -82,6 +99,12 @@ NAMESPACE = "nerd-folder"
 FONTS = "fonts.json"  # the file itself, as fetched
 PIN = "pin.json"  # the commit the file was fetched at
 PIN_SCHEMA = 1
+LICENSES = "licenses.json"  # license file paths under unpatched_dir, at the pinned commit
+LICENSES_SCHEMA = 1
+# A file name that looks like a license text (Nerd Fonts has LICENSE, LICENCE.txt,
+# OFL.txt, COPYING-LICENSE, "SIL Open Font License.txt", "Tinos/Apache License.txt").
+LICENSE_NAME = re.compile(r"licen[cs]e|copying|(?:^|[^a-z])ofl(?:[^a-z]|$)", re.IGNORECASE)
+NOT_LICENSE_TEXT = re.compile(r"faq|copyright|readme", re.IGNORECASE)
 BUILD = "build"  # the alias relation of a Nerd build's name (data/aliases.csv)
 FONT_EXTENSIONS = (".ttf", ".otf")
 API_HEADERS = {"Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"}
@@ -175,6 +198,13 @@ class Pin:
     def raw_url(self, path: str) -> str:
         """``path`` of the repository at the pinned commit, percent-encoded."""
         return f"https://{RAW_HOST}/{self.repo}/{self.commit}/{quote(path, safe='/')}"
+
+    def tree_url(self, path: str) -> str:
+        """The API request for every file under ``path`` at the pinned commit."""
+        return (
+            f"https://{API_HOST}/repos/{self.repo}/git/trees/"
+            f"{self.commit}:{quote(path, safe='/')}?recursive=1"
+        )
 
     def to_json(self) -> dict[str, Any]:
         return {
@@ -274,6 +304,79 @@ def check_shrink(entries: int, before: int | None, min_share: float) -> None:
         )
 
 
+# --- the license files -------------------------------------------------------------------------
+
+
+def license_files(doc: object) -> list[str]:
+    """The license-like file paths of a git trees-API answer, sorted.
+
+    Raises ``ValueError`` for an answer that is not a tree, or a truncated one
+    (it could leave out any folder's license).
+    """
+    tree = doc.get("tree") if isinstance(doc, dict) else None
+    if not isinstance(tree, list):
+        raise ValueError("the trees API answer has no tree")
+    if doc.get("truncated") is not False:
+        raise ValueError("the trees API answer is truncated")
+    paths = {
+        item["path"]
+        for item in tree
+        if isinstance(item, dict)
+        and item.get("type") == "blob"
+        and isinstance(item.get("path"), str)
+        and _relative_path(item["path"])
+        and LICENSE_NAME.search(item["path"].rpartition("/")[2])
+    }
+    return sorted(paths)
+
+
+def licenses_doc(pin: Pin, directory: str, files: list[str]) -> dict[str, Any]:
+    """The ``licenses.json`` extract."""
+    return {"schema": LICENSES_SCHEMA, "commit": pin.commit, "dir": directory, "files": files}
+
+
+def read_licenses(doc: object, pin: Pin, directory: str) -> list[str] | None:
+    """The paths of a ``licenses.json`` made at ``pin``'s commit for ``directory``, else None."""
+    if not isinstance(doc, dict) or doc.get("schema") != LICENSES_SCHEMA:
+        return None
+    files = doc.get("files")
+    if (doc.get("commit"), doc.get("dir")) != (pin.commit, directory) or not isinstance(
+        files, list
+    ):
+        return None
+    return [f for f in files if isinstance(f, str) and _relative_path(f)]
+
+
+def _license_rank(path: str) -> tuple[int, str]:
+    stem = path.rpartition("/")[2].rpartition(".")[0] or path.rpartition("/")[2]
+    stem = stem.lower()
+    if stem in ("license", "licence"):
+        return (0, path)
+    if stem.startswith("ofl") or "open font license" in stem:
+        return (1, path)
+    return (2, path)
+
+
+def license_path(entry: Mapping[str, Any], files: list[str]) -> str | None:
+    """The license file of a folder's original font, under ``unpatched_dir`` (module doc)."""
+    folder = entry["folderName"]
+    source = _text(entry.get("imagePreviewFontSource"))
+    parts = source.split("/")[:-1] if source and _relative_path(source) else []
+    if not parts or parts[0] != folder:
+        parts = [folder]
+    by_dir: dict[str, list[str]] = {}
+    for path in files:
+        name = path.rpartition("/")[2]
+        if LICENSE_NAME.search(name) and not NOT_LICENSE_TEXT.search(name):
+            by_dir.setdefault(path.rpartition("/")[0], []).append(path)
+    while parts:
+        found = by_dir.get("/".join(parts))
+        if found:
+            return min(found, key=_license_rank)
+        parts.pop()
+    return None
+
+
 # --- parse ---------------------------------------------------------------------------------------
 
 
@@ -355,7 +458,7 @@ def universe_record(entry: Mapping[str, Any], pin: Pin, settings: Settings) -> U
     )
 
 
-def license_fact(entry: Mapping[str, Any]) -> LicenseFact | None:
+def license_fact(entry: Mapping[str, Any], text_url: str | None = None) -> LicenseFact | None:
     """The license the entry states for the original font, if it states one."""
     raw = _text(entry.get("licenseId"))
     if raw is None:
@@ -367,6 +470,7 @@ def license_fact(entry: Mapping[str, Any]) -> LicenseFact | None:
         key=SourceKey(NAMESPACE, entry["folderName"]),
         raw=raw,
         spdx=raw if is_spdx_expression(raw) else None,
+        text_url=text_url,
         rfn=rfn if type(rfn) is bool else None,
         attrs=attrs(rfn_exception=exception) if exception is not None else (),
     )
@@ -400,7 +504,7 @@ class NerdFonts(CollectorBase):
 
     name: ClassVar[str] = NAME
     kind: ClassVar[Kind] = "universe"
-    version: ClassVar[int] = 1
+    version: ClassVar[int] = 2  # 2 adds licenses.json; version 1 snapshots parse without it
     hosts: ClassVar[tuple[str, ...]] = (API_HOST, RAW_HOST)
     emits: ClassVar[tuple[type, ...]] = (UniverseRecord, LicenseFact)
     group: ClassVar[str | None] = None
@@ -430,9 +534,35 @@ class NerdFonts(CollectorBase):
             else:
                 self._fetch_file(ctx, pin, settings)
             ctx.out.write_json(PIN, pin.to_json())
+        self._license_list(ctx, pin, settings, previous)
         # A committer's clock, or a --date in the past, must not date the data after the run.
         ctx.out.set_data_date(min(pin.day, ctx.run_date))
         ctx.log.info("%s: %s at %s (%s)", self.name, pin.path, pin.commit[:12], pin.committed_at)
+
+    def _license_list(
+        self, ctx: FetchContext, pin: Pin, settings: Settings, previous: Snapshot | None
+    ) -> None:
+        """Write ``licenses.json``: copied when the previous snapshot has it for this commit."""
+        directory = settings.unpatched_dir
+        if previous is not None and previous.has(LICENSES):
+            try:
+                reusable = read_licenses(previous.load_json(LICENSES), pin, directory) is not None
+            except ValueError:  # also SnapshotCorrupt and JSONDecodeError
+                reusable = False
+            if reusable:
+                ctx.out.copy_extract(previous, LICENSES)
+                return
+        url = pin.tree_url(directory)
+        try:
+            answer = ctx.fetcher.get(url, headers=API_HEADERS)
+            _record(ctx, answer, kept=False)
+            files = license_files(answer.json())
+        except (FetchError, ValueError) as exc:
+            ctx.log.warning("%s: no license file list: %s", self.name, exc)
+            ctx.out.note(f"no license file list at {pin.commit[:12]}: {exc}")
+            return
+        ctx.out.write_json(LICENSES, licenses_doc(pin, directory, files))
+        ctx.log.info("%s: %d license files under %s", self.name, len(files), directory)
 
     def _fetch_file(self, ctx: FetchContext, pin: Pin, settings: Settings) -> None:
         result = ctx.fetcher.get(pin.raw_url(pin.path))
@@ -455,6 +585,14 @@ class NerdFonts(CollectorBase):
         """
         settings = _settings(ctx.settings)
         pin = Pin.from_json(ctx.snapshot.load_json(PIN))
+        files: list[str] = []
+        if ctx.snapshot.has(LICENSES):
+            listed = read_licenses(ctx.snapshot.load_json(LICENSES), pin, settings.unpatched_dir)
+            if listed is None:
+                ctx.log.warning(
+                    "%s: %s is not for this pin; license texts left out", NAME, LICENSES
+                )
+            files = listed or []
         folders: set[str] = set()
         for entry in font_entries(ctx.snapshot.load_json(FONTS)):
             folder = entry["folderName"]
@@ -465,7 +603,9 @@ class NerdFonts(CollectorBase):
                 continue
             folders.add(folder)
             yield universe_record(entry, pin, settings)
-            if (fact := license_fact(entry)) is not None:
+            path = license_path(entry, files)
+            text_url = pin.raw_url(f"{settings.unpatched_dir}/{path}") if path else None
+            if (fact := license_fact(entry, text_url)) is not None:
                 yield fact
 
 

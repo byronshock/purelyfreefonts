@@ -1,0 +1,662 @@
+{
+  "sha": "198e60e734a59f31818c28d5c48855d88fe3edfa",
+  "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/198e60e734a59f31818c28d5c48855d88fe3edfa",
+  "tree": [
+    {
+      "path": "0xProto",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "29ad6991fb8c126bef2503fb7e864e51fb3edfe9",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/29ad6991fb8c126bef2503fb7e864e51fb3edfe9"
+    },
+    {
+      "path": "0xProto/0xProto-Regular.ttf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "57f51836f9afd500e42e4471171a53eff2a3dd2f",
+      "size": 211324,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/57f51836f9afd500e42e4471171a53eff2a3dd2f"
+    },
+    {
+      "path": "0xProto/LICENSE",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fefebe8f55ff363e154adccea9ffaa7cc9f5f9e5",
+      "size": 4372,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/fefebe8f55ff363e154adccea9ffaa7cc9f5f9e5"
+    },
+    {
+      "path": "0xProto/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7ec7241672677d7f39f68086ce4186d16767fff5",
+      "size": 174,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/7ec7241672677d7f39f68086ce4186d16767fff5"
+    },
+    {
+      "path": "3270",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "27c8047c9cf528e3d47b6cdb03d7172cf295b090",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/27c8047c9cf528e3d47b6cdb03d7172cf295b090"
+    },
+    {
+      "path": "3270/3270-Regular.ttf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d6b55a6ab21806582f4aee3c22dbbaca1f0c9490",
+      "size": 255248,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/d6b55a6ab21806582f4aee3c22dbbaca1f0c9490"
+    },
+    {
+      "path": "3270/LICENSE.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b8f248ab4051e6d3e259fbf0799f38a96491aa8f",
+      "size": 2675,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/b8f248ab4051e6d3e259fbf0799f38a96491aa8f"
+    },
+    {
+      "path": "3270/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "780e2b96b6e1abcb53de8a2c2c903e1e0d845315",
+      "size": 155,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/780e2b96b6e1abcb53de8a2c2c903e1e0d845315"
+    },
+    {
+      "path": "AnonymousPro",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ec6f85cef19cb3efa54604d97a703f4510e6ddc4",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/ec6f85cef19cb3efa54604d97a703f4510e6ddc4"
+    },
+    {
+      "path": "AnonymousPro/Anonymous Pro.ttf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "06aafc067310fba0d33b0a133654475ac73388ab",
+      "size": 158080,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/06aafc067310fba0d33b0a133654475ac73388ab"
+    },
+    {
+      "path": "AnonymousPro/OFL.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "68d1d00550fb9d708e266171e4f67e73c8ae0199",
+      "size": 4521,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/68d1d00550fb9d708e266171e4f67e73c8ae0199"
+    },
+    {
+      "path": "AnonymousPro/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "30f92b6d773e7a34f24c60eeb5d8c5760b546911",
+      "size": 239,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/30f92b6d773e7a34f24c60eeb5d8c5760b546911"
+    },
+    {
+      "path": "BigBlueTerminal",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "45552e22d9debda4c64d53341c654d71b695cbb6",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/45552e22d9debda4c64d53341c654d71b695cbb6"
+    },
+    {
+      "path": "BigBlueTerminal/BigBlue_TerminalPlus.ttf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ddcdc328fc234fbc1fb399539e5633860217d83f",
+      "size": 69964,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/ddcdc328fc234fbc1fb399539e5633860217d83f"
+    },
+    {
+      "path": "BigBlueTerminal/LICENSE.TXT",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fd662a7e6c628e351ccd072bf4a30710d36f4556",
+      "size": 20133,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/fd662a7e6c628e351ccd072bf4a30710d36f4556"
+    },
+    {
+      "path": "BigBlueTerminal/README.TXT",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "01dda92cf156af911d613223621e3ef200b1b537",
+      "size": 12493,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/01dda92cf156af911d613223621e3ef200b1b537"
+    },
+    {
+      "path": "BigBlueTerminal/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0acb194100cb5e06886d19cd34650357b075c59b",
+      "size": 184,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/0acb194100cb5e06886d19cd34650357b075c59b"
+    },
+    {
+      "path": "CascadiaCode",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e037083db159ac6ea02dc1de0746472067338d45",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/e037083db159ac6ea02dc1de0746472067338d45"
+    },
+    {
+      "path": "CascadiaCode/CascadiaCode-Regular-vtt.ttf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "091a5f1a669a12c9b87a51ef388a510d58d6192e",
+      "size": 2516656,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/091a5f1a669a12c9b87a51ef388a510d58d6192e"
+    },
+    {
+      "path": "CascadiaCode/LICENSE",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "40f856f6ecc6de260b4065368ad2f5c4f8cbdcbc",
+      "size": 4395,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/40f856f6ecc6de260b4065368ad2f5c4f8cbdcbc"
+    },
+    {
+      "path": "CascadiaCode/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "15ab41544d7cb6529579cd684d8fcc45f37acb07",
+      "size": 1096,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/15ab41544d7cb6529579cd684d8fcc45f37acb07"
+    },
+    {
+      "path": "EnvyCodeR",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5c023cbc9df4afd5611dcbeb474e4f04ffc51479",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/5c023cbc9df4afd5611dcbeb474e4f04ffc51479"
+    },
+    {
+      "path": "EnvyCodeR/Envy Code R.ttf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e8e4a6045fa8374ca37fd7f53dfa95c61142ae98",
+      "size": 89924,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/e8e4a6045fa8374ca37fd7f53dfa95c61142ae98"
+    },
+    {
+      "path": "EnvyCodeR/LICENCE.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "40d89b0118353ea5cdb010211e3f14f376955c7c",
+      "size": 4298,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/40d89b0118353ea5cdb010211e3f14f376955c7c"
+    },
+    {
+      "path": "EnvyCodeR/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1206b7a593eb316d2cc3008a06f32f6511c01695",
+      "size": 267,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/1206b7a593eb316d2cc3008a06f32f6511c01695"
+    },
+    {
+      "path": "FiraMono",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "874e271b3efe480a0b6c7a8b76958446dc49cd47",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/874e271b3efe480a0b6c7a8b76958446dc49cd47"
+    },
+    {
+      "path": "FiraMono/FiraMono-Regular.otf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c30b25b974989c2705747b2b33dc37cbe964709e",
+      "size": 125712,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/c30b25b974989c2705747b2b33dc37cbe964709e"
+    },
+    {
+      "path": "FiraMono/LICENSE",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b82722716de236b6d2c771e89a1c907006a677d5",
+      "size": 4479,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/b82722716de236b6d2c771e89a1c907006a677d5"
+    },
+    {
+      "path": "FiraMono/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "012ef8e083ca25b5e5314b0e2d49924274bad447",
+      "size": 177,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/012ef8e083ca25b5e5314b0e2d49924274bad447"
+    },
+    {
+      "path": "Go-Mono",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d6549d563447667af40b6c98ed89f4854bb5839c",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/d6549d563447667af40b6c98ed89f4854bb5839c"
+    },
+    {
+      "path": "Go-Mono/Go-Mono.ttf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "853d473bebdf6d27eea9ddcc1f1d310483704229",
+      "size": 173248,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/853d473bebdf6d27eea9ddcc1f1d310483704229"
+    },
+    {
+      "path": "Go-Mono/LICENSE.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7043c36248e1295eab83edf8a677bd92156eed60",
+      "size": 1913,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/7043c36248e1295eab83edf8a677bd92156eed60"
+    },
+    {
+      "path": "Go-Mono/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8d14cd42e3d1dd602d0b8d38efcf517704d3d73e",
+      "size": 272,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/8d14cd42e3d1dd602d0b8d38efcf517704d3d73e"
+    },
+    {
+      "path": "Hack",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3d01b44e278616aec149fe47b20bd3981935f1b8",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/3d01b44e278616aec149fe47b20bd3981935f1b8"
+    },
+    {
+      "path": "Hack/Hack-Regular.ttf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "92a90cb06e0535afa79f6cba26ceece15a7f7959",
+      "size": 309408,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/92a90cb06e0535afa79f6cba26ceece15a7f7959"
+    },
+    {
+      "path": "Hack/LICENSE.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "08927e504fce744f928c584c6e4a07328f2e94ed",
+      "size": 3744,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/08927e504fce744f928c584c6e4a07328f2e94ed"
+    },
+    {
+      "path": "Hack/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "385c0831c0bf7c422613f78293d567522277ba6e",
+      "size": 159,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/385c0831c0bf7c422613f78293d567522277ba6e"
+    },
+    {
+      "path": "MPlus",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "70fea12edd439c010cd2c26b01fbb82c600a84e5",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/70fea12edd439c010cd2c26b01fbb82c600a84e5"
+    },
+    {
+      "path": "MPlus/M_Plus_1",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0d16c636e0b0e4fd7a3cdd138b554816783db850",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/0d16c636e0b0e4fd7a3cdd138b554816783db850"
+    },
+    {
+      "path": "MPlus/M_Plus_1_code",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ed4c1c6e2ac5a355e0d6636bea51c0471937bc02",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/ed4c1c6e2ac5a355e0d6636bea51c0471937bc02"
+    },
+    {
+      "path": "MPlus/M_Plus_1_code/MPLUS1Code-Regular.ttf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "71e35a6add9d37e40f8e92643fed6fce6e227ffd",
+      "size": 1724108,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/71e35a6add9d37e40f8e92643fed6fce6e227ffd"
+    },
+    {
+      "path": "MPlus/M_Plus_2",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1900427f05b82ff6ccc17e99ba142f75c8fca555",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/1900427f05b82ff6ccc17e99ba142f75c8fca555"
+    },
+    {
+      "path": "MPlus/M_Plus_code_latin50",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e3a81e769d27c3cee4d78c3a8d3b0ebf1bf2053b",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/e3a81e769d27c3cee4d78c3a8d3b0ebf1bf2053b"
+    },
+    {
+      "path": "MPlus/M_Plus_code_latin60",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0cd51352106212e80520b0e8351ea476b9b800a5",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/0cd51352106212e80520b0e8351ea476b9b800a5"
+    },
+    {
+      "path": "MPlus/OFL.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b038fd111aff94bffc3fc21f239a556a84209a07",
+      "size": 4387,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/b038fd111aff94bffc3fc21f239a556a84209a07"
+    },
+    {
+      "path": "MPlus/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "119d4c3c807dcab321b8fa8d006d9f3dc5542e60",
+      "size": 180,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/119d4c3c807dcab321b8fa8d006d9f3dc5542e60"
+    },
+    {
+      "path": "Meslo",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ca6103d30f757a927a883ed67dc887b366bfd669",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/ca6103d30f757a927a883ed67dc887b366bfd669"
+    },
+    {
+      "path": "Meslo/L-DZ",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6a35ff23b67a94a61c6e02af4e75be8f324ff423",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/6a35ff23b67a94a61c6e02af4e75be8f324ff423"
+    },
+    {
+      "path": "Meslo/L",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "71204e516da97c522428857b107af3be6c331121",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/71204e516da97c522428857b107af3be6c331121"
+    },
+    {
+      "path": "Meslo/LICENSE.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0300a76ab6746b6effcea96441617e9e889d8576",
+      "size": 573,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/0300a76ab6746b6effcea96441617e9e889d8576"
+    },
+    {
+      "path": "Meslo/M-DZ",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3122e82f7ee95adb2c1fd362e034bd884b6a40dc",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/3122e82f7ee95adb2c1fd362e034bd884b6a40dc"
+    },
+    {
+      "path": "Meslo/M",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e4dd79cbe45f9cc2fb8aa5a56894324c619496fc",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/e4dd79cbe45f9cc2fb8aa5a56894324c619496fc"
+    },
+    {
+      "path": "Meslo/M/Meslo LG M Regular for Powerline.ttf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "548e2be8e5a9cad88ae30e52e079417b60e58b3e",
+      "size": 475628,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/548e2be8e5a9cad88ae30e52e079417b60e58b3e"
+    },
+    {
+      "path": "Meslo/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "094eaa4090d3082146068e564e23ff79cf22ce56",
+      "size": 307,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/094eaa4090d3082146068e564e23ff79cf22ce56"
+    },
+    {
+      "path": "Meslo/S-DZ",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4c0b580722e5060fd6b071435c9b1ca9a5a7f85d",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/4c0b580722e5060fd6b071435c9b1ca9a5a7f85d"
+    },
+    {
+      "path": "Meslo/S",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c577c780e2d0a5d0568f033abe1d68a992df3af6",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/c577c780e2d0a5d0568f033abe1d68a992df3af6"
+    },
+    {
+      "path": "Monoid",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1d5057a7575aeb3f700447f31dc134a92fdb446a",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/1d5057a7575aeb3f700447f31dc134a92fdb446a"
+    },
+    {
+      "path": "Monoid/LICENSE",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b13e7956a9970413bfac03e7299e3fcd46efd346",
+      "size": 5464,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/b13e7956a9970413bfac03e7299e3fcd46efd346"
+    },
+    {
+      "path": "Monoid/Monoid-Regular.ttf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8034ff64e8f537da04cb8df5c8a78b31e38ee636",
+      "size": 81952,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/8034ff64e8f537da04cb8df5c8a78b31e38ee636"
+    },
+    {
+      "path": "Monoid/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "89bb2ad0bb5ffa7495a14eacdaae7bda2e7a3ede",
+      "size": 258,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/89bb2ad0bb5ffa7495a14eacdaae7bda2e7a3ede"
+    },
+    {
+      "path": "NerdFontsSymbolsOnly",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "cdcdd604b9af18b7101d0222b3f5e3236acf6a6b",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/cdcdd604b9af18b7101d0222b3f5e3236acf6a6b"
+    },
+    {
+      "path": "NerdFontsSymbolsOnly/LICENSE",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "06eb073d6b545f7f505919a52e6af903f913d4b8",
+      "size": 1082,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/06eb073d6b545f7f505919a52e6af903f913d4b8"
+    },
+    {
+      "path": "NerdFontsSymbolsOnly/NerdFontsSymbolsNerdFontBlank.sfd",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "28b33c483a74de5ac2c6cd5fdfff53890135170e",
+      "size": 1217,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/28b33c483a74de5ac2c6cd5fdfff53890135170e"
+    },
+    {
+      "path": "NerdFontsSymbolsOnly/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f339d4ca6a970e027f3f3a567955a8a28f2d43b6",
+      "size": 213,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/f339d4ca6a970e027f3f3a567955a8a28f2d43b6"
+    },
+    {
+      "path": "Overpass",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ddb95131234feca67b59635e56575938fc4fc98c",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/ddb95131234feca67b59635e56575938fc4fc98c"
+    },
+    {
+      "path": "Overpass/LICENSE.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3dca19ff3ffbdea03b22c548e55115fe239e864c",
+      "size": 4422,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/3dca19ff3ffbdea03b22c548e55115fe239e864c"
+    },
+    {
+      "path": "Overpass/Mono",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4831c32710df074871e5a7766023fdc4706b0db0",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/4831c32710df074871e5a7766023fdc4706b0db0"
+    },
+    {
+      "path": "Overpass/Mono/LICENSE.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3dca19ff3ffbdea03b22c548e55115fe239e864c",
+      "size": 4422,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/3dca19ff3ffbdea03b22c548e55115fe239e864c"
+    },
+    {
+      "path": "Overpass/Mono/overpass-mono-regular.otf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f748cf9d440ded98ea0fe0fdb753c23c0b20bdc4",
+      "size": 94236,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/f748cf9d440ded98ea0fe0fdb753c23c0b20bdc4"
+    },
+    {
+      "path": "Overpass/Non-Mono",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e78a8986c8705966a299f1bb4a82f88ac8482799",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/e78a8986c8705966a299f1bb4a82f88ac8482799"
+    },
+    {
+      "path": "Overpass/Non-Mono/LICENSE.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3dca19ff3ffbdea03b22c548e55115fe239e864c",
+      "size": 4422,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/3dca19ff3ffbdea03b22c548e55115fe239e864c"
+    },
+    {
+      "path": "Overpass/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a51946c40b84616d111c9e56217755db97d71a20",
+      "size": 272,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/a51946c40b84616d111c9e56217755db97d71a20"
+    },
+    {
+      "path": "Recursive",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c41b46dc54f60186deaaf33e8247e01384986e06",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/c41b46dc54f60186deaaf33e8247e01384986e06"
+    },
+    {
+      "path": "Recursive/LICENSE.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d4361a99fe5b5091c2a7596ee55818da51373a3d",
+      "size": 4389,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/d4361a99fe5b5091c2a7596ee55818da51373a3d"
+    },
+    {
+      "path": "Recursive/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6b613c2e0c58a84e266be5c3b9323203ab0e02b8",
+      "size": 1368,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/6b613c2e0c58a84e266be5c3b9323203ab0e02b8"
+    },
+    {
+      "path": "Recursive/RecMonoCasual",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b4fb5535c546df81062a5aeecb3b98e77892f95b",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/b4fb5535c546df81062a5aeecb3b98e77892f95b"
+    },
+    {
+      "path": "Recursive/RecMonoDuotone",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3e3c3a6b1266942b83694d418be0809a19075c61",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/3e3c3a6b1266942b83694d418be0809a19075c61"
+    },
+    {
+      "path": "Recursive/RecMonoLinear",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ca87b2ceb146ea64af4c7b3634842c1ecf2f78e7",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/ca87b2ceb146ea64af4c7b3634842c1ecf2f78e7"
+    },
+    {
+      "path": "Recursive/RecMonoSemicasual",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7104baafe370a2ec59803064f43c20c61f387131",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/7104baafe370a2ec59803064f43c20c61f387131"
+    },
+    {
+      "path": "Recursive/RecMonoSemicasual/RecMonoSemicasual-Regular-1.085.ttf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e06e3baa91304fc3922432af90d479431ae270d1",
+      "size": 494908,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/e06e3baa91304fc3922432af90d479431ae270d1"
+    },
+    {
+      "path": "Ubuntu",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "8e12088a5c8dc1789637295ac914e4c8d90fa239",
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/8e12088a5c8dc1789637295ac914e4c8d90fa239"
+    },
+    {
+      "path": "Ubuntu/LICENCE-FAQ.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "776a25edf13d57a295a9c9b1e4f881e3a46d7241",
+      "size": 8980,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/776a25edf13d57a295a9c9b1e4f881e3a46d7241"
+    },
+    {
+      "path": "Ubuntu/LICENCE.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ae78a8f94eae372cb1ca4e14b67244342fce604e",
+      "size": 4673,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/ae78a8f94eae372cb1ca4e14b67244342fce604e"
+    },
+    {
+      "path": "Ubuntu/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b657967627c7c930fda1181d6e1d884c90ae2ca0",
+      "size": 926,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/b657967627c7c930fda1181d6e1d884c90ae2ca0"
+    },
+    {
+      "path": "Ubuntu/Ubuntu-R.ttf",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d748728a20789bf5f95e524f3d508f54c67f9475",
+      "size": 353824,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/d748728a20789bf5f95e524f3d508f54c67f9475"
+    },
+    {
+      "path": "Ubuntu/copyright.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "77340703a429e5905d5cc1c4dfab8eff6b21df5e",
+      "size": 155,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/blobs/77340703a429e5905d5cc1c4dfab8eff6b21df5e"
+    }
+  ],
+  "truncated": false
+}

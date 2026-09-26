@@ -165,3 +165,18 @@ def test_place_contract(verdicts: list[bool], top: int):
         assert (p.rank is None) == (p.band is not None)
         if p.rank is not None:
             assert p.rank == p.order
+
+
+def test_published_orders_put_every_unranked_font_past_the_exact_top():
+    # Methodology §6: a font that fails the gate sits at 101 or below, also for membership's
+    # top-100 lists (a view where nothing passes has no top-100 member at all).
+    from tff_catalog.engine.order import published_orders
+
+    fonts, gates = _ordered(150, set(range(1, 151)))
+    nothing = place(fonts, gates)
+    fonts2, gates2 = _ordered(150, {3})
+    one_held = place(fonts2, gates2)
+    out = published_orders({"dev_apps": nothing, "overall": one_held}, 100)
+    assert min(out["dev_apps"].values()) == 101
+    assert sorted(out["dev_apps"].values()) == list(range(101, 251))
+    assert out["overall"] == {f: p.order for f, p in one_held.items()}  # a full top: no shift

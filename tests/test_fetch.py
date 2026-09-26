@@ -10,6 +10,7 @@ import email.utils
 import hashlib
 import json
 import logging
+import ssl
 import time
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass, field
@@ -343,6 +344,78 @@ def test_connection_errors_are_retried_then_reported(server: Server) -> None:
     with server.fetcher(retries=2) as f, pytest.raises(FetchError, match=r"ConnectError.*3 tries"):
         f.get(URL)
     assert len(server.requests) == 3
+
+
+def test_a_host_never_reached_is_not_tried_again_this_run(server: Server) -> None:
+    other = "https://example.org/other.json"
+    elsewhere = "https://example.net/data.json"
+    server.on(URL, httpx.ConnectTimeout("timed out"))
+    server.on(other, reply(body=b"never asked"))
+    server.on(elsewhere, reply(body=b"ok"))
+    with server.fetcher(retries=2) as f:
+        with pytest.raises(FetchError, match=r"ConnectTimeout.*3 tries"):
+            f.get(URL)
+        with pytest.raises(FetchError, match=r"could not be reached earlier in this run"):
+            f.scoped(["example.org"]).get(other)
+        assert f.get(elsewhere).content == b"ok"
+    assert [str(r.url) for r in server.requests] == [URL, URL, URL, elsewhere]
+
+
+def test_a_host_given_up_on_is_tried_again_later(server: Server, fake_time: FakeTime) -> None:
+    server.on(URL, httpx.ConnectError("refused"), reply(body=b"back"))
+    with server.fetcher(retries=0) as f:
+        with pytest.raises(FetchError, match="1 tries"):
+            f.get(URL)
+        with pytest.raises(FetchError, match="not tried again"):
+            f.get(URL)
+        fake_time.now += fetch.UNREACHABLE_FOR
+        assert f.get(URL).content == b"back"
+        assert f.unreachable_hosts() == {"example.org": "ConnectError: refused"}
+
+
+def test_a_core_host_is_never_given_up_on(server: Server) -> None:
+    url = "https://api.github.com/repos/o/r"
+    server.on(url, httpx.ConnectError("refused"), reply(body=b"{}"))
+    with server.fetcher(retries=0, hosts=["api.github.com"]) as f:
+        with pytest.raises(FetchError, match="1 tries"):
+            f.get(url)
+        assert f.get(url).content == b"{}"
+        assert f.unreachable_hosts() == {}
+
+
+def test_a_certificate_that_fails_is_not_retried(server: Server, fake_time: FakeTime) -> None:
+    def bad_certificate(request: httpx.Request) -> httpx.Response:
+        try:
+            raise ssl.SSLCertVerificationError("certificate verify failed: Hostname mismatch")
+        except ssl.SSLError as exc:
+            raise httpx.ConnectError(f"[SSL: CERTIFICATE_VERIFY_FAILED] {exc}") from exc
+
+    server.on(URL, bad_certificate)
+    with server.fetcher(retries=4) as f:
+        with pytest.raises(FetchError, match=r"CERTIFICATE_VERIFY_FAILED.*1 tries"):
+            f.get(URL)
+        with pytest.raises(FetchError, match=r"not tried again"):
+            f.get("https://example.org/other.json")
+    assert len(server.requests) == 1
+    assert fake_time.sleeps == []
+
+
+def test_a_host_that_answered_once_stays_in_play(server: Server) -> None:
+    # A connection error that clears up on a retry, or an HTTP error, says the host is up.
+    server.on(URL, httpx.ConnectError("refused"), reply(body=b"ok"))
+    server.on("https://example.org/gone", reply(404))
+    with server.fetcher(retries=1) as f:
+        assert f.get(URL).content == b"ok"
+        assert f.get("https://example.org/gone", expect=(404,)).status == 404
+        assert f.get(URL).content == b"ok"
+
+
+def test_connecting_has_its_own_shorter_timeout() -> None:
+    with Fetcher(timeout=60.0) as f:
+        timeout = f._shared.client.timeout
+    assert (timeout.connect, timeout.read) == (fetch.CONNECT_TIMEOUT, 60.0)
+    with Fetcher(timeout=5.0) as f:
+        assert f._shared.client.timeout.connect == 5.0
 
 
 def test_a_read_error_mid_body_is_retried(server: Server) -> None:

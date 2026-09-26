@@ -51,14 +51,26 @@ Contents:
 | `assets/details.<h>.json` | the details payload (section 8), fetched on first use | immutable |
 | `assets/specimens/<id>.<h>.svg` | one specimen per font with a preview | immutable |
 | `assets/fonts/<id>.<h>.<ext>` | the unchanged upstream font file, for "Type your own text" | immutable |
+| `blog/index.html` | the blog, newest post first (only once a post is published, below) | `no-cache, no-transform` |
+| `blog/<slug>/index.html` | one page per post | `no-cache, no-transform` |
+| `blog/feed.xml` | the blog's Atom feed (RFC 4287) | `no-cache, no-transform` |
+| `assets/blog/<slug>.<h>.<ext>` | an image in a post, PNG or SVG; `<slug>` is the post's | immutable |
+
+**The blog** (M2-D12, Milestone 2 step 7b; `tff_site.blog`):
+
+- **Posts** are `site/content/blog/<yyyy-mm-dd>-<slug>.md`: YAML front matter with `title`, `date` and `description`, and optionally `updated` and `draft`, then Markdown (step 7's `render_markdown`, raw HTML off, headings from `##`). The build fails on a missing, unknown or repeated field, a value of the wrong kind, a file name whose date isn't the front matter's `date`, a repeated slug, or a slug that isn't a page directory under the path rule above (lowercase letters, digits and hyphens, starting with a letter or digit). Every post is checked, drafts included.
+- **Dates** come only from the front matter, never from file times or the build time, so the build stays byte-identical. Posts are shown newest first (by `date`, then slug).
+- **Drafts** (`draft: true`) are published only by `tff-site build --drafts`, which the staging deploy uses. Until a post is published, the build writes no `blog/` file and no Blog link (`site.blog` is none, section 3).
+- **Images** sit beside their post and are named in it by file name alone (`![What it shows](chart.png)`); PNG and SVG only, since those are the deploy's image extensions, and an SVG may hold no script, event handler or link. The build fails on an image with no alt text. The `<img>` carries the image's `width` and `height`.
+- **Pages** load no script, are in `sitemap.xml`, and each post page gives its license, CC BY-SA 4.0 (LICENSE-DATA covers `site/content/blog/`). The feed's text uses absolute URLs.
 
 ## 3. Templates
 
 Jinja2 with `autoescape=True`, `StrictUndefined`, `trim_blocks`, `lstrip_blocks` and `keep_trailing_newline`. No template may contain an inline `<script>` (only `<script type="module" src>`), a `<style>` element, a `style=""` or `on…=""` attribute, or a `<form>` (the CSP has `form-action 'none'`).
 
-**Files:** `base.html.j2` (the shell); `index.html.j2`, `_list.html.j2`, `_row.html.j2`, `_filters.html.j2` (the list; `_list.html.j2` holds the whole list so a later `/check/` page can include it unchanged); `methodology.html.j2`, `privacy.html.j2`, `about.html.j2`, `404.html.j2`; `sitemap.xml.j2`, `robots.txt.j2`.
+**Files:** `base.html.j2` (the shell); `index.html.j2`, `_list.html.j2`, `_row.html.j2`, `_filters.html.j2` (the list; `_list.html.j2` holds the whole list so a later `/check/` page can include it unchanged); `methodology.html.j2`, `privacy.html.j2`, `about.html.j2`, `404.html.j2`; `blog.html.j2`, `blog-post.html.j2`, `blog-feed.xml.j2` (the blog); `sitemap.xml.j2`, `robots.txt.j2`.
 
-**Pages.** The list page `/` is `index.html.j2` with the `list` context below. Every other page comes from `tff_site.pages.page_contexts(doc)`, keyed by URL path, and its template and output file follow from the path: `/x/` → `x.html.j2` → `x/index.html`, and `/f.ext` → `f.ext.j2` → `f.ext`. `/404.html`, `/robots.txt` and `/sitemap.xml` get a default context when `page_contexts` leaves them out. Content pages, the 404 included, also get `heading`, plus `content` (rendered Markdown) or, on `/methodology/`, `method`.
+**Pages.** The list page `/` is `index.html.j2` with the `list` context below. Every other page comes from `tff_site.pages.page_contexts(doc)`, keyed by URL path, and its template and output file follow from the path: `/x/` → `x.html.j2` → `x/index.html`, and `/f.ext` → `f.ext.j2` → `f.ext`. `/404.html`, `/robots.txt` and `/sitemap.xml` get a default context when `page_contexts` leaves them out. Content pages, the 404 included, also get `heading`, plus `content` (rendered Markdown) or, on `/methodology/`, `method`. The blog's pages come from `tff_site.blog.page_contexts(posts)`, only once a post is published (section 2), and `tff_site.blog.page_files` names their files: `/blog/` → `blog.html.j2` → `blog/index.html`, `/blog/<slug>/` → `blog-post.html.j2` → `blog/<slug>/index.html`, and `/blog/feed.xml` → `blog-feed.xml.j2` → `blog/feed.xml`. None of them loads a script (they override `scripts` with nothing).
 
 **Blocks in `base.html.j2`:**
 
@@ -78,7 +90,7 @@ Jinja2 with `autoescape=True`, `StrictUndefined`, `trim_blocks`, `lstrip_blocks`
 
 | Name | Fields |
 |---|---|
-| `site` | `name` ("Truly Free Fonts"), `base_url` ("https://trulyfreefonts.com"), `repo_url`, `feedback` {`issues_url`, `email`, `mailto`}, `tip_url` (the Stripe link from ops/DONATIONS.md, or none until M2 step 8) |
+| `site` | `name` ("Truly Free Fonts"), `base_url` ("https://trulyfreefonts.com"), `repo_url`, `feedback` {`issues_url`, `email`, `mailto`}, `tip_url` (the Stripe link from ops/DONATIONS.md, or none until M2 step 8), `blog` (none until a post is published; then {`url` "/blog/", `feed_url` "/blog/feed.xml"}, which adds the nav's Blog link and a `<link rel="alternate">` to the feed) |
 | `page` | `path` ("/", "/methodology/" …), `title`, `description`, `canonical` (false on the 404 page) |
 | `assets` | `css`, `js` (hashed URLs) |
 | `build` | `commit`, `run_date` |
@@ -97,6 +109,14 @@ Jinja2 with `autoescape=True`, `StrictUndefined`, `trim_blocks`, `lstrip_blocks`
 | `rows` | one per font, in server order (section 7): `id`, `family`, `label` (the Overall rank label), `category_label`, `license_name`, `badges` [{`key`, `text`}], `specimen` {`url`, `width`, `height`} or none (`width` and `height` are the no-script `<img>`'s display size: 48 px high, the `--spec-h` box, and as wide as the SVG's aspect ratio makes it), `fallback` (none, `"license"` or `"failed"`), `download` {`url`, `label`} |
 
 Badge keys, in this order: `variable`, `monospace`, `limited` ("Limited accents"), `attribution` ("Attribution required"), `noredist` ("Not redistributable"), `preinstalled` ("Comes with Windows 11, macOS"), `pulled` ("Pulled in by sample-office-common on Debian", from `pulled_in_by`; several are joined with "; "), `new` ("New"). `preinstalled` and `pulled` are the tags that explain "Not ranked: no evidence of deliberate installs" in *most chosen* (Milestone 2 step 3).
+
+**Extra context for the blog pages** (`tff_site.blog.page_contexts`); dates are `yyyy-mm-dd` text:
+
+| Page | Context |
+|---|---|
+| `/blog/` | `heading` ("Blog"), `posts`: one per published post, newest first, each {`url`, `title`, `date`, `updated` (or none), `description`, `draft`} |
+| `/blog/<slug>/` | `heading` (the post's title), `post`: the same fields plus `content` (the rendered Markdown) and `license` {`name` ("CC BY-SA 4.0"), `url`, `scope_url` (LICENSE-DATA on GitHub)} |
+| `/blog/feed.xml` | `feed`: `id`, `title`, `subtitle`, `self_url`, `alternate_url`, `updated`, `rights`, `entries` [{`id`, `url`, `title`, `published`, `updated`, `summary`, `content`}]; every URL absolute, every time RFC 3339 (midnight UTC of the front matter's date), `content` the post's HTML as text for a `type="html"` element |
 
 ## 4. DOM
 
@@ -256,7 +276,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 
 ## 6. CSS parts and tokens
 
-`site/css/*.css` is concatenated in filename order into `/assets/style.<h>.css`: `00-tokens.css` (wave 0), `10-base.css` (A14), `20-list.css` and `25-filters.css` (A2), `30-details.css` (A4), `35-specimens.css` (A6), `40-pages.css` (A8).
+`site/css/*.css` is concatenated in filename order into `/assets/style.<h>.css`: `00-tokens.css` (wave 0), `10-base.css` (A14), `20-list.css` and `25-filters.css` (A2), `30-details.css` (A4), `35-specimens.css` (A6), `40-pages.css` (A8), `45-blog.css` (the blog, step 7b).
 
 - Colours come only from the tokens; no other part writes a colour value.
 - Focus: `outline: var(--focus-ring); outline-offset: var(--focus-offset);` on `:focus-visible`. No sticky header, so focus is never hidden (2.4.11).

@@ -214,8 +214,12 @@ def _eligible(ctx: StageContext) -> frozenset[str] | None:
 
 def run(ctx: StageContext) -> None:
     """Stage "membership"."""
+    from tff_catalog.engine.order import published_orders
+
     placements = stageio.load_stage(ctx.paths, "ranks")
-    orders = {key: {fid: p.order for fid, p in ps.items()} for key, ps in placements.items()}
+    # The published orders: a font the gate holds out of a short exact top sits past it, so
+    # it never takes a top-100 place without a rank (methodology §6).
+    orders = published_orders(placements, ctx.config.ranking.display.exact_top)
     prev = load(ctx.state.membership)
     m = update(orders, prev, ctx.config.ranking.membership, ctx.run_date)
     excluded = _l3_failures(ctx)

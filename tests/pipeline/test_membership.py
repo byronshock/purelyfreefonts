@@ -410,14 +410,15 @@ def test_a_font_the_gates_now_rule_out_leaves_every_list_at_once(tmp_path: Path)
     )
     membership.run(ctx)
     m = stageio.load_stage(ctx.paths, "membership")
-    for fid in (dropped, not_latin, excluded, gone):
+    # A license waiting for the owner's ruling is unverified, so it is filtered out like
+    # the others until the ruling (methodology §1 and §9).
+    for fid in (dropped, not_latin, excluded, ruling, gone):
         assert m.catalog[fid] == MemberState(False, OCT, 0), fid
         assert not m.top100["project"].get(fid, MemberState(False, None, 0)).member, fid
-    # Waiting for the owner's license ruling is not ineligible: its counters run as usual
-    # (unranked, it is one run outside the project top 100, which keeps it in the catalog).
-    for fid in (ruling, base[0]):
-        assert m.top100["project"][fid] == MemberState(True, OCT, 1), fid
-        assert m.catalog[fid] == MemberState(True, OCT, 0), fid
+    # An eligible font the ranks no longer hold keeps its counters as usual (unranked, it is
+    # one run outside the project top 100, which keeps it in the catalog).
+    assert m.top100["project"][base[0]] == MemberState(True, OCT, 1)
+    assert m.catalog[base[0]] == MemberState(True, OCT, 0)
     assert base[6] in m.members()
 
 

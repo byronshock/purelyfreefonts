@@ -25,7 +25,12 @@ from ``ranking.toml [display]``: "<from>\u2013<to>" (an en dash), and
 
 How the per-font fields are made (``docs/catalog-schema.md`` says it for readers):
 
-- **Fonts** are the catalog members (``membership.json``), sorted by id.
+- **Fonts** are the catalog members (``membership.json``), sorted by id, that
+  have an accepted download link. Stage "links" accepts one only when two
+  sources agree or the owner approves it (gate K), and every catalog font
+  needs a primary link (milestone-1 step 14), so a member without one is held
+  back (``Inputs.unlinked``, logged and named in ``review.md``) until gate K
+  settles it, the way a font waiting on its license is.
 - **Views.** A font has an entry for every published rank key
   (``available_views``), except that ``coding`` holds monospace fonts only. A
   font with a placement is ranked; one without is unranked, with the reason
@@ -290,8 +295,18 @@ class Inputs:
 
     @cached_property
     def members(self) -> tuple[str, ...]:
-        """The catalog: every member of ``membership.json``, sorted by id."""
+        """The catalog: every member of ``membership.json`` with an accepted link, by id."""
+        return tuple(fid for fid in self.listed if fid in self.links)
+
+    @cached_property
+    def listed(self) -> tuple[str, ...]:
+        """Every member of ``membership.json``, sorted by id."""
         return tuple(sorted(fid for fid, st in self.membership.catalog.items() if st.member))
+
+    @cached_property
+    def unlinked(self) -> tuple[str, ...]:
+        """Members held back because no download link is accepted yet (gate K)."""
+        return tuple(fid for fid in self.listed if fid not in self.links)
 
     @cached_property
     def rows_by_family(self) -> dict[str, tuple[AliasRow, ...]]:
@@ -419,10 +434,10 @@ def band_label(order: int, display: Display) -> str | None:
 
 
 def band_shift(placed: Mapping[str, Placement], exact_top: int) -> int:
-    """How far a rank key's unranked placements move so the first sits just past the exact
-    top (module docstring). 0 when the exact top is full, as in every survey view."""
-    banded = [p.order for p in placed.values() if p.rank is None]
-    return max(0, exact_top + 1 - min(banded)) if banded else 0
+    """How far a rank key's unranked placements move (``engine.order.band_shift``)."""
+    from tff_catalog.engine.order import band_shift as shift
+
+    return shift(placed, exact_top)
 
 
 def new_fonts(first_seen: Mapping[str, Any], run_date: date, days: int) -> frozenset[str]:
@@ -596,14 +611,17 @@ def distinct_families(inputs: Inputs) -> dict[str, list[str]]:
 # --- the gates, as names.json and validate need them --------------------------------------------
 
 
-def gate_status(fid: str, inputs: Inputs, *, l3: bool = True) -> tuple[str, str | None]:
+def gate_status(
+    fid: str, inputs: Inputs, *, l3: bool = True, pending: bool = True
+) -> tuple[str, str | None]:
     """Where a universe family stands: ("eligible", None), ("ineligible", reason),
     ("unknown", why) when a gate stage has no answer for it, or ("skip", None) for a
     record that names no font. Reasons are names.json's ``ineligible`` reasons.
 
-    The gates are the ones stage "correct" applies (``corrections.eligible_families``:
-    no drop, Latin passed, a license that is not excluded; one waiting for the owner's
-    ruling passes) and, with ``l3``, a failed L3 check (stage "verify")."""
+    The gates are no drop, Latin passed and a license that is not excluded, and, with
+    ``l3``, no failed L3 check (stage "verify"). A license waiting for the owner's ruling
+    passes when ``pending`` (names.json, so Milestone 3 knows the font), and fails
+    without it, as in stage "correct" (``corrections.eligible_families``: filter first)."""
     fam = inputs.universe.families[fid]
     if fam.drop is not None:
         reason = DROP_INELIGIBLE.get(fam.drop)
@@ -618,6 +636,8 @@ def gate_status(fid: str, inputs: Inputs, *, l3: bool = True) -> tuple[str, str 
         return "unknown", "no license verdict"
     if verdict.license is None or verdict.license.status == "excluded":
         return "ineligible", "license"  # no license found is excluded too (D3)
+    if not pending and verdict.license.status != "allowed":
+        return "ineligible", "license"  # waiting for the owner: never ranked before the ruling
     result = inputs.l3.get(fid) if l3 else None
     if result is not None and result.level == "failed":
         return "ineligible", "license"
@@ -632,7 +652,7 @@ def ineligible(fid: str, inputs: Inputs, *, l3: bool = True) -> str | None:
     a failed L3 check, which ``ruler.json``, ``scores.json`` and ``ranks.json`` follow."""
     if fid not in inputs.universe.families:
         return "not in the universe"
-    status, reason = gate_status(fid, inputs, l3=l3)
+    status, reason = gate_status(fid, inputs, l3=l3, pending=False)
     return None if status == "eligible" else f"{status}: {reason or 'no font'}"
 
 
@@ -1270,7 +1290,14 @@ def run(ctx: StageContext) -> None:
     """Stage "export": write ``build/catalog.json``."""
     from tff_catalog.state import write_part
 
-    doc = build_catalog(ctx)
+    inputs = Inputs(ctx.paths)
+    if inputs.unlinked:
+        ctx.log.warning(
+            "export: %d catalog members held back until gate K accepts a download link: %s",
+            len(inputs.unlinked),
+            ", ".join(inputs.unlinked),
+        )
+    doc = catalog_document(inputs, ctx.config, ctx.state, ctx.run_date, code_commit(ctx.paths.root))
     jsonio.dump(doc, ctx.paths.build / CATALOG_FILE)
     write_part(ctx.paths, "published_ranks", published_ranks(doc), stage="export")
     ctx.log.info(

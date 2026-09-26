@@ -133,14 +133,23 @@ class PageError(ValueError):
     """A content page can't be built: a methodology part or a content file is missing or bad."""
 
 
-def render_markdown(text: str) -> str:
+def render_markdown(
+    text: str,
+    *,
+    refuse_h1: bool = False,
+    link: Callable[[str], str] | None = None,
+    image: Callable[[str, str], Mapping[str, str]] | None = None,
+) -> str:
     """Render Markdown to HTML with raw HTML disabled and anchored headings.
 
     Headings from ``##`` to ``####`` get GitHub-style ids (``## Check for yourself`` becomes
     ``id="check-for-yourself"``), unique within one call; ``#`` is left alone, since each page
-    has its own ``<h1>``. Raises ``ValueError`` for an image on another site.
+    has its own ``<h1>``, or refused with ``refuse_h1``. Raises ``ValueError`` for an image on
+    another site. ``link(href)`` returns each link's new ``href``; ``image(src, alt)`` returns
+    attributes to set on each ``<img>`` (``src``, ``width`` …) and may raise ``ValueError``
+    to refuse it (the blog's hook, ``tff_site.blog``).
     """
-    return _render(text)
+    return _render(text, link=link, refuse_h1=refuse_h1, image=image)
 
 
 def extract_sections(
@@ -447,7 +456,13 @@ def _markdown() -> MarkdownIt:
     return md
 
 
-def _render(text: str, *, link: Callable[[str], str] | None = None, refuse_h1: bool = False) -> str:
+def _render(
+    text: str,
+    *,
+    link: Callable[[str], str] | None = None,
+    refuse_h1: bool = False,
+    image: Callable[[str, str], Mapping[str, str]] | None = None,
+) -> str:
     md = _markdown()
     env: dict[str, Any] = {}
     tokens = md.parse(text, env)
@@ -456,6 +471,10 @@ def _render(text: str, *, link: Callable[[str], str] | None = None, refuse_h1: b
             src = str(token.attrGet("src") or "")
             if _SCHEME.match(src) or src.startswith("//"):
                 raise ValueError(f"image {src!r}: the pages load only their own files")
+            if image is not None:
+                alt = md.renderer.renderInlineAsText(token.children or [], md.options, env)
+                for name, value in image(src, alt).items():
+                    token.attrSet(name, value)
         elif token.type == "link_open" and link is not None:
             token.attrSet("href", link(str(token.attrGet("href") or "")))
         elif token.type == "heading_open" and token.tag == "h1" and refuse_h1:

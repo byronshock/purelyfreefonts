@@ -87,7 +87,7 @@ Our catalog data is CC BY-SA 4.0, final since ruling T5. That matches the ShareA
 
 ### Nerd Fonts `fonts.json`
 
-- **Use:** the list that maps each Nerd Fonts build to its original font (`unpatchedName`, `patchedName`, `folderName`, `caskName`, `licenseId`).
+- **Use:** the list that maps each Nerd Fonts build to its original font (`unpatchedName`, `patchedName`, `folderName`, `caskName`, `licenseId`), and the paths of the license files kept beside each original under `src/unpatched-fonts/` (from the git trees API; the license check reads those texts, pinned to the same commit).
 - **Terms:** the repository's [LICENSE](https://github.com/ryanoasis/nerd-fonts/blob/master/LICENSE). `fonts.json` sits in a folder with no license of its own.
 - **Quote:** "Source files not in folders containing an explicit license are using the MIT License (MIT)".
 - **Ruling T1:** the file may be published and used as a fixture, with the MIT notice.

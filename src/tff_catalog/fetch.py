@@ -11,6 +11,17 @@ Every network read goes through ``Fetcher`` (ruff bans ``urllib.request`` and
   ``Retry-After`` (seconds or an HTTP date) and ``x-ratelimit-reset`` up to
   ``MAX_RETRY_WAIT``, and waiting ``GITHUB_SECONDARY_WAIT`` after a GitHub
   secondary limit that names no time;
+- gives up on a host for ``UNREACHABLE_FOR`` seconds once a request to it has
+  failed every try without ever connecting (``httpx.ConnectError`` or
+  ``ConnectTimeout``, TLS failures included): later requests to that host
+  raise ``FetchError`` at once instead of waiting through the retries again.
+  A dead foundry site otherwise costs minutes per file in every stage that
+  reads it. The hosts every run depends on (``CORE_HOSTS``: GitHub, npm,
+  Google Fonts, jsDelivr and the package statistics) are never given up on,
+  so a short outage early in a run cannot fail every later request to them;
+  ``unreachable_hosts`` lists what was given up on, for the run's log.
+  Connecting times out after ``CONNECT_TIMEOUT``, and a certificate that fails
+  verification is not retried at all: it will not change in seconds;
 - makes conditional GETs from a previous manifest entry (ETag,
   Last-Modified) and reports ``not_modified``;
 - follows redirects itself, so every hop is checked, paced and charged, and
@@ -45,6 +56,7 @@ import logging
 import os
 import re
 import shutil
+import ssl
 import threading
 import time
 from collections.abc import Iterable, Mapping
@@ -73,6 +85,28 @@ DEFAULT_MIN_INTERVAL = 1.0  # seconds between requests to one host
 HOST_MIN_INTERVAL: dict[str, float] = {"api.npmjs.org": 1.5}
 DEFAULT_RETRIES = 4
 DEFAULT_TIMEOUT = 60.0
+CONNECT_TIMEOUT = 15.0  # opening a connection; reads keep the full timeout
+UNREACHABLE_FOR = 600.0  # seconds a host that no try reached is not asked again
+# Hosts a refresh cannot do without: a failed connection to one is retried every time.
+CORE_HOSTS = frozenset(
+    {
+        "api.github.com",
+        "github.com",
+        "codeload.github.com",
+        "objects.githubusercontent.com",
+        "raw.githubusercontent.com",
+        "release-assets.githubusercontent.com",
+        "api.npmjs.org",
+        "registry.npmjs.org",
+        "fonts.google.com",
+        "cdn.jsdelivr.net",
+        "data.jsdelivr.com",
+        "formulae.brew.sh",
+        "pkgstats.archlinux.de",
+        "popcon.debian.org",
+        "packages.ecosyste.ms",
+    }
+)
 BACKOFF_BASE = 2.0  # seconds before the first retry; doubled for each later one
 BACKOFF_CAP = 120.0
 MAX_RETRY_WAIT = 600.0  # a server asking for a longer wait fails the request instead
@@ -233,19 +267,39 @@ class _Shared:
     lock: threading.Lock = field(default_factory=threading.Lock)
     budget_lock: threading.Lock = field(default_factory=threading.Lock)
     warned_anonymous: bool = False
+    # Hosts a request never reached on any try: (the last error, when), not tried again for
+    # UNREACHABLE_FOR seconds. ``gave_up`` keeps every host given up on, for the log.
+    unreachable: dict[str, tuple[str, float]] = field(default_factory=dict)
+    gave_up: dict[str, str] = field(default_factory=dict)
 
     def host_lock(self, host: str) -> threading.Lock:
         with self.lock:
             return self.host_locks.setdefault(host, threading.Lock())
 
 
+def _bad_certificate(exc: BaseException) -> bool:
+    """Whether ``exc`` was caused by a TLS certificate that failed verification."""
+    seen: set[int] = set()
+    cur: BaseException | None = exc
+    while cur is not None and id(cur) not in seen:
+        if isinstance(cur, ssl.SSLCertVerificationError):
+            return True
+        seen.add(id(cur))
+        cur = cur.__cause__ or cur.__context__
+    return False
+
+
 class _Retry(Exception):
     """One attempt failed in a way worth retrying."""
 
-    def __init__(self, reason: str, wait: float = 0.0) -> None:
+    def __init__(
+        self, reason: str, wait: float = 0.0, unreached: str | None = None, permanent: bool = False
+    ) -> None:
         super().__init__(reason)
         self.reason = reason
         self.wait = wait  # what the server asked for, in seconds
+        self.unreached = unreached  # the host no connection could be opened to, if that was it
+        self.permanent = permanent  # no later try can succeed (a certificate that fails)
 
 
 # A hosts pattern: "*" in the leftmost label only, beside literal text, then a domain of
@@ -380,7 +434,7 @@ class Fetcher:
         named.setdefault("github", Budget("github", GITHUB_BUDGET))
         client = httpx.Client(
             transport=transport,
-            timeout=httpx.Timeout(timeout),
+            timeout=httpx.Timeout(timeout, connect=min(timeout, CONNECT_TIMEOUT)),
             headers={"User-Agent": user_agent},
             follow_redirects=False,
         )
@@ -573,7 +627,12 @@ class Fetcher:
                     method, target, headers, content, to, budget, expect, previous, final
                 )
             except _Retry as retry:
-                if final:
+                if final or retry.permanent:
+                    host = retry.unreached
+                    if host is not None and host not in CORE_HOSTS:
+                        with shared.lock:
+                            shared.unreachable[host] = (retry.reason, _monotonic())
+                            shared.gave_up.setdefault(host, retry.reason)
                     raise FetchError(
                         f"{method} {requested}: {retry.reason} (gave up after {attempt + 1} tries)"
                     ) from retry
@@ -616,6 +675,14 @@ class Fetcher:
         broken = (httpx.TransportError, httpx.DecodingError)
         try:
             response, hops = self._send(method, target, headers, content, budget)
+        except (httpx.ConnectError, httpx.ConnectTimeout) as exc:
+            try:  # the hop that failed, which a redirect may have moved to another host
+                host = exc.request.url.host
+            except RuntimeError:  # raised without a request
+                host = target.host
+            raise _Retry(
+                f"{type(exc).__name__}: {exc}", unreached=host, permanent=_bad_certificate(exc)
+            ) from exc
         except httpx.TransportError as exc:
             raise _Retry(f"{type(exc).__name__}: {exc}") from exc
         try:
@@ -659,6 +726,7 @@ class Fetcher:
         hops: list[httpx.URL] = []
         for _ in range(MAX_REDIRECTS + 1):
             self._check(url)
+            self._refuse_unreachable(url)
             self._charge(url.host, budget if url.host == origin else None)
             self._pace(url.host)
             request = shared.client.build_request(
@@ -686,6 +754,26 @@ class Fetcher:
             raise HostNotAllowed(
                 f"{url}: host {url.host!r} is not in this fetcher's hosts ({allowed})"
             )
+
+    def _refuse_unreachable(self, url: httpx.URL) -> None:
+        """``FetchError`` for a host that failed every try in the last ``UNREACHABLE_FOR``
+        seconds; after that the host is tried again."""
+        shared = self._shared
+        with shared.lock:
+            seen = shared.unreachable.get(url.host)
+            if seen is not None and _monotonic() - seen[1] >= UNREACHABLE_FOR:
+                del shared.unreachable[url.host]
+                seen = None
+        if seen is not None:
+            raise FetchError(
+                f"{url}: host {url.host!r} could not be reached earlier in this run "
+                f"({seen[0]}); not tried again for {UNREACHABLE_FOR:.0f} s"
+            )
+
+    def unreachable_hosts(self) -> dict[str, str]:
+        """Every host this fetcher gave up on at some point in the run, with the reason."""
+        with self._shared.lock:
+            return dict(sorted(self._shared.gave_up.items()))
 
     def _charge(self, host: str, budget: str | None) -> None:
         """Charge every budget this request counts against, all or none."""

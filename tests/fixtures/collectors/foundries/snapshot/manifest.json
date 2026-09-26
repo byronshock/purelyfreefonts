@@ -11,10 +11,10 @@
       "sha256": "5a418a596f4d678f395cb742d40a3c1ccd13781915b8c0a5630aca0bc69f5396"
     },
     {
-      "bytes": 1390,
+      "bytes": 1505,
       "path": "foundries.json",
       "rows": 5,
-      "sha256": "3aec8356d2c1cd81339a06cbfc666335d3618cbf65cdb18289ef147f3731e080"
+      "sha256": "4afb1e6e2b5de21cb7529225ac95cd58871e6fcc260378e4c427637811b865bc"
     }
   ],
   "fetched": [

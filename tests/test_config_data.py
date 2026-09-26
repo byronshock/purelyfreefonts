@@ -28,6 +28,7 @@ from tff_catalog.config_model import (
     Corrections,
     FoundriesConfig,
     PreinstalledConfig,
+    RankingConfig,
     from_mapping,
     load_toml,
 )
@@ -65,6 +66,11 @@ def preinstalled() -> PreinstalledConfig:
     return from_mapping(
         PreinstalledConfig, load_toml(CONFIG / "preinstalled.toml"), "preinstalled.toml"
     )
+
+
+@cache
+def ranking() -> RankingConfig:
+    return from_mapping(RankingConfig, load_toml(CONFIG / "ranking.toml"), "ranking.toml")
 
 
 @cache
@@ -132,8 +138,9 @@ def test_libreoffice_bundle_never_makes_linux_abstain() -> None:
 def test_only_linux_entries_make_linux_sources_abstain() -> None:
     """D8 through the real consumer, with every listed name resolved to its own family.
 
-    Each name a Linux entry lists abstains in every Linux source, naming a Linux
-    system; a name only Windows, macOS or Android entries list never abstains.
+    Each name a Linux entry lists abstains in the Linux sources that entry silences
+    (``abstain_sources``: the owner's ruling of 2026-09-26), naming a Linux system; a
+    name only Windows, macOS or Android entries list never abstains.
     """
     from tff_catalog.corrections import abstentions, pkg_id
     from tff_catalog.records import SourceKey
@@ -153,6 +160,9 @@ def test_only_linux_entries_make_linux_sources_abstain() -> None:
         dependency_review=0.35,
         dependency_rule="top",
         dependency_alternatives="first",
+        per_system_basis="largest_package",
+        abstain_scope="by_package_system",
+        abstain_sources=ranking().corrections.abstain_sources,
     )
     found = abstentions((), {"arch": {}, "debian": {}}, preinstalled(), cfg, families=families)
 
@@ -161,7 +171,13 @@ def test_only_linux_entries_make_linux_sources_abstain() -> None:
     assert other, "the non-Linux entries list families no Linux entry lists"
     assert set(found) == {"arch", "debian"}
     for source, got in found.items():
-        assert set(got) == {fid[n] for n in linux}, source
+        silenced = {
+            n
+            for sid, entry in systems.items()
+            if entry.os == "linux" and source in cfg.abstain_sources[sid]
+            for n in entry.families
+        }
+        assert set(got) == {fid[n] for n in silenced}, source
         for ab in got.values():
             assert ab.why == "preinstalled"
             assert systems[ab.system].os == "linux"

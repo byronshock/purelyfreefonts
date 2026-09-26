@@ -5,9 +5,12 @@
 # Checked by tests/engine/test_worked_example.py.
 #
 # Ruling M1 (a), 2026-09-25: the outlier guard stays (gap 1.5, at least 3
-# terms, x0.5). For JetBrains Mono, Debian's 1.59 sits 1.53 z below the mean of
-# the other two (3.12), so Debian gets half weight and the score is 2.5335
-# (5.76375 / 2.275), not the 2.4844 of the guard-off calculation.
+# terms, x0.5). The owner's ruling of 2026-09-26 (guard_basis) compares each term
+# with the median of all the font's terms. For JetBrains Mono that median is Arch's
+# 2.70; Debian's 1.59 sits 1.11 z below it and Homebrew's 3.54 sits 0.84 above,
+# so the guard does not fire and the score is 2.4844 (5.9625 / 2.4). Under M1's
+# first reading (the mean of the others, 3.12) Debian sat 1.53 z below and the
+# score was 2.5335 (5.76375 / 2.275): the "others_mean" rows below.
 
 kappa = 0.2        # κ; with W = 2.0, κ·W = 0.4
 mu0 = 0.0
@@ -24,14 +27,17 @@ debian = 0.25
 gap = 1.5
 min_terms = 3
 factor = 0.5
+basis = "median"
 
 [[fonts]]
 name = "JetBrains Mono"
 z = { homebrew = 3.54, arch = 2.70, debian = 1.59 }
 guard_off = 2.4844     # 5.9625 / 2.4
-guard_on = 2.5335      # 5.76375 / 2.275
-published = 2.53
-guarded = { debian = 0.5 }
+guard_on = 2.4844      # the median basis: no term is 1.5 z from 2.70
+published = 2.48
+guarded = {}
+others_mean_on = 2.5335  # 5.76375 / 2.275: Debian halved under M1's first reading
+others_mean_guarded = { debian = 0.5 }
 
 [[fonts]]
 name = "Inter"

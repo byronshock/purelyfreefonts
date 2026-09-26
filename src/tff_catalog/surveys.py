@@ -390,7 +390,10 @@ def _part(
             if w * terms[s][fid].factor > 0:  # a term with no weight is not one of the "others"
                 z.setdefault(fid, {})[s] = value
     g = cfg.engine.guard
-    guard = {fid: fusion.guard_factors(zf, g.gap, g.min_terms, g.factor) for fid, zf in z.items()}
+    guard = {
+        fid: fusion.guard_factors(zf, g.gap, g.min_terms, g.factor, g.basis)
+        for fid, zf in z.items()
+    }
     return _Part(dict(sorted(z.items())), dict(sorted(guard.items())))
 
 

@@ -75,9 +75,10 @@ class GitHub:
         if body is not None:
             data = json.dumps(body).encode("utf-8")
             headers["Content-Type"] = "application/json"
-        if self.token:
-            headers["Authorization"] = f"Bearer {self.token}"
         req = urllib.request.Request(API + path, data=data, headers=headers, method=method)
+        if self.token:
+            # Unredirected: urllib copies ordinary headers onto a redirect, even to another host.
+            req.add_unredirected_header("Authorization", f"Bearer {self.token}")
         try:
             with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
                 return resp.status, json.loads(resp.read() or b"null")

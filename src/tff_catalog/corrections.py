@@ -41,7 +41,8 @@ baselines of lifetime counters); the ``bundle`` rows of ``data/aliases.csv``
 
 1. select its observations: collector, series (``YYYY-MM``/``YYYY-Www`` are
    patterns), npm scopes, Nerd ``exclude_assets``, FOT ``methods``, the GitHub
-   ``release_history`` (gate M2); prereleases never count;
+   ``release_history`` (gate M2); prereleases count only for the GitHub repos in
+   ``prerelease_repos`` (repos that publish nothing else);
 2. count one number per source key (``count_keys``, by ``counting``), as a rate
    in the source's ``rate`` unit over min(window, days available), where the
    days available run from the key's ``first_seen`` attr (design-m1 gap G3);
@@ -62,8 +63,10 @@ baselines of lifetime counters); the ``bundle`` rows of ``data/aliases.csv``
 The frame of a source is every eligible family with a key in it, or with a
 universe key in the same namespace (a Homebrew cask with no analytics row);
 for the crawls (``weekly_mean`` and ``yearly`` counting) it is every eligible
-web-servable family (a Google, Fontsource or foundry key; design-m1 gap G11).
-Families outside the frame get no term, which reads as not covered.
+family, as methodology §4 says ("a desktop-only font gets censored terms from
+the web crawls, not a placeholder"; design-m1 gap G11's web-servable frame was
+never ruled on). Families outside the frame get no term, which reads as not
+covered.
 
 Exposure (gap G3): ``add_date``, ``first_nonzero_day`` and ``asset_created``
 come from the keys' ``first_seen`` attrs, ``first_nonzero_month`` from the
@@ -188,7 +191,6 @@ _CJK_SUFFIXES = ("-cn",)
 PULLING_KINDS = frozenset({"depends", "recommends"})  # pacman optdepends are never auto-installed
 NERD_GROUP = "nerd-fonts"  # the Arch package group of gate M4
 NERD_REPO = "ryanoasis/nerd-fonts"  # where Nerd casks download from (gate M5)
-WEB_NAMESPACES = frozenset({"gf-family", "gf-dir", "fs-id", "foundry-family"})  # gap G11
 CRAWL_COUNTINGS = frozenset({"weekly_mean", "yearly"})
 CHANNEL_EXPOSURES = frozenset(
     {"add_date", "first_nonzero_day", "first_nonzero_month", "date_added", "asset_created"}
@@ -508,15 +510,17 @@ def apply_credits(
     }
 
 
-def _credit(name: str, code: str, cfg: Corrections) -> float:
+def _credit(name: str, code: str, cfg: Corrections, *, nerd: bool = False) -> float:
+    """The credit of one key. The key's own name decides too, whatever its alias relation:
+    a Nerd cask or package ("font-0xproto-nerd-font") or a CJK build's suffix takes the
+    build credit even when mapped ``direct``, and ``nerd`` (every Nerd Fonts release
+    asset) always takes ``nerd_credit`` (D7)."""
     if code.startswith("bundle"):
         n = int(code.partition(":")[2] or 1)
         return cfg.bundle_credit if cfg.bundle_mode == "fixed" else 1.0 / max(n, 1)
-    if not code:
-        return 1.0
     tokens = set(re.split(r"[^a-z0-9]+", name.lower()))
     credits = []
-    if code in NERD_DETAILS or tokens & _NERD_TOKENS:
+    if nerd or code in NERD_DETAILS or tokens & _NERD_TOKENS:
         credits.append(cfg.nerd_credit)
     if code in CJK_DETAILS or tokens & _CJK_TOKENS or name.lower().endswith(_CJK_SUFFIXES):
         credits.append(cfg.cjk_build_credit)
@@ -532,12 +536,20 @@ def _credit_code(link: Link, families: int) -> str:
 
 
 def family_sums(
-    links: Iterable[Link], values: Mapping[SourceKey, float | None], cfg: Corrections
+    links: Iterable[Link],
+    values: Mapping[SourceKey, float | None],
+    cfg: Corrections,
+    *,
+    largest: bool = False,
+    nerd: bool = False,
 ) -> dict[str, FamilySum]:
-    """Each family's value: the sum of its keys' values times their credits.
+    """Each family's value: the sum of its keys' values times their credits, or with
+    ``largest`` the largest of them (a Linux source under ``per_system_basis =
+    "largest_package"``: one system counts once per package, so a sum double-counts).
 
     A key is counted once per family (duplicate links are ignored). A family
-    whose keys all lack a value gets ``value`` None.
+    whose keys all lack a value gets ``value`` None. ``nerd`` gives every key the
+    Nerd credit (the Nerd Fonts release assets).
     """
     by_key: dict[SourceKey, dict[str, Link]] = defaultdict(dict)
     for link in sorted(set(links)):
@@ -547,12 +559,14 @@ def family_sums(
         fams = by_key[key]
         for fid, link in sorted(fams.items()):
             code = _credit_code(link, len(fams))
-            parts[fid].append(Part(key, values.get(key), _credit(key.key, code, cfg), code))
+            credit = _credit(key.key, code, cfg, nerd=nerd)
+            parts[fid].append(Part(key, values.get(key), credit, code))
     out = {}
     for fid, ps in sorted(parts.items()):
         known = [p.value * p.credit for p in ps if p.value is not None]
+        total = (max(known) if largest else math.fsum(known)) if known else None
         out[fid] = FamilySum(
-            value=math.fsum(known) if known else None,
+            value=total,
             parts=tuple(ps),
             bundle_only=all(p.code.startswith("bundle") for p in ps),
         )
@@ -690,6 +704,11 @@ def _system(rel: Relation, default: str) -> str:
     return default
 
 
+def silences(system: str, source: str, cfg: Corrections) -> bool:
+    """Whether preinstalled Linux system ``system`` makes Linux source ``source`` abstain."""
+    return cfg.abstain_scope == "all" or source in cfg.abstain_sources.get(system, ())
+
+
 def abstentions(
     deps: Iterable[Relation],
     counts: Mapping[str, Mapping[str, float]],
@@ -708,6 +727,9 @@ def abstentions(
     pulled share (``dependency_rule``) reaches ``dependency_abstain``.
     Preinstalled wins over a dependency. The system named is the source's own
     when it ships the family (Debian's DejaVu), else the first in id order.
+    With ``abstain_scope = "by_package_system"`` (the owner's ruling of 2026-09-26) a
+    system silences only the sources ``abstain_sources`` names for it: CachyOS and
+    EndeavourOS pkgstats, Debian and Ubuntu popcon, GNOME and KDE Plasma both.
     """
     families = families or {}
     deps = list(deps)
@@ -728,10 +750,12 @@ def abstentions(
     out: dict[str, dict[str, Abstention]] = {}
     shares = dependency_shares(deps, counts, cfg, families=families)
     for source in sorted(counts):
-        found = {
-            fid: Abstention(source, fid, "preinstalled", source if source in sids else min(sids))
-            for fid, sids in shipped.items()
-        }
+        found = {}
+        for fid, sids in sorted(shipped.items()):
+            silencing = {sid for sid in sids if silences(sid, source, cfg)}
+            if silencing:
+                named = source if source in silencing else min(silencing)
+                found[fid] = Abstention(source, fid, "preinstalled", named)
         for fid, ds in shares.get(source, {}).items():
             share = _pulled_share(ds, cfg.dependency_rule)
             if fid not in found and share >= cfg.dependency_abstain:
@@ -762,7 +786,9 @@ def select(src: SourceBase, obs: Iterable[Observation]) -> list[Observation]:
 def _wanted(src: SourceBase, o: Observation, scopes: tuple[str, ...]) -> bool:
     if not in_scopes(o.key, scopes):  # "@scope/name" or a pkg:npm/%40scope/name purl
         return False
-    if _attr(o, "prerelease") is True:
+    if _attr(o, "prerelease") is True and not (
+        isinstance(src, GithubSource) and _repo_of(o) in src.prerelease_repos
+    ):
         return False
     if isinstance(src, NerdSource):
         names = {_asset_base(o.key.key), _asset_base(str(_attr(o, "asset") or ""))}
@@ -928,13 +954,17 @@ def _count_delta(
 ) -> dict[SourceKey, KeyValue]:
     """GitHub and Nerd lifetime counters (methodology §5): growth between snapshots.
 
-    With a baseline, only (key, release) pairs present in both snapshots count,
-    and a negative difference counts as 0. Without one: lifetime total over the
+    With a baseline, a (key, release) pair present in both snapshots counts its
+    growth, and a negative difference counts as 0. An asset created after the
+    baseline's data date counts its whole count over the days since that date (its
+    baseline is 0: the owner's ruling of 2026-09-26, new_release_assets); an older
+    asset the baseline lacks is ignored. Without a baseline: lifetime total over the
     days since each asset was created.
     """
     period = _MONTH if rate == "per_month" else _YEAR
     now = _instances(obs)
     then = _instances(baseline) if baseline else {}
+    base_day = max(o.end for o in baseline) if then else None
     values: dict[SourceKey, list[float]] = defaultdict(list)
     created: dict[SourceKey, list[date]] = defaultdict(list)
     ends: dict[SourceKey, list[date]] = defaultdict(list)
@@ -946,6 +976,8 @@ def _count_delta(
             if before is not None:
                 days = max(1, (end - before[2]).days)
                 values[key].append(max(0.0, total - before[0]) * period / days)
+            elif base_day is not None and made > base_day:
+                values[key].append(total * period / max(1, (end - base_day).days))
         else:
             values[key].append(total * period / max(1, (end - made).days))
     return {
@@ -1031,7 +1063,10 @@ def key_floors(
       ``nerd_floor_quantile`` of every Nerd cask's value, once per cask: a key
       with a legacy tap prefix ("homebrew/cask-fonts/font-x") is the same cask,
       so it does not set the floor and loses only what its cask's own key
-      could not.
+      could not. Every other cask loses the flat ``floor`` (20 a year) the same
+      way, once per cask: methodology §5 gives Nerd casks their own floor
+      "instead", so no family loses both, and ``apply_floors`` subtracts no
+      second floor for Homebrew.
     - Arch, gate M4 ``tenured_p10``: members of the ``nerd-fonts`` group that
       have been in it ``nerd_group_tenure_months`` or more lose the quantile of
       those members' shares; newer members keep theirs. ``flat`` takes
@@ -1042,7 +1077,7 @@ def key_floors(
     Quantiles are taken over positive values only; values never go below 0;
     keys without a value are left alone.
     """
-    if isinstance(src, HomebrewSource) and src.nerd_floor == "p10":
+    if isinstance(src, HomebrewSource):
         return _nerd_cask_floor(name, src, values)
     if isinstance(src, NerdSource):
         keys = list(values)
@@ -1055,25 +1090,38 @@ def key_floors(
 def _nerd_cask_floor(
     name: str, src: HomebrewSource, values: Mapping[SourceKey, KeyValue]
 ) -> tuple[dict[SourceKey, KeyValue], list[FloorNote]]:
-    casks: dict[str, list[SourceKey]] = defaultdict(list)  # cask token -> its keys
+    # cask token -> its keys; with gate M3 "flat" a Nerd cask takes the flat floor too.
+    casks: dict[str, list[SourceKey]] = defaultdict(list)
+    plain: dict[str, list[SourceKey]] = defaultdict(list)
     for k in sorted(values):
-        if NERD_SUFFIX.search(k.key):
-            casks[k.key.rsplit("/", 1)[-1]].append(k)
+        nerd = src.nerd_floor == "p10" and NERD_SUFFIX.search(k.key)
+        (casks if nerd else plain)[k.key.rsplit("/", 1)[-1]].append(k)
     own = [values[k].value for k in values if k.key in casks]  # keys without a tap prefix
     basis = [v for v in own if v is not None and v > 0]
     floor = quantile(basis, src.nerd_floor_quantile)
     out = dict(values)
-    if floor is None:
-        return out, []
+    notes = []
+    if floor is not None:
+        _take_per_cask(out, casks, floor)
+        notes.append(FloorNote(name, "Nerd casks (gate M3)", floor, len(basis)))
+    if src.floor > 0:
+        _take_per_cask(out, plain, src.floor)
+        notes.append(FloorNote(name, "other casks (flat)", src.floor, len(plain)))
+    return out, notes
+
+
+def _take_per_cask(
+    out: dict[SourceKey, KeyValue], casks: Mapping[str, Sequence[SourceKey]], floor: float
+) -> None:
+    """Subtract ``floor`` once per cask from its keys, the cask's own key first (never below 0)."""
     for token, keys in sorted(casks.items()):
         left = floor
-        for k in sorted(keys, key=lambda k: (k.key != token, k.key)):  # the cask's own key first
+        for k in sorted(keys, key=lambda k: (k.key != token, k.key)):
             kv = out[k]
             if kv.value is not None and left > 0:
                 taken = min(left, max(kv.value, 0.0))
                 out[k] = replace(kv, value=kv.value - taken)
                 left -= taken
-    return out, [FloorNote(name, "Nerd casks (gate M3)", floor, len(basis))]
 
 
 def _subtract(
@@ -1187,9 +1235,11 @@ def _frame(
     its keys' families, universe keys in its namespaces and npm scopes, and for a package
     source either end of any relation between keys it reads (a distro package with no
     count is then censored, not uncovered)."""
-    namespaces = {o.key.ns for o in obs}
     if src.counting in CRAWL_COUNTINGS:
-        namespaces |= WEB_NAMESPACES
+        # Methodology §4: "A desktop-only font gets censored terms from the web crawls,
+        # not a placeholder", so the crawls' frame is every eligible family.
+        return set(inp.families)
+    namespaces = {o.key.ns for o in obs}
     scopes = tuple(getattr(src, "scopes", ()))
 
     def reads(key: SourceKey) -> bool:
@@ -1318,9 +1368,15 @@ def _correct(
     floored, notes = key_floors(name, src, counted, inp.relations, tenure=tenure)
     links = [link for key in sorted(counted) for link in inp.links.get(key, ())]
     corr = cfg.corrections
-    sums = family_sums(links, {k: v.value for k, v in floored.items()}, corr)
-    unfloored = family_sums(links, {k: v.value for k, v in counted.items()}, corr)
-    terms = apply_floors({f: s.value for f, s in sums.items() if s.value is not None}, src)
+    how = {
+        "largest": src.linux and corr.per_system_basis == "largest_package",
+        "nerd": isinstance(src, NerdSource),
+    }
+    sums = family_sums(links, {k: v.value for k, v in floored.items()}, corr, **how)
+    unfloored = family_sums(links, {k: v.value for k, v in counted.items()}, corr, **how)
+    # Homebrew's flat floor went per cask in key_floors (a Nerd cask gets its own instead).
+    per_family = replace(src, floor=0.0) if isinstance(src, HomebrewSource) else src
+    terms = apply_floors({f: s.value for f, s in sums.items() if s.value is not None}, per_family)
     for fid in sorted(_frame(src, inp, obs, links) - terms.keys()):
         terms[fid] = Term(None, "censored", src.group, reason="no_value")
     starts = _starts(name, src, counted, links, inp, availability)
@@ -1706,8 +1762,9 @@ def eligible_families(
     log: logging.Logger | None = None,
 ) -> dict[str, Family]:
     """Universe families without a drop reason that pass the Latin gate and whose license
-    is not excluded (a family waiting for an owner ruling stays in). A missing gate file
-    skips that gate, with a warning."""
+    is allowed. A family whose license waits for an owner ruling is left out until the
+    ruling (methodology §1 "filter first", §9: a font with an unverified license must never
+    be ranked). A missing gate file skips that gate, with a warning."""
     fams = {fid: f for fid, f in sorted(u.families.items()) if f.drop is None}
     if latin is None:
         if log:
@@ -1724,7 +1781,7 @@ def eligible_families(
 
 def _license_ok(verdict: Any) -> bool:
     return (
-        verdict is not None and verdict.license is not None and verdict.license.status != "excluded"
+        verdict is not None and verdict.license is not None and verdict.license.status == "allowed"
     )
 
 

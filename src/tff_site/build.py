@@ -23,6 +23,10 @@ when ``page_contexts`` leaves them out. Every page gets ``site``, ``page``, ``as
 ``build`` (section 3), plus ``urls``: the absolute URLs of the canonical pages, sorted by
 path, for the sitemap.
 
+The blog (``tff_site.blog``) adds ``/blog/``, ``/blog/<slug>/`` and ``/blog/feed.xml``, whose
+templates and files ``blog.page_files`` names, and the posts' images, once a post is
+published (with ``drafts``, drafts count); ``site.blog`` then turns on the Blog link.
+
 Static files: exactly ``STATIC_FILES`` are copied from ``site/static/`` (section 2); anything
 else there (``_src/``, drafts) never ships.
 
@@ -46,7 +50,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from tff_catalog import jsonio
-from tff_site import assets, data, fonts, pages
+from tff_site import assets, blog, data, fonts, pages
 
 if TYPE_CHECKING:
     import jinja2
@@ -145,6 +149,8 @@ def build(
     allow_dirty: bool = False,
     font_files: bool = True,
     site_dir: Path = SITE_DIR,
+    drafts: bool = False,
+    blog_dir: Path | None = None,
 ) -> BuildResult:
     """Build the site into ``out_dir``, replacing its contents.
 
@@ -153,9 +159,14 @@ def build(
     file is copied and "Type your own text" is left out (for builds without the font cache).
     A missing or mismatching specimen or font file is an error, except a preview whose sha256
     is ``data.PLACEHOLDER_SHA256``, which is built as "Preview not available yet".
+    Blog posts come from ``blog_dir`` (default ``site_dir/content/blog``); ``drafts``
+    publishes posts marked ``draft: true`` too (the staging deploy).
     """
     data_path, out_dir, site_dir, fonts_dir = map(Path, (data_path, out_dir, site_dir, fonts_dir))
     doc, catalog_sha256 = _load_valid(data_path)
+    posts = blog.load(
+        site_dir / "content" / "blog" if blog_dir is None else blog_dir, drafts=drafts
+    )
     if commit is None:
         commit = git_commit(REPO_ROOT, allow_dirty=allow_dirty)
     elif not COMMIT_PATTERN.fullmatch(commit):
@@ -167,7 +178,7 @@ def build(
     version = version_fields(commit, doc, catalog_sha256=catalog_sha256)
     stage = _staging_dir(target)
     try:
-        _write_site(stage, doc, site_doc, data_path.parent, fonts_dir, version, site_dir)
+        _write_site(stage, doc, site_doc, data_path.parent, fonts_dir, version, site_dir, posts)
         files = _check_tree(stage)
         _swap(stage, target)
     except BaseException:
@@ -220,8 +231,9 @@ def version_fields(
     }
 
 
-def site_context() -> dict[str, Any]:
-    """The ``site`` context every page gets (site/CONTRACT.md section 3)."""
+def site_context(*, blog_nav: Mapping[str, str] | None = None) -> dict[str, Any]:
+    """The ``site`` context every page gets (site/CONTRACT.md section 3). ``blog_nav`` is
+    ``blog.nav(posts)``: None until a post is published."""
     return {
         "name": SITE_NAME,
         "base_url": BASE_URL,
@@ -232,6 +244,7 @@ def site_context() -> dict[str, Any]:
             "mailto": f"mailto:{data.FEEDBACK_EMAIL}?subject=trulyfreefonts.com",
         },
         "tip_url": TIP_URL,
+        "blog": None if blog_nav is None else dict(blog_nav),
     }
 
 
@@ -309,6 +322,7 @@ def _write_site(
     fonts_dir: Path,
     version: Mapping[str, str],
     site_dir: Path,
+    posts: list[blog.Post],
 ) -> None:
     commit = version["commit"]
     urls = assets.AssetManifest().urls
@@ -327,13 +341,14 @@ def _write_site(
     payload = data.details(site_doc, font_assets=font_assets)
     urls["details.json"] = assets.write_hashed(out, "details.json", jsonio.canonical_bytes(payload))
 
+    blog.write_images(out, posts)
     common = {
-        "site": site_context(),
+        "site": site_context(blog_nav=blog.nav(posts)),
         "assets": {"css": urls["style.css"], "js": urls["app.js"]},
         "build": {"commit": commit, "run_date": doc["run"]["date"]},
     }
     list_context = _list_context(site_doc, specimens, urls)
-    _render_pages(out, site_dir / "templates", doc, common, list_context)
+    _render_pages(out, site_dir / "templates", doc, common, list_context, blog.page_contexts(posts))
     _write(out, VERSION_FILE, _version_text(version).encode())
 
 
@@ -485,11 +500,16 @@ def _render_pages(
     doc: Mapping[str, Any],
     common: Mapping[str, Any],
     list_context: Mapping[str, Any],
+    blog_contexts: Mapping[str, Mapping[str, Any]],
 ) -> None:
     contexts: dict[str, Mapping[str, Any]] = {"/": {"page": HOME_PAGE, "list": list_context}}
     for path, context in pages.page_contexts(dict(doc)).items():
         if path in contexts:
             raise BuildError([f"pages.page_contexts: {path} is the list page"])
+        contexts[path] = context
+    for path, context in blog_contexts.items():
+        if path in contexts:
+            raise BuildError([f"blog.page_contexts: {path} is another page's path"])
         contexts[path] = context
     contexts.setdefault(NOT_FOUND_PAGE["path"], {"page": NOT_FOUND_PAGE})
     for path in ("/robots.txt", "/sitemap.xml"):
@@ -512,6 +532,8 @@ def _plain_page(path: str) -> dict[str, Any]:
 
 def _page_files(path: str) -> tuple[str, str]:
     """Return ``(template, output file)`` for a page's URL path (see the module docstring)."""
+    if blog_files := blog.page_files(path):
+        return blog_files
     if path == "/":
         return "index.html.j2", "index.html"
     if match := _PAGE_DIR.fullmatch(path):

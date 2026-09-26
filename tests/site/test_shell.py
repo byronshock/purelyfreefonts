@@ -599,9 +599,11 @@ def test_skip_link_is_the_first_stop_and_moves_focus_to_main(guarded_context, pa
 
 
 @pytest.mark.parametrize("scheme", ["light", "dark"])
-def test_shell_tab_stops_show_the_ring_and_are_never_covered(guarded_context, scheme):
+def test_shell_tab_stops_show_the_ring_and_are_never_covered(guarded_context, site_dir, scheme):
     """2.4.7 and 2.4.11 for the header and footer: each stop has the 3 px ring and the
-    element at its centre is the focused one."""
+    element at its centre is the focused one. The nav has a Blog link once the site has a
+    blog (M2 step 7b)."""
+    blog = ["Blog"] if (site_dir / "blog" / "index.html").is_file() else []
     guarded = guarded_context(viewport={"width": 1280, "height": 700}, color_scheme=scheme)
     page = guarded.new_page()
     page.goto("/missing")  # the shortest page: few stops outside the shell
@@ -622,6 +624,7 @@ def test_shell_tab_stops_show_the_ring_and_are_never_covered(guarded_context, sc
     assert [s["text"] for s in seen if s["where"] == "header"][1:] == [
         "Fonts",
         "How we rank",
+        *blog,
         "About",
         "Privacy",
     ]

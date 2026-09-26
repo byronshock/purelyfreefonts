@@ -189,6 +189,9 @@ class Guard:
     gap: float
     min_terms: int
     factor: float
+    # What a term is compared with: "median" of all the font's terms (owner ruling of
+    # 2026-09-26, guard_basis) or "others_mean", the mean of its other terms (ruling M1).
+    basis: Literal["median", "others_mean"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -217,6 +220,14 @@ class Corrections:
     dependency_review: float  # gate M8
     dependency_rule: Literal["top", "sum"]  # gate M8
     dependency_alternatives: Literal["first", "all"]  # gate M8
+    # Owner ruling of 2026-09-26 (per_system_basis): a Linux source's family value is its
+    # most-installed package ("largest_package"), not the "sum" of its packages.
+    per_system_basis: Literal["largest_package", "sum"]
+    # Owner ruling of 2026-09-26 (abstain_scope): a preinstalled Linux system silences only
+    # the Linux sources that count its installs ("by_package_system", through
+    # abstain_sources), or every Linux source ("all", D8 as first written).
+    abstain_scope: Literal["by_package_system", "all"]
+    abstain_sources: dict[str, tuple[str, ...]]  # Linux system id -> the Linux sources it silences
 
 
 @dataclass(frozen=True, slots=True)
@@ -259,6 +270,9 @@ class ArchSource(SourceBase):
 @dataclass(frozen=True, slots=True)
 class GithubSource(SourceBase):
     release_history: Literal["all", "latest24", "24months"]  # gate M2
+    # Repos ("owner/name", lower case) that publish only prereleases, whose prereleases
+    # count (owner ruling of 2026-09-26, opendyslexic_prereleases); others' never do.
+    prerelease_repos: tuple[str, ...]
 
 
 @dataclass(frozen=True, slots=True)
@@ -456,7 +470,7 @@ class Review:
 @dataclass(frozen=True, slots=True)
 class Latin:
     kernel_missing_max: int  # gate L1
-    core_missing_marks_max: int  # gate L1
+    core_missing_max: int  # gate L1: GF_Latin_Core code points of any kind missing for "extended"
     latin_share_min: float  # gate L1
     cjk_codepoints_below: int
 
@@ -556,6 +570,9 @@ class FoundryFamily:
     url: str  # the family's page at the foundry (https)
     license: str  # as the foundry states it; L1 normalises it
     repository: str = ""
+    # One Regular font file (https, pinned to a commit), so the Latin gate and L3 can read
+    # the family: the list itself carries no files otherwise.
+    files: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)

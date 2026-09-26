@@ -42,8 +42,8 @@ body:
   - type: input
     id: setup
     attributes:
-      label: Browser and assistive technology
-      description: For example, Firefox on Windows; Safari on an iPhone with VoiceOver; keyboard only; or zoomed to 200%.
+      label: Browser and assistive technology (optional)
+      description: For example, Firefox on Windows; Safari on an iPhone with VoiceOver; keyboard only; or zoomed to 200%. Reports are public, so leave this out if you'd rather not say it here; you can email admin@trulyfreefonts.com instead.
   - type: dropdown
     id: severity
     attributes:

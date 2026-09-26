@@ -1152,8 +1152,11 @@ def test_the_live_region_is_polite_coalesced_and_never_repeats_silently(
     assert status(page) != line
     assert status(page).rstrip("\u00a0") == line
     # Typing is announced after a pause (timed exactly, with the page clock, in
-    # test_search_writes_the_url_after_300_ms_and_speaks_after_500_ms).
-    page.locator("#f-q").press_sequentially("zz")
+    # test_search_writes_the_url_after_300_ms_and_speaks_after_500_ms). "zz" alone
+    # finds Piazzolla in the real catalog.
+    nothing = "zzqx"
+    assert not oracle(doc, {"q": nothing})[0]
+    page.locator("#f-q").press_sequentially(nothing)
     page.wait_for_function(
         "() => document.getElementById('status').textContent.startsWith('No fonts')"
     )

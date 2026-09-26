@@ -59,6 +59,7 @@ Outputs: ``build/stage/links.json`` (accepted links only, by family id) and
 waiting for gate K, failed checks).
 """
 
+import dataclasses
 import hashlib
 import logging
 import re
@@ -1097,6 +1098,11 @@ def cmd_check(ctx: StageContext) -> int:
     first membership run). A catalog family without links fails; so does any
     link the policy forbids and any primary that does not answer 200. A designer
     link that does not answer 200 is only reported.
+
+    It only reads: the answers recorded in the store for the run date (or the
+    replayed one), never the network, and it writes nothing, so it cannot change
+    the dated snapshot that ``_runs/`` and a replay depend on. A URL with no
+    recorded answer fails as "not checked"; rerun the stage to check it again.
     """
     paths = ctx.paths
     path = stageio.stage_path(paths, "links")
@@ -1108,7 +1114,7 @@ def cmd_check(ctx: StageContext) -> int:
     scope = sorted(links) if members is None else sorted(members)
     failures: list[str] = [f"{fid}: no accepted link (gate K)" for fid in scope if fid not in links]
     chosen = {fid: links[fid] for fid in scope if fid in links}
-    results = check(chosen, ctx)
+    results = check(chosen, dataclasses.replace(ctx, fetcher=None))
     warnings: list[str] = []
     for fid, ls in sorted(chosen.items()):
         primary = results[ls.primary.url]

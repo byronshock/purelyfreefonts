@@ -711,6 +711,7 @@ CONTEXT = {
             "mailto": "mailto:admin@trulyfreefonts.com?subject=trulyfreefonts.com",
         },
         "tip_url": None,
+        "blog": None,
     },
     "page": {
         "path": "/privacy/",

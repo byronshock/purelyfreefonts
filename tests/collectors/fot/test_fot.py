@@ -814,3 +814,16 @@ def rebuild() -> None:
 
 if __name__ == "__main__":
     rebuild()
+
+
+def test_a_malformed_site_row_error_never_quotes_the_row() -> None:
+    # Ruling T4: Fonts Over Time's rows stay private, and parse errors reach public logs.
+    from tff_catalog.collectors.ranking.fot import _sites
+
+    row = {"category": "c", "domain": "private.example", "body": "Secret Sans"}
+    with pytest.raises(ValueError, match="row 1") as caught:
+        _sites([row], "weeks/2026-W39.jsonl.gz", 0.5, frozenset())
+    message = str(caught.value)
+    assert message == "weeks/2026-W39.jsonl.gz: row 1: weekly extract row lacks method"
+    assert "private.example" not in message
+    assert "Secret" not in message

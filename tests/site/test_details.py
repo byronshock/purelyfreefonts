@@ -219,6 +219,23 @@ def test_hash_font_reads_the_last_valid_pair(part, hash_, want):
 # ------------------------------------------------------------------------ the built site
 
 
+def _sample_data() -> bool:
+    """Whether the site is built from the sample, whose font ids some panel tests name."""
+    return bool(DOC.get("synthetic")) and all(f["id"].startswith("sample-") for f in DOC["fonts"])
+
+
+def _sample_only() -> None:
+    """Skip a test that names fonts of the sample catalog (as tests/site/test_list.py does).
+    The other panel tests pick their fonts from the data, so they run on a real build too."""
+    if not _sample_data():
+        pytest.skip("names fonts of the sample catalog")
+
+
+def _first_ids(n: int) -> list[str]:
+    """The first n fonts of the default list, which every build shows on load."""
+    return [f["id"] for f in data.server_order(DOC)[:n]]
+
+
 def _open_page(guarded: Any, path: str = "/") -> Any:
     page = guarded.new_page()
     page.goto(path)
@@ -266,7 +283,7 @@ def _focused(page: Any) -> str:
 def test_toggle_opens_one_panel_at_a_time_and_back_follows(guarded_context):
     guarded = guarded_context()
     page = _open_page(guarded)
-    first, second = "sample-sans-01", "sample-mono-02"
+    first, second = _first_ids(2)
     assert _panel(page, first).get_attribute("hidden") is not None
 
     _toggle(page, first).click()
@@ -311,6 +328,7 @@ def test_toggle_opens_one_panel_at_a_time_and_back_follows(guarded_context):
 
 
 def test_opening_keeps_other_hash_pairs(guarded_context):
+    _sample_only()
     guarded = guarded_context()
     page = _open_page(guarded, "/#rank=project&os=linux")
     _wait_for(page, "location.hash.startsWith('#rank=project')")
@@ -323,7 +341,7 @@ def test_opening_keeps_other_hash_pairs(guarded_context):
 def test_close_button_and_escape_return_focus_to_the_toggle(guarded_context):
     guarded = guarded_context()
     page = _open_page(guarded)
-    font_id = "sample-serif-04"
+    font_id = _first_ids(4)[-1]
     _toggle(page, font_id).click()
     _wait_ready(page, font_id)
     close = _panel(page, font_id).locator("button.details-close")
@@ -345,6 +363,7 @@ def test_close_button_and_escape_return_focus_to_the_toggle(guarded_context):
 
 
 def test_font_link_on_load_opens_and_focuses_the_heading(guarded_context):
+    _sample_only()
     guarded = guarded_context(viewport={"width": 1280, "height": 800})
     font_id = "sample-mono-35"  # the last row: the page must scroll to it
     page = _open_page(guarded, f"/#font={font_id}")
@@ -359,6 +378,7 @@ def test_font_link_on_load_opens_and_focuses_the_heading(guarded_context):
 
 
 def test_font_link_with_another_rank_lands_on_the_moved_row(guarded_context):
+    _sample_only()
     guarded = guarded_context(viewport={"width": 1280, "height": 800})
     font_id = "sample-mono-07"  # 7th overall, 2nd in Coding: the row moves on load
     page = _open_page(guarded, f"/#rank=coding&font={font_id}")
@@ -375,6 +395,7 @@ def test_font_link_with_another_rank_lands_on_the_moved_row(guarded_context):
 
 
 def test_font_link_for_a_filtered_out_font_opens_nothing(guarded_context):
+    _sample_only()
     guarded = guarded_context()
     font_id = "sample-sans-01"  # not a serif
     page = _open_page(guarded, f"/#cat=serif&font={font_id}")
@@ -386,6 +407,7 @@ def test_font_link_for_a_filtered_out_font_opens_nothing(guarded_context):
 
 
 def test_a_font_link_in_the_page_opens_with_focus(guarded_context):
+    _sample_only()
     guarded = guarded_context()
     page = _open_page(guarded)
     font_id = "sample-serif-30"
@@ -410,6 +432,7 @@ def _live_page(guarded: Any, path: str = "/") -> Any:
 
 def test_back_reopens_a_font_the_previous_view_hid(guarded_context):
     # Back from a view that hides the font: the list is redrawn first, then the panel opens.
+    _sample_only()
     guarded = guarded_context()
     font_id = "sample-sans-01"
     page = _live_page(guarded, f"/#font={font_id}")
@@ -430,6 +453,7 @@ def test_back_reopens_a_font_the_previous_view_hid(guarded_context):
 def test_the_hook_opens_and_closes_panels_through_the_font_key(guarded_context):
     # site/CONTRACT.md section 9: font=<id> means "its details panel is open", so Milestone
     # 3's tff.list.setState({font}) opens it (without moving focus) and font '' closes it.
+    _sample_only()
     guarded = guarded_context()
     page = _live_page(guarded)
     font_id = "sample-serif-04"
@@ -454,6 +478,7 @@ def test_the_hook_opens_and_closes_panels_through_the_font_key(guarded_context):
 def test_a_search_typed_just_before_opening_survives_back(guarded_context):
     # The search is written to its history entry (after 300 ms of quiet) before a panel's
     # entry is pushed, so Back returns to the search, not to the view before it.
+    _sample_only()
     guarded = guarded_context()
     page = _live_page(guarded)
     page.fill("#f-q", "sample")
@@ -469,6 +494,7 @@ def test_a_search_typed_just_before_opening_survives_back(guarded_context):
 
 
 def test_a_font_the_link_hides_opens_once_the_view_shows_it(guarded_context):
+    _sample_only()
     guarded = guarded_context()
     font_id = "sample-sans-01"  # not a serif
     page = _live_page(guarded, f"/#cat=serif&font={font_id}")
@@ -483,7 +509,9 @@ def test_a_font_the_link_hides_opens_once_the_view_shows_it(guarded_context):
 def test_a_source_that_may_not_publish_ranks_never_shows_one(guarded_context):
     # Ruling on source terms: publish_rank false hides every rank of that source, even one
     # the data wrongly carries (tff_site.data's semantic checks should stop that earlier).
-    source = next(s for s in DOC["sources"] if not s["publish_rank"])
+    source = next((s for s in DOC["sources"] if not s["publish_rank"]), None)
+    if source is None:
+        pytest.skip("no source withholds its ranks in this data")
     font_id = next(i for i, f in FONTS.items() if f["sources"][source["id"]]["state"] == "observed")
     guarded = guarded_context()
     page = guarded.new_page()
@@ -505,7 +533,10 @@ def test_a_source_that_may_not_publish_ranks_never_shows_one(guarded_context):
 def test_type_own_text_loads_the_font_only_on_request(guarded_context):
     guarded = guarded_context()
     page = _open_page(guarded)
-    font_id = "sample-sans-01"
+    with_file = [f["id"] for f in data.server_order(DOC) if f["font_file"] and f["preview_ok"]]
+    if not with_file:
+        pytest.skip("no font in this data has a font file")
+    font_id = "sample-sans-01" if _sample_data() else with_file[0]
     font = FONTS[font_id]
     _toggle(page, font_id).click()
     _wait_ready(page, font_id)
@@ -536,7 +567,11 @@ def test_type_own_text_loads_the_font_only_on_request(guarded_context):
 def test_no_type_own_text_without_a_font_file(guarded_context):
     guarded = guarded_context()
     page = _open_page(guarded)
-    font_id = next(i for i, f in FONTS.items() if f["font_file"] is None and f["preview_ok"])
+    font_id = next(
+        (i for i, f in FONTS.items() if f["font_file"] is None and f["preview_ok"]), None
+    )
+    if font_id is None:
+        pytest.skip("every previewed font in this data has a font file")
     _toggle(page, font_id).click()
     _wait_ready(page, font_id)
     assert _panel(page, font_id).locator(".typeown-load, .details-typeown").count() == 0
@@ -544,6 +579,7 @@ def test_no_type_own_text_without_a_font_file(guarded_context):
 
 
 def test_stale_details_show_the_reload_message(guarded_context):
+    _sample_only()
     guarded = guarded_context()
     page = guarded.new_page()
     page.route("**/assets/details.*.json", lambda route: route.fulfill(status=404, body="gone"))
@@ -562,6 +598,7 @@ def test_stale_details_show_the_reload_message(guarded_context):
 
 
 def test_a_failed_load_can_be_retried(guarded_context):
+    _sample_only()
     guarded = guarded_context()
     page = guarded.new_page()
     failures = {"left": 1}
@@ -589,7 +626,12 @@ def test_a_failed_load_can_be_retried(guarded_context):
 def test_panel_reflows_at_320_px(guarded_context):
     guarded = guarded_context(viewport={"width": 320, "height": 700})
     page = _open_page(guarded)
-    for font_id in ("sample-serif-22-long", "sample-sans-01"):
+    if _sample_data():
+        ids: tuple[str, ...] = ("sample-serif-22-long", "sample-sans-01")
+    else:  # the longest name among the first rows, and the first row
+        shown = data.server_order(DOC)[:40]
+        ids = (max(shown, key=lambda f: len(f["family"]))["id"], shown[0]["id"])
+    for font_id in ids:
         _toggle(page, font_id).click()
         _wait_ready(page, font_id)
         width = page.evaluate("document.documentElement.scrollWidth")
@@ -611,7 +653,8 @@ def test_axe_finds_nothing_in_an_open_panel(guarded_context, scheme):
 
     guarded = guarded_context(color_scheme=scheme)
     page = _open_page(guarded)
-    for font_id in ("sample-sans-01", "sample-mono-23"):
+    ids = ("sample-sans-01", "sample-mono-23") if _sample_data() else tuple(_first_ids(2))
+    for font_id in ids:
         _toggle(page, font_id).click()
         _wait_ready(page, font_id)
         results = Axe().run(
@@ -813,16 +856,28 @@ def test_owner_ten_fields_match_the_data(guarded_context, font_id):
     guarded.assert_clean(page)
 
 
+OWNER_TEN_CASES = {
+    "attribution required": lambda f: f["license"]["attribution_required"],
+    "not redistributable": lambda f: not f["license"]["redistributable"],
+    "held by the gate": lambda f: any(e["gate_held"] for e in f["ranks"].values()),
+    "preinstalled": lambda f: bool(f["preinstalled_on"]),
+    "pulled in by a package": lambda f: bool(f["pulled_in_by"]),
+}
+
+
 def test_owner_ten_covers_the_edge_cases():
-    fonts = [FONTS[i] for i in OWNER_TEN]
     if os.environ.get("TFF_OWNER_TEN"):
         pytest.skip("the owner named the fonts")
+    fonts = [FONTS[i] for i in OWNER_TEN]
+    missing = [name for name, case in OWNER_TEN_CASES.items() if not any(map(case, fonts))]
+    if not _sample_data():
+        # Real data need not hold every case (the first real run has no font that needs
+        # attribution or forbids redistribution); the sample always does.
+        if missing:
+            pytest.skip(f"this data has no font that is: {', '.join(missing)}")
+        return
     assert len(OWNER_TEN) == 10
-    assert any(f["license"]["attribution_required"] for f in fonts)
-    assert any(not f["license"]["redistributable"] for f in fonts)
-    assert any(any(e["gate_held"] for e in f["ranks"].values()) for f in fonts)
-    assert any(f["preinstalled_on"] for f in fonts)
-    assert any(f["pulled_in_by"] for f in fonts)
+    assert missing == []
 
 
 # ------------------------------------------------------------------------ linkcheck

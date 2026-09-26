@@ -82,11 +82,26 @@ jobs:
           ref: ${{ steps.commit.outputs.sha }}
           fetch-depth: 0
           persist-credentials: false
-      - name: Production takes only commits on main
+      - name: Production takes only commits on main, staging only commits on staging or main
+        run: |
+          # A dispatch names any commit, including an unmerged branch's or a fork pull
+          # request's (refs/pull/*); the deploy job runs its code with the environment's key.
+          branches=(main)
+          if [ "$ENVIRONMENT" = staging ]; then branches+=(staging); fi
+          for branch in "${branches[@]}"; do
+            if git merge-base --is-ancestor "$SHA" "origin/$branch" 2> /dev/null; then
+              exit 0
+            fi
+          done
+          echo "::error::$SHA is not on ${branches[*]}"
+          exit 1
+      - name: Production waits for Caddy header phase B
         if: env.ENVIRONMENT == 'production'
         run: |
-          if ! git merge-base --is-ancestor "$SHA" origin/main; then
-            echo "::error::$SHA is not on main"
+          # Phase A strips the CSP from production (ops/Caddyfile) while the stub has an inline
+          # style; the list page must never go live without it (/privacy says it is sent).
+          if grep -Eq '^[[:space:]]*header -Content-Security-Policy' ops/Caddyfile; then
+            echo "::error::ops/Caddyfile is still in header phase A; do phase B first (ops/deploy/README.md)"
             exit 1
           fi
       - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
@@ -118,7 +133,11 @@ jobs:
           # The cache is keyed by each file's sha256, so an older one only saves downloads.
           restore-keys: tff-fonts-
       - run: uv run --locked tff-site fetch-fonts --data "$TFF_SITE_DATA"
-      - run: uv run --locked tff-site build --data "$TFF_SITE_DATA" --out "$TFF_SITE_DIR" --commit "$SHA"
+      - name: Build (the test site also publishes draft blog posts, M2 step 7b)
+        run: |
+          set --
+          if [ "$ENVIRONMENT" = staging ]; then set -- --drafts; fi
+          uv run --locked tff-site build --data "$TFF_SITE_DATA" --out "$TFF_SITE_DIR" --commit "$SHA" "$@"
       - run: uv run --locked tff-site check "$TFF_SITE_DIR"
       - name: Find the Playwright version
         id: pw
@@ -145,11 +164,15 @@ jobs:
         run: |
           caddy start --config ops/caddy/ci.Caddyfile --adapter caddyfile > "$RUNNER_TEMP/caddy.log" 2>&1
           curl -sSf -o /dev/null http://127.0.0.1:8080/version.txt
+      # The performance budget runs in CI (site-perf, and site-real on a committed catalog);
+      # here it would measure a synthetic site, not this build. The size budgets and the CSP
+      # rules of this build are checked above by tff-site check.
       - name: Test the build in Chromium and Firefox
         env:
           TFF_CADDY: "1"
         run: |
-          uv run --locked pytest tests/site -m "not live" --browser chromium --browser firefox
+          uv run --locked pytest tests/site -m "not live" --ignore=tests/site/test_perf.py \
+            --browser chromium --browser firefox
       - name: Pack the manifest
         run: |
           uv run --locked tff-site pack "$TFF_SITE_DIR" --out /dev/null --only /dev/null \

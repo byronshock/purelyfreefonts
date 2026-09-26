@@ -380,11 +380,13 @@ CATALOGUE: tuple[Question, ...] = (
     _q(
         "L",
         "L1",
-        "Latin thresholds for families outside Google (Claude measures them first):",
+        "Latin thresholds for families outside Google, as measured on the first real run "
+        "(asked again on 2026-09-26):",
+        "Relaxed: at most 2 Kernel code points missing; Latin share at least 30%; Core with "
+        "at most 3 code points missing (any kind) for extended; under 1,000 CJK code points",
         "Kernel fully covered; Core with at most 2 combining marks missing; Latin share at "
         "least 40%; under 1,000 CJK code points",
         "As written: a Latin share of at least 50%",
-        "No share test",
     ),
     *(
         _q(

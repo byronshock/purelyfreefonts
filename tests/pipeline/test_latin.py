@@ -218,10 +218,14 @@ def test_cjk_threshold_boundary() -> None:
 
 
 def test_kernel_missing_is_counted_against_the_threshold() -> None:
-    r = latin.glyph_test(LATIN - {0x2122}, TH)
+    # The owner's ruling of 2026-09-26: at most 2 Kernel code points may be missing.
+    two, three = {0x2122, 0x2212}, {0x2122, 0x2212, 0x00A0}
+    assert latin.glyph_test(LATIN - two, TH).latin
+    r = latin.glyph_test(LATIN - three, TH)
+    assert (r.latin, r.reason, r.kernel_missing) == (False, "kernel_missing", tuple(sorted(three)))
+    stricter = replace(TH, kernel_missing_max=0)
+    r = latin.glyph_test(LATIN - {0x2122}, stricter)
     assert (r.latin, r.reason, r.kernel_missing) == (False, "kernel_missing", (0x2122,))
-    looser = replace(TH, kernel_missing_max=1)
-    assert latin.glyph_test(LATIN - {0x2122}, looser).latin
 
 
 def test_low_latin_share_is_out() -> None:
@@ -235,12 +239,12 @@ def test_low_latin_share_is_out() -> None:
     ("missing", "coverage"),
     [
         (set(), "extended"),
-        ({0x030B, 0x0328}, "extended"),  # two combining marks
-        ({0x030B, 0x0328, 0x0326}, "basic"),  # three
-        ({0x1E9E}, "basic"),  # a letter (capital sharp s), not a mark
+        ({0x030B, 0x0328, 0x0326}, "extended"),  # three combining marks
+        ({0x1E9E, 0x030B, 0x0328}, "extended"),  # any kind: a letter (capital sharp s) too
+        ({0x1E9E, 0x030B, 0x0328, 0x0326}, "basic"),  # four
     ],
 )
-def test_core_tolerates_only_a_few_combining_marks(missing: set[int], coverage: str) -> None:
+def test_core_tolerates_at_most_three_missing_code_points(missing: set[int], coverage: str) -> None:
     assert latin.glyph_test(LATIN - missing, TH).coverage == coverage
 
 
@@ -256,7 +260,8 @@ def test_empty_cmap_fails_without_crashing() -> None:
 
 
 def test_l1_rec_matches_the_documented_gate_values() -> None:
-    assert Latin(0, 2, 0.40, 1000) == latin.L1_REC
+    # The owner's gate L1 ruling of 2026-09-26 (the relaxed thresholds), as config ships it.
+    assert Latin(2, 3, 0.30, 1000) == latin.L1_REC == TH
 
 
 # --- unicode ranges -----------------------------------------------------------------------------
@@ -989,3 +994,24 @@ def test_latin_languages_takes_the_largest_count(live_first: bool) -> None:
     u = Universe(families={"hind": fam}, unmapped=())
     records = {live.key: [live], repo.key: [repo]}
     assert latin._latin_languages(["hind"], u, records) == {"hind": 31}
+
+
+def test_a_menu_only_google_family_takes_the_glyph_test() -> None:
+    # Gate L, owner ruling of 2026-09-26: Google serves the Playwrite families (and Allkin)
+    # with only the "menu" subset, so their files decide.
+    ref = FontFileRef(url="https://example.org/PlaywriteXX-Regular.ttf", role="regular")
+    rec = replace(gf("Playwrite XX", "Latn", ("menu",)), files=(ref,))
+    assert latin.menu_only(rec)
+    assert not latin.menu_only(gf("Abel", "", ("latin", "menu")))
+    assert latin.google_result(rec).reason == "no_latin_subset"  # what metadata alone says
+    fam = Family(
+        id="playwrite-xx",
+        family="Playwrite XX",
+        keys=(rec.key,),
+        sources=("google_metadata",),
+        first_seen=DAY,
+        minted_from="Playwrite XX",
+    )
+    u = Universe(families={"playwrite-xx": fam}, unmapped=())
+    out = latin.decide(u, {rec.key: [rec]}, TH, cmap_for=lambda r: frozenset(LATIN))
+    assert (out["playwrite-xx"].latin, out["playwrite-xx"].basis) == (True, "glyph_test")

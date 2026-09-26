@@ -19,8 +19,8 @@ How each check reads the run (``CHECKS``, in order; ``docs/catalog-schema.md``):
   gates before ranking (``export.ineligible`` without L3: stage "correct" runs
   before "verify"); every placed, scored or ruler family passes them and L3
   too; every catalog font also has an allowed license (``export.publishable``)
-  at L3 or an owner ruling. A license waiting for the owner may be ranked, as
-  stage "correct" keeps it, but not catalogued. With no ineligible family in
+  at L3 or an owner ruling. A license waiting for the owner is neither ranked
+  nor catalogued (methodology §9: an unverified license). With no ineligible family in
   ``terms.json``, ``ruler_counts.json`` or ``ruler.json``, none can move a
   rank (filter first, methodology §1).
 - ``license_queue``: every candidate's verdict that needs the owner, and every
@@ -35,9 +35,10 @@ How each check reads the run (``CHECKS``, in order; ``docs/catalog-schema.md``):
   changes its ``minted_from`` or loses its name to a new id.
 - ``higher_count_lower_rank``: among fonts with the same terms (sources and
   weight factors) in a view and no guard event, one whose every value is at
-  least another's, and one higher, never scores lower. Fonts with a Fonts Over
-  Time term are skipped (its z is smoothed across months), and so is Rising
-  (shares, not counts); the engine's property tests cover both.
+  least another's, and one higher, never scores lower. A font whose Fonts Over
+  Time z is smoothed with an earlier month's is skipped (its z depends on the
+  history), and so is Rising (shares, not counts); the engine's property tests
+  cover both.
 - ``desktop_views_differ``: most chosen's terms equal most installed's, except
   Linux sources' missing ones; with no abstention at all the orders match.
 - ``abstention_leak``: a family a Linux source abstains for in most chosen has
@@ -53,6 +54,25 @@ How each check reads the run (``CHECKS``, in order; ``docs/catalog-schema.md``):
   Values under ``RAW_MIN`` (all of Fonts Over Time's, a few thousand sites at
   most) can't be told from chance, so the stages writing reports keep them out
   (``corrections``, ``mapping``, ``review``).
+
+- ``rank_gaps``: the overall rank's exact ranks in ``catalog.json`` run 1..N
+  with no gap. The catalog is the overall top 500, so every font with an overall
+  rank is a member; a hole means a member was held back (no accepted download
+  link yet, gate K), and the site, which numbers rows by position (M2-D2),
+  would then show numbers that disagree with ``rank`` after it. The other views
+  may lack fonts by design (Coding's and Developers & apps' top 100 are not
+  catalogued; M11 hysteresis), so their holes are for review, not failures.
+- ``private_fields``: no committed JSON output (``build/*.json``,
+  ``build/specimens/index.json``, ``state/`` and this run's ``build/state/``)
+  holds, under the id of a source whose ``publish_raw`` is false, anything but
+  the fields a ranks-only source may publish (``PRIVATE_SOURCE_FIELDS``); so no
+  Google or Fonts Over Time value, share or history is published by any file.
+
+**Committed outputs only** (``validate --committed``, CI's ``site-real`` job):
+``COMMITTED_CHECKS`` run on what a clone holds, without ``build/stage/``:
+``schema``, ``rank_gaps``, ``private_fields``, the ``catalog.json`` half of
+``raw_value_published``, and the known answers ``names.json`` can answer
+(``committed_known_answers``).
 
 A check that can't run (a missing file, or any error in it) fails with the
 reason, and the others still run. Each check lists at most ``MAX_PER_CHECK``
@@ -83,6 +103,15 @@ if TYPE_CHECKING:
 EPS = 1e-9  # score tolerance in the monotonicity check
 MAX_PER_CHECK = 50  # failures listed per check; one more line says there are more
 RAW_MIN = 100_000  # smallest whole value the report scan looks for
+# Google's view rates are smaller than its install-style counts, and a line must also name
+# the font to fail, so its values are looked for from here.
+RAW_MIN_BY_SOURCE = {"google": 10_000}
+# What a source whose publish_raw is false may carry under its id in a committed file: its
+# ranks and rank-based z (rulings T2, T4), and run bookkeeping (state/stale.json).
+PRIVATE_SOURCE_FIELDS = frozenset(
+    {"abstains_in", "rank_in_source", "reason", "state", "weight_used", "z"}
+    | {"last_good", "stale_runs"}
+)
 SMOOTHED_SOURCES = frozenset({"fot"})  # z carried across months (§6 EWMA)
 KNOWN_RENAMES = (("Source Sans Pro", "Source Sans 3"),)  # (old name, family)
 KNOWN_BUILDS = (("Sauce Code Pro", "Source Code Pro"),)  # (patched name, family)
@@ -204,8 +233,8 @@ def check_ineligible_ranked(run: Run) -> Iterator[Failure]:
     ruler counts (stage "correct") to the gates before ranking; the ruler, scores and
     placements (stage "rank", rerun after "verify") also to L3; the catalog also to an
     allowed license at L3 or an owner ruling. A family whose license waits for the
-    owner is ranked like any other until then (``corrections.eligible_families``),
-    but never catalogued.
+    owner is neither ranked nor catalogued until the ruling (filter first:
+    ``corrections.eligible_families``).
     """
     inputs = run.inputs
     gates = _memo(lambda fid: export.ineligible(fid, inputs, l3=False))
@@ -321,9 +350,19 @@ def check_known_answers(run: Run) -> Iterator[Failure]:
 
 
 def check_monotone(run: Run) -> Iterator[Failure]:
-    """A font with every value at least another's, and one higher, never scores lower."""
+    """A font with every value at least another's, and one higher, never scores lower.
+
+    Fonts Over Time's term is ranked on its EWMA z (§6). For a font with no earlier EWMA
+    (none on a first run) that z is this month's equated value, a monotone function of
+    the count, so the font is compared on its count like any other; only a font whose
+    smoothed z also carries last month's (``fot_ewma_base`` of this run's smoothing part)
+    is left out."""
     import numpy as np
 
+    from tff_catalog import state
+
+    smoothing = state.read_part(run.paths, "smoothing") or {}
+    history = frozenset(smoothing.get("fot_ewma_base") or ())
     inputs = run.inputs
     for key in export.RANK_KEYS:
         terms = export.view_terms(inputs.terms, key)
@@ -338,7 +377,10 @@ def check_monotone(run: Run) -> Iterator[Failure]:
                 continue
             counted = [(s, by_id[fid]) for s, by_id in sorted(terms.items()) if fid in by_id]
             counted = [(s, t) for s, t in counted if t.state in export.COUNTED]
-            if not counted or any(s in SMOOTHED_SOURCES for s, _ in counted):
+            if not counted or any(
+                s in SMOOTHED_SOURCES and t.state == "observed" and fid in history
+                for s, t in counted
+            ):
                 continue
             signature = tuple((s, t.factor) for s, t in counted)
             vector = [_value(t) for _, t in counted]
@@ -415,6 +457,107 @@ def check_abstention_leak(run: Run) -> Iterator[Failure]:
 
 def check_raw_values(run: Run) -> Iterator[Failure]:
     """No raw value of a source whose terms forbid it, in catalog.json or a committed report."""
+    yield from check_catalog_raw_values(run)
+    for path in _reports(run.paths):
+        shown = _shown(path.read_text(encoding="utf-8"), run.hidden)
+        if shown:
+            yield Failure(
+                "raw_value_published",
+                f"{_relative(path, run.paths.root)} shows {shown} value(s) of a source that "
+                "publishes ranks only",
+            )
+
+
+RANK_GAP_KEYS = ("overall",)  # the rank key whose whole exact top the catalog holds
+
+
+def rank_holes(catalog: Mapping[str, Any]) -> dict[str, list[int]]:
+    """{rank key: exact ranks missing from ``catalog.json``'s fonts}, for every key."""
+    ranks: dict[str, set[int]] = defaultdict(set)
+    for font in catalog["fonts"]:
+        for key, entry in font["ranks"].items():
+            if entry.get("rank") is not None:
+                ranks[key].add(entry["rank"])
+    return {
+        key: sorted(set(range(1, max(got) + 1)) - got)
+        for key, got in sorted(ranks.items())
+        if len(got) != max(got)
+    }
+
+
+def check_rank_gaps(run: Run) -> Iterator[Failure]:
+    """The overall rank's exact ranks run 1..N (module docstring)."""
+    ranks: dict[str, list[int]] = defaultdict(list)
+    for font in run.doc(export.CATALOG_FILE)["fonts"]:
+        for key, entry in font["ranks"].items():
+            if key in RANK_GAP_KEYS and entry.get("rank") is not None:
+                ranks[key].append(entry["rank"])
+    for key, got in sorted(ranks.items()):
+        missing = sorted(set(range(1, max(got) + 1)) - set(got))
+        doubled = sorted(r for r in set(got) if got.count(r) > 1)
+        if missing:
+            shown = ", ".join(map(str, missing[:20])) + (" ..." if len(missing) > 20 else "")
+            yield Failure(
+                "rank_gaps",
+                f"{key}: exact ranks {shown} are missing (a member held back, gate K?), so the "
+                "site would number the rows after them differently from their rank",
+            )
+        if doubled:
+            yield Failure("rank_gaps", f"{key}: exact ranks {doubled} are given twice")
+
+
+def committed_json(paths: Paths) -> list[Path]:
+    """The JSON files a refresh pull request commits: the build outputs, the specimen
+    index, ``state/`` and this run's next state (``build/state/``, copied to ``state/``)."""
+    out = sorted(paths.build.glob("*.json"))
+    index = paths.build / "specimens" / "index.json"
+    if index.is_file():
+        out.append(index)
+    for directory in (paths.state, paths.next_state):
+        if directory.is_dir():
+            out += sorted(directory.glob("*.json"))
+    return out
+
+
+def private_fields(doc: Any, private: frozenset[str], where: str = "") -> Iterator[str]:
+    """JSON pointers where ``doc`` holds anything but ``PRIVATE_SOURCE_FIELDS`` under the
+    id of a source in ``private`` (a raw value, a share, a history)."""
+    if isinstance(doc, Mapping):
+        for key, value in sorted(doc.items()):
+            at = f"{where}/{key}"
+            if key in private and not _ranks_only(value):
+                yield at
+            else:
+                yield from private_fields(value, private, at)
+    elif isinstance(doc, list):
+        for i, value in enumerate(doc):
+            yield from private_fields(value, private, f"{where}/{i}")
+
+
+def _ranks_only(value: Any) -> bool:
+    if value is None or isinstance(value, str | bool):
+        return True
+    return isinstance(value, Mapping) and set(value) <= PRIVATE_SOURCE_FIELDS
+
+
+def check_private_fields(run: Run) -> Iterator[Failure]:
+    """No committed JSON holds a ranks-only source's values (module docstring)."""
+    private = frozenset(
+        s for s, src in run.cfg.ranking.sources.all().items() if not src.publish_raw
+    )
+    for path in committed_json(run.paths):
+        found = list(itertools.islice(private_fields(jsonio.load(path), private), 6))
+        if found:
+            more = " and more" if len(found) > 5 else ""
+            yield Failure(
+                "private_fields",
+                f"{_relative(path, run.paths.root)} holds a ranks-only source's data at "
+                f"{', '.join(found[:5])}{more}",
+            )
+
+
+def check_catalog_raw_values(run: Run) -> Iterator[Failure]:
+    """The ``catalog.json`` half of ``raw_value_published`` (no stage file needed)."""
     sources = run.cfg.ranking.sources.all()
     catalog = run.doc(export.CATALOG_FILE)
     for entry in catalog["sources"]:
@@ -427,14 +570,25 @@ def check_raw_values(run: Run) -> Iterator[Failure]:
                 yield Failure(
                     "raw_value_published", f"catalog.json carries a {s} value", font["id"]
                 )
-    for path in _reports(run.paths):
-        shown = _shown(path.read_text(encoding="utf-8"), run.hidden)
-        if shown:
-            yield Failure(
-                "raw_value_published",
-                f"{_relative(path, run.paths.root)} shows {shown} value(s) of a source that "
-                "publishes ranks only",
-            )
+
+
+def check_committed_known_answers(run: Run) -> Iterator[Failure]:
+    """The known answers ``names.json`` can answer on its own: a rename or a patched build
+    resolves to its family, and a distinct family never holds its sibling's name."""
+    names = run.doc(export.NAMES_FILE)
+    by_name: dict[str, set[str]] = defaultdict(set)
+    for fam in names["families"]:
+        by_name[_key(fam["family"])].add(fam["id"])
+    holders = _name_holders(names)
+    for old, new in (*KNOWN_RENAMES, *KNOWN_BUILDS):
+        target = _single(by_name.get(_key(new)))
+        if target is not None and holders.get(_key(old), set()) != {target}:
+            yield Failure("known_answer", f"{old} must resolve to {new} ({target})", target)
+    for sibling, parent in KNOWN_DISTINCT:
+        own = _single(by_name.get(_key(sibling)))
+        other = _single(by_name.get(_key(parent)))
+        if own is not None and other is not None and other in holders.get(_key(sibling), set()):
+            yield Failure("known_answer", f"{parent} holds the name {sibling}", other)
 
 
 CHECKS: tuple[tuple[str, Check], ...] = (
@@ -447,17 +601,30 @@ CHECKS: tuple[tuple[str, Check], ...] = (
     ("desktop_views_differ", check_desktop_views),
     ("abstention_leak", check_abstention_leak),
     ("raw_value_published", check_raw_values),
+    ("rank_gaps", check_rank_gaps),
+    ("private_fields", check_private_fields),
+)
+# What ``validate --committed`` runs: the checks a clone's committed files can answer.
+COMMITTED_CHECKS: tuple[tuple[str, Check], ...] = (
+    ("schema", check_schema),
+    ("known_answer", check_committed_known_answers),
+    ("raw_value_published", check_catalog_raw_values),
+    ("rank_gaps", check_rank_gaps),
+    ("private_fields", check_private_fields),
 )
 
 
-def hard_checks(ctx: StageContext) -> list[Failure]:
-    """Run every §9 hard check on the build outputs.
+def hard_checks(
+    ctx: StageContext, checks: Sequence[tuple[str, Check]] | None = None
+) -> list[Failure]:
+    """Run every §9 hard check (or ``checks``) on the build outputs.
 
     Failures are logged and become a public issue (refresh), so their messages never
     repeat a raw value (``_redact``)."""
     run = Run(ctx)
     failures: list[Failure] = []
-    for name, check in CHECKS:
+    everything = checks is None
+    for name, check in CHECKS if checks is None else checks:
         try:
             found = list(itertools.islice(check(run), MAX_PER_CHECK + 1))
         except Exception as exc:
@@ -469,10 +636,21 @@ def hard_checks(ctx: StageContext) -> list[Failure]:
         if len(found) > MAX_PER_CHECK:
             failures.append(Failure(name, f"more failures past the first {MAX_PER_CHECK}"))
     try:
-        hidden = frozenset(run.hidden)
+        hidden = frozenset(run.hidden) if everything else frozenset()
     except Exception:
         hidden = frozenset()  # no terms to read: the value fields are still redacted
     return [replace(f, message=_redact(f.message, hidden)) for f in failures]
+
+
+def cmd_committed(ctx: StageContext) -> int:
+    """``validate --committed``: ``COMMITTED_CHECKS`` on the committed outputs; 1 on failure."""
+    failures = hard_checks(ctx, COMMITTED_CHECKS)
+    for failure in failures:
+        ctx.log.error("%s", failure)
+    if failures:
+        return 1
+    ctx.log.info("validate --committed: %d checks passed", len(COMMITTED_CHECKS))
+    return 0
 
 
 def run(ctx: StageContext) -> None:
@@ -712,8 +890,8 @@ def _hidden_values(run: Run) -> dict[int, set[str]]:
     families = run.inputs.universe.families
     out: dict[int, set[str]] = defaultdict(set)
 
-    def add(value: float | None, labels: Iterable[str]) -> None:
-        if value is not None and math.isfinite(value) and value >= RAW_MIN:
+    def add(value: float | None, labels: Iterable[str], floor: float = RAW_MIN) -> None:
+        if value is not None and math.isfinite(value) and value >= floor:
             for n in _whole(value):
                 out[n].update(label.casefold() for label in labels if label)
 
@@ -723,16 +901,20 @@ def _hidden_values(run: Run) -> dict[int, set[str]]:
 
     for by_source in run.inputs.terms.values():
         for s in sorted(hidden & set(by_source)):
+            floor = RAW_MIN_BY_SOURCE.get(s, RAW_MIN)
             for fid, term in by_source[s].items():
-                add(term.value, family_labels(fid))
+                add(term.value, family_labels(fid), floor)
     published = {src.collector for src in sources.values() if src.publish_raw}
     for collector in sorted({sources[s].collector for s in hidden} - published):
+        floor = min(
+            RAW_MIN_BY_SOURCE.get(s, RAW_MIN) for s in hidden if sources[s].collector == collector
+        )
         for path in sorted(run.paths.records.glob(f"{collector}*.jsonl")):
             if path.stem != collector and not path.stem.startswith(f"{collector}@"):
                 continue
             for rec in _records(path):
                 fam = run.inputs.universe.by_key(rec.key)
-                add(rec.value, (rec.key.key, *(family_labels(fam.id) if fam else ())))
+                add(rec.value, (rec.key.key, *(family_labels(fam.id) if fam else ())), floor)
     return dict(out)
 
 

@@ -37,6 +37,11 @@ schema = 1
 "Zlib" = "Zlib"
 "Unlicense" = "Unlicense"
 "CC0-1.0" = "CC0-1.0"
+"X11" = "X11"                         # the four Debian licenses the owner classed on 2026-09-26
+"BSL-1.0" = "BSL-1.0"
+"Artistic-2.0" = "Artistic-2.0"
+"MPL-2.0" = "MPL-2.0"
+"Artistic-1.0" = "Artistic-1.0"
 "CC-BY-2.0" = "CC-BY-2.0"
 "CC-BY-2.5" = "CC-BY-2.5"
 "CC-BY-3.0" = "CC-BY-3.0"
@@ -194,9 +199,10 @@ schema = 1
 "Creative Commons BY-NC-SA 4.0" = "CC-BY-NC-SA-4.0"   # config/foundries.toml (BilboINC)
 
 # --- Debian DEP-5 spellings (debian_copyright, as of the 2026-09-26 snapshot) ---
-# Only strings that name one license unambiguously. Variant texts ("BSD-3-clause~typo"),
-# licenses licenses.toml does not class yet (X11, MPL-2.0, Artistic) and custom names
-# stay unknown and go to the review queue.
+# Only strings that name one license unambiguously. Variant texts ("BSD-3-clause~typo")
+# and custom names stay unknown and go to the review queue. X11, MPL-2.0 and BSL-1.0 are
+# SPDX ids already; licenses.toml classes them (owner ruling of 2026-09-26).
+"Artistic" = "Artistic-1.0"           # Debian's short name for the Perl Artistic License 1.0
 "SIL-1.1" = "OFL-1.1"
 "SIL_Open_Font_License_1.1" = "OFL-1.1"
 "SIL Open Font License, Version 1.1 – 26 February 2007" = "OFL-1.1"

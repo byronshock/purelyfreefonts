@@ -360,7 +360,7 @@ def test_overall_reuses_each_surveys_guard_factors() -> None:
     scores = surveys.views(inputs, RANKING)
     combined = _z(inputs, "desktop_chosen", GUARDED) | _z(inputs, "project", GUARDED)
     g = RANKING.engine.guard
-    rerun = fusion.guard_factors(combined, g.gap, g.min_terms, g.factor)
+    rerun = fusion.guard_factors(combined, g.gap, g.min_terms, g.factor, g.basis)
     assert any(f != 1.0 for f in rerun.values()), "the combined terms would fire the guard"
     assert scores["overall"].fused[GUARDED].guard == ()
     for fid, fused in scores["overall"].fused.items():

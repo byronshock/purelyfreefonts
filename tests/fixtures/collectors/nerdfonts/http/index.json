@@ -20,6 +20,15 @@
       "method": "GET",
       "status": 200,
       "url": "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/bin/scripts/lib/fonts.json"
+    },
+    {
+      "body": "tree.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://api.github.com/repos/ryanoasis/nerd-fonts/git/trees/64a084f95480ee5efb62132c01cd142ab6147655:src/unpatched-fonts?recursive=1"
     }
   ],
   "version": 1

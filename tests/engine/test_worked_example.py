@@ -1,4 +1,5 @@
-"""The methodology's worked example (§4) as a fixture: guard off and on (ruling M1)."""
+"""The methodology's worked example (§4) as a fixture: guard off and on (ruling M1, with
+the median basis of the owner's ruling of 2026-09-26)."""
 
 import tomllib
 from typing import Any
@@ -16,10 +17,12 @@ FONTS = {font["name"]: font for font in EXAMPLE["fonts"]}
 GUARD = EXAMPLE["guard"]
 
 
-def _fuse(font: dict[str, Any], *, guarded: bool) -> Fused:
+def _fuse(font: dict[str, Any], *, guarded: bool, basis: str | None = None) -> Fused:
     z = font["z"]
     factors = (
-        guard_factors(z, GUARD["gap"], GUARD["min_terms"], GUARD["factor"]) if guarded else None
+        guard_factors(z, GUARD["gap"], GUARD["min_terms"], GUARD["factor"], basis or GUARD["basis"])
+        if guarded
+        else None
     )
     return fuse(
         z,
@@ -54,7 +57,7 @@ def test_guard_off(name: str):
 
 @pytest.mark.parametrize("name", list(FONTS))
 def test_guard_on(name: str):
-    """Ruling M1 (a): the guard fires on Debian for JetBrains Mono only."""
+    """The median basis (owner ruling of 2026-09-26): the guard fires on no example font."""
     font = FONTS[name]
     fused = _fuse(font, guarded=True)
     assert round(fused.score, EXAMPLE["decimals"]) == font["guard_on"]
@@ -63,20 +66,28 @@ def test_guard_on(name: str):
 
 
 def test_jetbrains_mono_exact_arithmetic():
-    """5.76375 / 2.275: Debian's weight halves from 0.25 to 0.125."""
-    fused = _fuse(FONTS["JetBrains Mono"], guarded=True)
-    assert fused.weight == pytest.approx(1.875)
-    assert fused.score == pytest.approx(5.76375 / 2.275, abs=1e-12)
-    unguarded = _fuse(FONTS["JetBrains Mono"], guarded=False)
-    assert unguarded.score == pytest.approx(5.9625 / 2.4, abs=1e-12)
+    """5.9625 / 2.4 with the median basis; 5.76375 / 2.275 under M1's mean of the others,
+    where Debian's weight halves from 0.25 to 0.125."""
+    font = FONTS["JetBrains Mono"]
+    fused = _fuse(font, guarded=True)
+    assert fused.score == pytest.approx(5.9625 / 2.4, abs=1e-12)
+    others = _fuse(font, guarded=True, basis="others_mean")
+    assert others.weight == pytest.approx(1.875)
+    assert others.score == pytest.approx(5.76375 / 2.275, abs=1e-12)
+    assert round(others.score, EXAMPLE["decimals"]) == font["others_mean_on"]
+    assert dict(others.guard) == font["others_mean_guarded"]
 
 
 def test_the_guard_gap_for_jetbrains_mono():
-    """Debian sits 1.53 z below mean(3.54, 2.70) = 3.12, just over the 1.5 gap."""
+    """Debian sits 1.11 z below the median 2.70, under the 1.5 gap; it sat 1.53 z below
+    mean(3.54, 2.70) = 3.12, just over it, under M1's first reading."""
     z = FONTS["JetBrains Mono"]["z"]
-    gap = (z["homebrew"] + z["arch"]) / 2 - z["debian"]
-    assert gap == pytest.approx(1.53)
-    assert gap > GUARD["gap"]
+    median_gap = z["arch"] - z["debian"]
+    assert median_gap == pytest.approx(1.11)
+    assert median_gap < GUARD["gap"]
+    others_gap = (z["homebrew"] + z["arch"]) / 2 - z["debian"]
+    assert others_gap == pytest.approx(1.53)
+    assert others_gap > GUARD["gap"]
 
 
 def test_signal_shares():

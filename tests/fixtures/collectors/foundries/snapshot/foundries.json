@@ -3,18 +3,21 @@
     "aster-type": {
       "families": [
         {
+          "files": [],
           "license": "Open Font License",
           "name": "Aster Sans",
           "repository": "https://github.com/aster-type/aster-sans",
           "url": "https://www.theleagueofmoveabletype.com/aster-sans"
         },
         {
+          "files": [],
           "license": "SIL Open Font License 1.1",
           "name": "Birch Mono",
           "repository": "https://gitlab.com/aster-type/birch-mono",
           "url": "https://gitlab.com/aster-type/birch-mono"
         },
         {
+          "files": [],
           "license": "NOASSERTION",
           "name": "Cobalt Serif",
           "repository": "",
@@ -27,12 +30,14 @@
     "birch-foundry": {
       "families": [
         {
+          "files": [],
           "license": "SIL Open Font License v.1.1",
           "name": "Aster Sans",
           "repository": "https://github.com/aster-type/aster-sans",
           "url": "https://open-foundry.com/fonts/aster-sans"
         },
         {
+          "files": [],
           "license": "",
           "name": "Dune Display",
           "repository": "https://github.com/birch-foundry/dune-display",

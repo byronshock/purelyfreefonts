@@ -1,0 +1,45 @@
+# Owner rulings of 2026-09-26, given in chat after integration A (the first real run). Ruled by
+# the owner, Byron Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml).
+# Also in AUTHORITY.md. Where the owner picked Claude's recommendation, the reason is Claude's summary.
+
+[guard_basis]
+value = "median"
+ruling = "The outlier guard compares each term with the median of all the font's terms and halves a term more than 1.5 z from it (at least 3 terms). The worked example goes back to JetBrains Mono 2.48: the guard does not fire. This supersedes ruling M1's correction to 2.53."
+reason = "The owner's own choice, not a listed option. A median is not pulled by the outlier it is testing."
+
+[dev_apps_display]
+value = "bands"
+ruling = "Developers & apps is published as bands only, labelled as such, until a second independent source (Flutter) is on; its sources share one independence group, so no font can pass the two-group gate."
+reason = "Claude's recommendation: the view keeps its information without claiming exact ranks it cannot have."
+
+[rising_tier]
+value = "C"
+ruling = "Rising is always tier C while it is in beta, and keeps the second-largest-rise rule."
+reason = "Claude's recommendation."
+
+[dirichlet_scope]
+value = "across"
+ruling = "The confidence draws keep re-weighting across all of a survey's sources, so the project group shares vary in the 200 draws; the leave-one-out runs are unchanged."
+reason = "The owner's choice, not Claude's recommendation."
+
+[monotonicity_wording]
+ruling = "Methodology §9's monotonicity promise reads: a higher count never lowers a rank, except when the guard changes for that font or for a font that overtakes it, or through the ruler's scale."
+reason = "Claude's recommendation: the exact statement the engine can keep."
+
+[coding_overlap]
+value = "filter_first"
+ruling = "Coding filters first (monospace fonts only) and then computes each source's overlap with the ruler."
+reason = "Claude's recommendation."
+
+[fot_rerank_and_ruler]
+ruling = "Fonts Over Time's smoothed values are re-ranked against the ruler each month; Homebrew stays the ruler in the leave-one-out runs."
+reason = "Claude's recommendation."
+
+[baseline_and_parse]
+ruling = "A lifetime counter's baseline is the oldest snapshot within 380 days; a snapshot that fails to parse counts as a failed fetch (the source goes stale)."
+reason = "Claude's recommendation."
+
+[new_release_assets]
+value = "count_from_zero"
+ruling = "GitHub release assets created after the baseline snapshot count their whole count (their baseline is 0); assets older than the baseline that the baseline lacks are ignored."
+reason = "Claude's recommendation: most downloads go to the newest release, which the both-snapshots rule would miss for up to a year."

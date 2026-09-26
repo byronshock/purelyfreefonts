@@ -19,6 +19,8 @@ What this license covers
   in data/reviews/, except files that carry their own license notice or sit
   beside a NOTICE or LICENSE file (such as the Apache-2.0 glyph sets in
   data/glyphsets/).
+- The blog: the text and images of the posts in site/content/blog/, published
+  at https://trulyfreefonts.com/blog/ (decision M2-D12 in AUTHORITY.md).
 
 It does not cover:
 

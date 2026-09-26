@@ -1068,6 +1068,15 @@ def cmd_check(paths: Paths) -> int:
 
 
 def cmd_commit(paths: Paths, message: str | None = None) -> int:
+    from tff_catalog.refresh import code_changes
+
+    if code_changes(paths.root) is not None:
+        print(
+            "warning: the working tree has uncommitted changes to the code, config or data; "
+            "the run manifests being committed name a commit that does not reproduce them "
+            "(their code_dirty is true)",
+            file=sys.stderr,
+        )
     store = Store.from_paths(paths)
     sha = store.commit(message or f"snapshots {clock.utc_today().isoformat()}")
     print(sha or "nothing to commit")

@@ -39,9 +39,10 @@ through ``frames`` and ``evidence_state`` instead:
   value is "in the frame, no usable value") and either end of any relation;
 - ``listed`` (Google): the same without relations, so a non-Google font is
   outside the frame;
-- ``web_servable`` (Fonts Over Time, the Almanac; gap G11): every eligible
-  family with a Google, Fontsource or foundry key, plus any family the source
-  itself observed.
+- ``web_servable`` (Fonts Over Time, the Almanac): every eligible family, as
+  methodology §4 says ("a desktop-only font gets censored terms from the web
+  crawls, not a placeholder"). Design-m1 gap G11 proposed only the families
+  with a Google, Fontsource or foundry key; the owner never ruled on it.
 
 ``evidence_state`` is the rule that turns frame membership, exposure and a
 value into one of the four evidence states, which ``terms.json`` carries (stage
@@ -587,10 +588,9 @@ def _common_unit(obs: Sequence[Observation]) -> str:
 # --- frames and evidence states ------------------------------------------------------------------
 
 FrameBasis = Literal["packaged", "listed", "web_servable"]
-# Design-m1 gap G11: crawls whose frame is "could have shown the font".
+# The crawls: their frame is every eligible family (methodology §4).
 WEB_GROUPS = frozenset({"fot", "http_archive"})
 LIST_GROUPS = frozenset({"google"})  # a Google-only list: a non-Google font is outside it
-WEB_SERVABLE_NS = frozenset({"gf-family", "gf-dir", "fs-id", "foundry-family"})
 
 
 @dataclass(frozen=True, slots=True)
@@ -632,7 +632,7 @@ def frames(
         reads = _reader(ns, selector(src))
         own = {k for r in recs.get(collector, ()) for k in _ends(r) if reads(k)}
         if basis == "web_servable":
-            known = [fid for fid, keys in eligible.items() if _any_ns(keys, WEB_SERVABLE_NS)]
+            known = list(eligible)
         else:
             known = [fid for fid, keys in eligible.items() if any(reads(k) for k in keys)]
         if basis == "packaged":
@@ -651,10 +651,6 @@ def _reader(
 
 def _ends(rec: Observation | Relation) -> tuple[SourceKey, ...]:
     return (rec.subject, rec.object) if isinstance(rec, Relation) else (rec.key,)
-
-
-def _any_ns(keys: Iterable[SourceKey], namespaces: frozenset[str]) -> bool:
-    return any(k.ns in namespaces for k in keys)
 
 
 def _families(keys: Iterable[SourceKey], idx: AliasIndex) -> set[str]:

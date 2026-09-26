@@ -1197,6 +1197,7 @@ def test_site_context_matches_the_contract():
             "mailto": "mailto:admin@trulyfreefonts.com?subject=trulyfreefonts.com",
         },
         "tip_url": None,
+        "blog": None,
     }
     assert (
         list(data.CATEGORY_LABELS)

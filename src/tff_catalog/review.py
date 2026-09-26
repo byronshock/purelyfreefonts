@@ -94,6 +94,7 @@ bytes.
 
 import importlib
 import math
+import re
 import shutil
 from collections import defaultdict
 from collections.abc import Iterable, Mapping, Sequence
@@ -149,8 +150,19 @@ KINDS: dict[str, tuple[str, str]] = {
     "disagreement": ("Most chosen versus project", "Fonts high in one rank and low in the other."),
     "term": ("Term flags", 'Evidence flags from stage "correct", by source.'),
     "growth": ("Snapshot growth", "Store sources whose snapshots grew fast."),
+    "specimen": ("Specimen failures", "Catalog fonts that may be previewed but have no image."),
+    "rank_gap": (
+        "Numbering gaps",
+        "Exact ranks whose font is not in the catalog. The site numbers rows by position, "
+        "so rows after a gap show numbers that differ from their rank.",
+    ),
     "what_if": ("What if", "Each ranking.toml weight halved and doubled."),
 }
+# The owner's ruling of 2026-09-26 (review_report): the what-if table stays in the private
+# pack, and review.md lists cross-check moves only inside the exact top and of at least
+# REVIEW_MIN_PLACES places.
+PRIVATE_KINDS = frozenset({"what_if"})
+REVIEW_MIN_PLACES = 3
 TERM_NOTES = {
     "parent_merge": "width cuts folded into the parent; weight halved",
     "bundle_only": "counted only through a bundle",
@@ -270,6 +282,17 @@ def _table(header: Sequence[str], rows: Iterable[Sequence[object]], align: str =
 
 def _orders(placements: Mapping[str, Mapping[str, Placement]]) -> dict[str, dict[str, int]]:
     return {k: {f: p.order for f, p in ps.items()} for k, ps in sorted(placements.items())}
+
+
+def export_orders(
+    placements: Mapping[str, Mapping[str, Placement]], exact_top: int
+) -> dict[str, dict[str, int]]:
+    """The orders stage "export" publishes: a rank key whose exact top the two-group
+    gate leaves short moves its unranked placements down past it (``export.band_shift``;
+    every month in Developers & apps while Flutter is off)."""
+    from tff_catalog.engine.order import published_orders
+
+    return published_orders(placements, exact_top)
 
 
 # --- the monthly diff --------------------------------------------------------------------------
@@ -469,6 +492,9 @@ def render_review(
     prev_ranks: Mapping[str, Mapping[str, int]],
     ranks: Mapping[str, Mapping[str, int]],
     flags: Iterable[Flag],
+    *,
+    totals: Sequence[Flag] | None = None,
+    private: bool = True,
 ) -> str:
     """``build/review.md``.
 
@@ -479,6 +505,10 @@ def render_review(
     given. The diff itself is flags too (``diff_flags``, ``catalog_flags``), so
     its names and thresholds follow ranking.toml. Deterministic for a given
     input order.
+
+    ``totals`` are the flags the "Flags:" line counts (``flag_total``; default
+    ``flags``), so review.md, whose lists are cut, prints the same total as the
+    pack. With ``private`` (review.md) the ``PRIVATE_KINDS`` sections are left out.
     """
     flags = list(flags)
     by_kind: dict[str, list[Flag]] = defaultdict(list)
@@ -489,14 +519,30 @@ def render_review(
     if lines[-1]:
         lines.append("")
     lines += _summary(prev_ranks, ranks, by_kind)
-    raised = {k: len(v) for k, v in by_kind.items() if k != "what_if" and v}
-    counts = ", ".join(
-        f"{k} {v}" for k, v in sorted(raised.items(), key=lambda kv: _kind_order(kv[0]))
-    )
-    lines += ["", f"Flags: {sum(raised.values())}" + (f" ({counts})." if counts else "."), ""]
-    for kind in sorted(set(KINDS) | set(by_kind), key=_kind_order):
+    lines += ["", flag_total(totals if totals is not None else flags), ""]
+    shown = set(KINDS) | set(by_kind)
+    if private:
+        shown -= PRIVATE_KINDS
+    for kind in sorted(shown, key=_kind_order):
         lines += _section(kind, by_kind.get(kind, []))
     return "\n".join(lines).rstrip("\n") + "\n"
+
+
+def raised_counts(flags: Iterable[Flag]) -> dict[str, int]:
+    """Flags by kind, the ones that count: every kind but ``info`` and ``what_if`` (a table
+    of effects, not a flag)."""
+    out: dict[str, int] = defaultdict(int)
+    for f in flags:
+        if f.kind not in (INFO, "what_if"):
+            out[f.kind] += 1
+    return dict(sorted(out.items(), key=lambda kv: _kind_order(kv[0])))
+
+
+def flag_total(flags: Iterable[Flag]) -> str:
+    """The one flag total that review.md, the pack's README and the log all print."""
+    raised = raised_counts(flags)
+    counts = ", ".join(f"{k} {v}" for k, v in raised.items())
+    return f"Flags: {sum(raised.values())}" + (f" ({counts})." if counts else ".")
 
 
 def _kind_order(kind: str) -> tuple[int, str]:
@@ -1395,7 +1441,7 @@ def analyse(ctx: StageContext) -> Analysis:
     run = _previous_run(ctx)
     notes: list[str] = []
     overall = now.get("overall", {})
-    pub = published(ctx, now, notes)
+    pub = published(ctx, export_orders(placements, cfg.display.exact_top), notes)
 
     flags = _change_flags(ctx, prev, pub, overall, names, notes)
     rbos = rbo_by_key(prev, pub, cfg)
@@ -1415,7 +1461,10 @@ def analyse(ctx: StageContext) -> Analysis:
     flags += growth
     rows = what_if(inputs, cfg, phasing_in(ctx)) if inputs is not None else ()
     flags += what_if_flags(rows, names, cfg.display.exact_top)
+    flags += specimen_flags(_optional(ctx, "previews") or {}, names)
+    flags += rank_gap_flags(ctx.paths.build / "catalog.json")
 
+    notes += _unlinked_notes(ctx, names)
     info = _info(ctx, run, prev, rbos, stats, scores, cfg, store_line)
     public, everything = _finish(flags, info, notes, now, cfg.display.exact_top)
     old = None
@@ -1438,6 +1487,70 @@ def analyse(ctx: StageContext) -> Analysis:
         old=old,
         notes=tuple(notes),
     )
+
+
+def specimen_flags(previews: Mapping[str, Any], names: Mapping[str, str]) -> list[Flag]:
+    """One ``specimen`` flag per previewable catalog font that has no image, with why."""
+    out = []
+    for fid, p in sorted(previews.items()):
+        if p.path is None:
+            why = p.reason or ", ".join(p.flags) or "no image"
+            out.append(Flag("specimen", f"{_name(names, fid)}: {why}", family_id=fid))
+    return out
+
+
+def rank_gap_flags(catalog: Path) -> list[Flag]:
+    """``rank_gap``: exact ranks missing from ``catalog.json``'s fonts, per rank key (for the
+    overall rank validate fails the run too: ``validate.check_rank_gaps``)."""
+    if not catalog.is_file():
+        return []
+    from tff_catalog.validate import rank_holes
+
+    return [
+        Flag(
+            "rank_gap",
+            f"exact ranks {', '.join(map(str, holes[:20]))}{' ...' if len(holes) > 20 else ''} "
+            "are not in the catalog",
+            key,
+        )
+        for key, holes in rank_holes(jsonio.load(catalog)).items()
+    ]
+
+
+def _unlinked_notes(ctx: StageContext, names: Mapping[str, str]) -> list[str]:
+    """The catalog members stage "export" holds back for want of an accepted link: those
+    gate K asks about (a candidate link exists), and those with no candidate at all, which
+    gate K never asks about until Claude researches the official page and proposes an
+    override in ``config/link-overrides.toml`` (``links.questions``)."""
+    from tff_catalog import links as links_stage
+
+    membership, links = _optional(ctx, "membership"), _optional(ctx, "links")
+    if membership is None or links is None:
+        return []
+    held = [fid for fid in membership.members() if fid not in links]
+    if not held:
+        return []
+    queue_path = ctx.paths.queues / links_stage.QUEUE_FILE
+    undecided = jsonio.load(queue_path).get("undecided", {}) if queue_path.is_file() else {}
+    asked = [fid for fid in held if (undecided.get(fid) or {}).get("candidates")]
+    research = [fid for fid in held if fid not in asked]
+
+    def listed(ids: Sequence[str]) -> str:
+        return ", ".join(f"{names.get(fid, fid)} (`{fid}`)" for fid in ids)
+
+    out = []
+    if asked:
+        out.append(
+            "Held back from the catalog until the owner picks a download link at gate K "
+            f"(no two sources agree on one): {listed(asked)}."
+        )
+    if research:
+        out.append(
+            "Held back from the catalog with no candidate download link at all, so gate K "
+            "has nothing to ask yet: Claude researches each official page and proposes an "
+            f"override in config/link-overrides.toml, which gate K then asks about: {listed(research)}."
+        )
+    return out
 
 
 def rbo_by_key(
@@ -1528,6 +1641,16 @@ def _crosscheck_flags(
         return []
 
 
+_MOVE = re.compile(r"moves from (\d+) to (\d+)")
+
+
+def _places(flag: Flag) -> int:
+    """How many places a cross-check flag says its font moves (a large number when it does
+    not say: a font with no place under the check)."""
+    m = _MOVE.search(flag.message)
+    return abs(int(m[1]) - int(m[2])) if m else REVIEW_MIN_PLACES
+
+
 def _in_top(flag: Flag, now: Mapping[str, Mapping[str, int]], top: int) -> bool:
     if flag.rank_key is None or flag.family_id is None:
         return True
@@ -1596,8 +1719,16 @@ def _finish(
 ) -> tuple[tuple[Flag, ...], tuple[Flag, ...]]:
     """(review.md flags, every flag): info lines first; review.md cuts ``CAPPED`` kinds
     to the exact top and says how many more there are."""
-    cut = [f for f in analysis_flags if f.kind in CAPPED and not _in_top(f, now, top)]
-    public = [f for f in analysis_flags if not (f.kind in CAPPED and not _in_top(f, now, top))]
+
+    def public_flag(f: Flag) -> bool:
+        if f.kind in PRIVATE_KINDS:
+            return False
+        if f.kind in CAPPED and not _in_top(f, now, top):
+            return False
+        return f.kind != "crosscheck" or _places(f) >= REVIEW_MIN_PLACES
+
+    cut = [f for f in analysis_flags if f.kind in CAPPED and not public_flag(f)]
+    public = [f for f in analysis_flags if public_flag(f)]
     lines = list(info)
     if cut:
         counts = ", ".join(
@@ -1605,7 +1736,9 @@ def _finish(
             for kind in sorted({f.kind for f in cut}, key=_kind_order)
         )
         lines.append(
-            f"Flags below the top {top} ({counts}) are listed in build/review-pack/anomalies.md."
+            f"Flags below the top {top}, and cross-check moves of fewer than "
+            f"{REVIEW_MIN_PLACES} places ({counts}), are listed in "
+            "build/review-pack/anomalies.md."
         )
     lines += notes
     lines.append(
@@ -1863,14 +1996,7 @@ def _pack_old(a: Analysis, cfg: RankingConfig) -> str:
 def _pack_readme(a: Analysis) -> str:
     from tff_catalog import reviews
 
-    kinds = defaultdict(int)
-    for f in a.all_flags:
-        if f.kind != INFO:
-            kinds[f.kind] += 1
     options = reviews.catalogue("R")[0].options
-    counts = ", ".join(
-        f"{k} {v}" for k, v in sorted(kinds.items(), key=lambda kv: _kind_order(kv[0]))
-    )
     lines = [
         f"# Review pack, {a.run_date}",
         "",
@@ -1879,7 +2005,7 @@ def _pack_readme(a: Analysis) -> str:
         "",
         *_table(["File", "What it holds"], ([f"[{n}]({n})", d] for n, d in PACK_FILES.items())),
         "",
-        f"Flags: {sum(kinds.values())}" + (f" ({counts})." if counts else "."),
+        flag_total(a.all_flags),
         "",
         "## The question (gate R)",
         "",
@@ -1903,7 +2029,7 @@ def write_pack(directory: Path, a: Analysis, cfg: RankingConfig) -> Path:
         "tier-c.md": _pack_tier_c(a, cfg),
         "old-top100.md": _pack_old(a, cfg),
         "disagreements.md": _pack_disagreements(a, cfg),
-        "anomalies.md": render_review(a.prev, a.published, a.all_flags),
+        "anomalies.md": render_review(a.prev, a.published, a.all_flags, private=False),
         "what-if.md": _pack_what_if(a, cfg),
         "sources.md": _pack_sources(a, cfg),
     }
@@ -1923,10 +2049,9 @@ def review_pack(ctx: StageContext) -> Path:
 def run(ctx: StageContext) -> None:
     """Stage "review"."""
     a = analyse(ctx)
-    text = render_review(a.prev, a.published, a.flags)
+    text = render_review(a.prev, a.published, a.flags, totals=a.all_flags)
     jsonio.atomic_write(ctx.paths.build / REVIEW_FILE, text.encode("utf-8"))
     pack = write_pack(ctx.paths.build / PACK_DIR, a, ctx.config.ranking)
-    raised = sum(1 for f in a.all_flags if f.kind not in (INFO, "what_if"))
-    ctx.log.info("review: %d flags; wrote %s and %s/", raised, REVIEW_FILE, pack.name)
+    ctx.log.info("review: %s wrote %s and %s/", flag_total(a.all_flags), REVIEW_FILE, pack.name)
     for note in a.notes:
         ctx.log.warning("review: %s", note)

@@ -87,7 +87,8 @@ Unknown IDs are excluded.
 In every option:
 
 - The 191 families that cover basic Latin only are kept, with a "limited accents" badge.
-- A non-Google font qualifies if it covers GF_Latin_Kernel, enough of its letters are Latin, and it has fewer than 1,000 CJK code points. A letter's script is its Unicode Script property, and letters of the Common, Inherited and Unknown scripts are not counted. The minimum Latin share is `latin_share_min` in `config/ranking.toml [latin]`: 0.40 until the owner rules on gate L1, which sets all these thresholds.
+- A non-Google font qualifies if it lacks at most 2 of GF_Latin_Kernel's code points, at least 30% of its letters are Latin, and it has fewer than 1,000 CJK code points. Its coverage is "extended" when at most 3 of GF_Latin_Core's code points are missing. A letter's script is its Unicode Script property, and letters of the Common, Inherited and Unknown scripts are not counted. These are the owner's gate L1 thresholds of 2026-09-26, in `config/ranking.toml [latin]`.
+- A Google family served only with Google's `menu` subset (the Playwrite families and Allkin) has no metadata to judge, so it takes the same test on its files (gate L, 2026-09-26).
 - Families that are mainly CJK (Sarasa, LXGW WenKai, D2Coding) are out.
 
 **Text only.** Excluded:
@@ -147,19 +148,19 @@ S_g(f) = (κ·W_g·μ0 + Σ w_s·z_s(f)) / (κ·W_g + Σ w_s), with κ = 0.2 and
 
 A font covered by every source keeps 83% of its signal; one covered by a third of the weight keeps 63%.
 
-**Outlier guard:** when a font has at least 3 terms and one source sits more than 1.5 z from the mean of the others, that source gets half weight for that font. The event is logged.
+**Outlier guard:** when a font has at least 3 terms and one source sits more than 1.5 z from the median of all the font's terms, that source gets half weight for that font. All terms are judged against the unguarded values at once, and the event is logged. (The owner's ruling of 2026-09-26; ruling M1 had compared each term with the mean of the others.)
 
-**Overall:** the same formula over all project terms and the *most chosen* desktop terms: a Linux source that abstains for a font in *most chosen* abstains in overall too. Each source is weighted v_s = M_g·w_s / W_g, where M_g is survey g's share of the overall mix (D12), and shrunk once (with Σ M_g in place of W_g). A desktop-only font gets censored terms from the web crawls, not a placeholder.
+**Overall:** the same formula over all project terms and the *most chosen* desktop terms: a Linux source that abstains for a font in *most chosen* abstains in overall too. Each source is weighted v_s = M_g·w_s / W_g, where M_g is survey g's share of the overall mix (D12), and shrunk once (with Σ M_g in place of W_g). W_g uses the effective weights (after phase-in, overlap scaling, stale drops and switched-off sources), and the overall rank reuses each survey's guard factors rather than running the guard again. A desktop-only font gets censored terms from the web crawls, not a placeholder: the crawls' frame is every eligible font.
 
 **Worked example** (Homebrew 1.0, Arch 0.75, Debian 0.25; κ·W = 0.4; live values from 2026-09-25):
 
 | Font | z (Homebrew, Arch, Debian) | Score |
 |---|---|---|
-| JetBrains Mono | 3.54, 2.70, 1.59 | 2.53 |
+| JetBrains Mono | 3.54, 2.70, 1.59 | 2.48 |
 | Inter | 2.99, 2.29, 1.77 | 2.15 |
 | Monaspace | 2.92, 1.77, no Debian package | 1.98 |
 
-For JetBrains Mono the outlier guard fires: Debian's 1.59 sits 1.53 z below the mean of the other two (3.12), more than the 1.5 gap, so Debian gets half weight (ruling M1).
+For JetBrains Mono the outlier guard does not fire: the median of its terms is Arch's 2.70, and Debian's 1.59 sits 1.11 z below it, within the 1.5 gap (the owner's ruling of 2026-09-26). Under ruling M1's first reading, the mean of the other two (3.12), Debian sat 1.53 z away and got half weight, for a score of 2.53.
 
 The missing Debian package costs Monaspace only a slightly stronger pull toward the middle: it keeps 81% of its signal instead of 83%. RRF would have scored it as if Debian users had rejected it.
 
@@ -185,7 +186,7 @@ In both views, affected fonts carry a tag naming the systems they come with or t
 
 | Source | Weight | Handling |
 |---|---|---|
-| Homebrew cask installs, 365 days (macOS) | 1.0 | subtract a bulk-install floor of 20 a year; Nerd casks instead get their own floor each run, the 10th percentile of Nerd casks' 365-day installs (about 2,150 a year), subtracted before `nerd_credit` (ruling M3); under 60 a year is censored |
+| Homebrew cask installs, 365 days (macOS) | 1.0 | subtract a bulk-install floor of 20 a year from each cask; Nerd casks instead get their own floor each run, the 10th percentile of Nerd casks' 365-day installs (about 2,150 a year), subtracted before `nerd_credit` (ruling M3); a family under 60 a year after the floors is censored |
 | Arch pkgstats, share of systems | 0.75 | mean of the monthly shares over 12 complete months; subtract the Nerd Fonts group floor: the 10th-percentile share of members that have been in the group at least 6 months, with newer members not floored (ruling M4); under 0.3% is censored |
 | GitHub release downloads (only repos that are the main download channel) | 0.5 | change between snapshots (see below) |
 | Nerd Fonts release downloads, credited to the original font | 0.3 | subtract the 10th-percentile floor; Symbols Only is dropped |
@@ -200,8 +201,8 @@ In both views, affected fonts carry a tag naming the systems they come with or t
   - months 2–11: (latest − earliest snapshot) ÷ days between them;
   - from month 12: the 12-month difference.
 
-  Only assets present in both snapshots count. Negative differences (deleted or re-uploaded assets) are clamped to 0 and flagged. Every release of a main-channel repo is counted, with no cap by date, because old releases still dominate: FiraCode's latest release is from 2021 and JetBrains Mono's from 2023. Iosevka, with over 400 releases, is the exception: only its latest 24 releases are fetched, through GitHub's GraphQL API (ruling M2).
-- **Linux dependency correction (every rank except *most installed*).** In *most chosen*, the overall rank and the Coding view, a Linux source abstains for a font when the font's top reverse Depends/Recommends/Provides accounts for at least 50% of its installs, or when the owner's preinstalled list names the font for a Linux distribution or desktop. Windows, macOS and Android entries on that list only add `preinstalled_on` tags and never cause an abstention. The test uses the largest single dependent, not the sum of all dependents. When a package depends on alternatives (`a | b`), only the first alternative counts as pulled in. A largest dependent at 35–50% is flagged for the owner's review (ruling M8). Dependencies are parsed from:
+  An asset present in both snapshots counts its growth, and an asset created after the earlier snapshot counts its whole count, since its baseline is 0 (owner ruling of 2026-09-26); an older asset the earlier snapshot lacks is ignored. Negative differences (deleted or re-uploaded assets) are clamped to 0 and flagged. Every release of a main-channel repo is counted, with no cap by date, because old releases still dominate: FiraCode's latest release is from 2021 and JetBrains Mono's from 2023. Iosevka, with over 400 releases, is the exception: only its latest 24 releases are fetched, through GitHub's GraphQL API (ruling M2).
+- **Linux dependency correction (every rank except *most installed*).** In *most chosen*, the overall rank and the Coding view, a Linux source abstains for a font when the font's top reverse Depends/Recommends/Provides accounts for at least 50% of its installs, or when the owner's preinstalled list names the font for a Linux system whose installs that source counts: Arch-family systems (CachyOS, EndeavourOS) silence Arch pkgstats only, Debian and Ubuntu silence popcon only, and desktops (GNOME, KDE Plasma) silence both (owner ruling of 2026-09-26). Windows, macOS and Android entries on that list only add `preinstalled_on` tags and never cause an abstention. A Linux source counts a family by its most-installed package, not the sum of its packages, since one system installs each package once (owner ruling of 2026-09-26); the dependency share uses the same basis. The test uses the largest single dependent, not the sum of all dependents. When a package depends on alternatives (`a | b`), only the first alternative counts as pulled in. A largest dependent at 35–50% is flagged for the owner's review (ruling M8). Dependencies are parsed from:
   - Arch core/extra;
   - the CachyOS and EndeavourOS repository databases (cachyos-kde-settings, on 3.57% of Arch systems in Aug 2026, requires ttf-fantasque-nerd, ttf-fira-sans and noto-fonts);
   - Debian's Packages.xz.
@@ -241,7 +242,7 @@ In both views, affected fonts carry a tag naming the systems they come with or t
 - **Almanac.**
   - The term comes from the pages tab (pages declaring the font; gid 1668708562).
   - Families it doesn't list are censored.
-  - Its name regex folds Condensed, Narrow and Black cuts into the parent. Those cuts count as not covered, and the parent's term is flagged and halved. The requests-by-service tab (gid 1594814478; top 100 per service) is used only to flag these parent merges and adds no term of its own (ruling M6).
+  - Its name regex folds Condensed, Narrow and Black cuts into the parent. Those cuts count as not covered, and the parent's term is flagged and its weight halved (its value is unchanged). The requests-by-service tab (gid 1594814478; top 100 per service) is used only to flag these parent merges and adds no term of its own (ruling M6).
   - A new edition arrives yearly. The sheet id and tabs are set in config and switched in one step, flagged in that month's pull request.
 - **Google.** Google is counted once. The metadata `popularity` field is dropped, except as a fallback, because it tracks 7-day views almost exactly (Spearman 0.998). The Top 100 counted Google twice. Google's view counts are used only to rank fonts and are never published (ruling T2).
 - **npm.**
@@ -276,7 +277,7 @@ These never feed the overall rank.
   - Covers monospace families.
   - Weights: Nerd release downloads 1.0, Homebrew 1.0, Arch 0.75, GitHub 0.5, Fontsource npm 0.5, ~~Chocolatey 0.25~~ (dropped in v1, ruling T3). Arch uses the *most chosen* abstentions.
   - On the site, a spacing filter (Any / Proportional / Monospaced) replaces the "Text only" filter planned for both desktop views. *Proportional* hides monospace and coding fonts, as "Text only" would have, and the filter works on every rank (owner ruling, 2026-09-25).
-- **Developers & apps.** Separates what builders choose from web traffic. Its weights are the project weights, rescaled: Fontsource npm 0.15, ecosyste.ms dependents 0.10, Expo 0.10, and Flutter 0.05 when it is on (ruling M10).
+- **Developers & apps.** Separates what builders choose from web traffic. Its weights are the project weights, rescaled: Fontsource npm 0.15, ecosyste.ms dependents 0.10, Expo 0.10, and Flutter 0.05 when it is on (ruling M10). While Flutter is off, all its sources share one independence group, so no font can pass the two-group gate: the view is published as bands only, labelled as such, until a second independent source is on (owner ruling of 2026-09-26).
 - **By category.** The overall scores filtered by sans, serif, display, handwriting and mono.
 - **Rising (beta).** Feeds "New popular free fonts this month".
   - Per source, the log-ratio of recent share to 12-month *share*, not counts: npm keeps growing overall, and Homebrew's 30-day total fell to about 20% of its 90-day total.
@@ -324,7 +325,7 @@ These never feed the overall rank.
 - A font enters at rank 450 or better and leaves after 2 runs below 550. This also caps the monthly license review.
 - Top-100 membership has its own hysteresis: a font enters a top 100 at 90 or better and leaves after 2 runs worse than 110 (ruling M11).
 
-**Confidence.** A 5–95% rank range from 200 Dirichlet weight perturbations plus leave-one-source-out runs.
+**Confidence.** A 5–95% rank range from 200 Dirichlet weight perturbations plus leave-one-source-out runs. Each draw re-weights a survey's sources with Dirichlet(20·w/W), across all its sources, so the project group shares vary too (owner ruling of 2026-09-26); the overall mix M_g is not perturbed.
 
 - Tier A: at least 2 groups, and a range no wider than max(10, 0.3·rank).
 - Tier B: a range no wider than the rank.

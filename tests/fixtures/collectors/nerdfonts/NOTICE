@@ -8,6 +8,12 @@ http/commits.json keeps only the sha and commit time of that commit from the
 GitHub API's answer (no names or emails). The ETags in http/index.json are
 invented.
 
+http/tree.json is GitHub's git trees answer for src/unpatched-fonts at that
+commit (recursive), trimmed to the folders of those 16 entries: their
+sub-folders, preview font files and license, read-me and copyright files
+(86 of 1,182 entries; file paths and blob hashes only). snapshot/licenses.json
+is what the collector keeps of it.
+
 The file is under the MIT License, as the Nerd Fonts LICENSE says of source
 files not in folders containing an explicit license:
 

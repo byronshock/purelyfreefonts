@@ -1,0 +1,25 @@
+# Owner rulings of 2026-09-26, given in chat after integration A (the first real run). Ruled by
+# the owner, Byron Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml).
+# Also in AUTHORITY.md. Where the owner picked Claude's recommendation, the reason is Claude's summary.
+
+[CI1]
+choice = "a"
+recommended = true
+ruling = "Claude allows Actions to create pull requests; the refresh job opens the PR with GITHUB_TOKEN and dispatches ci.yml on refresh/monthly"
+reason = "Claude's recommendation. Claude turns on \"Allow GitHub Actions to create and approve pull requests\" and creates the data repository's deploy key and the DATA_STORE_KEY secret with gh when step 19 is ready."
+
+[CI2]
+choice = "a"
+recommended = true
+ruling = "A VPS timer opens a GitHub issue with a fine-grained token (issues: write, this repo only) that the owner creates"
+reason = "Claude's recommendation. The owner creates the fine-grained token (Issues read and write, this repository only) after the first refresh pull request; Claude sends a checklist then."
+
+[cf_managed_robots]
+value = "off"
+ruling = "Turn off Cloudflare's managed robots.txt, through the API if the token can, else with an owner dashboard checklist."
+reason = "Claude's recommendation: the site serves its own robots.txt (M2-D8)."
+
+[deploy_rules]
+value = "accept_all_four"
+ruling = "Four deploy rules: the PRODUCTION_DEPLOYS gate stays off until Milestone 2 step 14; staging builds from the sample while there is no real catalog; the EU vantage check is skipped; production keeps header phase A (no CSP) until the stub's style is external."
+reason = "Claude's recommendation."

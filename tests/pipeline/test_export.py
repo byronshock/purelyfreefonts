@@ -829,10 +829,29 @@ def test_fonts_over_time_z_is_the_smoothed_one_the_ranking_used(tmp_path: Path) 
     assert [str(f) for f in hard_checks(ctx)] == []
 
 
-def test_a_member_without_stage_data_fails_the_export(tmp_path: Path) -> None:
+def test_a_member_without_an_accepted_link_is_held_back(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    # Stage "links" leaves out a family no two sources agree on (gate K decides); every
+    # catalog font needs a primary link, so the export holds it back instead of failing.
     ctx = make_build(tmp_path)
     stageio.dump_stage(ctx.paths, "links", {k: v for k, v in links().items() if k != "gamma-serif"})
-    with pytest.raises(export.ExportError, match=r"gamma-serif \(links\)"):
+    with caplog.at_level(logging.WARNING):
+        docs = run_all(ctx)
+    assert "gamma-serif" not in fonts(docs[export.CATALOG_FILE])
+    assert "gamma-serif" not in fonts(docs[export.SITE_FILE])
+    assert "held back until gate K accepts a download link: gamma-serif" in caplog.text
+    assert export.Inputs(ctx.paths).unlinked == ("gamma-serif",)
+    from tff_catalog.validate import hard_checks
+
+    assert [str(f) for f in hard_checks(ctx)] == []
+
+
+def test_a_member_without_stage_data_fails_the_export(tmp_path: Path) -> None:
+    ctx = make_build(tmp_path)
+    facts = stageio.load_stage(ctx.paths, "facts")
+    stageio.dump_stage(ctx.paths, "facts", {k: v for k, v in facts.items() if k != "gamma-serif"})
+    with pytest.raises(export.ExportError, match=r"gamma-serif \(facts\)"):
         export.run(ctx)
 
 

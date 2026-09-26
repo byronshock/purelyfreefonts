@@ -204,9 +204,9 @@ def test_a_flagged_license_must_be_queued(ctx: StageContext) -> None:
     assert ids(found["license_queue"]) == {"zeta-sans"}
 
 
-def test_a_license_awaiting_a_ruling_is_ranked_but_never_catalogued(ctx: StageContext) -> None:
-    """Stage "correct" keeps a family whose license waits for the owner (L3 then fails it
-    if it nears the catalog); only the catalog must hold allowed, verified licenses."""
+def test_a_license_awaiting_a_ruling_is_neither_ranked_nor_catalogued(ctx: StageContext) -> None:
+    """A license waiting for the owner is unverified: filter first (methodology §1 and §9),
+    so it may take no term, no place and no catalog entry until the ruling."""
     edit_stage(
         ctx,
         "terms",
@@ -215,6 +215,11 @@ def test_a_license_awaiting_a_ruling_is_ranked_but_never_catalogued(ctx: StageCo
     edit_stage(
         ctx, "ranks", lambda r: r["project"].update({"zeta-sans": Placement(7, 7, None, False)})
     )
+    found = rerun(ctx)["ineligible_ranked"]
+    assert ids(found) == {"zeta-sans"}
+    assert found[0].message.startswith("ineligible: license, but placed in project")
+    edit_stage(ctx, "terms", lambda t: t["project"]["google"].pop("zeta-sans") and None)
+    edit_stage(ctx, "ranks", lambda r: r["project"].pop("zeta-sans") and None)
     assert rerun(ctx) == {}
     edit_stage(
         ctx,
@@ -233,7 +238,7 @@ def test_a_license_awaiting_a_ruling_is_ranked_but_never_catalogued(ctx: StageCo
     )
     found = rerun(ctx)["ineligible_ranked"]
     assert ids(found) == {"zeta-sans"}
-    assert found[0].message == "license not allowed (ruling), but in catalog.json"
+    assert found[0].message == "ineligible: license, but in catalog.json"
 
 
 def drop_everywhere(ctx: StageContext, fid: str) -> None:
@@ -886,3 +891,71 @@ def test_committed_build_outputs_validate() -> None:
         from tff_site.data import validate as validate_site
 
         validate_site(jsonio.load(ROOT / "build" / export.SITE_FILE))
+
+
+# --- the committed outputs alone (validate --committed) --------------------------------------
+
+
+def test_the_committed_checks_pass_on_a_clean_build(ctx: StageContext) -> None:
+    assert [str(f) for f in validate.hard_checks(ctx, validate.COMMITTED_CHECKS)] == []
+    assert validate.cmd_committed(ctx) == 0
+
+
+def test_a_hole_in_the_exact_ranks_fails(ctx: StageContext) -> None:
+    catalog = ctx.paths.build / export.CATALOG_FILE
+    doc = jsonio.load(catalog)
+    ranked = [f for f in doc["fonts"] if f["ranks"]["overall"]["rank"] is not None]
+    assert len(ranked) >= 2
+    doc["fonts"] = [f for f in doc["fonts"] if f["ranks"]["overall"]["rank"] != 1]
+    jsonio.dump(doc, catalog)
+    found = [
+        f for f in validate.hard_checks(ctx, validate.COMMITTED_CHECKS) if f.check == "rank_gaps"
+    ]
+    assert [f.message.split(" (")[0] for f in found] == ["overall: exact ranks 1 are missing"]
+    assert validate.cmd_committed(ctx) == 1
+
+
+def test_a_ranks_only_source_holds_nothing_else_in_any_committed_file() -> None:
+    private = frozenset({"google", "fot"})
+    ok = {"sources": {"google": {"rank_in_source": 3, "z": 1.2, "state": "observed"}}}
+    assert list(validate.private_fields(ok, private)) == []
+    leak = {
+        "fonts": [{"sources": {"google": {"z": 1.0, "value": 5}}}],
+        "rising": {"google": {"inter": [0.1]}, "homebrew": {"inter": [0.2]}},
+        "fot": 12,
+    }
+    assert list(validate.private_fields(leak, private)) == [
+        "/fonts/0/sources/google",
+        "/fot",
+        "/rising/google",
+    ]
+
+
+def test_committed_known_answers_read_names_json(ctx: StageContext) -> None:
+    names_path = ctx.paths.build / export.NAMES_FILE
+    names = jsonio.load(names_path)
+    names["families"] += [
+        {
+            "id": "source-sans-3",
+            "family": "Source Sans 3",
+            "names": [],
+            "distinct_from": [],
+            "in_catalog": False,
+            "superfamily_id": None,
+        },
+        {
+            "id": "source-sans-pro",
+            "family": "Source Sans Pro",
+            "names": [],
+            "distinct_from": [],
+            "in_catalog": False,
+            "superfamily_id": None,
+        },
+    ]
+    jsonio.dump(names, names_path)
+    found = [
+        f for f in validate.hard_checks(ctx, validate.COMMITTED_CHECKS) if f.check == "known_answer"
+    ]
+    assert [f.message for f in found] == [
+        "Source Sans Pro must resolve to Source Sans 3 (source-sans-3)"
+    ]

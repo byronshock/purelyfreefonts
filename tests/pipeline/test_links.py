@@ -1008,7 +1008,14 @@ def test_links_check_fails_on_a_missing_or_broken_primary(
     build_world(paths, members=["inter", "abel", "fira-code", "solo"])
     pages = {**WORLD_PAGES, "https://ok.example/": (404, None)}
     links.run(context(paths, Web(pages).fetcher()))
-    assert links.cmd_check(context(paths, Web(pages).fetcher())) == 1
+    recorded = sorted(p.read_bytes() for p in (paths.store / links.CHECKS_SOURCE).rglob("*.*"))
+    web = Web(pages)
+    assert links.cmd_check(context(paths, web.fetcher())) == 1
+    # It reads the day's recorded answers only: no request, and the snapshot is unchanged,
+    # even for the URL whose recorded answer is not 200.
+    assert web.requests == []
+    after = sorted(p.read_bytes() for p in (paths.store / links.CHECKS_SOURCE).rglob("*.*"))
+    assert after == recorded
     out = capsys.readouterr().out
     assert "FAIL solo: no accepted link (gate K)" in out
     assert "FAIL fira-code: primary https://ok.example/: HTTP 404" in out

@@ -1,8 +1,16 @@
 # gitleaks configuration for the CI "secrets" job.
-# It extends gitleaks' built-in rules and allowlists nothing yet. Add an allowlist
+# It extends gitleaks' built-in rules. Add an allowlist
 # entry only for a reviewed false positive, with a comment saying why.
 
 title = "trulyfreefonts"
 
 [extend]
 useDefault = true
+
+# Reviewed false positive (2026-09-26): the specimen render index keys each specimen by the
+# sha256 of what it was drawn from (font file, text, renderer), in a field named "key", which
+# the generic-api-key rule reads as a secret. The file holds only public hashes and paths.
+[[allowlists]]
+description = "specimen render index: sha256 cache keys"
+targetRules = ["generic-api-key"]
+paths = ['''^build/specimens/index\.json$''']

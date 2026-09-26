@@ -1,0 +1,21 @@
+# Owner rulings of 2026-09-26, given in chat after integration A (the first real run). Ruled by
+# the owner, Byron Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml).
+# Also in AUTHORITY.md. Where the owner picked Claude's recommendation, the reason is Claude's summary.
+
+[L1]
+choice = "a"
+recommended = true
+value = "relaxed"
+ruling = "The relaxed thresholds, measured on the first real run: at most 2 GF_Latin_Kernel code points missing; a Latin share of at least 30%; coverage \"extended\" with at most 3 GF_Latin_Core code points missing, of any kind; under 1,000 CJK code points. In ranking.toml [latin] (kernel_missing_max, core_missing_max, latin_share_min)."
+reason = "Claude's recommendation after measuring: the strict Kernel test failed fonts that lack only the trademark sign or the minus (Fantasque Sans Mono), and 40% failed pan-Unicode fonts with complete Latin (DejaVu Sans, FreeSerif, JuliaMono)."
+
+[menu_only_google]
+value = "glyph_test"
+ruling = "Google families served only with the menu subset (104 Playwrite families and Allkin) take the non-Google glyph test automatically."
+reason = "Claude's recommendation: Google's metadata says nothing about their script."
+
+[L-single-day]
+choice = "b"
+recommended = false
+ruling = "Keep it out"
+reason = "Mainly CJK (a Korean font with no primary script); the gate L ruling keeps it out."

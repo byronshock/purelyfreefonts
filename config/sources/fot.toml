@@ -26,7 +26,8 @@ methods = ["browser", "static"]
 dominant_share = 0.05
 
 # Names of no particular font, dropped (lower case): CSS generic families and
-# keywords, and browsers' aliases for the system font.
+# keywords, and browsers' aliases for the system font. "sans" and "system" were added by
+# the owner's gate U ruling of 2026-09-26 (U_rules).
 generic_names = [
   "-apple-system",
   "-webkit-body",
@@ -43,8 +44,10 @@ generic_names = [
   "monospace",
   "revert",
   "revert-layer",
+  "sans",
   "sans-serif",
   "serif",
+  "system",
   "system-ui",
   "ui-monospace",
   "ui-rounded",

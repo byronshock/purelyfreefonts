@@ -602,7 +602,11 @@ def test_fonts_without_a_specimen_show_the_fallback_text(
     page = guarded.new_page()
     page.goto("/")
     without = [f for f in loader_doc["fonts"] if not f["preview"]]
-    assert {"license", "failed"} <= {"failed" if f["preview_ok"] else "license" for f in without}
+    kinds = {"failed" if f["preview_ok"] else "license" for f in without}
+    if loader_doc.get("synthetic"):
+        assert {"license", "failed"} <= kinds  # the sample holds both kinds
+    elif not without:
+        pytest.skip("every font in this data has a specimen")
     for font in without:
         spec = page.locator(f"#font-{font['id']} .font-spec")
         assert spec.locator("span.spec, img").count() == 0

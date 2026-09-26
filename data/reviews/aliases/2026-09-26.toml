@@ -1,0 +1,364 @@
+# Owner rulings of 2026-09-26, gate A (the alias queue of the first real run), given in chat after
+# integration A. Ruled by the owner, Byron Shock; recorded by Claude from the lead's notes
+# (design/rulings-2026-09-26.toml: A_structure, A_cleanup, A_sources). Only the rows those rulings name
+# are answered here; the distro rows wait for research into the packages' contents (A_sources).
+# The hand rows the rulings add (bundles, build folds) are in data/aliases.csv (source hand).
+
+[A_sources_github]
+choice = "a"
+recommended = true
+items = ["A-001347e3bc", "A-0053976f3e", "A-00d782291d", "A-01437feb40", "A-01d38bd074", "A-0254766730", "A-0254fc55aa", "A-0259307462", "A-028aadbb91", "A-02d453087a", "A-02d81a7ca0", "A-02dd3f3c7c", "A-033d7066e7", "A-034452e6cb", "A-036cb7a66c", "A-03702e1e02", "A-03b3a47e87", "A-04a09de8b2", "A-04b14326d6", "A-04d1cf4688", "A-04dd13138d", "A-0502a9aac5", "A-0506979703", "A-059d44d782", "A-05a9762948", "A-05d8aa3f30", "A-05f1271b78", "A-0641bc1cd1", "A-070fbc780d", "A-074601501a", "A-074fbd3bc4", "A-0791a9f9a8", "A-08999fb88d", "A-08adbfc091", "A-08bc8ae0b8", "A-09237094a4", "A-093eb14bbc", "A-09a1798c3f", "A-09cc071110", "A-0a2410a4b0", "A-0a4f99c6cf", "A-0ad1e470cf", "A-0af0b2775d", "A-0b4df669f8", "A-0b785677a2", "A-0c5be2861c", "A-0cacad4bc3", "A-0cf47b80bc", "A-0d1b738968", "A-0d1f072a63", "A-0d2e289906", "A-0d33a52573", "A-0d50a32f0e", "A-0d6a948a61", "A-0d94236314", "A-0dce1c9567", "A-0e6c504853", "A-0e7d2fdd91", "A-0e80a3beec", "A-0e91a89a46", "A-0ea7652117", "A-0f43e4f67f", "A-0f470867c8", "A-0f934ca871", "A-1000272924", "A-100ac159e1", "A-100afac36c", "A-102ae47775", "A-10aead9786", "A-1130f4a1a5", "A-11afc7a720", "A-11bbbf61d1", "A-11cfede412", "A-11db732fab", "A-11ede97429", "A-1234c412ea", "A-12ad0477b0", "A-12ee731aa4", "A-13db219f14", "A-143cf0e9cd", "A-1440072d45", "A-145e0a2f33", "A-149403f13a", "A-15216b60c8", "A-15e9d4f004", "A-1661b0bef9", "A-1662ffaf78", "A-1687536fe3", "A-171c591d67", "A-1724ab96c8", "A-179f44e768", "A-17ca987185", "A-186fb6d959", "A-18c4733a91", "A-19646b2323", "A-1a15a851d8", "A-1a21546315", "A-1a9afb5609", "A-1ab18dff62", "A-1ac4cf17eb", "A-1b848bc602", "A-1b8bb20b9b", "A-1ba42c0172", "A-1bc5cf32d4", "A-1c2de3c185", "A-1c73a7cb68", "A-1d1d9917d1", "A-1d6bcfdba7", "A-1d9b5bd02b", "A-1df91c9dba", "A-1dfe679cc0", "A-1e15fd6382", "A-1e5e70b9f0", "A-1e70742ac9", "A-1f6212f69a", "A-1f73cdf665", "A-1f81c1cb7f", "A-1f9158006a", "A-1fcaa12f9d", "A-202f396ac0", "A-20821f2417", "A-210e080211", "A-2114a99a20", "A-212ba496d9", "A-221c7dcecd", "A-22257af082", "A-2230186d6e", "A-2244ebe887", "A-226ddd0a07", "A-2274bbe136", "A-23309f760d", "A-235368e2a8", "A-235cdb6cd2", "A-235f38fa80", "A-24a84d3a24", "A-25913e0338", "A-25d5d6998d", "A-26066bafd7", "A-268045e031", "A-268a0ed89a", "A-26990756e7", "A-2736c2c8b2", "A-282f4fea2a", "A-28676fb108", "A-28730bcadc", "A-28e2b0f5de", "A-29f26bf0a6", "A-2a1b465cb8", "A-2a8e416758", "A-2a8fb0fb29", "A-2ab9558c93", "A-2acf7503ce", "A-2b43bbc983", "A-2be6198177", "A-2c50372f9a", "A-2cdcf51808", "A-2d05d9c41d", "A-2d44df5ae5", "A-2d785bc45e", "A-2d7b40622c", "A-2de64f4e7b", "A-2e3a240211", "A-2ea2c5edab", "A-2ebc82f70c", "A-2ed290532a", "A-2ef541e89f", "A-2f68cbeb21", "A-2ff47f500b", "A-30724c54c3", "A-3076281f19", "A-3086ade177", "A-3143aefeab", "A-3193ef62c0", "A-31c3c9617a", "A-31d797c796", "A-32aa763f80", "A-32bb892877", "A-32f161f0f0", "A-3310091df3", "A-333ed86007", "A-33634d509a", "A-33b7a7ac16", "A-33c8552a0e", "A-33e13bafe3", "A-349e5da86d", "A-34a782b23c", "A-34bac164a9", "A-34cdc78fe2", "A-3517a3335e", "A-35bd360904", "A-35dd1c07d5", "A-361b91fa66", "A-36730ccbfb", "A-368793caf1", "A-3689458b4f", "A-36a9d54c7b", "A-36b0be246b", "A-36e0f98185", "A-36e1423032", "A-3705f02bc9", "A-372cd8e407", "A-3748e16237", "A-37a4617558", "A-38430bacbc", "A-3874a46289", "A-3885c691ec", "A-3896478663", "A-389a677d58", "A-390275fd53", "A-39c506d6b5", "A-3a291ae1bb", "A-3a2e14f99c", "A-3a46619b6e", "A-3a873780ca", "A-3b1c5fec63", "A-3b4c5a89cf", "A-3b509d354c", "A-3b602483e7", "A-3b62299ac4", "A-3be964ddd5", "A-3bfa3afe86", "A-3c95bb46d6", "A-3cce46e30c", "A-3cd4efcc51", "A-3cdf966a44", "A-3cf27a1f6b", "A-3cf51969f0", "A-3cff9b11f9", "A-3d532afce7", "A-3d9ef6b8e0", "A-3db7c63dcc", "A-3de8cf31ec", "A-3dfb40393c", "A-3e15a4a100", "A-3fe9d24a65", "A-3ffb4fdccb", "A-40103d71d2", "A-405eb68b4e", "A-4101b50066", "A-4108d21a3b", "A-41c822e55f", "A-41caf04873", "A-4201f9761c", "A-42a31c2b67", "A-430629b65a", "A-4312f38e72", "A-43157baf9c", "A-43282355b8", "A-4459fbab89", "A-44fc96d31d", "A-45ae8a710f", "A-45e2736ab3", "A-45ecc9af19", "A-460609e296", "A-46834eda1f", "A-47821ca9c9", "A-47cb5c2767", "A-48586e535d", "A-48d8c09db9", "A-492a2337cf", "A-4a23473164", "A-4af80b9dad", "A-4bafc91efc", "A-4be471ba74", "A-4bea56b945", "A-4c64f97329", "A-4c89b005f0", "A-4d65fc1a47", "A-4d6c5220e8", "A-4da24bbf0f", "A-4db518a6b8", "A-4dc4934d9e", "A-4e2b517a6c", "A-4e845b1626", "A-4efc11b7c6", "A-4f98a737c6", "A-4fb33cb8bf", "A-4fee5c8d72", "A-505e79c0a6", "A-509e113d3f", "A-50b8143859", "A-51110004e1", "A-51281d8157", "A-5145c3c4c8", "A-51a7f04725", "A-51ce8a7c06", "A-5260ccb5dd", "A-52bf83f95d", "A-52e4373af0", "A-52eee32550", "A-53173592ef", "A-53614b55d0", "A-542e3b51c9", "A-5442a7a958", "A-54a732bd70", "A-54bf0317d0", "A-54e4b93c5c", "A-5527d12032", "A-552a71fc20", "A-5561373b12", "A-558777a2d1", "A-5590d41f86", "A-559b990c4b", "A-55c9db9d6f", "A-55f7df2926", "A-564ad96910", "A-56a4a2cb47", "A-5729661042", "A-57b454f149", "A-57ccedaab1", "A-57cdea3617", "A-57e738e73e", "A-58188036e5", "A-58a30ad850", "A-58d3f0fb73", "A-58d4731267", "A-599dedfd4d", "A-5a47570273", "A-5aacc91015", "A-5ab65339be", "A-5ac3959071", "A-5af2c433aa", "A-5b6a283ff6", "A-5b767640bd", "A-5bf5ac2663", "A-5c163f13fd", "A-5c579358ec", "A-5cc7250b56", "A-5d2211fbe9", "A-5d5fceccd5", "A-5ecbed6893", "A-5efe1a646b", "A-5faaf27770", "A-5fb22699b4", "A-601c9d04fc", "A-60278770da", "A-605286b477", "A-60a0afb186", "A-60acc8f7c4", "A-62011be7f1", "A-6259336c22", "A-635c85930f", "A-63c590d62b", "A-63fd76e95f", "A-641daa3fab", "A-646db97641", "A-64d09be092", "A-6611a48b40", "A-6635a8f8d2", "A-668101a342", "A-6685d85ba8", "A-668bd6e2d2", "A-668d7bef4d", "A-670c7352a6", "A-676371d030", "A-6782b5b153", "A-679693133a", "A-67aa92d90e", "A-67c530c1c4", "A-6878b29593", "A-68dd7bb6b3", "A-6a89890f5a", "A-6ad9314faa", "A-6adae18fda", "A-6b0b5c1aef", "A-6b746512a2", "A-6be477da7e", "A-6c1000cc81", "A-6c76c560a9", "A-6c8f7c843a", "A-6cce54b285", "A-6d75928e33", "A-6d976080ea", "A-6e137f6341", "A-6e5621743b", "A-6e5ffeccb1", "A-6ed0e7dff1", "A-6f0de95fc5", "A-6f47a67106", "A-6fb8fd3168", "A-6ff7255842", "A-6ff8a0ccb1", "A-7010bc6c64", "A-706ac40734", "A-707f5af2f2", "A-713146b267", "A-718b353339", "A-7275331460", "A-7289873292", "A-729458594b", "A-73857a6a3c", "A-7385d16762", "A-73d31fec03", "A-73d8a8e89b", "A-740471aa51", "A-740a7b301f", "A-7420944594", "A-7426d3d7a2", "A-7475c3c0d2", "A-7475d42c2d", "A-747bca8744", "A-762410277b", "A-763f073b4b", "A-7664371434", "A-76cf01034d", "A-76d473a053", "A-77a9d1f1f3", "A-77ab822972", "A-77cd7bbbc2", "A-77da946432", "A-78239e16ad", "A-783a7fc8ec", "A-7850f1b407", "A-78a82ec0b3", "A-79597344e4", "A-79c3e1a9bd", "A-79d2bf0900", "A-79d77992ba", "A-7a14543545", "A-7a8a370119", "A-7b215e995f", "A-7b8bb03674", "A-7b91370c16", "A-7c23d15b5e", "A-7c92a52392", "A-7c9a821381", "A-7cc88b4ee6", "A-7cd695b808", "A-7ce07a6a85", "A-7d70bd66c6", "A-7dc2f5b455", "A-7df65d397d", "A-7e334debf2", "A-7e4cb6014a", "A-7e4fbe411e", "A-7f692780ab", "A-7fa54b745a", "A-7fe1306c10", "A-8011f1e049", "A-801bec9270", "A-801e09a126", "A-804546dd96", "A-80880d0cd4", "A-813e8cbd72", "A-817e5e13a9", "A-8213843cb8", "A-822d798902", "A-826a5efa5b", "A-83005ec480", "A-8342428ee4", "A-835a0061a1", "A-83affdaa32", "A-83ed49bd02", "A-8437302f0f", "A-84380b5ff2", "A-843a580b05", "A-844351b8b4", "A-854543a1a2", "A-85775b6fa0", "A-85a1607fee", "A-85ae88c82e", "A-867a304e9d", "A-867c03f2eb", "A-8714586020", "A-8727b4fc2e", "A-87852a5fec", "A-88753f6b3c", "A-888742231a", "A-89500d4dce", "A-8975d74e35", "A-89776619b8", "A-898a1bc72b", "A-8a32f9333f", "A-8a4f9b19c9", "A-8afd84ef66", "A-8afdf8d8d9", "A-8c349133fc", "A-8c61192858", "A-8cc46129fe", "A-8d295f700d", "A-8d913557f8", "A-8dc7a89bc0", "A-8e12dc3b28", "A-8e1e619a38", "A-8e2b0d4707", "A-8e3c1df8c8", "A-8e4e6e5c1b", "A-8e53d641af", "A-8ea5bf78b3", "A-8ecdfad1fd", "A-8eecf8d975", "A-8f2d4b7b07", "A-8f62d71e87", "A-8f6fe6fbcb", "A-8f75db2f91", "A-8f9921c981", "A-8fb14b486b", "A-90330b3f0e", "A-908d4780c7", "A-908ed7f36c", "A-90a5ecd184", "A-90b59ca30e", "A-90cbfb0cb9", "A-9139c4a8fb", "A-91eedcf3b3", "A-920985b1b0", "A-92136bd8b2", "A-92167a2d84", "A-9263c84df2", "A-92907cd85c", "A-929f4d70bf", "A-931d18b3a3", "A-9325195a0f", "A-936573e92e", "A-93bdaaab98", "A-9443269905", "A-94940bd334", "A-949760c5c5", "A-94a842e6ba", "A-94da756526", "A-94edb044c7", "A-94f7d7808d", "A-9501c5dfa3", "A-95a3f8303b", "A-96ec552bad", "A-96f0d74e99", "A-9704a386e6", "A-976d30f37d", "A-97cfb54d97", "A-9849dbd653", "A-98f2515e0e", "A-993e581fc2", "A-994ea6c5aa", "A-9985a3bd72", "A-99fff814f4", "A-9a2fadaddb", "A-9a59acb8e8", "A-9a5d3b729d", "A-9a803737b7", "A-9ac3b8d0e2", "A-9af91c9ed6", "A-9c594b9592", "A-9c788ec516", "A-9cacb25c83", "A-9caf6bce2f", "A-9d640ee054", "A-9d9dca66b3", "A-9ddb516fbc", "A-9e4ad401ff", "A-9f0999c9b8", "A-9f1c717380", "A-9f9b4f35c4", "A-9fc8996738", "A-a09c909265", "A-a0bd4048f9", "A-a0d33b2174", "A-a0e72927bc", "A-a159a91cb3", "A-a1bc88a289", "A-a21da0c202", "A-a229bbc982", "A-a26ac9c22d", "A-a2ca265998", "A-a31259c5a2", "A-a31d6bb2c0", "A-a3dbaa58c1", "A-a40c712000", "A-a46ed5fb9e", "A-a4ae344b1e", "A-a4e63fdded", "A-a51d65cd05", "A-a5850cefaf", "A-a63602355c", "A-a667a92d3f", "A-a68dedcb28", "A-a6955b34a6", "A-a6c5eecdbf", "A-a7111c8a02", "A-a7224153a0", "A-a724dfeeb4", "A-a7d6300fb8", "A-a7d886e68d", "A-a7dfb35f5a", "A-a830c4e105", "A-a883ace4a4", "A-a89fb3f115", "A-a8cc01bb88", "A-a90cd1dd97", "A-a915d35b49", "A-a989871fda", "A-a9b7c82995", "A-a9be0a766c", "A-a9eec2d604", "A-aa0772bda5", "A-aa4b375b0c", "A-aa653d1c64", "A-aa98b065b3", "A-ab47955d8e", "A-ac049e77d7", "A-ac9b5696c2", "A-ad1b332167", "A-ad30585986", "A-ad75124fea", "A-adc0d4ac77", "A-ae220695d9", "A-ae31320438", "A-ae3c9ebecf", "A-ae40dd371b", "A-ae7e6b2c1b", "A-af5baffe9d", "A-b062252963", "A-b07ad4a837", "A-b085bff061", "A-b0c4ba4f84", "A-b10ea16ad2", "A-b112468ca6", "A-b1237b290b", "A-b1995accdc", "A-b19a45a62a", "A-b1acc321b4", "A-b1d31400a8", "A-b2a201f051", "A-b2d8c9df13", "A-b35466feb2", "A-b35d6dd642", "A-b3d026dd8f", "A-b429a95a03", "A-b43505e7e7", "A-b477b173f2", "A-b4e4f1f406", "A-b55f380a0c", "A-b57807e832", "A-b65561d848", "A-b6b50534e7", "A-b769515acd", "A-b77cfab149", "A-b79647aa9a", "A-b79c42cb61", "A-b825d442aa", "A-b830e5a4a6", "A-b8e19609ab", "A-b8f128fbee", "A-b907be3b34", "A-b9206425d6", "A-b923aa3acf", "A-b9393e9dbd", "A-b94bbd7ccd", "A-b95fb68352", "A-b9d6b2daa3", "A-ba10850202", "A-ba2195fdcc", "A-ba38ca2d47", "A-ba5cb5179c", "A-ba9d73cfdf", "A-bab56a1ec3", "A-badb2ffeb9", "A-bb20bd9626", "A-bb781c6278", "A-bb7b5743bf", "A-bb843bd343", "A-bbc7b9e895", "A-bbd2f4c07e", "A-bc05437038", "A-bc369aa941", "A-bc7245b785", "A-bd139e2e57", "A-bd1fe6392f", "A-bd405899cc", "A-bd7fae874f", "A-bda53b742d", "A-bdea5b84c9", "A-be06e563be", "A-be5345ac55", "A-be8d644e55", "A-becc41d28a", "A-bef2457448", "A-bf2cb09db4", "A-c00d6b70ee", "A-c03d765a60", "A-c059f6f4bf", "A-c07653115c", "A-c0bd4a029a", "A-c1326d7d38", "A-c14c736867", "A-c1b7348014", "A-c1bddded8f", "A-c21310dc44", "A-c242cac50b", "A-c2ef343944", "A-c3228ed22a", "A-c342c232b1", "A-c36c45f86d", "A-c39fa773a9", "A-c3a6ffa098", "A-c4263d59d9", "A-c49a75fe15", "A-c49de42dd9", "A-c4eed1273f", "A-c52fda2e25", "A-c5523b21aa", "A-c5a4f37c17", "A-c5c6e5fd18", "A-c5f5ba0d9d", "A-c5ffc120b0", "A-c613b41413", "A-c67abdc87d", "A-c6fe3e29c0", "A-c749a73fa5", "A-c74eec7e37", "A-c756234cae", "A-c7bdc5f46e", "A-c7cbf0552a", "A-c808b15037", "A-c82e6570e9", "A-c8368b575c", "A-c87d401d5f", "A-c88474ab59", "A-c8be1b0646", "A-c8e5c036d7", "A-c8ece83534", "A-c9348b7704", "A-c968507f70", "A-c9a2be5cfd", "A-c9c2c78625", "A-c9e5198a64", "A-ca0367719a", "A-ca46b8ceab", "A-ca6c56ef5a", "A-cb147628bd", "A-cb34215ed5", "A-cb3ed45e98", "A-cb5504c463", "A-cba7e899c0", "A-cbb4f76fe1", "A-cbc7d760da", "A-cc1d9df21b", "A-cc254d2950", "A-cc5303d374", "A-ccb13a0ec7", "A-cd01bb14c0", "A-cd630432e5", "A-cdc9f20c21", "A-cdfa13b149", "A-ce277a0716", "A-ce6b4f416d", "A-cef17b28f7", "A-cfae643366", "A-cff1a31052", "A-d07f2fdc55", "A-d0caa4c6e8", "A-d0dc9136f2", "A-d1644de6f1", "A-d17840e116", "A-d20e42bf01", "A-d28f2e2e13", "A-d29b16120a", "A-d2b89764b9", "A-d35d8f4a4c", "A-d36290b698", "A-d38bbc3df1", "A-d39bdcf0eb", "A-d3cc2914f1", "A-d3e1164563", "A-d4f4f77da0", "A-d4ff1fdb9c", "A-d54421731c", "A-d5a07c2293", "A-d5fac16837", "A-d66ad4b6db", "A-d6775b412e", "A-d6a7f95a87", "A-d6c87b1c60", "A-d881c48a3d", "A-d889120297", "A-d8a5958151", "A-d8d088baa8", "A-d9a2ff2fd5", "A-d9a60259ff", "A-d9c789e0b7", "A-da178291ce", "A-da31aa4203", "A-da4721985f", "A-da75d89b3a", "A-daa238a65f", "A-daa4059326", "A-db190a76fe", "A-db1d9a804a", "A-db24ac9f6f", "A-db9e6fee62", "A-dbbb39343e", "A-dc302f8e78", "A-dc315a3fd1", "A-dc55c2dca3", "A-dc98f38720", "A-dce388bfdf", "A-dcecbf36c7", "A-dd04aaaa67", "A-dd0884537b", "A-dd39b8491c", "A-dd63733f6d", "A-dd82f4a164", "A-dd8d1c3f51", "A-ddab00eea9", "A-ddc050b711", "A-de098145e5", "A-de5849eef3", "A-de971b8447", "A-deb486c849", "A-decf12db24", "A-df6b3e56b4", "A-df8aff2e69", "A-e015842279", "A-e07a876205", "A-e0d17e878e", "A-e0db5cf079", "A-e0f34ce517", "A-e146f82a89", "A-e2c84525c5", "A-e2f5621294", "A-e2ff53fc46", "A-e378031d5c", "A-e385dceeb3", "A-e41483791e", "A-e42b505a69", "A-e48d567279", "A-e4ccbedd1d", "A-e531187e9d", "A-e5374fa498", "A-e6332ff31f", "A-e648c71307", "A-e64fa264c7", "A-e67914e5ae", "A-e6d11b6051", "A-e6dc06b9da", "A-e6efea75cc", "A-e6f615b304", "A-e788beda34", "A-e7d34c7d11", "A-e8876db5fd", "A-e8a14e8443", "A-e8cacf1fbc", "A-e908bcf878", "A-e971878c16", "A-e9957942f1", "A-e9cdada710", "A-e9fc2ff492", "A-ea31e607c4", "A-ea5a7fd019", "A-eaa284572a", "A-eaad528e44", "A-eaeeb32390", "A-eaff2438b9", "A-eb27b84a2c", "A-eb46b9d143", "A-ec561bb37e", "A-ed298e9ef0", "A-ed89a4a9df", "A-ee081d1140", "A-ee9d058092", "A-eecc3fe98e", "A-eed7166ab4", "A-eed7ce55aa", "A-eeef4f6098", "A-efd2f4b7dc", "A-f08932f959", "A-f0895e7915", "A-f130a03f3a", "A-f1811d6e29", "A-f1a420153a", "A-f228b3a196", "A-f269e01e8b", "A-f2992b548e", "A-f35dcc467f", "A-f38c6cd35d", "A-f3ea12cb6d", "A-f3f6ba57b0", "A-f4515d1e1f", "A-f4b89890ec", "A-f5741c4708", "A-f57a37d8ee", "A-f63fd0760a", "A-f6459bbf30", "A-f66964271e", "A-f676b22220", "A-f6871d245f", "A-f80721e1a4", "A-f80e13dc72", "A-f850bed695", "A-f8e240a7db", "A-f8f76bdf52", "A-f92eb7db21", "A-f962231dc3", "A-f980ae5a73", "A-f98a2279cd", "A-f9decac67f", "A-fa58f920fc", "A-fa6bec9088", "A-fa8b6fc91b", "A-fac55ad9e7", "A-facbde6c11", "A-fbd95b8904", "A-fccb449973", "A-fd064aa536", "A-fd1b7a7229", "A-fdae244384", "A-fde9687169", "A-fe180e441e", "A-fe2f75acb2", "A-fe5875944b", "A-fe6408a841", "A-fe83a0cac1", "A-fe915737e0", "A-fec3829b91", "A-fefc3c8239"]
+ruling = "Accept every GitHub release-asset row recommended for acceptance (914 rows from the 53 repositories of config/sources/github_releases.toml, which the owner approved)."
+reason = "A_sources: approve the 53-repo GitHub list and batch-accept its 914 plain rows."
+
+[A-083f4ef35b]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "Inter Variable is a build of Inter (A_structure)."
+
+[A-1e2d534faf]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "JetBrains Mono NL is a build of JetBrains Mono (A_structure)."
+
+[A-26feeec20a]
+choice = "a"
+recommended = false
+family_id = "league-mono"
+relation = "build"
+ruling = "Accept: add the alias row"
+reason = "A retired Fontsource name for a width or style cut of the family (A_sources: League and Ostrich builds)."
+
+[A-28d7e65fa7]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "42dot Sans is Asta Sans, renamed on Google Fonts (A_sources)."
+
+[A-2c09e8fab3]
+choice = "a"
+recommended = false
+family_id = "ostrich-sans"
+relation = "build"
+ruling = "Accept: add the alias row"
+reason = "A retired Fontsource name for a width or style cut of the family (A_sources: League and Ostrich builds)."
+
+[A-2edbc828e4]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "An old Edu name Fontsource retired for the renamed Google family (A_cleanup: the 6 Edu old names)."
+
+[A-396337e4af]
+choice = "a"
+recommended = false
+family_id = "ia-writer-duo"
+ruling = "Accept: add the alias row"
+reason = "iA Writer Duospace is iA Writer Duo (A_sources)."
+
+[A-3cc26ba36c]
+choice = "a"
+recommended = false
+family_id = "vazirmatn"
+ruling = "Accept: add the alias row"
+reason = "Vazir is Vazirmatn's old name (A_sources)."
+
+[A-42a6ae85f6]
+choice = "a"
+recommended = false
+family_id = "ostrich-sans"
+relation = "build"
+ruling = "Accept: add the alias row"
+reason = "A retired Fontsource name for a width or style cut of the family (A_sources: League and Ostrich builds)."
+
+[A-487d8f7d4c]
+choice = "a"
+recommended = false
+family_id = "league-mono"
+relation = "build"
+ruling = "Accept: add the alias row"
+reason = "A retired Fontsource name for a width or style cut of the family (A_sources: League and Ostrich builds)."
+
+[A-4af8359ee2]
+choice = "a"
+recommended = false
+family_id = "league-gothic"
+relation = "build"
+ruling = "Accept: add the alias row"
+reason = "A retired Fontsource name for a width or style cut of the family (A_sources: League and Ostrich builds)."
+
+[A-4cc13ec385]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "Source Sans Pro is Source Sans 3's old name, same designer (A_sources: renames with a shared designer)."
+
+[A-4d53ee5dfa]
+choice = "a"
+recommended = false
+family_id = "ostrich-sans"
+relation = "build"
+ruling = "Accept: add the alias row"
+reason = "A retired Fontsource name for a width or style cut of the family (A_sources: League and Ostrich builds)."
+
+[A-58f51f376b]
+choice = "a"
+recommended = false
+family_id = "vazirmatn"
+ruling = "Accept: add the alias row"
+reason = "Vazir is Vazirmatn's old name (A_sources)."
+
+[A-5b90045f9e]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "Fontsource retired Source Serif Pro for Source Serif 4 (A_sources)."
+
+[A-5f637e915a]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "ttf-dejavu-nerd is DejaVu Sans Mono patched (A_cleanup)."
+
+[A-682ea71c12]
+choice = "a"
+recommended = false
+family_id = "league-mono"
+relation = "build"
+ruling = "Accept: add the alias row"
+reason = "A retired Fontsource name for a width or style cut of the family (A_sources: League and Ostrich builds)."
+
+[A-69ae9edccf]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Finlandica split into Finlandica Text and Headline: related (A_sources)."
+
+[A-6a688f3391]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "An old Edu name Fontsource retired for the renamed Google family (A_cleanup: the 6 Edu old names)."
+
+[A-72d95a2700]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "Inter Display is carried by Inter's own files (A_structure: width names carried by the parent's files fold)."
+
+[A-74cad7e236]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "An old Edu name Fontsource retired for the renamed Google family (A_cleanup: the 6 Edu old names)."
+
+[A-7584b26688]
+choice = "a"
+recommended = false
+family_id = "ostrich-sans"
+relation = "build"
+ruling = "Accept: add the alias row"
+reason = "A retired Fontsource name for a width or style cut of the family (A_sources: League and Ostrich builds)."
+
+[A-781cebfa94]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "An old Edu name Fontsource retired for the renamed Google family (A_cleanup: the 6 Edu old names)."
+
+[A-7c0cd170ac]
+choice = "a"
+recommended = false
+family_id = "league-mono"
+relation = "build"
+ruling = "Accept: add the alias row"
+reason = "A retired Fontsource name for a width or style cut of the family (A_sources: League and Ostrich builds)."
+
+[A-8f8a1dea58]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Finlandica split into Finlandica Text and Headline: related (A_sources)."
+
+[A-9c9b8cdb08]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "An old Edu name Fontsource retired for the renamed Google family (A_cleanup: the 6 Edu old names)."
+
+[A-a409a3f536]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "Fontsource retired Source Sans Pro for Source Sans 3 (A_sources: retired Fontsource names mapped)."
+
+[A-a50dc80903]
+choice = "a"
+recommended = false
+family_id = "league-mono"
+relation = "build"
+ruling = "Accept: add the alias row"
+reason = "A retired Fontsource name for a width or style cut of the family (A_sources: League and Ostrich builds)."
+
+[A-abd4f7128f]
+choice = "a"
+recommended = false
+family_id = "league-mono"
+relation = "build"
+ruling = "Accept: add the alias row"
+reason = "A retired Fontsource name for a width or style cut of the family (A_sources: League and Ostrich builds)."
+
+[A-ad2a2ddca1]
+choice = "a"
+recommended = false
+family_id = "ostrich-sans"
+relation = "build"
+ruling = "Accept: add the alias row"
+reason = "A retired Fontsource name for a width or style cut of the family (A_sources: League and Ostrich builds)."
+
+[A-b85552a6af]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "ProggyClean is ProggyCleanTT (A_cleanup)."
+
+[A-c2d397270f]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "An old Edu name Fontsource retired for the renamed Google family (A_cleanup: the 6 Edu old names)."
+
+[A-c33dbabcc0]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "Fontsource retired Source Serif Pro for Source Serif 4 (A_sources)."
+
+[A-c47214c116]
+choice = "a"
+recommended = true
+family_id = "golos-text"
+ruling = "Accept: add the alias row"
+reason = "Golos UI is Golos Text (A_sources: retired Fontsource names)."
+
+[A-c5ef9dd921]
+choice = "a"
+recommended = false
+family_id = "league-mono"
+relation = "build"
+ruling = "Accept: add the alias row"
+reason = "A retired Fontsource name for a width or style cut of the family (A_sources: League and Ostrich builds)."
+
+[A-d22d67e068]
+choice = "a"
+recommended = false
+family_id = "ia-writer-duo"
+ruling = "Accept: add the alias row"
+reason = "iA Writer Duospace is iA Writer Duo (A_sources)."
+
+[A-d4f24b8e9e]
+choice = "a"
+recommended = false
+family_id = "ostrich-sans"
+relation = "build"
+ruling = "Accept: add the alias row"
+reason = "A retired Fontsource name for a width or style cut of the family (A_sources: League and Ostrich builds)."
+
+[A-dc699c7ba4]
+choice = "a"
+recommended = false
+family_id = "league-gothic"
+relation = "build"
+ruling = "Accept: add the alias row"
+reason = "A retired Fontsource name for a width or style cut of the family (A_sources: League and Ostrich builds)."
+
+[A-ea559b9629]
+choice = "a"
+recommended = true
+family_id = "golos-text"
+ruling = "Accept: add the alias row"
+reason = "Golos UI is Golos Text (A_sources)."
+
+[A-f4228b87fe]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "Fontsource retired Source Sans Pro for Source Sans 3 (A_sources)."
+
+[A-f4b3aab563]
+choice = "a"
+recommended = false
+family_id = "league-mono"
+relation = "build"
+ruling = "Accept: add the alias row"
+reason = "A retired Fontsource name for a width or style cut of the family (A_sources: League and Ostrich builds)."
+
+[A-f8623a5666]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "fonts-noto-mono is Noto Mono (A_cleanup)."
+
+[A-1e56b9fd4d]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "DSEG7 is a seven-segment display font, not a text family (A_sources: rejected)."
+
+[A-278a5ccc53]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "fonts-noto-mono is Noto Mono, not Noto Sans Mono (A_cleanup)."
+
+[A-c2efaf1073]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "DSEG14 is a fourteen-segment display font (A_sources: rejected)."
+
+[A-c4ce4e1898]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "DSEG7 (A_sources: rejected)."
+
+[A-debd4a6fb7]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "DSEG14 (A_sources: rejected)."
+
+[A-f98df76682]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "ttf-dejavu-nerd is DejaVu Sans Mono, not the DejaVu umbrella (A_cleanup)."
+
+[A_structure]
+value = "accept_all"
+ruling = "Iosevka Term and Iosevka Term Slab fold into Iosevka; umbrellas follow D2 (bundles: the five Monaspace families, Libertinus; one family: Latin Modern, FreeFont); D2 half credit for big zips, CascadiaCode.zip included; build variants (Maple Mono CN and NF, Cascadia Mono NF, Inter Variable) fold into their family; width names carried by the parent's files fold, and widths Google lists as families of their own stay separate."
+reason = "Claude's recommendation. Applied as hand rows in data/aliases.csv and the gate A answers here."
+
+[A_cleanup]
+value = "accept_all"
+ruling = "Bundle rows for Noto, iA Writer, MPlus and Monaspace; ProggyCleanTT is ProggyClean; oldlib's wrong merges, 5 noisy name_tables rows and the deb-src rows of 31 non-font sources are rejected; ttf-dejavu-nerd is DejaVu Sans Mono; fonts-noto-mono is Noto Mono; hand rows for Monocraft Nerd and 6 old Edu names."
+reason = "Claude's recommendation. The oldlib, name_tables and deb-src rejections need the lists the owner saw; those rows stay open until Claude asks them again with the lists."
+
+[A_sources]
+value = "accept_all"
+ruling = "Google renames are auto-accepted only when the two names share a designer; Finlandica is related to its split families; 42dot Sans is Asta Sans, plus 2 renames; retired Fontsource names are mapped (League and Ostrich builds, Golos UI to Golos Text, iA Writer Duospace to iA Writer Duo, Vazir to Vazirmatn); Material Icons Rounded is ineligible; DSEG7 and DSEG14 are rejected; the 53-repo GitHub list is approved and its 914 plain rows accepted; distro package contents are researched before their rows are accepted; Homebrew's replacement links point out of the catalog."
+reason = "Claude's recommendation."
+
+[search_no_decomposition]
+value = "accept_v1"
+ruling = "In v1, search_key keeps ł, đ, ø, æ and ı as they are (no decomposition to ASCII); watch it in usability round 1."
+reason = "Claude's recommendation."
+
+[A-55b6134c8c]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Monocraft's Nerd Fonts build (A_cleanup: the Monocraft Nerd hand row)."

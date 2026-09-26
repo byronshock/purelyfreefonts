@@ -32,6 +32,7 @@ github_homebrew_same_group = "cask_asset"  # gate M5 (rec): GitHub counts join t
 gap = 1.5                       # gate M1 (rec): keep the guard; (b) is gap = 1.6
 min_terms = 3                   # gate M1 (rec); (c) is min_terms = 4
 factor = 0.5                    # weight multiplier for the outlying term
+basis = "median"                # owner ruling 2026-09-26 (guard_basis): the median of all the font's terms; "others_mean" is M1's mean of the others
 
 [corrections]
 min_exposure_days = 60          # "too new" under 60 days on a channel, counted from the data date
@@ -44,6 +45,17 @@ dependency_abstain = 0.5        # D8: top reverse dependency share at which a Li
 dependency_review = 0.35        # gate M8 (rec): shares from here up to dependency_abstain are flagged
 dependency_rule = "top"         # gate M8 (rec): the top single dependent; "sum" adds all dependents
 dependency_alternatives = "first"  # gate M8 (rec): an `a | b` group credits its first alternative
+per_system_basis = "largest_package"  # owner ruling 2026-09-26: popcon/pkgstats count a family's most-installed package, not the sum
+abstain_scope = "by_package_system"   # owner ruling 2026-09-26: a preinstalled system silences only the sources that count it; "all" silences every Linux source
+
+[corrections.abstain_sources]   # abstain_scope = "by_package_system": Linux system (preinstalled.toml) -> Linux sources it silences
+cachyos = ["arch"]              # Arch family: pkgstats only
+endeavouros = ["arch"]
+debian = ["debian"]             # Debian family: popcon only
+ubuntu = ["debian"]
+gnome = ["arch", "debian"]      # desktops ship on both
+kde-plasma = ["arch", "debian"]
+fedora-workstation = []         # counted by neither
 
 # --- Engine sources -----------------------------------------------------------
 # Engine sources are not collectors: each maps to one collector plus a selector.
@@ -97,6 +109,7 @@ rate = "per_year"
 floor = 0.0
 censor_below = 0.0
 release_history = "all"         # gate M2 (rec): all releases of main-channel repos; "latest24" or "24months" otherwise
+prerelease_repos = []           # owner ruling 2026-09-26: repos that publish only prereleases, whose prereleases count (OpenDyslexic's, once listed)
 
 [sources.nerd]                  # Nerd Fonts release downloads, credited to the original font
 collector = "nerd_releases"
@@ -208,7 +221,7 @@ rate = "count"
 floor = 0.0
 censor_below = 5.0
 scopes = ["@fontsource", "@fontsource-variable"]  # gate M7 (rec): Fontsource only; (b) adds "@expo-google-fonts"
-stale_sync_days = 45            # flag packages whose last_synced_at is older
+stale_sync_days = 90            # flag packages whose last_synced_at is older (owner ruling 2026-09-26, data_defaults; was 45)
 
 [sources.jsdelivr]              # jsDelivr hits (Fontsource stats)
 collector = "fontsource_stats"
@@ -397,9 +410,9 @@ first_run_move_places = 30      # first run: explain every move of more than 30 
 # --- Gates before ranking ------------------------------------------------------
 
 [latin]                         # D4: non-Google fonts, tested against the GF glyphsets
-kernel_missing_max = 0          # gate L1 (rec, pending measurement): GF_Latin_Kernel fully covered
-core_missing_marks_max = 2      # gate L1 (rec, pending measurement): GF_Latin_Core, at most 2 combining marks missing
-latin_share_min = 0.40          # gate L1 (rec, pending measurement): the methodology text says 0.50
+kernel_missing_max = 2          # gate L1, owner ruling 2026-09-26 (relaxed): at most 2 GF_Latin_Kernel code points missing
+core_missing_max = 3            # gate L1, owner ruling 2026-09-26 (relaxed): "extended" with at most 3 GF_Latin_Core code points missing, of any kind
+latin_share_min = 0.30          # gate L1, owner ruling 2026-09-26 (relaxed): the methodology text first said 0.50
 cjk_codepoints_below = 1000     # fewer than 1,000 CJK code points
 
 [universe]

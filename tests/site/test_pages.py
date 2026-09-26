@@ -735,11 +735,18 @@ def test_sitemap_lists_the_canonical_pages(site_dir, site_data):
     }
     base = build.BASE_URL
     run_date = data.load(site_data)["run"]["date"]
+    # The blog's pages, once a post is published or with --drafts, as on the test site
+    # (M2 step 7b; tests/site/test_blog.py checks them).
+    blog_pages = {
+        f"{base}/{p.parent.relative_to(site_dir).as_posix()}/": None
+        for p in (site_dir / "blog").rglob("index.html")
+    }
     assert entries == {
         f"{base}/": run_date,
         f"{base}/about/": None,
         f"{base}/methodology/": run_date,
         f"{base}/privacy/": None,
+        **blog_pages,
     }
 
 

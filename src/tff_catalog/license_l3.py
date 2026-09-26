@@ -1081,6 +1081,14 @@ class FactsSource(Protocol):
         ...
 
 
+_WEB_PAGE = re.compile(r"\A\s*(?:<!--.*?-->\s*)*<(?:!doctype\s+html|html)[\s>]", re.I | re.S)
+
+
+def is_web_page(text: str) -> bool:
+    """Whether ``text`` is an HTML document rather than a plain license text."""
+    return bool(_WEB_PAGE.match(text))
+
+
 def decode_text(data: bytes) -> str:
     """License text bytes as text: UTF-16 with a BOM (Windows editors save OFL.txt so),
     else UTF-8 (a BOM dropped), else Latin-1."""
@@ -1347,6 +1355,11 @@ def _check_text(
     ids = expression_ids(expr)
     where = f"a notice in license text {fetched.url}"
     if out.matched is None:
+        if is_web_page(text):
+            # A license's home page (scripts.sil.org/OFL, openfontlicense.org), as Fontist and
+            # name ID 14 give it, is no upstream text; its site's words are not the font's terms.
+            out.problems.append(f"license text {fetched.url} is a web page, not a license text")
+            return out
         close = inputs.canon.closest(text, ids)
         near = f" (closest: {close[0]}, {close[1]:.1%} of words alike)" if close else ""
         out.problems.append(f"license text {fetched.url} matches no known license{near}")

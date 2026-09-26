@@ -1,8 +1,10 @@
 """Fusion with shrinkage and the outlier guard (methodology §4, design-m1 §6). Owner: agent P7.
 
-- ``guard_factors``: a term more than ``gap`` z from the unweighted mean of a
-  font's other terms gets ``factor`` weight (gate M1 (a): gap 1.5, at least 3
-  terms, x0.5). All terms are judged against the unguarded values at once.
+- ``guard_factors``: a term more than ``gap`` z from the median of all a font's
+  terms (``basis = "median"``, the owner's ruling of 2026-09-26) or, as ruling M1
+  first read, from the unweighted mean of its other terms (``"others_mean"``)
+  gets ``factor`` weight (gap 1.5, at least 3 terms, x0.5). All terms are judged
+  against the unguarded values at once.
 - ``fuse``: the shrunk weighted mean S = (κ·W·μ0 + Σ w'z) / (κ·W + Σ w').
 
 Sums use ``math.fsum`` over sources in sorted order, so the result does not
@@ -10,8 +12,12 @@ depend on the iteration order of the mappings passed in.
 """
 
 import math
+import statistics
 from collections.abc import Mapping
 from dataclasses import dataclass
+from typing import Literal
+
+type GuardBasis = Literal["median", "others_mean"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -31,11 +37,16 @@ def _check_finite(terms: Mapping[str, float], what: str) -> None:
 
 
 def guard_factors(
-    terms: Mapping[str, float], gap: float = 1.5, min_terms: int = 3, factor: float = 0.5
+    terms: Mapping[str, float],
+    gap: float = 1.5,
+    min_terms: int = 3,
+    factor: float = 0.5,
+    basis: GuardBasis = "others_mean",
 ) -> dict[str, float]:
-    """Per-source weight factors: ``factor`` for a term more than ``gap`` z from the
-    unweighted mean of the others, when there are at least ``min_terms`` terms.
-    Applied simultaneously; 1.0 everywhere else.
+    """Per-source weight factors: ``factor`` for a term more than ``gap`` z from its
+    basis, when there are at least ``min_terms`` terms. Applied simultaneously; 1.0
+    everywhere else. The basis is the median of all the font's terms (``"median"``,
+    the term itself included) or the unweighted mean of the others (``"others_mean"``).
 
     ``terms`` are one font's z values by source, observed and censored, and
     should hold only the terms that carry weight (a switched-off source is not
@@ -48,6 +59,14 @@ def guard_factors(
     factors = dict.fromkeys(sources, 1.0)
     if len(sources) < max(min_terms, 2):
         return factors
+    if basis == "median":
+        middle = statistics.median(terms[source] for source in sources)
+        for source in sources:
+            if abs(terms[source] - middle) > gap:
+                factors[source] = factor
+        return factors
+    if basis != "others_mean":
+        raise ValueError(f"guard_factors: unknown basis {basis!r}")
     for source in sources:
         others = math.fsum(terms[other] for other in sources if other != source)
         mean_of_others = others / (len(sources) - 1)

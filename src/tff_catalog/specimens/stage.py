@@ -19,7 +19,9 @@ Details:
 - A specimen over ``MAX_FILE_BYTES`` is drawn again with the name only. Any
   name-only specimen (budget or glyph coverage) is flagged
   ``specimen_name_only``; a font with no usable specimen, no ``font_file``, or a
-  file that can't be had right now is flagged ``specimen_failed``.
+  file that can't be had right now is flagged ``specimen_failed``, and every
+  flag that gives no image carries its ``reason`` in words (stage "review"
+  lists them).
 - The render cache is ``build/specimens/index.json``: {id: {key, path, sha256,
   flags}}. It is committed with the SVGs it describes (they are committed
   because ``tff-site build`` is offline), so a fresh clone or a CI runner knows
@@ -58,6 +60,8 @@ INDEX_FILE = "index.json"  # under build/specimens/: the render cache, committed
 _SHA256 = re.compile(r"[0-9a-f]{64}")  # fullmatch: "$" would allow a final newline
 _ID = re.compile(r"[a-z0-9-]+")
 _NAME_ONLY = ("specimen_name_only",)
+# No exception text: a reason may reach review.md, which must not depend on local paths.
+UNAVAILABLE = "the font file could not be had (a failed download, or no font cache in a replay)"
 
 
 class FontUnavailable(RuntimeError):
@@ -71,6 +75,7 @@ class Preview:
     path: str | None  # "specimens/<id>.svg", None when there is no image
     sha256: str | None
     flags: tuple[str, ...] = ()  # specimen_failed, specimen_name_only, specimen_hash_mismatch
+    reason: str | None = None  # why there is no image, in words (None when there is one)
 
 
 def cache_key(font_sha256: str, sample: str, renderer_version: int, hb_version: str) -> str:
@@ -139,8 +144,10 @@ def render_one(font_id: str, family: str, font: bytes, out_dir: Path) -> Preview
     spec = render(font, family, SAMPLE, BASIC_SAMPLE)
     if spec is not None and len(spec.svg) > MAX_FILE_BYTES and spec.line != "name":
         spec = render(font, family, SAMPLE, BASIC_SAMPLE, name_only=True)
-    if spec is None or len(spec.svg) > MAX_FILE_BYTES:
-        return Preview(None, None, ("specimen_failed",))
+    if spec is None:
+        return _failed("the font draws none of the sample texts, not even its name")
+    if len(spec.svg) > MAX_FILE_BYTES:
+        return _failed(f"over {MAX_FILE_BYTES // 1000} KB even with the name only")
     target = out_dir / f"{font_id}.svg"
     if not target.is_file() or target.read_bytes() != spec.svg:
         _write_atomic(target, spec.svg)
@@ -172,7 +179,7 @@ def render_fonts(
         ref = font.get("font_file")
         if not ref:
             log.warning("%s: preview_ok but no font_file; flagged specimen_failed", font_id)
-            previews[font_id] = Preview(None, None, ("specimen_failed",))
+            previews[font_id] = _failed("no font file to draw from")
             continue
         key = cache_key(ref["sha256"], sample_texts(family), RENDERER_VERSION, engine)
         hit = _hit(index.get(font_id), key, font_id, out_dir)
@@ -187,7 +194,7 @@ def render_fonts(
                 new_index[font_id] = {"key": key, **stageio.encode(hit)}
             else:
                 log.warning("%s: font unavailable (%s); flagged specimen_failed", font_id, exc)
-                previews[font_id] = Preview(None, None, ("specimen_failed",))
+                previews[font_id] = _failed(UNAVAILABLE)
             continue
         if path is None:
             log.warning(
@@ -196,7 +203,9 @@ def render_fonts(
                 ref["url"],
                 ref["sha256"],
             )
-            previews[font_id] = Preview(None, None, ("specimen_hash_mismatch",))
+            previews[font_id] = Preview(
+                None, None, ("specimen_hash_mismatch",), "the font file does not match its sha256"
+            )
             continue
         if hit is not None:
             preview = hit
@@ -206,11 +215,12 @@ def render_fonts(
                 preview = render_one(font_id, family, path.read_bytes(), out_dir)
             except Exception:  # one odd upstream file must not stop the refresh
                 log.exception("%s: rendering raised; flagged specimen_failed", font_id)
-                previews[font_id] = Preview(None, None, ("specimen_failed",))
+                previews[font_id] = _failed("the renderer raised an error on this font")
                 continue  # not cached: a fixed renderer tries again
             counts["drawn"] += 1
             if preview.flags:
-                log.info("%s: %s", font_id, ", ".join(preview.flags))
+                why = f" ({preview.reason})" if preview.reason else ""
+                log.info("%s: %s%s", font_id, ", ".join(preview.flags), why)
         previews[font_id] = preview
         new_index[font_id] = {"key": key, **stageio.encode(preview)}
     removed = _prune(out_dir, {f"{i}.svg" for i, p in previews.items() if p.path})
@@ -240,6 +250,11 @@ def run(ctx: StageContext) -> None:
         log=ctx.log,
     )
     stageio.dump_stage(ctx.paths, "previews", previews)
+
+
+def _failed(reason: str) -> Preview:
+    """No image, flagged ``specimen_failed``, with why."""
+    return Preview(None, None, ("specimen_failed",), reason)
 
 
 def _hit(entry: object, key: str, font_id: str, out_dir: Path) -> Preview | None:

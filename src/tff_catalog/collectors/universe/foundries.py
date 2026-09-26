@@ -29,7 +29,9 @@ several foundries list is one key, as the universe would fold it anyway.
 
 - A ``UniverseRecord`` keyed ``foundry-family:<name>`` (the name as written:
   alias rules read this namespace as family names), status ``live``, with the
-  family page as its ``homepage`` URL and the ``repository`` URL. The page is
+  family page as its ``homepage`` URL and the ``repository`` URL, and the
+  family's ``files`` (one Regular font file each, pinned to a commit) as
+  ``FontFileRef``s of role "regular", so the Latin gate and L3 can read it. The page is
   left out when it is the repository itself, as the list does for Velvetyne
   and Collletttivo. A URL whose check answered one of ``gone_statuses`` is
   left out and counted in the ``gone_urls`` attr; the family stays live,
@@ -61,7 +63,14 @@ from tff_catalog.config_model import (
 )
 from tff_catalog.fetch import Fetcher, FetchError, FetchResult, HostNotAllowed
 from tff_catalog.paths import find_root
-from tff_catalog.records import LicenseFact, Record, SourceKey, UniverseRecord, attrs
+from tff_catalog.records import (
+    FontFileRef,
+    LicenseFact,
+    Record,
+    SourceKey,
+    UniverseRecord,
+    attrs,
+)
 from tff_catalog.store import Snapshot
 
 NAME = "foundries"
@@ -132,6 +141,7 @@ class ListedFamily:
     url: str
     license: str  # as written; "" or "NOASSERTION" when the foundry states none
     repository: str = ""
+    files: tuple[str, ...] = ()  # font file URLs (added 2026-09-26; older snapshots lack it)
 
 
 @dataclass(frozen=True, slots=True)
@@ -186,6 +196,7 @@ def list_doc(cfg: FoundriesConfig) -> dict[str, Any]:
                         "url": fam.url,
                         "license": fam.license,
                         "repository": fam.repository,
+                        "files": list(fam.files),
                     }
                     for fam in foundry.families
                 ],
@@ -374,12 +385,14 @@ def family_records(
     """The universe record and license facts of one family name (see the module docstring)."""
     urls: set[tuple[str, str]] = set()
     lost: set[str] = set()
+    files: set[str] = set()
     for _, fam in listed:
         for role, url in url_roles(fam):
             if url in gone:
                 lost.add(url)
             else:
                 urls.add((role, url))
+        files.update(fam.files)
     key = SourceKey(NAMESPACE, name)
     found = {"foundry": ",".join(sorted({fid for fid, _ in listed}))}
     extra = {"gone_urls": len(lost)} if lost else {}
@@ -389,6 +402,7 @@ def family_records(
             key=key,
             family=name,
             urls=tuple(sorted(urls)),
+            files=tuple(FontFileRef(url=url, role="regular") for url in sorted(files)),
             attrs=attrs(**found, **extra),
         )
     ]

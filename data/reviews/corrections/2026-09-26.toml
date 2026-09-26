@@ -1,0 +1,42 @@
+# Owner rulings of 2026-09-26, given in chat after integration A (the first real run). Ruled by
+# the owner, Byron Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml).
+# Also in AUTHORITY.md. Where the owner picked Claude's recommendation, the reason is Claude's summary.
+
+[per_system_basis]
+value = "largest_package"
+ruling = "Popcon's and pkgstats' family count, and the M8 dependency share, use the family's most-installed package, not the sum of its packages; a removed (not in sid) package maps only when nothing current replaces it."
+reason = "Claude's recommendation: one system installs each package once, so a sum counts a system twice."
+
+[opendyslexic_prereleases]
+value = "per_repo_setting"
+ruling = "A repository that publishes only prereleases has them counted (a per-repository setting)."
+reason = "Claude's recommendation: OpenDyslexic publishes only prereleases."
+
+[virtual_deps_never_pull]
+ruling = "A virtual dependency (Provides) never pulls a font in."
+reason = "Claude's recommendation."
+
+[almanac_merge_flag_services_only]
+ruling = "The Almanac's parent-merge flag reads its services tab only."
+reason = "Claude's recommendation (ruling M6 made the pages tab the term)."
+
+[gnu_unifont]
+value = "out"
+ruling = "GNU Unifont is out: it is mainly CJK."
+reason = "Claude's recommendation."
+
+[debian_nonfont_filter]
+ruling = "Debian source packages that ship no font are filtered out before mapping."
+reason = "Claude's recommendation."
+
+[fontist_agreement_proprietary]
+ruling = "Fontist formulas under a proprietary agreement are excluded (this drops mitimasu)."
+reason = "Claude's recommendation."
+
+[google_sans_no_ruling]
+ruling = "Google Sans needs no ruling: Google's own license excludes it."
+reason = "Claude's recommendation."
+
+[ios_and_vietnamese_as_findings]
+ruling = "iOS coverage and Vietnamese coverage are findings to watch in usability round 1, not changes now."
+reason = "Claude's recommendation."

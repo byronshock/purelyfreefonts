@@ -119,3 +119,24 @@ def place(
             gate_held=f.id in held_ids,
         )
     return placements
+
+
+def band_shift(placed: Mapping[str, Placement], exact_top: int) -> int:
+    """How far a rank key's unranked placements move so the first sits just past the exact
+    top: methodology §6 puts a font that fails the gate at ``exact_top`` + 1 or below, even
+    when too few fonts pass to fill the top. 0 when the top is full, as in every survey view."""
+    banded = [p.order for p in placed.values() if p.rank is None]
+    return max(0, exact_top + 1 - min(banded)) if banded else 0
+
+
+def published_orders(
+    placements: Mapping[str, Mapping[str, Placement]], exact_top: int
+) -> dict[str, dict[str, int]]:
+    """{rank key: {font: order}} as the catalog publishes them (``band_shift`` applied): the
+    orders stage "export" writes, stage "review" compares and stage "membership" enters and
+    leaves the top-100 lists by, so no font holds a top-100 place without an exact rank."""
+    out = {}
+    for key, ps in sorted(placements.items()):
+        shift = band_shift(ps, exact_top)
+        out[key] = {f: p.order + (shift if p.rank is None else 0) for f, p in ps.items()}
+    return out

@@ -697,8 +697,9 @@ def test_two_snapshots_give_the_growth_of_assets_in_both(tmp_path: Path) -> None
     got = corrections.count_keys(src, corrections.select(src, now), corrections.select(src, base))
     key = SourceKey("gh-asset", "o/r/Font.zip")
     assert set(got) == {key}  # the prerelease's key and the checksum never count
-    # (130 - 100) + (1006 - 1000) downloads in 30 days, per year
-    assert got[key].value == pytest.approx(36 * 365 / 30, rel=0.01)
+    # (130 - 100) + (1006 - 1000) downloads in 30 days, plus all 5 of v3, which was
+    # published after the baseline (the owner's ruling of 2026-09-26), per year
+    assert got[key].value == pytest.approx((36 + 5) * 365 / 30, rel=0.01)
 
 
 def snapshot_with(tmp: Path, lines: list[bytes]) -> Snapshot:

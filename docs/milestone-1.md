@@ -93,7 +93,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - `state/` on `main` holds membership counters, first_seen, license hashes, stale counters, last published ranks and snapshot baselines;
   - state advances only when a refresh pull request is merged;
   - a new run replaces an unmerged refresh pull request;
-  - test: two runs without a merge give the same state as one run.
+  - test: two runs without a merge give the same state as one run. *(Proven for the stub pipeline and the real state and parse modules; the four `[real]` cases of `tests/pipeline/test_state_two_runs.py` still xfail until the synthetic store holds the real collectors' extract formats.)*
 - [ ] Stale-data policy: reuse the last snapshot for up to 2 months, flagged.
 - [x] Terms audit, one row per source, recording whether raw values and fixtures may be republished. The result goes in `docs/sources.md`. *(Rulings T1–T5 given 2026-09-25, in `data/reviews/terms/`; `docs/sources.md` written and its links and quotes checked 2026-09-25. Its open points still need the owner: ecosyste.ms terms §9 and §11(c), and Google shares kept in `state/smoothing.json`.)* Rows:
   - Google's undocumented endpoints;
@@ -204,7 +204,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - [ ] Arch pkgstats: monthly shares for the last 12 complete months, for all font-like packages.
 - [ ] Dependency data:
   - Arch core/extra `.db`;
-  - the CachyOS and EndeavourOS repository databases;
+  - the CachyOS and EndeavourOS repository databases (EndeavourOS has no font dependencies of its own; its fonts come from eos-base-group, gate C2, 2026-09-26);
   - Debian `Packages.xz` and popcon `by_inst.gz`.
 - [ ] Debian popcon main/fonts.
 - [ ] GitHub releases for main-channel repos: every release, with no cap by date, measured as growth between snapshots; for Iosevka, only the latest 24 releases, through GraphQL (ruling M2). All within a per-run GitHub API budget.
@@ -252,7 +252,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - determinism;
   - adding an ineligible font moves nothing;
   - a higher count never lowers a rank, except when the guard changes for that font or for a font that overtakes it, or through the ruler's scale.
-- [ ] The worked example (2.53 / 2.15 / 1.98, with the outlier guard on; ruling M1) as a fixture.
+- [ ] The worked example (2.48 / 2.15 / 1.98, with the outlier guard on and its median basis; ruling M1 as amended on 2026-09-26) as a fixture.
 - [ ] Cross-checks: coverage-aware RRF (k=60) and the Fontsource ruler.
 
 **Done when:** the tests pass, and both desktop views and the project rank are produced from real data.
@@ -350,10 +350,10 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 
 ### Step 18: One-command refresh
 **Who:** Claude. **Depends on:** 15.
-- [ ] `uv run tff-catalog refresh` runs fetch → map → correct → rank → confidence → links → export → `review.md` → validate, so validate's scan of the committed reports covers this run's `review.md`.
-- [ ] `--from-snapshots <date>` replays a run offline.
+- [x] `uv run tff-catalog refresh` runs fetch → map → correct → rank → confidence → links → export → `review.md` → validate, so validate's scan of the committed reports covers this run's `review.md`. *(First real run 2026-09-26: 27 stages in 44 min with the snapshots already fetched; review ran before validate.)*
+- [x] `--from-snapshots <date>` replays a run offline. *(2026-09-26, with the network blocked: 99 s, and every file in `build/` and `data/` came out byte for byte the same. A replay in a clean clone is still open for the done-when.)*
 
-**Done when:** a clean clone produces identical output from the same snapshots, and the run time is recorded.
+**Done when:** a clean clone produces identical output from the same snapshots, and the run time is recorded. *(Still open: the clean-clone replay, and the real-refresh variant of step 3's two-runs test, whose `[real]` cases xfail.)*
 
 ### Step 19: Monthly GitHub Actions workflow
 **Who:** Claude builds it; the owner sets up access and merges. **Depends on:** 18 and D15.

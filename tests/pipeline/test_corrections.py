@@ -65,7 +65,20 @@ from tff_catalog.stages import StageContext
 from tff_catalog.state import State
 from tff_catalog.universe import Family, Universe
 
-RANKING = from_mapping(RankingConfig, load_toml(ROOT / "config" / "ranking.toml"), "ranking.toml")
+_RANKING = from_mapping(RankingConfig, load_toml(ROOT / "config" / "ranking.toml"), "ranking.toml")
+# The synthetic Linux systems below silence both Linux sources, as a desktop does
+# (abstain_scope = "by_package_system", the owner's ruling of 2026-09-26).
+RANKING = replace(
+    _RANKING,
+    corrections=replace(
+        _RANKING.corrections,
+        abstain_sources={
+            **_RANKING.corrections.abstain_sources,
+            "gnome-synth": ("arch", "debian"),
+            "ghost-synth": ("arch", "debian"),
+        },
+    ),
+)
 SITE = from_mapping(SiteConfig, load_toml(ROOT / "config" / "site.toml"), "site.toml")
 CORR = RANKING.corrections
 SRC = RANKING.sources
@@ -576,8 +589,9 @@ def test_floors_credits_ruler_and_gates(world: Paths) -> None:
     views = stageio.load_stage(world, "terms")
     installed = views["desktop_installed"]
     brew = installed["homebrew"]
-    # Gate M3: the Nerd cask loses the Nerd floor before nerd_credit; then the flat 20.
-    assert brew["jetbrains-mono"].value == pytest.approx(42_000 + 141_000 - NERD_CASK_FLOOR - 20)
+    # Gate M3: the Nerd cask loses the Nerd floor before nerd_credit, the plain cask the flat
+    # 20 (methodology §5: a Nerd cask's floor replaces the flat one, per cask).
+    assert brew["jetbrains-mono"].value == pytest.approx(42_000 - 20 + 141_000 - NERD_CASK_FLOOR)
     assert brew["cantarell"] == Term(30.0, "censored", "homebrew", "below_floor")
     assert brew["liberation-sans"] == Term(None, "censored", "homebrew", "no_value")
     assert brew["newfont-sans"] == Term(None, "too_new", "homebrew")
@@ -589,9 +603,12 @@ def test_floors_credits_ruler_and_gates(world: Paths) -> None:
     for fid in ("sarasa-gothic", "urw-bookman", "synth-icons"):
         assert fid not in ruler
         assert all(fid not in terms for view in views.values() for terms in view.values())
-    # Gate M4: tenured nerd-fonts members lose the p10 of their shares (0.0415 here).
-    assert installed["arch"]["jetbrains-mono"].value == pytest.approx(0.15 + 0.14 - 0.0415)
-    assert installed["arch"]["fantasque-sans-mono"].value == pytest.approx(0.01 + 0.045 - 0.0415)
+    # Gate M4: tenured nerd-fonts members lose the p10 of their shares (0.0415 here). The
+    # family counts its most-installed package (per_system_basis, owner ruling 2026-09-26).
+    assert installed["arch"]["jetbrains-mono"].value == pytest.approx(max(0.15, 0.14 - 0.0415))
+    assert installed["arch"]["fantasque-sans-mono"].value == pytest.approx(
+        max(0.01, 0.045 - 0.0415)
+    )
     # Gate M5: the cask downloads the repo's asset, so GitHub joins the homebrew group.
     assert installed["github"]["jetbrains-mono"].group == "homebrew"
     assert installed["nerd"]["jetbrains-mono"].group == "homebrew"
@@ -810,10 +827,11 @@ def test_bundle_rows_credit_every_family(tmp_path: Path) -> None:
     assert tags["liberation-serif"].pulled_in_by == (("debian", "synth-office"),)
     brew = views["desktop_installed"]["homebrew"]
     # D2 default: each eligible member gets bundle_credit (0.5) and a bundle-only flag.
+    # The bundle cask loses the flat floor once, before the credit (per cask).
     assert brew["liberation-serif"] == Term(
-        3_000 * 0.5 - 20, "observed", "homebrew", flags=("bundle_only",)
+        (3_000 - 20) * 0.5, "observed", "homebrew", flags=("bundle_only",)
     )
-    assert brew["liberation-sans"].value == pytest.approx(3_000 * 0.5 - 20)
+    assert brew["liberation-sans"].value == pytest.approx((3_000 - 20) * 0.5)
     assert brew["liberation-sans"].flags == ("bundle_only",)
     assert "liberation-mono" not in brew  # no license: the gate removed it
     ruler = stageio.load_stage(paths, "ruler_counts")
@@ -901,6 +919,35 @@ def test_sum_aliases_sums_packages_with_credits() -> None:
     assert sum_aliases(mapped, replace(CORR, nerd_credit=0.5)) == {"npm": {"inter": 165.0}}
 
 
+def test_a_nerd_key_takes_nerd_credit_whatever_its_relation() -> None:
+    # D7's credits must not depend on how the alias row was written: a Nerd cask mapped
+    # "direct" is still a patched build, and every Nerd Fonts release asset is one.
+    half = replace(CORR, nerd_credit=0.5, cjk_build_credit=0.25)
+    cask = k("brew-cask", "font-0xproto-nerd-font")
+    for relation, detail in (("direct", ""), ("build", "nerd")):
+        sums = corr.family_sums([Link(cask, "0xproto", relation, detail)], {cask: 1000.0}, half)
+        assert sums["0xproto"].value == 500.0, relation
+    cjk = k("brew-cask", "font-maple-mono-cn")
+    sums = corr.family_sums([Link(cjk, "maple-mono", "direct", "")], {cjk: 1000.0}, half)
+    assert sums["maple-mono"].value == 250.0
+    asset = k("nerd-asset", "JetBrainsMono.zip")
+    plain = corr.family_sums([Link(asset, "jetbrains-mono", "direct", "")], {asset: 10.0}, half)
+    assert plain["jetbrains-mono"].value == 10.0
+    nerd = corr.family_sums(
+        [Link(asset, "jetbrains-mono", "direct", "")], {asset: 10.0}, half, nerd=True
+    )
+    assert nerd["jetbrains-mono"].value == 5.0
+
+
+def test_a_linux_family_counts_its_largest_package() -> None:
+    # per_system_basis = "largest_package" (the owner's ruling of 2026-09-26).
+    own, patched = k("arch-pkg", "ttf-x"), k("arch-pkg", "ttf-x-nerd")
+    links = [Link(own, "x", "package", ""), Link(patched, "x", "build", "nerd")]
+    values = {own: 0.2, patched: 0.1}
+    assert corr.family_sums(links, values, CORR)["x"].value == pytest.approx(0.3)
+    assert corr.family_sums(links, values, CORR, largest=True)["x"].value == 0.2
+
+
 def test_floors_subtract_then_censor() -> None:
     terms = apply_floors({"a": 100.0, "b": 70.0, "c": 10.0}, SRC.homebrew)
     assert terms == {
@@ -928,7 +975,9 @@ def test_homebrew_nerd_floor_is_p10_of_nerd_casks() -> None:
         20_000 - NERD_CASK_FLOOR
     )
     assert floored[k("brew-cask", "font-agave-nerd-font")].value == 0.0
-    assert floored[k("brew-cask", "font-inter")].value == 30_000
+    # Every other cask loses the flat floor instead (once per cask).
+    assert floored[k("brew-cask", "font-inter")].value == 30_000 - SRC.homebrew.floor
+    assert notes[1].value == SRC.homebrew.floor
     # A legacy tap key is the same cask: it sets nothing, and the cask loses the floor once.
     legacy = {
         **values,
@@ -943,8 +992,11 @@ def test_homebrew_nerd_floor_is_p10_of_nerd_casks() -> None:
     assert floored[k("brew-cask", "homebrew/cask-fonts/font-agave-nerd-font")].value == (
         pytest.approx(100.0 - (NERD_CASK_FLOOR - 2_149))  # what its cask's own key lacked
     )
+    # Gate M3 (b) "flat": a Nerd cask takes the flat floor like any other cask.
     flat = replace(SRC.homebrew, nerd_floor="flat")
-    assert key_floors("homebrew", flat, values, ()) == (values, [])
+    floored, notes = key_floors("homebrew", flat, values, ())
+    assert [n.what for n in notes] == ["other casks (flat)"]
+    assert all(floored[key].value == max(0.0, kv.value - flat.floor) for key, kv in values.items())
 
 
 def test_arch_group_floor_spares_new_members() -> None:
@@ -1038,11 +1090,22 @@ def test_snapshot_delta_first_run_and_baseline() -> None:
     delta = count_keys(SRC.github, now, base)
     assert delta[k("gh-asset", "o/r/font.zip")].value == pytest.approx(
         6_000 * 365 / 60
-    )  # v2 is new
+    )  # v2 predates the baseline, which lacks it: ignored
+    # A release published after the baseline counts in full (the owner's ruling of
+    # 2026-09-26, new_release_assets): its baseline is 0.
+    fresh = replace(
+        asset(3_000.0, END, "v3"),
+        attrs=attrs(release="v3", first_seen=str(END - timedelta(days=10))),
+    )
+    delta = count_keys(SRC.github, [*now, fresh], base)
+    assert delta[k("gh-asset", "o/r/font.zip")].value == pytest.approx((6_000 + 3_000) * 365 / 60)
     shrunk = count_keys(SRC.github, [asset(100.0, END)], [asset(200.0, END - timedelta(days=60))])
     assert shrunk[k("gh-asset", "o/r/font.zip")].value == 0.0
     beta = replace(asset(5.0, END), attrs=attrs(release="v3-beta", prerelease=True))
     assert select(SRC.github, [beta]) == []
+    # A repo that publishes only prereleases counts them (owner ruling of 2026-09-26).
+    only_pre = replace(SRC.github, prerelease_repos=("o/r",))
+    assert select(only_pre, [beta]) == [beta]
 
 
 def test_dependency_rules_top_sum_and_alternatives() -> None:
@@ -1084,12 +1147,37 @@ def test_only_linux_systems_cause_abstentions() -> None:
     assert set(found["arch"]) == set(found["debian"]) == {"cantarell"}
     assert found["arch"]["cantarell"].why == "preinstalled"
     assert found["arch"]["cantarell"].system == "gnome-synth"
-    # Two Linux systems ship it: a source names its own system when it is one of them.
+    # Two Linux systems ship it: a source names its own system when it is one of them, else
+    # the first by id among those that silence it (Debian's system silences popcon only).
     debian = PreinstalledSystem("Debian", "linux", ("Cantarell",), "https://synth.example/debian")
     both = replace(PREINSTALLED, systems={**PREINSTALLED.systems, "debian": debian})
     found = abstentions([], counts, both, CORR, families=families)
     assert found["debian"]["cantarell"].system == "debian"
-    assert found["arch"]["cantarell"].system == "debian"  # else the first by id
+    assert found["arch"]["cantarell"].system == "gnome-synth"
+
+
+@pytest.mark.parametrize(
+    ("system", "silenced"),
+    [
+        ("cachyos", {"arch"}),  # an Arch-family system: pkgstats only
+        ("ubuntu", {"debian"}),  # a Debian-family system: popcon only
+        ("kde-plasma", {"arch", "debian"}),  # a desktop: both
+        ("fedora-workstation", set()),  # counted by neither
+    ],
+)
+def test_a_preinstalled_system_silences_only_the_sources_that_count_it(
+    system: str, silenced: set[str]
+) -> None:
+    # abstain_scope = "by_package_system" (the owner's ruling of 2026-09-26).
+    counts = {"arch": {"arch-pkg:x-fonts": 0.2}, "debian": {"deb-pkg:fonts-x": 5.0}}
+    families = {pkg_id(k("font-name", "X Sans")): "x"}
+    only = PreinstalledSystem(system, "linux", ("X Sans",), "https://synth.example/x")
+    pre = replace(PREINSTALLED, systems={system: only})
+    found = abstentions([], counts, pre, _RANKING.corrections, families=families)
+    assert {s for s, fams in found.items() if "x" in fams} == silenced
+    everything = replace(_RANKING.corrections, abstain_scope="all")
+    found = abstentions([], counts, pre, everything, families=families)
+    assert {s for s, fams in found.items() if "x" in fams} == {"arch", "debian"}
 
 
 def test_github_group_follows_the_cask_asset() -> None:

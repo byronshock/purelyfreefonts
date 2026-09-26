@@ -60,18 +60,41 @@ REDIRECTED = (
     "trulyfreefonts.net",
     "www.trulyfreefonts.net",
 )
+# Headers the access log drops (/privacy): every one that can carry the visitor's IP or
+# location beyond the country, including those Cloudflare adds only when a setting turns
+# them on, plus Referer, User-Agent and Cookie (owner ruling of 2026-09-26).
+DROPPED_HEADERS = (
+    "Cf-Connecting-Ip",
+    "X-Forwarded-For",
+    "Cf-Connecting-Ipv6",
+    "Cf-Pseudo-Ipv4",
+    "True-Client-Ip",
+    "X-Real-Ip",
+    "Cf-Ipcity",
+    "Cf-Iplatitude",
+    "Cf-Iplongitude",
+    "Cf-Postal-Code",
+    "Cf-Region",
+    "Cf-Region-Code",
+    "Cf-Metro-Code",
+    "Cf-Ipcontinent",
+    "Cf-Timezone",
+    "Referer",
+    "User-Agent",
+    "Cookie",
+)
 LOG_FIELDS = [
     "request>remote_ip ip_mask 16 32",
     "request>client_ip ip_mask 16 32",
     "request>remote_port delete",
-    "request>headers>Cf-Connecting-Ip delete",
-    "request>headers>X-Forwarded-For delete",
+    *(f"request>headers>{name} delete" for name in DROPPED_HEADERS),
 ]
 FROZEN_JOBS = {
     "lint",
     "test",
     "secrets",
     "site-build",
+    "site-real",
     "site-browser (chromium)",
     "site-browser (firefox)",
     "site-perf",
@@ -392,9 +415,21 @@ def test_scripts_never_expand_untrusted_input(path):
         assert not re.search(r"\$\{\{\s*(inputs\.|github\.event\.|github\.head_ref)", script), job
 
 
+def test_the_real_catalog_job_runs_what_the_deploy_runs():
+    jobs = workflow(CI_YML)["jobs"]
+    real = "\n".join(s.get("run", "") for s in jobs["site-real"]["steps"])
+    deploy = "\n".join(s.get("run", "") for _, s in steps(workflow(DEPLOY_YML)))
+    for needed in ("tff-site check", "--ignore=tests/site/test_perf.py", '-m "not live"'):
+        assert needed in real, needed
+        assert needed in deploy, needed
+    assert "tff-catalog validate --committed" in real
+    assert "TFF_PERF_SITE_DIR=" in real
+    assert jobs["site-real"]["env"]["DATA"] == "build/catalog-site.json"
+
+
 def test_browser_jobs_serve_with_caddy_where_the_tests_look():
     data = workflow(CI_YML)
-    for key in ("site-browser", "site-perf"):
+    for key in ("site-browser", "site-perf", "site-real"):
         scripts = "\n".join(s.get("run", "") for s in data["jobs"][key]["steps"])
         assert "caddy start --config ops/caddy/ci.Caddyfile --adapter caddyfile" in scripts
         assert "http://127.0.0.1:8080/" in scripts
@@ -435,6 +470,64 @@ def test_deploy_runs_build_deploy_live_and_reports_failures():
     report = jobs["report"]["steps"][0]["run"]
     assert "--label deploy-failure" in report
     assert "gh issue comment" in report
+
+
+def _deploy_step(name_start: str) -> dict[str, Any]:
+    (step,) = [
+        s for _, s in steps(workflow(DEPLOY_YML)) if s.get("name", "").startswith(name_start)
+    ]
+    return step
+
+
+@pytest.mark.parametrize(
+    ("environment", "on_main", "on_staging", "passes"),
+    [
+        ("production", True, False, True),
+        ("production", False, True, False),  # production takes only main
+        ("staging", False, True, True),
+        ("staging", True, False, True),
+        ("staging", False, False, False),  # an unmerged branch or a fork's pull request
+    ],
+)
+def test_deploy_builds_only_commits_on_its_branches(
+    tmp_path, environment, on_main, on_staging, passes
+):
+    script = _deploy_step("Production takes only commits on main")["run"]
+    stub = tmp_path / "git"
+    stub.write_text(
+        '#!/bin/sh\ncase "$4" in origin/main) exit "$ON_MAIN" ;; origin/staging) exit "$ON_STAGING" ;; esac\nexit 2\n'
+    )
+    stub.chmod(0o755)
+    env = {
+        "PATH": f"{tmp_path}:/usr/bin:/bin",
+        "ENVIRONMENT": environment,
+        "SHA": "a" * 40,
+        "ON_MAIN": "0" if on_main else "1",
+        "ON_STAGING": "0" if on_staging else "1",
+    }
+    done = subprocess.run(["bash", "-e", "-c", script], env=env, capture_output=True, text=True)
+    assert (done.returncode == 0) is passes, done.stdout + done.stderr
+
+
+def test_production_deploys_wait_for_header_phase_b(tmp_path):
+    step = _deploy_step("Production waits for Caddy header phase B")
+    assert step["if"] == "env.ENVIRONMENT == 'production'"
+    (tmp_path / "ops").mkdir()
+    caddyfile = tmp_path / "ops" / "Caddyfile"
+    for text, passes in (
+        (
+            CADDYFILE.read_text(encoding="utf-8"),
+            "header -Content-Security-Policy"
+            not in code_lines(site_block(CADDYFILE.read_text(encoding="utf-8"), PROD)),
+        ),
+        ("trulyfreefonts.com {\n\theader -Content-Security-Policy\n}\n", False),
+        ("trulyfreefonts.com {\n\timport tff_site\n}\n", True),
+    ):
+        caddyfile.write_text(text, encoding="utf-8")
+        done = subprocess.run(
+            ["bash", "-e", "-c", step["run"]], cwd=tmp_path, capture_output=True, text=True
+        )
+        assert (done.returncode == 0) is passes, done.stdout + done.stderr
 
 
 def test_the_condition_reader_follows_actions_precedence():
@@ -662,7 +755,9 @@ def test_production_staging_and_redirects_serve_what_the_design_says(caddy_bin, 
         for name in (PROD, STAGING, "trulyfreefonts.net"):
             conn = _SNIConnection(name, https_port, context)
             for path in ("/", "/missing", JS_PATH, "/a/b?c=1"):
-                seen[name, path] = fetch(conn, path, **{"Accept-Encoding": "gzip"})
+                # (Caddy reads the first two itself; the plain-IP checks below cover them.)
+                sent = {h: f"dropped-{h.lower()}" for h in DROPPED_HEADERS[2:]}
+                seen[name, path] = fetch(conn, path, **{"Accept-Encoding": "gzip"}, **sent)
             conn.close()
 
     for name in (PROD, STAGING):
@@ -700,6 +795,9 @@ def test_production_staging_and_redirects_serve_what_the_design_says(caddy_bin, 
     assert f'"host":"{PROD}:{https_port}"' in log
     assert '"client_ip":"127.0.0.0"' in log
     assert "remote_port" not in log
+    assert '"Accept-Encoding":["gzip"]' in log  # headers are logged, but none of these
+    for name in DROPPED_HEADERS[2:]:
+        assert f"dropped-{name.lower()}" not in log, name
 
 
 @pytest.fixture

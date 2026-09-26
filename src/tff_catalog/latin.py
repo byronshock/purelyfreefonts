@@ -16,7 +16,10 @@ private).
 ``GOOGLE_SOURCES`` (the live list first: design-m1 C12 pins it as the source of
 truth; a google/fonts repo folder only when the live list lacks the family and
 the folder is queued for it; any other repo-only folder takes the glyph test).
-They are judged on Google's metadata alone, never on their files:
+They are judged on Google's metadata alone, never on their files, except a
+family Google serves only with its ``menu`` subset (the Playwrite families and
+Allkin: ``menu_only``), which takes the glyph test like any other font (gate L,
+the owner's ruling of 2026-09-26):
 
 - rule A passes: basis ``gf_metadata``;
 - primary script CJK (``CJK_SCRIPTS``): out, reason ``cjk``;
@@ -49,17 +52,21 @@ recommended values it ships with):
 - CJK: fewer than ``cjk_codepoints_below`` (1,000) code points in
   ``CJK_RANGES`` (Han, kana, Hangul, Bopomofo), else out (``cjk``); this is the
   "mainly CJK" rule (Sarasa, LXGW WenKai, Pretendard, D2Coding);
-- Kernel: at most ``kernel_missing_max`` (0) of GF_Latin_Kernel's code points
+- Kernel: at most ``kernel_missing_max`` (2) of GF_Latin_Kernel's code points
   missing, else out (``kernel_missing``);
 - Latin share: of the letters that belong to a script (general category L*,
   Unicode Script property not Common, Inherited or Unknown), the share whose
-  script is Latin; at least ``latin_share_min`` (0.40), else out
+  script is Latin; at least ``latin_share_min`` (0.30), else out
   (``latin_share``). Inter measures 0.60, because it also has Greek and
   Cyrillic. Common letters (the mathematical alphanumerics, letterlike symbols)
   are symbols, not text: counting them would put Iosevka at 0.37;
-- coverage is ``extended`` when every GF_Latin_Core code point is there except at
-  most ``core_missing_marks_max`` (2) combining marks (Mn; Inter lacks U+030B),
-  else ``basic``.
+- coverage is ``extended`` when at most ``core_missing_max`` (3) GF_Latin_Core
+  code points are missing, of any kind (Inter lacks U+030B), else ``basic``.
+
+The values in brackets are the owner's gate L1 ruling of 2026-09-26 (the relaxed
+thresholds): at most 2 Kernel code points missing (Fantasque Sans Mono lacks the
+trademark sign and U+2212 minus), a Latin share of 30% (DejaVu Sans measures 0.35)
+and at most 3 Core code points missing for ``extended``.
 
 **Owner rulings** (gate L): any table of ``data/reviews/latin/<date>.toml`` may
 carry ``include = [family ids]`` and ``exclude = [family ids]`` next to its
@@ -153,13 +160,17 @@ REASONS = (
     "owner_excluded",  # an owner ruling (gate L)
 )
 
-# gate L1 (rec): the values ranking.toml [latin] ships with. The stage reads the config.
+# gate L1: the values ranking.toml [latin] ships with, as the owner ruled on 2026-09-26 (the
+# relaxed thresholds). The stage reads the config.
 L1_REC = Latin(
-    kernel_missing_max=0,
-    core_missing_marks_max=2,
-    latin_share_min=0.40,
+    kernel_missing_max=2,
+    core_missing_max=3,
+    latin_share_min=0.30,
     cjk_codepoints_below=1000,
 )
+# Google's subset for the font menu (the family name only): a family with no other subset
+# is judged by its files (gate L, owner ruling of 2026-09-26: menu_only_google).
+MENU_SUBSET = "menu"
 
 # Universe collectors whose records carry Google's metadata, in order of preference.
 GOOGLE_SOURCES = ("google_metadata", "google_repo")
@@ -244,6 +255,11 @@ def rule_a(rec: UniverseRecord) -> bool:
 
 def _gf_coverage(rec: UniverseRecord) -> Literal["basic", "extended"]:
     return "extended" if "latin-ext" in rec.subsets else "basic"
+
+
+def menu_only(rec: UniverseRecord) -> bool:
+    """Whether Google serves the family only with its ``menu`` subset (no text subsets)."""
+    return not set(rec.subsets) - {MENU_SUBSET}
 
 
 def google_result(rec: UniverseRecord) -> LatinResult:
@@ -346,10 +362,8 @@ def measure(cmap: Iterable[int], gs: Glyphsets) -> Measure:
 
 
 def core_covered(core_missing: Sequence[int], th: Latin) -> bool:
-    """Core counts as covered when at most ``core_missing_marks_max`` combining marks are missing."""
-    return len(core_missing) <= th.core_missing_marks_max and all(
-        unicodedata.category(chr(cp)) == "Mn" for cp in core_missing
-    )
+    """Core counts as covered when at most ``core_missing_max`` code points are missing."""
+    return len(core_missing) <= th.core_missing_max
 
 
 def verdict(m: Measure, th: Latin) -> LatinResult:
@@ -839,6 +853,8 @@ def decide(
             continue
         recs = family_records(fam, records)
         google = google_record(recs)
+        if google is not None and menu_only(google):
+            google = None  # judged by its files (MENU_SUBSET)
         if google is not None:
             res = google_result(google)
         else:

@@ -196,9 +196,18 @@ def test_stage_renders_flags_and_records_previews(
         p = previews[font_id]
         svg = ctx.paths.specimens / f"{font_id}.svg"
         assert p == Preview(f"specimens/{font_id}.svg", sha(svg.read_bytes()), ())
-    assert previews["greek"] == Preview(None, None, ("specimen_failed",))
-    assert previews["mismatch"] == Preview(None, None, ("specimen_hash_mismatch",))
-    assert previews["no-file"] == Preview(None, None, ("specimen_failed",))
+    assert previews["greek"] == Preview(
+        None,
+        None,
+        ("specimen_failed",),
+        "the font draws none of the sample texts, not even its name",
+    )
+    assert previews["mismatch"] == Preview(
+        None, None, ("specimen_hash_mismatch",), "the font file does not match its sha256"
+    )
+    assert previews["no-file"] == Preview(
+        None, None, ("specimen_failed",), "no font file to draw from"
+    )
     noisy = previews["noisy"]
     assert noisy.flags == ("specimen_name_only",)
     assert noisy.path == "specimens/noisy.svg"
@@ -226,7 +235,9 @@ def test_a_name_only_specimen_still_over_budget_fails(tmp_path: Path) -> None:
     chars = fontmaker.sample_chars("Noisy Family With A Long Name")
     font = fontmaker.make_font(chars, noisy=900)
     preview = stage.render_one("x", "Noisy Family With A Long Name", font, tmp_path)
-    assert preview == Preview(None, None, ("specimen_failed",))
+    assert preview == Preview(
+        None, None, ("specimen_failed",), "over 30 KB even with the name only"
+    )
     assert list(tmp_path.iterdir()) == []
 
 
@@ -286,7 +297,9 @@ def test_unavailable_font_keeps_a_same_input_specimen_else_fails(
     down = fetcher_for(rows, fonts, fail={URL.format(name="good")})
     assert run_with(ctx, rows, down) == first  # kept: same inputs as the rendered one
     index_path(ctx).unlink()
-    assert run_with(ctx, rows, down)["good"] == Preview(None, None, ("specimen_failed",))
+    assert run_with(ctx, rows, down)["good"] == Preview(
+        None, None, ("specimen_failed",), stage.UNAVAILABLE
+    )
     assert not (ctx.paths.specimens / "good.svg").exists()
 
 
@@ -313,7 +326,9 @@ def test_a_render_crash_flags_that_font_only_and_is_not_cached(
 
     monkeypatch.setattr(stage, "render_one", crash_on_good)
     previews = run_with(ctx, rows, fetcher_for(rows, fonts))
-    assert previews["good"] == Preview(None, None, ("specimen_failed",))
+    assert previews["good"] == Preview(
+        None, None, ("specimen_failed",), "the renderer raised an error on this font"
+    )
     assert previews["basic"].path == "specimens/basic.svg"
     assert set(jsonio.load(index_path(ctx))) == {"basic"}
 
@@ -403,7 +418,7 @@ def test_a_fresh_clone_replays_the_committed_specimens_without_the_font_files(
     # Changed inputs can't reuse it: without the file the font is flagged, its SVG removed.
     renamed = [font_row("good", fonts["good"], family="Sans Test"), *rows[1:]]
     again = run_with(ctx, renamed, None)
-    assert again["good"] == Preview(None, None, ("specimen_failed",))
+    assert again["good"] == Preview(None, None, ("specimen_failed",), stage.UNAVAILABLE)
     assert "good.svg" not in svgs(ctx)
 
 
@@ -433,7 +448,9 @@ def test_a_hand_edited_index_entry_is_a_miss(
     assert jsonio.load(index_path(ctx)) == index
     (cache_dir / sha(fonts["good"])).unlink()
     jsonio.dump({"good": edit(index["good"])}, index_path(ctx))
-    assert run_with(ctx, rows, None)["good"] == Preview(None, None, ("specimen_failed",))
+    assert run_with(ctx, rows, None)["good"] == Preview(
+        None, None, ("specimen_failed",), stage.UNAVAILABLE
+    )
 
 
 def test_an_unreadable_index_is_ignored(
@@ -483,8 +500,8 @@ def test_the_stage_with_the_real_m1_fetcher(
     with fetcher, caplog.at_level(logging.WARNING):
         previews = run_with(ctx, rows, fetcher)
     assert previews["good"].path == "specimens/good.svg"
-    assert previews["gone"] == Preview(None, None, ("specimen_failed",))
-    assert previews["plain"] == Preview(None, None, ("specimen_failed",))
+    assert previews["gone"] == Preview(None, None, ("specimen_failed",), stage.UNAVAILABLE)
+    assert previews["plain"] == Preview(None, None, ("specimen_failed",), stage.UNAVAILABLE)
     assert seen == [URL.format(name="gone"), URL.format(name="good")]  # sorted by id
     assert sorted(p.name for p in cache_dir.iterdir()) == [sha(fonts["good"])]  # no part files
     assert "gone: font unavailable" in caplog.text  # fetch.FetchError

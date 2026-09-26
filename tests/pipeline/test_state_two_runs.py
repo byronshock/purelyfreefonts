@@ -19,10 +19,12 @@ Each test runs three ways:
   ``stale`` state part with the real "parse" stage (``SynthCollector`` reads
   the synthetic extracts back), and loading, writing and merging state with
   ``tff_catalog.state`` (M1 step 3);
-- ``real``: the real ``refresh`` with the real collectors, xfail until M1
-  step 18 (no real collector reads the synthetic store yet). When it passes,
-  strict xfail fails the suite: then drop the mark and point
-  ``synth.make_store``'s data at the real collectors' formats.
+- ``real``: the real ``refresh`` with the real collectors, xfail until the
+  synthetic store holds the real collectors' extract formats (no real collector
+  reads it yet; step 18's refresh itself is done, and milestone-1 steps 3 and 18
+  note this case as open). When it passes, strict xfail fails the suite: then
+  drop the mark and point ``synth.make_store``'s data at the real collectors'
+  formats.
 """
 
 from collections.abc import Callable, Iterator
@@ -147,9 +149,11 @@ PIPELINES = [
         Pipeline(refresh.refresh, state.apply_state, state.load_state),
         id="real",
         # Any exception: refresh itself exists now, but no real collector reads the
-        # synthetic store until M1 step 18, so the pipeline stops at "universe".
+        # synthetic store yet, so the pipeline stops at "universe".
         marks=pytest.mark.xfail(
-            strict=True, reason="M1 step 18: real collectors over the synthetic store"
+            strict=True,
+            reason="open (milestone-1 steps 3, 18): the synthetic store lacks the real "
+            "collectors' extract formats",
         ),
     ),
 ]

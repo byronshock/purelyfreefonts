@@ -18,8 +18,11 @@ every size budget and the CSP lint, and each check fails on a site made to break
   take at most 200 ms, and the list must then show what the count says.
 - Specimens: at load, no specimen is requested for a row more than 1000 px below the screen.
 
-The site is the 540-font one. In CI (``TFF_CADDY=1``) Caddy serves it from ``TFF_SITE_DIR``
-with compression; locally this module builds it and serves it gzip-compressed with the
+The site is ``TFF_PERF_SITE_DIR`` when that is set (CI's 540-font build, or a real
+catalog's build), else a 540-font site this module builds from make_large_catalog. It is
+never guessed from ``TFF_SITE_DIR``: the deploy tests set that to whatever build they check.
+When ``TFF_CADDY=1`` and the perf site is the one Caddy serves (``TFF_SITE_DIR``), Caddy
+serves it with compression; otherwise this module serves it gzip-compressed with the
 production headers (``tff-site serve`` never compresses, and the budgets assume
 compression).
 """
@@ -47,7 +50,8 @@ from tff_site import budgets, cli
 FAKE_COMMIT = "0" * 40
 CI_CADDY_URL = "http://127.0.0.1:8080"
 LARGE_FONTS = 540
-MIN_LARGE_FONTS = 500
+MIN_LARGE_FONTS = 500  # a site this module builds; an explicit one is measured at its own size
+PERF_SITE_ENV = "TFF_PERF_SITE_DIR"
 RUNS = 5
 LCP_MAX_MS = 2500
 CLS_MAX = 0.1
@@ -142,9 +146,11 @@ def _rows_in(site: Path) -> int:
 
 @pytest.fixture(scope="module")
 def large_site(tmp_path_factory: pytest.TempPathFactory) -> Path:
-    """A built 540-font site: ``TFF_SITE_DIR`` if it is one (CI), else built here."""
-    given = os.environ.get("TFF_SITE_DIR")
-    if given and _rows_in(Path(given)) >= MIN_LARGE_FONTS:
+    """The site to measure: ``TFF_PERF_SITE_DIR`` if set, else a 540-font site built here."""
+    given = os.environ.get(PERF_SITE_ENV)
+    if given:
+        if _rows_in(Path(given)) == 0:
+            pytest.fail(f"{PERF_SITE_ENV}={given} is not a built site with a list")
         return Path(given)
     from tests.fixtures import make_large_catalog
 
@@ -212,12 +218,20 @@ class _GzipHandler(BaseHTTPRequestHandler):
 
 
 @pytest.fixture(scope="module")
+def large_rows(large_site: Path) -> int:
+    """How many fonts the measured site lists (at least MIN_LARGE_FONTS for one built here)."""
+    return _rows_in(large_site)
+
+
+@pytest.fixture(scope="module")
 def large_url(large_site: Path) -> Iterator[str]:
-    """Base URL of the served 540-font site, compressed."""
-    if os.environ.get("TFF_CADDY") == "1":
-        given = os.environ.get("TFF_SITE_DIR")
-        if not given or Path(given).resolve() != large_site.resolve():
-            pytest.fail("with TFF_CADDY=1, TFF_SITE_DIR must be the 540-font build Caddy serves")
+    """Base URL of the served perf site, compressed: Caddy's when it serves this site."""
+    served = os.environ.get("TFF_SITE_DIR")
+    if (
+        os.environ.get("TFF_CADDY") == "1"
+        and served
+        and Path(served).resolve() == large_site.resolve()
+    ):
         yield CI_CADDY_URL
         return
     from tff_site import serve
@@ -312,13 +326,13 @@ def _wait_quiet(page: Any, timeout_ms: int = LOAD_TIMEOUT_MS) -> None:
         waited += 250
 
 
-def measure_load(browser: Any, url: str, context_args: dict[str, Any]) -> Load:
+def measure_load(browser: Any, url: str, context_args: dict[str, Any], want_rows: int) -> Load:
     context, page = _throttled_page(browser, url, PERF_JS, **context_args)
     try:
         page.goto("/", wait_until="load", timeout=LOAD_TIMEOUT_MS)
         _wait_quiet(page)
         rows = page.locator("#list > li.font").count()
-        assert rows >= MIN_LARGE_FONTS, f"the served list has {rows} fonts, not the large catalog"
+        assert rows >= want_rows, f"the served list has {rows} fonts, not the {want_rows} measured"
         m = page.evaluate("() => window.__tffPerf")
     finally:
         context.close()
@@ -372,13 +386,13 @@ def _load_verdict(loads: list[Load], size: str) -> tuple[dict[str, Any], list[st
 
 @pytest.mark.parametrize("size", VIEWPORTS)
 def test_load_meets_the_web_vitals_budget(
-    browser: Any, browser_name: str, large_url: str, size: str
+    browser: Any, browser_name: str, large_url: str, large_rows: int, size: str
 ) -> None:
     _chromium(browser_name)
     summary, failures = {}, ["not measured"]
     # Shared CI runners are noisy: a failing median gets one more set of runs (design-m2 §9).
     for _attempt in range(2):
-        loads = [measure_load(browser, large_url, VIEWPORTS[size]) for _ in range(RUNS)]
+        loads = [measure_load(browser, large_url, VIEWPORTS[size], large_rows) for _ in range(RUNS)]
         summary, failures = _load_verdict(loads, size)
         print(json.dumps(summary))
         if not failures:
@@ -414,14 +428,16 @@ def _refilter_steps(ranks: list[str]) -> list[tuple[str, str, str | None]]:
     return steps[:REFILTER_STEPS]
 
 
-def _refilter_once(browser: Any, url: str) -> tuple[list[tuple[str, str, str | None]], list]:
+def _refilter_once(
+    browser: Any, url: str, want_rows: int
+) -> tuple[list[tuple[str, str, str | None]], list]:
     """Load the list under the slowdown, make the 20 changes, and return the steps and what
     REFILTER_JS recorded for each."""
     context, page = _throttled_page(browser, url, PERF_JS + REFILTER_JS, **VIEWPORTS["desktop"])
     try:
         page.goto("/", wait_until="load", timeout=LOAD_TIMEOUT_MS)
         _wait_quiet(page)
-        assert page.locator("#list > li.font").count() >= MIN_LARGE_FONTS
+        assert page.locator("#list > li.font").count() >= want_rows
         ranks = page.eval_on_selector_all("#f-rank option", "(os) => os.map((o) => o.value)")
         steps = _refilter_steps(ranks)
         for k, (action, selector, value) in enumerate(steps, start=1):
@@ -456,14 +472,14 @@ def _check_refilter_records(steps: list[tuple[str, str, str | None]], timings: l
 
 
 def test_rank_and_filter_changes_redraw_within_200_ms(
-    browser: Any, browser_name: str, large_url: str
+    browser: Any, browser_name: str, large_url: str, large_rows: int
 ) -> None:
     _chromium(browser_name)
     worst: dict[str, Any] = {}
     # The budget is on the slowest of 20 changes; on a noisy runner a slow one gets one more
     # full set (design-m2 §9).
     for _attempt in range(2):
-        steps, timings = _refilter_once(browser, large_url)
+        steps, timings = _refilter_once(browser, large_url, large_rows)
         _check_refilter_records(steps, timings)
         worst = max(timings, key=lambda t: t["ms"])
         print(json.dumps({"refilter_ms": [round(t["ms"]) for t in timings], "worst": worst}))
@@ -584,7 +600,8 @@ def test_no_specimen_loads_far_below_the_screen(
 
 
 def test_large_site_meets_every_budget(large_site: Path) -> None:
-    assert _rows_in(large_site) >= MIN_LARGE_FONTS
+    if not os.environ.get(PERF_SITE_ENV):
+        assert _rows_in(large_site) >= MIN_LARGE_FONTS
     assert budgets.check(large_site) == []
 
 

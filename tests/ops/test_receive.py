@@ -1239,7 +1239,7 @@ def test_deploy_sh_dir_rollback_status(rx: Receiver, tmp_path: Path) -> None:
 RECORDING_UV = """#!/bin/sh
 # uv sync ... | uv run [--group G]... CMD ...: records each call; fakes tff-site's build steps
 # and pytest, and runs the real tff-site pack.
-echo "$PWD :: TFF_SITE_DIR=${TFF_SITE_DIR:-} uv $*" >> "$TFF_TEST_CALLS"
+echo "$PWD :: TFF_SITE_DIR=${TFF_SITE_DIR:-} TFF_SITE_DATA=${TFF_SITE_DATA:-} uv $*" >> "$TFF_TEST_CALLS"
 case "$1" in sync) exit 0 ;; run) shift ;; *) exit 98 ;; esac
 while [ $# -gt 0 ]; do
   case "$1" in --group) shift 2 ;; --*) shift ;; *) break ;; esac
@@ -1311,12 +1311,16 @@ def test_deploy_sh_builds_in_a_temporary_worktree(rx: Receiver, tmp_path: Path) 
         assert proc.returncode == 0, proc.stderr
         return proc.stdout.strip()
 
+    # main carries a real (non-synthetic) catalog; the commit off main has none.
+    (repo / "build").mkdir()
+    (repo / "build" / "catalog-site.json").write_text('{"synthetic": false}\n')
     git("init", "-q", "-b", "main")
     git("add", "-A")
     git("commit", "-q", "-m", "one")
     on_main = git("rev-parse", "HEAD")
     git("update-ref", "refs/remotes/origin/main", on_main)
     (repo / "README.md").write_text("two\n")
+    git("rm", "-q", "build/catalog-site.json")
     git("add", "-A")
     git("commit", "-q", "-m", "two")
     off_main = git("rev-parse", "HEAD")
@@ -1338,17 +1342,24 @@ def test_deploy_sh_builds_in_a_temporary_worktree(rx: Receiver, tmp_path: Path) 
     lines = calls.read_text().splitlines()
     src = {line.split(" :: ")[0] for line in lines}
     assert len(src) == 1, "every step runs in the one worktree"
-    assert src.pop().endswith("/src")
+    src_dir = src.pop()
+    assert src_dir.endswith("/src")
     steps = [line.split(" uv ", 1)[1] for line in lines]
     site = steps[2].split("--out ")[1].split()[0]
+    # No build/catalog-site.json in this repository: staging gets the sample, and the site
+    # tests compare the page with that same file.
+    sample = f"{src_dir}/tests/fixtures/catalog-site.sample.json"
     assert steps[:4] == [
         "sync --locked --group browser",
-        "run tff-site fetch-fonts",
-        f"run tff-site build --out {site} --commit {off_main}",
+        f"run tff-site fetch-fonts --data {sample}",
+        f"run tff-site build --out {site} --commit {off_main} --data {sample} --drafts",
         f"run tff-site check {site}",
     ]
-    assert f"TFF_SITE_DIR={site} uv run --group browser pytest tests/site" in lines[4]
-    assert "--browser chromium --browser firefox" in lines[4]
+    assert (
+        f"TFF_SITE_DIR={site} TFF_SITE_DATA={sample} uv run --group browser pytest tests/site"
+        in lines[4]
+    )
+    assert "--ignore=tests/site/test_perf.py --browser chromium --browser firefox" in lines[4]
     assert steps[-1] == (
         "run --group browser pytest tests/live -q --base-url https://staging.trulyfreefonts.com"
         f" --expect-commit {off_main} --browser chromium --browser firefox"
@@ -1368,12 +1379,36 @@ def test_deploy_sh_builds_in_a_temporary_worktree(rx: Receiver, tmp_path: Path) 
     assert rx.current("production") is None
     assert calls.read_text() == "", "nothing built for a refused commit"
 
+    no_catalog = deploy_sh("production", "--fast", "--commit", off_main, "--any-commit")
+    assert no_catalog.code == 1
+    assert "production never gets the sample" in no_catalog.err
+    assert rx.current("production") is None
+    assert calls.read_text() == "", "nothing built without a real catalog"
+
+    # Header phase A (no CSP on production) refuses a build deploy to production.
+    git("switch", "-q", "-c", "phase-a", on_main)
+    (repo / "ops" / "Caddyfile").write_text(
+        "trulyfreefonts.com {\n\theader -Content-Security-Policy\n}\n"
+    )
+    git("add", "-A")
+    git("commit", "-q", "-m", "phase a")
+    phase_a = git("rev-parse", "HEAD")
+    git("switch", "-q", "main")
+    refused = deploy_sh("production", "--fast", "--commit", phase_a, "--any-commit")
+    assert refused.code == 1
+    assert "still in header phase A" in refused.err
+    assert rx.current("production") is None
+
     live_fail = deploy_sh("production", "--fast", "--commit", on_main, TFF_TEST_LIVE_EXIT="1")
     assert live_fail.code == 1
     assert "live test failed on production" in live_fail.err
     assert "ops/deploy.sh rollback production" in live_fail.err
     assert rx.current("production") == on_main
     assert git("worktree", "list", "--porcelain").count("worktree ") == 1
+    built = [line for line in calls.read_text().splitlines() if "tff-site build" in line]
+    assert len(built) == 1
+    assert "--drafts" not in built[0], "production never publishes draft posts (M2 step 7b)"
+    assert built[0].endswith("/build/catalog-site.json"), "production builds the real catalog"
 
 
 # --- the server's Python ---------------------------------------------------------------------

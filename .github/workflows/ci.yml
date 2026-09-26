@@ -253,6 +253,7 @@ jobs:
         id: tests
         run: |
           echo "TFF_SITE_DIR=$RUNNER_TEMP/site" >> "$GITHUB_ENV"
+          echo "TFF_PERF_SITE_DIR=$RUNNER_TEMP/site" >> "$GITHUB_ENV"
           echo "TFF_SITE_DATA=$RUNNER_TEMP/large/catalog-site.json" >> "$GITHUB_ENV"
           if [ "$BUILT" = true ] && [ -f tests/site/test_perf.py ] \
             && [ -f tests/fixtures/make_large_catalog.py ]; then
@@ -309,6 +310,104 @@ jobs:
         env:
           TFF_CADDY: "1"
         run: uv run --locked pytest tests/site/test_perf.py --browser chromium
+
+  # The committed real catalog (build/catalog-site.json, from a merged or proposed refresh):
+  # the site built from it must pass what deploy.yml checks before it goes live, so a refresh
+  # pull request that breaks the page, a budget or the tests fails here, not in the deploy.
+  site-real:
+    name: site-real
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash
+    env:
+      DATA: build/catalog-site.json
+      CADDY_VERSION: 2.11.4
+      # sha256 of caddy_2.11.4_linux_amd64.tar.gz (checked against the release's sha512 list).
+      CADDY_SHA256: 527fbf917c39189a1e3b31d34fa955601680b2d5c8055d2a87b8b9588dec7bb9
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Look for a committed real catalog
+        id: data
+        run: |
+          echo "TFF_SITE_DIR=$RUNNER_TEMP/site" >> "$GITHUB_ENV"
+          echo "TFF_SITE_DATA=$DATA" >> "$GITHUB_ENV"
+          if [ -f "$DATA" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "No build/catalog-site.json yet: nothing to check." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        if: steps.data.outputs.present == 'true'
+        with:
+          enable-cache: true
+      - if: steps.data.outputs.present == 'true'
+        run: uv sync --locked --group browser
+      - name: Check the committed catalog outputs (schemas and the checks they carry)
+        if: steps.data.outputs.present == 'true'
+        run: uv run --locked tff-catalog validate --committed
+      - name: Cache the font files
+        if: steps.data.outputs.present == 'true'
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/tff/fonts
+          key: tff-fonts-${{ hashFiles('build/catalog-site.json', 'tests/fixtures/catalog-site.sample.json') }}
+          restore-keys: tff-fonts-
+      - name: Build twice (byte-identical) and check the budgets
+        if: steps.data.outputs.present == 'true'
+        run: |
+          uv run --locked tff-site validate "$DATA"
+          uv run --locked tff-site fetch-fonts --data "$DATA"
+          uv run --locked tff-site build --data "$DATA" --out "$TFF_SITE_DIR" --commit "$GITHUB_SHA"
+          uv run --locked tff-site build --data "$DATA" --out "$RUNNER_TEMP/again" --commit "$GITHUB_SHA"
+          diff -r "$TFF_SITE_DIR" "$RUNNER_TEMP/again"
+          uv run --locked tff-site check "$TFF_SITE_DIR"
+      - name: Find the Playwright version
+        id: pw
+        if: steps.data.outputs.present == 'true'
+        run: |
+          version=$(uv run --locked python -c "import importlib.metadata as m; print(m.version('playwright'))")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Cache Playwright's browsers
+        if: steps.data.outputs.present == 'true'
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-${{ runner.os }}-${{ steps.pw.outputs.version }}
+      - name: Install the browsers
+        if: steps.data.outputs.present == 'true'
+        run: uv run --locked playwright install --with-deps chromium firefox
+      - name: Install Caddy
+        if: steps.data.outputs.present == 'true'
+        run: |
+          tarball="caddy_${CADDY_VERSION}_linux_amd64.tar.gz"
+          curl -sSfL -o "$RUNNER_TEMP/$tarball" \
+            "https://github.com/caddyserver/caddy/releases/download/v${CADDY_VERSION}/${tarball}"
+          echo "${CADDY_SHA256}  $RUNNER_TEMP/$tarball" | sha256sum --check --strict -
+          mkdir -p "$RUNNER_TEMP/bin"
+          tar -xzf "$RUNNER_TEMP/$tarball" -C "$RUNNER_TEMP/bin" caddy
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+      - name: Serve the site with Caddy on 127.0.0.1:8080
+        if: steps.data.outputs.present == 'true'
+        run: |
+          caddy start --config ops/caddy/ci.Caddyfile --adapter caddyfile > "$RUNNER_TEMP/caddy.log" 2>&1
+          curl -sSf -o /dev/null http://127.0.0.1:8080/version.txt
+      - name: Run the site tests on the real catalog, as deploy.yml does
+        if: steps.data.outputs.present == 'true'
+        env:
+          TFF_CADDY: "1"
+        run: |
+          uv run --locked pytest tests/site -m "not live" --ignore=tests/site/test_perf.py \
+            --browser chromium --browser firefox
+      - name: Run the performance budget on the real catalog in Chromium
+        if: steps.data.outputs.present == 'true'
+        env:
+          TFF_CADDY: "1"
+        run: TFF_PERF_SITE_DIR="$TFF_SITE_DIR" uv run --locked pytest tests/site/test_perf.py --browser chromium
 
   caddy:
     name: caddy

@@ -20,6 +20,7 @@ from tff_catalog.collectors.universe.nerdfonts import (
     API_HOST,
     COLLECTOR,
     FONTS,
+    LICENSES,
     PIN,
     RAW_HOST,
     Pin,
@@ -30,6 +31,9 @@ from tff_catalog.collectors.universe.nerdfonts import (
     commits_url,
     font_entries,
     is_spdx_expression,
+    license_files,
+    license_path,
+    read_licenses,
 )
 from tff_catalog.config_model import ConfigError, from_mapping
 from tff_catalog.fetch import Fetcher
@@ -48,6 +52,12 @@ COMMIT = "64a084f95480ee5efb62132c01cd142ab6147655"
 OTHER_COMMIT = "0123456789abcdef0123456789abcdef01234567"
 COMMITS_URL = commits_url(SETTINGS)
 RAW_BASE = f"https://{RAW_HOST}/ryanoasis/nerd-fonts"
+TREE = (HTTP / "tree.json").read_bytes()
+UNPATCHED = f"{RAW_BASE}/{COMMIT}/src/unpatched-fonts"
+
+
+def tree_url(commit: str = COMMIT) -> str:
+    return f"https://{API_HOST}/repos/ryanoasis/nerd-fonts/git/trees/{commit}:src/unpatched-fonts?recursive=1"
 
 
 def parse(snapshot: Snapshot = SNAPSHOT) -> list[Record]:
@@ -202,7 +212,7 @@ def test_license_facts_keep_the_raw_id_and_speak_spdx_only_when_well_formed() ->
     assert dict(facts["EnvyCodeR"].attrs) == {
         "rfn_exception": "https://github.com/ryanoasis/nerd-fonts/pull/1318#issuecomment-1636737323"
     }
-    assert all(f.text_url is None and f.text_sha256 is None for f in facts.values())
+    assert all(f.text_sha256 is None for f in facts.values())  # texts are read in stage verify
 
 
 @pytest.mark.parametrize(
@@ -338,19 +348,84 @@ def test_settings_reject_bad_values(data: dict[str, Any], message: str) -> None:
         from_mapping(Settings, data, where="sources/nerdfonts.toml")
 
 
+# --- license files ------------------------------------------------------------------------------
+
+
+def test_license_facts_point_at_the_folders_license_file_at_the_commit() -> None:
+    urls = {k: f.text_url for k, f in licenses(parse()).items()}
+    assert urls["0xProto"] == f"{UNPATCHED}/0xProto/LICENSE"
+    assert urls["Meslo"] == f"{UNPATCHED}/Meslo/LICENSE.txt"  # up from the preview's M/ folder
+    assert urls["Overpass"] == f"{UNPATCHED}/Overpass/Mono/LICENSE.md"  # the preview's own folder
+    assert urls["Ubuntu"] == f"{UNPATCHED}/Ubuntu/LICENCE.txt"  # not the FAQ or copyright.txt
+    assert urls["EnvyCodeR"] == f"{UNPATCHED}/EnvyCodeR/LICENCE.md"
+    assert all(u is not None for u in urls.values())
+
+
+@pytest.mark.parametrize(
+    ("files", "want"),
+    [
+        (["X/OFL.txt", "X/LICENSE"], "X/LICENSE"),
+        (["X/OFL.txt", "X/Apache License.txt"], "X/OFL.txt"),
+        (["X/SIL Open Font License.txt", "X/COPYING-LICENSE"], "X/SIL Open Font License.txt"),
+        (["X/LICENCE-FAQ.txt", "X/copyright.txt"], None),
+        (["Y/LICENSE"], None),
+        (["X/sub/LICENSE", "X/other/LICENSE"], None),
+    ],
+)
+def test_license_path_prefers_a_plain_license_file(files: list[str], want: str | None) -> None:
+    entry = {"folderName": "X", "imagePreviewFontSource": "X/X-Regular.ttf"}
+    assert license_path(entry, files) == want
+
+
+def test_license_path_without_a_preview_looks_in_the_folder() -> None:
+    assert license_path({"folderName": "X"}, ["X/LICENSE.md"]) == "X/LICENSE.md"
+
+
+def test_license_files_keep_license_like_blobs_and_refuse_truncated_trees() -> None:
+    doc = json.loads(TREE)
+    files = license_files(doc)
+    assert "Meslo/LICENSE.txt" in files
+    assert "Ubuntu/LICENCE-FAQ.txt" in files  # listed; license_path passes it over
+    assert not any(f.endswith((".ttf", ".otf", "README.md")) for f in files)
+    with pytest.raises(ValueError, match="truncated"):
+        license_files({**doc, "truncated": True})
+    with pytest.raises(ValueError, match="no tree"):
+        license_files({"message": "Not Found"})
+
+
+def test_a_license_list_for_another_commit_is_not_used(tmp_path: Path) -> None:
+    pin = Pin.from_json(SNAPSHOT.load_json(PIN))
+    doc = SNAPSHOT.load_json(LICENSES)
+    assert read_licenses(doc, pin, "src/unpatched-fonts") == doc["files"]
+    assert read_licenses({**doc, "commit": OTHER_COMMIT}, pin, "src/unpatched-fonts") is None
+    writer = SnapshotWriter(tmp_path / "made", COLLECTOR.name, DAY, COLLECTOR.version)
+    writer.write_bytes(FONTS, SNAPSHOT.read_bytes(FONTS), rows=16)
+    writer.write_json(PIN, SNAPSHOT.load_json(PIN))
+    writer.write_json(LICENSES, {**doc, "commit": OTHER_COMMIT})
+    assert all(f.text_url is None for f in licenses(parse(writer.close())).values())
+
+
+def test_a_version_1_snapshot_without_license_files_still_parses(tmp_path: Path) -> None:
+    old = snapshot_of(tmp_path, fixture_entries(), SNAPSHOT.load_json(PIN))
+    recs = parse(old)
+    assert universe(recs) == universe(parse())
+    assert all(f.text_url is None for f in licenses(recs).values())
+
+
 # --- fetch ------------------------------------------------------------------------------------
 
 
 def test_fetch_keeps_the_file_byte_for_byte_at_the_pinned_commit(tmp_path: Path) -> None:
     snap, urls = fetch(tmp_path, HTTP)
     assert snap is not None
-    assert [u.split("/")[2] for u in urls] == [API_HOST, RAW_HOST]
+    assert [u.split("/")[2] for u in urls] == [API_HOST, RAW_HOST, API_HOST]
     assert snap.read_bytes(FONTS) == (HTTP / "fonts.json").read_bytes()
     assert snap.manifest.extract(FONTS).rows == 16
     assert Pin.from_json(snap.load_json(PIN)).commit == COMMIT
     assert snap.manifest.data_date == date(2026, 9, 1)
-    assert [e.path for e in snap.manifest.extracts] == [FONTS, PIN]
-    assert [f.kept for f in snap.manifest.fetched] == [False, True]
+    assert [e.path for e in snap.manifest.extracts] == [FONTS, LICENSES, PIN]
+    assert [f.kept for f in snap.manifest.fetched] == [False, True, False]  # the tree is not kept
+    assert snap.load_json(LICENSES) == SNAPSHOT.load_json(LICENSES)
 
 
 def test_an_unchanged_commit_answer_copies_both_extracts(tmp_path: Path) -> None:
@@ -383,17 +458,45 @@ def test_a_new_commit_downloads_the_new_file(tmp_path: Path) -> None:
         [
             (COMMITS_URL, commits_body(OTHER_COMMIT, "2026-10-20T08:00:00+02:00"), None),
             (f"{RAW_BASE}/{OTHER_COMMIT}/bin/scripts/lib/fonts.json", fonts_body(entries), None),
+            (tree_url(OTHER_COMMIT), TREE, None),
         ],
     )
     snap, urls = fetch(tmp_path, http, day=LATER, previous=SNAPSHOT)
     assert snap is not None
-    assert len(urls) == 2
+    assert len(urls) == 3  # the previous license list is for another commit
+    assert snap.load_json(LICENSES)["commit"] == OTHER_COMMIT
     pin = Pin.from_json(snap.load_json(PIN))
     assert (pin.commit, pin.committed_at) == (OTHER_COMMIT, "2026-10-20T06:00:00Z")
     assert snap.manifest.data_date == date(2026, 10, 20)
     proto = universe(parse(snap))["0xProto"]
     assert dict(proto.attrs)["version"] == "3.000"
     assert OTHER_COMMIT in proto.files[0].url
+    assert OTHER_COMMIT in (licenses(parse(snap))["0xProto"].text_url or "")
+
+
+@pytest.mark.parametrize(
+    "tree",
+    [b'{"message": "Not Found"}', json.dumps({"tree": [], "truncated": True}).encode()],
+    ids=["not-a-tree", "truncated"],
+)
+def test_a_failed_license_list_leaves_the_snapshot_standing(tmp_path: Path, tree: bytes) -> None:
+    http = write_http(
+        tmp_path / "http",
+        [
+            (COMMITS_URL, commits_body(), None),
+            (
+                f"{RAW_BASE}/{COMMIT}/bin/scripts/lib/fonts.json",
+                (HTTP / "fonts.json").read_bytes(),
+                None,
+            ),
+            (tree_url(), tree, None),
+        ],
+    )
+    snap, _ = fetch(tmp_path, http)
+    assert snap is not None
+    assert [e.path for e in snap.manifest.extracts] == [FONTS, PIN]
+    assert snap.manifest.notes[0].startswith(f"no license file list at {COMMIT[:12]}")
+    assert all(f.text_url is None for f in licenses(parse(snap)).values())
 
 
 @pytest.mark.parametrize(
@@ -447,8 +550,8 @@ def test_a_previous_snapshot_without_a_readable_pin_is_not_reused(
     old = writer.close()
     snap, urls = fetch(tmp_path, HTTP, day=LATER, previous=old)
     assert snap is not None
-    assert len(urls) == 2  # no validators sent, so the file is downloaded again
-    assert [f.status for f in snap.manifest.fetched] == [200, 200]
+    assert len(urls) == 3  # no validators sent, so the file is downloaded again
+    assert [f.status for f in snap.manifest.fetched] == [200, 200, 200]
     assert snap.read_bytes(FONTS) == (HTTP / "fonts.json").read_bytes()
     assert Pin.from_json(snap.load_json(PIN)).commit == COMMIT
 
@@ -491,5 +594,6 @@ def test_real_fetch_and_parse(tmp_path: Path) -> None:
     assert fams["CascadiaCode"].names == (("CaskaydiaCove", "build"),)
     assert fams["NerdFontsSymbolsOnly"].drop == "icon"
     assert len(licenses(recs)) == len(fams)
+    assert all(f.text_url is not None for f in licenses(recs).values())
     commit = Pin.from_json(snap.load_json(PIN)).commit
     assert all(commit in f.url for r in fams.values() for f in r.files)

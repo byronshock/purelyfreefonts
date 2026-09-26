@@ -170,6 +170,37 @@ group = "permissive"
 redistributable = true
 attribution_required = false
 
+# Four licenses Debian's copyright files name, ruled on by the owner on 2026-09-26
+# (debian_unclassed = allow_four; data/reviews/licenses/2026-09-26.toml).
+
+[allowed."X11"]
+name = "X11 License"
+group = "permissive"
+redistributable = true
+attribution_required = false
+note = "Owner ruling of 2026-09-26: the MIT License with an advertising clause about the copyright holder's name."
+
+[allowed."BSL-1.0"]
+name = "Boost Software License 1.0"
+group = "permissive"
+redistributable = true
+attribution_required = false
+note = "Owner ruling of 2026-09-26."
+
+[allowed."Artistic-2.0"]
+name = "Artistic License 2.0"
+group = "permissive"
+redistributable = true
+attribution_required = false
+note = "Owner ruling of 2026-09-26. Artistic 1.0 is still researched (ruling class below)."
+
+[allowed."MPL-2.0"]
+name = "Mozilla Public License 2.0"
+group = "open-font"
+redistributable = true
+attribution_required = false
+note = "Owner ruling of 2026-09-26: file-level copyleft; changed font files stay under the MPL."
+
 [allowed."CC-BY-2.0"]
 name = "Creative Commons Attribution 2.0"
 group = "attribution"
@@ -339,6 +370,9 @@ question = "An informal freeware grant. D3: it qualifies only if it explicitly a
 
 [ruling."IPA"]
 question = "The IPA Font License 1.0 allows use, copying and redistribution; changed fonts must be renamed and shipped with their source. Does it qualify, and may the fonts be redistributed?"
+
+[ruling."Artistic-1.0"]
+question = "The Artistic License 1.0 (Debian's 'Artistic') lets anyone use and redistribute the package, with conditions on changed versions that the owner asked Claude to research (ruling of 2026-09-26). Does it qualify, and may the fonts be redistributed?"
 
 [ruling."Arphic-1999"]
 question = "The Arphic Public License is a copyleft license written for fonts, with no separate font exception. Does it qualify under D3, and may the fonts be redistributed?"

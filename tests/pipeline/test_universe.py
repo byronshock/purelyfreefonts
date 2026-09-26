@@ -874,7 +874,9 @@ def test_every_key_is_listed_exactly_once() -> None:
     ]
     assert sorted(listed) == sorted({r.key for r in recs})
     assert u.unmapped == (SourceKey("fs-id", "tie"),)  # unmapped wins over several-families
-    text = report(u, registry)
+    # Between them, the committed report (kept out, unmapped) and the key table (in a
+    # family) list every key exactly once.
+    text = report(u, registry) + universe.keys_report(u)
     for k in listed:
         assert sum(f"| {k.ns} | {k.key} |" in line for line in text.splitlines()) == 1, k
 
@@ -991,7 +993,6 @@ def test_report_shape() -> None:
         "New ids this run",
         "Display names changed this run (record the old name in data/aliases.csv)",
         "Registry ids no source listed this run",
-        "Every key mapped",
     ]
     lines = text.splitlines()
     assert "| Families | 3 |" in lines
@@ -1007,6 +1008,10 @@ def test_report_shape() -> None:
     assert "| ember-icons | Ember Icons | Ember Icons |" in lines  # new id
     assert "| aster-sans | ASTER SANS | Aster Sans |" in lines  # display name changed
     assert "| gone-sans | Gone Sans |" in lines  # not listed this run
+    assert "Every key's family is listed in build/review/universe-keys.md" in text
+    keys = universe.keys_report(u)
+    assert _sections(keys) == ["Every key mapped"]
+    lines = keys.splitlines()
     assert "| fs-id | pipe\\|name | pipe-sans | Pipe Sans |" in lines  # cells are escaped
     mapped = lines[lines.index("## Every key mapped") :]
     for fam in u.families.values():

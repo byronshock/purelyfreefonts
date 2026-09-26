@@ -114,7 +114,12 @@ def test_licenses_toml_is_strict_and_groups_are_site_filters() -> None:
         ("AGPL-3.0-only WITH PS-or-PDF-font-exception-20170817", "excluded", None, None),  # URW
         ("LicenseRef-Microsoft-EULA", "excluded", None, None),  # MS Core Fonts EULA
         ("LicenseRef-ITF-FFL", "excluded", None, None),  # AUTHORITY Rule 4
-        ("MPL-2.0", "excluded", None, None),  # not listed
+        ("EUPL-1.2", "excluded", None, None),  # not listed
+        ("MPL-2.0", "allowed", "open-font", False),  # owner ruling of 2026-09-26
+        ("X11", "allowed", "permissive", False),
+        ("BSL-1.0", "allowed", "permissive", False),
+        ("Artistic-2.0", "allowed", "permissive", False),
+        ("Artistic-1.0", "ruling", None, None),  # researched, back to the owner
         ("Bitstream-Vera", "ruling", None, None),  # gate LIC items
         ("Ubuntu-font-1.0", "ruling", None, None),
         ("WTFPL", "ruling", None, None),
@@ -134,7 +139,7 @@ def test_d3_classes(expr: str, status: str, group: str | None, attribution: bool
 def test_excluded_reasons_name_their_rule() -> None:
     assert "Rule 4" in lic.classify("LicenseRef-ITF-FFL", REAL_CFG).reason
     assert "D3" in lic.classify("CC-BY-SA-4.0", REAL_CFG).reason
-    assert "not listed" in lic.classify("MPL-2.0", REAL_CFG).reason
+    assert "not listed" in lic.classify("EUPL-1.2", REAL_CFG).reason
 
 
 def test_alias_values_are_canonical_and_listed() -> None:

@@ -1,0 +1,23 @@
+# Owner rulings of 2026-09-26, given in chat after integration A (the first real run). Ruled by
+# the owner, Byron Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml).
+# Also in AUTHORITY.md. Where the owner picked Claude's recommendation, the reason is Claude's summary.
+
+[google_rising_history]
+value = "private_store"
+ruling = "Google's share history is kept in the private data repository; Rising uses it, and nothing public holds it."
+reason = "Claude's recommendation: rulings T2 and T4 keep Google's values private, and state/smoothing.json is public."
+
+[ecosystems]
+value = "collect_credit_ask"
+ruling = "Keep collecting ecosyste.ms and credit it per its terms (§11 b); Claude drafts a note to its maintainer and the owner sends it."
+reason = "Claude's recommendation."
+
+[default_sources]
+value = "facts_only_flutter_off"
+ruling = "Fontist, Debian DEP-5, CachyOS and EndeavourOS package data and the foundry sites are used for facts only, with synthetic fixtures; Flutter stays off in v1."
+reason = "Claude's recommendation."
+
+[public_facts_in_fixtures]
+value = "allow"
+ruling = "Public facts may appear in fixtures: license-required copyright lines, designers' GitHub URLs and package homepages, personal sites included."
+reason = "Claude's recommendation."

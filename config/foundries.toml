@@ -28,6 +28,13 @@
 # url = "https://gitlab.com/velvetyne/sligoil"
 # license = "SIL Open Font License 1.1"
 # repository = "https://gitlab.com/velvetyne/sligoil"   # optional
+# files = ["https://gitlab.com/velvetyne/sligoil/-/raw/<commit>/fonts/..."]   # optional
+#
+# files: one font file per family, pinned to the repository's commit of 2026-09-26, so
+# the Latin gate and L3 can read a family only this list knows (without a file it fails
+# as "no readable file"). Picked by Claude from each repository's tree: the Regular (or
+# the first upright) desktop file. A family whose repository holds no font file (its
+# files are in releases) has none yet.
 
 schema = 1
 
@@ -37,41 +44,63 @@ schema = 1
 name = "The League of Moveable Type"
 url = "https://www.theleagueofmoveabletype.com"
 
+# Blackout is three families, one per cut (gate C3, the owner's ruling of 2026-09-26).
 [[foundries.league-of-moveable-type.families]]
-name = "Blackout"
+name = "Blackout Midnight"
 url = "https://www.theleagueofmoveabletype.com/blackout"
 license = "Open Font License"
 repository = "https://github.com/theleagueof/blackout"
+files = ["https://raw.githubusercontent.com/theleagueof/blackout/4864cfc1749590e9f78549c6e57116fe98480c0f/Blackout%20Midnight.ttf"]
+
+[[foundries.league-of-moveable-type.families]]
+name = "Blackout Sunrise"
+url = "https://www.theleagueofmoveabletype.com/blackout"
+license = "Open Font License"
+repository = "https://github.com/theleagueof/blackout"
+files = ["https://raw.githubusercontent.com/theleagueof/blackout/4864cfc1749590e9f78549c6e57116fe98480c0f/Blackout%20Sunrise.ttf"]
+
+[[foundries.league-of-moveable-type.families]]
+name = "Blackout Two AM"
+url = "https://www.theleagueofmoveabletype.com/blackout"
+license = "Open Font License"
+repository = "https://github.com/theleagueof/blackout"
+files = ["https://raw.githubusercontent.com/theleagueof/blackout/4864cfc1749590e9f78549c6e57116fe98480c0f/Blackout%20Two%20AM.ttf"]
+
 
 [[foundries.league-of-moveable-type.families]]
 name = "Chunk"
 url = "https://www.theleagueofmoveabletype.com/chunk"
 license = "Open Font License"
 repository = "https://github.com/theleagueof/chunk"
+files = ["https://raw.githubusercontent.com/theleagueof/chunk/12a243f3fb7c7a68844901023f7d95d6eaf14104/ChunkFive-Regular.ttf"]
 
 [[foundries.league-of-moveable-type.families]]
 name = "Fanwood"
 url = "https://www.theleagueofmoveabletype.com/fanwood"
 license = "Open Font License"
 repository = "https://github.com/theleagueof/fanwood"
+files = ["https://raw.githubusercontent.com/theleagueof/fanwood/cbaaed9704e7d37d3dcdbdf0b472e9efd0e39432/webfonts/fanwood-webfont.ttf"]
 
 [[foundries.league-of-moveable-type.families]]
 name = "Goudy Bookletter 1911"
 url = "https://www.theleagueofmoveabletype.com/goudy-bookletter-1911"
 license = "Open Font License"
 repository = "https://github.com/theleagueof/goudy-bookletter-1911"
+files = ["https://raw.githubusercontent.com/theleagueof/goudy-bookletter-1911/85ff5b834b4f63feb36fd2053949c19660580e48/webfonts/goudy_bookletter_1911-webfont.ttf"]
 
 [[foundries.league-of-moveable-type.families]]
 name = "Junction"
 url = "https://www.theleagueofmoveabletype.com/junction"
 license = "Open Font License"
 repository = "https://github.com/theleagueof/junction"
+files = ["https://raw.githubusercontent.com/theleagueof/junction/fb73260e86dd301b383cf6cc9ca8e726ef806535/webfonts/junction-regular.ttf"]
 
 [[foundries.league-of-moveable-type.families]]
 name = "Knewave"
 url = "https://www.theleagueofmoveabletype.com/knewave"
 license = "Open Font License"
 repository = "https://github.com/theleagueof/knewave"
+files = ["https://raw.githubusercontent.com/theleagueof/knewave/f335d5ff1f12e4acf97d4208e1c37b4d386e57fb/knewave.ttf"]
 
 [[foundries.league-of-moveable-type.families]]
 name = "League Gothic"
@@ -90,36 +119,42 @@ name = "League Script"
 url = "https://www.theleagueofmoveabletype.com/league-script"
 license = "Open Font License"
 repository = "https://github.com/theleagueof/league-script-number-one"
+files = ["https://raw.githubusercontent.com/theleagueof/league-script-number-one/225add0b37cf8268759ba4572e02630d9fb54ecf/webfonts/LeagueScriptNumberOne-webfont.ttf"]
 
 [[foundries.league-of-moveable-type.families]]
 name = "League Spartan"
 url = "https://www.theleagueofmoveabletype.com/league-spartan"
 license = "Open Font License"
 repository = "https://github.com/theleagueof/league-spartan"
+files = ["https://raw.githubusercontent.com/theleagueof/league-spartan/27341b9bf93a2c7faa140538a64ce342486c5fb5/fonts/ttf/LeagueSpartan-Regular.ttf"]
 
 [[foundries.league-of-moveable-type.families]]
 name = "Linden Hill"
 url = "https://www.theleagueofmoveabletype.com/linden-hill"
 license = "Open Font License"
 repository = "https://github.com/theleagueof/linden-hill"
+files = ["https://raw.githubusercontent.com/theleagueof/linden-hill/a3f7ae6c4cac1b7e5ce5269e1fcc6a2fbb9e31ee/webfonts/LindenHill-webfont.ttf"]
 
 [[foundries.league-of-moveable-type.families]]
 name = "Orbitron"
 url = "https://www.theleagueofmoveabletype.com/orbitron"
 license = "Open Font License"
 repository = "https://github.com/theleagueof/orbitron"
+files = ["https://raw.githubusercontent.com/theleagueof/orbitron/13e6a5222aa6818d81c9acd27edd701a2d744152/Orbitron%20Bold.ttf"]
 
 [[foundries.league-of-moveable-type.families]]
 name = "Ostrich Sans"
 url = "https://www.theleagueofmoveabletype.com/ostrich-sans"
 license = "Open Font License"
 repository = "https://github.com/theleagueof/ostrich-sans"
+files = ["https://raw.githubusercontent.com/theleagueof/ostrich-sans/a949d40d0576d12ba26e2a45e19c91fd0228c964/webfonts/ostrich-sans-regular.ttf"]
 
 [[foundries.league-of-moveable-type.families]]
 name = "Prociono"
 url = "https://www.theleagueofmoveabletype.com/prociono"
 license = "Open Font License"
 repository = "https://github.com/theleagueof/prociono"
+files = ["https://raw.githubusercontent.com/theleagueof/prociono/f9d9680de6d6f0c13939f23c9dd14cd7853cf844/webfonts/Prociono-Regular-webfont.ttf"]
 
 [[foundries.league-of-moveable-type.families]]
 name = "Raleway"
@@ -132,12 +167,14 @@ name = "Sniglet"
 url = "https://www.theleagueofmoveabletype.com/sniglet"
 license = "Open Font License"
 repository = "https://github.com/theleagueof/sniglet"
+files = ["https://raw.githubusercontent.com/theleagueof/sniglet/5c6b0860bdd0d8c4f16222e4de3918c384db17c4/Sniglet%20Regular.ttf"]
 
 [[foundries.league-of-moveable-type.families]]
 name = "Sorts Mill Goudy"
 url = "https://www.theleagueofmoveabletype.com/sorts-mill-goudy"
 license = "Open Font License"
 repository = "https://github.com/theleagueof/sorts-mill-goudy"
+files = ["https://raw.githubusercontent.com/theleagueof/sorts-mill-goudy/06072890c7b05f274215a24f17449655ccb2c8af/OFLGoudyStMTT.ttf"]
 
 [[foundries.league-of-moveable-type.families]]
 name = "The Neue Black"
@@ -162,12 +199,14 @@ name = "Amdal"
 url = "https://gitlab.com/velvetyne/amdal"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/amdal"
+files = ["https://gitlab.com/velvetyne/amdal/-/raw/4896d186680c62d002702f4c17ac741038b3d905/fonts/AMDAL-Regular.ttf"]
 
 [[foundries.velvetyne.families]]
 name = "Anthony"
 url = "https://gitlab.com/velvetyne/anthony"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/anthony"
+files = ["https://gitlab.com/velvetyne/anthony/-/raw/bf84739794cf48ff661f3ba6cee2dc38f3bc4710/fonts/Anthony.otf"]
 
 # FONTINFO.json and the README state the license; the repository has no license file.
 [[foundries.velvetyne.families]]
@@ -175,18 +214,21 @@ name = "Avara"
 url = "https://gitlab.com/velvetyne/Avara"
 license = "OFL"
 repository = "https://gitlab.com/velvetyne/Avara"
+files = ["https://gitlab.com/velvetyne/Avara/-/raw/cb655944d819ff3636e35bc58407e2b30b36e6fe/webspecimen/css/font/avara.ttf"]
 
 [[foundries.velvetyne.families]]
 name = "BackOut"
 url = "https://gitlab.com/velvetyne/backout"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/backout"
+files = ["https://gitlab.com/velvetyne/backout/-/raw/4f894ca0bf7d46e12a1e818d24a1234660e5848b/fonts/BackOut.ttf"]
 
 [[foundries.velvetyne.families]]
 name = "Basteleur"
 url = "https://gitlab.com/velvetyne/basteleur"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/basteleur"
+files = ["https://gitlab.com/velvetyne/basteleur/-/raw/f32302d63d46e9b996f329648b0f2df01c9190f5/fonts/ttf/Basteleur-Bold.ttf"]
 
 # Non-commercial: the license gate excludes it.
 [[foundries.velvetyne.families]]
@@ -194,48 +236,56 @@ name = "BilboINC"
 url = "https://github.com/velvetyne/BilboINC"
 license = "Creative Commons BY-NC-SA 4.0"
 repository = "https://github.com/velvetyne/BilboINC"
+files = ["https://raw.githubusercontent.com/velvetyne/BilboINC/29927408a5b95cf05266fe36b4502f44fca593d2/Fonts/webfonts/BilboINC-Regular_web.ttf"]
 
 [[foundries.velvetyne.families]]
 name = "Bluu Next"
 url = "https://github.com/velvetyne/BluuNext"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/jbmorizot/BluuNext"
+files = ["https://raw.githubusercontent.com/jbmorizot/BluuNext/82101a9970b26a7421cfe27bce32fd6533f02109/Fonts/BluuNext-Bold.otf"]
 
 [[foundries.velvetyne.families]]
 name = "Boeticher"
 url = "https://github.com/velvetyne/Boeticher"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/velvetyne/Boeticher"
+files = ["https://raw.githubusercontent.com/velvetyne/Boeticher/57388369a5a1e2554a93dff872d2c50a62f36bc5/fonts/Boeticher_Web/boeticher-romanwebfont.ttf"]
 
 [[foundries.velvetyne.families]]
 name = "Cantique"
 url = "https://gitlab.com/velvetyne/cantique"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/cantique"
+files = ["https://gitlab.com/velvetyne/cantique/-/raw/ff74dccdf7af6c3c4d1af70f44732ef87d75ce61/fonts/Cantique-Normal.otf"]
 
 [[foundries.velvetyne.families]]
 name = "Commune Nuit Debout"
 url = "https://github.com/velvetyne/Commune-Nuit-Debout"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/velvetyne/Commune-Nuit-Debout"
+files = ["https://raw.githubusercontent.com/velvetyne/Commune-Nuit-Debout/260989f3fef5ff3189603b17280dc40ba8e1c097/fonts/webfonts/NuitDebout/Commune-Nuit_Debout_web.ttf"]
 
 [[foundries.velvetyne.families]]
 name = "Compagnon"
 url = "https://gitlab.com/velvetyne/compagnon"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/compagnon"
+files = ["https://gitlab.com/velvetyne/compagnon/-/raw/4f2344df5adb6eaf9ffd9215c5406c0729fb7aa1/fonts/Compagnon-Roman.otf"]
 
 [[foundries.velvetyne.families]]
 name = "Courrrier"
 url = "https://github.com/velvetyne/courrrier"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/velvetyne/courrrier"
+files = ["https://raw.githubusercontent.com/velvetyne/courrrier/05bd07f8852c53d6258a4b8024f31209638be9a3/fonts/Courrrier.otf"]
 
 [[foundries.velvetyne.families]]
 name = "Daubenton"
 url = "https://github.com/velvetyne/Daubenton"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/velvetyne/Daubenton"
+files = ["https://raw.githubusercontent.com/velvetyne/Daubenton/71206c4d747b9d37db7b942deff8ed5e54b2f617/fonts/Daubenton.ttf"]
 
 # The font files name the family "Facade".
 [[foundries.velvetyne.families]]
@@ -243,24 +293,28 @@ name = "Façade"
 url = "https://gitlab.com/velvetyne/Facade-font"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/Facade-font"
+files = ["https://gitlab.com/velvetyne/Facade-font/-/raw/ee8aec96787b070239419632c8eecbf822df74eb/fonts/Variable/FacadeVF.ttf"]
 
 [[foundries.velvetyne.families]]
 name = "Feroniapi"
 url = "https://gitlab.com/velvetyne/feroniapi"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/feroniapi"
+files = ["https://gitlab.com/velvetyne/feroniapi/-/raw/4d94d4701ec463afee65da5228bba875f073eb54/fonts/otf/Feroniapi-MediumItalic.otf"]
 
 [[foundries.velvetyne.families]]
 name = "Flor de Ruina"
 url = "https://gitlab.com/velvetyne/flor-des-ruina"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/flor-des-ruina"
+files = ["https://gitlab.com/velvetyne/flor-des-ruina/-/raw/5ddb2681fecc6050de609200f9498593fb9d52d9/fonts/ttf/FlorDeRuina-Flor.ttf"]
 
 [[foundries.velvetyne.families]]
 name = "Format 1452"
 url = "https://gitlab.com/velvetyne/format-1452"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/format-1452"
+files = ["https://gitlab.com/velvetyne/format-1452/-/raw/4af715b8a873139975d2651f0e316604508635ff/fonts/otf/Format_1452.otf"]
 
 # Derived from DejaVu Sans, so it keeps the Bitstream Vera license.
 [[foundries.velvetyne.families]]
@@ -274,12 +328,14 @@ name = "Grotesk"
 url = "https://gitlab.com/velvetyne/grotesk"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/grotesk"
+files = ["https://gitlab.com/velvetyne/grotesk/-/raw/ac79fbc0f818fba94b61fb7f302e44ebc7a107bf/fonts/_ttf/Grotesk-03Regular.ttf"]
 
 [[foundries.velvetyne.families]]
 name = "Gulax"
 url = "https://gitlab.com/velvetyne/Gulax"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/Gulax"
+files = ["https://gitlab.com/velvetyne/Gulax/-/raw/25ad92e48c142ad0f50c70f4fbaed3a44d93e37a/fonts/otf/Gulax-Regular.otf"]
 
 # The font files name the family "vtf_hngl".
 [[foundries.velvetyne.families]]
@@ -287,36 +343,42 @@ name = "Hangul"
 url = "https://github.com/velvetyne/Hangul"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/velvetyne/Hangul"
+files = ["https://raw.githubusercontent.com/velvetyne/Hangul/3f04defa470d19c76d82816aaf4ab18ce4c9f23a/fonts/hangul_web/vtf_hngl-webfont.ttf"]
 
 [[foundries.velvetyne.families]]
 name = "Happy Times at the IKOB"
 url = "https://gitlab.com/velvetyne/Happy-Times-at-the-IKOB"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/Happy-Times-at-the-IKOB"
+files = ["https://gitlab.com/velvetyne/Happy-Times-at-the-IKOB/-/raw/0fc4cf5da8c67bd19c3b88b20f233a3564516427/fonts/webfonts/happy-times-NG_regular_master_web.ttf"]
 
 [[foundries.velvetyne.families]]
 name = "Imago Mundi Mei"
 url = "https://gitlab.com/velvetyne/imago-mundi-mei"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/imago-mundi-mei"
+files = ["https://gitlab.com/velvetyne/imago-mundi-mei/-/raw/bde2ee5bc138f2dc31662c373e25595e98f18a2d/fonts/ImagoMundiMei-Regular.otf"]
 
 [[foundries.velvetyne.families]]
 name = "Interlope"
 url = "https://gitlab.com/velvetyne/interlope"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/interlope"
+files = ["https://gitlab.com/velvetyne/interlope/-/raw/1b7c0ef818ae62620c749de80ac35a05b04ba9bc/font/ttf/Interlope-Regular.ttf"]
 
 [[foundries.velvetyne.families]]
 name = "Jgs"
 url = "https://gitlab.com/velvetyne/jgs"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/jgs"
+files = ["https://gitlab.com/velvetyne/jgs/-/raw/b1fe344c6ab4cb97aa9ceb09ba3b6056f826b040/fonts/jgs5.ttf"]
 
 [[foundries.velvetyne.families]]
 name = "Kaeru Kaeru"
 url = "https://gitlab.com/velvetyne/kaerukaeru"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/kaerukaeru"
+files = ["https://gitlab.com/velvetyne/kaerukaeru/-/raw/dae804908ffb9249af2c4ee0b65a4a9084620de5/fonts/kaerukaeru-Regular.otf"]
 
 # No license file; the font says "All rights reserved". Check the Velvetyne page.
 [[foundries.velvetyne.families]]
@@ -324,12 +386,14 @@ name = "Lack"
 url = "https://gitlab.com/velvetyne/lack"
 license = "NOASSERTION"
 repository = "https://gitlab.com/velvetyne/lack"
+files = ["https://gitlab.com/velvetyne/lack/-/raw/80e730e1f5f550a48cddcb1521f8a5767ffe7917/Fonts/Lack-Regular.otf"]
 
 [[foundries.velvetyne.families]]
 name = "Le Murmure"
 url = "https://gitlab.com/velvetyne/murmure"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/murmure"
+files = ["https://gitlab.com/velvetyne/murmure/-/raw/7cfa8faf6ce6fe8d030410913b6147931cdc2ecb/fonts/le-murmure.ttf"]
 
 # The repository's LICENSE.txt is the OFL; the font's license field says "Creative Commons".
 [[foundries.velvetyne.families]]
@@ -337,42 +401,49 @@ name = "Letters"
 url = "https://gitlab.com/velvetyne/letters"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/letters"
+files = ["https://gitlab.com/velvetyne/letters/-/raw/f402d42dcd6afc8f7c5f55bf4bbaae37643a69c5/fonts/Letters-Torn.otf"]
 
 [[foundries.velvetyne.families]]
 name = "Lineal"
 url = "https://gitlab.com/velvetyne/lineal"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/lineal"
+files = ["https://gitlab.com/velvetyne/lineal/-/raw/8dfea6601fdb5022ec38fc6d83de3cc44cb1bffa/fonts/Static/TTF/Lineal-Regular.ttf"]
 
 [[foundries.velvetyne.families]]
 name = "Lment"
 url = "https://github.com/velvetyne/Lment_"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/velvetyne/Lment_"
+files = ["https://raw.githubusercontent.com/velvetyne/Lment_/5c461b495699ad3d1324ad3d1f307338a24e27f5/fonts/Lment-v02.otf"]
 
 [[foundries.velvetyne.families]]
 name = "Mess"
 url = "https://gitlab.com/velvetyne/Mess"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/Mess"
+files = ["https://gitlab.com/velvetyne/Mess/-/raw/c0ec947a54d664c2b08bd5e9a7b7baf877a73423/fonts/Mess.otf"]
 
 [[foundries.velvetyne.families]]
 name = "Mourier"
 url = "https://gitlab.com/velvetyne/mourier"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/mourier"
+files = ["https://gitlab.com/velvetyne/mourier/-/raw/02c6e2d3aa23b3b8b625f50b7a912baa02e055f5/fonts/Mourier-Regular.otf"]
 
 [[foundries.velvetyne.families]]
 name = "Ouroboros"
 url = "https://gitlab.com/velvetyne/ouroboros"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/ouroboros"
+files = ["https://gitlab.com/velvetyne/ouroboros/-/raw/660bf83a5c6c5f3d500173e80fe51f74c046fdc2/fonts/Ouroboros-Regular.otf"]
 
 [[foundries.velvetyne.families]]
 name = "Runic Sans"
 url = "https://github.com/velvetyne/runic"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/velvetyne/runic"
+files = ["https://raw.githubusercontent.com/velvetyne/runic/51ed441fb970b7e536fd3675163b7b43bde96d99/fonts/Runic_Sans_Plain.otf"]
 
 # The font files name the family "Resistance".
 [[foundries.velvetyne.families]]
@@ -380,42 +451,49 @@ name = "Résistance Générale"
 url = "https://github.com/velvetyne/resistance-generale"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/velvetyne/resistance-generale"
+files = ["https://raw.githubusercontent.com/velvetyne/resistance-generale/b45a061aa8e7f1fdd783fc3170438bf7238ca656/fonts/webfonts/resistance_generale-webfont.ttf"]
 
 [[foundries.velvetyne.families]]
 name = "Saintjean"
 url = "https://github.com/velvetyne/saintjean"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/velvetyne/saintjean"
+files = ["https://raw.githubusercontent.com/velvetyne/saintjean/a5c7a35d478db8da7ecec2085fb47879383708d5/fonts/saintjean_Desktop_OTF/Saintjean-Regular.otf"]
 
 [[foundries.velvetyne.families]]
 name = "Sligoil"
 url = "https://gitlab.com/velvetyne/sligoil"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/sligoil"
+files = ["https://gitlab.com/velvetyne/sligoil/-/raw/d6d999088dff79d3fab81c5661e52f2caa2c479d/fonts/ttf/Sligoil-Micro.ttf"]
 
 [[foundries.velvetyne.families]]
 name = "Sporting Grotesque"
 url = "https://gitlab.com/velvetyne/Sporting-Grotesque"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/Sporting-Grotesque"
+files = ["https://gitlab.com/velvetyne/Sporting-Grotesque/-/raw/cf0a5a6350d61f9d299ca1c82f42f4c92dc2ff8c/webfonts/Regular/Sporting_Grotesque-Regular_web.ttf"]
 
 [[foundries.velvetyne.families]]
 name = "Trickster"
 url = "https://gitlab.com/velvetyne/Trickster"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/Trickster"
+files = ["https://gitlab.com/velvetyne/Trickster/-/raw/751b1fa5fd5293614d0eb4df4962ec195fa243ab/fonts/Trickster-Reg.ttf"]
 
 [[foundries.velvetyne.families]]
 name = "Typefesse"
 url = "https://github.com/velvetyne/Typefesse"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/velvetyne/Typefesse"
+files = ["https://raw.githubusercontent.com/velvetyne/Typefesse/3a1d99ace34398547315e55dafb7263310148350/Fonts/1-otf/Typefesse_Pleine.otf"]
 
 [[foundries.velvetyne.families]]
 name = "VG5000"
 url = "https://gitlab.com/velvetyne/vg5000"
 license = "SIL Open Font License 1.1"
 repository = "https://gitlab.com/velvetyne/vg5000"
+files = ["https://gitlab.com/velvetyne/vg5000/-/raw/e4eeaed973f75fd5bafe2c69de60e8ad0f710f58/fonts/webfonts/VG5000-Regular_web.ttf"]
 
 # The font files name the family "VTF Victorianna".
 [[foundries.velvetyne.families]]
@@ -423,6 +501,7 @@ name = "Victorianna"
 url = "https://github.com/velvetyne/Victorianna"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/velvetyne/Victorianna"
+files = ["https://raw.githubusercontent.com/velvetyne/Victorianna/4f23f75a6de0e8a6389e6d48fd642eed24c871ed/fonts/VictoriannaThint_Web/vtf_victorianna_thin-webfont.ttf"]
 
 [foundries.collletttivo]
 # Seeded from the foundry's GitHub account (github.com/collletttivo, 16 font repositories),
@@ -437,60 +516,70 @@ name = "Absans"
 url = "https://github.com/collletttivo/absans"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/collletttivo/absans"
+files = ["https://raw.githubusercontent.com/collletttivo/absans/e1ba5d9a2359934df024b4ebef4c1be76e0db263/fonts/Absans-Regular.otf"]
 
 [[foundries.collletttivo.families]]
 name = "Apfel Grotezk"
 url = "https://github.com/collletttivo/apfel-grotezk"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/collletttivo/apfel-grotezk"
+files = ["https://raw.githubusercontent.com/collletttivo/apfel-grotezk/8b4c9f2682d274d7fae81d8eceef24f7f2fba4ea/fonts/ApfelGrotezk-Regular.otf"]
 
 [[foundries.collletttivo.families]]
 name = "Aujournuit"
 url = "https://github.com/collletttivo/aujournuit"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/collletttivo/aujournuit"
+files = ["https://raw.githubusercontent.com/collletttivo/aujournuit/8b8aed12b67454ea6ae37009ad719bf33617b80d/fonts/Aujournuit-Regular.ttf"]
 
 [[foundries.collletttivo.families]]
 name = "Borges"
 url = "https://github.com/collletttivo/borges"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/collletttivo/borges"
+files = ["https://raw.githubusercontent.com/collletttivo/borges/f0c85182388603998ab55f84f9bc8cd8e8719383/fonts/Borges-SquarePixelRegular.ttf"]
 
 [[foundries.collletttivo.families]]
 name = "Coconat"
 url = "https://github.com/collletttivo/coconat"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/collletttivo/coconat"
+files = ["https://raw.githubusercontent.com/collletttivo/coconat/75f0bf21470de362ebee2f173e99505b7a7e977b/fonts/Coconat-Regular.otf"]
 
 [[foundries.collletttivo.families]]
 name = "Halibut"
 url = "https://github.com/collletttivo/halibut"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/collletttivo/halibut"
+files = ["https://raw.githubusercontent.com/collletttivo/halibut/13df8fd7ea926f9a47049ec1426fcce186909ee8/fonts/Halibut-Regular.otf"]
 
 [[foundries.collletttivo.families]]
 name = "Mattone"
 url = "https://github.com/collletttivo/mattone"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/collletttivo/mattone"
+files = ["https://raw.githubusercontent.com/collletttivo/mattone/b1dc55dc6a432708ab00329d452d8f6907c6e570/fonts/Mattone-Regular.ttf"]
 
 [[foundries.collletttivo.families]]
 name = "Mazius Display"
 url = "https://github.com/collletttivo/mazius-display"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/collletttivo/mazius-display"
+files = ["https://raw.githubusercontent.com/collletttivo/mazius-display/5798d69b14f0b7c1691f031f2ecb98ebdb709b54/fonts/MaziusDisplay-Regular.otf"]
 
 [[foundries.collletttivo.families]]
 name = "Messapia"
 url = "https://github.com/collletttivo/messapia"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/collletttivo/messapia"
+files = ["https://raw.githubusercontent.com/collletttivo/messapia/c7fbc664055d3f16f5d7431271f738ab5cdc6373/fonts/Messapia-Regular.otf"]
 
 [[foundries.collletttivo.families]]
 name = "Necto Mono"
 url = "https://github.com/collletttivo/necto-mono"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/collletttivo/necto-mono"
+files = ["https://raw.githubusercontent.com/collletttivo/necto-mono/db9edb73bace38d64f36f29e698d9c7547045ce6/fonts/NectoMono-Regular.otf"]
 
 # Two families in the files: Ortica Linear and Ortica Angular.
 [[foundries.collletttivo.families]]
@@ -498,24 +587,28 @@ name = "Ortica"
 url = "https://github.com/collletttivo/ortica"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/collletttivo/ortica"
+files = ["https://raw.githubusercontent.com/collletttivo/ortica/27bf44d3ea5057b7abcd09a8922d43d0b37a4f06/fonts/OrticaLinear-Regular.otf"]
 
 [[foundries.collletttivo.families]]
 name = "Ribes"
 url = "https://github.com/collletttivo/ribes"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/collletttivo/ribes"
+files = ["https://raw.githubusercontent.com/collletttivo/ribes/e5f58f6ef719ff69b599a3155c66f4cecaed0a0f/fonts/Ribes-Regular.otf"]
 
 [[foundries.collletttivo.families]]
 name = "Ronzino"
 url = "https://github.com/collletttivo/ronzino"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/collletttivo/ronzino"
+files = ["https://raw.githubusercontent.com/collletttivo/ronzino/24df8cdde479fef13948de629c3b10849e1dffb5/fonts/Ronzino-Regular.otf"]
 
 [[foundries.collletttivo.families]]
 name = "Sinistre"
 url = "https://github.com/collletttivo/sinistre"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/collletttivo/sinistre"
+files = ["https://raw.githubusercontent.com/collletttivo/sinistre/fbf85f1130670ff2e1b944a17ec13872996b4305/fonts/Sinistre-Regular.ttf"]
 
 # The font files name the family "Sneaky".
 [[foundries.collletttivo.families]]
@@ -523,6 +616,7 @@ name = "Sneaky Times"
 url = "https://github.com/collletttivo/sneaky-times"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/collletttivo/sneaky-times"
+files = ["https://raw.githubusercontent.com/collletttivo/sneaky-times/7094a621508090d479ccb95ce6a6b8827b3f9d4e/fonts/Sneaky-Times.otf"]
 
 # Collletttivo's copy of Ethan Nakache's repository.
 [[foundries.collletttivo.families]]
@@ -530,6 +624,7 @@ name = "Sprat"
 url = "https://github.com/collletttivo/sprat"
 license = "SIL Open Font License 1.1"
 repository = "https://github.com/EthanNakache/Sprat-type"
+files = ["https://raw.githubusercontent.com/EthanNakache/Sprat-type/925bfacb14ea49af9ba524f21a865296f45faa77/Sprat-Regular.otf"]
 
 [foundries.open-foundry]
 # A curated showcase of open fonts by other designers (25 families, fetched 2026-09-25).
@@ -548,18 +643,21 @@ name = "Archivo"
 url = "https://open-foundry.com/fonts/archivo"
 license = "SIL Open Font License v.1.1"
 repository = "https://github.com/Omnibus-Type/Archivo"
+files = ["https://raw.githubusercontent.com/Omnibus-Type/Archivo/211127690e8ff106c36c935f7e5e697114cff103/fonts/ttf/Archivo-Regular.ttf"]
 
 [[foundries.open-foundry.families]]
 name = "Bagnard"
 url = "https://open-foundry.com/fonts/bagnard"
 license = "SIL Open Font License v.1.1"
 repository = "https://github.com/sebsan/bagnard"
+files = ["https://raw.githubusercontent.com/sebsan/bagnard/31415d5e03d2088941fecae2c4ea9f2e6ca0446a/Bagnard.otf"]
 
 [[foundries.open-foundry.families]]
 name = "Bluu Next"
 url = "https://open-foundry.com/fonts/bluu-next"
 license = "SIL Open Font License v.1.1"
 repository = "https://github.com/jbmorizot/BluuNext"
+files = ["https://raw.githubusercontent.com/jbmorizot/BluuNext/82101a9970b26a7421cfe27bce32fd6533f02109/Fonts/BluuNext-Bold.otf"]
 
 [[foundries.open-foundry.families]]
 name = "Cooper Hewitt"
@@ -572,6 +670,7 @@ name = "Cotham Sans"
 url = "https://open-foundry.com/fonts/cotham-sans"
 license = "SIL Open Font License v.1.1"
 repository = "https://github.com/sebsan/Cotham"
+files = ["https://raw.githubusercontent.com/sebsan/Cotham/eca5c6d0cdaea789e06a3118147c0ecbabe20e94/CothamSans.otf"]
 
 [[foundries.open-foundry.families]]
 name = "EB Garamond"
@@ -584,18 +683,21 @@ name = "Gap Sans"
 url = "https://open-foundry.com/fonts/gap-sans"
 license = "SIL Open Font License v.1.1"
 repository = "https://github.com/Interstices-/GapSans"
+files = ["https://raw.githubusercontent.com/Interstices-/GapSans/24e59f53bbfac3c7d8e4eb8db89ae828f9f8fba7/fonts/GapSans.ttf"]
 
 [[foundries.open-foundry.families]]
 name = "Inter"
 url = "https://open-foundry.com/fonts/inter"
 license = "SIL Open Font License v.1.1"
 repository = "https://github.com/rsms/inter"
+files = ["https://raw.githubusercontent.com/rsms/inter/353b61b9f4430d5f420d56605a6e7993e0941470/docs/font-files/InterVariable.ttf"]
 
 [[foundries.open-foundry.families]]
 name = "Junicode"
 url = "https://open-foundry.com/fonts/junicode"
 license = "SIL Open Font License v.1.1"
 repository = "https://github.com/Fromager/junicode"
+files = ["https://raw.githubusercontent.com/Fromager/junicode/059558d413cf88277dc123e0b02fef15b67dd3b3/fonts/Junicode-Regular.ttf"]
 
 [[foundries.open-foundry.families]]
 name = "League Gothic"
@@ -615,6 +717,7 @@ name = "Libre Baskerville"
 url = "https://open-foundry.com/fonts/libre-baskerville"
 license = "SIL Open Font License v.1.1"
 repository = "https://github.com/impallari/Libre-Baskerville"
+files = ["https://raw.githubusercontent.com/impallari/Libre-Baskerville/9852edf75ece3af500a5ec61245f94788c3d4633/fonts/ttf/LibreBaskerville-Regular.ttf"]
 
 [[foundries.open-foundry.families]]
 name = "M+ M Type-1"
@@ -638,30 +741,35 @@ name = "Ostrich Sans"
 url = "https://open-foundry.com/fonts/ostrich-sans"
 license = "SIL Open Font License v.1.1"
 repository = "https://github.com/theleagueof/ostrich-sans"
+files = ["https://raw.githubusercontent.com/theleagueof/ostrich-sans/a949d40d0576d12ba26e2a45e19c91fd0228c964/webfonts/ostrich-sans-regular.ttf"]
 
 [[foundries.open-foundry.families]]
 name = "Oswald"
 url = "https://open-foundry.com/fonts/oswald"
 license = "SIL Open Font License v.1.1"
 repository = "https://github.com/googlefonts/OswaldFont"
+files = ["https://raw.githubusercontent.com/googlefonts/OswaldFont/89795261ac9eeb9aa8cd99f43982c4e4b0e53261/fonts/ttf/Oswald-Regular.ttf"]
 
 [[foundries.open-foundry.families]]
 name = "Poppins"
 url = "https://open-foundry.com/fonts/poppins"
 license = "SIL Open Font License v.1.1"
 repository = "https://github.com/itfoundry/poppins"
+files = ["https://raw.githubusercontent.com/itfoundry/poppins/be5b80d711415eccf6b65aad15bced8bbb6a67a2/variable/TTF%20%28Beta%29/Poppins-VariableFont_wght.ttf"]
 
 [[foundries.open-foundry.families]]
 name = "Reglo"
 url = "https://open-foundry.com/fonts/reglo"
 license = "SIL Open Font License v.1.1"
 repository = "https://github.com/sebsan/Reglo"
+files = ["https://raw.githubusercontent.com/sebsan/Reglo/3b465388f0b45930e5217edc1fc82c5b6514e80c/Reglo-Bold.otf"]
 
 [[foundries.open-foundry.families]]
 name = "Roboto"
 url = "https://open-foundry.com/fonts/roboto"
 license = "SIL Open Font License v.1.1"
 repository = "https://github.com/googlefonts/roboto-2"
+files = ["https://raw.githubusercontent.com/googlefonts/roboto-2/38062f4b4a0be4346d07a928408da21602545e9e/src/hinted/Roboto-Regular.ttf"]
 
 # Open Foundry's page is "terminal-grotesque-open"; Velvetyne publishes the family.
 [[foundries.open-foundry.families]]
@@ -669,6 +777,7 @@ name = "Terminal Grotesque"
 url = "https://open-foundry.com/fonts/terminal-grotesque-open"
 license = "SIL Open Font License v.1.1"
 repository = "https://gitlab.com/raphaelbastide/Terminal-Grotesque"
+files = ["https://gitlab.com/raphaelbastide/Terminal-Grotesque/-/raw/93d7478ef094e9f4efa38cf072879471c7b64f71/webspecimen/font/terminal-grotesque-webfont.ttf"]
 
 [[foundries.open-foundry.families]]
 name = "Tex Gyre Heros"
@@ -680,12 +789,14 @@ name = "Work Sans"
 url = "https://open-foundry.com/fonts/work-sans"
 license = "SIL Open Font License v.1.1"
 repository = "https://github.com/weiweihuanghuang/Work-Sans"
+files = ["https://raw.githubusercontent.com/weiweihuanghuang/Work-Sans/b35c81086186162164947bd39574683073d9b268/fonts/ttf/WorkSans-Regular.ttf"]
 
 [[foundries.open-foundry.families]]
 name = "Young Serif"
 url = "https://open-foundry.com/fonts/young-serif"
 license = "SIL Open Font License v.1.1"
 repository = "https://github.com/noirblancrouge/YoungSerif"
+files = ["https://raw.githubusercontent.com/noirblancrouge/YoungSerif/8a6c3ceeed5e52bd77b0dfad6b76e99096b9fd4b/fonts/ttf/YoungSerif-Regular.ttf"]
 
 [foundries.fontshare]
 # Only Roundo: of Fontshare's 36 OFL families it is the one not on Google Fonts. Fontshare's
@@ -701,3 +812,4 @@ name = "Roundo"
 url = "https://www.fontshare.com/fonts/roundo"
 license = "sil_ofl"
 repository = "https://github.com/itfoundry/roundo"
+files = ["https://raw.githubusercontent.com/itfoundry/roundo/f7e77db4300d2c7ce0176f42196cd35fc1c91c42/build/Roundo-Regular.ttf"]

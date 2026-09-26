@@ -29,6 +29,7 @@ When the real stages can run on a synthetic store, ``test_state_two_runs.py``'s
 import ast
 import importlib.machinery
 import importlib.util
+import os
 import re
 import shutil
 import subprocess
@@ -537,6 +538,8 @@ def test_live_run_writes_the_run_manifest(
     assert manifest["failures"] == []
     assert manifest["error"] is None
     assert manifest["code_commit"] == refresh.code_commit(ROOT)
+    assert manifest["code_changes_sha256"] == refresh.code_changes(ROOT)
+    assert manifest["code_dirty"] is (manifest["code_changes_sha256"] is not None)
     history = state.load_state(result.build / "state").run_history
     assert history[-1]["snapshots"] == snapshots
 
@@ -671,21 +674,36 @@ def test_workflow_triggers_and_settings() -> None:
     assert doc["concurrency"]["group"]
     assert doc["concurrency"]["cancel-in-progress"] is False
     assert doc["permissions"] == {"contents": "read"}
-    (job,) = doc["jobs"].values()
-    assert job["permissions"] == {
+    jobs = doc["jobs"]
+    assert list(jobs) == ["refresh", "store", "publish", "report"]
+    # Least privilege: the job that downloads and parses third-party data can only read;
+    # the jobs that write parse nothing the run produced.
+    assert jobs["refresh"]["permissions"] == {"contents": "read"}
+    assert jobs["store"]["permissions"] == {"contents": "read"}
+    assert jobs["publish"]["permissions"] == {
         "contents": "write",
         "pull-requests": "write",
-        "issues": "write",
         "actions": "write",
     }
+    assert jobs["report"]["permissions"] == {"issues": "write"}
     steps = _steps(doc)
     uv = [s for s in steps if str(s.get("uses", "")).startswith("astral-sh/setup-uv@")]
     assert uv
     assert all(s["with"]["enable-cache"] is True for s in uv)
-    (store,) = [s for s in steps if s.get("with", {}).get("path") == "_store"]
-    assert store["with"]["repository"] == "byronshock/trulyfreefonts-data"
-    assert store["with"]["ssh-key"] == "${{ secrets.DATA_STORE_KEY }}"
-    assert job["env"]["TFF_STORE"] == "${{ github.workspace }}/_store"
+    assert not [
+        s
+        for s in _steps({"jobs": {k: jobs[k] for k in ("store", "publish", "report")}})
+        if "uv " in str(s.get("run", "")) or "setup-uv" in str(s.get("uses", ""))
+    ]
+    stores = [s for s in steps if s.get("with", {}).get("path") == "_store"]
+    assert len(stores) == 2
+    for store in stores:
+        assert store["with"]["repository"] == "byronshock/trulyfreefonts-data"
+        assert store["with"]["ssh-key"] == "${{ secrets.DATA_STORE_KEY }}"
+    (clone,) = [s for s in jobs["refresh"]["steps"] if s.get("with", {}).get("path") == "_store"]
+    assert clone["with"]["persist-credentials"] is False  # the key is not kept while parsing
+    assert jobs["refresh"]["env"]["TFF_STORE"] == "${{ github.workspace }}/_store"
+    assert jobs["refresh"]["env"]["TFF_STORE_PUSH"] == "0"
 
 
 def test_workflow_reuses_ci_pins() -> None:
@@ -698,15 +716,24 @@ def test_workflow_reuses_ci_pins() -> None:
 
 def test_workflow_opens_the_pull_request_dispatches_ci_and_reports_failures() -> None:
     doc = _workflow("refresh.yml")
-    (job,) = doc["jobs"].values()
-    assert job["env"]["BRANCH"] == "refresh/monthly"
+    jobs = doc["jobs"]
+    assert jobs["refresh"]["env"]["BRANCH"] == jobs["publish"]["env"]["BRANCH"] == "refresh/monthly"
     runs = {s.get("name", ""): s for s in _steps(doc)}
+    commit = runs["Commit the pull request's files"]
+    assert commit["if"] == "${{ github.ref == 'refs/heads/main' }}"
+    assert "apply_state" in commit["run"]
+    assert "git bundle create" in commit["run"]
+    assert jobs["publish"]["needs"] == "refresh"
+    assert "refs/heads/main" in jobs["publish"]["if"]
     pr = runs["Open or update the refresh pull request"]
-    assert pr["if"] == "${{ github.ref == 'refs/heads/main' }}"
-    for needle in ("apply_state", "gh pr create", "gh pr edit", "gh workflow run ci.yml"):
+    for needle in ("git bundle verify", "gh pr create", "gh pr edit", "gh workflow run ci.yml"):
         assert needle in pr["run"], needle
+    assert "uv run" not in pr["run"]
+    assert jobs["store"]["needs"] == "refresh"
+    assert "git -C _store push" in runs["Push the new snapshots to the store"]["run"]
+    assert jobs["report"]["if"] == "${{ failure() }}"
+    assert jobs["report"]["needs"] == ["refresh", "store", "publish"]
     issue = runs["Report the failure in an issue"]
-    assert issue["if"] == "${{ failure() }}"
     assert "gh issue create" in issue["run"]
     replay = runs["Replay offline from a clean checkout"]
     assert "--from-snapshots" in replay["run"]
@@ -770,7 +797,12 @@ STUBS: dict[str, str] = {
     "git": """case "$1 $2" in
   "diff --cached") exit "${STUB_STAGED_SAME:-1}" ;;
   "diff --quiet") exit "${STUB_WORKFLOWS_SAME:-0}" ;;
-  "fetch --quiet") exit "${STUB_BRANCH_EXISTS:-1}" ;;
+  "diff --name-only") printf '%s' "${STUB_DIFF_NAMES:-}" ;;
+  "fetch --quiet")
+    case "$3" in *.bundle) exit 0 ;; esac
+    exit "${STUB_BRANCH_EXISTS:-1}" ;;
+  "-C _store")
+    if [ "$3" = rev-list ]; then printf '%s' "${STUB_REV_LIST:-}"; fi ;;
 esac""",
     "gh": """case "$1 $2" in
   "pr list") printf '%s\\n' "${STUB_PR:-}" ;;
@@ -910,15 +942,13 @@ def test_step_replay(tmp_path: Path) -> None:
     assert "Replay matched" not in step.files["summary"]
 
 
-def test_step_pull_request(tmp_path: Path) -> None:
-    name = "Open or update the refresh pull request"
-    head = "git push --force origin HEAD:refs/heads/refresh/monthly"
-    dispatch = "gh workflow run ci.yml --repo owner/repo --ref refresh/monthly"
-
+def test_step_commit_the_pull_request_files(tmp_path: Path) -> None:
+    name = "Commit the pull request's files"
     step = run_step(name, tmp_path / "unchanged", STUB_STAGED_SAME="0")
     assert step.code == 0, step.out
     assert "Nothing changed against main" in step.files["summary"]
-    assert step.called("git commit", "git push", "gh pr", "gh workflow") == []
+    assert step.files["output"] == "changed=false\n"
+    assert step.called("git -c", "git bundle") == []
 
     first = tmp_path / "first"
     listed = "none"
@@ -926,31 +956,67 @@ def test_step_pull_request(tmp_path: Path) -> None:
         stale = {"a_src": {"dropped": False}, "b_src": {"dropped": True}}
         jsonio.dump(stale, first / "workspace" / "build" / "stage" / "stale.json")
         listed = "a_src, b_src (dropped)"
-    step = run_step(name, first)
+    step = run_step(name, first, GITHUB_SHA="a" * 40)
     assert step.code == 0, step.out
-    assert [c.split(" -")[0] for c in step.calls if not c.startswith("gh auth")] == [
+    assert [" ".join(c.split()[:2]) for c in step.calls] == [
         "git switch",
         "uv run",
         "git add",
         "git diff",
-        "git",  # git -c user.name=... commit
-        "git fetch",
-        "git push",
-        "gh pr list",
-        "gh pr create",
-        "gh workflow run ci.yml",
+        "git -c",  # git -c user.name=... commit
+        "git bundle",
     ]
     assert "apply_state" in step.called("uv run")[0]
     assert step.called("git add") == [
         "git add --all -- state build data/aliases.csv data/alias-seeds"
     ]
+    (bundle,) = step.called("git bundle")
+    assert bundle.endswith(f"pull-request/pr.bundle {'a' * 40}..refresh/monthly")
+    assert (step.temp / "pull-request" / "stale.txt").read_text(encoding="utf-8") == listed + "\n"
+    assert step.files["output"] == "changed=true\n"
+
+
+def _publish_files(root: Path, stale: str = "none") -> None:
+    (root / "runner-temp" / "pull-request").mkdir(parents=True, exist_ok=True)
+    (root / "runner-temp" / "pull-request" / "stale.txt").write_text(stale + "\n")
+
+
+def test_step_pull_request(tmp_path: Path) -> None:
+    name = "Open or update the refresh pull request"
+    head = "git push --force origin HEAD:refs/heads/refresh/monthly"
+    dispatch = "gh workflow run ci.yml --repo owner/repo --ref refresh/monthly"
+
+    first = tmp_path / "first"
+    _publish_files(first, "a_src, b_src (dropped)")
+    step = run_step(name, first, GITHUB_SHA="a" * 40)
+    assert step.code == 0, step.out
+    assert [" ".join(c.split()[:3]) for c in step.calls if not c.startswith("gh auth")] == [
+        "git bundle verify",
+        "git fetch --quiet",
+        "git switch --quiet",
+        "git diff --name-only",
+        "git fetch --quiet",
+        "git push --force",
+        "gh pr list",
+        "gh pr create",
+        "gh workflow run",
+    ]
     assert step.called("git push") == [head]
     assert step.called("gh workflow") == [dispatch]
     body = (step.temp / "pr-body.md").read_text(encoding="utf-8")
     assert f"The monthly catalog refresh of {OCT}" in body
-    assert f"Stale or dropped sources: {listed}." in body
+    assert "Stale or dropped sources: a_src, b_src (dropped)." in body
 
-    step = run_step(name, tmp_path / "open", STUB_PR="12", STUB_BRANCH_EXISTS="0")
+    outside = tmp_path / "outside"
+    _publish_files(outside)
+    step = run_step(name, outside, STUB_DIFF_NAMES=".github/workflows/ci.yml")
+    assert step.code == 1
+    assert "changes files outside its paths" in step.out
+    assert step.called("git push", "gh pr") == []
+
+    opened = tmp_path / "open"
+    _publish_files(opened)
+    step = run_step(name, opened, STUB_PR="12", STUB_BRANCH_EXISTS="0")
     assert step.code == 0, step.out
     (edit,) = step.called("gh pr edit")
     assert edit.startswith("gh pr edit 12 ")
@@ -958,13 +1024,25 @@ def test_step_pull_request(tmp_path: Path) -> None:
     assert step.called("git push") == [head], "same workflows: the branch is updated in place"
     assert "Stale or dropped sources: none." in (step.temp / "pr-body.md").read_text()
 
-    step = run_step(
-        name, tmp_path / "workflows", STUB_PR="", STUB_BRANCH_EXISTS="0", STUB_WORKFLOWS_SAME="1"
-    )
+    changed = tmp_path / "workflows"
+    _publish_files(changed)
+    step = run_step(name, changed, STUB_PR="", STUB_BRANCH_EXISTS="0", STUB_WORKFLOWS_SAME="1")
     assert step.code == 0, step.out
     assert step.called("git push") == ["git push origin --delete refresh/monthly", head]
     assert step.called("gh pr create")
     assert step.called("gh workflow") == [dispatch]
+
+
+def test_step_store_bundle(tmp_path: Path) -> None:
+    name = "Bundle the store's new commits"
+    step = run_step(name, tmp_path / "none")
+    assert step.code == 0, step.out
+    assert step.files["output"] == "bundle=false\n"
+    step = run_step(name, tmp_path / "new", STUB_REV_LIST="abc123")
+    assert step.code == 0, step.out
+    assert step.files["output"] == "bundle=true\n"
+    (bundle,) = step.called("git -C _store bundle")
+    assert "store/store.bundle @{upstream}..HEAD" in bundle
 
 
 def test_step_failure_issue(tmp_path: Path) -> None:
@@ -1193,3 +1271,38 @@ def test_watchdog_reads_github(watchdog: types.ModuleType) -> None:
     assert gh.workflow_state() in (None, "active", "disabled_inactivity", "disabled_manually")
     gh.last_refresh()  # None until the first refresh pull request
     assert watchdog.main(["--dry-run"]) in (0, 1)
+
+
+def test_code_changes_name_uncommitted_code(tmp_path: Path) -> None:
+    git = shutil.which("git")
+    if git is None:
+        pytest.skip("no git")
+    env = {
+        "PATH": os.environ.get("PATH", ""),
+        "GIT_CONFIG_GLOBAL": "/dev/null",
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_AUTHOR_NAME": "t",
+        "GIT_AUTHOR_EMAIL": "t@example.invalid",
+        "GIT_COMMITTER_NAME": "t",
+        "GIT_COMMITTER_EMAIL": "t@example.invalid",
+    }
+
+    def run(*args: str) -> None:
+        subprocess.run([git, "-C", str(tmp_path), *args], env=env, check=True, capture_output=True)
+
+    (tmp_path / "src").mkdir()
+    (tmp_path / "src" / "a.py").write_text("x = 1\n")
+    (tmp_path / "notes.md").write_text("not code\n")
+    run("init", "-q")
+    run("add", "-A")
+    run("commit", "-q", "-m", "one")
+    assert refresh.code_changes(tmp_path) is None
+    (tmp_path / "notes.md").write_text("still not code\n")
+    assert refresh.code_changes(tmp_path) is None
+    (tmp_path / "src" / "a.py").write_text("x = 2\n")
+    edited = refresh.code_changes(tmp_path)
+    assert edited is not None
+    assert len(edited) == 64
+    (tmp_path / "src" / "b.py").write_text("y = 1\n")
+    assert refresh.code_changes(tmp_path) not in (None, edited)
+    assert refresh.code_changes(tmp_path / "nowhere") is None

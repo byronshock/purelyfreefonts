@@ -123,6 +123,8 @@ def refresh(
         raise
     finally:
         if ctx.fetcher is not None:
+            for host, reason in ctx.fetcher.unreachable_hosts().items():
+                _LOG.warning("gave up on host %s for a while this run: %s", host, reason)
             ctx.fetcher.close()
     seconds = time.perf_counter() - started
     if not options.replay:
@@ -184,6 +186,7 @@ class _Run:
     def __init__(self, ctx: StageContext) -> None:
         self.ctx = ctx
         self.commit = code_commit(ctx.paths.root)
+        self.changes = code_changes(ctx.paths.root)
         self.ran: list[str] = []
         self.failures: tuple[str, ...] = ()
 
@@ -338,6 +341,38 @@ def snapshots_used(ctx: StageContext) -> dict[str, str]:
     return dict(sorted(out.items()))
 
 
+# What the code that ran is made of: a change here makes code_commit not describe the run.
+CODE_PATHS = ("src", "config", "data", "schemas", "pyproject.toml", "uv.lock")
+
+
+def code_changes(root: Path) -> str | None:
+    """sha256 of the uncommitted changes to ``CODE_PATHS`` (tracked diffs against HEAD and
+    untracked files with their contents), or None when there are none or outside git.
+
+    The run manifest records it next to ``code_commit`` (``code_dirty``), so a run made
+    from an uncommitted tree is never mistaken for one the recorded commit reproduces."""
+    import hashlib
+
+    def git(*args: str) -> bytes | None:
+        try:
+            done = subprocess.run(["git", "-C", str(root), *args], capture_output=True, check=False)
+        except OSError:
+            return None
+        return done.stdout if done.returncode == 0 else None
+
+    diff = git("diff", "HEAD", "--binary", "--", *CODE_PATHS)
+    others = git("ls-files", "--others", "--exclude-standard", "-z", "--", *CODE_PATHS)
+    if diff is None or others is None:
+        return None
+    untracked = sorted(name for name in others.decode().split("\0") if name)
+    if not diff and not untracked:
+        return None
+    digest = hashlib.sha256(diff)
+    for name in untracked:
+        digest.update(b"\0" + name.encode() + b"\0" + (root / name).read_bytes())
+    return digest.hexdigest()
+
+
 def code_commit(root: Path) -> str | None:
     """The checked-out commit of ``root`` (``git rev-parse HEAD``), or None outside git."""
     try:
@@ -386,6 +421,10 @@ def run_manifest(
         "version": __version__,
         "method_version": METHOD_VERSION,
         "code_commit": run.commit,
+        # True when the run used uncommitted changes to the code, config or data; the hash
+        # names them, since code_commit alone cannot reproduce the run.
+        "code_dirty": run.changes is not None,
+        "code_changes_sha256": run.changes,
         "config_sha256": config_hash(config),
         "options": {"only": list(ctx.options.only), "refetch": ctx.options.refetch},
         "snapshots": snapshots,

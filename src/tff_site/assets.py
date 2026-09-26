@@ -46,6 +46,7 @@ CSS_PARTS: tuple[str, ...] = (
     "30-details.css",
     "35-specimens.css",
     "40-pages.css",
+    "45-blog.css",
 )
 # Substrings the JS lint refuses anywhere in a part (comments included, to keep the lint dumb).
 FORBIDDEN_JS: tuple[str, ...] = (

@@ -1,0 +1,81 @@
+/* 45-blog: the blog (Milestone 2 step 7b): /blog/ (`.blog-index`) and each post
+   (`article.blog-post`), both also `.page`, so 40-pages.css sets the prose. Nothing here
+   reaches another page. Colours come only from the tokens. 10-base.css already keeps images
+   within the column (max-width: 100%; height: auto), and each <img> carries its width and
+   height, so text doesn't move as an image loads. */
+
+/* ---- The index: one entry per post, newest first */
+
+.blog-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.page .blog-item + .blog-item {
+  margin-block-start: var(--space-5);
+  padding-block-start: var(--space-5);
+  border-block-start: 1px solid var(--c-divider);
+}
+
+.page .blog-item-title {
+  margin-block: 0 var(--space-1);
+  font-size: var(--fs-xl);
+}
+
+.page .blog-summary {
+  margin-block-end: 0;
+}
+
+/* ---- Dates, and the draft mark (only in builds with --drafts, such as the test site) */
+
+.blog-meta {
+  color: var(--c-muted);
+  font-size: var(--fs-small);
+}
+
+.page .blog-meta {
+  margin-block-end: var(--space-2);
+}
+
+.blog-draft {
+  padding-inline: var(--space-1);
+  border-radius: var(--radius);
+  background-color: var(--c-warn-bg);
+  color: var(--c-warn-fg);
+  font-weight: 700;
+}
+
+/* ---- A post */
+
+.blog-post img {
+  display: block;
+  margin-block: var(--space-2);
+}
+
+.blog-post-end {
+  margin-block-start: var(--space-6);
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid var(--c-divider);
+}
+
+.page .blog-post-end > :last-child {
+  margin-block-end: 0;
+}
+
+.blog-license {
+  font-size: var(--fs-small);
+}
+
+/* Forced colours drop backgrounds: the draft mark keeps a border, and the rules between
+   posts become full-strength borders. */
+@media (forced-colors: active) {
+  .blog-draft {
+    border: 1px solid var(--c-border);
+  }
+
+  .page .blog-item + .blog-item,
+  .blog-post-end {
+    border-color: var(--c-border);
+  }
+}

@@ -7,7 +7,9 @@ their family. Each family keeps the id in ``state/ids.json``; a new family gets
 kept with a ``drop`` reason code, never silently removed.
 
 Writes ``build/stage/universe.json``, ``build/universe.md`` (per-source counts,
-drop reasons, every name mapped) and ``build/state/ids.json``.
+drop reasons, the keys kept out and the registry's changes), ``build/review/
+universe-keys.md`` (every key mapped, several thousand rows: gitignored, owner
+ruling of 2026-09-26, U_rules) and ``build/state/ids.json``.
 Committed reports show sources whose ``publish_raw`` is false (Google and
 Fonts Over Time, rulings T2 and T4) only as ranks or z scores, never as values.
 
@@ -106,7 +108,8 @@ if TYPE_CHECKING:
     from tff_catalog.aliases import AliasRow, AliasTable
     from tff_catalog.stages import StageContext
 
-REPORT_NAME = "universe.md"  # under build/
+REPORT_NAME = "universe.md"  # under build/, committed
+KEYS_REPORT = Path("review") / "universe-keys.md"  # under build/, gitignored: every key mapped
 NAME_KEY_NS = "font-name"  # a family name, asked of the alias table as a key
 FOLD_RELATIONS = frozenset({"rename", "build", "package", "postscript"})
 # Display-name preference; sources not listed come after, by name.
@@ -820,10 +823,12 @@ def _section(title: str, lines: list[str]) -> list[str]:
 
 
 def report(u: Universe, previous: Mapping[str, Mapping[str, Any]] | None = None) -> str:
-    """``build/universe.md``: per-source counts, drop reasons, and every name mapped.
+    """``build/universe.md``: per-source counts, drop reasons and the keys kept out.
 
     With ``previous`` (the committed registry) it also lists the ids minted
     this run, the display names that changed and the registry ids no source listed.
+    Every key's family is in ``keys_report`` instead (U_rules: the committed report
+    stays short).
     """
     fams = [u.families[fid] for fid in sorted(u.families)]
     dropped = [f for f in fams if f.drop is not None]
@@ -831,8 +836,8 @@ def report(u: Universe, previous: Mapping[str, Mapping[str, Any]] | None = None)
     out = [
         "# Candidate universe",
         "",
-        "Written by `tff-catalog universe` (milestone-1 step 4). Every universe key is "
-        "listed once: in a family, kept out by the alias table, or unmapped.",
+        "Written by `tff-catalog universe` (milestone-1 step 4). Every universe key is in a "
+        "family, kept out by the alias table, or unmapped.",
         "",
         *_table(
             ("Measure", "Count"),
@@ -865,6 +870,21 @@ def report(u: Universe, previous: Mapping[str, Mapping[str, Any]] | None = None)
     )
     if previous is not None:
         out += _registry_sections(fams, previous)
+    out += [
+        "",
+        f"Every key's family is listed in build/{KEYS_REPORT.as_posix()} (not committed).",
+    ]
+    return "\n".join(out) + "\n"
+
+
+def keys_report(u: Universe) -> str:
+    """``build/review/universe-keys.md``: every key mapped, with its family."""
+    fams = [u.families[fid] for fid in sorted(u.families)]
+    out = [
+        "# Every universe key mapped",
+        "",
+        "Written by `tff-catalog universe` (milestone-1 step 4); not committed.",
+    ]
     out += _section(
         "Every key mapped",
         _table(
@@ -910,13 +930,21 @@ def _drop_counts(dropped: list[Family]) -> list[str]:
 
 def _registry_sections(fams: list[Family], previous: Mapping[str, Mapping[str, Any]]) -> list[str]:
     seen = {f.id for f in fams}
-    out = _section(
-        "New ids this run",
-        _table(
-            ("Id", "Family", "Minted from"),
-            ((f.id, f.family, f.minted_from) for f in fams if f.id not in previous),
-        ),
-    )
+    if not previous:  # the first run: every id is new, and the key table lists them all
+        out = _section(
+            "New ids this run",
+            [
+                f"First run: all {len(fams)} ids are new (build/{KEYS_REPORT.as_posix()} lists them)."
+            ],
+        )
+    else:
+        out = _section(
+            "New ids this run",
+            _table(
+                ("Id", "Family", "Minted from"),
+                ((f.id, f.family, f.minted_from) for f in fams if f.id not in previous),
+            ),
+        )
     out += _section(
         "Display names changed this run (record the old name in data/aliases.csv)",
         _table(
@@ -982,6 +1010,8 @@ def run(ctx: StageContext) -> None:
     stageio.dump_stage(paths, "universe", u)
     state.write_part(paths, "ids", next_ids(u, ctx.state.ids), stage="universe")
     jsonio.atomic_write(paths.build / REPORT_NAME, report(u, ctx.state.ids).encode("utf-8"))
+    (paths.build / KEYS_REPORT).parent.mkdir(parents=True, exist_ok=True)
+    jsonio.atomic_write(paths.build / KEYS_REPORT, keys_report(u).encode("utf-8"))
     eligible = len(u.eligible())
     ctx.log.info(
         "%d families (%d eligible, %d dropped), %d new ids, %d keys kept out, %d unmapped",

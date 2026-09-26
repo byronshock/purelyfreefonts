@@ -1,0 +1,8 @@
+# Owner rulings of 2026-09-26, gate U (unmatched source keys), given in chat after integration A.
+# Ruled by the owner, Byron Shock; recorded by Claude from the lead's notes
+# (design/rulings-2026-09-26.toml: U_rules). The rows it adds are hand rows in data/aliases.csv.
+
+[U_rules]
+value = "accept_all_four"
+ruling = "Four rules: a short build/universe.md is committed and the full key table stays in the gitignored build/review/; Material Icons and Material Symbols are ineligible (icon); hand rows bundle ibm-plex, dejavu-core, noto, droid and adobe-source-*, rename the BBH casks and map font-noto-mono to Noto Mono; LXGW ZhenKai and Glow Sans are ineligible (CJK); Fonts Over Time's generic names add \"sans\" and \"system\"; Nerd Fonts' style-only assets stay excluded."
+reason = "Claude's recommendation. The distro bundles wait for the package contents (A_sources: research before rows); the BBH cask renames wait for their list."

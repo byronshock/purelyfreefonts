@@ -1,0 +1,32 @@
+# Owner rulings of 2026-09-26, given in chat after integration A (the first real run). Ruled by
+# the owner, Byron Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml).
+# Also in AUTHORITY.md. Where the owner picked Claude's recommendation, the reason is Claude's summary.
+
+[K-adobe-source]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation: Adobe's releases carry the desktop and web builds."
+
+[K-ibm-plex]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation: IBM publishes every Plex family on its own site and releases page."
+
+[K-inter]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation: the designer's site offers the full release."
+
+[K-jetbrains-mono]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation: JetBrains' own release, including the NL cut Google Fonts lacks."
+
+[link_rules]
+value = "accept_all_four"
+ruling = "Four link rules: a family on the foundry list may take the foundry's page as its single source; an http link is upgraded to https and checked monthly; Inter Tight keeps its Google Fonts page; open-foundry.com is an aggregator, not an official source."
+reason = "Claude's recommendation."

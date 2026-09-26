@@ -66,6 +66,7 @@ def load_config(paths: Paths) -> Config:
     check_licenses(cfg.licenses)
     check_preinstalled(cfg.preinstalled)
     check_foundries(cfg.foundries)
+    check_abstain_scope(cfg)
     check_site(cfg)
     return cfg
 
@@ -138,6 +139,14 @@ def check_ranking(r: RankingConfig) -> None:
         _fail("ranking.toml: engine", "kappa >= 0, 0 <= guard.factor <= 1 and guard.gap > 0")
 
     c = r.corrections
+    linux_sources = {name for name, src in sources.items() if src.linux}
+    for system, silenced in c.abstain_sources.items():
+        unknown = sorted(set(silenced) - linux_sources)
+        if unknown:
+            _fail(
+                f"ranking.toml: corrections.abstain_sources.{system}",
+                f"not Linux sources: {unknown}",
+            )
     for key in ("nerd_credit", "cjk_build_credit", "bundle_credit"):
         if not 0 <= getattr(c, key) <= 1:
             _fail(f"ranking.toml: corrections.{key}", "must be between 0 and 1")
@@ -257,6 +266,19 @@ def check_preinstalled(pre: PreinstalledConfig) -> None:
             _fail(f"preinstalled.toml: systems.{system}.source", "must be an https URL")
 
 
+def check_abstain_scope(cfg: Config) -> None:
+    """With ``abstain_scope = "by_package_system"``, every Linux system of preinstalled.toml
+    says which Linux sources it silences (``corrections.abstain_sources``), and only those."""
+    c = cfg.ranking.corrections
+    linux = {sid for sid, entry in cfg.preinstalled.systems.items() if entry.os == "linux"}
+    listed = set(c.abstain_sources)
+    where = "ranking.toml: corrections.abstain_sources"
+    if c.abstain_scope == "by_package_system" and linux - listed:
+        _fail(where, f"missing Linux systems of preinstalled.toml: {sorted(linux - listed)}")
+    if listed - linux:
+        _fail(where, f"not Linux systems in preinstalled.toml: {sorted(listed - linux)}")
+
+
 def check_foundries(f: FoundriesConfig) -> None:
     """Foundry ids are tokens and every URL is https."""
     for foundry_id, foundry in f.foundries.items():
@@ -265,6 +287,7 @@ def check_foundries(f: FoundriesConfig) -> None:
             _fail(where, "foundry ids must be lower-case tokens")
         urls = [foundry.url] + [fam.url for fam in foundry.families]
         urls += [fam.repository for fam in foundry.families if fam.repository]
+        urls += [url for fam in foundry.families for url in fam.files]
         for url in urls:
             if not _HTTPS.match(url):
                 _fail(where, f"{url!r} is not an https URL")

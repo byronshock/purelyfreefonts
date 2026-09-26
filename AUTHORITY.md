@@ -53,7 +53,7 @@ Answers to the Milestone 1, Step 0 decisions in [docs/ranking-methodology.md](do
 
   *(2026-09-25)*
 - **Method clarifications (M1–M12).** Recorded in `data/reviews/method/2026-09-25.toml` and in the methodology.
-  - **M1:** the outlier guard stays (gap 1.5 z, at least 3 terms, half weight), and the worked example is corrected to JetBrains Mono 2.53.
+  - **M1:** the outlier guard stays (gap 1.5 z, at least 3 terms, half weight). *Superseded on 2026-09-26:* the guard compares each term with the median of all the font's terms, and the worked example goes back to JetBrains Mono 2.48.
   - **M2:** GitHub counts every release of a main-channel repo, as growth between snapshots, with no 24-month cap; Iosevka uses its latest 24 releases, through GraphQL.
   - **M3:** Homebrew Nerd casks get their own floor each run, the 10th percentile of Nerd casks' 365-day installs (about 2,150 a year), subtracted before `nerd_credit`.
   - **M4:** the Arch Nerd Fonts group floor is the 10th-percentile share of members in the group at least 6 months; newer members are not floored.
@@ -67,6 +67,20 @@ Answers to the Milestone 1, Step 0 decisions in [docs/ranking-methodology.md](do
   - **M12:** foundry families are a hand list in `config/foundries.toml`, seeded once by Claude from the foundry sites and reviewed by the owner with the step 2 config.
 
   *(2026-09-25)*
+- **Rulings after the first real run.** Given in chat on 2026-09-26 and recorded in `data/reviews/<gate>/2026-09-26.toml` (method, terms, config, latin, licenses, aliases, unmatched, corrections, links, review, ci, site). Unless noted, the owner took Claude's recommendation.
+  - **Outlier guard (the owner's own option):** each term is compared with the median of all the font's terms; one more than 1.5 z from it gets half weight. The worked example is JetBrains Mono 2.48.
+  - **Method:** Developers & apps shows bands only while its sources share one independence group (until Flutter is on); Rising is tier C while in beta; the confidence draws keep re-weighting across all of a survey's sources (the owner's choice); release assets created after the baseline count in full; §9's monotonicity wording as written there.
+  - **Linux sources:** a preinstalled system silences only the Linux sources that count it (Arch-family systems pkgstats, Debian and Ubuntu popcon, desktops both); popcon and pkgstats count a family by its most-installed package.
+  - **Config (gate C):** `preinstalled.toml` and `foundries.toml` are approved; LibreOffice is listed as an application (`os = "app"`); EndeavourOS takes its fonts from eos-base-group; Blackout is three families.
+  - **Latin (gate L):** at most 2 GF_Latin_Kernel code points missing, a Latin share of at least 30%, "extended" with at most 3 GF_Latin_Core code points missing; Google families served only with the menu subset take the glyph test; Single Day is out.
+  - **Licenses (gate LIC):** Bitstream Vera, Bitstream Charter, the Ubuntu Font Licence, the GUST Font License and IPA qualify (open-font group); WTFPL, LPPL 1.3c and public-domain dedications qualify (permissive); X11, BSL-1.0 and Artistic-2.0 qualify (permissive) and MPL-2.0 (open-font); GPL and LGPL with the font exception qualify; Lack is excluded until it publishes a license; Monofur, Vic Fieger, freeware grants, Arphic, Artistic-1.0 and Letters are researched; a family with no license is excluded, but Claude researches any that would reach the overall top 700.
+  - **Aliases and unmatched keys (gates A, U):** Iosevka Term and Term Slab fold into Iosevka; build variants (Maple Mono CN and NF, Cascadia NF and PL, Inter Variable) fold into their family; Monaspace, Libertinus, Noto, iA Writer and M+ are bundles (D2); the 53-repository GitHub list and its 914 plain rows are accepted; distro package rows wait until their contents are researched; Material Icons and Symbols are icon fonts; a short `build/universe.md` is committed.
+  - **Links (gate K):** the four overrides (Adobe Source, IBM Plex, Inter, JetBrains Mono) are approved.
+  - **Review:** the what-if table stays in the private review pack; ecosyste.ms packages are flagged stale after 90 days.
+  - **Refresh (gate CI):** Claude sets up the pull-request permission and the data key with `gh` when step 19 is ready; the owner creates the watchdog's token after the first refresh pull request.
+  - **Site:** the footer link reads "Leave a tip ($5 suggested)" on every page; the access log also drops Referer and User-Agent.
+
+  *(2026-09-26)*
 
 ## Site (Milestone 2)
 
@@ -99,7 +113,7 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
 - **Cloudflare.** Proxied (orange cloud), SSL mode Full (strict), with a Cloudflare Origin CA certificate on the server.
 - **Access.** One admin user `byron`, key-only SSH, passwordless sudo, root login off. Local alias `ssh tff`. Claude manages the server over SSH and Cloudflare through an API token; its ssh/scp/rsync commands to `tff` are auto-allowed in this project.
 - **Secrets.** Kept out of the project: the Cloudflare token lives in `~/.config/trulyfreefonts/cloudflare.env`, and the root password (VNC emergency access only) lives in the owner's password manager.
-- **Visitor privacy on the server.** Cloudflare's Network Error Logging is off on all three zones. The access log masks visitor IPs to /16 (IPv4) and /32 (IPv6), drops the port and IP-carrying headers, and is kept for 14 days. *(2026-09-25)*
+- **Visitor privacy on the server.** Cloudflare's Network Error Logging is off on all three zones. The access log masks visitor IPs to /16 (IPv4) and /32 (IPv6), drops the port and IP-carrying headers, and is kept for 14 days. *(2026-09-25)* It also drops Referer, User-Agent, cookies and every location header finer than the country. *(2026-09-26)*
 
 ## Repository and workflow
 

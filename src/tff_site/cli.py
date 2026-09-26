@@ -5,7 +5,7 @@ value is the exit code: 0 success, 1 a failed check or not implemented yet, 2 us
 
 | Command | Calls |
 |---|---|
-| ``build [--data F] [--out D] ...`` | ``tff_site.build.build`` |
+| ``build [--data F] [--out D] [--drafts] ...`` | ``tff_site.build.build`` |
 | ``serve [SITE_DIR] [--host H] [--port N]`` | ``tff_site.serve.serve`` |
 | ``check [SITE_DIR]`` | ``tff_site.budgets.check`` |
 | ``pack [SITE_DIR] [--out F] [--only F] [--manifest F]`` | ``tff_site.pack.pack`` |
@@ -14,9 +14,9 @@ value is the exit code: 0 success, 1 a failed check or not implemented yet, 2 us
 | ``linkcheck [--data F] [--ids a,b] [--rate R]`` | ``tff_site.linkcheck.linkcheck`` |
 
 A command that fails on bad input (``CatalogError``, ``BuildError``, ``AssetError``,
-``PageError``, ``PackError`` or a Jinja2 ``TemplateError``) prints ``tff-site <command>:
-failed`` and each problem, at most ``MAX_ERRORS_SHOWN``, to stderr and returns 1, with no
-traceback. Any other exception is a bug and keeps its traceback.
+``PageError``, ``BlogError``, ``PackError`` or a Jinja2 ``TemplateError``) prints
+``tff-site <command>: failed`` and each problem, at most ``MAX_ERRORS_SHOWN``, to stderr and
+returns 1, with no traceback. Any other exception is a bug and keeps its traceback.
 """
 
 import argparse
@@ -25,7 +25,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 from tff_catalog import __version__
-from tff_site import assets, budgets, build, data, fonts, linkcheck, pack, pages, serve
+from tff_site import assets, blog, budgets, build, data, fonts, linkcheck, pack, pages, serve
 
 MAX_ERRORS_SHOWN = 50
 # Bad input, not bugs: each carries its problems as ``errors`` or ``problems`` (module docstring).
@@ -34,6 +34,7 @@ _FAILURES: tuple[type[Exception], ...] = (
     build.BuildError,
     assets.AssetError,
     pages.PageError,
+    blog.BlogError,
     pack.PackError,
 )
 
@@ -60,6 +61,7 @@ def _cmd_build(ns: argparse.Namespace) -> int:
         commit=ns.commit,
         allow_dirty=ns.allow_dirty,
         font_files=not ns.no_font_files,
+        drafts=ns.drafts,
     )
     print(f"built {result.files} files into {result.out_dir}")
     return 0
@@ -146,6 +148,9 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--commit", help="commit to record in version.txt (default: git HEAD)")
     p.add_argument("--allow-dirty", action="store_true", help="build from a dirty tree")
     p.add_argument("--no-font-files", action="store_true", help='leave out "Type your own text"')
+    p.add_argument(
+        "--drafts", action="store_true", help="also publish blog posts marked draft (staging)"
+    )
 
     p = add("serve", _cmd_serve, "preview a built site locally with the production headers")
     p.add_argument("site_dir", **site_dir, help="default: build/site")
