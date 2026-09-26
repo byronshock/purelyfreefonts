@@ -66,7 +66,7 @@ The license column shows each source's license or terms and, where the owner has
 
 | Source | What we use | License or terms |
 |---|---|---|
-| [Fonts Over Time](https://fontsovertime.com) | fonts on about 10,000 homepages | used with credit and a link back, as its data page asks; an explicit license will be requested (no license file; the data page says the data is free to download and reuse). Only ranks and rank-based scores are published |
+| [Fonts Over Time](https://fontsovertime.com) | fonts on about 10,000 homepages | used with credit and a link back, as its data page asks; an explicit license has been [requested](https://github.com/fcjr/fontsovertime/issues/1) (no license file; the data page says the data is free to download and reuse). Only ranks and rank-based scores are published |
 | [Web Almanac 2025](https://almanac.httparchive.org) | pages declaring each font | Apache 2.0 |
 | [Google Fonts](https://fonts.google.com) | views over one year | used for ranks and rank-based scores only; view counts are not published ([Google Terms of Service](https://policies.google.com/terms)) |
 | [npm](https://www.npmjs.com) downloads of `@fontsource`, `@fontsource-variable` and `@expo-google-fonts` packages | code and app use | npm's terms say nothing specific about download counts; counts may be published, with credit |

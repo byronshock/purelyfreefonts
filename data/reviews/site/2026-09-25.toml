@@ -15,3 +15,13 @@ reason = "One three-way control covers both old filters, which were two halves o
 value = "Used in projects"
 ruling = "On the site, the Project rank (D10) is labelled 'Used in projects'."
 reason = "A plain label for what the rank measures: fonts used in websites, code and apps."
+
+[site_data_fields]
+value = "approved as drafted"
+ruling = "Milestone 2 step 2: the catalog-site.json fields in schemas/catalog-site.schema.json (draft 1.0.0) are approved. Designer lists are dropped, since D12 is usage only. Milestone 1 step 20 freezes v1 with them."
+reason = "They cover every field the list and details panel need, and nothing the terms rulings keep private."
+
+[license_filter_groups]
+options = ["Open font licenses (OFL, UFL, Bitstream Vera)", "Permissive (Apache, MIT, BSD, CC0)", "Attribution required (CC BY)", "Other free-use grants"]
+ruling = "The license filter offers these four groups (config/site.toml license_classes)."
+reason = "Rule 3 admits licenses that allow any use but forbid redistributing the files, so they need a group of their own."

@@ -80,8 +80,15 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
 - **M2-D6: deploy.** GitHub Actions deploys each push to `main` as a restricted `deploy` user, and a laptop script is the fallback. *(2026-09-25)*
 - **M2-D7: test site.** `staging.trulyfreefonts.com` is used for usability round 1 and reused by Milestone 3. *(2026-09-25)*
 - **M2-D9: server logs.** See Infrastructure, visitor privacy on the server. *(2026-09-25)*
+- **M2-D12: blog.** *(2026-09-25; checklist in [Milestone 2 step 7b](docs/milestone-2.md#step-7b-blog))*
+  - **System.** Posts are Markdown files in the repository, built by `tff-site` with the rest of the site. There is no separate blog engine.
+  - **When.** It ships with the list release (Milestone 2).
+  - **Address.** Posts live at `/blog/`, with an Atom feed at `/blog/feed.xml`.
+  - **License.** Post text and images are under CC BY-SA 4.0, the same as the catalog data.
 - **Spacing filter.** "Spacing: Any / Proportional / Monospaced" replaces D13's "Text only" filter and the "monospace only" checkbox. *Proportional* is the old "Text only": it hides monospace and coding fonts. The filter applies to every rank. Recorded in `data/reviews/site/2026-09-25.toml`. *(2026-09-25)*
 - **Project rank label.** On the site, the Project rank (D10) is labelled **"Used in projects"**. *(2026-09-25)*
+- **Site data fields (M2 step 2).** The `catalog-site.json` fields in `schemas/catalog-site.schema.json` are approved as drafted. Designer lists are left out, because D12 is usage only. *(2026-09-25)*
+- **License filter.** Four groups: open font licenses (OFL, UFL, Bitstream Vera); permissive (Apache, MIT, BSD, CC0); attribution required (CC BY); and other free-use grants, which allow any use but may forbid redistributing the files (Rule 3). *(2026-09-25)*
 
 ## Infrastructure
 
@@ -109,6 +116,11 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
   - the milestone checklists `docs/milestone-1.md` to `docs/milestone-4.md`;
   - `docs/owned-fonts.md`, the notes for Milestone 3.
 - **Monthly data refresh.** A scheduled GitHub Actions workflow runs the pipeline and opens a pull request with the new catalog and anything flagged for review. The owner reviews and merges it.
+- **Backlog.** *(2026-09-25)*
+  - **Tool.** [Backlog.md](https://github.com/MrLesk/Backlog.md) keeps its tasks in `backlog/`, committed to the public repository.
+  - **What goes in it.** Only loose items: ideas, bugs and later work that no milestone checklist covers. The milestone checklists stay the plan, and decisions stay in this file, never in `backlog/decisions/`.
+  - **Changes.** A task's status changes in the same pull request as its work.
+  - **Agents.** `CLAUDE.md` tells Claude sessions to use the `backlog` command.
 
 ## Funding
 
