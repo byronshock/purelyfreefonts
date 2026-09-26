@@ -79,11 +79,15 @@ def frozen_day() -> Iterator[date]:
 
 def test_committed_rulings_load_oldest_first_in_gate_order() -> None:
     rulings = reviews.load_rulings(COMMITTED)
+    # The site file grows as the owner rules on more wording, so count its tables.
+    site_file = ROOT / "data" / "reviews" / "site" / "2026-09-25.toml"
+    site_count = sum(isinstance(v, dict) for v in tomllib.loads(site_file.read_text()).values())
     assert [(r.gate, r.day, len(r.answers)) for r in rulings][:3] == [
         ("T", date(2026, 9, 25), 5),
         ("M", date(2026, 9, 25), 12),
-        ("SITE", date(2026, 9, 25), 2),
+        ("SITE", date(2026, 9, 25), site_count),
     ]
+    assert site_count >= 4
     method = {a.id: a for a in reviews.load_rulings(COMMITTED, "M")[0].answers}
     assert list(method) == [f"M{n}" for n in range(1, 13)]  # file order
     assert (method["M9"].choice, method["M9"].recommended) == ("b", False)
