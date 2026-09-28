@@ -853,6 +853,46 @@ family_id = "source-code-pro"
     assert outcome(again, k("font-name", "Sorce Sans")).status == "blocked"
 
 
+def test_claudes_delegated_rulings_are_marked_as_claudes(tmp_path: Path) -> None:
+    """``by = "claude"`` (the owner's delegation of 2026-09-28): rows say Claude reviewed them."""
+    paths = Paths.for_root(tmp_path)
+    result = merged(cands=REVIEW)
+    ids = ids_by_alias(result)
+    write_ruling(
+        paths,
+        "2026-10-05",
+        f"""
+[claude-exact]
+choice = "a"
+recommended = true
+by = "claude"
+ruling = "Accept: exact names."
+reason = "Claude, under the owner's delegation."
+items = ["{ids["@fontsource/source-sans-pro"]}"]
+""",
+    )
+    decisions = load_alias_rulings(paths)
+    assert decisions[ids["@fontsource/source-sans-pro"]].by == "claude"
+    after = apply_rulings(result, decisions)
+    added = {(r.alias, r.reviewed_by) for r in new_rows(after)}
+    assert ("@fontsource/source-sans-pro", "claude:2026-10-05") in added
+    write_ruling(
+        paths,
+        "2026-10-06",
+        f"""
+[someone-else]
+choice = "a"
+recommended = true
+by = "a bot"
+ruling = "Accept."
+reason = "Test."
+items = ["{ids["SSP"]}"]
+""",
+    )
+    with pytest.raises(AliasError, match="by must be one of"):
+        load_alias_rulings(paths)
+
+
 def test_an_accepted_conflict_replaces_the_old_row() -> None:
     table = AliasTable.from_rows([row("SSP", "font-name", "source-code-pro")])
     result = merged(table, [cand(k("font-name", "ssp"), k("gf-family", "Source Sans 3"))])

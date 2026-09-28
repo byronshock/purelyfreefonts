@@ -64,8 +64,11 @@ batches; the rest recommend nothing and are asked one by one. Rulings
 item, and any table may instead list ``items``. ``choice = "a"`` accepts, ``"b"``
 rejects (a rejection with a known family becomes an exact ``distinct`` row), any
 other choice decides nothing. An accepting single-item table may correct the row
-with ``family_id``, ``relation`` or ``detail``. A later file wins over an earlier
-one. Rulings are read on every run, so a decision holds until the table carries it.
+with ``family_id``, ``relation`` or ``detail``. A table with ``by = "claude"``
+records Claude's decision under the owner's delegation of 2026-09-28 (mechanical
+rows only), and its rows get ``reviewed_by = "claude:<date>"`` instead of
+``"owner:<date>"``. A later file wins over an earlier one. Rulings are read on
+every run, so a decision holds until the table carries it.
 
 Stage outputs, besides ``build/stage/alias_index.json`` (``mapping.IndexEntry``):
 
@@ -1065,9 +1068,14 @@ class Decision:
     family_id: str | None = None  # corrections, for an accepted single item
     relation: str | None = None
     detail: str | None = None
+    by: str = "owner"  # who decided: "claude" under the owner's delegation of 2026-09-28
 
 
 GATE = "A"  # reviews.GATE_DIRS: data/reviews/aliases/
+# Who may decide a queue item (a ruling's ``by`` value, default "owner"): the owner, or Claude
+# for the mechanical rows the owner delegated on 2026-09-28 (A_U_queues). The row's
+# ``reviewed_by`` is "<by>:<day>".
+DECIDERS = frozenset({"owner", "claude"})
 # The options of every gate A question, in ``Decision`` order: (a) accepts, (b) rejects,
 # (c) decides nothing and keeps the question open (``reviews.REOPEN``).
 QUESTION_OPTIONS = (
@@ -1108,7 +1116,10 @@ def _decisions(day: date, answer: reviews.Answer) -> dict[str, Decision]:
         raise AliasError(f"{where} family_id, relation and detail must be strings")
     if len(items) > 1 and any(v is not None for v in fixes.values()):
         raise AliasError(f"{where} corrections need a single item")
-    return {i: Decision(answer.choice == "a", day, **fixes) for i in items}
+    by = values.get("by", "owner")
+    if by not in DECIDERS:
+        raise AliasError(f"{where} by must be one of {sorted(DECIDERS)}, got {by!r}")
+    return {i: Decision(answer.choice == "a", day, **fixes, by=str(by)) for i in items}
 
 
 def _question(item: Mapping[str, Any]) -> reviews.Question:
@@ -1164,7 +1175,7 @@ def apply_rulings(result: MergeResult, decisions: Mapping[str, Decision]) -> Mer
         if d is None:
             kept.append(item)
             continue
-        by, source = f"owner:{d.day.isoformat()}", "+".join(item.sources)
+        by, source = f"{d.by}:{d.day.isoformat()}", "+".join(item.sources)
         if not d.accept:
             if item.family_id:
                 # Rejecting a kept id means the new name is not the old family; the

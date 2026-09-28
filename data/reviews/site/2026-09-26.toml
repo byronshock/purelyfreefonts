@@ -1,6 +1,8 @@
 # Owner rulings of 2026-09-26, given in chat after integration A (the first real run). Ruled by
 # the owner, Byron Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml).
 # Also in AUTHORITY.md. Where the owner picked Claude's recommendation, the reason is Claude's summary.
+# Corrected on 2026-09-28 (the owner's note in the lead's record, [gates_2026-09-28] log_fields_note):
+# log_fields was Claude's recommendation in chat, so it records recommended = true.
 
 [tip_link]
 label = "Leave a tip ($5 suggested)"
@@ -14,10 +16,10 @@ reason = "Claude's recommendation."
 
 [log_fields]
 choice = "b"
-recommended = false
+recommended = true
 value = "trim_referer_user_agent"
 ruling = "The Caddy access log also drops Referer and User-Agent; /privacy describes the log accordingly; the Caddyfile change goes out with its checked deploy line (ops/SERVER.md item 25); AUTHORITY.md's visitor-privacy line is updated."
-reason = "The owner's choice, not Claude's recommendation. Integration A's question (SITE, /privacy facts) offered (a) confirm the page as written, the log keeping every header but the IP ones, which Claude recommended because it matches M2-D9, and (b) trim Referer and User-Agent from the log; the owner picked (b). Not part of the ruling: the same Caddyfile change also drops Cookie and Cloudflare's location headers finer than the country. Those are Claude's addition, in the spirit of ruling M2-D9, and go back to the owner to confirm."
+reason = "Claude's recommendation in chat, taken by the owner. Integration A's printed question (SITE, /privacy facts) had marked (a), confirming the log as written, and offered (b), trimming Referer and User-Agent; in chat Claude recommended (b). The same Caddyfile change also drops Cookie and Cloudflare's location headers finer than the country: the owner confirmed that on 2026-09-28 (../2026-09-28.toml, log_extra_headers)."
 
 [specimen_sample]
 value = "Zażółć gęślą jaźń · Příliš žluťoučký kůň"

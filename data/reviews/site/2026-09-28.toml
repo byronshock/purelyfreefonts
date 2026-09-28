@@ -1,0 +1,11 @@
+# Owner ruling of 2026-09-28, gate SITE, given in chat after the finish-gates-2 run. Ruled by the
+# owner, Byron Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml,
+# [gates_2026-09-28]: log_extra_headers). Also in AUTHORITY.md (Infrastructure, visitor privacy).
+# The owner took Claude's recommendation.
+
+[log_extra_headers]
+choice = "a"
+recommended = true
+value = "owner_ruling"
+ruling = "The Caddy access log also drops the Cookie header and Cloudflare's location headers finer than the country, as the Caddyfile change of the log_fields ruling (2026-09-26) already does. This is the owner's ruling, not Claude's addition."
+reason = "Claude's recommendation: the log keeps nothing it does not need, in the spirit of M2-D9. Options were (a) keep dropping them, recorded as the owner's ruling, (b) keep dropping them, recorded as Claude's addition, (c) drop only Referer and User-Agent; the owner chose (a)."

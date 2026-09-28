@@ -1,7 +1,10 @@
-# Owner rulings of 2026-09-28, gate K (the researched link overrides), given in chat after the
-# finish-gates-1 run. Ruled by the owner, Byron Shock; recorded by Claude from the lead's notes
-# (design/rulings-2026-09-26.toml, [links_research_2026-09-28]). Also in AUTHORITY.md. The owner
-# took Claude's recommendation each time, so each reason is Claude's summary.
+# Owner rulings of 2026-09-28, gate K, given in chat in two batches. Ruled by the owner, Byron
+# Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml). Batch 1, after
+# the finish-gates-1 run: the researched overrides ([links_research_2026-09-28]). Batch 2, after
+# the finish-gates-2 run: the 7 accepted links and the 11 font-specific pages ([gates_2026-09-28]
+# K_batch3, K_font_pages). Also in AUTHORITY.md. The owner took Claude's recommendation each time,
+# so each reason is Claude's summary. Where Claude recommended another option than the printed
+# (rec), the answer records that option's letter as recommendation; each pick names its url.
 
 [K-metropolis-page]
 choice = "a"
@@ -20,3 +23,141 @@ choice = "a"
 recommended = true
 ruling = "Approve the override"
 reason = "Claude's recommendation: the designer's own page (Dimitar Zhekov, SIL OFL 1.1). Terminus TTF, the build Nerd Fonts patches, is a third party's conversion."
+
+[K-dejavu-sans-mono]
+choice = "a"
+recommended = true
+url = "https://dejavu.sourceforge.net/"
+ruling = "https://dejavu.sourceforge.net/ (from fontist)"
+reason = "Claude's recommendation (K_batch3): the DejaVu project's own page; it redirects to dejavu-fonts.org, which answered 200 on 2026-09-28."
+
+[K-dejavu-serif]
+choice = "a"
+recommended = true
+url = "https://dejavu.sourceforge.net/"
+ruling = "https://dejavu.sourceforge.net/ (from fontist)"
+reason = "Claude's recommendation (K_batch3): the DejaVu project's own page, as for DejaVu Sans Mono."
+
+[K-dejavu-mono]
+choice = "a"
+recommended = true
+url = "https://github.com/dejavu-fonts/dejavu-fonts/releases"
+ruling = "https://github.com/dejavu-fonts/dejavu-fonts/releases (from fontsource)"
+reason = "Claude's recommendation (K_batch3): the DejaVu project's releases, the only candidate."
+
+[K-hack]
+choice = "a"
+recommended = true
+url = "https://sourcefoundry.org/hack/"
+ruling = "https://sourcefoundry.org/hack/ (from homebrew_casks)"
+reason = "Claude's recommendation (K_batch3): Source Foundry's Hack page, the only candidate."
+
+[K-juliamono]
+choice = "a"
+recommended = true
+url = "https://juliamono.netlify.app/"
+ruling = "https://juliamono.netlify.app/ (from homebrew_casks)"
+reason = "Claude's recommendation (K_batch3): the designer's JuliaMono site."
+
+[K-meslo-lg]
+choice = "a"
+recommended = true
+url = "https://github.com/andreberg/Meslo-Font/releases"
+ruling = "https://github.com/andreberg/Meslo-Font/releases (from homebrew_casks)"
+reason = "Claude's recommendation (K_batch3): the designer's repository releases, the only candidate."
+
+[K-firago]
+choice = "b"
+recommended = true
+recommendation = "b"
+url = "https://github.com/bBoxType/FiraGO/releases"
+ruling = "https://github.com/bBoxType/FiraGO/releases (from fontsource)"
+reason = "Claude's recommendation (K_batch3): bBox Type's FiraGO releases. The printed (rec), carrois.com/typefaces/FiraGO/, answered 404 on 2026-09-28, so Claude recommended (b) in chat."
+
+[K-courier-prime-code]
+choice = "b"
+recommended = true
+recommendation = "b"
+url = "https://quoteunquoteapps.com/courierprime/"
+ruling = "https://quoteunquoteapps.com/courierprime/ (from homebrew_casks)"
+reason = "Claude's recommendation (K_font_pages): the font's own Courier Prime page rather than the publisher's home page, the printed (rec); it answered 200 on 2026-09-28."
+
+[K-courier-prime-sans]
+choice = "b"
+recommended = true
+recommendation = "b"
+url = "https://quoteunquoteapps.com/courierprime/"
+ruling = "https://quoteunquoteapps.com/courierprime/ (from homebrew_casks)"
+reason = "Claude's recommendation (K_font_pages): the font's own Courier Prime page rather than the publisher's home page, the printed (rec); it answered 200 on 2026-09-28."
+
+[K-gentium]
+choice = "b"
+recommended = true
+recommendation = "b"
+url = "https://software.sil.org/gentium/"
+ruling = "https://software.sil.org/gentium/ (from homebrew_casks)"
+reason = "Claude's recommendation (K_font_pages): SIL's Gentium page rather than SIL's home page, the printed (rec); it answered 200 on 2026-09-28."
+
+[K-tex-gyre-adventor]
+choice = "b"
+recommended = true
+recommendation = "b"
+url = "https://www.gust.org.pl/projects/e-foundry/tex-gyre/adventor"
+ruling = "https://www.gust.org.pl/projects/e-foundry/tex-gyre/adventor (from homebrew_casks)"
+reason = "Claude's recommendation (K_font_pages): the family's own GUST page rather than the general TeX Gyre page, the printed (rec); it answered 200 on 2026-09-28."
+
+[K-tex-gyre-bonum]
+choice = "b"
+recommended = true
+recommendation = "b"
+url = "https://www.gust.org.pl/projects/e-foundry/tex-gyre/bonum"
+ruling = "https://www.gust.org.pl/projects/e-foundry/tex-gyre/bonum (from homebrew_casks)"
+reason = "Claude's recommendation (K_font_pages): the family's own GUST page rather than the general TeX Gyre page, the printed (rec); it answered 200 on 2026-09-28."
+
+[K-tex-gyre-chorus]
+choice = "b"
+recommended = true
+recommendation = "b"
+url = "https://www.gust.org.pl/projects/e-foundry/tex-gyre/chorus"
+ruling = "https://www.gust.org.pl/projects/e-foundry/tex-gyre/chorus (from homebrew_casks)"
+reason = "Claude's recommendation (K_font_pages): the family's own GUST page rather than the general TeX Gyre page, the printed (rec); it answered 200 on 2026-09-28."
+
+[K-tex-gyre-cursor]
+choice = "b"
+recommended = true
+recommendation = "b"
+url = "https://www.gust.org.pl/projects/e-foundry/tex-gyre/cursor"
+ruling = "https://www.gust.org.pl/projects/e-foundry/tex-gyre/cursor (from homebrew_casks)"
+reason = "Claude's recommendation (K_font_pages): the family's own GUST page rather than the general TeX Gyre page, the printed (rec); it answered 200 on 2026-09-28."
+
+[K-tex-gyre-heros]
+choice = "b"
+recommended = true
+recommendation = "b"
+url = "https://www.gust.org.pl/projects/e-foundry/tex-gyre/heros"
+ruling = "https://www.gust.org.pl/projects/e-foundry/tex-gyre/heros (from homebrew_casks)"
+reason = "Claude's recommendation (K_font_pages): the family's own GUST page rather than the general TeX Gyre page, the printed (rec); it answered 200 on 2026-09-28."
+
+[K-tex-gyre-pagella]
+choice = "b"
+recommended = true
+recommendation = "b"
+url = "https://www.gust.org.pl/projects/e-foundry/tex-gyre/pagella"
+ruling = "https://www.gust.org.pl/projects/e-foundry/tex-gyre/pagella (from homebrew_casks)"
+reason = "Claude's recommendation (K_font_pages): the family's own GUST page rather than the general TeX Gyre page, the printed (rec); it answered 200 on 2026-09-28."
+
+[K-tex-gyre-schola]
+choice = "b"
+recommended = true
+recommendation = "b"
+url = "https://www.gust.org.pl/projects/e-foundry/tex-gyre/schola"
+ruling = "https://www.gust.org.pl/projects/e-foundry/tex-gyre/schola (from homebrew_casks)"
+reason = "Claude's recommendation (K_font_pages): the family's own GUST page rather than the general TeX Gyre page, the printed (rec); it answered 200 on 2026-09-28."
+
+[K-tex-gyre-termes]
+choice = "b"
+recommended = true
+recommendation = "b"
+url = "https://www.gust.org.pl/projects/e-foundry/tex-gyre/termes"
+ruling = "https://www.gust.org.pl/projects/e-foundry/tex-gyre/termes (from homebrew_casks)"
+reason = "Claude's recommendation (K_font_pages): the family's own GUST page rather than the general TeX Gyre page, the printed (rec); it answered 200 on 2026-09-28."

@@ -493,6 +493,8 @@ def test_committed_overrides_cover_the_gate_k_families() -> None:
         "K-metropolis-page",
         "K-profont-page",
         "K-terminus-page",
+        # Proposed on 2026-09-28: the owner's pick for DejaVu fails the https-only check.
+        "K-dejavu-site",
     }
     # The archived mirror says why it is the official link (owner ruling of 2026-09-28).
     assert "2020" in by_family["metropolis"].primary_note
@@ -500,7 +502,8 @@ def test_committed_overrides_cover_the_gate_k_families() -> None:
     for o in overrides:
         assert o.choice == "a"
         assert o.primary, o.family
-        if not o.question.endswith("-page"):  # the four approved ones name both links
+        if o.question.startswith(("K-inter", "K-jetbrains", "K-ibm", "K-adobe")):
+            # the four approved on 2026-09-26 name both links
             assert o.designer, o.family
         for url in filter(None, (o.primary, o.designer)):
             assert links.policy_problems(url) == [], (o.family, url)

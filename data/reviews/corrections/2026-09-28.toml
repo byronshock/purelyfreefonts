@@ -1,0 +1,123 @@
+# Owner rulings of 2026-09-28, gate X (new preinstalled and dependency cases), given in chat after
+# the finish-gates-2 run. Ruled by the owner, Byron Shock; recorded by Claude from the lead's notes
+# (design/rulings-2026-09-26.toml, [gates_2026-09-28]: X_17). Also in AUTHORITY.md. The owner
+# accepted the three groups as recommended; each member carries its group as batch.
+
+[dep-debian-noto-sans-mono]
+choice = "a"
+recommended = true
+batch = "all-X-2632604a91"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 7 together."
+
+[dep-debian-roboto]
+choice = "a"
+recommended = true
+batch = "all-X-2632604a91"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 7 together."
+
+[dep-debian-roboto-condensed]
+choice = "a"
+recommended = true
+batch = "all-X-2632604a91"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 7 together."
+
+[dep-debian-roboto-slab]
+choice = "a"
+recommended = true
+batch = "all-X-2632604a91"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 7 together."
+
+[pre-arch-dejavu-sans]
+choice = "a"
+recommended = true
+batch = "all-X-2632604a91"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 7 together."
+
+[pre-arch-dejavu-serif]
+choice = "a"
+recommended = true
+batch = "all-X-2632604a91"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 7 together."
+
+[pre-arch-noto-sans]
+choice = "a"
+recommended = true
+batch = "all-X-2632604a91"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 7 together."
+
+[pre-arch-noto-sans-mono]
+choice = "a"
+recommended = true
+batch = "all-X-58f108ab4c"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 8 together."
+
+[pre-arch-noto-serif]
+choice = "a"
+recommended = true
+batch = "all-X-58f108ab4c"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 8 together."
+
+[pre-arch-noto-serif-display]
+choice = "a"
+recommended = true
+batch = "all-X-58f108ab4c"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 8 together."
+
+[pre-debian-dejavu-sans]
+choice = "a"
+recommended = true
+batch = "all-X-58f108ab4c"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 8 together."
+
+[pre-debian-dejavu-sans-mono]
+choice = "a"
+recommended = true
+batch = "all-X-58f108ab4c"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 8 together."
+
+[pre-debian-dejavu-serif]
+choice = "a"
+recommended = true
+batch = "all-X-58f108ab4c"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 8 together."
+
+[pre-debian-noto-sans]
+choice = "a"
+recommended = true
+batch = "all-X-58f108ab4c"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 8 together."
+
+[pre-debian-noto-sans-display]
+choice = "a"
+recommended = true
+batch = "all-X-58f108ab4c"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 8 together."
+
+[pre-debian-noto-serif]
+choice = "a"
+recommended = true
+batch = "all-X-7eea9203c5"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted both together."
+
+[pre-debian-noto-serif-display]
+choice = "a"
+recommended = true
+batch = "all-X-7eea9203c5"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted both together."

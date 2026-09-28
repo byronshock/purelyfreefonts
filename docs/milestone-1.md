@@ -140,7 +140,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 ### Step 5: Latin filter
 **Who:** Claude; the owner signs off the allowlist. **Depends on:** 4 and D4.
 - [ ] Google families: apply rule A (expect 1,264).
-- [ ] Dual-script review sheet: about 30 candidates, sorted by Google year views, with the Latin-language counts from each family's metadata. The owner marks the allowlist. *(2026-09-26: the real sheet had 443 candidates; the owner ruled a rule instead (gate L2), which Claude applied family by family in `data/reviews/latin/2026-09-26.toml`: 178 included, 206 script companions and 59 basic-Latin-only families left out. Left: the owner confirms the 149 companions that the count shown to them had put on the include side.)*
+- [x] Dual-script review sheet: about 30 candidates, sorted by Google year views, with the Latin-language counts from each family's metadata. The owner marks the allowlist. *(2026-09-26: the real sheet had 443 candidates; the owner ruled a rule instead (gate L2), which Claude applied family by family in `data/reviews/latin/2026-09-26.toml`: 178 included, 206 script companions and 59 basic-Latin-only families left out. 2026-09-28: the owner confirmed that the 149 companions the first count had put on the include side stay out (`data/reviews/latin/2026-09-28.toml`); the latest run's latin stage has the 178 as `owner_allowlist`.)*
 - [ ] Non-Google fonts:
   - fetch one Regular file per candidate;
   - test it against the GF glyphsets with fontTools;
@@ -171,7 +171,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - [ ] L1: map every license string to an SPDX ID through `licenses.toml`.
 - [ ] L2: cross-check the google/fonts folder, Fontsource, Fontist, Nerd Fonts, Debian DEP-5 and Arch.
 - [ ] Per font, provisionally: class, redistributable, attribution_required and preview_ok (per D3).
-- [ ] Review queue for NOASSERTION results, custom texts and disagreements (DejaVu, Hack, Cascadia, OpenDyslexic, URW, Roboto Mono). Owner rulings are saved in `data/reviews/`. *(2026-09-26: the owner's 14 answers are recorded. Left: the 5 Monaspace families, new in this run, and Claude's research on Monofur, Vic Fieger and the four Salaowu families.)*
+- [ ] Review queue for NOASSERTION results, custom texts and disagreements (DejaVu, Hack, Cascadia, OpenDyslexic, URW, Roboto Mono). Owner rulings are saved in `data/reviews/`. *(2026-09-26: the owner's 14 answers are recorded. 2026-09-28: the 5 Monaspace families and the 25 researched no-license families are ruled (`data/reviews/licenses/2026-09-28.toml`). Left: Claude's research on Monofur, Vic Fieger and the four Salaowu families.)*
 
 **Done when:** every candidate has a provisional class, and the queue is empty.
 
@@ -192,7 +192,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - a GitHub repo-to-family table with a main-download-channel flag;
   - upstream name tables (Inter Variable, Inter Display).
 - [ ] Sibling rules that block false matches: Roboto ≠ Roboto Slab, Fira Sans ≠ Fira Code, Inter ≠ Inter Tight, Noto Sans ≠ Noto Sans JP.
-- [ ] Auto-accept only renames from google/fonts history and Nerd `unpatchedName` rows; the owner reviews the rest.
+- [ ] Auto-accept only renames from google/fonts history and Nerd `unpatchedName` rows; the owner reviews the rest. *(2026-09-28: under the owner's delegation (A_U_queues), Claude settled 817 of the 1,038 queued rows that were mechanical, as its own rulings in `data/reviews/aliases/2026-09-28.toml` (`by = "claude"`, rows `reviewed_by claude:2026-09-28`): distro packages whose file lists hold one family, exact names, declared renames, the families' own names, and ineligible names. Left: 221 rows, about half of them Claude's package-contents research (A_sources) and the rest owner questions.)*
 
 **Done when:** the known-answer tests pass and the review queue is empty.
 
@@ -226,7 +226,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 **Who:** Claude; the owner reviews the top of the report. **Depends on:** 7, 8.
 - [ ] Map every source key to a family id or an ineligible row, and set the four evidence states.
 - [ ] `build/unmatched.md` lists keys with no alias row, above each source's floor, sorted by volume. Nothing is guessed.
-- [ ] The owner resolves the top entries; new rows go into `aliases.csv`.
+- [ ] The owner resolves the top entries; new rows go into `aliases.csv`. *(2026-09-28: of the 501 keys gate U asked, 180 are settled by Claude's hand rows under the owner's delegation (`data/reviews/unmatched/2026-09-28.toml`) and 154 by the gate A rows; 167 are left for the owner, mostly packages that need a reason code the table does not have yet.)*
 
 **Done when:** no source has an unmatched key in its top 200 (ineligible rows count as resolved), and the known answers pass.
 

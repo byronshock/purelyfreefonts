@@ -1,0 +1,10 @@
+# Owner ruling of 2026-09-28, gate L, given in chat after the finish-gates-2 run. Ruled by the
+# owner, Byron Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml,
+# [gates_2026-09-28]: L2_companions). Also in AUTHORITY.md. The owner took Claude's recommendation.
+
+[L2_companions]
+choice = "a"
+recommended = true
+value = "keep_149_out"
+ruling = "The 206 script companions stay out, as the L2 rule and its examples say: 178 dual-script families are included, and the 206 companions (among them 134 Noto Sans and Noto Serif script families, the nine Baloo 2 script versions, IBM Plex Sans Arabic, Mukta Mahee, Malar and Vaani, and Playpen Sans Arabic and Deva) and the 59 basic-Latin-only families are left out. This confirms the lists L2-included, L2-companions and L2-basic-latin of 2026-09-26."
+reason = "Claude's recommendation: the owner was first shown 327 in and 116 out, but the rule's own examples (Noto Sans Arabic, IBM Plex Sans Arabic) make the 149 families between the two counts companions. Options were (a) keep all 206 out, (b) include the 149, (c) include only the 15 that are not Noto; the owner chose (a)."

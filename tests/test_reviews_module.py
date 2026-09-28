@@ -712,6 +712,37 @@ def test_apply_records_a_static_gate(
     assert "(0 new, 0 replaced, 2 already recorded)" in capsys.readouterr().out
 
 
+def test_apply_honours_the_recommendation_given_in_chat(
+    paths: Paths, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """A question asked in chat with another recommended option records that letter."""
+    file = answers_file(
+        tmp_path,
+        'gate = "C"\nday = 2026-10-01\n\n'
+        '[C2]\nchoice = "b"\nrecommendation = "b"\nreason = "Claude recommended (b) in chat."\n',
+    )
+    assert reviews.cmd_apply_rulings(paths, file) == 0
+    doc = tomllib.loads((paths.reviews / "config" / "2026-10-01.toml").read_text(encoding="utf-8"))
+    assert (doc["C2"]["choice"], doc["C2"]["recommended"], doc["C2"]["recommendation"]) == (
+        "b",
+        True,
+        "b",
+    )
+    assert reviews.audit(paths, "C") == []
+    capsys.readouterr()
+    bad = answers_file(
+        tmp_path,
+        'gate = "C"\n[C1]\nchoice = "a"\nrecommendation = "b"\nrecommended = true\nreason = "y"\n',
+    )
+    assert reviews.cmd_apply_rulings(paths, bad) == 1
+    assert re.search(r"\(a\) is not the recommended", capsys.readouterr().err)
+    wrong = answers_file(
+        tmp_path, 'gate = "C"\n[C1]\nchoice = "a"\nrecommendation = "q"\nreason = "y"\n'
+    )
+    assert reviews.cmd_apply_rulings(paths, wrong) == 1
+    assert "recommendation must be one of a-c" in capsys.readouterr().err
+
+
 @pytest.mark.parametrize(
     ("tables", "match"),
     [

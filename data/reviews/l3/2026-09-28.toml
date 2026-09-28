@@ -1,0 +1,46 @@
+# Owner rulings of 2026-09-28, gate L3 (license verification failures), given in chat after the
+# finish-gates-2 run. Ruled by the owner, Byron Shock; recorded by Claude from the lead's notes
+# (design/rulings-2026-09-26.toml, [gates_2026-09-28]: keep_monaspace_cascadia_gfsdidot,
+# code_new_roman, ibm_3270). Also in AUTHORITY.md. The printed questions mark no option, so each
+# answer records the option Claude recommended in chat as recommendation. The owner took it each
+# time except for IBM 3270.
+
+[L3-cascadia-code]
+choice = "b"
+recommended = true
+recommendation = "b"
+text_sha256 = "82c05d6c53dfa0c9025985c19e371810020b74ed2c61d51d370f2a8ab2506d52"
+ruling = "Keep it: the license qualifies (owner ruling)"
+reason = "Claude's recommendation: Microsoft's repository LICENSE and Google's OFL.txt are plain OFL-1.1, which governs. Name ID 13 opens with Windows boilerplate (\"Microsoft supplied font ... Any other use is prohibited\") and then states that the SIL Open Font License applies; the owner had already ruled that Cascadia qualifies (LIC_14)."
+
+[L3-cascadia-mono]
+choice = "b"
+recommended = true
+recommendation = "b"
+text_sha256 = "82c05d6c53dfa0c9025985c19e371810020b74ed2c61d51d370f2a8ab2506d52"
+ruling = "Keep it: the license qualifies (owner ruling)"
+reason = "Claude's recommendation: as for Cascadia Code, the OFL-1.1 governs and the name ID 13 paragraph is Windows boilerplate."
+
+[L3-gfs-didot]
+choice = "b"
+recommended = true
+recommendation = "b"
+text_sha256 = "9e19c0d2e7e7adcbe9dfd0749e34dda41e7e356e0f2cc082d61d2fc9b6e0cef7"
+ruling = "Keep it: the license qualifies (owner ruling)"
+reason = "Claude's recommendation: Google's OFL.txt is the final OFL-1.1. Name ID 13 holds SIL's draft \"OFL 1.1-review1\" (18 March 2006), whose \"may not be distributed under any other license\" is the OFL's copyleft condition, not a use restriction; the draft grants the same rights."
+
+[L3-code-new-roman]
+choice = "a"
+recommended = true
+recommendation = "a"
+text_sha256 = "bd5d5113498de3036d9d5c9c11d0f744cd79d31146f27ef6f7bcf8877acfdd94"
+ruling = "Exclude it from the catalog"
+reason = "Claude's recommendation: there is no OFL text anywhere; the only license, also name ID 13, is the designer's own freeware notice, which says the font is based on proprietary fonts (Monaco, Consolas) and then claims OFL-1.1, and there is no source repository."
+
+[L3-ibm-3270]
+choice = "b"
+recommended = false
+recommendation = "a"
+text_sha256 = "ef855fadca28e91a4123f7299bd79dcd78a7e19dfc364039790bb75bdedd515a"
+ruling = "Keep it: the license qualifies (owner ruling)"
+reason = "The owner's choice, not Claude's recommendation (Claude recommended excluding it under D3). The font is BSD-3-Clause (its name IDs say OFL-1.1, which the LICENSE allows for its FontForge source); the Debian logo glyph at U+F100, under CC-BY-SA-3.0 or LGPL-3.0-or-later, is one private-use glyph and does not taint the font."

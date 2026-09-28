@@ -61,7 +61,10 @@ optional ``day`` (the day the owner ruled; default today, UTC) and ``header``
 (the comment lines of a new rulings file), then one table per answered id, as
 in a rulings file, except that for a known question ``recommended`` and any
 pinned value are filled in (and checked when given) and ``ruling`` defaults to
-the chosen option's text. A group's table becomes one table per member, each
+the chosen option's text. A question asked in chat with a recommendation the
+printed one lacks or differs from (an L3 failure has none; a gate K pick Claude
+researched) records that option's letter as ``recommendation``, and
+``recommended`` is checked against it instead. A group's table becomes one table per member, each
 with ``batch = <group id>``; a group answered "decide one by one" records
 nothing, and a group id that is no longer open is an error. Any other id is
 recorded as given, so it must be complete, and a lettered one gets a warning
@@ -150,6 +153,10 @@ LETTERS = "abcdefghijklmnopqrstuvwxyz"
 ANSWER_KEYS = ("choice", "recommended", "ruling", "reason")  # the rest are values
 ANSWERS_FILE_KEYS = ("gate", "day", "header")  # top-level keys of an answers file
 BATCH_KEY = "batch"  # value naming the group question a member was answered through
+# Value naming the option recommended when the owner was asked, for a question asked in chat
+# with a recommendation the printed question lacks or differs from (an L3 failure, a gate K
+# pick Claude researched): ``recommended`` is then checked against it instead.
+RECOMMENDATION_KEY = "recommendation"
 
 _ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{0,63}")  # schemas/review.schema.json propertyNames
 # A value a question pins for its answer (``pins``), as gate L3 words it.
@@ -912,9 +919,11 @@ def audit(paths: Paths, gate: str | None = None) -> list[str]:
                 continue
             i = letter_index(a.choice)
             where = f"{ruling.gate} {ruling.day.isoformat()} [{a.id}]"
+            asked = dict(a.values).get(RECOMMENDATION_KEY)
+            rec = q.recommended if asked is None else letter_index(asked)
             if i is None or i >= len(q.options):
                 problems.append(f"{where}: choice {a.choice!r} is not an option")
-            elif a.recommended != (i == q.recommended):
+            elif a.recommended != (i == rec):
                 problems.append(f"{where}: recommended = {a.recommended} is wrong")
     return problems
 
@@ -982,10 +991,24 @@ def _choice_index(qid: str, table: Mapping[str, Any], q: Question) -> int:
     return i
 
 
+def _asked_recommendation(qid: str, table: Mapping[str, Any], q: Question) -> int | None:
+    """The option recommended when the owner was asked: ``RECOMMENDATION_KEY``, else the printed one."""
+    if RECOMMENDATION_KEY not in table:
+        return q.recommended
+    j = letter_index(table[RECOMMENDATION_KEY])
+    if j is None or j >= len(q.options):
+        last = LETTERS[len(q.options) - 1]
+        raise RulingError(
+            f"[{qid}]: {RECOMMENDATION_KEY} must be one of a-{last}, "
+            f"got {table[RECOMMENDATION_KEY]!r}"
+        )
+    return j
+
+
 def _complete(qid: str, table: Mapping[str, Any], q: Question) -> dict[str, Any]:
     """A known question's answer, with ``recommended``, pinned values and a default ``ruling``."""
     i = _choice_index(qid, table, q)
-    rec = i == q.recommended
+    rec = i == _asked_recommendation(qid, table, q)
     given = table.get("recommended", rec)
     if given is not rec:
         what = "is" if rec else "is not"
@@ -1016,7 +1039,8 @@ def expand(group: Group, table: Mapping[str, Any]) -> dict[str, dict[str, Any]] 
         return None
     if "reason" not in table:
         raise RulingError(f"[{gid}]: reason is required")
-    extra = {k: v for k, v in table.items() if k not in ANSWER_KEYS}
+    # A recommendation letter names a group option, not a member's.
+    extra = {k: v for k, v in table.items() if k not in (*ANSWER_KEYS, RECOMMENDATION_KEY)}
     out = {}
     for m in group.members:
         row = {"choice": LETTERS[pick], **extra, BATCH_KEY: gid, "reason": table["reason"]}

@@ -206,3 +206,64 @@ name = "Terminus"
 question = "K-terminus-page"
 primary = "https://terminus-font.sourceforge.net/"
 reason = "The designer's own page, Dimitar Zhekov's Terminus Font home (SIL OFL 1.1), with the source release and a Windows installer. The TrueType build Nerd Fonts patches is Terminus TTF (files.ax86.net/terminus-ttf/), a third party's conversion, so it is not the official link."
+
+# --- Proposed on 2026-09-28, waiting for the owner at gate K --------------------------------------
+# The link the owner picked for DejaVu Sans Mono and DejaVu Serif on 2026-09-28,
+# https://dejavu.sourceforge.net/, fails the monthly check: it answers 302 to
+# http://dejavu-fonts.org/wiki/, and the checker follows https only. The page it ends on,
+# https://dejavu-fonts.org/, answers 200 directly (checked 2026-09-28).
+
+# --- K-dejavu-site -------------------------------------------------------------------------------
+
+[[override]]
+family = "dejavu-sans-mono"
+name = "DejaVu Sans Mono"
+question = "K-dejavu-site"
+primary = "https://dejavu-fonts.org/"
+reason = "The DejaVu project's own site, where https://dejavu.sourceforge.net/ (the owner's pick of 2026-09-28) ends up; linking it directly avoids the http redirect that fails the link check."
+
+[[override]]
+family = "dejavu-serif"
+name = "DejaVu Serif"
+question = "K-dejavu-site"
+primary = "https://dejavu-fonts.org/"
+reason = "As for DejaVu Sans Mono: the DejaVu project's own site, without the http redirect of https://dejavu.sourceforge.net/."
+
+# --- Researched on 2026-09-28, waiting for the owner at gate K -----------------------------------
+# Held back from the catalog with no candidate link at all: each family's only sources are
+# Nerd Fonts and its Homebrew cask (and, for Droid Sans Mono, Arch's ttf-droid and Fonts Over
+# Time). Each URL below answered HTTP 200 on 2026-09-28. android.googlesource.com answers 503
+# to bursts of scripted requests; a single monthly check was fine.
+
+# --- K-droid-sans-mono-page ----------------------------------------------------------------------
+
+[[override]]
+family = "droid-sans-mono"
+name = "Droid Sans Mono"
+question = "K-droid-sans-mono-page"
+primary = "https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/data/fonts/"
+primary_label = "Android Open Source Project: data/fonts"
+primary_note = "Google stopped listing Droid Sans Mono on Google Fonts in 2017, when the Droid fonts gave way to Noto; Noto Sans Mono is its revised successor. Android still ships Droid Sans Mono as its monospace font, and this folder of Android's source code holds that file, DroidSansMono.ttf, under the Apache License 2.0."
+reason = "No official download page is left. Google unlisted the Droid fonts in 2017 as 'deprecated by Noto' (google/fonts#1223, commit 4930caf removed apache/droidsansmono), fonts.google.com/specimen/Droid+Sans+Mono answers 404, and droidfonts.com now redirects to MyFonts' commercial Droid Serif Pro. Android's own source still carries DroidSansMono.ttf on main (Version 1.00 build 113, name ID 13 'Licensed under the Apache License, Version 2.0', git blob b7bf5b4aa8ad5a8c8036653734d83006c6a376ee), the same build Nerd Fonts patches and Homebrew ships, and AOSP's fonts.xml makes it the monospace family (config/preinstalled.toml [systems.android])."
+
+# --- K-go-mono-page ------------------------------------------------------------------------------
+
+[[override]]
+family = "go-mono"
+name = "Go Mono"
+question = "K-go-mono-page"
+primary = "https://go.dev/blog/go-fonts"
+primary_label = "The Go Blog: Go fonts"
+primary_note = "The Go project's announcement of its fonts, by Nigel Tao, Chuck Bigelow and Rob Pike. The TrueType files are in the Go image repository (go.googlesource.com/image), in font/gofont/ttfs, under the Go project's BSD-style license."
+reason = "The Go fonts have no download page of their own. The Go project's post (16 November 2016) is the official page: it describes Go Mono, states the license and says where the TTF files are. Their folder on go.googlesource.com answered 503 to a scripted request on 2026-09-28, so the post is the steadier link."
+
+# --- K-bitstream-vera-page -----------------------------------------------------------------------
+
+[[override]]
+family = "bitstream-vera-sans-mono"
+name = "Bitstream Vera Sans Mono"
+question = "K-bitstream-vera-page"
+primary = "https://download.gnome.org/sources/ttf-bitstream-vera/1.10/"
+primary_label = "GNOME: ttf-bitstream-vera 1.10"
+primary_note = "Bitstream gave the Vera fonts to the GNOME Foundation in 2003. This is GNOME's download folder for their last release, 1.10."
+reason = "gnome.org/fonts/, the fonts' old home page, answers 404. GNOME's download server still holds the 1.10 release (tar.gz, tar.bz2 and zip, with checksums), which is the release Nerd Fonts patches. DejaVu Sans Mono is a later, extended derivative, so Vera keeps its own link."

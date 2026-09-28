@@ -1,0 +1,236 @@
+# Owner rulings of 2026-09-28, gate LIC, given in chat after the finish-gates-2 run. Ruled by the
+# owner, Byron Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml,
+# [gates_2026-09-28]: nolicense_25, keep_monaspace_cascadia_gfsdidot). Also in AUTHORITY.md. The
+# owner took Claude's recommendation each time. The LIC-<family> answers after the Monaspace ones
+# are the 25 families with no license found that would reach the overall top 700 (ruling
+# no_license_families of 2026-09-26): each names the license Claude found (spdx) and its source.
+# Seven of them are builds that fold into their family at gate A (../aliases/2026-09-28.toml).
+
+[LIC-monaspace-argon]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (keep_monaspace_cascadia_gfsdidot): upstream githubnext/monaspace is OFL-1.1 with the reserved name \"Monaspace\"; Arch's OFL-1.0 label is outdated."
+
+[LIC-monaspace-krypton]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (keep_monaspace_cascadia_gfsdidot): upstream githubnext/monaspace is OFL-1.1 with the reserved name \"Monaspace\"; Arch's OFL-1.0 label is outdated."
+
+[LIC-monaspace-neon]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (keep_monaspace_cascadia_gfsdidot): upstream githubnext/monaspace is OFL-1.1 with the reserved name \"Monaspace\"; Arch's OFL-1.0 label is outdated."
+
+[LIC-monaspace-radon]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (keep_monaspace_cascadia_gfsdidot): upstream githubnext/monaspace is OFL-1.1 with the reserved name \"Monaspace\"; Arch's OFL-1.0 label is outdated."
+
+[LIC-monaspace-xenon]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (keep_monaspace_cascadia_gfsdidot): upstream githubnext/monaspace is OFL-1.1 with the reserved name \"Monaspace\"; Arch's OFL-1.0 label is outdated."
+
+[LIC-ioskeley-mono]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://github.com/ahatem/IoskeleyMono/blob/main/LICENSE (OFL 1.1; an Iosevka build)."
+
+[LIC-monocraft]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://github.com/IdreesInc/Monocraft/blob/main/LICENSE."
+
+[LIC-cozette]
+choice = "a"
+recommended = true
+group = "permissive"
+spdx = "MIT"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://github.com/the-moonwitch/Cozette/blob/main/LICENSE (the repository moved from slavfox/Cozette)."
+
+[LIC-terminus-ttf]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://files.ax86.net/terminus-ttf/ (Licenses: OFL 1.1 from version 4.32 on; Homebrew ships 4.49.3)."
+
+[LIC-sudo]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://github.com/jenskutilek/sudo-font/blob/main/OFL.txt."
+
+[LIC-psudofont-liga-mono]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://github.com/psudo-dev/psudofont-liga-mono/blob/main/LICENSE."
+
+[LIC-latin-modern]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "LicenseRef-GUST-Font-License"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://www.gust.org.pl/projects/e-foundry/latin-modern (GUST Font License, which the owner ruled qualifies on 2026-09-26)."
+
+[LIC-anka-coder]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): OFL.txt in AnkaCoder.1.100.zip, https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/anka-coder-fonts/AnkaCoder.1.100.zip (the old project page's LGPL label is outdated; the description says OFL)."
+
+[LIC-charter]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "Bitstream-Charter"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://practicaltypography.com/charter.html (Bitstream's X Consortium license, which the owner ruled qualifies on 2026-09-26)."
+
+[LIC-myna]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://github.com/sayyadirfanali/Myna/blob/main/OFL.txt."
+
+[LIC-inconsolata-for-powerline]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.0"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://github.com/powerline/fonts/blob/master/Inconsolata/LICENSE.txt (Raph Levien's Inconsolata, OFL 1.0; a Powerline-patched build)."
+
+[LIC-zed-sans]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://github.com/zed-industries/zed-fonts (README: custom Iosevka builds under OFL 1.1)."
+
+[LIC-microsoft-selawik]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://github.com/microsoft/Selawik/blob/master/LICENSE.txt."
+
+[LIC-recursive-code]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://github.com/arrowtype/recursive/blob/main/OFL.txt."
+
+[LIC-monaspace-frozen]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://github.com/githubnext/monaspace/blob/main/LICENSE."
+
+[LIC-delugia-code]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://github.com/adam7/delugia-code (Cascadia Code patched with Nerd Fonts: the fonts carry Cascadia's OFL 1.1; the repository's MIT LICENSE covers its build workflow)."
+
+[LIC-inconsolata-dz-for-powerline]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.0"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://github.com/powerline/fonts/blob/master/InconsolataDz/LICENSE.txt (OFL 1.0)."
+
+[LIC-meslo-lg-dz]
+choice = "a"
+recommended = true
+group = "permissive"
+spdx = "Apache-2.0"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://github.com/andreberg/Meslo-Font (README License section: Apache 2.0)."
+
+[LIC-bitstream-vera]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "Bitstream-Vera"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://download.gnome.org/sources/ttf-bitstream-vera/1.10/ (COPYRIGHT.TXT: the Bitstream Vera license, which the owner ruled qualifies on 2026-09-26)."
+
+[LIC-twilio-sans-mono]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://github.com/twilio/twilio-sans-mono/blob/main/LICENSE.txt (OFL 1.1 with Reserved Font Names)."
+
+[LIC-sn-pro-font-family]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://github.com/supernotes/sn-pro/blob/main/OFL.txt."
+
+[LIC-inconsolata-bold-for-powerline]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.0"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://github.com/powerline/fonts/blob/master/Inconsolata/LICENSE.txt (OFL 1.0)."
+
+[LIC-miracode]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://github.com/IdreesInc/Miracode/blob/main/LICENSE."
+
+[LIC-pretendard-std]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (no_license_families): https://github.com/orioncactus/pretendard/blob/main/LICENSE."
+
+[LIC-camingocode]
+choice = "c"
+recommended = true
+spdx = "CC-BY-ND-3.0"
+ruling = "Excluded"
+reason = "Claude's research (no_license_families): https://janfromm.de/typefaces/camingomono/camingocode/ (\"Licensed under Creative Commons CC BY-ND, Version 3.0\": no derivatives, so D3 excludes it)."
