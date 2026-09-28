@@ -14,8 +14,8 @@ reason = "Claude's recommendation."
 
 [log_fields]
 value = "trim_referer_user_agent"
-ruling = "The Caddy access log also drops Referer and User-Agent (and cookies, and every header that can carry an IP or a location finer than the country); /privacy describes the log accordingly; the Caddyfile change goes out with its checked deploy line; AUTHORITY.md's visitor-privacy line is updated."
-reason = "Claude's recommendation: the log needs neither to find errors or count pages."
+ruling = "The Caddy access log also drops Referer and User-Agent; /privacy describes the log accordingly; the Caddyfile change goes out with its checked deploy line (ops/SERVER.md item 25); AUTHORITY.md's visitor-privacy line is updated."
+reason = "Claude's recommendation, picked in chat (\"Trim Referer and User-Agent (Recommended)\"): the log needs neither to find errors or count pages. Not part of the ruling: the same Caddyfile change also drops Cookie and Cloudflare's location headers finer than the country. Those are Claude's addition, in the spirit of ruling M2-D9, and go back to the owner to confirm."
 
 [specimen_sample]
 value = "Zażółć gęślą jaźń · Příliš žluťoučký kůň"
@@ -30,7 +30,7 @@ reason = "Claude's recommendation."
 [list_layout]
 value = "keep_both_fix_layout"
 ruling = "Keep \"Not ranked: no evidence of deliberate installs\", with the reason on its own line, and keep both attribution options; watch both in usability round 1."
-reason = "Claude's recommendation."
+reason = "Claude's recommendation. Applied: an unranked row carries li.font.is-unranked (server and script), which puts its label on a line of its own above the name instead of down the rank column (site/css/20-list.css)."
 
 [top100_display]
 value = "exact_order"

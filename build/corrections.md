@@ -2,7 +2,7 @@
 
 Stage "correct" (milestone-1 step 10), run date 2026-09-26. Generated; do not edit.
 
-**2 new cases for the owner (gate X).** Rule on them in `data/reviews/corrections/`, one table per case id: choice "a" accepts the handling shown, choice "b" reverses it (the source keeps counting the font, or a flagged font abstains).
+**17 new cases for the owner (gate X).** Rule on them in `data/reviews/corrections/`, one table per case id: choice "a" accepts the handling shown, choice "b" reverses it (the source keeps counting the font, or a flagged font abstains).
 
 ## Floors this run
 
@@ -18,8 +18,25 @@ Stage "correct" (milestone-1 step 10), run date 2026-09-26. Generated; do not ed
 
 | Case | Status | Family | Source | Why | System | Package | Share |
 |---|---|---|---|---|---|---|---|
-| `dep-debian-noto-mono` | **new** | Noto Mono (`noto-mono`) | debian | abstains: dependency | debian | fonts-droid-fallback | 100% |
-| `pre-arch-dejavu-sans-mono` | **new** | DejaVu Sans Mono (`dejavu-sans-mono`) | arch | preinstalled | cachyos |  |  |
+| `dep-debian-noto-sans-mono` | **new** | Noto Sans Mono (`noto-sans-mono`) | debian | abstains: dependency | debian | fonts-noto | 88% |
+| `dep-debian-roboto` | **new** | Roboto (`roboto`) | debian | abstains: dependency | debian | texlive-fonts-extra | 53% |
+| `dep-debian-roboto-condensed` | **new** | Roboto Condensed (`roboto-condensed`) | debian | abstains: dependency | debian | texlive-fonts-extra | 53% |
+| `dep-debian-roboto-slab` | **new** | Roboto Slab (`roboto-slab`) | debian | abstains: dependency | debian | texlive-fonts-extra | 90% |
+| `pre-arch-dejavu-sans` | **new** | DejaVu Sans (`dejavu-sans`) | arch | preinstalled | cachyos |  |  |
+| `pre-arch-dejavu-serif` | **new** | DejaVu Serif (`dejavu-serif`) | arch | preinstalled | cachyos |  |  |
+| `pre-arch-noto-sans` | **new** | Noto Sans (`noto-sans`) | arch | preinstalled | cachyos |  |  |
+| `pre-arch-noto-sans-mono` | **new** | Noto Sans Mono (`noto-sans-mono`) | arch | preinstalled | cachyos |  |  |
+| `pre-arch-noto-serif` | **new** | Noto Serif (`noto-serif`) | arch | preinstalled | cachyos |  |  |
+| `pre-arch-noto-serif-display` | **new** | Noto Serif Display (`noto-serif-display`) | arch | preinstalled | cachyos |  |  |
+| `pre-debian-dejavu-sans` | **new** | DejaVu Sans (`dejavu-sans`) | debian | preinstalled | debian |  |  |
+| `pre-debian-dejavu-sans-mono` | **new** | DejaVu Sans Mono (`dejavu-sans-mono`) | debian | preinstalled | debian |  |  |
+| `pre-debian-dejavu-serif` | **new** | DejaVu Serif (`dejavu-serif`) | debian | preinstalled | debian |  |  |
+| `pre-debian-noto-sans` | **new** | Noto Sans (`noto-sans`) | debian | preinstalled | kde-plasma |  |  |
+| `pre-debian-noto-sans-display` | **new** | Noto Sans Display (`noto-sans-display`) | debian | preinstalled | ubuntu |  |  |
+| `pre-debian-noto-serif` | **new** | Noto Serif (`noto-serif`) | debian | preinstalled | ubuntu |  |  |
+| `pre-debian-noto-serif-display` | **new** | Noto Serif Display (`noto-serif-display`) | debian | preinstalled | ubuntu |  |  |
+| `dep-debian-noto-mono` | accepted | Noto Mono (`noto-mono`) | debian | abstains: dependency | debian | fonts-droid-fallback | 100% |
+| `pre-arch-dejavu-sans-mono` | accepted | DejaVu Sans Mono (`dejavu-sans-mono`) | arch | preinstalled | cachyos |  |  |
 
 ## Preinstalled names with no family
 
@@ -48,9 +65,63 @@ Credited builds and bundles, and keys a key-level floor changed.
 
 | Family | Source | Keys | Term |
 |---|---|---|---|
-| DejaVu Sans Mono (`dejavu-sans-mono`) | arch | `ttf-dejavu-nerd` (nerd): 7.16% before the floor, 2.24% after, credit 1 | observed, 2.24% |
+| Cascadia Code (`cascadia-code`) | arch | `ttf-cascadia-code-nerd` (nerd): 7.90% before the floor, 2.98% after, credit 1 | observed, 2.98% |
+| Cascadia Mono (`cascadia-mono`) | arch | `ttf-cascadia-mono-nerd` (nerd): 6.10% before the floor, 1.18% after, credit 1 | observed, 1.18% |
+| DejaVu Sans (`dejavu-sans`) | arch | `ttf-dejavu` (bundle): 66.45%, credit 0.5 | observed, 33.23% |
+| DejaVu Sans Mono (`dejavu-sans-mono`) | arch | `ttf-dejavu` (bundle): 66.45%, credit 0.5; `ttf-dejavu-nerd` (nerd): 7.16% before the floor, 2.24% after, credit 1 | observed, 33.23% |
+| DejaVu Serif (`dejavu-serif`) | arch | `ttf-dejavu` (bundle): 66.45%, credit 0.5 | observed, 33.23% |
+| Droid Sans Mono (`droid-sans-mono`) | arch | `otf-droid-nerd` (nerd): 5.87% before the floor, 0.95% after, credit 1; `ttf-droid` (bundle): 17.05%, credit 0.5 | observed, 8.52% |
+| Fira Code (`fira-code`) | arch | `ttf-firacode-nerd` (nerd): 13.39% before the floor, 8.47% after, credit 1 | observed, 15.05% |
+| Fira Mono (`fira-mono`) | arch | `otf-firamono-nerd` (nerd): 6.36% before the floor, 1.44% after, credit 1 | observed, 7.00% |
+| Fira Sans (`fira-sans`) | arch | `otf-fira-sans` (bundle): 4.26%, credit 0.5; `ttf-fira-sans` (bundle): 11.83%, credit 0.5 | observed, 5.91% |
+| Fira Sans Condensed (`fira-sans-condensed`) | arch | `otf-fira-sans` (bundle): 4.26%, credit 0.5; `ttf-fira-sans` (bundle): 11.83%, credit 0.5 | observed, 5.91% |
+| IBM Plex Mono (`ibm-plex-mono`) | arch | `ttf-ibm-plex` (bundle): 5.61%, credit 0.5; `ttf-ibmplex-mono-nerd` (nerd): 5.94% before the floor, 1.02% after, credit 1 | observed, 2.81% |
+| IBM Plex Sans (`ibm-plex-sans`) | arch | `ttf-ibm-plex` (bundle): 5.61%, credit 0.5 | observed, 2.81% |
+| IBM Plex Sans Condensed (`ibm-plex-sans-condensed`) | arch | `ttf-ibm-plex` (bundle): 5.61%, credit 0.5 | observed, 2.81% |
+| IBM Plex Serif (`ibm-plex-serif`) | arch | `ttf-ibm-plex` (bundle): 5.61%, credit 0.5 | observed, 2.81% |
+| Inconsolata LGC (`inconsolata-lgc`) | arch | `ttf-inconsolata-lgc-nerd` (nerd): 5.59% before the floor, 0.67% after, credit 1 | observed, 0.67% |
+| InconsolataGo (`inconsolatago`) | arch | `ttf-inconsolata-go-nerd` (nerd): 5.70% before the floor, 0.78% after, credit 1 | observed, 0.78% |
+| Libertinus Keyboard (`libertinus-keyboard`) | arch | `otf-libertinus` (bundle): 7.41%, credit 0.5 | observed, 3.71% |
+| Libertinus Mono (`libertinus-mono`) | arch | `otf-libertinus` (bundle): 7.41%, credit 0.5 | observed, 3.71% |
+| Libertinus Sans (`libertinus-sans`) | arch | `otf-libertinus` (bundle): 7.41%, credit 0.5 | observed, 3.71% |
+| Libertinus Serif (`libertinus-serif`) | arch | `otf-libertinus` (bundle): 7.41%, credit 0.5 | observed, 3.71% |
+| Libertinus Serif Display (`libertinus-serif-display`) | arch | `otf-libertinus` (bundle): 7.41%, credit 0.5 | observed, 3.71% |
+| M PLUS Code Latin (`m-plus-code-latin`) | arch | `ttf-mplus-nerd` (bundle): 5.50% before the floor, 0.58% after, credit 0.5 | censored, 0.29% |
+| Monaspace Argon (`monaspace-argon`) | arch | `otf-monaspace` (bundle): 1.29%, credit 0.5; `otf-monaspace-nerd` (bundle): 5.21% before the floor, 0.29% after, credit 0.5 | observed, 0.64% |
+| Monaspace Krypton (`monaspace-krypton`) | arch | `otf-monaspace` (bundle): 1.29%, credit 0.5; `otf-monaspace-nerd` (bundle): 5.21% before the floor, 0.29% after, credit 0.5 | observed, 0.64% |
+| Monaspace Neon (`monaspace-neon`) | arch | `otf-monaspace` (bundle): 1.29%, credit 0.5; `otf-monaspace-nerd` (bundle): 5.21% before the floor, 0.29% after, credit 0.5 | observed, 0.64% |
+| Monaspace Radon (`monaspace-radon`) | arch | `otf-monaspace` (bundle): 1.29%, credit 0.5; `otf-monaspace-nerd` (bundle): 5.21% before the floor, 0.29% after, credit 0.5 | observed, 0.64% |
+| Monaspace Xenon (`monaspace-xenon`) | arch | `otf-monaspace` (bundle): 1.29%, credit 0.5; `otf-monaspace-nerd` (bundle): 5.21% before the floor, 0.29% after, credit 0.5 | observed, 0.64% |
+| Noto Mono (`noto-mono`) | arch | `ttf-noto-nerd` (bundle): 7.56% before the floor, 2.63% after, credit 0.5 | observed, 1.32% |
+| Noto Sans (`noto-sans`) | arch | `noto-fonts` (bundle): 67.92%, credit 0.5; `noto-fonts-extra` (bundle): 20.63%, credit 0.5; `ttf-noto-nerd` (bundle): 7.56% before the floor, 2.63% after, credit 0.5 | observed, 33.96% |
+| Noto Sans Mono (`noto-sans-mono`) | arch | `noto-fonts` (bundle): 67.92%, credit 0.5; `noto-fonts-extra` (bundle): 20.63%, credit 0.5; `ttf-noto-nerd` (bundle): 7.56% before the floor, 2.63% after, credit 0.5 | observed, 33.96% |
+| Noto Serif (`noto-serif`) | arch | `noto-fonts` (bundle): 67.92%, credit 0.5; `noto-fonts-extra` (bundle): 20.63%, credit 0.5; `ttf-noto-nerd` (bundle): 7.56% before the floor, 2.63% after, credit 0.5 | observed, 33.96% |
+| Noto Serif Display (`noto-serif-display`) | arch | `noto-fonts` (bundle): 67.92%, credit 0.5; `noto-fonts-extra` (bundle): 20.63%, credit 0.5 | observed, 33.96% |
+| Roboto (`roboto`) | arch | `ttf-roboto` (bundle): 24.02%, credit 0.5 | observed, 12.01% |
+| Roboto Condensed (`roboto-condensed`) | arch | `ttf-roboto` (bundle): 24.02%, credit 0.5 | observed, 12.01% |
+| Roboto Mono (`roboto-mono`) | arch | `ttf-roboto-mono-nerd` (nerd): 6.80% before the floor, 1.87% after, credit 1 | observed, 6.55% |
+| DejaVu Sans (`dejavu-sans`) | debian | `fonts-dejavu` (bundle): 112,315, credit 0.5; `fonts-dejavu-core` (bundle): 230,374, credit 0.5; `fonts-dejavu-extra` (bundle): 128,192, credit 0.5; `fonts-dejavu-web` (bundle): 213, credit 0.5 | observed, 115,187 |
+| DejaVu Sans Mono (`dejavu-sans-mono`) | debian | `fonts-dejavu` (bundle): 112,315, credit 0.5; `fonts-dejavu-core` (bundle): 230,374, credit 0.5 | observed, 128,638 |
+| DejaVu Serif (`dejavu-serif`) | debian | `fonts-dejavu` (bundle): 112,315, credit 0.5; `fonts-dejavu-core` (bundle): 230,374, credit 0.5; `fonts-dejavu-extra` (bundle): 128,192, credit 0.5; `fonts-dejavu-web` (bundle): 213, credit 0.5 | observed, 115,187 |
+| IBM Plex Mono (`ibm-plex-mono`) | debian | `fonts-ibm-plex` (bundle): 494, credit 0.5 | observed, 247 |
+| IBM Plex Sans (`ibm-plex-sans`) | debian | `fonts-ibm-plex` (bundle): 494, credit 0.5 | observed, 247 |
+| IBM Plex Sans Condensed (`ibm-plex-sans-condensed`) | debian | `fonts-ibm-plex` (bundle): 494, credit 0.5 | observed, 247 |
+| IBM Plex Serif (`ibm-plex-serif`) | debian | `fonts-ibm-plex` (bundle): 494, credit 0.5 | observed, 247 |
+| Libertinus Keyboard (`libertinus-keyboard`) | debian | `fonts-libertinus` (bundle): 51, credit 0.5 | censored, 25.50 |
+| Libertinus Mono (`libertinus-mono`) | debian | `fonts-libertinus` (bundle): 51, credit 0.5 | censored, 25.50 |
+| Libertinus Sans (`libertinus-sans`) | debian | `fonts-libertinus` (bundle): 51, credit 0.5 | censored, 25.50 |
+| Libertinus Serif (`libertinus-serif`) | debian | `fonts-libertinus` (bundle): 51, credit 0.5 | censored, 25.50 |
+| Libertinus Serif Display (`libertinus-serif-display`) | debian | `fonts-libertinus` (bundle): 51, credit 0.5 | censored, 25.50 |
+| Noto Sans (`noto-sans`) | debian | `fonts-noto-core` (bundle): 61,855, credit 0.5; `fonts-noto-extra` (bundle): 49,497, credit 0.5 | observed, 30,928 |
+| Noto Sans Display (`noto-sans-display`) | debian | `fonts-noto-core` (bundle): 61,855, credit 0.5; `fonts-noto-extra` (bundle): 49,497, credit 0.5 | observed, 30,928 |
+| Noto Sans Mono (`noto-sans-mono`) | debian | `fonts-noto-extra` (bundle): 49,497, credit 0.5 | observed, 24,748 |
+| Noto Serif (`noto-serif`) | debian | `fonts-noto-core` (bundle): 61,855, credit 0.5; `fonts-noto-extra` (bundle): 49,497, credit 0.5 | observed, 30,928 |
+| Noto Serif Display (`noto-serif-display`) | debian | `fonts-noto-core` (bundle): 61,855, credit 0.5; `fonts-noto-extra` (bundle): 49,497, credit 0.5 | observed, 30,928 |
+| Roboto (`roboto`) | debian | `fonts-roboto-fontface` (bundle): 524, credit 0.5; `fonts-roboto-hinted` (bundle): 1,362, credit 0.5; `fonts-roboto-unhinted` (bundle): 15,733, credit 0.5 | observed, 7,866 |
+| Roboto Condensed (`roboto-condensed`) | debian | `fonts-roboto-fontface` (bundle): 524, credit 0.5; `fonts-roboto-hinted` (bundle): 1,362, credit 0.5; `fonts-roboto-unhinted` (bundle): 15,733, credit 0.5 | observed, 7,866 |
 | Inter (`inter`) | fot | `Inter Display` (opsz): credit 1; `Inter Variable` (variable): credit 1 | observed, rank 1 |
 | Maple Mono (`maple-mono`) | fot | `maplemono nf` (nf): credit 1 | censored, unranked |
+| Open Sans (`open-sans`) | fot | `Open Sans Condensed` (static): credit 1 | observed, rank 3 |
 | Cascadia Code (`cascadia-code`) | github | `microsoft/cascadia-code/CascadiaCode.zip` (bundle): 581,457, credit 0.5; `microsoft/cascadia-code/CascadiaPL.ttf` (powerline): 9,824, credit 1 | observed, 335,999 |
 | Cascadia Mono (`cascadia-mono`) | github | `microsoft/cascadia-code/CascadiaCode.zip` (bundle): 581,457, credit 0.5; `microsoft/cascadia-code/CascadiaMonoPL.ttf` (powerline): 7,854, credit 1 | observed, 307,147 |
 | DejaVu Sans (`dejavu-sans`) | github | `dejavu-fonts/dejavu-fonts/dejavu-fonts-ttf.tar.bz2` (bundle): 23,017, credit 0.5; `dejavu-fonts/dejavu-fonts/dejavu-fonts-ttf.zip` (bundle): 45,832, credit 0.5; `dejavu-fonts/dejavu-fonts/dejavu-lgc-fonts-ttf.tar.bz2` (bundle): 209, credit 0.5; `dejavu-fonts/dejavu-fonts/dejavu-lgc-fonts-ttf.zip` (bundle): 526, credit 0.5 | observed, 36,617 |
@@ -80,12 +151,15 @@ Credited builds and bundles, and keys a key-level floor changed.
 | 0xProto (`0xproto`) | homebrew | `font-0xproto` (package): 551 before the floor, 531 after, credit 1; `font-0xproto-nerd-font` (package): 15,257 before the floor, 13,124 after, credit 1 | observed, 13,655 |
 | ABeeZee (`abeezee`) | homebrew | `font-abeezee` (package): 47 before the floor, 27 after, credit 1 | censored, 27 |
 | Abel (`abel`) | homebrew | `font-abel` (package): 85 before the floor, 65 after, credit 1 | observed, 65 |
+| Abhaya Libre (`abhaya-libre`) | homebrew | `font-abhaya-libre` (package): 34 before the floor, 14 after, credit 1 | censored, 14 |
 | Aboreto (`aboreto`) | homebrew | `font-aboreto` (package): 54 before the floor, 34 after, credit 1 | censored, 34 |
 | Abril Fatface (`abril-fatface`) | homebrew | `font-abril-fatface` (package): 82 before the floor, 62 after, credit 1 | observed, 62 |
+| Abyssinica SIL (`abyssinica-sil`) | homebrew | `font-abyssinica-sil` (package): 36 before the floor, 16 after, credit 1 | censored, 16 |
 | Aclonica (`aclonica`) | homebrew | `font-aclonica` (package): 34 before the floor, 14 after, credit 1 | censored, 14 |
 | Acme (`acme`) | homebrew | `font-acme` (package): 76 before the floor, 56 after, credit 1 | censored, 56 |
 | Actor (`actor`) | homebrew | `font-actor` (package): 98 before the floor, 78 after, credit 1 | observed, 78 |
 | Adamina (`adamina`) | homebrew | `font-adamina` (package): 42 before the floor, 22 after, credit 1 | censored, 22 |
+| ADLaM Display (`adlam-display`) | homebrew | `font-adlam-display` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
 | Advent Pro (`advent-pro`) | homebrew | `font-advent-pro` (package): 47 before the floor, 27 after, credit 1 | censored, 27 |
 | Adwaita Mono (`adwaita-mono`) | homebrew | `font-adwaita-mono-nerd-font` (package): 2,680 before the floor, 547 after, credit 1 | observed, 547 |
 | Afacad (`afacad`) | homebrew | `font-afacad` (package): 34 before the floor, 14 after, credit 1 | censored, 14 |
@@ -96,7 +170,11 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Agu Display (`agu-display`) | homebrew | `font-agu-display` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
 | Aguafina Script (`aguafina-script`) | homebrew | `font-aguafina-script` (package): 47 before the floor, 27 after, credit 1 | censored, 27 |
 | Aileron (`aileron`) | homebrew | `font-aileron` (package): 42 before the floor, 22 after, credit 1 | censored, 22 |
+| Akatab (`akatab`) | homebrew | `font-akatab` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
+| Akaya Kanadaka (`akaya-kanadaka`) | homebrew | `font-akaya-kanadaka` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
+| Akaya Telivigala (`akaya-telivigala`) | homebrew | `font-akaya-telivigala` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
 | Akronim (`akronim`) | homebrew | `font-akronim` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
+| Akshar (`akshar`) | homebrew | `font-akshar` (package): 29 before the floor, 9 after, credit 1 | censored, 9 |
 | Akt (`akt`) | homebrew | `font-akt` (package): 69.52 before the floor, 49.52 after, credit 1 | censored, 49.52 |
 | Aladin (`aladin`) | homebrew | `font-aladin` (package): 39 before the floor, 19 after, credit 1 | censored, 19 |
 | Alan Sans (`alan-sans`) | homebrew | `font-alan-sans` (package): 52 before the floor, 32 after, credit 1 | censored, 32 |
@@ -110,11 +188,13 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Alegreya SC (`alegreya-sc`) | homebrew | `font-alegreya-sc` (package): 86 before the floor, 66 after, credit 1 | observed, 66 |
 | Aleo (`aleo`) | homebrew | `font-aleo` (package): 44 before the floor, 24 after, credit 1 | censored, 24 |
 | Alex Brush (`alex-brush`) | homebrew | `font-alex-brush` (package): 677 before the floor, 657 after, credit 1 | observed, 657 |
+| Alexandria (`alexandria`) | homebrew | `font-alexandria` (package): 50 before the floor, 30 after, credit 1 | censored, 30 |
 | Alfa Slab One (`alfa-slab-one`) | homebrew | `font-alfa-slab-one` (package): 72 before the floor, 52 after, credit 1 | censored, 52 |
 | Alice (`alice`) | homebrew | `font-alice` (package): 43 before the floor, 23 after, credit 1 | censored, 23 |
 | Alien Block (`alien-block`) | homebrew | `font-alien-block` (package): 76.97 before the floor, 56.97 after, credit 1 | censored, 56.97 |
 | Alike (`alike`) | homebrew | `font-alike` (package): 31 before the floor, 11 after, credit 1 | censored, 11 |
 | Alike Angular (`alike-angular`) | homebrew | `font-alike-angular` (package): 40 before the floor, 20 after, credit 1 | censored, 20 |
+| Alkalami (`alkalami`) | homebrew | `font-alkalami` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | Alkatra (`alkatra`) | homebrew | `font-alkatra` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
 | Allan (`allan`) | homebrew | `font-allan` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
 | Allerta (`allerta`) | homebrew | `font-allerta` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
@@ -130,17 +210,22 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Alumni Sans Inline One (`alumni-sans-inline-one`) | homebrew | `font-alumni-sans-inline-one` (package): 34 before the floor, 14 after, credit 1 | censored, 14 |
 | Alumni Sans Pinstripe (`alumni-sans-pinstripe`) | homebrew | `font-alumni-sans-pinstripe` (package): 42 before the floor, 22 after, credit 1 | censored, 22 |
 | Alumni Sans SC (`alumni-sans-sc`) | homebrew | `font-alumni-sans-sc` (package): 32 before the floor, 12 after, credit 1 | censored, 12 |
+| Alyamama (`alyamama`) | homebrew | `font-alyamama` (package): 20.54 before the floor, 0.54 after, credit 1 | censored, 0.54 |
 | Amarante (`amarante`) | homebrew | `font-amarante` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
 | Amaranth (`amaranth`) | homebrew | `font-amaranth` (package): 31 before the floor, 11 after, credit 1 | censored, 11 |
 | Amarna (`amarna`) | homebrew | `font-amarna` (package): 60.44 before the floor, 40.44 after, credit 1 | censored, 40.44 |
 | Amatic SC (`amatic-sc`) | homebrew | `font-amatic-sc` (package): 63 before the floor, 43 after, credit 1 | censored, 43 |
 | Amethysta (`amethysta`) | homebrew | `font-amethysta` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
+| Amiko (`amiko`) | homebrew | `font-amiko` (package): 46 before the floor, 26 after, credit 1 | censored, 26 |
+| Amiri (`amiri`) | homebrew | `font-amiri` (package): 411 before the floor, 391 after, credit 1 | observed, 391 |
+| Amita (`amita`) | homebrew | `font-amita` (package): 34 before the floor, 14 after, credit 1 | censored, 14 |
 | Anaheim (`anaheim`) | homebrew | `font-anaheim` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
 | Ancizar Sans (`ancizar-sans`) | homebrew | `font-ancizar-sans` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
 | Ancizar Serif (`ancizar-serif`) | homebrew | `font-ancizar-serif` (package): 31 before the floor, 11 after, credit 1 | censored, 11 |
 | Andada Pro (`andada-pro`) | homebrew | `font-andada-pro` (package): 36 before the floor, 16 after, credit 1 | censored, 16 |
 | Andika (`andika`) | homebrew | `font-andika` (package): 57 before the floor, 37 after, credit 1 | censored, 37 |
 | Anek Latin (`anek-latin`) | homebrew | `font-anek-latin` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
+| Annapurna SIL (`annapurna-sil`) | homebrew | `font-annapurna-sil` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
 | Annie Use Your Telescope (`annie-use-your-telescope`) | homebrew | `font-annie-use-your-telescope` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
 | Annotation Mono (`annotation-mono`) | homebrew | `font-annotation-mono` (package): 172 before the floor, 152 after, credit 1; `font-annotationmono-nerd-font` (package): 1,334 before the floor, 0 after, credit 1 | observed, 152 |
 | Anonymous Pro (`anonymous-pro`) | homebrew | `font-anonymice-nerd-font` (package): 2,863 before the floor, 730 after, credit 1; `font-anonymous-pro` (package): 744 before the floor, 724 after, credit 1 | observed, 1,454 |
@@ -151,6 +236,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Anton (`anton`) | homebrew | `font-anton` (package): 419 before the floor, 399 after, credit 1 | observed, 399 |
 | Anton SC (`anton-sc`) | homebrew | `font-anton-sc` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
 | Antonio (`antonio`) | homebrew | `font-antonio` (package): 41 before the floor, 21 after, credit 1 | censored, 21 |
+| Anuphan (`anuphan`) | homebrew | `font-anuphan` (package): 45 before the floor, 25 after, credit 1 | censored, 25 |
 | Anybody (`anybody`) | homebrew | `font-anybody` (package): 31 before the floor, 11 after, credit 1 | censored, 11 |
 | AR One Sans (`ar-one-sans`) | homebrew | `font-ar-one-sans` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
 | Arapey (`arapey`) | homebrew | `font-arapey` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
@@ -161,6 +247,8 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Archivo Black (`archivo-black`) | homebrew | `font-archivo-black` (package): 185 before the floor, 165 after, credit 1 | observed, 165 |
 | Archivo Narrow (`archivo-narrow`) | homebrew | `font-archivo-narrow` (package): 93 before the floor, 73 after, credit 1 | observed, 73 |
 | Are You Serious (`are-you-serious`) | homebrew | `font-are-you-serious` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
+| Aref Ruqaa (`aref-ruqaa`) | homebrew | `font-aref-ruqaa` (package): 40 before the floor, 20 after, credit 1 | censored, 20 |
+| Aref Ruqaa Ink (`aref-ruqaa-ink`) | homebrew | `font-aref-ruqaa-ink` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
 | Arima (`arima`) | homebrew | `font-arima` (package): 38 before the floor, 18 after, credit 1 | censored, 18 |
 | Arimo (`arimo`) | homebrew | `font-arimo` (package): 197 before the floor, 177 after, credit 1; `font-arimo-nerd-font` (package): 2,467 before the floor, 334 after, credit 1 | observed, 511 |
 | Arizonia (`arizonia`) | homebrew | `font-arizonia` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
@@ -169,16 +257,21 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Arsenal SC (`arsenal-sc`) | homebrew | `font-arsenal-sc` (package): 33 before the floor, 13 after, credit 1 | censored, 13 |
 | Artifika (`artifika`) | homebrew | `font-artifika` (package): 51 before the floor, 31 after, credit 1 | censored, 31 |
 | Arvo (`arvo`) | homebrew | `font-arvo` (package): 65 before the floor, 45 after, credit 1 | censored, 45 |
+| Arya (`arya`) | homebrew | `font-arya` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
 | Asap (`asap`) | homebrew | `font-asap` (package): 52 before the floor, 32 after, credit 1 | censored, 32 |
 | Asap Condensed (`asap-condensed`) | homebrew | `font-asap-condensed` (package): 45 before the floor, 25 after, credit 1 | censored, 25 |
 | Asap Sharp (`asap-sharp`) | homebrew | `font-asap-sharp` (package): 135 before the floor, 115 after, credit 1 | too_new, no value |
+| Asar (`asar`) | homebrew | `font-asar` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
 | Asimovian (`asimovian`) | homebrew | `font-asimovian` (package): 33 before the floor, 13 after, credit 1 | censored, 13 |
 | Asset (`asset`) | homebrew | `font-asset` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
+| Assistant (`assistant`) | homebrew | `font-assistant` (package): 65 before the floor, 45 after, credit 1 | censored, 45 |
 | Astloch (`astloch`) | homebrew | `font-astloch` (package): 29 before the floor, 9 after, credit 1 | censored, 9 |
 | Asul (`asul`) | homebrew | `font-asul` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
+| Athiti (`athiti`) | homebrew | `font-athiti` (package): 29 before the floor, 9 after, credit 1 | censored, 9 |
 | Atkinson Hyperlegible (`atkinson-hyperlegible`) | homebrew | `font-atkinson-hyperlegible` (package): 729 before the floor, 709 after, credit 1 | observed, 709 |
 | Atkinson Hyperlegible Mono (`atkinson-hyperlegible-mono`) | homebrew | `font-atkinson-hyperlegible-mono` (package): 807 before the floor, 787 after, credit 1; `font-atkynson-mono-nerd-font` (package): 2,224 before the floor, 91.40 after, credit 1 | observed, 878 |
 | Atkinson Hyperlegible Next (`atkinson-hyperlegible-next`) | homebrew | `font-atkinson-hyperlegible-next` (package): 569 before the floor, 549 after, credit 1 | observed, 549 |
+| Atma (`atma`) | homebrew | `font-atma` (package): 32 before the floor, 12 after, credit 1 | censored, 12 |
 | Atomic Age (`atomic-age`) | homebrew | `font-atomic-age` (package): 29 before the floor, 9 after, credit 1 | censored, 9 |
 | Aubrey (`aubrey`) | homebrew | `font-aubrey` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
 | Audiowide (`audiowide`) | homebrew | `font-audiowide` (package): 65 before the floor, 45 after, credit 1 | censored, 45 |
@@ -195,9 +288,13 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Babylonica (`babylonica`) | homebrew | `font-babylonica` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
 | Bacasime Antique (`bacasime-antique`) | homebrew | `font-bacasime-antique` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | Bad Script (`bad-script`) | homebrew | `font-bad-script` (package): 36 before the floor, 16 after, credit 1 | censored, 16 |
+| Badeen Display (`badeen-display`) | homebrew | `font-badeen-display` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | Bahiana (`bahiana`) | homebrew | `font-bahiana` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
 | Bahianita (`bahianita`) | homebrew | `font-bahianita` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
+| Bai Jamjuree (`bai-jamjuree`) | homebrew | `font-bai-jamjuree` (package): 59 before the floor, 39 after, credit 1 | censored, 39 |
+| Bakbak One (`bakbak-one`) | homebrew | `font-bakbak-one` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
 | Ballet (`ballet`) | homebrew | `font-ballet` (package): 29 before the floor, 9 after, credit 1 | censored, 9 |
+| Baloo 2 (`baloo-2`) | homebrew | `font-baloo-2` (package): 94 before the floor, 74 after, credit 1 | observed, 74 |
 | Balsamiq Sans (`balsamiq-sans`) | homebrew | `font-balsamiq-sans` (package): 34 before the floor, 14 after, credit 1 | censored, 14 |
 | Balthazar (`balthazar`) | homebrew | `font-balthazar` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
 | Bangers (`bangers`) | homebrew | `font-bangers` (package): 88 before the floor, 68 after, credit 1 | observed, 68 |
@@ -210,12 +307,13 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Baskervville (`baskervville`) | homebrew | `font-baskervville` (package): 71 before the floor, 51 after, credit 1 | censored, 51 |
 | Baskervville SC (`baskervville-sc`) | homebrew | `font-baskervville-sc` (package): 31 before the floor, 11 after, credit 1 | censored, 11 |
 | Baumans (`baumans`) | homebrew | `font-baumans` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
-| BBH Bartle (`bbh-bartle`) | homebrew | `font-bbh-bartle` (package): 36.50 before the floor, 16.50 after, credit 1 | censored, 16.50 |
-| BBH Bogle (`bbh-bogle`) | homebrew | `font-bbh-bogle` (package): 31.63 before the floor, 11.63 after, credit 1 | censored, 11.63 |
-| BBH Hegarty (`bbh-hegarty`) | homebrew | `font-bbh-hegarty` (package): 29.20 before the floor, 9.20 after, credit 1 | censored, 9.20 |
+| BBH Bartle (`bbh-bartle`) | homebrew | `font-bbh-bartle` (package): 36.50 before the floor, 16.50 after, credit 1; `font-bbh-sans-bartle` (package): 23 before the floor, 3 after, credit 1 | censored, 19.50 |
+| BBH Bogle (`bbh-bogle`) | homebrew | `font-bbh-bogle` (package): 31.63 before the floor, 11.63 after, credit 1; `font-bbh-sans-bogle` (package): 17 before the floor, 0 after, credit 1 | censored, 11.63 |
+| BBH Hegarty (`bbh-hegarty`) | homebrew | `font-bbh-hegarty` (package): 29.20 before the floor, 9.20 after, credit 1; `font-bbh-sans-hegarty` (package): 23 before the floor, 3 after, credit 1 | censored, 12.20 |
 | Be Vietnam Pro (`be-vietnam-pro`) | homebrew | `font-be-vietnam-pro` (package): 124 before the floor, 104 after, credit 1 | observed, 104 |
 | Beau Rivage (`beau-rivage`) | homebrew | `font-beau-rivage` (package): 43 before the floor, 23 after, credit 1 | censored, 23 |
 | Bebas Neue (`bebas-neue`) | homebrew | `font-bebas-neue` (package): 618 before the floor, 598 after, credit 1 | observed, 598 |
+| Beiruti (`beiruti`) | homebrew | `font-beiruti` (package): 31 before the floor, 11 after, credit 1 | censored, 11 |
 | Belanosima (`belanosima`) | homebrew | `font-belanosima` (package): 32 before the floor, 12 after, credit 1 | censored, 12 |
 | Belgrano (`belgrano`) | homebrew | `font-belgrano` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | Bellefair (`bellefair`) | homebrew | `font-bellefair` (package): 35 before the floor, 15 after, credit 1 | censored, 15 |
@@ -223,6 +321,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Bellota (`bellota`) | homebrew | `font-bellota` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
 | Bellota Text (`bellota-text`) | homebrew | `font-bellota-text` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
 | BenchNine (`benchnine`) | homebrew | `font-benchnine` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
+| Benne (`benne`) | homebrew | `font-benne` (package): 42 before the floor, 22 after, credit 1 | censored, 22 |
 | Bentham (`bentham`) | homebrew | `font-bentham` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
 | Berkshire Swash (`berkshire-swash`) | homebrew | `font-berkshire-swash` (package): 44 before the floor, 24 after, credit 1 | censored, 24 |
 | Besley (`besley`) | homebrew | `font-besley` (package): 40 before the floor, 20 after, credit 1 | censored, 20 |
@@ -233,6 +332,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Beth Ellen (`beth-ellen`) | homebrew | `font-beth-ellen` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | Bevan (`bevan`) | homebrew | `font-bevan` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
 | Bhavuka (`bhavuka`) | homebrew | `font-bhavuka` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
+| BhuTuka Expanded One (`bhutuka-expanded-one`) | homebrew | `font-bhutuka-expanded-one` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
 | Big Shoulders (`big-shoulders`) | homebrew | `font-big-shoulders` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
 | Big Shoulders Display (`big-shoulders-display`) | homebrew | `font-big-shoulders-display` (package): 69 before the floor, 49 after, credit 1 | censored, 49 |
 | Big Shoulders Display SC (`big-shoulders-display-sc`) | homebrew | `font-big-shoulders-display-sc` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
@@ -256,6 +356,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | BioRhyme Expanded (`biorhyme-expanded`) | homebrew | `font-biorhyme-expanded` (package): 33 before the floor, 13 after, credit 1 | censored, 13 |
 | Birthstone (`birthstone`) | homebrew | `font-birthstone` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
 | Birthstone Bounce (`birthstone-bounce`) | homebrew | `font-birthstone-bounce` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
+| Biryani (`biryani`) | homebrew | `font-biryani` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | Bitcount (`bitcount`) | homebrew | `font-bitcount` (package): 39 before the floor, 19 after, credit 1 | censored, 19 |
 | Bitcount Grid Double (`bitcount-grid-double`) | homebrew | `font-bitcount-grid-double` (package): 31 before the floor, 11 after, credit 1 | censored, 11 |
 | Bitcount Grid Double Ink (`bitcount-grid-double-ink`) | homebrew | `font-bitcount-grid-double-ink` (package): 33 before the floor, 13 after, credit 1 | censored, 13 |
@@ -271,6 +372,9 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Bitstream Vera Sans Mono (`bitstream-vera-sans-mono`) | homebrew | `font-bitstream-vera-sans-mono-nerd-font` (package): 2,559 before the floor, 426 after, credit 1 | observed, 426 |
 | Bitter (`bitter`) | homebrew | `font-bitter` (package): 136 before the floor, 116 after, credit 1 | observed, 116 |
 | Black Ops One (`black-ops-one`) | homebrew | `font-black-ops-one` (package): 50 before the floor, 30 after, credit 1 | censored, 30 |
+| Blaka (`blaka`) | homebrew | `font-blaka` (package): 30 before the floor, 10 after, credit 1 | censored, 10 |
+| Blaka Hollow (`blaka-hollow`) | homebrew | `font-blaka-hollow` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
+| Blaka Ink (`blaka-ink`) | homebrew | `font-blaka-ink` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
 | Blinker (`blinker`) | homebrew | `font-blinker` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
 | Bodoni Moda (`bodoni-moda`) | homebrew | `font-bodoni-moda` (package): 97 before the floor, 77 after, credit 1 | observed, 77 |
 | Bodoni Moda SC (`bodoni-moda-sc`) | homebrew | `font-bodoni-moda-sc` (package): 35 before the floor, 15 after, credit 1 | censored, 15 |
@@ -283,6 +387,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Borel (`borel`) | homebrew | `font-borel` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
 | Bowlby One (`bowlby-one`) | homebrew | `font-bowlby-one` (package): 35 before the floor, 15 after, credit 1 | censored, 15 |
 | Bowlby One SC (`bowlby-one-sc`) | homebrew | `font-bowlby-one-sc` (package): 29 before the floor, 9 after, credit 1 | censored, 9 |
+| Braah One (`braah-one`) | homebrew | `font-braah-one` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | Brawler (`brawler`) | homebrew | `font-brawler` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
 | Bree Serif (`bree-serif`) | homebrew | `font-bree-serif` (package): 62 before the floor, 42 after, credit 1 | censored, 42 |
 | Bricolage Grotesque (`bricolage-grotesque`) | homebrew | `font-bricolage-grotesque` (package): 200 before the floor, 180 after, credit 1 | observed, 180 |
@@ -311,10 +416,13 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Cabin Sketch (`cabin-sketch`) | homebrew | `font-cabin-sketch` (package): 46 before the floor, 26 after, credit 1 | censored, 26 |
 | Caesar Dressing (`caesar-dressing`) | homebrew | `font-caesar-dressing` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
 | Cagliostro (`cagliostro`) | homebrew | `font-cagliostro` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
+| Cairo (`cairo`) | homebrew | `font-cairo` (package): 162 before the floor, 142 after, credit 1 | observed, 142 |
+| Cairo Play (`cairo-play`) | homebrew | `font-cairo-play` (package): 33 before the floor, 13 after, credit 1 | censored, 13 |
 | Cal Sans (`cal-sans`) | homebrew | `font-cal-sans` (package): 60 before the floor, 40 after, credit 1 | censored, 40 |
 | Caladea (`caladea`) | homebrew | `font-caladea` (package): 446 before the floor, 426 after, credit 1 | observed, 426 |
 | Calistoga (`calistoga`) | homebrew | `font-calistoga` (package): 31 before the floor, 11 after, credit 1 | censored, 11 |
 | Calligraffitti (`calligraffitti`) | homebrew | `font-calligraffitti` (package): 31 before the floor, 11 after, credit 1 | censored, 11 |
+| Cambay (`cambay`) | homebrew | `font-cambay` (package): 33 before the floor, 13 after, credit 1 | censored, 13 |
 | Cambo (`cambo`) | homebrew | `font-cambo` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
 | Candal (`candal`) | homebrew | `font-candal` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
 | Cantarell (`cantarell`) | homebrew | `font-cantarell` (package): 157 before the floor, 137 after, credit 1 | observed, 137 |
@@ -334,17 +442,21 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Cascadia Mono (`cascadia-mono`) | homebrew | `font-cascadia-mono` (package): 1,153 before the floor, 1,133 after, credit 1; `font-cascadia-mono-nf` (nf): 613 before the floor, 593 after, credit 1; `font-cascadia-mono-pl` (powerline): 321 before the floor, 301 after, credit 1; `font-caskaydia-mono-nerd-font` (package): 17,117 before the floor, 14,984 after, credit 1 | observed, 17,011 |
 | Castoro (`castoro`) | homebrew | `font-castoro` (package): 34 before the floor, 14 after, credit 1 | censored, 14 |
 | Castoro Titling (`castoro-titling`) | homebrew | `font-castoro-titling` (package): 30 before the floor, 10 after, credit 1 | censored, 10 |
+| Catamaran (`catamaran`) | homebrew | `font-catamaran` (package): 38 before the floor, 18 after, credit 1 | censored, 18 |
 | Caudex (`caudex`) | homebrew | `font-caudex` (package): 36 before the floor, 16 after, credit 1 | censored, 16 |
 | Cause (`cause`) | homebrew | `font-cause` (package): 52.14 before the floor, 32.14 after, credit 1 | censored, 32.14 |
 | Caveat (`caveat`) | homebrew | `font-caveat` (package): 274 before the floor, 254 after, credit 1 | observed, 254 |
 | Caveat Brush (`caveat-brush`) | homebrew | `font-caveat-brush` (package): 46 before the floor, 26 after, credit 1 | censored, 26 |
 | Cedarville Cursive (`cedarville-cursive`) | homebrew | `font-cedarville-cursive` (package): 32 before the floor, 12 after, credit 1 | censored, 12 |
 | Ceviche One (`ceviche-one`) | homebrew | `font-ceviche-one` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
+| Chakra Petch (`chakra-petch`) | homebrew | `font-chakra-petch` (package): 86 before the floor, 66 after, credit 1 | observed, 66 |
 | Changa (`changa`) | homebrew | `font-changa` (package): 40 before the floor, 20 after, credit 1 | censored, 20 |
 | Changa One (`changa-one`) | homebrew | `font-changa-one` (package): 29 before the floor, 9 after, credit 1 | censored, 9 |
 | Chango (`chango`) | homebrew | `font-chango` (package): 34 before the floor, 14 after, credit 1 | censored, 14 |
 | Charis (`charis`) | homebrew | `font-charis` (package): 57 before the floor, 37 after, credit 1 | censored, 37 |
 | Charis SIL (`charis-sil`) | homebrew | `font-charis-sil` (package): 135 before the floor, 115 after, credit 1 | observed, 115 |
+| Charm (`charm`) | homebrew | `font-charm` (package): 36 before the floor, 16 after, credit 1 | censored, 16 |
+| Charmonman (`charmonman`) | homebrew | `font-charmonman` (package): 29 before the floor, 9 after, credit 1 | censored, 9 |
 | Chau Philomene One (`chau-philomene-one`) | homebrew | `font-chau-philomene-one` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
 | Chela One (`chela-one`) | homebrew | `font-chela-one` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
 | Chelsea Market (`chelsea-market`) | homebrew | `font-chelsea-market` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
@@ -353,8 +465,10 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Cherry Swash (`cherry-swash`) | homebrew | `font-cherry-swash` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
 | Chewy (`chewy`) | homebrew | `font-chewy` (package): 40 before the floor, 20 after, credit 1 | censored, 20 |
 | Chicle (`chicle`) | homebrew | `font-chicle` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
+| Chilanka (`chilanka`) | homebrew | `font-chilanka` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
 | Chivo (`chivo`) | homebrew | `font-chivo` (package): 66 before the floor, 46 after, credit 1 | censored, 46 |
 | Chivo Mono (`chivo-mono`) | homebrew | `font-chivo-mono` (package): 72 before the floor, 52 after, credit 1 | censored, 52 |
+| Chonburi (`chonburi`) | homebrew | `font-chonburi` (package): 36 before the floor, 16 after, credit 1 | censored, 16 |
 | Cinzel (`cinzel`) | homebrew | `font-cinzel` (package): 249 before the floor, 229 after, credit 1 | observed, 229 |
 | Cinzel Decorative (`cinzel-decorative`) | homebrew | `font-cinzel-decorative` (package): 76 before the floor, 56 after, credit 1 | censored, 56 |
 | Clarity City (`clarity-city`) | homebrew | `font-clarity-city` (package): 17.38 before the floor, 0 after, credit 1 | too_new, no value |
@@ -410,15 +524,19 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Cuprum (`cuprum`) | homebrew | `font-cuprum` (package): 62 before the floor, 42 after, credit 1 | censored, 42 |
 | Cutive (`cutive`) | homebrew | `font-cutive` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
 | Cutive Mono (`cutive-mono`) | homebrew | `font-cutive-mono` (package): 70 before the floor, 50 after, credit 1 | censored, 50 |
+| Dai Banna SIL (`dai-banna-sil`) | homebrew | `font-dai-banna-sil` (package): 14 before the floor, 0 after, credit 1 | censored, 0 |
 | Damion (`damion`) | homebrew | `font-damion` (package): 43 before the floor, 23 after, credit 1 | censored, 23 |
 | Dancing Script (`dancing-script`) | homebrew | `font-dancing-script` (package): 127 before the floor, 107 after, credit 1 | observed, 107 |
 | Danfo (`danfo`) | homebrew | `font-danfo` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | Darker Grotesque (`darker-grotesque`) | homebrew | `font-darker-grotesque` (package): 35 before the floor, 15 after, credit 1 | censored, 15 |
 | Datatype (`datatype`) | homebrew | `font-datatype` (package): 120 before the floor, 99.93 after, credit 1 | observed, 99.93 |
+| David Libre (`david-libre`) | homebrew | `font-david-libre` (package): 44 before the floor, 24 after, credit 1 | censored, 24 |
 | Dawning of a New Day (`dawning-of-a-new-day`) | homebrew | `font-dawning-of-a-new-day` (package): 29 before the floor, 9 after, credit 1 | censored, 9 |
 | Days One (`days-one`) | homebrew | `font-days-one` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
-| DejaVu Sans (`dejavu-sans`) | homebrew | `font-dejavu-sans` (package): 995 before the floor, 975 after, credit 1 | observed, 975 |
-| DejaVu Sans Mono (`dejavu-sans-mono`) | homebrew | `font-dejavu-sans-mono-nerd-font` (package): 3,752 before the floor, 1,619 after, credit 1 | observed, 1,619 |
+| DejaVu Sans (`dejavu-sans`) | homebrew | `font-dejavu` (bundle): 4,890 before the floor, 4,870 after, credit 0.5; `font-dejavu-sans` (package): 995 before the floor, 975 after, credit 1 | observed, 3,410 |
+| DejaVu Sans Mono (`dejavu-sans-mono`) | homebrew | `font-dejavu` (bundle): 4,890 before the floor, 4,870 after, credit 0.5; `font-dejavu-sans-mono-nerd-font` (package): 3,752 before the floor, 1,619 after, credit 1 | observed, 4,054 |
+| DejaVu Serif (`dejavu-serif`) | homebrew | `font-dejavu` (bundle): 4,890 before the floor, 4,870 after, credit 0.5 | observed, 2,435 |
+| Dekko (`dekko`) | homebrew | `font-dekko` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Delicious Handrawn (`delicious-handrawn`) | homebrew | `font-delicious-handrawn` (package): 30 before the floor, 10 after, credit 1 | censored, 10 |
 | Delius (`delius`) | homebrew | `font-delius` (package): 44 before the floor, 24 after, credit 1 | censored, 24 |
 | Delius Swash Caps (`delius-swash-caps`) | homebrew | `font-delius-swash-caps` (package): 31 before the floor, 11 after, credit 1 | censored, 11 |
@@ -451,6 +569,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Eater (`eater`) | homebrew | `font-eater` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
 | EB Garamond (`eb-garamond`) | homebrew | `font-eb-garamond` (package): 1,585 before the floor, 1,565 after, credit 1 | observed, 1,565 |
 | Economica (`economica`) | homebrew | `font-economica` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
+| Eczar (`eczar`) | homebrew | `font-eczar` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
 | Edu AU VIC WA NT Arrows (`edu-au-vic-wa-nt-arrows`) | homebrew | `font-edu-au-vic-wa-nt-arrows` (package): 41 before the floor, 21 after, credit 1 | censored, 21 |
 | Edu AU VIC WA NT Dots (`edu-au-vic-wa-nt-dots`) | homebrew | `font-edu-au-vic-wa-nt-dots` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
 | Edu AU VIC WA NT Guides (`edu-au-vic-wa-nt-guides`) | homebrew | `font-edu-au-vic-wa-nt-guides` (package): 14 before the floor, 0 after, credit 1 | censored, 0 |
@@ -461,6 +580,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Edu SA Beginner (`edu-sa-beginner`) | homebrew | `font-edu-sa-beginner` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
 | Edu TAS Beginner (`edu-tas-beginner`) | homebrew | `font-edu-tas-beginner` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Edu VIC WA NT Beginner (`edu-vic-wa-nt-beginner`) | homebrew | `font-edu-vic-wa-nt-beginner` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
+| El Messiri (`el-messiri`) | homebrew | `font-el-messiri` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
 | Electrolize (`electrolize`) | homebrew | `font-electrolize` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
 | Elms Sans (`elms-sans`) | homebrew | `font-elms-sans` (package): 66.26 before the floor, 46.26 after, credit 1 | censored, 46.26 |
 | Elsie (`elsie`) | homebrew | `font-elsie` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
@@ -483,6 +603,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Epunda Slab (`epunda-slab`) | homebrew | `font-epunda-slab` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | Erica One (`erica-one`) | homebrew | `font-erica-one` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
 | Esteban (`esteban`) | homebrew | `font-esteban` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
+| Estedad (`estedad`) | homebrew | `font-estedad` (package): 38.54 before the floor, 18.54 after, credit 1 | censored, 18.54 |
 | Estonia (`estonia`) | homebrew | `font-estonia` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
 | Euphoria Script (`euphoria-script`) | homebrew | `font-euphoria-script` (package): 30 before the floor, 10 after, credit 1 | censored, 10 |
 | Ewert (`ewert`) | homebrew | `font-ewert` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
@@ -493,10 +614,12 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Explora (`explora`) | homebrew | `font-explora` (package): 33 before the floor, 13 after, credit 1 | censored, 13 |
 | Ezra SIL (`ezra-sil`) | homebrew | `font-ezra-sil` (package): 35 before the floor, 15 after, credit 1 | censored, 15 |
 | Faculty Glyphic (`faculty-glyphic`) | homebrew | `font-faculty-glyphic` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
+| Fahkwang (`fahkwang`) | homebrew | `font-fahkwang` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | Familjen Grotesk (`familjen-grotesk`) | homebrew | `font-familjen-grotesk` (package): 38 before the floor, 18 after, credit 1 | censored, 18 |
 | Fantasque Sans Mono (`fantasque-sans-mono`) | homebrew | `font-fantasque-sans-mono` (package): 580 before the floor, 560 after, credit 1; `font-fantasque-sans-mono-nerd-font` (package): 3,082 before the floor, 949 after, credit 1 | observed, 1,509 |
 | Fanwood Text (`fanwood-text`) | homebrew | `font-fanwood-text` (package): 36 before the floor, 16 after, credit 1 | censored, 16 |
 | Farro (`farro`) | homebrew | `font-farro` (package): 11 before the floor, 0 after, credit 1 | censored, 0 |
+| Farsan (`farsan`) | homebrew | `font-farsan` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Fascinate (`fascinate`) | homebrew | `font-fascinate` (package): 190 before the floor, 170 after, credit 1 | observed, 170 |
 | Fascinate Inline (`fascinate-inline`) | homebrew | `font-fascinate-inline` (package): 188 before the floor, 168 after, credit 1 | observed, 168 |
 | Faster One (`faster-one`) | homebrew | `font-faster-one` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
@@ -530,6 +653,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Fragment Mono (`fragment-mono`) | homebrew | `font-fragment-mono` (package): 145 before the floor, 125 after, credit 1 | observed, 125 |
 | Fragment Mono SC (`fragment-mono-sc`) | homebrew | `font-fragment-mono-sc` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | Francois One (`francois-one`) | homebrew | `font-francois-one` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
+| Frank Ruhl Libre (`frank-ruhl-libre`) | homebrew | `font-frank-ruhl-libre` (package): 50 before the floor, 30 after, credit 1 | censored, 30 |
 | Fraunces (`fraunces`) | homebrew | `font-fraunces` (package): 580 before the floor, 560 after, credit 1 | observed, 560 |
 | Freckle Face (`freckle-face`) | homebrew | `font-freckle-face` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | Fredericka the Great (`fredericka-the-great`) | homebrew | `font-fredericka-the-great` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
@@ -542,11 +666,13 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Fuggles (`fuggles`) | homebrew | `font-fuggles` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
 | Funnel Display (`funnel-display`) | homebrew | `font-funnel-display` (package): 40 before the floor, 20 after, credit 1 | censored, 20 |
 | Funnel Sans (`funnel-sans`) | homebrew | `font-funnel-sans` (package): 38 before the floor, 18 after, credit 1 | censored, 18 |
+| Fustat (`fustat`) | homebrew | `font-fustat` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
 | Fuzzy Bubbles (`fuzzy-bubbles`) | homebrew | `font-fuzzy-bubbles` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
 | Ga Maamli (`ga-maamli`) | homebrew | `font-ga-maamli` (package): 12 before the floor, 0 after, credit 1 | censored, 0 |
 | Gabarito (`gabarito`) | homebrew | `font-gabarito` (package): 36 before the floor, 16 after, credit 1 | censored, 16 |
 | Gabriela (`gabriela`) | homebrew | `font-gabriela` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
 | Gafata (`gafata`) | homebrew | `font-gafata` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
+| Gajraj One (`gajraj-one`) | homebrew | `font-gajraj-one` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Galdeano (`galdeano`) | homebrew | `font-galdeano` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Galindo (`galindo`) | homebrew | `font-galindo` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
 | Gantari (`gantari`) | homebrew | `font-gantari` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
@@ -554,6 +680,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Geist Pixel (`geist-pixel`) | homebrew | `font-geist-pixel` (package): 269 before the floor, 249 after, credit 1 | observed, 249 |
 | Geist Sans (`geist-sans`) | homebrew | `font-geist` (package): 1,256 before the floor, 1,236 after, credit 1 | observed, 1,236 |
 | Gelasio (`gelasio`) | homebrew | `font-gelasio` (package): 53 before the floor, 33 after, credit 1 | censored, 33 |
+| Gemunu Libre (`gemunu-libre`) | homebrew | `font-gemunu-libre` (package): 33 before the floor, 13 after, credit 1 | censored, 13 |
 | Genos (`genos`) | homebrew | `font-genos` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
 | Gentium (`gentium`) | homebrew | `font-gentium` (package): 112 before the floor, 92 after, credit 1 | observed, 92 |
 | Gentium Book Basic (`gentium-book-basic`) | homebrew | `font-gentium-book-basic` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
@@ -571,6 +698,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | GFS Neohellenic (`gfs-neohellenic`) | homebrew | `font-gfs-neohellenic` (package): 36 before the floor, 16 after, credit 1 | censored, 16 |
 | Gideon Roman (`gideon-roman`) | homebrew | `font-gideon-roman` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Gidole (`gidole`) | homebrew | `font-gidole` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
+| Gidugu (`gidugu`) | homebrew | `font-gidugu` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | Gilda Display (`gilda-display`) | homebrew | `font-gilda-display` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
 | Girassol (`girassol`) | homebrew | `font-girassol` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Give You Glory (`give-you-glory`) | homebrew | `font-give-you-glory` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
@@ -589,6 +717,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Google Sans Code (`google-sans-code`) | homebrew | `font-google-sans-code` (package): 1,814 before the floor, 1,794 after, credit 1; `font-googlesanscode-nerd-font` (package): 1,925 before the floor, 0 after, credit 1 | observed, 1,794 |
 | Google Sans Flex (`google-sans-flex`) | homebrew | `font-google-sans-flex` (package): 78.21 before the floor, 58.21 after, credit 1 | too_new, no value |
 | Gorditas (`gorditas`) | homebrew | `font-gorditas` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
+| Gotu (`gotu`) | homebrew | `font-gotu` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
 | Goudy Bookletter 1911 (`goudy-bookletter-1911`) | homebrew | `font-goudy-bookletter-1911` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
 | Graduate (`graduate`) | homebrew | `font-graduate` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | Grand Hotel (`grand-hotel`) | homebrew | `font-grand-hotel` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
@@ -603,10 +732,12 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Griffy (`griffy`) | homebrew | `font-griffy` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | Gruppo (`gruppo`) | homebrew | `font-gruppo` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
 | Gudea (`gudea`) | homebrew | `font-gudea` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
+| Gulzar (`gulzar`) | homebrew | `font-gulzar` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | Gupter (`gupter`) | homebrew | `font-gupter` (package): 12 before the floor, 0 after, credit 1 | censored, 0 |
 | Gwendolyn (`gwendolyn`) | homebrew | `font-gwendolyn` (package): 30 before the floor, 10 after, credit 1 | censored, 10 |
 | Habibi (`habibi`) | homebrew | `font-habibi` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
 | Hack (`hack`) | homebrew | `font-hack` (package): 3,389 before the floor, 3,369 after, credit 1; `font-hack-nerd-font` (package): 60,681 before the floor, 58,548 after, credit 1 | observed, 61,917 |
+| Halant (`halant`) | homebrew | `font-halant` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | Hammersmith One (`hammersmith-one`) | homebrew | `font-hammersmith-one` (package): 507 before the floor, 487 after, credit 1 | observed, 487 |
 | Hanalei (`hanalei`) | homebrew | `font-hanalei` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Hanalei Fill (`hanalei-fill`) | homebrew | `font-hanalei-fill` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
@@ -614,14 +745,18 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Handlee (`handlee`) | homebrew | `font-handlee` (package): 29 before the floor, 9 after, credit 1 | censored, 9 |
 | Hanken Grotesk (`hanken-grotesk`) | homebrew | `font-hanken-grotesk` (package): 167 before the floor, 147 after, credit 1 | observed, 147 |
 | Happy Monkey (`happy-monkey`) | homebrew | `font-happy-monkey` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
+| Harmattan (`harmattan`) | homebrew | `font-harmattan` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | Hasklig (`hasklig`) | homebrew | `font-hasklig` (package): 269 before the floor, 249 after, credit 1; `font-hasklug-nerd-font` (package): 2,699 before the floor, 566 after, credit 1 | observed, 815 |
 | Headland One (`headland-one`) | homebrew | `font-headland-one` (package): 52 before the floor, 32 after, credit 1 | censored, 32 |
 | Hedvig Letters Sans (`hedvig-letters-sans`) | homebrew | `font-hedvig-letters-sans` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | Hedvig Letters Serif (`hedvig-letters-serif`) | homebrew | `font-hedvig-letters-serif` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
+| Heebo (`heebo`) | homebrew | `font-heebo` (package): 84 before the floor, 64 after, credit 1 | observed, 64 |
 | Henny Penny (`henny-penny`) | homebrew | `font-henny-penny` (package): 65 before the floor, 45 after, credit 1 | censored, 45 |
 | Hepta Slab (`hepta-slab`) | homebrew | `font-hepta-slab` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Hermeneus One (`hermeneus-one`) | homebrew | `font-hermeneus-one` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
 | Herr Von Muellerhoff (`herr-von-muellerhoff`) | homebrew | `font-herr-von-muellerhoff` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
+| Hibur Mono (`hibur-mono`) | homebrew | `font-hibur-mono` (package): 56.15 before the floor, 36.15 after, credit 1 | censored, 36.15 |
+| Hind (`hind`) | homebrew | `font-hind` (package): 45 before the floor, 25 after, credit 1 | censored, 25 |
 | Hind Colombo (`hind-colombo`) | homebrew | `font-hind-colombo` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
 | Hind Jalandhar (`hind-jalandhar`) | homebrew | `font-hind-jalandhar` (package): 13 before the floor, 0 after, credit 1 | censored, 0 |
 | Hind Kochi (`hind-kochi`) | homebrew | `font-hind-kochi` (package): 14 before the floor, 0 after, credit 1 | censored, 0 |
@@ -630,6 +765,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Homenaje (`homenaje`) | homebrew | `font-homenaje` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | Honk (`honk`) | homebrew | `font-honk` (package): 32 before the floor, 12 after, credit 1 | censored, 12 |
 | Host Grotesk (`host-grotesk`) | homebrew | `font-host-grotesk` (package): 48 before the floor, 28 after, credit 1 | censored, 28 |
+| Hubballi (`hubballi`) | homebrew | `font-hubballi` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
 | Hubot Sans (`hubot-sans`) | homebrew | `font-hubot-sans` (package): 69 before the floor, 49 after, credit 1 | censored, 49 |
 | Hurricane (`hurricane`) | homebrew | `font-hurricane` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | iA Writer Duo (`ia-writer-duo`) | homebrew | `font-ia-writer-duo` (package): 452 before the floor, 432 after, credit 1; `font-im-writing-nerd-font` (bundle): 2,303 before the floor, 170 after, credit 0.5 | observed, 517 |
@@ -637,10 +773,10 @@ Credited builds and bundles, and keys a key-level floor changed.
 | iA Writer Quattro (`ia-writer-quattro`) | homebrew | `font-ia-writer-quattro` (package): 612 before the floor, 592 after, credit 1; `font-im-writing-nerd-font` (bundle): 2,303 before the floor, 170 after, credit 0.5 | observed, 677 |
 | Ibarra Real Nova (`ibarra-real-nova`) | homebrew | `font-ibarra-real-nova` (package): 50 before the floor, 30 after, credit 1 | censored, 30 |
 | IBM 3270 (`ibm-3270`) | homebrew | `font-3270` (package): 239 before the floor, 219 after, credit 1; `font-3270-nerd-font` (package): 3,555 before the floor, 1,422 after, credit 1 | observed, 1,641 |
-| IBM Plex Mono (`ibm-plex-mono`) | homebrew | `font-blex-mono-nerd-font` (package): 18,813 before the floor, 16,680 after, credit 1; `font-ibm-plex-mono` (package): 4,974 before the floor, 4,954 after, credit 1 | observed, 21,634 |
-| IBM Plex Sans (`ibm-plex-sans`) | homebrew | `font-ibm-plex-sans` (package): 2,149 before the floor, 2,129 after, credit 1 | observed, 2,129 |
-| IBM Plex Sans Condensed (`ibm-plex-sans-condensed`) | homebrew | `font-ibm-plex-sans-condensed` (package): 290 before the floor, 270 after, credit 1 | observed, 270 |
-| IBM Plex Serif (`ibm-plex-serif`) | homebrew | `font-ibm-plex-serif` (package): 1,026 before the floor, 1,006 after, credit 1 | observed, 1,006 |
+| IBM Plex Mono (`ibm-plex-mono`) | homebrew | `font-blex-mono-nerd-font` (package): 18,813 before the floor, 16,680 after, credit 1; `font-ibm-plex` (bundle): 853 before the floor, 833 after, credit 0.5; `font-ibm-plex-mono` (package): 4,974 before the floor, 4,954 after, credit 1 | observed, 22,051 |
+| IBM Plex Sans (`ibm-plex-sans`) | homebrew | `font-ibm-plex` (bundle): 853 before the floor, 833 after, credit 0.5; `font-ibm-plex-sans` (package): 2,149 before the floor, 2,129 after, credit 1 | observed, 2,546 |
+| IBM Plex Sans Condensed (`ibm-plex-sans-condensed`) | homebrew | `font-ibm-plex` (bundle): 853 before the floor, 833 after, credit 0.5; `font-ibm-plex-sans-condensed` (package): 290 before the floor, 270 after, credit 1 | observed, 686 |
+| IBM Plex Serif (`ibm-plex-serif`) | homebrew | `font-ibm-plex` (bundle): 853 before the floor, 833 after, credit 0.5; `font-ibm-plex-serif` (package): 1,026 before the floor, 1,006 after, credit 1 | observed, 1,422 |
 | Iceberg (`iceberg`) | homebrew | `font-iceberg` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
 | Iceland (`iceland`) | homebrew | `font-iceland` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
 | IM Fell Double Pica (`im-fell-double-pica`) | homebrew | `font-im-fell-double-pica` (package): 44 before the floor, 24 after, credit 1 | censored, 24 |
@@ -664,6 +800,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Indie Flower (`indie-flower`) | homebrew | `font-indie-flower` (package): 51 before the floor, 31 after, credit 1 | censored, 31 |
 | Ingrid Darling (`ingrid-darling`) | homebrew | `font-ingrid-darling` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Inika (`inika`) | homebrew | `font-inika` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
+| Inknut Antiqua (`inknut-antiqua`) | homebrew | `font-inknut-antiqua` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
 | Inria Sans (`inria-sans`) | homebrew | `font-inria-sans` (package): 37 before the floor, 17 after, credit 1 | censored, 17 |
 | Inria Serif (`inria-serif`) | homebrew | `font-inria-serif` (package): 29 before the floor, 9 after, credit 1 | censored, 9 |
 | Inspiration (`inspiration`) | homebrew | `font-inspiration` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
@@ -685,6 +822,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Istok Web (`istok-web`) | homebrew | `font-istok-web` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | Italiana (`italiana`) | homebrew | `font-italiana` (package): 33 before the floor, 13 after, credit 1 | censored, 13 |
 | Italianno (`italianno`) | homebrew | `font-italianno` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
+| Itim (`itim`) | homebrew | `font-itim` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
 | Jacquard 12 (`jacquard-12`) | homebrew | `font-jacquard-12` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Jacquard 12 Charted (`jacquard-12-charted`) | homebrew | `font-jacquard-12-charted` (package): 12 before the floor, 0 after, credit 1 | censored, 0 |
 | Jacquard 24 (`jacquard-24`) | homebrew | `font-jacquard-24` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
@@ -693,6 +831,9 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Jacquarda Bastarda 9 Charted (`jacquarda-bastarda-9-charted`) | homebrew | `font-jacquarda-bastarda-9-charted` (package): 12 before the floor, 0 after, credit 1 | censored, 0 |
 | Jacques Francois (`jacques-francois`) | homebrew | `font-jacques-francois` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
 | Jacques Francois Shadow (`jacques-francois-shadow`) | homebrew | `font-jacques-francois-shadow` (package): 149 before the floor, 129 after, credit 1 | observed, 129 |
+| Jaini (`jaini`) | homebrew | `font-jaini` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
+| Jaini Purva (`jaini-purva`) | homebrew | `font-jaini-purva` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
+| Jaldi (`jaldi`) | homebrew | `font-jaldi` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
 | Jaro (`jaro`) | homebrew | `font-jaro` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
 | Jersey 10 (`jersey-10`) | homebrew | `font-jersey-10` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
 | Jersey 10 Charted (`jersey-10-charted`) | homebrew | `font-jersey-10-charted` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
@@ -707,6 +848,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Joan (`joan`) | homebrew | `font-joan` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
 | Jockey One (`jockey-one`) | homebrew | `font-jockey-one` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Jolly Lodger (`jolly-lodger`) | homebrew | `font-jolly-lodger` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
+| Jomhuria (`jomhuria`) | homebrew | `font-jomhuria` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | Josefin Sans (`josefin-sans`) | homebrew | `font-josefin-sans` (package): 338 before the floor, 318 after, credit 1 | observed, 318 |
 | Josefin Slab (`josefin-slab`) | homebrew | `font-josefin-slab` (package): 35 before the floor, 15 after, credit 1 | censored, 15 |
 | Jost (`jost`) | homebrew | `font-jost` (package): 407 before the floor, 387 after, credit 1 | observed, 387 |
@@ -720,34 +862,58 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Jura (`jura`) | homebrew | `font-jura` (package): 46 before the floor, 26 after, credit 1 | censored, 26 |
 | Just Another Hand (`just-another-hand`) | homebrew | `font-just-another-hand` (package): 31 before the floor, 11 after, credit 1 | censored, 11 |
 | Just Me Again Down Here (`just-me-again-down-here`) | homebrew | `font-just-me-again-down-here` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
+| K2D (`k2d`) | homebrew | `font-k2d` (package): 34 before the floor, 14 after, credit 1 | censored, 14 |
 | Kablammo (`kablammo`) | homebrew | `font-kablammo` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
+| Kalam (`kalam`) | homebrew | `font-kalam` (package): 81 before the floor, 61 after, credit 1 | observed, 61 |
 | Kalnia (`kalnia`) | homebrew | `font-kalnia` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | Kalnia Glaze (`kalnia-glaze`) | homebrew | `font-kalnia-glaze` (package): 31 before the floor, 11 after, credit 1 | censored, 11 |
 | Kameron (`kameron`) | homebrew | `font-kameron` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
+| Kanit (`kanit`) | homebrew | `font-kanit` (package): 92 before the floor, 72 after, credit 1 | observed, 72 |
+| Kantumruy Pro (`kantumruy-pro`) | homebrew | `font-kantumruy-pro` (package): 29 before the floor, 9 after, credit 1 | censored, 9 |
+| Karantina (`karantina`) | homebrew | `font-karantina` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
 | Karla (`karla`) | homebrew | `font-karla` (package): 117 before the floor, 97 after, credit 1 | observed, 97 |
+| Karma (`karma`) | homebrew | `font-karma` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
+| Katibeh (`katibeh`) | homebrew | `font-katibeh` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | Kaushan Script (`kaushan-script`) | homebrew | `font-kaushan-script` (package): 48 before the floor, 28 after, credit 1 | censored, 28 |
+| Kavivanar (`kavivanar`) | homebrew | `font-kavivanar` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Kavoon (`kavoon`) | homebrew | `font-kavoon` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
+| Kay Pho Du (`kay-pho-du`) | homebrew | `font-kay-pho-du` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
+| Kdam Thmor Pro (`kdam-thmor-pro`) | homebrew | `font-kdam-thmor-pro` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Keania One (`keania-one`) | homebrew | `font-keania-one` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | Kedebideri (`kedebideri`) | homebrew | `font-kedebideri` (package): 29.65 before the floor, 9.65 after, credit 1 | censored, 9.65 |
 | Kelly Slab (`kelly-slab`) | homebrew | `font-kelly-slab` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
 | Kenia (`kenia`) | homebrew | `font-kenia` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
+| Khand (`khand`) | homebrew | `font-khand` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
+| Khula (`khula`) | homebrew | `font-khula` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
 | Kings (`kings`) | homebrew | `font-kings` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | Kite One (`kite-one`) | homebrew | `font-kite-one` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | Knewave (`knewave`) | homebrew | `font-knewave` (package): 34 before the floor, 14 after, credit 1 | censored, 14 |
+| Kodchasan (`kodchasan`) | homebrew | `font-kodchasan` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Kode Mono (`kode-mono`) | homebrew | `font-kode-mono` (package): 84 before the floor, 64 after, credit 1 | observed, 64 |
+| KoHo (`koho`) | homebrew | `font-koho` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
 | Kolker Brush (`kolker-brush`) | homebrew | `font-kolker-brush` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
+| Konkhmer Sleokchher (`konkhmer-sleokchher`) | homebrew | `font-konkhmer-sleokchher` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
 | Kotta One (`kotta-one`) | homebrew | `font-kotta-one` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Kranky (`kranky`) | homebrew | `font-kranky` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | Kreon (`kreon`) | homebrew | `font-kreon` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
+| Kripa (`kripa`) | homebrew | `font-kripa` (package): 17.38 before the floor, 0 after, credit 1 | too_new, no value |
 | Kristi (`kristi`) | homebrew | `font-kristi` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | Krona One (`krona-one`) | homebrew | `font-krona-one` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
+| Krub (`krub`) | homebrew | `font-krub` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
+| Kufam (`kufam`) | homebrew | `font-kufam` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Kulim Park (`kulim-park`) | homebrew | `font-kulim-park` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
+| Kumar One (`kumar-one`) | homebrew | `font-kumar-one` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | Kumar One Outline (`kumar-one-outline`) | homebrew | `font-kumar-one-outline` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Kumbh Sans (`kumbh-sans`) | homebrew | `font-kumbh-sans` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
+| Kurale (`kurale`) | homebrew | `font-kurale` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
 | La Belle Aurore (`la-belle-aurore`) | homebrew | `font-la-belle-aurore` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Labrada (`labrada`) | homebrew | `font-labrada` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | Lacquer (`lacquer`) | homebrew | `font-lacquer` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
+| Laila (`laila`) | homebrew | `font-laila` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
+| Lalezar (`lalezar`) | homebrew | `font-lalezar` (package): 30 before the floor, 10 after, credit 1 | censored, 10 |
 | Lancelot (`lancelot`) | homebrew | `font-lancelot` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
+| Langar (`langar`) | homebrew | `font-langar` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
+| Lateef (`lateef`) | homebrew | `font-lateef` (package): 45 before the floor, 25 after, credit 1 | censored, 25 |
 | Lato (`lato`) | homebrew | `font-lato` (package): 2,136 before the floor, 2,116 after, credit 1 | observed, 2,116 |
 | Lavishly Yours (`lavishly-yours`) | homebrew | `font-lavishly-yours` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | League Gothic (`league-gothic`) | homebrew | `font-league-gothic` (package): 84 before the floor, 64 after, credit 1 | observed, 64 |
@@ -758,6 +924,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Ledger (`ledger`) | homebrew | `font-ledger` (package): 37 before the floor, 17 after, credit 1 | censored, 17 |
 | Lekton (`lekton`) | homebrew | `font-lekton` (package): 63 before the floor, 43 after, credit 1; `font-lekton-nerd-font` (package): 2,242 before the floor, 109 after, credit 1 | observed, 152 |
 | Lemon (`lemon`) | homebrew | `font-lemon` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
+| Lemonada (`lemonada`) | homebrew | `font-lemonada` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
 | Lexend (`lexend`) | homebrew | `font-lexend` (package): 857 before the floor, 837 after, credit 1 | observed, 837 |
 | Lexend Deca (`lexend-deca`) | homebrew | `font-lexend-deca` (package): 84 before the floor, 64 after, credit 1 | observed, 64 |
 | Lexend Exa (`lexend-exa`) | homebrew | `font-lexend-exa` (package): 37 before the floor, 17 after, credit 1 | censored, 17 |
@@ -785,6 +952,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Lily Script One (`lily-script-one`) | homebrew | `font-lily-script-one` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
 | Limelight (`limelight`) | homebrew | `font-limelight` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
 | Linden Hill (`linden-hill`) | homebrew | `font-linden-hill` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
+| Lisu Bosa (`lisu-bosa`) | homebrew | `font-lisu-bosa` (package): 13 before the floor, 0 after, credit 1 | censored, 0 |
 | Liter (`liter`) | homebrew | `font-liter` (package): 29 before the floor, 9 after, credit 1 | censored, 9 |
 | Literata (`literata`) | homebrew | `font-literata` (package): 296 before the floor, 276 after, credit 1 | observed, 276 |
 | Livvic (`livvic`) | homebrew | `font-livvic` (package): 32 before the floor, 12 after, credit 1 | censored, 12 |
@@ -810,12 +978,16 @@ Credited builds and bundles, and keys a key-level floor changed.
 | M PLUS Code Latin (`m-plus-code-latin`) | homebrew | `font-m+-nerd-font` (bundle): 2,330 before the floor, 197 after, credit 0.5; `font-m-plus-code-latin` (package): 71 before the floor, 51 after, credit 1 | observed, 150 |
 | Macondo (`macondo`) | homebrew | `font-macondo` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | Macondo Swash Caps (`macondo-swash-caps`) | homebrew | `font-macondo-swash-caps` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
+| Mada (`mada`) | homebrew | `font-mada` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Madimi One (`madimi-one`) | homebrew | `font-madimi-one` (package): 13 before the floor, 0 after, credit 1 | censored, 0 |
 | Magra (`magra`) | homebrew | `font-magra` (package): 11 before the floor, 0 after, credit 1 | censored, 0 |
 | Maiden Orange (`maiden-orange`) | homebrew | `font-maiden-orange` (package): 14 before the floor, 0 after, credit 1 | censored, 0 |
 | Maitree (`maitree`) | homebrew | `font-maitree` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | Major Mono Display (`major-mono-display`) | homebrew | `font-major-mono-display` (package): 55 before the floor, 35 after, credit 1 | censored, 35 |
 | Mako (`mako`) | homebrew | `font-mako` (package): 34 before the floor, 14 after, credit 1 | censored, 14 |
+| Mali (`mali`) | homebrew | `font-mali` (package): 30 before the floor, 10 after, credit 1 | censored, 10 |
+| Maname (`maname`) | homebrew | `font-maname` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
+| Manjari (`manjari`) | homebrew | `font-manjari` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | Manrope (`manrope`) | homebrew | `font-manrope` (package): 801 before the floor, 781 after, credit 1 | observed, 781 |
 | Mansalva (`mansalva`) | homebrew | `font-mansalva` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
 | Manuale (`manuale`) | homebrew | `font-manuale` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
@@ -825,10 +997,15 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Marcellus SC (`marcellus-sc`) | homebrew | `font-marcellus-sc` (package): 31 before the floor, 11 after, credit 1 | censored, 11 |
 | Marck Script (`marck-script`) | homebrew | `font-marck-script` (package): 34 before the floor, 14 after, credit 1 | censored, 14 |
 | Margarine (`margarine`) | homebrew | `font-margarine` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
+| Marhey (`marhey`) | homebrew | `font-marhey` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
+| Markazi Text (`markazi-text`) | homebrew | `font-markazi-text` (package): 38 before the floor, 18 after, credit 1 | censored, 18 |
 | Marko One (`marko-one`) | homebrew | `font-marko-one` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Marmelad (`marmelad`) | homebrew | `font-marmelad` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
+| Martel (`martel`) | homebrew | `font-martel` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
+| Martel Sans (`martel-sans`) | homebrew | `font-martel-sans` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Martian Mono (`martian-mono`) | homebrew | `font-martian-mono` (package): 290 before the floor, 270 after, credit 1; `font-martian-mono-nerd-font` (package): 2,131 before the floor, 0 after, credit 1 | observed, 270 |
 | Marvel (`marvel`) | homebrew | `font-marvel` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
+| Matangi (`matangi`) | homebrew | `font-matangi` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
 | Mate (`mate`) | homebrew | `font-mate` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
 | Mate SC (`mate-sc`) | homebrew | `font-mate-sc` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Matemasie (`matemasie`) | homebrew | `font-matemasie` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
@@ -840,6 +1017,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Medula One (`medula-one`) | homebrew | `font-medula-one` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
 | Megrim (`megrim`) | homebrew | `font-megrim` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
 | Meie Script (`meie-script`) | homebrew | `font-meie-script` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
+| Menbere (`menbere`) | homebrew | `font-menbere` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
 | Meow Script (`meow-script`) | homebrew | `font-meow-script` (package): 29 before the floor, 9 after, credit 1 | censored, 9 |
 | Merge One (`merge-one`) | homebrew | `font-merge-one` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
 | Merienda (`merienda`) | homebrew | `font-merienda` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
@@ -858,11 +1036,18 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Milonga (`milonga`) | homebrew | `font-milonga` (package): 54 before the floor, 34 after, credit 1 | censored, 34 |
 | Miltonian (`miltonian`) | homebrew | `font-miltonian` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | Miltonian Tattoo (`miltonian-tattoo`) | homebrew | `font-miltonian-tattoo` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
+| Mina (`mina`) | homebrew | `font-mina` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
+| Mingzat (`mingzat`) | homebrew | `font-mingzat` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
 | Miniver (`miniver`) | homebrew | `font-miniver` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
 | Miranda Sans (`miranda-sans`) | homebrew | `font-miranda-sans` (package): 91.70 before the floor, 71.70 after, credit 1 | observed, 71.70 |
+| Miriam Libre (`miriam-libre`) | homebrew | `font-miriam-libre` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
+| Mirza (`mirza`) | homebrew | `font-mirza` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | Miss Fajardose (`miss-fajardose`) | homebrew | `font-miss-fajardose` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
+| Mitr (`mitr`) | homebrew | `font-mitr` (package): 33 before the floor, 13 after, credit 1 | censored, 13 |
+| Modak (`modak`) | homebrew | `font-modak` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
 | Modern Antiqua (`modern-antiqua`) | homebrew | `font-modern-antiqua` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
 | Moderustic (`moderustic`) | homebrew | `font-moderustic` (package): 76 before the floor, 56 after, credit 1 | censored, 56 |
+| Mogra (`mogra`) | homebrew | `font-mogra` (package): 12 before the floor, 0 after, credit 1 | censored, 0 |
 | Mohave (`mohave`) | homebrew | `font-mohave` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
 | Molengo (`molengo`) | homebrew | `font-molengo` (package): 268 before the floor, 248 after, credit 1 | observed, 248 |
 | Molle (`molle`) | homebrew | `font-molle` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
@@ -870,15 +1055,16 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Momo Trust Display (`momo-trust-display`) | homebrew | `font-momo-trust-display` (package): 72.59 before the floor, 52.59 after, credit 1 | censored, 52.59 |
 | Momo Trust Sans (`momo-trust-sans`) | homebrew | `font-momo-trust-sans` (package): 40.90 before the floor, 20.90 after, credit 1 | censored, 20.90 |
 | Mona Sans (`mona-sans`) | homebrew | `font-mona-sans` (package): 200 before the floor, 180 after, credit 1 | observed, 180 |
-| Monaspace Argon (`monaspace-argon`) | homebrew | `font-monaspace` (bundle): 8,303 before the floor, 8,283 after, credit 0.5; `font-monaspace-nf` (bundle): 1,519 before the floor, 1,499 after, credit 0.5; `font-monaspace-var` (bundle): 334 before the floor, 314 after, credit 0.5; `font-monaspice-nerd-font` (bundle): 6,680 before the floor, 4,547 after, credit 0.5 | observed, 7,322 |
-| Monaspace Krypton (`monaspace-krypton`) | homebrew | `font-monaspace` (bundle): 8,303 before the floor, 8,283 after, credit 0.5; `font-monaspace-nf` (bundle): 1,519 before the floor, 1,499 after, credit 0.5; `font-monaspace-var` (bundle): 334 before the floor, 314 after, credit 0.5; `font-monaspice-nerd-font` (bundle): 6,680 before the floor, 4,547 after, credit 0.5 | observed, 7,322 |
-| Monaspace Neon (`monaspace-neon`) | homebrew | `font-monaspace` (bundle): 8,303 before the floor, 8,283 after, credit 0.5; `font-monaspace-nf` (bundle): 1,519 before the floor, 1,499 after, credit 0.5; `font-monaspace-var` (bundle): 334 before the floor, 314 after, credit 0.5; `font-monaspice-nerd-font` (bundle): 6,680 before the floor, 4,547 after, credit 0.5 | observed, 7,322 |
-| Monaspace Radon (`monaspace-radon`) | homebrew | `font-monaspace` (bundle): 8,303 before the floor, 8,283 after, credit 0.5; `font-monaspace-nf` (bundle): 1,519 before the floor, 1,499 after, credit 0.5; `font-monaspace-var` (bundle): 334 before the floor, 314 after, credit 0.5; `font-monaspice-nerd-font` (bundle): 6,680 before the floor, 4,547 after, credit 0.5 | observed, 7,322 |
-| Monaspace Xenon (`monaspace-xenon`) | homebrew | `font-monaspace` (bundle): 8,303 before the floor, 8,283 after, credit 0.5; `font-monaspace-nf` (bundle): 1,519 before the floor, 1,499 after, credit 0.5; `font-monaspace-var` (bundle): 334 before the floor, 314 after, credit 0.5; `font-monaspice-nerd-font` (bundle): 6,680 before the floor, 4,547 after, credit 0.5 | observed, 7,322 |
+| Monaspace Argon (`monaspace-argon`) | homebrew | `font-monaspace` (bundle): 8,303 before the floor, 8,283 after, credit 0.5; `font-monaspace-nerd-font` (bundle): 9 before the floor, 0 after, credit 0.5; `font-monaspace-nf` (bundle): 1,519 before the floor, 1,499 after, credit 0.5; `font-monaspace-var` (bundle): 334 before the floor, 314 after, credit 0.5; `font-monaspice-nerd-font` (bundle): 6,680 before the floor, 4,547 after, credit 0.5 | observed, 7,322 |
+| Monaspace Krypton (`monaspace-krypton`) | homebrew | `font-monaspace` (bundle): 8,303 before the floor, 8,283 after, credit 0.5; `font-monaspace-nerd-font` (bundle): 9 before the floor, 0 after, credit 0.5; `font-monaspace-nf` (bundle): 1,519 before the floor, 1,499 after, credit 0.5; `font-monaspace-var` (bundle): 334 before the floor, 314 after, credit 0.5; `font-monaspice-nerd-font` (bundle): 6,680 before the floor, 4,547 after, credit 0.5 | observed, 7,322 |
+| Monaspace Neon (`monaspace-neon`) | homebrew | `font-monaspace` (bundle): 8,303 before the floor, 8,283 after, credit 0.5; `font-monaspace-nerd-font` (bundle): 9 before the floor, 0 after, credit 0.5; `font-monaspace-nf` (bundle): 1,519 before the floor, 1,499 after, credit 0.5; `font-monaspace-var` (bundle): 334 before the floor, 314 after, credit 0.5; `font-monaspice-nerd-font` (bundle): 6,680 before the floor, 4,547 after, credit 0.5 | observed, 7,322 |
+| Monaspace Radon (`monaspace-radon`) | homebrew | `font-monaspace` (bundle): 8,303 before the floor, 8,283 after, credit 0.5; `font-monaspace-nerd-font` (bundle): 9 before the floor, 0 after, credit 0.5; `font-monaspace-nf` (bundle): 1,519 before the floor, 1,499 after, credit 0.5; `font-monaspace-var` (bundle): 334 before the floor, 314 after, credit 0.5; `font-monaspice-nerd-font` (bundle): 6,680 before the floor, 4,547 after, credit 0.5 | observed, 7,322 |
+| Monaspace Xenon (`monaspace-xenon`) | homebrew | `font-monaspace` (bundle): 8,303 before the floor, 8,283 after, credit 0.5; `font-monaspace-nerd-font` (bundle): 9 before the floor, 0 after, credit 0.5; `font-monaspace-nf` (bundle): 1,519 before the floor, 1,499 after, credit 0.5; `font-monaspace-var` (bundle): 334 before the floor, 314 after, credit 0.5; `font-monaspice-nerd-font` (bundle): 6,680 before the floor, 4,547 after, credit 0.5 | observed, 7,322 |
 | Monda (`monda`) | homebrew | `font-monda` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
 | Monofett (`monofett`) | homebrew | `font-monofett` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
 | Monoid (`monoid`) | homebrew | `font-monoid` (package): 257 before the floor, 237 after, credit 1; `font-monoid-nerd-font` (package): 2,404 before the floor, 271 after, credit 1 | observed, 508 |
 | Monoisome (`monoisome`) | homebrew | `font-monoisome` (package): 36 before the floor, 16 after, credit 1 | censored, 16 |
+| Monomakh (`monomakh`) | homebrew | `font-monomakh` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
 | Mononoki (`mononoki`) | homebrew | `font-mononoki` (package): 347 before the floor, 327 after, credit 1; `font-mononoki-nerd-font` (package): 3,111 before the floor, 978 after, credit 1 | observed, 1,305 |
 | Monoton (`monoton`) | homebrew | `font-monoton` (package): 50 before the floor, 30 after, credit 1 | censored, 30 |
 | Monsieur La Doulaise (`monsieur-la-doulaise`) | homebrew | `font-monsieur-la-doulaise` (package): 31 before the floor, 11 after, credit 1 | censored, 11 |
@@ -889,7 +1075,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Montez (`montez`) | homebrew | `font-montez` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Montserrat (`montserrat`) | homebrew | `font-montserrat` (package): 3,178 before the floor, 3,158 after, credit 1 | observed, 3,158 |
 | Montserrat Alternates (`montserrat-alternates`) | homebrew | `font-montserrat-alternates` (package): 92 before the floor, 72 after, credit 1 | observed, 72 |
-| Montserrat Underline (`montserrat-underline`) | homebrew | `font-montserrat-underline` (package): 46 before the floor, 26 after, credit 1 | censored, 26 |
+| Montserrat Underline (`montserrat-underline`) | homebrew | `font-montserrat-subrayada` (package): 45 before the floor, 25 after, credit 1; `font-montserrat-underline` (package): 46 before the floor, 26 after, credit 1 | censored, 51 |
 | Moo Lah Lah (`moo-lah-lah`) | homebrew | `font-moo-lah-lah` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
 | Mooli (`mooli`) | homebrew | `font-mooli` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Moon Dance (`moon-dance`) | homebrew | `font-moon-dance` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
@@ -903,6 +1089,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Mrs Saint Delafield (`mrs-saint-delafield`) | homebrew | `font-mrs-saint-delafield` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | Mrs Sheppards (`mrs-sheppards`) | homebrew | `font-mrs-sheppards` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | Ms Madi (`ms-madi`) | homebrew | `font-ms-madi` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
+| Mukta (`mukta`) | homebrew | `font-mukta` (package): 39 before the floor, 19 after, credit 1 | censored, 19 |
 | Mulish (`mulish`) | homebrew | `font-mulish` (package): 120 before the floor, 100 after, credit 1 | observed, 100 |
 | MuseoModerno (`museomoderno`) | homebrew | `font-museomoderno` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
 | My Soul (`my-soul`) | homebrew | `font-my-soul` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
@@ -910,6 +1097,8 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Mystery Quest (`mystery-quest`) | homebrew | `font-mystery-quest` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
 | Nabla (`nabla`) | homebrew | `font-nabla` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
 | Nacelle (`nacelle`) | homebrew | `font-nacelle` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
+| Namdhinggo (`namdhinggo`) | homebrew | `font-namdhinggo` (package): 13 before the floor, 0 after, credit 1 | censored, 0 |
+| Narnoor (`narnoor`) | homebrew | `font-narnoor` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
 | Nata Sans (`nata-sans`) | homebrew | `font-nata-sans` (package): 30 before the floor, 10 after, credit 1 | censored, 10 |
 | National Park (`national-park`) | homebrew | `font-national-park` (package): 33 before the floor, 13 after, credit 1 | censored, 13 |
 | NATS (`nats`) | homebrew | `font-nats` (package): 47 before the floor, 27 after, credit 1 | censored, 27 |
@@ -924,6 +1113,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | News Cycle (`news-cycle`) | homebrew | `font-news-cycle` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | Newsreader (`newsreader`) | homebrew | `font-newsreader` (package): 243 before the floor, 223 after, credit 1 | observed, 223 |
 | Niconne (`niconne`) | homebrew | `font-niconne` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
+| Niramit (`niramit`) | homebrew | `font-niramit` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
 | Nixie One (`nixie-one`) | homebrew | `font-nixie-one` (package): 47 before the floor, 27 after, credit 1 | censored, 27 |
 | Nobile (`nobile`) | homebrew | `font-nobile` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | Norican (`norican`) | homebrew | `font-norican` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
@@ -932,7 +1122,11 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Notable (`notable`) | homebrew | `font-notable` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | Nothing You Could Do (`nothing-you-could-do`) | homebrew | `font-nothing-you-could-do` (package): 30 before the floor, 10 after, credit 1 | censored, 10 |
 | Noticia Text (`noticia-text`) | homebrew | `font-noticia-text` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
+| Noto Kufi Arabic (`noto-kufi-arabic`) | homebrew | `font-noto-kufi-arabic` (package): 97 before the floor, 77 after, credit 1 | observed, 77 |
 | Noto Mono (`noto-mono`) | homebrew | `font-noto-mono` (package): 181 before the floor, 161 after, credit 1; `font-noto-nerd-font` (bundle): 3,004 before the floor, 871 after, credit 0.5 | observed, 597 |
+| Noto Naskh Arabic (`noto-naskh-arabic`) | homebrew | `font-noto-naskh-arabic` (package): 313 before the floor, 293 after, credit 1 | observed, 293 |
+| Noto Nastaliq Urdu (`noto-nastaliq-urdu`) | homebrew | `font-noto-nastaliq-urdu` (package): 84 before the floor, 64 after, credit 1 | observed, 64 |
+| Noto Rashi Hebrew (`noto-rashi-hebrew`) | homebrew | `font-noto-rashi-hebrew` (package): 62 before the floor, 42 after, credit 1 | censored, 42 |
 | Noto Sans (`noto-sans`) | homebrew | `font-noto-nerd-font` (bundle): 3,004 before the floor, 871 after, credit 0.5; `font-noto-sans` (package): 3,486 before the floor, 3,466 after, credit 1; `font-noto-sans-mono` (package): 1,343 before the floor, 1,323 after, credit 1 | observed, 5,225 |
 | Noto Sans Caucasian Albanian (`noto-sans-caucasian-albanian`) | homebrew | `font-noto-sans-caucasian-albanian` (package): 40 before the floor, 20 after, credit 1 | censored, 20 |
 | Noto Sans Cypro Minoan (`noto-sans-cypro-minoan`) | homebrew | `font-noto-sans-cypro-minoan` (package): 37 before the floor, 17 after, credit 1 | censored, 17 |
@@ -950,6 +1144,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Noto Serif Hentaigana (`noto-serif-hentaigana`) | homebrew | `font-noto-serif-hentaigana` (package): 46 before the floor, 26 after, credit 1 | censored, 26 |
 | Noto Serif Khitan Small Script (`noto-serif-khitan-small-script`) | homebrew | `font-noto-serif-khitan-small-script` (package): 37 before the floor, 17 after, credit 1 | censored, 17 |
 | Noto Serif Ottoman Siyaq (`noto-serif-ottoman-siyaq`) | homebrew | `font-noto-serif-ottoman-siyaq` (package): 36 before the floor, 16 after, credit 1 | censored, 16 |
+| Noto Traditional Nushu (`noto-traditional-nushu`) | homebrew | `font-noto-traditional-nushu` (package): 34 before the floor, 14 after, credit 1 | censored, 14 |
 | Nova Cut (`nova-cut`) | homebrew | `font-nova-cut` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Nova Flat (`nova-flat`) | homebrew | `font-nova-flat` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Nova Mono (`nova-mono`) | homebrew | `font-nova-mono` (package): 76 before the floor, 56 after, credit 1 | censored, 56 |
@@ -961,6 +1156,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Numans (`numans`) | homebrew | `font-numans` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
 | Nunito (`nunito`) | homebrew | `font-nunito` (package): 627 before the floor, 607 after, credit 1 | observed, 607 |
 | Nunito Sans (`nunito-sans`) | homebrew | `font-nunito-sans` (package): 281 before the floor, 261 after, credit 1 | observed, 261 |
+| Nuosu SIL (`nuosu-sil`) | homebrew | `font-nuosu-sil` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
 | Odibee Sans (`odibee-sans`) | homebrew | `font-odibee-sans` (package): 14 before the floor, 0 after, credit 1 | censored, 0 |
 | Offside (`offside`) | homebrew | `font-offside` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | OFL Sorts Mill Goudy TT (`ofl-sorts-mill-goudy-tt`) | homebrew | `font-ofl-sorts-mill-goudy-tt` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
@@ -993,8 +1189,13 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Oxygen (`oxygen`) | homebrew | `font-oxygen` (package): 90 before the floor, 70 after, credit 1 | observed, 70 |
 | Oxygen Mono (`oxygen-mono`) | homebrew | `font-oxygen-mono` (package): 76 before the floor, 56 after, credit 1 | censored, 56 |
 | Pacifico (`pacifico`) | homebrew | `font-pacifico` (package): 295 before the floor, 275 after, credit 1 | observed, 275 |
+| Padauk (`padauk`) | homebrew | `font-padauk` (package): 29 before the floor, 9 after, credit 1 | censored, 9 |
+| Padyakke Expanded One (`padyakke-expanded-one`) | homebrew | `font-padyakke-expanded-one` (package): 12 before the floor, 0 after, credit 1 | censored, 0 |
+| Palanquin (`palanquin`) | homebrew | `font-palanquin` (package): 12 before the floor, 0 after, credit 1 | censored, 0 |
+| Palanquin Dark (`palanquin-dark`) | homebrew | `font-palanquin-dark` (package): 10 before the floor, 0 after, credit 1 | censored, 0 |
 | Pangolin (`pangolin`) | homebrew | `font-pangolin` (package): 50 before the floor, 30 after, credit 1 | censored, 30 |
 | Paprika (`paprika`) | homebrew | `font-paprika` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
+| Parastoo (`parastoo`) | homebrew | `font-parastoo` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
 | Parisienne (`parisienne`) | homebrew | `font-parisienne` (package): 40 before the floor, 20 after, credit 1 | censored, 20 |
 | Parkinsans (`parkinsans`) | homebrew | `font-parkinsans` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
 | Passero One (`passero-one`) | homebrew | `font-passero-one` (package): 12 before the floor, 0 after, credit 1 | censored, 0 |
@@ -1004,7 +1205,9 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Pathway Gothic One (`pathway-gothic-one`) | homebrew | `font-pathway-gothic-one` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | Patrick Hand (`patrick-hand`) | homebrew | `font-patrick-hand` (package): 96 before the floor, 76 after, credit 1 | observed, 76 |
 | Patrick Hand SC (`patrick-hand-sc`) | homebrew | `font-patrick-hand-sc` (package): 33 before the floor, 13 after, credit 1 | censored, 13 |
+| Pattaya (`pattaya`) | homebrew | `font-pattaya` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Patua One (`patua-one`) | homebrew | `font-patua-one` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
+| Pavanam (`pavanam`) | homebrew | `font-pavanam` (package): 13 before the floor, 0 after, credit 1 | censored, 0 |
 | Paytone One (`paytone-one`) | homebrew | `font-paytone-one` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | Peralta (`peralta`) | homebrew | `font-peralta` (package): 12 before the floor, 0 after, credit 1 | censored, 0 |
 | Permanent Marker (`permanent-marker`) | homebrew | `font-permanent-marker` (package): 101 before the floor, 81 after, credit 1 | observed, 81 |
@@ -1140,14 +1343,18 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Poly (`poly`) | homebrew | `font-poly` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
 | Pompiere (`pompiere`) | homebrew | `font-pompiere` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
 | Pontano Sans (`pontano-sans`) | homebrew | `font-pontano-sans` (package): 13 before the floor, 0 after, credit 1 | censored, 0 |
+| Poppins (`poppins`) | homebrew | `font-poppins` (package): 1,721 before the floor, 1,701 after, credit 1 | observed, 1,701 |
 | Port Lligat Sans (`port-lligat-sans`) | homebrew | `font-port-lligat-sans` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
 | Port Lligat Slab (`port-lligat-slab`) | homebrew | `font-port-lligat-slab` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
+| Pragati Narrow (`pragati-narrow`) | homebrew | `font-pragati-narrow` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Praise (`praise`) | homebrew | `font-praise` (package): 14 before the floor, 0 after, credit 1 | censored, 0 |
 | Prata (`prata`) | homebrew | `font-prata` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
 | Press Start 2P (`press-start-2p`) | homebrew | `font-press-start-2p` (package): 123 before the floor, 103 after, credit 1 | observed, 103 |
+| Pridi (`pridi`) | homebrew | `font-pridi` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
 | Princess Sofia (`princess-sofia`) | homebrew | `font-princess-sofia` (package): 37 before the floor, 17 after, credit 1 | censored, 17 |
 | Prociono (`prociono`) | homebrew | `font-prociono` (package): 72 before the floor, 52 after, credit 1 | censored, 52 |
 | ProFont (`profont`) | homebrew | `font-profont-nerd-font` (package): 2,269 before the floor, 136 after, credit 1 | observed, 136 |
+| Prompt (`prompt`) | homebrew | `font-prompt` (package): 94 before the floor, 74 after, credit 1 | observed, 74 |
 | Prosto One (`prosto-one`) | homebrew | `font-prosto-one` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | Protest Guerrilla (`protest-guerrilla`) | homebrew | `font-protest-guerrilla` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
 | Protest Revolution (`protest-revolution`) | homebrew | `font-protest-revolution` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
@@ -1178,13 +1385,18 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Radio Canada (`radio-canada`) | homebrew | `font-radio-canada` (package): 35 before the floor, 15 after, credit 1 | censored, 15 |
 | Radio Canada Big (`radio-canada-big`) | homebrew | `font-radio-canada-big` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | Radley (`radley`) | homebrew | `font-radley` (package): 14 before the floor, 0 after, credit 1 | censored, 0 |
+| Rajdhani (`rajdhani`) | homebrew | `font-rajdhani` (package): 90 before the floor, 70 after, credit 1 | observed, 70 |
+| Rakkas (`rakkas`) | homebrew | `font-rakkas` (package): 29 before the floor, 9 after, credit 1 | censored, 9 |
 | Raleway (`raleway`) | homebrew | `font-raleway` (package): 779 before the floor, 759 after, credit 1 | observed, 759 |
 | Raleway Dots (`raleway-dots`) | homebrew | `font-raleway-dots` (package): 32 before the floor, 12 after, credit 1 | censored, 12 |
 | Rambla (`rambla`) | homebrew | `font-rambla` (package): 188 before the floor, 168 after, credit 1 | observed, 168 |
 | Rammetto One (`rammetto-one`) | homebrew | `font-rammetto-one` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
 | Ranchers (`ranchers`) | homebrew | `font-ranchers` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
 | Rancho (`rancho`) | homebrew | `font-rancho` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
+| Ranga (`ranga`) | homebrew | `font-ranga` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
+| Rasa (`rasa`) | homebrew | `font-rasa` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
 | Rationale (`rationale`) | homebrew | `font-rationale` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
+| Readex Pro (`readex-pro`) | homebrew | `font-readex-pro` (package): 56 before the floor, 36 after, credit 1 | censored, 36 |
 | Recursive (`recursive`) | homebrew | `font-recursive` (package): 303 before the floor, 283 after, credit 1; `font-recursive-mono-nerd-font` (package): 2,135 before the floor, 2.40 after, credit 1 | observed, 285 |
 | Red Hat Display (`red-hat-display`) | homebrew | `font-red-hat-display` (package): 118 before the floor, 98 after, credit 1 | observed, 98 |
 | Red Hat Mono (`red-hat-mono`) | homebrew | `font-red-hat-mono` (package): 223 before the floor, 203 after, credit 1 | observed, 203 |
@@ -1194,6 +1406,9 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Reddit Sans (`reddit-sans`) | homebrew | `font-reddit-sans` (package): 43 before the floor, 23 after, credit 1 | censored, 23 |
 | Reddit Sans Condensed (`reddit-sans-condensed`) | homebrew | `font-reddit-sans-condensed` (package): 32 before the floor, 12 after, credit 1 | censored, 12 |
 | Redressed (`redressed`) | homebrew | `font-redressed` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
+| Reem Kufi (`reem-kufi`) | homebrew | `font-reem-kufi` (package): 38 before the floor, 18 after, credit 1 | censored, 18 |
+| Reem Kufi Fun (`reem-kufi-fun`) | homebrew | `font-reem-kufi-fun` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
+| Reem Kufi Ink (`reem-kufi-ink`) | homebrew | `font-reem-kufi-ink` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | Reenie Beanie (`reenie-beanie`) | homebrew | `font-reenie-beanie` (package): 30 before the floor, 10 after, credit 1 | censored, 10 |
 | REM (`rem`) | homebrew | `font-rem` (package): 31 before the floor, 11 after, credit 1 | censored, 11 |
 | Rethink Sans (`rethink-sans`) | homebrew | `font-rethink-sans` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
@@ -1219,6 +1434,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Rosarivo (`rosarivo`) | homebrew | `font-rosarivo` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | Rouge Script (`rouge-script`) | homebrew | `font-rouge-script` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
 | Rowdies (`rowdies`) | homebrew | `font-rowdies` (package): 12 before the floor, 0 after, credit 1 | censored, 0 |
+| Rozha One (`rozha-one`) | homebrew | `font-rozha-one` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
 | Rubik (`rubik`) | homebrew | `font-rubik` (package): 527 before the floor, 507 after, credit 1 | observed, 507 |
 | Rubik 80s Fade (`rubik-80s-fade`) | homebrew | `font-rubik-80s-fade` (package): 32 before the floor, 12 after, credit 1 | censored, 12 |
 | Rubik Beastly (`rubik-beastly`) | homebrew | `font-rubik-beastly` (package): 29 before the floor, 9 after, credit 1 | censored, 9 |
@@ -1256,6 +1472,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Ruslan Display (`ruslan-display`) | homebrew | `font-ruslan-display` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Russo One (`russo-one`) | homebrew | `font-russo-one` (package): 51 before the floor, 31 after, credit 1 | censored, 31 |
 | Ruthie (`ruthie`) | homebrew | `font-ruthie` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
+| Ruwudu (`ruwudu`) | homebrew | `font-ruwudu` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
 | Rye (`rye`) | homebrew | `font-rye` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
 | Sacramento (`sacramento`) | homebrew | `font-sacramento` (package): 59 before the floor, 39 after, credit 1 | censored, 39 |
 | Sail (`sail`) | homebrew | `font-sail` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
@@ -1263,8 +1480,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Saira Condensed (`saira-condensed`) | homebrew | `font-saira-condensed` (package): 44 before the floor, 24 after, credit 1 | censored, 24 |
 | Saira Extra Condensed (`saira-extra-condensed`) | homebrew | `font-saira-extra-condensed` (package): 31 before the floor, 11 after, credit 1 | censored, 11 |
 | Saira Semi Condensed (`saira-semi-condensed`) | homebrew | `font-saira-semi-condensed` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
-| Saira Stencil (`saira-stencil`) | homebrew | `font-saira-stencil` (package): 24.07 before the floor, 4.07 after, credit 1 | censored, 4.07 |
-| Saira Stencil One (`saira-stencil-one`) | homebrew | `font-saira-stencil-one` (package): 33 before the floor, 13 after, credit 1 | censored, 13 |
+| Saira Stencil (`saira-stencil`) | homebrew | `font-saira-stencil` (package): 24.07 before the floor, 4.07 after, credit 1; `font-saira-stencil-one` (package): 33 before the floor, 13 after, credit 1 | censored, 17.07 |
 | Salsa (`salsa`) | homebrew | `font-salsa` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Sanchez (`sanchez`) | homebrew | `font-sanchez` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
 | Sancreek (`sancreek`) | homebrew | `font-sancreek` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
@@ -1273,17 +1489,22 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Sansita (`sansita`) | homebrew | `font-sansita` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
 | Sansita One (`sansita-one`) | homebrew | `font-sansita-one` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
 | Sansita Swashed (`sansita-swashed`) | homebrew | `font-sansita-swashed` (package): 14 before the floor, 0 after, credit 1 | censored, 0 |
+| Sarabun (`sarabun`) | homebrew | `font-sarabun` (package): 290 before the floor, 270 after, credit 1 | observed, 270 |
+| Sarala (`sarala`) | homebrew | `font-sarala` (package): 50 before the floor, 30 after, credit 1 | censored, 30 |
 | Sarina (`sarina`) | homebrew | `font-sarina` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
+| Sarpanch (`sarpanch`) | homebrew | `font-sarpanch` (package): 12 before the floor, 0 after, credit 1 | censored, 0 |
 | Sassy Frass (`sassy-frass`) | homebrew | `font-sassy-frass` (package): 41 before the floor, 21 after, credit 1 | censored, 21 |
 | Satisfy (`satisfy`) | homebrew | `font-satisfy` (package): 62 before the floor, 42 after, credit 1 | censored, 42 |
 | Savate (`savate`) | homebrew | `font-savate` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
 | Scada (`scada`) | homebrew | `font-scada` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
+| Scheherazade New (`scheherazade-new`) | homebrew | `font-scheherazade-new` (package): 84 before the floor, 64 after, credit 1 | observed, 64 |
 | Schibsted Grotesk (`schibsted-grotesk`) | homebrew | `font-schibsted-grotesk` (package): 63 before the floor, 43 after, credit 1 | censored, 43 |
 | Schoolbell (`schoolbell`) | homebrew | `font-schoolbell` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
 | Science Gothic (`science-gothic`) | homebrew | `font-science-gothic` (package): 54.32 before the floor, 34.32 after, credit 1 | censored, 34.32 |
 | Scope One (`scope-one`) | homebrew | `font-scope-one` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
 | Scoutie Sans (`scoutie-sans`) | homebrew | `font-scoutie-sans` (package): 91.25 before the floor, 71.25 after, credit 1 | observed, 71.25 |
 | Seaweed Script (`seaweed-script`) | homebrew | `font-seaweed-script` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
+| Secular One (`secular-one`) | homebrew | `font-secular-one` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
 | Sedan (`sedan`) | homebrew | `font-sedan` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | Sedan SC (`sedan-sc`) | homebrew | `font-sedan-sc` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Sedgwick Ave (`sedgwick-ave`) | homebrew | `font-sedgwick-ave` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
@@ -1295,6 +1516,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Seymour One (`seymour-one`) | homebrew | `font-seymour-one` (package): 14 before the floor, 0 after, credit 1 | censored, 0 |
 | Shadows Into Light (`shadows-into-light`) | homebrew | `font-shadows-into-light` (package): 42 before the floor, 22 after, credit 1 | censored, 22 |
 | Shadows Into Light Two (`shadows-into-light-two`) | homebrew | `font-shadows-into-light-two` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
+| Shafarik (`shafarik`) | homebrew | `font-shafarik` (package): 11 before the floor, 0 after, credit 1 | censored, 0 |
 | Shalimar (`shalimar`) | homebrew | `font-shalimar` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
 | Shantell Sans (`shantell-sans`) | homebrew | `font-shantell-sans` (package): 55 before the floor, 35 after, credit 1 | censored, 35 |
 | Shanti (`shanti`) | homebrew | `font-shanti` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
@@ -1303,6 +1525,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Share Tech Mono (`share-tech-mono`) | homebrew | `font-share-tech-mono` (package): 186 before the floor, 166 after, credit 1; `font-shure-tech-mono-nerd-font` (package): 2,075 before the floor, 0 after, credit 1 | observed, 166 |
 | Shojumaru (`shojumaru`) | homebrew | `font-shojumaru` (package): 13 before the floor, 0 after, credit 1 | censored, 0 |
 | Short Stack (`short-stack`) | homebrew | `font-short-stack` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
+| Shrikhand (`shrikhand`) | homebrew | `font-shrikhand` (package): 31 before the floor, 11 after, credit 1 | censored, 11 |
 | Sigmar (`sigmar`) | homebrew | `font-sigmar` (package): 13 before the floor, 0 after, credit 1 | censored, 0 |
 | Sigmar One (`sigmar-one`) | homebrew | `font-sigmar-one` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Signika (`signika`) | homebrew | `font-signika` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
@@ -1333,6 +1556,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Sofia Sans Condensed (`sofia-sans-condensed`) | homebrew | `font-sofia-sans-condensed` (package): 35 before the floor, 15 after, credit 1 | censored, 15 |
 | Sofia Sans Extra Condensed (`sofia-sans-extra-condensed`) | homebrew | `font-sofia-sans-extra-condensed` (package): 31 before the floor, 11 after, credit 1 | censored, 11 |
 | Sofia Sans Semi Condensed (`sofia-sans-semi-condensed`) | homebrew | `font-sofia-sans-semi-condensed` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
+| Solitreo (`solitreo`) | homebrew | `font-solitreo` (package): 13 before the floor, 0 after, credit 1 | censored, 0 |
 | Solway (`solway`) | homebrew | `font-solway` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | Sometype Mono (`sometype-mono`) | homebrew | `font-sometype-mono` (package): 101 before the floor, 81 after, credit 1 | observed, 81 |
 | Sono (`sono`) | homebrew | `font-sono` (package): 42 before the floor, 22 after, credit 1 | censored, 22 |
@@ -1359,6 +1583,8 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Spline Sans Mono (`spline-sans-mono`) | homebrew | `font-spline-sans-mono` (package): 89 before the floor, 69 after, credit 1 | observed, 69 |
 | Squada One (`squada-one`) | homebrew | `font-squada-one` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Square Peg (`square-peg`) | homebrew | `font-square-peg` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
+| Sriracha (`sriracha`) | homebrew | `font-sriracha` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
+| Srisakdi (`srisakdi`) | homebrew | `font-srisakdi` (package): 14 before the floor, 0 after, credit 1 | censored, 0 |
 | Staatliches (`staatliches`) | homebrew | `font-staatliches` (package): 35 before the floor, 15 after, credit 1 | censored, 15 |
 | Stack Sans Headline (`stack-sans-headline`) | homebrew | `font-stack-sans-headline` (package): 56.31 before the floor, 36.31 after, credit 1 | censored, 36.31 |
 | Stack Sans Notch (`stack-sans-notch`) | homebrew | `font-stack-sans-notch` (package): 43.45 before the floor, 23.45 after, credit 1 | censored, 23.45 |
@@ -1377,9 +1603,12 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Strong (`strong`) | homebrew | `font-strong` (package): 11 before the floor, 0 after, credit 1 | censored, 0 |
 | Style Script (`style-script`) | homebrew | `font-style-script` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
 | Sue Ellen Francisco (`sue-ellen-francisco`) | homebrew | `font-sue-ellen-francisco` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
+| Suez One (`suez-one`) | homebrew | `font-suez-one` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
 | Sulphur Point (`sulphur-point`) | homebrew | `font-sulphur-point` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
+| Sumana (`sumana`) | homebrew | `font-sumana` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
 | Sunshiney (`sunshiney`) | homebrew | `font-sunshiney` (package): 703 before the floor, 683 after, credit 1 | observed, 683 |
 | Supermercado One (`supermercado-one`) | homebrew | `font-supermercado-one` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
+| Sura (`sura`) | homebrew | `font-sura` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | SUSE (`suse`) | homebrew | `font-suse` (package): 56 before the floor, 36 after, credit 1 | censored, 36 |
 | SUSE Mono (`suse-mono`) | homebrew | `font-suse-mono` (package): 93 before the floor, 73 after, credit 1 | observed, 73 |
 | Swanky and Moo Moo (`swanky-and-moo-moo`) | homebrew | `font-swanky-and-moo-moo` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
@@ -1389,12 +1618,15 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Syne Tactile (`syne-tactile`) | homebrew | `font-syne-tactile` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
 | Tac One (`tac-one`) | homebrew | `font-tac-one` (package): 14 before the floor, 0 after, credit 1 | censored, 0 |
 | Tagesschrift (`tagesschrift`) | homebrew | `font-tagesschrift` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
+| Tai Heritage Pro (`tai-heritage-pro`) | homebrew | `font-tai-heritage-pro` (package): 11 before the floor, 0 after, credit 1 | censored, 0 |
 | Tangerine (`tangerine`) | homebrew | `font-tangerine` (package): 45 before the floor, 25 after, credit 1 | censored, 25 |
 | Tapestry (`tapestry`) | homebrew | `font-tapestry` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
 | TASA Explorer (`tasa-explorer`) | homebrew | `font-tasa-explorer` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | TASA Orbiter (`tasa-orbiter`) | homebrew | `font-tasa-orbiter` (package): 31 before the floor, 11 after, credit 1 | censored, 11 |
 | Tauri (`tauri`) | homebrew | `font-tauri` (package): 79 before the floor, 59 after, credit 1 | censored, 59 |
+| Taviraj (`taviraj`) | homebrew | `font-taviraj` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | Teachers (`teachers`) | homebrew | `font-teachers` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
+| Teko (`teko`) | homebrew | `font-teko` (package): 52 before the floor, 32 after, credit 1 | censored, 32 |
 | Tektur (`tektur`) | homebrew | `font-tektur` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | Telex (`telex`) | homebrew | `font-telex` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
 | Tenderness (`tenderness`) | homebrew | `font-tenderness` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
@@ -1411,21 +1643,33 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Text Me One (`text-me-one`) | homebrew | `font-text-me-one` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Texturina (`texturina`) | homebrew | `font-texturina` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
 | Thabit (`thabit`) | homebrew | `font-thabit` (package): 12 before the floor, 0 after, credit 1 | censored, 0 |
+| Thasadith (`thasadith`) | homebrew | `font-thasadith` (package): 14 before the floor, 0 after, credit 1 | censored, 0 |
 | The Girl Next Door (`the-girl-next-door`) | homebrew | `font-the-girl-next-door` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | The Nautigal (`the-nautigal`) | homebrew | `font-the-nautigal` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
 | Tienne (`tienne`) | homebrew | `font-tienne` (package): 12 before the floor, 0 after, credit 1 | censored, 0 |
 | TikTok Sans (`tiktok-sans`) | homebrew | `font-tiktok-sans` (package): 72 before the floor, 52 after, credit 1 | censored, 52 |
+| Tillana (`tillana`) | homebrew | `font-tillana` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Tilt Neon (`tilt-neon`) | homebrew | `font-tilt-neon` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Tilt Prism (`tilt-prism`) | homebrew | `font-tilt-prism` (package): 13 before the floor, 0 after, credit 1 | censored, 0 |
 | Tilt Warp (`tilt-warp`) | homebrew | `font-tilt-warp` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Tinos (`tinos`) | homebrew | `font-tinos` (package): 131 before the floor, 111 after, credit 1; `font-tinos-nerd-font` (package): 2,041 before the floor, 0 after, credit 1 | observed, 111 |
 | Tiny5 (`tiny5`) | homebrew | `font-tiny5` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
 | Tiny5 Duo (`tiny5-duo`) | homebrew | `font-tiny5-duo` (package): 52.14 before the floor, 32.14 after, credit 1 | too_new, no value |
+| Tiro Bangla (`tiro-bangla`) | homebrew | `font-tiro-bangla` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
+| Tiro Devanagari Hindi (`tiro-devanagari-hindi`) | homebrew | `font-tiro-devanagari-hindi` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
+| Tiro Devanagari Marathi (`tiro-devanagari-marathi`) | homebrew | `font-tiro-devanagari-marathi` (package): 12 before the floor, 0 after, credit 1 | censored, 0 |
+| Tiro Devanagari Sanskrit (`tiro-devanagari-sanskrit`) | homebrew | `font-tiro-devanagari-sanskrit` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
+| Tiro Gurmukhi (`tiro-gurmukhi`) | homebrew | `font-tiro-gurmukhi` (package): 14 before the floor, 0 after, credit 1 | censored, 0 |
+| Tiro Kannada (`tiro-kannada`) | homebrew | `font-tiro-kannada` (package): 8 before the floor, 0 after, credit 1 | censored, 0 |
+| Tiro Tamil (`tiro-tamil`) | homebrew | `font-tiro-tamil` (package): 13 before the floor, 0 after, credit 1 | censored, 0 |
+| Tiro Telugu (`tiro-telugu`) | homebrew | `font-tiro-telugu` (package): 14 before the floor, 0 after, credit 1 | censored, 0 |
+| Tirra (`tirra`) | homebrew | `font-tirra` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Titan One (`titan-one`) | homebrew | `font-titan-one` (package): 30 before the floor, 10 after, credit 1 | censored, 10 |
 | Titillium Web (`titillium-web`) | homebrew | `font-titillium-web` (package): 76 before the floor, 56 after, credit 1 | censored, 56 |
 | Tomorrow (`tomorrow`) | homebrew | `font-tomorrow` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
 | Tourney (`tourney`) | homebrew | `font-tourney` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
 | Trade Winds (`trade-winds`) | homebrew | `font-trade-winds` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
+| Trirong (`trirong`) | homebrew | `font-trirong` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | Trispace (`trispace`) | homebrew | `font-trispace` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
 | Trocchi (`trocchi`) | homebrew | `font-trocchi` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
 | Trochut (`trochut`) | homebrew | `font-trochut` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
@@ -1458,7 +1702,9 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Varela Round (`varela-round`) | homebrew | `font-varela-round` (package): 59 before the floor, 39 after, credit 1 | censored, 39 |
 | Varta (`varta`) | homebrew | `font-varta` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Vast Shadow (`vast-shadow`) | homebrew | `font-vast-shadow` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
+| Vazirmatn (`vazirmatn`) | homebrew | `font-vazirmatn` (package): 288 before the floor, 268 after, credit 1 | observed, 268 |
 | Vend Sans (`vend-sans`) | homebrew | `font-vend-sans` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
+| Vesper Libre (`vesper-libre`) | homebrew | `font-vesper-libre` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
 | Viaoda Libre (`viaoda-libre`) | homebrew | `font-viaoda-libre` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
 | Vibur (`vibur`) | homebrew | `font-vibur` (package): 14 before the floor, 0 after, credit 1 | censored, 0 |
 | Victor Mono (`victor-mono`) | homebrew | `font-victor-mono` (package): 2,040 before the floor, 2,020 after, credit 1; `font-victor-mono-nerd-font` (package): 4,150 before the floor, 2,017 after, credit 1 | observed, 4,037 |
@@ -1491,8 +1737,11 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Work Sans (`work-sans`) | homebrew | `font-work-sans` (package): 464 before the floor, 444 after, credit 1 | observed, 444 |
 | Workbench (`workbench`) | homebrew | `font-workbench` (package): 37 before the floor, 17 after, credit 1 | censored, 17 |
 | Xanh Mono (`xanh-mono`) | homebrew | `font-xanh-mono` (package): 46 before the floor, 26 after, credit 1 | censored, 26 |
+| Yaldevi (`yaldevi`) | homebrew | `font-yaldevi` (package): 14 before the floor, 0 after, credit 1 | censored, 0 |
 | Yaldevi Colombo (`yaldevi-colombo`) | homebrew | `font-yaldevi-colombo` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
 | Yanone Kaffeesatz (`yanone-kaffeesatz`) | homebrew | `font-yanone-kaffeesatz` (package): 46 before the floor, 26 after, credit 1 | censored, 26 |
+| Yantramanav (`yantramanav`) | homebrew | `font-yantramanav` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
+| Yatra One (`yatra-one`) | homebrew | `font-yatra-one` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
 | Yellowtail (`yellowtail`) | homebrew | `font-yellowtail` (package): 42 before the floor, 22 after, credit 1 | censored, 22 |
 | Yeseva One (`yeseva-one`) | homebrew | `font-yeseva-one` (package): 41 before the floor, 21 after, credit 1 | censored, 21 |
 | Yesteryear (`yesteryear`) | homebrew | `font-yesteryear` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
@@ -1587,20 +1836,20 @@ Credited builds and bundles, and keys a key-level floor changed.
 
 | Source | Data date | Observed | Censored | Too new | Merged into parent | Flagged | Abstaining in most chosen |
 |---|---|---|---|---|---|---|---|
-| almanac | 2025-07-01 | 42 | 1415 | 76 | 22 | 0 | 0 |
-| arch | 2026-08-31 | 1 | 0 | 0 | 0 | 0 | 1 |
-| debian | 2026-09-25 | 1 | 0 | 0 | 0 | 0 | 1 |
-| ecosystems | 2026-09-26 | 234 | 1163 | 0 | 0 | 14 | 0 |
-| fot | 2026-09-23 | 157 | 1389 | 9 | 0 | 0 | 0 |
-| github | 2026-09-26 | 66 | 0 | 0 | 0 | 14 | 0 |
-| google | 2026-09-26 | 1326 | 0 | 4 | 0 | 0 | 0 |
-| homebrew | 2026-09-26 | 262 | 1165 | 10 | 0 | 6 | 0 |
-| jsdelivr | 2026-09-25 | 675 | 752 | 0 | 0 | 0 | 0 |
+| almanac | 2025-07-01 | 46 | 1583 | 78 | 22 | 0 | 0 |
+| arch | 2026-08-31 | 37 | 1 | 0 | 0 | 25 | 7 |
+| debian | 2026-09-25 | 18 | 5 | 0 | 0 | 18 | 12 |
+| ecosystems | 2026-09-26 | 264 | 1306 | 0 | 0 | 15 | 0 |
+| fot | 2026-09-23 | 172 | 1547 | 10 | 0 | 0 | 0 |
+| github | 2026-09-26 | 67 | 0 | 0 | 0 | 14 | 0 |
+| google | 2026-09-26 | 1503 | 0 | 4 | 0 | 0 | 0 |
+| homebrew | 2026-09-26 | 279 | 1325 | 11 | 0 | 7 | 0 |
+| jsdelivr | 2026-09-25 | 784 | 816 | 0 | 0 | 0 | 0 |
 | nerd | 2026-09-26 | 60 | 6 | 2 | 0 | 13 | 0 |
-| npm_expo | 2026-09-24 | 221 | 1105 | 4 | 0 | 0 | 0 |
-| npm_fontsource | 2026-09-24 | 541 | 852 | 4 | 0 | 0 | 0 |
+| npm_expo | 2026-09-24 | 248 | 1255 | 4 | 0 | 0 | 0 |
+| npm_fontsource | 2026-09-24 | 610 | 956 | 4 | 0 | 0 | 0 |
 
-Too new (under the exposure minimum): adwaita-sans (almanac), akt (almanac), alan-sans (almanac), alien-block (almanac), amarna (almanac), annotation-mono (almanac), asap-sharp (almanac), asimovian (almanac), bbh-bartle (almanac), bbh-bogle (almanac), bbh-hegarty (almanac), bbh-sans-bartle (almanac), bbh-sans-bogle (almanac), bbh-sans-hegarty (almanac), betania-patmos (almanac), betania-patmos-gdl (almanac), betania-patmos-in (almanac), betania-patmos-in-gdl (almanac), caacupe-one (almanac), cause (almanac), clarity-city (almanac), cossette-texte (almanac), cossette-titre (almanac), datatype (almanac), elms-sans (almanac), finlandica-headline (almanac), finlandica-text (almanac), geist-pixel (almanac), geom (almanac), geomini (almanac), iosevka-aile (almanac), iosevka-charon (almanac), iosevka-charon-mono (almanac), iosevka-curly (almanac), iosevka-curly-slab (almanac), iosevka-etoile (almanac), isometra (almanac), kedebideri (almanac), libre-caslon-condensed (almanac), manufacturing-consent (almanac), miranda-sans (almanac), momo-signature (almanac), momo-trust-display (almanac), momo-trust-sans (almanac), montenegrin-gothic-one (almanac), mozilla-headline (almanac), mozilla-text (almanac), nata-sans (almanac), nebula-sans (almanac), nevermind (almanac), playwrite-nz-basic (almanac), playwrite-nz-basic-guides (almanac), pliant (almanac), saira-stencil (almanac), savate (almanac), science-gothic (almanac), scoutie-sans (almanac), sekuya (almanac), sn-pro (almanac), stack-sans-headline (almanac), stack-sans-notch (almanac), stack-sans-text (almanac), story-script (almanac), strichpunkt-sans (almanac), suse-mono (almanac), tasa-explorer (almanac), tasa-orbiter (almanac), tiny5-duo (almanac), valley-sans (almanac), vend-sans (almanac), xmind (almanac), yuyu (almanac), yuyu-short (almanac), zalando-sans (almanac), zalando-sans-expanded (almanac), zalando-sans-semiexpanded (almanac), annotation-mono (fot), asap-sharp (fot), clarity-city (fot), isometra (fot), libre-caslon-condensed (fot), nebula-sans (fot), tiny5-duo (fot), valley-sans (fot), xmind (fot), asap-sharp (google), caacupe-one (google), scoutie-sans (google), valley-sans (google), asap-sharp (homebrew), clarity-city (homebrew), google-sans (homebrew), google-sans-flex (homebrew), isometra (homebrew), libre-caslon-condensed (homebrew), nebula-sans (homebrew), nevermind (homebrew), tiny5-duo (homebrew), valley-sans (homebrew), annotation-mono (nerd), google-sans-code (nerd), asap-sharp (npm_expo), caacupe-one (npm_expo), scoutie-sans (npm_expo), valley-sans (npm_expo), asap-sharp (npm_fontsource), caacupe-one (npm_fontsource), scoutie-sans (npm_fontsource), valley-sans (npm_fontsource).
+Too new (under the exposure minimum): adwaita-sans (almanac), akt (almanac), alan-sans (almanac), alien-block (almanac), alyamama (almanac), amarna (almanac), annotation-mono (almanac), asap-sharp (almanac), asimovian (almanac), bbh-bartle (almanac), bbh-bogle (almanac), bbh-hegarty (almanac), betania-patmos (almanac), betania-patmos-gdl (almanac), betania-patmos-in (almanac), betania-patmos-in-gdl (almanac), caacupe-one (almanac), cause (almanac), clarity-city (almanac), cossette-texte (almanac), cossette-titre (almanac), datatype (almanac), elms-sans (almanac), estedad (almanac), finlandica-headline (almanac), finlandica-text (almanac), geist-pixel (almanac), geom (almanac), geomini (almanac), hibur-mono (almanac), iosevka-aile (almanac), iosevka-charon (almanac), iosevka-charon-mono (almanac), iosevka-curly (almanac), iosevka-curly-slab (almanac), iosevka-etoile (almanac), isometra (almanac), kedebideri (almanac), kripa (almanac), libre-caslon-condensed (almanac), manufacturing-consent (almanac), miranda-sans (almanac), momo-signature (almanac), momo-trust-display (almanac), momo-trust-sans (almanac), montenegrin-gothic-one (almanac), mozilla-headline (almanac), mozilla-text (almanac), nata-sans (almanac), nebula-sans (almanac), nevermind (almanac), parastoo (almanac), playwrite-nz-basic (almanac), playwrite-nz-basic-guides (almanac), pliant (almanac), savate (almanac), science-gothic (almanac), scoutie-sans (almanac), sekuya (almanac), sn-pro (almanac), stack-sans-headline (almanac), stack-sans-notch (almanac), stack-sans-text (almanac), story-script (almanac), strichpunkt-sans (almanac), suse-mono (almanac), tasa-explorer (almanac), tasa-orbiter (almanac), tiny5-duo (almanac), tirra (almanac), valley-sans (almanac), vend-sans (almanac), xmind (almanac), yuyu (almanac), yuyu-short (almanac), zalando-sans (almanac), zalando-sans-expanded (almanac), zalando-sans-semiexpanded (almanac), annotation-mono (fot), asap-sharp (fot), clarity-city (fot), isometra (fot), kripa (fot), libre-caslon-condensed (fot), nebula-sans (fot), tiny5-duo (fot), valley-sans (fot), xmind (fot), asap-sharp (google), caacupe-one (google), scoutie-sans (google), valley-sans (google), asap-sharp (homebrew), clarity-city (homebrew), google-sans (homebrew), google-sans-flex (homebrew), isometra (homebrew), kripa (homebrew), libre-caslon-condensed (homebrew), nebula-sans (homebrew), nevermind (homebrew), tiny5-duo (homebrew), valley-sans (homebrew), annotation-mono (nerd), google-sans-code (nerd), asap-sharp (npm_expo), caacupe-one (npm_expo), scoutie-sans (npm_expo), valley-sans (npm_expo), asap-sharp (npm_fontsource), caacupe-one (npm_fontsource), scoutie-sans (npm_fontsource), valley-sans (npm_fontsource).
 
 ## Rising: recent windows
 

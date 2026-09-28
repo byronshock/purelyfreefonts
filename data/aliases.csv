@@ -68,6 +68,7 @@ AnonymicePro Nerd Font Propo,font-name,anonymous-pro,build,propo,nerd,2026-09-26
 AnonymicePro NF,font-name,anonymous-pro,build,nf,nerd,2026-09-26,auto:nerd_unpatched
 AnonymicePro NFM,font-name,anonymous-pro,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 AnonymicePro NFP,font-name,anonymous-pro,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
+Aptos Display,font-name,aptos,distinct,rejected,name_tables,2026-09-26,owner:2026-09-26
 Arimo Nerd Font,font-name,arimo,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 Arimo Nerd Font Mono,font-name,arimo,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 Arimo Nerd Font Propo,font-name,arimo,build,propo,nerd,2026-09-26,auto:nerd_unpatched
@@ -90,9 +91,21 @@ AurulentSansM NF,font-name,aurulent-sans-mono,build,nf,nerd,2026-09-26,auto:nerd
 AurulentSansM NFM,font-name,aurulent-sans-mono,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 AurulentSansM NFP,font-name,aurulent-sans-mono,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
 azeret,gf-dir,azeret-mono,rename,,gf_history,2026-09-26,auto:gf_history_rename
+@fontsource/bbh-sans-bartle,npm,bbh-bartle,package,,fontsource_legacy,2026-09-26,owner:2026-09-26
+font-bbh-sans-bartle,brew-cask,bbh-bartle,rename,https://github.com/google/fonts/commit/8b81217e56b08597989bfbd1029db1dd11266885,hand,2026-09-26,owner:2026-09-26
+bbh-sans-bartle,fs-id,bbh-bartle,rename,,fontsource_legacy,2026-09-26,owner:2026-09-26
 bbhsansbartle,gf-dir,bbh-bartle,rename,,gf_history,2026-09-26,auto:gf_history_rename
+BBH Sans Bartle,gf-family,bbh-bartle,rename,,gf_history,2026-09-26,owner:2026-09-26
+@fontsource/bbh-sans-bogle,npm,bbh-bogle,package,,fontsource_legacy,2026-09-26,owner:2026-09-26
+font-bbh-sans-bogle,brew-cask,bbh-bogle,rename,https://github.com/google/fonts/commit/9373da8165f91709ccaf5ba7d5862f97dea155c1,hand,2026-09-26,owner:2026-09-26
+bbh-sans-bogle,fs-id,bbh-bogle,rename,,fontsource_legacy,2026-09-26,owner:2026-09-26
 bbhsansbogle,gf-dir,bbh-bogle,rename,,gf_history,2026-09-26,auto:gf_history_rename
+BBH Sans Bogle,gf-family,bbh-bogle,rename,,gf_history,2026-09-26,owner:2026-09-26
+@fontsource/bbh-sans-hegarty,npm,bbh-hegarty,package,,fontsource_legacy,2026-09-26,owner:2026-09-26
+font-bbh-sans-hegarty,brew-cask,bbh-hegarty,rename,https://github.com/google/fonts/commit/152d80b0c60c7f8dfc132cb6955540533601fd7a,hand,2026-09-26,owner:2026-09-26
+bbh-sans-hegarty,fs-id,bbh-hegarty,rename,,fontsource_legacy,2026-09-26,owner:2026-09-26
 bbhsanshegarty,gf-dir,bbh-hegarty,rename,,gf_history,2026-09-26,auto:gf_history_rename
+BBH Sans Hegarty,gf-family,bbh-hegarty,rename,,gf_history,2026-09-26,owner:2026-09-26
 BigBlueTerm,font-name,bigblue-terminal,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 BigBlueTerm Nerd Font,font-name,bigblue-terminal,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 BigBlueTerm Nerd Font Mono,font-name,bigblue-terminal,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
@@ -112,6 +125,7 @@ calcom/sans/calsans-static-essentials.zip,gh-asset,cal-sans,package,,github_repo
 calcom/sans/calsans-static-full.zip,gh-asset,cal-sans,package,,github_repos,2026-09-26,owner:2026-09-26
 calcom/sans/CalSansVF.ttf,gh-asset,cal-sans,package,,github_repos,2026-09-26,owner:2026-09-26
 calcom/sans/CalSansVF.woff2,gh-asset,cal-sans,package,,github_repos,2026-09-26,owner:2026-09-26
+ttf-cascadia-code-nerd,arch-pkg,cascadia-code,build,nerd,distro+oldlib,2026-09-26,owner:2026-09-26
 font-cascadia-code-nf,brew-cask,cascadia-code,build,nf,hand,2026-09-26,owner:2026-09-26
 font-cascadia-code-pl,brew-cask,cascadia-code,build,powerline,hand,2026-09-26,owner:2026-09-26
 CaskaydiaCove,font-name,cascadia-code,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
@@ -123,7 +137,10 @@ CaskaydiaCove NFM,font-name,cascadia-code,build,nfm,nerd,2026-09-26,auto:nerd_un
 CaskaydiaCove NFP,font-name,cascadia-code,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
 microsoft/cascadia-code/CascadiaPL.ttf,gh-asset,cascadia-code,build,powerline,github_repos,2026-09-26,owner:2026-09-26
 microsoft/cascadia-code/CascadiaCode.zip,gh-asset,cascadia-code,bundle,,github_repos,2026-09-26,owner:2026-09-26
+ttf-cascadia-mono-nerd,arch-pkg,cascadia-code,distinct,rejected,oldlib,2026-09-26,owner:2026-09-26
+CascadiaMono,nerd-folder,cascadia-code,distinct,rejected,oldlib,2026-09-26,owner:2026-09-26
 microsoft/cascadia-code/Cascadia.ttf,gh-asset,cascadia-code,package,,github_repos,2026-09-26,owner:2026-09-26
+ttf-cascadia-mono-nerd,arch-pkg,cascadia-mono,build,nerd,distro,2026-09-26,owner:2026-09-26
 font-cascadia-mono-nf,brew-cask,cascadia-mono,build,nf,hand,2026-09-26,owner:2026-09-26
 font-cascadia-mono-pl,brew-cask,cascadia-mono,build,powerline,hand,2026-09-26,owner:2026-09-26
 CaskaydiaMono,font-name,cascadia-mono,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
@@ -224,13 +241,28 @@ DaddyTimeMono NF,font-name,daddytimemono,build,nf,nerd,2026-09-26,auto:nerd_unpa
 DaddyTimeMono NFM,font-name,daddytimemono,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 DaddyTimeMono NFP,font-name,daddytimemono,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
 ttf-dejavu-nerd,arch-pkg,dejavu,distinct,rejected,distro,2026-09-26,owner:2026-09-26
+ttf-dejavu,arch-pkg,dejavu-math-tex-gyre,bundle,4,hand,2026-09-26,owner:2026-09-26
+font-dejavu,brew-cask,dejavu-math-tex-gyre,bundle,4,hand,2026-09-26,owner:2026-09-26
+fonts-dejavu,deb-pkg,dejavu-math-tex-gyre,bundle,4,hand,2026-09-26,owner:2026-09-26
+fonts-dejavu-extra,deb-pkg,dejavu-math-tex-gyre,bundle,3,hand,2026-09-26,owner:2026-09-26
+fonts-dejavu,deb-src,dejavu-math-tex-gyre,bundle,4,hand,2026-09-26,owner:2026-09-26
 dejavu-fonts/dejavu-fonts/dejavu-fonts-ttf.tar.bz2,gh-asset,dejavu-math-tex-gyre,bundle,,github_repos,2026-09-26,owner:2026-09-26
 dejavu-fonts/dejavu-fonts/dejavu-fonts-ttf.zip,gh-asset,dejavu-math-tex-gyre,bundle,,github_repos,2026-09-26,owner:2026-09-26
+fonts-dejavu-mono,deb-pkg,dejavu-mono,distinct,rejected,distro,2026-09-26,owner:2026-09-26
+DejaVu Sans Condensed,font-name,dejavu-sans,build,static,name_tables,2026-09-26,owner:2026-09-26
+ttf-dejavu,arch-pkg,dejavu-sans,bundle,4,hand,2026-09-26,owner:2026-09-26
+font-dejavu,brew-cask,dejavu-sans,bundle,4,hand,2026-09-26,owner:2026-09-26
+fonts-dejavu,deb-pkg,dejavu-sans,bundle,4,hand,2026-09-26,owner:2026-09-26
+fonts-dejavu-core,deb-pkg,dejavu-sans,bundle,3,hand,2026-09-26,owner:2026-09-26
+fonts-dejavu-extra,deb-pkg,dejavu-sans,bundle,3,hand,2026-09-26,owner:2026-09-26
+fonts-dejavu-web,deb-pkg,dejavu-sans,bundle,2,hand,2026-09-26,owner:2026-09-26
+fonts-dejavu,deb-src,dejavu-sans,bundle,4,hand,2026-09-26,owner:2026-09-26
 dejavu-fonts/dejavu-fonts/dejavu-fonts-ttf.tar.bz2,gh-asset,dejavu-sans,bundle,,github_repos,2026-09-26,owner:2026-09-26
 dejavu-fonts/dejavu-fonts/dejavu-fonts-ttf.zip,gh-asset,dejavu-sans,bundle,,github_repos,2026-09-26,owner:2026-09-26
 dejavu-fonts/dejavu-fonts/dejavu-lgc-fonts-ttf.tar.bz2,gh-asset,dejavu-sans,bundle,lgc,github_repos,2026-09-26,owner:2026-09-26
 dejavu-fonts/dejavu-fonts/dejavu-lgc-fonts-ttf.zip,gh-asset,dejavu-sans,bundle,lgc,github_repos,2026-09-26,owner:2026-09-26
 dejavu-fonts/dejavu-fonts/dejavu-sans-ttf.zip,gh-asset,dejavu-sans,package,,github_repos,2026-09-26,owner:2026-09-26
+nerd-fonts-dejavu-complete,arch-pkg,dejavu-sans-mono,build,nerd,hand,2026-09-26,owner:2026-09-26
 ttf-dejavu-nerd,arch-pkg,dejavu-sans-mono,build,nerd,oldlib,2026-09-26,owner:2026-09-26
 DejaVuSansM,font-name,dejavu-sans-mono,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 DejaVuSansM Nerd Font,font-name,dejavu-sans-mono,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
@@ -239,10 +271,24 @@ DejaVuSansM Nerd Font Propo,font-name,dejavu-sans-mono,build,propo,nerd,2026-09-
 DejaVuSansM NF,font-name,dejavu-sans-mono,build,nf,nerd,2026-09-26,auto:nerd_unpatched
 DejaVuSansM NFM,font-name,dejavu-sans-mono,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 DejaVuSansM NFP,font-name,dejavu-sans-mono,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
+ttf-dejavu,arch-pkg,dejavu-sans-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
+font-dejavu,brew-cask,dejavu-sans-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
+fonts-dejavu,deb-pkg,dejavu-sans-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
+fonts-dejavu-core,deb-pkg,dejavu-sans-mono,bundle,3,hand,2026-09-26,owner:2026-09-26
+fonts-dejavu,deb-src,dejavu-sans-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
 dejavu-fonts/dejavu-fonts/dejavu-fonts-ttf.tar.bz2,gh-asset,dejavu-sans-mono,bundle,,github_repos,2026-09-26,owner:2026-09-26
 dejavu-fonts/dejavu-fonts/dejavu-fonts-ttf.zip,gh-asset,dejavu-sans-mono,bundle,,github_repos,2026-09-26,owner:2026-09-26
 dejavu-fonts/dejavu-fonts/dejavu-lgc-fonts-ttf.tar.bz2,gh-asset,dejavu-sans-mono,bundle,lgc,github_repos,2026-09-26,owner:2026-09-26
 dejavu-fonts/dejavu-fonts/dejavu-lgc-fonts-ttf.zip,gh-asset,dejavu-sans-mono,bundle,lgc,github_repos,2026-09-26,owner:2026-09-26
+fonts-dejavu-mono,deb-pkg,dejavu-sans-mono,package,,oldlib,2026-09-26,owner:2026-09-26
+DejaVu Serif Condensed,font-name,dejavu-serif,build,static,name_tables,2026-09-26,owner:2026-09-26
+ttf-dejavu,arch-pkg,dejavu-serif,bundle,4,hand,2026-09-26,owner:2026-09-26
+font-dejavu,brew-cask,dejavu-serif,bundle,4,hand,2026-09-26,owner:2026-09-26
+fonts-dejavu,deb-pkg,dejavu-serif,bundle,4,hand,2026-09-26,owner:2026-09-26
+fonts-dejavu-core,deb-pkg,dejavu-serif,bundle,3,hand,2026-09-26,owner:2026-09-26
+fonts-dejavu-extra,deb-pkg,dejavu-serif,bundle,3,hand,2026-09-26,owner:2026-09-26
+fonts-dejavu-web,deb-pkg,dejavu-serif,bundle,2,hand,2026-09-26,owner:2026-09-26
+fonts-dejavu,deb-src,dejavu-serif,bundle,4,hand,2026-09-26,owner:2026-09-26
 dejavu-fonts/dejavu-fonts/dejavu-fonts-ttf.tar.bz2,gh-asset,dejavu-serif,bundle,,github_repos,2026-09-26,owner:2026-09-26
 dejavu-fonts/dejavu-fonts/dejavu-fonts-ttf.zip,gh-asset,dejavu-serif,bundle,,github_repos,2026-09-26,owner:2026-09-26
 dejavu-fonts/dejavu-fonts/dejavu-lgc-fonts-ttf.tar.bz2,gh-asset,dejavu-serif,bundle,lgc,github_repos,2026-09-26,owner:2026-09-26
@@ -254,6 +300,8 @@ DepartureMono NF,font-name,departure-mono,build,nf,nerd,2026-09-26,auto:nerd_unp
 DepartureMono NFM,font-name,departure-mono,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 DepartureMono NFP,font-name,departure-mono,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
 rektdeckard/departure-mono/DepartureMono.zip,gh-asset,departure-mono,package,,github_repos,2026-09-26,owner:2026-09-26
+DMCAsansserifv1000dev1i,font-name,dmca-sans-serif-10-0-dev1,distinct,rejected,name_tables,2026-09-26,owner:2026-09-26
+otf-droid-nerd,arch-pkg,droid-sans-mono,build,nerd,distro+oldlib,2026-09-26,owner:2026-09-26
 DroidSansM,font-name,droid-sans-mono,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 DroidSansM Nerd Font,font-name,droid-sans-mono,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 DroidSansM Nerd Font Mono,font-name,droid-sans-mono,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
@@ -261,6 +309,7 @@ DroidSansM Nerd Font Propo,font-name,droid-sans-mono,build,propo,nerd,2026-09-26
 DroidSansM NF,font-name,droid-sans-mono,build,nf,nerd,2026-09-26,auto:nerd_unpatched
 DroidSansM NFM,font-name,droid-sans-mono,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 DroidSansM NFP,font-name,droid-sans-mono,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
+ttf-droid,arch-pkg,droid-sans-mono,bundle,15,hand,2026-09-26,owner:2026-09-26
 eduvicwantarrows,gf-dir,edu-au-vic-wa-nt-arrows,rename,,gf_history,2026-09-26,auto:gf_history_rename
 Edu VIC WA NT Arrows,gf-family,edu-au-vic-wa-nt-arrows,rename,,gf_history,2026-09-26,auto:gf_history_rename
 @fontsource/edu-vic-wa-nt-hand,npm,edu-au-vic-wa-nt-hand,package,,fontsource_legacy,2026-09-26,owner:2026-09-26
@@ -296,6 +345,7 @@ belluzj/fantasque-sans/FantasqueSansMono-Normal.zip,gh-asset,fantasque-sans-mono
 belluzj/fantasque-sans/FantasqueSansMono_ss01.zip,gh-asset,fantasque-sans-mono,package,,github_repos,2026-09-26,owner:2026-09-26
 Finlandica,gf-family,finlandica-headline,related,split,gf_history,2026-09-26,owner:2026-09-26
 Finlandica,gf-family,finlandica-text,related,split,gf_history,2026-09-26,owner:2026-09-26
+ttf-firacode-nerd,arch-pkg,fira-code,build,nerd,distro+oldlib,2026-09-26,owner:2026-09-26
 FiraCode Nerd Font,font-name,fira-code,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 FiraCode Nerd Font Mono,font-name,fira-code,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 FiraCode Nerd Font Propo,font-name,fira-code,build,propo,nerd,2026-09-26,auto:nerd_unpatched
@@ -303,16 +353,26 @@ FiraCode NF,font-name,fira-code,build,nf,nerd,2026-09-26,auto:nerd_unpatched
 FiraCode NFM,font-name,fira-code,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 FiraCode NFP,font-name,fira-code,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
 Fira Sans,font-name,fira-code,distinct,sibling,rule:sibling,2026-09-26,auto:sibling
+ttf-fira-code,arch-pkg,fira-code,package,,distro+oldlib,2026-09-26,owner:2026-09-26
+fonts-firacode,deb-pkg,fira-code,package,,distro+oldlib,2026-09-26,owner:2026-09-26
+fonts-firacode,deb-src,fira-code,package,,distro,2026-09-26,owner:2026-09-26
 tonsky/FiraCode/FiraCode.zip,gh-asset,fira-code,package,,github_repos,2026-09-26,owner:2026-09-26
 tonsky/FiraCode/FiraCode-Regular.otf,gh-asset,fira-code,package,,github_repos,2026-09-26,owner:2026-09-26
 tonsky/FiraCode/FiraCode-Regular.ttf,gh-asset,fira-code,package,,github_repos,2026-09-26,owner:2026-09-26
+otf-firamono-nerd,arch-pkg,fira-mono,build,nerd,distro+oldlib,2026-09-26,owner:2026-09-26
 FiraMono Nerd Font,font-name,fira-mono,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 FiraMono Nerd Font Mono,font-name,fira-mono,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 FiraMono Nerd Font Propo,font-name,fira-mono,build,propo,nerd,2026-09-26,auto:nerd_unpatched
 FiraMono NF,font-name,fira-mono,build,nf,nerd,2026-09-26,auto:nerd_unpatched
 FiraMono NFM,font-name,fira-mono,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 FiraMono NFP,font-name,fira-mono,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
+otf-fira-mono,arch-pkg,fira-mono,package,,distro+oldlib,2026-09-26,owner:2026-09-26
+ttf-fira-mono,arch-pkg,fira-mono,package,,distro+oldlib,2026-09-26,owner:2026-09-26
+otf-fira-sans,arch-pkg,fira-sans,bundle,3,hand,2026-09-26,owner:2026-09-26
+ttf-fira-sans,arch-pkg,fira-sans,bundle,3,hand,2026-09-26,owner:2026-09-26
 Fira Code,font-name,fira-sans,distinct,sibling,rule:sibling,2026-09-26,auto:sibling
+otf-fira-sans,arch-pkg,fira-sans-condensed,bundle,3,hand,2026-09-26,owner:2026-09-26
+ttf-fira-sans,arch-pkg,fira-sans-condensed,bundle,3,hand,2026-09-26,owner:2026-09-26
 vercel/geist-font/geist-font.zip,gh-asset,geist,bundle,,github_repos,2026-09-26,owner:2026-09-26
 vercel/geist-font/Geist.Sans.zip,gh-asset,geist,package,,github_repos,2026-09-26,owner:2026-09-26
 vercel/geist-font/Geist.zip,gh-asset,geist,package,,github_repos,2026-09-26,owner:2026-09-26
@@ -433,6 +493,7 @@ iA-Writer,nerd-folder,ia-writer-quattro,bundle,3,hand,2026-09-26,owner:2026-09-2
 3270 NFP,font-name,ibm-3270,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
 rbanffy/3270font/3270_fonts.zip,gh-asset,ibm-3270,package,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/ibm-plex-math.zip,gh-asset,ibm-plex-math,package,,github_repos,2026-09-26,owner:2026-09-26
+ttf-ibmplex-mono-nerd,arch-pkg,ibm-plex-mono,build,nerd,distro+oldlib,2026-09-26,owner:2026-09-26
 BlexMono,font-name,ibm-plex-mono,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 BlexMono Nerd Font,font-name,ibm-plex-mono,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 BlexMono Nerd Font Mono,font-name,ibm-plex-mono,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
@@ -440,54 +501,95 @@ BlexMono Nerd Font Propo,font-name,ibm-plex-mono,build,propo,nerd,2026-09-26,aut
 BlexMono NF,font-name,ibm-plex-mono,build,nf,nerd,2026-09-26,auto:nerd_unpatched
 BlexMono NFM,font-name,ibm-plex-mono,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 BlexMono NFP,font-name,ibm-plex-mono,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
+ttf-ibm-plex,arch-pkg,ibm-plex-mono,bundle,12,hand,2026-09-26,owner:2026-09-26
+font-ibm-plex,brew-cask,ibm-plex-mono,bundle,11,hand,2026-09-26,owner:2026-09-26
+fonts-ibm-plex,deb-pkg,ibm-plex-mono,bundle,9,hand,2026-09-26,owner:2026-09-26
+fonts-ibm-plex,deb-src,ibm-plex-mono,bundle,9,hand,2026-09-26,owner:2026-09-26
 IBM/plex/OpenType.zip,gh-asset,ibm-plex-mono,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/TrueType.zip,gh-asset,ibm-plex-mono,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/Web.zip,gh-asset,ibm-plex-mono,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/IBM-Plex-Mono.zip,gh-asset,ibm-plex-mono,package,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/plex-mono-variable.zip,gh-asset,ibm-plex-mono,package,,github_repos,2026-09-26,owner:2026-09-26
+ttf-ibm-plex,arch-pkg,ibm-plex-sans,bundle,12,hand,2026-09-26,owner:2026-09-26
+font-ibm-plex,brew-cask,ibm-plex-sans,bundle,11,hand,2026-09-26,owner:2026-09-26
+fonts-ibm-plex,deb-pkg,ibm-plex-sans,bundle,9,hand,2026-09-26,owner:2026-09-26
+fonts-ibm-plex,deb-src,ibm-plex-sans,bundle,9,hand,2026-09-26,owner:2026-09-26
 IBM/plex/OpenType.zip,gh-asset,ibm-plex-sans,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/TrueType.zip,gh-asset,ibm-plex-sans,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/Web.zip,gh-asset,ibm-plex-sans,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/IBM-Plex-Sans.zip,gh-asset,ibm-plex-sans,package,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/IBM-Plex-Sans-Var.zip,gh-asset,ibm-plex-sans,package,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/plex-sans-variable.zip,gh-asset,ibm-plex-sans,package,,github_repos,2026-09-26,owner:2026-09-26
+ttf-ibm-plex,arch-pkg,ibm-plex-sans-arabic,bundle,12,hand,2026-09-26,owner:2026-09-26
+font-ibm-plex,brew-cask,ibm-plex-sans-arabic,bundle,11,hand,2026-09-26,owner:2026-09-26
+fonts-ibm-plex,deb-pkg,ibm-plex-sans-arabic,bundle,9,hand,2026-09-26,owner:2026-09-26
+fonts-ibm-plex,deb-src,ibm-plex-sans-arabic,bundle,9,hand,2026-09-26,owner:2026-09-26
 IBM/plex/OpenType.zip,gh-asset,ibm-plex-sans-arabic,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/TrueType.zip,gh-asset,ibm-plex-sans-arabic,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/Web.zip,gh-asset,ibm-plex-sans-arabic,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/IBM-Plex-Sans-Arabic.zip,gh-asset,ibm-plex-sans-arabic,package,,github_repos,2026-09-26,owner:2026-09-26
+ttf-ibm-plex,arch-pkg,ibm-plex-sans-condensed,bundle,12,hand,2026-09-26,owner:2026-09-26
+font-ibm-plex,brew-cask,ibm-plex-sans-condensed,bundle,11,hand,2026-09-26,owner:2026-09-26
+fonts-ibm-plex,deb-pkg,ibm-plex-sans-condensed,bundle,9,hand,2026-09-26,owner:2026-09-26
+fonts-ibm-plex,deb-src,ibm-plex-sans-condensed,bundle,9,hand,2026-09-26,owner:2026-09-26
 IBM/plex/OpenType.zip,gh-asset,ibm-plex-sans-condensed,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/TrueType.zip,gh-asset,ibm-plex-sans-condensed,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/Web.zip,gh-asset,ibm-plex-sans-condensed,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/IBM-Plex-Sans-Condensed.zip,gh-asset,ibm-plex-sans-condensed,package,,github_repos,2026-09-26,owner:2026-09-26
+ttf-ibm-plex,arch-pkg,ibm-plex-sans-devanagari,bundle,12,hand,2026-09-26,owner:2026-09-26
+font-ibm-plex,brew-cask,ibm-plex-sans-devanagari,bundle,11,hand,2026-09-26,owner:2026-09-26
+fonts-ibm-plex,deb-pkg,ibm-plex-sans-devanagari,bundle,9,hand,2026-09-26,owner:2026-09-26
+fonts-ibm-plex,deb-src,ibm-plex-sans-devanagari,bundle,9,hand,2026-09-26,owner:2026-09-26
 IBM/plex/OpenType.zip,gh-asset,ibm-plex-sans-devanagari,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/TrueType.zip,gh-asset,ibm-plex-sans-devanagari,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/Web.zip,gh-asset,ibm-plex-sans-devanagari,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/IBM-Plex-Sans-Devanagari.zip,gh-asset,ibm-plex-sans-devanagari,package,,github_repos,2026-09-26,owner:2026-09-26
+ttf-ibm-plex,arch-pkg,ibm-plex-sans-hebrew,bundle,12,hand,2026-09-26,owner:2026-09-26
+font-ibm-plex,brew-cask,ibm-plex-sans-hebrew,bundle,11,hand,2026-09-26,owner:2026-09-26
+fonts-ibm-plex,deb-pkg,ibm-plex-sans-hebrew,bundle,9,hand,2026-09-26,owner:2026-09-26
+fonts-ibm-plex,deb-src,ibm-plex-sans-hebrew,bundle,9,hand,2026-09-26,owner:2026-09-26
 IBM/plex/OpenType.zip,gh-asset,ibm-plex-sans-hebrew,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/TrueType.zip,gh-asset,ibm-plex-sans-hebrew,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/Web.zip,gh-asset,ibm-plex-sans-hebrew,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/IBM-Plex-Sans-Hebrew.zip,gh-asset,ibm-plex-sans-hebrew,package,,github_repos,2026-09-26,owner:2026-09-26
+ttf-ibm-plex,arch-pkg,ibm-plex-sans-jp,bundle,12,hand,2026-09-26,owner:2026-09-26
+font-ibm-plex,brew-cask,ibm-plex-sans-jp,bundle,11,hand,2026-09-26,owner:2026-09-26
 IBM/plex/OpenType.zip,gh-asset,ibm-plex-sans-jp,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/TrueType.zip,gh-asset,ibm-plex-sans-jp,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/Web.zip,gh-asset,ibm-plex-sans-jp,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/IBM-Plex-Sans-JP.zip,gh-asset,ibm-plex-sans-jp,package,,github_repos,2026-09-26,owner:2026-09-26
+ttf-ibm-plex,arch-pkg,ibm-plex-sans-kr,bundle,12,hand,2026-09-26,owner:2026-09-26
+font-ibm-plex,brew-cask,ibm-plex-sans-kr,bundle,11,hand,2026-09-26,owner:2026-09-26
 IBM/plex/OpenType.zip,gh-asset,ibm-plex-sans-kr,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/TrueType.zip,gh-asset,ibm-plex-sans-kr,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/Web.zip,gh-asset,ibm-plex-sans-kr,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/IBM-Plex-Sans-KR.zip,gh-asset,ibm-plex-sans-kr,package,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/ibm-plex-sans-sc.zip,gh-asset,ibm-plex-sans-sc,package,,github_repos,2026-09-26,owner:2026-09-26
+ttf-ibm-plex,arch-pkg,ibm-plex-sans-tc,bundle,12,hand,2026-09-26,owner:2026-09-26
 IBM/plex/OpenType.zip,gh-asset,ibm-plex-sans-tc,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/TrueType.zip,gh-asset,ibm-plex-sans-tc,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/Web.zip,gh-asset,ibm-plex-sans-tc,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/ibm-plex-sans-tc.zip,gh-asset,ibm-plex-sans-tc,package,,github_repos,2026-09-26,owner:2026-09-26
+ttf-ibm-plex,arch-pkg,ibm-plex-sans-thai,bundle,12,hand,2026-09-26,owner:2026-09-26
+font-ibm-plex,brew-cask,ibm-plex-sans-thai,bundle,11,hand,2026-09-26,owner:2026-09-26
+fonts-ibm-plex,deb-pkg,ibm-plex-sans-thai,bundle,9,hand,2026-09-26,owner:2026-09-26
+fonts-ibm-plex,deb-src,ibm-plex-sans-thai,bundle,9,hand,2026-09-26,owner:2026-09-26
 IBM/plex/OpenType.zip,gh-asset,ibm-plex-sans-thai,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/TrueType.zip,gh-asset,ibm-plex-sans-thai,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/Web.zip,gh-asset,ibm-plex-sans-thai,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/IBM-Plex-Sans-Thai.zip,gh-asset,ibm-plex-sans-thai,package,,github_repos,2026-09-26,owner:2026-09-26
+ttf-ibm-plex,arch-pkg,ibm-plex-sans-thai-looped,bundle,12,hand,2026-09-26,owner:2026-09-26
+font-ibm-plex,brew-cask,ibm-plex-sans-thai-looped,bundle,11,hand,2026-09-26,owner:2026-09-26
+fonts-ibm-plex,deb-pkg,ibm-plex-sans-thai-looped,bundle,9,hand,2026-09-26,owner:2026-09-26
+fonts-ibm-plex,deb-src,ibm-plex-sans-thai-looped,bundle,9,hand,2026-09-26,owner:2026-09-26
 IBM/plex/OpenType.zip,gh-asset,ibm-plex-sans-thai-looped,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/TrueType.zip,gh-asset,ibm-plex-sans-thai-looped,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/Web.zip,gh-asset,ibm-plex-sans-thai-looped,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/IBM-Plex-Sans-Thai-Looped.zip,gh-asset,ibm-plex-sans-thai-looped,package,,github_repos,2026-09-26,owner:2026-09-26
+ttf-ibm-plex,arch-pkg,ibm-plex-serif,bundle,12,hand,2026-09-26,owner:2026-09-26
+font-ibm-plex,brew-cask,ibm-plex-serif,bundle,11,hand,2026-09-26,owner:2026-09-26
+fonts-ibm-plex,deb-pkg,ibm-plex-serif,bundle,9,hand,2026-09-26,owner:2026-09-26
+fonts-ibm-plex,deb-src,ibm-plex-serif,bundle,9,hand,2026-09-26,owner:2026-09-26
 IBM/plex/OpenType.zip,gh-asset,ibm-plex-serif,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/TrueType.zip,gh-asset,ibm-plex-serif,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/Web.zip,gh-asset,ibm-plex-serif,bundle,,github_repos,2026-09-26,owner:2026-09-26
@@ -499,12 +601,18 @@ Inconsolata Nerd Font Propo,font-name,inconsolata,build,propo,nerd,2026-09-26,au
 Inconsolata NF,font-name,inconsolata,build,nf,nerd,2026-09-26,auto:nerd_unpatched
 Inconsolata NFM,font-name,inconsolata,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 Inconsolata NFP,font-name,inconsolata,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
+ttf-inconsolata-go-nerd,arch-pkg,inconsolata,distinct,rejected,oldlib,2026-09-26,owner:2026-09-26
+ttf-inconsolata-lgc-nerd,arch-pkg,inconsolata,distinct,rejected,oldlib,2026-09-26,owner:2026-09-26
+InconsolataGo,nerd-folder,inconsolata,distinct,rejected,oldlib,2026-09-26,owner:2026-09-26
+InconsolataLGC,nerd-folder,inconsolata,distinct,rejected,oldlib,2026-09-26,owner:2026-09-26
+ttf-inconsolata-lgc-nerd,arch-pkg,inconsolata-lgc,build,nerd,distro,2026-09-26,owner:2026-09-26
 Inconsolata LGC Nerd Font,font-name,inconsolata-lgc,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 Inconsolata LGC Nerd Font Mono,font-name,inconsolata-lgc,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 Inconsolata LGC Nerd Font Propo,font-name,inconsolata-lgc,build,propo,nerd,2026-09-26,auto:nerd_unpatched
 Inconsolata LGC NF,font-name,inconsolata-lgc,build,nf,nerd,2026-09-26,auto:nerd_unpatched
 Inconsolata LGC NFM,font-name,inconsolata-lgc,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 Inconsolata LGC NFP,font-name,inconsolata-lgc,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
+ttf-inconsolata-go-nerd,arch-pkg,inconsolatago,build,nerd,distro,2026-09-26,owner:2026-09-26
 InconsolataGo Nerd Font,font-name,inconsolatago,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 InconsolataGo Nerd Font Mono,font-name,inconsolatago,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 InconsolataGo Nerd Font Propo,font-name,inconsolatago,build,propo,nerd,2026-09-26,auto:nerd_unpatched
@@ -1052,6 +1160,7 @@ league-mono-wide,fs-id,league-mono,build,,fontsource_legacy,2026-09-26,owner:202
 @fontsource/league-mono-extended,npm,league-mono,build,,fontsource_legacy,2026-09-26,owner:2026-09-26
 @fontsource/league-mono-narrow,npm,league-mono,build,,fontsource_legacy,2026-09-26,owner:2026-09-26
 @fontsource/league-mono-wide,npm,league-mono,build,,fontsource_legacy,2026-09-26,owner:2026-09-26
+League Mono Thin Condensed,font-name,league-mono,distinct,rejected,name_tables,2026-09-26,owner:2026-09-26
 theleagueof/league-mono/LeagueMono.tar.xz,gh-asset,league-mono,package,,github_repos,2026-09-26,owner:2026-09-26
 theleagueof/league-mono/LeagueMono.zip,gh-asset,league-mono,package,,github_repos,2026-09-26,owner:2026-09-26
 theleagueof/league-spartan/LeagueSpartan.tar.xz,gh-asset,league-spartan,package,,github_repos,2026-09-26,owner:2026-09-26
@@ -1069,54 +1178,77 @@ LiterationMono Nerd Font Propo,font-name,liberation-mono,build,propo,nerd,2026-0
 LiterationMono NF,font-name,liberation-mono,build,nf,nerd,2026-09-26,auto:nerd_unpatched
 LiterationMono NFM,font-name,liberation-mono,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 LiterationMono NFP,font-name,liberation-mono,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
-font-libertinus,brew-cask,libertinus-keyboard,bundle,6,hand,2026-09-26,owner:2026-09-26
-Libertinus,font-name,libertinus-keyboard,bundle,6,hand,2026-09-26,owner:2026-09-26
+otf-libertinus,arch-pkg,libertinus-keyboard,bundle,7,hand,2026-09-26,owner:2026-09-26
+font-libertinus,brew-cask,libertinus-keyboard,bundle,7,hand,2026-09-26,owner:2026-09-26
+fonts-libertinus,deb-pkg,libertinus-keyboard,bundle,7,hand,2026-09-26,owner:2026-09-26
+fonts-libertinus,deb-src,libertinus-keyboard,bundle,7,hand,2026-09-26,owner:2026-09-26
+Libertinus,font-name,libertinus-keyboard,bundle,7,hand,2026-09-26,owner:2026-09-26
 alerque/libertinus/libertine.zip,gh-asset,libertinus-keyboard,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus.tar.xz,gh-asset,libertinus-keyboard,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus.tar.zst,gh-asset,libertinus-keyboard,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus.zip,gh-asset,libertinus-keyboard,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus-r0-g53ece34.tar.xz,gh-asset,libertinus-keyboard,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus-r0-g53ece34.zip,gh-asset,libertinus-keyboard,bundle,,github_repos,2026-09-26,owner:2026-09-26
-font-libertinus,brew-cask,libertinus-math,bundle,6,hand,2026-09-26,owner:2026-09-26
-Libertinus,font-name,libertinus-math,bundle,6,hand,2026-09-26,owner:2026-09-26
+otf-libertinus,arch-pkg,libertinus-math,bundle,7,hand,2026-09-26,owner:2026-09-26
+font-libertinus,brew-cask,libertinus-math,bundle,7,hand,2026-09-26,owner:2026-09-26
+fonts-libertinus,deb-pkg,libertinus-math,bundle,7,hand,2026-09-26,owner:2026-09-26
+fonts-libertinus,deb-src,libertinus-math,bundle,7,hand,2026-09-26,owner:2026-09-26
+Libertinus,font-name,libertinus-math,bundle,7,hand,2026-09-26,owner:2026-09-26
 alerque/libertinus/libertine.zip,gh-asset,libertinus-math,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus.tar.xz,gh-asset,libertinus-math,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus.tar.zst,gh-asset,libertinus-math,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus.zip,gh-asset,libertinus-math,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus-r0-g53ece34.tar.xz,gh-asset,libertinus-math,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus-r0-g53ece34.zip,gh-asset,libertinus-math,bundle,,github_repos,2026-09-26,owner:2026-09-26
-font-libertinus,brew-cask,libertinus-mono,bundle,6,hand,2026-09-26,owner:2026-09-26
-Libertinus,font-name,libertinus-mono,bundle,6,hand,2026-09-26,owner:2026-09-26
+otf-libertinus,arch-pkg,libertinus-mono,bundle,7,hand,2026-09-26,owner:2026-09-26
+font-libertinus,brew-cask,libertinus-mono,bundle,7,hand,2026-09-26,owner:2026-09-26
+fonts-libertinus,deb-pkg,libertinus-mono,bundle,7,hand,2026-09-26,owner:2026-09-26
+fonts-libertinus,deb-src,libertinus-mono,bundle,7,hand,2026-09-26,owner:2026-09-26
+Libertinus,font-name,libertinus-mono,bundle,7,hand,2026-09-26,owner:2026-09-26
 alerque/libertinus/libertine.zip,gh-asset,libertinus-mono,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus.tar.xz,gh-asset,libertinus-mono,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus.tar.zst,gh-asset,libertinus-mono,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus.zip,gh-asset,libertinus-mono,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus-r0-g53ece34.tar.xz,gh-asset,libertinus-mono,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus-r0-g53ece34.zip,gh-asset,libertinus-mono,bundle,,github_repos,2026-09-26,owner:2026-09-26
-font-libertinus,brew-cask,libertinus-sans,bundle,6,hand,2026-09-26,owner:2026-09-26
-Libertinus,font-name,libertinus-sans,bundle,6,hand,2026-09-26,owner:2026-09-26
+otf-libertinus,arch-pkg,libertinus-sans,bundle,7,hand,2026-09-26,owner:2026-09-26
+font-libertinus,brew-cask,libertinus-sans,bundle,7,hand,2026-09-26,owner:2026-09-26
+fonts-libertinus,deb-pkg,libertinus-sans,bundle,7,hand,2026-09-26,owner:2026-09-26
+fonts-libertinus,deb-src,libertinus-sans,bundle,7,hand,2026-09-26,owner:2026-09-26
+Libertinus,font-name,libertinus-sans,bundle,7,hand,2026-09-26,owner:2026-09-26
 alerque/libertinus/libertine.zip,gh-asset,libertinus-sans,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus.tar.xz,gh-asset,libertinus-sans,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus.tar.zst,gh-asset,libertinus-sans,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus.zip,gh-asset,libertinus-sans,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus-r0-g53ece34.tar.xz,gh-asset,libertinus-sans,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus-r0-g53ece34.zip,gh-asset,libertinus-sans,bundle,,github_repos,2026-09-26,owner:2026-09-26
-font-libertinus,brew-cask,libertinus-serif,bundle,6,hand,2026-09-26,owner:2026-09-26
-Libertinus,font-name,libertinus-serif,bundle,6,hand,2026-09-26,owner:2026-09-26
+otf-libertinus,arch-pkg,libertinus-serif,bundle,7,hand,2026-09-26,owner:2026-09-26
+font-libertinus,brew-cask,libertinus-serif,bundle,7,hand,2026-09-26,owner:2026-09-26
+fonts-libertinus,deb-pkg,libertinus-serif,bundle,7,hand,2026-09-26,owner:2026-09-26
+fonts-libertinus,deb-src,libertinus-serif,bundle,7,hand,2026-09-26,owner:2026-09-26
+Libertinus,font-name,libertinus-serif,bundle,7,hand,2026-09-26,owner:2026-09-26
 alerque/libertinus/libertine.zip,gh-asset,libertinus-serif,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus.tar.xz,gh-asset,libertinus-serif,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus.tar.zst,gh-asset,libertinus-serif,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus.zip,gh-asset,libertinus-serif,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus-r0-g53ece34.tar.xz,gh-asset,libertinus-serif,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus-r0-g53ece34.zip,gh-asset,libertinus-serif,bundle,,github_repos,2026-09-26,owner:2026-09-26
-font-libertinus,brew-cask,libertinus-serif-display,bundle,6,hand,2026-09-26,owner:2026-09-26
-Libertinus,font-name,libertinus-serif-display,bundle,6,hand,2026-09-26,owner:2026-09-26
+otf-libertinus,arch-pkg,libertinus-serif-display,bundle,7,hand,2026-09-26,owner:2026-09-26
+font-libertinus,brew-cask,libertinus-serif-display,bundle,7,hand,2026-09-26,owner:2026-09-26
+fonts-libertinus,deb-pkg,libertinus-serif-display,bundle,7,hand,2026-09-26,owner:2026-09-26
+fonts-libertinus,deb-src,libertinus-serif-display,bundle,7,hand,2026-09-26,owner:2026-09-26
+Libertinus,font-name,libertinus-serif-display,bundle,7,hand,2026-09-26,owner:2026-09-26
 alerque/libertinus/libertine.zip,gh-asset,libertinus-serif-display,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus.tar.xz,gh-asset,libertinus-serif-display,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus.tar.zst,gh-asset,libertinus-serif-display,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus.zip,gh-asset,libertinus-serif-display,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus-r0-g53ece34.tar.xz,gh-asset,libertinus-serif-display,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus-r0-g53ece34.zip,gh-asset,libertinus-serif-display,bundle,,github_repos,2026-09-26,owner:2026-09-26
+otf-libertinus,arch-pkg,libertinus-serif-initials,bundle,7,hand,2026-09-26,owner:2026-09-26
+font-libertinus,brew-cask,libertinus-serif-initials,bundle,7,hand,2026-09-26,owner:2026-09-26
+fonts-libertinus,deb-pkg,libertinus-serif-initials,bundle,7,hand,2026-09-26,owner:2026-09-26
+fonts-libertinus,deb-src,libertinus-serif-initials,bundle,7,hand,2026-09-26,owner:2026-09-26
+Libertinus,font-name,libertinus-serif-initials,bundle,7,hand,2026-09-26,owner:2026-09-26
 alerque/libertinus/libertine.zip,gh-asset,libertinus-serif-initials,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus.tar.xz,gh-asset,libertinus-serif-initials,bundle,,github_repos,2026-09-26,owner:2026-09-26
 alerque/libertinus/Libertinus.tar.zst,gh-asset,libertinus-serif-initials,bundle,,github_repos,2026-09-26,owner:2026-09-26
@@ -1131,7 +1263,9 @@ Lilex NFM,font-name,lilex,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 Lilex NFP,font-name,lilex,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
 mishamyrt/Lilex/Lilex.zip,gh-asset,lilex,package,,github_repos,2026-09-26,owner:2026-09-26
 mishamyrt/Lilex/LilexDuo.zip,gh-asset,lilex,package,,github_repos,2026-09-26,owner:2026-09-26
+ttf-mplus-nerd,arch-pkg,m-plus-1,bundle,4,hand,2026-09-26,owner:2026-09-26
 font-m+-nerd-font,brew-cask,m-plus-1,bundle,4,hand,2026-09-26,owner:2026-09-26
+font-mplus-nerd-font,brew-cask,m-plus-1,bundle,4,hand,2026-09-26,owner:2026-09-26
 M+,font-name,m-plus-1,bundle,4,hand,2026-09-26,owner:2026-09-26
 M+ Nerd Font,font-name,m-plus-1,bundle,4,hand,2026-09-26,owner:2026-09-26
 M+ Nerd Font Mono,font-name,m-plus-1,bundle,4,hand,2026-09-26,owner:2026-09-26
@@ -1141,7 +1275,9 @@ M+ NFM,font-name,m-plus-1,bundle,4,hand,2026-09-26,owner:2026-09-26
 M+ NFP,font-name,m-plus-1,bundle,4,hand,2026-09-26,owner:2026-09-26
 MPlus,font-name,m-plus-1,bundle,4,hand,2026-09-26,owner:2026-09-26
 MPlus,nerd-folder,m-plus-1,bundle,4,hand,2026-09-26,owner:2026-09-26
+ttf-mplus-nerd,arch-pkg,m-plus-1-code,bundle,4,hand,2026-09-26,owner:2026-09-26
 font-m+-nerd-font,brew-cask,m-plus-1-code,bundle,4,hand,2026-09-26,owner:2026-09-26
+font-mplus-nerd-font,brew-cask,m-plus-1-code,bundle,4,hand,2026-09-26,owner:2026-09-26
 M+,font-name,m-plus-1-code,bundle,4,hand,2026-09-26,owner:2026-09-26
 M+ Nerd Font,font-name,m-plus-1-code,bundle,4,hand,2026-09-26,owner:2026-09-26
 M+ Nerd Font Mono,font-name,m-plus-1-code,bundle,4,hand,2026-09-26,owner:2026-09-26
@@ -1151,7 +1287,9 @@ M+ NFM,font-name,m-plus-1-code,bundle,4,hand,2026-09-26,owner:2026-09-26
 M+ NFP,font-name,m-plus-1-code,bundle,4,hand,2026-09-26,owner:2026-09-26
 MPlus,font-name,m-plus-1-code,bundle,4,hand,2026-09-26,owner:2026-09-26
 MPlus,nerd-folder,m-plus-1-code,bundle,4,hand,2026-09-26,owner:2026-09-26
+ttf-mplus-nerd,arch-pkg,m-plus-2,bundle,4,hand,2026-09-26,owner:2026-09-26
 font-m+-nerd-font,brew-cask,m-plus-2,bundle,4,hand,2026-09-26,owner:2026-09-26
+font-mplus-nerd-font,brew-cask,m-plus-2,bundle,4,hand,2026-09-26,owner:2026-09-26
 M+,font-name,m-plus-2,bundle,4,hand,2026-09-26,owner:2026-09-26
 M+ Nerd Font,font-name,m-plus-2,bundle,4,hand,2026-09-26,owner:2026-09-26
 M+ Nerd Font Mono,font-name,m-plus-2,bundle,4,hand,2026-09-26,owner:2026-09-26
@@ -1161,7 +1299,9 @@ M+ NFM,font-name,m-plus-2,bundle,4,hand,2026-09-26,owner:2026-09-26
 M+ NFP,font-name,m-plus-2,bundle,4,hand,2026-09-26,owner:2026-09-26
 MPlus,font-name,m-plus-2,bundle,4,hand,2026-09-26,owner:2026-09-26
 MPlus,nerd-folder,m-plus-2,bundle,4,hand,2026-09-26,owner:2026-09-26
+ttf-mplus-nerd,arch-pkg,m-plus-code-latin,bundle,4,hand,2026-09-26,owner:2026-09-26
 font-m+-nerd-font,brew-cask,m-plus-code-latin,bundle,4,hand,2026-09-26,owner:2026-09-26
+font-mplus-nerd-font,brew-cask,m-plus-code-latin,bundle,4,hand,2026-09-26,owner:2026-09-26
 M+,font-name,m-plus-code-latin,bundle,4,hand,2026-09-26,owner:2026-09-26
 M+ Nerd Font,font-name,m-plus-code-latin,bundle,4,hand,2026-09-26,owner:2026-09-26
 M+ Nerd Font Mono,font-name,m-plus-code-latin,bundle,4,hand,2026-09-26,owner:2026-09-26
@@ -1250,12 +1390,16 @@ subframe7536/maple-font/MapleMono-TTF.zip,gh-asset,maple-mono,package,,github_re
 subframe7536/maple-font/MapleMono-TTF-AutoHint.zip,gh-asset,maple-mono,package,,github_repos,2026-09-26,owner:2026-09-26
 subframe7536/maple-font/MapleMono-Variable.zip,gh-asset,maple-mono,package,,github_repos,2026-09-26,owner:2026-09-26
 subframe7536/maple-font/MapleMono-Woff2.zip,gh-asset,maple-mono,package,,github_repos,2026-09-26,owner:2026-09-26
+Martian Mono Cn,font-name,martian-mono,build,static,name_tables,2026-09-26,owner:2026-09-26
 MartianMono Nerd Font,font-name,martian-mono,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 MartianMono Nerd Font Mono,font-name,martian-mono,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 MartianMono Nerd Font Propo,font-name,martian-mono,build,propo,nerd,2026-09-26,auto:nerd_unpatched
 MartianMono NF,font-name,martian-mono,build,nf,nerd,2026-09-26,auto:nerd_unpatched
 MartianMono NFM,font-name,martian-mono,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 MartianMono NFP,font-name,martian-mono,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
+Martian Mono Nr,font-name,martian-mono,build,static,name_tables,2026-09-26,owner:2026-09-26
+Martian Mono Std,font-name,martian-mono,build,static,name_tables,2026-09-26,owner:2026-09-26
+Martian Mono sWd,font-name,martian-mono,build,static,name_tables,2026-09-26,owner:2026-09-26
 evilmartians/mono/martian-mono-otf.zip,gh-asset,martian-mono,package,,github_repos,2026-09-26,owner:2026-09-26
 evilmartians/mono/martian-mono-ttf.zip,gh-asset,martian-mono,package,,github_repos,2026-09-26,owner:2026-09-26
 evilmartians/mono/martian-mono-variable.zip,gh-asset,martian-mono,package,,github_repos,2026-09-26,owner:2026-09-26
@@ -1273,7 +1417,10 @@ github/mona-sans/mona-sans-complete.zip,gh-asset,mona-sans,package,,github_repos
 github/mona-sans/mona-sans-static.zip,gh-asset,mona-sans,package,,github_repos,2026-09-26,owner:2026-09-26
 github/mona-sans/mona-sans-variable.zip,gh-asset,mona-sans,package,,github_repos,2026-09-26,owner:2026-09-26
 github/mona-sans/mona-sans-webfonts.zip,gh-asset,mona-sans,package,,github_repos,2026-09-26,owner:2026-09-26
+otf-monaspace,arch-pkg,monaspace-argon,bundle,5,hand,2026-09-26,owner:2026-09-26
+otf-monaspace-nerd,arch-pkg,monaspace-argon,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspace,brew-cask,monaspace-argon,bundle,5,hand,2026-09-26,owner:2026-09-26
+font-monaspace-nerd-font,brew-cask,monaspace-argon,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspace-nf,brew-cask,monaspace-argon,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspace-var,brew-cask,monaspace-argon,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspice-nerd-font,brew-cask,monaspace-argon,bundle,5,hand,2026-09-26,owner:2026-09-26
@@ -1294,7 +1441,10 @@ githubnext/monaspace/monaspace-webfont-nerdfonts.zip,gh-asset,monaspace-argon,bu
 githubnext/monaspace/monaspace-webfont-static.zip,gh-asset,monaspace-argon,bundle,,github_repos,2026-09-26,owner:2026-09-26
 githubnext/monaspace/monaspace-webfont-variable.zip,gh-asset,monaspace-argon,bundle,,github_repos,2026-09-26,owner:2026-09-26
 Monaspace,nerd-folder,monaspace-argon,bundle,5,hand,2026-09-26,owner:2026-09-26
+otf-monaspace,arch-pkg,monaspace-krypton,bundle,5,hand,2026-09-26,owner:2026-09-26
+otf-monaspace-nerd,arch-pkg,monaspace-krypton,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspace,brew-cask,monaspace-krypton,bundle,5,hand,2026-09-26,owner:2026-09-26
+font-monaspace-nerd-font,brew-cask,monaspace-krypton,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspace-nf,brew-cask,monaspace-krypton,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspace-var,brew-cask,monaspace-krypton,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspice-nerd-font,brew-cask,monaspace-krypton,bundle,5,hand,2026-09-26,owner:2026-09-26
@@ -1315,7 +1465,10 @@ githubnext/monaspace/monaspace-webfont-nerdfonts.zip,gh-asset,monaspace-krypton,
 githubnext/monaspace/monaspace-webfont-static.zip,gh-asset,monaspace-krypton,bundle,,github_repos,2026-09-26,owner:2026-09-26
 githubnext/monaspace/monaspace-webfont-variable.zip,gh-asset,monaspace-krypton,bundle,,github_repos,2026-09-26,owner:2026-09-26
 Monaspace,nerd-folder,monaspace-krypton,bundle,5,hand,2026-09-26,owner:2026-09-26
+otf-monaspace,arch-pkg,monaspace-neon,bundle,5,hand,2026-09-26,owner:2026-09-26
+otf-monaspace-nerd,arch-pkg,monaspace-neon,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspace,brew-cask,monaspace-neon,bundle,5,hand,2026-09-26,owner:2026-09-26
+font-monaspace-nerd-font,brew-cask,monaspace-neon,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspace-nf,brew-cask,monaspace-neon,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspace-var,brew-cask,monaspace-neon,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspice-nerd-font,brew-cask,monaspace-neon,bundle,5,hand,2026-09-26,owner:2026-09-26
@@ -1336,7 +1489,10 @@ githubnext/monaspace/monaspace-webfont-nerdfonts.zip,gh-asset,monaspace-neon,bun
 githubnext/monaspace/monaspace-webfont-static.zip,gh-asset,monaspace-neon,bundle,,github_repos,2026-09-26,owner:2026-09-26
 githubnext/monaspace/monaspace-webfont-variable.zip,gh-asset,monaspace-neon,bundle,,github_repos,2026-09-26,owner:2026-09-26
 Monaspace,nerd-folder,monaspace-neon,bundle,5,hand,2026-09-26,owner:2026-09-26
+otf-monaspace,arch-pkg,monaspace-radon,bundle,5,hand,2026-09-26,owner:2026-09-26
+otf-monaspace-nerd,arch-pkg,monaspace-radon,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspace,brew-cask,monaspace-radon,bundle,5,hand,2026-09-26,owner:2026-09-26
+font-monaspace-nerd-font,brew-cask,monaspace-radon,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspace-nf,brew-cask,monaspace-radon,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspace-var,brew-cask,monaspace-radon,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspice-nerd-font,brew-cask,monaspace-radon,bundle,5,hand,2026-09-26,owner:2026-09-26
@@ -1357,7 +1513,10 @@ githubnext/monaspace/monaspace-webfont-nerdfonts.zip,gh-asset,monaspace-radon,bu
 githubnext/monaspace/monaspace-webfont-static.zip,gh-asset,monaspace-radon,bundle,,github_repos,2026-09-26,owner:2026-09-26
 githubnext/monaspace/monaspace-webfont-variable.zip,gh-asset,monaspace-radon,bundle,,github_repos,2026-09-26,owner:2026-09-26
 Monaspace,nerd-folder,monaspace-radon,bundle,5,hand,2026-09-26,owner:2026-09-26
+otf-monaspace,arch-pkg,monaspace-xenon,bundle,5,hand,2026-09-26,owner:2026-09-26
+otf-monaspace-nerd,arch-pkg,monaspace-xenon,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspace,brew-cask,monaspace-xenon,bundle,5,hand,2026-09-26,owner:2026-09-26
+font-monaspace-nerd-font,brew-cask,monaspace-xenon,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspace-nf,brew-cask,monaspace-xenon,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspace-var,brew-cask,monaspace-xenon,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspice-nerd-font,brew-cask,monaspace-xenon,bundle,5,hand,2026-09-26,owner:2026-09-26
@@ -1379,6 +1538,8 @@ githubnext/monaspace/monaspace-webfont-static.zip,gh-asset,monaspace-xenon,bundl
 githubnext/monaspace/monaspace-webfont-variable.zip,gh-asset,monaspace-xenon,bundle,,github_repos,2026-09-26,owner:2026-09-26
 Monaspace,nerd-folder,monaspace-xenon,bundle,5,hand,2026-09-26,owner:2026-09-26
 ttf-monocraft-nerd,arch-pkg,monocraft,build,nerd,distro,2026-09-26,owner:2026-09-26
+font-monocraft-nerd-font,brew-cask,monocraft,build,nerd,hand,2026-09-26,owner:2026-09-26
+Monocraft with Nerd glyphs,font-name,monocraft,build,nerd,hand,2026-09-26,owner:2026-09-26
 IdreesInc/Monocraft/Monocraft-nerd-fonts-patched.ttc,gh-asset,monocraft,build,nerd,github_repos,2026-09-26,owner:2026-09-26
 IdreesInc/Monocraft/Monocraft-nerd-fonts-patched.ttf,gh-asset,monocraft,build,nerd,github_repos,2026-09-26,owner:2026-09-26
 IdreesInc/Monocraft/MinecraftMono.otf,gh-asset,monocraft,package,,github_repos,2026-09-26,owner:2026-09-26
@@ -1410,8 +1571,12 @@ Mononoki NFM,font-name,mononoki,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 Mononoki NFP,font-name,mononoki,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
 madmalik/mononoki/mononoki.zip,gh-asset,mononoki,package,,github_repos,2026-09-26,owner:2026-09-26
 madmalik/mononoki/mononoki_preview.zip,gh-asset,mononoki,package,,github_repos,2026-09-26,owner:2026-09-26
+Montserrat Subrayada,gf-family,montserrat-underline,rename,,gf_history,2026-09-26,owner:2026-09-26
 muli,gf-dir,mulish,rename,,gf_history,2026-09-26,auto:gf_history_rename
 Muli,gf-family,mulish,rename,,gf_history,2026-09-26,auto:gf_history_rename
+NewCMMath,font-name,newcomputermodernmath,distinct,rejected,name_tables,2026-09-26,owner:2026-09-26
+NewCMSansMath,font-name,newcomputermodernsansmath,distinct,rejected,name_tables,2026-09-26,owner:2026-09-26
+ttf-noto-nerd,arch-pkg,noto-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
 font-noto-nerd-font,brew-cask,noto-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
 Noto Nerd Font,font-name,noto-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
 Noto Nerd Font Mono,font-name,noto-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
@@ -1422,7 +1587,15 @@ Noto NFP,font-name,noto-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
 Noto,nerd-folder,noto-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
 font-noto-mono,brew-cask,noto-mono,package,,hand,2026-09-26,owner:2026-09-26
 fonts-noto-mono,deb-pkg,noto-mono,package,,distro,2026-09-26,owner:2026-09-26
+Noto Sans Condensed,font-name,noto-sans,build,static,name_tables,2026-09-26,owner:2026-09-26
+Noto Sans ExtraCondensed,font-name,noto-sans,build,static,name_tables,2026-09-26,owner:2026-09-26
+Noto Sans SemiCondensed,font-name,noto-sans,build,static,name_tables,2026-09-26,owner:2026-09-26
+noto-fonts,arch-pkg,noto-sans,bundle,226,hand,2026-09-26,owner:2026-09-26
+noto-fonts-extra,arch-pkg,noto-sans,bundle,84,hand,2026-09-26,owner:2026-09-26
+ttf-noto-nerd,arch-pkg,noto-sans,bundle,4,hand,2026-09-26,owner:2026-09-26
 font-noto-nerd-font,brew-cask,noto-sans,bundle,4,hand,2026-09-26,owner:2026-09-26
+fonts-noto-core,deb-pkg,noto-sans,bundle,190,hand,2026-09-26,owner:2026-09-26
+fonts-noto-extra,deb-pkg,noto-sans,bundle,67,hand,2026-09-26,owner:2026-09-26
 Noto Nerd Font,font-name,noto-sans,bundle,4,hand,2026-09-26,owner:2026-09-26
 Noto Nerd Font Mono,font-name,noto-sans,bundle,4,hand,2026-09-26,owner:2026-09-26
 Noto Nerd Font Propo,font-name,noto-sans,bundle,4,hand,2026-09-26,owner:2026-09-26
@@ -1431,8 +1604,24 @@ Noto NFM,font-name,noto-sans,bundle,4,hand,2026-09-26,owner:2026-09-26
 Noto NFP,font-name,noto-sans,bundle,4,hand,2026-09-26,owner:2026-09-26
 Noto,nerd-folder,noto-sans,bundle,4,hand,2026-09-26,owner:2026-09-26
 Noto Sans JP,font-name,noto-sans,distinct,sibling,rule:sibling,2026-09-26,auto:sibling
+noto-fonts-cjk,arch-pkg,noto-sans-cjk,bundle,2,hand,2026-09-26,owner:2026-09-26
+fonts-noto-cjk,deb-pkg,noto-sans-cjk,bundle,2,hand,2026-09-26,owner:2026-09-26
+fonts-noto-cjk-extra,deb-pkg,noto-sans-cjk,bundle,2,hand,2026-09-26,owner:2026-09-26
+fonts-noto-cjk,deb-src,noto-sans-cjk,bundle,2,hand,2026-09-26,owner:2026-09-26
+font-noto-sans-jp,brew-cask,noto-sans-cjk,distinct,rejected,oldlib,2026-09-26,owner:2026-09-26
+font-noto-sans-kr,brew-cask,noto-sans-cjk,distinct,rejected,oldlib,2026-09-26,owner:2026-09-26
+font-noto-sans-sc,brew-cask,noto-sans-cjk,distinct,rejected,oldlib,2026-09-26,owner:2026-09-26
+font-noto-sans-tc,brew-cask,noto-sans-cjk,distinct,rejected,oldlib,2026-09-26,owner:2026-09-26
+fonts-noto-core,deb-pkg,noto-sans-display,bundle,190,hand,2026-09-26,owner:2026-09-26
+fonts-noto-extra,deb-pkg,noto-sans-display,bundle,67,hand,2026-09-26,owner:2026-09-26
 Noto Sans,font-name,noto-sans-jp,distinct,,rule:sibling,2026-09-26,auto:sibling
+Noto Sans CJK JP,font-name,noto-sans-jp,distinct,rejected,oldlib,2026-09-26,owner:2026-09-26
+源ノ角ゴシック JP,font-name,noto-sans-jp,distinct,rejected,oldlib,2026-09-26,owner:2026-09-26
+noto-fonts,arch-pkg,noto-sans-mono,bundle,226,hand,2026-09-26,owner:2026-09-26
+noto-fonts-extra,arch-pkg,noto-sans-mono,bundle,84,hand,2026-09-26,owner:2026-09-26
+ttf-noto-nerd,arch-pkg,noto-sans-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
 font-noto-nerd-font,brew-cask,noto-sans-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
+fonts-noto-extra,deb-pkg,noto-sans-mono,bundle,67,hand,2026-09-26,owner:2026-09-26
 Noto Nerd Font,font-name,noto-sans-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
 Noto Nerd Font Mono,font-name,noto-sans-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
 Noto Nerd Font Propo,font-name,noto-sans-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
@@ -1441,7 +1630,12 @@ Noto NFM,font-name,noto-sans-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
 Noto NFP,font-name,noto-sans-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
 Noto,nerd-folder,noto-sans-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
 fonts-noto-mono,deb-pkg,noto-sans-mono,distinct,rejected,oldlib,2026-09-26,owner:2026-09-26
+noto-fonts,arch-pkg,noto-serif,bundle,226,hand,2026-09-26,owner:2026-09-26
+noto-fonts-extra,arch-pkg,noto-serif,bundle,84,hand,2026-09-26,owner:2026-09-26
+ttf-noto-nerd,arch-pkg,noto-serif,bundle,4,hand,2026-09-26,owner:2026-09-26
 font-noto-nerd-font,brew-cask,noto-serif,bundle,4,hand,2026-09-26,owner:2026-09-26
+fonts-noto-core,deb-pkg,noto-serif,bundle,190,hand,2026-09-26,owner:2026-09-26
+fonts-noto-extra,deb-pkg,noto-serif,bundle,67,hand,2026-09-26,owner:2026-09-26
 Noto Nerd Font,font-name,noto-serif,bundle,4,hand,2026-09-26,owner:2026-09-26
 Noto Nerd Font Mono,font-name,noto-serif,bundle,4,hand,2026-09-26,owner:2026-09-26
 Noto Nerd Font Propo,font-name,noto-serif,bundle,4,hand,2026-09-26,owner:2026-09-26
@@ -1449,15 +1643,28 @@ Noto NF,font-name,noto-serif,bundle,4,hand,2026-09-26,owner:2026-09-26
 Noto NFM,font-name,noto-serif,bundle,4,hand,2026-09-26,owner:2026-09-26
 Noto NFP,font-name,noto-serif,bundle,4,hand,2026-09-26,owner:2026-09-26
 Noto,nerd-folder,noto-serif,bundle,4,hand,2026-09-26,owner:2026-09-26
+noto-fonts-cjk,arch-pkg,noto-serif-cjk,bundle,2,hand,2026-09-26,owner:2026-09-26
+fonts-noto-cjk,deb-pkg,noto-serif-cjk,bundle,2,hand,2026-09-26,owner:2026-09-26
+fonts-noto-cjk-extra,deb-pkg,noto-serif-cjk,bundle,2,hand,2026-09-26,owner:2026-09-26
+fonts-noto-cjk,deb-src,noto-serif-cjk,bundle,2,hand,2026-09-26,owner:2026-09-26
+noto-fonts,arch-pkg,noto-serif-display,bundle,226,hand,2026-09-26,owner:2026-09-26
+noto-fonts-extra,arch-pkg,noto-serif-display,bundle,84,hand,2026-09-26,owner:2026-09-26
+fonts-noto-core,deb-pkg,noto-serif-display,bundle,190,hand,2026-09-26,owner:2026-09-26
+fonts-noto-extra,deb-pkg,noto-serif-display,bundle,67,hand,2026-09-26,owner:2026-09-26
 nuosu,gf-dir,nuosu-sil,rename,,gf_history,2026-09-26,auto:gf_history_rename
 Nuosu,gf-family,nuosu-sil,rename,,gf_history,2026-09-26,auto:gf_history_rename
 lauridskern/open-runde/OpenRunde.zip,gh-asset,open-runde,package,,github_repos,2026-09-26,owner:2026-09-26
+Open Sans Condensed,font-name,open-sans,build,static,name_tables,2026-09-26,owner:2026-09-26
 OpenDyslexic Nerd Font,font-name,opendyslexic,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 OpenDyslexic Nerd Font Mono,font-name,opendyslexic,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 OpenDyslexic Nerd Font Propo,font-name,opendyslexic,build,propo,nerd,2026-09-26,auto:nerd_unpatched
 OpenDyslexic NF,font-name,opendyslexic,build,nf,nerd,2026-09-26,auto:nerd_unpatched
 OpenDyslexic NFM,font-name,opendyslexic,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 OpenDyslexic NFP,font-name,opendyslexic,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
+antijingoist/opendyslexic/opendyslexic-alpha.zip,gh-asset,opendyslexic,package,,github_repos,2026-09-26,owner:2026-09-26
+antijingoist/opendyslexic/opendyslexic-beta.zip,gh-asset,opendyslexic,package,,github_repos,2026-09-26,owner:2026-09-26
+antijingoist/opendyslexic/opendyslexic-rc1.zip,gh-asset,opendyslexic,package,,github_repos,2026-09-26,owner:2026-09-26
+antijingoist/opendyslexic/opendyslexic-rc2.zip,gh-asset,opendyslexic,package,,github_repos,2026-09-26,owner:2026-09-26
 ostrich-sans-dashed,fs-id,ostrich-sans,build,,fontsource_legacy,2026-09-26,owner:2026-09-26
 ostrich-sans-inline,fs-id,ostrich-sans,build,,fontsource_legacy,2026-09-26,owner:2026-09-26
 ostrich-sans-rounded,fs-id,ostrich-sans,build,,fontsource_legacy,2026-09-26,owner:2026-09-26
@@ -1488,14 +1695,15 @@ ProFont Nerd Font Propo,font-name,profont,build,propo,nerd,2026-09-26,auto:nerd_
 ProFont NF,font-name,profont,build,nf,nerd,2026-09-26,auto:nerd_unpatched
 ProFont NFM,font-name,profont,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 ProFont NFP,font-name,profont,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
-ttf-proggyclean-nerd,arch-pkg,proggycleantt,build,nerd,distro,2026-09-26,owner:2026-09-26
-ProggyClean,font-name,proggycleantt,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
-ProggyClean Nerd Font,font-name,proggycleantt,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
-ProggyClean Nerd Font Mono,font-name,proggycleantt,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
-ProggyClean Nerd Font Propo,font-name,proggycleantt,build,propo,nerd,2026-09-26,auto:nerd_unpatched
-ProggyClean NF,font-name,proggycleantt,build,nf,nerd,2026-09-26,auto:nerd_unpatched
-ProggyClean NFM,font-name,proggycleantt,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
-ProggyClean NFP,font-name,proggycleantt,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
+ttf-proggyclean-nerd,arch-pkg,proggyclean,build,nerd,distro,2026-09-26,owner:2026-09-26
+ProggyClean Nerd Font,font-name,proggyclean,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
+ProggyClean Nerd Font Mono,font-name,proggyclean,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
+ProggyClean Nerd Font Propo,font-name,proggyclean,build,propo,nerd,2026-09-26,auto:nerd_unpatched
+ProggyClean NF,font-name,proggyclean,build,nf,nerd,2026-09-26,auto:nerd_unpatched
+ProggyClean NFM,font-name,proggyclean,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
+ProggyClean NFP,font-name,proggyclean,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
+ProggyClean,font-name,proggyclean,rename,display,hand,2026-09-26,owner:2026-09-26
+ProggyCleanTT,font-name,proggyclean,rename,,hand,2026-09-26,owner:2026-09-26
 uswds/public-sans/public-sans.zip,gh-asset,public-sans,package,,github_repos,2026-09-26,owner:2026-09-26
 RecMono,font-name,recursive,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 RecMono Nerd Font,font-name,recursive,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
@@ -1507,14 +1715,29 @@ RecMono NFP,font-name,recursive,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
 arrowtype/recursive/ArrowType-Recursive.zip,gh-asset,recursive,package,,github_repos,2026-09-26,owner:2026-09-26
 arrowtype/recursive/Recursive.zip,gh-asset,recursive,package,,github_repos,2026-09-26,owner:2026-09-26
 arrowtype/recursive/Recursive-Beta.zip,gh-asset,recursive,package,,github_repos,2026-09-26,owner:2026-09-26
+ttf-roboto,arch-pkg,roboto,bundle,2,hand,2026-09-26,owner:2026-09-26
+fonts-roboto-fontface,deb-pkg,roboto,bundle,2,hand,2026-09-26,owner:2026-09-26
+fonts-roboto-hinted,deb-pkg,roboto,bundle,2,hand,2026-09-26,owner:2026-09-26
+fonts-roboto-unhinted,deb-pkg,roboto,bundle,2,hand,2026-09-26,owner:2026-09-26
+fonts-roboto,deb-src,roboto,bundle,2,hand,2026-09-26,owner:2026-09-26
 Roboto Slab,font-name,roboto,distinct,sibling,rule:sibling,2026-09-26,auto:sibling
+ttf-roboto,arch-pkg,roboto-condensed,bundle,2,hand,2026-09-26,owner:2026-09-26
+fonts-roboto-fontface,deb-pkg,roboto-condensed,bundle,2,hand,2026-09-26,owner:2026-09-26
+fonts-roboto-hinted,deb-pkg,roboto-condensed,bundle,2,hand,2026-09-26,owner:2026-09-26
+fonts-roboto-unhinted,deb-pkg,roboto-condensed,bundle,2,hand,2026-09-26,owner:2026-09-26
+fonts-roboto,deb-src,roboto-condensed,bundle,2,hand,2026-09-26,owner:2026-09-26
+ttf-roboto-mono-nerd,arch-pkg,roboto-mono,build,nerd,distro+oldlib,2026-09-26,owner:2026-09-26
 RobotoMono Nerd Font,font-name,roboto-mono,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 RobotoMono Nerd Font Mono,font-name,roboto-mono,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 RobotoMono Nerd Font Propo,font-name,roboto-mono,build,propo,nerd,2026-09-26,auto:nerd_unpatched
 RobotoMono NF,font-name,roboto-mono,build,nf,nerd,2026-09-26,auto:nerd_unpatched
 RobotoMono NFM,font-name,roboto-mono,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 RobotoMono NFP,font-name,roboto-mono,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
+ttf-roboto-mono,arch-pkg,roboto-mono,package,,distro+oldlib,2026-09-26,owner:2026-09-26
 Roboto,font-name,roboto-slab,distinct,,rule:sibling,2026-09-26,auto:sibling
+fonts-roboto-slab,deb-pkg,roboto-slab,package,,distro+oldlib,2026-09-26,owner:2026-09-26
+fonts-roboto-slab,deb-src,roboto-slab,package,,distro,2026-09-26,owner:2026-09-26
+Saira Stencil One,gf-family,saira-stencil,rename,,gf_history,2026-09-26,owner:2026-09-26
 oppiliappan/scientifica/scientifica.tar,gh-asset,scientifica,package,,github_repos,2026-09-26,owner:2026-09-26
 oppiliappan/scientifica/scientifica.tar.gz,gh-asset,scientifica,package,,github_repos,2026-09-26,owner:2026-09-26
 oppiliappan/scientifica/scientifica-doubled.tar.gz,gh-asset,scientifica,package,,github_repos,2026-09-26,owner:2026-09-26
@@ -1534,6 +1757,7 @@ SauceCodePro Nerd Font Propo,font-name,source-code-pro,build,propo,nerd,2026-09-
 SauceCodePro NF,font-name,source-code-pro,build,nf,nerd,2026-09-26,auto:nerd_unpatched
 SauceCodePro NFM,font-name,source-code-pro,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 SauceCodePro NFP,font-name,source-code-pro,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
+adobe-source-code-pro-fonts,arch-pkg,source-code-pro,package,,oldlib,2026-09-26,owner:2026-09-26
 adobe-fonts/source-code-pro/OTF-source-code-pro.zip,gh-asset,source-code-pro,package,,github_repos,2026-09-26,owner:2026-09-26
 adobe-fonts/source-code-pro/source-code-pro.zip,gh-asset,source-code-pro,package,,github_repos,2026-09-26,owner:2026-09-26
 adobe-fonts/source-code-pro/SourceCodeVariable-Italic.otf,gh-asset,source-code-pro,package,,github_repos,2026-09-26,owner:2026-09-26
@@ -1545,6 +1769,9 @@ adobe-fonts/source-code-pro/VAR-source-code-var.zip,gh-asset,source-code-pro,pac
 adobe-fonts/source-code-pro/VF-source-code-VF.zip,gh-asset,source-code-pro,package,,github_repos,2026-09-26,owner:2026-09-26
 adobe-fonts/source-code-pro/WOFF2-source-code-pro.zip,gh-asset,source-code-pro,package,,github_repos,2026-09-26,owner:2026-09-26
 adobe-fonts/source-code-pro/WOFF-source-code-pro.zip,gh-asset,source-code-pro,package,,github_repos,2026-09-26,owner:2026-09-26
+adobe-source-sans-fonts,arch-pkg,source-sans-3,package,,oldlib,2026-09-26,owner:2026-09-26
+fonts-adobe-sourcesans3,deb-pkg,source-sans-3,package,,distro+oldlib,2026-09-26,owner:2026-09-26
+fonts-adobe-sourcesans3,deb-src,source-sans-3,package,,distro,2026-09-26,owner:2026-09-26
 adobe-fonts/source-sans/OTF-source-sans.zip,gh-asset,source-sans-3,package,,github_repos,2026-09-26,owner:2026-09-26
 adobe-fonts/source-sans/source-sans.zip,gh-asset,source-sans-3,package,,github_repos,2026-09-26,owner:2026-09-26
 adobe-fonts/source-sans/source-sans-3.zip,gh-asset,source-sans-3,package,,github_repos,2026-09-26,owner:2026-09-26
@@ -1561,6 +1788,7 @@ adobe-fonts/source-sans/WOFF-source-sans.zip,gh-asset,source-sans-3,package,,git
 @fontsource/source-sans-pro,npm,source-sans-3,package,,fontsource_legacy,2026-09-26,owner:2026-09-26
 Source Sans Pro,font-name,source-sans-3,rename,,oldlib,2026-09-26,owner:2026-09-26
 source-sans-pro,fs-id,source-sans-3,rename,,fontsource_legacy,2026-09-26,owner:2026-09-26
+adobe-source-serif-fonts,arch-pkg,source-serif-4,package,,oldlib,2026-09-26,owner:2026-09-26
 adobe-fonts/source-serif/source-serif.zip,gh-asset,source-serif-4,package,,github_repos,2026-09-26,owner:2026-09-26
 adobe-fonts/source-serif/source-serif_Desktop.zip,gh-asset,source-serif-4,package,,github_repos,2026-09-26,owner:2026-09-26
 adobe-fonts/source-serif/source-serif-pro.zip,gh-asset,source-serif-4,package,,github_repos,2026-09-26,owner:2026-09-26
@@ -1606,6 +1834,7 @@ Ubuntu Nerd Font Propo,font-name,ubuntu,build,propo,nerd,2026-09-26,auto:nerd_un
 Ubuntu NF,font-name,ubuntu,build,nf,nerd,2026-09-26,auto:nerd_unpatched
 Ubuntu NFM,font-name,ubuntu,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 Ubuntu NFP,font-name,ubuntu,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
+font-ubuntu-condensed,brew-cask,ubuntu,distinct,rejected,oldlib,2026-09-26,owner:2026-09-26
 UbuntuMono Nerd Font,font-name,ubuntu-mono,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 UbuntuMono Nerd Font Mono,font-name,ubuntu-mono,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 UbuntuMono Nerd Font Propo,font-name,ubuntu-mono,build,propo,nerd,2026-09-26,auto:nerd_unpatched

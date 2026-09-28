@@ -223,7 +223,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 - Font index `i` (section 7) is the `i`-th `li.font` in the server-rendered `#list`.
 - `span.spec[data-src]` is always `/assets/specimens/<id>.<h>.svg`. `Specimens` ignores any other value, so a `data-src` can never break out of the CSS `url("…")` it becomes.
 - `Render` moves rows in and out of `#list` (hidden rows are detached, not given `hidden`) and changes only `.rank` text. Rows carry `content-visibility: auto`, so they must not change height when their specimen arrives.
-- **States set by scripts:** `html[data-js]` once the script runs; `span.spec[data-state="set"]` once its mask is set; `li.font.is-dim` for a row a Milestone 3 filter dims.
+- **States set by scripts:** `html[data-js]` once the script runs; `span.spec[data-state="set"]` once its mask is set; `li.font.is-dim` for a row a Milestone 3 filter dims; `li.font.is-unranked` for a row whose `.rank` reads "Not ranked: <reason>" (the server sets it too), which puts that label on a line of its own above the name (the owner's site ruling of 2026-09-26).
 - **The Milestone 3 slot** (section 10). For each filter whose `note` gives a row something to show, `Render` adds one `<div class="ext" data-filter="<filter id>">` at the end of `.font-row` (created on demand, removed when that filter no longer has a note for the row), built with `Core.el` only:
   - `span.ext-badge` for `badge`, `p.ext-note` for `text`;
   - one `a.ext-link` per link (`href` relative or `https://`, anything else dropped);

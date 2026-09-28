@@ -18,6 +18,7 @@ Plus Coding (monospace only, Chocolatey gone) and Rising (3 months of history,
 import dataclasses
 import logging
 import math
+from collections.abc import Sequence
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -39,9 +40,12 @@ from tests.pipeline.test_surveys import (
     write_stage_files,
 )
 
-from tff_catalog import jsonio, membership, stageio, surveys
+from tff_catalog import jsonio, membership, stageio, surveys, validate
 from tff_catalog.config_model import RankingConfig
 from tff_catalog.corrections import Tags, Term
+from tff_catalog.stages import StageContext
+from tff_catalog.state import State
+from tff_catalog.store import Store
 
 RISING = RANKING.ranks.rising
 
@@ -327,7 +331,8 @@ def test_a_source_without_a_recent_window_is_left_out_of_rising(
 
 
 def test_rising_keeps_no_shares_of_a_source_published_as_ranks_only(tmp_path: Path) -> None:
-    """Ruling T2: Google's shares must never reach the public smoothing state."""
+    """Ruling T2: Google's shares must never reach the public smoothing state; without a
+    private store its history is not kept, so it takes no part in Rising."""
     s = synth()
     s.terms["rising"] = _rising_terms_json(s, {"google": 2.0, "homebrew": 0.5, "arch": 0.5})
     rs = surveys.rising_shares(s.terms, RANKING, frozenset())
@@ -340,6 +345,103 @@ def test_rising_keeps_no_shares_of_a_source_published_as_ranks_only(tmp_path: Pa
     surveys.run(ctx)
     smoothing = jsonio.load(ctx.paths.next_state / "smoothing.json")
     assert set(smoothing["rising"]) == {"arch", "homebrew"}
+
+
+# --- Google's Rising history in the private store (ruling of 2026-09-26) --------------------------
+
+PRIVATE = surveys.private_sources(RANKING)
+
+
+def _store_ctx(
+    root: Path,
+    store: Path,
+    smoothing: dict[str, Any],
+    run_date: date,
+    merged: Sequence[date] = (),
+) -> StageContext:
+    """``rank_ctx`` with a private store and the merged runs' dates in run_history."""
+    ctx = rank_ctx(root, smoothing, run_date)
+    history = tuple({"run_date": d.isoformat()} for d in merged)
+    return dataclasses.replace(
+        ctx, store=Store(store), state=State(smoothing=smoothing, run_history=history)
+    )
+
+
+def _no_private_shares_in_state(ctx: StageContext) -> None:
+    """Nothing under build/state/ holds a publish_raw-false source's values (validate)."""
+    files = sorted(ctx.paths.next_state.glob("*.json"))
+    assert files
+    for path in files:
+        assert list(validate.private_fields(jsonio.load(path), PRIVATE)) == [], path
+    smoothing = jsonio.load(ctx.paths.next_state / "smoothing.json")
+    assert not PRIVATE & set(smoothing.get("rising", {}))
+
+
+def test_google_rising_history_stays_in_the_private_store(tmp_path: Path) -> None:
+    """Google's shares go to $TFF_STORE/_state/rising/google/, never to state/, and Rising
+    uses them: after three merged months fam-000 rises in Google too."""
+    assert "google" in PRIVATE
+    assert "google" in RISING.sources
+    s = synth()
+    s.terms["rising"] = _recent(s)
+    store = tmp_path / "store"
+    smoothing: dict[str, Any] = {}
+    merged: list[date] = []
+    for run_date in (RUN_DATE, date(2026, 11, 3), date(2026, 12, 3)):
+        ctx = _store_ctx(tmp_path / run_date.isoformat(), store, smoothing, run_date, merged)
+        write_stage_files(ctx.paths, s)
+        surveys.run(ctx)
+        _no_private_shares_in_state(ctx)
+        smoothing = jsonio.load(ctx.paths.next_state / "smoothing.json")
+        kept = jsonio.load(surveys.private_history_path(store, "google", run_date))
+        assert kept["month"] == f"{run_date:%Y-%m}"
+        assert kept["source"] == "google"
+        merged.append(run_date)
+    assert len(kept["history"]["fam-000"]) == RISING.min_history_months
+    assert sorted(p.name for p in (store / "_state" / "rising").iterdir()) == ["google"]
+    rising = stageio.load_stage(ctx.paths, "scores")["rising"]
+    assert "fam-000" in rising.placements
+    assert rising.fused["fam-000"].groups == ("google", "homebrew", "npm_registry")
+
+
+def test_private_history_starts_from_the_newest_merged_run_only(tmp_path: Path) -> None:
+    """An unmerged run's file is never a base, and a run in a merged run's month redoes
+    that month instead of adding one (as the public history does)."""
+    s = synth()
+    s.terms["rising"] = _recent(s)
+    store = tmp_path / "store"
+    unmerged = _store_ctx(tmp_path / "unmerged", store, {}, date(2026, 9, 20))
+    write_stage_files(unmerged.paths, s)
+    surveys.run(unmerged)
+    first = _store_ctx(tmp_path / "first", store, {}, RUN_DATE)  # 2026-09-20 never merged
+    write_stage_files(first.paths, s)
+    surveys.run(first)
+    kept = jsonio.load(surveys.private_history_path(store, "google", RUN_DATE))
+    assert all(len(h) == 1 for h in kept["history"].values())
+    merged = jsonio.load(first.paths.next_state / "smoothing.json")
+    again = _store_ctx(tmp_path / "again", store, merged, date(2026, 10, 20), [RUN_DATE])
+    write_stage_files(again.paths, s)
+    surveys.run(again)
+    redone = jsonio.load(surveys.private_history_path(store, "google", date(2026, 10, 20)))
+    assert redone["history"] == kept["history"]
+
+
+def test_a_merged_runs_private_history_is_never_rewritten(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    s = synth()
+    s.terms["rising"] = _recent(s)
+    store = tmp_path / "store"
+    path = surveys.private_history_path(store, "google", RUN_DATE)
+    old = {"schema": 1, "source": "google", "run_date": RUN_DATE.isoformat(), "month": "2026-10"}
+    jsonio.dump({**old, "history": {"fam-001": [0.5]}}, path)
+    before = path.read_bytes()
+    ctx = _store_ctx(tmp_path / "rerun", store, {}, RUN_DATE, [RUN_DATE])
+    write_stage_files(ctx.paths, s)
+    with caplog.at_level(logging.ERROR, logger="test.rank"):
+        surveys.run(ctx)
+    assert path.read_bytes() == before
+    assert "merged run's history" in caplog.text
 
 
 def test_rising_needs_a_minimum_share() -> None:

@@ -1,7 +1,8 @@
 // 25-render: puts a View result on the page (site/CONTRACT.md sections 4 and 10). It reuses
 // the server-rendered li.font rows: the rows to show go back into #list, in order, through
 // one DocumentFragment; the others are detached (kept here, never given `hidden`). Only the
-// .rank text, the dim class and the Milestone 3 slots change inside a row, and only when they
+// .rank text (with the is-unranked class that follows it), the dim class and the Milestone 3
+// slots change inside a row, and only when they
 // differ, so an unchanged view costs no DOM work. Focus stays where it was, or moves to a
 // neighbouring row when its own row leaves.
 const Render = (() => {
@@ -158,6 +159,8 @@ const Render = (() => {
       const label = result.labels[k];
       if (label !== labelNow[i] && rankNodes[i]) {
         rankNodes[i].textContent = label;
+        // "Not ranked: <reason>" gets a line of its own (site ruling of 2026-09-26).
+        rows[i].classList.toggle('is-unranked', label.startsWith(View.NOT_RANKED));
         labelNow[i] = label;
       }
       const dim = Boolean(result.dimmed[k]);

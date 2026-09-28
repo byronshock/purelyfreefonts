@@ -4,7 +4,7 @@
       "distinct_from": [],
       "family": "0xProto",
       "id": "0xproto",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "detail": "nerd",
@@ -81,6 +81,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Abyssinica SIL",
+      "id": "abyssinica-sil",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Aclonica",
       "id": "aclonica",
       "in_catalog": false,
@@ -113,6 +121,14 @@
     },
     {
       "distinct_from": [],
+      "family": "ADLaM Display",
+      "id": "adlam-display",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Advent Pro",
       "id": "advent-pro",
       "in_catalog": true,
@@ -123,7 +139,7 @@
       "distinct_from": [],
       "family": "Adwaita Mono",
       "id": "adwaita-mono",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "detail": "nerd",
@@ -186,7 +202,7 @@
       "distinct_from": [],
       "family": "Agave",
       "id": "agave",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "detail": "nerd",
@@ -258,6 +274,30 @@
       "family": "Aileron",
       "id": "aileron",
       "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Akatab",
+      "id": "akatab",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Akaya Kanadaka",
+      "id": "akaya-kanadaka",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Akaya Telivigala",
+      "id": "akaya-telivigala",
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -415,6 +455,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Alkalami",
+      "id": "alkalami",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Alkalami Light",
       "id": "alkalami-light",
       "in_catalog": false,
@@ -543,6 +591,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Alyamama",
+      "id": "alyamama",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Amarante",
       "id": "amarante",
       "in_catalog": false,
@@ -577,6 +633,14 @@
       "distinct_from": [],
       "family": "Amethysta",
       "id": "amethysta",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Amiko",
+      "id": "amiko",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -679,6 +743,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Annapurna SIL",
+      "id": "annapurna-sil",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Annie Use Your Telescope",
       "id": "annie-use-your-telescope",
       "in_catalog": true,
@@ -689,7 +761,7 @@
       "distinct_from": [],
       "family": "Annotation Mono",
       "id": "annotation-mono",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "detail": "nerd",
@@ -801,7 +873,7 @@
       "distinct_from": [],
       "family": "Antic Slab",
       "id": "antic-slab",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -919,6 +991,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Aref Ruqaa Ink",
+      "id": "aref-ruqaa-ink",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Argentum Sans",
       "id": "argentum-sans",
       "in_catalog": false,
@@ -1030,6 +1110,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Arya",
+      "id": "arya",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Asap",
       "id": "asap",
       "in_catalog": true,
@@ -1048,6 +1136,14 @@
       "distinct_from": [],
       "family": "Asap Sharp",
       "id": "asap-sharp",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Asar",
+      "id": "asar",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -1080,6 +1176,14 @@
       "distinct_from": [],
       "family": "Asul",
       "id": "asul",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Athiti",
+      "id": "athiti",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -1141,6 +1245,14 @@
       "family": "Atkinson Hyperlegible Next",
       "id": "atkinson-hyperlegible-next",
       "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Atma",
+      "id": "atma",
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -1322,6 +1434,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Badeen Display",
+      "id": "badeen-display",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Bahiana",
       "id": "bahiana",
       "in_catalog": false,
@@ -1332,6 +1452,14 @@
       "distinct_from": [],
       "family": "Bahianita",
       "id": "bahianita",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Bakbak One",
+      "id": "bakbak-one",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -1453,7 +1581,12 @@
       "family": "BBH Bartle",
       "id": "bbh-bartle",
       "in_catalog": false,
-      "names": [],
+      "names": [
+        {
+          "name": "BBH Sans Bartle",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -1461,7 +1594,12 @@
       "family": "BBH Bogle",
       "id": "bbh-bogle",
       "in_catalog": false,
-      "names": [],
+      "names": [
+        {
+          "name": "BBH Sans Bogle",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -1469,31 +1607,12 @@
       "family": "BBH Hegarty",
       "id": "bbh-hegarty",
       "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "BBH Sans Bartle",
-      "id": "bbh-sans-bartle",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "BBH Sans Bogle",
-      "id": "bbh-sans-bogle",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "BBH Sans Hegarty",
-      "id": "bbh-sans-hegarty",
-      "in_catalog": false,
-      "names": [],
+      "names": [
+        {
+          "name": "BBH Sans Hegarty",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -1517,6 +1636,14 @@
       "family": "Bebas Neue",
       "id": "bebas-neue",
       "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Beiruti",
+      "id": "beiruti",
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -1572,6 +1699,14 @@
       "distinct_from": [],
       "family": "BenchNine",
       "id": "benchnine",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Benne",
+      "id": "benne",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -1652,6 +1787,14 @@
       "distinct_from": [],
       "family": "Bhavuka",
       "id": "bhavuka",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "BhuTuka Expanded One",
+      "id": "bhutuka-expanded-one",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -1828,7 +1971,7 @@
       "distinct_from": [],
       "family": "Birthstone",
       "id": "birthstone",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -1954,6 +2097,30 @@
     },
     {
       "distinct_from": [],
+      "family": "Blaka",
+      "id": "blaka",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Blaka Hollow",
+      "id": "blaka-hollow",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Blaka Ink",
+      "id": "blaka-ink",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Blinker",
       "id": "blinker",
       "in_catalog": true,
@@ -2061,6 +2228,14 @@
       "family": "Bowlby One SC",
       "id": "bowlby-one-sc",
       "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Braah One",
+      "id": "braah-one",
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -2324,6 +2499,14 @@
       "distinct_from": [],
       "family": "Calligraffitti",
       "id": "calligraffitti",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Cambay",
+      "id": "cambay",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -2610,6 +2793,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Charmonman",
+      "id": "charmonman",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Chau Philomene One",
       "id": "chau-philomene-one",
       "in_catalog": false,
@@ -2674,6 +2865,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Chilanka",
+      "id": "chilanka",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Chivo",
       "id": "chivo",
       "in_catalog": true,
@@ -2685,6 +2884,14 @@
       "family": "Chivo Mono",
       "id": "chivo-mono",
       "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Chonburi",
+      "id": "chonburi",
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -2716,7 +2923,7 @@
       "distinct_from": [],
       "family": "Clear Sans",
       "id": "clear-sans",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -2852,7 +3059,7 @@
       "distinct_from": [],
       "family": "Commit Mono",
       "id": "commit-mono",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "detail": "nerd",
@@ -3208,6 +3415,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Dai Banna SIL",
+      "id": "dai-banna-sil",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Damion",
       "id": "damion",
       "in_catalog": true,
@@ -3264,6 +3479,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Dekko",
+      "id": "dekko",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Delicious Handrawn",
       "id": "delicious-handrawn",
       "in_catalog": false,
@@ -3314,7 +3537,7 @@
       "distinct_from": [],
       "family": "Departure Mono",
       "id": "departure-mono",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "detail": "nerd",
@@ -3862,7 +4085,7 @@
       "distinct_from": [],
       "family": "Envy Code R",
       "id": "envy-code-r",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "detail": "nerd",
@@ -3941,6 +4164,14 @@
       "distinct_from": [],
       "family": "Esteban",
       "id": "esteban",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Estedad",
+      "id": "estedad",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -4045,7 +4276,7 @@
       "distinct_from": [],
       "family": "Fantasque Sans Mono",
       "id": "fantasque-sans-mono",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "detail": "nerd",
@@ -4105,6 +4336,14 @@
       "distinct_from": [],
       "family": "Farro",
       "id": "farro",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Farsan",
+      "id": "farsan",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -4611,6 +4850,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Gajraj One",
+      "id": "gajraj-one",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Galdeano",
       "id": "galdeano",
       "in_catalog": false,
@@ -4700,7 +4947,7 @@
       "distinct_from": [],
       "family": "Geist Sans",
       "id": "geist-sans",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -4709,6 +4956,14 @@
       "family": "Gelasio",
       "id": "gelasio",
       "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Gemunu Libre",
+      "id": "gemunu-libre",
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -4887,6 +5142,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Gidugu",
+      "id": "gidugu",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Gilda Display",
       "id": "gilda-display",
       "in_catalog": true,
@@ -5054,6 +5317,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Gotu",
+      "id": "gotu",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Goudy Bookletter 1911",
       "id": "goudy-bookletter-1911",
       "in_catalog": false,
@@ -5166,6 +5437,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Gulzar",
+      "id": "gulzar",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Gupter",
       "id": "gupter",
       "in_catalog": false,
@@ -5216,6 +5495,14 @@
       "distinct_from": [],
       "family": "Habibi",
       "id": "habibi",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Halant",
+      "id": "halant",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -5288,6 +5575,14 @@
       "distinct_from": [],
       "family": "Happy Times at the IKOB",
       "id": "happy-times-at-the-ikob",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Harmattan",
+      "id": "harmattan",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -5435,6 +5730,14 @@
       "distinct_from": [],
       "family": "Herr Von Muellerhoff",
       "id": "herr-von-muellerhoff",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Hibur Mono",
+      "id": "hibur-mono",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -5500,6 +5803,14 @@
       "family": "Host Grotesk",
       "id": "host-grotesk",
       "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Hubballi",
+      "id": "hubballi",
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -5847,7 +6158,10 @@
       "superfamily_id": null
     },
     {
-      "distinct_from": [],
+      "distinct_from": [
+        "inconsolata-lgc",
+        "inconsolatago"
+      ],
       "family": "Inconsolata",
       "id": "inconsolata",
       "in_catalog": true,
@@ -5886,10 +6200,12 @@
       "superfamily_id": null
     },
     {
-      "distinct_from": [],
+      "distinct_from": [
+        "inconsolata"
+      ],
       "family": "Inconsolata LGC",
       "id": "inconsolata-lgc",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "detail": "nerd",
@@ -5925,7 +6241,9 @@
       "superfamily_id": null
     },
     {
-      "distinct_from": [],
+      "distinct_from": [
+        "inconsolata"
+      ],
       "family": "InconsolataGo",
       "id": "inconsolatago",
       "in_catalog": false,
@@ -6381,6 +6699,30 @@
     },
     {
       "distinct_from": [],
+      "family": "Jaini",
+      "id": "jaini",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Jaini Purva",
+      "id": "jaini-purva",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Jaldi",
+      "id": "jaldi",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Jaro",
       "id": "jaro",
       "in_catalog": false,
@@ -6529,6 +6871,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Jomhuria",
+      "id": "jomhuria",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Josefin Sans",
       "id": "josefin-sans",
       "in_catalog": true,
@@ -6649,9 +6999,25 @@
     },
     {
       "distinct_from": [],
+      "family": "Karantina",
+      "id": "karantina",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Karla",
       "id": "karla",
       "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Katibeh",
+      "id": "katibeh",
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -6665,8 +7031,32 @@
     },
     {
       "distinct_from": [],
+      "family": "Kavivanar",
+      "id": "kavivanar",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Kavoon",
       "id": "kavoon",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Kay Pho Du",
+      "id": "kay-pho-du",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Kdam Thmor Pro",
+      "id": "kdam-thmor-pro",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -6753,6 +7143,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Kodchasan",
+      "id": "kodchasan",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Kode Mono",
       "id": "kode-mono",
       "in_catalog": true,
@@ -6763,6 +7161,14 @@
       "distinct_from": [],
       "family": "Kolker Brush",
       "id": "kolker-brush",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Konkhmer Sleokchher",
+      "id": "konkhmer-sleokchher",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -6793,6 +7199,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Kripa",
+      "id": "kripa",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Kristi",
       "id": "kristi",
       "in_catalog": false,
@@ -6809,8 +7223,24 @@
     },
     {
       "distinct_from": [],
+      "family": "Kufam",
+      "id": "kufam",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Kulim Park",
       "id": "kulim-park",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Kumar One",
+      "id": "kumar-one",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -6828,6 +7258,14 @@
       "family": "Kumbh Sans",
       "id": "kumbh-sans",
       "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Kurale",
+      "id": "kurale",
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -6857,8 +7295,24 @@
     },
     {
       "distinct_from": [],
+      "family": "Laila",
+      "id": "laila",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Lancelot",
       "id": "lancelot",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Langar",
+      "id": "langar",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -7050,7 +7504,7 @@
       "distinct_from": [],
       "family": "Liberation Mono",
       "id": "liberation-mono",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "detail": "nerd",
@@ -7286,6 +7740,14 @@
       "distinct_from": [],
       "family": "Linden Hill",
       "id": "linden-hill",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Lisu Bosa",
+      "id": "lisu-bosa",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -7573,6 +8035,22 @@
     },
     {
       "distinct_from": [],
+      "family": "Maname",
+      "id": "maname",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Manjari",
+      "id": "manjari",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Manrope",
       "id": "manrope",
       "in_catalog": true,
@@ -7607,7 +8085,7 @@
       "distinct_from": [],
       "family": "Maple Mono",
       "id": "maple-mono",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "detail": "nf",
@@ -7656,6 +8134,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Marhey",
+      "id": "marhey",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Marko One",
       "id": "marko-one",
       "in_catalog": false,
@@ -7676,6 +8162,11 @@
       "id": "martian-mono",
       "in_catalog": true,
       "names": [
+        {
+          "detail": "static",
+          "name": "Martian Mono Cn",
+          "relation": "build"
+        },
         {
           "detail": "nerd",
           "name": "MartianMono Nerd Font",
@@ -7705,6 +8196,21 @@
           "detail": "nfp",
           "name": "MartianMono NFP",
           "relation": "build"
+        },
+        {
+          "detail": "static",
+          "name": "Martian Mono Nr",
+          "relation": "build"
+        },
+        {
+          "detail": "static",
+          "name": "Martian Mono Std",
+          "relation": "build"
+        },
+        {
+          "detail": "static",
+          "name": "Martian Mono sWd",
+          "relation": "build"
         }
       ],
       "superfamily_id": null
@@ -7713,6 +8219,14 @@
       "distinct_from": [],
       "family": "Marvel",
       "id": "marvel",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Matangi",
+      "id": "matangi",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -7817,6 +8331,14 @@
       "distinct_from": [],
       "family": "Meie Script",
       "id": "meie-script",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Menbere",
+      "id": "menbere",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -7975,6 +8497,22 @@
     },
     {
       "distinct_from": [],
+      "family": "Mina",
+      "id": "mina",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Mingzat",
+      "id": "mingzat",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Miniver",
       "id": "miniver",
       "in_catalog": false,
@@ -7986,6 +8524,14 @@
       "family": "Miranda Sans",
       "id": "miranda-sans",
       "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Mirza",
+      "id": "mirza",
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -8009,6 +8555,14 @@
       "distinct_from": [],
       "family": "Moderustic",
       "id": "moderustic",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Mogra",
+      "id": "mogra",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -8073,7 +8627,7 @@
       "distinct_from": [],
       "family": "Monaspace Argon",
       "id": "monaspace-argon",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "name": "Monaspace",
@@ -8114,7 +8668,7 @@
       "distinct_from": [],
       "family": "Monaspace Krypton",
       "id": "monaspace-krypton",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "name": "Monaspace",
@@ -8155,7 +8709,7 @@
       "distinct_from": [],
       "family": "Monaspace Neon",
       "id": "monaspace-neon",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "name": "Monaspace",
@@ -8196,7 +8750,7 @@
       "distinct_from": [],
       "family": "Monaspace Radon",
       "id": "monaspace-radon",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "name": "Monaspace",
@@ -8237,7 +8791,7 @@
       "distinct_from": [],
       "family": "Monaspace Xenon",
       "id": "monaspace-xenon",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "name": "Monaspace",
@@ -8339,9 +8893,17 @@
     },
     {
       "distinct_from": [],
+      "family": "Monomakh",
+      "id": "monomakh",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Mononoki",
       "id": "mononoki",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "detail": "nerd",
@@ -8453,7 +9015,12 @@
       "family": "Montserrat Underline",
       "id": "montserrat-underline",
       "in_catalog": false,
-      "names": [],
+      "names": [
+        {
+          "name": "Montserrat Subrayada",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -8617,6 +9184,22 @@
       "distinct_from": [],
       "family": "Nacelle",
       "id": "nacelle",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Namdhinggo",
+      "id": "namdhinggo",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Narnoor",
+      "id": "narnoor",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -8855,6 +9438,14 @@
       "superfamily_id": null
     },
     {
+      "distinct_from": [],
+      "family": "Noto Rashi Hebrew",
+      "id": "noto-rashi-hebrew",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
       "distinct_from": [
         "noto-sans-jp"
       ],
@@ -8862,6 +9453,21 @@
       "id": "noto-sans",
       "in_catalog": true,
       "names": [
+        {
+          "detail": "static",
+          "name": "Noto Sans Condensed",
+          "relation": "build"
+        },
+        {
+          "detail": "static",
+          "name": "Noto Sans ExtraCondensed",
+          "relation": "build"
+        },
+        {
+          "detail": "static",
+          "name": "Noto Sans SemiCondensed",
+          "relation": "build"
+        },
         {
           "name": "Noto Nerd Font",
           "relation": "bundle"
@@ -9069,6 +9675,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Noto Traditional Nushu",
+      "id": "noto-traditional-nushu",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Nova Cut",
       "id": "nova-cut",
       "in_catalog": false,
@@ -9153,6 +9767,19 @@
       "id": "nunito-sans",
       "in_catalog": true,
       "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Nuosu SIL",
+      "id": "nuosu-sil",
+      "in_catalog": false,
+      "names": [
+        {
+          "name": "Nuosu",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -9255,7 +9882,7 @@
       "distinct_from": [],
       "family": "Open Runde",
       "id": "open-runde",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -9264,14 +9891,20 @@
       "family": "Open Sans",
       "id": "open-sans",
       "in_catalog": true,
-      "names": [],
+      "names": [
+        {
+          "detail": "static",
+          "name": "Open Sans Condensed",
+          "relation": "build"
+        }
+      ],
       "superfamily_id": null
     },
     {
       "distinct_from": [],
       "family": "Open Sauce One",
       "id": "open-sauce-one",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -9279,7 +9912,7 @@
       "distinct_from": [],
       "family": "Open Sauce Sans",
       "id": "open-sauce-sans",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -9287,7 +9920,7 @@
       "distinct_from": [],
       "family": "Open Sauce Two",
       "id": "open-sauce-two",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -9485,7 +10118,7 @@
       "distinct_from": [],
       "family": "Ovo",
       "id": "ovo",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -9531,6 +10164,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Padyakke Expanded One",
+      "id": "padyakke-expanded-one",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Pangolin",
       "id": "pangolin",
       "in_catalog": false,
@@ -9541,6 +10182,14 @@
       "distinct_from": [],
       "family": "Paprika",
       "id": "paprika",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Parastoo",
+      "id": "parastoo",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -9619,9 +10268,25 @@
     },
     {
       "distinct_from": [],
+      "family": "Pattaya",
+      "id": "pattaya",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Patua One",
       "id": "patua-one",
       "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Pavanam",
+      "id": "pavanam",
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -10771,6 +11436,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Pragati Narrow",
+      "id": "pragati-narrow",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Praise",
       "id": "praise",
       "in_catalog": false,
@@ -10956,7 +11629,7 @@
       "distinct_from": [],
       "family": "Puppies Play",
       "id": "puppies-play",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -11090,6 +11763,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Rakkas",
+      "id": "rakkas",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Raleway",
       "id": "raleway",
       "in_catalog": true,
@@ -11132,6 +11813,14 @@
       "distinct_from": [],
       "family": "Rancho",
       "id": "rancho",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Ranga",
+      "id": "ranga",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -11248,6 +11937,22 @@
       "distinct_from": [],
       "family": "Redressed",
       "id": "redressed",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Reem Kufi Fun",
+      "id": "reem-kufi-fun",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Reem Kufi Ink",
+      "id": "reem-kufi-ink",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -11809,6 +12514,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Ruwudu",
+      "id": "ruwudu",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Rye",
       "id": "rye",
       "in_catalog": true,
@@ -11868,15 +12581,12 @@
       "family": "Saira Stencil",
       "id": "saira-stencil",
       "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Saira Stencil One",
-      "id": "saira-stencil-one",
-      "in_catalog": false,
-      "names": [],
+      "names": [
+        {
+          "name": "Saira Stencil One",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -11979,6 +12689,14 @@
       "distinct_from": [],
       "family": "Sarina",
       "id": "sarina",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sarpanch",
+      "id": "sarpanch",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -12155,6 +12873,14 @@
       "distinct_from": [],
       "family": "Shadows Into Light Two",
       "id": "shadows-into-light-two",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Shafarik",
+      "id": "shafarik",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -12527,7 +13253,7 @@
       "distinct_from": [],
       "family": "Sofia",
       "id": "sofia",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -12559,6 +13285,14 @@
       "distinct_from": [],
       "family": "Sofia Sans Semi Condensed",
       "id": "sofia-sans-semi-condensed",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Solitreo",
+      "id": "solitreo",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -12853,6 +13587,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Srisakdi",
+      "id": "srisakdi",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Staatliches",
       "id": "staatliches",
       "in_catalog": true,
@@ -13005,6 +13747,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Sumana",
+      "id": "sumana",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Sunshiney",
       "id": "sunshiney",
       "in_catalog": true,
@@ -13015,6 +13765,14 @@
       "distinct_from": [],
       "family": "Supermercado One",
       "id": "supermercado-one",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sura",
+      "id": "sura",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -13103,6 +13861,14 @@
       "distinct_from": [],
       "family": "Tagmukay",
       "id": "tagmukay",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Tai Heritage Pro",
+      "id": "tai-heritage-pro",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -13273,6 +14039,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Thasadith",
+      "id": "thasadith",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "The Girl Next Door",
       "id": "the-girl-next-door",
       "in_catalog": false,
@@ -13300,6 +14074,14 @@
       "family": "TikTok Sans",
       "id": "tiktok-sans",
       "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Tillana",
+      "id": "tillana",
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -13384,6 +14166,70 @@
     },
     {
       "distinct_from": [],
+      "family": "Tiro Bangla",
+      "id": "tiro-bangla",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Tiro Devanagari Marathi",
+      "id": "tiro-devanagari-marathi",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Tiro Devanagari Sanskrit",
+      "id": "tiro-devanagari-sanskrit",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Tiro Gurmukhi",
+      "id": "tiro-gurmukhi",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Tiro Kannada",
+      "id": "tiro-kannada",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Tiro Tamil",
+      "id": "tiro-tamil",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Tiro Telugu",
+      "id": "tiro-telugu",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Tirra",
+      "id": "tirra",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Titan One",
       "id": "titan-one",
       "in_catalog": true,
@@ -13426,6 +14272,14 @@
       "distinct_from": [],
       "family": "Trickster",
       "id": "trickster",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Trirong",
+      "id": "trirong",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -13503,7 +14357,9 @@
       "superfamily_id": null
     },
     {
-      "distinct_from": [],
+      "distinct_from": [
+        "ubuntu-condensed"
+      ],
       "family": "Ubuntu",
       "id": "ubuntu",
       "in_catalog": true,
@@ -13542,7 +14398,9 @@
       "superfamily_id": null
     },
     {
-      "distinct_from": [],
+      "distinct_from": [
+        "ubuntu"
+      ],
       "family": "Ubuntu Condensed",
       "id": "ubuntu-condensed",
       "in_catalog": true,
@@ -13663,7 +14521,7 @@
       "distinct_from": [],
       "family": "Uncut Sans",
       "id": "uncut-sans",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -13791,6 +14649,14 @@
       "distinct_from": [],
       "family": "Vend Sans",
       "id": "vend-sans",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Vesper Libre",
+      "id": "vesper-libre",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -14100,6 +14966,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Yaldevi",
+      "id": "yaldevi",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Yaldevi Colombo",
       "id": "yaldevi-colombo",
       "in_catalog": false,
@@ -14230,7 +15104,7 @@
       "distinct_from": [],
       "family": "Zed Mono",
       "id": "zed-mono",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "detail": "nerd",
@@ -14357,15 +15231,11 @@
     },
     {
       "name": "Abhaya Libre",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Aboriginal Serif",
       "reason": "license"
-    },
-    {
-      "name": "Abyssinica SIL",
-      "reason": "latin"
     },
     {
       "name": "Ac437",
@@ -14377,10 +15247,6 @@
     },
     {
       "name": "Adinatha Tamil Brahmi",
-      "reason": "latin"
-    },
-    {
-      "name": "ADLaM Display",
       "reason": "latin"
     },
     {
@@ -14460,18 +15326,6 @@
       "reason": "cjk"
     },
     {
-      "name": "Akatab",
-      "reason": "latin"
-    },
-    {
-      "name": "Akaya Kanadaka",
-      "reason": "latin"
-    },
-    {
-      "name": "Akaya Telivigala",
-      "reason": "latin"
-    },
-    {
       "name": "Akhbar MT",
       "reason": "proprietary"
     },
@@ -14481,7 +15335,7 @@
     },
     {
       "name": "Akshar",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Albertella",
@@ -14493,11 +15347,7 @@
     },
     {
       "name": "Alexandria",
-      "reason": "latin"
-    },
-    {
-      "name": "Alkalami",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Allkin",
@@ -14508,15 +15358,7 @@
       "reason": "latin"
     },
     {
-      "name": "Alyamama",
-      "reason": "latin"
-    },
-    {
       "name": "Amdal",
-      "reason": "latin"
-    },
-    {
-      "name": "Amiko",
       "reason": "latin"
     },
     {
@@ -14525,7 +15367,7 @@
     },
     {
       "name": "Amiri",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Amiri Quran",
@@ -14537,7 +15379,7 @@
     },
     {
       "name": "Amita",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Amstelvar Alpha",
@@ -14608,10 +15450,6 @@
       "reason": "license"
     },
     {
-      "name": "Annapurna SIL",
-      "reason": "latin"
-    },
-    {
       "name": "Anonymice Powerline",
       "reason": "latin"
     },
@@ -14625,7 +15463,7 @@
     },
     {
       "name": "Anuphan",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Aoboshi One",
@@ -14665,11 +15503,7 @@
     },
     {
       "name": "Aref Ruqaa",
-      "reason": "latin"
-    },
-    {
-      "name": "Aref Ruqaa Ink",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Arial",
@@ -14712,32 +15546,16 @@
       "reason": "license"
     },
     {
-      "name": "Arya",
-      "reason": "latin"
-    },
-    {
-      "name": "Asar",
-      "reason": "latin"
-    },
-    {
       "name": "ASATTE",
       "reason": "cjk"
     },
     {
       "name": "Assistant",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Asta Sans",
       "reason": "cjk"
-    },
-    {
-      "name": "Athiti",
-      "reason": "latin"
-    },
-    {
-      "name": "Atma",
-      "reason": "latin"
     },
     {
       "name": "AU Logo",
@@ -14792,10 +15610,6 @@
       "reason": "latin"
     },
     {
-      "name": "Badeen Display",
-      "reason": "latin"
-    },
-    {
       "name": "Bagel Fat One",
       "reason": "cjk"
     },
@@ -14809,11 +15623,7 @@
     },
     {
       "name": "Bai Jamjuree",
-      "reason": "latin"
-    },
-    {
-      "name": "Bakbak One",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Baloo",
@@ -14821,7 +15631,7 @@
     },
     {
       "name": "Baloo 2",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Baloo Bhai 2",
@@ -14884,16 +15694,8 @@
       "reason": "latin"
     },
     {
-      "name": "Beiruti",
-      "reason": "latin"
-    },
-    {
       "name": "Bell MT",
       "reason": "proprietary"
-    },
-    {
-      "name": "Benne",
-      "reason": "latin"
     },
     {
       "name": "Bernard MT Condensed",
@@ -14902,10 +15704,6 @@
     {
       "name": "Betania Patmos Guide Line",
       "reason": "icon"
-    },
-    {
-      "name": "BhuTuka Expanded One",
-      "reason": "latin"
     },
     {
       "name": "BigBlueTerm",
@@ -14945,7 +15743,7 @@
     },
     {
       "name": "Biryani",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Bitstream Vera",
@@ -15036,18 +15834,6 @@
       "reason": "latin"
     },
     {
-      "name": "Blaka",
-      "reason": "latin"
-    },
-    {
-      "name": "Blaka Hollow",
-      "reason": "latin"
-    },
-    {
-      "name": "Blaka Ink",
-      "reason": "latin"
-    },
-    {
       "name": "BLOKK Neue",
       "reason": "latin"
     },
@@ -15108,10 +15894,6 @@
       "reason": "cjk"
     },
     {
-      "name": "Braah One",
-      "reason": "latin"
-    },
-    {
       "name": "Braggadocio",
       "reason": "proprietary"
     },
@@ -15161,11 +15943,11 @@
     },
     {
       "name": "Cairo",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Cairo Play",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Calibri",
@@ -15174,10 +15956,6 @@
     {
       "name": "Calisto MT",
       "reason": "proprietary"
-    },
-    {
-      "name": "Cambay",
-      "reason": "latin"
     },
     {
       "name": "Cambria",
@@ -15261,7 +16039,7 @@
     },
     {
       "name": "Catamaran",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Century",
@@ -15277,7 +16055,7 @@
     },
     {
       "name": "Chakra Petch",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Chapbook",
@@ -15293,11 +16071,7 @@
     },
     {
       "name": "Charm",
-      "reason": "latin"
-    },
-    {
-      "name": "Charmonman",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Charter",
@@ -15324,10 +16098,6 @@
       "reason": "license"
     },
     {
-      "name": "Chilanka",
-      "reason": "latin"
-    },
-    {
       "name": "Chiron GoRound TC",
       "reason": "cjk"
     },
@@ -15349,10 +16119,6 @@
     },
     {
       "name": "Chomsky",
-      "reason": "latin"
-    },
-    {
-      "name": "Chonburi",
       "reason": "latin"
     },
     {
@@ -15616,10 +16382,6 @@
       "reason": "latin"
     },
     {
-      "name": "Dai Banna SIL",
-      "reason": "latin"
-    },
-    {
       "name": "Dai Banna SIL Book",
       "reason": "latin"
     },
@@ -15645,7 +16407,7 @@
     },
     {
       "name": "David Libre",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "DDC Uchen",
@@ -15680,10 +16442,6 @@
       "reason": "latin"
     },
     {
-      "name": "DejaVu",
-      "reason": "license"
-    },
-    {
       "name": "DejaVu Math",
       "reason": "icon"
     },
@@ -15697,6 +16455,10 @@
     },
     {
       "name": "DejaVu Sans",
+      "reason": "license"
+    },
+    {
+      "name": "DejaVu Sans Condensed",
       "reason": "license"
     },
     {
@@ -15740,8 +16502,8 @@
       "reason": "license"
     },
     {
-      "name": "Dekko",
-      "reason": "latin"
+      "name": "DejaVu Serif Condensed",
+      "reason": "license"
     },
     {
       "name": "Dela Gothic One",
@@ -15953,7 +16715,7 @@
     },
     {
       "name": "Eczar",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Edlo",
@@ -15973,7 +16735,7 @@
     },
     {
       "name": "El Messiri",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "ElstobD",
@@ -15990,10 +16752,6 @@
     {
       "name": "Escumasia",
       "reason": "license"
-    },
-    {
-      "name": "Estedad",
-      "reason": "latin"
     },
     {
       "name": "ET Book",
@@ -16029,7 +16787,7 @@
     },
     {
       "name": "Fahkwang",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Fairfax",
@@ -16050,10 +16808,6 @@
     {
       "name": "Fantasque Sans Mono NoLoopK",
       "reason": "license"
-    },
-    {
-      "name": "Farsan",
-      "reason": "latin"
     },
     {
       "name": "Farsi Simple Bold",
@@ -16197,7 +16951,7 @@
     },
     {
       "name": "Frank Ruhl Libre",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "FreeFont",
@@ -16337,7 +17091,7 @@
     },
     {
       "name": "Fustat",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "FZShuTi",
@@ -16354,10 +17108,6 @@
     {
       "name": "Gaegu",
       "reason": "cjk"
-    },
-    {
-      "name": "Gajraj One",
-      "reason": "latin"
     },
     {
       "name": "Galada",
@@ -16390,10 +17140,6 @@
     {
       "name": "GD-HighwayGothicJA",
       "reason": "cjk"
-    },
-    {
-      "name": "Gemunu Libre",
-      "reason": "latin"
     },
     {
       "name": "Genjyuu Gothic",
@@ -16473,10 +17219,6 @@
     },
     {
       "name": "Ghana Chocolate",
-      "reason": "latin"
-    },
-    {
-      "name": "Gidugu",
       "reason": "latin"
     },
     {
@@ -16596,10 +17338,6 @@
       "reason": "cjk"
     },
     {
-      "name": "Gotu",
-      "reason": "latin"
-    },
-    {
       "name": "Goudy Old Style",
       "reason": "proprietary"
     },
@@ -16642,10 +17380,6 @@
     {
       "name": "GulimChe",
       "reason": "cjk"
-    },
-    {
-      "name": "Gulzar",
-      "reason": "latin"
     },
     {
       "name": "Gungsuh",
@@ -16808,10 +17542,6 @@
       "reason": "cjk"
     },
     {
-      "name": "Halant",
-      "reason": "latin"
-    },
-    {
       "name": "HanaMin",
       "reason": "cjk"
     },
@@ -16844,10 +17574,6 @@
       "reason": "cjk"
     },
     {
-      "name": "Harmattan",
-      "reason": "latin"
-    },
-    {
       "name": "HarmonyOS Sans",
       "reason": "latin"
     },
@@ -16873,7 +17599,7 @@
     },
     {
       "name": "Heebo",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Hermit",
@@ -16996,10 +17722,6 @@
       "reason": "proprietary"
     },
     {
-      "name": "Hibur Mono",
-      "reason": "latin"
-    },
-    {
       "name": "Hi Melody",
       "reason": "cjk"
     },
@@ -17009,7 +17731,7 @@
     },
     {
       "name": "Hind",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Hind Guntur",
@@ -17034,10 +17756,6 @@
     {
       "name": "hizumin-kana",
       "reason": "cjk"
-    },
-    {
-      "name": "Hubballi",
-      "reason": "latin"
     },
     {
       "name": "Humor Sans",
@@ -17233,7 +17951,7 @@
     },
     {
       "name": "Inknut Antiqua",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Input",
@@ -17397,22 +18115,10 @@
     },
     {
       "name": "Itim",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Jaapokki",
-      "reason": "latin"
-    },
-    {
-      "name": "Jaini",
-      "reason": "latin"
-    },
-    {
-      "name": "Jaini Purva",
-      "reason": "latin"
-    },
-    {
-      "name": "Jaldi",
       "reason": "latin"
     },
     {
@@ -17445,10 +18151,6 @@
     },
     {
       "name": "Jgs",
-      "reason": "latin"
-    },
-    {
-      "name": "Jomhuria",
       "reason": "latin"
     },
     {
@@ -17517,7 +18219,7 @@
     },
     {
       "name": "K2D",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Kadwa",
@@ -17553,7 +18255,7 @@
     },
     {
       "name": "Kalam",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Kanchenjunga",
@@ -17561,7 +18263,7 @@
     },
     {
       "name": "Kanit",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "KanjiStrokeOrders",
@@ -17573,15 +18275,11 @@
     },
     {
       "name": "Kantumruy Pro",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Kapakana",
       "reason": "cjk"
-    },
-    {
-      "name": "Karantina",
-      "reason": "latin"
     },
     {
       "name": "Karla Tamil Inclined",
@@ -17593,18 +18291,10 @@
     },
     {
       "name": "Karma",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Karmilla",
-      "reason": "latin"
-    },
-    {
-      "name": "Katibeh",
-      "reason": "latin"
-    },
-    {
-      "name": "Kavivanar",
       "reason": "latin"
     },
     {
@@ -17612,16 +18302,8 @@
       "reason": "license"
     },
     {
-      "name": "Kay Pho Du",
-      "reason": "latin"
-    },
-    {
-      "name": "Kdam Thmor Pro",
-      "reason": "latin"
-    },
-    {
       "name": "Khand",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Khmer",
@@ -17629,7 +18311,7 @@
     },
     {
       "name": "Khula",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Khyay",
@@ -17684,10 +18366,6 @@
       "reason": "cjk"
     },
     {
-      "name": "Kodchasan",
-      "reason": "latin"
-    },
-    {
       "name": "KodomoRounded",
       "reason": "cjk"
     },
@@ -17697,7 +18375,7 @@
     },
     {
       "name": "KoHo",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Koh Santepheap",
@@ -17718,10 +18396,6 @@
     {
       "name": "komorebi gothic P",
       "reason": "cjk"
-    },
-    {
-      "name": "Konkhmer Sleokchher",
-      "reason": "latin"
     },
     {
       "name": "Ko Pub Batang",
@@ -17752,16 +18426,8 @@
       "reason": "license"
     },
     {
-      "name": "Kripa",
-      "reason": "latin"
-    },
-    {
       "name": "Krub",
-      "reason": "latin"
-    },
-    {
-      "name": "Kufam",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Kufi Extended Outline",
@@ -17770,14 +18436,6 @@
     {
       "name": "Kufi Outline Shaded",
       "reason": "proprietary"
-    },
-    {
-      "name": "Kumar One",
-      "reason": "latin"
-    },
-    {
-      "name": "Kurale",
-      "reason": "latin"
     },
     {
       "name": "kurobara-cinderella",
@@ -17792,20 +18450,12 @@
       "reason": "license"
     },
     {
-      "name": "Laila",
-      "reason": "latin"
-    },
-    {
       "name": "Lakki Reddy",
       "reason": "latin"
     },
     {
       "name": "Lalezar",
-      "reason": "latin"
-    },
-    {
-      "name": "Langar",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Langdon",
@@ -17825,7 +18475,7 @@
     },
     {
       "name": "Lateef",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Latin Modern",
@@ -17849,7 +18499,7 @@
     },
     {
       "name": "Lemonada",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Lemonada VF Beta",
@@ -17942,10 +18592,6 @@
     {
       "name": "LiSu",
       "reason": "proprietary"
-    },
-    {
-      "name": "Lisu Bosa",
-      "reason": "latin"
     },
     {
       "name": "Literation Mono for Powerline",
@@ -18121,7 +18767,7 @@
     },
     {
       "name": "Mada",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Magic R",
@@ -18137,7 +18783,7 @@
     },
     {
       "name": "Mali",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Mallanna",
@@ -18156,15 +18802,7 @@
       "reason": "cjk"
     },
     {
-      "name": "Maname",
-      "reason": "latin"
-    },
-    {
       "name": "Mandali",
-      "reason": "latin"
-    },
-    {
-      "name": "Manjari",
       "reason": "latin"
     },
     {
@@ -18172,12 +18810,8 @@
       "reason": "cjk"
     },
     {
-      "name": "Marhey",
-      "reason": "latin"
-    },
-    {
       "name": "Markazi Text",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Marlett",
@@ -18185,11 +18819,11 @@
     },
     {
       "name": "Martel",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Martel Sans",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Ma Shan Zheng",
@@ -18201,10 +18835,6 @@
     },
     {
       "name": "Masinahikan Dene",
-      "reason": "latin"
-    },
-    {
-      "name": "Matangi",
       "reason": "latin"
     },
     {
@@ -18290,10 +18920,6 @@
     {
       "name": "Memoir-Square",
       "reason": "cjk"
-    },
-    {
-      "name": "Menbere",
-      "reason": "latin"
     },
     {
       "name": "Mengshen Pinyin",
@@ -18420,10 +19046,6 @@
       "reason": "cjk"
     },
     {
-      "name": "Mina",
-      "reason": "latin"
-    },
-    {
       "name": "Ming(for ISO10646)",
       "reason": "proprietary"
     },
@@ -18444,10 +19066,6 @@
       "reason": "proprietary"
     },
     {
-      "name": "Mingzat",
-      "reason": "latin"
-    },
-    {
       "name": "Minion Pro",
       "reason": "proprietary"
     },
@@ -18457,14 +19075,10 @@
     },
     {
       "name": "Miriam Libre",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Miriam Mono CLM",
-      "reason": "latin"
-    },
-    {
-      "name": "Mirza",
       "reason": "latin"
     },
     {
@@ -18477,7 +19091,7 @@
     },
     {
       "name": "Mitr",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Mochiy Pop One",
@@ -18493,7 +19107,7 @@
     },
     {
       "name": "Modak",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Modern No. 20",
@@ -18502,10 +19116,6 @@
     {
       "name": "MoeumT R",
       "reason": "proprietary"
-    },
-    {
-      "name": "Mogra",
-      "reason": "latin"
     },
     {
       "name": "Moirai One",
@@ -18560,10 +19170,6 @@
       "reason": "license"
     },
     {
-      "name": "Monomakh",
-      "reason": "latin"
-    },
-    {
       "name": "Monomaniac One",
       "reason": "cjk"
     },
@@ -18582,10 +19188,6 @@
     {
       "name": "Monotype Sorts",
       "reason": "proprietary"
-    },
-    {
-      "name": "Montserrat Subrayada",
-      "reason": "latin"
     },
     {
       "name": "Moralerspace",
@@ -18677,7 +19279,7 @@
     },
     {
       "name": "Mukta",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Mukta Mahee",
@@ -18752,10 +19354,6 @@
       "reason": "latin"
     },
     {
-      "name": "Namdhinggo",
-      "reason": "latin"
-    },
-    {
       "name": "Namdhinggo SIL",
       "reason": "latin"
     },
@@ -18790,10 +19388,6 @@
     {
       "name": "NanumSquare Round",
       "reason": "cjk"
-    },
-    {
-      "name": "Narnoor",
-      "reason": "latin"
     },
     {
       "name": "NewCM08Devanagari",
@@ -18921,7 +19515,7 @@
     },
     {
       "name": "Niramit",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Nokora",
@@ -18945,7 +19539,7 @@
     },
     {
       "name": "Noto Kufi Arabic",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Noto Mono for Powerline",
@@ -18957,7 +19551,7 @@
     },
     {
       "name": "Noto Naskh Arabic",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Noto Naskh Arabic UI",
@@ -18965,11 +19559,7 @@
     },
     {
       "name": "Noto Nastaliq Urdu",
-      "reason": "latin"
-    },
-    {
-      "name": "Noto Rashi Hebrew",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Noto Sans Adlam",
@@ -19852,23 +20442,11 @@
       "reason": "latin"
     },
     {
-      "name": "Noto Traditional Nushu",
-      "reason": "latin"
-    },
-    {
       "name": "Noto Znamenny Musical Notation",
       "reason": "icon"
     },
     {
       "name": "NTR",
-      "reason": "latin"
-    },
-    {
-      "name": "Nuosu",
-      "reason": "latin"
-    },
-    {
-      "name": "Nuosu SIL",
       "reason": "latin"
     },
     {
@@ -19953,11 +20531,7 @@
     },
     {
       "name": "Padauk",
-      "reason": "latin"
-    },
-    {
-      "name": "Padyakke Expanded One",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Pagella Math",
@@ -19965,11 +20539,11 @@
     },
     {
       "name": "Palanquin",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Palanquin Dark",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Palatino Linotype",
@@ -19998,18 +20572,6 @@
     {
       "name": "Paper Mono",
       "reason": "license"
-    },
-    {
-      "name": "Parastoo",
-      "reason": "latin"
-    },
-    {
-      "name": "Pattaya",
-      "reason": "latin"
-    },
-    {
-      "name": "Pavanam",
-      "reason": "latin"
     },
     {
       "name": "Peddana",
@@ -20117,7 +20679,7 @@
     },
     {
       "name": "Poppins",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "PoppinsLatin",
@@ -20138,10 +20700,6 @@
     {
       "name": "Powerline Symbols",
       "reason": "icon"
-    },
-    {
-      "name": "Pragati Narrow",
-      "reason": "latin"
     },
     {
       "name": "Preahvihear",
@@ -20165,7 +20723,7 @@
     },
     {
       "name": "Pridi",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "ProFontX",
@@ -20205,7 +20763,7 @@
     },
     {
       "name": "Prompt",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "psudoFont Liga Mono",
@@ -20269,11 +20827,7 @@
     },
     {
       "name": "Rajdhani",
-      "reason": "latin"
-    },
-    {
-      "name": "Rakkas",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Ramabhadra",
@@ -20292,12 +20846,8 @@
       "reason": "latin"
     },
     {
-      "name": "Ranga",
-      "reason": "latin"
-    },
-    {
       "name": "Rasa",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Ravi Prakash",
@@ -20305,7 +20855,7 @@
     },
     {
       "name": "Readex Pro",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Recursive Code",
@@ -20357,15 +20907,7 @@
     },
     {
       "name": "Reem Kufi",
-      "reason": "latin"
-    },
-    {
-      "name": "Reem Kufi Fun",
-      "reason": "latin"
-    },
-    {
-      "name": "Reem Kufi Ink",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Reggae One",
@@ -20425,14 +20967,10 @@
     },
     {
       "name": "Rozha One",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Runic Sans",
-      "reason": "latin"
-    },
-    {
-      "name": "Ruwudu",
       "reason": "latin"
     },
     {
@@ -20477,18 +21015,14 @@
     },
     {
       "name": "Sarabun",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Sarala",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Sarasa Gothic",
-      "reason": "latin"
-    },
-    {
-      "name": "Sarpanch",
       "reason": "latin"
     },
     {
@@ -20509,7 +21043,7 @@
     },
     {
       "name": "Scheherazade New",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Schola Math",
@@ -20521,7 +21055,7 @@
     },
     {
       "name": "Secular One",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Segoe Print",
@@ -20553,10 +21087,6 @@
     },
     {
       "name": "SF Mono Nerd Font Ligaturized",
-      "reason": "latin"
-    },
-    {
-      "name": "Shafarik",
       "reason": "latin"
     },
     {
@@ -20617,7 +21147,7 @@
     },
     {
       "name": "Shrikhand",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Siemreap",
@@ -20692,10 +21222,6 @@
       "reason": "license"
     },
     {
-      "name": "Solitreo",
-      "reason": "latin"
-    },
-    {
       "name": "Song Myung",
       "reason": "cjk"
     },
@@ -20757,11 +21283,7 @@
     },
     {
       "name": "Sriracha",
-      "reason": "latin"
-    },
-    {
-      "name": "Srisakdi",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Standard Symbols PS",
@@ -20833,7 +21355,7 @@
     },
     {
       "name": "Suez One",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "SUIT",
@@ -20844,16 +21366,8 @@
       "reason": "cjk"
     },
     {
-      "name": "Sumana",
-      "reason": "latin"
-    },
-    {
       "name": "Sunflower",
       "reason": "cjk"
-    },
-    {
-      "name": "Sura",
-      "reason": "latin"
     },
     {
       "name": "Suranna",
@@ -20908,10 +21422,6 @@
       "reason": "proprietary"
     },
     {
-      "name": "Tai Heritage Pro",
-      "reason": "latin"
-    },
-    {
       "name": "Tajawal",
       "reason": "latin"
     },
@@ -20929,11 +21439,11 @@
     },
     {
       "name": "Taviraj",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Teko",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Tenali Ramakrishna",
@@ -21016,20 +21526,12 @@
       "reason": "license"
     },
     {
-      "name": "Thasadith",
-      "reason": "latin"
-    },
-    {
       "name": "The Neue Black",
       "reason": "latin"
     },
     {
       "name": "Tiejili SC",
       "reason": "cjk"
-    },
-    {
-      "name": "Tillana",
-      "reason": "latin"
     },
     {
       "name": "timemachine wa",
@@ -21048,40 +21550,8 @@
       "reason": "latin"
     },
     {
-      "name": "Tiro Bangla",
-      "reason": "latin"
-    },
-    {
       "name": "Tiro Devanagari Hindi",
-      "reason": "latin"
-    },
-    {
-      "name": "Tiro Devanagari Marathi",
-      "reason": "latin"
-    },
-    {
-      "name": "Tiro Devanagari Sanskrit",
-      "reason": "latin"
-    },
-    {
-      "name": "Tiro Gurmukhi",
-      "reason": "latin"
-    },
-    {
-      "name": "Tiro Kannada",
-      "reason": "latin"
-    },
-    {
-      "name": "Tiro Tamil",
-      "reason": "latin"
-    },
-    {
-      "name": "Tiro Telugu",
-      "reason": "latin"
-    },
-    {
-      "name": "Tirra",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Togalite",
@@ -21101,10 +21571,6 @@
     },
     {
       "name": "Triodion",
-      "reason": "latin"
-    },
-    {
-      "name": "Trirong",
       "reason": "latin"
     },
     {
@@ -21201,14 +21667,10 @@
     },
     {
       "name": "Vazirmatn",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Verdana",
-      "reason": "latin"
-    },
-    {
-      "name": "Vesper Libre",
       "reason": "latin"
     },
     {
@@ -21360,12 +21822,8 @@
       "reason": "icon"
     },
     {
-      "name": "Yaldevi",
-      "reason": "latin"
-    },
-    {
       "name": "Yantramanav",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Yarndings 12",
@@ -21385,7 +21843,7 @@
     },
     {
       "name": "Yatra One",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "Yeon Sung",

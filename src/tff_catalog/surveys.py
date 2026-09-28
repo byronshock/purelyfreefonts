@@ -30,9 +30,10 @@ Which terms each rank key ranks on (``view_terms``):
   same abstention as Rising (``desktop_chosen`` or ``project``), so both
   shares are of the same families. A source whose Rising terms equal its
   12-month terms carries no recent window and is left out, with a warning
-  (``rising_shares``). So is a source whose ``publish_raw`` is false (Google):
-  its monthly shares would be published in the smoothing state
-  (``RISING_KEEPS_PRIVATE_SHARES``, owner question T).
+  (``rising_shares``). A source whose ``publish_raw`` is false (Google) keeps
+  its history in the private store instead (``PRIVATE_HISTORY_DIR``; owner
+  ruling of 2026-09-26, terms ``google_rising_history``), never in
+  ``state/``; without a store it is left out of Rising.
 
 Before any key ranks on them, Fonts Over Time's observed values are replaced
 by its EWMA-smoothed z (``smooth``, methodology §6).
@@ -50,10 +51,23 @@ parts.
      "fot_ewma": {id: z},                      Fonts Over Time's smoothed z (§6)
      "fot_ewma_base": {id: z},                 the previous month's, which this month smoothed from
      "fot_weeks": ["YYYY-Www", ...],           FOT weekly snapshots seen so far (phase-in)
-     "rising": {source: {id: [share, ...]}}}   monthly shares, oldest first
+     "rising": {source: {id: [share, ...]}}}   monthly shares, oldest first (public sources only)
 
 A second merged run in the same month recomputes that month from the same
 base (``month``), so smoothing never advances twice in one month.
+
+The private Rising history, one file per source and run under ``$TFF_STORE``
+(``PRIVATE_HISTORY_DIR``)::
+
+    _state/rising/<source>/<YYYY-MM-DD>.json
+    {"schema": 1, "source": ..., "run_date": ..., "month": "YYYY-MM",
+     "history": {id: [share, ...]}}
+
+It follows the public history's rules: a run starts from the file of the
+newest merged run (``state/run_history.json``) dated before it, and a run in
+that run's month recomputes the month instead of adding one. The file of a
+merged run's date is never rewritten with other contents, so later runs and
+replays read what that run used. Stage "confidence" reads this run's file back.
 """
 
 import math
@@ -64,7 +78,7 @@ from datetime import date
 from statistics import fmean
 from typing import TYPE_CHECKING, Any, Literal
 
-from tff_catalog import records, stageio, state
+from tff_catalog import jsonio, records, stageio, state
 from tff_catalog.config_model import RANK_KEYS, SurveyRank, WeightedView
 from tff_catalog.corrections import Term
 from tff_catalog.engine import equate, order
@@ -89,11 +103,12 @@ INSTALLED = "desktop_installed"  # the one view where no source abstains (D8)
 # Rising is a rank other than most installed, so its Linux sources abstain (§5,
 # D8); stage "correct" writes terms.json["rising"] that way (view_sources).
 RISING_ABSTAINS = True
-# Rising keeps each source's monthly shares in state/smoothing.json, which is public.
-# Rulings T2 and T4 publish a source whose publish_raw is false (Google) as ranks and
-# z only, so such a source takes no part in Rising and none of its shares are kept.
-# Owner question T (pending): true would keep them there, which T2 does not allow.
-RISING_KEEPS_PRIVATE_SHARES = False
+# Rising keeps each source's monthly shares, and state/smoothing.json is public. Rulings
+# T2 and T4 publish a source whose publish_raw is false (Google) as ranks and z only, so
+# its shares go to the private store instead (owner ruling of 2026-09-26, terms
+# google_rising_history = private_store): $TFF_STORE/_state/rising/<source>/<date>.json.
+PRIVATE_HISTORY_DIR = ("_state", "rising")
+PRIVATE_HISTORY_SCHEMA = 1
 FOT = "fot"  # the engine source with a phase-in weight and EWMA smoothing (D11, §6)
 _WEEK = re.compile(r"^\d{4}-W\d{2}$")
 _USED = frozenset({"observed", "censored"})  # the evidence states that make a term
@@ -836,11 +851,15 @@ class RisingShares:
     recent: dict[str, dict[str, float]]  # {source: {id: share of the recent window}}
     baseline: dict[str, dict[str, float]]  # {source: {id: share of the 12-month window}}
     no_window: tuple[str, ...]  # sources whose Rising terms are their 12-month terms
-    private: tuple[str, ...] = ()  # publish_raw false: left out (RISING_KEEPS_PRIVATE_SHARES)
+    private: tuple[str, ...] = ()  # publish_raw false and no private store: left out
 
 
 def rising_shares(
-    terms_all: Mapping[str, Terms], cfg: RankingConfig, dropped: frozenset[str]
+    terms_all: Mapping[str, Terms],
+    cfg: RankingConfig,
+    dropped: frozenset[str],
+    *,
+    private_store: bool = False,
 ) -> RisingShares:
     """Each enabled, not stale-dropped rising source's recent and 12-month shares.
 
@@ -855,8 +874,9 @@ def rising_shares(
     measure the 12-month share's drift, not a rise: it is left out
     (``no_window``) and its history is not advanced.
 
-    A source whose ``publish_raw`` is false is left out (``private``): its
-    shares would go into the public smoothing state (``RISING_KEEPS_PRIVATE_SHARES``).
+    A source whose ``publish_raw`` is false keeps its history in the private
+    store; without one (``private_store`` false) it is left out (``private``),
+    since its shares may never go into the public smoothing state.
 
     Stage "confidence" rebuilds Rising and must take its baselines from this
     function too, or its Rising orders drift from the stage's.
@@ -870,7 +890,7 @@ def rising_shares(
     for s in sorted(cfg.ranks.rising.sources):
         if not sources[s].enabled or s in dropped or s not in recent_terms:
             continue
-        if not sources[s].publish_raw and not RISING_KEEPS_PRIVATE_SHARES:
+        if not sources[s].publish_raw and not private_store:
             private.append(s)
             continue
         key = survey_key(cfg, sources[s].survey, abstain=RISING_ABSTAINS)
@@ -881,6 +901,104 @@ def rising_shares(
         recent[s] = shares(recent_terms[s])
         baseline[s] = shares(long_terms)
     return RisingShares(recent, baseline, tuple(no_window), tuple(private))
+
+
+# --- the private Rising history (module docstring) ------------------------------------------------
+
+
+def private_sources(cfg: RankingConfig) -> frozenset[str]:
+    """The sources whose ``publish_raw`` is false: their Rising history stays in the store."""
+    return frozenset(s for s, src in cfg.sources.all().items() if not src.publish_raw)
+
+
+def private_history_path(store_root: Path, source: str, day: date) -> Path:
+    """``$TFF_STORE/_state/rising/<source>/<day>.json``."""
+    return store_root.joinpath(*PRIVATE_HISTORY_DIR, source, f"{day.isoformat()}.json")
+
+
+def _merged_dates(ctx_state: state.State) -> list[date]:
+    """The merged runs' dates (``run_history``), newest first."""
+    days = {
+        date.fromisoformat(str(e["run_date"])) for e in ctx_state.run_history if e.get("run_date")
+    }
+    return sorted(days, reverse=True)
+
+
+def _read_private(path: Path, source: str) -> dict[str, Any]:
+    doc = jsonio.load(path)
+    if (
+        not isinstance(doc, dict)
+        or doc.get("schema") != PRIVATE_HISTORY_SCHEMA
+        or doc.get("source") != source
+        or not isinstance(doc.get("history"), dict)
+        or not isinstance(doc.get("month"), str)
+    ):
+        raise ValueError(f"{path}: not a private Rising history of {source}")
+    return doc
+
+
+def private_base(
+    store_root: Path, sources: Iterable[str], ctx_state: state.State, run_date: date
+) -> dict[str, tuple[str, dict[str, list[float]]]]:
+    """Per private source, (month, history) of the newest merged run before ``run_date``
+    that kept one; a source none kept is missing (its history starts now)."""
+    out: dict[str, tuple[str, dict[str, list[float]]]] = {}
+    merged = [d for d in _merged_dates(ctx_state) if d < run_date]
+    for s in sorted(sources):
+        for day in merged:
+            path = private_history_path(store_root, s, day)
+            if path.is_file():
+                doc = _read_private(path, s)
+                out[s] = (doc["month"], doc["history"])
+                break
+    return out
+
+
+def run_private_history(
+    store_root: Path, sources: Iterable[str], run_date: date
+) -> dict[str, dict[str, list[float]]]:
+    """The private history stage "rank" kept for this run (for stage "confidence")."""
+    out = {}
+    for s in sorted(sources):
+        path = private_history_path(store_root, s, run_date)
+        if path.is_file():
+            out[s] = _read_private(path, s)["history"]
+    return out
+
+
+def keep_private_history(
+    store_root: Path,
+    history: Mapping[str, Mapping[str, list[float]]],
+    ctx_state: state.State,
+    run_date: date,
+    log: Any,
+) -> list[Path]:
+    """Write each private source's history for ``run_date``; return the files written.
+
+    The file of a merged run's date keeps what that run wrote: a different history
+    for it is logged as an error and not written.
+    """
+    merged = set(_merged_dates(ctx_state))
+    written = []
+    for s in sorted(history):
+        path = private_history_path(store_root, s, run_date)
+        doc = {
+            "schema": PRIVATE_HISTORY_SCHEMA,
+            "source": s,
+            "run_date": run_date.isoformat(),
+            "month": f"{run_date:%Y-%m}",
+            "history": {f: list(h) for f, h in sorted(history[s].items())},
+        }
+        if run_date in merged and path.is_file():
+            if jsonio.canonical_bytes(_read_private(path, s)) != jsonio.canonical_bytes(doc):
+                log.error(
+                    "rising: %s is a merged run's history and differs from this run's; kept",
+                    path,
+                )
+            continue
+        jsonio.dump(doc, path)
+        written.append(path)
+    return written
 
 
 @dataclass(frozen=True, slots=True)
@@ -897,7 +1015,8 @@ def _smoothing(
     ruler: Mapping[str, float],
     dropped: frozenset[str],
 ) -> _Smoothed:
-    """FOT's phase-in and EWMA and Rising's history, from the committed smoothing state.
+    """FOT's phase-in and EWMA and Rising's history, from the committed smoothing state
+    (and, for a source whose publish_raw is false, the private store's history).
 
     It never reads this run's own output, and a second run in the same month
     redoes that month instead of adding one, so smoothing advances once a month.
@@ -906,7 +1025,8 @@ def _smoothing(
     month = f"{ctx.run_date:%Y-%m}"
     again = prev.get("month") == month
     r = cfg.ranks.rising
-    rs = rising_shares(terms_all, cfg, dropped)
+    store_root = ctx.store.root if ctx.store is not None else None
+    rs = rising_shares(terms_all, cfg, dropped, private_store=store_root is not None)
     recent, baseline = rs.recent, rs.baseline
     if rs.no_window:
         ctx.log.warning(
@@ -916,16 +1036,25 @@ def _smoothing(
         )
     if rs.private:
         ctx.log.info(
-            "rising: %s left out (publish_raw is false; the smoothing state is public)",
+            "rising: %s left out (publish_raw is false and there is no private store)",
             ", ".join(rs.private),
         )
-    private = {s for s, src in cfg.sources.all().items() if not src.publish_raw}
+    private = private_sources(cfg)
+    # A stale state may still hold a private source's shares: they are never read back.
     old = {
         s: {f: h[:-1] if again and s in recent else h for f, h in fam.items()}
         for s, fam in prev.get("rising", {}).items()
-        if RISING_KEEPS_PRIVATE_SHARES or s not in private
+        if s not in private
     }
+    if store_root is not None:
+        kept = private_base(store_root, private & set(r.sources), ctx.state, ctx.run_date)
+        for s, (base_month, fam) in kept.items():
+            redo = base_month == month and s in recent
+            old[s] = {f: list(h[:-1]) if redo else list(h) for f, h in fam.items()}
     history = next_history(old, recent, max(r.smoothing_months, r.min_history_months))
+    if store_root is not None:
+        secret = {s: h for s, h in history.items() if s in private}
+        keep_private_history(store_root, secret, ctx.state, ctx.run_date, ctx.log)
     new = _new_fonts(state.read_part(paths, "first_seen"), ctx.run_date, r.new_days)
     rise = rising_terms(
         {s: history[s] for s in recent if s in history},
@@ -943,7 +1072,7 @@ def _smoothing(
         "fot_ewma": ewma,
         "fot_ewma_base": dict(sorted(base.items())),
         "fot_weeks": sorted(weeks),
-        "rising": history,
+        "rising": {s: h for s, h in history.items() if s not in private},
     }
     return _Smoothed(smoothed, rise, phase_in(cfg, weeks), part)
 

@@ -384,6 +384,9 @@ def _rows(doc: Mapping[str, Any], specimens: Mapping[str, Specimen]) -> list[dic
                 "id": font["id"],
                 "family": font["family"],
                 "label": label,
+                # The owner's site ruling of 2026-09-26 (list_layout): an unranked row puts
+                # its "Not ranked: <reason>" label on a line of its own (li.font.is-unranked).
+                "unranked": label.startswith(UNRANKED_PREFIX),
                 "category_label": data.CATEGORY_LABELS[font["category"]],
                 "license_name": font["license"]["name"],
                 "badges": _badges(font, systems),

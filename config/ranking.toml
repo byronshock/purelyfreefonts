@@ -55,7 +55,7 @@ debian = ["debian"]             # Debian family: popcon only
 ubuntu = ["debian"]
 gnome = ["arch", "debian"]      # desktops ship on both
 kde-plasma = ["arch", "debian"]
-fedora-workstation = []         # counted by neither
+fedora-workstation = []         # counted by neither (RPM: pkgstats and popcon never see it), so it only tags
 
 # --- Engine sources -----------------------------------------------------------
 # Engine sources are not collectors: each maps to one collector plus a selector.
@@ -109,7 +109,7 @@ rate = "per_year"
 floor = 0.0
 censor_below = 0.0
 release_history = "all"         # gate M2 (rec): all releases of main-channel repos; "latest24" or "24months" otherwise
-prerelease_repos = []           # owner ruling 2026-09-26: repos that publish only prereleases, whose prereleases count (OpenDyslexic's, once listed)
+prerelease_repos = ["antijingoist/opendyslexic"]  # owner ruling 2026-09-26 (opendyslexic_prereleases): owner/repo, lower case; repos that publish only prereleases, whose prereleases count
 
 [sources.nerd]                  # Nerd Fonts release downloads, credited to the original font
 collector = "nerd_releases"
@@ -256,7 +256,7 @@ scopes = ["@expo-google-fonts"]
 collector = "flutter"
 group = "flutter"
 survey = "project"
-enabled = false                 # off in the first build (deferred until a token is chosen)
+enabled = false                 # owner ruling 2026-09-26 (default_sources): off in v1; later it needs a search service, a token and a terms ruling
 linux = false
 publish_raw = false
 series = "code_search"
@@ -405,6 +405,7 @@ top100_from_below = 250         # top-100 entries that came from below this
 disagreement_top = 50           # top 50 of most chosen or project ...
 disagreement_other = 300        # ... but below 300 in the other
 what_if_factors = [0.5, 2.0]    # each weight halved and doubled
+move_places = 30                # owner ruling 2026-09-26 (review_report): a move is flagged when over 30 places AND over crosscheck.move_flag
 first_run_move_places = 30      # first run: explain every move of more than 30 places
 
 # --- Gates before ranking ------------------------------------------------------

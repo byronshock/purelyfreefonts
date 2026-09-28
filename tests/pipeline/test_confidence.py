@@ -181,6 +181,15 @@ def test_tiers_cover_every_ranked_font() -> None:
     assert got == {"overall": {"a": "A", "b": "C", "c": "C"}, "project": {"a": "A"}}
 
 
+def test_rising_is_tier_c_while_in_beta() -> None:
+    """Owner ruling of 2026-09-26 (rising_tier): Rising's point ranges would read as A."""
+    orders = {"rising": {"a": 1, "b": 2}, "overall": {"a": 1}}
+    ranges = {"rising": {"a": (1, 1), "b": (2, 2)}, "overall": {"a": (1, 1)}}
+    got = confidence.tiers(ranges, orders, {"a": 3, "b": 2}, TIERS)
+    assert got == {"overall": {"a": "A"}, "rising": {"a": "C", "b": "C"}}
+    assert confidence.FIXED_TIERS == {"rising": "C"}
+
+
 def test_tiers_refuse_a_ranked_font_without_a_range() -> None:
     with pytest.raises(KeyError, match="'b'"):
         confidence.tiers({"overall": {"a": (1, 1)}}, {"overall": {"a": 1, "b": 2}}, {}, TIERS)
@@ -450,13 +459,26 @@ def stage_terms(seed: int = 11) -> tuple[dict[str, Any], dict[str, float], dict[
     return terms, counts, smoothing
 
 
-def ranked_build(root: Path) -> StageContext:
-    """A build where stage "rank" (the real ``surveys.run``) has run on synthetic terms."""
-    from tff_catalog import surveys
+def ranked_build(root: Path, store: Path | None = None) -> StageContext:
+    """A build where stage "rank" (the real ``surveys.run``) has run on synthetic terms.
+
+    With ``store``, Google's Rising history is where the ruling of 2026-09-26 keeps
+    it: in the private store, as the file of a merged run of 2026-09-05.
+    """
+    from tff_catalog import jsonio, surveys
     from tff_catalog.facts import Facts
+    from tff_catalog.store import Store
 
     paths = Paths.for_root(root)
     terms, counts, smoothing = stage_terms()
+    run_history: tuple[dict[str, Any], ...] = ()
+    if store is not None:
+        merged = date(2026, 9, 5)
+        google = smoothing["rising"].pop("google")
+        doc = {"schema": 1, "source": "google", "run_date": merged.isoformat()}
+        path = surveys.private_history_path(store, "google", merged)
+        jsonio.dump({**doc, "month": "2026-09", "history": google}, path)
+        run_history = ({"run_date": merged.isoformat()},)
     names = {fid: f"Family {fid[-2:]}" for fid in counts}
     stageio.dump_stage(paths, "terms", terms)
     stageio.dump_stage(paths, "ruler_counts", counts)
@@ -499,9 +521,9 @@ def ranked_build(root: Path) -> StageContext:
     ctx = StageContext(
         paths=paths,
         config=SimpleNamespace(ranking=FAST),  # type: ignore[arg-type]
-        state=State(smoothing=smoothing),
+        state=State(smoothing=smoothing, run_history=run_history),
         run_date=date(2026, 10, 3),
-        store=None,
+        store=None if store is None else Store(store),
         fetcher=None,
         log=logging.getLogger("test.confidence"),
     )
@@ -534,11 +556,28 @@ def test_stage_gives_every_ranked_font_a_range_and_a_tier(
             assert lo <= placement.order <= hi
             widths.append(hi - lo)
             groups = len(scores[key].fused[fid].groups)
-            assert conf.tier == confidence.tier(placement.order, hi - lo, groups, TIERS)
+            computed = confidence.tier(placement.order, hi - lo, groups, TIERS)
+            assert conf.tier == (confidence.FIXED_TIERS.get(key) or computed)
     assert max(widths) > 0  # the perturbations move something
     before = stageio.stage_path(ctx.paths, "confidence").read_bytes()
     confidence.run(ctx)
     assert stageio.stage_path(ctx.paths, "confidence").read_bytes() == before
+
+
+def test_stage_rebuilds_rising_from_the_private_history(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Google's Rising history is in the private store (ruling of 2026-09-26): the
+    rebuilt ranks read it back, and Google counts towards the fonts that rise."""
+    from tff_catalog import jsonio
+
+    ctx = ranked_build(tmp_path / "build", tmp_path / "store")
+    with caplog.at_level(logging.WARNING):
+        confidence.run(ctx)
+    assert "rebuilt ranks differ" not in caplog.text
+    rising = stageio.load_stage(ctx.paths, "scores")["rising"]
+    assert any("google" in f.groups for f in rising.fused.values())
+    assert "google" not in jsonio.load(ctx.paths.next_state / "smoothing.json")["rising"]
 
 
 def test_stage_widens_and_warns_when_ranks_json_disagrees(

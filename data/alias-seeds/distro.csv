@@ -842,9 +842,7 @@ fonts-vazirmatn,deb-src,gf-family,Vazirmatn,package,,distro,binary fonts-vazirma
 fonts-vollkorn,deb-src,gf-family,Vollkorn,package,,distro,binary fonts-vollkorn; name vollkorn; url vollkorn-typeface.com,false
 fonts-yanone-kaffeesatz,deb-src,gf-family,Yanone Kaffeesatz,package,,distro,binary fonts-yanone-kaffeesatz; name yanone-kaffeesatz; upstream yanone.de/fonts/kaffeesatz; upstream-name Yanone Kaffeesatz,false
 fonts-yusei-magic,deb-src,gf-family,Yusei Magic,package,,distro,binary fonts-yusei-magic; name yusei-magic; url github.com/tanukifont/yuseimagic,false
-ibm-3270,deb-src,brew-cask,font-3270,package,,distro,name ibm-3270; upstream x3270.bgp.nu,false
 lmodern,deb-src,brew-cask,font-latin-modern,package,,distro,binary fonts-lmodern; binary lmodern; url gust.org.pl/projects/e-foundry/latin-modern,false
 oxanium,deb-src,gf-family,Oxanium,package,,distro,name oxanium; upstream-name Oxanium; url github.com/sevmeyer/oxanium,false
-powerline,deb-src,brew-cask,font-powerline-symbols,package,,distro,binary fonts-powerline; url github.com/powerline/powerline,false
 ttf-bitstream-vera,deb-src,brew-cask,font-bitstream-vera,package,,distro,binary ttf-bitstream-vera; name bitstream-vera,false
 unifont,deb-src,fs-id,unifont,package,,distro,name unifont; upstream unifoundry.com/unifont,false

@@ -445,6 +445,45 @@ def test_known_and_blocked_candidates_are_neither_rows_nor_questions() -> None:
     assert new_rows(result, table) == set()
 
 
+def test_a_bundled_key_blocks_single_family_candidates() -> None:
+    """Ruling of 2026-09-26 (gate A): a key the table makes a bundle (D2) is settled, so a
+    miner's proposal to send it to one family never reaches the owner; a name bundled in
+    one name namespace is bundled in all of them."""
+    table = AliasTable.from_rows(
+        [
+            row("ttf-roboto", "arch-pkg", "roboto", "bundle", "2"),
+            row("ttf-roboto", "arch-pkg", "roboto-slab", "bundle", "2"),
+            row("Roboto Family", "font-name", "roboto", "bundle", "2"),
+            row("Roboto Family", "font-name", "roboto-slab", "bundle", "2"),
+        ]
+    )
+    result = merged(
+        table,
+        [
+            cand(k("arch-pkg", "ttf-roboto"), k("gf-family", "Roboto"), "package"),
+            cand(
+                k("arch-pkg", "ttf-roboto"),
+                k("arch-pkg", "ttf-roboto"),
+                "ineligible",
+                detail="icon",
+            ),
+            cand(k("gf-family", "Roboto Family"), k("font-name", "Nowhere"), "build"),
+            cand(k("arch-pkg", "ttf-roboto"), k("gf-family", "Roboto Slab"), "bundle", detail="2"),
+            cand(k("brew-cask", "font-roboto-family"), k("gf-family", "Roboto"), "package"),
+        ],
+    )
+    status = {(o.candidate.alias.key, o.candidate.relation): o.status for o in result.outcomes}
+    assert status == {
+        ("ttf-roboto", "package"): "blocked",
+        ("ttf-roboto", "ineligible"): "blocked",
+        ("Roboto Family", "build"): "blocked",  # its target names no family: still settled
+        ("ttf-roboto", "bundle"): "known",  # the table's own bundle row
+        ("font-roboto-family", "package"): "queued",  # another key
+    }
+    assert [i.alias.key for i in result.queue] == ["font-roboto-family"]
+    assert new_rows(result, table) == set()
+
+
 def test_candidates_that_agree_share_one_question_or_follow_the_accepted_one() -> None:
     alias, target = k("font-name", "Source Sans Pro"), k("gf-family", "Source Sans 3")
     two_miners = merged(

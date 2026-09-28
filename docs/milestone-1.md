@@ -140,7 +140,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 ### Step 5: Latin filter
 **Who:** Claude; the owner signs off the allowlist. **Depends on:** 4 and D4.
 - [ ] Google families: apply rule A (expect 1,264).
-- [ ] Dual-script review sheet: about 30 candidates, sorted by Google year views, with the Latin-language counts from each family's metadata. The owner marks the allowlist.
+- [ ] Dual-script review sheet: about 30 candidates, sorted by Google year views, with the Latin-language counts from each family's metadata. The owner marks the allowlist. *(2026-09-26: the real sheet had 443 candidates; the owner ruled a rule instead (gate L2): 178 included and 116 left out in `data/reviews/latin/2026-09-26.toml`. Left: 149 script companions the shown count had put on the include side, back to the owner.)*
 - [ ] Non-Google fonts:
   - fetch one Regular file per candidate;
   - test it against the GF glyphsets with fontTools;
@@ -171,7 +171,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - [ ] L1: map every license string to an SPDX ID through `licenses.toml`.
 - [ ] L2: cross-check the google/fonts folder, Fontsource, Fontist, Nerd Fonts, Debian DEP-5 and Arch.
 - [ ] Per font, provisionally: class, redistributable, attribution_required and preview_ok (per D3).
-- [ ] Review queue for NOASSERTION results, custom texts and disagreements (DejaVu, Hack, Cascadia, OpenDyslexic, URW, Roboto Mono). Owner rulings are saved in `data/reviews/`.
+- [ ] Review queue for NOASSERTION results, custom texts and disagreements (DejaVu, Hack, Cascadia, OpenDyslexic, URW, Roboto Mono). Owner rulings are saved in `data/reviews/`. *(2026-09-26: the owner's 14 answers are recorded. Left: the 5 Monaspace families, new in this run, and Claude's research on Monofur, Vic Fieger and the four Salaowu families.)*
 
 **Done when:** every candidate has a provisional class, and the queue is empty.
 
@@ -297,8 +297,9 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - [ ] An override list (Inter, IBM Plex, JetBrains Mono, the Adobe Source families), approved by the owner.
 - [ ] Non-Google fonts:
   - link the designer's homepage or the repository's releases page;
-  - never a release asset, `/releases/latest` or an aggregator;
-  - auto-accept only when two sources agree.
+  - never a release asset, `/releases/latest` or an aggregator (open-foundry.com counts as one: owner ruling of 2026-09-26);
+  - auto-accept only when two sources agree, or when the owner-approved foundry list (`config/foundries.toml`, gate C3) gives the link (owner ruling of 2026-09-26);
+  - an `http://` homepage is upgraded to `https://` and checked monthly (owner ruling of 2026-09-26).
 - [ ] A monthly link check.
 
 **Done when:** every catalog font has a primary link that follows the policy and returns HTTP 200.
@@ -356,11 +357,9 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 **Done when:** a clean clone produces identical output from the same snapshots, and the run time is recorded. *(Still open: the clean-clone replay, and the real-refresh variant of step 3's two-runs test, whose `[real]` cases xfail.)*
 
 ### Step 19: Monthly GitHub Actions workflow
-**Who:** Claude builds it; the owner sets up access and merges. **Depends on:** 18 and D15.
-- [ ] Owner: let refresh pull requests trigger CI (gate CI1): turn on "Allow GitHub Actions to create and approve pull requests", which the repository currently has off. The refresh job opens the pull request with `GITHUB_TOKEN` and then dispatches `ci.yml` on `refresh/monthly`, because pull requests that `GITHUB_TOKEN` opens trigger no workflows. No GitHub App or personal token is needed.
-- [ ] Owner: add the secrets:
-  - access to the private snapshot store if D15 is (a), with a deploy key or App;
-  - a token for Flutter code search only if that is turned on.
+**Who:** Claude builds it and sets up access with `gh` (owner ruling CI1, 2026-09-26); the owner merges. **Depends on:** 18 and D15.
+- [ ] Claude (ruling CI1, 2026-09-26), when this step is ready: let refresh pull requests trigger CI by turning on "Allow GitHub Actions to create and approve pull requests" with `gh`, which the repository currently has off. The refresh job opens the pull request with `GITHUB_TOKEN` and then dispatches `ci.yml` on `refresh/monthly`, because pull requests that `GITHUB_TOKEN` opens trigger no workflows. No GitHub App or personal token is needed.
+- [ ] Claude (ruling CI1, 2026-09-26), with `gh`: create the private data repository's deploy key and this repository's `DATA_STORE_KEY` secret (D15), and record both in SERVER.md and here. A token for Flutter code search comes only if that is turned on after v1.
 - [ ] The workflow:
   - runs on a monthly cron at an off-minute (for example `17 6 3 * *`) and on `workflow_dispatch`;
   - uses a uv cache and a concurrency group;

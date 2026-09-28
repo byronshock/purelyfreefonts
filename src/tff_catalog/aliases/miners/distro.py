@@ -57,6 +57,10 @@ and the sources of Debian's font packages.
    (``-doc``, ``-bin`` and other ``NON_FONT_SUFFIXES`` binaries left out),
    unless its own evidence names another.
 
+No rule proposes a ``deb-src`` row for a source in ``NON_FONT_SOURCES``: a
+program, library or TeX source that happens to ship one font binary (owner
+ruling of 2026-09-26, gate A).
+
 Evidence naming two families gives no candidate. A candidate's ``evidence``
 lists what matched (``name``, ``replaces``, ``upstream-name``, ``url``,
 ``replaced by``, ``provided by``, ``transitional to``, ``binary``) and, when
@@ -134,6 +138,51 @@ NERD_DETAILS = frozenset({"nerd", "nf", "nfm", "nfp"})  # aliases.BUILD_DETAILS 
 NON_FONT_SUFFIXES = ("-doc", "-docs", "-dev", "-dbg", "-bin", "-utils", "-tools", "-common")
 NON_FONT_SUFFIXES += ("-examples",)
 
+# Owner ruling of 2026-09-26 (gate A, A_cleanup): no deb-src row for a Debian source
+# package that is not a font package but ships one font binary beside programs, libraries
+# or TeX packages. L2 ANDs every DEP-5 fact of a source, so a row would give the font the
+# program's licenses (libreoffice -> OpenSymbol). The list: sid's Sources of 2026-09-26,
+# the 26 sources whose own section is not "fonts" and whose other binaries are more than
+# installer (udeb), documentation and transitional packages, plus the 5 font tools filed
+# under "fonts" that ship no font at all (font-manager, font-v, fontconfig, fontforge,
+# ttfautohint): the ruling's 31. The other mixed sources of the debian_copyright snapshot
+# are font packages whose extra binaries are only udeb, -doc or transitional packages.
+NON_FONT_SOURCES = frozenset(
+    {
+        "circos",
+        "cool-retro-term",
+        "dcl",
+        "denemo",
+        "finalcut",
+        "font-manager",
+        "font-v",
+        "fontconfig",
+        "fontforge",
+        "fonttools-opentype-feature-freezer",
+        "gftools",
+        "graphite2",
+        "hershey-fonts",
+        "ibm-3270",
+        "libdockapp",
+        "libeot",
+        "libreoffice",
+        "lyx",
+        "mathjax",
+        "node-katex",
+        "povray",
+        "powerline",
+        "psautohint",
+        "python-vfblib",
+        "texlive-base",
+        "texlive-extra",
+        "texmacs",
+        "tipa",
+        "toilet",
+        "ttfautohint",
+        "wine",
+    }
+)
+
 # Which family key a candidate targets, best first; a family with none is named.
 TARGET_NS_ORDER = ("gf-family", "fs-id", "foundry-family", "brew-cask", "fontist-formula")
 TARGET_NS_ORDER += ("gf-dir", "nerd-folder")
@@ -155,8 +204,8 @@ AGGREGATOR_URLS = (
 FORGE_HOSTS = frozenset({"github.com", "gitlab.com", "codeberg.org", "bitbucket.org"})
 FORGE_HOSTS |= {"gitlab.gnome.org", "salsa.debian.org", "sr.ht"}
 SPECIMEN_HOST = "fonts.google.com"
-# Open owner question (2026-09-26): list package homepages in the public seed file as
-# ``upstream <url>``? They show a same-named stranger; some are designers' own sites.
+# Package homepages are listed in the public seed file as ``upstream <url>``, personal
+# sites included: owner ruling of 2026-09-26 (terms, public_facts_in_fixtures).
 LIST_HOMEPAGES = True
 _TRANSITIONAL = re.compile(r"\btransitional\b", re.IGNORECASE)
 _PKG_NAME = re.compile(r"^[a-z0-9][a-z0-9.+_-]*")  # a package name before any version constraint
@@ -706,7 +755,8 @@ class Resolver:
             self._settle(key, decided[0].family, relation, detail, targets, evidence)
 
     def candidates(self) -> list[AliasCandidate]:
-        """Run the four rules; one candidate per decided, uncontested key."""
+        """Run the four rules; one candidate per decided, uncontested key, none for a
+        ``NON_FONT_SOURCES`` source package."""
         self.decide_direct()
         self.decide_derived()
         self.decide_sources()
@@ -721,7 +771,7 @@ class Resolver:
                 auto=False,
             )
             for key, d in sorted(self.decisions.items())
-            if key not in self.conflicts
+            if key not in self.conflicts and not (key.ns == SRC_NS and key.key in NON_FONT_SOURCES)
         ]
 
 

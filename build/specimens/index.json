@@ -202,13 +202,6 @@
     "reason": null,
     "sha256": "e94d129347de5af9a6f3f0986c0a71a7e37309258cf68c118e061e601f26469e"
   },
-  "antic-slab": {
-    "flags": [],
-    "key": "9c5e50be25014f975a957ce14f8a2fe7e67d76a058101858b9a84f8ba584c52a",
-    "path": "specimens/antic-slab.svg",
-    "reason": null,
-    "sha256": "9fe73c9839bc1e0869c1fea1b868ca3ea9bc4320705c5255105511c91e7e38ff"
-  },
   "anton": {
     "flags": [],
     "key": "23fadce119c377e054e39073473e962c234b9750fc310d70ba2b4a43e0cffac4",
@@ -481,6 +474,13 @@
     "path": "specimens/big-shoulders-inline-text.svg",
     "reason": null,
     "sha256": "20a58e55bdafd4b0ad5e471762e0b12b377b82d8b43d351239796f4ac001c5b1"
+  },
+  "birthstone": {
+    "flags": [],
+    "key": "509a84b9b6a39c84291a02097674fb9147ed6a97c9b3aba09fc0d1654c9af059",
+    "path": "specimens/birthstone.svg",
+    "reason": null,
+    "sha256": "962b015e9a619fafc5e6deb0874d04b8e65e5a4bc3c1fed2fb8de2ae0797271d"
   },
   "bitter": {
     "flags": [],
@@ -1179,6 +1179,13 @@
     "reason": "over 30 KB even with the name only",
     "sha256": null
   },
+  "geist-sans": {
+    "flags": [],
+    "key": "20acfd447f4788a4ae2c4b550f0eee70aa59865a99a2a6dd331dfb38261d86ea",
+    "path": "specimens/geist-sans.svg",
+    "reason": null,
+    "sha256": "b45f1a15a371260b77f362540204d5aac1d8403115c50361c75b5635f14ba46e"
+  },
   "gelasio": {
     "flags": [],
     "key": "dae8a7df8ba0d7445b92a22c9399bc4029d19be2217c06417f0aa6f5f44b3f8a",
@@ -1339,6 +1346,13 @@
     "path": "specimens/hepta-slab.svg",
     "reason": null,
     "sha256": "5bb31391acf52a2b2767158e031cf6a1b47be3563ee0df2ad795a44937d78ca3"
+  },
+  "herr-von-muellerhoff": {
+    "flags": [],
+    "key": "071189df458707995800a58d6123744eae6ffa48f604e4d59715aa1f0e067a98",
+    "path": "specimens/herr-von-muellerhoff.svg",
+    "reason": null,
+    "sha256": "142a7e66b89adb7a66fb8489404274bbb817cb4bbbcc3f22a0cafb0627fe4cd0"
   },
   "homemade-apple": {
     "flags": [
@@ -2200,6 +2214,13 @@
     "reason": null,
     "sha256": "c349cb50c1188d8dc4184bb7bd5be72c46a952dd6a0693345c8175618436650c"
   },
+  "ovo": {
+    "flags": [],
+    "key": "8d8974f43b59ea37e44da71a671d10d897ace91f673c9c41eed2e838143ba2f9",
+    "path": "specimens/ovo.svg",
+    "reason": null,
+    "sha256": "703f5c38c9d6d2092e0a9eba3ae80a3b40ebbd4a8f0b19ff99a3a9c8d9da6e17"
+  },
   "oxanium": {
     "flags": [],
     "key": "d4d2fed1eab22df446cfb45ebd2525561c2ce56f82f539137bc2eb08d70c4026",
@@ -2451,13 +2472,6 @@
     "path": "specimens/public-sans.svg",
     "reason": null,
     "sha256": "bab37cb6d70ff3abbc404cb646ca0540390d94a7a6275acae119a9f34361b820"
-  },
-  "puppies-play": {
-    "flags": [],
-    "key": "ce21a511c15ec16125d50cf5aefa91aed73f522eb77c46f2913fc149782ca484",
-    "path": "specimens/puppies-play.svg",
-    "reason": null,
-    "sha256": "8179764fb2b4e9d1976b7242029a9e46578db5a0323cc27e85adab22033d3628"
   },
   "quantico": {
     "flags": [],
@@ -2852,13 +2866,6 @@
     "path": "specimens/sniglet.svg",
     "reason": null,
     "sha256": "390f2497ae6cb9d7edf169e174c5311731c17f24c641eb131af13187fafadbb2"
-  },
-  "sofia": {
-    "flags": [],
-    "key": "b1bd0917f2adff621d825e2ee6b0d20cd099a8620d852c76d5192940c367bdda",
-    "path": "specimens/sofia.svg",
-    "reason": null,
-    "sha256": "c43943e63922ea71fa676edc1bae05f835e8120b649d9703a29c64d8c76c1e7c"
   },
   "sofia-sans": {
     "flags": [],

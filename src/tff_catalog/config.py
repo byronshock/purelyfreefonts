@@ -128,6 +128,13 @@ def check_ranking(r: RankingConfig) -> None:
         if name not in getattr(r.surveys, src.survey).weights:
             _fail(f"ranking.toml: sources.{name}", f"missing from surveys.{src.survey}.weights")
     _check_project_groups(r, sources)
+    for repo in r.sources.github.prerelease_repos:
+        # Stage "correct" compares them with the lower-cased repo of each observation.
+        if repo != repo.lower() or not re.fullmatch(r"[a-z0-9_.-]+/[a-z0-9_.-]+", repo):
+            _fail(
+                "ranking.toml: sources.github.prerelease_repos",
+                f"{repo!r} is not owner/repo in lower case",
+            )
 
     e = r.engine
     for key in ("ruler", "alt_ruler"):

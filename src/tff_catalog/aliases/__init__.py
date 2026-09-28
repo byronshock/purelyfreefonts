@@ -28,7 +28,9 @@ What the relations do (the stage below):
   (ns, match_key) maps to at most one family (``AliasTable`` checks it).
 - ``bundle`` rows credit several families from one key (D2); ``sibling`` and
   ``related`` rows are information for the catalog. None of them enter the
-  alias index (``mapping.IndexEntry`` holds one family per key).
+  alias index (``mapping.IndexEntry`` holds one family per key). A candidate
+  that would send a bundled key (a name: bundled in any name namespace) to one
+  family is ``blocked``, never queued: the table could not hold both.
 - ``distinct`` rows are blocks: the alias never maps to ``family_id``. With
   detail ``SIBLING_DETAIL`` the block covers every key whose match_key
   *contains* the alias's (so ``fonts-roboto-slab`` and ``@fontsource/roboto-slab``
@@ -785,7 +787,20 @@ def _kept_id(
     return kept
 
 
+def _bundled(key: SourceKey, table: AliasTable) -> bool:
+    """Whether a ``bundle`` row credits several families from ``key`` (a name: in any
+    ``NAME_NAMESPACES`` namespace, since a name means the same thing in all of them)."""
+    spaces = NAME_NAMESPACES if key.ns in NAME_NAMESPACES else (key.ns,)
+    return any(
+        r.relation == "bundle" for ns in spaces for r in table.lookup(SourceKey(ns, key.key))
+    )
+
+
 def _assess(cand: AliasCandidate, inp: _Inputs) -> _Assessment:
+    if cand.relation in MAPPING_RELATIONS and _bundled(cand.alias, inp.table):
+        # The table makes the key a bundle (D2): a row sending it to one family could never
+        # join it (``AliasTable`` refuses both on one key), so the proposal is settled.
+        return _Assessment("blocked", None, "a bundle row credits several families from it")
     fam = _target_family(cand, inp)
     if isinstance(fam, _Assessment):
         return fam

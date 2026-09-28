@@ -74,7 +74,11 @@ then live before queued,
 deprecated and delisted, then ``SOURCE_PRIORITY``. The registry keeps
 ``minted_from`` and ``first_seen`` for ever and takes the current display name
 (``next_ids``). An intermediate name is not kept: the report lists every
-changed display name so its old name can go into ``data/aliases.csv``.
+changed display name so its old name can go into ``data/aliases.csv``. A
+``rename`` row in a name namespace with detail ``display`` (``DISPLAY_DETAIL``)
+names its family's display name outright, for a family no record names the
+way the owner ruled (ProggyCleanTT is shown as ProggyClean, 2026-09-26); two
+such rows for one family raise ``UniverseError``.
 
 **Drop.** A family is dropped when any record gives a non-text code (icon,
 emoji, symbol, barcode, math, music, non-font), or when every record says
@@ -130,6 +134,7 @@ SEVERAL_FAMILIES = "several-families"
 BUNDLE = "bundle"
 INELIGIBLE = "ineligible"
 DISTINCT = "distinct"
+DISPLAY_DETAIL = "display"  # a rename row's detail: the row's alias is the family's display name
 SETTLE_ROUNDS = 8  # build_universe: rounds of placing against the proposed registry
 
 _STATUS_RANK = {"live": 0, "queued": 1, "deprecated": 2, "delisted": 3}
@@ -245,6 +250,7 @@ class _Rules:
     name_ns: frozenset[str]  # aliases.NAME_NAMESPACES
     blocks: Any  # aliases.Blocks: the distinct rows
     split: frozenset[str]  # the families distinct rows name: something was split off them
+    display: dict[str, str]  # family id -> display name the owner ruled (DISPLAY_DETAIL)
 
     @classmethod
     def of(cls, rows: Iterable[AliasRow]) -> _Rules:
@@ -255,7 +261,14 @@ class _Rules:
         fold: dict[tuple[str, str], set[str]] = defaultdict(set)
         ineligible: dict[tuple[str, str], set[str]] = defaultdict(set)
         bundle: set[tuple[str, str]] = set()
+        display: dict[str, set[str]] = defaultdict(set)
         for row in rows:
+            if (
+                row.relation == "rename"
+                and row.detail == DISPLAY_DETAIL
+                and row.ns in NAME_NAMESPACES
+            ):
+                display[row.family_id].add(row.alias)
             k = (row.ns, match_key(row.alias))
             if row.relation in FOLD_RELATIONS:
                 fold[k].add(row.family_id)
@@ -270,6 +283,7 @@ class _Rules:
             name_ns=NAME_NAMESPACES,
             blocks=Blocks.of(rows),
             split=frozenset(r.family_id for r in rows if r.relation == DISTINCT and r.family_id),
+            display=_one_display(display),
         )
 
     def key_verdict(self, key: SourceKey) -> tuple[str, str]:
@@ -306,6 +320,13 @@ class _Rules:
 
     def name_bars(self, name: str, fid: str) -> bool:
         return self.blocks.blocks(SourceKey(NAME_KEY_NS, name), fid)
+
+
+def _one_display(found: Mapping[str, set[str]]) -> dict[str, str]:
+    twice = sorted(f"{fid} ({', '.join(sorted(n))})" for fid, n in found.items() if len(n) > 1)
+    if twice:
+        raise UniverseError(f"more than one display-name row for {'; '.join(twice)}")
+    return {fid: next(iter(names)) for fid, names in sorted(found.items())}
 
 
 # --- grouping by name ----------------------------------------------------------------------------
@@ -672,6 +693,7 @@ def _assemble(
     ids: Mapping[str, Mapping[str, Any]],
     run_date: date,
     kept_out: set[SourceKey],
+    display: Mapping[str, str],
 ) -> tuple[dict[str, Family], set[SourceKey]]:
     """The families, and the keys found in several of them.
 
@@ -687,7 +709,7 @@ def _assemble(
     families = {}
     for fid in sorted(by_id):
         recs = by_id[fid]
-        name = _best(recs).family
+        name = display.get(fid) or _best(recs).family
         entry = ids.get(fid, {})
         minted_from = entry.get("minted_from") or entry.get("family") or minted.get(fid) or name
         families[fid] = Family(
@@ -778,7 +800,7 @@ def _build(
     placed.unmapped |= held & {r.key for r in records}
     by_id, minted = _mint(placed.targets, ids, rules)
     kept_out = placed.unmapped | set(placed.excluded)
-    families, several = _assemble(by_id, minted, ids, day, kept_out)
+    families, several = _assemble(by_id, minted, ids, day, kept_out, rules.display)
     # One entry per key: unmapped wins, then the alias table's reasons.
     whys = {k: v for k, v in placed.excluded.items() if k not in placed.unmapped}
     whys |= {k: {SEVERAL_FAMILIES} for k in several}

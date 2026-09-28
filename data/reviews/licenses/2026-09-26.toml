@@ -114,3 +114,91 @@ choice = "d"
 recommended = true
 ruling = "Research more"
 reason = "Letters (Velvetyne): the repository's LICENSE.txt is the OFL but the font's license field says Creative Commons; Claude researches it and asks again."
+
+[LIC-opendyslexic]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (LIC_14): the upstream repository says OFL-1.1; the Bitstream Vera label (Debian, Nerd Fonts) is outdated."
+
+[LIC-overpass]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (LIC_14): google/fonts, Fontsource and Fontist say OFL-1.1; Nerd Fonts' LGPL-2.1 OR OFL-1.1 is the older dual license."
+
+[LIC-roboto-mono]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (LIC_14): Roboto Mono moved from google/fonts apache/ to ofl/; the Apache-2.0 label is outdated."
+
+[LIC-tinos]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (LIC_14): google/fonts and Fontsource say OFL-1.1; Nerd Fonts' Apache-2.0 label is outdated."
+
+[LIC-tex-gyre-heros]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "LicenseRef-GUST-Font-License"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (LIC_14): TeX Gyre fonts are under the GUST Font License, which qualifies (owner_ruling_12); Fontist's LPPL-1.3c label is the license GUST derives from."
+
+[LIC-cascadia-code]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (LIC_14): Microsoft publishes Cascadia under OFL-1.1; Windows 11 also preinstalls it."
+
+[LIC-cascadia-mono]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (LIC_14): Microsoft publishes Cascadia under OFL-1.1; Windows 11 also preinstalls it."
+
+[LIC-hack]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "Bitstream-Vera AND MIT"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (LIC_14): MIT for Hack's own work plus the Bitstream Vera license for the glyphs it derives from; both qualify."
+
+[LIC-salaowu]
+choice = "d"
+recommended = true
+ruling = "Research more"
+reason = "Claude's recommendation (LIC_14): no source states a license; Claude researches it and asks again."
+
+[LIC-salaowu-book]
+choice = "d"
+recommended = true
+ruling = "Research more"
+reason = "Claude's recommendation (LIC_14): no source states a license; Claude researches it and asks again."
+
+[LIC-salaowu-extra-light]
+choice = "d"
+recommended = true
+ruling = "Research more"
+reason = "Claude's recommendation (LIC_14): no source states a license; Claude researches it and asks again."
+
+[LIC-salaowu-light]
+choice = "d"
+recommended = true
+ruling = "Research more"
+reason = "Claude's recommendation (LIC_14): no source states a license; Claude researches it and asks again."

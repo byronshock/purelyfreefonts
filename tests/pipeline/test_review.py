@@ -62,6 +62,7 @@ def small(cfg: RankingConfig = RANKING) -> RankingConfig:
             top100_from_below=25,
             disagreement_top=5,
             disagreement_other=30,
+            move_places=3,
             first_run_move_places=3,
         ),
     )
@@ -164,6 +165,42 @@ def test_diff_flags_small_moves_deep_down_are_not_big() -> None:
     now_ids.insert(29, "f25")  # 26 -> 30: 4 places, but only 15% of 26
     flags = review.diff_flags({"project": orders(*ids)}, {"project": orders(*now_ids)}, {}, cfg)
     assert not [f for f in flags if f.kind == "move"]
+
+
+def test_the_move_flag_reads_its_own_key_not_the_first_run_one() -> None:
+    """Owner ruling of 2026-09-26 (review_report): review.move_places, not first_run_move_places."""
+    ids = [f"f{i:02d}" for i in range(40)]
+    now_ids = list(ids)
+    now_ids.remove("f01")
+    now_ids.insert(9, "f01")  # 2 -> 10: 8 places
+    prev, now = {"overall": orders(*ids)}, {"overall": orders(*now_ids)}
+    wide = dataclasses.replace(small().review, move_places=10, first_run_move_places=3)
+    narrow = dataclasses.replace(small().review, move_places=3, first_run_move_places=10)
+    for rev, flagged in ((wide, False), (narrow, True)):
+        flags = review.diff_flags(prev, now, {}, dataclasses.replace(small(), review=rev))
+        assert any(f.kind == "move" and f.family_id == "f01" for f in flags) is flagged
+
+
+def test_default_category_catalog_fonts_are_listed_for_gate_r() -> None:
+    """Owner ruling of 2026-09-26 (data_defaults): catalog fonts whose category is the
+    sans-serif default are listed in the pack for the owner to correct."""
+    fx = {
+        "a": Facts("sans-serif", False, False, True, "default"),
+        "b": Facts("serif", False, False, True, "google_metadata"),
+        "c": Facts(
+            "sans-serif",
+            True,
+            False,
+            True,
+            "category=default;is_monospace=font_file;formats=font_file",
+        ),
+        "d": Facts("sans-serif", False, False, True, "default"),
+    }
+    members = SimpleNamespace(members=lambda: ["a", "b", "c"])
+    assert review.defaulted_categories(fx, members) == ("a", "c")  # d is not in the catalog
+    assert review.defaulted_categories(fx, None) == ("a", "c", "d")
+    assert review.defaulted_categories(None, members) == ()
+    assert "fira-mono" in review.GATE_R_WATCH
 
 
 def test_diff_flags_first_run_and_a_newly_published_key() -> None:
@@ -859,6 +896,9 @@ def test_stage_writes_review_and_pack_deterministically(tmp_path: Path) -> None:
     assert "## What if" not in text
     anomalies = pack["anomalies.md"].decode()
     assert "## What if" in anomalies
+    checks = pack["checks.md"].decode()  # the owner's ruling of 2026-09-26 (data_defaults)
+    assert "## Catalog fonts with the default category" in checks
+    assert "## Families to watch" in checks
     assert f"`ranks.overall.mix.project` {review.TIMES} 2:" in anomalies
     # no Fonts Over Time weeks yet: its weight this run is the phase-in weight, not its key
     phase = "(phasing in: this run's weight is `sources.fot.phase_in_weight`)"
@@ -962,6 +1002,48 @@ def test_members_without_an_accepted_link_are_named(tmp_path: Path) -> None:
     ]
     stageio.dump_stage(ctx.paths, "links", dict.fromkeys(members, link))
     assert not [f for f in review.analyse(ctx).flags if "Held back" in f.message]
+
+
+def test_held_back_members_name_what_they_wait_for(tmp_path: Path) -> None:
+    """A proposed override waits on the owner, a research answer on Claude; neither is
+    reported as a pick the owner still has to make."""
+    from tff_catalog.links import Link, Links, queue_question
+
+    ctx = ranked_build(tmp_path)
+    members = stageio.load_stage(ctx.paths, "membership").members()
+    link = Links(Link("https://x.example/"), None, "two_sources")
+    stageio.dump_stage(ctx.paths, "links", dict.fromkeys(members[4:], link))
+    candidate = {"candidates": [{"kind": "homepage", "sources": ["x"], "url": "https://y/"}]}
+    ctx.paths.config.mkdir(parents=True, exist_ok=True)
+    (ctx.paths.config / "link-overrides.toml").write_text(
+        "schema = 1\n\n[[override]]\n"
+        f'family = "{members[0]}"\nname = "{NAMES[members[0]]}"\n'
+        f'question = "K-{members[0]}-page"\nprimary = "https://z.example/"\nreason = "r"\n'
+    )
+    queue = {
+        "undecided": dict.fromkeys(members[:3], candidate),
+        "overrides": {
+            "pending": [f"K-{members[0]}-page"],
+            "research": [queue_question(members[1])],
+        },
+    }
+    jsonio.dump(queue, ctx.paths.queues / "links.json")
+    info = [f.message for f in review.analyse(ctx).flags if f.kind == "info"]
+    held = [m for m in info if m.startswith("Held back from the catalog")]
+    assert held == [
+        "Held back from the catalog until the owner answers gate K on the link Claude "
+        "researched and proposed in config/link-overrides.toml: "
+        f"{NAMES[members[0]]} (`{members[0]}`, K-{members[0]}-page).",
+        "Held back from the catalog while Claude researches the official page the owner "
+        "asked for at gate K, to propose it in config/link-overrides.toml: "
+        f"{NAMES[members[1]]} (`{members[1]}`).",
+        "Held back from the catalog until the owner picks a download link at gate K "
+        f"(no two sources agree on one): {NAMES[members[2]]} (`{members[2]}`).",
+        "Held back from the catalog with no candidate download link at all, so gate K has "
+        "nothing to ask yet: Claude researches each official page and proposes an override in "
+        f"config/link-overrides.toml, which gate K then asks about: {NAMES[members[3]]} "
+        f"(`{members[3]}`).",
+    ]
 
 
 def test_stage_needs_ranks(tmp_path: Path) -> None:

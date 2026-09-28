@@ -36,9 +36,9 @@ values:
   "catalog", from ``build/stage/membership.json`` against the committed
   ``state/membership.json``, so hysteresis counts).
 - ``move``: a font in the top ``membership.catalog_size`` either month whose
-  order changed by more than ``review.first_run_move_places`` places and by
-  more than ``crosscheck.move_flag`` of the better of its two orders (so 20 →
-  51 counts, 400 → 431 does not).
+  order changed by more than ``review.move_places`` places and by more than
+  ``crosscheck.move_flag`` of the better of its two orders (so 20 → 51
+  counts, 400 → 431 does not; the owner's ruling of 2026-09-26).
 - ``from_below``: a font now in the exact top that was below
   ``review.top100_from_below`` last month, or not published.
 - ``license``: a changed L3 license text, text URL or level
@@ -84,7 +84,11 @@ says how many more there are; ``review-pack/anomalies.md`` lists every flag.
 ranges and per-source ranks; fonts held back by the two-group gate; tier-C
 fonts; the comparison with the old Top 100 (``OLD_TOP100`` in the store;
 methodology §9, first run); most-chosen-versus-project disagreements; every
-flag; the what-if table; the per-source statistics. It is rebuilt from
+flag; the what-if table; the per-source statistics; and the checks the owner
+asked for at gate R (``checks.md``, the owner's ruling of 2026-09-26,
+data_defaults): the catalog fonts whose category is the "sans-serif" default,
+for the owner to correct, and the families in ``GATE_R_WATCH`` with their rank
+in each source. It is rebuilt from
 scratch on every run. The old Top 100 and the installed-fonts filter it
 reads come from the private store's seed copy and never reach review.md.
 
@@ -169,6 +173,12 @@ TERM_NOTES = {
     "dependency_review": "a Linux dependent holds 35-50% of installs; gate X",
     "stale_sync": "ecosyste.ms data not synced recently",
 }
+# Families the owner asked to look at at gate R, with why (owner ruling of 2026-09-26,
+# data_defaults): shown in the pack's checks.md with their rank in every source.
+GATE_R_WATCH: dict[str, str] = {
+    "fira-mono": "@fontsource/fira-mono looks inflated by a project template (3rd in "
+    "ecosyste.ms dependents); no automatic change",
+}
 PACK_FILES: dict[str, str] = {
     "README.md": "What is here, and the gate R question.",
     "top100.md": "The top 100 of each rank, with tiers, ranges and per-source ranks.",
@@ -179,6 +189,7 @@ PACK_FILES: dict[str, str] = {
     "anomalies.md": "Every flag, uncut (review.md stops some lists at the exact top).",
     "what-if.md": "The what-if table: each weight halved and doubled.",
     "sources.md": "Per-source statistics against the last run, ruler overlaps and weights.",
+    "checks.md": "Catalog fonts with the default category, and the families to watch.",
 }
 
 
@@ -363,7 +374,7 @@ def _moves(
     names: Mapping[str, str],
     cfg: RankingConfig,
 ) -> list[Flag]:
-    places, share = cfg.review.first_run_move_places, cfg.crosscheck.move_flag
+    places, share = cfg.review.move_places, cfg.crosscheck.move_flag
     depth = cfg.membership.catalog_size
     found = []
     for f in sorted(p.keys() & n.keys()):
@@ -1345,6 +1356,7 @@ class Analysis:
     what_if: tuple[WhatIf, ...]
     old: OldComparison | None
     notes: tuple[str, ...]
+    defaulted: tuple[str, ...] = ()  # catalog members whose category is the default
 
 
 def _require(ctx: StageContext, name: str) -> Any:
@@ -1486,6 +1498,22 @@ def analyse(ctx: StageContext) -> Analysis:
         what_if=tuple(rows),
         old=old,
         notes=tuple(notes),
+        defaulted=defaulted_categories(_optional(ctx, "facts"), _optional(ctx, "membership")),
+    )
+
+
+def defaulted_categories(
+    facts: Mapping[str, Any] | None, membership: Membership | None
+) -> tuple[str, ...]:
+    """Catalog members (every family without a membership) whose category no source or
+    font table gave, so it is the "sans-serif" default (``facts.DEFAULT``), sorted by id."""
+    from tff_catalog.facts import DEFAULT, fact_bases
+
+    if not facts:
+        return ()
+    members = set(membership.members()) if membership is not None else set(facts)
+    return tuple(
+        sorted(f for f, x in facts.items() if f in members and fact_bases(x)["category"] == DEFAULT)
     )
 
 
@@ -1518,10 +1546,16 @@ def rank_gap_flags(catalog: Path) -> list[Flag]:
 
 
 def _unlinked_notes(ctx: StageContext, names: Mapping[str, str]) -> list[str]:
-    """The catalog members stage "export" holds back for want of an accepted link: those
-    gate K asks about (a candidate link exists), and those with no candidate at all, which
-    gate K never asks about until Claude researches the official page and proposes an
-    override in ``config/link-overrides.toml`` (``links.questions``)."""
+    """The catalog members stage "export" holds back for want of an accepted link, by what
+    each waits for:
+
+    - the owner's answer to a researched override in ``config/link-overrides.toml``
+      (its question is in the links queue's ``overrides.pending``);
+    - Claude's research, which the owner asked for at gate K (``overrides.research``);
+    - the owner's pick among the candidate links gate K lists;
+    - research no one has asked for: with no candidate at all, gate K asks nothing until
+      Claude proposes an override (``links.questions``).
+    """
     from tff_catalog import links as links_stage
 
     membership, links = _optional(ctx, "membership"), _optional(ctx, "links")
@@ -1531,14 +1565,39 @@ def _unlinked_notes(ctx: StageContext, names: Mapping[str, str]) -> list[str]:
     if not held:
         return []
     queue_path = ctx.paths.queues / links_stage.QUEUE_FILE
-    undecided = jsonio.load(queue_path).get("undecided", {}) if queue_path.is_file() else {}
-    asked = [fid for fid in held if (undecided.get(fid) or {}).get("candidates")]
-    research = [fid for fid in held if fid not in asked]
+    queue = jsonio.load(queue_path) if queue_path.is_file() else {}
+    undecided = queue.get("undecided", {})
+    ruled = queue.get("overrides", {})
+    pending, sent = set(ruled.get("pending", [])), set(ruled.get("research", []))
+    proposed = {
+        o.family: o.question for o in links_stage.load_overrides(ctx.paths) if o.question in pending
+    }
+    waiting = [fid for fid in held if fid in proposed]
+    researching = [
+        fid for fid in held if fid not in proposed and links_stage.queue_question(fid) in sent
+    ]
+    rest = [fid for fid in held if fid not in proposed and fid not in researching]
+    asked = [fid for fid in rest if (undecided.get(fid) or {}).get("candidates")]
+    research = [fid for fid in rest if fid not in asked]
 
     def listed(ids: Sequence[str]) -> str:
         return ", ".join(f"{names.get(fid, fid)} (`{fid}`)" for fid in ids)
 
     out = []
+    if waiting:
+        questions = ", ".join(
+            f"{names.get(fid, fid)} (`{fid}`, {proposed[fid]})" for fid in waiting
+        )
+        out.append(
+            "Held back from the catalog until the owner answers gate K on the link Claude "
+            f"researched and proposed in config/link-overrides.toml: {questions}."
+        )
+    if researching:
+        out.append(
+            "Held back from the catalog while Claude researches the official page the owner "
+            "asked for at gate K, to propose it in config/link-overrides.toml: "
+            f"{listed(researching)}."
+        )
     if asked:
         out.append(
             "Held back from the catalog until the owner picks a download link at gate K "
@@ -1856,6 +1915,49 @@ def _pack_disagreements(a: Analysis, cfg: RankingConfig) -> str:
     return "\n".join([*lines, ""])
 
 
+def _pack_checks(a: Analysis) -> str:
+    overall = a.now.get("overall", {})
+    lines = [
+        f"# Checks for gate R, {a.run_date}",
+        "",
+        "Asked for by the owner's ruling of 2026-09-26 (data_defaults).",
+        "",
+        "## Catalog fonts with the default category",
+        "",
+        "No source and no font table gave a category, so these show as sans-serif. Correct "
+        "any that are wrong (the category drives the site's filters).",
+        "",
+    ]
+    rows = sorted(
+        ([overall.get(f, NONE), _name(a.names, f), f] for f in a.defaulted),
+        key=lambda r: (r[0] if isinstance(r[0], int) else math.inf, r[2]),
+    )
+    lines += _table(["Overall", "Font", "Id"], rows, "rll") if rows else ["None."]
+    lines += ["", "## Families to watch", ""]
+    for fid, why in sorted(GATE_R_WATCH.items()):
+        lines += [f"### {_name(a.names, fid)} (`{fid}`)", "", f"{why}.", ""]
+        rows = []
+        for key in RANK_KEYS:
+            order = a.now.get(key, {}).get(fid)
+            ranks = a.source_ranks.get(key, {})
+            by_source = [f"{s} {r[fid]}" for s, r in sorted(ranks.items()) if fid in r]
+            if order is not None or by_source:
+                rows.append(
+                    [
+                        key,
+                        order if order is not None else "not ranked",
+                        ", ".join(by_source) or NONE,
+                    ]
+                )
+        lines += (
+            _table(["Rank", "Order", "Rank in each source"], rows, "lrl")
+            if rows
+            else ["Not ranked."]
+        )
+        lines.append("")
+    return "\n".join(lines)
+
+
 def _pack_what_if(a: Analysis, cfg: RankingConfig) -> str:
     top = cfg.display.exact_top
     lines = [
@@ -2032,6 +2134,7 @@ def write_pack(directory: Path, a: Analysis, cfg: RankingConfig) -> Path:
         "anomalies.md": render_review(a.prev, a.published, a.all_flags, private=False),
         "what-if.md": _pack_what_if(a, cfg),
         "sources.md": _pack_sources(a, cfg),
+        "checks.md": _pack_checks(a),
     }
     texts["README.md"] = _pack_readme(a)
     if directory.exists():

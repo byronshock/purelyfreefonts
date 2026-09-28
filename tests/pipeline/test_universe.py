@@ -629,6 +629,29 @@ def test_an_asserted_old_name_is_never_the_display_name() -> None:
     assert only(build(recs)).id == "quill-sans"
 
 
+def test_a_display_row_names_the_family_no_record_names() -> None:
+    """Ruling of 2026-09-26 (gate A): every record says "ProggyCleanTT", the owner says
+    the family is ProggyClean. A fold row on the old name gives the id, a display row
+    the name; the registry then keeps that name."""
+    recs = [
+        rec("nerdfonts", "nerd-folder", "Proggy", "Proggy Glyph TT", names=(("Proggy", "build"),)),
+        rec("homebrew_casks", "brew-cask", "font-proggy-glyph-tt-nerd-font", "Proggy Glyph TT"),
+    ]
+    assert only(build(recs)).family == "Proggy Glyph TT"
+    rows = table(
+        alias("Proggy Glyph TT", "font-name", "proggy-glyph", "rename"),
+        alias("Proggy Glyph", "font-name", "proggy-glyph", "rename", universe.DISPLAY_DETAIL),
+    )
+    fam = only(build(recs, rows))
+    assert (fam.id, fam.family, fam.minted_from) == ("proggy-glyph", "Proggy Glyph", "Proggy Glyph")
+    registry = next_ids(build(recs, rows), {})
+    assert registry["proggy-glyph"]["family"] == "Proggy Glyph"
+    assert only(build(recs, rows, ids=registry, day=DAY2)) == fam
+    two = table(*rows.rows, alias("Proggy G", "gf-family", "proggy-glyph", "rename", "display"))
+    with pytest.raises(UniverseError, match="more than one display-name row for proggy-glyph"):
+        build(recs, two)
+
+
 def test_placements_that_never_settle_are_held_back_as_unmapped() -> None:
     # Contradictory input found by a property search: records of one formula assert
     # renames across two registry families that share every name. The run must end,

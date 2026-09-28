@@ -1386,9 +1386,15 @@ def test_real_templates_render_the_list_contract(tmp_path, catalog, real_site):
     assert (preload["href"], preload["as"]) == (ol["data-index"], "fetch")
     assert "crossorigin" in preload
     assert ol["data-run-date"] == SAMPLE["run"]["date"]
-    rows = [a["data-id"] for t, a in tags if t == "li" and a.get("class") == "font"]
+    lis = [a for t, a in tags if t == "li" and "font" in (a.get("class") or "").split()]
+    rows = [a["data-id"] for a in lis]
     assert rows == index["ids"]
     assert page.ranks == expected_labels(SAMPLE)
+    # The owner's site ruling of 2026-09-26 (list_layout): "Not ranked: <reason>" rows are
+    # marked so the label takes a line of its own.
+    unranked = ["is-unranked" in a["class"].split() for a in lis]
+    assert unranked == [label.startswith("Not ranked: ") for label in page.ranks]
+    assert any(unranked)
     options = [a["value"] for t, a in tags if t == "option"]
     assert options == [v["key"] for v in SAMPLE["views"] if v["available"]]
     assert options[0] == "overall"

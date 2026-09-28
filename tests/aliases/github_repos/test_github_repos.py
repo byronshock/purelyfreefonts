@@ -293,6 +293,24 @@ def test_keys_are_the_collectors_keys_without_prerelease_only_ones(tmp_path: Pat
     assert "IBM/plex/OpenType.zip" in keys["IBM/plex"]
 
 
+def test_prerelease_keys_count_for_the_listed_repos(tmp_path: Path) -> None:
+    """Owner ruling of 2026-09-26 (opendyslexic_prereleases): a repo that publishes only
+    prereleases (ranking.toml prerelease_repos) keeps its prerelease keys."""
+    store = make_store(tmp_path / "store", ROWS)
+    snap = store.latest(gr.COLLECTOR, DAY)
+    assert snap is not None
+    key = asset_key("subframe7536/maple-font", "MapleMono-VF.zip", "v8.0-beta.3").key
+    plain = gr.asset_keys(snap, SETTINGS, LOG)
+    assert key not in plain.get("subframe7536/maple-font", set())
+    listed = gr.asset_keys(snap, SETTINGS, LOG, ["SubFrame7536/Maple-Font"])
+    assert key in listed["subframe7536/maple-font"]
+
+
+def test_prerelease_repos_come_from_ranking_toml(tmp_path: Path) -> None:
+    assert gr.prerelease_repos(tmp_path) == ()
+    assert "antijingoist/opendyslexic" in gr.prerelease_repos(ROOT / "config")
+
+
 # --- candidates ----------------------------------------------------------------------------
 
 

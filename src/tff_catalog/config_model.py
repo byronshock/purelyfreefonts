@@ -464,6 +464,7 @@ class Review:
     disagreement_top: int
     disagreement_other: int
     what_if_factors: tuple[float, ...]
+    move_places: int  # owner ruling 2026-09-26 (review_report): a monthly move flag needs more places than this
     first_run_move_places: int
 
 

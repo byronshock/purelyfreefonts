@@ -18,7 +18,7 @@ import httpx
 import pytest
 from tests.helpers import ROOT
 
-from tff_catalog import jsonio, links, records, stageio
+from tff_catalog import jsonio, links, records, reviews, stageio
 from tff_catalog.config_model import Config, ConfigError
 from tff_catalog.fetch import Fetcher
 from tff_catalog.links import Link, Links, NoAcceptedLink, Target
@@ -194,6 +194,7 @@ def test_policy_rejects_the_hg_mirror(url: str) -> None:
         ("https://github.com/google/fonts/tree/main/ofl/inter", "github.com/google/fonts"),
         ("https://github.com/fontsource/font-files", "github.com/fontsource"),
         ("https://fontlot.com/1234/some-font/", "fontlot.com"),
+        ("https://open-foundry.com/fonts/bagnard", "open-foundry.com"),  # link_rules (4)
         (
             "https://web.archive.org/web/20210314185159/https://designer.example/fonts/",
             "web.archive.org",
@@ -393,6 +394,38 @@ def test_one_source_is_not_enough() -> None:
     assert (candidate.url, candidate.sources) == ("https://solo.example/", ("homebrew_casks",))
 
 
+def test_the_owner_approved_foundry_list_is_enough_on_its_own() -> None:
+    """Owner ruling of 2026-09-26 (link_rules (1)): no second source is needed."""
+    got = choose(rec("foundries", "Amdal", ("homepage", "https://gitlab.com/velvetyne/amdal")))
+    assert got == Links(Link("https://gitlab.com/velvetyne/amdal/-/releases"), None, "foundry_list")
+
+
+def test_the_foundry_list_beats_a_lone_other_source_and_skips_open_foundry() -> None:
+    """Open Foundry is a showcase (link_rules (4)): the foundry list's repository wins over
+    a fork only one other source names."""
+    got = choose(
+        rec(
+            "foundries",
+            "Bagnard",
+            ("homepage", "https://open-foundry.com/fonts/bagnard"),
+            ("repository", "https://github.com/sebsan/bagnard"),
+        ),
+        rec("fontsource", "Bagnard", ("repository", "https://github.com/dconstruct/Bagnard")),
+    )
+    assert got == Links(Link("https://github.com/sebsan/bagnard/releases"), None, "foundry_list")
+
+
+def test_two_sources_still_beat_the_foundry_list_alone() -> None:
+    got = choose(
+        rec("foundries", "Chunk", ("homepage", "https://foundry.example/chunk")),
+        rec("homebrew_casks", "Chunk", ("repository", "https://github.com/o/chunk")),
+        rec("fontsource", "Chunk", ("repository", "https://github.com/o/chunk")),
+    )
+    assert got.primary == Link("https://github.com/o/chunk/releases")
+    assert got.designer == Link("https://foundry.example/chunk")
+    assert got.basis == "two_sources"
+
+
 def test_two_sources_agreeing_on_an_aggregator_are_ignored() -> None:
     nerd = ("homepage", "https://github.com/ryanoasis/nerd-fonts")
     with pytest.raises(NoAcceptedLink) as caught:
@@ -456,11 +489,17 @@ def test_committed_overrides_cover_the_gate_k_families() -> None:
         "K-jetbrains-mono",
         "K-ibm-plex",
         "K-adobe-source",
+        # Proposals after research (2026-09-26), each a new question for the owner.
+        "K-metropolis-page",
+        "K-profont-page",
+        "K-terminus-page",
     }
     for o in overrides:
         assert o.choice == "a"
-        for url in (o.primary, o.designer):
-            assert url, o.family
+        assert o.primary, o.family
+        if not o.question.endswith("-page"):  # the four approved ones name both links
+            assert o.designer, o.family
+        for url in filter(None, (o.primary, o.designer)):
             assert links.policy_problems(url) == [], (o.family, url)
 
 
@@ -944,10 +983,12 @@ def test_stage_writes_links_queue_and_checks(paths: Paths) -> None:
         }
     }
     assert queue["overrides"] == {
-        "answered": {},
         "pending": [],
+        "picked": {},
         "rejected": [],
+        "research": [],
         "unknown_family": [],
+        "unusable": {},
     }
     assert queue["failed_checks"] == {}
     recorded = links.recorded_checks(Store(paths.require_store()), DAY)
@@ -959,27 +1000,178 @@ def test_stage_writes_links_queue_and_checks(paths: Paths) -> None:
     }
 
 
-def test_a_picked_candidate_is_linked_once_its_override_entry_exists(paths: Paths) -> None:
-    build_world(paths, members=["inter", "abel", "fira-code", "solo"])
-    pages = {**WORLD_PAGES, "https://gone.example/": (200, None)}
-    write_ruling(paths, "2026-10-02", "K-solo", "a")
-    links.run(context(paths, Web(pages).fetcher()))
-    queue = jsonio.load(paths.queues / links.QUEUE_FILE)
-    assert "solo" in queue["undecided"]
-    assert queue["overrides"]["answered"] == {"K-solo": "a"}  # Claude writes the entry
+SOLO_PAGE = "https://gone.example/"
+SOLO_PICK = f"{SOLO_PAGE} (from homebrew_casks)"  # the option, as links.questions words it
 
-    solo = (
-        '[[override]]\nfamily = "solo"\nname = "Solo"\nquestion = "K-solo"\n'
-        'primary = "https://gone.example/"\nreason = "The owner picked it (gate K)."\n'
+
+def answer_gate_k(paths: Paths, day: str, **choices: str) -> reviews.Applied:
+    """Record the owner's gate K answers with ``rulings apply``: question id -> letter."""
+    answers = paths.root / f"answers-{day}.toml"
+    tables = "".join(
+        f'\n[{qid.replace("_", "-")}]\nchoice = "{c}"\nreason = "The owner, in chat."\n'
+        for qid, c in choices.items()
     )
-    write_overrides(paths.root, INTER, solo)
+    answers.write_text(f'gate = "K"\nday = {day}\n{tables}')
+    return reviews.apply_answers(paths, answers)
+
+
+def test_an_owner_pick_links_the_family_from_the_ruling_itself(paths: Paths) -> None:
+    build_world(paths, members=["inter", "abel", "fira-code", "solo"])
+    pages = {**WORLD_PAGES, SOLO_PAGE: (200, None)}
     links.run(context(paths, Web(pages).fetcher()))
+    assert [q.id for q in reviews.questions(paths, "K")] == ["K-solo"]
+
+    applied = answer_gate_k(paths, "2026-10-04", K_solo="a")
+    assert applied.warnings == ()  # a known question: its option text becomes the ruling
+    answer, _day = reviews.latest_answers(paths, "K")["K-solo"]
+    assert answer.ruling == SOLO_PICK
+
+    links.run(context(paths, Web(pages).fetcher()))
+    # No override entry is needed: the ruling names the link.
     assert stageio.load_stage(paths, "links")["solo"] == Links(
-        Link("https://gone.example/"), None, "override"
+        Link(SOLO_PAGE), None, links.PICK_BASIS
     )
     queue = jsonio.load(paths.queues / links.QUEUE_FILE)
     assert queue["undecided"] == {}
-    assert queue["overrides"]["answered"] == {}
+    assert queue["overrides"]["picked"] == {"K-solo": SOLO_PAGE}
+    assert queue["failed_checks"] == {}
+    assert reviews.questions(paths, "K") == []
+    assert SOLO_PAGE in links.recorded_checks(Store(paths.require_store()), DAY)
+
+
+def test_a_pick_keeps_the_link_the_owner_saw_when_candidates_change(paths: Paths) -> None:
+    build_world(paths, members=["inter", "abel", "fira-code", "solo"])
+    links.run(context(paths, Web(WORLD_PAGES).fetcher()))
+    answer_gate_k(paths, "2026-10-04", K_solo="a")
+    # A later month: another source gives the family a page that sorts first, so
+    # option (a) of a question asked now would be that page.
+    brew = rec("homebrew_casks", "Solo", ("homepage", SOLO_PAGE), key="font-solo")
+    extra = rec("fontsource", "Solo", ("homepage", "https://a-solo.example/"), key="solo")
+    records.write_jsonl([extra], paths.records / "fontsource.jsonl")
+    u = stageio.load_stage(paths, "universe")
+    families = {**u.families, "solo": fam("solo", "Solo", [brew, extra])}
+    stageio.dump_stage(paths, "universe", replace(u, families=families))
+    assert links.candidates([brew, extra])[0][0].url == "https://a-solo.example/"
+
+    links.run(context(paths, None, options=RunOptions(from_snapshots=DAY)))
+    assert stageio.load_stage(paths, "links")["solo"].primary == Link(SOLO_PAGE)
+
+
+@pytest.mark.parametrize(
+    ("ruling", "values", "want"),
+    [
+        (SOLO_PICK, (), SOLO_PAGE),
+        (
+            "https://github.com/o/r/releases (from fontsource, homebrew_casks)",
+            (),
+            "https://github.com/o/r/releases",
+        ),
+        (
+            "The owner took the designer's page.",
+            (("url", "https://solo.example/"),),
+            "https://solo.example/",
+        ),
+        ("Accept", (), None),
+        (links.RESEARCH_OPTION, (), None),
+    ],
+)
+def test_picked_url_reads_the_option_text_or_a_url_value(
+    ruling: str, values: tuple[tuple[str, str], ...], want: str | None
+) -> None:
+    answer = reviews.Answer("K-solo", ruling, "test", choice="a", values=values)
+    assert links.picked_url(answer) == want
+
+
+def test_owner_picks_leave_research_entries_and_bad_links_alone() -> None:
+    def answer(ruling: str, **values: str) -> reviews.Answer:
+        return reviews.Answer("x", ruling, "test", choice="a", values=tuple(values.items()))
+
+    answers = {
+        "K-picked": answer("https://picked.example/ (from homebrew_casks)"),
+        "K-asked": answer(links.RESEARCH_OPTION),
+        "K-researched": answer(links.RESEARCH_OPTION),
+        "K-entry": answer("https://entry.example/ (from fontist)"),
+        "K-asset": answer("x", url="https://github.com/o/r/releases/download/v1/F.zip"),
+        "K-vague": answer("Accept"),
+        "K-outside": answer("https://outside.example/ (from fontist)"),
+    }
+    entry = links.LinkOverride(
+        family="entry", name="Entry", question="K-entry", primary="https://e.example/", reason="r"
+    )
+    researched = replace(entry, family="researched", question="K-researched-page")
+    families = ["picked", "asked", "researched", "entry", "asset", "vague", "unasked"]
+    got = links.owner_picks(families, answers, [entry, researched])
+    assert got.links == {"picked": Links(Link("https://picked.example/"), None, links.PICK_BASIS)}
+    assert got.picked == {"K-picked": "https://picked.example/"}
+    assert got.research == ("asked",)  # "researched" already has its override entry
+    assert set(got.unusable) == {"K-asset", "K-vague"}
+    assert "release asset" in got.unusable["K-asset"]
+
+
+def test_a_research_answer_waits_for_an_override_under_a_new_question(paths: Paths) -> None:
+    build_world(paths, members=["inter", "abel", "fira-code", "solo"])
+    links.run(context(paths, Web(WORLD_PAGES).fetcher()))
+    answer_gate_k(paths, "2026-10-04", K_solo="b")  # the research option
+    links.run(context(paths, Web(WORLD_PAGES).fetcher()))
+    queue = jsonio.load(paths.queues / links.QUEUE_FILE)
+    assert "solo" in queue["undecided"]
+    assert queue["overrides"]["research"] == ["K-solo"]
+    assert [q.id for q in reviews.questions(paths, "K")] == ["K-solo"]  # still open
+
+    researched = (
+        '[[override]]\nfamily = "solo"\nname = "Solo"\nquestion = "K-solo-page"\n'
+        'primary = "https://solo.example/"\nreason = "Claude researched it."\n'
+    )
+    write_overrides(paths.root, INTER, researched)
+    links.run(context(paths, Web(WORLD_PAGES).fetcher()))
+    queue = jsonio.load(paths.queues / links.QUEUE_FILE)
+    assert queue["overrides"]["research"] == []
+    assert queue["overrides"]["pending"] == ["K-solo-page"]
+    # The override's question replaces the family's own.
+    assert [q.id for q in reviews.questions(paths, "K")] == ["K-solo-page"]
+
+
+def test_an_override_entry_on_the_family_question_decides_instead_of_the_pick(
+    paths: Paths,
+) -> None:
+    build_world(paths, members=["inter", "abel", "fira-code", "solo"])
+    links.run(context(paths, Web(WORLD_PAGES).fetcher()))
+    answer_gate_k(paths, "2026-10-04", K_solo="a")
+    entry = (
+        '[[override]]\nfamily = "solo"\nname = "Solo"\nquestion = "K-solo"\n'
+        'primary = "https://designer.example/solo/"\nreason = "A fuller release."\n'
+    )
+    write_overrides(paths.root, INTER, entry)
+    links.run(context(paths, Web(WORLD_PAGES).fetcher()))
+    assert stageio.load_stage(paths, "links")["solo"] == Links(
+        Link("https://designer.example/solo/"), None, "override"
+    )
+    assert jsonio.load(paths.queues / links.QUEUE_FILE)["overrides"]["picked"] == {}
+
+
+def test_a_replay_warns_about_links_accepted_after_its_run(
+    paths: Paths, caplog: pytest.LogCaptureFixture
+) -> None:
+    build_world(paths, members=["inter", "abel", "fira-code", "solo"])
+    pages = {**WORLD_PAGES, SOLO_PAGE: (200, None)}
+    links.run(context(paths, Web(pages).fetcher()))  # the run: solo is left undecided
+    answer_gate_k(paths, "2026-10-04", K_solo="a")  # the owner rules afterwards
+
+    replay = RunOptions(from_snapshots=DAY)
+    links.run(context(paths, None, options=replay))
+    queue = jsonio.load(paths.queues / links.QUEUE_FILE)
+    assert queue["failed_checks"][SOLO_PAGE]["problems"] == [links.NOT_CHECKED]
+    assert f"run `tff-catalog links --date {DAY.isoformat()}` live" in caplog.text
+
+    # A live run for the run's date checks just that link and adds it to the day's record ...
+    web = Web(pages)
+    links.run(context(paths, web.fetcher()))
+    assert {url for _, url in web.requests} == {SOLO_PAGE}
+    # ... so the replay passes.
+    caplog.clear()
+    links.run(context(paths, None, options=replay))
+    assert jsonio.load(paths.queues / links.QUEUE_FILE)["failed_checks"] == {}
+    assert "no check recorded" not in caplog.text
 
 
 def test_stage_output_is_deterministic(paths: Paths) -> None:

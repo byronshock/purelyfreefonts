@@ -4,11 +4,11 @@ Written by `tff-catalog universe` (milestone-1 step 4). Every universe key is in
 
 | Measure | Count |
 |---|---|
-| Families | 3183 |
-| Eligible families | 2823 |
+| Families | 3176 |
+| Eligible families | 2816 |
 | Dropped families | 360 |
-| Keys in a family | 9078 |
-| Keys kept out of every family | 87 |
+| Keys in a family | 9077 |
+| Keys kept out of every family | 88 |
 | Unmapped keys (must be 0) | 0 |
 
 ## Per source
@@ -16,18 +16,18 @@ Written by `tff-catalog universe` (milestone-1 step 4). Every universe key is in
 | Source | Families | Eligible | Dropped |
 |---|---|---|---|
 | fontist | 622 | 333 | 289 |
-| fontsource | 2155 | 2110 | 45 |
+| fontsource | 2150 | 2105 | 45 |
 | foundries | 102 | 102 | 0 |
 | google_metadata | 1944 | 1917 | 27 |
-| google_repo | 2029 | 1994 | 35 |
-| homebrew_casks | 2510 | 2445 | 65 |
+| google_repo | 2027 | 1992 | 35 |
+| homebrew_casks | 2506 | 2441 | 65 |
 | nerdfonts | 66 | 65 | 1 |
 
 ## Keys per namespace
 
 | Namespace | In a family | Kept out | Unmapped |
 |---|---|---|---|
-| brew-cask | 2589 | 10 | 0 |
+| brew-cask | 2588 | 11 | 0 |
 | fontist-formula | 180 | 64 | 0 |
 | foundry-family | 102 | 0 | 0 |
 | fs-id | 2162 | 9 | 0 |
@@ -421,6 +421,7 @@ None.
 
 | Namespace | Key | Why |
 |---|---|---|
+| brew-cask | font-dejavu | bundle |
 | brew-cask | font-im-writing-nerd-font | bundle |
 | brew-cask | font-libertinus | bundle |
 | brew-cask | font-m+-nerd-font | bundle |
@@ -511,7 +512,7 @@ None.
 
 ## New ids this run
 
-First run: all 3183 ids are new (build/review/universe-keys.md lists them).
+First run: all 3176 ids are new (build/review/universe-keys.md lists them).
 
 ## Display names changed this run (record the old name in data/aliases.csv)
 

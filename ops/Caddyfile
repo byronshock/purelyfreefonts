@@ -27,8 +27,9 @@ import site.caddy
 # Visitor privacy: IP addresses are masked (IPv4 to /16, IPv6 to /32) and the
 # IP-carrying headers dropped before anything is written, including the ones Cloudflare
 # adds only when a setting turns them on (True-Client-IP, pseudo IPv4, visitor location
-# headers other than the country). Referer, User-Agent and Cookie are dropped too (owner
-# ruling of 2026-09-26). Caddy's size-based rolling is off; logrotate keeps 14 days
+# headers other than the country). Referer and User-Agent are dropped too (owner ruling of
+# 2026-09-26, log_fields); so are Cookie and the location headers, Claude's addition for the
+# owner to confirm. Caddy's size-based rolling is off; logrotate keeps 14 days
 # (ops/logrotate-caddy). Production and staging share the file; Caddy opens it once.
 (privacy_log) {
 	log {

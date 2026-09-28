@@ -540,6 +540,22 @@ def test_sources_whose_binaries_disagree_get_nothing() -> None:
     assert set(rows) == {("deb-pkg", "fonts-alpha"), ("deb-pkg", "fonts-beta")}
 
 
+def test_a_non_font_source_gets_no_row() -> None:
+    """Ruling of 2026-09-26 (gate A): a program's source that ships one font binary
+    (libreoffice's fonts-opensymbol) gets no deb-src row; the binary keeps its own."""
+    families = [info("o", "OpenSymbol", (GF, "OpenSymbol"))]
+    deb = [deb_row("fonts-opensymbol", source="libreoffice")]
+    dep5 = [{"package": "libreoffice", "status": 200, "upstream_name": "OpenSymbol"}]
+    rows = propose(families, deb=deb, dep5=dep5)
+    assert "libreoffice" in d.NON_FONT_SOURCES
+    assert len(d.NON_FONT_SOURCES) == 31  # the ruling's count: 26 programs and 5 font tools
+    assert rows["deb-pkg", "fonts-opensymbol"].target == SourceKey(GF, "OpenSymbol")
+    assert ("deb-src", "libreoffice") not in rows
+    # The same package under a font source keeps its row.
+    rows = propose(families, deb=[deb_row("fonts-opensymbol", source="fonts-opensymbol")])
+    assert ("deb-src", "fonts-opensymbol") in rows
+
+
 def test_a_transitional_package_needs_one_successor() -> None:
     families = [info("a", "Alpha", (GF, "Alpha"))]
     deb = [

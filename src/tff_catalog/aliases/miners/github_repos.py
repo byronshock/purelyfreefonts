@@ -15,8 +15,11 @@ source of names.
 **Keys.** The miner maps the ``gh-asset:<repo>/<asset base>`` keys of the
 newest ``github_releases`` snapshot on or before the run date, made by that
 collector's own ``parse`` with its settings, so they are exactly the keys stage
-"map" looks up. Keys seen only in prereleases are left out: the engine never
-reads prereleases.
+"map" looks up. Keys seen only in prereleases are left out, because the engine
+reads no prereleases, except from the repos in ``ranking.toml``
+``[sources.github] prerelease_repos`` (repos that publish only prereleases,
+such as OpenDyslexic's: the owner's ruling of 2026-09-26), whose prerelease keys
+count like any other.
 
 **Rules.** For each key, the entry of its repo (compared ignoring case) decides:
 
@@ -55,9 +58,11 @@ families of the newest release carrying it (checked by listing the zips).
 import importlib
 import logging
 import re
+import tomllib
 from collections import defaultdict
-from collections.abc import Iterable, Mapping
+from collections.abc import Collection, Iterable, Mapping
 from dataclasses import dataclass
+from pathlib import Path
 from typing import ClassVar
 
 from tff_catalog.aliases import BUILD_DETAILS, AliasCandidate
@@ -586,13 +591,20 @@ def collector() -> Collector:
     return importlib.import_module(f"tff_catalog.collectors.ranking.{COLLECTOR}").COLLECTOR
 
 
-def asset_keys(snapshot: Snapshot, settings: object, log: logging.Logger) -> dict[str, set[str]]:
+def asset_keys(
+    snapshot: Snapshot,
+    settings: object,
+    log: logging.Logger,
+    prerelease_repos: Collection[str] = (),
+) -> dict[str, set[str]]:
     """Repo (as the collector spells it) -> its ``gh-asset`` keys in ``snapshot``.
 
     The keys come from the ``github_releases`` collector's own ``parse``, so
-    they match the records exactly. A key seen only in prereleases is left out.
+    they match the records exactly. A key seen only in prereleases is left out,
+    unless its repo is in ``prerelease_repos`` (compared ignoring case).
     """
     parser = collector()
+    counted = {r.casefold() for r in prerelease_repos}
     released: dict[str, set[str]] = defaultdict(set)
     prerelease: dict[str, set[str]] = defaultdict(set)
     for rec in parser.parse(ParseContext(snapshot=snapshot, settings=settings, log=log)):
@@ -600,7 +612,8 @@ def asset_keys(snapshot: Snapshot, settings: object, log: logging.Logger) -> dic
             continue
         found = dict(rec.attrs)
         name = str(found["repo"])
-        (prerelease if found.get("prerelease") is True else released)[name].add(rec.key.key)
+        pre = found.get("prerelease") is True and name.casefold() not in counted
+        (prerelease if pre else released)[name].add(rec.key.key)
     dropped = sum(len(keys - released[name]) for name, keys in prerelease.items())
     if dropped:
         log.info("%s: %d keys seen only in prereleases left out", NAME, dropped)
@@ -702,6 +715,17 @@ def _one_per_match_key(cands: Iterable[AliasCandidate]) -> list[AliasCandidate]:
     return sorted(out.values())
 
 
+def prerelease_repos(config_dir: Path) -> tuple[str, ...]:
+    """``ranking.toml`` ``[sources.github] prerelease_repos``: the repos whose prereleases
+    the engine counts (``()`` without the file). The config loader checks the file."""
+    path = config_dir / "ranking.toml"
+    if not path.is_file():
+        return ()
+    with path.open("rb") as fh:
+        github = tomllib.load(fh).get("sources", {}).get("github", {})
+    return tuple(str(r) for r in github.get("prerelease_repos", ()))
+
+
 def family_hints(settings: object) -> dict[str, str]:
     """``repo.casefold()`` -> the ``family`` hint of each repo the collector's settings list."""
     out = {}
@@ -729,7 +753,7 @@ class GithubRepos:
             raise MinerError(f"{NAME}: no {COLLECTOR} snapshot on or before {ctx.run_date}")
         settings = load_settings(collector(), ctx.paths)
         ctx.log.info("%s: reading %s %s", NAME, COLLECTOR, snapshot.date)
-        keys = asset_keys(snapshot, settings, ctx.log)
+        keys = asset_keys(snapshot, settings, ctx.log, prerelease_repos(ctx.paths.config))
         return candidates(keys, table_index(REPOS), family_hints(settings), ctx.log)
 
 

@@ -5,12 +5,17 @@
 # config_model.PreinstalledConfig: unknown or missing keys fail.
 #
 # What an entry does:
-# - os = "linux": every Linux source (Arch pkgstats, Debian popcon) abstains for
-#   these families in every rank except *most installed*, and the families get
-#   a preinstalled_on tag. One Linux entry is enough for all Linux sources to
-#   abstain (D8), so a family belongs here only if the system installs it
-#   without the user choosing it.
-# - any other os: a preinstalled_on tag only, never an abstention.
+# - os = "linux": the Linux sources that count this system's installs abstain
+#   for these families in every rank except *most installed*, and the families
+#   get a preinstalled_on tag. The owner's ruling of 2026-09-26 (abstain_scope)
+#   scopes this by package system, in ranking.toml [corrections.abstain_sources]:
+#   Arch-family systems (CachyOS, EndeavourOS) silence Arch pkgstats only,
+#   Debian and Ubuntu silence Debian popcon only, and desktops (GNOME, KDE
+#   Plasma) silence both. Fedora is counted by neither, so it only tags. A
+#   family belongs here only if the system installs it without the user
+#   choosing it.
+# - any other os (windows, macos, android, app): a preinstalled_on tag only,
+#   never an abstention.
 #
 # How the lists were made:
 # - Family names are written as the system ships them; the aliases map them to
@@ -45,7 +50,7 @@
 
 schema = 1
 
-# --- Linux: these entries make the Linux sources abstain ----------------------
+# --- Linux: these entries make the Linux sources that count them abstain -----
 
 [systems.cachyos]
 label = "CachyOS"

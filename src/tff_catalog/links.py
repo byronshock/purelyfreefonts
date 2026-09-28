@@ -4,7 +4,7 @@
   designer is ``minisite_url`` or ``repository_url``, never googlefontdirectory-hg.
 - Others: the designer's homepage or the repository's releases page; never a
   release asset, ``/releases/latest`` or an aggregator; auto-accepted only
-  when two sources agree.
+  when two sources agree, or when the owner-approved foundry list gives it.
 - Owner-approved overrides come from gate K (``reviews.gate_dir(paths, "K")``).
 
 A monthly check records every response in the ``link_checks`` pseudo-source,
@@ -19,7 +19,8 @@ must not be a release asset or other file download (``/releases/download/``,
 
 **Choosing** (``choose``), in this order:
 
-1. An approved override (``config/link-overrides.toml``) wins.
+1. An approved override (``config/link-overrides.toml``) wins, then a link the
+   owner picked on the family's own gate K question (``owner_picks``).
 2. A family with a live record from a Google source: primary is its specimen
    page, ``https://fonts.google.com/specimen/<name>``; designer is the first
    compliant ``minisite`` URL, else the first compliant ``repository`` URL
@@ -31,9 +32,13 @@ must not be a release asset or other file download (``/releases/download/``,
    Two URLs agree when they resolve to the same key: the same repository, or
    the same page up to case of the host, ``www.``, ``http``/``https`` and a
    trailing slash. A key is accepted when records of at least
-   ``MIN_AGREEING_SOURCES`` different sources (collectors) give it. The primary
-   is the accepted key with the most sources (a homepage before a repository on
-   a tie); the designer is the best accepted key of the other kind, if any.
+   ``MIN_AGREEING_SOURCES`` different sources (collectors) give it, or when a
+   source in ``SINGLE_SOURCE_OK`` gives it: ``config/foundries.toml``, which the
+   owner approved at gate C3, is enough on its own (owner ruling of 2026-09-26,
+   link_rules (1)). The primary is the accepted key with the most sources (a
+   homepage before a repository on a tie); the designer is the best accepted
+   key of the other kind, if any. The basis is ``two_sources``, or
+   ``foundry_list`` when the primary was accepted on the foundry list alone.
    Nothing accepted: ``NoAcceptedLink``, and the family goes to the gate K queue.
 
 **Overrides and gate K.** ``config/link-overrides.toml`` proposes overrides.
@@ -43,6 +48,18 @@ that question (``data/reviews/links/<date>.toml``, read by
 ``reviews.latest_answers``) is that choice. ``questions`` gives gate K's
 questions to ``reviews``: the override questions, then the catalog families
 left undecided, with their candidates as options.
+
+**Owner picks.** When the owner answers an undecided family's question
+(``queue_question``) with one of its candidates, the family takes that link
+(basis ``PICK_BASIS``) from the next run on, with no override entry: the
+ruling itself names the link, because ``rulings apply`` records the picked
+option's text, "<url> (from <sources>)", as ``ruling`` (``picked_url``; a
+``url`` value, when given, wins). The URL the owner saw is kept even if a later
+run lists the candidates in another order. An answer asking for research
+(``RESEARCH_OPTION``) picks nothing: Claude researches the page and proposes
+an override under a new question id, and the family's own question is then no
+longer asked. An override entry on the family's own question decides instead
+of the pick.
 
 **The check** (``check``) HEADs every primary and designer link of the
 catalog's families (all chosen links when there is no membership yet), one
@@ -54,9 +71,16 @@ final_url, error}``); a later run on the same day reuses the 200 answers and
 re-checks the others (``--refetch``: all), and a replay reads them with the
 network off.
 
+A replay cannot check a link the owner accepted after the run it replays (an
+owner pick, a newly approved override): the link is used, but it fails its
+check as "not checked", and the stage logs a warning. Before replaying run
+``D`` again, run the stage live for that date, ``tff-catalog links --date D``,
+which checks just the links with no 200 answer recorded for ``D`` and adds
+them to ``link_checks/D/`` (not recorded once a merged run has used ``D``).
+
 Outputs: ``build/stage/links.json`` (accepted links only, by family id) and
 ``build/stage/queues/links.json`` (families without an accepted link, overrides
-waiting for gate K, failed checks).
+waiting for gate K, owner picks, failed checks).
 """
 
 import dataclasses
@@ -81,7 +105,7 @@ if TYPE_CHECKING:
     from tff_catalog.fetch import Fetcher
     from tff_catalog.paths import Paths
     from tff_catalog.records import UniverseRecord
-    from tff_catalog.reviews import Question
+    from tff_catalog.reviews import Answer, Question
     from tff_catalog.stages import StageContext
     from tff_catalog.store import FetchRecord, Store
     from tff_catalog.universe import Family, Universe
@@ -95,6 +119,9 @@ CHECKS_VERSION = 1
 CHECKS_EXTRACT = "checks.jsonl"
 CHECK_WORKERS = 8  # hosts checked at once; each host keeps the fetcher's pace (1 a second)
 MIN_AGREEING_SOURCES = 2  # milestone-1 step 14: "auto-accept only when two sources agree"
+# Sources whose link is accepted with no second source agreeing. Owner ruling of 2026-09-26
+# (links, link_rules (1)): the foundry list the owner approved at gate C3.
+SINGLE_SOURCE_OK = frozenset({"foundries"})
 
 GOOGLE_SOURCES = frozenset({"google_metadata", "google_repo"})
 LIVE_LIST = "google_metadata"  # Google's live list: a family on it has a specimen page
@@ -148,6 +175,7 @@ AGGREGATOR_HOSTS = frozenset(
         "myfonts.com",
         "nerdfonts.com",
         "npmjs.com",
+        "open-foundry.com",  # a showcase of other designers' fonts (owner ruling 2026-09-26, link_rules (4))
         "openfontlibrary.org",
         "packages.debian.org",
         "packages.ubuntu.com",
@@ -238,6 +266,12 @@ _CONTROL_RE = re.compile(r"[\x00-\x1f\x7f]")
 # The last option of a queued family's question. It starts with "Research", so an answer
 # picking it keeps the question open (reviews.REOPEN) until Claude proposes an override.
 RESEARCH_OPTION = "Research the official page: none of these is it"
+NOT_CHECKED = "not checked: no answer recorded for this day"  # a replayed link without one
+PICK_BASIS = "owner_pick"  # Links.basis of a candidate the owner picked on gate K
+PICK_URL = "url"  # an answer's value naming the picked link; else its ruling text does
+# A queued family's candidate option, as ``questions`` words it and ``rulings apply``
+# records the picked one as the ruling.
+_PICKED_OPTION_RE = re.compile(r"(?P<url>https://\S+) \(from [^()]*\)")
 
 Kind = Literal["homepage", "repository"]
 
@@ -563,7 +597,8 @@ def choose(fam: Family, recs: Iterable[UniverseRecord], overrides: Mapping[str, 
     """Pick one family's links.
 
     ``recs`` are the family's universe records; ``overrides`` the approved
-    overrides by family id (``approved_overrides``). Pure and deterministic:
+    overrides and the owner's picks by family id (``approved_overrides``,
+    ``owner_picks``). Pure and deterministic:
     record order does not matter. Raises ``NoAcceptedLink`` when no link is
     accepted (see the module docstring).
     """
@@ -574,12 +609,19 @@ def choose(fam: Family, recs: Iterable[UniverseRecord], overrides: Mapping[str, 
     if live:
         return Links(Link(_specimen(live)), _google_designer(live), "google_specimen")
     found, rejected = candidates(recs)
-    agreed = [c for c in found if len(c.sources) >= MIN_AGREEING_SOURCES]
+    agreed = [c for c in found if _accepted(c)]
     if not agreed:
         raise NoAcceptedLink(fam.id, found, rejected)
     primary = agreed[0]
     other = next((c for c in agreed[1:] if c.kind != primary.kind), None)
-    return Links(Link(primary.url), None if other is None else Link(other.url), "two_sources")
+    basis = "two_sources" if len(primary.sources) >= MIN_AGREEING_SOURCES else "foundry_list"
+    return Links(Link(primary.url), None if other is None else Link(other.url), basis)
+
+
+def _accepted(c: Candidate) -> bool:
+    """Whether ``c`` is accepted without the owner: two sources agree, or a source in
+    ``SINGLE_SOURCE_OK`` (the owner-approved foundry list) gives it."""
+    return len(c.sources) >= MIN_AGREEING_SOURCES or not SINGLE_SOURCE_OK.isdisjoint(c.sources)
 
 
 def group_records(u: Universe, recs: Iterable[UniverseRecord]) -> dict[str, list[UniverseRecord]]:
@@ -676,20 +718,26 @@ def load_overrides(paths: Paths) -> tuple[LinkOverride, ...]:
     return doc.override
 
 
-def gate_choices(paths: Paths) -> dict[str, str]:
-    """Question id -> the owner's latest ``choice`` in gate K's rulings.
+def gate_answers(paths: Paths) -> dict[str, Answer]:
+    """Question id -> the owner's latest answer in gate K's rulings.
 
     Read with ``reviews.latest_answers``: every file is schema-checked (a bad
     one raises ``reviews.RulingError``) and a later ruling overrides an earlier
-    one. Answers without a ``choice`` are left out.
+    one.
     """
     from tff_catalog.reviews import latest_answers
 
-    return {
-        qid: answer.choice
-        for qid, (answer, _day) in latest_answers(paths, GATE).items()
-        if answer.choice is not None
-    }
+    return {qid: answer for qid, (answer, _day) in latest_answers(paths, GATE).items()}
+
+
+def choices_of(answers: Mapping[str, Answer]) -> dict[str, str]:
+    """Question id -> ``choice``, leaving out answers without one."""
+    return {qid: a.choice for qid, a in answers.items() if a.choice is not None}
+
+
+def gate_choices(paths: Paths) -> dict[str, str]:
+    """Question id -> the owner's latest ``choice`` in gate K's rulings (``gate_answers``)."""
+    return choices_of(gate_answers(paths))
 
 
 def queue_question(fid: str) -> str:
@@ -710,6 +758,77 @@ def approved_overrides(
 ) -> dict[str, Links]:
     """The overrides whose question the owner answered with their ``choice``, by family id."""
     return {o.family: o.links() for o in overrides if choices.get(o.question) == o.choice}
+
+
+def asks_research(answer: Answer) -> bool:
+    """Whether ``answer`` picked the research option (``RESEARCH_OPTION``, ``reviews.REOPEN``)."""
+    from tff_catalog.reviews import REOPEN
+
+    return answer.ruling.strip().casefold().startswith(REOPEN)
+
+
+def picked_url(answer: Answer) -> str | None:
+    """The link an answer to a queued family's question picked, or None when it names none.
+
+    A ``url`` value (``PICK_URL``) names it; otherwise the ruling does, when it is
+    a candidate option as ``questions`` words it, "<url> (from <sources>)", which
+    ``rulings apply`` records for the picked letter. The link is not checked here.
+    """
+    given = dict(answer.values).get(PICK_URL)
+    if isinstance(given, str):
+        return given.strip()
+    m = _PICKED_OPTION_RE.fullmatch(answer.ruling.strip())
+    return m["url"] if m else None
+
+
+@dataclass(frozen=True, slots=True)
+class OwnerPicks:
+    """What the owner's answers to the queued families' questions decide (``owner_picks``)."""
+
+    links: dict[str, Links]  # family id -> the picked link (basis PICK_BASIS)
+    picked: dict[str, str]  # question id -> the picked URL
+    research: tuple[str, ...]  # family ids whose question the owner sent to research, sorted
+    unusable: dict[str, str]  # question id -> why its answer gives no link
+
+
+def owner_picks(
+    families: Iterable[str], answers: Mapping[str, Answer], overrides: Iterable[LinkOverride]
+) -> OwnerPicks:
+    """The links the owner picked on the families' own gate K questions (``queue_question``).
+
+    ``answers`` are gate K's latest answers (``gate_answers``). A question an
+    override entry uses is left to that entry. An answer asking for research
+    picks nothing and is listed while no override entry names the family. An
+    answer whose link is missing or breaks the policy is listed as unusable.
+    """
+    overrides = list(overrides)
+    entries = {o.question for o in overrides}
+    researched = {o.family for o in overrides}
+    links: dict[str, Links] = {}
+    picked: dict[str, str] = {}
+    research: list[str] = []
+    unusable: dict[str, str] = {}
+    for fid in sorted(set(families)):
+        qid = queue_question(fid)
+        answer = answers.get(qid)
+        if answer is None or qid in entries:
+            continue
+        if asks_research(answer):
+            if fid not in researched:
+                research.append(fid)
+            continue
+        url = picked_url(answer)
+        if url is None:
+            unusable[qid] = (
+                f"the ruling names no link: expected a {PICK_URL} value or the picked option's "
+                f"text, got {answer.ruling!r}"
+            )
+        elif problems := policy_problems(url):
+            unusable[qid] = f"{url} is {'; '.join(problems)}"
+        else:
+            links[fid] = Links(Link(url), None, PICK_BASIS)
+            picked[qid] = url
+    return OwnerPicks(links, picked, tuple(research), unusable)
 
 
 def _override_lines(items: Iterable[LinkOverride]) -> str:
@@ -739,16 +858,17 @@ def questions(paths: Paths) -> list[Question]:
       catalog, is not asked about: Claude researches its page and proposes an
       override instead.
 
-    Picking a candidate takes an override entry with that question, the
-    picked letter as its ``choice`` and the candidate's URL; the queue lists
-    such answers (``overrides.answered``). An override that follows research
-    gets a new question id.
+    Picking a candidate links the family from the next run on (``owner_picks``);
+    the family then leaves the queue, and its question with it. An override that
+    follows research gets a new question id, and once an override entry names a
+    family, that entry's question is asked instead of the family's own.
     """
     from tff_catalog.reviews import MAX_OPTIONS, Question
 
     by_question: dict[str, list[LinkOverride]] = defaultdict(list)
     for o in load_overrides(paths):
         by_question[o.question].append(o)
+    with_entry = {o.family for items in by_question.values() for o in items}
     out = []
     for qid, items in sorted(by_question.items()):
         text = f"Official link override. {_override_lines(items)}. Why: {items[0].reason}"
@@ -762,7 +882,7 @@ def questions(paths: Paths) -> list[Question]:
     for fid in members:
         entry, qid = undecided.get(fid), queue_question(fid)
         shown = [] if entry is None else entry.get("candidates", [])[: MAX_OPTIONS - 1]
-        if not shown or qid in by_question:
+        if not shown or qid in by_question or fid in with_entry:
             continue
         options = (
             *(f"{c['url']} (from {', '.join(c['sources'])})" for c in shown),
@@ -937,7 +1057,7 @@ def check(links: Mapping[str, Links], ctx: StageContext) -> dict[str, LinkCheck]
         for url in urls:
             row = recorded.get(url)
             if row is None:
-                problems = (*policy_problems(url), "not checked: no answer recorded for this day")
+                problems = (*policy_problems(url), NOT_CHECKED)
                 out[url] = LinkCheck(url, 0, url, tuple(problems))
             else:
                 out[url] = to_check(row)
@@ -996,29 +1116,28 @@ def build_queue(
     choices: Mapping[str, str],
     links: Mapping[str, Links],
     checks: Mapping[str, LinkCheck],
+    picks: OwnerPicks | None = None,
 ) -> dict[str, Any]:
     """``build/stage/queues/links.json``: what the owner or Claude must act on.
 
     - ``undecided``: families without an accepted link, their candidates and
       the URLs that gave none;
     - ``overrides``: override questions with no ruling (``pending``), ruled
-      otherwise (``rejected``), overrides of an unknown family, and
-      ``answered``: undecided families whose question the owner answered
-      (question id -> letter), for which Claude writes the override entry;
+      otherwise (``rejected``), overrides of an unknown family; and the owner's
+      answers to the undecided families' own questions (``picks``):
+      ``picked``, the links taken from them (question id -> URL), ``research``,
+      the undecided families the owner sent to research that no override entry
+      names yet (Claude proposes one), and ``unusable``, answers that give no
+      link (question id -> why);
     - ``failed_checks``: links that failed the check, with the families using them.
     """
+    picks = picks or OwnerPicks({}, {}, (), {})
     by_url: dict[str, list[str]] = defaultdict(list)
     for fid, ls in sorted(links.items()):
         for role, link in (("primary", ls.primary), ("designer", ls.designer)):
             if link is not None:
                 by_url[link.url].append(f"{fid}:{role}")
     overrides = list(overrides)
-    entries = {o.question for o in overrides}
-    answered = {
-        qid: choices[qid]
-        for qid in map(queue_question, undecided)
-        if qid in choices and qid not in entries
-    }
     return {
         "undecided": {
             fid: {
@@ -1031,8 +1150,8 @@ def build_queue(
             for fid, exc in sorted(undecided.items())
         },
         "overrides": {
-            "answered": answered,
             "pending": sorted({o.question for o in overrides if o.question not in choices}),
+            "picked": dict(sorted(picks.picked.items())),
             "rejected": sorted(
                 {
                     o.question
@@ -1040,7 +1159,9 @@ def build_queue(
                     if o.question in choices and choices[o.question] != o.choice
                 }
             ),
+            "research": [queue_question(fid) for fid in picks.research if fid in undecided],
             "unknown_family": sorted(o.family for o in overrides if o.family not in u.families),
+            "unusable": dict(sorted(picks.unusable.items())),
         },
         "failed_checks": {
             url: {
@@ -1055,6 +1176,12 @@ def build_queue(
     }
 
 
+def _unchecked(checks: Mapping[str, LinkCheck]) -> list[str]:
+    return sorted(
+        url for url, c in checks.items() if c.status == 0 and c.problems[-1:] == (NOT_CHECKED,)
+    )
+
+
 def run(ctx: StageContext) -> None:
     """Stage "links"."""
     from tff_catalog.universe import universe_records
@@ -1063,12 +1190,14 @@ def run(ctx: StageContext) -> None:
     u: Universe = stageio.load_stage(paths, "universe")
     grouped = group_records(u, universe_records(paths.records))
     overrides = load_overrides(paths)
-    choices = gate_choices(paths)
+    answers = gate_answers(paths)
+    choices = choices_of(answers)
     approved = approved_overrides(overrides, choices)
-    links, undecided = choose_all(u, grouped, approved)
+    picks = owner_picks(u.eligible(), answers, overrides)
+    links, undecided = choose_all(u, grouped, {**picks.links, **approved})
     stageio.dump_stage(paths, "links", links)
     checks = check(_check_scope(paths, links, ctx.log), ctx)
-    queue = build_queue(u, undecided, overrides, choices, links, checks)
+    queue = build_queue(u, undecided, overrides, choices, links, checks, picks)
     jsonio.dump(queue, paths.queues / QUEUE_FILE)
 
     bases: dict[str, int] = defaultdict(int)
@@ -1081,14 +1210,29 @@ def run(ctx: StageContext) -> None:
         len(undecided),
     )
     ctx.log.info(
-        "links: %d overrides approved, %d questions pending; %d of %d checked links failed",
+        "links: %d overrides approved, %d questions pending, %d owner picks; "
+        "%d of %d checked links failed",
         len(approved),
         len(queue["overrides"]["pending"]),
+        len(picks.links),
         len(queue["failed_checks"]),
         len(checks),
     )
     for fid in queue["overrides"]["unknown_family"]:
         ctx.log.warning("links: override for unknown family id %r", fid)
+    for qid, why in queue["overrides"]["unusable"].items():
+        ctx.log.warning("links: gate K answer %s gives no link: %s", qid, why)
+    unchecked = _unchecked(checks)
+    if unchecked:
+        day = ctx.options.from_snapshots or ctx.run_date
+        ctx.log.warning(
+            "links: %d links have no check recorded for %s (accepted after that run?); "
+            "run `tff-catalog links --date %s` live to check and record them, then replay: %s",
+            len(unchecked),
+            day.isoformat(),
+            day.isoformat(),
+            ", ".join(unchecked),
+        )
 
 
 def cmd_check(ctx: StageContext) -> int:

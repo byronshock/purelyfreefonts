@@ -62,7 +62,8 @@ REDIRECTED = (
 )
 # Headers the access log drops (/privacy): every one that can carry the visitor's IP or
 # location beyond the country, including those Cloudflare adds only when a setting turns
-# them on, plus Referer, User-Agent and Cookie (owner ruling of 2026-09-26).
+# them on, plus Referer and User-Agent (owner ruling of 2026-09-26) and Cookie (Claude's
+# addition, for the owner to confirm).
 DROPPED_HEADERS = (
     "Cf-Connecting-Ip",
     "X-Forwarded-For",

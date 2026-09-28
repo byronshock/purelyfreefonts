@@ -75,7 +75,7 @@ Unknown IDs are excluded.
 - **Rule 4 extended** to any ban on modification or embedding. That excludes:
   - the MS Core Fonts EULA;
   - CC-BY-ND;
-  - fonts with no license found.
+  - fonts with no license found. Claude researches any such family that would otherwise reach the overall top 700 before it drops out (owner ruling of 2026-09-26).
 - **Previews (`preview_ok`):** a font may be previewed on our site only if it is redistributable. We serve the upstream files unchanged: no subsetting or format conversion of fonts with a Reserved Font Name. Whether conversion is fine under the OFL is *unverified*, so we avoid it.
 
 **Latin. D4 (decided 2026-09-25): option (C).** The options were:
@@ -83,6 +83,8 @@ Unknown IDs are excluded.
 - **(A)** The strict Google metadata test: primary script Latin or unset, and a `latin` subset. That gives 1,264 families and drops Poppins.
 - **(B)** A, plus 204 dual-script families that are not CJK and have both `latin` and `latin-ext`.
 - **(C, chosen)** A, plus a dual-script allowlist the owner reviews.
+
+The allowlist follows the owner's rule of 2026-09-26 (gate L2): a dual-script Google family with full Latin Extended is included unless it is a script companion, a script version of a family already listed whose Latin is that family's (Noto Sans Arabic of Noto Sans, Hind Siliguri of Hind); companions and families with basic Latin only stay out. The per-family lists are in `data/reviews/latin/`, and the owner can move any family.
 
 In every option:
 
@@ -201,8 +203,8 @@ In both views, affected fonts carry a tag naming the systems they come with or t
   - months 2–11: (latest − earliest snapshot) ÷ days between them;
   - from month 12: the 12-month difference.
 
-  An asset present in both snapshots counts its growth, and an asset created after the earlier snapshot counts its whole count, since its baseline is 0 (owner ruling of 2026-09-26); an older asset the earlier snapshot lacks is ignored. Negative differences (deleted or re-uploaded assets) are clamped to 0 and flagged. Every release of a main-channel repo is counted, with no cap by date, because old releases still dominate: FiraCode's latest release is from 2021 and JetBrains Mono's from 2023. Iosevka, with over 400 releases, is the exception: only its latest 24 releases are fetched, through GitHub's GraphQL API (ruling M2).
-- **Linux dependency correction (every rank except *most installed*).** In *most chosen*, the overall rank and the Coding view, a Linux source abstains for a font when the font's top reverse Depends/Recommends/Provides accounts for at least 50% of its installs, or when the owner's preinstalled list names the font for a Linux system whose installs that source counts: Arch-family systems (CachyOS, EndeavourOS) silence Arch pkgstats only, Debian and Ubuntu silence popcon only, and desktops (GNOME, KDE Plasma) silence both (owner ruling of 2026-09-26). Windows, macOS and Android entries on that list only add `preinstalled_on` tags and never cause an abstention. A Linux source counts a family by its most-installed package, not the sum of its packages, since one system installs each package once (owner ruling of 2026-09-26); the dependency share uses the same basis. The test uses the largest single dependent, not the sum of all dependents. When a package depends on alternatives (`a | b`), only the first alternative counts as pulled in. A largest dependent at 35–50% is flagged for the owner's review (ruling M8). Dependencies are parsed from:
+  An asset present in both snapshots counts its growth, and an asset created after the earlier snapshot counts its whole count, since its baseline is 0 (owner ruling of 2026-09-26); an older asset the earlier snapshot lacks is ignored. Negative differences (deleted or re-uploaded assets) are clamped to 0 and flagged. Every release of a main-channel repo is counted, with no cap by date, because old releases still dominate: FiraCode's latest release is from 2021 and JetBrains Mono's from 2023. Iosevka, with over 400 releases, is the exception: only its latest 24 releases are fetched, through GitHub's GraphQL API (ruling M2). Prereleases don't count, except in a repository that publishes nothing else (OpenDyslexic: `prerelease_repos`, owner ruling of 2026-09-26).
+- **Linux dependency correction (every rank except *most installed*).** In *most chosen*, the overall rank and the Coding view, a Linux source abstains for a font when the font's top reverse Depends/Recommends accounts for at least 50% of its installs (a virtual package, named only in Provides, never pulls a font in, even with one provider: owner ruling of 2026-09-26), or when the owner's preinstalled list names the font for a Linux system whose installs that source counts: Arch-family systems (CachyOS, EndeavourOS) silence Arch pkgstats only, Debian and Ubuntu silence popcon only, and desktops (GNOME, KDE Plasma) silence both (owner ruling of 2026-09-26). Windows, macOS and Android entries on that list only add `preinstalled_on` tags and never cause an abstention. A Linux source counts a family by its most-installed package, not the sum of its packages, since one system installs each package once (owner ruling of 2026-09-26); the dependency share uses the same basis. The test uses the largest single dependent, not the sum of all dependents. When a package depends on alternatives (`a | b`), only the first alternative counts as pulled in. A largest dependent at 35–50% is flagged for the owner's review (ruling M8). Dependencies are parsed from:
   - Arch core/extra;
   - the CachyOS and EndeavourOS repository databases (cachyos-kde-settings, on 3.57% of Arch systems in Aug 2026, requires ttf-fantasque-nerd, ttf-fira-sans and noto-fonts);
   - Debian's Packages.xz.
@@ -283,7 +285,8 @@ These never feed the overall rank.
   - Per source, the log-ratio of recent share to 12-month *share*, not counts: npm keeps growing overall, and Homebrew's 30-day total fell to about 20% of its 90-day total.
   - A font rises only when at least 2 sources agree, its share is at least 0.02%, and the rise holds over 3 months of smoothing.
   - Fonts under 3 months old go to "New" instead.
-  - Google alone can't make a font rise: Andada Pro was up 925% in 90 days.
+  - Google alone can't make a font rise: Andada Pro was up 925% in 90 days. A font's rise is its second-largest rise among its sources, so no single source sets it.
+  - Every Rising font shows tier C while the view is in beta: Rising has no weights, so its confidence ranges are nearly all single points and would otherwise read as tier A (owner ruling of 2026-09-26).
 
 **Deferred:**
 
@@ -320,12 +323,12 @@ These never feed the overall rank.
 **Stability.**
 
 - Windows are 12 months long.
-- FOT is smoothed with an exponentially weighted moving average (λ 0.5).
+- FOT is smoothed with an exponentially weighted moving average (λ 0.5) of its ruler-equated z. Each month the smoothed values are ranked again and mapped back onto the ruler, like any other source (owner ruling of 2026-09-26).
 - The catalog is the overall top 500 plus the top 100 of the project rank and of both desktop views (`desktop_chosen`, `desktop_installed`).
 - A font enters at rank 450 or better and leaves after 2 runs below 550. This also caps the monthly license review.
 - Top-100 membership has its own hysteresis: a font enters a top 100 at 90 or better and leaves after 2 runs worse than 110 (ruling M11).
 
-**Confidence.** A 5–95% rank range from 200 Dirichlet weight perturbations plus leave-one-source-out runs. Each draw re-weights a survey's sources with Dirichlet(20·w/W), across all its sources, so the project group shares vary too (owner ruling of 2026-09-26); the overall mix M_g is not perturbed.
+**Confidence.** A 5–95% rank range from 200 Dirichlet weight perturbations plus leave-one-source-out runs. Each draw re-weights a survey's sources with Dirichlet(20·w/W), across all its sources, so the project group shares vary too (owner ruling of 2026-09-26); the overall mix M_g is not perturbed. The leave-one-source-out run that drops Homebrew keeps Homebrew as the ruler, so only its term is removed and every other source keeps its scale (owner ruling of 2026-09-26).
 
 - Tier A: at least 2 groups, and a range no wider than max(10, 0.3·rank).
 - Tier B: a range no wider than the rank.

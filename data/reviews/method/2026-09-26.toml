@@ -15,7 +15,7 @@ reason = "Claude's recommendation: the view keeps its information without claimi
 [rising_tier]
 value = "C"
 ruling = "Rising is always tier C while it is in beta, and keeps the second-largest-rise rule."
-reason = "Claude's recommendation."
+reason = "Claude's recommendation. Applied: confidence.FIXED_TIERS gives every Rising font tier C; methodology §5 (Rising) says so."
 
 [dirichlet_scope]
 value = "across"
@@ -33,7 +33,7 @@ reason = "Claude's recommendation."
 
 [fot_rerank_and_ruler]
 ruling = "Fonts Over Time's smoothed values are re-ranked against the ruler each month; Homebrew stays the ruler in the leave-one-out runs."
-reason = "Claude's recommendation."
+reason = "Claude's recommendation. Written into methodology §6 (Stability and Confidence)."
 
 [baseline_and_parse]
 ruling = "A lifetime counter's baseline is the oldest snapshot within 380 days; a snapshot that fails to parse counts as a failed fetch (the source goes stale)."

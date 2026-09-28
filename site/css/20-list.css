@@ -150,8 +150,8 @@ li.font.is-dim .font-name {
   font-weight: 400;
 }
 
-/* Phones: a card. The rank sits beside the name (a long "Not ranked: ..." wraps in at most
-   40% of the card), then one thing per line, and download and details side by side last. */
+/* Phones: a card. The rank sits beside the name ("Not ranked: ..." takes a line of its own,
+   below), then one thing per line, and download and details side by side last. */
 .font-row {
   display: grid;
   grid-template-columns: fit-content(40%) minmax(0, 1fr) auto;
@@ -345,6 +345,19 @@ li.font.is-dim .spec-fallback {
   }
 }
 
+/* An unranked row: "Not ranked: <reason>" gets a line of its own above the name, instead of
+   wrapping down the narrow rank column (the owner's site ruling of 2026-09-26, list_layout). */
+li.font.is-unranked .font-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "rank rank"
+    "name name"
+    "spec spec"
+    "meta meta"
+    "badges badges"
+    "download toggle";
+}
+
 /* From 40rem: table-like rows. The rank has its own column; download and details close the
    row, so a download link that wraps never pushes the name block apart. */
 @media (min-width: 40rem) {
@@ -361,6 +374,17 @@ li.font.is-dim .spec-fallback {
   .font-row > .ext {
     grid-column: 2 / -1;
   }
+
+  li.font.is-unranked .font-row {
+    grid-template-columns: 6rem minmax(0, 1fr) auto;
+    grid-template-areas:
+      "rank rank rank"
+      ". name ."
+      ". spec ."
+      ". meta ."
+      ". badges ."
+      ". download toggle";
+  }
 }
 
 /* A wide list: the specimen gets its own column, level with the name and meta lines, and the
@@ -376,6 +400,20 @@ li.font.is-dim .spec-fallback {
       "rank name spec ."
       "rank meta spec ."
       "rank badges download toggle";
+  }
+
+  /* The label's own line adds one line to the row. */
+  li.font.is-unranked {
+    --row-est-h: 9rem;
+  }
+
+  li.font.is-unranked .font-row {
+    grid-template-columns: 6rem minmax(11rem, 1fr) minmax(0, 1.25fr) auto;
+    grid-template-areas:
+      "rank rank rank rank"
+      ". name spec ."
+      ". meta spec ."
+      ". badges download toggle";
   }
 
   .font-spec {

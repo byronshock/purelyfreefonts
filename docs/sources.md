@@ -1,8 +1,8 @@
 # Data sources and their terms
 
-This is the terms audit from Milestone 1, step 3. It lists every source the catalog reads: what we take from it, where its terms are, the sentence in them that matters, and what we may publish. The owner ruled on the terms on 2026-09-25 (rulings T1–T5). The rulings are recorded in [AUTHORITY.md](../AUTHORITY.md) and in `data/reviews/terms/2026-09-25.toml`. The method that uses these sources is in [ranking-methodology.md](ranking-methodology.md).
+This is the terms audit from Milestone 1, step 3. It lists every source the catalog reads: what we take from it, where its terms are, the sentence in them that matters, and what we may publish. The owner ruled on the terms on 2026-09-25 (rulings T1–T5) and on the remaining points on 2026-09-26. The rulings are recorded in [AUTHORITY.md](../AUTHORITY.md) and in `data/reviews/terms/2026-09-25.toml` and `2026-09-26.toml`. The method that uses these sources is in [ranking-methodology.md](ranking-methodology.md).
 
-Where no ruling covers a source, a conservative default applies: we publish facts only, and tests use synthetic fixtures.
+Where no ruling covers a source, a conservative default applies: we publish facts only, and tests use synthetic fixtures. The owner's ruling of 2026-09-26 (`default_sources`) confirmed this default for Fontist, the Debian copyright files, CachyOS and EndeavourOS and the foundry sites, and kept Flutter off in v1.
 
 Every page linked below returned HTTP 200 on 2026-09-25, and each quoted sentence was still on its page.
 
@@ -21,6 +21,8 @@ Every page linked below returned HTTP 200 on 2026-09-25, and each quoted sentenc
 
 **Basis:** the ruling that decides the row, the source's own license, or the default.
 
+**Public facts in fixtures and seed files** (owner ruling of 2026-09-26, `public_facts_in_fixtures`). Fixtures, alias seeds and config files may carry public facts even where they name people: the copyright lines a font license requires to be kept (for example the Nerd Fonts author's), designers' GitHub URLs, and package homepages, personal sites included.
+
 Real snapshots of every source we collect, Google and Fonts Over Time included, are kept in the private data repository (D15). The public repository never holds them. Tests that need real data from a synthetic-only source read it from there, and public CI skips them.
 
 Our catalog data is CC BY-SA 4.0, final since ruling T5. That matches the ShareAlike term of ecosyste.ms, the one source whose data license requires it.
@@ -36,13 +38,13 @@ Our catalog data is CC BY-SA 4.0, final since ruling T5. That matches the ShareA
 | [Fontsource registry and API](#fontsource-registry-and-api) | non-Google fonts, font facts, old ids | yes | yes | T1 |
 | [Nerd Fonts `fonts.json`](#nerd-fonts-fontsjson) | the original font behind each Nerd build | yes | yes | T1 |
 | [Homebrew casks](#homebrew-casks) | font casks, renames, add dates | yes | yes | T1 |
-| [Fontist formulas](#fontist-formulas) | license facts, candidate fonts | facts only | synthetic | default |
-| [Debian copyright files](#debian-copyright-files-dep-5) | license identifiers | facts only | synthetic | default |
-| [Foundry sites](#foundry-sites) | a hand list of families | facts only | none needed | default |
+| [Fontist formulas](#fontist-formulas) | license facts, candidate fonts | facts only | synthetic | ruling of 2026-09-26 |
+| [Debian copyright files](#debian-copyright-files-dep-5) | license identifiers | facts only | synthetic | ruling of 2026-09-26 |
+| [Foundry sites](#foundry-sites) | a hand list of families | facts only | none needed | ruling of 2026-09-26 |
 | [Homebrew analytics](#homebrew-analytics) | cask installs over 30, 90 and 365 days | yes | yes | T1 |
 | [Arch pkgstats](#arch-pkgstats) | monthly share of systems per package | yes | yes | T1 |
 | [Arch package databases](#arch-package-databases) | dependencies, groups, licenses | yes | yes | T1 |
-| [CachyOS and EndeavourOS](#cachyos-and-endeavouros) | CachyOS dependencies; EndeavourOS preinstalled fonts | facts only | synthetic | default |
+| [CachyOS and EndeavourOS](#cachyos-and-endeavouros) | CachyOS dependencies; EndeavourOS preinstalled fonts | facts only | synthetic | ruling of 2026-09-26 |
 | [Debian popcon](#debian-popcon) | installs per package | yes | yes | T1 |
 | [Debian package lists](#debian-package-lists) | dependencies and sections | yes | yes | T1 |
 | [GitHub release downloads](#github-release-downloads) | downloads from main-channel repositories | yes | yes, without author or uploader | T1 |
@@ -50,10 +52,10 @@ Our catalog data is CC BY-SA 4.0, final since ruling T5. That matches the ShareA
 | [Fonts Over Time](#fonts-over-time) | fonts on about 10,000 homepages | ranks only | synthetic | T4 |
 | [Web Almanac 2025](#web-almanac-2025) | pages declaring each font | yes | yes, with the Apache notice | T1 |
 | [npm](#npm) | downloads of `@fontsource`, `@fontsource-variable` and `@expo-google-fonts` packages | yes | yes | T1 |
-| [ecosyste.ms](#ecosystems) | projects that depend on each Fontsource package | yes | yes, marked CC BY-SA 4.0 | T1 |
+| [ecosyste.ms](#ecosystems) | projects that depend on each Fontsource package | yes | yes, marked CC BY-SA 4.0 | T1; ruling of 2026-09-26 |
 | [jsDelivr, through Fontsource](#jsdelivr-through-fontsource) | CDN hits per package | yes | yes | T1 |
 | [Chocolatey](#chocolatey) | nothing: dropped from v1 | not used | none | T3 |
-| [Flutter code search](#flutter-code-search) | nothing yet: off in the first build | not published | synthetic | needs a ruling |
+| [Flutter code search](#flutter-code-search) | nothing: off in v1 | not published | synthetic | ruling of 2026-09-26 |
 
 ## Candidate fonts and license facts
 
@@ -63,6 +65,7 @@ Our catalog data is CC BY-SA 4.0, final since ruling T5. That matches the ShareA
 - **Terms:** [Google Terms of Service](https://policies.google.com/terms), effective 30 July 2026. Google's [robots.txt](https://fonts.google.com/robots.txt) disallows only `/license/`.
 - **Quote:** "You may use Google's content as allowed by these terms and any service-specific additional terms, but we retain any intellectual property rights that we have in our content." The terms also forbid "using automated means to access content from any of our services in violation of the machine-readable instructions on our web pages (for example, robots.txt files that disallow crawling, training, or other activities)".
 - **Ruling T2:** both endpoints are used. View counts are never published: only each font's rank and its rank-based z score. Family facts such as the category also appear in the catalog; the google/fonts repository carries the same facts under open licenses. Fixtures are synthetic.
+- **Rising (ruling of 2026-09-26):** Google's monthly shares for Rising are kept in the private data repository, never in `state/smoothing.json`. Rising uses them, and nothing public holds them.
 - **Note:** the [Google APIs Terms of Service](https://developers.google.com/terms) forbid building databases from API content ("Scrape, build databases, or otherwise create permanent copies of such content"). They cover the keyed Developer API, which we don't use.
 
 ### google/fonts repository
@@ -104,20 +107,20 @@ Our catalog data is CC BY-SA 4.0, final since ruling T5. That matches the ShareA
 - **Use:** license facts (`spdx_license`, `open_license`), font names and homepages, from the root and `sil/` folders of the formulas repository. The `google/` folder repeats Google Fonts, and `macos/` holds proprietary fonts, so neither is read.
 - **Terms:** the [formulas repository](https://github.com/fontist/formulas) has no license file, and GitHub reports none. The Fontist tool's own BSD license does not cover this repository.
 - **Quote:** none found.
-- **Default (no ruling):** facts only, as one input to the license cross-check; formula files are never copied. Fixtures are synthetic.
+- **Ruling of 2026-09-26 (`default_sources`):** facts only, as one input to the license cross-check; formula files are never copied. Fixtures are synthetic.
 
 ### Debian copyright files (DEP-5)
 
 - **Use:** the license short names in each font source package's `debian/copyright` file, from `metadata.ftp-master.debian.org`, as one input to the license cross-check. The `Files: debian/*` stanza, which covers packaging, is skipped.
 - **Terms:** the footer of [sources.debian.org](https://sources.debian.org/). Each copyright file belongs to its package.
 - **Quote:** "Hosted source files are available under their own copyright and licenses."
-- **Default (no ruling):** facts only: the license identifiers, never the file text. Fixtures are synthetic. Ruling T1's "Debian package data" means the package lists and popcon; the copyright files were not put to the owner.
+- **Ruling of 2026-09-26 (`default_sources`):** facts only: the license identifiers, never the file text. Fixtures are synthetic. Ruling T1's "Debian package data" means the package lists and popcon; this later ruling covers the copyright files.
 
 ### Foundry sites
 
 - **Use:** `config/foundries.toml`, a hand list of families from The League of Moveable Type, Velvetyne, Collletttivo, Open Foundry and Roundo. Claude seeds it once from the foundry sites and the owner reviews it. The sites are not scraped each month (ruling M12); each run only checks that the listed links still work.
 - **Terms:** each foundry's own site. No data is copied from them beyond family names and links.
-- **Default (no ruling):** facts only. The list is our own file, so no fixture is needed.
+- **Ruling of 2026-09-26 (`default_sources`):** facts only. The list is our own file, so no fixture is needed.
 
 ## Desktop installs
 
@@ -147,7 +150,7 @@ Our catalog data is CC BY-SA 4.0, final since ruling T5. That matches the ShareA
 - **Use:** CachyOS's `cachyos` package database, for the fonts its settings packages pull in (for example, `cachyos-kde-settings` requires ttf-fantasque-nerd, ttf-fira-sans and noto-fonts). EndeavourOS's repository has no font dependencies, so we use only its installer's base package list, as a seed for the hand-kept `config/preinstalled.toml`.
 - **Terms:** the [CachyOS package repository](https://github.com/CachyOS/CachyOS-PKGBUILDS) has no license file; [CachyOS-Settings](https://github.com/CachyOS/CachyOS-Settings) is GPL-3.0. The [EndeavourOS package lists](https://github.com/endeavouros-team/EndeavourOS-packages-lists) have no license file. Neither project publishes terms for its repositories.
 - **Quote:** none found.
-- **Default (no ruling):** facts only. The catalog names the packages that pull a font in (`pulled_in_by`) and the systems that preinstall it (`preinstalled_on`), and never copies the databases. Fixtures are synthetic. Ruling T1 covers Arch's own databases, not these.
+- **Ruling of 2026-09-26 (`default_sources`):** facts only. The catalog names the packages that pull a font in (`pulled_in_by`) and the systems that preinstall it (`preinstalled_on`), and never copies the databases. Fixtures are synthetic. Ruling T1 covers Arch's own databases; this later ruling covers these.
 
 ### Debian popcon
 
@@ -206,7 +209,8 @@ Our catalog data is CC BY-SA 4.0, final since ruling T5. That matches the ShareA
 - **Terms:** the [API page](https://ecosyste.ms/api), the footer of [ecosyste.ms](https://ecosyste.ms/) and the site's [Terms of Service](https://ecosyste.ms/terms). The OpenAPI file gives the same license.
 - **Quote:** "All APIs follow OpenAPI 3.0.1 specifications and are available under CC-BY-SA-4.0 license." The footer reads "Code: AGPL-3 — Data: CC BY-SA 4.0". Section 11(b) of the terms says the data "is subject to a creative commons attribution share-alike license", and asks users to comply with it "including attributing ‘ecosyste.ms’ as the source of data when published alongside, or combined with other data".
 - **Ruling T1:** counts may be published under CC BY-SA 4.0, which is our data license, crediting ecosyste.ms as the source. We don't suggest that ecosyste.ms is associated with our catalog, which section 11(b) also forbids. A real fixture is marked CC BY-SA 4.0, separately from the MIT code license.
-- **Open point:** the same terms say, in section 9, that users will not "Develop or use any third-party applications that interact with our Platform without our prior written consent, including any scripts designed to scrape or extract data from our Platform". Section 11(c) gives a license for personal use that excludes "data mining, robots or similar data gathering or extraction methods". The API page invites exactly this kind of use, and its robots.txt allows everything. The owner has not ruled on these clauses; see [Open points](#open-points).
+- **Open point:** the same terms say, in section 9, that users will not "Develop or use any third-party applications that interact with our Platform without our prior written consent, including any scripts designed to scrape or extract data from our Platform". Section 11(c) gives a license for personal use that excludes "data mining, robots or similar data gathering or extraction methods". The API page invites exactly this kind of use, and its robots.txt allows everything.
+- **Ruling of 2026-09-26 (`ecosystems`):** keep collecting, and credit ecosyste.ms as section 11(b) asks. Claude drafted a short note asking ecosyste.ms to confirm the monthly job of about 30 calls, and the owner sends it.
 
 ### jsDelivr, through Fontsource
 
@@ -217,9 +221,9 @@ Our catalog data is CC BY-SA 4.0, final since ruling T5. That matches the ShareA
 
 ### Flutter code search
 
-- **Use:** none yet. The plan is to count `GoogleFonts.<name>` calls in public Flutter code that uses the [google_fonts package](https://pub.dev/packages/google_fonts). It is off in the first build, and deferred until a search service and token are chosen.
+- **Use:** none in v1. The plan is to count `GoogleFonts.<name>` calls in public Flutter code that uses the [google_fonts package](https://pub.dev/packages/google_fonts), once a search service and token are chosen.
 - **Terms:** not audited, because the service is not chosen.
-- **Default (no ruling):** `publish_raw = false`, and fixtures are synthetic. It needs a terms ruling before it is turned on.
+- **Ruling of 2026-09-26 (`default_sources`):** Flutter stays off in v1, with `publish_raw = false` and synthetic fixtures. Turning it on later needs the service's terms audited and a terms ruling first.
 
 ## Not used
 
@@ -238,10 +242,7 @@ Our catalog data is CC BY-SA 4.0, final since ruling T5. That matches the ShareA
 
 ## Open points
 
-- **ecosyste.ms Terms of Service, sections 9 and 11(c).** They ask for written consent before scripts extract data, while the API page and section 11(b) offer the data under CC BY-SA 4.0. The terms still name Open Collective in several places, so they look adapted from that site's terms. Ruling T1 stands. The owner may want to ask ecosyste.ms to confirm that a monthly job of about 30 API calls is fine.
-- **Google shares in the Rising history.** Rising keeps each font's last three monthly shares per source in `state/smoothing.json`, which is public, and Google is one of its sources. A Google share is a view count divided by the total. Ruling T2 publishes only ranks and z scores, so this page reads it as ruling shares out too. Google's share history could stay in the private store, or be kept as ranks; otherwise the owner rules on shares.
-- **Sources under the default.** Fontist, the Debian copyright files, CachyOS, EndeavourOS and the foundry sites were never put to the owner. They follow the default (facts only, synthetic fixtures) until the owner rules otherwise.
-- **Flutter** needs a terms ruling before it is turned on.
+- **ecosyste.ms' reply.** The owner sends the note asking ecosyste.ms to confirm the monthly job (ruling of 2026-09-26), and its reply goes back to the owner. Its terms still name Open Collective in several places, so they look adapted from that site's terms.
 - **Fonts Over Time** stays ranks only. If its author grants an explicit license in reply to [the request](https://github.com/fcjr/fontsovertime/issues/1), the owner can revisit ruling T4.
 
 ## Keeping this page current

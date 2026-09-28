@@ -12,13 +12,13 @@ and T4). The floor is the volume under which the engine censors a key.
 | Source | Floor | Unmatched keys |
 |---|---:|---:|
 | almanac | 0 pages | 39 |
-| arch | 0.3% | 354 |
-| debian | 100 installs | 619 |
+| arch | 0.3% | 324 |
+| debian | 100 installs | 603 |
 | ecosystems | 5 dependents | 7 |
-| fot | 3 sites | 335 |
+| fot | 3 sites | 334 |
 | github | 0 downloads a year | 28 |
 | google | 0 | 0 |
-| homebrew | 80 installs a year | 3 |
+| homebrew | 80 installs a year | 2 |
 | jsdelivr | 10,000 hits a month | 1 |
 | nerd | 0 | 0 |
 | npm_expo | 1,000 downloads a month | 5 |
@@ -76,44 +76,33 @@ and T4). The floor is the volume under which the engine censors a key.
 | 2 | `adwaita-fonts` | arch-pkg | 85.1% |
 | 3 | `woff2` | arch-pkg | 77.6% |
 | 4 | `ttf-liberation` | arch-pkg | 77.2% |
-| 5 | `noto-fonts` | arch-pkg | 67.9% |
 | 6 | `noto-fonts-emoji` | arch-pkg | 67.3% |
-| 7 | `ttf-dejavu` | arch-pkg | 66.5% |
 | 8 | `cantarell-fonts` | arch-pkg | 54.2% |
 | 9 | `sdl2_ttf` | arch-pkg | 44.8% |
 | 10 | `ttf-hack` | arch-pkg | 44.7% |
 | 11 | `gnu-free-fonts` | arch-pkg | 42.7% |
-| 12 | `adobe-source-code-pro-fonts` | arch-pkg | 42.6% |
-| 13 | `noto-fonts-cjk` | arch-pkg | 38.5% |
 | 14 | `sdl3_ttf` | arch-pkg | 34.7% |
 | 15 | `ttf-nerd-fonts-symbols-common` | arch-pkg | 26.8% |
 | 16 | `ttf-nerd-fonts-symbols` | arch-pkg | 24.9% |
 | 17 | `ttf-bitstream-vera` | arch-pkg | 24.3% |
-| 18 | `ttf-roboto` | arch-pkg | 24% |
 | 19 | `xorg-font-util` | arch-pkg | 23.6% |
 | 20 | `ttf-opensans` | arch-pkg | 21.9% |
 | 21 | `terminus-font` | arch-pkg | 20.7% |
-| 22 | `noto-fonts-extra` | arch-pkg | 20.6% |
 | 23 | `ttf-jetbrains-mono-nerd` | arch-pkg | 20.3% |
 | 24 | `xorg-fonts-alias-100dpi` | arch-pkg | 19.2% |
 | 25 | `xorg-fonts-100dpi` | arch-pkg | 19.1% |
 | 26 | `ttf-ubuntu-font-family` | arch-pkg | 18.8% |
 | 27 | `xorg-fonts-alias-75dpi` | arch-pkg | 18.4% |
 | 28 | `xorg-fonts-75dpi` | arch-pkg | 18.3% |
-| 29 | `ttf-droid` | arch-pkg | 17% |
 | 30 | `woff2-font-awesome` | arch-pkg | 15.7% |
 | 31 | `gnome-font-viewer` | arch-pkg | 15.4% |
-| 32 | `ttf-fira-code` | arch-pkg | 15% |
 | 33 | `ttf-jetbrains-mono` | arch-pkg | 14.6% |
 | 34 | `otf-font-awesome` | arch-pkg | 14.5% |
-| 35 | `adobe-source-sans-fonts` | arch-pkg | 14.4% |
 | 36 | `awesome-terminal-fonts` | arch-pkg | 14.2% |
 | 37 | `sdl_ttf` | arch-pkg | 13.9% |
-| 38 | `ttf-firacode-nerd` | arch-pkg | 13.4% |
 | 39 | `ttf-ms-fonts` | arch-pkg | 13.2% |
 | 40 | `xorg-fonts-alias-misc` | arch-pkg | 13% |
 | 41 | `xorg-fonts-misc` | arch-pkg | 12.8% |
-| 42 | `ttf-fira-sans` | arch-pkg | 11.8% |
 | 43 | `ttf-carlito` | arch-pkg | 11.7% |
 | 44 | `ttf-hack-nerd` | arch-pkg | 11.6% |
 | 45 | `ttf-meslo-nerd` | arch-pkg | 11.5% |
@@ -126,40 +115,28 @@ and T4). The floor is the volume under which the engine censors a key.
 | 52 | `lib32-sdl_ttf` | arch-pkg | 9.24% |
 | 53 | `ttf-croscore` | arch-pkg | 8.38% |
 | 54 | `ttf-iosevka-nerd` | arch-pkg | 8.22% |
-| 55 | `ttf-cascadia-code-nerd` | arch-pkg | 7.9% |
 | 56 | `ttf-terminus-nerd` | arch-pkg | 7.78% |
-| 57 | `ttf-noto-nerd` | arch-pkg | 7.56% |
-| 58 | `otf-libertinus` | arch-pkg | 7.41% |
 | 59 | `ttf-sourcecodepro-nerd` | arch-pkg | 7.4% |
-| 61 | `adobe-source-serif-fonts` | arch-pkg | 7.07% |
-| 62 | `ttf-fira-mono` | arch-pkg | 7% |
 | 63 | `ttf-caladea` | arch-pkg | 6.82% |
-| 64 | `ttf-roboto-mono-nerd` | arch-pkg | 6.8% |
 | 65 | `adobe-source-han-sans-jp-fonts` | arch-pkg | 6.75% |
 | 66 | `ttf-ubuntu-mono-nerd` | arch-pkg | 6.64% |
-| 67 | `ttf-roboto-mono` | arch-pkg | 6.55% |
 | 68 | `xorg-font-utils` | arch-pkg | 6.51% |
 | 69 | `adobe-source-han-sans-cn-fonts` | arch-pkg | 6.43% |
 | 70 | `tex-gyre-fonts` | arch-pkg | 6.4% |
-| 71 | `otf-firamono-nerd` | arch-pkg | 6.36% |
 | 72 | `ttf-inconsolata-nerd` | arch-pkg | 6.34% |
 | 73 | `ttf-ubuntu-nerd` | arch-pkg | 6.28% |
 | 74 | `ttf-mononoki-nerd` | arch-pkg | 6.16% |
 | 75 | `ttf-anonymouspro-nerd` | arch-pkg | 6.15% |
 | 76 | `ttf-linux-libertine` | arch-pkg | 6.14% |
 | 77 | `ttf-liberation-mono-nerd` | arch-pkg | 6.14% |
-| 78 | `ttf-cascadia-mono-nerd` | arch-pkg | 6.1% |
 | 79 | `inter-font` | arch-pkg | 6.09% |
 | 80 | `ttf-space-mono-nerd` | arch-pkg | 6.04% |
 | 81 | `ttf-arimo-nerd` | arch-pkg | 6.01% |
 | 82 | `ttf-victor-mono-nerd` | arch-pkg | 5.99% |
-| 83 | `ttf-ibmplex-mono-nerd` | arch-pkg | 5.94% |
-| 84 | `otf-droid-nerd` | arch-pkg | 5.87% |
 | 85 | `ttf-iosevkaterm-nerd` | arch-pkg | 5.86% |
 | 86 | `ttf-bitstream-vera-mono-nerd` | arch-pkg | 5.76% |
 | 87 | `otf-comicshanns-nerd` | arch-pkg | 5.7% |
 | 88 | `ttf-agave-nerd` | arch-pkg | 5.7% |
-| 89 | `ttf-inconsolata-go-nerd` | arch-pkg | 5.7% |
 | 90 | `ttf-go-nerd` | arch-pkg | 5.69% |
 | 91 | `otf-codenewroman-nerd` | arch-pkg | 5.67% |
 | 92 | `ttf-3270-nerd` | arch-pkg | 5.66% |
@@ -171,21 +148,17 @@ and T4). The floor is the volume under which the engine censors a key.
 | 98 | `ttf-lilex-nerd` | arch-pkg | 5.62% |
 | 99 | `otf-aurulent-nerd` | arch-pkg | 5.62% |
 | 100 | `ttf-monofur-nerd` | arch-pkg | 5.62% |
-| 101 | `ttf-ibm-plex` | arch-pkg | 5.61% |
 | 102 | `ttf-tinos-nerd` | arch-pkg | 5.61% |
 | 103 | `otf-opendyslexic-nerd` | arch-pkg | 5.61% |
 | 104 | `ttf-profont-nerd` | arch-pkg | 5.6% |
-| 105 | `ttf-inconsolata-lgc-nerd` | arch-pkg | 5.59% |
 | 106 | `ttf-iawriter-nerd` | arch-pkg | 5.58% |
 | 107 | `ttf-heavydata-nerd` | arch-pkg | 5.56% |
 | 108 | `ttf-daddytime-mono-nerd` | arch-pkg | 5.55% |
 | 109 | `otf-overpass-nerd` | arch-pkg | 5.53% |
-| 111 | `ttf-mplus-nerd` | arch-pkg | 5.5% |
 | 112 | `otf-hasklig-nerd` | arch-pkg | 5.5% |
 | 113 | `ttf-lekton-nerd` | arch-pkg | 5.47% |
 | 114 | `ttf-0xproto-nerd` | arch-pkg | 5.31% |
 | 115 | `font-manager` | arch-pkg | 5.23% |
-| 116 | `otf-monaspace-nerd` | arch-pkg | 5.21% |
 | 117 | `otf-commit-mono-nerd` | arch-pkg | 5.18% |
 | 118 | `ttf-martian-mono-nerd` | arch-pkg | 5.02% |
 | 119 | `ttf-intone-nerd` | arch-pkg | 4.99% |
@@ -197,8 +170,6 @@ and T4). The floor is the volume under which the engine censors a key.
 | 125 | `opendesktop-fonts` | arch-pkg | 4.53% |
 | 126 | `otf-ipafont` | arch-pkg | 4.37% |
 | 127 | `ttf-homeinfo` | arch-pkg | 4.3% |
-| 128 | `otf-fira-sans` | arch-pkg | 4.26% |
-| 129 | `otf-fira-mono` | arch-pkg | 4.24% |
 | 130 | `ttf-cascadia-code` | arch-pkg | 4.14% |
 | 131 | `xorg-fonts-type1` | arch-pkg | 4.02% |
 | 132 | `ttf-lato` | arch-pkg | 3.94% |
@@ -260,7 +231,6 @@ and T4). The floor is the volume under which the engine censors a key.
 | 189 | `ttf-google-fonts-git` | arch-pkg | 1.33% |
 | 190 | `ttf-ms-win10-auto` | arch-pkg | 1.32% |
 | 191 | `apple-fonts` | arch-pkg | 1.3% |
-| 192 | `otf-monaspace` | arch-pkg | 1.29% |
 | 193 | `adobe-source-han-serif-tw-fonts` | arch-pkg | 1.26% |
 | 194 | `ttf-monaco` | arch-pkg | 1.23% |
 | 195 | `ttf-courier-prime` | arch-pkg | 1.21% |
@@ -431,7 +401,6 @@ and T4). The floor is the volume under which the engine censors a key.
 
 | Rank | Key | Namespace | Installs |
 |---:|---|---|---:|
-| 1 | `fonts-dejavu-core` | deb-pkg | 230,374 |
 | 2 | `xfonts-encodings` | deb-pkg | 166,289 |
 | 3 | `xfonts-utils` | deb-pkg | 166,255 |
 | 5 | `fonts-droid-fallback` | deb-pkg | 159,657 |
@@ -442,26 +411,19 @@ and T4). The floor is the volume under which the engine censors a key.
 | 10 | `xfonts-75dpi` | deb-pkg | 131,590 |
 | 11 | `xfonts-100dpi` | deb-pkg | 131,322 |
 | 12 | `fonts-liberation` | deb-pkg | 129,730 |
-| 13 | `fonts-dejavu-mono` | deb-pkg | 128,638 |
-| 14 | `fonts-dejavu-extra` | deb-pkg | 128,192 |
 | 15 | `fonts-opensymbol` | deb-pkg | 126,665 |
 | 16 | `fonts-symbola` | deb-pkg | 119,697 |
-| 17 | `fonts-dejavu` | deb-pkg | 112,315 |
 | 18 | `fonts-noto-color-emoji` | deb-pkg | 108,716 |
 | 19 | `fonts-liberation-sans-narrow` | deb-pkg | 94,005 |
 | 20 | `fonts-cantarell` | deb-pkg | 83,960 |
 | 21 | `fonts-lato` | deb-pkg | 71,714 |
 | 22 | `fonts-font-awesome` | deb-pkg | 63,478 |
-| 23 | `fonts-noto-core` | deb-pkg | 61,855 |
 | 24 | `fonts-freefont-ttf` | deb-pkg | 58,965 |
 | 25 | `fonts-noto-ui-core` | deb-pkg | 52,519 |
-| 26 | `fonts-noto-extra` | deb-pkg | 49,497 |
 | 27 | `fonts-mathjax` | deb-pkg | 47,688 |
 | 28 | `fonts-liberation2` | deb-pkg | 46,260 |
-| 29 | `fonts-noto-cjk` | deb-pkg | 45,208 |
 | 30 | `fonts-noto` | deb-pkg | 43,585 |
 | 31 | `fonts-noto-unhinted` | deb-pkg | 43,254 |
-| 32 | `fonts-noto-cjk-extra` | deb-pkg | 42,896 |
 | 32 | `fonts-noto-ui-extra` | deb-pkg | 42,896 |
 | 34 | `fonts-hack` | deb-pkg | 39,671 |
 | 35 | `fonts-lyx` | deb-pkg | 32,955 |
@@ -475,7 +437,6 @@ and T4). The floor is the volume under which the engine censors a key.
 | 43 | `fonts-texgyre-math` | deb-pkg | 17,072 |
 | 44 | `fonts-wine` | deb-pkg | 17,025 |
 | 45 | `texlive-fonts-recommended` | deb-pkg | 16,867 |
-| 46 | `fonts-roboto-unhinted` | deb-pkg | 15,733 |
 | 47 | `fonts-open-sans` | deb-pkg | 14,408 |
 | 48 | `fonts-glyphicons-halflings` | deb-pkg | 14,300 |
 | 49 | `fonts-tuffy` | deb-pkg | 13,728 |
@@ -490,7 +451,6 @@ and T4). The floor is the volume under which the engine censors a key.
 | 58 | `fonts-ipafont-gothic` | deb-pkg | 9,680 |
 | 59 | `fonts-gfs-baskerville` | deb-pkg | 9,387 |
 | 60 | `fonts-gfs-porson` | deb-pkg | 9,359 |
-| 61 | `fonts-roboto-slab` | deb-pkg | 9,259 |
 | 62 | `texlive-fonts-extra` | deb-pkg | 8,298 |
 | 63 | `fonts-comfortaa` | deb-pkg | 8,289 |
 | 64 | `fonts-ebgaramond-extra` | deb-pkg | 8,261 |
@@ -571,7 +531,6 @@ and T4). The floor is the volume under which the engine censors a key.
 | 139 | `xfonts-unifont` | deb-pkg | 4,065 |
 | 140 | `fonts-font-logos` | deb-pkg | 3,592 |
 | 141 | `fonts-junicode` | deb-pkg | 3,371 |
-| 142 | `fonts-firacode` | deb-pkg | 3,176 |
 | 143 | `fonts-dustin` | deb-pkg | 3,127 |
 | 144 | `fonts-elusive-icons` | deb-pkg | 3,044 |
 | 145 | `fonts-adwaita-sans` | deb-pkg | 3,038 |
@@ -651,7 +610,6 @@ and T4). The floor is the volume under which the engine censors a key.
 | 219 | `fonts-orya-extra` | deb-pkg | 1,393 |
 | 220 | `fonts-orya` | deb-pkg | 1,389 |
 | 221 | `fonts-ecolier-lignes-court` | deb-pkg | 1,368 |
-| 222 | `fonts-roboto-hinted` | deb-pkg | 1,362 |
 | 223 | `fonts-ubuntu` | deb-pkg | 1,347 |
 | 224 | `fonts-adf-oldania` | deb-pkg | 1,294 |
 | 225 | `fonts-courier-prime` | deb-pkg | 1,217 |
@@ -726,12 +684,10 @@ and T4). The floor is the volume under which the engine censors a key.
 | 294 | `emacs-intl-fonts` | deb-pkg | 551 |
 | 295 | `ttf-unifont` | deb-pkg | 548 |
 | 296 | `fonts-anonymous-pro` | deb-pkg | 538 |
-| 297 | `fonts-roboto-fontface` | deb-pkg | 524 |
 | 298 | `fonts-dzongkha` | deb-pkg | 517 |
 | 299 | `fonts-bpg-georgian` | deb-pkg | 515 |
 | 300 | `fonts-culmus` | deb-pkg | 513 |
 | 301 | `xfonts-intl-japanese` | deb-pkg | 497 |
-| 302 | `fonts-ibm-plex` | deb-pkg | 494 |
 | 303 | `fonts-jsmath` | deb-pkg | 476 |
 | 304 | `fonts-ukij-uyghur` | deb-pkg | 475 |
 | 305 | `fonts-hosny-thabit` | deb-pkg | 474 |
@@ -786,7 +742,6 @@ and T4). The floor is the volume under which the engine censors a key.
 | 354 | `fonts-radisnoir` | deb-pkg | 281 |
 | 355 | `fonts-lklug-sinhala` | deb-pkg | 279 |
 | 356 | `fonts-summersby` | deb-pkg | 277 |
-| 357 | `fonts-adobe-sourcesans3` | deb-pkg | 275 |
 | 358 | `fonts-adf-romande` | deb-pkg | 273 |
 | 358 | `thunar-font-manager` | deb-pkg | 273 |
 | 360 | `fonts-monofur` | deb-pkg | 272 |
@@ -835,7 +790,6 @@ and T4). The floor is the volume under which the engine censors a key.
 | 402 | `fonts-play` | deb-pkg | 221 |
 | 404 | `fonts-f500` | deb-pkg | 215 |
 | 405 | `fonts-lao` | deb-pkg | 214 |
-| 406 | `fonts-dejavu-web` | deb-pkg | 213 |
 | 406 | `fonts-engadget` | deb-pkg | 213 |
 | 406 | `fonts-levien-museum` | deb-pkg | 213 |
 | 409 | `fonts-cardo` | deb-pkg | 212 |
@@ -1259,7 +1213,6 @@ and T4). The floor is the volume under which the engine censors a key.
 | 316 | `Neue Machina` | fot-name | rank only |
 | 316 | `Newsreader Variable` | fot-name | rank only |
 | 316 | `Nohemi` | fot-name | rank only |
-| 316 | `Open Sans Condensed` | fot-name | rank only |
 | 316 | `PP Editorial New` | fot-name | rank only |
 | 316 | `PP Mondwest` | fot-name | rank only |
 | 316 | `Plus Jakarta Display` | fot-name | rank only |
@@ -1440,7 +1393,6 @@ and T4). The floor is the volume under which the engine censors a key.
 
 | Rank | Key | Namespace | Installs a year |
 |---:|---|---|---:|
-| 170 | `font-ibm-plex` | brew-cask | 853 |
 | 400 | `font-material-icons` | brew-cask | 157 |
 | 473 | `font-material-symbols` | brew-cask | 118 |
 

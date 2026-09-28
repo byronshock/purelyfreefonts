@@ -33,7 +33,9 @@ The stage rebuilds the inputs stage "rank" ranked (``load_inputs``) and checks
 that they give the published orders. Each published range is widened, if
 needed, to contain the font's published order, so a range always holds its
 point rank. Tiers use each font's independence groups in that rank key
-(``scores.json``).
+(``scores.json``), except in the rank keys of ``FIXED_TIERS``: every Rising
+font is tier C while the view is in beta (owner ruling of 2026-09-26), because
+its unweighted ranges are nearly all single points and would read as tier A.
 
 Writes ``build/stage/confidence.json`` ({rank key: {id: Confidence}}).
 """
@@ -57,6 +59,10 @@ if TYPE_CHECKING:
 
 Range = tuple[int, int]
 Tier = Literal["A", "B", "C"]
+
+# Rank key -> the tier every font of it gets, whatever its range. Owner ruling of
+# 2026-09-26 (method, rising_tier): Rising is tier C while it is in beta.
+FIXED_TIERS: Mapping[str, Tier] = {"rising": "C"}
 
 # {rank key: {family_id: order}}: what a ranker returns for one set of inputs.
 type Orders = Mapping[str, Mapping[str, int]]
@@ -323,17 +329,19 @@ def tiers(
     range in ``ranges`` (``KeyError`` otherwise). The width is p95 - p5.
     ``groups`` is each font's count of distinct independence groups among its
     observed terms (a missing font has 0); the stage calls this once per rank
-    key with that key's counts.
+    key with that key's counts. A rank key in ``FIXED_TIERS`` gives every font
+    that tier.
     """
     out: dict[str, dict[str, Tier]] = {}
     for key in sorted(orders, key=_key_order):
         key_ranges = ranges.get(key, {})
+        fixed = FIXED_TIERS.get(key)
         out[key] = {}
         for fid in sorted(orders[key]):
             if fid not in key_ranges:
                 raise KeyError(f"{key}: no range for ranked font {fid!r}")
             lo, hi = key_ranges[fid]
-            out[key][fid] = tier(orders[key][fid], hi - lo, groups.get(fid, 0), cfg)
+            out[key][fid] = fixed or tier(orders[key][fid], hi - lo, groups.get(fid, 0), cfg)
     return out
 
 
@@ -414,8 +422,13 @@ def _rising_terms(
 
     cfg = ctx.config.ranking
     # The same sources and 12-month baselines (Rising's abstention) as stage "rank".
-    rs = surveys.rising_shares(terms_all, cfg, dropped)
+    store_root = ctx.store.root if ctx.store is not None else None
+    rs = surveys.rising_shares(terms_all, cfg, dropped, private_store=store_root is not None)
     live, baseline = sorted(rs.recent), rs.baseline
+    if store_root is not None:
+        # Sources whose publish_raw is false: the history stage "rank" kept in the store.
+        private = surveys.private_sources(cfg) & set(live)
+        history = {**history, **surveys.run_private_history(store_root, private, ctx.run_date)}
     first_seen = state.read_part(ctx.paths, "first_seen")
     new = _new_fonts(first_seen, ctx.run_date, cfg.ranks.rising.new_days)
     return surveys.rising_terms(

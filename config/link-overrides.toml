@@ -11,10 +11,12 @@
 # `question` with `choice` ("a" = approve). Several families can share one
 # question. For a catalog family the links queue left undecided
 # (build/stage/queues/links.json), gate K asks the owner to pick one of its
-# candidates on question "K-<family id>". When the owner picks one (the queue's
-# `overrides.answered`), add an entry with that question, the picked letter as
-# `choice` and the candidate's URL. When the owner asks for research, add the
-# researched link under a new question id, such as "K-<family id>-page".
+# candidates on question "K-<family id>". A pick needs no entry here: the
+# ruling records the picked option's text, "<url> (from <sources>)", and stage
+# links takes the link from it (the queue's `overrides.picked`). When the owner
+# asks for research (the queue's `overrides.research`), add the researched link
+# under a new question id, such as "K-<family id>-page"; gate K then asks that
+# question instead of the family's own.
 #
 # Fields (loaded strictly: unknown or missing keys fail):
 #   family          family id (state/ids.json), listed once
@@ -29,7 +31,7 @@
 #                   ("GitHub: rsms/inter", or the host name)
 #   reason          why the override is needed
 #
-# All URLs below answered HTTP 200 on 2026-09-25.
+# All URLs below answered HTTP 200 on 2026-09-25 (the proposals at the end on 2026-09-26).
 
 schema = 1
 
@@ -168,3 +170,36 @@ question = "K-adobe-source"
 primary = "https://github.com/adobe-fonts/source-code-pro/releases"
 designer = "https://adobe-fonts.github.io/source-code-pro/"
 reason = "Adobe's releases carry the desktop and web builds; Google Fonts serves its own build. Adobe's project page links only the repository, so the releases page is the primary."
+
+# --- Proposals after research (2026-09-26), waiting for the owner ---------------------------------
+# Researched because no two sources agree on a link: Metropolis and Noto Mono (the owner
+# asked for research at gate K), ProFont and Terminus (no candidate at all). Noto Mono
+# gets no entry: Google no longer distributes it (see the lead's owner questions).
+
+# --- K-metropolis-page ---------------------------------------------------------------------------
+
+[[override]]
+family = "metropolis"
+name = "Metropolis"
+question = "K-metropolis-page"
+primary = "https://github.com/dw5/Metropolis"
+primary_label = "GitHub: dw5/Metropolis (archived mirror)"
+reason = "No official page is left: the designer, Chris Simpson, made his repository private in October 2020 after a dispute over the name, and wrote that anyone may fork it. dw5/Metropolis is an archived copy of its last commit (June 2020, Unlicense). It has no releases, so the link is the repository itself."
+
+# --- K-profont-page ------------------------------------------------------------------------------
+
+[[override]]
+family = "profont"
+name = "ProFont"
+question = "K-profont-page"
+primary = "https://tobiasjung.name/profont/"
+reason = "Tobias Jung's ProFont site keeps the Windows, Mac and Linux versions under the MIT license (since 2014), and Nerd Fonts names it as ProFont's upstream. He maintains the distributions; ProFont was designed by Andrew Welch, Carl Osterwald and Stephen C. Gilardi."
+
+# --- K-terminus-page -----------------------------------------------------------------------------
+
+[[override]]
+family = "terminus"
+name = "Terminus"
+question = "K-terminus-page"
+primary = "https://terminus-font.sourceforge.net/"
+reason = "The designer's own page, Dimitar Zhekov's Terminus Font home (SIL OFL 1.1), with the source release and a Windows installer. The TrueType build Nerd Fonts patches is Terminus TTF (files.ax86.net/terminus-ttf/), a third party's conversion, so it is not the official link."

@@ -1,7 +1,8 @@
 # Owner rulings of 2026-09-26, gate A (the alias queue of the first real run), given in chat after
 # integration A. Ruled by the owner, Byron Shock; recorded by Claude from the lead's notes
 # (design/rulings-2026-09-26.toml: A_structure, A_cleanup, A_sources). Only the rows those rulings name
-# are answered here; the distro rows wait for research into the packages' contents (A_sources).
+# are answered here. The distro rows researched on 2026-09-26 (the Arch and Debian file lists, cited
+# in each reason and in ../unmatched/2026-09-26.toml) are answered below; the rest still wait (A_sources).
 # The hand rows the rulings add (bundles, build folds) are in data/aliases.csv (source hand).
 
 [A_sources_github]
@@ -49,7 +50,7 @@ reason = "A retired Fontsource name for a width or style cut of the family (A_so
 choice = "a"
 recommended = false
 ruling = "Accept: add the alias row"
-reason = "An old Edu name Fontsource retired for the renamed Google family (A_cleanup: the 6 Edu old names)."
+reason = "A retired Fontsource id that Fontsource's replacements table maps to the renamed Edu AU family (A_sources: retired Fontsource names). Not one of A_cleanup's hand rows. Both ids are live again on Fontsource and Google, so the owner is asked whether to keep this merge."
 
 [A-396337e4af]
 choice = "a"
@@ -140,7 +141,7 @@ reason = "Finlandica split into Finlandica Text and Headline: related (A_sources
 choice = "a"
 recommended = false
 ruling = "Accept: add the alias row"
-reason = "An old Edu name Fontsource retired for the renamed Google family (A_cleanup: the 6 Edu old names)."
+reason = "A retired Fontsource id that Fontsource's replacements table maps to the renamed Edu AU family (A_sources: retired Fontsource names). Not one of A_cleanup's hand rows. Both ids are live again on Fontsource and Google, so the owner is asked whether to keep this merge."
 
 [A-72d95a2700]
 choice = "a"
@@ -152,7 +153,7 @@ reason = "Inter Display is carried by Inter's own files (A_structure: width name
 choice = "a"
 recommended = false
 ruling = "Accept: add the alias row"
-reason = "An old Edu name Fontsource retired for the renamed Google family (A_cleanup: the 6 Edu old names)."
+reason = "A retired Fontsource id that Fontsource's replacements table maps to the renamed Edu AU family (A_sources: retired Fontsource names). Not one of A_cleanup's hand rows. Both ids are live again on Fontsource and Google, so the owner is asked whether to keep this merge."
 
 [A-7584b26688]
 choice = "a"
@@ -166,7 +167,7 @@ reason = "A retired Fontsource name for a width or style cut of the family (A_so
 choice = "a"
 recommended = false
 ruling = "Accept: add the alias row"
-reason = "An old Edu name Fontsource retired for the renamed Google family (A_cleanup: the 6 Edu old names)."
+reason = "A retired Fontsource id that Fontsource's replacements table maps to the renamed Edu AU family (A_sources: retired Fontsource names). Not one of A_cleanup's hand rows. Both ids are live again on Fontsource and Google, so the owner is asked whether to keep this merge."
 
 [A-7c0cd170ac]
 choice = "a"
@@ -186,7 +187,7 @@ reason = "Finlandica split into Finlandica Text and Headline: related (A_sources
 choice = "a"
 recommended = false
 ruling = "Accept: add the alias row"
-reason = "An old Edu name Fontsource retired for the renamed Google family (A_cleanup: the 6 Edu old names)."
+reason = "A retired Fontsource id that Fontsource's replacements table maps to the renamed Edu AU family (A_sources: retired Fontsource names). Not one of A_cleanup's hand rows. Both ids are live again on Fontsource and Google, so the owner is asked whether to keep this merge."
 
 [A-a409a3f536]
 choice = "a"
@@ -228,7 +229,7 @@ reason = "ProggyClean is ProggyCleanTT (A_cleanup)."
 choice = "a"
 recommended = false
 ruling = "Accept: add the alias row"
-reason = "An old Edu name Fontsource retired for the renamed Google family (A_cleanup: the 6 Edu old names)."
+reason = "A retired Fontsource id that Fontsource's replacements table maps to the renamed Edu AU family (A_sources: retired Fontsource names). Not one of A_cleanup's hand rows. Both ids are live again on Fontsource and Google, so the owner is asked whether to keep this merge."
 
 [A-c33dbabcc0]
 choice = "a"
@@ -344,12 +345,12 @@ reason = "Claude's recommendation. Applied as hand rows in data/aliases.csv and 
 
 [A_cleanup]
 value = "accept_all"
-ruling = "Bundle rows for Noto, iA Writer, MPlus and Monaspace; ProggyCleanTT is ProggyClean; oldlib's wrong merges, 5 noisy name_tables rows and the deb-src rows of 31 non-font sources are rejected; ttf-dejavu-nerd is DejaVu Sans Mono; fonts-noto-mono is Noto Mono; hand rows for Monocraft Nerd and 6 old Edu names."
-reason = "Claude's recommendation. The oldlib, name_tables and deb-src rejections need the lists the owner saw; those rows stay open until Claude asks them again with the lists."
+ruling = "Bundle rows for Noto, iA Writer, MPlus and Monaspace; ProggyCleanTT is ProggyClean; oldlib's wrong merges, 5 noisy name_tables rows and the deb-src rows of 31 non-font sources are rejected; ttf-dejavu-nerd is DejaVu Sans Mono; fonts-noto-mono is Noto Mono; hand rows for the Monocraft Nerd builds and 6 Edu families under old names."
+reason = "Claude's recommendation, as summarised to the owner in chat. Applied: the bundle rows and ProggyClean in data/aliases.csv; the old run's merges (Cascadia Mono, InconsolataGo and LGC, Ubuntu Condensed, the Noto Sans JP/KR/SC/TC casks, Source Han Sans and Noto Sans CJK JP) and the five name_tables rows as rulings of this file; the 31 non-font Debian sources as NON_FONT_SOURCES in aliases/miners/distro.py (26 programs whose own section is not fonts, and 5 font tools filed under fonts that ship no font: font-manager, font-v, fontconfig, fontforge, ttfautohint), with the deb-src rows of ibm-3270 and powerline also rejected here; the Monocraft hand rows (brew-cask font-monocraft-nerd-font and the name Monocraft with Nerd glyphs, build nerd) in data/aliases.csv. Not applied: the 6 Edu hand rows. Their premise, that Google serves Edu NSW ACT Foundation as Edu NSW ACT Cursive, is wrong: Google and Fontsource list the 2022 families (Foundation, Beginner) and the 2025 ones (Cursive, Hand, Hand Pre) as separate live families with their own popularity and subsets, so the rows would merge two live families. That goes back to the owner. The Nerd sub-family names of integration A's list (MesloLGS NF, JetBrainsMonoNL Nerd Font, MonaspiceNe Nerd Font) were not in the summary the owner saw, and no source key needs them today."
 
 [A_sources]
 value = "accept_all"
-ruling = "Google renames are auto-accepted only when the two names share a designer; Finlandica is related to its split families; 42dot Sans is Asta Sans, plus 2 renames; retired Fontsource names are mapped (League and Ostrich builds, Golos UI to Golos Text, iA Writer Duospace to iA Writer Duo, Vazir to Vazirmatn); Material Icons Rounded is ineligible; DSEG7 and DSEG14 are rejected; the 53-repo GitHub list is approved and its 914 plain rows accepted; distro package contents are researched before their rows are accepted; Homebrew's replacement links point out of the catalog."
+ruling = "Google renames are auto-accepted only when the two names share a designer; Finlandica is related to its split families; 42dot Sans is Asta Sans, plus 2 renames (Saira Stencil One to Saira Stencil, Montserrat Subrayada to Montserrat Underline); retired Fontsource names are mapped (League and Ostrich builds, Golos UI to Golos Text, iA Writer Duospace to iA Writer Duo, Vazir to Vazirmatn); Material Icons Rounded is ineligible; DSEG7 and DSEG14 are rejected; the 53-repo GitHub list is approved and its 914 plain rows accepted; distro package contents are researched before their rows are accepted; Homebrew's deprecation replacement casks (font-iosevka-comfy to font-aporetic) are not mined as alias rows, with a hand row only if the volume ever matters."
 reason = "Claude's recommendation."
 
 [search_no_decomposition]
@@ -361,4 +362,436 @@ reason = "Claude's recommendation."
 choice = "a"
 recommended = true
 ruling = "Accept: add the alias row"
-reason = "Monocraft's Nerd Fonts build (A_cleanup: the Monocraft Nerd hand row)."
+reason = "ttf-monocraft-nerd, Arch's package of Monocraft's Nerd Fonts build: a distro row (A_cleanup: the Monocraft Nerd builds fold into Monocraft). The two hand rows are in data/aliases.csv."
+
+[A-945958a9f1]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "Cascadia Mono is a family of its own, not a build of Cascadia Code (A_cleanup: the old run's wrong merges)."
+
+[A-ce250ffbf8]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "ttf-cascadia-mono-nerd ships CaskaydiaMono Nerd Font, a build of Cascadia Mono, not of Cascadia Code (A_cleanup; https://archlinux.org/packages/extra/any/ttf-cascadia-mono-nerd/files/)."
+
+[A-67dc724d68]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "InconsolataGo is a separate fork, not Inconsolata (A_cleanup: the old run's wrong merges)."
+
+[A-5419df9fec]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "ttf-inconsolata-go-nerd patches InconsolataGo, a separate fork, not Inconsolata (A_cleanup)."
+
+[A-af4358c47e]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "Inconsolata LGC is a separate fork, not Inconsolata (A_cleanup: the old run's wrong merges)."
+
+[A-d77131be3b]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "ttf-inconsolata-lgc-nerd patches Inconsolata LGC, a separate fork, not Inconsolata (A_cleanup)."
+
+[A-0b6dd99479]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "Ubuntu Condensed is a family of its own (D2), not Ubuntu (A_cleanup: the old run's wrong merges)."
+
+[A-a808a61843]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "font-noto-sans-jp is Noto Sans JP, not the Noto Sans CJK umbrella (A_cleanup: the old run's CJK merges)."
+
+[A-17fc75cef7]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "font-noto-sans-kr is Noto Sans KR, not the Noto Sans CJK umbrella (A_cleanup: the old run's CJK merges)."
+
+[A-eb4a2eb32a]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "font-noto-sans-sc is Noto Sans SC, not the Noto Sans CJK umbrella (A_cleanup: the old run's CJK merges)."
+
+[A-7a90d82714]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "font-noto-sans-tc is Noto Sans TC, not the Noto Sans CJK umbrella (A_cleanup: the old run's CJK merges)."
+
+[A-3a533a9ec2]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "Source Han Sans (源ノ角ゴシック) is a CJK-primary family, not a CJK build of Noto Sans JP (A_cleanup)."
+
+[A-c0e10af329]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "Noto Sans CJK JP is a CJK-primary family, not a CJK build of Noto Sans JP (A_cleanup)."
+
+[A-488b4b6d34]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "Aptos is proprietary; the name_tables row is noise (A_cleanup: the five noisy name_tables rows)."
+
+[A-22f698046e]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "A development build's PostScript name; the name_tables row is noise (A_cleanup: the five noisy name_tables rows)."
+
+[A-4122dcaa85]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "League Mono Thin Condensed is not a style name League Mono's files carry; noise (A_cleanup: the five noisy name_tables rows)."
+
+[A-b38f002197]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "NewCMMath is a math font the universe drops (A_cleanup: the five noisy name_tables rows)."
+
+[A-a7b1414284]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "NewCMSansMath is a math font the universe drops (A_cleanup: the five noisy name_tables rows)."
+
+[A-9472bd6952]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "ibm-3270 builds the x3270 terminal programs and ships one font binary: no deb-src row (A_cleanup: non-font sources; the distro miner now skips them, NON_FONT_SOURCES)."
+
+[A-c97e63afe0]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "powerline is the status-line plugin and ships one font binary: no deb-src row (A_cleanup: non-font sources; the distro miner now skips them, NON_FONT_SOURCES)."
+
+[A-66f54b53c1]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "fonts-dejavu-mono ships DejaVuSansMono*.ttf, which is DejaVu Sans Mono (https://packages.debian.org/sid/all/fonts-dejavu-mono/filelist); research before rows (A_sources)."
+
+[A-900af8cb69]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "fonts-dejavu-mono ships DejaVu Sans Mono only (https://packages.debian.org/sid/all/fonts-dejavu-mono/filelist); A_sources: research before rows."
+
+[A-01a93e65db]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "Ships CaskaydiaMono Nerd Font only: Cascadia Mono's Nerd build (https://archlinux.org/packages/extra/any/ttf-cascadia-mono-nerd/files/; A_cleanup, A_structure)."
+
+[A-697f71e39b]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Ships CaskaydiaCove Nerd Font only: Cascadia Code's Nerd build (https://archlinux.org/packages/extra/any/ttf-cascadia-code-nerd/files/; A_sources)."
+
+[A-8c4087c674]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "Ships InconsolataGo Nerd Font only (https://archlinux.org/packages/extra/any/ttf-inconsolata-go-nerd/files/; A_cleanup: InconsolataGo is its own fork)."
+
+[A-2511144878]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "Ships InconsolataLGC Nerd Font only (https://archlinux.org/packages/extra/any/ttf-inconsolata-lgc-nerd/files/; A_cleanup: Inconsolata LGC is its own fork)."
+
+[A-8fd0f7bdf5]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Ships BlexMono Nerd Font only: IBM Plex Mono's Nerd build (https://archlinux.org/packages/extra/any/ttf-ibmplex-mono-nerd/files/; A_sources)."
+
+[A-abf904dfaa]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Ships DroidSansM Nerd Font only: Droid Sans Mono's Nerd build (https://archlinux.org/packages/extra/any/otf-droid-nerd/files/; A_sources)."
+
+[A-b148c4a428]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Ships FiraCode Nerd Font only (https://archlinux.org/packages/extra/any/ttf-firacode-nerd/files/; A_sources: research before rows)."
+
+[A-62d2371d89]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Ships FiraMono Nerd Font only (https://archlinux.org/packages/extra/any/otf-firamono-nerd/files/; A_sources: research before rows)."
+
+[A-40bb8e4b4a]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Ships RobotoMono Nerd Font only (https://archlinux.org/packages/extra/any/ttf-roboto-mono-nerd/files/; A_sources: research before rows)."
+
+[A-40e339b97a]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Ships Fira Code only (https://archlinux.org/packages/extra/any/ttf-fira-code/files/; A_sources: research before rows)."
+
+[A-82b51f0ef3]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Ships Fira Mono only (https://archlinux.org/packages/extra/any/ttf-fira-mono/files/; A_sources: research before rows)."
+
+[A-64f5f0ab2b]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Ships Fira Mono only (https://archlinux.org/packages/extra/any/otf-fira-mono/files/; A_sources: research before rows)."
+
+[A-1f1692a0ec]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Ships Roboto Mono only (https://archlinux.org/packages/extra/any/ttf-roboto-mono/files/; A_sources: research before rows)."
+
+[A-9d376494c9]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Ships Source Code Pro only, static and variable (https://archlinux.org/packages/extra/any/adobe-source-code-pro-fonts/files/; U_rules: adobe-source-*)."
+
+[A-cdc2fa3fb6]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Ships Source Sans 3 and its old name Source Sans Pro: one family (https://archlinux.org/packages/extra/any/adobe-source-sans-fonts/files/; U_rules: adobe-source-*)."
+
+[A-0e512597b4]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Ships Source Serif 4 with its optical sizes and its old name Source Serif Pro: one family (https://archlinux.org/packages/extra/any/adobe-source-serif-fonts/files/; U_rules: adobe-source-*)."
+
+[A-8d1b5e47f8]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Ships Roboto Slab only (its SC files are Roboto Slab's small caps) (https://packages.debian.org/sid/all/fonts-roboto-slab/filelist; A_sources)."
+
+[A-c819447206]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "The source's one binary, fonts-roboto-slab, ships Roboto Slab only (https://packages.debian.org/source/sid/fonts-roboto-slab; A_sources)."
+
+[A-d810354396]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Ships Fira Code only (https://packages.debian.org/sid/all/fonts-firacode/filelist; A_sources: research before rows)."
+
+[A-7881a4fae6]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "The source's one binary, fonts-firacode, ships Fira Code only (https://packages.debian.org/source/sid/fonts-firacode; A_sources)."
+
+[A-e88a3490e3]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Ships Source Sans 3 only (https://packages.debian.org/sid/all/fonts-adobe-sourcesans3/filelist; U_rules: adobe-source-*)."
+
+[A-79f86f1e20]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "The source's one binary ships Source Sans 3 only (https://packages.debian.org/source/sid/fonts-adobe-sourcesans3; U_rules: adobe-source-*)."
+
+[A-0cc54da79d]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "BBH Sans Bartle was renamed BBH Bartle (google/fonts 8b81217e); U_rules: BBH renames as gf_history maps them."
+
+[A-33b5d030df]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "BBH Sans Hegarty was renamed BBH Hegarty (google/fonts 152d80b0); U_rules: BBH renames as gf_history maps them."
+
+[A-66ee1c0b4a]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "BBH Sans Bogle was renamed BBH Bogle (google/fonts 9373da81); U_rules: BBH renames as gf_history maps them."
+
+[A-f8f8854e3c]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "Fontsource's retired id for BBH Bartle (U_rules: BBH renames as gf_history maps them)."
+
+[A-c27354f2d1]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "Fontsource's retired id for BBH Hegarty (U_rules: BBH renames as gf_history maps them)."
+
+[A-a8616477e2]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "Fontsource's retired id for BBH Bogle (U_rules: BBH renames as gf_history maps them)."
+
+[A-421f9b0651]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "Fontsource's retired package for BBH Bartle (U_rules: BBH renames as gf_history maps them)."
+
+[A-3289c4733f]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "Fontsource's retired package for BBH Hegarty (U_rules: BBH renames as gf_history maps them)."
+
+[A-f759679ee1]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "Fontsource's retired package for BBH Bogle (U_rules: BBH renames as gf_history maps them)."
+
+[A-3b25d94c09]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "Its target is the DejaVu umbrella, now a bundle (A_structure); the package's own row, a Nerd build of DejaVu Sans Mono, is a hand row (ttf-dejavu-nerd replaces it)."
+
+[A-7890a91223]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "Its target is the DejaVu umbrella, now a bundle (A_structure); ttf-dejavu-nerd is DejaVu Sans Mono (A_cleanup), which a row already says."
+
+[A-520eade7d6]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "Its target is the DejaVu umbrella, now a bundle (A_structure); ttf-dejavu left Debian before stretch, so its contents cannot be checked."
+
+[A-4944814973]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Noto Sans Condensed is a width that Noto Sans's own font files carry, so it folds into Noto Sans (A_structure: width names carried by the parent's files)."
+
+[A-caf739e967]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Noto Sans SemiCondensed is a width that Noto Sans's own font files carry, so it folds into Noto Sans (A_structure: width names carried by the parent's files)."
+
+[A-0fc67cda27]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Noto Sans ExtraCondensed is a width that Noto Sans's own font files carry, so it folds into Noto Sans (A_structure: width names carried by the parent's files)."
+
+[A-161a20e26e]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Open Sans Condensed is a width that Open Sans's own font files carry, so it folds into Open Sans (A_structure: width names carried by the parent's files)."
+
+[A-77fdf7d1f4]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "DejaVu Sans Condensed is a width that DejaVu Sans's own font files carry, so it folds into DejaVu Sans (A_structure: width names carried by the parent's files)."
+
+[A-ea299a538a]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "DejaVu Serif Condensed is a width that DejaVu Serif's own font files carry, so it folds into DejaVu Serif (A_structure: width names carried by the parent's files)."
+
+[A-ff816420c5]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Martian Mono Cn is a width that Martian Mono's own font files carry, so it folds into Martian Mono (A_structure: width names carried by the parent's files)."
+
+[A-bb844e9593]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Martian Mono Nr is a width that Martian Mono's own font files carry, so it folds into Martian Mono (A_structure: width names carried by the parent's files)."
+
+[A-30b9d20d9c]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Martian Mono Std is a width that Martian Mono's own font files carry, so it folds into Martian Mono (A_structure: width names carried by the parent's files)."
+
+[A-43fa6976e0]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "Martian Mono sWd is a width that Martian Mono's own font files carry, so it folds into Martian Mono (A_structure: width names carried by the parent's files)."
+
+[A-1c0817e754]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "Saira Stencil One is Saira Stencil, renamed on Google Fonts (google/fonts to_delist.txt); one of the two renames beside 42dot Sans (A_sources)."
+
+[A-c52e406213]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "Montserrat Subrayada is Montserrat Underline, renamed on Google Fonts (google/fonts to_delist.txt); one of the two renames beside 42dot Sans (A_sources)."
+
+[A-7a693cd4d7]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "A release asset of antijingoist/opendyslexic, one of the 53 approved repositories (A_sources), whose prereleases now count (the corrections ruling opendyslexic_prereleases): a plain row like the 914 accepted ones."
+
+[A-d0282c6618]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "A release asset of antijingoist/opendyslexic, one of the 53 approved repositories (A_sources), whose prereleases now count (the corrections ruling opendyslexic_prereleases): a plain row like the 914 accepted ones."
+
+[A-e8597a8974]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "A release asset of antijingoist/opendyslexic, one of the 53 approved repositories (A_sources), whose prereleases now count (the corrections ruling opendyslexic_prereleases): a plain row like the 914 accepted ones."
+
+[A-eed4db8e8b]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "A release asset of antijingoist/opendyslexic, one of the 53 approved repositories (A_sources), whose prereleases now count (the corrections ruling opendyslexic_prereleases): a plain row like the 914 accepted ones."

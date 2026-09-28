@@ -172,6 +172,10 @@ alerque/libertinus/libertine.zip,gh-asset,font-name,Libertinus Sans,bundle,,gith
 alerque/libertinus/libertine.zip,gh-asset,font-name,Libertinus Serif,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
 alerque/libertinus/libertine.zip,gh-asset,font-name,Libertinus Serif Display,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
 alerque/libertinus/libertine.zip,gh-asset,font-name,Libertinus Serif Initials,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+antijingoist/opendyslexic/opendyslexic-alpha.zip,gh-asset,font-name,OpenDyslexic,package,,github_repos,https://github.com/antijingoist/opendyslexic/releases,false
+antijingoist/opendyslexic/opendyslexic-beta.zip,gh-asset,font-name,OpenDyslexic,package,,github_repos,https://github.com/antijingoist/opendyslexic/releases,false
+antijingoist/opendyslexic/opendyslexic-rc1.zip,gh-asset,font-name,OpenDyslexic,package,,github_repos,https://github.com/antijingoist/opendyslexic/releases,false
+antijingoist/opendyslexic/opendyslexic-rc2.zip,gh-asset,font-name,OpenDyslexic,package,,github_repos,https://github.com/antijingoist/opendyslexic/releases,false
 arrowtype/recursive/ArrowType-Recursive.zip,gh-asset,font-name,Recursive,package,,github_repos,https://github.com/arrowtype/recursive/releases,false
 arrowtype/recursive/Recursive-Beta.zip,gh-asset,font-name,Recursive,package,,github_repos,https://github.com/arrowtype/recursive/releases,false
 arrowtype/recursive/Recursive.zip,gh-asset,font-name,Recursive,package,,github_repos,https://github.com/arrowtype/recursive/releases,false
