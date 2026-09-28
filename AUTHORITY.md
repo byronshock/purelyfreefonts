@@ -114,7 +114,8 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
   - `docs/ranking-methodology.md`;
   - `docs/roadmap.md`;
   - the milestone checklists `docs/milestone-1.md` to `docs/milestone-4.md`;
-  - `docs/owned-fonts.md`, the notes for Milestone 3.
+  - `docs/owned-fonts.md`, the notes for Milestone 3;
+  - `PLAN-NERD-FONTS.md`, the working checklist for Backlog TASK-2. *(2026-09-28)*
 - **Monthly data refresh.** A scheduled GitHub Actions workflow runs the pipeline and opens a pull request with the new catalog and anything flagged for review. The owner reviews and merges it.
 - **Backlog.** *(2026-09-25)*
   - **Tool.** [Backlog.md](https://github.com/MrLesk/Backlog.md) keeps its tasks in `backlog/`, committed to the public repository.
