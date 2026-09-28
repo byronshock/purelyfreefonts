@@ -4,6 +4,7 @@ title: Investigate a Nerd Fonts download link beside the official one
 status: To Do
 assignee: []
 created_date: '2026-09-28 10:03'
+updated_date: '2026-09-28 11:34'
 labels:
   - links
 dependencies: []
@@ -12,6 +13,7 @@ references:
   - schemas/catalog-site.schema.json
   - docs/ranking-methodology.md
   - 'https://github.com/ryanoasis/nerd-fonts'
+  - PLAN-NERD-FONTS.md
 type: spike
 ordinal: 2000
 ---
