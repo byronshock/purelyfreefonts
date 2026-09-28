@@ -784,6 +784,7 @@ def expected_panel(doc: dict[str, Any], font: dict[str, Any]) -> dict[str, Any]:
         "license": license_pairs,
         "license_href": lic["text_url"],
         "links": links,
+        "link_note": primary.get("note"),
         "ranks": ranks,
         "tiers": tier_pairs,
         "sources": sources,
@@ -815,11 +816,13 @@ READ_PANEL = """(id) => {
     }));
   const issue = q('.details-report-issue');
   const email = q('.details-report-email');
+  const note = q('.details-links .details-link-note');
   return {
     title: q(':scope > .details-title').textContent,
     license: pairs(q('.details-license')),
     license_href: q('.details-lic-link').getAttribute('href'),
     links,
+    link_note: note && note.textContent,
     ranks,
     tiers: pairs(q('.details-tiers')),
     sources,

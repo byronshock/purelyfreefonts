@@ -11,9 +11,9 @@ RENDERER_VERSION = 1  # bump when output bytes change on purpose
 UNITS_PER_EM = 256  # integer coordinate grid
 NAME_SIZE_EM = 1.0  # line 1: the family name
 SAMPLE_SIZE_EM = 0.6  # line 2: the sample
-# gate M2 batch 2 (rec): the owner has not picked the sample line yet (M2 step 5).
+# The owner's site ruling of 2026-09-26 (specimen_sample), recorded in data/reviews/site/.
 # Changing either line re-renders every specimen (the texts are in the cache key).
-SAMPLE = "Zażółć gęślą jaźń · Příliš žluťoučký kůň"  # gate M2 batch 2 (rec)
+SAMPLE = "Zażółć gęślą jaźń · Příliš žluťoučký kůň"  # owner ruling 2026-09-26 (specimen_sample)
 BASIC_SAMPLE = "Sphinx of black quartz, judge my vow"  # fallback for basic-Latin fonts
 DEFAULT_WEIGHT = 400.0  # variable fonts: wght=400 if the axis allows it, else the default instance
 

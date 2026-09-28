@@ -1164,6 +1164,68 @@ def test_the_live_region_is_polite_coalesced_and_never_repeats_silently(
     guarded.assert_clean(page)
 
 
+# Every listed row laid out in full (content-visibility off, so no row keeps its estimate):
+# its height, the estimate its CSS gives, and where its rank label and name sit.
+LAYOUT_JS = """() => {
+  const lis = Array.from(document.querySelectorAll('#list > li.font'));
+  lis.forEach((li) => { li.style.contentVisibility = 'visible'; });  // CSSOM: CSP allows it
+  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+  const out = lis.map((li) => {
+    const rank = li.querySelector('.rank');
+    const r = rank.getBoundingClientRect();
+    const n = li.querySelector('.font-name').getBoundingClientRect();
+    const est = getComputedStyle(li).getPropertyValue('--row-est-h').trim();
+    return {
+      label: rank.textContent,
+      unranked: li.classList.contains('is-unranked'),
+      height: li.getBoundingClientRect().height,
+      estimate: est.endsWith('rem') ? parseFloat(est) * rem : parseFloat(est),
+      rankTop: r.top, rankBottom: r.bottom, rankHeight: r.height,
+      nameTop: n.top,
+      lineHeight: parseFloat(getComputedStyle(rank).lineHeight) || 1.5 * rem,
+    };
+  });
+  lis.forEach((li) => { li.style.contentVisibility = ''; });
+  return out;
+}"""
+
+
+def median(values: list[float]) -> float:
+    ordered = sorted(values)
+    return ordered[len(ordered) // 2]
+
+
+@pytest.mark.parametrize(
+    "viewport",
+    [{"width": 1280, "height": 720}, {"width": 700, "height": 800}, {"width": 375, "height": 812}],
+    ids=["wide", "table", "phone"],
+)
+def test_an_unranked_label_takes_a_line_of_its_own(
+    guarded_context: Any, viewport: dict[str, int]
+) -> None:
+    """The owner's site ruling of 2026-09-26 (list_layout): "Not ranked: <reason>" is kept,
+    on a line of its own above the name instead of down the narrow rank column, and the row
+    estimates (``--row-est-h``) stay close to the measured heights."""
+    guarded, page = open_list(guarded_context, viewport=viewport)
+    laid = page.evaluate(LAYOUT_JS)
+    unranked = [r for r in laid if r["label"].startswith(NOT_RANKED)]
+    ranked = [r for r in laid if not r["label"].startswith(NOT_RANKED)]
+    assert unranked, "the sample's default view has unranked rows"
+    assert all(r["unranked"] for r in unranked)
+    assert not any(r["unranked"] for r in ranked)
+    for r in unranked:
+        assert r["rankBottom"] <= r["nameTop"] + 1, r["label"]  # a line of its own, above
+    for r in ranked:
+        assert abs(r["rankTop"] - r["nameTop"]) < r["lineHeight"], r["label"]  # beside the name
+    if viewport["width"] >= 700:  # the label fits on one line once the row is table-like
+        assert all(r["rankHeight"] < 1.6 * r["lineHeight"] for r in unranked)
+    for group in (ranked, unranked):
+        measured, estimate = median([r["height"] for r in group]), group[0]["estimate"]
+        assert 0.75 * estimate <= measured <= 1.25 * estimate, (measured, estimate)
+    assert unranked[0]["estimate"] > ranked[0]["estimate"]
+    guarded.assert_clean(page)
+
+
 def test_phone_filters_button_counts_active_filters(guarded_context: Any) -> None:
     guarded, page = open_list(guarded_context, viewport={"width": 375, "height": 812})
     toggle = page.locator("#f-toggle")

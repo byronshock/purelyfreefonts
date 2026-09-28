@@ -1,0 +1,22 @@
+# Owner rulings of 2026-09-28, gate K (the researched link overrides), given in chat after the
+# finish-gates-1 run. Ruled by the owner, Byron Shock; recorded by Claude from the lead's notes
+# (design/rulings-2026-09-26.toml, [links_research_2026-09-28]). Also in AUTHORITY.md. The owner
+# took Claude's recommendation each time, so each reason is Claude's summary.
+
+[K-metropolis-page]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation: no official page is left, since the designer made his repository private in 2020 and said anyone may fork it; link the archived mirror github.com/dw5/Metropolis (the repository, not /releases), labelled \"archived mirror\", and let the details page explain the designer's 2020 removal."
+
+[K-profont-page]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation: Tobias Jung's ProFont site keeps the distributions under the MIT license, and Nerd Fonts names it as ProFont's upstream."
+
+[K-terminus-page]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation: the designer's own page (Dimitar Zhekov, SIL OFL 1.1). Terminus TTF, the build Nerd Fonts patches, is a third party's conversion."

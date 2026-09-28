@@ -249,6 +249,10 @@
         "label": {
           "description": "Overrides the destination name the page derives from the host.",
           "$ref": "#/$defs/text"
+        },
+        "note": {
+          "description": "What a visitor should know before following the link, shown under it in the font's details.",
+          "$ref": "#/$defs/text"
         }
       }
     },

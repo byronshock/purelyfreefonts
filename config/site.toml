@@ -72,7 +72,7 @@ id = "attribution"
 label = "Attribution required (CC BY)"
 
 [[license_classes]]
-id = "freeware"                 # not in M2 gate Q4's recommended three: free-use grants that forbid redistributing; needs the owner's ruling
+id = "freeware"                 # the fourth group of the owner's License filter (AUTHORITY.md, 2026-09-25): free-use grants that may forbid redistributing (Rule 3)
 label = "Other free-use grants"
 
 # Distributions whose package data can pull a font in (pulled_in_by systems).

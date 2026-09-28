@@ -101,7 +101,7 @@ reason = "Claude's recommendation; config/licenses.toml already lists them."
 [no_license_families]
 value = "research_top700"
 ruling = "A family with no license found stays excluded automatically, but Claude researches any such family that would reach the overall top 700."
-reason = "Claude's recommendation."
+reason = "Claude's recommendation. Applied: stage review reruns stages correct and rank on a copy of the build with those families' licenses counted as allowed (tff_catalog.nolicense) and lists the order each would get in the review pack (no-license.md); a license Claude finds goes to the owner as a LIC-<family id> question with spdx. On the 2026-09-26 build, 25 of the 77 such families would reach the top 700."
 
 [LIC-lack]
 choice = "c"

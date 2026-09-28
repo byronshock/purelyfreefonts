@@ -1000,6 +1000,18 @@ def test_members_without_an_accepted_link_are_named(tmp_path: Path) -> None:
         f"config/link-overrides.toml, which gate K then asks about: {NAMES[members[1]]} "
         f"(`{members[1]}`).",
     ]
+    # Their exact places, which the published ranks close up over (rank_holes, 2026-09-28).
+    placed = stageio.load_stage(ctx.paths, "ranks")
+    closed = [m for m in info if m.startswith("The published exact ranks close up")]
+    where = [
+        f"{key} #{placed[key][fid].rank}"
+        for fid in members[:2]
+        for key in placed
+        if fid in placed[key] and placed[key][fid].rank is not None
+    ]
+    assert where
+    assert len(closed) == 1
+    assert all(w in closed[0] for w in where)
     stageio.dump_stage(ctx.paths, "links", dict.fromkeys(members, link))
     assert not [f for f in review.analyse(ctx).flags if "Held back" in f.message]
 
@@ -1191,6 +1203,33 @@ def test_rbo_flag_when_last_month_differs(tmp_path: Path) -> None:
     assert flag.rank_key == "project"
     assert flag.message.endswith("with last month's top list, under 0.9")
     assert float(flag.message.split()[0]) < 0.9
+
+
+@pytest.mark.usefixtures("replay_collector")
+def test_pack_lists_no_license_families_with_their_what_if_orders(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Owner ruling of 2026-09-26 (no_license_families): Claude researches those at 700."""
+    from tff_catalog import nolicense
+
+    ctx = ranked_build(tmp_path)
+    assert review.analyse(ctx).no_license == ()  # no licenses queue: nothing to rerun
+    rows = (
+        nolicense.NoLicense("fam-90", {"overall": 800, "desktop_chosen": 750}),
+        nolicense.NoLicense("fam-91", {"overall": 120, "desktop_chosen": 60, "coding": 7}),
+        nolicense.NoLicense("fam-92", {}),
+    )
+    monkeypatch.setattr(nolicense, "what_if", lambda ctx: rows)
+    a = review.analyse(ctx)
+    assert a.no_license == rows
+    assert any(n.startswith("1 family with no license found would reach") for n in a.notes)
+    text = (review.review_pack(ctx) / "no-license.md").read_text()
+    assert "| Research | Font | Id | overall | desktop_chosen | project | coding |" in text
+    ids = [line.split(" | ")[2] for line in text.splitlines() if line.startswith("| yes |")]
+    ids += [line.split(" | ")[2] for line in text.splitlines() if line.startswith("| no |")]
+    assert ids == ["fam-91", "fam-90", "fam-92"]  # by order, not ranked last
+    assert f"| yes | fam-91 | fam-91 | 120 | 60 | {review.NONE} | 7 |" in text
+    assert f"| no | fam-92 | fam-92 | {review.NONE} |" in text
 
 
 @pytest.mark.usefixtures("replay_collector")

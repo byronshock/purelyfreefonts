@@ -55,22 +55,20 @@ How each check reads the run (``CHECKS``, in order; ``docs/catalog-schema.md``):
   most) can't be told from chance, so the stages writing reports keep them out
   (``corrections``, ``mapping``, ``review``).
 
-- ``rank_gaps``: the overall rank's exact ranks in ``catalog.json`` run 1..N
-  with no gap. The catalog is the overall top 500, so every font with an overall
-  rank is a member; a hole means a member was held back (no accepted download
-  link yet, gate K), and the site, which numbers rows by position (M2-D2),
-  would then show numbers that disagree with ``rank`` after it. The other views
-  may lack fonts by design (Coding's and Developers & apps' top 100 are not
-  catalogued; M11 hysteresis), so their holes are for review, not failures.
 - ``private_fields``: no committed JSON output (``build/*.json``,
   ``build/specimens/index.json``, ``state/`` and this run's ``build/state/``)
   holds, under the id of a source whose ``publish_raw`` is false, anything but
   the fields a ranks-only source may publish (``PRIVATE_SOURCE_FIELDS``); so no
   Google or Fonts Over Time value, share or history is published by any file.
 
+Gaps in the exact ranks are no failure (owner ruling of 2026-09-28, rank_holes): stage
+"export" closes the ranks up over a member it holds back for want of a download link,
+and stage "review" flags any gap left (``review.rank_gap_flags``). A rank given twice
+still fails ``schema``, through the site's cross-references (one font per order).
+
 **Committed outputs only** (``validate --committed``, CI's ``site-real`` job):
 ``COMMITTED_CHECKS`` run on what a clone holds, without ``build/stage/``:
-``schema``, ``rank_gaps``, ``private_fields``, the ``catalog.json`` half of
+``schema``, ``private_fields``, the ``catalog.json`` half of
 ``raw_value_published``, and the known answers ``names.json`` can answer
 (``committed_known_answers``).
 
@@ -468,44 +466,6 @@ def check_raw_values(run: Run) -> Iterator[Failure]:
             )
 
 
-RANK_GAP_KEYS = ("overall",)  # the rank key whose whole exact top the catalog holds
-
-
-def rank_holes(catalog: Mapping[str, Any]) -> dict[str, list[int]]:
-    """{rank key: exact ranks missing from ``catalog.json``'s fonts}, for every key."""
-    ranks: dict[str, set[int]] = defaultdict(set)
-    for font in catalog["fonts"]:
-        for key, entry in font["ranks"].items():
-            if entry.get("rank") is not None:
-                ranks[key].add(entry["rank"])
-    return {
-        key: sorted(set(range(1, max(got) + 1)) - got)
-        for key, got in sorted(ranks.items())
-        if len(got) != max(got)
-    }
-
-
-def check_rank_gaps(run: Run) -> Iterator[Failure]:
-    """The overall rank's exact ranks run 1..N (module docstring)."""
-    ranks: dict[str, list[int]] = defaultdict(list)
-    for font in run.doc(export.CATALOG_FILE)["fonts"]:
-        for key, entry in font["ranks"].items():
-            if key in RANK_GAP_KEYS and entry.get("rank") is not None:
-                ranks[key].append(entry["rank"])
-    for key, got in sorted(ranks.items()):
-        missing = sorted(set(range(1, max(got) + 1)) - set(got))
-        doubled = sorted(r for r in set(got) if got.count(r) > 1)
-        if missing:
-            shown = ", ".join(map(str, missing[:20])) + (" ..." if len(missing) > 20 else "")
-            yield Failure(
-                "rank_gaps",
-                f"{key}: exact ranks {shown} are missing (a member held back, gate K?), so the "
-                "site would number the rows after them differently from their rank",
-            )
-        if doubled:
-            yield Failure("rank_gaps", f"{key}: exact ranks {doubled} are given twice")
-
-
 def committed_json(paths: Paths) -> list[Path]:
     """The JSON files a refresh pull request commits: the build outputs, the specimen
     index, ``state/`` and this run's next state (``build/state/``, copied to ``state/``)."""
@@ -601,7 +561,6 @@ CHECKS: tuple[tuple[str, Check], ...] = (
     ("desktop_views_differ", check_desktop_views),
     ("abstention_leak", check_abstention_leak),
     ("raw_value_published", check_raw_values),
-    ("rank_gaps", check_rank_gaps),
     ("private_fields", check_private_fields),
 )
 # What ``validate --committed`` runs: the checks a clone's committed files can answer.
@@ -609,7 +568,6 @@ COMMITTED_CHECKS: tuple[tuple[str, Check], ...] = (
     ("schema", check_schema),
     ("known_answer", check_committed_known_answers),
     ("raw_value_published", check_catalog_raw_values),
-    ("rank_gaps", check_rank_gaps),
     ("private_fields", check_private_fields),
 )
 

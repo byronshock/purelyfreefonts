@@ -225,6 +225,84 @@ def test_variants_match_their_license(canon: Canon) -> None:
     assert canon.match(mit) == "MIT"
 
 
+def variant_text(spdx: str, name: str) -> str:
+    return (TEXTS / "variants" / spdx / name).read_text(encoding="utf-8")
+
+
+def test_the_apache_standard_notice_is_apache(canon: Canon) -> None:
+    """The notice from the Apache-2.0 appendix ("How to apply the Apache License to your
+    work") grants the license by reference; a font that ships only it is Apache-2.0."""
+    notice = variant_text("Apache-2.0", "notice.txt")
+    droid = notice.replace(
+        "Copyright [yyyy] [name of copyright owner]", "Copyright 2009 Jane Example"
+    )
+    assert canon.identify(droid) == ("Apache-2.0", frozenset())
+    assert (
+        canon.match(droid.replace("See the License", "Personal use only. See the License")) is None
+    )
+    # The whole license text still starts at its definitions, not at the notice in its appendix.
+    assert canon.match(spdx_text("Apache-2.0")) == "Apache-2.0"
+
+
+def test_the_gust_font_license_grants_lppl(canon: Canon) -> None:
+    """GUST's own text (version 1.0, and the 2006 preliminary one TeX Gyre ships) is one
+    license, and it verifies LPPL-1.3c too (``GRANTS``)."""
+    final = variant_text("LicenseRef-GUST-Font-License", "GUST-FONT-LICENSE-1.0.txt")
+    early = variant_text("LicenseRef-GUST-Font-License", "tex-gyre-2.501-preliminary.txt")
+    assert canon.match(final) == canon.match(early) == "LicenseRef-GUST-Font-License"
+    assert license_l3.verified_ids("LicenseRef-GUST-Font-License") == {
+        "LicenseRef-GUST-Font-License",
+        "LPPL-1.3c",
+    }
+    allowed = ("LPPL-1.3c", "LicenseRef-GUST-Font-License")
+    for expr in allowed:
+        inputs = make_inputs(canon, verdicts={"example-sans": verdict(expr)}, allowed=allowed)
+        result = check(inputs, text=final, facts=Facts(FONT_SHA, None, None, None))
+        assert (result.level, result.matched, fatal(result)) == (
+            "L3",
+            "LicenseRef-GUST-Font-License",
+            [],
+        ), expr
+    # A GUST text does not verify another license, and LPPL's own text does not verify GUST's.
+    inputs = make_inputs(canon, verdicts={"example-sans": verdict("MIT")}, allowed=allowed)
+    assert check(inputs, text=final).level == "failed"
+    gust = verdict("LicenseRef-GUST-Font-License")
+    inputs = make_inputs(canon, verdicts={"example-sans": gust}, allowed=allowed)
+    result = check(inputs, text=spdx_text("LPPL-1.3c"), facts=Facts(FONT_SHA, None, None, None))
+    assert fatal(result)[0].endswith("is LPPL-1.3c, not LicenseRef-GUST-Font-License")
+
+
+def test_the_vera_release_copyright_file_is_vera(canon: Canon) -> None:
+    """GNOME's ttf-bitstream-vera-1.10 COPYRIGHT.TXT: the license with its release notes
+    above and Bitstream's FAQ below, as Nerd Fonts ships it."""
+    text = variant_text("Bitstream-Vera", "gnome-1.10-COPYRIGHT.txt")
+    assert canon.identify(text) == ("Bitstream-Vera", frozenset())
+    assert canon.match(text.replace("Happy Font Hacking!", "Not for commercial use.")) is None
+
+
+@pytest.mark.parametrize(
+    ("line", "restricted"),
+    [
+        ("Digitized data copyright (c) 2012-2018 for FiraGO, Carrois Corporate GbR.", False),
+        ("Digitized data copyright (c) 2012 Example Type. Free for personal use only.", True),
+    ],
+)
+def test_a_digitized_data_line_is_a_copyright_line(
+    canon: Canon, line: str, restricted: bool
+) -> None:
+    """The type industry's "Digitized data copyright ..." counts as a copyright line: left
+    out of the fingerprint and the notice's word count, but still read for restrictions."""
+    text = ofl(line + "\n" + OFL_NOTICE)
+    assert license_l3.header_words(text) == license_l3.header_words(ofl())
+    assert license_l3.dropped_lines(text).startswith("digitized data copyright")
+    result = check(make_inputs(canon), text=text)
+    assert (result.level == "failed") is restricted
+    if restricted:
+        assert fatal(result) == [
+            f"a notice in license text {TEXT_URL} restricts use: 'personal use'"
+        ]
+
+
 def test_header_keeps_notices_and_normalise_drops_them() -> None:
     text = ofl()
     assert "copyright 2021 the example sans project authors" in license_l3.header(text)
@@ -290,6 +368,7 @@ def test_restrictions(text: str, found: tuple[str, ...]) -> None:
         ("CC-BY-4.0", "CC-BY", "CC-BY-4.0"),
         ("0BSD", "BSD", "0BSD"),
         ("LicenseRef-Example", "LicenseRef-Example", "LicenseRef-Example"),
+        ("LicenseRef-GUST-Font-License", "LPPL", "LicenseRef-GUST-Font-License"),
     ],
 )
 def test_license_family_and_text_id(spdx: str, family: str, text: str) -> None:
@@ -973,6 +1052,257 @@ def test_an_and_expression_needs_every_text(canon: Canon) -> None:
 
 def previous_entry(result: L3Result, **changes: Any) -> dict[str, Any]:
     return license_l3.state_entry(result) | changes
+
+
+# --- research (config/license-texts.toml) -----------------------------------------------------
+
+HACK_URL = f"{REPO}/hack/LICENSE.md"
+HACK = (
+    "The work in the Example project is Copyright 2018 Example Authors and licensed under "
+    "the MIT License\n\nThe work in the DejaVu project was committed to the public domain.\n\n"
+    "Bitstream Vera Sans Mono Copyright 2003 Bitstream Inc. and licensed under the Bitstream "
+    'Vera License with Reserved Font Names "Bitstream" and "Vera"\n\n### MIT License\n\n'
+    + spdx_text("MIT").split("\n", 2)[2]
+    + "\n### BITSTREAM VERA LICENSE\n\n"
+    + spdx_text("Bitstream-Vera").split("\n", 2)[2]
+)
+HACK_13 = "The work in the DejaVu project was committed to the public domain. MIT License."
+
+
+def research(
+    *,
+    texts: Iterable[license_l3.ResearchedText] = (),
+    families: Iterable[license_l3.FamilyResearch] = (),
+) -> license_l3.Research:
+    return license_l3.Research(
+        families={f.family: f for f in families}, texts={t.sha256: t for t in texts}
+    )
+
+
+PUBLIC_DOMAIN = license_l3.FamilyResearch(
+    "example-sans", "Example", "test", mentions=("Public-domain",)
+)
+
+
+def hack_inputs(canon: Canon, **known: Any) -> Inputs:
+    """Hack-like inputs: its LICENSE.md researched, public-domain notes allowed."""
+    expr = "Bitstream-Vera AND MIT"
+    entry = license_l3.ResearchedText(sha(HACK), ("MIT", "Bitstream-Vera"), HACK_URL, "test")
+    known.setdefault("families", [PUBLIC_DOMAIN])
+    return replace(
+        make_inputs(
+            canon,
+            verdicts={"example-sans": verdict(expr)},
+            evidence={
+                "example-sans": Evidence(
+                    texts=(TextRef(HACK_URL),), files=(FontFileRef(FONT_URL, role="variable"),)
+                )
+            },
+        ),
+        research=research(texts=[entry], **known),
+    )
+
+
+def check_hack(inputs: Inputs, text: str = HACK, facts: Facts | None = None) -> L3Result:
+    texts = Texts({HACK_URL: text})
+    reader = FontReader({FONT_URL: facts or Facts(FONT_SHA, None, None, None)})
+    return license_l3.check_family("example-sans", inputs, texts, reader, DAY)
+
+
+def test_a_researched_text_verifies_its_licenses(canon: Canon) -> None:
+    assert canon.match(HACK) is None  # two licenses and three notices: no canonical text
+    assert check_hack(make_inputs(canon)).level == "failed"
+    result = check_hack(hack_inputs(canon))
+    assert (result.level, result.matched, fatal(result)) == ("L3", "Bitstream-Vera AND MIT", [])
+    assert result.problems[0] == (
+        f"note: license text {HACK_URL} is a researched text (config/license-texts.toml): "
+        "Bitstream-Vera AND MIT"
+    )
+
+
+@pytest.mark.parametrize(
+    ("edit", "problem"),
+    [
+        (lambda t: t + "\nOne more line.\n", "matches no known license"),
+        (lambda t: t + "\n", "matches no known license"),
+    ],
+    ids=["added-line", "added-newline"],
+)
+def test_a_researched_text_holds_only_for_its_exact_bytes(
+    canon: Canon, edit: Any, problem: str
+) -> None:
+    result = check_hack(hack_inputs(canon), text=edit(HACK))
+    assert result.level == "failed"
+    assert problem in fatal(result)[0]
+
+
+def test_a_researched_text_is_read_whole_for_restrictions_and_licenses(canon: Canon) -> None:
+    """No license body is set aside: a restriction or another license anywhere fails it,
+    even inside what research took for a license body."""
+    for text, problem in (
+        (HACK.replace("to deal in the Software", "to deal, for personal use only, in the Software"),
+         "restricts use: 'personal use'"),
+        (HACK.replace("### MIT License", "### MIT License (or the GNU General Public License)"),
+         "names GPL"),
+    ):  # fmt: skip
+        assert text != HACK
+        entry = license_l3.ResearchedText(sha(text), ("MIT", "Bitstream-Vera"), HACK_URL, "test")
+        inputs = replace(
+            hack_inputs(canon), research=research(texts=[entry], families=[PUBLIC_DOMAIN])
+        )
+        result = check_hack(inputs, text=text)
+        assert result.level == "failed"
+        assert any(p.endswith(problem) for p in fatal(result)), fatal(result)
+
+
+def test_a_researched_text_must_hold_the_l2_license(canon: Canon) -> None:
+    entry = license_l3.ResearchedText(sha(HACK), ("MIT",), HACK_URL, "test")
+    inputs = replace(hack_inputs(canon), research=research(texts=[entry], families=[PUBLIC_DOMAIN]))
+    result = check_hack(inputs)
+    assert result.level == "failed"
+    assert fatal(result) == ["the license texts found do not verify Bitstream-Vera AND MIT"]
+    inputs = replace(inputs, verdicts={"example-sans": verdict("Apache-2.0")})
+    assert f"license text {HACK_URL} is MIT, not Apache-2.0" in fatal(check_hack(inputs))
+
+
+def test_a_mentions_allowance_lets_a_name_id_name_that_license_only(canon: Canon) -> None:
+    facts = Facts(FONT_SHA, license_description=HACK_13, license_url=None)
+    assert fatal(check_hack(hack_inputs(canon, families=[]), facts=facts)) == [
+        f"license text {HACK_URL} names Public-domain",
+        "name ID 13 names Public-domain",
+    ]
+    inputs = hack_inputs(canon)
+    assert check_hack(inputs, facts=facts).level == "L3"
+    # The allowance names a license; it never lets a restriction or another license through.
+    for said, problem in (
+        (HACK_13 + " Free for personal use only.", "name ID 13 restricts use: 'personal use'"),
+        (HACK_13 + " Or the GPL.", "name ID 13 names GPL"),
+    ):
+        facts = Facts(FONT_SHA, license_description=said, license_url=None)
+        assert fatal(check_hack(inputs, facts=facts)) == [problem]
+
+
+def test_a_mentions_allowance_must_name_an_allowed_license() -> None:
+    from tff_catalog.config_model import ConfigError
+
+    allowed = ("OFL-1.1", "Unlicense", "GPL-2.0-or-later WITH Font-exception-2.0")
+    for ok in ("Public-domain", "CC0", "OFL"):
+        fam = license_l3.FamilyResearch("example-sans", "Example", "test", mentions=(ok,))
+        license_l3.check_mentions(research(families=[fam]), allowed)
+    for bad in ("GPL", "CC-BY-SA", "Apache"):  # plain GPL is not the GPL with the font exception
+        fam = license_l3.FamilyResearch("example-sans", "Example", "test", mentions=(bad,))
+        with pytest.raises(ConfigError, match="not the family of an allowed license"):
+            license_l3.check_mentions(research(families=[fam]), allowed)
+
+
+def test_researched_texts_and_files_are_tried_first(canon: Canon) -> None:
+    upstream_text = f"{REPO}/upstream/OFL.txt"
+    upstream_file = f"{REPO}/upstream/ExampleSans-Regular.ttf"
+    fam = license_l3.FamilyResearch(
+        "example-sans", "Example", "test", texts=(upstream_text,), files=(upstream_file,)
+    )
+    old = make_inputs(canon).evidence
+    evidence = license_l3.apply_research(old, research(families=[fam]))
+    assert [t.url for t in evidence["example-sans"].texts] == [upstream_text, TEXT_URL]
+    assert evidence["example-sans"].texts[0].source == "research"
+    assert [f.url for f in evidence["example-sans"].files] == [upstream_file, FONT_URL]
+    # The sources' web page is never reached once the upstream text verifies.
+    inputs = replace(make_inputs(canon), evidence=evidence)
+    texts = Texts({upstream_text: ofl(), TEXT_URL: "<!doctype html><html>OFL</html>"})
+    reader = FontReader({upstream_file: Facts(FONT_SHA)})
+    result = license_l3.check_family("example-sans", inputs, texts, reader, DAY)
+    assert (result.level, result.text_url, texts.asked) == ("L3", upstream_text, [upstream_text])
+    assert result.font_file is not None
+    assert result.font_file.url == upstream_file
+
+
+def write_research(tmp_path: Path, body: str) -> Paths:
+    (tmp_path / "config").mkdir(exist_ok=True)
+    (tmp_path / "config" / "license-texts.toml").write_text("schema = 1\n" + body)
+    return Paths.for_root(tmp_path)
+
+
+@pytest.mark.parametrize(
+    ("body", "error"),
+    [
+        ('[[family]]\nfamily = "a"\nname = "A"\nreason = "r"\nnote = "x"\n', "unknown key"),
+        ('[[family]]\nfamily = "A b"\nname = "A"\nreason = "r"\n', "is not a family id"),
+        ('[[family]]\nfamily = "a"\nname = "A"\nreason = "r"\n' * 2, "listed twice"),
+        ('[[family]]\nfamily = "a"\nname = "A"\nreason = "r"\ntexts = ["http://x.example/OFL"]\n',
+         "is not an https URL"),
+        ('[[family]]\nfamily = "a"\nname = "A"\nreason = "r"\nfiles = ["https://x.example/OFL.txt"]\n',
+         "names no font file"),
+        ('[[family]]\nfamily = "a"\nname = "A"\nreason = "r"\nmentions = ["Nice"]\n',
+         "is no license family"),
+        ('[[text]]\nsha256 = "abc"\nlicenses = ["MIT"]\nurl = "https://x.example/L"\nreason = "r"\n',
+         "is not a sha256"),
+        (f'[[text]]\nsha256 = "{"a" * 64}"\nlicenses = ["MIT OR X"]\nurl = "https://x.example/L"\n'
+         'reason = "r"\n', "is not one license id"),
+        (f'[[text]]\nsha256 = "{"a" * 64}"\nlicenses = []\nurl = "https://x.example/L"\n'
+         'reason = "r"\n', "empty"),
+    ],
+    ids=["unknown-key", "bad-id", "twice", "http", "not-a-font", "mention", "sha", "expression",
+         "no-licenses"],
+)  # fmt: skip
+def test_load_research_is_strict(tmp_path: Path, body: str, error: str) -> None:
+    from tff_catalog.config_model import ConfigError
+
+    with pytest.raises(ConfigError, match=error):
+        license_l3.load_research(write_research(tmp_path, body))
+
+
+def test_load_research_without_a_file(tmp_path: Path) -> None:
+    assert license_l3.load_research(Paths.for_root(tmp_path)) == license_l3.Research()
+
+
+def test_the_real_research_file_loads_and_allows_only_allowed_licenses() -> None:
+    """config/license-texts.toml: strict, every allowance is an allowed license's family,
+    every researched text verifies only allowed licenses, and texts are pinned where the
+    upstream has commits (GUST publishes its license only on its own site)."""
+    found = license_l3.load_research(Paths.for_root(ROOT))
+    cfg = from_mapping(
+        LicensesConfig, load_toml(ROOT / "config" / "licenses.toml"), where="licenses.toml"
+    )
+    allowed = frozenset(cfg.allowed) | frozenset(cfg.ruling)  # gate LIC ruled these in
+    license_l3.check_mentions(found, allowed)
+    pairs = license_l3.allowed_pairs(allowed)
+    for entry in found.texts.values():
+        for spdx in entry.licenses:
+            assert license_l3.leaf_allowed(license_l3._Leaf(spdx), pairs), spdx
+    for fam in found.families.values():
+        for url in fam.texts:
+            assert license_l3.is_pinned(url) or url.startswith("https://www.gust.org.pl/"), url
+    assert len(found.families) >= 20
+    assert len(found.texts) >= 5
+
+
+def test_a_family_the_last_run_failed_is_checked_again(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Stage "rank" leaves out the families the last verify failed, so no rank puts them
+    in scope: verify checks them again all the same, and one fixed since comes back."""
+    ctx = stage_context(tmp_path)
+    write_stage_files(ctx.paths)
+    texts = Texts({f"{REPO}/ofl/{f.replace('-', '')}/OFL.txt": ofl() for f in FAMILIES})
+    gamma = f"{REPO}/ofl/gammamono/gamma-mono.ttf"
+    facts = {f"{REPO}/ofl/{f.replace('-', '')}/{f}.ttf": Facts(sha(f)) for f in FAMILIES}
+    facts[gamma] = Facts(sha("gamma-mono"), license_description="Licensed under the Apache License")
+
+    @contextmanager
+    def fake_sources(ctx: StageContext, *, persist: bool = True) -> Iterator[tuple[Any, Any]]:
+        yield texts, FontReader(facts)
+
+    monkeypatch.setattr(license_l3, "open_sources", fake_sources)
+    monkeypatch.setattr(license_l3, "load_l3_rulings", lambda paths, log=None: {})
+    license_l3.run(ctx)
+    assert license_l3.exclusions(ctx.paths) == {"gamma-mono"}
+    ranks = stageio.load_stage(ctx.paths, "ranks")
+    overall = {fid: p for fid, p in ranks["overall"].items() if fid != "gamma-mono"}
+    stageio.dump_stage(ctx.paths, "ranks", {"overall": overall})  # as rank leaves it out
+    facts[gamma] = Facts(sha("gamma-mono"))  # upstream fixed its name table
+    license_l3.run(ctx)
+    assert stageio.load_stage(ctx.paths, "l3")["gamma-mono"].level == "L3"
+    assert license_l3.exclusions(ctx.paths) == frozenset()
 
 
 def test_checked_on_is_kept_while_nothing_changes(canon: Canon) -> None:

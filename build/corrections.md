@@ -18,7 +18,7 @@ Stage "correct" (milestone-1 step 10), run date 2026-09-26. Generated; do not ed
 
 | Case | Status | Family | Source | Why | System | Package | Share |
 |---|---|---|---|---|---|---|---|
-| `dep-debian-noto-sans-mono` | **new** | Noto Sans Mono (`noto-sans-mono`) | debian | abstains: dependency | debian | fonts-noto | 88% |
+| `dep-debian-noto-sans-mono` | **new** | Noto Sans Mono (`noto-sans-mono`) | debian | abstains: dependency | debian | fonts-droid-fallback | 100% |
 | `dep-debian-roboto` | **new** | Roboto (`roboto`) | debian | abstains: dependency | debian | texlive-fonts-extra | 53% |
 | `dep-debian-roboto-condensed` | **new** | Roboto Condensed (`roboto-condensed`) | debian | abstains: dependency | debian | texlive-fonts-extra | 53% |
 | `dep-debian-roboto-slab` | **new** | Roboto Slab (`roboto-slab`) | debian | abstains: dependency | debian | texlive-fonts-extra | 90% |
@@ -35,7 +35,6 @@ Stage "correct" (milestone-1 step 10), run date 2026-09-26. Generated; do not ed
 | `pre-debian-noto-sans-display` | **new** | Noto Sans Display (`noto-sans-display`) | debian | preinstalled | ubuntu |  |  |
 | `pre-debian-noto-serif` | **new** | Noto Serif (`noto-serif`) | debian | preinstalled | ubuntu |  |  |
 | `pre-debian-noto-serif-display` | **new** | Noto Serif Display (`noto-serif-display`) | debian | preinstalled | ubuntu |  |  |
-| `dep-debian-noto-mono` | accepted | Noto Mono (`noto-mono`) | debian | abstains: dependency | debian | fonts-droid-fallback | 100% |
 | `pre-arch-dejavu-sans-mono` | accepted | DejaVu Sans Mono (`dejavu-sans-mono`) | arch | preinstalled | cachyos |  |  |
 
 ## Preinstalled names with no family
@@ -79,8 +78,8 @@ Credited builds and bundles, and keys a key-level floor changed.
 | IBM Plex Sans (`ibm-plex-sans`) | arch | `ttf-ibm-plex` (bundle): 5.61%, credit 0.5 | observed, 2.81% |
 | IBM Plex Sans Condensed (`ibm-plex-sans-condensed`) | arch | `ttf-ibm-plex` (bundle): 5.61%, credit 0.5 | observed, 2.81% |
 | IBM Plex Serif (`ibm-plex-serif`) | arch | `ttf-ibm-plex` (bundle): 5.61%, credit 0.5 | observed, 2.81% |
+| Inconsolata (`inconsolata`) | arch | `ttf-inconsolata-go-nerd` (nerd): 5.70% before the floor, 0.78% after, credit 1 | observed, 0.78% |
 | Inconsolata LGC (`inconsolata-lgc`) | arch | `ttf-inconsolata-lgc-nerd` (nerd): 5.59% before the floor, 0.67% after, credit 1 | observed, 0.67% |
-| InconsolataGo (`inconsolatago`) | arch | `ttf-inconsolata-go-nerd` (nerd): 5.70% before the floor, 0.78% after, credit 1 | observed, 0.78% |
 | Libertinus Keyboard (`libertinus-keyboard`) | arch | `otf-libertinus` (bundle): 7.41%, credit 0.5 | observed, 3.71% |
 | Libertinus Mono (`libertinus-mono`) | arch | `otf-libertinus` (bundle): 7.41%, credit 0.5 | observed, 3.71% |
 | Libertinus Sans (`libertinus-sans`) | arch | `otf-libertinus` (bundle): 7.41%, credit 0.5 | observed, 3.71% |
@@ -92,7 +91,6 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Monaspace Neon (`monaspace-neon`) | arch | `otf-monaspace` (bundle): 1.29%, credit 0.5; `otf-monaspace-nerd` (bundle): 5.21% before the floor, 0.29% after, credit 0.5 | observed, 0.64% |
 | Monaspace Radon (`monaspace-radon`) | arch | `otf-monaspace` (bundle): 1.29%, credit 0.5; `otf-monaspace-nerd` (bundle): 5.21% before the floor, 0.29% after, credit 0.5 | observed, 0.64% |
 | Monaspace Xenon (`monaspace-xenon`) | arch | `otf-monaspace` (bundle): 1.29%, credit 0.5; `otf-monaspace-nerd` (bundle): 5.21% before the floor, 0.29% after, credit 0.5 | observed, 0.64% |
-| Noto Mono (`noto-mono`) | arch | `ttf-noto-nerd` (bundle): 7.56% before the floor, 2.63% after, credit 0.5 | observed, 1.32% |
 | Noto Sans (`noto-sans`) | arch | `noto-fonts` (bundle): 67.92%, credit 0.5; `noto-fonts-extra` (bundle): 20.63%, credit 0.5; `ttf-noto-nerd` (bundle): 7.56% before the floor, 2.63% after, credit 0.5 | observed, 33.96% |
 | Noto Sans Mono (`noto-sans-mono`) | arch | `noto-fonts` (bundle): 67.92%, credit 0.5; `noto-fonts-extra` (bundle): 20.63%, credit 0.5; `ttf-noto-nerd` (bundle): 7.56% before the floor, 2.63% after, credit 0.5 | observed, 33.96% |
 | Noto Serif (`noto-serif`) | arch | `noto-fonts` (bundle): 67.92%, credit 0.5; `noto-fonts-extra` (bundle): 20.63%, credit 0.5; `ttf-noto-nerd` (bundle): 7.56% before the floor, 2.63% after, credit 0.5 | observed, 33.96% |
@@ -114,7 +112,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Libertinus Serif Display (`libertinus-serif-display`) | debian | `fonts-libertinus` (bundle): 51, credit 0.5 | censored, 25.50 |
 | Noto Sans (`noto-sans`) | debian | `fonts-noto-core` (bundle): 61,855, credit 0.5; `fonts-noto-extra` (bundle): 49,497, credit 0.5 | observed, 30,928 |
 | Noto Sans Display (`noto-sans-display`) | debian | `fonts-noto-core` (bundle): 61,855, credit 0.5; `fonts-noto-extra` (bundle): 49,497, credit 0.5 | observed, 30,928 |
-| Noto Sans Mono (`noto-sans-mono`) | debian | `fonts-noto-extra` (bundle): 49,497, credit 0.5 | observed, 24,748 |
+| Noto Sans Mono (`noto-sans-mono`) | debian | `fonts-noto-extra` (bundle): 49,497, credit 0.5 | observed, 160,187 |
 | Noto Serif (`noto-serif`) | debian | `fonts-noto-core` (bundle): 61,855, credit 0.5; `fonts-noto-extra` (bundle): 49,497, credit 0.5 | observed, 30,928 |
 | Noto Serif Display (`noto-serif-display`) | debian | `fonts-noto-core` (bundle): 61,855, credit 0.5; `fonts-noto-extra` (bundle): 49,497, credit 0.5 | observed, 30,928 |
 | Roboto (`roboto`) | debian | `fonts-roboto-fontface` (bundle): 524, credit 0.5; `fonts-roboto-hinted` (bundle): 1,362, credit 0.5; `fonts-roboto-unhinted` (bundle): 15,733, credit 0.5 | observed, 7,866 |
@@ -793,9 +791,8 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Imperial Script (`imperial-script`) | homebrew | `font-imperial-script` (package): 36 before the floor, 16 after, credit 1 | censored, 16 |
 | Imprima (`imprima`) | homebrew | `font-imprima` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Inclusive Sans (`inclusive-sans`) | homebrew | `font-inclusive-sans` (package): 43 before the floor, 23 after, credit 1 | censored, 23 |
-| Inconsolata (`inconsolata`) | homebrew | `font-inconsolata` (package): 2,276 before the floor, 2,256 after, credit 1; `font-inconsolata-nerd-font` (package): 3,795 before the floor, 1,662 after, credit 1 | observed, 3,918 |
+| Inconsolata (`inconsolata`) | homebrew | `font-inconsolata` (package): 2,276 before the floor, 2,256 after, credit 1; `font-inconsolata-go-nerd-font` (nerd): 2,471 before the floor, 338 after, credit 1; `font-inconsolata-nerd-font` (package): 3,795 before the floor, 1,662 after, credit 1 | observed, 4,257 |
 | Inconsolata LGC (`inconsolata-lgc`) | homebrew | `font-inconsolata-lgc` (package): 85 before the floor, 65 after, credit 1; `font-inconsolata-lgc-nerd-font` (package): 2,334 before the floor, 201 after, credit 1 | observed, 266 |
-| InconsolataGo (`inconsolatago`) | homebrew | `font-inconsolata-go-nerd-font` (package): 2,471 before the floor, 338 after, credit 1 | observed, 338 |
 | Inder (`inder`) | homebrew | `font-inder` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
 | Indie Flower (`indie-flower`) | homebrew | `font-indie-flower` (package): 51 before the floor, 31 after, credit 1 | censored, 31 |
 | Ingrid Darling (`ingrid-darling`) | homebrew | `font-ingrid-darling` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
@@ -1123,7 +1120,6 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Nothing You Could Do (`nothing-you-could-do`) | homebrew | `font-nothing-you-could-do` (package): 30 before the floor, 10 after, credit 1 | censored, 10 |
 | Noticia Text (`noticia-text`) | homebrew | `font-noticia-text` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | Noto Kufi Arabic (`noto-kufi-arabic`) | homebrew | `font-noto-kufi-arabic` (package): 97 before the floor, 77 after, credit 1 | observed, 77 |
-| Noto Mono (`noto-mono`) | homebrew | `font-noto-mono` (package): 181 before the floor, 161 after, credit 1; `font-noto-nerd-font` (bundle): 3,004 before the floor, 871 after, credit 0.5 | observed, 597 |
 | Noto Naskh Arabic (`noto-naskh-arabic`) | homebrew | `font-noto-naskh-arabic` (package): 313 before the floor, 293 after, credit 1 | observed, 293 |
 | Noto Nastaliq Urdu (`noto-nastaliq-urdu`) | homebrew | `font-noto-nastaliq-urdu` (package): 84 before the floor, 64 after, credit 1 | observed, 64 |
 | Noto Rashi Hebrew (`noto-rashi-hebrew`) | homebrew | `font-noto-rashi-hebrew` (package): 62 before the floor, 42 after, credit 1 | censored, 42 |
@@ -1134,7 +1130,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Noto Sans Elymaic (`noto-sans-elymaic`) | homebrew | `font-noto-sans-elymaic` (package): 37 before the floor, 17 after, credit 1 | censored, 17 |
 | Noto Sans Indic Siyaq Numbers (`noto-sans-indic-siyaq-numbers`) | homebrew | `font-noto-sans-indic-siyaq-numbers` (package): 33 before the floor, 13 after, credit 1 | censored, 13 |
 | Noto Sans Mayan Numerals (`noto-sans-mayan-numerals`) | homebrew | `font-noto-sans-mayan-numerals` (package): 39 before the floor, 19 after, credit 1 | censored, 19 |
-| Noto Sans Mono (`noto-sans-mono`) | homebrew | `font-noto-nerd-font` (bundle): 3,004 before the floor, 871 after, credit 0.5 | observed, 436 |
+| Noto Sans Mono (`noto-sans-mono`) | homebrew | `font-noto-mono` (package): 181 before the floor, 161 after, credit 1; `font-noto-nerd-font` (bundle): 3,004 before the floor, 871 after, credit 0.5 | observed, 597 |
 | Noto Sans Nushu (`noto-sans-nushu`) | homebrew | `font-noto-sans-nushu` (package): 37 before the floor, 17 after, credit 1 | censored, 17 |
 | Noto Sans Old Hungarian (`noto-sans-old-hungarian`) | homebrew | `font-noto-sans-old-hungarian` (package): 45 before the floor, 25 after, credit 1 | censored, 25 |
 | Noto Sans Pau Cin Hau (`noto-sans-pau-cin-hau`) | homebrew | `font-noto-sans-pau-cin-hau` (package): 38 before the floor, 18 after, credit 1 | censored, 18 |
@@ -1793,9 +1789,8 @@ Credited builds and bundles, and keys a key-level floor changed.
 | iA Writer Quattro (`ia-writer-quattro`) | nerd | `iA-Writer` (bundle): 258,889 before the floor, 45,979 after, credit 0.5 | observed, 22,990 |
 | IBM 3270 (`ibm-3270`) | nerd | `3270` (package): 531,936 before the floor, 319,026 after, credit 1 | observed, 319,026 |
 | IBM Plex Mono (`ibm-plex-mono`) | nerd | `IBMPlexMono` (package): 481,457 before the floor, 268,547 after, credit 1 | observed, 268,547 |
-| Inconsolata (`inconsolata`) | nerd | `Inconsolata` (package): 410,885 before the floor, 197,975 after, credit 1 | observed, 197,975 |
+| Inconsolata (`inconsolata`) | nerd | `Inconsolata` (package): 410,885 before the floor, 197,975 after, credit 1; `InconsolataGo` (nerd): 280,746 before the floor, 67,836 after, credit 1 | observed, 265,811 |
 | Inconsolata LGC (`inconsolata-lgc`) | nerd | `InconsolataLGC` (package): 256,371 before the floor, 43,461 after, credit 1 | observed, 43,461 |
-| InconsolataGo (`inconsolatago`) | nerd | `InconsolataGo` (package): 280,746 before the floor, 67,836 after, credit 1 | observed, 67,836 |
 | Intel One Mono (`intel-one-mono`) | nerd | `IntelOneMono` (package): 238,826 before the floor, 25,916 after, credit 1 | observed, 25,916 |
 | Iosevka (`iosevka`) | nerd | `Iosevka` (package): 737,161 before the floor, 524,251 after, credit 1; `IosevkaTerm` (nerd): 442,071 before the floor, 229,161 after, credit 1; `IosevkaTermSlab` (nerd): 227,850 before the floor, 14,940 after, credit 1 | observed, 768,352 |
 | JetBrains Mono (`jetbrains-mono`) | nerd | `JetBrainsMono` (package): 5,385,384 before the floor, 5,172,474 after, credit 1 | observed, 5,172,474 |
@@ -1812,7 +1807,6 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Monaspace Xenon (`monaspace-xenon`) | nerd | `Monaspace` (bundle): 350,502 before the floor, 137,592 after, credit 0.5 | observed, 68,796 |
 | Monoid (`monoid`) | nerd | `Monoid` (package): 268,582 before the floor, 55,672 after, credit 1 | observed, 55,672 |
 | Mononoki (`mononoki`) | nerd | `Mononoki` (package): 377,335 before the floor, 164,425 after, credit 1 | observed, 164,425 |
-| Noto Mono (`noto-mono`) | nerd | `Noto` (bundle): 375,302 before the floor, 162,392 after, credit 0.5 | observed, 81,196 |
 | Noto Sans (`noto-sans`) | nerd | `Noto` (bundle): 375,302 before the floor, 162,392 after, credit 0.5 | observed, 81,196 |
 | Noto Sans Mono (`noto-sans-mono`) | nerd | `Noto` (bundle): 375,302 before the floor, 162,392 after, credit 0.5 | observed, 81,196 |
 | Noto Serif (`noto-serif`) | nerd | `Noto` (bundle): 375,302 before the floor, 162,392 after, credit 0.5 | observed, 81,196 |
@@ -1836,18 +1830,18 @@ Credited builds and bundles, and keys a key-level floor changed.
 
 | Source | Data date | Observed | Censored | Too new | Merged into parent | Flagged | Abstaining in most chosen |
 |---|---|---|---|---|---|---|---|
-| almanac | 2025-07-01 | 46 | 1583 | 78 | 22 | 0 | 0 |
-| arch | 2026-08-31 | 37 | 1 | 0 | 0 | 25 | 7 |
-| debian | 2026-09-25 | 18 | 5 | 0 | 0 | 18 | 12 |
-| ecosystems | 2026-09-26 | 264 | 1306 | 0 | 0 | 15 | 0 |
-| fot | 2026-09-23 | 172 | 1547 | 10 | 0 | 0 | 0 |
+| almanac | 2025-07-01 | 46 | 1582 | 78 | 22 | 0 | 0 |
+| arch | 2026-08-31 | 36 | 1 | 0 | 0 | 24 | 7 |
+| debian | 2026-09-25 | 17 | 5 | 0 | 0 | 17 | 11 |
+| ecosystems | 2026-09-26 | 262 | 1308 | 0 | 0 | 15 | 0 |
+| fot | 2026-09-23 | 172 | 1546 | 10 | 0 | 0 | 0 |
 | github | 2026-09-26 | 67 | 0 | 0 | 0 | 14 | 0 |
-| google | 2026-09-26 | 1503 | 0 | 4 | 0 | 0 | 0 |
-| homebrew | 2026-09-26 | 279 | 1325 | 11 | 0 | 7 | 0 |
-| jsdelivr | 2026-09-25 | 784 | 816 | 0 | 0 | 0 | 0 |
-| nerd | 2026-09-26 | 60 | 6 | 2 | 0 | 13 | 0 |
-| npm_expo | 2026-09-24 | 248 | 1255 | 4 | 0 | 0 | 0 |
-| npm_fontsource | 2026-09-24 | 610 | 956 | 4 | 0 | 0 | 0 |
+| google | 2026-09-26 | 1505 | 0 | 4 | 0 | 0 | 0 |
+| homebrew | 2026-09-26 | 277 | 1325 | 11 | 0 | 6 | 0 |
+| jsdelivr | 2026-09-25 | 783 | 817 | 0 | 0 | 0 | 0 |
+| nerd | 2026-09-26 | 58 | 6 | 2 | 0 | 12 | 0 |
+| npm_expo | 2026-09-24 | 248 | 1257 | 4 | 0 | 0 | 0 |
+| npm_fontsource | 2026-09-24 | 608 | 958 | 4 | 0 | 0 | 0 |
 
 Too new (under the exposure minimum): adwaita-sans (almanac), akt (almanac), alan-sans (almanac), alien-block (almanac), alyamama (almanac), amarna (almanac), annotation-mono (almanac), asap-sharp (almanac), asimovian (almanac), bbh-bartle (almanac), bbh-bogle (almanac), bbh-hegarty (almanac), betania-patmos (almanac), betania-patmos-gdl (almanac), betania-patmos-in (almanac), betania-patmos-in-gdl (almanac), caacupe-one (almanac), cause (almanac), clarity-city (almanac), cossette-texte (almanac), cossette-titre (almanac), datatype (almanac), elms-sans (almanac), estedad (almanac), finlandica-headline (almanac), finlandica-text (almanac), geist-pixel (almanac), geom (almanac), geomini (almanac), hibur-mono (almanac), iosevka-aile (almanac), iosevka-charon (almanac), iosevka-charon-mono (almanac), iosevka-curly (almanac), iosevka-curly-slab (almanac), iosevka-etoile (almanac), isometra (almanac), kedebideri (almanac), kripa (almanac), libre-caslon-condensed (almanac), manufacturing-consent (almanac), miranda-sans (almanac), momo-signature (almanac), momo-trust-display (almanac), momo-trust-sans (almanac), montenegrin-gothic-one (almanac), mozilla-headline (almanac), mozilla-text (almanac), nata-sans (almanac), nebula-sans (almanac), nevermind (almanac), parastoo (almanac), playwrite-nz-basic (almanac), playwrite-nz-basic-guides (almanac), pliant (almanac), savate (almanac), science-gothic (almanac), scoutie-sans (almanac), sekuya (almanac), sn-pro (almanac), stack-sans-headline (almanac), stack-sans-notch (almanac), stack-sans-text (almanac), story-script (almanac), strichpunkt-sans (almanac), suse-mono (almanac), tasa-explorer (almanac), tasa-orbiter (almanac), tiny5-duo (almanac), tirra (almanac), valley-sans (almanac), vend-sans (almanac), xmind (almanac), yuyu (almanac), yuyu-short (almanac), zalando-sans (almanac), zalando-sans-expanded (almanac), zalando-sans-semiexpanded (almanac), annotation-mono (fot), asap-sharp (fot), clarity-city (fot), isometra (fot), kripa (fot), libre-caslon-condensed (fot), nebula-sans (fot), tiny5-duo (fot), valley-sans (fot), xmind (fot), asap-sharp (google), caacupe-one (google), scoutie-sans (google), valley-sans (google), asap-sharp (homebrew), clarity-city (homebrew), google-sans (homebrew), google-sans-flex (homebrew), isometra (homebrew), kripa (homebrew), libre-caslon-condensed (homebrew), nebula-sans (homebrew), nevermind (homebrew), tiny5-duo (homebrew), valley-sans (homebrew), annotation-mono (nerd), google-sans-code (nerd), asap-sharp (npm_expo), caacupe-one (npm_expo), scoutie-sans (npm_expo), valley-sans (npm_expo), asap-sharp (npm_fontsource), caacupe-one (npm_fontsource), scoutie-sans (npm_fontsource), valley-sans (npm_fontsource).
 

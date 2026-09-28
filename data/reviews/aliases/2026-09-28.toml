@@ -1,0 +1,63 @@
+# Owner rulings of 2026-09-28, gate A, given in chat after the finish-gates-1 run. Ruled by the
+# owner, Byron Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml,
+# [links_research_2026-09-28]: noto_mono, fredoka_one, inconsolatago). Also in AUTHORITY.md. The
+# owner took Claude's recommendation each time. These replace the 2026-09-26 rulings on the same
+# items (a later file wins). The rows they add or change are in data/aliases.csv (reviewed_by
+# owner:2026-09-28), as Iosevka Term's hand rows were: the table already held rows for these keys.
+
+[noto_mono]
+value = "fold_into_noto_sans_mono"
+ruling = "Noto Mono is left out as a family: it folds into Noto Sans Mono as its superseded name, so fonts-noto-mono (Debian, which ships Noto Mono and Noto Sans Mono), font-noto-mono (Homebrew) and Fontsource's noto-mono count toward Noto Sans Mono. The Nerd Fonts Noto bundle credits Noto Sans, Noto Sans Mono and Noto Serif. This reverses the 2026-09-26 A_cleanup row fonts-noto-mono -> Noto Mono and the U_rules row font-noto-mono -> Noto Mono."
+reason = "Claude's recommendation: Google replaced Noto Mono with Noto Sans Mono in 2020, no current Noto page offers it, and Nerd Fonts calls Noto Sans Mono its equivalent today."
+
+[fredoka_one]
+value = "fold_into_fredoka"
+ruling = "Fredoka One is an old name of Fredoka: Fontsource's fredoka-one, its npm package and the name Fredoka One count toward Fredoka."
+reason = "Claude's recommendation: Google replaced Fredoka One with Fredoka (same designer and project) and delisted it in 2023; google/fonts TRIVIA.md maps fredokaone to fredoka."
+
+[inconsolatago]
+value = "fold_into_inconsolata"
+ruling = "InconsolataGo and its Nerd Fonts builds are build variants of Inconsolata, like Iosevka Term."
+reason = "Claude's recommendation: InconsolataGo is Raph Levien's own straight-quote Inconsolata (levien.com/type/myfonts/inconsolata.html), not a third-party fork. This corrects the premise of the 2026-09-26 rulings A-67dc724d68, A-5419df9fec and A-8c4087c674."
+
+[A-f8623a5666]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "noto_mono: fonts-noto-mono counts toward Noto Sans Mono, and Noto Mono is no longer a family of its own. Replaces the 2026-09-26 acceptance."
+
+[A-278a5ccc53]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "noto_mono: fonts-noto-mono ships Noto Mono and Noto Sans Mono and counts toward Noto Sans Mono. Replaces the 2026-09-26 rejection."
+
+[A-6e5e32bb60]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "fredoka_one: Fontsource's fredoka-one is Fredoka One, an old name of Fredoka."
+
+[A-67c23b3fb2]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "fredoka_one: @fontsource/fredoka-one is Fredoka One, an old name of Fredoka."
+
+[A-67dc724d68]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "inconsolatago: the Nerd Fonts InconsolataGo folder patches InconsolataGo, a build of Inconsolata. Replaces the 2026-09-26 rejection."
+
+[A-5419df9fec]
+choice = "a"
+recommended = false
+ruling = "Accept: add the alias row"
+reason = "inconsolatago: ttf-inconsolata-go-nerd patches InconsolataGo, a build of Inconsolata. Replaces the 2026-09-26 rejection."
+
+[A-8c4087c674]
+choice = "b"
+recommended = false
+ruling = "Reject: the alias never maps to that family"
+reason = "inconsolatago: InconsolataGo is no longer a family of its own; ttf-inconsolata-go-nerd counts toward Inconsolata. Replaces the 2026-09-26 acceptance."

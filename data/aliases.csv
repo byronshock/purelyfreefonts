@@ -312,12 +312,6 @@ DroidSansM NFP,font-name,droid-sans-mono,build,nfp,nerd,2026-09-26,auto:nerd_unp
 ttf-droid,arch-pkg,droid-sans-mono,bundle,15,hand,2026-09-26,owner:2026-09-26
 eduvicwantarrows,gf-dir,edu-au-vic-wa-nt-arrows,rename,,gf_history,2026-09-26,auto:gf_history_rename
 Edu VIC WA NT Arrows,gf-family,edu-au-vic-wa-nt-arrows,rename,,gf_history,2026-09-26,auto:gf_history_rename
-@fontsource/edu-vic-wa-nt-hand,npm,edu-au-vic-wa-nt-hand,package,,fontsource_legacy,2026-09-26,owner:2026-09-26
-@fontsource-variable/edu-vic-wa-nt-hand,npm,edu-au-vic-wa-nt-hand,package,,fontsource_legacy,2026-09-26,owner:2026-09-26
-edu-vic-wa-nt-hand,fs-id,edu-au-vic-wa-nt-hand,rename,,fontsource_legacy,2026-09-26,owner:2026-09-26
-@fontsource/edu-vic-wa-nt-hand-pre,npm,edu-au-vic-wa-nt-pre,package,,fontsource_legacy,2026-09-26,owner:2026-09-26
-@fontsource-variable/edu-vic-wa-nt-hand-pre,npm,edu-au-vic-wa-nt-pre,package,,fontsource_legacy,2026-09-26,owner:2026-09-26
-edu-vic-wa-nt-hand-pre,fs-id,edu-au-vic-wa-nt-pre,rename,,fontsource_legacy,2026-09-26,owner:2026-09-26
 EnvyCodeR Nerd Font,font-name,envy-code-r,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 EnvyCodeR Nerd Font Mono,font-name,envy-code-r,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 EnvyCodeR Nerd Font Propo,font-name,envy-code-r,build,propo,nerd,2026-09-26,auto:nerd_unpatched
@@ -373,6 +367,9 @@ ttf-fira-sans,arch-pkg,fira-sans,bundle,3,hand,2026-09-26,owner:2026-09-26
 Fira Code,font-name,fira-sans,distinct,sibling,rule:sibling,2026-09-26,auto:sibling
 otf-fira-sans,arch-pkg,fira-sans-condensed,bundle,3,hand,2026-09-26,owner:2026-09-26
 ttf-fira-sans,arch-pkg,fira-sans-condensed,bundle,3,hand,2026-09-26,owner:2026-09-26
+@fontsource/fredoka-one,npm,fredoka,package,,fontsource_legacy,2026-09-28,owner:2026-09-28
+Fredoka One,font-name,fredoka,rename,,hand,2026-09-28,owner:2026-09-28
+fredoka-one,fs-id,fredoka,rename,,fontsource_legacy,2026-09-28,owner:2026-09-28
 vercel/geist-font/geist-font.zip,gh-asset,geist,bundle,,github_repos,2026-09-26,owner:2026-09-26
 vercel/geist-font/Geist.Sans.zip,gh-asset,geist,package,,github_repos,2026-09-26,owner:2026-09-26
 vercel/geist-font/Geist.zip,gh-asset,geist,package,,github_repos,2026-09-26,owner:2026-09-26
@@ -595,15 +592,23 @@ IBM/plex/TrueType.zip,gh-asset,ibm-plex-serif,bundle,,github_repos,2026-09-26,ow
 IBM/plex/Web.zip,gh-asset,ibm-plex-serif,bundle,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/IBM-Plex-Serif.zip,gh-asset,ibm-plex-serif,package,,github_repos,2026-09-26,owner:2026-09-26
 IBM/plex/plex-serif-variable.zip,gh-asset,ibm-plex-serif,package,,github_repos,2026-09-26,owner:2026-09-26
+ttf-inconsolata-go-nerd,arch-pkg,inconsolata,build,nerd,distro+oldlib,2026-09-28,owner:2026-09-28
+font-inconsolata-go-nerd-font,brew-cask,inconsolata,build,nerd,hand,2026-09-28,owner:2026-09-28
+InconsolataGo,font-name,inconsolata,build,,hand,2026-09-28,owner:2026-09-28
+InconsolataGo Nerd Font,font-name,inconsolata,build,nerd,nerd,2026-09-26,owner:2026-09-28
+InconsolataGo Nerd Font Mono,font-name,inconsolata,build,nfm,nerd,2026-09-26,owner:2026-09-28
+InconsolataGo Nerd Font Propo,font-name,inconsolata,build,propo,nerd,2026-09-26,owner:2026-09-28
+InconsolataGo NF,font-name,inconsolata,build,nf,nerd,2026-09-26,owner:2026-09-28
+InconsolataGo NFM,font-name,inconsolata,build,nfm,nerd,2026-09-26,owner:2026-09-28
+InconsolataGo NFP,font-name,inconsolata,build,nfp,nerd,2026-09-26,owner:2026-09-28
 Inconsolata Nerd Font,font-name,inconsolata,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 Inconsolata Nerd Font Mono,font-name,inconsolata,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 Inconsolata Nerd Font Propo,font-name,inconsolata,build,propo,nerd,2026-09-26,auto:nerd_unpatched
 Inconsolata NF,font-name,inconsolata,build,nf,nerd,2026-09-26,auto:nerd_unpatched
 Inconsolata NFM,font-name,inconsolata,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 Inconsolata NFP,font-name,inconsolata,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
-ttf-inconsolata-go-nerd,arch-pkg,inconsolata,distinct,rejected,oldlib,2026-09-26,owner:2026-09-26
+InconsolataGo,nerd-folder,inconsolata,build,nerd,oldlib,2026-09-28,owner:2026-09-28
 ttf-inconsolata-lgc-nerd,arch-pkg,inconsolata,distinct,rejected,oldlib,2026-09-26,owner:2026-09-26
-InconsolataGo,nerd-folder,inconsolata,distinct,rejected,oldlib,2026-09-26,owner:2026-09-26
 InconsolataLGC,nerd-folder,inconsolata,distinct,rejected,oldlib,2026-09-26,owner:2026-09-26
 ttf-inconsolata-lgc-nerd,arch-pkg,inconsolata-lgc,build,nerd,distro,2026-09-26,owner:2026-09-26
 Inconsolata LGC Nerd Font,font-name,inconsolata-lgc,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
@@ -612,13 +617,6 @@ Inconsolata LGC Nerd Font Propo,font-name,inconsolata-lgc,build,propo,nerd,2026-
 Inconsolata LGC NF,font-name,inconsolata-lgc,build,nf,nerd,2026-09-26,auto:nerd_unpatched
 Inconsolata LGC NFM,font-name,inconsolata-lgc,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 Inconsolata LGC NFP,font-name,inconsolata-lgc,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
-ttf-inconsolata-go-nerd,arch-pkg,inconsolatago,build,nerd,distro,2026-09-26,owner:2026-09-26
-InconsolataGo Nerd Font,font-name,inconsolatago,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
-InconsolataGo Nerd Font Mono,font-name,inconsolatago,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
-InconsolataGo Nerd Font Propo,font-name,inconsolatago,build,propo,nerd,2026-09-26,auto:nerd_unpatched
-InconsolataGo NF,font-name,inconsolatago,build,nf,nerd,2026-09-26,auto:nerd_unpatched
-InconsolataGo NFM,font-name,inconsolatago,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
-InconsolataGo NFP,font-name,inconsolatago,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
 IntoneMono,font-name,intel-one-mono,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 IntoneMono Nerd Font,font-name,intel-one-mono,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 IntoneMono Nerd Font Mono,font-name,intel-one-mono,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
@@ -1138,6 +1136,7 @@ JetBrainsMono NF,font-name,jetbrains-mono,build,nf,nerd,2026-09-26,auto:nerd_unp
 JetBrainsMono NFM,font-name,jetbrains-mono,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 JetBrainsMono NFP,font-name,jetbrains-mono,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
 JetBrains Mono NL,font-name,jetbrains-mono,build,nl,name_tables,2026-09-26,owner:2026-09-26
+JetBrainsMonoNL Nerd Font,font-name,jetbrains-mono,build,nerd,hand,2026-09-26,owner:2026-09-26
 JetBrains/JetBrainsMono/JetBrains.Mono.zip,gh-asset,jetbrains-mono,package,,github_repos,2026-09-26,owner:2026-09-26
 JetBrains/JetBrainsMono/JetBrainsMono.zip,gh-asset,jetbrains-mono,package,,github_repos,2026-09-26,owner:2026-09-26
 font-juisee-nf,brew-cask,juisee,build,nf,hand,2026-09-26,owner:2026-09-26
@@ -1410,6 +1409,7 @@ MesloLG Nerd Font Propo,font-name,meslo-lg,build,propo,nerd,2026-09-26,auto:nerd
 MesloLG NF,font-name,meslo-lg,build,nf,nerd,2026-09-26,auto:nerd_unpatched
 MesloLG NFM,font-name,meslo-lg,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 MesloLG NFP,font-name,meslo-lg,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
+MesloLGS NF,font-name,meslo-lg,build,nf,hand,2026-09-26,owner:2026-09-26
 github/mona-sans/fonts-mona-sans_all.deb,gh-asset,mona-sans,package,,github_repos,2026-09-26,owner:2026-09-26
 github/mona-sans/Mona.Sans.zip,gh-asset,mona-sans,package,,github_repos,2026-09-26,owner:2026-09-26
 github/mona-sans/MonaSans.zip,gh-asset,mona-sans,package,,github_repos,2026-09-26,owner:2026-09-26
@@ -1465,6 +1465,7 @@ githubnext/monaspace/monaspace-webfont-nerdfonts.zip,gh-asset,monaspace-krypton,
 githubnext/monaspace/monaspace-webfont-static.zip,gh-asset,monaspace-krypton,bundle,,github_repos,2026-09-26,owner:2026-09-26
 githubnext/monaspace/monaspace-webfont-variable.zip,gh-asset,monaspace-krypton,bundle,,github_repos,2026-09-26,owner:2026-09-26
 Monaspace,nerd-folder,monaspace-krypton,bundle,5,hand,2026-09-26,owner:2026-09-26
+MonaspiceNe Nerd Font,font-name,monaspace-neon,build,nerd,hand,2026-09-26,owner:2026-09-26
 otf-monaspace,arch-pkg,monaspace-neon,bundle,5,hand,2026-09-26,owner:2026-09-26
 otf-monaspace-nerd,arch-pkg,monaspace-neon,bundle,5,hand,2026-09-26,owner:2026-09-26
 font-monaspace,brew-cask,monaspace-neon,bundle,5,hand,2026-09-26,owner:2026-09-26
@@ -1576,17 +1577,6 @@ muli,gf-dir,mulish,rename,,gf_history,2026-09-26,auto:gf_history_rename
 Muli,gf-family,mulish,rename,,gf_history,2026-09-26,auto:gf_history_rename
 NewCMMath,font-name,newcomputermodernmath,distinct,rejected,name_tables,2026-09-26,owner:2026-09-26
 NewCMSansMath,font-name,newcomputermodernsansmath,distinct,rejected,name_tables,2026-09-26,owner:2026-09-26
-ttf-noto-nerd,arch-pkg,noto-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
-font-noto-nerd-font,brew-cask,noto-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
-Noto Nerd Font,font-name,noto-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
-Noto Nerd Font Mono,font-name,noto-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
-Noto Nerd Font Propo,font-name,noto-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
-Noto NF,font-name,noto-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
-Noto NFM,font-name,noto-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
-Noto NFP,font-name,noto-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
-Noto,nerd-folder,noto-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
-font-noto-mono,brew-cask,noto-mono,package,,hand,2026-09-26,owner:2026-09-26
-fonts-noto-mono,deb-pkg,noto-mono,package,,distro,2026-09-26,owner:2026-09-26
 Noto Sans Condensed,font-name,noto-sans,build,static,name_tables,2026-09-26,owner:2026-09-26
 Noto Sans ExtraCondensed,font-name,noto-sans,build,static,name_tables,2026-09-26,owner:2026-09-26
 Noto Sans SemiCondensed,font-name,noto-sans,build,static,name_tables,2026-09-26,owner:2026-09-26
@@ -1629,7 +1619,10 @@ Noto NF,font-name,noto-sans-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
 Noto NFM,font-name,noto-sans-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
 Noto NFP,font-name,noto-sans-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
 Noto,nerd-folder,noto-sans-mono,bundle,4,hand,2026-09-26,owner:2026-09-26
-fonts-noto-mono,deb-pkg,noto-sans-mono,distinct,rejected,oldlib,2026-09-26,owner:2026-09-26
+font-noto-mono,brew-cask,noto-sans-mono,package,,hand,2026-09-28,owner:2026-09-28
+fonts-noto-mono,deb-pkg,noto-sans-mono,package,,distro+oldlib,2026-09-28,owner:2026-09-28
+Noto Mono,font-name,noto-sans-mono,rename,,hand,2026-09-28,owner:2026-09-28
+noto-mono,fs-id,noto-sans-mono,rename,,hand,2026-09-28,owner:2026-09-28
 noto-fonts,arch-pkg,noto-serif,bundle,226,hand,2026-09-26,owner:2026-09-26
 noto-fonts-extra,arch-pkg,noto-serif,bundle,84,hand,2026-09-26,owner:2026-09-26
 ttf-noto-nerd,arch-pkg,noto-serif,bundle,4,hand,2026-09-26,owner:2026-09-26

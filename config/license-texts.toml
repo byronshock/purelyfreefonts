@@ -1,0 +1,244 @@
+# License-text research for gate L3 (milestone-1 step 6b). Read by tff_catalog.license_l3.
+#
+# Owner ruling L3_32 (2026-09-26): Claude researches every family that fails the
+# automatic license check and brings the owner only genuine conflicts. This file
+# records what that research found for the technical failures, so the check reads
+# the right evidence. It never overrides a failure: every text is still matched,
+# every notice and name ID is still read for restrictions, and a changed text
+# fails again and goes back to the queue.
+#
+# [[family]]: one per researched family.
+#   family     family id (state/ids.json), listed once
+#   name       display name, for people
+#   reason     what the research found
+#   texts      upstream license files, tried before the sources' texts (pin a commit
+#              where the upstream has one)
+#   files      upstream font files, read before the sources' files
+#   mentions   license families (as license_l3.mentions names them: "Public-domain",
+#              "Apache", ...) that the family's notices and name IDs 13 and 14 may name
+#              besides its L2 license. Each must be the family of an allowed license.
+#
+# [[text]]: a license file that matches no canonical text in data/license-texts/
+# but holds the listed licenses; research read it word for word. It is matched
+# by the sha256 of its bytes, so any change to it fails the check again. Its
+# whole text, license bodies included, is read for restrictions and for other
+# licenses; only the word limits on notices are waived for it.
+#   sha256     of the file's bytes
+#   licenses   the SPDX ids it verifies
+#   url        where it was read
+#   reason     how it differs from the canonical texts
+#
+# Researched 2026-09-28; every URL below answered HTTP 200 that day.
+
+schema = 1
+
+# --- texts pointed at their upstream file ------------------------------------------------------
+
+[[family]]
+family = "courier-prime-code"
+name = "Courier Prime Code"
+texts = ["https://raw.githubusercontent.com/quoteunquoteapps/CourierPrimeCode/0fcb44c7bcb7e81079dfa9f0d5ac5a4b3e7bf853/LICENSE.md"]
+files = ["https://raw.githubusercontent.com/quoteunquoteapps/CourierPrimeCode/0fcb44c7bcb7e81079dfa9f0d5ac5a4b3e7bf853/ttf/Courier%20Prime%20Code.ttf"]
+reason = "The only text the sources gave was the OFL's web page (scripts.sil.org/OFL). The foundry's own repository has the OFL-1.1 text and the font files."
+
+[[family]]
+family = "courier-prime-sans"
+name = "Courier Prime Sans"
+texts = ["https://raw.githubusercontent.com/quoteunquoteapps/CourierPrimeSans/5740acaf752618ababc8d0499d225a7dcd3a54a9/LICENSE.md"]
+files = ["https://raw.githubusercontent.com/quoteunquoteapps/CourierPrimeSans/5740acaf752618ababc8d0499d225a7dcd3a54a9/ttf/Courier%20Prime%20Sans.ttf"]
+reason = "The only text the sources gave was the OFL's web page (scripts.sil.org/OFL). The foundry's own repository has the OFL-1.1 text and the font files."
+
+[[family]]
+family = "gentium"
+name = "Gentium"
+texts = ["https://raw.githubusercontent.com/silnrsi/font-gentium/4ca818136aface2214706a3ca95551af40786df4/OFL.txt"]
+reason = "The only text the sources gave was openfontlicense.org, a web page. SIL's repository has the OFL-1.1 text."
+
+[[family]]
+family = "juliamono"
+name = "JuliaMono"
+texts = ["https://raw.githubusercontent.com/cormullion/juliamono/0dfc749503778730d6af79183a17fcde668ae626/LICENSE"]
+reason = "The only text the sources gave was the OFL's web page (scripts.sil.org/OFL). The designer's repository has the OFL-1.1 text."
+
+[[family]]
+family = "league-mono"
+name = "League Mono"
+texts = ["https://raw.githubusercontent.com/theleagueof/league-mono/444f6c3a1eb9d0d5c00ecc0c3b07d21fdcd37a8a/OFL.md"]
+reason = "The sources gave the repository's older ofl.markdown (commit 7a3b0f7, also Fontsource's copy), which leaves out the OFL's definition of 'Reserved Font Name' (League Mono reserves no name). The repository's current OFL.md is the whole OFL-1.1 text."
+
+[[family]]
+family = "junicode"
+name = "Junicode"
+texts = ["https://raw.githubusercontent.com/psb1558/Junicode-font/6978714c2bb053861a68489c052b1c88e7596bfb/OFL.txt"]
+files = ["https://github.com/psb1558/Junicode-font/releases/download/v2.226/Junicode_2.226.zip#Junicode/TTF/Junicode-Regular.ttf"]
+reason = "The sources gave no license text and only the old Junicode 0.6.17 (github.com/Fromager/junicode), whose name ID 14 points at the GPL. Junicode 2 (github.com/psb1558/Junicode-font, release 2.226) is the current family, under OFL-1.1, and its files say so."
+
+[[family]]
+family = "go-mono"
+name = "Go Mono"
+texts = ["https://raw.githubusercontent.com/golang/image/b06f1de3f4900ff828b8f114c37eb9ea10dfed90/font/gofont/ttfs/README"]
+files = ["https://raw.githubusercontent.com/golang/image/b06f1de3f4900ff828b8f114c37eb9ea10dfed90/font/gofont/ttfs/Go-Mono.ttf"]
+reason = "The Go fonts' own folder in golang.org/x/image. Its README is the Go project's BSD-3-Clause license (text below). L2's BSD-3-Clause-Clear comes from Nerd Fonts' label alone; the text has no Clear patent clause, so L2 needs correcting to BSD-3-Clause."
+
+# The GUST Font License, from the steward (GUST, the Polish TeX Users Group). It is
+# LPPL-1.3c with a request that is "not legally required" (license_l3.GRANTS). No
+# commit-pinned copy exists; a changed text puts the families back in the queue.
+
+[[family]]
+family = "tex-gyre-adventor"
+name = "TeX Gyre Adventor"
+texts = ["https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"]
+reason = "The sources gave GUST's licenses web page. The GUST Font License text is on the same site."
+
+[[family]]
+family = "tex-gyre-bonum"
+name = "TeX Gyre Bonum"
+texts = ["https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"]
+reason = "The sources gave GUST's licenses web page. The GUST Font License text is on the same site."
+
+[[family]]
+family = "tex-gyre-chorus"
+name = "TeX Gyre Chorus"
+texts = ["https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"]
+reason = "The sources gave GUST's licenses web page. The GUST Font License text is on the same site."
+
+[[family]]
+family = "tex-gyre-cursor"
+name = "TeX Gyre Cursor"
+texts = ["https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"]
+reason = "The sources gave GUST's licenses web page. The GUST Font License text is on the same site."
+
+[[family]]
+family = "tex-gyre-heros"
+name = "TeX Gyre Heros"
+texts = ["https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"]
+reason = "The sources gave GUST's licenses web page. The GUST Font License text is on the same site."
+
+[[family]]
+family = "tex-gyre-pagella"
+name = "TeX Gyre Pagella"
+texts = ["https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"]
+reason = "The sources gave GUST's licenses web page. The GUST Font License text is on the same site."
+
+[[family]]
+family = "tex-gyre-schola"
+name = "TeX Gyre Schola"
+texts = ["https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"]
+reason = "The sources gave GUST's licenses web page. The GUST Font License text is on the same site."
+
+[[family]]
+family = "tex-gyre-termes"
+name = "TeX Gyre Termes"
+texts = ["https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"]
+reason = "The sources gave GUST's licenses web page. The GUST Font License text is on the same site."
+
+[[family]]
+family = "ibm-3270"
+name = "IBM 3270"
+texts = ["https://raw.githubusercontent.com/rbanffy/3270font/cd81d9c4a03b1916eced8841bdb8f560ca68da3d/LICENSE.txt"]
+reason = "The designer's repository; its LICENSE.txt is the same bytes Nerd Fonts ships (text below)."
+
+# --- families whose notices name a license that changes nothing ---------------------------------
+
+[[family]]
+family = "dejavu-sans"
+name = "DejaVu Sans"
+texts = ["https://raw.githubusercontent.com/dejavu-fonts/dejavu-fonts/9b5d1b2ffeec20c7b46aa89c0223d783c02762cf/LICENSE"]
+mentions = ["Public-domain"]
+reason = "DejaVu's LICENSE (text below) and name ID 13 say that DejaVu's own changes are in the public domain; that grants more, never less."
+
+[[family]]
+family = "dejavu-sans-mono"
+name = "DejaVu Sans Mono"
+texts = ["https://raw.githubusercontent.com/dejavu-fonts/dejavu-fonts/9b5d1b2ffeec20c7b46aa89c0223d783c02762cf/LICENSE"]
+mentions = ["Public-domain"]
+reason = "DejaVu's LICENSE (text below) and name ID 13 say that DejaVu's own changes are in the public domain; that grants more, never less."
+
+[[family]]
+family = "dejavu-serif"
+name = "DejaVu Serif"
+texts = ["https://raw.githubusercontent.com/dejavu-fonts/dejavu-fonts/9b5d1b2ffeec20c7b46aa89c0223d783c02762cf/LICENSE"]
+mentions = ["Public-domain"]
+reason = "DejaVu's LICENSE (text below) and name ID 13 say that DejaVu's own changes are in the public domain; that grants more, never less."
+
+[[family]]
+family = "dejavu-mono"
+name = "DejaVu Mono"
+texts = ["https://raw.githubusercontent.com/dejavu-fonts/dejavu-fonts/9b5d1b2ffeec20c7b46aa89c0223d783c02762cf/LICENSE"]
+mentions = ["Public-domain"]
+reason = "Fontsource's name for DejaVu Sans Mono. DejaVu's LICENSE (text below) and name ID 13 say that DejaVu's own changes are in the public domain; that grants more, never less."
+
+[[family]]
+family = "hack"
+name = "Hack"
+texts = ["https://raw.githubusercontent.com/source-foundry/Hack/a737c121cabb337fdfe655d8c7304729f351e30f/LICENSE.md"]
+mentions = ["Public-domain"]
+reason = "Hack's LICENSE.md (text below) and name ID 13 say that the DejaVu work Hack builds on was committed to the public domain; that grants more, never less."
+
+[[family]]
+family = "roboto-condensed"
+name = "Roboto Condensed"
+mentions = ["Apache"]
+reason = "Google Fonts lists it under OFL-1.1 (ofl/robotocondensed, OFL.txt, METADATA.pb license OFL), but its font file, v3.008, was built in July 2023 from googlefonts/roboto-classic at commit 8aa699a, while that repository was still under Apache-2.0; name IDs 13 and 14 kept that label. Upstream moved its sources to OFL-1.1 in January 2024 (commit bfc4c5e, 'Update license strings to OFL'). Both licenses are allowed, redistributable and without an attribution badge, so the label changes nothing."
+
+[[family]]
+family = "mountains-of-christmas"
+name = "Mountains of Christmas"
+mentions = ["OFL"]
+reason = "Google Fonts lists it under Apache-2.0 (apache/mountainsofchristmas, LICENSE.txt, METADATA.pb license APACHE2), while name IDs 13 and 14 of its only file, v1.003, name OFL-1.1. Both licenses are allowed, redistributable and without an attribution badge, so the label changes nothing."
+
+# --- researched texts --------------------------------------------------------------------------
+
+[[text]]
+sha256 = "ad0bc2ae83f6dbf6f3edde26752324260c2fbaf9cc021748d363a879dd5b749c"
+licenses = ["OFL-1.1"]
+url = "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/dynapuff/OFL.txt"
+reason = "DynaPuff's OFL.txt (the same bytes in google/fonts and in googlefonts/dynapuff at 0cc624e) is the OFL-1.1 text word for word, followed by GitHub's page footer pasted by mistake: 'Terms Privacy Security Status Docs Contact GitHub Pricing API Training Blog About'."
+
+[[text]]
+sha256 = "1f61bb7c790c59b4b0ecdf304628b94e42ae4c8020094a8c3da73381ab212623"
+licenses = ["MIT", "Bitstream-Vera"]
+url = "https://raw.githubusercontent.com/source-foundry/Hack/a737c121cabb337fdfe655d8c7304729f351e30f/LICENSE.md"
+reason = "Hack's LICENSE.md: three lines on who holds what (Hack's work under the MIT License, DejaVu's work in the public domain, Bitstream Vera under its license with the Reserved Font Names 'Bitstream' and 'Vera'), then the MIT License and the Bitstream Vera License, each word for word. Nerd Fonts ships the same bytes."
+
+[[text]]
+sha256 = "7a083b136e64d064794c3419751e5c7dd10d2f64c108fe5ba161eae5e5958a93"
+licenses = ["Bitstream-Vera"]
+url = "https://raw.githubusercontent.com/dejavu-fonts/dejavu-fonts/9b5d1b2ffeec20c7b46aa89c0223d783c02762cf/LICENSE"
+reason = "DejaVu's LICENSE (unchanged since commit 0eda8a3): 'DejaVu changes are in public domain', the Bitstream Vera license word for word, the Arev fonts license (the Bitstream Vera terms with Tavmjong Bah and 'Arev' in place of Bitstream and 'Vera'), and a section for the separate TeX Gyre DJV Math font (public-domain math extensions and the AMSFonts notice, which says it 'is not meant to restrict in any way the legitimate use of the fonts')."
+
+[[text]]
+sha256 = "dc5993069c09f002ea4b0280a0096bfbba14f1960a168fc6aab5a47fb1841788"
+licenses = ["MIT", "OFL-1.1"]
+url = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/src/unpatched-fonts/Monoid/LICENSE"
+reason = "'Monoid is dual licensed with MIT and OFL licenses. Pick one:)', then the MIT License and the OFL-1.1, each word for word; the same words as the License section of Monoid's own Readme.md (github.com/larsenwork/monoid, which has no separate license file)."
+
+[[text]]
+sha256 = "dc588a7ba9130043b67c2380cc03cc6644ed3557f6d5e8589b96acba1c64e343"
+licenses = ["BSD-3-Clause"]
+url = "https://raw.githubusercontent.com/golang/image/b06f1de3f4900ff828b8f114c37eb9ea10dfed90/font/gofont/ttfs/README"
+reason = "The Go fonts' README: 'licensed under the same open source license as the rest of the Go project's software', a line saying not to distribute or modify the font without agreeing to the license, then BSD-3-Clause with 'Google Inc.' in clause 3 (where SPDX's template has the holder's name) and the word 'DISCLAIMER:' before the disclaimer. Nerd Fonts ships the same bytes."
+
+[[text]]
+sha256 = "ef855fadca28e91a4123f7299bd79dcd78a7e19dfc364039790bb75bdedd515a"
+licenses = ["BSD-3-Clause"]
+url = "https://raw.githubusercontent.com/rbanffy/3270font/cd81d9c4a03b1916eced8841bdb8f560ca68da3d/LICENSE.txt"
+reason = "IBM 3270's LICENSE.txt: BSD-3-Clause with its holders named in clause 3, then notes that the Debian logo glyph (U+F100, present in 3.0.1) is under CC-BY-SA-3.0 or LGPL-3.0-or-later, that Ubuntu's logos are Canonical's trademarks, and that the FontForge source is optionally OFL-1.1. The logo's licenses stay a failure for the owner to rule on (gate L3)."
+
+[[text]]
+sha256 = "4e9720b2544d946737e7dfe0027a62c23c7247f0144f08bc437cdcc2e6a7d828"
+licenses = ["OFL-1.1"]
+url = "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/frankruhllibre/OFL.txt"
+reason = "Frank Ruhl Libre's OFL.txt is the OFL-1.1 text word for word, followed by GitHub's page footer pasted by mistake: '(c) 2022 GitHub, Inc. Terms Privacy Security Status Docs Contact GitHub Pricing API Training Blog About'."
+
+[[text]]
+sha256 = "2d83a49d05906b5e23285168e72c0d019fc15e3ad110376f640feeeda34c27d1"
+licenses = ["OFL-1.1"]
+url = "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/hennypenny/OFL.txt"
+reason = "Henny Penny's OFL.txt is the OFL-1.1 text word for word, followed by the Google Code page it was copied from ('Hide details, Change log, 19ca6107e016 by Dave Crossland on Dec 5, 2011 ... View raw file')."
+
+[[text]]
+sha256 = "93f60741563b4f51f2fcdb207fde72b2b23292a47022c729aecd998b360d8038"
+licenses = ["OFL-1.1"]
+url = "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/bilboswashcaps/OFL.txt"
+reason = "Bilbo Swash Caps' OFL.txt is titled 'Version 1.1 - 1 February 2007', and one sentence of its preamble (the OFL's non-binding introduction) keeps the OFL-1.0 wording, 'provided that the font names of derivative works are changed', where OFL-1.1 says 'provided that any reserved names are not used by derivative works'. Every definition, permission and condition is the OFL-1.1 text word for word."

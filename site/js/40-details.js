@@ -359,6 +359,8 @@ const Details = (() => {
     );
   };
 
+  // A link's note (link.note: why an archived mirror is the official download, say) follows
+  // the pairs as plain text.
   const linksSection = (font) => {
     const { primary, designer } = font.links;
     return section(
@@ -368,6 +370,7 @@ const Details = (() => {
         ['Official download', link(primary.url, destination(primary))],
         designer && ['Designer', link(designer.url, destination(designer))],
       ]),
+      primary.note && el('p', { class: 'details-link-note', text: primary.note }),
     );
   };
 

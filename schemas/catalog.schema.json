@@ -531,6 +531,10 @@
                   },
                   "label": {
                     "$ref": "#/$defs/text"
+                  },
+                  "note": {
+                    "description": "What a visitor should know before following the link (an override's primary_note), shown under it in the font's details.",
+                    "$ref": "#/$defs/text"
                   }
                 }
               },

@@ -29,9 +29,10 @@
 #   primary_label, designer_label
 #                   optional destination names; by default the site derives one
 #                   ("GitHub: rsms/inter", or the host name)
+#   primary_note    optional sentence the font's details show under the primary link
 #   reason          why the override is needed
 #
-# All URLs below answered HTTP 200 on 2026-09-25 (the proposals at the end on 2026-09-26).
+# All URLs below answered HTTP 200 on 2026-09-25 (the researched ones at the end on 2026-09-26).
 
 schema = 1
 
@@ -171,10 +172,11 @@ primary = "https://github.com/adobe-fonts/source-code-pro/releases"
 designer = "https://adobe-fonts.github.io/source-code-pro/"
 reason = "Adobe's releases carry the desktop and web builds; Google Fonts serves its own build. Adobe's project page links only the repository, so the releases page is the primary."
 
-# --- Proposals after research (2026-09-26), waiting for the owner ---------------------------------
+# --- Researched on 2026-09-26, approved by the owner on 2026-09-28 --------------------------------
 # Researched because no two sources agree on a link: Metropolis and Noto Mono (the owner
 # asked for research at gate K), ProFont and Terminus (no candidate at all). Noto Mono
-# gets no entry: Google no longer distributes it (see the lead's owner questions).
+# gets no entry: Google no longer distributes it, and the owner folded it into Noto Sans
+# Mono as its superseded name (data/reviews/aliases/2026-09-28.toml, noto_mono).
 
 # --- K-metropolis-page ---------------------------------------------------------------------------
 
@@ -184,6 +186,7 @@ name = "Metropolis"
 question = "K-metropolis-page"
 primary = "https://github.com/dw5/Metropolis"
 primary_label = "GitHub: dw5/Metropolis (archived mirror)"
+primary_note = "Metropolis has no official download any more: its designer, Chris Simpson, made his repository private in 2020 after a dispute over the name and said anyone may fork it. This is an archived, unchanged copy of his last version."
 reason = "No official page is left: the designer, Chris Simpson, made his repository private in October 2020 after a dispute over the name, and wrote that anyone may fork it. dw5/Metropolis is an archived copy of its last commit (June 2020, Unlicense). It has no releases, so the link is the repository itself."
 
 # --- K-profont-page ------------------------------------------------------------------------------

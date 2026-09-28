@@ -8,8 +8,9 @@ original relative order, flagged ``gate_held`` (D14). Everything else keeps its
 position, so ``order`` is always an exact integer 1..n.
 """
 
+import bisect
 import math
-from collections.abc import Mapping, Sequence
+from collections.abc import Collection, Mapping, Sequence
 from dataclasses import dataclass
 
 
@@ -129,14 +130,38 @@ def band_shift(placed: Mapping[str, Placement], exact_top: int) -> int:
     return max(0, exact_top + 1 - min(banded)) if banded else 0
 
 
+def held_places(placed: Mapping[str, Placement], held: Collection[str]) -> list[int]:
+    """The exact ranks of the ``held`` fonts (sorted): catalog members held back from the
+    catalog, for want of an accepted download link (gate K)."""
+    return sorted(p.order for f, p in placed.items() if f in held and p.rank is not None)
+
+
+def close_up(held: Sequence[int], place: int) -> int:
+    """``place`` once the exact ranks in ``held`` (sorted) leave the list: each one before it
+    moves it up one (owner ruling of 2026-09-28, rank_holes). Never below 1."""
+    return place - bisect.bisect_left(held, place)
+
+
 def published_orders(
-    placements: Mapping[str, Mapping[str, Placement]], exact_top: int
+    placements: Mapping[str, Mapping[str, Placement]],
+    exact_top: int,
+    held: Collection[str] = frozenset(),
 ) -> dict[str, dict[str, int]]:
     """{rank key: {font: order}} as the catalog publishes them (``band_shift`` applied): the
     orders stage "export" writes, stage "review" compares and stage "membership" enters and
-    leaves the top-100 lists by, so no font holds a top-100 place without an exact rank."""
+    leaves the top-100 lists by, so no font holds a top-100 place without an exact rank.
+
+    ``held`` fonts (members held back until gate K accepts a link) are left out, and the
+    exact ranks after each close up (``close_up``), as stage "export" publishes them;
+    places past the exact top keep their order. Membership passes none: it decides before
+    any link is known."""
     out = {}
     for key, ps in sorted(placements.items()):
         shift = band_shift(ps, exact_top)
-        out[key] = {f: p.order + (shift if p.rank is None else 0) for f, p in ps.items()}
+        gone = held_places(ps, held)
+        out[key] = {
+            f: p.order + shift if p.rank is None else close_up(gone, p.order)
+            for f, p in ps.items()
+            if f not in held
+        }
     return out

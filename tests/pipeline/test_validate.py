@@ -901,18 +901,21 @@ def test_the_committed_checks_pass_on_a_clean_build(ctx: StageContext) -> None:
     assert validate.cmd_committed(ctx) == 0
 
 
-def test_a_hole_in_the_exact_ranks_fails(ctx: StageContext) -> None:
+def test_a_hole_in_the_exact_ranks_is_a_review_flag_not_a_failure(ctx: StageContext) -> None:
+    # Owner ruling of 2026-09-28 (rank_holes): export closes the ranks up over a held-back
+    # member, so a gap left in catalog.json is for review (review.rank_gap_flags).
+    from tff_catalog import review
+
     catalog = ctx.paths.build / export.CATALOG_FILE
     doc = jsonio.load(catalog)
     ranked = [f for f in doc["fonts"] if f["ranks"]["overall"]["rank"] is not None]
     assert len(ranked) >= 2
     doc["fonts"] = [f for f in doc["fonts"] if f["ranks"]["overall"]["rank"] != 1]
     jsonio.dump(doc, catalog)
-    found = [
-        f for f in validate.hard_checks(ctx, validate.COMMITTED_CHECKS) if f.check == "rank_gaps"
-    ]
-    assert [f.message.split(" (")[0] for f in found] == ["overall: exact ranks 1 are missing"]
-    assert validate.cmd_committed(ctx) == 1
+    assert "rank_gaps" not in {name for name, _ in validate.COMMITTED_CHECKS + validate.CHECKS}
+    assert [str(f) for f in validate.hard_checks(ctx, validate.COMMITTED_CHECKS)] == []
+    flags = [f for f in review.rank_gap_flags(catalog) if f.rank_key == "overall"]
+    assert [f.message.split(" are")[0] for f in flags] == ["exact ranks 1"]
 
 
 def test_a_ranks_only_source_holds_nothing_else_in_any_committed_file() -> None:

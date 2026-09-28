@@ -4,6 +4,11 @@
 # are answered here. The distro rows researched on 2026-09-26 (the Arch and Debian file lists, cited
 # in each reason and in ../unmatched/2026-09-26.toml) are answered below; the rest still wait (A_sources).
 # The hand rows the rulings add (bundles, build folds) are in data/aliases.csv (source hand).
+# Corrected on 2026-09-28: six tables were removed (A-2edbc828e4, A-6a688f3391, A-74cad7e236,
+# A-781cebfa94, A-9c9b8cdb08, A-c2d397270f: Fontsource's edu-vic-wa-nt-hand and -hand-pre merged
+# into Edu AU VIC WA NT Hand and Pre). The owner never ruled on them, and A_sources' rule for
+# retired Fontsource names does not cover them: both names are live families on Google and
+# Fontsource. Their rows left data/aliases.csv, so gate A asks them again.
 
 [A_sources_github]
 choice = "a"
@@ -45,12 +50,6 @@ family_id = "ostrich-sans"
 relation = "build"
 ruling = "Accept: add the alias row"
 reason = "A retired Fontsource name for a width or style cut of the family (A_sources: League and Ostrich builds)."
-
-[A-2edbc828e4]
-choice = "a"
-recommended = false
-ruling = "Accept: add the alias row"
-reason = "A retired Fontsource id that Fontsource's replacements table maps to the renamed Edu AU family (A_sources: retired Fontsource names). Not one of A_cleanup's hand rows. Both ids are live again on Fontsource and Google, so the owner is asked whether to keep this merge."
 
 [A-396337e4af]
 choice = "a"
@@ -137,23 +136,11 @@ recommended = true
 ruling = "Accept: add the alias row"
 reason = "Finlandica split into Finlandica Text and Headline: related (A_sources)."
 
-[A-6a688f3391]
-choice = "a"
-recommended = false
-ruling = "Accept: add the alias row"
-reason = "A retired Fontsource id that Fontsource's replacements table maps to the renamed Edu AU family (A_sources: retired Fontsource names). Not one of A_cleanup's hand rows. Both ids are live again on Fontsource and Google, so the owner is asked whether to keep this merge."
-
 [A-72d95a2700]
 choice = "a"
 recommended = false
 ruling = "Accept: add the alias row"
 reason = "Inter Display is carried by Inter's own files (A_structure: width names carried by the parent's files fold)."
-
-[A-74cad7e236]
-choice = "a"
-recommended = false
-ruling = "Accept: add the alias row"
-reason = "A retired Fontsource id that Fontsource's replacements table maps to the renamed Edu AU family (A_sources: retired Fontsource names). Not one of A_cleanup's hand rows. Both ids are live again on Fontsource and Google, so the owner is asked whether to keep this merge."
 
 [A-7584b26688]
 choice = "a"
@@ -162,12 +149,6 @@ family_id = "ostrich-sans"
 relation = "build"
 ruling = "Accept: add the alias row"
 reason = "A retired Fontsource name for a width or style cut of the family (A_sources: League and Ostrich builds)."
-
-[A-781cebfa94]
-choice = "a"
-recommended = false
-ruling = "Accept: add the alias row"
-reason = "A retired Fontsource id that Fontsource's replacements table maps to the renamed Edu AU family (A_sources: retired Fontsource names). Not one of A_cleanup's hand rows. Both ids are live again on Fontsource and Google, so the owner is asked whether to keep this merge."
 
 [A-7c0cd170ac]
 choice = "a"
@@ -182,12 +163,6 @@ choice = "a"
 recommended = true
 ruling = "Accept: add the alias row"
 reason = "Finlandica split into Finlandica Text and Headline: related (A_sources)."
-
-[A-9c9b8cdb08]
-choice = "a"
-recommended = false
-ruling = "Accept: add the alias row"
-reason = "A retired Fontsource id that Fontsource's replacements table maps to the renamed Edu AU family (A_sources: retired Fontsource names). Not one of A_cleanup's hand rows. Both ids are live again on Fontsource and Google, so the owner is asked whether to keep this merge."
 
 [A-a409a3f536]
 choice = "a"
@@ -224,12 +199,6 @@ choice = "a"
 recommended = true
 ruling = "Accept: add the alias row"
 reason = "ProggyClean is ProggyCleanTT (A_cleanup)."
-
-[A-c2d397270f]
-choice = "a"
-recommended = false
-ruling = "Accept: add the alias row"
-reason = "A retired Fontsource id that Fontsource's replacements table maps to the renamed Edu AU family (A_sources: retired Fontsource names). Not one of A_cleanup's hand rows. Both ids are live again on Fontsource and Google, so the owner is asked whether to keep this merge."
 
 [A-c33dbabcc0]
 choice = "a"
@@ -345,8 +314,8 @@ reason = "Claude's recommendation. Applied as hand rows in data/aliases.csv and 
 
 [A_cleanup]
 value = "accept_all"
-ruling = "Bundle rows for Noto, iA Writer, MPlus and Monaspace; ProggyCleanTT is ProggyClean; oldlib's wrong merges, 5 noisy name_tables rows and the deb-src rows of 31 non-font sources are rejected; ttf-dejavu-nerd is DejaVu Sans Mono; fonts-noto-mono is Noto Mono; hand rows for the Monocraft Nerd builds and 6 Edu families under old names."
-reason = "Claude's recommendation, as summarised to the owner in chat. Applied: the bundle rows and ProggyClean in data/aliases.csv; the old run's merges (Cascadia Mono, InconsolataGo and LGC, Ubuntu Condensed, the Noto Sans JP/KR/SC/TC casks, Source Han Sans and Noto Sans CJK JP) and the five name_tables rows as rulings of this file; the 31 non-font Debian sources as NON_FONT_SOURCES in aliases/miners/distro.py (26 programs whose own section is not fonts, and 5 font tools filed under fonts that ship no font: font-manager, font-v, fontconfig, fontforge, ttfautohint), with the deb-src rows of ibm-3270 and powerline also rejected here; the Monocraft hand rows (brew-cask font-monocraft-nerd-font and the name Monocraft with Nerd glyphs, build nerd) in data/aliases.csv. Not applied: the 6 Edu hand rows. Their premise, that Google serves Edu NSW ACT Foundation as Edu NSW ACT Cursive, is wrong: Google and Fontsource list the 2022 families (Foundation, Beginner) and the 2025 ones (Cursive, Hand, Hand Pre) as separate live families with their own popularity and subsets, so the rows would merge two live families. That goes back to the owner. The Nerd sub-family names of integration A's list (MesloLGS NF, JetBrainsMonoNL Nerd Font, MonaspiceNe Nerd Font) were not in the summary the owner saw, and no source key needs them today."
+ruling = "Bundle rows for Noto, iA Writer, MPlus and Monaspace; ProggyCleanTT is ProggyClean; oldlib's wrong merges, 5 noisy name_tables rows and the deb-src rows of 31 non-font sources are rejected; ttf-dejavu-nerd is DejaVu Sans Mono; fonts-noto-mono is Noto Mono; hand rows for the Monocraft Nerd builds, 6 Edu families under old names and the Nerd sub-family names fonts.json does not give (MesloLGS NF, JetBrainsMonoNL Nerd Font, MonaspiceNe Nerd Font)."
+reason = "Claude's recommendation, as summarised to the owner in chat. Applied: the bundle rows and ProggyClean in data/aliases.csv; the old run's merges (Cascadia Mono, InconsolataGo and LGC, Ubuntu Condensed, the Noto Sans JP/KR/SC/TC casks, Source Han Sans and Noto Sans CJK JP) and the five name_tables rows as rulings of this file; the 31 non-font Debian sources as NON_FONT_SOURCES in aliases/miners/distro.py (26 programs whose own section is not fonts, and 5 font tools filed under fonts that ship no font: font-manager, font-v, fontconfig, fontforge, ttfautohint), with the deb-src rows of ibm-3270 and powerline also rejected here; the Monocraft hand rows (brew-cask font-monocraft-nerd-font and the name Monocraft with Nerd glyphs, build nerd) in data/aliases.csv. Not applied: the 6 Edu hand rows. Their premise, that Google serves Edu NSW ACT Foundation as Edu NSW ACT Cursive, is wrong: Google and Fontsource list the 2022 families (Foundation, Beginner) and the 2025 ones (Cursive, Hand, Hand Pre) as separate live families with their own popularity and subsets, so the rows would merge two live families. That goes back to the owner. The Nerd sub-family names are hand rows in data/aliases.csv (font-name, build): MesloLGS NF to Meslo LG (nf), JetBrainsMonoNL Nerd Font to JetBrains Mono (nerd), MonaspiceNe Nerd Font to Monaspace Neon (nerd). The chat summary had left them out, but the question the owner approved (integration A, the gate A hand-row question) named them; no source key uses them yet. Corrected on 2026-09-28: the premise that InconsolataGo is a separate fork was wrong (it is Raph Levien's own straight-quote Inconsolata), and fonts-noto-mono no longer maps to Noto Mono; the owner's rulings of 2026-09-28 (../aliases/2026-09-28.toml: inconsolatago, noto_mono) replace those parts. The 6 Edu hand rows go back to the owner as a question of 2026-09-28, with the six Fontsource Edu merges removed from this file."
 
 [A_sources]
 value = "accept_all"

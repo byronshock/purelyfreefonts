@@ -18,7 +18,7 @@ import httpx
 import pytest
 from tests.helpers import ROOT
 
-from tff_catalog import jsonio, links, records, reviews, stageio
+from tff_catalog import export, jsonio, links, records, reviews, stageio
 from tff_catalog.config_model import Config, ConfigError
 from tff_catalog.fetch import Fetcher
 from tff_catalog.links import Link, Links, NoAcceptedLink, Target
@@ -489,11 +489,14 @@ def test_committed_overrides_cover_the_gate_k_families() -> None:
         "K-jetbrains-mono",
         "K-ibm-plex",
         "K-adobe-source",
-        # Proposals after research (2026-09-26), each a new question for the owner.
+        # Researched on 2026-09-26, each under a new question; approved on 2026-09-28.
         "K-metropolis-page",
         "K-profont-page",
         "K-terminus-page",
     }
+    # The archived mirror says why it is the official link (owner ruling of 2026-09-28).
+    assert "2020" in by_family["metropolis"].primary_note
+    assert "archived mirror" in by_family["metropolis"].primary_label
     for o in overrides:
         assert o.choice == "a"
         assert o.primary, o.family
@@ -548,6 +551,26 @@ def test_an_override_waits_for_the_owner(tmp_path: Path) -> None:
 
     write_ruling(paths, "2026-11-01", "K-inter", "b")  # a later ruling wins
     assert approved(paths) == {}
+
+
+def test_an_override_note_goes_with_its_primary_link(tmp_path: Path) -> None:
+    note = "The designer took the original down; this is an archived copy."
+    paths = write_overrides(
+        tmp_path,
+        INTER.replace(
+            'reason = "', f'primary_label = "Archive"\nprimary_note = "{note}"\nreason = "'
+        ),
+    )
+    write_ruling(paths, "2026-10-01", "K-inter", "a")
+    got = approved(paths)["inter"]
+    assert got.primary == Link("https://designer.example/inter/", "Archive", note)
+    assert got.designer == Link("https://github.com/owner/inter/releases")
+    assert export.link(got.primary) == {
+        "url": "https://designer.example/inter/",
+        "label": "Archive",
+        "note": note,
+    }
+    assert export.link(got.designer) == {"url": "https://github.com/owner/inter/releases"}
 
 
 def test_an_override_applies_only_with_its_own_choice(tmp_path: Path) -> None:

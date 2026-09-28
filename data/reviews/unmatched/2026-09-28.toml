@@ -1,0 +1,9 @@
+# Owner ruling of 2026-09-28 that changes a gate U hand row of 2026-09-26, given in chat after the
+# finish-gates-1 run. Ruled by the owner, Byron Shock; recorded by Claude from the lead's notes
+# (design/rulings-2026-09-26.toml, [links_research_2026-09-28] noto_mono). The gate A side is in
+# ../aliases/2026-09-28.toml; the rows are in data/aliases.csv.
+
+[U_noto_mono]
+value = "leave_out_superseded"
+ruling = "font-noto-mono counts toward Noto Sans Mono, replacing U_rules' row font-noto-mono -> Noto Mono. The Nerd Fonts Noto keys (ttf-noto-nerd, font-noto-nerd-font, the Noto folder and its font names) keep their bundle rows for Noto Sans, Noto Sans Mono and Noto Serif and lose the one for Noto Mono, which folds into Noto Sans Mono as its superseded name."
+reason = "Claude's recommendation (noto_mono): Noto Mono is left out as superseded by Noto Sans Mono."

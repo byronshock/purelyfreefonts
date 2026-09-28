@@ -847,6 +847,43 @@ def test_a_member_without_an_accepted_link_is_held_back(
     assert [str(f) for f in hard_checks(ctx)] == []
 
 
+def test_the_exact_ranks_close_up_over_a_held_back_member(tmp_path: Path) -> None:
+    # Owner ruling of 2026-09-28 (rank_holes): the fonts below a held-back member move up one
+    # place in every view, so the published exact ranks run 1..N; bands keep their orders.
+    full = fonts(run_all(make_build(tmp_path / "full"))[export.CATALOG_FILE])
+    ctx = make_build(tmp_path / "held")
+    stageio.dump_stage(ctx.paths, "links", {k: v for k, v in links().items() if k != "gamma-serif"})
+    held = fonts(run_all(ctx)[export.CATALOG_FILE])
+    gone = full["gamma-serif"]["ranks"]
+    assert any(e["rank"] is not None for e in gone.values())  # it had exact places to leave
+    for fid, font in held.items():
+        for key, entry in font["ranks"].items():
+            before, hole = full[fid]["ranks"][key], gone.get(key, {}).get("rank")
+            if before["rank"] is None:
+                assert entry == before, (fid, key)
+                continue
+            up = 1 if hole is not None and hole < before["rank"] else 0
+            assert entry["rank"] == entry["order"] == before["rank"] - up, (fid, key)
+            assert entry["range"][0] <= entry["rank"] <= entry["range"][1] or up == 0, (fid, key)
+    from tff_catalog.review import export_orders, rank_holes
+
+    # No new gap: the synthetic views' own gaps (fonts ranked outside the catalog) just move.
+    before = rank_holes(jsonio.load(tmp_path / "full" / "repo" / "build" / export.CATALOG_FILE))
+    after = rank_holes(jsonio.load(ctx.paths.build / export.CATALOG_FILE))
+    for key in sorted(set(before) | set(after)):
+        hole = gone.get(key, {}).get("rank")
+        moved = [h - (1 if hole is not None and hole < h else 0) for h in before.get(key, [])]
+        assert after.get(key, []) == moved, key
+    # Stage "review" takes the published orders export wrote (``published_ranks``) only when
+    # every one matches its own, so it must close up the same way.
+    placements = stageio.load_stage(ctx.paths, "ranks")
+    exact_top = load_config(Paths.for_root(ROOT)).ranking.display.exact_top
+    now = export_orders(placements, exact_top, {"gamma-serif"})
+    written = export.published_ranks(jsonio.load(ctx.paths.build / export.CATALOG_FILE))
+    assert all(now[k][f] == o for k, v in written.items() for f, o in v.items())
+    assert all("gamma-serif" not in v for v in now.values())
+
+
 def test_a_member_without_stage_data_fails_the_export(tmp_path: Path) -> None:
     ctx = make_build(tmp_path)
     facts = stageio.load_stage(ctx.paths, "facts")

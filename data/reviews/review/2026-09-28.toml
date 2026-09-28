@@ -1,0 +1,9 @@
+# Owner ruling of 2026-09-28, given in chat after the finish-gates-1 run. Ruled by the owner,
+# Byron Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml,
+# [links_research_2026-09-28] rank_holes). Also in AUTHORITY.md and the methodology (sections 7
+# and 9). The owner took Claude's recommendation, so the reason is Claude's summary.
+
+[rank_holes]
+value = "renumber_published"
+ruling = "When a catalog member is held back (no accepted or working download link), the published exact ranks close up among the published fonts in every view; review.md names the held-back font and its places; validate's rank_gaps check becomes a review flag, not a hard failure."
+reason = "Claude's recommendation: it matches how the site already numbers rows by position (M2-D2), and a held-back font no longer blocks the monthly refresh. Applied in export (engine.order.close_up), review (held-back places, rank_gap flags) and validate (rank_gaps removed from the hard checks)."

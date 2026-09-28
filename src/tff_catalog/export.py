@@ -30,7 +30,12 @@ How the per-font fields are made (``docs/catalog-schema.md`` says it for readers
   sources agree or the owner approves it (gate K), and every catalog font
   needs a primary link (milestone-1 step 14), so a member without one is held
   back (``Inputs.unlinked``, logged and named in ``review.md``) until gate K
-  settles it, the way a font waiting on its license is.
+  settles it, the way a font waiting on its license is. The exact ranks close
+  up over it (owner ruling of 2026-09-28, rank_holes): in every view, a ranked
+  font's rank, order and range move up one for each held-back font ranked above
+  it (``engine.order.close_up``), so it leaves no gap, and the ranks agree
+  with the site, which numbers rows by position (M2-D2). Places past the exact
+  top keep their order and band.
 - **Views.** A font has an entry for every published rank key
   (``available_views``), except that ``coding`` holds monospace fonts only. A
   font with a placement is ranked; one without is unranked, with the reason
@@ -759,6 +764,10 @@ class CatalogBuilder:
         self.view_terms = {k: view_terms(inputs.terms, k) for k in RANK_KEYS}
         exact_top = cfg.ranking.display.exact_top
         self.shift = {k: band_shift(placed, exact_top) for k, placed in inputs.ranks.items()}
+        from tff_catalog.engine.order import held_places
+
+        held = frozenset(inputs.unlinked)
+        self.held = {k: held_places(placed, held) for k, placed in inputs.ranks.items()}
         self.new = new_fonts(inputs.first_seen, run_date, cfg.ranking.ranks.rising.new_days)
 
     @cached_property
@@ -905,15 +914,23 @@ class CatalogBuilder:
                 "gate_held": False,
                 "unranked": self.unranked(key, fid),
             }
+        from tff_catalog.engine.order import close_up
+
         conf = self.inputs.confidence.get(key, {}).get(fid)
-        shift = self.shift.get(key, 0) if placed.rank is None else 0
-        order = placed.order + shift
+        if placed.rank is None:
+            shift = self.shift.get(key, 0)
+            order, rank = placed.order + shift, None
+            span = [conf.range[0] + shift, conf.range[1] + shift] if conf else None
+        else:  # the exact ranks close up over held-back members (``Inputs.unlinked``)
+            gone = self.held.get(key, [])
+            order = rank = close_up(gone, placed.order)
+            span = [close_up(gone, conf.range[0]), close_up(gone, conf.range[1])] if conf else None
         return entry | {
-            "rank": placed.rank,
+            "rank": rank,
             "band": band_label(order, self.cfg.ranking.display),
             "order": order,
             "tier": conf.tier if conf else None,
-            "range": [conf.range[0] + shift, conf.range[1] + shift] if conf else None,
+            "range": span,
             "gate_held": placed.gate_held,
             "unranked": None,
         }
@@ -1029,7 +1046,8 @@ def data_license(cfg: Config) -> dict[str, Any]:
 
 
 def link(value: Link) -> dict[str, str]:
-    return {"url": value.url} | ({"label": value.label} if value.label else {})
+    out = {"url": value.url} | ({"label": value.label} if value.label else {})
+    return out | ({"note": value.note} if value.note else {})
 
 
 def attribution(family: str, license_title: str, copyright: str | None = None) -> str:

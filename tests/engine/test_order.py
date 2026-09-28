@@ -180,3 +180,23 @@ def test_published_orders_put_every_unranked_font_past_the_exact_top():
     assert min(out["dev_apps"].values()) == 101
     assert sorted(out["dev_apps"].values()) == list(range(101, 251))
     assert out["overall"] == {f: p.order for f, p in one_held.items()}  # a full top: no shift
+
+
+def test_published_orders_close_up_over_held_back_fonts():
+    # Owner ruling of 2026-09-28 (rank_holes): a font held back for want of a download link
+    # leaves, and every exact rank after it moves up one; places past the top keep theirs.
+    from tff_catalog.engine.order import close_up, held_places, published_orders
+
+    fonts, gates = _ordered(150, set())
+    placed = place(fonts, gates)
+    held = {"f002", "f050", "f120"}  # f120 is past the exact top: it just leaves
+    assert held_places(placed, held) == [2, 50]
+    assert [close_up([2, 50], n) for n in (1, 2, 3, 49, 51, 100)] == [1, 2, 2, 48, 49, 98]
+    out = published_orders({"overall": placed}, 100, held)["overall"]
+    assert not held & set(out)
+    assert sorted(o for o in out.values() if o <= 100) == list(range(1, 99))
+    assert [out[f] for f in ("f003", "f051", "f100")] == [2, 49, 98]
+    assert [out[f] for f in ("f101", "f150")] == [101, 150]  # bands: unchanged
+    assert published_orders({"overall": placed}, 100) == {
+        "overall": {f: p.order for f, p in placed.items()}
+    }

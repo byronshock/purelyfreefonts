@@ -140,7 +140,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 ### Step 5: Latin filter
 **Who:** Claude; the owner signs off the allowlist. **Depends on:** 4 and D4.
 - [ ] Google families: apply rule A (expect 1,264).
-- [ ] Dual-script review sheet: about 30 candidates, sorted by Google year views, with the Latin-language counts from each family's metadata. The owner marks the allowlist. *(2026-09-26: the real sheet had 443 candidates; the owner ruled a rule instead (gate L2): 178 included and 116 left out in `data/reviews/latin/2026-09-26.toml`. Left: 149 script companions the shown count had put on the include side, back to the owner.)*
+- [ ] Dual-script review sheet: about 30 candidates, sorted by Google year views, with the Latin-language counts from each family's metadata. The owner marks the allowlist. *(2026-09-26: the real sheet had 443 candidates; the owner ruled a rule instead (gate L2), which Claude applied family by family in `data/reviews/latin/2026-09-26.toml`: 178 included, 206 script companions and 59 basic-Latin-only families left out. Left: the owner confirms the 149 companions that the count shown to them had put on the include side.)*
 - [ ] Non-Google fonts:
   - fetch one Regular file per candidate;
   - test it against the GF glyphsets with fontTools;
@@ -269,12 +269,12 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 
 ### Step 6b: License verification for the catalog (after ranking)
 **Who:** Claude; the owner rules on the queue. **Depends on:** 12; on the critical path before step 13.
-- [ ] L3, for overall rank 700 or better and the top 150 of the project rank and both desktop views:
+- [x] L3, for overall rank 700 or better and the top 150 of the project rank and both desktop views:
   - fetch the upstream license text and match its fingerprint;
   - check name-table IDs 13 and 14;
   - store text_url, sha256, checked_on and font_version;
   - record the font file this check used as `font_file` {url, sha256}; Milestone 2 builds previews from it.
-- [ ] Any font that fails L3 leaves the catalog; rerun the rank.
+- [x] Any font that fails L3 leaves the catalog; rerun the rank.
 
 **Done when:**
 - every catalog font is at L3 or has an owner ruling;

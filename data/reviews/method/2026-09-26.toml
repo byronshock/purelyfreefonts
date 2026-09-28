@@ -5,7 +5,7 @@
 [guard_basis]
 value = "median"
 ruling = "The outlier guard compares each term with the median of all the font's terms and halves a term more than 1.5 z from it (at least 3 terms). The worked example goes back to JetBrains Mono 2.48: the guard does not fire. This supersedes ruling M1's correction to 2.53."
-reason = "The owner's own choice, not a listed option. A median is not pulled by the outlier it is testing."
+reason = "The owner's own choice, not a listed option (integration A offered halving only the single most distant term, which Claude recommended, or keeping the comparison with the mean of the other terms). Claude's note, not the owner's words: a median is not pulled by the outlier it is testing."
 
 [dev_apps_display]
 value = "bands"
@@ -18,9 +18,11 @@ ruling = "Rising is always tier C while it is in beta, and keeps the second-larg
 reason = "Claude's recommendation. Applied: confidence.FIXED_TIERS gives every Rising font tier C; methodology §5 (Rising) says so."
 
 [dirichlet_scope]
+choice = "b"
+recommended = false
 value = "across"
 ruling = "The confidence draws keep re-weighting across all of a survey's sources, so the project group shares vary in the 200 draws; the leave-one-out runs are unchanged."
-reason = "The owner's choice, not Claude's recommendation."
+reason = "The owner's choice, not Claude's recommendation. Integration A's question offered (a) drawing inside each group, so the M9(b) group shares stay fixed, which Claude recommended, and (b) keeping the draws over all of a survey's sources; the owner picked (b)."
 
 [monotonicity_wording]
 ruling = "Methodology §9's monotonicity promise reads: a higher count never lowers a rank, except when the guard changes for that font or for a font that overtakes it, or through the ruler's scale."

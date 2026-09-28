@@ -26,7 +26,7 @@ ruling = "GNU Unifont is out: it is mainly CJK."
 reason = "Claude's recommendation."
 
 [debian_nonfont_filter]
-ruling = "Debian source packages that ship no font are filtered out before mapping."
+ruling = "debian_copyright's non_font_files globs are approved (AppStream metadata, node_modules, scripts and tools, autotools, fontconfig .conf files, LaTeX support files, web assets, docs): a Files stanza that matches only them gives no license fact. The remaining GPL-and-OFL cases (SMC and TLWG packages) go to the LIC queue. In config/sources/debian_copyright.toml."
 reason = "Claude's recommendation."
 
 [fontist_agreement_proprietary]

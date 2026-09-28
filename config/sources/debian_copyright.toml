@@ -25,8 +25,9 @@ max_failures = 10
 # "*" also matches "/") do not describe fonts, so they give no license fact: the
 # cross-check ANDs every fact of a source, and a build script's GPL or an
 # AppStream file's CC0 says nothing about the fonts. Stanzas under debian/ (the
-# packaging) are always skipped. Claude's default (no gate), from the 2026-09-26
-# snapshot; keep it to paths that never hold fonts or font sources.
+# packaging) are always skipped. Drawn up by Claude from the 2026-09-26 snapshot and
+# approved by the owner on 2026-09-26 (debian_nonfont_filter, recorded in
+# data/reviews/corrections/); keep it to paths that never hold fonts or font sources.
 non_font_files = [
   # AppStream metadata
   "appstream/*", "*.metainfo.xml", "*.appdata.xml",

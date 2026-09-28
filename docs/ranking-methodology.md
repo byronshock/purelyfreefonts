@@ -75,7 +75,7 @@ Unknown IDs are excluded.
 - **Rule 4 extended** to any ban on modification or embedding. That excludes:
   - the MS Core Fonts EULA;
   - CC-BY-ND;
-  - fonts with no license found. Claude researches any such family that would otherwise reach the overall top 700 before it drops out (owner ruling of 2026-09-26).
+  - fonts with no license found. Claude researches any such family that would otherwise reach the overall top 700 before it drops out (owner ruling of 2026-09-26). Each month the review pack lists these families with the overall order each would get if its license were found, from a rerun of the ranking on a copy of the build.
 - **Previews (`preview_ok`):** a font may be previewed on our site only if it is redistributable. We serve the upstream files unchanged: no subsetting or format conversion of fonts with a Reserved Font Name. Whether conversion is fine under the OFL is *unverified*, so we avoid it.
 
 **Latin. D4 (decided 2026-09-25): option (C).** The options were:
@@ -84,7 +84,7 @@ Unknown IDs are excluded.
 - **(B)** A, plus 204 dual-script families that are not CJK and have both `latin` and `latin-ext`.
 - **(C, chosen)** A, plus a dual-script allowlist the owner reviews.
 
-The allowlist follows the owner's rule of 2026-09-26 (gate L2): a dual-script Google family with full Latin Extended is included unless it is a script companion, a script version of a family already listed whose Latin is that family's (Noto Sans Arabic of Noto Sans, Hind Siliguri of Hind); companions and families with basic Latin only stay out. The per-family lists are in `data/reviews/latin/`, and the owner can move any family.
+The allowlist follows the owner's rule of 2026-09-26 (gate L2): a dual-script Google family with full Latin Extended is included unless it is a script companion, a script version of a family already listed whose Latin is that family's (Noto Sans Arabic of Noto Sans, Hind Siliguri of Hind); companions and families with basic Latin only stay out. Claude applied the rule family by family: on 2026-09-26, 178 families were included and 265 left out (206 companions, 59 with basic Latin only). The lists are in `data/reviews/latin/`, and the owner can move any family. A new dual-script family is asked about with the rule's advice: keep it out if its Latin is basic, include it if no other family's name starts its own, and otherwise the owner decides whether its extra words name a script or a style.
 
 In every option:
 
@@ -391,6 +391,7 @@ They live in committed files under `state/` on the main branch.
   - `first_seen`;
   - `flags[]`.
 - **Per rank or view:** {rank or band, order, tier, range, score, groups}. The rank keys (`overall`, `desktop_chosen`, `desktop_installed`, `project`, `coding`, `dev_apps`, `rising`) are versioned schema constants.
+- **Held-back fonts:** a catalog font with no accepted download link yet (the owner decides the link at gate K) is held back from `catalog.json`, and the published exact ranks close up over it: in each view, every font ranked below it moves up one place, with its range. Places past the exact top keep their order. The monthly review names the held-back font and its places (owner ruling of 2026-09-28).
 - **Per source:** {state, rank_in_source, z, weight_used}. Raw values appear only where the source's terms allow; never for Google or Fonts Over Time, whose entries carry no raw values (rulings T2, T4).
 - **Top level:** run date, method version, `ranking.toml` hash, fetch times.
 
@@ -450,7 +451,8 @@ Source weights and fixed floors are in the §5 tables.
 - a font moving more than 30% under the coverage-aware RRF or Fontsource-ruler cross-checks;
 - fonts in the top 50 of *most chosen* or project but below 300 in the other;
 - a what-if table with each weight halved and doubled;
-- snapshot size growth.
+- snapshot size growth;
+- exact ranks missing from `catalog.json` (a font outside the catalog, such as a Coding font), and the fonts held back for want of a download link, with their places (owner ruling of 2026-09-28).
 
 **First run:**
 

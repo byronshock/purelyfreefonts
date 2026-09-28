@@ -12,6 +12,7 @@ that would drop Inter or Iosevka fails here.
 import hashlib
 import logging
 import shutil
+import tomllib
 from dataclasses import replace
 from datetime import date
 from pathlib import Path
@@ -23,11 +24,12 @@ from hypothesis import given
 from hypothesis import strategies as st
 from tests.helpers import ROOT
 
-from tff_catalog import fontfiles, latin, reviews, stageio
+from tff_catalog import fontfiles, jsonio, latin, reviews, stageio
 from tff_catalog.aliases import AliasRow, write_aliases
 from tff_catalog.config_model import Latin, RankingConfig, from_mapping, load_toml
 from tff_catalog.fetch import USER_AGENT, FetchError, HostNotAllowed
 from tff_catalog.fontfiles import FileRead, FontFacts, FontFileCache, record_reads
+from tff_catalog.keys import match_key
 from tff_catalog.paths import Paths
 from tff_catalog.records import (
     FontFileRef,
@@ -340,12 +342,87 @@ def test_the_stage_queues_gate_l_questions(tmp_path: Path, monkeypatch: pytest.M
     latin.run(ctx)
     asked = {q.id: q for q in reviews.questions(ctx.paths, "L") if q.id.startswith("L-")}
     # Hind waits for a ruling (Poppins and Mukta have one); Single Day passes rule A with a
-    # CJK subset. Every row takes the same three options and no recommendation.
+    # CJK subset. Every row takes the same three options.
     assert sorted(asked) == ["L-hind", "L-single-day"]
-    assert all(
-        q.options == latin.QUESTION_OPTIONS and q.recommended is None for q in asked.values()
-    )
+    assert all(q.options == latin.QUESTION_OPTIONS for q in asked.values())
     assert "Devanagari" in asked["L-hind"].text or "Deva" in asked["L-hind"].text
+    # The owner's L2 rule advises on Hind (full Latin Extended, no base family); the CJK
+    # question has no recommendation.
+    assert asked["L-hind"].recommended == latin.INCLUDE
+    assert "L2 rule includes it" in asked["L-hind"].text
+    assert asked["L-single-day"].recommended is None
+
+
+def test_a_list_ruling_recorded_after_the_run_stops_the_asking(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    ctx, _ = make_run(tmp_path, monkeypatch)
+    latin.run(ctx)
+    late = '[L2-late]\nruling = "Hind in."\nreason = "Test."\ninclude = ["hind"]\n'
+    write_ruling(ctx.paths, "2026-10-03", late)
+    # The queue file still lists Hind, but the list ruling covers it now.
+    queued = {q["id"] for q in jsonio.load(ctx.paths.queues / latin.QUEUE_FILE)}
+    assert "L-hind" in queued
+    assert [q.id for q in latin.questions(ctx.paths)] == ["L-single-day"]
+    assert "L-hind" not in {q.id for q in reviews.questions(ctx.paths, "L")}
+    # A "research more" answer settles nothing: the question stays.
+    research = '[L-single-day]\nchoice = "c"\nrecommended = false\nruling = "R."\nreason = "T."\n'
+    write_ruling(ctx.paths, "2026-10-04", research)
+    assert [q.id for q in latin.questions(ctx.paths)] == ["L-single-day"]
+
+
+NAMES = {
+    match_key(n): n
+    for n in ("Noto Sans", "Anek Latin", "Baloo 2", "Hind", "Reem Kufi", "IBM Plex Sans")
+}
+
+
+@pytest.mark.parametrize(
+    ("name", "latin_ext", "advice", "base"),
+    [
+        ("Tajawal", False, latin.KEEP_OUT, None),  # basic Latin only
+        ("Noto Sans Tagalog", False, latin.KEEP_OUT, None),  # basic only wins
+        ("Poppins", True, latin.INCLUDE, None),
+        ("Noto Kufi Arabic", True, latin.INCLUDE, None),  # no Noto Kufi family
+        ("Noto Sans Arabic", True, None, "Noto Sans"),
+        ("IBM Plex Sans Thai Looped", True, None, "IBM Plex Sans"),
+        ("Anek Telugu", True, None, "Anek Latin"),  # the base carries "Latin"
+        ("Baloo Bhai 2", True, None, "Baloo 2"),  # the version word stays
+        ("Hind Siliguri", True, None, "Hind"),
+        ("Reem Kufi Fun", True, None, "Reem Kufi"),  # a style: the owner's call, not a guess
+        ("Hind", True, latin.INCLUDE, None),  # never its own base
+    ],
+)
+def test_l2_advice(name: str, latin_ext: bool, advice: int | None, base: str | None) -> None:
+    got, why = latin.l2_advice(name, latin_ext, NAMES)
+    assert got == advice
+    if base is not None:
+        assert latin.base_families(name, NAMES)[0] == base
+        assert why.startswith(f"{base} is in the universe")
+
+
+def test_the_committed_l2_rulings_apply_the_owners_rule() -> None:
+    """data/reviews/latin/2026-09-26.toml: Claude's family-by-family application of L2."""
+    with (ROOT / "data" / "reviews" / "latin" / "2026-09-26.toml").open("rb") as fh:
+        doc = tomllib.load(fh)
+    included = doc["L2-included"]["include"]
+    companions = doc["L2-companions"]["exclude"]
+    basic = doc["L2-basic-latin"]["exclude"]
+    for ids in (included, companions, basic):
+        assert ids == sorted(set(ids))
+    assert (len(included), len(companions), len(basic)) == (178, 206, 59)
+    assert len(set(included) | set(companions) | set(basic)) == 443
+    for table in ("L2-included", "L2-companions", "L2-basic-latin"):
+        assert doc[table]["reason"].startswith("Claude's application of the owner's L2 rule")
+    # The rule's own examples, and the borderline cases the reasons name.
+    assert {"noto-sans-arabic", "hind-siliguri", "ibm-plex-sans-arabic", "anek-telugu"} <= set(
+        companions
+    )
+    assert {"baloo-bhai-2", "mukta-mahee", "playpen-sans-deva"} <= set(companions)
+    assert {"poppins", "hind", "baloo-2", "reem-kufi-fun", "noto-naskh-arabic"} <= set(included)
+    allow = latin.load_allowlist(Paths.for_root(ROOT))
+    assert allow["poppins"] is True
+    assert allow["noto-sans-arabic"] is False
 
 
 @pytest.mark.parametrize(

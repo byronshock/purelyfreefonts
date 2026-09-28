@@ -77,11 +77,27 @@ order, so a later ruling wins. ``include`` passes a family that failed (basis
 ``owner_allowlist``); ``exclude`` fails any family (``owner_excluded``). A Google
 family without a ``latin`` subset cannot be included.
 
+The owner's L2 rule of 2026-09-26 decides the dual-script candidates: include a
+family with full Latin Extended (a ``latin-ext`` subset) unless it is a script
+companion, a script version of a family already in the universe (Noto Sans
+Arabic of Noto Sans, Hind Siliguri of Hind, Anek Telugu of Anek Latin); leave
+out the companions and the families with basic Latin only. Claude applied it
+family by family in ``data/reviews/latin/2026-09-26.toml`` (tables
+``L2-included``, ``L2-companions`` and ``L2-basic-latin``).
+
 **Queue** (``questions``, gate L's provider for ``reviews``): the stage writes
 ``build/stage/queues/latin.json``, one question per family still waiting for a
 ruling: every dual-script candidate (the sheet's rows, views rank first), then
 every Google family that passes rule A with a CJK subset and no primary script
-(Single Day: mainly CJK?), with ``QUESTION_OPTIONS`` and no recommendation.
+(Single Day: mainly CJK?), with ``QUESTION_OPTIONS``. A dual-script question
+carries the L2 rule's advice (``l2_advice``): keep out a family with basic
+Latin only, include one with full Latin Extended whose name starts with no
+other universe family's name, and no recommendation when one does, since the
+extra words may name a script (a companion) or a style (Reem Kufi Fun). The CJK
+questions carry no recommendation. ``questions`` drops a queued question once a
+ruling covers its family, including an ``include`` or ``exclude`` list recorded
+after the stage wrote the queue, so a list ruling stops the asking before the
+next run. That can renumber the group questions ``reviews`` prints for gate L.
 
 **CJK builds** (Maple Mono NF CN) are alias rows with relation ``build`` and
 detail ``cjk``, matched as the universe matches them: a row in the record key's
@@ -492,28 +508,77 @@ def apply_ruling(
 QUEUE_FILE = "latin.json"  # under build/stage/queues/
 QUESTION_PREFIX = "L-"  # a queue question's id: "L-<family id>"
 QUESTION_OPTIONS = ("Include it in the catalog", "Keep it out", "Research more")
+INCLUDE, KEEP_OUT = 0, 1  # indexes into QUESTION_OPTIONS
+
+
+def base_families(name: str, family_names: Mapping[str, str]) -> list[str]:
+    """Universe families whose name could be ``name``'s base family (the L2 rule's test).
+
+    ``family_names`` maps ``match_key`` of each universe family name to that
+    name. A base is a shorter run of ``name``'s leading words, also with
+    "Latin" added (Anek Telugu of Anek Latin) or with ``name``'s last word kept
+    (Baloo Bhai 2 of Baloo 2). Shortest first; never ``name`` itself.
+    """
+    words = name.split()
+    out: list[str] = []
+    for i in range(1, len(words)):
+        lead = words[:i]
+        tries = [lead, [*lead, "Latin"]]
+        if len(words) - i > 1:
+            tries.append([*lead, words[-1]])
+        for t in tries:
+            found = family_names.get(match_key(" ".join(t)))
+            if found is not None and match_key(found) != match_key(name) and found not in out:
+                out.append(found)
+    return out
+
+
+def l2_advice(
+    name: str, latin_ext: bool, family_names: Mapping[str, str]
+) -> tuple[int | None, str]:
+    """The owner's L2 rule (2026-09-26) on one dual-script candidate: (option, why).
+
+    Basic Latin only: keep it out. Full Latin Extended and no possible base
+    family (``base_families``): include it. Otherwise no option: whether the
+    extra words name a script or a style is a judgment.
+    """
+    if not latin_ext:
+        return KEEP_OUT, "it has basic Latin only, so the owner's L2 rule keeps it out"
+    bases = base_families(name, family_names)
+    if not bases:
+        return INCLUDE, (
+            "it has full Latin Extended and no base family in the universe, so the owner's L2 "
+            "rule includes it"
+        )
+    return None, (
+        f"{bases[0]} is in the universe: the owner's L2 rule keeps it out if it is a script "
+        "version of that family, and includes it if the extra words name a style"
+    )
 
 
 def queue_questions(
     u: Universe, candidates: Sequence[Candidate], cjk_text: Sequence[str]
 ) -> list[Question]:
     """Gate L's open rows (module docstring): dual-script candidates, then CJK-subset passes."""
+    family_names = {match_key(f.family): f.family for f in u.families.values()}
     out = []
     for c in candidates:
         if c.ruled is not None:
             continue
         fam = u.families.get(c.id)
+        name = fam.family if fam else c.id
         rank = f"Google year-views rank {c.views_rank}" if c.views_rank else "no Google views rank"
         langs = "" if c.latin_languages is None else f", {c.latin_languages} Latin languages"
         accents = "latin-ext" if c.latin_ext else "basic Latin only"
+        advice, why = l2_advice(name, c.latin_ext, family_names)
         out.append(
             Question(
                 "L",
                 QUESTION_PREFIX + c.id,
-                f"{fam.family if fam else c.id} (`{c.id}`): Google's primary script is "
-                f"{c.primary_script}, with a latin subset ({accents}{langs}); {rank}. Rule A "
-                "leaves it out. Include it?",
+                f"{name} (`{c.id}`): Google's primary script is {c.primary_script}, with a latin "
+                f"subset ({accents}{langs}); {rank}. Rule A leaves it out; {why}. Include it?",
                 QUESTION_OPTIONS,
+                advice,
             )
         )
     for fid in cjk_text:
@@ -531,8 +596,12 @@ def queue_questions(
 
 
 def questions(paths: Paths) -> list[Question]:
-    """Gate L's open questions from the last run's queue (for ``reviews.questions``)."""
-    return questions_from_file(paths.queues / QUEUE_FILE)
+    """Gate L's questions from the last run's queue (for ``reviews.questions``), less the
+    families a ruling covers now (``load_allowlist``), so an ``include`` or ``exclude`` list
+    recorded after that run stops the asking at once."""
+    queued = questions_from_file(paths.queues / QUEUE_FILE)
+    ruled = load_allowlist(paths)
+    return [q for q in queued if q.id.removeprefix(QUESTION_PREFIX) not in ruled]
 
 
 # --- Google year views (ranks only: ruling T2) --------------------------------------------------

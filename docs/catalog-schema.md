@@ -51,7 +51,7 @@ The full catalog: every font in it, every rank, and every source.
 
 ### Each font
 
-The catalog is the overall top 500 plus the top 100 of the project rank and both desktop views, with the membership hysteresis in methodology §6. Every font in it has an accepted download link: a member with no link that two sources agree on, or that the owner-approved foundry list gives, is held back until the owner picks one (gate K), and `review.md` names it.
+The catalog is the overall top 500 plus the top 100 of the project rank and both desktop views, with the membership hysteresis in methodology §6. Every font in it has an accepted download link: a member with no link that two sources agree on, or that the owner-approved foundry list gives, is held back until the owner picks one (gate K), and `review.md` names it. The published exact ranks close up over it: every font ranked below it moves up one place in that view, so a held-back font leaves no gap in the ranks the site shows (owner ruling of 2026-09-28).
 
 - **Identity:** `id` (stable, never changes), `family` (the current name), `category`, `is_monospace`, `superfamily_id` (from `data/superfamilies.csv`, or null).
 - `aliases[]`: other names of the family, each with its `relation`:
@@ -73,7 +73,7 @@ The catalog is the overall top 500 plus the top 100 of the project rank and both
 - `formats`: `variable` and `static`.
 - `preview_ok`: the license lets the site show previews (redistributable fonts only). `preview`: the rendered specimen (`specimens/<id>.svg` and its sha256), or null.
 - `preinstalled_on[]`: systems that ship the font. `pulled_in_by[]`: Linux packages that install it on their own.
-- `links`: the `primary` download page and the `designer` page, each with an optional `label`.
+- `links`: the `primary` download page and the `designer` page, each with an optional `label`. The primary link may also carry a `note`, a sentence the font's details show under it (for example why an archived mirror is the official download).
 - `first_seen`: the date the family first appeared in the universe.
 - `flags[]`:
   - `too_new`: too new to rank in some view;
@@ -171,9 +171,10 @@ The names Milestone 3 needs to recognise installed fonts. It covers the whole un
 7. **The desktop views differ only by abstentions.** *Most chosen* has the same evidence as *most installed*, less Linux sources' abstentions.
 8. **Abstentions don't leak.** A Linux source that abstains for a font in *most chosen* has no evidence for it in any other view where Linux sources abstain, and carries no weight in the overall rank.
 9. **No forbidden raw values.** `catalog.json` has no value for a source whose `publish_raw` is false. No committed report (`build/*.md`, `docs/backtests/*.md`) shows such a source's count of 100,000 or more (Google's of 10,000 or more) on a line that also names its font. Smaller counts, such as Fonts Over Time's, can't be told from chance, so the stages that write reports keep them out themselves. The review stage writes `build/review.md` before validation, so a run's own review is scanned.
-10. **No gaps in the overall rank.** The overall rank's exact ranks in `catalog.json` run 1 to N. A gap means a member was held back (no accepted download link yet, gate K), and the site, which numbers rows by position, would disagree with `rank` after it. Gaps in the other views, which may lack fonts by design, are review flags.
-11. **No private fields.** No committed JSON file (`build/*.json`, the specimen index, `state/`) holds anything but ranks, rank-based z, states and reasons under the id of a source whose `publish_raw` is false.
+10. **No private fields.** No committed JSON file (`build/*.json`, the specimen index, `state/`) holds anything but ranks, rank-based z, states and reasons under the id of a source whose `publish_raw` is false.
 
 A check that can't run, because a file is missing or the check itself fails, counts as a failure; the other checks still run. Failures go to the log and, in the monthly refresh, to a public issue, so no failure message repeats a count the terms keep private.
 
-The CI test job also validates the committed `build/*.json` files against their schemas, and CI's `site-real` job runs `tff-catalog validate --committed`: the checks the committed files can answer on their own (schemas, the known answers `names.json` holds, raw values in `catalog.json`, gaps and private fields).
+The CI test job also validates the committed `build/*.json` files against their schemas, and CI's `site-real` job runs `tff-catalog validate --committed`: the checks the committed files can answer on their own (schemas, the known answers `names.json` holds, raw values in `catalog.json` and private fields).
+
+Gaps in the exact ranks are not a failure (owner ruling of 2026-09-28). The export closes the ranks up over a held-back member, and `review.md` flags any gap left, such as a Coding font outside the catalog. A rank given twice still fails the schema check, through the site's cross-reference checks.

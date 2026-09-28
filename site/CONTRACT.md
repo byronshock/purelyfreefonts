@@ -33,6 +33,8 @@ Contents:
   3. `https://fonts.google.com/…` → `Google Fonts`;
   4. otherwise the host name without a leading `www.`.
 
+  A primary link may carry `link.note`, a sentence `Details` shows as `p.details-link-note` under the panel's links (Metropolis: why an archived mirror is its official download).
+
 ## 2. Build output
 
 `tff-site build` writes one directory (default `build/site/`, gitignored). It is offline and byte-identical for the same inputs. `<h>` is the first 10 hex digits of the file's sha256. Every path matches `^([a-z0-9][a-z0-9._-]*/)*[a-z0-9][a-z0-9._-]*$`, the deploy receiver's rule.

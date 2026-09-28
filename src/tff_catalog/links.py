@@ -280,6 +280,9 @@ Kind = Literal["homepage", "repository"]
 class Link:
     url: str  # https
     label: str | None = None
+    # What a visitor should know before following it, shown under the link in the font's
+    # details (an override's ``primary_note``: why an archived mirror is the official link).
+    note: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -667,11 +670,13 @@ class LinkOverride:
     designer: str = ""
     primary_label: str = ""
     designer_label: str = ""
+    primary_note: str = ""  # shown under the primary link in the font's details
     choice: str = "a"  # the answer to ``question`` that applies this override
 
     def links(self) -> Links:
         designer = Link(self.designer, self.designer_label or None) if self.designer else None
-        return Links(Link(self.primary, self.primary_label or None), designer, "override")
+        primary = Link(self.primary, self.primary_label or None, self.primary_note or None)
+        return Links(primary, designer, "override")
 
 
 @dataclass(frozen=True, slots=True)

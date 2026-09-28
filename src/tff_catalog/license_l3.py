@@ -2,11 +2,13 @@
 
 For the overall top 700 and the top 150 of the project and both desktop views
 (``ranking.toml`` ``membership.l3_overall_max`` and ``l3_extra_top``; the extra
-ranks are ``membership.extra_ranks``), plus every current catalog member:
-fetch the upstream license text, match its fingerprint against
-``data/license-texts/<SPDX>.txt``, check name-table IDs 13 and 14, and record
-text_url, sha256, checked_on, font_version and ``font_file`` {url, sha256}
-(Milestone 2 builds previews from that file). Texts and font reads go through
+ranks are ``membership.extra_ranks``), plus every current catalog member and
+every family the last run failed (stage "rank" left those out, so no rank
+would bring one back once it is fixed): fetch the upstream license text,
+match its fingerprint against ``data/license-texts/<SPDX>.txt``, check
+name-table IDs 13 and 14, and record text_url, sha256, checked_on,
+font_version and ``font_file`` {url, sha256} (Milestone 2 builds previews
+from that file). Texts and font reads go through
 the ``license_texts`` and ``font_facts`` pseudo-sources, so replay is offline.
 
 A changed text hash puts the font back in the queue. A new exclusion makes
@@ -26,16 +28,27 @@ Contracts:
   other change to the license's own words gives another one.
 - **Canonical texts** (``load_canon``): ``data/license-texts/<SPDX id>.txt``
   (the SPDX License List texts), other published forms of the same license in
-  ``variants/<SPDX id>/*.txt``, and exception texts in ``exceptions/``. A text
+  ``variants/<id>/*.txt`` (a ``LicenseRef-`` license the SPDX list lacks keeps
+  all its texts there), and exception texts in ``exceptions/``. A text
   matches a license when its fingerprint equals one of that license's, also
   once the whole text of each exception it carries is taken out (``Canon.identify``:
-  a COPYING file holding the GPL and the font exception).
+  a COPYING file holding the GPL and the font exception). A notice that grants
+  another license by reference verifies that one too (``GRANTS``: the GUST Font
+  License grants LPPL-1.3c).
+- **Research** (``config/license-texts.toml``, ``load_research``; owner ruling
+  L3_32): per family, upstream texts and font files tried before the sources'
+  own (``apply_research``), and ``mentions``, license families its notices and
+  name IDs may name besides its L2 expression (each the family of a license
+  allowed on its own, ``check_mentions``); and researched texts, which match no
+  canonical text but verify the licenses listed for the sha256 of their bytes.
+  A researched text is read *whole* for restrictions and other licenses
+  (``_check_researched``); only the notice word limits are waived for it.
 - **Evidence** (``gather``): license texts come from ``LicenseFact.text_url``
   (with ``text_sha256`` when the collector hashed the text) and
   ``UniverseRecord.urls`` with role "license"; font files from
-  ``UniverseRecord.files``. Both are ordered best first: pinned URLs, then the
-  source order ``SOURCE_ORDER`` (the google/fonts folder first, as methodology
-  §2 allows), then the URL.
+  ``UniverseRecord.files``. Both are ordered best first: research's own
+  (``apply_research``), pinned URLs, then the source order ``SOURCE_ORDER``
+  (the google/fonts folder first, as methodology §2 allows), then the URL.
 - **A family passes (level "L3")** when a fetched text matches licenses that
   satisfy its L2 expression (``build/stage/licenses.json``; every matched id
   must be allowed in ``licenses.toml`` with gate LIC's license rulings applied,
@@ -44,8 +57,9 @@ Contracts:
   allowed, L2 let the family in by an owner ruling on it and every id counts),
   the text's notices (``notices``: the lines before the license body less the
   license's own title, and every copyright and Reserved Font Name line, which
-  the fingerprint leaves out wherever they stand) and name IDs 13 and 14 of
-  the font file name no license outside that expression and no use
+  the fingerprint leaves out wherever they stand; "Digitized data copyright"
+  lines count as copyright lines) and name IDs 13 and 14 of the font file name
+  no license outside that expression (or research's ``mentions``) and no use
   restriction (``RESTRICTIONS``; a name ID holding a whole license text is
   judged by the license it is and its notices), the lines before the body
   hold at most ``EXTRA_WORDS_MAX`` words besides copyright and Reserved Font
@@ -84,8 +98,8 @@ Contracts:
   before the run (``[stale] max_months``, as for a failed source) holds last
   level's text: a host that stays down fails the family after that.
 - **Exclusions** (``exclusions``): the families whose level is "failed"; stage
-  "rank" leaves them out and refresh reruns "rank" and "membership" when the
-  set grows.
+  "rank" leaves them out, refresh reruns "rank" and "membership" when the set
+  changes, and the next verify checks them again.
 """
 
 import difflib
@@ -243,13 +257,28 @@ BODY_STARTS = (
     "these fonts are free softwares",  # mplus
     "licensing agreement for the fonts with original name",  # ParaType-Free-Font-1.3
     "as a special exception",  # exceptions
+    # Notices that grant a license by reference (GRANTS, variants/): the Apache-2.0
+    # appendix's standard notice, and the GUST Font License (LPPL-1.3c plus a request).
+    "licensed under the apache license version 2 0 the license you may not use this file "
+    "except in compliance with the license",
+    "this work may be distributed and or modified under the conditions of the latex project "
+    "public license",
 )
+
+# Canonical texts that grant another license by reference: a text matching the key
+# verifies these ids too. The GUST Font License says "This work may be distributed
+# and/or modified under the conditions of the LaTeX Project Public License, either
+# version 1.3c of this license or (at your option) any later version", and adds
+# only a request that is "not legally required".
+GRANTS: Mapping[str, tuple[str, ...]] = {"LicenseRef-GUST-Font-License": ("LPPL-1.3c",)}
 
 _WORD = re.compile(r"[^\W_]+")
 _URL = re.compile(r"(?:https?://|www\.)\S+|\b[\w.-]+\.(?:org|com|net|io)(?:/\S*)?")
-# A copyright notice line: "Copyright 2020 ...", "Copyright (c) ...", "© 2023 ...".
+# A copyright notice line: "Copyright 2020 ...", "Copyright (c) ...", "© 2023 ...", and
+# the type industry's "Digitized data copyright (c) 2012-2018 ..." (FiraGO's OFL.txt).
 _COPYRIGHT = re.compile(
-    r"^\W*(?:portions\s+)?(?:copyright\b\W*(?:©|\(c\)|\d|by\b|\[|<|\{|yyyy)|©|\(c\)\s*\d)"
+    r"^\W*(?:portions\s+|digitized\s+data\s+)?"
+    r"(?:copyright\b\W*(?:©|\(c\)|\d|by\b|\[|<|\{|yyyy)|©|\(c\)\s*\d)"
 )
 # A list bullet at the start of a line: "1.", "2)", "(a)", "iv.", "- ".
 _BULLET = re.compile(r"^\s*[-*•>#]*\s*(?:\(?(?:\d{1,2}|[a-z]|[ivx]{1,4})[.)])(?=\s)")
@@ -506,6 +535,7 @@ def license_family(spdx: str) -> str:
         ("Bitstream-Vera", "Bitstream-Vera"),
         ("IPA", "IPA"),
         ("LPPL-", "LPPL"),
+        ("LicenseRef-GUST-Font-License", "LPPL"),  # the LPPL-1.3c with a request (GRANTS)
         ("MPL-", "MPL"),
         ("Arphic-", "Arphic"),
     ):
@@ -531,6 +561,11 @@ def text_id(spdx: str) -> str:
 
 
 _GNU_ID = re.compile(r"^((?:A|L)?GPL-\d\.\d)(?:-only|-or-later|\+)?$")
+
+
+def verified_ids(spdx: str) -> frozenset[str]:
+    """The text ids a text matching ``spdx`` verifies: its own, and those it grants (``GRANTS``)."""
+    return frozenset(text_id(i) for i in (spdx, *GRANTS.get(spdx, ())))
 
 
 def _expected_families(ids: Iterable[str]) -> frozenset[str]:
@@ -938,6 +973,151 @@ def key_index(universe: Universe) -> dict[SourceKey, str]:
     return {key: fam.id for fam in universe.families.values() for key in fam.keys}
 
 
+# --- research (config/license-texts.toml) -------------------------------------------------------
+
+RESEARCH_FILE = "license-texts.toml"  # under config/
+RESEARCH_SCHEMA = 1
+RESEARCH_SOURCE = "research"  # TextRef.source of a researched text URL
+_SHA256 = re.compile(r"^[0-9a-f]{64}$")
+_MENTION_FAMILIES = frozenset(family for family, _ in _MENTIONS)
+
+
+@dataclass(frozen=True, slots=True)
+class FamilyResearch:
+    """One ``[[family]]`` table of ``config/license-texts.toml``."""
+
+    family: str  # family id
+    name: str  # display name, for people
+    reason: str  # what the research found
+    texts: tuple[str, ...] = ()  # upstream license texts, tried before the sources' ones
+    files: tuple[str, ...] = ()  # upstream font files, read before the sources' ones
+    # License families (as ``mentions`` names them) its texts' notices and name IDs 13
+    # and 14 may name besides its L2 expression; each must be a family of an allowed
+    # license, so an allowance never lets a restricting or excluded license through.
+    mentions: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
+class ResearchedText:
+    """One ``[[text]]`` table: a license text, by the sha256 of its bytes, that matches
+    no canonical text but holds ``licenses`` (research read it word for word)."""
+
+    sha256: str
+    licenses: tuple[str, ...]  # SPDX ids the text verifies
+    url: str  # where it was read
+    reason: str  # how it differs from the canonical texts, and why that changes nothing
+
+
+@dataclass(frozen=True, slots=True)
+class ResearchFile:
+    schema: int
+    family: tuple[FamilyResearch, ...] = ()
+    text: tuple[ResearchedText, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
+class Research:
+    """``config/license-texts.toml``, indexed (``load_research``)."""
+
+    families: Mapping[str, FamilyResearch] = field(default_factory=dict)
+    texts: Mapping[str, ResearchedText] = field(default_factory=dict)  # by sha256
+
+
+def _check_url(url: str, where: str) -> None:
+    from tff_catalog.config_model import ConfigError
+
+    if not url.startswith("https://") or any(c.isspace() for c in url):
+        raise ConfigError(f"{where}: {url!r} is not an https URL")
+
+
+def load_research(paths: Paths) -> Research:
+    """``config/license-texts.toml``, checked strictly (no file: no research).
+
+    Raises ``ConfigError`` for unknown or missing keys, a bad family id, a family
+    or text listed twice, a URL that is not https, a font file URL that names no
+    font, an unknown license family in ``mentions``, a bad sha256 or an SPDX
+    expression that does not parse.
+    """
+    from tff_catalog.config_model import ConfigError, from_mapping, load_toml
+    from tff_catalog.names import ID_PATTERN
+
+    path = paths.config / RESEARCH_FILE
+    if not path.is_file():
+        return Research()
+    doc = from_mapping(ResearchFile, load_toml(path), where=RESEARCH_FILE)
+    if doc.schema != RESEARCH_SCHEMA:
+        raise ConfigError(f"{RESEARCH_FILE}: schema {doc.schema}, expected {RESEARCH_SCHEMA}")
+    families: dict[str, FamilyResearch] = {}
+    for i, fam in enumerate(doc.family):
+        where = f"{RESEARCH_FILE}: family[{i}]"
+        if not ID_PATTERN.fullmatch(fam.family):
+            raise ConfigError(f"{where}.family: {fam.family!r} is not a family id")
+        if fam.family in families:
+            raise ConfigError(f"{where}.family: {fam.family!r} is listed twice")
+        for n, url in enumerate(fam.texts):
+            _check_url(url, f"{where}.texts[{n}]")
+        for n, url in enumerate(fam.files):
+            _check_url(url, f"{where}.files[{n}]")
+            if not _is_font_file(url):
+                raise ConfigError(f"{where}.files[{n}]: {url} names no font file")
+        for n, mention in enumerate(fam.mentions):
+            if mention not in _MENTION_FAMILIES:
+                raise ConfigError(f"{where}.mentions[{n}]: {mention!r} is no license family")
+        families[fam.family] = fam
+    texts: dict[str, ResearchedText] = {}
+    for i, known in enumerate(doc.text):
+        where = f"{RESEARCH_FILE}: text[{i}]"
+        if not _SHA256.fullmatch(known.sha256):
+            raise ConfigError(f"{where}.sha256: {known.sha256!r} is not a sha256")
+        if known.sha256 in texts:
+            raise ConfigError(f"{where}.sha256: {known.sha256} is listed twice")
+        if not known.licenses:
+            raise ConfigError(f"{where}.licenses: empty")
+        for n, spdx in enumerate(known.licenses):
+            try:
+                node = parse_expression(spdx)
+            except ValueError as exc:
+                raise ConfigError(f"{where}.licenses[{n}]: {exc}") from exc
+            if not isinstance(node, _Leaf) or node.exception is not None:
+                raise ConfigError(f"{where}.licenses[{n}]: {spdx!r} is not one license id")
+        _check_url(known.url, f"{where}.url")
+        texts[known.sha256] = known
+    return Research(families=dict(sorted(families.items())), texts=dict(sorted(texts.items())))
+
+
+def check_mentions(research: Research, allowed: Iterable[str]) -> None:
+    """``ConfigError`` unless every ``mentions`` allowance names the family of a license
+    allowed on its own, without an exception (or a public-domain dedication, which an
+    allowed CC0-1.0 or Unlicense stands for): an allowance never lets an excluded license
+    through, and never plain GPL on the strength of the GPL with the font exception."""
+    from tff_catalog.config_model import ConfigError
+
+    families = _expected_families(i for i, exc in allowed_pairs(allowed) if exc is None)
+    for fam in research.families.values():
+        for mention in fam.mentions:
+            if mention not in families:
+                raise ConfigError(
+                    f"{RESEARCH_FILE}: family {fam.family!r}: mentions {mention!r} is not "
+                    "the family of an allowed license"
+                )
+
+
+def apply_research(evidence: Mapping[str, Evidence], research: Research) -> dict[str, Evidence]:
+    """``evidence`` with each researched family's texts and font files first, in the
+    order ``config/license-texts.toml`` lists them."""
+    out = dict(evidence)
+    for fid, fam in research.families.items():
+        old = out.get(fid, Evidence())
+        texts = tuple(TextRef(fetchable_url(u), source=RESEARCH_SOURCE) for u in fam.texts)
+        files = tuple(FontFileRef(u) for u in fam.files)
+        seen_texts = {t.url for t in texts}
+        out[fid] = Evidence(
+            texts=texts + tuple(t for t in old.texts if t.url not in seen_texts),
+            files=files + tuple(f for f in old.files if f.url not in fam.files),
+        )
+    return dict(sorted(out.items()))
+
+
 # --- scope --------------------------------------------------------------------------------------
 
 
@@ -1316,14 +1496,17 @@ class Inputs:
     rulings: Mapping[str, L3Ruling]
     canon: Canon
     allowed: frozenset[str]  # licenses.toml allowed ids
+    research: Research = field(default_factory=Research)  # config/license-texts.toml
 
 
 @dataclass(slots=True)
 class _TextCheck:
     fetched: FetchedText
     matched: str | None = None
+    ids: frozenset[str] = frozenset()  # the text ids a clean match verifies
     exceptions: frozenset[str] = frozenset()
     problems: list[str] = field(default_factory=list)
+    note: str | None = None
     # The problems that fail the family even when another text verifies it: a use
     # restriction, or added words the fingerprint cannot see (a long notice).
     blocking: list[str] = field(default_factory=list)
@@ -1360,6 +1543,9 @@ def _check_text(
             # name ID 14 give it, is no upstream text; its site's words are not the font's terms.
             out.problems.append(f"license text {fetched.url} is a web page, not a license text")
             return out
+        known = inputs.research.texts.get(fetched.sha256 or "")
+        if known is not None:
+            return _check_researched(out, text, known, expr, families)
         close = inputs.canon.closest(text, ids)
         near = f" (closest: {close[0]}, {close[1]:.1%} of words alike)" if close else ""
         out.problems.append(f"license text {fetched.url} matches no known license{near}")
@@ -1371,7 +1557,8 @@ def _check_text(
         out.blocking = [f"{where} restricts use: {p!r}" for p in restrictions(scan)]
         out.problems += out.blocking
         return out
-    if text_id(out.matched) not in {text_id(i) for i in ids}:
+    out.ids = verified_ids(out.matched)
+    if not out.ids & {text_id(i) for i in ids}:
         out.problems.append(f"license text {fetched.url} is {out.matched}, not {expr}")
     # Restrictions and other licenses are looked for in every notice, the copyright
     # lines below the body included: the fingerprint leaves those lines out.
@@ -1394,6 +1581,25 @@ def _check_text(
     return out
 
 
+def _check_researched(
+    out: _TextCheck, text: str, known: ResearchedText, expr: str, families: frozenset[str]
+) -> _TextCheck:
+    """A text ``config/license-texts.toml`` lists by its sha256: it verifies the licenses
+    research found in it. Its *whole* text is read for restrictions and for other
+    licenses (no license body is set aside), and only this exact text is spared the
+    notice word limits, because research read every word of it."""
+    url = out.fetched.url
+    out.matched = " AND ".join(sorted(known.licenses))
+    out.ids = frozenset(text_id(i) for i in known.licenses)
+    out.note = f"license text {url} is a researched text (config/{RESEARCH_FILE}): {out.matched}"
+    if not out.ids & {text_id(i) for i in expression_ids(expr)}:
+        out.problems.append(f"license text {url} is {out.matched}, not {expr}")
+    said = statement_problems(f"license text {url}", text, families)
+    out.problems += said
+    out.blocking = [p for p in said if " restricts use: " in p]
+    return out
+
+
 def _without(words: str, phrases: Iterable[str]) -> str:
     """``words`` (space-separated) with every whole-word occurrence of ``phrases`` removed."""
     padded = f" {words} "
@@ -1403,11 +1609,18 @@ def _without(words: str, phrases: Iterable[str]) -> str:
     return padded.strip()
 
 
+def expected_families(expr: str, family_id: str, research: Research) -> frozenset[str]:
+    """The license families a family's notices and name IDs may name: its L2
+    expression's, plus the ``mentions`` research allowed for it."""
+    fam = research.families.get(family_id)
+    return _expected_families(expression_ids(expr)) | frozenset(fam.mentions if fam else ())
+
+
 def _texts_verdict(
-    expr: str, evidence: Evidence, texts: TextSource, inputs: Inputs
+    family_id: str, expr: str, evidence: Evidence, texts: TextSource, inputs: Inputs
 ) -> tuple[list[_TextCheck], bool]:
     """Try candidate texts until the expression is verified; (checks, verified)."""
-    families = _expected_families(expression_ids(expr))
+    families = expected_families(expr, family_id, inputs.research)
     allowed = family_allowed(expr, inputs.allowed)
     checks: list[_TextCheck] = []
     matched: set[str] = set()
@@ -1416,7 +1629,7 @@ def _texts_verdict(
         check = _check_text(texts.get(ref), expr, families, inputs)
         checks.append(check)
         if check.matched and not check.problems:
-            matched.add(text_id(check.matched))
+            matched |= check.ids
             exceptions |= check.exceptions
             if satisfied(expr, frozenset(matched), allowed, frozenset(exceptions)):
                 return checks, True
@@ -1494,7 +1707,7 @@ def check_family(
         if not evidence.texts:
             fatal.append("no upstream license text found")
         else:
-            checks, verified = _texts_verdict(expr, evidence, texts, inputs)
+            checks, verified = _texts_verdict(family_id, expr, evidence, texts, inputs)
     primary = _primary(checks, verified)
     carried = False
     if expr is not None and not verified:
@@ -1518,7 +1731,8 @@ def check_family(
         # A text that restricts use, or carries words the fingerprint cannot see, fails
         # the family even when another text verifies it.
         fatal += [p for c in checks for p in c.blocking]
-    families = _expected_families(expression_ids(expr)) if expr is not None else None
+        notes += [c.note for c in checks if c.note and c.matched and not c.problems]
+    families = expected_families(expr, family_id, inputs.research) if expr is not None else None
     ref, found, file_fatal, file_notes = _file_check(evidence, facts, families, inputs.canon)
     fatal += file_fatal
     notes += file_notes
@@ -1747,19 +1961,31 @@ def load_inputs(ctx: StageContext) -> tuple[Inputs, list[str]]:
     wanted = scope(
         ranks, catalog_members(membership), m.extra_ranks, m.l3_overall_max, m.l3_extra_top
     )
+    # Stage "rank" left out the families the last verify failed, so no rank puts them in
+    # scope: check them again, or one fixed since would never come back.
+    wanted = sorted(set(wanted) | exclusions(paths))
     ids = [fid for fid in wanted if fid in universe.families]
     if len(ids) < len(wanted):
         unknown = sorted(set(wanted) - set(ids))
-        ctx.log.warning("verify: %d ranked ids are not in the universe: %s", len(unknown), unknown)
+        ctx.log.warning(
+            "verify: %d ids in scope are not in the universe: %s", len(unknown), unknown
+        )
+    research = load_research(paths)
+    allowed = frozenset(licenses.effective_config(paths, ctx.config.licenses).allowed)
+    check_mentions(research, allowed)
+    unknown = sorted(set(research.families) - set(universe.families))
+    if unknown:
+        ctx.log.warning("verify: %s lists families not in the universe: %s", RESEARCH_FILE, unknown)
     evidence = gather(iter_records(paths.records), key_index(universe), universe)
     inputs = Inputs(
         names={fid: universe.families[fid].family for fid in ids},
         verdicts=verdicts,
-        evidence=evidence,
+        evidence=apply_research(evidence, research),
         previous=ctx.state.license_hashes,
         rulings=load_l3_rulings(paths, ctx.log),
         canon=load_canon(canon_dir(paths)),
-        allowed=frozenset(licenses.effective_config(paths, ctx.config.licenses).allowed),
+        allowed=allowed,
+        research=research,
     )
     return inputs, ids
 

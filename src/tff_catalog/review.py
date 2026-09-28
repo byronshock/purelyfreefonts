@@ -88,8 +88,12 @@ flag; the what-if table; the per-source statistics; and the checks the owner
 asked for at gate R (``checks.md``, the owner's ruling of 2026-09-26,
 data_defaults): the catalog fonts whose category is the "sans-serif" default,
 for the owner to correct, and the families in ``GATE_R_WATCH`` with their rank
-in each source. It is rebuilt from
-scratch on every run. The old Top 100 and the installed-fonts filter it
+in each source; and ``no-license.md``, the families with no license found and
+the overall order each would get (``nolicense.what_if``, which reruns stages
+"correct" and "rank" on a copy of the build), for the owner's ruling of
+2026-09-26 (no_license_families): Claude researches those at
+``nolicense.RESEARCH_TOP`` or better, and a note in review.md counts them. It
+is rebuilt from scratch on every run. The old Top 100 and the installed-fonts filter it
 reads come from the private store's seed copy and never reach review.md.
 
 Everything is deterministic: the same build, state and store give the same
@@ -117,6 +121,7 @@ if TYPE_CHECKING:
     from tff_catalog.engine.order import Placement
     from tff_catalog.mapping import AliasIndex
     from tff_catalog.membership import Membership
+    from tff_catalog.nolicense import NoLicense
     from tff_catalog.records import Observation, Relation
     from tff_catalog.stages import StageContext
     from tff_catalog.surveys import RankInputs, SurveyScores
@@ -190,6 +195,7 @@ PACK_FILES: dict[str, str] = {
     "what-if.md": "The what-if table: each weight halved and doubled.",
     "sources.md": "Per-source statistics against the last run, ruler overlaps and weights.",
     "checks.md": "Catalog fonts with the default category, and the families to watch.",
+    "no-license.md": "Families with no license found, and the overall order each would get.",
 }
 
 
@@ -296,14 +302,18 @@ def _orders(placements: Mapping[str, Mapping[str, Placement]]) -> dict[str, dict
 
 
 def export_orders(
-    placements: Mapping[str, Mapping[str, Placement]], exact_top: int
+    placements: Mapping[str, Mapping[str, Placement]],
+    exact_top: int,
+    held: Iterable[str] = (),
 ) -> dict[str, dict[str, int]]:
     """The orders stage "export" publishes: a rank key whose exact top the two-group
     gate leaves short moves its unranked placements down past it (``export.band_shift``;
-    every month in Developers & apps while Flutter is off)."""
+    every month in Developers & apps while Flutter is off), and the ``held`` fonts (members
+    held back for want of a download link, ``held_back``) leave while the exact ranks after
+    them close up (owner ruling of 2026-09-28, rank_holes)."""
     from tff_catalog.engine.order import published_orders
 
-    return published_orders(placements, exact_top)
+    return published_orders(placements, exact_top, frozenset(held))
 
 
 # --- the monthly diff --------------------------------------------------------------------------
@@ -1357,6 +1367,7 @@ class Analysis:
     old: OldComparison | None
     notes: tuple[str, ...]
     defaulted: tuple[str, ...] = ()  # catalog members whose category is the default
+    no_license: tuple[NoLicense, ...] = ()  # families with no license found (nolicense.what_if)
 
 
 def _require(ctx: StageContext, name: str) -> Any:
@@ -1453,7 +1464,7 @@ def analyse(ctx: StageContext) -> Analysis:
     run = _previous_run(ctx)
     notes: list[str] = []
     overall = now.get("overall", {})
-    pub = published(ctx, export_orders(placements, cfg.display.exact_top), notes)
+    pub = published(ctx, export_orders(placements, cfg.display.exact_top, held_back(ctx)), notes)
 
     flags = _change_flags(ctx, prev, pub, overall, names, notes)
     rbos = rbo_by_key(prev, pub, cfg)
@@ -1477,6 +1488,7 @@ def analyse(ctx: StageContext) -> Analysis:
     flags += rank_gap_flags(ctx.paths.build / "catalog.json")
 
     notes += _unlinked_notes(ctx, names)
+    no_license = _no_license(ctx, notes)
     info = _info(ctx, run, prev, rbos, stats, scores, cfg, store_line)
     public, everything = _finish(flags, info, notes, now, cfg.display.exact_top)
     old = None
@@ -1499,7 +1511,29 @@ def analyse(ctx: StageContext) -> Analysis:
         old=old,
         notes=tuple(notes),
         defaulted=defaulted_categories(_optional(ctx, "facts"), _optional(ctx, "membership")),
+        no_license=no_license,
     )
+
+
+def _no_license(ctx: StageContext, notes: list[str]) -> tuple[NoLicense, ...]:
+    """``nolicense.what_if`` for the pack, with a note on the families Claude researches
+    (owner ruling of 2026-09-26, no_license_families)."""
+    from tff_catalog import nolicense
+
+    try:
+        rows = nolicense.what_if(ctx)
+    except FileNotFoundError as exc:
+        notes.append(f"No-license what-if skipped: {exc}.")
+        return ()
+    found = [r for r in rows if r.to_research]
+    if found:
+        notes.append(
+            f"{len(found)} {'family' if len(found) == 1 else 'families'} with no license "
+            "found would reach the overall "
+            f"top {nolicense.RESEARCH_TOP}; Claude researches their licenses (owner ruling of "
+            "2026-09-26; the list is in build/review-pack/no-license.md)."
+        )
+    return rows
 
 
 def defaulted_categories(
@@ -1527,13 +1561,27 @@ def specimen_flags(previews: Mapping[str, Any], names: Mapping[str, str]) -> lis
     return out
 
 
+def rank_holes(catalog: Mapping[str, Any]) -> dict[str, list[int]]:
+    """{rank key: exact ranks missing from ``catalog.json``'s fonts}, for every key."""
+    ranks: dict[str, set[int]] = defaultdict(set)
+    for font in catalog["fonts"]:
+        for key, entry in font["ranks"].items():
+            if entry.get("rank") is not None:
+                ranks[key].add(entry["rank"])
+    return {
+        key: sorted(set(range(1, max(got) + 1)) - got)
+        for key, got in sorted(ranks.items())
+        if len(got) != max(got)
+    }
+
+
 def rank_gap_flags(catalog: Path) -> list[Flag]:
-    """``rank_gap``: exact ranks missing from ``catalog.json``'s fonts, per rank key (for the
-    overall rank validate fails the run too: ``validate.check_rank_gaps``)."""
+    """``rank_gap``: exact ranks missing from ``catalog.json``'s fonts, per rank key. Export
+    closes the ranks up over held-back members (owner ruling of 2026-09-28, rank_holes), so
+    a gap is a font outside the catalog (Coding's and Developers & apps' tops are not all
+    catalogued), never a failure: validate no longer checks it."""
     if not catalog.is_file():
         return []
-    from tff_catalog.validate import rank_holes
-
     return [
         Flag(
             "rank_gap",
@@ -1558,10 +1606,7 @@ def _unlinked_notes(ctx: StageContext, names: Mapping[str, str]) -> list[str]:
     """
     from tff_catalog import links as links_stage
 
-    membership, links = _optional(ctx, "membership"), _optional(ctx, "links")
-    if membership is None or links is None:
-        return []
-    held = [fid for fid in membership.members() if fid not in links]
+    held = sorted(held_back(ctx))
     if not held:
         return []
     queue_path = ctx.paths.queues / links_stage.QUEUE_FILE
@@ -1609,7 +1654,37 @@ def _unlinked_notes(ctx: StageContext, names: Mapping[str, str]) -> list[str]:
             "has nothing to ask yet: Claude researches each official page and proposes an "
             f"override in config/link-overrides.toml, which gate K then asks about: {listed(research)}."
         )
+    places = _held_places(ctx, held, names)
+    if places:
+        out.append(
+            "The published exact ranks close up over these fonts (owner ruling of 2026-09-28, "
+            f"rank_holes): each font below one moves up a place. Their own places: {places}."
+        )
     return out
+
+
+def held_back(ctx: StageContext) -> frozenset[str]:
+    """Catalog members stage "export" holds back for want of an accepted download link: the
+    members of ``membership.json`` missing from ``links.json`` (none without either)."""
+    membership, links = _optional(ctx, "membership"), _optional(ctx, "links")
+    if membership is None or links is None:
+        return frozenset()
+    return frozenset(fid for fid in membership.members() if fid not in links)
+
+
+def _held_places(ctx: StageContext, held: Sequence[str], names: Mapping[str, str]) -> str:
+    """Each held-back font's exact ranks: "Droid Sans Mono: overall #36, coding #20; ..."."""
+    placements = _optional(ctx, "ranks") or {}
+    parts = []
+    for fid in held:
+        where = [
+            f"{key} #{p.rank}"
+            for key in sorted(placements, key=_key_order)
+            if (p := placements[key].get(fid)) is not None and p.rank is not None
+        ]
+        if where:
+            parts.append(f"{names.get(fid, fid)}: {', '.join(where)}")
+    return "; ".join(parts)
 
 
 def rbo_by_key(
@@ -1915,6 +1990,38 @@ def _pack_disagreements(a: Analysis, cfg: RankingConfig) -> str:
     return "\n".join([*lines, ""])
 
 
+def _pack_no_license(a: Analysis) -> str:
+    from tff_catalog.nolicense import KEYS, RESEARCH_TOP
+
+    lines = [
+        f"# Families with no license found, {a.run_date}",
+        "",
+        "No source states a license for these families, so they are left out before ranking. "
+        "The orders are what each would get if its license were found (a rerun of stages "
+        '"correct" and "rank" on a copy of the build). By the owner\'s ruling of 2026-09-26 '
+        f"(no_license_families), Claude researches every one at overall {RESEARCH_TOP} or "
+        "better; a license found goes to the owner as a gate LIC question (`LIC-<id>`, with "
+        "`spdx`).",
+        "",
+    ]
+    if not a.no_license:
+        return "\n".join([*lines, "None."]) + "\n"
+    rows = sorted(
+        a.no_license, key=lambda r: (r.overall is None, r.overall or 0, _name(a.names, r.id))
+    )
+    table = [
+        [
+            "yes" if r.to_research else "no",
+            _name(a.names, r.id),
+            r.id,
+            *(NONE if r.orders.get(k) is None else r.orders[k] for k in KEYS),
+        ]
+        for r in rows
+    ]
+    heads = ["Research", "Font", "Id", *KEYS]
+    return "\n".join([*lines, *_table(heads, table, "lll" + "r" * len(KEYS))]) + "\n"
+
+
 def _pack_checks(a: Analysis) -> str:
     overall = a.now.get("overall", {})
     lines = [
@@ -2135,6 +2242,7 @@ def write_pack(directory: Path, a: Analysis, cfg: RankingConfig) -> Path:
         "what-if.md": _pack_what_if(a, cfg),
         "sources.md": _pack_sources(a, cfg),
         "checks.md": _pack_checks(a),
+        "no-license.md": _pack_no_license(a),
     }
     texts["README.md"] = _pack_readme(a)
     if directory.exists():
