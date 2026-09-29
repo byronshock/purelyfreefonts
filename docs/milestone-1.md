@@ -47,7 +47,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - `pyproject.toml`, `src/tff_catalog/`, `tests/`, and a CLI named `tff-catalog`;
   - dependencies httpx, fonttools, numpy and jsonschema (tomllib is built in);
   - `uv.lock` committed.
-- [ ] Layout: *(the directories exist; their files come in step 2 (`config/`), step 7 (`aliases.csv`) and step 15 (`build/`))*
+- [x] Layout: *(All committed: the four config files, `data/aliases.csv` and `data/reviews/`, and `build/catalog.json`, `catalog-site.json` and `review.md` from the real-store rebuild of 2026-09-29. `state/` holds only `.gitkeep` until the first refresh pull request is merged.)*
   - `config/`: `ranking.toml`, `licenses.toml`, `preinstalled.toml`, `foundries.toml`;
   - `data/`: `aliases.csv`, `reviews/` (owner rulings);
   - `state/` (see step 3);
@@ -58,13 +58,13 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - [x] Claude, with gh (owner-approved 2026-09-25): branch protection for `main` requiring the CI checks, with **0 required approvals**, because the owner can't approve their own pull requests. *(Checks lint, test, secrets; 0 approvals.)*
 - [x] Confirm `.gitignore` still excludes `PLAN.md`, `ops/SERVER.local.md` and `.claude/settings.local.json`.
 
-**Done when:** a pull request with one trivial test passes CI, and both license files are on `main`.
+**Done when:** a pull request with one trivial test passes CI, and both license files are on `main`. *(Met 2026-09-25: [#6](https://github.com/byronshock/trulyfreefonts/pull/6).)*
 
 ### Step 2: Config files
 **Who:** Claude writes them; the owner edits values. **Depends on:** 0, 1.
 - [x] `ranking.toml` holds every parameter in the methodology (the §5 tables and §8). It is validated on load, and unknown or missing keys fail. *(Done 2026-09-25, with the rulings' gate values; `tests/test_config.py`.)*
-- [ ] `licenses.toml` sorts licenses into allowed, excluded and owner-ruling classes per D3. Anything not listed is excluded.
-- [ ] `preinstalled.toml`, seeded from the research and reviewed by the owner. Seeds:
+- [x] `licenses.toml` sorts licenses into allowed, excluded and owner-ruling classes per D3. Anything not listed is excluded. *(30 allowed ids in the site's filter groups, 35 excluded and 13 for owner rulings, loaded strictly; `licenses.classify` excludes any id it doesn't list; `tests/pipeline/test_licenses.py::test_d3_classes`.)*
+- [x] `preinstalled.toml`, seeded from the research and reviewed by the owner. *(Eleven entries, each naming its system and OS: seven Linux systems (GNOME with Adwaita), Cascadia on `windows-11`, `macos`, `android` and the LibreOffice bundle (`os = "app"`). Only `os = "linux"` entries cause abstentions (`corrections.abstentions`), and every entry adds `preinstalled_on` tags; `tests/test_config_data.py`, `tests/pipeline/test_corrections.py`. Approved at gate C, 2026-09-26.)* Seeds:
   - Linux defaults;
   - Cascadia on Windows 11;
   - the macOS list;
@@ -73,29 +73,29 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 
   Each entry names its system. Only Linux entries trigger abstentions; Windows, macOS and Android entries only add `preinstalled_on` tags.
   - the LibreOffice bundle.
-- [ ] `foundries.toml` is a hand list of the families of League of Moveable Type, Velvetyne, Collletttivo, Open Foundry and Roundo. Claude seeds it once from the foundry sites, and the owner reviews it with `preinstalled.toml`; the sites are not scraped each month (ruling M12).
+- [x] `foundries.toml` is a hand list of the families of League of Moveable Type, Velvetyne, Collletttivo, Open Foundry and Roundo. Claude seeds it once from the foundry sites, and the owner reviews it with `preinstalled.toml`; the sites are not scraped each month (ruling M12). *(The League of Moveable Type (20 families), Velvetyne (43), Collletttivo (16) and Open Foundry (25); Roundo, a family rather than a foundry, is listed under Fontshare; `tests/test_config_data.py::test_m12_foundries_are_present`. Approved at gate C, 2026-09-26.)*
 - [x] `tff-catalog config` prints the effective config and its hash. *(Done 2026-09-25; the hash is stable across runs.)*
 
-**Done when:** the loader tests pass and the owner has reviewed `preinstalled.toml` and `foundries.toml`.
+**Done when:** the loader tests pass and the owner has reviewed `preinstalled.toml` and `foundries.toml`. *(Met 2026-09-26: `tests/test_config.py` and `tests/test_config_data.py` pass, and the owner approved both files at gate C, `data/reviews/config/2026-09-26.toml`.)*
 
 ### Step 3: Collector framework, snapshots, run state and source terms
 **Who:** Claude; the owner rules on the terms table and posts the Fonts Over Time request. **Depends on:** 1 and D15.
-- [ ] A shared fetcher:
+- [x] A shared fetcher: *(`fetch.Fetcher`: this User-Agent, retries with seeded exponential backoff that honour `Retry-After`, one request a second per host, and conditional GETs from the last manifest; `tests/test_fetch.py`.)*
   - User-Agent `trulyfreefonts-catalog/<version> (+https://github.com/byronshock/trulyfreefonts)`, never a personal email;
   - retries with backoff;
   - per-host rate limits;
   - conditional GETs.
-- [ ] Snapshot store per D15:
+- [x] Snapshot store per D15: *(`store.Store` writes each snapshot whole, with its `manifest.json`; raw files are deleted after the run unless `--keep-raw`; `Store.check()` holds the size limits; `tests/test_store.py`. The real store holds one 2026-09-26 snapshot per source.)*
   - font-relevant extracts plus a manifest (url, sha256, fetched_at, status) in `<store>/<source>/<YYYY-MM-DD>/`;
   - big raw files expire after the run;
   - a size check.
-- [ ] Run-state design:
+- [ ] Run-state design: *(Built in `state.py`; `refresh.yml` copies `build/state/` to `state/` in the one `refresh/monthly` pull request, which a new run replaces; `tests/pipeline/test_refresh.py`. `state/` holds only `.gitkeep` until the first refresh pull request is merged.)*
   - `state/` on `main` holds membership counters, first_seen, license hashes, stale counters, last published ranks and snapshot baselines;
   - state advances only when a refresh pull request is merged;
   - a new run replaces an unmerged refresh pull request;
   - test: two runs without a merge give the same state as one run. *(Proven for the stub pipeline and the real state and parse modules; the four `[real]` cases of `tests/pipeline/test_state_two_runs.py` still xfail until the synthetic store holds the real collectors' extract formats.)*
-- [ ] Stale-data policy: reuse the last snapshot for up to 2 months, flagged.
-- [x] Terms audit, one row per source, recording whether raw values and fixtures may be republished. The result goes in `docs/sources.md`. *(Rulings T1–T5 given 2026-09-25, in `data/reviews/terms/`; `docs/sources.md` written and its links and quotes checked 2026-09-25. Its open points still need the owner: ecosyste.ms terms §9 and §11(c), and Google shares kept in `state/smoothing.json`.)* Rows:
+- [x] Stale-data policy: reuse the last snapshot for up to 2 months, flagged. *(`[stale] max_months = 2`: `parse` takes the newest snapshot of the last 62 days, flags the source stale in `review.md` and the catalog's `sources`, then drops it; `tests/test_parse.py::test_stale_and_dropped_sources`, `tests/test_fetch.py`.)*
+- [x] Terms audit, one row per source, recording whether raw values and fixtures may be republished. The result goes in `docs/sources.md`. *(Rulings T1–T5 given 2026-09-25, in `data/reviews/terms/`; `docs/sources.md` written and its links and quotes checked 2026-09-25. The owner ruled its two open points on 2026-09-26: ecosyste.ms is collected and credited per its terms, and Google's shares stay in the private data repository (`data/reviews/terms/2026-09-26.toml`).)* Rows:
   - Google's undocumented endpoints;
   - Fonts Over Time (no license file);
   - ecosyste.ms (data CC BY-SA 4.0, verified 2026-09-25);
@@ -115,11 +115,13 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - the owner has ruled on the terms table;
 - the data license is final.
 
+*(Still open: no run has yet fetched one real source twice on one date (the fake-collector tests in `tests/test_store.py` and `tests/test_fetch.py` pass), and the four `[real]` cases of the state test xfail. The terms are ruled, and the data license is final.)*
+
 **Parallel:** split the terms audit by source.
 
 ### Step 4: Candidate universe
 **Who:** Claude. **Depends on:** 2, 3.
-- [ ] Collectors for:
+- [x] Collectors for: *(Seven collectors in `src/tff_catalog/collectors/universe/`, each tested offline in `tests/collectors/<name>/`; the store holds a 2026-09-26 snapshot of each.)*
   - Google Fonts metadata;
   - the google/fonts tree and METADATA.pb files (license folder, repository, minisite);
   - Fontsource;
@@ -127,62 +129,66 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - Homebrew `cask.json`;
   - Fontist formulas;
   - `foundries.toml`.
-- [ ] Each family gets a stable `id`, minted from its name at first sighting and never changed. Renames only add aliases. Source memberships and upstream URLs are recorded.
-- [ ] Drop non-text families, each with a reason code.
+- [x] Each family gets a stable `id`, minted from its name at first sighting and never changed. Renames only add aliases. Source memberships and upstream URLs are recorded. *(`universe.py`: ids minted by `names.mint_id` into the append-only registry, and each family records its sources, keys and URLs; `tests/pipeline/test_universe.py::test_rename_keeps_id`, `::test_registry_is_append_only`. The registry reaches `state/ids.json` with the first merged refresh.)*
+- [x] Drop non-text families, each with a reason code. *(`universe.family_drop`: the real run dropped 355 of 3,141 families, each listed with its reason in `build/universe.md`; `tests/pipeline/test_universe.py::test_family_drop`.)*
 
 **Done when:**
 - a universe report shows every name mapped to a family, with per-source counts and drop reasons;
 - ids are identical across two runs;
 - a rename test keeps the id.
 
+*(Met 2026-09-29: `build/universe.md` maps every key, with 0 unmapped, and gives per-source counts and drop reasons; `tests/pipeline/test_universe.py::test_ids_identical_across_two_runs` and `::test_rename_keeps_id` pass.)*
+
 **Parallel:** one agent per catalog collector.
 
 ### Step 5: Latin filter
 **Who:** Claude; the owner signs off the allowlist. **Depends on:** 4 and D4.
-- [ ] Google families: apply rule A (expect 1,264).
+- [x] Google families: apply rule A (expect 1,264). *(`latin.rule_a`; on Google's list of 2026-09-26 it passes 1,248 of the 1,946 families, not the 1,264 of earlier data; `tests/pipeline/test_latin.py::test_rule_a`.)*
 - [x] Dual-script review sheet: about 30 candidates, sorted by Google year views, with the Latin-language counts from each family's metadata. The owner marks the allowlist. *(2026-09-26: the real sheet had 443 candidates; the owner ruled a rule instead (gate L2), which Claude applied family by family in `data/reviews/latin/2026-09-26.toml`: 178 included, 206 script companions and 59 basic-Latin-only families left out. 2026-09-28: the owner confirmed that the 149 companions the first count had put on the include side stay out (`data/reviews/latin/2026-09-28.toml`); the latest run's latin stage has the 178 as `owner_allowlist`.)*
-- [ ] Non-Google fonts:
+- [ ] Non-Google fonts: *(Built: `latin.py` and `fontfiles.py` test one file per family, or Fontsource's full code-point list, against the GF glyphsets with fontTools, cache the result by file sha256 and record basic or extended; `tests/pipeline/test_latin.py`, `tests/test_fontfiles.py`. Still open: 141 families have no readable file and are out as `no_file` without a test, among them Liberation Sans and Serif, Linux Libertine and Biolinum, Go and Spleen.)*
   - fetch one Regular file per candidate;
   - test it against the GF glyphsets with fontTools;
   - cache the result by file hash;
   - record coverage (basic or latin-ext).
-- [ ] Map CJK builds to their Latin parent at `cjk_build_credit`, and exclude families that are mainly CJK.
+- [ ] Map CJK builds to their Latin parent at `cjk_build_credit`, and exclude families that are mainly CJK. *(Built: `build` rows with detail `cjk` fold CJK builds into their parent (Maple Mono's CN casks), and the real run keeps 367 mainly-CJK families out; `tests/pipeline/test_latin.py`, `tests/pipeline/test_corrections.py`. Still open: Homebrew's HackGen and Cica casks are still CJK families of their own, though gate A made Arch's `ttf-hackgen` and `ttf-cica` builds of Hack on 2026-09-28.)*
 
 **Done when:**
 - every family has a `latin` field;
 - the allowlist is approved;
 - spot checks pass: Inter and Iosevka are in; Pretendard and LXGW WenKai are out.
 
+*(Met 2026-09-29: every eligible family has a `latin` verdict, the owner approved the allowlist at gate L, and on the real run Inter and Iosevka are in while Pretendard and LXGW WenKai are out as mainly CJK; the Latin-only Pretendard Std is a family of its own. The step's two open items remain.)*
+
 **Parallel:** batch the file tests across agents.
 
 ### Step 5b: Font facts
 **Who:** Claude. **Depends on:** 4; runs alongside step 5.
-- [ ] For every family, including non-Google ones:
+- [x] For every family, including non-Google ones: *(`facts.py`: all three facts for the 2,786 eligible families of the real run, from Google's metadata, Fontsource or the font's own tables, cached by file sha256, with the 22 owner categories first; `tests/pipeline/test_facts.py`.)*
   - `category`;
   - `is_monospace` (from `post.isFixedPitch` or panose when no metadata exists);
   - `formats` {variable, static}.
 
   Sources: GF metadata, Fontsource, or the font's own tables, cached by file hash. The owner's categories in `config/category-overrides.toml` come before all of them (owner ruling of 2026-09-29, gate R round 1: the 22 catalog fonts left on the sans-serif default).
 
-**Done when:** every family has all three fields, and spot checks pass: JetBrains Mono is monospace; Inter is sans and variable.
+**Done when:** every family has all three fields, and spot checks pass: JetBrains Mono is monospace; Inter is sans and variable. *(Met 2026-09-29: every eligible family has all three in the real run, and in `build/catalog.json` JetBrains Mono is monospace and Inter is sans-serif and variable.)*
 
 ### Step 6a: License classification (before ranking)
 **Who:** Claude; the owner rules on the queue. **Depends on:** 2, 4.
-- [ ] L1: map every license string to an SPDX ID through `licenses.toml`.
-- [ ] L2: cross-check the google/fonts folder, Fontsource, Fontist, Nerd Fonts, Debian DEP-5 and Arch.
-- [ ] Per font, provisionally: class, redistributable, attribution_required and preview_ok (per D3).
-- [x] Review queue for NOASSERTION results, custom texts and disagreements (DejaVu, Hack, Cascadia, OpenDyslexic, URW, Roboto Mono). Owner rulings are saved in `data/reviews/`. *(2026-09-26: the owner's 14 answers are recorded. 2026-09-28: the 5 Monaspace families and the 25 researched no-license families are ruled (`data/reviews/licenses/2026-09-28.toml`). Later batches that day ruled the researched Monofur, Vic Fieger (Heavy Data), Salaowu and Letters licenses, the Debian disagreements, Conakry and five more disagreements. The queue is empty on the real store (replay of 2026-09-29).)*
+- [ ] L1: map every license string to an SPDX ID through `licenses.toml`. *(Built: `licenses.normalize` and `classify` read strings through `config/license-aliases.toml` and `licenses.toml`; `tests/pipeline/test_licenses.py`. Still open: the 2026-09-29 run can't read 8 strings from Arch, Debian and Fontist, such as Arch's `LicenseRef-GUST-Font-1.0` and Debian's `BSD3|SIL`; they are the license queue's 8 items.)*
+- [x] L2: cross-check the google/fonts folder, Fontsource, Fontist, Nerd Fonts, Debian DEP-5 and Arch. *(`licenses.cross_check` combines the license facts of all six and queues disagreements; `tests/pipeline/test_licenses.py`.)*
+- [x] Per font, provisionally: class, redistributable, attribution_required and preview_ok (per D3). *(`licenses.Verdict` for all 1,816 candidates of the 2026-09-29 run: 1,747 allowed, 65 excluded, and 4 waiting on strings L1 can't read (AU Passata, AU Passata Light, AU Peto, fontoPoSOLID); `tests/pipeline/test_licenses.py::test_d3_classes`.)*
+- [x] Review queue for NOASSERTION results, custom texts and disagreements (DejaVu, Hack, Cascadia, OpenDyslexic, URW, Roboto Mono). Owner rulings are saved in `data/reviews/`. *(2026-09-26: the owner's 14 answers are recorded. 2026-09-28: the 5 Monaspace families and the 25 researched no-license families are ruled (`data/reviews/licenses/2026-09-28.toml`). Later batches that day ruled the researched Monofur, Vic Fieger (Heavy Data), Salaowu and Letters licenses, the Debian disagreements, Conakry and five more disagreements. No gate LIC question is open on the real store (replay of 2026-09-29); the queue's 8 remaining items are L1's unread strings.)*
 
-**Done when:** every candidate has a provisional class, and the queue is empty.
+**Done when:** every candidate has a provisional class, and the queue is empty. *(Still open: the queue holds L1's 8 unread strings. Every candidate has a class, 4 of them waiting on those strings.)*
 
 ### Step 7: Alias table
 **Who:** Claude; the owner reviews flagged rows. **Depends on:** 4.
-- [ ] `data/aliases.csv`, with columns: alias, family_id, relation, source, first_seen, reviewed_by. Relations:
+- [x] `data/aliases.csv`, with columns: alias, family_id, relation, source, first_seen, reviewed_by. *(3,493 rows. The header adds `ns` and `detail`, which carries the reason code, and sibling pairs are `distinct` rows; `aliases.AliasRow.problems` refuses an unknown relation or reason; `tests/pipeline/test_aliases.py`.)* Relations:
   - rename, build, package, postscript;
   - sibling;
   - related;
   - **ineligible**, with a reason code (proprietary, ITF, CJK, icon, generic, system; since the owner's ruling of 2026-09-28 also not_font, non_latin and unlisted).
-- [ ] Mine aliases from:
+- [x] Mine aliases from: *(One miner each in `src/tff_catalog/aliases/miners/`: `gf_history` (never through googlefontdirectory-hg), `fontsource_legacy`, `nerd` (the one list of Nerd casks), `homebrew`, `distro`, `github_repos` (each repo with its `main_channel` flag) and `name_tables`; `tests/aliases/`.)*
   - google/fonts delisted directories and git history (never pair through googlefontdirectory-hg);
   - Fontsource's legacy names;
   - Nerd Fonts `fonts.json`, keeping one authoritative list of Nerd casks;
@@ -191,50 +197,50 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - ~~a hand-made table of about 60 Chocolatey ids;~~ *(not needed: Chocolatey is dropped from v1, ruling T3)*
   - a GitHub repo-to-family table with a main-download-channel flag;
   - upstream name tables (Inter Variable, Inter Display).
-- [ ] Sibling rules that block false matches: Roboto ≠ Roboto Slab, Fira Sans ≠ Fira Code, Inter ≠ Inter Tight, Noto Sans ≠ Noto Sans JP.
+- [x] Sibling rules that block false matches: Roboto ≠ Roboto Slab, Fira Sans ≠ Fira Code, Inter ≠ Inter Tight, Noto Sans ≠ Noto Sans JP. *(`aliases.SIBLING_RULES` writes them as `distinct` rows; `tests/pipeline/test_known_answers.py::test_a_sibling_gets_no_counts_of_its_parent`.)*
 - [x] Auto-accept only renames from google/fonts history and Nerd `unpatchedName` rows; the owner reviews the rest. *(2026-09-28: under the owner's delegation (A_U_queues), Claude settled 817 of the 1,038 queued rows that were mechanical, as its own rulings in `data/reviews/aliases/2026-09-28.toml` (`by = "claude"`, rows `reviewed_by claude:2026-09-28`): distro packages whose file lists hold one family, exact names, declared renames, the families' own names, and ineligible names. Later batches that day settled the other 221: the owner's rulings, with Claude's package-contents research settling the clear rows and 21 doubtful ones going to the owner. The Chunk fold followed on 2026-09-29 (`data/reviews/aliases/2026-09-29.toml`). The queue is empty on the real store (replay of 2026-09-29).)*
 
-**Done when:** the known-answer tests pass and the review queue is empty.
+**Done when:** the known-answer tests pass and the review queue is empty. *(Met 2026-09-29: `tests/pipeline/test_known_answers.py` passes, validate's known-answer check passes on the real run, and the alias queue is empty.)*
 
 **Parallel:** one agent per alias source.
 
 ### Step 8: One collector per ranking source
 **Who:** Claude. **Depends on:** 3; runs alongside steps 5–7. Each collector writes a dated snapshot and parsed values, and has a test built from a fixture the terms ruling allows (synthetic if not).
-- [ ] Homebrew analytics for 30, 90 and 365 days. Cask add dates come from a tree diff of `Casks/font` at the window start and end, plus the commits API for added casks (design-m1 C4).
-- [ ] Arch pkgstats: monthly shares for the last 12 complete months, for all font-like packages.
-- [ ] Dependency data:
+- [x] Homebrew analytics for 30, 90 and 365 days. Cask add dates come from a tree diff of `Casks/font` at the window start and end, plus the commits API for added casks (design-m1 C4). *(`collectors/ranking/homebrew_analytics.py`, inside the run's GitHub budget; `tests/collectors/homebrew_analytics/`.)*
+- [x] Arch pkgstats: monthly shares for the last 12 complete months, for all font-like packages. *(`collectors/ranking/pkgstats.py` keeps each package's count and sample size per month; `tests/collectors/pkgstats/`.)*
+- [x] Dependency data: *(`collectors/ranking/arch_repos.py` reads Arch core, extra and multilib and CachyOS's `cachyos.db`; `debian.py` reads `Packages.xz` and `by_inst.gz`; EndeavourOS's fonts are listed in `config/preinstalled.toml`; `tests/collectors/arch_repos/`, `tests/collectors/debian/`.)*
   - Arch core/extra `.db`;
   - the CachyOS and EndeavourOS repository databases (EndeavourOS has no font dependencies of its own; its fonts come from eos-base-group, gate C2, 2026-09-26);
   - Debian `Packages.xz` and popcon `by_inst.gz`.
-- [ ] Debian popcon main/fonts.
-- [ ] GitHub releases for main-channel repos: every release, with no cap by date, measured as growth between snapshots; for Iosevka, only the latest 24 releases, through GraphQL (ruling M2). All within a per-run GitHub API budget.
-- [ ] Nerd Fonts releases.
+- [x] Debian popcon main/fonts. *(`collectors/ranking/debian.py` keeps the `by_inst.gz` rows of Section fonts packages, a superset of main/fonts, and of their dependents; `tests/collectors/debian/`.)*
+- [x] GitHub releases for main-channel repos: every release, with no cap by date, measured as growth between snapshots; for Iosevka, only the latest 24 releases, through GraphQL (ruling M2). All within a per-run GitHub API budget. *(`collectors/ranking/github_releases.py` over the 52 repos of `config/sources/github_releases.toml`; the growth is computed in `corrections.py`; `tests/collectors/github_releases/`.)*
+- [x] Nerd Fonts releases. *(`collectors/ranking/nerd_releases.py`: every release of ryanoasis/nerd-fonts, font archives only; `tests/collectors/nerd_releases/`.)*
 - ~~Chocolatey OData.~~ *(Dropped from v1: its terms forbid automated access; ruling T3.)*
-- [ ] Fonts Over Time weekly JSONL and `latest.csv`, with a column check that marks the source stale on mismatch.
-- [ ] Web Almanac 2025 sheets: find the header row, validate the columns, and pin the sheet id and tabs per edition in config.
-- [ ] Google Fonts `/metadata/stats`, falling back to the popularity field.
-- [ ] npm downloads for every @fontsource, @fontsource-variable and @expo-google-fonts package: one `downloads/range` request per package over 540 days (last-year total, complete months and first download day), at most 1 request a second with backoff on 429.
-- [ ] ecosyste.ms dependent-repository counts for the @fontsource and @fontsource-variable packages only (packages.ecosyste.ms API; ruling M7), credited as CC BY-SA 4.0.
-- [ ] Fontsource `/v1/stats` (jsDelivr).
-- [ ] Flutter code search: deferred until a token is chosen.
+- [x] Fonts Over Time weekly JSONL and `latest.csv`, with a column check that marks the source stale on mismatch. *(`collectors/ranking/fot.py`; `tests/collectors/fot/test_fot.py::test_a_column_mismatch_leaves_the_source_stale`.)*
+- [x] Web Almanac 2025 sheets: find the header row, validate the columns, and pin the sheet id and tabs per edition in config. *(`collectors/ranking/almanac.py`, pinned in `config/sources/almanac.toml`; `tests/collectors/almanac/`.)*
+- [x] Google Fonts `/metadata/stats`, falling back to the popularity field. *(`collectors/ranking/gf_stats.py`, and `[sources.google] fallback` in `ranking.toml`; `tests/collectors/gf_stats/`, `tests/pipeline/test_mapping.py::test_google_falls_back_to_popularity`.)*
+- [x] npm downloads for every @fontsource, @fontsource-variable and @expo-google-fonts package: one `downloads/range` request per package over 540 days (last-year total, complete months and first download day), at most 1 request a second with backoff on 429. *(`collectors/ranking/npm.py`, paced at one request per 1.5 seconds; `tests/collectors/npm/`.)*
+- [x] ecosyste.ms dependent-repository counts for the @fontsource and @fontsource-variable packages only (packages.ecosyste.ms API; ruling M7), credited as CC BY-SA 4.0. *(`collectors/ranking/ecosystems.py`, credited in the README and `catalog-site.json`; `tests/collectors/ecosystems/`.)*
+- [x] Fontsource `/v1/stats` (jsDelivr). *(`collectors/ranking/fontsource_stats.py`: monthly jsDelivr hits per package; `tests/collectors/fontsource_stats/`.)*
+- ~~Flutter code search: deferred until a token is chosen.~~ *(Off in v1: owner ruling of 2026-09-26, `default_sources` in `data/reviews/terms/`; `[sources.flutter] enabled = false`, and there is no collector.)*
 
-**Done when:** `tff-catalog fetch` runs every collector locally. The Actions run is checked in step 19.
+**Done when:** `tff-catalog fetch` runs every collector locally. The Actions run is checked in step 19. *(Met 2026-09-26: the fetch wrote a complete snapshot for all 12 ranking collectors, none stale; `build/catalog.json` lists each source's data date and fetch time.)*
 
 **Parallel:** one agent per collector; the biggest speed-up in the milestone.
 
 ### Step 9: Name mapping and unmatched report
 **Who:** Claude; the owner reviews the top of the report. **Depends on:** 7, 8.
-- [ ] Map every source key to a family id or an ineligible row, and set the four evidence states.
-- [ ] `build/unmatched.md` lists keys with no alias row, above each source's floor, sorted by volume. Nothing is guessed.
-- [x] The owner resolves the top entries; new rows go into `aliases.csv`. *(2026-09-28: of the 501 keys gate U asked, 180 were settled by Claude's hand rows under the owner's delegation and 154 by the gate A rows; the other 167 are settled after the owner's later rulings of the same day: bundle rows from file lists, the new reasons not_font, non_latin and unlisted, researched leftover packages, and four keys left unmatched (answer (d)). Rulings in `data/reviews/unmatched/2026-09-28.toml`.)*
+- [x] Map every source key to a family id or an ineligible row, and set the four evidence states. *(`mapping.resolve` and `map_records` look keys up exactly, and stage `correct` sets the four states, all of them present in `build/catalog.json`; `tests/pipeline/test_mapping.py`, `tests/pipeline/test_corrections.py`.)*
+- [x] `build/unmatched.md` lists keys with no alias row, above each source's floor, sorted by volume. Nothing is guessed. *(`mapping.unmatched_report`; `tests/pipeline/test_mapping.py::test_report_lists_keys_above_the_floor_largest_first`.)*
+- [ ] The owner resolves the top entries; new rows go into `aliases.csv`. *(2026-09-28: of the 501 keys gate U asked, 180 were settled by Claude's hand rows under the owner's delegation and 154 by the gate A rows; the other 167 are settled after the owner's later rulings of the same day: bundle rows from file lists, the new reasons not_font, non_latin and unlisted, researched leftover packages, and four keys left unmatched (answer (d)). Rulings in `data/reviews/unmatched/2026-09-28.toml`. Still open (2026-09-29): the row that ruling U-115b853c4cd3 gives `deb-pkg:fonts-adwaita`, a package of Adwaita Sans, never reached `aliases.csv`, because the gate A item it names, A-a49b3ac465, matches no candidate any more.)*
 
-**Done when:** no source has an unmatched key in its top 200 (ineligible rows count as resolved, and so do keys the owner rules to leave unmatched, gate U answer (d): TeX Live's font packages and `ttf-google-fonts-git`, 2026-09-28), and the known answers pass.
+**Done when:** no source has an unmatched key in its top 200 (ineligible rows count as resolved, and so do keys the owner rules to leave unmatched, gate U answer (d): TeX Live's font packages and `ttf-google-fonts-git`, 2026-09-28), and the known answers pass. *(Still open: `tff-catalog map --check-unmatched 200` lists `deb-pkg:fonts-adwaita` at Debian #148. Every other top-200 key is resolved or ruled to stay unmatched, and the known answers pass.)*
 
 ### Step 10: Confound corrections
 **Who:** Claude; the owner reviews flagged preinstalled and dependency entries. **Depends on:** 8, 9.
-- [ ] For every rank except *most installed* (most chosen, overall, Coding): reverse-dependency abstentions (the largest single dependent at 50% or more, with `a | b` credited to the first alternative and 35–50% flagged; ruling M8), plus abstentions for fonts a Linux system preinstalls. The *most installed* view keeps every count.
-- [ ] `preinstalled_on` and `pulled_in_by` tags for each affected font, used by both views.
-- [ ] Noise floors (Homebrew, the Arch Nerd Fonts group, Nerd release downloads), bundle, Nerd and CJK credits, and exposure counted from data dates.
+- [x] For every rank except *most installed* (most chosen, overall, Coding): reverse-dependency abstentions (the largest single dependent at 50% or more, with `a | b` credited to the first alternative and 35–50% flagged; ruling M8), plus abstentions for fonts a Linux system preinstalls. The *most installed* view keeps every count. *(`corrections.dependency_shares` and `abstentions`, applied by `build_views` to every view but *most installed*; `tests/pipeline/test_corrections.py::test_linux_sources_abstain_in_most_chosen_and_count_in_most_installed`.)*
+- [x] `preinstalled_on` and `pulled_in_by` tags for each affected font, used by both views. *(`corrections.build_tags`, exported per font to `catalog.json`; `tests/pipeline/test_corrections.py::test_tags_name_the_systems_and_packages`.)*
+- [x] Noise floors (Homebrew, the Arch Nerd Fonts group, Nerd release downloads), bundle, Nerd and CJK credits, and exposure counted from data dates. *(`corrections.key_floors` (rulings M3 and M4, Nerd's 10th percentile), `apply_floors`, `_credit` and `exposure`; the real run's floors are in `build/corrections.md`; `tests/pipeline/test_corrections.py`.)*
 - [x] A per-font correction report, with new cases flagged for the owner. *(2026-09-28: the owner ruled every new case (`data/reviews/corrections/`); the gate X queue is empty on the real store, replay of 2026-09-29.)*
 
 **Done when:**
@@ -242,30 +248,32 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - in *most chosen*, Quicksand and DejaVu abstain on Debian and Hack abstains on Arch; in *most installed*, they count;
 - Fantasque Sans Mono and Fira Sans have been checked against CachyOS's dependencies.
 
+*(Met 2026-09-29: the owner ruled every gate X case (`data/reviews/corrections/`). In `build/catalog.json`, Quicksand and the DejaVu families abstain on Debian and Hack on Arch in *most chosen*, and all of them count in *most installed*. On the 2026-09-26 data, Fantasque Sans Mono's largest CachyOS dependent is cachyos-fish-config at 32.4% (cachyos-kde-settings 22.5%), and Fira Sans's is cachyos-kde-settings at 19.0%: both are under 35%, so both keep counting.)*
+
 ### Step 11: Per-survey ranking engine
 **Who:** Claude. **Depends on:** 2 for building on synthetic fixtures during steps 4–10; 10 for the real run.
-- [ ] Ruler built from Homebrew values after the gates, alias-summing and credits.
-- [ ] Equating, and the censored value pinned as in the methodology (§3).
-- [ ] Weight scaling for small overlaps.
-- [ ] Shrunk mean, outlier guard, the two-group gate for the top 100, and deterministic ties.
-- [ ] Property tests:
+- [x] Ruler built from Homebrew values after the gates, alias-summing and credits. *(`corrections.ruler_counts` and `engine/equate.build_ruler`; `tests/pipeline/test_corrections.py::test_floors_credits_ruler_and_gates`.)*
+- [x] Equating, and the censored value pinned as in the methodology (§3). *(`engine/equate.equate_source`: the censored block sits at the bottom of the overlap; `tests/engine/test_equate.py`.)*
+- [x] Weight scaling for small overlaps. *(`equate.overlap_scale` in `surveys.effective_weights`: min(1, |O|/50), off below 15; `tests/engine/test_equate.py::test_overlap_scale`. The real run scales GitHub in Coding, where it shares 39 fonts with the ruler.)*
+- [x] Shrunk mean, outlier guard, the two-group gate for the top 100, and deterministic ties. *(`engine/fuse.py` (κ 0.2, the guard on the median basis) and `engine/order.py` (the gate; ties by score, evidence weight, ruler z, then name); `tests/engine/test_fuse.py`, `tests/engine/test_order.py`.)*
+- [x] Property tests: *(`tests/engine/test_properties.py`, with each exception pinned by an example.)*
   - determinism;
   - adding an ineligible font moves nothing;
   - a higher count never lowers a rank, except when the guard changes for that font or for a font that overtakes it, or through the ruler's scale.
-- [ ] The worked example (2.48 / 2.15 / 1.98, with the outlier guard on and its median basis; ruling M1 as amended on 2026-09-26) as a fixture.
-- [ ] Cross-checks: coverage-aware RRF (k=60) and the Fontsource ruler.
+- [x] The worked example (2.48 / 2.15 / 1.98, with the outlier guard on and its median basis; ruling M1 as amended on 2026-09-26) as a fixture. *(`tests/fixtures/engine/worked_example.toml`, `tests/engine/test_worked_example.py`, which also checks the fixture's guard against `ranking.toml`.)*
+- [x] Cross-checks: coverage-aware RRF (k=60) and the Fontsource ruler. *(`engine/crosscheck.py`; `tests/engine/test_crosscheck.py`; `build/review.md` lists the moves under both.)*
 
-**Done when:** the tests pass, and both desktop views and the project rank are produced from real data.
+**Done when:** the tests pass, and both desktop views and the project rank are produced from real data. *(Met 2026-09-29: `tests/engine` passes, and the real-store rebuild places 317 catalog fonts in *most chosen*, 322 in *most installed* and 436 in the project rank.)*
 
 ### Step 12: Overall rank, views and membership
 **Who:** Claude. **Depends on:** 11.
-- [ ] Overall rank with split weights (desktop from *most chosen*), shrunk once.
-- [ ] Views: Desktop *most installed*, Coding, Developers & apps, categories, Rising (beta).
-- [ ] A test that changing any extra view's weights (Coding, Developers & apps, Rising) leaves the overall rank unchanged.
-- [ ] A leak test: changing a Linux source's count for a font that abstains in *most chosen* leaves the overall rank unchanged.
-- [ ] Catalog membership (the overall top 500 plus the top 100 of the project rank and of both desktop views), with hysteresis counters in `state/`. For the top-100 lists, a font enters at 90 or better and leaves after 2 runs worse than 110 (ruling M11).
+- [x] Overall rank with split weights (desktop from *most chosen*), shrunk once. *(`surveys.overall`; `tests/pipeline/test_surveys.py::test_overall_is_the_mixed_weighted_mean_shrunk_once`.)*
+- [x] Views: Desktop *most installed*, Coding, Developers & apps, categories, Rising (beta). *(`surveys.views`. Developers & apps is bands only, Rising is published from the third merged refresh, and categories are the site's category filter; `tests/pipeline/test_views.py`.)*
+- [x] A test that changing any extra view's weights (Coding, Developers & apps, Rising) leaves the overall rank unchanged. *(`tests/pipeline/test_views.py::test_changing_an_extra_view_leaves_overall_unchanged`.)*
+- [x] A leak test: changing a Linux source's count for a font that abstains in *most chosen* leaves the overall rank unchanged. *(`tests/pipeline/test_views.py::test_abstention_leak_linux_counts_of_abstaining_fonts_never_reach_overall`; validate runs the same check each refresh.)*
+- [x] Catalog membership (the overall top 500 plus the top 100 of the project rank and of both desktop views), with hysteresis counters in `state/`. For the top-100 lists, a font enters at 90 or better and leaves after 2 runs worse than 110 (ruling M11). *(`membership.update`; `tests/pipeline/test_membership.py`. The stage writes the counters to `build/state/membership.json`, which reaches `state/` when a refresh pull request is merged.)*
 
-**Done when:** every catalog candidate has every published rank it has evidence for; fonts unranked in *most chosen* only because of abstentions are listed with their tag.
+**Done when:** every catalog candidate has every published rank it has evidence for; fonts unranked in *most chosen* only because of abstentions are listed with their tag. *(Met 2026-09-29: in `build/catalog.json` every catalog font is placed in each rank it has evidence for, and the 5 fonts unranked in *most chosen* for want of deliberate installs, among them Clear Sans and PT Sans Narrow, carry their `pulled_in_by` tags.)*
 
 ### Step 6b: License verification for the catalog (after ranking)
 **Who:** Claude; the owner rules on the queue. **Depends on:** 12; on the critical path before step 13.
@@ -280,14 +288,16 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - every catalog font is at L3 or has an owner ruling;
 - a test shows that a changed license hash puts the font back in the queue.
 
+*(Met 2026-09-29: 497 catalog fonts are at L3, and Cascadia Code, Cascadia Mono and IBM 3270 are kept by owner rulings (`data/reviews/l3/2026-09-28.toml`); `tests/pipeline/test_license_l3.py::test_license_hash_change_requeues`.)*
+
 **Parallel:** Google families in one automatic batch; non-Google upstreams split across agents.
 
 ### Step 13: Confidence and stability
 **Who:** Claude. **Depends on:** 6b.
-- [ ] 200 weight perturbations plus leave-one-source-out runs, giving ranges, tiers and bands.
-- [ ] A backtest on historical windows (pkgstats series, 18 months of npm, Homebrew 30/90/365 days, Google's windows), used to set the alert thresholds.
+- [x] 200 weight perturbations plus leave-one-source-out runs, giving ranges, tiers and bands. *(`confidence.perturb` and `tier`; `tests/pipeline/test_confidence.py::test_stage_gives_every_ranked_font_a_range_and_a_tier`.)*
+- [ ] A backtest on historical windows (pkgstats series, 18 months of npm, Homebrew 30/90/365 days, Google's windows), used to set the alert thresholds. *(Built: `backtest.py`, `tff-catalog backtest`; `tests/pipeline/test_backtest.py`. Still open: it hasn't run on the real store, so there is no `docs/backtests/` report, and `ranking.toml [review]` keeps the §9 defaults. The owner ruled on 2026-09-26 that the thresholds are revisited after 3 merged refreshes.)*
 
-**Done when:** every ranked font has a range and a tier, and the backtest report is committed.
+**Done when:** every ranked font has a range and a tier, and the backtest report is committed. *(Still open: the backtest report. Every placed font in `build/catalog.json` has a range and a tier.)*
 
 ### Step 14: Official download links
 **Who:** Claude; the owner approves overrides. **Depends on:** 4, 6a; runs alongside steps 8–13.
@@ -301,16 +311,16 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - web.archive.org counts as an aggregator for every automatic pick, but an override the owner approves may link a timestamped Wayback Machine capture of the designer's page when that page is gone, marked and labelled as archived (owner ruling of 2026-09-29);
   - auto-accept only when two sources agree, or when the owner-approved foundry list (`config/foundries.toml`, gate C3) gives the link (owner ruling of 2026-09-26);
   - an `http://` homepage is upgraded to `https://` and checked monthly (owner ruling of 2026-09-26).
-- [ ] A monthly link check. *(The check runs in every refresh and as `tff-catalog links --check`; the monthly schedule comes with step 19's workflow.)*
+- [ ] A monthly link check. *(The check runs in every refresh and as `tff-catalog links --check`; the monthly schedule comes with step 19's workflow. Still open (2026-09-29): a failed check reaches only the log and `build/stage/queues/links.json`. `review.md`, validate and gate K don't report it, and `refresh.yml` doesn't run `links --check`, so a link that breaks later would stay published without a flag.)*
 
-**Done when:** every catalog font has a primary link that follows the policy and returns HTTP 200.
+**Done when:** every catalog font has a primary link that follows the policy and returns HTTP 200. *(Met 2026-09-29: `links --check` passes all 500 catalog families on the real store, and every primary follows the policy, Heavy Data's and Monofur's as approved archived overrides.)*
 
 **Parallel:** batch the link checks.
 
 ### Step 15: catalog.json schema, validation and site export
 **Who:** Claude. **Depends on:** 13, 14.
-- [ ] A JSON Schema for `catalog.json` (methodology §7), with the hard-failure checks from §9 wired in. The rank keys are versioned constants.
-- [ ] `catalog-site.json` for the filterable list, with these fields per font:
+- [x] A JSON Schema for `catalog.json` (methodology §7), with the hard-failure checks from §9 wired in. The rank keys are versioned constants. *(`schemas/catalog.schema.json`; `validate.CHECKS` runs every §9 hard failure as refresh's last stage; `export.RANK_KEYS` is pinned to the schemas by `tests/pipeline/test_export.py::test_rank_keys_are_versioned_constants`; `tests/pipeline/test_validate.py`.)*
+- [x] `catalog-site.json` for the filterable list, with these fields per font: *(`schemas/catalog-site.schema.json`, written by `export.py`. The gate-held and no-deliberate-evidence flags sit in each rank entry (`gate_held`, `unranked`), as `docs/catalog-schema.md` says, and `flags[]` holds `too_new`; `tests/pipeline/test_export.py`.)*
   - id, family, category, is_monospace;
   - formats, Latin coverage;
   - license {spdx, class, redistributable, attribution_required, text_url};
@@ -322,11 +332,11 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - `preview` {path, sha256} for fonts with a preview.
 
   At the top level, the file also carries the run date, method version, stale sources with their data dates, the data license and the source credits. Milestone 2's step 2 reviews this list before it is frozen.
-- [ ] `names.json`: the names and aliases of every eligible family in the universe, not only the catalog. Milestone 3's matching uses it, so a real font outside the catalog is recognised instead of showing up as a near-match.
-- [ ] A monthly diff (entries, exits, big moves, license changes) and the flags, written to `build/review.md`.
-- [ ] `docs/catalog-schema.md` documents both files.
+- [x] `names.json`: the names and aliases of every eligible family in the universe, not only the catalog. Milestone 3's matching uses it, so a real font outside the catalog is recognised instead of showing up as a near-match. *(`build/names.json`: the 1,750 families that pass the gates, 500 of them in the catalog, plus 1,692 ineligible names with their reasons; `tests/pipeline/test_export.py::test_names_lists_every_eligible_family`.)*
+- [x] A monthly diff (entries, exits, big moves, license changes) and the flags, written to `build/review.md`. *(`review.py`; the what-if table stays in the private review pack (owner ruling of 2026-09-26); `tests/pipeline/test_review.py`. The first run has no diff yet.)*
+- [x] `docs/catalog-schema.md` documents both files. *(It covers `catalog.json`, `catalog-site.json` and `names.json`, with the validation checks.)*
 
-**Done when:** the three files validate in CI and the hard checks pass on the real run.
+**Done when:** the three files validate in CI and the hard checks pass on the real run. *(Still open: CI checks the committed files once they are in a pull request. Locally, `tests/pipeline/test_validate.py::test_committed_build_outputs_validate` and `tff-catalog validate --committed` pass, and validate's 10 hard checks pass on the real run.)*
 
 ### Step 16: First full run and owner review of the top lists
 **Who:** both. **Depends on:** 15.
@@ -340,13 +350,13 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - the what-if table.
 - [x] The owner reviews and edits `ranking.toml`, the aliases or `preinstalled.toml`; Claude reruns (up to 3 rounds). *(2026-09-29: round 1 is ruled (`data/reviews/review/2026-09-29.toml`) and implemented: Nerd Fonts is its own independence group, and 22 catalog fonts get owner categories in `config/category-overrides.toml`. The real-store rebuild followed the same day (replays byte-identical, validate green), and the owner approved the lists in round 2 (R2).)*
 
-**Done when:** the owner approves the lists.
+**Done when:** the owner approves the lists. *(Met 2026-09-29: the owner approved the lists in round 2, R2 in `data/reviews/review/2026-09-29.toml`.)*
 
 ### Step 17: Record decisions
 **Who:** both. **Depends on:** 16; runs alongside step 18.
-- [ ] AUTHORITY.md gets dated entries for the final method, weights, license rulings and Latin policy.
-- [ ] `docs/ranking-methodology.md` becomes the public text, starting from its plain-words section.
-- [ ] Confirm every completed item in this checklist is already ticked.
+- [x] AUTHORITY.md gets dated entries for the final method, weights, license rulings and Latin policy. *(2026-09-29: "Final method (Milestone 1 step 17)" names the method version, the weights in `config/ranking.toml`, and where the license and Latin rulings live; each ruling keeps its own dated entry.)*
+- [x] `docs/ranking-methodology.md` becomes the public text, starting from its plain-words section. *(2026-09-29: status "published"; it opens with §1, and the Step 0 decision markers and the options already decided are gone. The section numbers, which the code and `/methodology/` use, are unchanged.)*
+- [x] Confirm every completed item in this checklist is already ticked. *(2026-09-29: every item of steps 1–15 was checked against the code, the tests and the real run's outputs, and ticked with its evidence or left open with what's left. Step 9's owner item is open again: one ruled alias row is missing.)*
 
 **Done when:** the changes are merged to `main`.
 
@@ -361,25 +371,25 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 **Who:** Claude builds it and sets up access with `gh` (owner ruling CI1, 2026-09-26); the owner merges. **Depends on:** 18 and D15.
 - [ ] Claude (ruling CI1, 2026-09-26), when this step is ready: let refresh pull requests trigger CI by turning on "Allow GitHub Actions to create and approve pull requests" with `gh`, which the repository currently has off. The refresh job opens the pull request with `GITHUB_TOKEN` and then dispatches `ci.yml` on `refresh/monthly`, because pull requests that `GITHUB_TOKEN` opens trigger no workflows. No GitHub App or personal token is needed.
 - [ ] Claude (ruling CI1, 2026-09-26), with `gh`: create the private data repository's deploy key and this repository's `DATA_STORE_KEY` secret (D15), and record both in SERVER.md and here. A token for Flutter code search comes only if that is turned on after v1.
-- [ ] The workflow:
+- [ ] The workflow: *(Written: `.github/workflows/refresh.yml` has this cron, `workflow_dispatch`, a uv cache, the `refresh` concurrency group and each job's write permissions. It hasn't run on GitHub yet.)*
   - runs on a monthly cron at an off-minute (for example `17 6 3 * *`) and on `workflow_dispatch`;
   - uses a uv cache and a concurrency group;
   - has write permission for `contents`, `pull-requests` and `issues`.
-- [ ] It opens or updates a pull request on the fixed branch `refresh/monthly`, with `catalog.json`, `catalog-site.json`, `review.md`, the `state/` changes, and the alias rows and seeds the run added to `data/`. A hard failure fails the job and opens an issue instead.
+- [ ] It opens or updates a pull request on the fixed branch `refresh/monthly`, with `catalog.json`, `catalog-site.json`, `review.md`, the `state/` changes, and the alias rows and seeds the run added to `data/`. A hard failure fails the job and opens an issue instead. *(Written: `refresh.yml`'s `publish` and `report` jobs. Not yet run.)*
 - [ ] Check the collectors on GitHub's runners: rate limits, the GitHub API budget, and whether Google's endpoints respond.
-- [ ] A watchdog for GitHub's rule that disables scheduled workflows in public repositories after 60 days without activity. It runs outside this repository's schedule (for example a timer on the VPS reading GitHub's public API, which the rule can't disable), and warns the owner if no refresh pull request has appeared for 35 days, or `main` has had no commit for 50 days.
+- [ ] A watchdog for GitHub's rule that disables scheduled workflows in public repositories after 60 days without activity. It runs outside this repository's schedule (for example a timer on the VPS reading GitHub's public API, which the rule can't disable), and warns the owner if no refresh pull request has appeared for 35 days, or `main` has had no commit for 50 days. *(Written: `ops/refresh-watchdog/`, a script with a systemd timer. Not yet installed on the VPS.)*
 
 **Done when:** a manual dispatch opens a correct pull request, CI runs on it, and the owner merges it.
 
 ### Step 20: Handoff to Milestone 2
 **Who:** both. **Depends on:** 17, 19.
-- [ ] `catalog-site.json` v1 is frozen, with a sample file and the schema doc, but only after Milestone 2's step 2 has approved its fields.
+- [ ] `catalog-site.json` v1 is frozen, with a sample file and the schema doc, but only after Milestone 2's step 2 has approved its fields. *(Not yet: `schema_version` is still `1.0.0-draft`. Milestone 2's step 2 approved the fields on 2026-09-25; since then the schema has gained the `nerd` group, the `app` system type and a link `note`, each from an owner ruling.)*
 - [ ] A handoff note lists what Milestone 2 must settle:
   - the default rank order;
   - numbering under filters;
   - the deploy path to the VPS;
   - the methodology page.
-- [ ] The runbook lists the manual tasks (methodology §10).
+- [ ] The runbook lists the manual tasks (methodology §10). *(Not yet: no runbook in `ops/` or `docs/` lists them.)*
 - [ ] "Current step" in AUTHORITY.md moves to Milestone 2, and `docs/roadmap.md` shows the new status.
 
 **Done when:** the owner accepts the handoff.

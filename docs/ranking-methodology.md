@@ -1,23 +1,16 @@
 # Ranking methodology
 
-**Status: approved 2026-09-25** (Milestone 1, Step 0, pull request #1). Every Step 0 decision is marked *decided*. Approved choices are recorded in [AUTHORITY.md](../AUTHORITY.md), and the checklist is in [milestone-1.md](milestone-1.md).
+**Status: published 2026-09-29** (Milestone 1, step 17). This is how the catalog is ranked, and the code follows it. Every number is set in [`config/ranking.toml`](../config/ranking.toml). Labels such as D4, M5 and T2 name the owner's decisions and rulings, which [AUTHORITY.md](../AUTHORITY.md) records with their dates. The rulings and their reasons are in [`data/reviews/`](../data/reviews/).
 
-The clarifications of 2026-09-25 (terms rulings T1–T5 and method rulings M1–M12) were ruled by the owner; they are recorded in [AUTHORITY.md](../AUTHORITY.md) and `data/reviews/`.
+## 1. In plain words
 
-Every number is a default in `config/ranking.toml`, which the owner can edit. There are two kinds of decision:
+Each month we collect public counts of how often free fonts are installed on computers and used in websites, code and apps. The sources measure different things, so we compare positions, not raw numbers: each source's order is translated onto one shared scale.
 
-- **DECISION [Step 0]** must be answered before building starts.
-- **DECISION [later OK]** starts from its default and can change later.
+A font's score is the weighted average over the sources that could have seen it. A source that doesn't carry a font at all (a Linux distribution with no package for it) is left out, not counted as zero.
 
-## 1. In plain words (draft for the public page)
+Fonts with little evidence are pulled toward the middle. No font reaches the top 100 on one kind of evidence alone.
 
-> Each month we collect public counts of how often free fonts are installed on computers and used in websites, code and apps. The sources measure different things, so we compare positions, not raw numbers: each source's order is translated onto one shared scale.
->
-> A font's score is the weighted average over the sources that could have seen it. A source that doesn't carry a font at all (a Linux distribution with no package for it) is left out, not counted as zero.
->
-> Fonts with little evidence are pulled toward the middle. No font reaches the top 100 on one kind of evidence alone.
->
-> The desktop rank comes in two versions, and both list the same fonts. **Most installed** counts every install. **Most chosen** leaves out the installs that Linux systems make on their own (fonts that come preinstalled, or that another program brings in), so those fonts are ranked on the installs people made themselves. The overall rank uses *most chosen*, blended with the *Used in projects* rank. Past #100 we show bands, because the data can't separate those fonts precisely.
+The desktop rank comes in two versions, and both list the same fonts. **Most installed** counts every install. **Most chosen** leaves out the installs that Linux systems make on their own (fonts that come preinstalled, or that another program brings in), so those fonts are ranked on the installs people made themselves. The overall rank uses *most chosen*, blended with the *Used in projects* rank. Past #100 we show bands, because the data can't separate those fonts precisely.
 
 **Principles:**
 
@@ -39,10 +32,7 @@ Every number is a default in `config/ranking.toml`, which the owner can edit. Th
 
 **IDs:** each family gets a stable `id` minted from its name the first time it is seen, and it never changes. A rename adds an alias and updates the display name, but keeps the `id`, so links, history and "first seen" survive.
 
-**DECISION [later OK] D2: siblings and bundles.**
-
-- *Width siblings* such as Barlow Condensed: separate families (default), or fold into the parent.
-- *Bundles* (fonts-urw-base35, the Monaspace cask): each member gets 0.5 credit and a "bundle-only" flag (default); full credit; or an even split.
+**Siblings and bundles (D2).** Width siblings such as Barlow Condensed are families of their own. A bundle (fonts-urw-base35, the Monaspace cask) credits each of its member families with half its count, and a count that reaches a font only through bundles is flagged "bundle-only".
 
 **Universe:** the candidate families come from:
 
@@ -51,9 +41,9 @@ Every number is a default in `config/ranking.toml`, which the owner can edit. Th
 - the original fonts behind Nerd Fonts;
 - Homebrew's non-Google font casks;
 - Fontist's open-license formulas;
-- a hand list of foundry families in `config/foundries.toml` (League of Moveable Type, Velvetyne, Collletttivo, Open Foundry and others). Claude seeds it once from the foundry sites and the owner reviews it; the sites are not scraped each month (ruling M12).
+- a hand list of foundry families in `config/foundries.toml` (League of Moveable Type, Velvetyne, Collletttivo, Open Foundry and others). It was seeded once from the foundry sites and approved by the owner (gate C); the sites are not scraped each month (ruling M12).
 
-Appearing in one of these lists never counts as popularity. After the gates, we expect 1,400–1,600 families.
+Appearing in one of these lists never counts as popularity. After the gates, about 1,600 families are ranked.
 
 ### Gates, applied before ranking
 
@@ -65,7 +55,7 @@ Appearing in one of these lists never counts as popularity. After the gates, we 
 
 Unknown IDs are excluded.
 
-**D3 (decided 2026-09-25): license classes and previews.**
+**License classes and previews (D3).**
 
 - **Qualify:** CC-BY qualifies, with an "attribution" badge. An informal freeware grant qualifies only if it explicitly allows any use.
 - **Excluded in v1:**
@@ -78,18 +68,16 @@ Unknown IDs are excluded.
   - fonts with no license found. Claude researches any such family that would otherwise reach the overall top 700 before it drops out (owner ruling of 2026-09-26), and a license found goes to the owner as a gate LIC ruling that names it (the first 25 were ruled on 2026-09-28). Each month the review pack lists these families with the overall order each would get if its license were found, from a rerun of the ranking on a copy of the build.
 - **Previews (`preview_ok`):** a font may be previewed on our site only if it is redistributable. We serve the upstream files unchanged: no subsetting or format conversion of fonts with a Reserved Font Name. Whether conversion is fine under the OFL is *unverified*, so we avoid it.
 
-**Latin. D4 (decided 2026-09-25): option (C).** The options were:
+`config/licenses.toml` lists the licenses that qualify, in the groups the site's license filter shows, and the licenses that are excluded. A license it doesn't list is excluded. The owner's rulings on particular licenses and fonts are in `data/reviews/licenses/` (gate LIC) and `data/reviews/l3/` (gate L3).
 
-- **(A)** The strict Google metadata test: primary script Latin or unset, and a `latin` subset. That gives 1,264 families and drops Poppins.
-- **(B)** A, plus 204 dual-script families that are not CJK and have both `latin` and `latin-ext`.
-- **(C, chosen)** A, plus a dual-script allowlist the owner reviews.
+**Latin (D4).** A Google family is Latin when Google's metadata says so: its primary script is Latin or unset, and it has a `latin` subset. About 1,250 of Google's 1,946 families pass this strict test. It misses dual-script families such as Poppins (Latin and Devanagari), so those join from an allowlist the owner reviews.
 
 The allowlist follows the owner's rule of 2026-09-26 (gate L2): a dual-script Google family with full Latin Extended is included unless it is a script companion, a script version of a family already listed whose Latin is that family's (Noto Sans Arabic of Noto Sans, Hind Siliguri of Hind); companions and families with basic Latin only stay out. Claude applied the rule family by family: on 2026-09-26, 178 families were included and 265 left out (206 companions, 59 with basic Latin only), and on 2026-09-28 the owner confirmed the companions stay out. The lists are in `data/reviews/latin/`, and the owner can move any family. A new dual-script family is asked about with the rule's advice: keep it out if its Latin is basic, include it if no other family's name starts its own, and otherwise the owner decides whether its extra words name a script or a style.
 
-In every option:
+Also:
 
-- The 191 families that cover basic Latin only are kept, with a "limited accents" badge.
-- A non-Google font qualifies if it lacks at most 2 of GF_Latin_Kernel's code points, at least 30% of its letters are Latin, and it has fewer than 1,000 CJK code points. Its coverage is "extended" when at most 3 of GF_Latin_Core's code points are missing. A letter's script is its Unicode Script property, and letters of the Common, Inherited and Unknown scripts are not counted. These are the owner's gate L1 thresholds of 2026-09-26, in `config/ranking.toml [latin]`.
+- Families that cover basic Latin only are kept, with a "limited accents" badge.
+- A non-Google font qualifies if it lacks at most 2 of GF_Latin_Kernel's code points, at least 30% of its letters are Latin, and it has fewer than 1,000 CJK code points. Its coverage is "extended" when at most 3 of GF_Latin_Core's code points are missing. A letter's script is its Unicode Script property, and letters of the Common, Inherited and Unknown scripts are not counted. These are the owner's gate L1 thresholds of 2026-09-26, in `config/ranking.toml [latin]`. A font with no readable file can't be tested, so it stays out.
 - A Google family served only with Google's `menu` subset (the Playwrite families and Allkin) has no metadata to judge, so it takes the same test on its files (gate L, 2026-09-26).
 - Families that are mainly CJK (Sarasa, LXGW WenKai, D2Coding) are out.
 
@@ -130,9 +118,9 @@ In every option:
 
 - A source that packages only popular fonts can't label its least-installed font unpopular. For example, the typical font Debian packages sits at Homebrew's 87th percentile.
 - For sources that see nearly every family (Fonts Over Time, the Almanac, Google, npm), this reduces to a plain rank-to-normal-score conversion. Homebrew's developer skew therefore barely reaches the project rank.
-- Small overlaps are noisy. A source's weight is multiplied by min(1, |O_s|/50), and the source is switched off below 15. GitHub releases are likely to be affected; this needs testing.
+- Small overlaps are noisy. A source's weight is multiplied by min(1, |O_s|/50), and the source is switched off below 15.
 
-**DECISION [later OK] D5: the ruler.** Homebrew (default). Fontsource is the fallback, and a rerun with Fontsource as the ruler runs each month as a check.
+**The ruler (D5)** is Homebrew. Each month the ranking is also rerun with Fontsource (its jsDelivr counts) as the ruler, as a check (§9).
 
 **Why not the Top 100's reciprocal-rank fusion (RRF, k=20)?**
 
@@ -140,7 +128,7 @@ In every option:
 - Averaging log counts fails the other way: fonts seen only by Homebrew, mostly coding fonts, reached #4–#6.
 - With only 2–4 lists, Borda, Robust Rank Aggregation, Markov-chain and Kemeny methods either ignore weights or produce cycles.
 
-**D1 (decided 2026-09-25): method.** Equated normal scores plus shrinkage, as this document describes. Coverage-aware RRF (k=60, averaged over only the sources that cover the font, plus a prior) runs each month as a cross-check.
+**Method (D1).** Equated normal scores plus shrinkage, as this document describes. Coverage-aware RRF (k=60, averaged over only the sources that cover the font, plus a prior) runs each month as a cross-check.
 
 ## 4. Fusion
 
@@ -150,7 +138,7 @@ S_g(f) = (κ·W_g·μ0 + Σ w_s·z_s(f)) / (κ·W_g + Σ w_s), with κ = 0.2 and
 
 A font covered by every source keeps 83% of its signal; one covered by a third of the weight keeps 63%.
 
-**Outlier guard:** when a font has at least 3 terms and one source sits more than 1.5 z from the median of all the font's terms, that source gets half weight for that font. All terms are judged against the unguarded values at once, and the event is logged. (The owner's ruling of 2026-09-26; ruling M1 had compared each term with the mean of the others.)
+**Outlier guard:** when a font has at least 3 terms and one source sits more than 1.5 z from the median of all the font's terms, that source gets half weight for that font. All terms are judged against the unguarded values at once, and the event is logged (owner ruling of 2026-09-26, amending M1).
 
 **Overall:** the same formula over all project terms and the *most chosen* desktop terms: a Linux source that abstains for a font in *most chosen* abstains in overall too. Each source is weighted v_s = M_g·w_s / W_g, where M_g is survey g's share of the overall mix (D12), and shrunk once (with Σ M_g in place of W_g). W_g uses the effective weights (after phase-in, overlap scaling, stale drops and switched-off sources), and the overall rank reuses each survey's guard factors rather than running the guard again. A desktop-only font gets censored terms from the web crawls, not a placeholder: the crawls' frame is every eligible font.
 
@@ -162,17 +150,11 @@ A font covered by every source keeps 83% of its signal; one covered by a third o
 | Inter | 2.99, 2.29, 1.77 | 2.15 |
 | Monaspace | 2.92, 1.77, no Debian package | 1.98 |
 
-For JetBrains Mono the outlier guard does not fire: the median of its terms is Arch's 2.70, and Debian's 1.59 sits 1.11 z below it, within the 1.5 gap (the owner's ruling of 2026-09-26). Under ruling M1's first reading, the mean of the other two (3.12), Debian sat 1.53 z away and got half weight, for a score of 2.53.
+For JetBrains Mono the outlier guard does not fire: the median of its terms is Arch's 2.70, and Debian's 1.59 sits 1.11 z below it, within the 1.5 gap.
 
 The missing Debian package costs Monaspace only a slightly stronger pull toward the middle: it keeps 81% of its signal instead of 83%. RRF would have scored it as if Debian users had rejected it.
 
-**DECISION [later OK] D6: display.**
-
-- **(a, default)** Exact ranks 1–100 with a confidence tier, then bands 101–250 and 251–500.
-- **(b)** Exact ranks everywhere.
-- **(c)** Bands only.
-
-Each font also shows its rank in every source. The site data carries an internal sort order, so lists can still be sorted within a band.
+**Display (D6).** Exact ranks 1–100 with a confidence tier, then the bands 101–250 and 251–500, and "501+" for a catalog font placed past 500. Each font also shows its rank in every source. The site data carries an internal sort order, so lists can still be sorted within a band.
 
 ## 5. The rankings
 
@@ -213,11 +195,11 @@ In both views, affected fonts carry a tag naming the systems they come with or t
 - **Fonts left without desktop evidence.** If abstentions leave a font no observed desktop term, it stays listed in *most chosen* as "no evidence of deliberate installs", with its tag, and keeps its *most installed* rank and its overall rank. It is never removed from the catalog for this reason.
 - **Resolution.** The data separates roughly 200–300 families.
 
-**D7 (decided 2026-09-25): Nerd and CJK credit.** A patched build's installs count in full toward the original font: `nerd_credit` 1.0 and `cjk_build_credit` 1.0 (Maple Mono NF CN and similar). About 59% of Homebrew font installs are Nerd casks, and Meslo LG ranks high because Powerlevel10k recommends it, so coding fonts rank higher under this choice. If the two credits ever differ, a build that is both NF and CN gets the smaller.
+**Nerd and CJK credit (D7).** A patched build's installs count in full toward the original font: `nerd_credit` 1.0 and `cjk_build_credit` 1.0 (Maple Mono NF CN and similar). About 59% of Homebrew font installs are Nerd casks, and Meslo LG ranks high because Powerlevel10k recommends it, so coding fonts rank higher under this choice. If the two credits ever differ, a build that is both NF and CN gets the smaller.
 
-**D8 (decided 2026-09-25): preinstalled and dependency-pulled fonts.** These fonts stay in every rank; only how their Linux installs are counted changes. Publish two desktop views, *most chosen* and *most installed*, as described at the top of this section. *Most chosen* feeds the overall rank. The owner reviews new preinstalled and dependency entries when the script flags them.
+**Preinstalled and dependency-pulled fonts (D8).** These fonts stay in every rank; only how their Linux installs are counted changes. Two desktop views are published, *most chosen* and *most installed*, as described at the top of this section. *Most chosen* feeds the overall rank. The owner reviews new preinstalled and dependency entries when the script flags them.
 
-**DECISION [later OK] D9:** desktop weights as in the table. Noise estimates suggesting Arch deserves 1.0 came from only 45 families, before correction.
+**Desktop weights (D9)** are as in the table. Noise estimates suggesting Arch deserves 1.0 came from only 45 families, before correction.
 
 ### Project: fonts used in sites, code and apps
 
@@ -240,7 +222,7 @@ In both views, affected fonts carry a tag naming the systems they come with or t
   - It is new: the crawl started in September 2026, and its repository has no license file. It runs at weight 0.10 until it has 8 weekly snapshots, then 0.25.
   - Each run checks FOT's file columns. On a mismatch, FOT is marked stale rather than failing the run.
   - Counted rows: browser and static only; weekly snapshots averaged over the month; under 3 sites is censored; ITF fonts and generic names dropped.
-  - Startups make up 5,231 of its 10,465 sites, so they are capped at 25% of the weight.
+  - Startups make up 5,231 of its 10,465 sites, so they are capped at 25% of the weight, for an effective sample of about 8,400 sites (D11).
 - **Almanac.**
   - The term comes from the pages tab (pages declaring the font; gid 1668708562).
   - Families it doesn't list are censored.
@@ -248,45 +230,38 @@ In both views, affected fonts carry a tag naming the systems they come with or t
   - A new edition arrives yearly. The sheet id and tabs are set in config and switched in one step, flagged in that month's pull request.
 - **Google.** Google is counted once. The metadata `popularity` field is dropped, except as a fallback, because it tracks 7-day views almost exactly (Spearman 0.998). The Top 100 counted Google twice. Google's view counts are used only to rank fonts and are never published (ruling T2).
 - **npm.**
-  - Numbers come straight from `api.npmjs.org/downloads/point/last-year/<package>`, one request a second, for packages above the floor.
+  - Each package's daily downloads come from one `api.npmjs.org/downloads/range` request over the last 540 days, at one request a second. The term is the last-year total.
   - Legacy ids are folded (source-sans-pro → source-sans-3).
   - Floors: npm 1,000 a month and jsDelivr 10,000 a month; values below are censored.
 - **ecosyste.ms** dependent-repository counts (projects that declare each package, so CI re-downloads can't inflate them) are used at 0.10. Only the @fontsource and @fontsource-variable packages are counted, not Expo's (ruling M7). Its data is CC BY-SA 4.0, the same license as our catalog data (D17). Floor: 5 dependents; values below are censored.
 
-**D10 (decided 2026-09-25): project scope.** Websites, code and apps, including ecosyste.ms dependent repositories at 0.10 in the code group.
+**Project scope (D10).** Websites, code and apps, including ecosyste.ms dependent repositories at 0.10 in the code group.
 
 Print stays at 0, because the terms of Fonts In Use forbid robots.
 
-**D11 (use decided 2026-09-25, ruling T4): Fonts Over Time.**
-
-- *Use (decided):* under its "free to download and reuse" wording, at the phase-in weight (0.10 until 8 weekly snapshots), with credit and a link back. Only ranks and their rank-based z scores are published, never its raw values, and test fixtures are synthetic. Claude drafts a request to its author for an explicit license, and the owner posts it. The other options were to wait for a license or to skip it.
-- *Startup skew* (still **[later OK]**; the default stands):
-  - a 25% cap (default; effective sample about 8,400 sites);
-  - equal weight per category (about 3,000; one university site would weigh as much as about 24 startup sites);
-  - or raw counts.
+**Fonts Over Time (D11, ruling T4).** It is used under its "free to download and reuse" wording, at the phase-in weight (0.10 until 8 weekly snapshots), with credit and a link back. Only ranks and their rank-based z scores are published, never its raw values, and test fixtures are synthetic. The owner asked its author for an explicit data license on 2026-09-25 ([fcjr/fontsovertime#1](https://github.com/fcjr/fontsovertime/issues/1)).
 
 ### Overall
 
-**D12 (decided 2026-09-25): overall mix.** Desktop (*most chosen*) 0.5 and project 0.5, measuring usage only. Designer picks are not used. They could be added later as a 10% share from 3–5 fixed public lists entered by hand once a year.
+**Overall mix (D12).** Desktop (*most chosen*) 0.5 and project 0.5, measuring usage only; the owner kept this mix at the gate R review of 2026-09-29. Designer picks are not used.
 
-### Recommended extra views
+### Extra views
 
-These never feed the overall rank.
-
-**D13 (decided 2026-09-25): publish all four views.**
+These never feed the overall rank. The owner chose all four (D13).
 
 - **Coding fonts.** Developers are a real audience and already dominate the desktop data.
   - Covers monospace families.
-  - Weights: Nerd release downloads 1.0, Homebrew 1.0, Arch 0.75, GitHub 0.5, Fontsource npm 0.5, ~~Chocolatey 0.25~~ (dropped in v1, ruling T3). Arch uses the *most chosen* abstentions.
-  - On the site, a spacing filter (Any / Proportional / Monospaced) replaces the "Text only" filter planned for both desktop views. *Proportional* hides monospace and coding fonts, as "Text only" would have, and the filter works on every rank (owner ruling, 2026-09-25).
+  - Weights: Nerd release downloads 1.0, Homebrew 1.0, Arch 0.75, GitHub 0.5, Fontsource npm 0.5. Arch uses the *most chosen* abstentions.
+  - On the site, a spacing filter (Any / Proportional / Monospaced) works on every rank. *Proportional* hides monospace and coding fonts (owner ruling, 2026-09-25).
 - **Developers & apps.** Separates what builders choose from web traffic. Its weights are the project weights, rescaled: Fontsource npm 0.15, ecosyste.ms dependents 0.10, Expo 0.10, and Flutter 0.05 when it is on (ruling M10). While Flutter is off, all its sources share one independence group, so no font can pass the two-group gate: the view is published as bands only, labelled as such, until a second independent source is on (owner ruling of 2026-09-26).
-- **By category.** The overall scores filtered by sans, serif, display, handwriting and mono.
+- **By category.** The overall scores filtered by sans, serif, display, handwriting and mono. A font's category comes from Google Fonts' metadata, then Fontsource, then the font's own tables. The owner's category in `config/category-overrides.toml` comes before all of them (owner ruling of 2026-09-29, gate R).
 - **Rising (beta).** Feeds "New popular free fonts this month".
   - Per source, the log-ratio of recent share to 12-month *share*, not counts: npm keeps growing overall, and Homebrew's 30-day total fell to about 20% of its 90-day total.
   - A font rises only when at least 2 sources agree, its share is at least 0.02%, and the rise holds over 3 months of smoothing.
   - Fonts under 3 months old go to "New" instead.
   - Google alone can't make a font rise: Andada Pro was up 925% in 90 days. A font's rise is its second-largest rise among its sources, so no single source sets it.
   - Every Rising font shows tier C while the view is in beta: Rising has no weights, so its confidence ranges are nearly all single points and would otherwise read as tier A (owner ruling of 2026-09-26).
+  - The view appears from the third monthly refresh, once three months of shares exist.
 
 **Deferred:**
 
@@ -310,14 +285,13 @@ These never feed the overall rank.
   - Debian;
   - GitHub counters (releases);
   - Nerd Fonts;
-  - ~~Chocolatey~~ (dropped in v1, ruling T3);
   - Flutter.
 
   GitHub release counts and Homebrew count as one group for a font whose Homebrew cask downloads that repository's release asset, because GitHub's counts then include the cask's installs (ruling M5). Nerd Fonts stays a group of its own even when a font's Nerd cask downloads the Nerd release, because Homebrew's Nerd casks are a small share of Nerd's downloads: for Hack, about 62,000 Homebrew installs a year against 2.3 million Nerd downloads (owner ruling of 2026-09-29).
 
   A font that fails the gate sits at 101 or below and is flagged. In a crude check, shrinkage alone left Homebrew-only fonts in the top 15.
 
-**D14 (decided 2026-09-25): evidence gate.** The 2-group gate plus κ 0.2.
+**Evidence gate (D14).** The 2-group gate plus κ 0.2.
 
 **Ties.** Mid-ranks within a source. The final sort is by score, then evidence weight, then ruler z, then name, so runs are deterministic.
 
@@ -353,9 +327,9 @@ They live in committed files under `state/` on the main branch.
 - Each run reads state from main plus the snapshot store.
 - A new run replaces a refresh pull request that was never merged, so a skipped month doesn't corrupt the next one.
 
-**D15 (decided 2026-09-25): snapshot storage.** We keep monthly snapshots from the first run, because the GitHub differences and Rising need history. Only font-relevant extracts plus a manifest (url, sha256, fetched_at) are kept; big raw files (about 55 MB a month) expire after the run. They live in a private data repository that the GitHub Action reads and writes with a deploy key or GitHub App, not a personal token that expires.
+**Snapshot storage (D15).** We keep monthly snapshots from the first run, because the GitHub differences and Rising need history. Only font-relevant extracts plus a manifest (url, sha256, fetched_at) are kept; big raw files (about 55 MB a month) expire after the run. They live in a private data repository that the GitHub Action reads and writes with a deploy key (ruling CI1), not a personal token that expires.
 
-**DECISION [later OK] D16: rejected sources.** Confirm the sources the research rejected:
+**Rejected sources (D16).** The research rejected these sources:
 
 - Google trending;
 - Fontshare views (only for ITF fonts);
@@ -369,7 +343,7 @@ They live in committed files under `state/` on the main branch.
 - code-search counts for web usage;
 - LLM-compiled lists.
 
-**D17 (decided 2026-09-25): licenses for this repository.**
+**Licenses for this repository (D17).**
 
 - **Code:** MIT.
 - **Catalog data:** CC BY-SA 4.0, final since 2026-09-25 (ruling T5). What the Step 3 terms audit found, and how the owner ruled:
@@ -391,6 +365,7 @@ They live in committed files under `state/` on the main branch.
   - `links` {primary, designer};
   - `first_seen`;
   - `flags[]`.
+- **Download links:** the primary link is where to get the font. For a Google family it is the Google Fonts specimen page. For any other font it is the designer's homepage or the repository's releases page, never a file download, `/releases/latest` or an aggregator (open-foundry.com counts as one). A link is accepted automatically only when two sources agree, or when the owner-approved foundry list gives it; otherwise the owner picks it or approves an override (gate K, `config/link-overrides.toml`). An `http://` homepage is upgraded to `https://`. The Wayback Machine counts as an aggregator too, except that an override the owner approves may link a dated capture of the designer's page when that page is gone; such a link is labelled as archived and says why (owner ruling of 2026-09-29). Every link is checked at each monthly refresh, and it passes only when it answers HTTP 200.
 - **Per rank or view:** {rank or band, order, tier, range, score, groups}. The rank keys (`overall`, `desktop_chosen`, `desktop_installed`, `project`, `coding`, `dev_apps`, `rising`) are versioned schema constants.
 - **Held-back fonts:** a catalog font with no accepted download link yet (the owner decides the link at gate K) is held back from `catalog.json`, and the published exact ranks close up over it: in each view, every font ranked below it moves up one place, with its range. Places past the exact top keep their order. The monthly review names the held-back font and its places (owner ruling of 2026-09-28).
 - **Per source:** {state, rank_in_source, z, weight_used}. Raw values appear only where the source's terms allow; never for Google or Fonts Over Time, whose entries carry no raw values (rulings T2, T4).
@@ -402,7 +377,7 @@ A trimmed `catalog-site.json` feeds the filterable list (Milestone 2), and `name
 
 Source weights and fixed floors are in the §5 tables.
 
-| Key | Default |
+| Key | Value |
 |---|---|
 | kappa, mu0 | 0.2, 0 |
 | ruler overlap: full weight / off | 50 / 15 |
@@ -414,7 +389,7 @@ Source weights and fixed floors are in the §5 tables.
 | almanac_parent_merge_factor | 0.5 |
 | fot_phase_in | weight 0.10 until 8 weekly snapshots |
 | project_group_shares | web 0.55, code 0.30, apps 0.15, fixed; split pro rata within each group |
-| outlier guard | gap 1.5 z, at least 3 terms, weight × 0.5 |
+| outlier guard | gap 1.5 z from the median of the font's terms, at least 3 terms, weight × 0.5 |
 | top100_min_groups | 2 |
 | catalog | 500; enter at 450; leave below 550 for 2 runs |
 | top100_membership | enter at 90; leave after 2 runs worse than 110 |
@@ -463,12 +438,12 @@ Source weights and fixed floors are in the §5 tables.
 
 ## 10. Manual work beyond monthly review
 
-The monthly pull request asks the owner only to review what it flags: new aliases, licenses, and preinstalled and dependency entries. The other manual tasks are:
+The monthly pull request asks the owner only to review what it flags: new aliases and unmatched names, licenses and failed license checks, preinstalled and dependency entries, new dual-script families, and download links. The other manual tasks are:
 
 - **Yearly:** switch the Almanac to the new edition (sheet id and tabs in config).
-- **Once:** ask the author of Fonts Over Time for an explicit data license.
+- **Once:** ask the author of Fonts Over Time for an explicit data license (asked on 2026-09-25: [fcjr/fontsovertime#1](https://github.com/fcjr/fontsovertime/issues/1)).
 
-## 11. Known biases (for the public page)
+## 11. Known biases
 
 - **Developer skew.** The desktop data comes from developers who leave telemetry on. About 59% of Homebrew font installs are Nerd builds. The 10 biggest plain casks come from 8 families, and 7 of those are coding fonts.
 - **Thin platform coverage.** There is no Windows source in v1: Chocolatey's terms forbid automated access, so it was dropped. Windows users, and designers who download zips, show up only through GitHub counters.

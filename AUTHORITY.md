@@ -127,6 +127,18 @@ Answers to the Milestone 1, Step 0 decisions in [docs/ranking-methodology.md](do
   - **Round 2 (R2): approved.** After the two changes were rebuilt on the real store, Hack is #5 in coding and *most chosen* and #53 overall, and Geist Mono, Liberation Mono, Commit Mono and Zed Mono enter *most chosen*. The owner judged the changes right and approved the top lists, which completes Milestone 1 step 16.
 
   *(2026-09-29)*
+- **Final method (Milestone 1 step 17).** The method the owner approved at gate R round 2 is final. The entries above hold each decision; this one says where the final state lives.
+  - **Method:** the code implements method version 2026-09-25 (`METHOD_VERSION` in `src/tff_catalog/__init__.py`, which each catalog records as `run.method_version`), with every ruling above up to gate R round 2. Its public text is [docs/ranking-methodology.md](docs/ranking-methodology.md), published on 2026-09-29.
+  - **Weights:** every weight and parameter is in `config/ranking.toml`, as the approved run used it (`run.ranking_toml_sha256` `c22345a4…` in `build/catalog.json`). The headline values:
+    - overall: desktop (*most chosen*) 50% and project 50% (D12);
+    - desktop: Homebrew 1.0, Arch 0.75, GitHub 0.5, Nerd Fonts 0.3, Debian 0.25 (D9);
+    - project: web 55%, code 30% and apps 15%, fixed, each shared among its sources (D10, M9);
+    - Coding: Nerd Fonts 1.0, Homebrew 1.0, Arch 0.75, GitHub 0.5, Fontsource npm 0.5 (D13);
+    - Developers & apps: Fontsource npm 0.15, ecosyste.ms 0.10, Expo 0.10, and Flutter 0.05 once it is on (M10).
+  - **Licenses:** Rules 1, 3 and 4, and D3. `config/licenses.toml` lists the licenses that qualify, by filter group, and those excluded; a license it doesn't list is excluded. The owner's rulings on particular licenses and fonts are in `data/reviews/licenses/` (gate LIC) and `data/reviews/l3/` (gate L3).
+  - **Latin:** D4 with the owner's allowlist rulings (gate L, 2026-09-26 and 2026-09-28): Google's strict metadata test, plus the dual-script families of `data/reviews/latin/`; every other font takes the glyph test, with the thresholds in `config/ranking.toml [latin]`.
+
+  *(2026-09-29)*
 
 ## Site (Milestone 2)
 
