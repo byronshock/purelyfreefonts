@@ -105,7 +105,7 @@ In every option:
 
 - Every package, slug or name maps to a family through one versioned alias table.
 - Names must match exactly after normalization, never by prefix. "Sibling" rows stop Roboto from matching Roboto Slab.
-- Names that must never map to a catalog family are recorded as *ineligible*, with a reason: proprietary, ITF, CJK, icon, generic or system. These include Arial, SF Pro, Satoshi and Font Awesome.
+- Names that must never map to a catalog family are recorded as *ineligible*, with a reason: proprietary, ITF, CJK, icon, generic or system. These include Arial, SF Pro, Satoshi and Font Awesome. Three more reasons cover package and name keys no family fits: not a font (a program or library, such as a font viewer), non-Latin (a font for another script, such as Thai or Devanagari), and unlisted (a Latin font that no catalog source lists).
 - A family's packages are summed: static and variable npm packages, ttf and otf, renamed casks.
 - Counts become rates over min(window, days available). Exposure is counted from each source's *data* date; for example, the Almanac 2025 crawl ran in July 2025.
 

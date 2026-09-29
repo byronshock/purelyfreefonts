@@ -61,7 +61,7 @@ Step 3 waits on M1 steps 7 and 15, so steps 5–9 use a stand-in table until the
 - [ ] The export stage also writes a versioned `build/match-site.json`, published under a content-hashed name, with:
   - every catalog family's names, and each alias with its relation: rename; build (Nerd Font, NF, NFM, NFP, Propo, Powerline, NL, CJK); PostScript prefix; related; folded sibling (D2);
   - eligible families outside the catalog, as "known, not listed", so they never raise a near-match;
-  - ineligible names with their reason (proprietary, ITF, CJK, icon, generic, system);
+  - ineligible names with their reason (proprietary, ITF, CJK, icon, generic, system, not a font, non-Latin, unlisted);
   - strippable style words (weights, slopes, SemBd, Med, Ret, Obl …) and Nerd suffixes;
   - an "ambiguous" set: names that are both a family and another family's weight (so far only Archivo Black).
 - [ ] A test-vector file shared by the Python and JavaScript suites defines `match_key` (NFKC, case-fold, drop spaces, hyphens and underscores; accents kept) and `search_key` (`match_key` with accents stripped), which M2's search uses (M2 step 3).

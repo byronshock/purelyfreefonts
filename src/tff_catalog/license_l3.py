@@ -37,10 +37,13 @@ Contracts:
   License grants LPPL-1.3c).
 - **Research** (``config/license-texts.toml``, ``load_research``; owner ruling
   L3_32): per family, upstream texts and font files tried before the sources'
-  own (``apply_research``), and ``mentions``, license families its notices and
+  own (``apply_research``; a text shipped only in a release archive is named
+  like a font file in one, ``archive.zip#path``, ``archive_member``), and
+  ``mentions``, license families its notices and
   name IDs may name besides its L2 expression (each the family of a license
-  allowed on its own, ``check_mentions``); and researched texts, which match no
-  canonical text but verify the licenses listed for the sha256 of their bytes.
+  allowed on its own, ``check_mentions``); and researched texts, which verify the
+  licenses listed for the sha256 of their bytes: texts that match no canonical
+  text, or match one under a notice the word limits refuse.
   A researched text is read *whole* for restrictions and other licenses
   (``_check_researched``); only the notice word limits are waived for it.
 - **Evidence** (``gather``): license texts come from ``LicenseFact.text_url``
@@ -89,8 +92,10 @@ Contracts:
   the day the current text first reached its current level.
 - **license_texts pseudo-source**: ``<store>/license_texts/<date>/texts.jsonl.gz``,
   one row per URL (``url, status, sha256, bytes, text, error``), failures
-  included, sorted by URL. A live run reuses an earlier snapshot's text when
-  the collector's ``text_sha256`` or a commit-pinned URL shows it unchanged,
+  included, sorted by URL; an archive member's row holds the member's bytes and
+  sha256. A live run reuses an earlier snapshot's text when
+  the collector's ``text_sha256`` or a pinned URL (a commit on GitHub or a
+  GitLab host, a release asset, a package version) shows it unchanged,
   and fetches the rest. When today's snapshot exists (a replay, or a second
   ``verify`` the same day) it is the only source; ``--refetch`` rebuilds it.
   When no text could be fetched because of a network error, the family keeps
@@ -871,6 +876,15 @@ def is_pinned(url: str) -> bool:
         spec = segs[1] if segs[0] == "npm" and not segs[1].startswith("@") else segs[2]
         ref = spec.rpartition("@")[2] if "@" in spec.lstrip("@") else ""
         return bool(_COMMIT.match(ref) or _VERSION.match(ref))
+    if "-" in segs:
+        # A GitLab host (gitlab.com, salsa.debian.org): <namespace>/<project>/-/raw/<commit>/<path>.
+        i = segs.index("-")
+        return (
+            i >= 2
+            and len(segs) > i + 3
+            and segs[i + 1] == "raw"
+            and bool(_COMMIT.match(segs[i + 2]))
+        )
     return False
 
 
@@ -883,6 +897,54 @@ def fetchable_url(url: str) -> str:
     if parts.netloc.lower() == "github.com" and len(segs) > 5 and segs[3] == "blob":
         return f"https://raw.githubusercontent.com/{segs[1]}/{segs[2]}/{'/'.join(segs[4:])}"
     return url
+
+
+ARCHIVE_EXTENSIONS = (".zip",)
+
+
+def archive_member(url: str) -> tuple[str, str] | None:
+    """``(archive url, member path)`` when ``url`` names a file inside a zip archive, the
+    way font file URLs do (``https://host/Font-1.0.zip#Font-1.0/OFL.txt``); else None."""
+    from urllib.parse import unquote
+
+    archive, sep, fragment = url.partition("#")
+    if not sep or not fragment or not archive.startswith("https://"):
+        return None
+    if not urlsplit(archive).path.lower().endswith(ARCHIVE_EXTENSIONS):
+        return None
+    return archive, unquote(fragment)
+
+
+class MemberError(ValueError):
+    """A zip archive that holds no single readable text by the member's name."""
+
+    def __init__(self, message: str, *, missing: bool = False) -> None:
+        super().__init__(message)
+        self.missing = missing
+
+
+def read_member(data: bytes, member: str) -> bytes:
+    """The bytes of ``member`` of the zip archive ``data``: the entry of that path, else
+    the one entry whose path ends in it. ``MemberError`` when there is none (``missing``),
+    several, the member is larger than ``MAX_TEXT_BYTES`` or ``data`` is no zip archive."""
+    import io
+    import zipfile
+
+    try:
+        with zipfile.ZipFile(io.BytesIO(data)) as zf:
+            infos = [i for i in zf.infolist() if not i.is_dir()]
+            found = [i for i in infos if i.filename == member] or [
+                i for i in infos if i.filename.endswith("/" + member.lstrip("/"))
+            ]
+            if not found:
+                raise MemberError(f"no archive entry {member!r}", missing=True)
+            if len(found) > 1:
+                raise MemberError(f"{len(found)} archive entries match {member!r}")
+            if found[0].file_size > MAX_TEXT_BYTES:
+                raise MemberError(f"{found[0].file_size} bytes: too large for a license")
+            return zf.read(found[0])
+    except (zipfile.BadZipFile, zipfile.LargeZipFile, NotImplementedError, EOFError) as exc:
+        raise MemberError(f"not a readable zip archive ({exc})") from exc
 
 
 def _source_rank(source: str) -> tuple[int, str]:
@@ -999,8 +1061,9 @@ class FamilyResearch:
 
 @dataclass(frozen=True, slots=True)
 class ResearchedText:
-    """One ``[[text]]`` table: a license text, by the sha256 of its bytes, that matches
-    no canonical text but holds ``licenses`` (research read it word for word)."""
+    """One ``[[text]]`` table: a license text, by the sha256 of its bytes, that holds
+    ``licenses`` but matches no canonical text, or matches one under a notice longer
+    than the word limits allow (research read it word for word)."""
 
     sha256: str
     licenses: tuple[str, ...]  # SPDX ids the text verifies
@@ -1034,9 +1097,9 @@ def load_research(paths: Paths) -> Research:
     """``config/license-texts.toml``, checked strictly (no file: no research).
 
     Raises ``ConfigError`` for unknown or missing keys, a bad family id, a family
-    or text listed twice, a URL that is not https, a font file URL that names no
-    font, an unknown license family in ``mentions``, a bad sha256 or an SPDX
-    expression that does not parse.
+    or text listed twice, a URL that is not https, a text URL naming a zip archive
+    but no file in it, a font file URL that names no font, an unknown license
+    family in ``mentions``, a bad sha256 or an SPDX expression that does not parse.
     """
     from tff_catalog.config_model import ConfigError, from_mapping, load_toml
     from tff_catalog.names import ID_PATTERN
@@ -1056,6 +1119,12 @@ def load_research(paths: Paths) -> Research:
             raise ConfigError(f"{where}.family: {fam.family!r} is listed twice")
         for n, url in enumerate(fam.texts):
             _check_url(url, f"{where}.texts[{n}]")
+            archive = urlsplit(url).path.lower().endswith(ARCHIVE_EXTENSIONS)
+            if ("#" in url or archive) and archive_member(url) is None:
+                raise ConfigError(
+                    f"{where}.texts[{n}]: {url} names no file in a zip archive "
+                    "(archive.zip#path/in/archive)"
+                )
         for n, url in enumerate(fam.files):
             _check_url(url, f"{where}.files[{n}]")
             if not _is_font_file(url):
@@ -1363,13 +1432,21 @@ class StoreTexts:
         from tff_catalog.fetch import FetchError, HostNotAllowed
 
         assert self._fetcher is not None
+        member = archive_member(url)
         try:
-            res = self._fetcher.get(url, expect=TEXT_STATUSES)
+            res = self._fetcher.get(member[0] if member else url, expect=TEXT_STATUSES)
         except (FetchError, HostNotAllowed) as exc:
             return FetchedText(url, 0, error=str(exc)[:300])
         self._records.extend(res.to_records())
         if res.status != 200:
             return FetchedText(url, res.status, error=f"HTTP {res.status}")
+        if member is not None:
+            # A text inside a release archive: the row is the member's, bytes and sha256.
+            try:
+                data = read_member(res.content, member[1])
+            except MemberError as exc:
+                return FetchedText(url, 404 if exc.missing else 200, error=f"{member[0]}: {exc}")
+            return FetchedText(url, 200, hashlib.sha256(data).hexdigest(), decode_text(data))
         sha = res.sha256 or hashlib.sha256(res.content).hexdigest()
         if res.size > MAX_TEXT_BYTES:
             return FetchedText(url, 200, sha, error=f"{res.size} bytes: too large for a license")
@@ -1534,6 +1611,12 @@ def _check_text(
         out.problems.append(f"license text {fetched.url}: {fetched.error or fetched.status}")
         return out
     text = fetched.text or ""
+    known = inputs.research.texts.get(fetched.sha256 or "")
+    if known is not None and not is_web_page(text):
+        # Research read this exact text word for word, a canonical body under a notice
+        # too long for the word limits included (Twilio Sans Mono's list of names).
+        out.exceptions = inputs.canon.exceptions_in(text)
+        return _check_researched(out, text, known, expr, families)
     out.matched, out.exceptions = inputs.canon.identify(text)
     ids = expression_ids(expr)
     where = f"a notice in license text {fetched.url}"
@@ -1543,9 +1626,6 @@ def _check_text(
             # name ID 14 give it, is no upstream text; its site's words are not the font's terms.
             out.problems.append(f"license text {fetched.url} is a web page, not a license text")
             return out
-        known = inputs.research.texts.get(fetched.sha256 or "")
-        if known is not None:
-            return _check_researched(out, text, known, expr, families)
         close = inputs.canon.closest(text, ids)
         near = f" (closest: {close[0]}, {close[1]:.1%} of words alike)" if close else ""
         out.problems.append(f"license text {fetched.url} matches no known license{near}")

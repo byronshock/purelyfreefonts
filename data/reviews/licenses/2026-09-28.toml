@@ -5,6 +5,14 @@
 # are the 25 families with no license found that would reach the overall top 700 (ruling
 # no_license_families of 2026-09-26): each names the license Claude found (spdx) and its source.
 # Seven of them are builds that fold into their family at gate A (../aliases/2026-09-28.toml).
+# Batch 4, after the finish-gates-3 run ([gates_2026-09-28_b4]: research3_licenses, heavy_data,
+# debian_lic_11): the licenses Claude researched (Salaowu x4, Monofur, Letters, Heavy Data's Vic
+# Fieger terms, the Artistic-1.0 class, which replaces the 2026-09-26 research ruling) and the 11
+# new disagreements from Debian's and Arch's license data. The owner took each recommendation;
+# where the printed queue recommended research, the answer records Claude's letter as
+# recommendation.
+# Batch 5 ([gates_2026-09-28_b5]: LIC_conakry, new_X47_LIC5): Conakry (OFL-1.1, researched)
+# and the five disagreements the new bundle rows raised, asked one by one.
 
 [LIC-monaspace-argon]
 choice = "a"
@@ -234,3 +242,177 @@ recommended = true
 spdx = "CC-BY-ND-3.0"
 ruling = "Excluded"
 reason = "Claude's research (no_license_families): https://janfromm.de/typefaces/camingomono/camingocode/ (\"Licensed under Creative Commons CC BY-ND, Version 3.0\": no derivatives, so D3 excludes it)."
+
+[LIC-salaowu]
+choice = "a"
+recommended = true
+group = "open-font"
+recommendation = "a"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (LIC_14): SIL's Salaowu-1.000.zip (software.sil.org/downloads/r/shimenkan/Salaowu-1.000.zip, sha256 160795f5...) holds OFL.txt, 'Copyright (c) 2018-2019, SIL International ... This Font Software is licensed under the SIL Open Font License, Version 1.1', and every font's name ID 13 carries the same text. Fontist's NOASSERTION was only a missing label."
+
+[LIC-salaowu-book]
+choice = "a"
+recommended = true
+group = "open-font"
+recommendation = "a"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (LIC_14): same SIL release and OFL.txt as Salaowu (Salaowu-1.000.zip, SIL Open Font License 1.1)."
+
+[LIC-salaowu-extra-light]
+choice = "a"
+recommended = true
+group = "open-font"
+recommendation = "a"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (LIC_14): same SIL release and OFL.txt as Salaowu (Salaowu-1.000.zip, SIL Open Font License 1.1)."
+
+[LIC-salaowu-light]
+choice = "a"
+recommended = true
+group = "open-font"
+recommendation = "a"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (LIC_14): same SIL release and OFL.txt as Salaowu (Salaowu-1.000.zip, SIL Open Font License 1.1)."
+
+[LIC-spdx-licenseref-monofur]
+choice = "a"
+recommended = true
+group = "open-font"
+recommendation = "a"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (owner_ruling_12): the 2000 readme (Nerd Fonts' LICENSE.txt) calls the fonts freeware that 'can be distributed as long as they are together with this text file', and welcomes commercial users. On 2018-02-11 the author, tobias benjamin köhler, relicensed monofur under the SIL Open Font License 1.1 in an email to Debian (fonts-monofur debian/LICENSE.mail and debian/copyright, Debian main since 2018)."
+
+[LIC-monofur]
+choice = "a"
+recommended = true
+group = "open-font"
+recommendation = "a"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (owner_ruling_12; also one of the 11 Debian disagreements, debian_lic_11): the author's 2018 grant, 'These fonts are licensed under SIL Open Font License version 1.1', recorded by Debian (sources.debian.org/src/fonts-monofur/1.0-3/debian/LICENSE.mail/)."
+
+[LIC-spdx-licenseref-vicfieger]
+choice = "a"
+recommended = true
+group = "freeware"
+recommendation = "a"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (owner_ruling_12; the owner's ruling heavy_data): the license file ('freeware, to be downloaded and used by anyone who wants them for free ... You don't have to ask for my permission') and the designer's FAQ (vicfieger.com/~font/faq.html, Wayback capture of 2025-05-17): free fonts 'may be used by anyone for any design or artistic purpose, whether it be personal, commercial, or charitable'; the only restriction is 'Please don't sell them', and shipping a font file with commercial software is 'fine'. Modifying is allowed; he asks that modified versions not be put online."
+
+[LIC-letters]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (letters): the repository's LICENSE.txt ('with Reserved Font Name Letters. This Font Software is licensed under the SIL Open Font License, Version 1.1'), its README and Velvetyne's page (velvetyne.fr/fonts/letters/, 'License: SIL Open Font License, Version 1.1') agree; the fonts' name ID 13 says only 'Creative Commons', with no licence or version, so the specific grant governs. Letters stays out anyway: it has no digits or punctuation and fails the Latin gate (kernel_missing)."
+
+[LIC-spdx-artistic-1-0]
+choice = "a"
+recommended = true
+group = "permissive"
+ruling = "Qualifies and redistributable"
+reason = "Claude's research (debian_unclassed); this answer replaces the 2026-09-26 ruling that sent Artistic-1.0 to research. The Artistic License 1.0 puts no condition on use. It allows verbatim copies 'without restriction' (clause 1), modification with a notice and one of four conditions (clause 3), and aggregation with commercial software (clauses 5 and 8); it forbids only charging 'a fee for this Package itself'. Debian ships it in main. No catalog family uses it today: Debian's two Artistic font packages, fonts-alee (Hangul) and fonts-f500, are unmatched."
+
+[LIC-agave]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (debian_lic_11), taken by the owner: qualifies and is redistributable under its current license; Nerd Fonts and the designer's repository (blobject/agave, LICENSE) say OFL-1.1; Debian's copyright file keeps the MIT license of the old releases."
+
+[LIC-goudy-bookletter-1911]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (debian_lic_11), taken by the owner: qualifies and is redistributable under its current license; Google Fonts, the foundry list and Fontsource say OFL-1.1; Debian's copyright file keeps the author's older public-domain dedication, which also qualifies."
+
+[LIC-jetbrains-mono]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (debian_lic_11), taken by the owner: qualifies and is redistributable under its current license; every font source says OFL-1.1; Debian's Apache-2.0 label is from JetBrains Mono's first releases (relicensed to OFL-1.1 in 2020)."
+
+[LIC-jura]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (debian_lic_11), taken by the owner: qualifies and is redistributable under its current license; Google Fonts and Fontsource say OFL-1.1; Debian's copyright file lists the dual GPL-3.0-or-later or OFL-1.1 grant, whose OFL branch governs here."
+
+[LIC-open-sans]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (debian_lic_11), taken by the owner: qualifies and is redistributable under its current license; every font source says OFL-1.1; Debian's Apache-2.0 label is Open Sans's license before Google relicensed it to OFL-1.1 in 2021."
+
+[LIC-play]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (debian_lic_11), taken by the owner: qualifies and is redistributable under its current license; Google Fonts and Fontsource say OFL-1.1; Debian's copyright file adds Apache-2.0 for older files."
+
+[LIC-prociono]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (debian_lic_11), taken by the owner: qualifies and is redistributable under its current license; Google Fonts, the foundry list and Fontsource say OFL-1.1; Debian's copyright file keeps the older public-domain dedication, which also qualifies."
+
+[LIC-scheherazade-new]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (debian_lic_11), taken by the owner: qualifies and is redistributable under its current license; Google Fonts, Fontsource and Fontist say OFL-1.1; Arch's OFL-1.0 label is outdated."
+
+[LIC-terminus]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (debian_lic_11), taken by the owner: qualifies and is redistributable under its current license; Nerd Fonts says OFL-1.1, Terminus's license since 4.40; Arch's label adds GPL-2.0-only for the old tools in the source package."
+
+[LIC-tuffy]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (debian_lic_11), taken by the owner: qualifies and is redistributable under its current license; Google Fonts and Fontsource say OFL-1.1; Debian's copyright file keeps Thatcher Ulrich's public-domain dedication, which also qualifies."
+
+[LIC-fanwood]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): qualifies and is redistributable under its current license; the foundry list says OFL-1.1, the League of Moveable Type's current license; Debian's copyright file keeps the older public-domain and MIT terms, which also qualify."
+
+[LIC-fanwood-text]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): qualifies and is redistributable under its current license; Google Fonts and Fontsource say OFL-1.1; Debian's copyright file keeps the older public-domain and MIT terms, which also qualify."
+
+[LIC-monoid]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): qualifies and is redistributable under its current license; Monoid is dual-licensed MIT or OFL-1.1 (its repository, Nerd Fonts, Fontist, Arch); Debian's copyright file lists both for its files."
+
+[LIC-monoisome]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): qualifies and is redistributable under its current license; Monoisome ships with Monoid under the same MIT or OFL-1.1 terms; Debian's copyright file lists both for its files."
+
+[LIC-overpass-mono]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): qualifies and is redistributable under its current license; Overpass is dual-licensed OFL-1.1 or LGPL-2.1 (Red Hat); Google Fonts, Fontsource and Fontist say OFL-1.1, and Arch's labels only spell the two licenses differently."
+
+[LIC-conakry]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5) (LIC_conakry), from the research (no_license_families): Evertype's release zip ConakryFont.zip, the one Homebrew installs, holds SIL's OFL-1.1 text (the template, with the copyright holder and Reserved Font Name left blank) and OFL-FAQ.txt; the font's name ID 13 says 'Released under the Open Font License.' and name ID 14 points at scripts.sil.org/OFL. The text is pinned in config/license-texts.toml."

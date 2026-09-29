@@ -12,14 +12,16 @@
 #   name       display name, for people
 #   reason     what the research found
 #   texts      upstream license files, tried before the sources' texts (pin a commit
-#              where the upstream has one)
+#              where the upstream has one). A license shipped only in a release
+#              archive is named like a font file in one: archive.zip#path/in/archive.
 #   files      upstream font files, read before the sources' files
 #   mentions   license families (as license_l3.mentions names them: "Public-domain",
 #              "Apache", ...) that the family's notices and name IDs 13 and 14 may name
 #              besides its L2 license. Each must be the family of an allowed license.
 #
-# [[text]]: a license file that matches no canonical text in data/license-texts/
-# but holds the listed licenses; research read it word for word. It is matched
+# [[text]]: a license file that holds the listed licenses but matches no canonical
+# text in data/license-texts/, or matches one under a notice longer than the word
+# limits allow; research read it word for word. It is matched
 # by the sha256 of its bytes, so any change to it fails the check again. Its
 # whole text, license bodies included, is read for restrictions and for other
 # licenses; only the word limits on notices are waived for it.
@@ -162,13 +164,6 @@ mentions = ["Public-domain"]
 reason = "DejaVu's LICENSE (text below) and name ID 13 say that DejaVu's own changes are in the public domain; that grants more, never less."
 
 [[family]]
-family = "dejavu-mono"
-name = "DejaVu Mono"
-texts = ["https://raw.githubusercontent.com/dejavu-fonts/dejavu-fonts/9b5d1b2ffeec20c7b46aa89c0223d783c02762cf/LICENSE"]
-mentions = ["Public-domain"]
-reason = "Fontsource's name for DejaVu Sans Mono. DejaVu's LICENSE (text below) and name ID 13 say that DejaVu's own changes are in the public domain; that grants more, never less."
-
-[[family]]
 family = "hack"
 name = "Hack"
 texts = ["https://raw.githubusercontent.com/source-foundry/Hack/a737c121cabb337fdfe655d8c7304729f351e30f/LICENSE.md"]
@@ -186,6 +181,222 @@ family = "mountains-of-christmas"
 name = "Mountains of Christmas"
 mentions = ["OFL"]
 reason = "Google Fonts lists it under Apache-2.0 (apache/mountainsofchristmas, LICENSE.txt, METADATA.pb license APACHE2), while name IDs 13 and 14 of its only file, v1.003, name OFL-1.1. Both licenses are allowed, redistributable and without an attribution badge, so the label changes nothing."
+
+# --- families licensed at gate LIC on 2026-09-28 --------------------------------------------------
+# The 24 families with no license found that Claude's research licensed (ruling
+# no_license_families of 2026-09-28). The sources gave none of them a license text. Seven are
+# builds that fold into a checked family at gate A (the three Inconsolata Powerline builds into
+# Inconsolata, Delugia into Cascadia Code and Cascadia Mono, Meslo LG DZ into Meslo LG,
+# Recursive Code into Recursive, Monaspace Frozen into the Monaspace bundle), so their family's
+# own text covers them and they need no entry. Each text below is pinned to the commit of the
+# release the font files come from, unless the upstream has no tags.
+
+[[family]]
+family = "anka-coder"
+name = "Anka/Coder"
+texts = ["https://raw.githubusercontent.com/loafer-mka/anka-coder-fonts/a55caea96b91b74a82c1e8410752de6ed1dcd82b/AnkaCoder/OFL.txt"]
+reason = "The designer Andrey Makarov's own repository, moved from code.google.com in 2017. Its AnkaCoder/OFL.txt is OFL-1.1 with the Reserved Font Name Anka/Coder; it differs from the OFL.txt in AnkaCoder.1.100.zip (the release Homebrew installs) only in the designer's e-mail addresses."
+
+[[family]]
+family = "charter"
+name = "Charter"
+texts = ["https://practicaltypography.com/fonts/Charter%20210112.zip#Charter%20210112/Charter%20license.txt"]
+reason = "Matthew Butterick's Charter release (practicaltypography.com, the one Homebrew installs). Its 'Charter license.txt' says it is a copy of the Charter fonts Bitstream contributed to the X Consortium, then gives Bitstream's original notice word for word, the Bitstream-Charter license: use, copy, modify, sublicense, sell and redistribute 'for any purpose and without restriction'."
+
+[[family]]
+family = "cozette"
+name = "Cozette"
+texts = ["https://raw.githubusercontent.com/slavfox/Cozette/d2282e728aa64949b0a1e6489920ceb0772944fa/LICENSE"]
+reason = "The designer's repository at tag v.1.30.0, the release Homebrew installs (the repository has since moved to github.com/the-moonwitch/Cozette). Its LICENSE is the MIT License."
+
+[[family]]
+family = "ioskeley-mono"
+name = "Ioskeley Mono"
+texts = ["https://raw.githubusercontent.com/ahatem/IoskeleyMono/03c163ddd4e7ca3fe4d2bc7fe97bbdc981f362e1/LICENSE"]
+reason = "The designer's repository at tag v2.1.0, the release Homebrew installs. Its LICENSE is OFL-1.1 (an Iosevka build, with Iosevka's copyright)."
+
+[[family]]
+family = "latin-modern"
+name = "Latin Modern"
+texts = ["https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"]
+reason = "GUST's Latin Modern fonts are under the GUST Font License (the e-foundry's Latin Modern page); the release zip Homebrew installs holds only the fonts. The license text is on GUST's own site, as for TeX Gyre."
+
+[[family]]
+family = "microsoft-selawik"
+name = "Microsoft Selawik"
+texts = ["https://raw.githubusercontent.com/microsoft/Selawik/b65ff9ce7c4673e75ec5c622924a6b6f61f2f876/LICENSE.txt"]
+reason = "Microsoft's repository at tag 1.01, the release Homebrew installs. Its LICENSE.txt is OFL-1.1."
+
+[[family]]
+family = "miracode"
+name = "Miracode"
+texts = ["https://raw.githubusercontent.com/IdreesInc/Miracode/3bfb7f89fec51115a491d4e6420a7d81d0da5856/LICENSE"]
+reason = "The designer's repository at tag v1.0, the release Homebrew installs. Its LICENSE is OFL-1.1 (the same file as Monocraft's, which Miracode is drawn from)."
+
+[[family]]
+family = "monocraft"
+name = "Monocraft"
+texts = ["https://raw.githubusercontent.com/IdreesInc/Monocraft/04d8a6f3c0fcddf9ab0ec6c21aefcf6302392464/LICENSE"]
+files = ["https://github.com/IdreesInc/Monocraft/releases/download/v4.2.1/Monocraft-ttf.zip#Monocraft-ttf/Monocraft.ttf"]
+reason = "The designer's repository at tag v4.2.1, the release Homebrew installs. Its LICENSE is OFL-1.1. Homebrew's file is a font collection (.ttc), which the check does not read, so the release's TrueType zip is read instead."
+
+[[family]]
+family = "myna"
+name = "Myna"
+texts = ["https://raw.githubusercontent.com/sayyadirfanali/Myna/a7b022b299c976efa8192b7140a6f32fd9c12e6f/OFL.txt"]
+reason = "The designer's repository. The v1.0.0 release Homebrew installs had no license file, but its README says 'License: SIL Open Font License, Version 1.1'; the repository's OFL.txt (added in November 2025) is that license's text."
+
+[[family]]
+family = "pretendard-std"
+name = "Pretendard Std"
+texts = ["https://raw.githubusercontent.com/orioncactus/pretendard/5c41199ea0024a9e0b2cb31735265056e5472d76/LICENSE"]
+reason = "The designer's repository at tag v1.3.9, the release Homebrew installs. Its LICENSE is OFL-1.1 with the Reserved Font Name Pretendard."
+
+[[family]]
+family = "psudofont-liga-mono"
+name = "psudoFont Liga Mono"
+texts = ["https://raw.githubusercontent.com/psudo-dev/psudofont-liga-mono/b8ce155dd1dd0de61f233d15f90e1954503c9199/LICENSE"]
+reason = "The designer's repository at tag v.2.2.0, the release Homebrew installs. Its LICENSE is OFL-1.1."
+
+[[family]]
+family = "sn-pro-font-family"
+name = "SN Pro Font Family"
+texts = ["https://raw.githubusercontent.com/supernotes/sn-pro/4d2c82d3910fd9cc270f60eca679ffdbc0176a2a/OFL.txt"]
+reason = "Supernotes' repository at tag 1.5.0, the release Homebrew installs. Its OFL.txt is OFL-1.1 (SN Pro is drawn from Nunito, also OFL-1.1)."
+
+[[family]]
+family = "sudo"
+name = "Sudo"
+texts = ["https://raw.githubusercontent.com/jenskutilek/sudo-font/37ea6abbd2d4273552717d45687063852b0a6fcd/OFL.txt"]
+reason = "The designer's repository at tag v3.6, the release Homebrew installs. Its OFL.txt is OFL-1.1."
+
+[[family]]
+family = "twilio-sans-mono"
+name = "Twilio Sans Mono"
+texts = ["https://raw.githubusercontent.com/twilio/twilio-sans-mono/6bb29c96842f19a533401e6266fdfdd813dcf3e4/LICENSE.txt"]
+files = ["https://github.com/twilio/twilio-sans-mono/raw/6bb29c96842f19a533401e6266fdfdd813dcf3e4/Twilio-Sans-Mono.zip#Twilio-Sans-Mono/OTF/TwilioSansMono-Regular.otf"]
+reason = "Twilio's repository at its last commit (it has no tags), the zip Homebrew installs. Its LICENSE.txt is OFL-1.1 (text below); the font file is the same zip, pinned to that commit rather than to the branch."
+
+[[family]]
+family = "zed-sans"
+name = "Zed Sans"
+texts = ["https://raw.githubusercontent.com/zed-industries/zed-fonts/fe25e4b8a101e7b1dd61f68c137cf4759be8b627/LICENSE.md"]
+reason = "Zed's repository at tag 1.2.0, the release Homebrew installs. Zed Sans is a custom Iosevka build, and the repository's LICENSE.md is Iosevka's OFL-1.1 (the file now lives in zed-iosevka/LICENSE.md, unchanged)."
+
+# --- other families research licensed, and families that came into scope ----------------------
+
+[[family]]
+family = "salaowu"
+name = "Salaowu"
+texts = ["https://raw.githubusercontent.com/silnrsi/font-shimenkan/6d0133e1812c5d8f37f66c247edf57b7cea2c48d/OFL.txt"]
+reason = "SIL's Shimenkan project, tag v1.000, the source of Salaowu-1.000.zip. Its OFL.txt is OFL-1.1 with the Reserved Font Names Shimenkan, Sapushan, Salaowu and Taogu (and Adobe's 'Source' for the Latin glyphs); it differs from the zip's OFL.txt only in line endings. Gate LIC research of 2026-09-28."
+
+[[family]]
+family = "salaowu-book"
+name = "Salaowu Book"
+texts = ["https://raw.githubusercontent.com/silnrsi/font-shimenkan/6d0133e1812c5d8f37f66c247edf57b7cea2c48d/OFL.txt"]
+reason = "Part of SIL's Salaowu-1.000.zip, the same release and OFL-1.1 text as Salaowu."
+
+[[family]]
+family = "salaowu-extra-light"
+name = "Salaowu Extra Light"
+texts = ["https://raw.githubusercontent.com/silnrsi/font-shimenkan/6d0133e1812c5d8f37f66c247edf57b7cea2c48d/OFL.txt"]
+reason = "Part of SIL's Salaowu-1.000.zip, the same release and OFL-1.1 text as Salaowu."
+
+[[family]]
+family = "salaowu-light"
+name = "Salaowu Light"
+texts = ["https://raw.githubusercontent.com/silnrsi/font-shimenkan/6d0133e1812c5d8f37f66c247edf57b7cea2c48d/OFL.txt"]
+reason = "Part of SIL's Salaowu-1.000.zip, the same release and OFL-1.1 text as Salaowu."
+
+[[family]]
+family = "letters"
+name = "Letters"
+texts = ["https://gitlab.com/velvetyne/letters/-/raw/f402d42dcd6afc8f7c5f55bf4bbaae37643a69c5/LICENSE.txt"]
+reason = "Velvetyne's repository, the one its font file comes from. Its LICENSE.txt is OFL-1.1 with the Reserved Font Name Letters. Gate LIC research of 2026-09-28 (Letters fails the Latin gate, so it is not in the catalog)."
+
+[[family]]
+family = "monofur"
+name = "Monofur"
+texts = ["https://salsa.debian.org/fonts-team/fonts-monofur/-/raw/6fec4bd47273880e6d0e27a5ae9a87da9654cfed/debian/LICENSE.mail"]
+files = ["https://salsa.debian.org/fonts-team/fonts-monofur/-/raw/6fec4bd47273880e6d0e27a5ae9a87da9654cfed/monof55.ttf"]
+reason = "Monofur is OFL-1.1 from the author's grant of 2018-02-11 (gate LIC research of 2026-09-28): tobias benjamin köhler's e-mail to Debian, kept as debian/LICENSE.mail in Debian's fonts-monofur (tag debian/1.0-3; text below). The 2000 readme that Nerd Fonts ships calls the fonts freeware and is superseded by it. The font file is the author's original monof55.ttf in the same repository, not a Powerline-patched build."
+
+[[family]]
+family = "heavy-data"
+name = "Heavy Data"
+texts = ["https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/src/unpatched-fonts/HeavyData/Vic%20Fieger%20License.txt"]
+reason = "Vic Fieger's freeware terms, LicenseRef-VicFieger (gate LIC research of 2026-09-28): the text Nerd Fonts ships with the unpatched font (text below). vicfieger.com is down; the designer's FAQ (Wayback capture of 2025-05-17) adds that the fonts 'may be used by anyone for any design or artistic purpose, whether it be personal, commercial, or charitable', asking only that they not be sold."
+
+[[family]]
+family = "compagnon"
+name = "Compagnon"
+texts = ["https://gitlab.com/velvetyne/compagnon/-/raw/4f2344df5adb6eaf9ffd9215c5406c0729fb7aa1/LICENSE.txt"]
+reason = "Velvetyne's repository, at the commit its font file comes from. Its LICENSE.txt is OFL-1.1 (the copyright is in COPYRIGHT.md). The sources gave no license text."
+
+[[family]]
+family = "elstobd"
+name = "ElstobD"
+texts = ["https://raw.githubusercontent.com/psb1558/Elstob-font/9958a72321e3f474b5d2da4924574937f64cb696/OFL.txt"]
+reason = "Peter Baker's repository at tag v3.003, the release Homebrew installs. Its OFL.txt is OFL-1.1. The sources gave no license text."
+
+[[family]]
+family = "awami-nastaliq"
+name = "Awami Nastaliq"
+texts = ["https://raw.githubusercontent.com/silnrsi/font-awami/b71695b64ea1bc81d6df5b43f2080dafab5c8fdf/OFL.txt"]
+reason = "SIL's repository at tag v3.400, the release Fontist installs. Its OFL.txt is OFL-1.1 with the Reserved Font Names Awami and SIL. The sources gave only openfontlicense.org and scripts.sil.org/OFL, web pages."
+
+[[family]]
+family = "ezra-sil"
+name = "Ezra SIL"
+texts = ["https://software.sil.org/downloads/r/ezra/EzraSIL-2.51.zip#EzraSIL2.51/Licenses.txt"]
+reason = "SIL's 2.51 release, the one Homebrew installs; SIL has no public repository for it. Its Licenses.txt puts the Hebrew layout intelligence (by Ralph Hancock and John Hudson) under the MIT License and the rest of the font under OFL-1.1 (text below). The sources gave only scripts.sil.org/OFL, a web page."
+
+[[family]]
+family = "sophia-nubian"
+name = "Sophia Nubian"
+texts = ["https://software.sil.org/downloads/r/sophianubian/SophiaNubian-1.0.zip#SophiaNubian/OFL.txt"]
+reason = "SIL's 1.0 release, the one Fontist installs; SIL has no public repository for it. Its OFL.txt is OFL-1.1 with the Reserved Font Names SIL and Sophia. The sources gave only scripts.sil.org/OFL, a web page."
+
+[[family]]
+family = "tagmukay"
+name = "Tagmukay"
+texts = ["https://raw.githubusercontent.com/silnrsi/font-tagmukay/f22103ec3990e5b6bcaf2a1118a7c7c93fffa24c/OFL.txt"]
+reason = "SIL's repository at tag v2.000, the release Fontist installs. Its OFL.txt is OFL-1.1 with the Reserved Font Names Tagmukay and SIL. The sources gave only scripts.sil.org/OFL, a web page."
+
+[[family]]
+family = "conakry"
+name = "Conakry"
+texts = ["https://www.evertype.com/fonts/nko/ConakryFont.zip#ConakryFont/OFL.txt"]
+reason = "Michael Everson's N'Ko font (Evertype, 2007; overall #570 with no license found). Its release zip, the one Homebrew installs, holds SIL's OFL-1.1 text (the template, with the copyright holder and Reserved Font Name left blank) and OFL-FAQ.txt, and the font's name ID 13 says 'Released under the Open Font License.' with name ID 14 pointing at scripts.sil.org/OFL. Used once the owner answers gate LIC on it (question LIC-conakry); until then L2 excludes it and nothing here is read."
+
+# --- families just outside the scope (overall 800-1000, extra ranks 150-300) ------------------
+# Found by a wider verify run on 2026-09-28, researched so that a small rank move does not
+# bring them in failing.
+
+[[family]]
+family = "charis"
+name = "Charis"
+texts = ["https://raw.githubusercontent.com/silnrsi/font-charis/5382abf45c42bc51d338ac8e9c30d080bc46831a/OFL.txt"]
+reason = "SIL's repository at tag v7.000, the release Homebrew and Fontist install. Its OFL.txt is OFL-1.1. The sources gave only openfontlicense.org, a web page."
+
+[[family]]
+family = "doulos-sil"
+name = "Doulos SIL"
+texts = ["https://raw.githubusercontent.com/silnrsi/font-doulos/ff34c7cc08754c07552f0ae4e5806e71330f7652/OFL.txt"]
+reason = "SIL's repository at tag v7.000, the release Homebrew and Fontist install. Its OFL.txt is OFL-1.1. The sources gave only openfontlicense.org and scripts.sil.org/OFL, web pages."
+
+[[family]]
+family = "scheherazade"
+name = "Scheherazade"
+texts = ["https://software.sil.org/downloads/r/scheherazade/Scheherazade-2.100.zip#Scheherazade-2.100/OFL.txt"]
+reason = "SIL's 2.100 release of the original Scheherazade, the one Homebrew installs; SIL's repository (silnrsi/font-scheherazade) tags only its successor's releases, Scheherazade New 2.900 on. The zip's OFL.txt is OFL-1.1. The sources gave no license text."
+
+[[family]]
+family = "science-gothic"
+name = "Science Gothic"
+mentions = ["Apache"]
+reason = "Its OFL.txt (google/fonts and Fontsource, the same bytes) is OFL-1.1 with one more sentence above the body: 'ADDITIONAL non-font source files are licensed to others under the Apache 2.0 open source license'. The fonts are OFL-1.1; Apache-2.0 covers only the build sources, and both licenses are allowed and redistributable, so the mention changes nothing."
 
 # --- researched texts --------------------------------------------------------------------------
 
@@ -242,3 +453,39 @@ sha256 = "93f60741563b4f51f2fcdb207fde72b2b23292a47022c729aecd998b360d8038"
 licenses = ["OFL-1.1"]
 url = "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/bilboswashcaps/OFL.txt"
 reason = "Bilbo Swash Caps' OFL.txt is titled 'Version 1.1 - 1 February 2007', and one sentence of its preamble (the OFL's non-binding introduction) keeps the OFL-1.0 wording, 'provided that the font names of derivative works are changed', where OFL-1.1 says 'provided that any reserved names are not used by derivative works'. Every definition, permission and condition is the OFL-1.1 text word for word."
+
+[[text]]
+sha256 = "cdd4c855dcf7b6ea3e8c5fd6e6c50b964e1abf77babdbfa6216276a19d737461"
+licenses = ["OFL-1.1"]
+url = "https://raw.githubusercontent.com/twilio/twilio-sans-mono/6bb29c96842f19a533401e6266fdfdd813dcf3e4/LICENSE.txt"
+reason = "Twilio Sans Mono's LICENSE.txt: Sharp Type's copyright line (its template's placeholders left in), a Reserved Font Name line that says 'set forth below' followed by the sixteen style names on their own lines, the sentence 'This Font Software is licensed by Twilio Inc. with permission of the Copyright Holder under the SIL Open Font License, Version 1.1', then the OFL-1.1 text word for word. Only the list of names is over the notice word limit."
+
+[[text]]
+sha256 = "cd29dbb1528a3ce89e66e76c7287b0866e93c43d49a8cf8a1c73804109c28214"
+licenses = ["MIT", "OFL-1.1"]
+url = "https://software.sil.org/downloads/r/ezra/EzraSIL-2.51.zip#EzraSIL2.51/Licenses.txt"
+reason = "Ezra SIL 2.51's Licenses.txt: 'Hebrew layout intelligence copyright (c) 2003 & 2007 Ralph Hancock and John Hudson, and licensed under the MIT/X11 License', 'All other font software is copyright (c) 1997-2007, SIL International ... licensed under the SIL Open Font License, Version 1.1', then the MIT License and the OFL-1.1, each word for word. Both are allowed; OFL-1.1 covers the font."
+
+[[text]]
+sha256 = "928e010629205ae572fa6d4ad4b52bc38d9e6c4a69b58e92e70ff0bc894d1a45"
+licenses = ["OFL-1.1"]
+url = "https://salsa.debian.org/fonts-team/fonts-monofur/-/raw/6fec4bd47273880e6d0e27a5ae9a87da9654cfed/debian/LICENSE.mail"
+reason = "Monofur's author, tobias benjamin köhler, answering Debian's Adam Borowski on 2018-02-11 (Debian's debian/LICENSE.mail, also at sources.debian.org/src/fonts-monofur/1.0-3/debian/LICENSE.mail): 'These fonts are licensed under SIL Open Font License version 1.1.' The rest is a wish, not a condition: 'I would enjoy it if you notify me ... when you use them commercially or redistribute them on a server.' The e-mail names the license and does not copy its text; that is the grant, and data/license-texts/OFL-1.1.txt is the license it names."
+
+[[text]]
+sha256 = "f996f987857a3d915817c02d3bac4e708813bcf095afd10f44e79739a7cd8514"
+licenses = ["LicenseRef-VicFieger"]
+url = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/src/unpatched-fonts/HeavyData/Vic%20Fieger%20License.txt"
+reason = "Vic Fieger's whole license, two sentences: the fonts 'are freeware, to be downloaded and used by anyone who wants them for free', 'You don't have to ask for my permission', and an address to tell him how a font is used. It sets no condition. LicenseRef-VicFieger is this text (gate LIC research and ruling of 2026-09-28)."
+
+[[text]]
+sha256 = "81d0973236b5b5709a80a217a330db36eabedf57bf4031de46b4660b69901234"
+licenses = ["OFL-1.1"]
+url = "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/leaguescript/OFL.txt"
+reason = "League Script's OFL.txt (google/fonts and Fontsource, the same bytes): 'licensed under the SIL Open Font License, Version 1.1. (with no Reserved Font Name)', and the text leaves out the two clauses about Reserved Font Names, the definition and condition 3 (no Modified Version may use one). With no name reserved those clauses bind nothing; every other word is OFL-1.1."
+
+[[text]]
+sha256 = "473c5e3123102434d05c66a9fc8b19cf285a3bf71cd8a91a41acef44d1448e62"
+licenses = ["OFL-1.1"]
+url = "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/sevillana/OFL.txt"
+reason = "Sevillana's OFL.txt (google/fonts and Fontsource, the same bytes) is the OFL-1.1 text word for word, followed by the Google Code page it was copied from ('Hide details, Change log, 19ca6107e016 by Dave Crossland on Dec 5, 2011 ... View raw file'), as with Henny Penny."

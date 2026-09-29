@@ -171,7 +171,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - [ ] L1: map every license string to an SPDX ID through `licenses.toml`.
 - [ ] L2: cross-check the google/fonts folder, Fontsource, Fontist, Nerd Fonts, Debian DEP-5 and Arch.
 - [ ] Per font, provisionally: class, redistributable, attribution_required and preview_ok (per D3).
-- [ ] Review queue for NOASSERTION results, custom texts and disagreements (DejaVu, Hack, Cascadia, OpenDyslexic, URW, Roboto Mono). Owner rulings are saved in `data/reviews/`. *(2026-09-26: the owner's 14 answers are recorded. 2026-09-28: the 5 Monaspace families and the 25 researched no-license families are ruled (`data/reviews/licenses/2026-09-28.toml`). Left: Claude's research on Monofur, Vic Fieger and the four Salaowu families.)*
+- [x] Review queue for NOASSERTION results, custom texts and disagreements (DejaVu, Hack, Cascadia, OpenDyslexic, URW, Roboto Mono). Owner rulings are saved in `data/reviews/`. *(2026-09-26: the owner's 14 answers are recorded. 2026-09-28: the 5 Monaspace families and the 25 researched no-license families are ruled (`data/reviews/licenses/2026-09-28.toml`). Later batches that day ruled the researched Monofur, Vic Fieger (Heavy Data), Salaowu and Letters licenses, the Debian disagreements, Conakry and five more disagreements. The queue is empty on the real store (replay of 2026-09-29).)*
 
 **Done when:** every candidate has a provisional class, and the queue is empty.
 
@@ -181,7 +181,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - rename, build, package, postscript;
   - sibling;
   - related;
-  - **ineligible**, with a reason code (proprietary, ITF, CJK, icon, generic, system).
+  - **ineligible**, with a reason code (proprietary, ITF, CJK, icon, generic, system; since the owner's ruling of 2026-09-28 also not_font, non_latin and unlisted).
 - [ ] Mine aliases from:
   - google/fonts delisted directories and git history (never pair through googlefontdirectory-hg);
   - Fontsource's legacy names;
@@ -192,7 +192,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - a GitHub repo-to-family table with a main-download-channel flag;
   - upstream name tables (Inter Variable, Inter Display).
 - [ ] Sibling rules that block false matches: Roboto ≠ Roboto Slab, Fira Sans ≠ Fira Code, Inter ≠ Inter Tight, Noto Sans ≠ Noto Sans JP.
-- [ ] Auto-accept only renames from google/fonts history and Nerd `unpatchedName` rows; the owner reviews the rest. *(2026-09-28: under the owner's delegation (A_U_queues), Claude settled 817 of the 1,038 queued rows that were mechanical, as its own rulings in `data/reviews/aliases/2026-09-28.toml` (`by = "claude"`, rows `reviewed_by claude:2026-09-28`): distro packages whose file lists hold one family, exact names, declared renames, the families' own names, and ineligible names. Left: 221 rows, about half of them Claude's package-contents research (A_sources) and the rest owner questions.)*
+- [x] Auto-accept only renames from google/fonts history and Nerd `unpatchedName` rows; the owner reviews the rest. *(2026-09-28: under the owner's delegation (A_U_queues), Claude settled 817 of the 1,038 queued rows that were mechanical, as its own rulings in `data/reviews/aliases/2026-09-28.toml` (`by = "claude"`, rows `reviewed_by claude:2026-09-28`): distro packages whose file lists hold one family, exact names, declared renames, the families' own names, and ineligible names. Later batches that day settled the other 221: the owner's rulings, with Claude's package-contents research settling the clear rows and 21 doubtful ones going to the owner. The Chunk fold followed on 2026-09-29 (`data/reviews/aliases/2026-09-29.toml`). The queue is empty on the real store (replay of 2026-09-29).)*
 
 **Done when:** the known-answer tests pass and the review queue is empty.
 
@@ -226,16 +226,16 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 **Who:** Claude; the owner reviews the top of the report. **Depends on:** 7, 8.
 - [ ] Map every source key to a family id or an ineligible row, and set the four evidence states.
 - [ ] `build/unmatched.md` lists keys with no alias row, above each source's floor, sorted by volume. Nothing is guessed.
-- [ ] The owner resolves the top entries; new rows go into `aliases.csv`. *(2026-09-28: of the 501 keys gate U asked, 180 are settled by Claude's hand rows under the owner's delegation (`data/reviews/unmatched/2026-09-28.toml`) and 154 by the gate A rows; 167 are left for the owner, mostly packages that need a reason code the table does not have yet.)*
+- [x] The owner resolves the top entries; new rows go into `aliases.csv`. *(2026-09-28: of the 501 keys gate U asked, 180 were settled by Claude's hand rows under the owner's delegation and 154 by the gate A rows; the other 167 are settled after the owner's later rulings of the same day: bundle rows from file lists, the new reasons not_font, non_latin and unlisted, researched leftover packages, and four keys left unmatched (answer (d)). Rulings in `data/reviews/unmatched/2026-09-28.toml`.)*
 
-**Done when:** no source has an unmatched key in its top 200 (ineligible rows count as resolved), and the known answers pass.
+**Done when:** no source has an unmatched key in its top 200 (ineligible rows count as resolved, and so do keys the owner rules to leave unmatched, gate U answer (d): TeX Live's font packages and `ttf-google-fonts-git`, 2026-09-28), and the known answers pass.
 
 ### Step 10: Confound corrections
 **Who:** Claude; the owner reviews flagged preinstalled and dependency entries. **Depends on:** 8, 9.
 - [ ] For every rank except *most installed* (most chosen, overall, Coding): reverse-dependency abstentions (the largest single dependent at 50% or more, with `a | b` credited to the first alternative and 35–50% flagged; ruling M8), plus abstentions for fonts a Linux system preinstalls. The *most installed* view keeps every count.
 - [ ] `preinstalled_on` and `pulled_in_by` tags for each affected font, used by both views.
 - [ ] Noise floors (Homebrew, the Arch Nerd Fonts group, Nerd release downloads), bundle, Nerd and CJK credits, and exposure counted from data dates.
-- [ ] A per-font correction report, with new cases flagged for the owner.
+- [x] A per-font correction report, with new cases flagged for the owner. *(2026-09-28: the owner ruled every new case (`data/reviews/corrections/`); the gate X queue is empty on the real store, replay of 2026-09-29.)*
 
 **Done when:**
 - the owner has reviewed the report;

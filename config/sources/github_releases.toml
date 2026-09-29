@@ -44,6 +44,8 @@ skip_assets = '(?i)(\.(asc|sig|minisig|sha1|sha256|sha512|md5|txt|md|json|ya?ml|
 # - CJK-primary families that the Latin gate (D4) excludes anyway (Source Han,
 #   Sarasa Gothic, LXGW, Pretendard, HackGen, PlemolJP, UDEV Gothic, pixel CJK);
 # - icon and emoji fonts (Font Awesome, Twemoji, OpenMoji).
+# - romeovs/creep: Creep is in no catalog source and unmaintained since 2014, so it
+#   stays out of the universe (owner ruling of 2026-09-28, creep).
 #
 # Each [[repos]] table:
 #   repo    "owner/name" as GitHub spells it; the key prefix (keys keep it after a rename)
@@ -230,10 +232,6 @@ family = "Overpass"
 [[repos]]
 repo = "rektdeckard/departure-mono"
 family = "Departure Mono"
-
-[[repos]]
-repo = "romeovs/creep"
-family = "creep"
 
 [[repos]]
 repo = "rsms/inter"

@@ -38,7 +38,11 @@ row forbids a key or a name (as a ``font-name`` key).
    - the registry's ``minted_from`` names, and the names of records that step 1
      placed, their own and the ones they assert (``RANK_OLDER``). So a key row
      that folds a renamed Fontsource id into the old family takes the other
-     sources' records of the new name with it.
+     sources' records of the new name with it. A record placed by ``package``
+     rows only (``PACKAGE``) lends just the names it asserts, not its own: a
+     package row says where a key's counts go, not that the key's name field
+     names that family. Homebrew's cask ``font-noto-sans-mono`` is named "Noto
+     Sans", and its package row must not fold Noto Sans into Noto Sans Mono.
 
    No id: the group is a new family, and ``mint_id`` mints one from its display
    name. Several ids: each record is resolved on its own name, where the best
@@ -116,6 +120,7 @@ REPORT_NAME = "universe.md"  # under build/, committed
 KEYS_REPORT = Path("review") / "universe-keys.md"  # under build/, gitignored: every key mapped
 NAME_KEY_NS = "font-name"  # a family name, asked of the alias table as a key
 FOLD_RELATIONS = frozenset({"rename", "build", "package", "postscript"})
+PACKAGE = "package"  # a fold relation that places a key but does not name its family
 # Display-name preference; sources not listed come after, by name.
 SOURCE_PRIORITY = (
     "google_metadata",
@@ -245,6 +250,7 @@ class _Rules:
     """``aliases.csv`` rows by (ns, match_key), the way ``AliasTable.lookup`` matches."""
 
     fold: dict[tuple[str, str], frozenset[str]]
+    package_only: frozenset[tuple[str, str]]  # keys whose fold rows are all ``package`` rows
     ineligible: dict[tuple[str, str], frozenset[str]]  # -> reasons
     bundle: frozenset[tuple[str, str]]
     name_ns: frozenset[str]  # aliases.NAME_NAMESPACES
@@ -259,6 +265,7 @@ class _Rules:
 
         rows = tuple(rows)
         fold: dict[tuple[str, str], set[str]] = defaultdict(set)
+        fold_relations: dict[tuple[str, str], set[str]] = defaultdict(set)
         ineligible: dict[tuple[str, str], set[str]] = defaultdict(set)
         bundle: set[tuple[str, str]] = set()
         display: dict[str, set[str]] = defaultdict(set)
@@ -272,12 +279,14 @@ class _Rules:
             k = (row.ns, match_key(row.alias))
             if row.relation in FOLD_RELATIONS:
                 fold[k].add(row.family_id)
+                fold_relations[k].add(row.relation)
             elif row.relation == INELIGIBLE:
                 ineligible[k].add(row.detail)
             elif row.relation == BUNDLE:
                 bundle.add(k)
         return cls(
             fold={k: frozenset(v) for k, v in fold.items()},
+            package_only=frozenset(k for k, rels in fold_relations.items() if rels == {PACKAGE}),
             ineligible={k: frozenset(v) for k, v in ineligible.items()},
             bundle=frozenset(bundle),
             name_ns=NAME_NAMESPACES,
@@ -313,6 +322,11 @@ class _Rules:
         if bundle:
             return ("exclude", BUNDLE)
         return ("name", "")
+
+    def lends_own_name(self, key: SourceKey) -> bool:
+        """Whether a record that ``key``'s fold rows placed lends its own name to its
+        family: not when they are all ``package`` rows (module docstring, step 2)."""
+        return (key.ns, match_key(key.key)) not in self.package_only
 
     def bars(self, r: UniverseRecord, fid: str) -> bool:
         """Whether a distinct row forbids ``r`` (its key or its name) in family ``fid``."""
@@ -386,7 +400,7 @@ def _name_links(
     for fid, entry in ids.items():
         _link(links, rules, entry.get("family"), fid, RANK_CURRENT)
         _link(links, rules, entry.get("minted_from"), fid, RANK_OLDER)
-    _link_placed(links, rules, anchored)
+    _link_placed(links, rules, anchored, keyed=True)
     return links
 
 
@@ -401,12 +415,17 @@ def _link_placed(
     links: dict[str, dict[str, int]],
     rules: _Rules,
     placed: Iterable[tuple[UniverseRecord, str]],
+    *,
+    keyed: bool = False,
 ) -> None:
     """Link the names of placed records to their ids (``RANK_OLDER``): their own
     name, so a source listing the same name without an alias row does not mint a
-    second family of that name, and the names they assert."""
+    second family of that name, and the names they assert. For records step 1
+    placed by their key (``keyed``), the own name only when a row other than a
+    ``package`` row placed it (``_Rules.lends_own_name``)."""
     for r, fid in placed:
-        for mk in (match_key(r.family), *_folded_names(r)):
+        own = (match_key(r.family),) if not keyed or rules.lends_own_name(r.key) else ()
+        for mk in (*own, *_folded_names(r)):
             _link(links, rules, mk, fid, RANK_OLDER)
 
 

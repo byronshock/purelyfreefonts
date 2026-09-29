@@ -795,6 +795,45 @@ def test_a_key_row_takes_the_other_sources_of_the_same_name_with_it() -> None:
     assert build(recs, rows, ids=merged, day=DAY2).families == u.families
 
 
+@pytest.mark.parametrize("registered", [False, True])
+def test_a_package_row_never_folds_the_family_its_name_field_names(registered: bool) -> None:
+    # Homebrew names the cask font-noto-sans-mono "Noto Sans". Its package row sends the
+    # cask's counts to Noto Sans Mono; the cask's name must not take Noto Sans with it.
+    recs = [
+        rec("google_metadata", "gf-family", "Opal Sans", "Opal Sans"),
+        rec("fontsource", "fs-id", "opal-sans", "Opal Sans"),
+        rec("homebrew_casks", "brew-cask", "font-opal-sans", "Opal Sans"),
+        rec("google_metadata", "gf-family", "Opal Sans Mono", "Opal Sans Mono"),
+        rec("homebrew_casks", "brew-cask", "font-opal-sans-mono", "Opal Sans"),
+    ]
+    rows = table(alias("font-opal-sans-mono", "brew-cask", "opal-sans-mono", "package"))
+    ids = (
+        {
+            "opal-sans": {
+                "family": "Opal Sans",
+                "minted_from": "Opal Sans",
+                "first_seen": "2026-09-01",
+            },
+            "opal-sans-mono": {
+                "family": "Opal Sans Mono",
+                "minted_from": "Opal Sans Mono",
+                "first_seen": "2026-09-01",
+            },
+        }
+        if registered
+        else {}
+    )
+    u = build(recs, rows, ids=ids)
+    assert sorted(u.families) == ["opal-sans", "opal-sans-mono"]
+    assert set(u.families["opal-sans-mono"].keys) == {
+        SourceKey("gf-family", "Opal Sans Mono"),
+        SourceKey("brew-cask", "font-opal-sans-mono"),
+    }
+    assert u.families["opal-sans"].family == "Opal Sans"
+    assert len(u.families["opal-sans"].keys) == 3
+    assert build(recs, rows, ids=next_ids(u, ids), day=DAY2).families == u.families
+
+
 def test_two_key_rows_that_give_one_name_two_families_leave_the_name_unmapped() -> None:
     recs = [
         rec("fontsource", "fs-id", "rowan", "Rowan"),

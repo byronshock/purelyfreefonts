@@ -493,8 +493,12 @@ def test_committed_overrides_cover_the_gate_k_families() -> None:
         "K-metropolis-page",
         "K-profont-page",
         "K-terminus-page",
-        # Proposed on 2026-09-28: the owner's pick for DejaVu fails the https-only check.
+        # Researched on 2026-09-28 and approved by the owner the same day: the owner's pick
+        # for DejaVu failed the https-only check, and three held-back families had no link.
         "K-dejavu-site",
+        "K-droid-sans-mono-page",
+        "K-go-mono-page",
+        "K-bitstream-vera-page",
     }
     # The archived mirror says why it is the official link (owner ruling of 2026-09-28).
     assert "2020" in by_family["metropolis"].primary_note

@@ -952,6 +952,13 @@ def test_gate_u_asks_about_each_unmatched_key_in_a_top_200_once(tmp_path: Path) 
     assert "google rank 9)" in asked[1].text  # ranks only: publish_raw is false
     assert all(q.gate == "U" and q.recommended is None for q in asked)
     assert reviews.pins(asked[0]) == {"key": "npm:@fontsource/mystery"}
+    # (d) leaves a key unmatched and settles its question (owner ruling of 2026-09-28);
+    # (c) research keeps it open.
+    left = reviews.Answer(asked[0].id, "Leave it unmatched", "why", "d")
+    left = replace(left, values=(("key", "npm:@fontsource/mystery"),))
+    assert asked[0].options[3].startswith("Leave it unmatched")
+    assert reviews.settles(asked[0], left)
+    assert not reviews.settles(asked[0], replace(left, choice="c"))
 
     paths = write_build(tmp_path, scenario())
     mapping.run(context(paths))
@@ -980,6 +987,16 @@ def test_check_unmatched(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> 
     assert "gnome-shell" not in out
     assert "Arial" not in out
     assert mapping.cmd_check_unmatched(ctx, top=1) == 1  # npm_expo's only key is unmatched
+    # a key the owner leaves unmatched (gate U answer (d)) counts as resolved
+    capsys.readouterr()
+    rulings = paths.reviews / "unmatched"
+    rulings.mkdir(parents=True, exist_ok=True)
+    (rulings / "2026-09-28.toml").write_text(
+        '[U-x]\nchoice = "d"\nrecommended = false\nkey = "brew-cask:font-mystery"\n'
+        'ruling = "Leave it unmatched"\nreason = "a test"\n'
+    )
+    assert mapping.cmd_check_unmatched(ctx, top=200) == 1
+    assert "font-mystery" not in capsys.readouterr().out
     # without it, every source's top key resolves (Arial is ineligible, which counts)
     capsys.readouterr()
     recs = scenario()

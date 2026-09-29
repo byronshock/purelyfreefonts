@@ -163,10 +163,13 @@
               "icon",
               "generic",
               "system",
+              "not_font",
+              "non_latin",
+              "unlisted",
               "license",
               "latin"
             ],
-            "description": "icon covers every non-text drop (icon, emoji, symbol, barcode, math, music); license covers excluded licenses and failed L3 checks; latin and cjk are Latin-gate failures."
+            "description": "icon covers every non-text drop (icon, emoji, symbol, barcode, math, music); license covers excluded licenses and failed L3 checks; latin and cjk are Latin-gate failures. not_font, non_latin and unlisted come from the alias table's ineligible rows (owner ruling of 2026-09-28): a name that is no font, a font for another script, and a Latin font no catalog source lists."
           }
         }
       },

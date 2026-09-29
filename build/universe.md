@@ -4,31 +4,31 @@ Written by `tff-catalog universe` (milestone-1 step 4). Every universe key is in
 
 | Measure | Count |
 |---|---|
-| Families | 3175 |
-| Eligible families | 2815 |
-| Dropped families | 360 |
-| Keys in a family | 9077 |
-| Keys kept out of every family | 88 |
+| Families | 3141 |
+| Eligible families | 2786 |
+| Dropped families | 355 |
+| Keys in a family | 9067 |
+| Keys kept out of every family | 98 |
 | Unmapped keys (must be 0) | 0 |
 
 ## Per source
 
 | Source | Families | Eligible | Dropped |
 |---|---|---|---|
-| fontist | 622 | 333 | 289 |
-| fontsource | 2150 | 2105 | 45 |
+| fontist | 618 | 331 | 287 |
+| fontsource | 2145 | 2100 | 45 |
 | foundries | 102 | 102 | 0 |
 | google_metadata | 1946 | 1919 | 27 |
-| google_repo | 2027 | 1992 | 35 |
-| homebrew_casks | 2505 | 2440 | 65 |
+| google_repo | 2026 | 1991 | 35 |
+| homebrew_casks | 2484 | 2422 | 62 |
 | nerdfonts | 65 | 64 | 1 |
 
 ## Keys per namespace
 
 | Namespace | In a family | Kept out | Unmapped |
 |---|---|---|---|
-| brew-cask | 2588 | 11 | 0 |
-| fontist-formula | 180 | 64 | 0 |
+| brew-cask | 2577 | 22 | 0 |
+| fontist-formula | 181 | 63 | 0 |
 | foundry-family | 102 | 0 | 0 |
 | fs-id | 2162 | 9 | 0 |
 | gf-dir | 2031 | 0 | 0 |
@@ -39,13 +39,13 @@ Written by `tff-catalog universe` (milestone-1 step 4). Every universe key is in
 
 | Reason | Families |
 |---|---|
-| icon | 12 |
+| icon | 10 |
 | emoji | 4 |
-| symbol | 36 |
+| symbol | 35 |
 | barcode | 7 |
 | math | 25 |
 | music | 4 |
-| proprietary | 272 |
+| proprietary | 270 |
 | non-font | 0 |
 
 ## Dropped families
@@ -133,7 +133,6 @@ Written by `tff-catalog universe` (milestone-1 step 4). Every universe key is in
 | flow-block | Flow Block | symbol | fontsource, google_metadata, google_repo, homebrew_casks |
 | flow-circular | Flow Circular | symbol | fontsource, google_metadata, google_repo, homebrew_casks |
 | flow-rounded | Flow Rounded | symbol | fontsource, google_metadata, google_repo, homebrew_casks |
-| font-awesome | Font Awesome | icon | homebrew_casks |
 | footlight-mt-light | Footlight MT Light | proprietary | fontist |
 | foundation-icons | Foundation Icons | icon | homebrew_casks |
 | franklin-gothic-book | Franklin Gothic Book | proprietary | fontist |
@@ -274,7 +273,6 @@ Written by `tff-catalog universe` (milestone-1 step 4). Every universe key is in
 | mingliu-extb | MingLiU-ExtB | proprietary | fontist |
 | mingliu-hkscs | MingLiU_HKSCS | proprietary | fontist |
 | mingliu-hkscs-extb | MingLiU_HKSCS-ExtB | proprietary | fontist |
-| minion-pro | Minion Pro | proprietary | fontist |
 | mistral | Mistral | proprietary | fontist |
 | mitimasu | Mitimasu | proprietary | fontist |
 | modern-no-20 | Modern No. 20 | proprietary | fontist |
@@ -297,7 +295,6 @@ Written by `tff-catalog universe` (milestone-1 step 4). Every universe key is in
 | myriad-arabic | Myriad Arabic | proprietary | fontist |
 | myriad-cad | Myriad CAD | proprietary | fontist |
 | myriad-hebrew | Myriad Hebrew | proprietary | fontist |
-| myriad-pro | Myriad Pro | proprietary | fontist |
 | new-gulim | New Gulim | proprietary | fontist |
 | new-york | New York | proprietary | homebrew_casks |
 | newcomputermodernmath | NewComputerModernMath | math | fontist |
@@ -324,7 +321,6 @@ Written by `tff-catalog universe` (milestone-1 step 4). Every universe key is in
 | perpetua-titling-mt | Perpetua Titling MT | proprietary | fontist |
 | pmingliu | PMingLiU | proprietary | fontist |
 | pmingliu-extb | PMingLiU-ExtB | proprietary | fontist |
-| powerline-symbols | Powerline Symbols | symbol | homebrew_casks |
 | pt-bold-arch | PT Bold Arch | proprietary | fontist |
 | pt-bold-broken | PT Bold Broken | proprietary | fontist |
 | pt-bold-dusky | PT Bold Dusky | proprietary | fontist |
@@ -355,7 +351,6 @@ Written by `tff-catalog universe` (milestone-1 step 4). Every universe key is in
 | simple-icons | Simple Icons | icon | homebrew_casks |
 | simple-indust-outline | Simple Indust Outline | proprietary | fontist |
 | simple-indust-shaded | Simple Indust Shaded | proprietary | fontist |
-| simple-line-icons | Simple Line Icons | icon | homebrew_casks |
 | simple-outline-pat | Simple Outline Pat | proprietary | fontist |
 | simsun | SimSun | proprietary | fontist |
 | simsun-18030 | SimSun-18030 | proprietary | fontist |
@@ -421,19 +416,30 @@ None.
 
 | Namespace | Key | Why |
 |---|---|---|
+| brew-cask | font-adwaita | bundle |
+| brew-cask | font-bitstream-vera | bundle |
 | brew-cask | font-dejavu | bundle |
+| brew-cask | font-fontawesome | ineligible:icon |
+| brew-cask | font-icomoon | ineligible:icon |
 | brew-cask | font-im-writing-nerd-font | bundle |
+| brew-cask | font-liberation | bundle |
 | brew-cask | font-libertinus | bundle |
 | brew-cask | font-m+-nerd-font | bundle |
 | brew-cask | font-material-icons | ineligible:icon |
 | brew-cask | font-material-symbols | ineligible:icon |
 | brew-cask | font-monaspace | bundle |
+| brew-cask | font-monaspace-frozen | bundle |
 | brew-cask | font-monaspace-nf | bundle |
 | brew-cask | font-monaspace-var | bundle |
 | brew-cask | font-monaspice-nerd-font | bundle |
 | brew-cask | font-noto-nerd-font | bundle |
+| brew-cask | font-powerline-symbols | ineligible:icon |
+| brew-cask | font-satoshi | ineligible:itf |
+| brew-cask | font-simple-line-icons | ineligible:icon |
+| brew-cask | font-stix | bundle |
+| brew-cask | font-urw-base35 | bundle |
 | fontist-formula | adobe_reader_19 | several-families |
-| fontist-formula | adobe_reader_20 | several-families |
+| fontist-formula | adobe_reader_20 | ineligible:proprietary |
 | fontist-formula | aptos | several-families |
 | fontist-formula | arabic | several-families |
 | fontist-formula | au | several-families |
@@ -447,7 +453,6 @@ None.
 | fontist-formula | dmca_sans_serif | several-families |
 | fontist-formula | eb_garamond | several-families |
 | fontist-formula | eurofix | several-families |
-| fontist-formula | gnu_freefont | several-families |
 | fontist-formula | guttman | several-families |
 | fontist-formula | ipa | several-families |
 | fontist-formula | ipaex | several-families |
@@ -512,7 +517,7 @@ None.
 
 ## New ids this run
 
-First run: all 3175 ids are new (build/review/universe-keys.md lists them).
+First run: all 3141 ids are new (build/review/universe-keys.md lists them).
 
 ## Display names changed this run (record the old name in data/aliases.csv)
 

@@ -5,6 +5,12 @@
 # K_batch3, K_font_pages). Also in AUTHORITY.md. The owner took Claude's recommendation each time,
 # so each reason is Claude's summary. Where Claude recommended another option than the printed
 # (rec), the answer records that option's letter as recommendation; each pick names its url.
+# Batch 4, after the finish-gates-3 run ([gates_2026-09-28_b4]: K_droid_sans_mono, K_dejavu_site,
+# K_three): the four researched overrides of config/link-overrides.toml (K-droid-sans-mono-page,
+# K-dejavu-site, K-go-mono-page, K-bitstream-vera-page) and the pick K-ibm-3270. K-dejavu-site
+# replaces the picks K-dejavu-sans-mono and K-dejavu-serif (an approved override wins), and
+# K-dejavu-mono lapses: DejaVu Mono folded into DejaVu Sans Mono (../aliases/2026-09-28.toml).
+# Batch 5 ([gates_2026-09-28_b5]: K_latin_modern): the pick K-latin-modern.
 
 [K-metropolis-page]
 choice = "a"
@@ -161,3 +167,41 @@ recommendation = "b"
 url = "https://www.gust.org.pl/projects/e-foundry/tex-gyre/termes"
 ruling = "https://www.gust.org.pl/projects/e-foundry/tex-gyre/termes (from homebrew_casks)"
 reason = "Claude's recommendation (K_font_pages): the family's own GUST page rather than the general TeX Gyre page, the printed (rec); it answered 200 on 2026-09-28."
+
+[K-droid-sans-mono-page]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation (K_droid_sans_mono): Android's source folder platform/frameworks/base/data/fonts on main still carries DroidSansMono.ttf (Version 1.00 build 113, Apache-2.0), the build Nerd Fonts patches; Google unlisted Droid in 2017 and droidfonts.com now redirects to a commercial font. Droid Sans Mono stays its own family: Noto Sans Mono revised its glyphs (slashed zero, footed 1)."
+
+[K-dejavu-site]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation (K_dejavu_site): https://dejavu-fonts.org/ answers 200 directly; the owner's first pick, https://dejavu.sourceforge.net/, redirects through http:// and fails the https-only link check. This override replaces the picks K-dejavu-sans-mono and K-dejavu-serif of 2026-09-28."
+
+[K-ibm-3270]
+choice = "a"
+recommended = true
+url = "https://github.com/rbanffy/3270font/releases"
+ruling = "https://github.com/rbanffy/3270font/releases (from homebrew_casks)"
+reason = "Claude's recommendation (K_three): the designer's repository releases (Ricardo Bánffy's 3270font), the only candidate."
+
+[K-go-mono-page]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation (K_three): the Go project's own post on the Go fonts (go.dev/blog/go-fonts), which describes Go Mono, states the license and says where the files are; the fonts have no download page of their own."
+
+[K-bitstream-vera-page]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation (K_three): GNOME's download folder for ttf-bitstream-vera 1.10, the fonts' last release (gnome.org/fonts/ answers 404); Bitstream gave the Vera fonts to the GNOME Foundation in 2003."
+
+[K-latin-modern]
+choice = "a"
+recommended = true
+url = "https://www.gust.org.pl/projects/e-foundry/latin-modern"
+ruling = "https://www.gust.org.pl/projects/e-foundry/latin-modern (from homebrew_casks)"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5) (K_latin_modern): GUST's Latin Modern page, the project's own page, the only candidate."

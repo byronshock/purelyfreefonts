@@ -846,10 +846,14 @@ def _load_stage(paths: Paths, name: str) -> Any:
 
 QUEUE_FILE = "unmatched.json"  # under build/stage/queues/
 QUESTION_TOP = 200  # milestone-1 step 9: no source has an unmatched key in its top 200
+LEAVE_UNMATCHED = 3  # index of "Leave it unmatched" in QUESTION_OPTIONS
 QUESTION_OPTIONS = (
     "A family's name or package: add an alias row (record its family_id)",
     "Not a font we list: add an ineligible row (record the reason)",
     "Research more",
+    # Owner ruling of 2026-09-28 (multi_family_packages): TeX Live's font packages and
+    # ttf-google-fonts-git ship whole collections, so no row fits and they stay listed.
+    "Leave it unmatched: no row fits, and it stays in unmatched.md",
 )
 
 
@@ -876,10 +880,25 @@ def queue_questions(ranked: Iterable[Unmatched], top: int = QUESTION_TOP) -> lis
                 "U",
                 f"U-{digest}",
                 f"`{name}` matches no family ({u.source} rank {u.rank}{value}). It is resolved "
-                f'with a row in data/aliases.csv. Record the answer with key = "{name}".',
+                "with a row in data/aliases.csv, or left unmatched when no row fits. "
+                f'Record the answer with key = "{name}".',
                 QUESTION_OPTIONS,
             )
         )
+    return out
+
+
+def left_unmatched(paths: Paths) -> set[SourceKey]:
+    """The keys gate U rulings leave unmatched (answer (d), ``LEAVE_UNMATCHED``): they stay
+    in ``unmatched.md`` but count as resolved for ``--check-unmatched``."""
+    from tff_catalog.reviews import latest_answers, letter_index
+
+    out = set()
+    for answer, _ in latest_answers(paths, "U").values():
+        key = dict(answer.values).get("key")
+        if letter_index(answer.choice) == LEAVE_UNMATCHED and isinstance(key, str) and ":" in key:
+            ns, name = key.split(":", 1)
+            out.add(SourceKey(ns, name))
     return out
 
 
@@ -931,14 +950,16 @@ def cmd_check_unmatched(ctx: StageContext, *, top: int) -> int:
 
     Every ranked key counts, also one under its source's floor (such a key is
     not in ``unmatched.md``, and the output says so): milestone-1 step 9 is done
-    when no source has an unmatched key in its top 200.
+    when no source has an unmatched key in its top 200. A key the owner ruled to
+    leave unmatched (``left_unmatched``) counts as resolved.
     """
     inputs = load_inputs(ctx.paths)
     sources = ctx.config.ranking.sources.all()
     ranked, _ = report_rows(
         sources, inputs.current, inputs.idx, under_floor=True, bundles=inputs.bundles
     )
-    offenders = [u for u in ranked if u.rank is not None and u.rank <= top]
+    left = left_unmatched(ctx.paths)
+    offenders = [u for u in ranked if u.rank is not None and u.rank <= top and u.key not in left]
     if not offenders:
         print(f"no source has an unmatched key in its top {top}")
         return 0

@@ -11,9 +11,11 @@ google/fonts license files, and the SPDX release the canonical texts come from.
 """
 
 import hashlib
+import io
 import json
 import logging
 import time
+import zipfile
 from collections.abc import Iterable, Iterator
 from contextlib import contextmanager
 from dataclasses import dataclass, field, replace
@@ -497,6 +499,10 @@ def test_gpl_with_the_font_exception_in_one_text(canon: Canon, order: str) -> No
         (f"https://cdn.jsdelivr.net/gh/example/fonts@{COMMIT}/ExampleSans.ttf", True),
         ("https://cdn.jsdelivr.net/gh/example/fonts@main/ExampleSans.ttf", False),
         ("https://fonts.example/ExampleSans.ttf", False),
+        (f"https://gitlab.com/example/fonts/-/raw/{COMMIT}/LICENSE.txt", True),
+        (f"https://salsa.debian.org/fonts-team/fonts-example/-/raw/{COMMIT}/debian/LICENSE", True),
+        ("https://gitlab.com/example/fonts/-/raw/main/LICENSE.txt", False),
+        (f"https://gitlab.com/example/fonts/-/blob/{COMMIT}/LICENSE.txt", False),
     ],
 )
 def test_is_pinned(url: str, pinned: bool) -> None:
@@ -510,6 +516,27 @@ def test_fetchable_url() -> None:
     assert license_l3.fetchable_url("http://fonts.example/LICENSE") == (
         "https://fonts.example/LICENSE"
     )
+
+
+@pytest.mark.parametrize(
+    ("url", "member"),
+    [
+        (
+            "https://fonts.example/Example-1.0.zip#Example-1.0/OFL.txt",
+            ("https://fonts.example/Example-1.0.zip", "Example-1.0/OFL.txt"),
+        ),
+        (
+            "https://fonts.example/Example%201.0.zip#Example%201.0/Example%20license.txt",
+            ("https://fonts.example/Example%201.0.zip", "Example 1.0/Example license.txt"),
+        ),
+        ("https://fonts.example/Example-1.0.zip", None),
+        ("https://fonts.example/Example-1.0.zip#", None),
+        ("https://fonts.example/OFL.txt#section", None),
+        ("http://fonts.example/Example-1.0.zip#OFL.txt", None),
+    ],
+)
+def test_archive_member(url: str, member: tuple[str, str] | None) -> None:
+    assert license_l3.archive_member(url) == member
 
 
 def fam_key(key: str, ns: str = "gf-dir") -> SourceKey:
@@ -1165,6 +1192,37 @@ def test_a_researched_text_must_hold_the_l2_license(canon: Canon) -> None:
     assert f"license text {HACK_URL} is MIT, not Apache-2.0" in fatal(check_hack(inputs))
 
 
+# A notice that lists the Reserved Font Names on lines of their own, as Twilio Sans Mono's does:
+# more words above the body than EXTRA_WORDS_MAX.
+NAMES_NOTICE = OFL_NOTICE.replace(
+    "\n\nThis Font Software",
+    "\nwith Reserved Font Names set forth below\n"
+    + "".join(
+        f"Example Sans {style} Italic\n"
+        for style in ("Thin", "Light", "Book", "Regular", "Medium", "Bold", "Heavy", "Black")
+    )
+    + "\nThis Font Software",
+)
+
+
+def test_a_researched_text_may_match_a_canonical_text_under_a_long_notice(canon: Canon) -> None:
+    """Research of its exact bytes lets a canonical body under a notice longer than the word
+    limits verify; the whole text is still read for restrictions and other licenses."""
+    text = ofl(NAMES_NOTICE)
+    assert canon.match(text) == "OFL-1.1"
+    assert " words besides copyright" in fatal(check(make_inputs(canon), text=text))[0]
+    entry = license_l3.ResearchedText(sha(text), ("OFL-1.1",), TEXT_URL, "test")
+    inputs = replace(make_inputs(canon), research=research(texts=[entry]))
+    result = check(inputs, text=text)
+    assert (result.level, result.matched, fatal(result)) == ("L3", "OFL-1.1", [])
+    assert result.problems[0].startswith(f"note: license text {TEXT_URL} is a researched text")
+    limited = ofl(NAMES_NOTICE.replace("Thin Italic", "Thin Italic, for personal use"))
+    entry = license_l3.ResearchedText(sha(limited), ("OFL-1.1",), TEXT_URL, "test")
+    result = check(replace(inputs, research=research(texts=[entry])), text=limited)
+    assert result.level == "failed"
+    assert any(p.endswith("restricts use: 'personal use'") for p in fatal(result)), fatal(result)
+
+
 def test_a_mentions_allowance_lets_a_name_id_name_that_license_only(canon: Canon) -> None:
     facts = Facts(FONT_SHA, license_description=HACK_13, license_url=None)
     assert fatal(check_hack(hack_inputs(canon, families=[]), facts=facts)) == [
@@ -1232,6 +1290,10 @@ def write_research(tmp_path: Path, body: str) -> Paths:
          "is not an https URL"),
         ('[[family]]\nfamily = "a"\nname = "A"\nreason = "r"\nfiles = ["https://x.example/OFL.txt"]\n',
          "names no font file"),
+        ('[[family]]\nfamily = "a"\nname = "A"\nreason = "r"\ntexts = ["https://x.example/A-1.zip"]\n',
+         "names no file in a zip archive"),
+        ('[[family]]\nfamily = "a"\nname = "A"\nreason = "r"\ntexts = ["https://x.example/OFL#a"]\n',
+         "names no file in a zip archive"),
         ('[[family]]\nfamily = "a"\nname = "A"\nreason = "r"\nmentions = ["Nice"]\n',
          "is no license family"),
         ('[[text]]\nsha256 = "abc"\nlicenses = ["MIT"]\nurl = "https://x.example/L"\nreason = "r"\n',
@@ -1241,8 +1303,8 @@ def write_research(tmp_path: Path, body: str) -> Paths:
         (f'[[text]]\nsha256 = "{"a" * 64}"\nlicenses = []\nurl = "https://x.example/L"\n'
          'reason = "r"\n', "empty"),
     ],
-    ids=["unknown-key", "bad-id", "twice", "http", "not-a-font", "mention", "sha", "expression",
-         "no-licenses"],
+    ids=["unknown-key", "bad-id", "twice", "http", "not-a-font", "bare-archive", "fragment",
+         "mention", "sha", "expression", "no-licenses"],
 )  # fmt: skip
 def test_load_research_is_strict(tmp_path: Path, body: str, error: str) -> None:
     from tff_catalog.config_model import ConfigError
@@ -1255,10 +1317,22 @@ def test_load_research_without_a_file(tmp_path: Path) -> None:
     assert license_l3.load_research(Paths.for_root(tmp_path)) == license_l3.Research()
 
 
+# Upstreams with no repository to pin: GUST publishes its license only on its own site, and
+# these release archives hold the only copy of theirs.
+UNPINNED_UPSTREAMS = (
+    "https://www.gust.org.pl/",
+    "https://www.evertype.com/fonts/nko/ConakryFont.zip#",
+    "https://practicaltypography.com/fonts/Charter%20210112.zip#",
+    "https://software.sil.org/downloads/r/ezra/EzraSIL-2.51.zip#",
+    "https://software.sil.org/downloads/r/scheherazade/Scheherazade-2.100.zip#",
+    "https://software.sil.org/downloads/r/sophianubian/SophiaNubian-1.0.zip#",
+)
+
+
 def test_the_real_research_file_loads_and_allows_only_allowed_licenses() -> None:
     """config/license-texts.toml: strict, every allowance is an allowed license's family,
     every researched text verifies only allowed licenses, and texts are pinned where the
-    upstream has commits (GUST publishes its license only on its own site)."""
+    upstream has commits (``UNPINNED_UPSTREAMS`` has none)."""
     found = license_l3.load_research(Paths.for_root(ROOT))
     cfg = from_mapping(
         LicensesConfig, load_toml(ROOT / "config" / "licenses.toml"), where="licenses.toml"
@@ -1271,7 +1345,7 @@ def test_the_real_research_file_loads_and_allows_only_allowed_licenses() -> None
             assert license_l3.leaf_allowed(license_l3._Leaf(spdx), pairs), spdx
     for fam in found.families.values():
         for url in fam.texts:
-            assert license_l3.is_pinned(url) or url.startswith("https://www.gust.org.pl/"), url
+            assert license_l3.is_pinned(url) or url.startswith(UNPINNED_UPSTREAMS), url
     assert len(found.families) >= 20
     assert len(found.texts) >= 5
 
@@ -1804,6 +1878,52 @@ def test_store_texts_refuses_oversized_texts() -> None:
     fetcher = FakeFetcher({TEXT_URL: b"x" * (license_l3.MAX_TEXT_BYTES + 1)})
     row = store_texts(FakeStore(), fetcher).get(TextRef(TEXT_URL))
     assert (row.status, row.text, row.ok) == (200, None, False)
+
+
+def zip_bytes(files: dict[str, bytes]) -> bytes:
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as zf:
+        for name, data in files.items():
+            zf.writestr(name, data)
+    return buf.getvalue()
+
+
+def test_store_texts_reads_a_text_inside_a_release_archive() -> None:
+    archive = "https://fonts.example/downloads/Example-1.0.zip"
+    member = f"{archive}#Example-1.0/OFL.txt"
+    files = {"Example-1.0/OFL.txt": ofl().encode(), "Example-1.0/ExampleSans.ttf": b"font"}
+    fetcher = FakeFetcher({archive: zip_bytes(files)})
+    store = FakeStore()
+    live = store_texts(store, fetcher)
+    row = live.get(TextRef(member))
+    assert (row.status, row.sha256, row.text) == (200, sha(ofl()), ofl())  # the member's
+    assert live.get(TextRef(f"{archive}#OFL.txt")).sha256 == sha(ofl())  # the one path ending in it
+    missing = live.get(TextRef(f"{archive}#Example-1.0/LICENSE"))
+    assert (missing.status, missing.ok) == (404, False)
+    assert missing.error == f"{archive}: no archive entry 'Example-1.0/LICENSE'"
+    assert fetcher.asked == [archive] * 3
+    live.close()
+    replay = store_texts(store, None)
+    assert replay.get(TextRef(member)).text == ofl()
+
+
+@pytest.mark.parametrize(
+    ("body", "error"),
+    [
+        (b"not a zip archive", "not a readable zip archive"),
+        (zip_bytes({"a/OFL.txt": b"x", "b/OFL.txt": b"x"}), "2 archive entries match 'OFL.txt'"),
+        (
+            zip_bytes({"OFL.txt": b"x" * (license_l3.MAX_TEXT_BYTES + 1)}),
+            "too large for a license",
+        ),
+    ],
+    ids=["not-a-zip", "ambiguous", "too-large"],
+)
+def test_store_texts_refuses_a_bad_archive_member(body: bytes, error: str) -> None:
+    archive = "https://fonts.example/Example-1.0.zip"
+    row = store_texts(FakeStore(), FakeFetcher({archive: body})).get(TextRef(f"{archive}#OFL.txt"))
+    assert (row.status, row.ok) == (200, False)
+    assert error in (row.error or "")
 
 
 def test_decode_text(canon: Canon) -> None:

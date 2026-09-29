@@ -381,15 +381,6 @@
       "url": "https://api.github.com/repos/rektdeckard/departure-mono/releases?page=1&per_page=100"
     },
     {
-      "body": "empty.json",
-      "headers": {
-        "content-type": "application/json; charset=utf-8"
-      },
-      "method": "GET",
-      "status": 200,
-      "url": "https://api.github.com/repos/romeovs/creep/releases?page=1&per_page=100"
-    },
-    {
       "body": "rsms__inter-p1.json",
       "headers": {
         "content-type": "application/json; charset=utf-8"

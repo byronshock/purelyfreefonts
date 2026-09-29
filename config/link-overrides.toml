@@ -32,7 +32,8 @@
 #   primary_note    optional sentence the font's details show under the primary link
 #   reason          why the override is needed
 #
-# All URLs below answered HTTP 200 on 2026-09-25 (the researched ones at the end on 2026-09-26).
+# All URLs below answered HTTP 200 on 2026-09-25 (the researched ones at the end on 2026-09-26
+# and 2026-09-28).
 
 schema = 1
 
@@ -207,11 +208,12 @@ question = "K-terminus-page"
 primary = "https://terminus-font.sourceforge.net/"
 reason = "The designer's own page, Dimitar Zhekov's Terminus Font home (SIL OFL 1.1), with the source release and a Windows installer. The TrueType build Nerd Fonts patches is Terminus TTF (files.ax86.net/terminus-ttf/), a third party's conversion, so it is not the official link."
 
-# --- Proposed on 2026-09-28, waiting for the owner at gate K --------------------------------------
-# The link the owner picked for DejaVu Sans Mono and DejaVu Serif on 2026-09-28,
+# --- Proposed on 2026-09-28, approved by the owner the same day (K_dejavu_site) -------------------
+# The link the owner first picked for DejaVu Sans Mono and DejaVu Serif on 2026-09-28,
 # https://dejavu.sourceforge.net/, fails the monthly check: it answers 302 to
 # http://dejavu-fonts.org/wiki/, and the checker follows https only. The page it ends on,
-# https://dejavu-fonts.org/, answers 200 directly (checked 2026-09-28).
+# https://dejavu-fonts.org/, answers 200 directly (checked 2026-09-28). An approved override
+# wins over the owner's picks on K-dejavu-sans-mono and K-dejavu-serif.
 
 # --- K-dejavu-site -------------------------------------------------------------------------------
 
@@ -229,7 +231,7 @@ question = "K-dejavu-site"
 primary = "https://dejavu-fonts.org/"
 reason = "As for DejaVu Sans Mono: the DejaVu project's own site, without the http redirect of https://dejavu.sourceforge.net/."
 
-# --- Researched on 2026-09-28, waiting for the owner at gate K -----------------------------------
+# --- Researched on 2026-09-28, approved by the owner the same day (K_droid_sans_mono, K_three) ---
 # Held back from the catalog with no candidate link at all: each family's only sources are
 # Nerd Fonts and its Homebrew cask (and, for Droid Sans Mono, Arch's ttf-droid and Fonts Over
 # Time). Each URL below answered HTTP 200 on 2026-09-28. android.googlesource.com answers 503

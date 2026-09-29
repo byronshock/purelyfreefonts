@@ -411,16 +411,6 @@
   },
   {
     "api": "rest",
-    "assets": 0,
-    "latest": 0,
-    "releases": 0,
-    "renamed_to": null,
-    "repo": "romeovs/creep",
-    "status": "ok",
-    "total_releases": null
-  },
-  {
-    "api": "rest",
     "assets": 2,
     "latest": 0,
     "releases": 2,

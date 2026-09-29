@@ -11,10 +11,10 @@
       "sha256": "8eaa229c4b13d836f913d550bf159aabf4069f3f82bc3d95bca1c69c35cb276e"
     },
     {
-      "bytes": 9972,
+      "bytes": 9791,
       "path": "repos.json",
-      "rows": 53,
-      "sha256": "48be5cf5b89c83f9bf83ff071a08dd0612a5f335c797de693f32fbca9b71c658"
+      "rows": 52,
+      "sha256": "59a3d3c29b1fa9b1120331e0e5277ad5816b8177030db5c141f19deb4ffd4dcd"
     }
   ],
   "fetched": [
@@ -427,16 +427,6 @@
       "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
       "status": 200,
       "url": "https://api.github.com/repos/rektdeckard/departure-mono/releases?per_page=100&page=1"
-    },
-    {
-      "bytes": 3,
-      "etag": null,
-      "fetched_at": "2026-09-26T06:00:00Z",
-      "kept": false,
-      "last_modified": null,
-      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
-      "status": 200,
-      "url": "https://api.github.com/repos/romeovs/creep/releases?per_page=100&page=1"
     },
     {
       "bytes": 682,

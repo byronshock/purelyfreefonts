@@ -135,7 +135,12 @@ RELATIONS = frozenset(
         "ineligible",
     }
 )
-INELIGIBLE_REASONS = frozenset({"proprietary", "itf", "cjk", "icon", "generic", "system"})
+# not_font (a program, library or other package that is no font), non_latin (a font for
+# another script) and unlisted (a Latin font no catalog source lists): owner ruling of
+# 2026-09-28 (pkg_rules), for the gate U keys no other reason fits.
+INELIGIBLE_REASONS = frozenset(
+    {"proprietary", "itf", "cjk", "icon", "generic", "system", "not_font", "non_latin", "unlisted"}
+)
 BUILD_DETAILS = frozenset(
     {
         "",

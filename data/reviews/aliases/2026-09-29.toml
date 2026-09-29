@@ -1,0 +1,7 @@
+# Rulings of 2026-09-29, gate A. Owner ruling given in chat, ruled by the owner, Byron Shock, and recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml, chunk_fold); also in AUTHORITY.md.
+# The rows it adds or changes are hand rows in data/aliases.csv (reviewed_by owner:2026-09-29): fs-id chunk-five renames to chunk, and AUR ttf-chunk's package row moves from chunk-five to chunk.
+
+[chunk_fold]
+value = "fold"
+ruling = "Chunk Five (Fontsource's chunk-five, with its npm package @fontsource/chunk-five) folds into Chunk (The League of Moveable Type's foundry list); AUR ttf-chunk, whose files name the family ChunkFive, counts toward Chunk."
+reason = "Claude's recommendation, taken by the owner: both universe records are the same typeface from github.com/theleagueof/chunk. Neither was ranked or in the catalog before the fold."
