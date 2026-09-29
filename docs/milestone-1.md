@@ -311,6 +311,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - web.archive.org counts as an aggregator for every automatic pick, but an override the owner approves may link a timestamped Wayback Machine capture of the designer's page when that page is gone, marked and labelled as archived (owner ruling of 2026-09-29);
   - auto-accept only when two sources agree, or when the owner-approved foundry list (`config/foundries.toml`, gate C3) gives the link (owner ruling of 2026-09-26);
   - an `http://` homepage is upgraded to `https://` and checked monthly (owner ruling of 2026-09-26).
+- [ ] Nerd Font build link (owner rulings of 2026-09-28 and 2026-09-29, TASK-2): for every family with a Nerd Font build, whether a Nerd Fonts project build (`fonts.json`; alias rows with relation `build`, detail `nerd`) or the maker's own NF build, set `links.nerd` to that build's own page: the build's folder in the Nerd Fonts repository at the current release tag, or the maker's release page for a maker-built one. Never a release asset or `/releases/latest`. Its label names the build (for example "SauceCodePro Nerd Font"), and the monthly link check covers it. *(The 2026-09-29 ruling replaces the 2026-09-28 ruling's one shared releases page.)*
 - [ ] A monthly link check. *(The check runs in every refresh and as `tff-catalog links --check`; the monthly schedule comes with step 19's workflow. Still open (2026-09-29): a failed check reaches only the log and `build/stage/queues/links.json`. `review.md`, validate and gate K don't report it, and `refresh.yml` doesn't run `links --check`, so a link that breaks later would stay published without a flag.)*
 
 **Done when:** every catalog font has a primary link that follows the policy and returns HTTP 200. *(Met 2026-09-29: `links --check` passes all 500 catalog families on the real store, and every primary follows the policy, Heavy Data's and Monofur's as approved archived overrides.)*
@@ -324,7 +325,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - id, family, category, is_monospace;
   - formats, Latin coverage;
   - license {spdx, class, redistributable, attribution_required, text_url};
-  - preview_ok, links, preinstalled_on, pulled_in_by;
+  - preview_ok, links (primary, designer and the nullable `nerd` of the TASK-2 ruling), preinstalled_on, pulled_in_by;
   - rank or band, `order`, tier and 5–95% range for each published rank;
   - `aliases[]` (old names and build names, for search and matching);
   - per source: {state, rank_in_source}, only as far as the step 3 terms ruling allows;
