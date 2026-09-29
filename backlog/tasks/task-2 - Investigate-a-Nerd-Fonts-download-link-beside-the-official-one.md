@@ -3,9 +3,9 @@ id: TASK-2
 title: Investigate a Nerd Fonts download link beside the official one
 status: Done
 assignee:
-  - '@qwen'
+  - '@claude'
 created_date: '2026-09-28 10:03'
-updated_date: '2026-09-29 16:24'
+updated_date: '2026-09-29 23:35'
 labels:
   - links
 dependencies: []
@@ -52,6 +52,8 @@ Many developers install the Nerd Fonts build of a coding font instead of the ori
 Investigation complete; findings in docs/nerd-fonts-link.md (2026-09-28). Summary: (1) 72 builds in fonts.json; catalog intersection comes free via aliases.csv relation=build detail=nerd once seeded; full rename table in the appendix. (2) All base licenses and all 14 icon sets pass Rules 1-4; Font Logos 'unlicensed' = The Unlicense (GitHub API); only BigBlueTerm (CC-BY-SA) fails D3 and its original would never enter the catalog. (3) Proposed target https://github.com/ryanoasis/nerd-fonts/releases (repository releases page = the class step 14 allows; 200 on 2026-09-28; nerdfonts.com has no per-font deep links). (4) Placement: details panel only, every view, label 'Nerd Fonts build'. (5) Schema: nullable links.nerd in both schemas + Links dataclass; step 14/15 code is still stubs, so it is cheapest now and must land before the M1 step 20 freeze. (6) Recommendation to owner: adopt. Awaiting ruling for AUTHORITY.md.
 
 Owner ruling received in chat 2026-09-28: adopt, with the link on the list row as well as the details panel. Recorded in AUTHORITY.md (Site (Milestone 2)) and data/reviews/site/2026-09-28.toml; build work added to milestone-1.md steps 14/15 and milestone-2.md steps 2/3/4. Verification: full pytest suite 601 passed, 1 skipped, 4 xfail (expected stubs); the new reviews TOML validates against schemas/review.schema.json; all candidate link targets returned HTTP 200 on 2026-09-28.
+
+2026-09-29: at the owner's request Claude took the task over from Qwen, and Qwen's commit (a46a3dd) is merged into m1/wave1. The same day the owner amended the ruling: an "NF" marker with the legend "NF: Nerd Font version available (adds developer icons, which have their own licenses)."; a link to each build's own page (its Nerd Fonts folder at the current release tag, or the maker's release page); the makers' own NF builds count; a "Nerd Font available" filter; placement unchanged (row and details, every view). Before launch Claude confirms each linked build's license check. Recorded in AUTHORITY.md and data/reviews/site/2026-09-29.toml. Build work: milestone-1 steps 14/15, milestone-2 steps 2-4. The logo request is TASK-3.
 <!-- SECTION:NOTES:END -->
 
 ## Final Summary

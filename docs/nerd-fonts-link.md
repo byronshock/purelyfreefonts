@@ -1,5 +1,14 @@
 # Nerd Fonts download link — spike findings (TASK-2)
 
+**Ruling amended on 2026-09-29.** The owner changed parts of the 2026-09-28 ruling that closes this document:
+
+- an "NF" marker with a legend replaces the "Nerd Fonts build" link text;
+- the link goes to each build's own page: its folder in the Nerd Fonts repository at the current release tag, or the maker's release page for a maker-built one;
+- the makers' own NF builds count as well as the Nerd Fonts project's;
+- a "Nerd Font available" filter is added.
+
+See AUTHORITY.md and `data/reviews/site/2026-09-29.toml`. The findings below stand, but their recommendation of one shared releases page does not.
+
 Investigated 2026-09-28 for the owner's ruling. Question: should a catalog font
 that has a Nerd Fonts build also offer a Nerd Fonts download link beside its
 official one? Evidence: Nerd Fonts `fonts.json` (master, 2026-09-28, MIT per

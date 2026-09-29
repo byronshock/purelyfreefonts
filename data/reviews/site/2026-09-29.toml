@@ -1,0 +1,26 @@
+# Owner rulings of 2026-09-29 on the Nerd Font marker (Backlog TASK-2), given in chat to Claude, which took TASK-2 over from Qwen at the owner's request. Ruled by the owner, Byron Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml, [nerd_2026-09-29]). The owner took Claude's recommendation each time except the legend's wording, where the owner chose among alternatives. These replace the 2026-09-28 ruling nerd_fonts_link where they differ (a later file wins). Findings: docs/nerd-fonts-link.md. Also in AUTHORITY.md.
+
+[nerd_fonts_link]
+value = "nf_marker_per_build_page"
+ruling = "A font that has a Nerd Font build shows it: an \"NF\" marker, a legend, and a link to the build's own page. The builds that count are the Nerd Fonts project's (fonts.json) and the makers' own NF builds (such as Maple Mono NF, Cascadia Code NF and Rec Mono). The link goes to the build's folder in the Nerd Fonts repository at the current release tag, or to the maker's release page for a maker-built one, never a release asset or /releases/latest, and its label names the build (for example \"SauceCodePro Nerd Font\"). The field is a nullable links.nerd in catalog.json and catalog-site.json, added before the Milestone 1 step 20 freeze."
+reason = "The owner's idea of 2026-09-29, with Claude's recommendations: a per-build page shows that build's variants, icon credits and downloads, where the 2026-09-28 ruling's one shared releases page left visitors to search; makers' own NF builds are what many users install."
+
+[nerd_marker]
+value = "NF_text_all_views_row_and_details"
+ruling = "The marker is the text \"NF\", fixed-width, beside the font's name in every list row (rows keep their height) and in the details panel, on every rank. The Nerd Fonts logo may replace it if the Nerd Fonts maintainers agree (Backlog TASK-3)."
+reason = "Claude's recommendation: Nerd Fonts' LICENSE covers its code (MIT) and patched fonts (OFL 1.1) but not the logo."
+
+[nerd_legend]
+value = "short_form"
+ruling = "NF: Nerd Font version available (adds developer icons, which have their own licenses)."
+reason = "The owner's choice among three alternatives Claude offered, after declining Claude's first draft."
+
+[nerd_filter]
+value = "yes"
+ruling = "The site's filters gain a \"Nerd Font available\" option that shows only fonts with a Nerd Font build."
+reason = "Claude's recommendation: one checkbox, cheap once the field exists, and useful to developers."
+
+[nerd_icon_licenses]
+value = "note_and_check_before_launch"
+ruling = "The legend notes that the icons carry their own licenses. Before the site launches, Claude confirms the license check of every linked build and its patched icon sets (the 2026-09-28 findings: every base license and all 14 icon sets pass Rules 1-4, Font Logos being The Unlicense), and the marker is hidden for any build that fails."
+reason = "Claude's recommendation: Codicons and Font Awesome are CC BY 4.0 (attribution), so visitors should know the icons are licensed separately."

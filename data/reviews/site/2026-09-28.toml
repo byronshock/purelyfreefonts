@@ -2,6 +2,12 @@
 # owner, Byron Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml,
 # [gates_2026-09-28]: log_extra_headers). Also in AUTHORITY.md (Infrastructure, visitor privacy).
 # The owner took Claude's recommendation.
+#
+# Owner ruling on the Nerd Fonts download link (Backlog TASK-2 spike).
+# Ruled by the owner, Byron Shock, in chat on 2026-09-28. Recorded by Qwen the same day.
+# Also recorded in AUTHORITY.md (Site (Milestone 2)) and applied in docs/milestone-1.md
+# (steps 14, 15) and docs/milestone-2.md (steps 2, 3, 4). Findings: docs/nerd-fonts-link.md.
+# Each ruling: the value chosen; ruling = what it means; reason = Qwen's summary of why.
 
 [log_extra_headers]
 choice = "a"
@@ -10,15 +16,9 @@ value = "owner_ruling"
 ruling = "The Caddy access log also drops the Cookie header and Cloudflare's location headers finer than the country, as the Caddyfile change of the log_fields ruling (2026-09-26) already does. This is the owner's ruling, not Claude's addition."
 reason = "Claude's recommendation: the log keeps nothing it does not need, in the spirit of M2-D9. Options were (a) keep dropping them, recorded as the owner's ruling, (b) keep dropping them, recorded as Claude's addition, (c) drop only Referer and User-Agent; the owner chose (a)."
 
-# Owner ruling on the Nerd Fonts download link (Backlog TASK-2 spike).
-# Ruled by the owner, Byron Shock, in chat on 2026-09-28. Recorded by Qwen the same day.
-# Also recorded in AUTHORITY.md (Site (Milestone 2)) and applied in docs/milestone-1.md
-# (steps 14, 15) and docs/milestone-2.md (steps 2, 3, 4). Findings: docs/nerd-fonts-link.md.
-# Each ruling: the value chosen; ruling = what it means; reason = Qwen's summary of why.
-
 [nerd_fonts_link]
-value = "adopted; row and details panel"
-url = "https://github.com/ryanoasis/nerd-fonts/releases"
 label = "Nerd Fonts build"
+url = "https://github.com/ryanoasis/nerd-fonts/releases"
+value = "adopted; row and details panel"
 ruling = "Catalog families with a Nerd Fonts build (alias table, relation build) get a nullable links.nerd in both catalog schemas, landing before the M1 step 20 v1 freeze. One shared target: the Nerd Fonts repository releases page, never a release asset or /releases/latest. Link text 'Nerd Fonts build', destination named per the M2 step 4 convention. It shows on the list row and in the details panel, in every view, only for families that have a build."
 reason = "About 59% of Homebrew font installs are Nerd builds and D7 counts them toward the original family, so visitors often want the patched build. The spike found no license obstacle: every base license and all 14 patched icon sets pass Rules 1-4 (Font Logos' 'unlicensed' is The Unlicense), and the step 14/15 code is still stubs, so the field is cheapest now. The owner chose row-and-details over details-only."
