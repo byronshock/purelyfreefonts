@@ -25,3 +25,9 @@ reason = "Claude's recommendation: the Coding view and the site's Spacing filter
 value = "look_right"
 ruling = "The project, desktop (most chosen, most installed) and coding lists look right apart from the Hack case; Developers & apps stays bands only (ruling of 2026-09-26); the explanations of the moves against the old Top 100 are accepted."
 reason = "Claude's recommendation; the old-list moves: web fonts fall for lack of desktop evidence under D12, IBM Plex Serif, Dosis and Crimson Pro rise on desktop evidence, five Fontshare fonts are excluded by Rule 4 (ITF) and Redaction's evidence is Fontsource only."
+
+[R2]
+choice = "a"
+recommended = false
+ruling = "Approve"
+reason = "Claude's recommendation, taken by the owner in chat after the round 1 changes were rebuilt on the real store (f57bf7b): Hack is #5 in coding and most chosen and #53 overall (tier C, desktop evidence only); Geist Mono, Liberation Mono, Commit Mono and Zed Mono enter most chosen, six fonts enter coding, and the 22 owner categories apply. The owner judged the changes right and approved the lists."

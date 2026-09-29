@@ -124,6 +124,7 @@ Answers to the Milestone 1, Step 0 decisions in [docs/ranking-methodology.md](do
   - **Overall mix (D12):** unchanged, desktop (*most chosen*) 50% and project 50%.
   - **Fira Mono:** no hand correction; it stays on the gate R watch list.
   - **Lists:** the project, desktop (*most chosen*, *most installed*) and coding lists look right apart from the Hack case; Developers & apps stays bands only; the explanations of the moves against the old Top 100 are accepted.
+  - **Round 2 (R2): approved.** After the two changes were rebuilt on the real store, Hack is #5 in coding and *most chosen* and #53 overall, and Geist Mono, Liberation Mono, Commit Mono and Zed Mono enter *most chosen*. The owner judged the changes right and approved the top lists, which completes Milestone 1 step 16.
 
   *(2026-09-29)*
 
