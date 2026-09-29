@@ -89,6 +89,7 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
 - **Project rank label.** On the site, the Project rank (D10) is labelled **"Used in projects"**. *(2026-09-25)*
 - **Site data fields (M2 step 2).** The `catalog-site.json` fields in `schemas/catalog-site.schema.json` are approved as drafted. Designer lists are left out, because D12 is usage only. *(2026-09-25)*
 - **License filter.** Four groups: open font licenses (OFL, UFL, Bitstream Vera); permissive (Apache, MIT, BSD, CC0); attribution required (CC BY); and other free-use grants, which allow any use but may forbid redistributing the files (Rule 3). *(2026-09-25)*
+- **Nerd Fonts build link (TASK-2 ruling).** A catalog family with a Nerd Fonts build gets a third, nullable link, `links.nerd`, in both catalog schemas, landing before the M1 step 20 v1 freeze. One shared target: `https://github.com/ryanoasis/nerd-fonts/releases` — the repository's releases page, never a release asset or `/releases/latest`. Text: **"Nerd Fonts build"**, naming its destination per the M2 step 4 convention. It shows on the list row and in the details panel, in every view. The spike found no license obstacle: every base license and all 14 patched icon sets pass Rules 1–4 (Font Logos' "unlicensed" is The Unlicense). Findings: [docs/nerd-fonts-link.md](docs/nerd-fonts-link.md); recorded in `data/reviews/site/2026-09-28.toml`. *(2026-09-28)*
 
 ## Infrastructure
 

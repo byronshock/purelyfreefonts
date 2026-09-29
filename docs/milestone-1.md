@@ -299,6 +299,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - link the designer's homepage or the repository's releases page;
   - never a release asset, `/releases/latest` or an aggregator;
   - auto-accept only when two sources agree.
+- [ ] Nerd Fonts build link (TASK-2 ruling, 2026-09-28): for every family with a Nerd build (alias table, relation `build`), set `links.nerd` to the one shared page `https://github.com/ryanoasis/nerd-fonts/releases`, labelled "Nerd Fonts build"; never a release asset or `/releases/latest`.
 - [ ] A monthly link check.
 
 **Done when:** every catalog font has a primary link that follows the policy and returns HTTP 200.
@@ -312,7 +313,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - id, family, category, is_monospace;
   - formats, Latin coverage;
   - license {spdx, class, redistributable, attribution_required, text_url};
-  - preview_ok, links, preinstalled_on, pulled_in_by;
+  - preview_ok, links (primary, designer and the nullable `nerd` of the TASK-2 ruling), preinstalled_on, pulled_in_by;
   - rank or band, `order`, tier and 5–95% range for each published rank;
   - `aliases[]` (old names and build names, for search and matching);
   - per source: {state, rank_in_source}, only as far as the step 3 terms ruling allows;
