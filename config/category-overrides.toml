@@ -1,0 +1,68 @@
+# Owner categories (milestone-1 step 5b; owner gate R). Read by stage "facts".
+#
+# Stage "facts" takes a family's category from its sources (Google's metadata, then
+# Fontsource, then any other source), else "monospace" for a monospaced family, else
+# the font's own OS/2 tables. When none of them gives one, the family falls back to
+# "sans-serif" with basis "default", and the gate R review pack
+# (build/review-pack/checks.md) lists the catalog fonts left on that default for the
+# owner to rule on. The owner's answers go here.
+#
+# An entry wins over every other basis: the family gets the category given here, with
+# basis "owner", and leaves checks.md's list. A "monospace" entry also makes the family
+# monospaced (is_monospace = true), because a monospace category is always monospaced;
+# any other entry leaves is_monospace as the sources and font tables decide it.
+#
+# Entries (loaded strictly with the rest of config/; `tff-catalog config` prints them and
+# they count toward the config hash):
+#   <family id> = "<category>"
+#   family id   a family id from the id registry (state/ids.json), listed once
+#   category    one of "sans-serif", "serif", "display", "handwriting", "monospace"
+#               (tff_catalog.facts.CATEGORIES, the site's category filter)
+# A malformed id or any other category fails every command that loads the config.
+# `tff-catalog config --strict` also fails on an id missing from the id registry, and
+# stage "facts" fails on an id that names no family of the run's universe (a typo, or a
+# family renamed or merged away since). An entry for a family the universe drops (an
+# icon font, say) changes nothing and is logged.
+#
+# Record the owner's ruling in data/reviews/<gate>/<YYYY-MM-DD>.toml and AUTHORITY.md
+# first, then add its entries here under a comment naming it.
+
+schema = 1
+
+[families]
+
+# --- Owner ruling of 2026-09-29, gate R round 1 (data/reviews/review/2026-09-29.toml,
+# categories_22): the 22 catalog fonts checks.md listed on the default. No source and no
+# font table gives them a category. The TeX Gyre families follow the designs they clone.
+
+# Serif (TeX Gyre Termes clones Times, Pagella Palatino, Schola Century Schoolbook,
+# Bonum Bookman).
+charter = "serif"
+fanwood = "serif"
+gentium = "serif"
+junicode = "serif"
+latin-modern = "serif"
+tex-gyre-bonum = "serif"
+tex-gyre-pagella = "serif"
+tex-gyre-schola = "serif"
+tex-gyre-termes = "serif"
+
+# Monospace: every letter and digit has one advance width (measured).
+compagnon = "monospace"
+cozette = "monospace"
+miracode = "monospace"
+
+# Handwriting (TeX Gyre Chorus clones Zapf Chancery).
+tex-gyre-chorus = "handwriting"
+
+# Sans-serif, the default kept (TeX Gyre Heros clones Helvetica, Adventor Avant Garde).
+# Listed so that the owner's ruling, not the default, decides them.
+awami-nastaliq = "sans-serif"
+heavy-data = "sans-serif"
+pretendard-std = "sans-serif"
+sn-pro-font-family = "sans-serif"
+sophia-nubian = "sans-serif"
+tagmukay = "sans-serif"
+tex-gyre-adventor = "sans-serif"
+tex-gyre-heros = "sans-serif"
+tex-gyre-heros-cn = "sans-serif"

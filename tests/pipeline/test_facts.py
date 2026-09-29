@@ -25,15 +25,17 @@ from tests.test_fontfiles import (
 )
 
 from tff_catalog import jsonio, stageio
-from tff_catalog.config_model import Config
+from tff_catalog.config_model import CategoryOverridesConfig, Config, ConfigError
 from tff_catalog.facts import (
     CATEGORIES,
+    Category,
     Facts,
     candidates,
     derive_facts,
     fact_bases,
     family_facts,
     normalise_category,
+    owner_categories,
     run,
     settled_by_metadata,
     table_category,
@@ -452,6 +454,107 @@ def test_records_of_one_key_decide_the_same_whatever_their_order() -> None:
     assert family_facts([a, b], {}) == family_facts([b, a], {})
 
 
+# --- owner categories (config/category-overrides.toml) ------------------------------------------
+
+
+def test_an_owner_category_wins_over_every_other_basis() -> None:
+    """Owner ruling of 2026-09-29 (gate R round 1, categories_22): the owner's category beats
+    Google's metadata, the font's own tables and the default, as basis "owner"."""
+    serif = ff_of(build_font(panose=(2, 5, 3)))
+    url = "https://cdn.example/c/Clone-Regular.ttf"
+    fams = {
+        "inter": [rec("google_metadata", "Inter", "Inter", category="Sans Serif", variable=True)],
+        "clone": [
+            rec("homebrew_casks", "font-clone", "Clone", files=(ref(url, sha256=serif.sha256),))
+        ],
+        "bare": [rec("foundries", "velvetyne/bare", "Bare")],
+    }
+    known = {serif.sha256: serif}
+    derived = derive_facts(universe(fams), all_records(fams), known)
+    assert [derived[f].category for f in ("inter", "clone", "bare")] == [
+        "sans-serif",
+        "serif",
+        "sans-serif",
+    ]
+    owner: dict[str, Category] = {"inter": "display", "clone": "handwriting", "bare": "serif"}
+    out = derive_facts(universe(fams), all_records(fams), known, owner)
+    assert out["inter"] == Facts(
+        "display",
+        False,
+        True,
+        True,
+        "category=owner;is_monospace=google_metadata;formats=google_metadata",
+    )
+    assert out["clone"] == Facts(
+        "handwriting", False, False, True, "category=owner;is_monospace=font_file;formats=font_file"
+    )
+    assert out["bare"] == Facts(
+        "serif", False, False, True, "category=owner;is_monospace=default;formats=default"
+    )
+
+
+def test_an_owner_monospace_makes_the_family_monospaced_and_others_keep_the_spacing() -> None:
+    """A "monospace" owner category also sets is_monospace (a monospace category is always
+    monospaced); any other leaves the spacing the sources and tables give."""
+    mono = ff_of(build_font(mono=True, panose=(2, 11, 9)))
+    url = "https://cdn.example/s/SlabCode-Regular.ttf"
+    fams = {
+        "cozette": [rec("foundries", "moonwitch/cozette", "Cozette")],  # nothing known
+        "slab-code": [
+            rec(
+                "homebrew_casks",
+                "font-slab-code",
+                "Slab Code",
+                files=(ref(url, sha256=mono.sha256),),
+            )
+        ],
+    }
+    owner: dict[str, Category] = {"cozette": "monospace", "slab-code": "serif"}
+    out = derive_facts(universe(fams), all_records(fams), {mono.sha256: mono}, owner)
+    assert out["cozette"] == Facts(
+        "monospace", True, False, True, "category=owner;is_monospace=owner;formats=default"
+    )
+    assert (out["slab-code"].category, out["slab-code"].is_monospace) == ("serif", True)
+    assert fact_bases(out["slab-code"])["is_monospace"] == "font_file"
+
+
+@given(_family(), st.sampled_from(CATEGORIES))
+def test_an_owner_category_always_decides_and_keeps_the_contract(
+    case: tuple[list[UniverseRecord], dict[str, FontFacts]], owner: Category
+) -> None:
+    recs, known = case
+    f = family_facts(recs, known, owner)
+    assert (f.category, fact_bases(f)["category"]) == (owner, "owner")
+    assert f.is_monospace or owner != "monospace"
+    derived = family_facts(recs, known)
+    assert (f.variable, f.static) == (derived.variable, derived.static)
+    assert family_facts(list(reversed(recs)), known, owner) == f
+
+
+def test_owner_categories_check_the_ids_against_the_universe(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    fams = {
+        "bare": [rec("foundries", "velvetyne/bare", "Bare")],
+        "icons": [rec("fontsource", "icons", "Icons", category="other")],
+    }
+    u = universe(fams, dropped={"icons": "icon"})
+    table = CategoryOverridesConfig(1, {"bare": "serif", "icons": "display"})
+    with caplog.at_level(logging.WARNING, logger=LOG.name):
+        owner = owner_categories(table, u, LOG)
+    assert owner == {"bare": "serif", "icons": "display"}
+    assert "category-overrides.toml names families the universe drops" in caplog.text
+    assert "icons" in caplog.text
+    # A dropped family gets no facts, with an owner category or without.
+    assert set(derive_facts(u, all_records(fams), {}, owner)) == {"bare"}
+    with pytest.raises(
+        ConfigError, match=r"families gone: no family of this run's universe has that id"
+    ):
+        owner_categories(CategoryOverridesConfig(1, {"gone": "serif", "bare": "serif"}), u)
+    with pytest.raises(ConfigError, match=r"families\.bare: 'slab' is not one of sans-serif"):
+        owner_categories(CategoryOverridesConfig(1, {"bare": "slab"}), u)
+
+
 # --- choosing files -----------------------------------------------------------------------------
 
 
@@ -589,10 +692,19 @@ def _setup(root: Path) -> Paths:
     return paths
 
 
-def _ctx(paths: Paths, fetcher: Any, store: Any = None, replay: date | None = None) -> StageContext:
+def _ctx(
+    paths: Paths,
+    fetcher: Any,
+    store: Any = None,
+    replay: date | None = None,
+    owner: dict[str, str] | None = None,
+) -> StageContext:
+    # The stage reads only the owner's categories (config/category-overrides.toml).
+    table = CategoryOverridesConfig(schema=1, families=owner or {})
+    config = cast("Config", Config(*([None] * 6), sources={}, category_overrides=table))  # type: ignore[arg-type]
     return StageContext(
         paths=paths,
-        config=cast("Config", None),  # the stage reads no config
+        config=config,
         state=State(),
         run_date=RUN_DAY,
         store=store,
@@ -621,6 +733,31 @@ def test_the_stage_reads_what_the_metadata_leaves_open(tmp_path: Path) -> None:
     assert (MONO_URL, None, None) in server.calls  # no sha256: downloaded whole
     assert all(start is not None for url, start, _ in server.calls if url == VAR_URL)
     assert (paths.cache / "fontfacts.jsonl").is_file()
+
+
+def test_the_stage_applies_the_owner_categories(tmp_path: Path) -> None:
+    paths = _setup(tmp_path)
+    owner = {"zipped": "serif", "synth-var": "monospace"}
+    run(_ctx(paths, FakeServer(_fonts()), owner=owner))
+    out = stageio.load_stage(paths, "facts")
+    assert out["zipped"] == Facts(
+        "serif", False, False, True, "category=owner;is_monospace=default;formats=default"
+    )
+    assert out["synth-var"] == Facts(
+        "monospace", True, True, True, "category=owner;is_monospace=owner;formats=font_file"
+    )
+    assert {f: out[f] for f in out if f not in owner} == {
+        f: x for f, x in EXPECTED.items() if f not in owner
+    }
+
+
+def test_an_owner_category_for_an_unknown_family_fails_the_stage(tmp_path: Path) -> None:
+    paths = _setup(tmp_path)
+    server = FakeServer(_fonts())
+    with pytest.raises(ConfigError, match=r"category-overrides\.toml: families no-such-font: "):
+        run(_ctx(paths, server, owner={"inter": "serif", "no-such-font": "serif"}))
+    assert server.calls == []  # before any font file is read
+    assert not stageio.stage_path(paths, "facts").exists()
 
 
 def test_a_second_run_uses_the_cache_and_writes_the_same_bytes(tmp_path: Path) -> None:

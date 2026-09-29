@@ -181,6 +181,9 @@ def test_the_move_flag_reads_its_own_key_not_the_first_run_one() -> None:
         assert any(f.kind == "move" and f.family_id == "f01" for f in flags) is flagged
 
 
+OWNED = "category=owner;is_monospace=default;formats=default"  # an owner category's basis
+
+
 def test_default_category_catalog_fonts_are_listed_for_gate_r() -> None:
     """Owner ruling of 2026-09-26 (data_defaults): catalog fonts whose category is the
     sans-serif default are listed in the pack for the owner to correct."""
@@ -195,8 +198,12 @@ def test_default_category_catalog_fonts_are_listed_for_gate_r() -> None:
             "category=default;is_monospace=font_file;formats=font_file",
         ),
         "d": Facts("sans-serif", False, False, True, "default"),
+        # The owner ruled on these (config/category-overrides.toml, 2026-09-29), one of
+        # them keeping sans-serif: neither is listed again.
+        "e": Facts("sans-serif", False, False, True, OWNED),
+        "f": Facts("serif", False, False, True, OWNED),
     }
-    members = SimpleNamespace(members=lambda: ["a", "b", "c"])
+    members = SimpleNamespace(members=lambda: ["a", "b", "c", "e", "f"])
     assert review.defaulted_categories(fx, members) == ("a", "c")  # d is not in the catalog
     assert review.defaulted_categories(fx, None) == ("a", "c", "d")
     assert review.defaulted_categories(None, members) == ()

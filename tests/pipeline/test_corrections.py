@@ -17,7 +17,7 @@ from jsonschema import Draft202012Validator
 from tests.helpers import ROOT
 
 from tff_catalog import corrections as corr
-from tff_catalog import jsonio, reviews, stageio
+from tff_catalog import jsonio, reviews, stageio, surveys
 from tff_catalog.config_model import (
     Config,
     FoundriesConfig,
@@ -611,8 +611,10 @@ def test_floors_credits_ruler_and_gates(world: Paths) -> None:
     )
     # Gate M5: the cask downloads the repo's asset, so GitHub joins the homebrew group.
     assert installed["github"]["jetbrains-mono"].group == "homebrew"
-    assert installed["nerd"]["jetbrains-mono"].group == "homebrew"
-    assert installed["nerd"]["hack"].group == "github_counters"
+    # Nerd Fonts keeps its own group, although JetBrains Mono's Nerd cask downloads the
+    # Nerd release (owner ruling of 2026-09-29, gate R round 1).
+    assert installed["nerd"]["jetbrains-mono"].group == "nerd"
+    assert installed["nerd"]["hack"].group == "nerd"
     # Google: ranks only in the report; the term keeps its value for the engine.
     assert views["project"]["google"]["fira-sans"].state == "observed"
 
@@ -1201,6 +1203,68 @@ def test_github_group_follows_the_cask_asset() -> None:
     res = corr.correct_source("github", SRC.github, other, RANKING, {})
     assert res is not None
     assert res.terms["jetbrains-mono"].group == "github_counters"
+
+
+NERD_RELEASE_REPO = "ryanoasis/nerd-fonts"  # where Homebrew's Nerd casks download from
+
+
+def test_nerd_keeps_its_own_group_when_the_cask_downloads_the_nerd_release() -> None:
+    """Owner ruling of 2026-09-29 (gate R round 1, R1): gate M5 merges only GitHub release
+    counts into Homebrew's group. Nerd Fonts is a group of its own, so a family that only
+    Homebrew and Nerd Fonts observe has 2 groups and passes the 2-group gate, although its
+    Homebrew cask downloads the Nerd release (Hack's case: about 62,000 Homebrew installs
+    a year against 2.3 million Nerd downloads)."""
+    fam = family("hack", "Hack", [("brew-cask", "font-hack-nerd-font"), ("nerd-folder", "Hack")])
+    keymap = {
+        k("brew-cask", "font-hack-nerd-font"): ("hack", "build", "nerd"),
+        k("nerd-folder", "Hack"): ("hack", "build", "nerd"),
+    }
+    _, nerd = counter_records()
+    data = [r for r in [*homebrew_records(), *nerd] if isinstance(r, Observation)]
+    inp = inputs([fam], keymap, data, cask_repos={"hack": frozenset({NERD_RELEASE_REPO})})
+    terms = {}
+    for name in ("homebrew", "nerd"):
+        res = corr.correct_source(name, SRC.all()[name], inp, RANKING, {})
+        assert res is not None
+        terms[name] = res.terms["hack"]
+    assert {s: (t.state, t.group) for s, t in terms.items()} == {
+        "homebrew": ("observed", "homebrew"),
+        "nerd": ("observed", "nerd"),
+    }
+    # The engine: two groups among the observed terms, so the gate lets Hack into the top.
+    views = {s: {"hack": t} for s, t in terms.items()}
+    weights = {s: RANKING.surveys.desktop.weights[s] for s in terms}
+    scores = surveys.score_survey(views, weights, {"hack": 0.0}, RANKING)
+    assert scores.fused["hack"].groups == ("homebrew", "nerd")
+    assert RANKING.engine.top100_min_groups == 2
+    placed = scores.placements["hack"]
+    assert (placed.rank, placed.gate_held) == (1, False)
+    # Under the old merge (Nerd into Homebrew's group) the same evidence was one group.
+    merged = {s: {"hack": replace(t, group="homebrew")} for s, t in terms.items()}
+    held = surveys.score_survey(merged, weights, {"hack": 0.0}, RANKING)
+    assert held.fused["hack"].groups == ("homebrew",)
+    assert (held.placements["hack"].rank, held.placements["hack"].gate_held) == (None, True)
+
+
+def test_only_github_release_counts_join_homebrew_under_m5() -> None:
+    """Gate M5 still merges a GitHub release term whose repository the cask downloads, and
+    never a Nerd Fonts term, whatever repository its casks download from."""
+    fam = family("jetbrains-mono", "JetBrains Mono")
+    github, nerd = counter_records()
+    asset = k("gh-asset", "JetBrains/JetBrainsMono/JetBrainsMono.zip")
+    keymap = {
+        asset: ("jetbrains-mono", "direct", ""),
+        k("nerd-folder", "JetBrainsMono"): ("jetbrains-mono", "build", "nerd"),
+    }
+    data = [r for r in [*github, *nerd] if isinstance(r, Observation)]
+    casks = frozenset({"jetbrains/jetbrainsmono", NERD_RELEASE_REPO})
+    inp = inputs([fam], keymap, data, cask_repos={"jetbrains-mono": casks})
+    groups = {}
+    for name in ("github", "nerd"):
+        res = corr.correct_source(name, SRC.all()[name], inp, RANKING, {})
+        assert res is not None
+        groups[name] = res.terms["jetbrains-mono"].group
+    assert groups == {"github": "homebrew", "nerd": "nerd"}
 
 
 def test_almanac_width_cuts_merge_into_their_parent() -> None:

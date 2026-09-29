@@ -26,7 +26,7 @@ overlap_full = 50               # overlap with the ruler that earns full weight
 overlap_off = 15                # below this overlap the source is switched off
 top100_min_groups = 2           # D14: independence groups needed for a top-100 place
 min_observed_terms = 1          # "ranked at all"
-github_homebrew_same_group = "cask_asset"  # gate M5 (rec): GitHub counts join the homebrew group when the cask's url is that repo's asset; "never" keeps them apart
+github_homebrew_same_group = "cask_asset"  # gate M5 (rec): GitHub release counts join the homebrew group when the cask's url is that repo's asset; "never" keeps them apart. Nerd Fonts never joins (owner ruling 2026-09-29, R1)
 
 [engine.guard]                  # outlier guard (§4)
 gap = 1.5                       # gate M1 (rec): keep the guard; (b) is gap = 1.6
@@ -113,7 +113,7 @@ prerelease_repos = ["antijingoist/opendyslexic"]  # owner ruling 2026-09-26 (ope
 
 [sources.nerd]                  # Nerd Fonts release downloads, credited to the original font
 collector = "nerd_releases"
-group = "github_counters"
+group = "nerd"                  # owner ruling 2026-09-29 (gate R, R1): its own group, never Homebrew's under M5 (Homebrew's Nerd casks are a small share of Nerd's downloads)
 survey = "desktop"
 enabled = true
 linux = false

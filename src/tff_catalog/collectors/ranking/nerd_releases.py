@@ -450,7 +450,7 @@ class NerdReleases(CollectorBase):
     version: ClassVar[int] = 1
     hosts: ClassVar[tuple[str, ...]] = (GITHUB_API_HOST,)
     emits: ClassVar[tuple[type, ...]] = (Observation,)
-    group: ClassVar[str | None] = "github_counters"
+    group: ClassVar[str | None] = "nerd"  # its own group: owner ruling of 2026-09-29 (gate R, R1)
     needs_baseline: ClassVar[bool] = True
     Settings: ClassVar[type] = Settings
 

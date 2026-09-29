@@ -1,0 +1,27 @@
+# Owner rulings of 2026-09-29, gate R (Milestone 1 step 16), review round 1. Given in chat in four batches after the real-store rebuild (m1/wave1 e34d824), ruled by the owner, Byron Shock, and recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml, [gates_2026-09-29_R1_b1] and after). The owner took Claude's recommendation each time. Also in AUTHORITY.md.
+
+[R1]
+choice = "b"
+recommended = false
+ruling = "Change weights in ranking.toml"
+reason = "Claude's recommendation, taken by the owner: two changes, then round 2. (1) Nerd Fonts release downloads become their own independence group instead of joining Homebrew's through GitHub counters under M5: Homebrew's Nerd casks are a small share of Nerd's downloads (Hack: about 62,000 Homebrew installs a year against 2.3 million Nerd downloads), and the merge held Hack out of the coding, most-chosen and overall top 100s. (2) The 22 catalog fonts whose category was the sans-serif default get owner categories (table categories_22). Claude implements both, rebuilds on the real store and brings round 2."
+
+[categories_22]
+value = "apply_all"
+ruling = "Serif: Junicode, Latin Modern, TeX Gyre Termes, TeX Gyre Pagella, TeX Gyre Schola, TeX Gyre Bonum, Charter, Gentium, Fanwood. Monospace: Cozette, Miracode, Compagnon (every letter and digit has one advance width). Handwriting: TeX Gyre Chorus. Sans-serif, the default kept: TeX Gyre Heros, TeX Gyre Heros Cn, TeX Gyre Adventor, SN Pro Font Family, Pretendard Std, Sophia Nubian, Tagmukay, Heavy Data, Awami Nastaliq."
+reason = "Claude's recommendation (checks.md listed them): no source and no font table gives these a category. The TeX Gyre families follow the designs they clone (Times, Palatino, Century Schoolbook, Bookman, Zapf Chancery, Helvetica, Avant Garde); the monospace ones were measured."
+
+[fira_mono_watch]
+value = "leave"
+ruling = "No hand correction for Fira Mono; it stays on the gate R watch list."
+reason = "Claude's recommendation: the template-inflated ecosyste.ms count (#3) moves it little, since its desktop sources carry it (overall #63, coding #8)."
+
+[overall_mix]
+value = "keep_50_50"
+ruling = "D12 stays: overall is desktop (most chosen) 50% and project 50%, with 24 monospace fonts in the overall top 100."
+reason = "Claude's recommendation: the Coding view and the site's Spacing filter let visitors focus either way."
+
+[lists_round_1]
+value = "look_right"
+ruling = "The project, desktop (most chosen, most installed) and coding lists look right apart from the Hack case; Developers & apps stays bands only (ruling of 2026-09-26); the explanations of the moves against the old Top 100 are accepted."
+reason = "Claude's recommendation; the old-list moves: web fonts fall for lack of desktop evidence under D12, IBM Plex Serif, Dosis and Crimson Pro rise on desktop evidence, five Fontshare fonts are excluded by Rule 4 (ITF) and Redaction's evidence is Fontsource only."

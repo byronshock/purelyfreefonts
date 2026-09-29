@@ -308,11 +308,12 @@ These never feed the overall rank.
   - Homebrew;
   - Arch;
   - Debian;
-  - GitHub counters (releases, Nerd);
+  - GitHub counters (releases);
+  - Nerd Fonts;
   - ~~Chocolatey~~ (dropped in v1, ruling T3);
   - Flutter.
 
-  GitHub counters and Homebrew count as one group for a font whose Homebrew cask downloads that repository's release asset, because GitHub's counts then include the cask's installs (ruling M5).
+  GitHub release counts and Homebrew count as one group for a font whose Homebrew cask downloads that repository's release asset, because GitHub's counts then include the cask's installs (ruling M5). Nerd Fonts stays a group of its own even when a font's Nerd cask downloads the Nerd release, because Homebrew's Nerd casks are a small share of Nerd's downloads: for Hack, about 62,000 Homebrew installs a year against 2.3 million Nerd downloads (owner ruling of 2026-09-29).
 
   A font that fails the gate sits at 101 or below and is flagged. In a crude check, shrinkage alone left Homebrew-only fonts in the top 15.
 

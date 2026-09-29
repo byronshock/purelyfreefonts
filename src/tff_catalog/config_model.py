@@ -19,6 +19,8 @@ Files and their owners:
 - ``config/preinstalled.toml`` → ``PreinstalledConfig`` (D8)
 - ``config/foundries.toml`` → ``FoundriesConfig`` (universe)
 - ``config/site.toml`` → ``SiteConfig`` (the site wording export-site copies)
+- ``config/category-overrides.toml`` → ``CategoryOverridesConfig`` (the owner's
+  categories, which stage "facts" puts over every other basis)
 - ``config/sources/<collector>.toml`` → kept raw in ``Config.sources``; each
   collector's ``Settings`` types it.
 """
@@ -646,12 +648,39 @@ class SiteConfig:
     sources: dict[str, SourceCredit]  # engine source id -> credit
 
 
+# --- config/category-overrides.toml -------------------------------------------
+
+CATEGORY_OVERRIDES_FILE = "category-overrides.toml"
+
+
+@dataclass(frozen=True, slots=True)
+class CategoryOverridesConfig:
+    """The owner's categories (owner ruling of 2026-09-29, gate R round 1, categories_22).
+
+    Stage "facts" gives each listed family this category, with basis "owner", over
+    every other basis; "monospace" also makes the family monospaced.
+    ``config.check_category_overrides`` checks that each key is a family id and each
+    value a ``facts.CATEGORIES`` word; stage "facts" fails on an id its universe lacks.
+    """
+
+    schema: int
+    families: dict[str, str]  # family id (state/ids.json) -> category
+
+
 # --- everything ---------------------------------------------------------------
+
+
+def _no_category_overrides() -> CategoryOverridesConfig:
+    return CategoryOverridesConfig(schema=SCHEMA_VERSION, families={})
 
 
 @dataclass(frozen=True, slots=True)
 class Config:
-    """The effective configuration of one run; ``config.config_hash`` hashes it."""
+    """The effective configuration of one run; ``config.config_hash`` hashes it.
+
+    ``load_config`` fills every field from its file. ``category_overrides`` has a
+    default (no overrides) only so that a test can build a ``Config`` without it.
+    """
 
     ranking: RankingConfig
     licenses: LicensesConfig
@@ -660,6 +689,9 @@ class Config:
     foundries: FoundriesConfig
     site: SiteConfig
     sources: dict[str, dict[str, Any]]  # collector -> raw config/sources/<collector>.toml
+    category_overrides: CategoryOverridesConfig = dataclasses.field(
+        default_factory=_no_category_overrides
+    )
 
 
 # File name -> (Config field, dataclass).
@@ -670,4 +702,5 @@ CONFIG_FILES: dict[str, tuple[str, type]] = {
     "preinstalled.toml": ("preinstalled", PreinstalledConfig),
     "foundries.toml": ("foundries", FoundriesConfig),
     "site.toml": ("site", SiteConfig),
+    CATEGORY_OVERRIDES_FILE: ("category_overrides", CategoryOverridesConfig),
 }

@@ -190,7 +190,6 @@ _CJK_TOKENS = frozenset({"cjk"})
 _CJK_SUFFIXES = ("-cn",)
 PULLING_KINDS = frozenset({"depends", "recommends"})  # pacman optdepends are never auto-installed
 NERD_GROUP = "nerd-fonts"  # the Arch package group of gate M4
-NERD_REPO = "ryanoasis/nerd-fonts"  # where Nerd casks download from (gate M5)
 CRAWL_COUNTINGS = frozenset({"weekly_mean", "yearly"})
 CHANNEL_EXPOSURES = frozenset(
     {"add_date", "first_nonzero_day", "first_nonzero_month", "date_added", "asset_created"}
@@ -231,10 +230,13 @@ class Term:
 
     - ``value``: after credits and floors; None unless observed or censored.
     - ``group``: the family's independence group for this source: the source's
-      ``group``, except that the GitHub counters (``github``, ``nerd``) take
-      ``homebrew`` for a family whose Homebrew cask downloads that repository's
-      release asset (gate M5 (a), ``engine.github_homebrew_same_group``). The
-      2-group gate and tier A count distinct groups among observed terms.
+      ``group``, except that GitHub release counts (``github``) take ``homebrew``
+      for a family whose Homebrew cask downloads that repository's release asset
+      (gate M5 (a), ``engine.github_homebrew_same_group``). Nerd Fonts downloads
+      (``nerd``) always keep their own group, ``nerd``, even for a family whose
+      Nerd cask downloads the Nerd release, because Homebrew's Nerd casks are a
+      small share of Nerd's downloads (owner ruling of 2026-09-29, gate R round 1).
+      The 2-group gate and tier A count distinct groups among observed terms.
     - ``factor``: a weight multiplier for this family. The engine uses
       w' = w_eff * factor * guard factor. The Almanac parent merge ("flagged and
       halved", methodology §5) is ``factor = almanac.parent_merge_factor`` plus
@@ -1497,16 +1499,15 @@ def _group(
     keys: Iterable[SourceKey],
     by_key: Mapping[SourceKey, list[Observation]],
 ) -> str:
-    """Gate M5: a GitHub counter joins ``homebrew`` when the family's cask downloads its asset."""
-    if src.group != "github_counters" or cfg.engine.github_homebrew_same_group != "cask_asset":
+    """Gate M5: a GitHub release count joins ``homebrew`` when the family's cask downloads
+    that repository's asset. Only the ``github`` source merges; Nerd Fonts keeps its own
+    group (owner ruling of 2026-09-29, gate R round 1)."""
+    if not isinstance(src, GithubSource) or cfg.engine.github_homebrew_same_group != "cask_asset":
         return src.group
     casks = inp.cask_repos.get(fid)
     if not casks:
         return src.group
-    repos = set()
-    for key in keys:
-        found = {_repo_of(o) for o in by_key.get(key, ())} - {""}
-        repos |= found or ({NERD_REPO} if isinstance(src, NerdSource) else set())
+    repos = {_repo_of(o) for key in keys for o in by_key.get(key, ())} - {""}
     return "homebrew" if repos & casks else src.group
 
 

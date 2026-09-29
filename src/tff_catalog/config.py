@@ -10,6 +10,8 @@ checks that need the collectors themselves: every ``config/sources/<name>.toml``
 belongs to a discovered collector and loads into its ``Settings``, and every
 enabled engine source reads a discovered ranking collector. It is separate
 because it imports every collector module; CI runs it once the collectors exist.
+``--strict`` also runs ``check_category_ids``: every family of
+``category-overrides.toml`` is in the id registry, when there is one.
 
 ``config_hash(cfg)`` is the sha256 of the canonical JSON of the effective
 config, so two runs with the same values give the same hash whatever the
@@ -27,9 +29,11 @@ from typing import Any
 
 from tff_catalog import jsonio
 from tff_catalog.config_model import (
+    CATEGORY_OVERRIDES_FILE,
     CONFIG_FILES,
     RANK_KEYS,
     SCHEMA_VERSION,
+    CategoryOverridesConfig,
     Config,
     ConfigError,
     FoundriesConfig,
@@ -68,6 +72,7 @@ def load_config(paths: Paths) -> Config:
     check_foundries(cfg.foundries)
     check_abstain_scope(cfg)
     check_site(cfg)
+    check_category_overrides(cfg.category_overrides)
     return cfg
 
 
@@ -251,6 +256,37 @@ def check_collectors(cfg: Config, paths: Paths) -> None:
             _fail(where, f"{src.collector!r} is not a ranking collector")
 
 
+def check_category_overrides(c: CategoryOverridesConfig) -> None:
+    """Each key is a family id and each value one of ``facts.CATEGORIES``."""
+    from tff_catalog.facts import CATEGORIES
+    from tff_catalog.names import ID_PATTERN
+
+    for fid, category in c.families.items():
+        where = f"{CATEGORY_OVERRIDES_FILE}: families.{fid}"
+        if not ID_PATTERN.fullmatch(fid):
+            _fail(where, f"{fid!r} is not a family id")
+        if category not in CATEGORIES:
+            _fail(where, f"{category!r} is not one of {', '.join(CATEGORIES)}")
+
+
+def check_category_ids(cfg: Config, paths: Paths) -> None:
+    """``--strict``: every family of ``category-overrides.toml`` is in the id registry
+    (``state/ids.json``, or the one the latest run proposed in ``build/state/``).
+
+    Without a registry (a clone before the first merged refresh) there is nothing to
+    check against; stage "facts" still fails on any id its universe lacks.
+    """
+    from tff_catalog.state import read_part
+
+    known = read_part(paths, "ids")
+    unknown = sorted(set(cfg.category_overrides.families) - set(known)) if known else []
+    if unknown:
+        _fail(
+            f"{CATEGORY_OVERRIDES_FILE}: families",
+            f"not in the id registry (state/ids.json): {', '.join(unknown)}",
+        )
+
+
 def check_licenses(lic: LicensesConfig) -> None:
     """No license id may sit in two classes."""
     seen: dict[str, str] = {}
@@ -344,6 +380,7 @@ def cmd_config(args: argparse.Namespace) -> int:
         cfg = load_config(paths)
         if getattr(args, "strict", False):
             check_collectors(cfg, paths)
+            check_category_ids(cfg, paths)
     except ConfigError as exc:
         print(f"tff-catalog config: {exc}", file=sys.stderr)
         return 1

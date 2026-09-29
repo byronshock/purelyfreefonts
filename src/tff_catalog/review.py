@@ -87,7 +87,9 @@ methodology §9, first run); most-chosen-versus-project disagreements; every
 flag; the what-if table; the per-source statistics; and the checks the owner
 asked for at gate R (``checks.md``, the owner's ruling of 2026-09-26,
 data_defaults): the catalog fonts whose category is the "sans-serif" default,
-for the owner to correct, and the families in ``GATE_R_WATCH`` with their rank
+for the owner to correct (the corrections go in ``config/category-overrides.toml``,
+and a family listed there has basis "owner", so it is never on this list), and
+the families in ``GATE_R_WATCH`` with their rank
 in each source; and ``no-license.md``, the families with no license found and
 the overall order each would get (``nolicense.what_if``, which reruns stages
 "correct" and "rank" on a copy of the build), for the owner's ruling of
@@ -1540,7 +1542,10 @@ def defaulted_categories(
     facts: Mapping[str, Any] | None, membership: Membership | None
 ) -> tuple[str, ...]:
     """Catalog members (every family without a membership) whose category no source or
-    font table gave, so it is the "sans-serif" default (``facts.DEFAULT``), sorted by id."""
+    font table gave, so it is the "sans-serif" default (``facts.DEFAULT``), sorted by id.
+
+    A family in ``config/category-overrides.toml`` has the owner's category (basis
+    ``facts.OWNER``), even when the owner kept sans-serif, so it is left out."""
     from tff_catalog.facts import DEFAULT, fact_bases
 
     if not facts:
@@ -2032,7 +2037,8 @@ def _pack_checks(a: Analysis) -> str:
         "## Catalog fonts with the default category",
         "",
         "No source and no font table gave a category, so these show as sans-serif. Correct "
-        "any that are wrong (the category drives the site's filters).",
+        "any that are wrong (the category drives the site's filters); the owner's categories "
+        "go in config/category-overrides.toml, which takes a font off this list.",
         "",
     ]
     rows = sorted(

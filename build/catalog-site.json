@@ -95,24 +95,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 15,
+          "order": 16,
           "range": [
-            12,
-            23
+            13,
+            24
           ],
-          "rank": 15,
+          "rank": 16,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 35,
+          "order": 36,
           "range": [
             23,
-            51
+            52
           ],
-          "rank": 35,
+          "rank": 36,
           "tier": "B",
           "unranked": null
         },
@@ -140,12 +140,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 79,
+          "order": 80,
           "range": [
-            57,
+            58,
             112
           ],
-          "rank": 79,
+          "rank": 80,
           "tier": "B",
           "unranked": null
         },
@@ -859,7 +859,7 @@
           "gate_held": false,
           "order": 130,
           "range": [
-            85,
+            86,
             170
           ],
           "rank": null,
@@ -1404,10 +1404,10 @@
         "coding": {
           "band": "101–250",
           "gate_held": true,
-          "order": 108,
+          "order": 104,
           "range": [
-            106,
-            109
+            102,
+            105
           ],
           "rank": null,
           "tier": "B",
@@ -1416,9 +1416,9 @@
         "desktop_chosen": {
           "band": "101–250",
           "gate_held": false,
-          "order": 114,
+          "order": 109,
           "range": [
-            109,
+            106,
             138
           ],
           "rank": null,
@@ -1431,7 +1431,7 @@
           "order": 35,
           "range": [
             16,
-            50
+            51
           ],
           "rank": 35,
           "tier": "B",
@@ -1626,12 +1626,12 @@
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 53,
+          "order": 54,
           "range": [
             28,
-            98
+            112
           ],
-          "rank": 53,
+          "rank": 54,
           "tier": "C",
           "unranked": null
         },
@@ -2002,36 +2002,36 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 28,
+          "order": 30,
           "range": [
-            24,
-            32
+            25,
+            34
           ],
-          "rank": 28,
+          "rank": 30,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 49,
+          "order": 51,
           "range": [
-            43,
-            59
+            44,
+            61
           ],
-          "rank": 49,
+          "rank": 51,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 60,
+          "order": 61,
           "range": [
-            47,
-            66
+            48,
+            67
           ],
-          "rank": 60,
+          "rank": 61,
           "tier": "B",
           "unranked": null
         },
@@ -2049,7 +2049,7 @@
           "gate_held": false,
           "order": 109,
           "range": [
-            90,
+            91,
             135
           ],
           "rank": null,
@@ -3805,7 +3805,7 @@
           "gate_held": false,
           "order": 133,
           "range": [
-            121,
+            116,
             160
           ],
           "rank": null,
@@ -3817,7 +3817,7 @@
           "gate_held": false,
           "order": 137,
           "range": [
-            115,
+            112,
             171
           ],
           "rank": null,
@@ -5278,7 +5278,7 @@
           "gate_held": false,
           "order": 115,
           "range": [
-            77,
+            78,
             170
           ],
           "rank": null,
@@ -5796,10 +5796,10 @@
         "coding": {
           "band": "101–250",
           "gate_held": true,
-          "order": 109,
+          "order": 105,
           "range": [
-            108,
-            112
+            104,
+            107
           ],
           "rank": null,
           "tier": "B",
@@ -5810,7 +5810,7 @@
           "gate_held": false,
           "order": 144,
           "range": [
-            125,
+            120,
             152
           ],
           "rank": null,
@@ -5822,7 +5822,7 @@
           "gate_held": false,
           "order": 146,
           "range": [
-            120,
+            117,
             164
           ],
           "rank": null,
@@ -6014,10 +6014,10 @@
         "coding": {
           "band": "101–250",
           "gate_held": true,
-          "order": 119,
+          "order": 115,
           "range": [
-            115,
-            125
+            110,
+            121
           ],
           "rank": null,
           "tier": "B",
@@ -6232,24 +6232,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 20,
+          "order": 21,
           "range": [
-            15,
-            27
+            16,
+            28
           ],
-          "rank": 20,
+          "rank": 21,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 18,
+          "order": 19,
           "range": [
             12,
-            29
+            30
           ],
-          "rank": 18,
+          "rank": 19,
           "tier": "B",
           "unranked": null
         },
@@ -6259,7 +6259,7 @@
           "order": 38,
           "range": [
             31,
-            43
+            44
           ],
           "rank": 38,
           "tier": "B",
@@ -6280,12 +6280,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 83,
+          "order": 84,
           "range": [
             68,
             114
           ],
-          "rank": 83,
+          "rank": 84,
           "tier": "B",
           "unranked": null
         },
@@ -6463,12 +6463,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 87,
+          "order": 88,
           "range": [
-            77,
-            100
+            78,
+            102
           ],
-          "rank": 87,
+          "rank": 88,
           "tier": "A",
           "unranked": null
         },
@@ -7366,7 +7366,7 @@
           "gate_held": false,
           "order": 106,
           "range": [
-            81,
+            82,
             146
           ],
           "rank": null,
@@ -7728,24 +7728,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 44,
+          "order": 46,
           "range": [
-            32,
-            58
+            33,
+            60
           ],
-          "rank": 44,
+          "rank": 46,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 51,
+          "order": 52,
           "range": [
             44,
-            61
+            62
           ],
-          "rank": 51,
+          "rank": 52,
           "tier": "B",
           "unranked": null
         },
@@ -8656,7 +8656,7 @@
           "gate_held": false,
           "order": 139,
           "range": [
-            79,
+            80,
             192
           ],
           "rank": null,
@@ -8801,24 +8801,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 63,
+          "order": 66,
           "range": [
-            56,
-            73
+            58,
+            76
           ],
-          "rank": 63,
+          "rank": 66,
           "tier": "A",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 79,
+          "order": 80,
           "range": [
-            70,
-            95
+            72,
+            97
           ],
-          "rank": 79,
+          "rank": 80,
           "tier": "B",
           "unranked": null
         },
@@ -8837,12 +8837,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 75,
+          "order": 76,
           "range": [
-            63,
-            95
+            64,
+            96
           ],
-          "rank": 75,
+          "rank": 76,
           "tier": "B",
           "unranked": null
         },
@@ -9013,21 +9013,21 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 47,
+          "order": 50,
           "range": [
-            42,
-            54
+            45,
+            58
           ],
-          "rank": 47,
+          "rank": 50,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": "101–250",
           "gate_held": false,
-          "order": 117,
+          "order": 112,
           "range": [
-            113,
+            108,
             137
           ],
           "rank": null,
@@ -9039,7 +9039,7 @@
           "gate_held": false,
           "order": 122,
           "range": [
-            108,
+            106,
             141
           ],
           "rank": null,
@@ -9208,24 +9208,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 60,
+          "order": 62,
           "range": [
-            44,
-            90
+            45,
+            95
           ],
-          "rank": 60,
+          "rank": 62,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 82,
+          "order": 83,
           "range": [
-            62,
+            63,
             134
           ],
-          "rank": 82,
+          "rank": 83,
           "tier": "B",
           "unranked": null
         },
@@ -9246,7 +9246,7 @@
           "gate_held": false,
           "order": 125,
           "range": [
-            94,
+            95,
             169
           ],
           "rank": null,
@@ -9743,12 +9743,12 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 63,
+          "order": 69,
           "range": [
-            58,
-            68
+            63,
+            74
           ],
-          "rank": 63,
+          "rank": 69,
           "tier": "A",
           "unranked": null
         },
@@ -9943,12 +9943,12 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 66,
+          "order": 72,
           "range": [
-            64,
-            68
+            69,
+            74
           ],
-          "rank": 66,
+          "rank": 72,
           "tier": "A",
           "unranked": null
         },
@@ -10871,7 +10871,7 @@
           "gate_held": false,
           "order": 173,
           "range": [
-            159,
+            160,
             174
           ],
           "rank": null,
@@ -10908,7 +10908,7 @@
           "order": 41,
           "range": [
             32,
-            51
+            52
           ],
           "rank": 41,
           "tier": "B",
@@ -11088,12 +11088,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 74,
+          "order": 75,
           "range": [
-            68,
+            69,
             81
           ],
-          "rank": 74,
+          "rank": 75,
           "tier": "A",
           "unranked": null
         },
@@ -11625,12 +11625,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 99,
+          "order": 100,
           "range": [
-            89,
+            90,
             128
           ],
-          "rank": 99,
+          "rank": 100,
           "tier": "B",
           "unranked": null
         },
@@ -11774,7 +11774,7 @@
           "gate_held": false,
           "order": 135,
           "range": [
-            86,
+            91,
             149
           ],
           "rank": null,
@@ -11808,12 +11808,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 64,
+          "order": 65,
           "range": [
             56,
-            77
+            78
           ],
-          "rank": 64,
+          "rank": 65,
           "tier": "B",
           "unranked": null
         },
@@ -12518,26 +12518,26 @@
       "pulled_in_by": [],
       "ranks": {
         "coding": {
-          "band": "101–250",
-          "gate_held": true,
-          "order": 103,
+          "band": null,
+          "gate_held": false,
+          "order": 48,
           "range": [
-            103,
-            107
+            41,
+            60
           ],
-          "rank": null,
+          "rank": 48,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 46,
+          "order": 48,
           "range": [
-            16,
-            91
+            17,
+            96
           ],
-          "rank": 46,
+          "rank": 48,
           "tier": "C",
           "unranked": null
         },
@@ -12547,7 +12547,7 @@
           "order": 43,
           "range": [
             33,
-            57
+            58
           ],
           "rank": 43,
           "tier": "B",
@@ -12567,7 +12567,7 @@
           "gate_held": false,
           "order": 151,
           "range": [
-            69,
+            70,
             219
           ],
           "rank": null,
@@ -12749,12 +12749,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 67,
+          "order": 68,
           "range": [
             53,
-            86
+            87
           ],
-          "rank": 67,
+          "rank": 68,
           "tier": "B",
           "unranked": null
         },
@@ -13646,12 +13646,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 85,
+          "order": 86,
           "range": [
-            68,
+            69,
             117
           ],
-          "rank": 85,
+          "rank": 86,
           "tier": "B",
           "unranked": null
         },
@@ -14160,7 +14160,7 @@
           "gate_held": false,
           "order": 125,
           "range": [
-            117,
+            112,
             155
           ],
           "rank": null,
@@ -14170,12 +14170,12 @@
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 98,
+          "order": 99,
           "range": [
-            72,
+            75,
             142
           ],
-          "rank": 98,
+          "rank": 99,
           "tier": "B",
           "unranked": null
         },
@@ -14197,7 +14197,7 @@
           "order": 49,
           "range": [
             37,
-            65
+            66
           ],
           "rank": 49,
           "tier": "B",
@@ -14567,7 +14567,7 @@
           "gate_held": false,
           "order": 114,
           "range": [
-            98,
+            99,
             138
           ],
           "rank": null,
@@ -14904,24 +14904,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 51,
+          "order": 53,
           "range": [
-            35,
-            73
+            36,
+            77
           ],
-          "rank": 51,
+          "rank": 53,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 54,
+          "order": 55,
           "range": [
             38,
-            69
+            72
           ],
-          "rank": 54,
+          "rank": 55,
           "tier": "B",
           "unranked": null
         },
@@ -15304,7 +15304,7 @@
           "order": 22,
           "range": [
             4,
-            63
+            64
           ],
           "rank": 22,
           "tier": "C",
@@ -15697,7 +15697,7 @@
           "gate_held": false,
           "order": 111,
           "range": [
-            70,
+            71,
             172
           ],
           "rank": null,
@@ -15851,12 +15851,12 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 20,
+          "order": 21,
           "range": [
-            17,
-            38
+            18,
+            40
           ],
-          "rank": 20,
+          "rank": 21,
           "tier": "C",
           "unranked": null
         },
@@ -15866,7 +15866,7 @@
           "order": 32,
           "range": [
             18,
-            39
+            40
           ],
           "rank": 32,
           "tier": "B",
@@ -16251,24 +16251,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 5,
+          "order": 6,
           "range": [
             4,
-            6
+            7
           ],
-          "rank": 5,
+          "rank": 6,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 6,
+          "order": 7,
           "range": [
-            5,
-            14
+            6,
+            15
           ],
-          "rank": 6,
+          "rank": 7,
           "tier": "A",
           "unranked": null
         },
@@ -16299,12 +16299,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 80,
+          "order": 81,
           "range": [
             65,
             113
           ],
-          "rank": 80,
+          "rank": 81,
           "tier": "B",
           "unranked": null
         },
@@ -16479,24 +16479,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 11,
+          "order": 12,
           "range": [
             8,
             15
           ],
-          "rank": 11,
+          "rank": 12,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 13,
+          "order": 14,
           "range": [
-            8,
-            20
+            9,
+            21
           ],
-          "rank": 13,
+          "rank": 14,
           "tier": "B",
           "unranked": null
         },
@@ -16529,7 +16529,7 @@
           "gate_held": false,
           "order": 110,
           "range": [
-            88,
+            89,
             147
           ],
           "rank": null,
@@ -16893,7 +16893,7 @@
           "gate_held": false,
           "order": 123,
           "range": [
-            95,
+            96,
             161
           ],
           "rank": null,
@@ -17602,8 +17602,8 @@
           "gate_held": false,
           "order": 132,
           "range": [
-            89,
-            171
+            90,
+            176
           ],
           "rank": null,
           "tier": "B",
@@ -17726,7 +17726,7 @@
     },
     {
       "aliases": [],
-      "category": "sans-serif",
+      "category": "serif",
       "family": "Charter",
       "first_seen": "2026-09-26",
       "flags": [],
@@ -18306,10 +18306,10 @@
         "coding": {
           "band": "101–250",
           "gate_held": true,
-          "order": 118,
+          "order": 114,
           "range": [
-            110,
-            122
+            106,
+            118
           ],
           "rank": null,
           "tier": "B",
@@ -19068,7 +19068,7 @@
           "gate_held": false,
           "order": 177,
           "range": [
-            127,
+            129,
             214
           ],
           "rank": null,
@@ -19263,8 +19263,8 @@
           "gate_held": false,
           "order": 144,
           "range": [
-            99,
-            168
+            109,
+            170
           ],
           "rank": null,
           "tier": "B",
@@ -19812,24 +19812,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 39,
+          "order": 40,
           "range": [
-            31,
-            48
+            32,
+            49
           ],
-          "rank": 39,
+          "rank": 40,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
-          "band": "101–250",
-          "gate_held": true,
-          "order": 110,
+          "band": null,
+          "gate_held": false,
+          "order": 89,
           "range": [
-            109,
-            131
+            62,
+            130
           ],
-          "rank": null,
+          "rank": 89,
           "tier": "B",
           "unranked": null
         },
@@ -19838,7 +19838,7 @@
           "gate_held": false,
           "order": 114,
           "range": [
-            105,
+            68,
             146
           ],
           "rank": null,
@@ -19862,7 +19862,7 @@
           "gate_held": false,
           "order": 118,
           "range": [
-            93,
+            94,
             166
           ],
           "rank": null,
@@ -19959,7 +19959,7 @@
     },
     {
       "aliases": [],
-      "category": "sans-serif",
+      "category": "monospace",
       "family": "Compagnon",
       "first_seen": "2026-09-26",
       "flags": [],
@@ -19974,7 +19974,7 @@
         "variable": false
       },
       "id": "compagnon",
-      "is_monospace": false,
+      "is_monospace": true,
       "latin": {
         "basis": "glyph_test",
         "coverage": "basic"
@@ -20002,6 +20002,15 @@
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
+        "coding": {
+          "band": null,
+          "gate_held": false,
+          "order": null,
+          "range": null,
+          "rank": null,
+          "tier": null,
+          "unranked": "no_evidence"
+        },
         "desktop_chosen": {
           "band": "251–500",
           "gate_held": false,
@@ -20359,7 +20368,7 @@
           "gate_held": false,
           "order": 132,
           "range": [
-            100,
+            110,
             150
           ],
           "rank": null,
@@ -20395,7 +20404,7 @@
           "gate_held": false,
           "order": 108,
           "range": [
-            96,
+            97,
             133
           ],
           "rank": null,
@@ -20540,12 +20549,12 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 84,
+          "order": 87,
           "range": [
-            70,
-            122
+            74,
+            123
           ],
-          "rank": 84,
+          "rank": 87,
           "tier": "B",
           "unranked": null
         },
@@ -20554,7 +20563,7 @@
           "gate_held": false,
           "order": 112,
           "range": [
-            78,
+            79,
             153
           ],
           "rank": null,
@@ -20576,12 +20585,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 58,
+          "order": 59,
           "range": [
             48,
-            71
+            72
           ],
-          "rank": 58,
+          "rank": 59,
           "tier": "B",
           "unranked": null
         },
@@ -21631,25 +21640,25 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 43,
+          "order": 45,
           "range": [
-            35,
-            52
+            36,
+            56
           ],
-          "rank": 43,
+          "rank": 45,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
-          "band": null,
+          "band": "101–250",
           "gate_held": false,
-          "order": 97,
+          "order": 115,
           "range": [
-            90,
+            95,
             126
           ],
-          "rank": 97,
-          "tier": "B",
+          "rank": null,
+          "tier": "A",
           "unranked": null
         },
         "desktop_installed": {
@@ -21657,7 +21666,7 @@
           "gate_held": false,
           "order": 120,
           "range": [
-            91,
+            92,
             125
           ],
           "rank": null,
@@ -21832,12 +21841,12 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 58,
+          "order": 63,
           "range": [
-            55,
-            65
+            60,
+            71
           ],
-          "rank": 58,
+          "rank": 63,
           "tier": "A",
           "unranked": null
         },
@@ -22027,12 +22036,12 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 64,
+          "order": 70,
           "range": [
-            59,
-            71
+            65,
+            77
           ],
-          "rank": 64,
+          "rank": 70,
           "tier": "A",
           "unranked": null
         },
@@ -22253,36 +22262,36 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 24,
+          "order": 25,
           "range": [
-            18,
+            19,
             32
           ],
-          "rank": 24,
+          "rank": 25,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 37,
+          "order": 38,
           "range": [
-            28,
-            49
+            29,
+            50
           ],
-          "rank": 37,
+          "rank": 38,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 45,
+          "order": 46,
           "range": [
             40,
-            52
+            53
           ],
-          "rank": 45,
+          "rank": 46,
           "tier": "A",
           "unranked": null
         },
@@ -22303,7 +22312,7 @@
           "gate_held": false,
           "order": 127,
           "range": [
-            91,
+            92,
             160
           ],
           "rank": null,
@@ -22586,7 +22595,7 @@
     },
     {
       "aliases": [],
-      "category": "sans-serif",
+      "category": "monospace",
       "family": "Cozette",
       "first_seen": "2026-09-26",
       "flags": [],
@@ -22601,7 +22610,7 @@
         "variable": false
       },
       "id": "cozette",
-      "is_monospace": false,
+      "is_monospace": true,
       "latin": {
         "basis": "glyph_test",
         "coverage": "extended"
@@ -22629,15 +22638,27 @@
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
+        "coding": {
+          "band": null,
+          "gate_held": false,
+          "order": 59,
+          "range": [
+            48,
+            65
+          ],
+          "rank": 59,
+          "tier": "A",
+          "unranked": null
+        },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 88,
+          "order": 92,
           "range": [
-            60,
+            62,
             127
           ],
-          "rank": 88,
+          "rank": 92,
           "tier": "B",
           "unranked": null
         },
@@ -22646,7 +22667,7 @@
           "gate_held": false,
           "order": 110,
           "range": [
-            69,
+            71,
             134
           ],
           "rank": null,
@@ -22986,13 +23007,13 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 91,
+          "order": 96,
           "range": [
-            82,
-            100
+            84,
+            124
           ],
-          "rank": 91,
-          "tier": "A",
+          "rank": 96,
+          "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
@@ -23000,7 +23021,7 @@
           "gate_held": false,
           "order": 108,
           "range": [
-            91,
+            92,
             128
           ],
           "rank": null,
@@ -23022,12 +23043,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 91,
+          "order": 92,
           "range": [
-            77,
+            78,
             115
           ],
-          "rank": 91,
+          "rank": 92,
           "tier": "B",
           "unranked": null
         },
@@ -23171,7 +23192,7 @@
           "gate_held": false,
           "order": 136,
           "range": [
-            98,
+            100,
             173
           ],
           "rank": null,
@@ -23205,12 +23226,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 95,
+          "order": 96,
           "range": [
             84,
             125
           ],
-          "rank": 95,
+          "rank": 96,
           "tier": "B",
           "unranked": null
         },
@@ -23356,10 +23377,10 @@
         "coding": {
           "band": "101–250",
           "gate_held": true,
-          "order": 120,
+          "order": 116,
           "range": [
-            114,
-            121
+            109,
+            117
           ],
           "rank": null,
           "tier": "B",
@@ -23585,12 +23606,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 69,
+          "order": 70,
           "range": [
             51,
-            96
+            97
           ],
-          "rank": 69,
+          "rank": 70,
           "tier": "B",
           "unranked": null
         },
@@ -23933,10 +23954,10 @@
         "desktop_chosen": {
           "band": "101–250",
           "gate_held": true,
-          "order": 104,
+          "order": 102,
           "range": [
-            103,
-            106
+            102,
+            104
           ],
           "rank": null,
           "tier": "B",
@@ -23948,10 +23969,10 @@
           "order": 14,
           "range": [
             9,
-            23
+            24
           ],
           "rank": 14,
-          "tier": "B",
+          "tier": "C",
           "unranked": null
         },
         "dev_apps": {
@@ -23971,7 +23992,7 @@
           "gate_held": false,
           "order": 134,
           "range": [
-            91,
+            92,
             184
           ],
           "rank": null,
@@ -24178,24 +24199,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 19,
+          "order": 20,
           "range": [
-            16,
-            27
+            17,
+            28
           ],
-          "rank": 19,
+          "rank": 20,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 30,
+          "order": 31,
           "range": [
-            23,
+            25,
             43
           ],
-          "rank": 30,
+          "rank": 31,
           "tier": "B",
           "unranked": null
         },
@@ -24226,12 +24247,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 97,
+          "order": 98,
           "range": [
-            74,
+            75,
             150
           ],
-          "rank": 97,
+          "rank": 98,
           "tier": "B",
           "unranked": null
         },
@@ -24404,12 +24425,12 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 45,
+          "order": 47,
           "range": [
-            35,
-            80
+            37,
+            82
           ],
-          "rank": 45,
+          "rank": 47,
           "tier": "B",
           "unranked": null
         },
@@ -24610,10 +24631,10 @@
         "coding": {
           "band": "101–250",
           "gate_held": true,
-          "order": 106,
+          "order": 103,
           "range": [
-            104,
-            107
+            101,
+            103
           ],
           "rank": null,
           "tier": "B",
@@ -24622,9 +24643,9 @@
         "desktop_chosen": {
           "band": "101–250",
           "gate_held": false,
-          "order": 115,
+          "order": 110,
           "range": [
-            111,
+            107,
             127
           ],
           "rank": null,
@@ -24636,7 +24657,7 @@
           "gate_held": false,
           "order": 113,
           "range": [
-            107,
+            104,
             131
           ],
           "rank": null,
@@ -24979,12 +25000,12 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 52,
+          "order": 55,
           "range": [
-            35,
-            58
+            36,
+            63
           ],
-          "rank": 52,
+          "rank": 55,
           "tier": "B",
           "unranked": null
         },
@@ -25005,7 +25026,7 @@
           "gate_held": false,
           "order": 172,
           "range": [
-            157,
+            156,
             179
           ],
           "rank": null,
@@ -25027,12 +25048,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 73,
+          "order": 74,
           "range": [
-            60,
-            91
+            61,
+            92
           ],
-          "rank": 73,
+          "rank": 74,
           "tier": "B",
           "unranked": null
         },
@@ -25174,9 +25195,9 @@
         "desktop_chosen": {
           "band": "101–250",
           "gate_held": false,
-          "order": 116,
+          "order": 111,
           "range": [
-            111,
+            108,
             148
           ],
           "rank": null,
@@ -25188,7 +25209,7 @@
           "gate_held": false,
           "order": 118,
           "range": [
-            106,
+            105,
             153
           ],
           "rank": null,
@@ -25393,13 +25414,13 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 89,
+          "order": 90,
           "range": [
-            79,
+            80,
             106
           ],
-          "rank": 89,
-          "tier": "B",
+          "rank": 90,
+          "tier": "A",
           "unranked": null
         },
         "project": {
@@ -25896,7 +25917,7 @@
           "gate_held": false,
           "order": 139,
           "range": [
-            64,
+            67,
             188
           ],
           "rank": null,
@@ -25908,7 +25929,7 @@
           "gate_held": false,
           "order": 176,
           "range": [
-            152,
+            153,
             204
           ],
           "rank": null,
@@ -25930,12 +25951,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 66,
+          "order": 67,
           "range": [
             43,
-            98
+            99
           ],
-          "rank": 66,
+          "rank": 67,
           "tier": "B",
           "unranked": null
         },
@@ -26114,24 +26135,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 13,
+          "order": 14,
           "range": [
-            10,
-            17
+            11,
+            18
           ],
-          "rank": 13,
+          "rank": 14,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 10,
+          "order": 11,
           "range": [
-            6,
-            12
+            7,
+            13
           ],
-          "rank": 10,
+          "rank": 11,
           "tier": "A",
           "unranked": null
         },
@@ -26324,24 +26345,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 76,
+          "order": 79,
           "range": [
-            54,
-            98
+            57,
+            107
           ],
-          "rank": 76,
+          "rank": 79,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 71,
+          "order": 72,
           "range": [
-            54,
+            55,
             110
           ],
-          "rank": 71,
+          "rank": 72,
           "tier": "B",
           "unranked": null
         },
@@ -26360,12 +26381,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 54,
+          "order": 55,
           "range": [
-            46,
-            65
+            47,
+            66
           ],
-          "rank": 54,
+          "rank": 55,
           "tier": "B",
           "unranked": null
         },
@@ -27238,12 +27259,12 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 55,
+          "order": 60,
           "range": [
-            49,
-            61
+            52,
+            66
           ],
-          "rank": 55,
+          "rank": 60,
           "tier": "A",
           "unranked": null
         },
@@ -27252,7 +27273,7 @@
           "gate_held": false,
           "order": 137,
           "range": [
-            95,
+            100,
             166
           ],
           "rank": null,
@@ -28168,24 +28189,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 18,
+          "order": 19,
           "range": [
-            16,
-            24
+            17,
+            25
           ],
-          "rank": 18,
+          "rank": 19,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 26,
+          "order": 27,
           "range": [
-            20,
-            32
+            21,
+            34
           ],
-          "rank": 26,
+          "rank": 27,
           "tier": "B",
           "unranked": null
         },
@@ -28195,7 +28216,7 @@
           "order": 41,
           "range": [
             34,
-            45
+            46
           ],
           "rank": 41,
           "tier": "A",
@@ -28213,12 +28234,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 70,
+          "order": 71,
           "range": [
-            50,
-            88
+            51,
+            89
           ],
-          "rank": 70,
+          "rank": 71,
           "tier": "B",
           "unranked": null
         },
@@ -28309,7 +28330,7 @@
     },
     {
       "aliases": [],
-      "category": "sans-serif",
+      "category": "serif",
       "family": "Fanwood",
       "first_seen": "2026-09-26",
       "flags": [],
@@ -28927,12 +28948,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 59,
+          "order": 60,
           "range": [
             47,
-            78
+            79
           ],
-          "rank": 59,
+          "rank": 60,
           "tier": "B",
           "unranked": null
         },
@@ -29076,7 +29097,7 @@
           "gate_held": false,
           "order": 154,
           "range": [
-            131,
+            130,
             194
           ],
           "rank": null,
@@ -29503,24 +29524,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 8,
+          "order": 9,
           "range": [
-            7,
-            10
+            8,
+            11
           ],
-          "rank": 8,
+          "rank": 9,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 14,
+          "order": 15,
           "range": [
-            10,
-            19
+            11,
+            20
           ],
-          "rank": 14,
+          "rank": 15,
           "tier": "A",
           "unranked": null
         },
@@ -29551,12 +29572,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 63,
+          "order": 64,
           "range": [
-            43,
-            86
+            44,
+            87
           ],
-          "rank": 63,
+          "rank": 64,
           "tier": "B",
           "unranked": null
         },
@@ -29698,24 +29719,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 40,
+          "order": 42,
           "range": [
-            30,
-            62
+            31,
+            65
           ],
-          "rank": 40,
+          "rank": 42,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 50,
+          "order": 51,
           "range": [
             43,
-            79
+            80
           ],
-          "rank": 50,
+          "rank": 51,
           "tier": "B",
           "unranked": null
         },
@@ -29737,7 +29758,7 @@
           "order": 25,
           "range": [
             21,
-            33
+            34
           ],
           "rank": 25,
           "tier": "B",
@@ -29881,24 +29902,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 38,
+          "order": 40,
           "range": [
-            27,
-            56
+            28,
+            59
           ],
-          "rank": 38,
+          "rank": 40,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 52,
+          "order": 53,
           "range": [
-            48,
-            68
+            49,
+            69
           ],
-          "rank": 52,
+          "rank": 53,
           "tier": "B",
           "unranked": null
         },
@@ -29917,12 +29938,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 78,
+          "order": 79,
           "range": [
             60,
             126
           ],
-          "rank": 78,
+          "rank": 79,
           "tier": "B",
           "unranked": null
         },
@@ -30066,7 +30087,7 @@
           "gate_held": false,
           "order": 129,
           "range": [
-            119,
+            114,
             156
           ],
           "rank": null,
@@ -30078,7 +30099,7 @@
           "gate_held": false,
           "order": 129,
           "range": [
-            113,
+            110,
             167
           ],
           "rank": null,
@@ -30605,12 +30626,12 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 62,
+          "order": 68,
           "range": [
-            57,
-            64
+            61,
+            70
           ],
-          "rank": 62,
+          "rank": 68,
           "tier": "A",
           "unranked": null
         },
@@ -31153,7 +31174,7 @@
           "gate_held": false,
           "order": 138,
           "range": [
-            123,
+            118,
             164
           ],
           "rank": null,
@@ -31165,7 +31186,7 @@
           "gate_held": false,
           "order": 140,
           "range": [
-            117,
+            114,
             174
           ],
           "rank": null,
@@ -31187,12 +31208,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 56,
+          "order": 57,
           "range": [
-            44,
-            75
+            45,
+            76
           ],
-          "rank": 56,
+          "rank": 57,
           "tier": "B",
           "unranked": null
         },
@@ -32068,10 +32089,10 @@
         "desktop_chosen": {
           "band": "101–250",
           "gate_held": true,
-          "order": 105,
+          "order": 103,
           "range": [
-            103,
-            107
+            102,
+            104
           ],
           "rank": null,
           "tier": "B",
@@ -32080,10 +32101,10 @@
         "desktop_installed": {
           "band": "101–250",
           "gate_held": true,
-          "order": 103,
+          "order": 102,
           "range": [
             102,
-            103
+            102
           ],
           "rank": null,
           "tier": "B",
@@ -32107,7 +32128,7 @@
           "order": 30,
           "range": [
             20,
-            55
+            56
           ],
           "rank": 30,
           "tier": "C",
@@ -32280,37 +32301,37 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 23,
+          "order": 24,
           "range": [
-            13,
+            14,
             34
           ],
-          "rank": 23,
+          "rank": 24,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
-          "band": "101–250",
-          "gate_held": true,
-          "order": 103,
+          "band": null,
+          "gate_held": false,
+          "order": 39,
           "range": [
-            103,
-            105
+            25,
+            74
           ],
-          "rank": null,
-          "tier": "B",
+          "rank": 39,
+          "tier": "C",
           "unranked": null
         },
         "desktop_installed": {
-          "band": "101–250",
-          "gate_held": true,
-          "order": 102,
+          "band": null,
+          "gate_held": false,
+          "order": 45,
           "range": [
-            102,
-            103
+            28,
+            77
           ],
-          "rank": null,
-          "tier": "B",
+          "rank": 45,
+          "tier": "C",
           "unranked": null
         },
         "dev_apps": {
@@ -32331,7 +32352,7 @@
           "order": 42,
           "range": [
             26,
-            63
+            64
           ],
           "rank": 42,
           "tier": "B",
@@ -32474,9 +32495,9 @@
         "desktop_chosen": {
           "band": "101–250",
           "gate_held": false,
-          "order": 112,
+          "order": 107,
           "range": [
-            108,
+            106,
             148
           ],
           "rank": null,
@@ -32488,7 +32509,7 @@
           "gate_held": false,
           "order": 107,
           "range": [
-            105,
+            104,
             151
           ],
           "rank": null,
@@ -32792,7 +32813,7 @@
     },
     {
       "aliases": [],
-      "category": "sans-serif",
+      "category": "serif",
       "family": "Gentium",
       "first_seen": "2026-09-26",
       "flags": [],
@@ -32857,7 +32878,7 @@
           "gate_held": false,
           "order": 180,
           "range": [
-            94,
+            95,
             245
           ],
           "rank": null,
@@ -33034,7 +33055,7 @@
           "gate_held": false,
           "order": 121,
           "range": [
-            85,
+            87,
             158
           ],
           "rank": null,
@@ -33042,14 +33063,14 @@
           "unranked": null
         },
         "desktop_installed": {
-          "band": null,
+          "band": "101–250",
           "gate_held": false,
-          "order": 100,
+          "order": 106,
           "range": [
-            74,
-            139
+            75,
+            140
           ],
-          "rank": 100,
+          "rank": null,
           "tier": "B",
           "unranked": null
         },
@@ -33780,24 +33801,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 17,
+          "order": 18,
           "range": [
-            15,
+            16,
             27
           ],
-          "rank": 17,
+          "rank": 18,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 27,
+          "order": 28,
           "range": [
-            16,
-            39
+            17,
+            40
           ],
-          "rank": 27,
+          "rank": 28,
           "tier": "B",
           "unranked": null
         },
@@ -33825,12 +33846,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 88,
+          "order": 89,
           "range": [
-            59,
+            60,
             132
           ],
-          "rank": 88,
+          "rank": 89,
           "tier": "B",
           "unranked": null
         },
@@ -34537,37 +34558,37 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 44,
+          "order": 46,
           "range": [
-            33,
-            52
+            34,
+            56
           ],
-          "rank": 44,
+          "rank": 46,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 70,
+          "order": 73,
           "range": [
-            46,
+            48,
             120
           ],
-          "rank": 70,
-          "tier": "C",
+          "rank": 73,
+          "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 74,
+          "order": 75,
           "range": [
-            49,
+            50,
             125
           ],
-          "rank": 74,
-          "tier": "C",
+          "rank": 75,
+          "tier": "B",
           "unranked": null
         },
         "dev_apps": {
@@ -35668,27 +35689,27 @@
       ],
       "ranks": {
         "coding": {
-          "band": "101–250",
-          "gate_held": true,
-          "order": 101,
+          "band": null,
+          "gate_held": false,
+          "order": 5,
           "range": [
-            101,
-            101
+            4,
+            11
           ],
-          "rank": null,
-          "tier": "B",
+          "rank": 5,
+          "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
-          "band": "101–250",
-          "gate_held": true,
-          "order": 101,
+          "band": null,
+          "gate_held": false,
+          "order": 5,
           "range": [
-            101,
-            102
+            5,
+            15
           ],
-          "rank": null,
-          "tier": "B",
+          "rank": 5,
+          "tier": "A",
           "unranked": null
         },
         "desktop_installed": {
@@ -35713,15 +35734,15 @@
           "unranked": "no_evidence"
         },
         "overall": {
-          "band": "101–250",
-          "gate_held": true,
-          "order": 101,
+          "band": null,
+          "gate_held": false,
+          "order": 53,
           "range": [
-            101,
-            101
+            28,
+            94
           ],
-          "rank": null,
-          "tier": "B",
+          "rank": 53,
+          "tier": "C",
           "unranked": null
         },
         "project": {
@@ -35868,7 +35889,7 @@
           "gate_held": false,
           "order": 149,
           "range": [
-            127,
+            123,
             181
           ],
           "rank": null,
@@ -36264,7 +36285,7 @@
           "gate_held": false,
           "order": 117,
           "range": [
-            91,
+            92,
             165
           ],
           "rank": null,
@@ -36436,36 +36457,36 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 36,
+          "order": 37,
           "range": [
-            31,
-            38
+            33,
+            40
           ],
-          "rank": 36,
+          "rank": 37,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 59,
+          "order": 61,
           "range": [
-            50,
-            74
+            53,
+            76
           ],
-          "rank": 59,
+          "rank": 61,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 67,
+          "order": 68,
           "range": [
-            55,
+            56,
             83
           ],
-          "rank": 67,
+          "rank": 68,
           "tier": "B",
           "unranked": null
         },
@@ -36652,8 +36673,8 @@
           "gate_held": false,
           "order": 128,
           "range": [
-            87,
-            157
+            91,
+            156
           ],
           "rank": null,
           "tier": "B",
@@ -36664,7 +36685,7 @@
           "gate_held": false,
           "order": 131,
           "range": [
-            97,
+            99,
             168
           ],
           "rank": null,
@@ -36863,12 +36884,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 65,
+          "order": 66,
           "range": [
             48,
-            83
+            84
           ],
-          "rank": 65,
+          "rank": 66,
           "tier": "B",
           "unranked": null
         },
@@ -37728,36 +37749,36 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 48,
+          "order": 51,
           "range": [
-            43,
-            53
+            47,
+            56
           ],
-          "rank": 48,
+          "rank": 51,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 86,
+          "order": 90,
           "range": [
-            70,
+            74,
             113
           ],
-          "rank": 86,
+          "rank": 90,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 96,
+          "order": 97,
           "range": [
-            78,
+            80,
             119
           ],
-          "rank": 96,
+          "rank": 97,
           "tier": "B",
           "unranked": null
         },
@@ -37921,36 +37942,36 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 40,
+          "order": 43,
           "range": [
-            39,
-            45
+            41,
+            47
           ],
-          "rank": 40,
+          "rank": 43,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 77,
+          "order": 80,
           "range": [
-            57,
-            93
+            60,
+            95
           ],
-          "rank": 77,
+          "rank": 80,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 80,
+          "order": 81,
           "range": [
-            63,
+            64,
             108
           ],
-          "rank": 80,
+          "rank": 81,
           "tier": "B",
           "unranked": null
         },
@@ -38114,24 +38135,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 83,
+          "order": 86,
           "range": [
-            65,
-            100
+            70,
+            109
           ],
-          "rank": 83,
+          "rank": 86,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 89,
+          "order": 90,
           "range": [
-            72,
+            75,
             115
           ],
-          "rank": 89,
+          "rank": 90,
           "tier": "B",
           "unranked": null
         },
@@ -38329,36 +38350,36 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 25,
+          "order": 27,
           "range": [
-            19,
+            20,
             38
           ],
-          "rank": 25,
+          "rank": 27,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 54,
+          "order": 56,
           "range": [
-            39,
-            79
+            40,
+            80
           ],
-          "rank": 54,
+          "rank": 56,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 61,
+          "order": 62,
           "range": [
             45,
-            85
+            86
           ],
-          "rank": 61,
+          "rank": 62,
           "tier": "B",
           "unranked": null
         },
@@ -38376,7 +38397,7 @@
           "gate_held": false,
           "order": 116,
           "range": [
-            88,
+            89,
             154
           ],
           "rank": null,
@@ -38550,25 +38571,25 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 6,
+          "order": 7,
           "range": [
             4,
-            8
+            9
           ],
-          "rank": 6,
+          "rank": 7,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 12,
+          "order": 13,
           "range": [
-            7,
+            8,
             18
           ],
-          "rank": 12,
-          "tier": "B",
+          "rank": 13,
+          "tier": "A",
           "unranked": null
         },
         "desktop_installed": {
@@ -38745,12 +38766,12 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 28,
+          "order": 29,
           "range": [
-            22,
-            33
+            23,
+            34
           ],
-          "rank": 28,
+          "rank": 29,
           "tier": "B",
           "unranked": null
         },
@@ -38760,7 +38781,7 @@
           "order": 39,
           "range": [
             30,
-            50
+            51
           ],
           "rank": 39,
           "tier": "B",
@@ -38928,24 +38949,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 42,
+          "order": 44,
           "range": [
-            32,
-            52
+            33,
+            55
           ],
-          "rank": 42,
+          "rank": 44,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 58,
+          "order": 59,
           "range": [
-            46,
-            66
+            47,
+            67
           ],
-          "rank": 58,
+          "rank": 59,
           "tier": "B",
           "unranked": null
         },
@@ -38964,12 +38985,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 93,
+          "order": 94,
           "range": [
-            69,
+            70,
             128
           ],
-          "rank": 93,
+          "rank": 94,
           "tier": "B",
           "unranked": null
         },
@@ -39111,24 +39132,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 34,
+          "order": 35,
           "range": [
-            27,
-            44
+            29,
+            45
           ],
-          "rank": 34,
+          "rank": 35,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 46,
+          "order": 47,
           "range": [
-            38,
-            58
+            39,
+            59
           ],
-          "rank": 46,
+          "rank": 47,
           "tier": "B",
           "unranked": null
         },
@@ -39150,7 +39171,7 @@
           "order": 52,
           "range": [
             43,
-            66
+            67
           ],
           "rank": 52,
           "tier": "B",
@@ -39538,24 +39559,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 9,
+          "order": 10,
           "range": [
-            8,
-            12
+            9,
+            13
           ],
-          "rank": 9,
+          "rank": 10,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 7,
+          "order": 8,
           "range": [
             5,
-            13
+            14
           ],
-          "rank": 7,
+          "rank": 8,
           "tier": "A",
           "unranked": null
         },
@@ -39756,24 +39777,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 42,
+          "order": 44,
           "range": [
-            40,
-            49
+            41,
+            52
           ],
-          "rank": 42,
+          "rank": 44,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 92,
+          "order": 97,
           "range": [
-            71,
-            99
+            74,
+            119
           ],
-          "rank": 92,
+          "rank": 97,
           "tier": "B",
           "unranked": null
         },
@@ -39782,7 +39803,7 @@
           "gate_held": false,
           "order": 111,
           "range": [
-            81,
+            82,
             125
           ],
           "rank": null,
@@ -40337,7 +40358,7 @@
           "gate_held": false,
           "order": 135,
           "range": [
-            97,
+            98,
             186
           ],
           "rank": null,
@@ -40518,12 +40539,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 96,
+          "order": 97,
           "range": [
-            77,
+            78,
             150
           ],
-          "rank": 96,
+          "rank": 97,
           "tier": "B",
           "unranked": null
         },
@@ -40694,36 +40715,36 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 34,
+          "order": 35,
           "range": [
-            29,
-            37
+            31,
+            38
           ],
-          "rank": 34,
+          "rank": 35,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 43,
+          "order": 45,
           "range": [
-            32,
+            34,
             57
           ],
-          "rank": 43,
+          "rank": 45,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 49,
+          "order": 50,
           "range": [
-            37,
-            69
+            38,
+            67
           ],
-          "rank": 49,
+          "rank": 50,
           "tier": "B",
           "unranked": null
         },
@@ -40915,12 +40936,12 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 5,
+          "order": 6,
           "range": [
             4,
-            15
+            16
           ],
-          "rank": 5,
+          "rank": 6,
           "tier": "C",
           "unranked": null
         },
@@ -41103,7 +41124,7 @@
           "gate_held": false,
           "order": 150,
           "range": [
-            129,
+            126,
             185
           ],
           "rank": null,
@@ -41137,12 +41158,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 76,
+          "order": 77,
           "range": [
             63,
             110
           ],
-          "rank": 76,
+          "rank": 77,
           "tier": "B",
           "unranked": null
         },
@@ -41363,24 +41384,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 7,
+          "order": 8,
           "range": [
-            6,
-            10
+            5,
+            11
           ],
-          "rank": 7,
+          "rank": 8,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 8,
+          "order": 9,
           "range": [
             5,
-            16
+            17
           ],
-          "rank": 8,
+          "rank": 9,
           "tier": "C",
           "unranked": null
         },
@@ -41558,24 +41579,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 56,
+          "order": 58,
           "range": [
-            40,
-            75
+            41,
+            78
           ],
-          "rank": 56,
+          "rank": 58,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 62,
+          "order": 63,
           "range": [
-            48,
-            82
+            49,
+            83
           ],
-          "rank": 62,
+          "rank": 63,
           "tier": "B",
           "unranked": null
         },
@@ -41735,10 +41756,10 @@
         "coding": {
           "band": "101–250",
           "gate_held": true,
-          "order": 115,
+          "order": 110,
           "range": [
-            113,
-            120
+            108,
+            116
           ],
           "rank": null,
           "tier": "B",
@@ -41927,10 +41948,10 @@
         "coding": {
           "band": "101–250",
           "gate_held": true,
-          "order": 112,
+          "order": 107,
           "range": [
-            111,
-            118
+            107,
+            114
           ],
           "rank": null,
           "tier": "B",
@@ -41953,7 +41974,7 @@
           "gate_held": false,
           "order": 174,
           "range": [
-            154,
+            153,
             213
           ],
           "rank": null,
@@ -42119,36 +42140,36 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 56,
+          "order": 61,
           "range": [
-            50,
-            64
+            54,
+            69
           ],
-          "rank": 56,
+          "rank": 61,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 90,
+          "order": 94,
           "range": [
-            59,
-            130
+            61,
+            131
           ],
-          "rank": 90,
+          "rank": 94,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 99,
+          "order": 100,
           "range": [
-            68,
-            135
+            69,
+            134
           ],
-          "rank": 99,
+          "rank": 100,
           "tier": "B",
           "unranked": null
         },
@@ -42308,12 +42329,12 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 61,
+          "order": 67,
           "range": [
-            54,
-            67
+            58,
+            72
           ],
-          "rank": 61,
+          "rank": 67,
           "tier": "A",
           "unranked": null
         },
@@ -42322,7 +42343,7 @@
           "gate_held": false,
           "order": 119,
           "range": [
-            70,
+            73,
             158
           ],
           "rank": null,
@@ -42334,7 +42355,7 @@
           "gate_held": false,
           "order": 125,
           "range": [
-            78,
+            79,
             166
           ],
           "rank": null,
@@ -42497,24 +42518,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 75,
+          "order": 78,
           "range": [
-            49,
-            92
+            51,
+            97
           ],
-          "rank": 75,
+          "rank": 78,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 76,
+          "order": 77,
           "range": [
-            57,
-            109
+            58,
+            111
           ],
-          "rank": 76,
+          "rank": 77,
           "tier": "B",
           "unranked": null
         },
@@ -42674,10 +42695,10 @@
         "coding": {
           "band": "101–250",
           "gate_held": true,
-          "order": 107,
+          "order": 102,
           "range": [
-            102,
-            109
+            101,
+            104
           ],
           "rank": null,
           "tier": "B",
@@ -42686,10 +42707,10 @@
         "desktop_chosen": {
           "band": "101–250",
           "gate_held": true,
-          "order": 106,
+          "order": 104,
           "range": [
-            105,
-            109
+            103,
+            106
           ],
           "rank": null,
           "tier": "B",
@@ -42698,10 +42719,10 @@
         "desktop_installed": {
           "band": "101–250",
           "gate_held": true,
-          "order": 104,
+          "order": 103,
           "range": [
-            104,
-            105
+            103,
+            103
           ],
           "rank": null,
           "tier": "B",
@@ -42721,7 +42742,7 @@
           "gate_held": false,
           "order": 102,
           "range": [
-            102,
+            101,
             171
           ],
           "rank": null,
@@ -43463,7 +43484,7 @@
           "gate_held": false,
           "order": 165,
           "range": [
-            146,
+            145,
             208
           ],
           "rank": null,
@@ -43488,7 +43509,7 @@
           "order": 51,
           "range": [
             40,
-            62
+            63
           ],
           "rank": 51,
           "tier": "B",
@@ -43823,7 +43844,7 @@
           "gate_held": false,
           "order": 167,
           "range": [
-            151,
+            150,
             176
           ],
           "rank": null,
@@ -43848,7 +43869,7 @@
           "order": 50,
           "range": [
             41,
-            59
+            60
           ],
           "rank": 50,
           "tier": "B",
@@ -43990,36 +44011,36 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 45,
+          "order": 47,
           "range": [
-            38,
-            53
+            39,
+            57
           ],
-          "rank": 45,
+          "rank": 47,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 57,
+          "order": 59,
           "range": [
-            43,
-            80
+            45,
+            83
           ],
-          "rank": 57,
+          "rank": 59,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 65,
+          "order": 66,
           "range": [
-            50,
+            51,
             90
           ],
-          "rank": 65,
+          "rank": 66,
           "tier": "B",
           "unranked": null
         },
@@ -44131,7 +44152,7 @@
     },
     {
       "aliases": [],
-      "category": "sans-serif",
+      "category": "serif",
       "family": "Junicode",
       "first_seen": "2026-09-26",
       "flags": [],
@@ -44177,24 +44198,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 65,
+          "order": 68,
           "range": [
-            33,
-            96
+            34,
+            119
           ],
-          "rank": 65,
-          "tier": "B",
+          "rank": 68,
+          "tier": "C",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 92,
+          "order": 93,
           "range": [
-            73,
+            74,
             133
           ],
-          "rank": 92,
+          "rank": 93,
           "tier": "B",
           "unranked": null
         },
@@ -44212,7 +44233,7 @@
           "gate_held": false,
           "order": 140,
           "range": [
-            88,
+            89,
             181
           ],
           "rank": null,
@@ -44756,12 +44777,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 90,
+          "order": 91,
           "range": [
-            76,
+            77,
             108
           ],
-          "rank": 90,
+          "rank": 91,
           "tier": "B",
           "unranked": null
         },
@@ -44944,12 +44965,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 61,
+          "order": 62,
           "range": [
             46,
-            73
+            74
           ],
-          "rank": 61,
+          "rank": 62,
           "tier": "B",
           "unranked": null
         },
@@ -45631,12 +45652,12 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 72,
+          "order": 78,
           "range": [
-            70,
-            72
+            76,
+            78
           ],
-          "rank": 72,
+          "rank": 78,
           "tier": "A",
           "unranked": null
         },
@@ -46313,7 +46334,7 @@
     },
     {
       "aliases": [],
-      "category": "sans-serif",
+      "category": "serif",
       "family": "Latin Modern",
       "first_seen": "2026-09-26",
       "flags": [],
@@ -46368,24 +46389,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 58,
+          "order": 60,
           "range": [
             50,
-            70
+            73
           ],
-          "rank": 58,
+          "rank": 60,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 59,
+          "order": 60,
           "range": [
             43,
-            68
+            69
           ],
-          "rank": 59,
+          "rank": 60,
           "tier": "B",
           "unranked": null
         },
@@ -46558,12 +46579,12 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 32,
+          "order": 33,
           "range": [
-            26,
-            47
+            27,
+            49
           ],
-          "rank": 32,
+          "rank": 33,
           "tier": "B",
           "unranked": null
         },
@@ -46573,7 +46594,7 @@
           "order": 37,
           "range": [
             21,
-            47
+            48
           ],
           "rank": 37,
           "tier": "B",
@@ -46927,10 +46948,10 @@
         "coding": {
           "band": "101–250",
           "gate_held": true,
-          "order": 121,
+          "order": 117,
           "range": [
-            117,
-            124
+            113,
+            120
           ],
           "rank": null,
           "tier": "B",
@@ -47123,7 +47144,7 @@
           "gate_held": false,
           "order": 171,
           "range": [
-            129,
+            128,
             214
           ],
           "rank": null,
@@ -47159,7 +47180,7 @@
           "gate_held": false,
           "order": 122,
           "range": [
-            99,
+            100,
             149
           ],
           "rank": null,
@@ -47330,12 +47351,12 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 53,
+          "order": 57,
           "range": [
-            45,
-            57
+            48,
+            61
           ],
-          "rank": 53,
+          "rank": 57,
           "tier": "A",
           "unranked": null
         },
@@ -47344,7 +47365,7 @@
           "gate_held": false,
           "order": 124,
           "range": [
-            85,
+            90,
             145
           ],
           "rank": null,
@@ -47356,8 +47377,8 @@
           "gate_held": false,
           "order": 128,
           "range": [
-            94,
-            154
+            97,
+            152
           ],
           "rank": null,
           "tier": "B",
@@ -47710,7 +47731,7 @@
           "gate_held": false,
           "order": 145,
           "range": [
-            123,
+            118,
             158
           ],
           "rank": null,
@@ -47722,7 +47743,7 @@
           "gate_held": false,
           "order": 154,
           "range": [
-            119,
+            118,
             196
           ],
           "rank": null,
@@ -47744,12 +47765,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 71,
+          "order": 72,
           "range": [
-            59,
-            84
+            60,
+            85
           ],
-          "rank": 71,
+          "rank": 72,
           "tier": "B",
           "unranked": null
         },
@@ -48653,26 +48674,26 @@
       ],
       "ranks": {
         "coding": {
-          "band": "101–250",
-          "gate_held": true,
-          "order": 102,
+          "band": null,
+          "gate_held": false,
+          "order": 41,
           "range": [
-            102,
-            104
+            38,
+            54
           ],
-          "rank": null,
+          "rank": 41,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
-          "band": "101–250",
-          "gate_held": true,
-          "order": 108,
+          "band": null,
+          "gate_held": false,
+          "order": 63,
           "range": [
-            104,
+            50,
             113
           ],
-          "rank": null,
+          "rank": 63,
           "tier": "B",
           "unranked": null
         },
@@ -48682,7 +48703,7 @@
           "order": 19,
           "range": [
             8,
-            32
+            33
           ],
           "rank": 19,
           "tier": "C",
@@ -48851,24 +48872,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 71,
+          "order": 74,
           "range": [
-            55,
-            87
+            57,
+            92
           ],
-          "rank": 71,
+          "rank": 74,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 87,
+          "order": 88,
           "range": [
             72,
             129
           ],
-          "rank": 87,
+          "rank": 88,
           "tier": "B",
           "unranked": null
         },
@@ -49031,36 +49052,36 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 46,
+          "order": 49,
           "range": [
             36,
-            55
+            60
           ],
-          "rank": 46,
+          "rank": 49,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 67,
+          "order": 70,
           "range": [
-            51,
-            83
+            54,
+            88
           ],
-          "rank": 67,
+          "rank": 70,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 84,
+          "order": 85,
           "range": [
             69,
             123
           ],
-          "rank": 84,
+          "rank": 85,
           "tier": "B",
           "unranked": null
         },
@@ -49223,24 +49244,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 64,
+          "order": 67,
           "range": [
-            50,
-            81
+            53,
+            86
           ],
-          "rank": 64,
+          "rank": 67,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 83,
+          "order": 84,
           "range": [
-            67,
+            68,
             119
           ],
-          "rank": 83,
+          "rank": 84,
           "tier": "B",
           "unranked": null
         },
@@ -49403,24 +49424,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 62,
+          "order": 65,
           "range": [
-            48,
-            77
+            50,
+            82
           ],
-          "rank": 62,
+          "rank": 65,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 81,
+          "order": 82,
           "range": [
-            64,
+            65,
             116
           ],
-          "rank": 81,
+          "rank": 82,
           "tier": "B",
           "unranked": null
         },
@@ -49583,24 +49604,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 69,
+          "order": 72,
           "range": [
-            54,
-            85
+            56,
+            90
           ],
-          "rank": 69,
+          "rank": 72,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 86,
+          "order": 87,
           "range": [
-            70,
+            71,
             127
           ],
-          "rank": 86,
+          "rank": 87,
           "tier": "B",
           "unranked": null
         },
@@ -49799,12 +49820,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 57,
+          "order": 58,
           "range": [
             45,
             70
           ],
-          "rank": 57,
+          "rank": 58,
           "tier": "B",
           "unranked": null
         },
@@ -50348,12 +50369,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 62,
+          "order": 63,
           "range": [
             48,
-            74
+            75
           ],
-          "rank": 62,
+          "rank": 63,
           "tier": "B",
           "unranked": null
         },
@@ -50520,36 +50541,36 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 35,
+          "order": 36,
           "range": [
-            31,
-            37
+            32,
+            38
           ],
-          "rank": 35,
+          "rank": 36,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 47,
+          "order": 49,
           "range": [
-            40,
-            55
+            42,
+            56
           ],
-          "rank": 47,
-          "tier": "B",
+          "rank": 49,
+          "tier": "A",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 55,
+          "order": 56,
           "range": [
             46,
-            67
+            66
           ],
-          "rank": 55,
+          "rank": 56,
           "tier": "B",
           "unranked": null
         },
@@ -50892,7 +50913,7 @@
           "gate_held": false,
           "order": 174,
           "range": [
-            160,
+            161,
             175
           ],
           "rank": null,
@@ -50928,7 +50949,7 @@
           "gate_held": false,
           "order": 105,
           "range": [
-            96,
+            97,
             134
           ],
           "rank": null,
@@ -51116,7 +51137,7 @@
           "gate_held": false,
           "order": 113,
           "range": [
-            79,
+            80,
             157
           ],
           "rank": null,
@@ -51456,7 +51477,7 @@
           "gate_held": false,
           "order": 147,
           "range": [
-            125,
+            120,
             183
           ],
           "rank": null,
@@ -51493,10 +51514,10 @@
           "order": 27,
           "range": [
             23,
-            33
+            34
           ],
           "rank": 27,
-          "tier": "A",
+          "tier": "B",
           "unranked": null
         },
         "project": {
@@ -51810,15 +51831,15 @@
       "pulled_in_by": [],
       "ranks": {
         "coding": {
-          "band": "101–250",
-          "gate_held": true,
-          "order": 110,
+          "band": null,
+          "gate_held": false,
+          "order": 66,
           "range": [
-            107,
-            112
+            59,
+            72
           ],
-          "rank": null,
-          "tier": "B",
+          "rank": 66,
+          "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
@@ -51826,7 +51847,7 @@
           "gate_held": false,
           "order": 162,
           "range": [
-            133,
+            131,
             194
           ],
           "rank": null,
@@ -51838,7 +51859,7 @@
           "gate_held": false,
           "order": 168,
           "range": [
-            137,
+            136,
             201
           ],
           "rank": null,
@@ -52011,7 +52032,7 @@
           "gate_held": false,
           "order": 123,
           "range": [
-            74,
+            79,
             142
           ],
           "rank": null,
@@ -52023,7 +52044,7 @@
           "gate_held": false,
           "order": 139,
           "range": [
-            90,
+            93,
             150
           ],
           "rank": null,
@@ -52201,8 +52222,8 @@
           "gate_held": false,
           "order": 26,
           "range": [
-            9,
-            45
+            11,
+            48
           ],
           "rank": 26,
           "tier": "C",
@@ -52211,10 +52232,10 @@
         "desktop_chosen": {
           "band": "101–250",
           "gate_held": true,
-          "order": 102,
+          "order": 101,
           "range": [
             101,
-            102
+            101
           ],
           "rank": null,
           "tier": "B",
@@ -52247,12 +52268,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 82,
+          "order": 83,
           "range": [
-            47,
+            48,
             158
           ],
-          "rank": 82,
+          "rank": 83,
           "tier": "C",
           "unranked": null
         },
@@ -52964,12 +52985,12 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 50,
+          "order": 56,
           "range": [
-            45,
-            55
+            48,
+            61
           ],
-          "rank": 50,
+          "rank": 56,
           "tier": "A",
           "unranked": null
         },
@@ -52978,7 +52999,7 @@
           "gate_held": false,
           "order": 142,
           "range": [
-            118,
+            114,
             152
           ],
           "rank": null,
@@ -53341,24 +53362,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 82,
+          "order": 85,
           "range": [
-            71,
+            73,
             119
           ],
-          "rank": 82,
+          "rank": 85,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 95,
+          "order": 96,
           "range": [
-            80,
+            81,
             150
           ],
-          "rank": 95,
+          "rank": 96,
           "tier": "B",
           "unranked": null
         },
@@ -53526,7 +53547,7 @@
           "gate_held": false,
           "order": 130,
           "range": [
-            90,
+            92,
             176
           ],
           "rank": null,
@@ -53538,7 +53559,7 @@
           "gate_held": false,
           "order": 134,
           "range": [
-            99,
+            100,
             186
           ],
           "rank": null,
@@ -53562,7 +53583,7 @@
           "gate_held": false,
           "order": 112,
           "range": [
-            93,
+            94,
             144
           ],
           "rank": null,
@@ -53786,7 +53807,7 @@
           "order": 34,
           "range": [
             18,
-            70
+            69
           ],
           "rank": 34,
           "tier": "C",
@@ -54410,7 +54431,7 @@
     },
     {
       "aliases": [],
-      "category": "sans-serif",
+      "category": "monospace",
       "family": "Miracode",
       "first_seen": "2026-09-26",
       "flags": [],
@@ -54425,7 +54446,7 @@
         "variable": false
       },
       "id": "miracode",
-      "is_monospace": false,
+      "is_monospace": true,
       "latin": {
         "basis": "glyph_test",
         "coverage": "basic"
@@ -54453,6 +54474,18 @@
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
+        "coding": {
+          "band": "101–250",
+          "gate_held": true,
+          "order": 111,
+          "range": [
+            109,
+            117
+          ],
+          "rank": null,
+          "tier": "B",
+          "unranked": null
+        },
         "desktop_chosen": {
           "band": "101–250",
           "gate_held": false,
@@ -54811,14 +54844,14 @@
       "pulled_in_by": [],
       "ranks": {
         "desktop_chosen": {
-          "band": null,
+          "band": "101–250",
           "gate_held": false,
-          "order": 98,
+          "order": 116,
           "range": [
-            73,
+            76,
             143
           ],
-          "rank": 98,
+          "rank": null,
           "tier": "B",
           "unranked": null
         },
@@ -54827,7 +54860,7 @@
           "gate_held": false,
           "order": 127,
           "range": [
-            87,
+            89,
             167
           ],
           "rank": null,
@@ -54999,24 +55032,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 31,
+          "order": 32,
           "range": [
-            22,
+            23,
             37
           ],
-          "rank": 31,
+          "rank": 32,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 21,
+          "order": 22,
           "range": [
-            14,
-            33
+            15,
+            34
           ],
-          "rank": 21,
+          "rank": 22,
           "tier": "B",
           "unranked": null
         },
@@ -55046,7 +55079,7 @@
           "gate_held": false,
           "order": 121,
           "range": [
-            89,
+            90,
             163
           ],
           "rank": null,
@@ -55196,7 +55229,7 @@
           "gate_held": false,
           "order": 29,
           "range": [
-            20,
+            21,
             32
           ],
           "rank": 29,
@@ -55206,12 +55239,12 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 22,
+          "order": 23,
           "range": [
-            15,
-            34
+            16,
+            35
           ],
-          "rank": 22,
+          "rank": 23,
           "tier": "B",
           "unranked": null
         },
@@ -55244,7 +55277,7 @@
           "gate_held": false,
           "order": 104,
           "range": [
-            80,
+            81,
             150
           ],
           "rank": null,
@@ -55396,24 +55429,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 21,
+          "order": 22,
           "range": [
-            16,
+            17,
             26
           ],
-          "rank": 21,
+          "rank": 22,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 23,
+          "order": 24,
           "range": [
-            16,
-            35
+            17,
+            36
           ],
-          "rank": 23,
+          "rank": 24,
           "tier": "B",
           "unranked": null
         },
@@ -55444,12 +55477,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 92,
+          "order": 93,
           "range": [
-            70,
+            71,
             122
           ],
-          "rank": 92,
+          "rank": 93,
           "tier": "B",
           "unranked": null
         },
@@ -55594,24 +55627,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 32,
+          "order": 33,
           "range": [
-            23,
+            24,
             38
           ],
-          "rank": 32,
+          "rank": 33,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 24,
+          "order": 25,
           "range": [
-            17,
-            36
+            18,
+            37
           ],
-          "rank": 24,
+          "rank": 25,
           "tier": "B",
           "unranked": null
         },
@@ -55641,7 +55674,7 @@
           "gate_held": false,
           "order": 131,
           "range": [
-            92,
+            93,
             172
           ],
           "rank": null,
@@ -55786,24 +55819,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 27,
+          "order": 28,
           "range": [
-            19,
-            30
+            20,
+            31
           ],
-          "rank": 27,
+          "rank": 28,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 25,
+          "order": 26,
           "range": [
-            18,
-            37
+            19,
+            38
           ],
-          "rank": 25,
+          "rank": 26,
           "tier": "B",
           "unranked": null
         },
@@ -55832,14 +55865,14 @@
           "unranked": null
         },
         "overall": {
-          "band": null,
+          "band": "101–250",
           "gate_held": false,
-          "order": 100,
+          "order": 101,
           "range": [
-            77,
+            78,
             143
           ],
-          "rank": 100,
+          "rank": null,
           "tier": "B",
           "unranked": null
         },
@@ -55984,10 +56017,10 @@
         "coding": {
           "band": "101–250",
           "gate_held": true,
-          "order": 105,
+          "order": 101,
           "range": [
-            102,
-            108
+            101,
+            103
           ],
           "rank": null,
           "tier": "B",
@@ -55996,9 +56029,9 @@
         "desktop_chosen": {
           "band": "101–250",
           "gate_held": true,
-          "order": 109,
+          "order": 106,
           "range": [
-            107,
+            105,
             123
           ],
           "rank": null,
@@ -56008,9 +56041,9 @@
         "desktop_installed": {
           "band": "101–250",
           "gate_held": true,
-          "order": 105,
+          "order": 104,
           "range": [
-            105,
+            104,
             136
           ],
           "rank": null,
@@ -56207,36 +56240,36 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 37,
+          "order": 38,
           "range": [
-            31,
-            44
+            32,
+            46
           ],
-          "rank": 37,
+          "rank": 38,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 73,
+          "order": 76,
           "range": [
-            56,
-            84
+            59,
+            89
           ],
-          "rank": 73,
+          "rank": 76,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 78,
+          "order": 79,
           "range": [
-            65,
-            91
+            66,
+            94
           ],
-          "rank": 78,
+          "rank": 79,
           "tier": "B",
           "unranked": null
         },
@@ -56422,36 +56455,36 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 38,
+          "order": 39,
           "range": [
-            36,
-            45
+            37,
+            46
           ],
-          "rank": 38,
+          "rank": 39,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 78,
+          "order": 81,
           "range": [
-            58,
-            83
+            61,
+            85
           ],
-          "rank": 78,
-          "tier": "B",
+          "rank": 81,
+          "tier": "A",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 88,
+          "order": 89,
           "range": [
-            72,
-            106
+            73,
+            107
           ],
-          "rank": 88,
+          "rank": 89,
           "tier": "B",
           "unranked": null
         },
@@ -56609,10 +56642,10 @@
         "coding": {
           "band": "101–250",
           "gate_held": true,
-          "order": 114,
+          "order": 109,
           "range": [
-            109,
-            122
+            105,
+            118
           ],
           "rank": null,
           "tier": "B",
@@ -56826,36 +56859,36 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 33,
+          "order": 34,
           "range": [
-            26,
-            42
+            27,
+            43
           ],
-          "rank": 33,
+          "rank": 34,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 39,
+          "order": 41,
           "range": [
-            35,
-            44
+            36,
+            45
           ],
-          "rank": 39,
+          "rank": 41,
           "tier": "A",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 47,
+          "order": 48,
           "range": [
-            42,
+            43,
             55
           ],
-          "rank": 47,
+          "rank": 48,
           "tier": "A",
           "unranked": null
         },
@@ -57199,24 +57232,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 55,
+          "order": 57,
           "range": [
-            39,
-            83
+            41,
+            85
           ],
-          "rank": 55,
+          "rank": 57,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 68,
+          "order": 69,
           "range": [
-            46,
+            47,
             121
           ],
-          "rank": 68,
+          "rank": 69,
           "tier": "C",
           "unranked": null
         },
@@ -57965,7 +57998,7 @@
           "order": 44,
           "range": [
             32,
-            52
+            53
           ],
           "rank": 44,
           "tier": "B",
@@ -58286,10 +58319,10 @@
         "coding": {
           "band": "101–250",
           "gate_held": true,
-          "order": 113,
+          "order": 108,
           "range": [
-            112,
-            116
+            107,
+            111
           ],
           "rank": null,
           "tier": "B",
@@ -58511,12 +58544,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 81,
+          "order": 82,
           "range": [
-            72,
+            73,
             104
           ],
-          "rank": 81,
+          "rank": 82,
           "tier": "B",
           "unranked": null
         },
@@ -58855,7 +58888,7 @@
           "gate_held": false,
           "order": 175,
           "range": [
-            155,
+            154,
             214
           ],
           "rank": null,
@@ -59252,12 +59285,12 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 41,
+          "order": 43,
           "range": [
-            31,
-            81
+            33,
+            83
           ],
-          "rank": 41,
+          "rank": 43,
           "tier": "C",
           "unranked": null
         },
@@ -59468,7 +59501,7 @@
           "gate_held": false,
           "order": 187,
           "range": [
-            83,
+            84,
             263
           ],
           "rank": null,
@@ -59664,24 +59697,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 30,
+          "order": 31,
           "range": [
-            22,
-            39
+            23,
+            40
           ],
-          "rank": 30,
+          "rank": 31,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 48,
+          "order": 50,
           "range": [
-            37,
-            89
+            39,
+            91
           ],
-          "rank": 48,
+          "rank": 50,
           "tier": "C",
           "unranked": null
         },
@@ -59898,12 +59931,12 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 50,
+          "order": 52,
           "range": [
-            38,
-            93
+            40,
+            95
           ],
-          "rank": 50,
+          "rank": 52,
           "tier": "C",
           "unranked": null
         },
@@ -60122,12 +60155,12 @@
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 56,
+          "order": 57,
           "range": [
             27,
-            99
+            119
           ],
-          "rank": 56,
+          "rank": 57,
           "tier": "C",
           "unranked": null
         },
@@ -60299,12 +60332,12 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 89,
+          "order": 93,
           "range": [
-            79,
+            82,
             128
           ],
-          "rank": 89,
+          "rank": 93,
           "tier": "B",
           "unranked": null
         },
@@ -60313,7 +60346,7 @@
           "gate_held": false,
           "order": 121,
           "range": [
-            88,
+            90,
             159
           ],
           "rank": null,
@@ -61400,9 +61433,9 @@
         "desktop_chosen": {
           "band": "101–250",
           "gate_held": true,
-          "order": 107,
+          "order": 105,
           "range": [
-            105,
+            103,
             126
           ],
           "rank": null,
@@ -61415,7 +61448,7 @@
           "order": 23,
           "range": [
             16,
-            31
+            32
           ],
           "rank": 23,
           "tier": "B",
@@ -61962,24 +61995,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 53,
+          "order": 55,
           "range": [
-            37,
-            69
+            38,
+            71
           ],
-          "rank": 53,
+          "rank": 55,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 70,
+          "order": 71,
           "range": [
-            62,
-            86
+            63,
+            87
           ],
-          "rank": 70,
+          "rank": 71,
           "tier": "B",
           "unranked": null
         },
@@ -61998,12 +62031,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 94,
+          "order": 95,
           "range": [
-            79,
+            80,
             122
           ],
-          "rank": 94,
+          "rank": 95,
           "tier": "B",
           "unranked": null
         },
@@ -62506,25 +62539,25 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 72,
+          "order": 75,
           "range": [
-            62,
-            82
+            64,
+            86
           ],
-          "rank": 72,
+          "rank": 75,
           "tier": "A",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 75,
+          "order": 76,
           "range": [
             71,
-            93
+            96
           ],
-          "rank": 75,
-          "tier": "A",
+          "rank": 76,
+          "tier": "B",
           "unranked": null
         },
         "dev_apps": {
@@ -62691,7 +62724,7 @@
           "gate_held": false,
           "order": 122,
           "range": [
-            114,
+            109,
             151
           ],
           "rank": null,
@@ -62703,7 +62736,7 @@
           "gate_held": false,
           "order": 124,
           "range": [
-            110,
+            107,
             161
           ],
           "rank": null,
@@ -62897,13 +62930,13 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 87,
+          "order": 91,
           "range": [
-            73,
-            98
+            75,
+            116
           ],
-          "rank": 87,
-          "tier": "A",
+          "rank": 91,
+          "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
@@ -62911,7 +62944,7 @@
           "gate_held": false,
           "order": 116,
           "range": [
-            84,
+            87,
             142
           ],
           "rank": null,
@@ -62933,12 +62966,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 86,
+          "order": 87,
           "range": [
-            74,
+            75,
             103
           ],
-          "rank": 86,
+          "rank": 87,
           "tier": "B",
           "unranked": null
         },
@@ -63080,12 +63113,12 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 54,
+          "order": 58,
           "range": [
-            45,
-            57
+            47,
+            62
           ],
-          "rank": 54,
+          "rank": 58,
           "tier": "A",
           "unranked": null
         },
@@ -63094,7 +63127,7 @@
           "gate_held": false,
           "order": 143,
           "range": [
-            99,
+            109,
             190
           ],
           "rank": null,
@@ -63454,7 +63487,7 @@
           "gate_held": false,
           "order": 134,
           "range": [
-            71,
+            75,
             192
           ],
           "rank": null,
@@ -63635,12 +63668,12 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 67,
+          "order": 73,
           "range": [
-            59,
-            71
+            64,
+            77
           ],
-          "rank": 67,
+          "rank": 73,
           "tier": "A",
           "unranked": null
         },
@@ -63649,7 +63682,7 @@
           "gate_held": false,
           "order": 221,
           "range": [
-            97,
+            109,
             299
           ],
           "rank": null,
@@ -63832,7 +63865,7 @@
           "gate_held": false,
           "order": 175,
           "range": [
-            163,
+            164,
             177
           ],
           "rank": null,
@@ -63866,12 +63899,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 77,
+          "order": 78,
           "range": [
-            61,
+            62,
             105
           ],
-          "rank": 77,
+          "rank": 78,
           "tier": "B",
           "unranked": null
         },
@@ -66499,9 +66532,9 @@
         "desktop_chosen": {
           "band": "101–250",
           "gate_held": false,
-          "order": 113,
+          "order": 108,
           "range": [
-            109,
+            106,
             145
           ],
           "rank": null,
@@ -66513,7 +66546,7 @@
           "gate_held": false,
           "order": 109,
           "range": [
-            105,
+            104,
             150
           ],
           "rank": null,
@@ -66684,7 +66717,7 @@
           "gate_held": false,
           "order": 151,
           "range": [
-            130,
+            128,
             191
           ],
           "rank": null,
@@ -66721,7 +66754,7 @@
           "order": 39,
           "range": [
             30,
-            57
+            58
           ],
           "rank": 39,
           "tier": "B",
@@ -67047,24 +67080,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 81,
+          "order": 84,
           "range": [
-            56,
+            60,
             126
           ],
-          "rank": 81,
+          "rank": 84,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 97,
+          "order": 98,
           "range": [
-            65,
+            66,
             152
           ],
-          "rank": 97,
+          "rank": 98,
           "tier": "B",
           "unranked": null
         },
@@ -67786,13 +67819,13 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 49,
+          "order": 53,
           "range": [
-            41,
-            56
+            44,
+            59
           ],
-          "rank": 49,
-          "tier": "B",
+          "rank": 53,
+          "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
@@ -67800,8 +67833,8 @@
           "gate_held": false,
           "order": 120,
           "range": [
-            80,
-            148
+            83,
+            146
           ],
           "rank": null,
           "tier": "B",
@@ -67812,8 +67845,8 @@
           "gate_held": false,
           "order": 126,
           "range": [
-            87,
-            155
+            89,
+            154
           ],
           "rank": null,
           "tier": "B",
@@ -68158,10 +68191,10 @@
         "coding": {
           "band": "101–250",
           "gate_held": true,
-          "order": 111,
+          "order": 106,
           "range": [
-            110,
-            119
+            106,
+            115
           ],
           "rank": null,
           "tier": "B",
@@ -68358,12 +68391,12 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 60,
+          "order": 65,
           "range": [
-            53,
-            62
+            57,
+            68
           ],
-          "rank": 60,
+          "rank": 65,
           "tier": "A",
           "unranked": null
         },
@@ -68384,7 +68417,7 @@
           "gate_held": false,
           "order": 185,
           "range": [
-            143,
+            144,
             205
           ],
           "rank": null,
@@ -68581,7 +68614,7 @@
           "gate_held": false,
           "order": 171,
           "range": [
-            139,
+            140,
             192
           ],
           "rank": null,
@@ -68603,12 +68636,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 53,
+          "order": 54,
           "range": [
             38,
-            67
+            68
           ],
-          "rank": 53,
+          "rank": 54,
           "tier": "B",
           "unranked": null
         },
@@ -69166,7 +69199,7 @@
           "gate_held": false,
           "order": 189,
           "range": [
-            145,
+            147,
             213
           ],
           "rank": null,
@@ -69188,12 +69221,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 60,
+          "order": 61,
           "range": [
             44,
-            74
+            75
           ],
-          "rank": 60,
+          "rank": 61,
           "tier": "B",
           "unranked": null
         },
@@ -69539,7 +69572,7 @@
           "gate_held": false,
           "order": 140,
           "range": [
-            112,
+            109,
             169
           ],
           "rank": null,
@@ -69551,7 +69584,7 @@
           "gate_held": false,
           "order": 141,
           "range": [
-            112,
+            110,
             177
           ],
           "rank": null,
@@ -69573,12 +69606,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 55,
+          "order": 56,
           "range": [
             44,
-            70
+            71
           ],
-          "rank": 55,
+          "rank": 56,
           "tier": "B",
           "unranked": null
         },
@@ -70274,7 +70307,7 @@
           "gate_held": false,
           "order": 152,
           "range": [
-            93,
+            95,
             180
           ],
           "rank": null,
@@ -70299,7 +70332,7 @@
           "order": 47,
           "range": [
             37,
-            55
+            56
           ],
           "rank": 47,
           "tier": "B",
@@ -71166,12 +71199,12 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 93,
+          "order": 98,
           "range": [
-            73,
+            78,
             126
           ],
-          "rank": 93,
+          "rank": 98,
           "tier": "B",
           "unranked": null
         },
@@ -71180,7 +71213,7 @@
           "gate_held": false,
           "order": 119,
           "range": [
-            81,
+            83,
             131
           ],
           "rank": null,
@@ -71922,7 +71955,7 @@
           "gate_held": false,
           "order": 127,
           "range": [
-            115,
+            111,
             145
           ],
           "rank": null,
@@ -71934,7 +71967,7 @@
           "gate_held": false,
           "order": 136,
           "range": [
-            113,
+            111,
             165
           ],
           "rank": null,
@@ -72286,12 +72319,12 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 59,
+          "order": 64,
           "range": [
-            53,
-            61
+            58,
+            67
           ],
-          "rank": 59,
+          "rank": 64,
           "tier": "A",
           "unranked": null
         },
@@ -72664,12 +72697,12 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 68,
+          "order": 74,
           "range": [
-            62,
-            69
+            67,
+            75
           ],
-          "rank": 68,
+          "rank": 74,
           "tier": "A",
           "unranked": null
         },
@@ -73579,12 +73612,12 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 16,
+          "order": 17,
           "range": [
-            10,
-            28
+            11,
+            30
           ],
-          "rank": 16,
+          "rank": 17,
           "tier": "C",
           "unranked": null
         },
@@ -73594,7 +73627,7 @@
           "order": 25,
           "range": [
             22,
-            34
+            35
           ],
           "rank": 25,
           "tier": "B",
@@ -73770,24 +73803,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 33,
+          "order": 34,
           "range": [
-            21,
-            58
+            22,
+            61
           ],
-          "rank": 33,
+          "rank": 34,
           "tier": "C",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 48,
+          "order": 49,
           "range": [
             36,
-            63
+            64
           ],
-          "rank": 48,
+          "rank": 49,
           "tier": "B",
           "unranked": null
         },
@@ -73996,12 +74029,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 84,
+          "order": 85,
           "range": [
-            75,
-            96
+            76,
+            97
           ],
-          "rank": 84,
+          "rank": 85,
           "tier": "A",
           "unranked": null
         },
@@ -74168,24 +74201,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 12,
+          "order": 13,
           "range": [
-            9,
-            15
+            10,
+            16
           ],
-          "rank": 12,
+          "rank": 13,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 19,
+          "order": 20,
           "range": [
-            18,
-            31
+            19,
+            32
           ],
-          "rank": 19,
+          "rank": 20,
           "tier": "B",
           "unranked": null
         },
@@ -74377,7 +74410,7 @@
           "gate_held": false,
           "order": 173,
           "range": [
-            159,
+            158,
             180
           ],
           "rank": null,
@@ -74553,26 +74586,26 @@
       ],
       "ranks": {
         "desktop_chosen": {
-          "band": null,
+          "band": "101–250",
           "gate_held": false,
-          "order": 99,
+          "order": 117,
           "range": [
-            89,
+            93,
             127
           ],
-          "rank": 99,
-          "tier": "B",
+          "rank": null,
+          "tier": "A",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 90,
+          "order": 91,
           "range": [
-            72,
+            73,
             122
           ],
-          "rank": 90,
+          "rank": 91,
           "tier": "B",
           "unranked": null
         },
@@ -75099,12 +75132,12 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 85,
+          "order": 88,
           "range": [
-            78,
+            80,
             126
           ],
-          "rank": 85,
+          "rank": 88,
           "tier": "B",
           "unranked": null
         },
@@ -75113,7 +75146,7 @@
           "gate_held": false,
           "order": 117,
           "range": [
-            87,
+            88,
             155
           ],
           "rank": null,
@@ -75282,10 +75315,10 @@
         "coding": {
           "band": "101–250",
           "gate_held": true,
-          "order": 122,
+          "order": 118,
           "range": [
-            115,
-            123
+            110,
+            119
           ],
           "rank": null,
           "tier": "B",
@@ -78530,24 +78563,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 41,
+          "order": 42,
           "range": [
-            32,
-            48
+            33,
+            52
           ],
-          "rank": 41,
+          "rank": 42,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
-          "band": null,
+          "band": "101–250",
           "gate_held": false,
-          "order": 100,
+          "order": 118,
           "range": [
-            82,
+            85,
             135
           ],
-          "rank": 100,
+          "rank": null,
           "tier": "B",
           "unranked": null
         },
@@ -78556,8 +78589,8 @@
           "gate_held": false,
           "order": 123,
           "range": [
-            90,
-            146
+            92,
+            145
           ],
           "rank": null,
           "tier": "B",
@@ -80509,12 +80542,12 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 70,
+          "order": 76,
           "range": [
-            68,
-            71
+            74,
+            77
           ],
-          "rank": 70,
+          "rank": 76,
           "tier": "A",
           "unranked": null
         },
@@ -80915,12 +80948,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 72,
+          "order": 73,
           "range": [
-            60,
-            85
+            61,
+            86
           ],
-          "rank": 72,
+          "rank": 73,
           "tier": "B",
           "unranked": null
         },
@@ -81271,7 +81304,7 @@
           "order": 3,
           "range": [
             2,
-            4
+            5
           ],
           "rank": 3,
           "tier": "A",
@@ -81476,12 +81509,12 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 15,
+          "order": 16,
           "range": [
-            9,
-            23
+            10,
+            25
           ],
-          "rank": 15,
+          "rank": 16,
           "tier": "B",
           "unranked": null
         },
@@ -81664,12 +81697,12 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 36,
+          "order": 37,
           "range": [
-            24,
-            52
+            25,
+            54
           ],
-          "rank": 36,
+          "rank": 37,
           "tier": "B",
           "unranked": null
         },
@@ -81679,7 +81712,7 @@
           "order": 44,
           "range": [
             39,
-            62
+            63
           ],
           "rank": 44,
           "tier": "B",
@@ -81703,7 +81736,7 @@
           "order": 29,
           "range": [
             25,
-            42
+            43
           ],
           "rank": 29,
           "tier": "B",
@@ -81847,24 +81880,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 66,
+          "order": 69,
           "range": [
-            59,
-            81
+            62,
+            85
           ],
-          "rank": 66,
+          "rank": 69,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 72,
+          "order": 73,
           "range": [
-            65,
-            92
+            67,
+            94
           ],
-          "rank": 72,
+          "rank": 73,
           "tier": "B",
           "unranked": null
         },
@@ -81885,7 +81918,7 @@
           "gate_held": false,
           "order": 32,
           "range": [
-            25,
+            26,
             45
           ],
           "rank": 32,
@@ -82055,36 +82088,36 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 16,
+          "order": 17,
           "range": [
-            14,
+            15,
             28
           ],
-          "rank": 16,
+          "rank": 17,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 52,
+          "order": 54,
           "range": [
-            42,
-            72
+            44,
+            74
           ],
-          "rank": 52,
+          "rank": 54,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 64,
+          "order": 65,
           "range": [
-            49,
+            50,
             97
           ],
-          "rank": 64,
+          "rank": 65,
           "tier": "B",
           "unranked": null
         },
@@ -82787,12 +82820,12 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 65,
+          "order": 71,
           "range": [
-            57,
-            69
+            62,
+            75
           ],
-          "rank": 65,
+          "rank": 71,
           "tier": "A",
           "unranked": null
         },
@@ -83366,7 +83399,7 @@
           "gate_held": false,
           "order": 133,
           "range": [
-            93,
+            95,
             147
           ],
           "rank": null,
@@ -83898,7 +83931,7 @@
           "gate_held": false,
           "order": 131,
           "range": [
-            120,
+            115,
             158
           ],
           "rank": null,
@@ -83910,7 +83943,7 @@
           "gate_held": false,
           "order": 130,
           "range": [
-            114,
+            111,
             168
           ],
           "rank": null,
@@ -84253,10 +84286,10 @@
         "coding": {
           "band": "101–250",
           "gate_held": true,
-          "order": 116,
+          "order": 112,
           "range": [
-            114,
-            120
+            109,
+            115
           ],
           "rank": null,
           "tier": "B",
@@ -85715,24 +85748,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 14,
+          "order": 15,
           "range": [
             7,
-            19
+            21
           ],
-          "rank": 14,
+          "rank": 15,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 9,
+          "order": 10,
           "range": [
             4,
-            16
+            19
           ],
-          "rank": 9,
+          "rank": 10,
           "tier": "C",
           "unranked": null
         },
@@ -85742,7 +85775,7 @@
           "order": 31,
           "range": [
             22,
-            36
+            37
           ],
           "rank": 31,
           "tier": "B",
@@ -85763,7 +85796,7 @@
           "order": 48,
           "range": [
             26,
-            81
+            82
           ],
           "rank": 48,
           "tier": "C",
@@ -85907,24 +85940,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 94,
+          "order": 99,
           "range": [
-            73,
+            75,
             162
           ],
-          "rank": 94,
+          "rank": 99,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 91,
+          "order": 92,
           "range": [
-            65,
-            141
+            66,
+            142
           ],
-          "rank": 91,
+          "rank": 92,
           "tier": "B",
           "unranked": null
         },
@@ -86039,7 +86072,7 @@
     },
     {
       "aliases": [],
-      "category": "sans-serif",
+      "category": "serif",
       "family": "TeX Gyre Bonum",
       "first_seen": "2026-09-26",
       "flags": [],
@@ -86092,7 +86125,7 @@
           "gate_held": false,
           "order": 126,
           "range": [
-            80,
+            82,
             188
           ],
           "rank": null,
@@ -86222,7 +86255,7 @@
     },
     {
       "aliases": [],
-      "category": "sans-serif",
+      "category": "handwriting",
       "family": "TeX Gyre Chorus",
       "first_seen": "2026-09-26",
       "flags": [],
@@ -86271,26 +86304,26 @@
       ],
       "ranks": {
         "desktop_chosen": {
-          "band": null,
+          "band": "101–250",
           "gate_held": false,
-          "order": 96,
+          "order": 114,
           "range": [
-            76,
+            78,
             168
           ],
-          "rank": 96,
+          "rank": null,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 94,
+          "order": 95,
           "range": [
-            68,
+            69,
             148
           ],
-          "rank": 94,
+          "rank": 95,
           "tier": "B",
           "unranked": null
         },
@@ -86456,36 +86489,36 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 51,
+          "order": 54,
           "range": [
-            40,
-            60
+            41,
+            65
           ],
-          "rank": 51,
+          "rank": 54,
           "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 80,
+          "order": 83,
           "range": [
-            61,
-            96
+            63,
+            118
           ],
-          "rank": 80,
+          "rank": 83,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 73,
+          "order": 74,
           "range": [
-            57,
-            96
+            58,
+            97
           ],
-          "rank": 73,
+          "rank": 74,
           "tier": "B",
           "unranked": null
         },
@@ -86651,24 +86684,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 68,
+          "order": 71,
           "range": [
-            53,
-            85
+            54,
+            90
           ],
-          "rank": 68,
+          "rank": 71,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 66,
+          "order": 67,
           "range": [
             52,
-            82
+            84
           ],
-          "rank": 66,
+          "rank": 67,
           "tier": "B",
           "unranked": null
         },
@@ -86839,9 +86872,9 @@
         "desktop_chosen": {
           "band": "101–250",
           "gate_held": false,
-          "order": 118,
+          "order": 113,
           "range": [
-            104,
+            102,
             255
           ],
           "rank": null,
@@ -86851,12 +86884,12 @@
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 85,
+          "order": 86,
           "range": [
             58,
             186
           ],
-          "rank": 85,
+          "rank": 86,
           "tier": "C",
           "unranked": null
         },
@@ -86971,7 +87004,7 @@
     },
     {
       "aliases": [],
-      "category": "sans-serif",
+      "category": "serif",
       "family": "TeX Gyre Pagella",
       "first_seen": "2026-09-26",
       "flags": [],
@@ -87022,24 +87055,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 74,
+          "order": 77,
           "range": [
-            55,
-            89
+            57,
+            93
           ],
-          "rank": 74,
+          "rank": 77,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 69,
+          "order": 70,
           "range": [
-            53,
-            87
+            54,
+            89
           ],
-          "rank": 69,
+          "rank": 70,
           "tier": "B",
           "unranked": null
         },
@@ -87154,7 +87187,7 @@
     },
     {
       "aliases": [],
-      "category": "sans-serif",
+      "category": "serif",
       "family": "TeX Gyre Schola",
       "first_seen": "2026-09-26",
       "flags": [],
@@ -87205,24 +87238,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 95,
+          "order": 100,
           "range": [
-            75,
+            77,
             167
           ],
-          "rank": 95,
+          "rank": 100,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 93,
+          "order": 94,
           "range": [
-            67,
+            68,
             147
           ],
-          "rank": 93,
+          "rank": 94,
           "tier": "B",
           "unranked": null
         },
@@ -87337,7 +87370,7 @@
     },
     {
       "aliases": [],
-      "category": "sans-serif",
+      "category": "serif",
       "family": "TeX Gyre Termes",
       "first_seen": "2026-09-26",
       "flags": [],
@@ -87388,24 +87421,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 61,
+          "order": 64,
           "range": [
-            49,
-            78
+            50,
+            83
           ],
-          "rank": 61,
+          "rank": 64,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 63,
+          "order": 64,
           "range": [
             50,
-            76
+            77
           ],
-          "rank": 63,
+          "rank": 64,
           "tier": "B",
           "unranked": null
         },
@@ -87602,24 +87635,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 79,
+          "order": 82,
           "range": [
-            47,
-            98
+            49,
+            125
           ],
-          "rank": 79,
+          "rank": 82,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 77,
+          "order": 78,
           "range": [
-            59,
+            60,
             125
           ],
-          "rank": 77,
+          "rank": 78,
           "tier": "B",
           "unranked": null
         },
@@ -87991,12 +88024,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 98,
+          "order": 99,
           "range": [
-            68,
+            69,
             159
           ],
-          "rank": 98,
+          "rank": 99,
           "tier": "B",
           "unranked": null
         },
@@ -88136,10 +88169,10 @@
         "coding": {
           "band": "101–250",
           "gate_held": true,
-          "order": 123,
+          "order": 119,
           "range": [
-            117,
-            126
+            113,
+            122
           ],
           "rank": null,
           "tier": "B",
@@ -88352,12 +88385,12 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 11,
+          "order": 12,
           "range": [
-            6,
-            13
+            7,
+            14
           ],
-          "rank": 11,
+          "rank": 12,
           "tier": "A",
           "unranked": null
         },
@@ -88536,24 +88569,24 @@
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 29,
+          "order": 30,
           "range": [
-            19,
-            47
+            20,
+            50
           ],
-          "rank": 29,
+          "rank": 30,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": null,
           "gate_held": false,
-          "order": 57,
+          "order": 58,
           "range": [
             48,
-            69
+            71
           ],
-          "rank": 57,
+          "rank": 58,
           "tier": "B",
           "unranked": null
         },
@@ -88574,7 +88607,7 @@
           "gate_held": false,
           "order": 137,
           "range": [
-            91,
+            92,
             184
           ],
           "rank": null,
@@ -88746,24 +88779,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 10,
+          "order": 11,
           "range": [
-            9,
-            14
+            10,
+            15
           ],
-          "rank": 10,
+          "rank": 11,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 17,
+          "order": 18,
           "range": [
-            13,
-            23
+            14,
+            24
           ],
-          "rank": 17,
+          "rank": 18,
           "tier": "A",
           "unranked": null
         },
@@ -88773,7 +88806,7 @@
           "order": 24,
           "range": [
             19,
-            34
+            35
           ],
           "rank": 24,
           "tier": "B",
@@ -88794,12 +88827,12 @@
         "overall": {
           "band": null,
           "gate_held": false,
-          "order": 68,
+          "order": 69,
           "range": [
             49,
-            93
+            94
           ],
-          "rank": 68,
+          "rank": 69,
           "tier": "B",
           "unranked": null
         },
@@ -88975,7 +89008,7 @@
           "gate_held": false,
           "order": 159,
           "range": [
-            125,
+            126,
             191
           ],
           "rank": null,
@@ -89163,12 +89196,12 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 69,
+          "order": 75,
           "range": [
-            61,
-            72
+            68,
+            78
           ],
-          "rank": 69,
+          "rank": 75,
           "tier": "A",
           "unranked": null
         },
@@ -89189,7 +89222,7 @@
           "gate_held": false,
           "order": 159,
           "range": [
-            137,
+            138,
             176
           ],
           "rank": null,
@@ -90115,7 +90148,7 @@
           "gate_held": false,
           "order": 124,
           "range": [
-            100,
+            101,
             148
           ],
           "rank": null,
@@ -90828,24 +90861,24 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 22,
+          "order": 23,
           "range": [
-            19,
-            28
+            20,
+            29
           ],
-          "rank": 22,
+          "rank": 23,
           "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
           "band": null,
           "gate_held": false,
-          "order": 31,
+          "order": 32,
           "range": [
-            26,
-            43
+            27,
+            44
           ],
-          "rank": 31,
+          "rank": 32,
           "tier": "B",
           "unranked": null
         },
@@ -91025,7 +91058,7 @@
           "gate_held": false,
           "order": 157,
           "range": [
-            92,
+            96,
             195
           ],
           "rank": null,
@@ -91206,13 +91239,13 @@
         "coding": {
           "band": null,
           "gate_held": false,
-          "order": 57,
+          "order": 62,
           "range": [
-            47,
-            64
+            51,
+            70
           ],
-          "rank": 57,
-          "tier": "A",
+          "rank": 62,
+          "tier": "B",
           "unranked": null
         },
         "desktop_chosen": {
@@ -91955,7 +91988,7 @@
           "gate_held": false,
           "order": 155,
           "range": [
-            133,
+            134,
             160
           ],
           "rank": null,
@@ -93223,35 +93256,35 @@
       "pulled_in_by": [],
       "ranks": {
         "coding": {
-          "band": "101–250",
-          "gate_held": true,
-          "order": 104,
+          "band": null,
+          "gate_held": false,
+          "order": 52,
           "range": [
-            103,
-            107
+            45,
+            59
           ],
-          "rank": null,
-          "tier": "B",
+          "rank": 52,
+          "tier": "A",
           "unranked": null
         },
         "desktop_chosen": {
-          "band": "101–250",
+          "band": null,
           "gate_held": false,
-          "order": 111,
+          "order": 95,
           "range": [
-            109,
+            66,
             129
           ],
-          "rank": null,
+          "rank": 95,
           "tier": "B",
           "unranked": null
         },
         "desktop_installed": {
           "band": "101–250",
           "gate_held": false,
-          "order": 106,
+          "order": 105,
           "range": [
-            105,
+            70,
             133
           ],
           "rank": null,
@@ -93739,7 +93772,7 @@
     "date": "2026-09-26",
     "generator": "tff-catalog 0.1.0",
     "method_version": "2026-09-25",
-    "ranking_toml_sha256": "fc2ce4bfb6f83c25a83f456376d6d5230645be8ab1f0b15afaf973e1f4ab45a6"
+    "ranking_toml_sha256": "c22345a46e450ec826f9076b9f82ad87c3f5343ae9cce64c2da8574ae5a5992b"
   },
   "schema_version": "1.0.0-draft",
   "sources": [
@@ -93781,7 +93814,7 @@
     },
     {
       "data_date": "2026-09-26",
-      "group": "github_counters",
+      "group": "nerd",
       "id": "nerd",
       "license": "Counts may be published, with credit (GitHub Terms of Service)",
       "measures": "Patched-build downloads, credited to the original font",

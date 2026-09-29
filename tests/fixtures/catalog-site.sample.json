@@ -85,7 +85,7 @@
     {
       "id": "nerd",
       "name": "Nerd Fonts release downloads",
-      "group": "github_counters",
+      "group": "nerd",
       "survey": "desktop",
       "measures": "Patched-build downloads, credited to the original font",
       "url": "https://github.com/ryanoasis/nerd-fonts/releases",

@@ -126,7 +126,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--strict",
         action="store_true",
-        help="also check config/sources/ and ranking.toml against the collectors",
+        help="also check config/sources/ and ranking.toml against the collectors, and "
+        "category-overrides.toml against the family id registry",
     )
     p.set_defaults(func=_cmd_config)
 

@@ -162,7 +162,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - `is_monospace` (from `post.isFixedPitch` or panose when no metadata exists);
   - `formats` {variable, static}.
 
-  Sources: GF metadata, Fontsource, or the font's own tables, cached by file hash.
+  Sources: GF metadata, Fontsource, or the font's own tables, cached by file hash. The owner's categories in `config/category-overrides.toml` come before all of them (owner ruling of 2026-09-29, gate R round 1: the 22 catalog fonts left on the sans-serif default).
 
 **Done when:** every family has all three fields, and spot checks pass: JetBrains Mono is monospace; Inter is sans and variable.
 
@@ -330,7 +330,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 
 ### Step 16: First full run and owner review of the top lists
 **Who:** both. **Depends on:** 15.
-- [ ] Claude prepares a review pack:
+- [x] Claude prepares a review pack: *(`build/review-pack/`, rebuilt by every refresh; the owner reviewed round 1 from it in chat on 2026-09-29)*
   - the top 100 of each rank, with tiers and per-source ranks;
   - fonts held back by the gate;
   - tier-C fonts;
@@ -338,7 +338,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - *most chosen*-versus-project disagreements;
   - anomalies;
   - the what-if table.
-- [ ] The owner reviews and edits `ranking.toml`, the aliases or `preinstalled.toml`; Claude reruns (up to 3 rounds).
+- [ ] The owner reviews and edits `ranking.toml`, the aliases or `preinstalled.toml`; Claude reruns (up to 3 rounds). *(2026-09-29: round 1 is ruled (`data/reviews/review/2026-09-29.toml`) and implemented: Nerd Fonts is its own independence group, and 22 catalog fonts get owner categories in `config/category-overrides.toml`. The real-store rebuild followed the same day (replays byte-identical, validate green). Left: round 2.)*
 
 **Done when:** the owner approves the lists.
 

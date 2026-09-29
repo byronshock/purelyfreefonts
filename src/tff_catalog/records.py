@@ -72,6 +72,7 @@ GROUPS = frozenset(
         "arch",
         "debian",
         "github_counters",
+        "nerd",  # its own group since the owner's ruling of 2026-09-29 (gate R, R1)
         "flutter",
     }
 )  # independence groups, methodology §6; gate T3 dropped Chocolatey from v1

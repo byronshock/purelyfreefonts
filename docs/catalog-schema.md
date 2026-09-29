@@ -54,6 +54,8 @@ The full catalog: every font in it, every rank, and every source.
 The catalog is the overall top 500 plus the top 100 of the project rank and both desktop views, with the membership hysteresis in methodology §6. Every font in it has an accepted download link: a member with no link that two sources agree on, or that the owner-approved foundry list gives, is held back until the owner picks one (gate K), and `review.md` names it. The published exact ranks close up over it: every font ranked below it moves up one place in that view, so a held-back font leaves no gap in the ranks the site shows (owner ruling of 2026-09-28).
 
 - **Identity:** `id` (stable, never changes), `family` (the current name), `category`, `is_monospace`, `superfamily_id` (from `data/superfamilies.csv`, or null).
+  - `category` is `sans-serif`, `serif`, `display`, `handwriting` or `monospace`. The owner's category in `config/category-overrides.toml` comes first (owner ruling of 2026-09-29). Otherwise it comes from Google's metadata, then Fontsource, then the other sources; then `monospace` for a monospaced font; then the font's own OS/2 tables. With none of those it is `sans-serif`, and the monthly review pack lists those catalog fonts for the owner to rule on.
+  - `is_monospace` comes from the same sources and the font's tables. A font whose category is `monospace` is always monospaced, the owner's included.
 - `aliases[]`: other names of the family, each with its `relation`:
   - `rename`: an old name (Source Sans Pro for Source Sans 3);
   - `build`: a build of the same design (Inter Variable, JetBrainsMono Nerd Font);

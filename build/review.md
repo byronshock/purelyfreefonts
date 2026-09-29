@@ -3,7 +3,7 @@
 - Run of 2026-09-26. First run: there are no published ranks to compare with, so there is no diff and no month-on-month flag yet.
 - Fonts with an outlier-guard hit, all ranks: desktop_chosen 6, desktop_installed 8, project 130, coding 0, dev_apps 20.
 - Snapshot store: 6.9 MB in the newest snapshots used this run.
-- Flags below the top 100, and cross-check moves of fewer than 3 places (guard 31, crosscheck 178), are listed in build/review-pack/anomalies.md.
+- Flags below the top 100, and cross-check moves of fewer than 3 places (guard 31, crosscheck 176), are listed in build/review-pack/anomalies.md.
 - The owner's review pack (top-100 lists with tiers and per-source ranks, the what-if table in full, the old Top 100 comparison) is in build/review-pack/, not committed.
 
 ## Summary
@@ -14,10 +14,10 @@
 | desktop_chosen | 317 | – | – | – | 0 | 0 | 0 |
 | desktop_installed | 322 | – | – | – | 0 | 0 | 0 |
 | project | 436 | – | – | – | 0 | 0 | 0 |
-| coding | 93 | – | – | – | 0 | 0 | 0 |
+| coding | 95 | – | – | – | 0 | 0 | 0 |
 | dev_apps | 405 | – | – | – | 0 | 0 | 0 |
 
-Flags: 435 (ruler_overlap 1, guard 88, crosscheck 315, disagreement 21, term 8, specimen 1, rank_gap 1).
+Flags: 442 (ruler_overlap 1, guard 88, crosscheck 322, disagreement 21, term 8, specimen 1, rank_gap 1).
 
 ## Entries
 
@@ -85,7 +85,7 @@ Sources with too few fonts in common with the ruler.
 
 | Rank | Flag |
 | --- | --- |
-| coding | `github`: 38 fonts in common with the ruler, weight × 0.76 |
+| coding | `github`: 39 fonts in common with the ruler, weight × 0.78 |
 
 ## Outlier-guard hits
 
@@ -94,14 +94,14 @@ Terms the outlier guard gave reduced weight.
 | Rank | Flag |
 | --- | --- |
 | desktop_chosen | Source Code Pro (3): `debian` × 0.5 |
-| desktop_chosen | Iosevka (8): `debian` × 0.5 |
-| desktop_chosen | Roboto Mono (19): `debian` × 0.5 |
+| desktop_chosen | Iosevka (9): `debian` × 0.5 |
+| desktop_chosen | Roboto Mono (20): `debian` × 0.5 |
 | desktop_installed | Source Code Pro (4): `debian` × 0.5 |
 | desktop_installed | Cascadia Code (6): `debian` × 0.5 |
 | desktop_installed | Iosevka (7): `debian` × 0.5 |
 | desktop_installed | Roboto Mono (36): `debian` × 0.5 |
 | desktop_installed | Source Serif 4 (44): `debian` × 0.5 |
-| desktop_installed | Fira Sans (50): `debian` × 0.5 |
+| desktop_installed | Fira Sans (51): `debian` × 0.5 |
 | project | JetBrains Mono (24): `almanac` × 0.5 |
 | project | Google Sans (26): `ecosystems` × 0.5 |
 | project | Roboto Mono (29): `almanac` × 0.5 |
@@ -159,91 +159,96 @@ Fonts moving under RRF or the Fontsource ruler.
 | --- | --- |
 | overall | Source Code Pro moves from 10 to 15 (50%) under coverage-aware RRF (k=60) |
 | overall | Inconsolata moves from 21 to 28 (33%) under coverage-aware RRF (k=60) |
-| overall | Arimo moves from 38 to 50 (32%) under coverage-aware RRF (k=60) |
-| overall | Fira Mono moves from 63 to 44 (30.2%) under coverage-aware RRF (k=60) |
-| overall | Bitter moves from 67 to 94 (40%) under coverage-aware RRF (k=60) |
-| overall | Fantasque Sans Mono moves from 70 to 47 (33%) under coverage-aware RRF (k=60) |
-| overall | Pacifico moves from 77 to 107 (39%) under coverage-aware RRF (k=60) |
-| overall | 0xProto moves from 79 to 51 (35%) under coverage-aware RRF (k=60) |
-| overall | Cascadia Code moves from 80 to 52 (35%) under coverage-aware RRF (k=60) |
-| overall | Newsreader moves from 81 to 109 (35%) under coverage-aware RRF (k=60) |
-| overall | Roboto Flex moves from 84 to 112 (33%) under coverage-aware RRF (k=60) |
-| overall | Go Mono moves from 88 to 56 (36%) under coverage-aware RRF (k=60) |
-| overall | Crimson Pro moves from 91 to 121 (33%) under coverage-aware RRF (k=60) |
-| overall | Be Vietnam Pro moves from 99 to 144 (45%) under coverage-aware RRF (k=60) |
+| overall | Arimo moves from 38 to 51 (34%) under coverage-aware RRF (k=60) |
+| overall | Hack moves from 53 to 31 (42%) under coverage-aware RRF (k=60) |
+| overall | Bitter moves from 68 to 95 (40%) under coverage-aware RRF (k=60) |
+| overall | Fantasque Sans Mono moves from 71 to 48 (32%) under coverage-aware RRF (k=60) |
+| overall | Pacifico moves from 78 to 107 (37%) under coverage-aware RRF (k=60) |
+| overall | 0xProto moves from 80 to 52 (35%) under coverage-aware RRF (k=60) |
+| overall | Cascadia Code moves from 81 to 53 (35%) under coverage-aware RRF (k=60) |
+| overall | Newsreader moves from 82 to 109 (33%) under coverage-aware RRF (k=60) |
+| overall | Roboto Flex moves from 85 to 112 (32%) under coverage-aware RRF (k=60) |
+| overall | Go Mono moves from 89 to 57 (36%) under coverage-aware RRF (k=60) |
+| overall | Crimson Pro moves from 92 to 121 (32%) under coverage-aware RRF (k=60) |
+| overall | Be Vietnam Pro moves from 100 to 144 (44%) under coverage-aware RRF (k=60) |
 | overall | Source Sans 3 moves from 5 to 8 (60%) under the jsdelivr ruler |
 | overall | Source Code Pro moves from 10 to 20 (100%) under the jsdelivr ruler |
 | overall | IBM Plex Sans moves from 19 to 26 (37%) under the jsdelivr ruler |
 | overall | Geist Mono moves from 42 to 57 (36%) under the jsdelivr ruler |
 | overall | Iosevka moves from 45 to 70 (56%) under the jsdelivr ruler |
 | overall | Terminus moves from 48 to 63 (31%) under the jsdelivr ruler |
-| overall | Fantasque Sans Mono moves from 70 to 103 (47%) under the jsdelivr ruler |
-| overall | 0xProto moves from 79 to 131 (66%) under the jsdelivr ruler |
-| overall | Overpass moves from 86 to 125 (45%) under the jsdelivr ruler |
-| overall | Monaspace Neon moves from 92 to 129 (40%) under the jsdelivr ruler |
-| overall | OpenDyslexic moves from 94 to 143 (52%) under the jsdelivr ruler |
-| overall | DejaVu Sans Mono moves from 97 to 158 (63%) under the jsdelivr ruler |
-| overall | Monaspace Xenon moves from 100 to 139 (39%) under the jsdelivr ruler |
-| desktop_chosen | Cascadia Code moves from 6 to 9 (50%) under coverage-aware RRF (k=60) |
-| desktop_chosen | Terminus moves from 9 to 15 (67%) under coverage-aware RRF (k=60) |
-| desktop_chosen | Droid Sans Mono moves from 10 to 5 (50%) under coverage-aware RRF (k=60) |
-| desktop_chosen | Ubuntu moves from 11 to 6 (45%) under coverage-aware RRF (k=60) |
-| desktop_chosen | Inconsolata LGC moves from 92 to 135 (47%) under coverage-aware RRF (k=60) |
-| desktop_chosen | Courier Prime moves from 97 to 143 (47%) under coverage-aware RRF (k=60) |
-| desktop_chosen | Roboto Slab moves from 99 to 141 (42%) under coverage-aware RRF (k=60) |
-| desktop_chosen | Share Tech Mono moves from 100 to 151 (51%) under coverage-aware RRF (k=60) |
+| overall | Hack moves from 53 to 86 (62%) under the jsdelivr ruler |
+| overall | Fantasque Sans Mono moves from 71 to 103 (45%) under the jsdelivr ruler |
+| overall | 0xProto moves from 80 to 131 (64%) under the jsdelivr ruler |
+| overall | Overpass moves from 87 to 125 (44%) under the jsdelivr ruler |
+| overall | Monaspace Neon moves from 93 to 129 (39%) under the jsdelivr ruler |
+| overall | OpenDyslexic moves from 95 to 143 (51%) under the jsdelivr ruler |
+| overall | DejaVu Sans Mono moves from 98 to 158 (61%) under the jsdelivr ruler |
+| desktop_chosen | Cascadia Code moves from 7 to 10 (43%) under coverage-aware RRF (k=60) |
+| desktop_chosen | Terminus moves from 10 to 16 (60%) under coverage-aware RRF (k=60) |
+| desktop_chosen | Droid Sans Mono moves from 11 to 6 (45%) under coverage-aware RRF (k=60) |
+| desktop_chosen | Ubuntu moves from 12 to 7 (42%) under coverage-aware RRF (k=60) |
+| desktop_chosen | Inconsolata LGC moves from 97 to 135 (39%) under coverage-aware RRF (k=60) |
 | desktop_chosen | Source Code Pro moves from 3 to 9 (200%) under the jsdelivr ruler |
-| desktop_chosen | Cascadia Code moves from 6 to 12 (100%) under the jsdelivr ruler |
-| desktop_chosen | Iosevka moves from 8 to 17 (112%) under the jsdelivr ruler |
-| desktop_chosen | Ubuntu moves from 11 to 6 (45%) under the jsdelivr ruler |
-| desktop_chosen | Cascadia Mono moves from 13 to 18 (38%) under the jsdelivr ruler |
-| desktop_chosen | Source Sans 3 moves from 15 to 20 (33%) under the jsdelivr ruler |
-| desktop_chosen | Roboto moves from 16 to 7 (56%) under the jsdelivr ruler |
-| desktop_chosen | Monaspace Argon moves from 21 to 34 (62%) under the jsdelivr ruler |
-| desktop_chosen | Monaspace Krypton moves from 22 to 36 (64%) under the jsdelivr ruler |
-| desktop_chosen | Monaspace Neon moves from 23 to 33 (43%) under the jsdelivr ruler |
-| desktop_chosen | Monaspace Radon moves from 24 to 37 (54%) under the jsdelivr ruler |
-| desktop_chosen | Monaspace Xenon moves from 25 to 35 (40%) under the jsdelivr ruler |
-| desktop_chosen | Ubuntu Condensed moves from 29 to 19 (34%) under the jsdelivr ruler |
-| desktop_chosen | DejaVu Sans Mono moves from 30 to 59 (97%) under the jsdelivr ruler |
-| desktop_chosen | Roboto Condensed moves from 33 to 21 (36%) under the jsdelivr ruler |
-| desktop_chosen | 0xProto moves from 35 to 55 (57%) under the jsdelivr ruler |
-| desktop_chosen | Fira Sans Condensed moves from 38 to 26 (32%) under the jsdelivr ruler |
-| desktop_chosen | Mononoki moves from 39 to 62 (59%) under the jsdelivr ruler |
-| desktop_chosen | Fira Sans moves from 40 to 25 (38%) under the jsdelivr ruler |
-| desktop_chosen | Intel One Mono moves from 43 to 77 (79%) under the jsdelivr ruler |
-| desktop_chosen | DejaVu Serif moves from 45 to 67 (49%) under the jsdelivr ruler |
-| desktop_chosen | Lilex moves from 47 to 96 (104%) under the jsdelivr ruler |
-| desktop_chosen | Agave moves from 49 to 88 (80%) under the jsdelivr ruler |
-| desktop_chosen | Caladea moves from 51 to 30 (41%) under the jsdelivr ruler |
-| desktop_chosen | OpenDyslexic moves from 53 to 97 (83%) under the jsdelivr ruler |
-| desktop_chosen | IBM 3270 moves from 54 to 74 (37%) under the jsdelivr ruler |
-| desktop_chosen | Latin Modern moves from 58 to 38 (34%) under the jsdelivr ruler |
-| desktop_chosen | Hasklig moves from 59 to 128 (117%) under the jsdelivr ruler |
-| desktop_chosen | Atkinson Hyperlegible Next moves from 60 to 40 (33%) under the jsdelivr ruler |
-| desktop_chosen | Libertinus Serif moves from 62 to 85 (37%) under the jsdelivr ruler |
-| desktop_chosen | Libertinus Sans moves from 64 to 87 (36%) under the jsdelivr ruler |
-| desktop_chosen | Libertinus Mono moves from 67 to 89 (33%) under the jsdelivr ruler |
-| desktop_chosen | Libertinus Serif Display moves from 69 to 91 (32%) under the jsdelivr ruler |
-| desktop_chosen | Google Sans Code moves from 70 to 269 (284%) under the jsdelivr ruler |
-| desktop_chosen | Libertinus Keyboard moves from 71 to 94 (32%) under the jsdelivr ruler |
-| desktop_chosen | Oswald moves from 72 to 47 (35%) under the jsdelivr ruler |
-| desktop_chosen | TeX Gyre Pagella moves from 74 to 50 (32%) under the jsdelivr ruler |
-| desktop_chosen | iA Writer Duo moves from 86 to 135 (57%) under the jsdelivr ruler |
-| desktop_chosen | Overpass moves from 87 to 192 (121%) under the jsdelivr ruler |
-| desktop_chosen | Cozette moves from 88 to 149 (69%) under the jsdelivr ruler |
-| desktop_chosen | Iosevka Curly moves from 90 to 141 (57%) under the jsdelivr ruler |
-| desktop_chosen | Crimson Pro moves from 91 to 61 (33%) under the jsdelivr ruler |
-| desktop_chosen | Inconsolata LGC moves from 92 to 133 (45%) under the jsdelivr ruler |
-| desktop_chosen | Mona Sans moves from 98 to 162 (65%) under the jsdelivr ruler |
-| desktop_chosen | Share Tech Mono moves from 100 to 150 (50%) under the jsdelivr ruler |
+| desktop_chosen | Hack moves from 5 to 13 (160%) under the jsdelivr ruler |
+| desktop_chosen | Cascadia Code moves from 7 to 12 (71%) under the jsdelivr ruler |
+| desktop_chosen | Inconsolata moves from 8 to 5 (38%) under the jsdelivr ruler |
+| desktop_chosen | Iosevka moves from 9 to 18 (100%) under the jsdelivr ruler |
+| desktop_chosen | Ubuntu moves from 12 to 6 (50%) under the jsdelivr ruler |
+| desktop_chosen | Cascadia Mono moves from 14 to 19 (36%) under the jsdelivr ruler |
+| desktop_chosen | Source Sans 3 moves from 16 to 21 (31%) under the jsdelivr ruler |
+| desktop_chosen | Roboto moves from 17 to 7 (59%) under the jsdelivr ruler |
+| desktop_chosen | Monaspace Argon moves from 22 to 35 (59%) under the jsdelivr ruler |
+| desktop_chosen | Monaspace Krypton moves from 23 to 37 (61%) under the jsdelivr ruler |
+| desktop_chosen | Monaspace Neon moves from 24 to 34 (42%) under the jsdelivr ruler |
+| desktop_chosen | Monaspace Radon moves from 25 to 38 (52%) under the jsdelivr ruler |
+| desktop_chosen | Monaspace Xenon moves from 26 to 36 (38%) under the jsdelivr ruler |
+| desktop_chosen | Ubuntu Condensed moves from 30 to 20 (33%) under the jsdelivr ruler |
+| desktop_chosen | DejaVu Sans Mono moves from 31 to 60 (94%) under the jsdelivr ruler |
+| desktop_chosen | Roboto Condensed moves from 34 to 22 (35%) under the jsdelivr ruler |
+| desktop_chosen | 0xProto moves from 36 to 56 (56%) under the jsdelivr ruler |
+| desktop_chosen | Geist Mono moves from 39 to 83 (113%) under the jsdelivr ruler |
+| desktop_chosen | Fira Sans Condensed moves from 40 to 27 (32%) under the jsdelivr ruler |
+| desktop_chosen | Mononoki moves from 41 to 63 (54%) under the jsdelivr ruler |
+| desktop_chosen | Fira Sans moves from 42 to 26 (38%) under the jsdelivr ruler |
+| desktop_chosen | Intel One Mono moves from 45 to 79 (76%) under the jsdelivr ruler |
+| desktop_chosen | DejaVu Serif moves from 47 to 69 (47%) under the jsdelivr ruler |
+| desktop_chosen | Lilex moves from 49 to 99 (102%) under the jsdelivr ruler |
+| desktop_chosen | Agave moves from 51 to 91 (78%) under the jsdelivr ruler |
+| desktop_chosen | Caladea moves from 53 to 31 (42%) under the jsdelivr ruler |
+| desktop_chosen | OpenDyslexic moves from 55 to 100 (82%) under the jsdelivr ruler |
+| desktop_chosen | IBM 3270 moves from 56 to 76 (36%) under the jsdelivr ruler |
+| desktop_chosen | Latin Modern moves from 60 to 39 (35%) under the jsdelivr ruler |
+| desktop_chosen | Hasklig moves from 61 to 128 (110%) under the jsdelivr ruler |
+| desktop_chosen | Atkinson Hyperlegible Next moves from 62 to 41 (34%) under the jsdelivr ruler |
+| desktop_chosen | Libertinus Serif moves from 65 to 88 (35%) under the jsdelivr ruler |
+| desktop_chosen | Libertinus Sans moves from 67 to 90 (34%) under the jsdelivr ruler |
+| desktop_chosen | Libertinus Mono moves from 70 to 92 (31%) under the jsdelivr ruler |
+| desktop_chosen | Tex Gyre Heros moves from 71 to 49 (31%) under the jsdelivr ruler |
+| desktop_chosen | Libertinus Serif Display moves from 72 to 94 (31%) under the jsdelivr ruler |
+| desktop_chosen | Google Sans Code moves from 73 to 269 (268%) under the jsdelivr ruler |
+| desktop_chosen | Libertinus Keyboard moves from 74 to 97 (31%) under the jsdelivr ruler |
+| desktop_chosen | Oswald moves from 75 to 48 (36%) under the jsdelivr ruler |
+| desktop_chosen | TeX Gyre Pagella moves from 77 to 51 (34%) under the jsdelivr ruler |
+| desktop_chosen | TeX Gyre Cursor moves from 83 to 57 (31%) under the jsdelivr ruler |
+| desktop_chosen | Merriweather moves from 85 to 59 (31%) under the jsdelivr ruler |
+| desktop_chosen | iA Writer Quattro moves from 86 to 126 (47%) under the jsdelivr ruler |
+| desktop_chosen | Rubik moves from 88 to 61 (31%) under the jsdelivr ruler |
+| desktop_chosen | Commit Mono moves from 89 to 306 (244%) under the jsdelivr ruler |
+| desktop_chosen | iA Writer Duo moves from 90 to 135 (50%) under the jsdelivr ruler |
+| desktop_chosen | Overpass moves from 91 to 192 (111%) under the jsdelivr ruler |
+| desktop_chosen | Cozette moves from 92 to 149 (62%) under the jsdelivr ruler |
+| desktop_chosen | Iosevka Curly moves from 94 to 141 (50%) under the jsdelivr ruler |
+| desktop_chosen | Zed Mono moves from 95 to 312 (228%) under the jsdelivr ruler |
+| desktop_chosen | Crimson Pro moves from 96 to 62 (35%) under the jsdelivr ruler |
+| desktop_chosen | Inconsolata LGC moves from 97 to 133 (37%) under the jsdelivr ruler |
 | desktop_installed | Cascadia Code moves from 6 to 10 (67%) under coverage-aware RRF (k=60) |
 | desktop_installed | Noto Sans Mono moves from 9 to 14 (56%) under coverage-aware RRF (k=60) |
 | desktop_installed | Cascadia Mono moves from 12 to 17 (42%) under coverage-aware RRF (k=60) |
 | desktop_installed | Fira Mono moves from 16 to 11 (31%) under coverage-aware RRF (k=60) |
-| desktop_installed | Cantarell moves from 22 to 41 (86%) under coverage-aware RRF (k=60) |
-| desktop_installed | TeX Gyre Heros Cn moves from 85 to 54 (36%) under coverage-aware RRF (k=60) |
-| desktop_installed | iA Writer Duo moves from 96 to 127 (32%) under coverage-aware RRF (k=60) |
+| desktop_installed | Cantarell moves from 22 to 42 (91%) under coverage-aware RRF (k=60) |
+| desktop_installed | TeX Gyre Heros Cn moves from 86 to 55 (36%) under coverage-aware RRF (k=60) |
+| desktop_installed | iA Writer Duo moves from 97 to 127 (31%) under coverage-aware RRF (k=60) |
 | desktop_installed | Cascadia Code moves from 6 to 20 (233%) under the jsdelivr ruler |
 | desktop_installed | Iosevka moves from 7 to 22 (214%) under the jsdelivr ruler |
 | desktop_installed | Noto Sans Mono moves from 9 to 6 (33%) under the jsdelivr ruler |
@@ -263,36 +268,40 @@ Fonts moving under RRF or the Fontsource ruler.
 | desktop_installed | Fantasque Sans Mono moves from 41 to 62 (51%) under the jsdelivr ruler |
 | desktop_installed | 0xProto moves from 42 to 134 (219%) under the jsdelivr ruler |
 | desktop_installed | Source Serif 4 moves from 44 to 66 (50%) under the jsdelivr ruler |
-| desktop_installed | Mononoki moves from 47 to 77 (64%) under the jsdelivr ruler |
-| desktop_installed | Roboto Condensed moves from 48 to 31 (35%) under the jsdelivr ruler |
-| desktop_installed | Intel One Mono moves from 49 to 87 (78%) under the jsdelivr ruler |
-| desktop_installed | Adwaita Sans moves from 53 to 34 (36%) under the jsdelivr ruler |
-| desktop_installed | Caladea moves from 54 to 37 (31%) under the jsdelivr ruler |
-| desktop_installed | Lilex moves from 55 to 99 (80%) under the jsdelivr ruler |
-| desktop_installed | Noto Serif Display moves from 56 to 32 (43%) under the jsdelivr ruler |
-| desktop_installed | Latin Modern moves from 59 to 41 (31%) under the jsdelivr ruler |
-| desktop_installed | Agave moves from 60 to 90 (50%) under the jsdelivr ruler |
-| desktop_installed | IBM 3270 moves from 61 to 83 (36%) under the jsdelivr ruler |
-| desktop_installed | Hasklig moves from 67 to 133 (99%) under the jsdelivr ruler |
-| desktop_installed | OpenDyslexic moves from 70 to 153 (119%) under the jsdelivr ruler |
-| desktop_installed | Google Sans Code moves from 74 to 267 (261%) under the jsdelivr ruler |
-| desktop_installed | Atkinson Hyperlegible Next moves from 82 to 56 (32%) under the jsdelivr ruler |
-| desktop_installed | Libertinus Mono moves from 84 to 122 (45%) under the jsdelivr ruler |
-| desktop_installed | Libertinus Serif Display moves from 86 to 125 (45%) under the jsdelivr ruler |
-| desktop_installed | Libertinus Keyboard moves from 87 to 129 (48%) under the jsdelivr ruler |
-| desktop_installed | Monoid moves from 88 to 124 (41%) under the jsdelivr ruler |
-| desktop_installed | iA Writer Quattro moves from 89 to 132 (48%) under the jsdelivr ruler |
-| desktop_installed | Junicode moves from 92 to 131 (42%) under the jsdelivr ruler |
-| desktop_installed | iA Writer Duo moves from 96 to 144 (50%) under the jsdelivr ruler |
-| desktop_installed | Cabin moves from 98 to 63 (36%) under the jsdelivr ruler |
-| desktop_installed | Iosevka Curly moves from 99 to 142 (43%) under the jsdelivr ruler |
+| desktop_installed | Geist Mono moves from 45 to 90 (100%) under the jsdelivr ruler |
+| desktop_installed | Mononoki moves from 48 to 77 (60%) under the jsdelivr ruler |
+| desktop_installed | Roboto Condensed moves from 49 to 31 (37%) under the jsdelivr ruler |
+| desktop_installed | Intel One Mono moves from 50 to 87 (74%) under the jsdelivr ruler |
+| desktop_installed | Adwaita Sans moves from 54 to 34 (37%) under the jsdelivr ruler |
+| desktop_installed | Caladea moves from 55 to 37 (33%) under the jsdelivr ruler |
+| desktop_installed | Lilex moves from 56 to 100 (79%) under the jsdelivr ruler |
+| desktop_installed | Noto Serif Display moves from 57 to 32 (44%) under the jsdelivr ruler |
+| desktop_installed | Ubuntu Condensed moves from 58 to 40 (31%) under the jsdelivr ruler |
+| desktop_installed | Latin Modern moves from 60 to 41 (32%) under the jsdelivr ruler |
+| desktop_installed | Agave moves from 61 to 91 (49%) under the jsdelivr ruler |
+| desktop_installed | IBM 3270 moves from 62 to 83 (34%) under the jsdelivr ruler |
+| desktop_installed | Hasklig moves from 68 to 133 (96%) under the jsdelivr ruler |
+| desktop_installed | OpenDyslexic moves from 71 to 153 (115%) under the jsdelivr ruler |
+| desktop_installed | Google Sans Code moves from 75 to 267 (256%) under the jsdelivr ruler |
+| desktop_installed | Atkinson Hyperlegible Next moves from 83 to 56 (33%) under the jsdelivr ruler |
+| desktop_installed | Libertinus Sans moves from 84 to 120 (43%) under the jsdelivr ruler |
+| desktop_installed | Libertinus Mono moves from 85 to 122 (44%) under the jsdelivr ruler |
+| desktop_installed | Libertinus Serif Display moves from 87 to 125 (44%) under the jsdelivr ruler |
+| desktop_installed | Libertinus Keyboard moves from 88 to 129 (47%) under the jsdelivr ruler |
+| desktop_installed | Monoid moves from 89 to 124 (39%) under the jsdelivr ruler |
+| desktop_installed | iA Writer Quattro moves from 90 to 132 (47%) under the jsdelivr ruler |
+| desktop_installed | Junicode moves from 93 to 131 (41%) under the jsdelivr ruler |
+| desktop_installed | Merriweather moves from 96 to 67 (30.3%) under the jsdelivr ruler |
+| desktop_installed | iA Writer Duo moves from 97 to 144 (48%) under the jsdelivr ruler |
+| desktop_installed | Cabin moves from 99 to 63 (36%) under the jsdelivr ruler |
+| desktop_installed | Iosevka Curly moves from 100 to 142 (42%) under the jsdelivr ruler |
 | project | Google Sans moves from 26 to 34 (31%) under coverage-aware RRF (k=60) |
-| coding | Space Mono moves from 16 to 21 (31%) under coverage-aware RRF (k=60) |
-| coding | iA Writer Mono moves from 40 to 54 (35%) under the jsdelivr ruler |
-| coding | Atkinson Hyperlegible Mono moves from 47 to 68 (45%) under the jsdelivr ruler |
-| coding | Martian Mono moves from 50 to 72 (44%) under the jsdelivr ruler |
-| coding | TeX Gyre Cursor moves from 51 to 31 (39%) under the jsdelivr ruler |
-| coding | VT323 moves from 57 to 35 (39%) under the jsdelivr ruler |
+| coding | Commit Mono moves from 40 to 53 (32%) under the jsdelivr ruler |
+| coding | iA Writer Mono moves from 43 to 58 (35%) under the jsdelivr ruler |
+| coding | Atkinson Hyperlegible Mono moves from 50 to 73 (46%) under the jsdelivr ruler |
+| coding | TeX Gyre Cursor moves from 54 to 32 (41%) under the jsdelivr ruler |
+| coding | Martian Mono moves from 56 to 78 (39%) under the jsdelivr ruler |
+| coding | VT323 moves from 62 to 36 (42%) under the jsdelivr ruler |
 | dev_apps | Space Grotesk moves from 9 to 12 (33%) under coverage-aware RRF (k=60) |
 
 ## Most chosen versus project
@@ -302,25 +311,25 @@ Fonts high in one rank and low in the other.
 | Rank | Flag |
 | --- | --- |
 | desktop_chosen | Meslo LG: desktop_chosen 4, project not ranked |
-| desktop_chosen | Cascadia Code: desktop_chosen 6, project 430 |
-| desktop_chosen | Terminus: desktop_chosen 9, project not ranked |
-| desktop_chosen | Cascadia Mono: desktop_chosen 13, project 634 |
-| desktop_chosen | Monaspace Argon: desktop_chosen 21, project 826 |
-| desktop_chosen | Monaspace Krypton: desktop_chosen 22, project 636 |
-| desktop_chosen | Monaspace Neon: desktop_chosen 23, project 440 |
-| desktop_chosen | Monaspace Radon: desktop_chosen 24, project not ranked |
-| desktop_chosen | Monaspace Xenon: desktop_chosen 25, project 603 |
-| desktop_chosen | Fantasque Sans Mono: desktop_chosen 26, project not ranked |
-| desktop_chosen | Go Mono: desktop_chosen 27, project not ranked |
-| desktop_chosen | Ubuntu Condensed: desktop_chosen 29, project 359 |
-| desktop_chosen | Victor Mono: desktop_chosen 31, project 454 |
-| desktop_chosen | 0xProto: desktop_chosen 35, project not ranked |
-| desktop_chosen | Mononoki: desktop_chosen 39, project 596 |
-| desktop_chosen | Intel One Mono: desktop_chosen 43, project 983 |
-| desktop_chosen | DejaVu Serif: desktop_chosen 45, project not ranked |
-| desktop_chosen | Bitstream Vera Sans Mono: desktop_chosen 46, project not ranked |
-| desktop_chosen | Lilex: desktop_chosen 47, project 982 |
-| desktop_chosen | Agave: desktop_chosen 49, project not ranked |
+| desktop_chosen | Hack: desktop_chosen 5, project not ranked |
+| desktop_chosen | Cascadia Code: desktop_chosen 7, project 430 |
+| desktop_chosen | Terminus: desktop_chosen 10, project not ranked |
+| desktop_chosen | Cascadia Mono: desktop_chosen 14, project 634 |
+| desktop_chosen | Monaspace Argon: desktop_chosen 22, project 826 |
+| desktop_chosen | Monaspace Krypton: desktop_chosen 23, project 636 |
+| desktop_chosen | Monaspace Neon: desktop_chosen 24, project 440 |
+| desktop_chosen | Monaspace Radon: desktop_chosen 25, project not ranked |
+| desktop_chosen | Monaspace Xenon: desktop_chosen 26, project 603 |
+| desktop_chosen | Fantasque Sans Mono: desktop_chosen 27, project not ranked |
+| desktop_chosen | Go Mono: desktop_chosen 28, project not ranked |
+| desktop_chosen | Ubuntu Condensed: desktop_chosen 30, project 359 |
+| desktop_chosen | Victor Mono: desktop_chosen 32, project 454 |
+| desktop_chosen | 0xProto: desktop_chosen 36, project not ranked |
+| desktop_chosen | Mononoki: desktop_chosen 41, project 596 |
+| desktop_chosen | Intel One Mono: desktop_chosen 45, project 983 |
+| desktop_chosen | DejaVu Serif: desktop_chosen 47, project not ranked |
+| desktop_chosen | Bitstream Vera Sans Mono: desktop_chosen 48, project not ranked |
+| desktop_chosen | Lilex: desktop_chosen 49, project 982 |
 | project | Titillium Web: project 38, desktop_chosen not ranked |
 
 ## Term flags
@@ -354,4 +363,4 @@ Exact ranks whose font is not in the catalog. The site numbers rows by position,
 
 | Rank | Flag |
 | --- | --- |
-| coding | exact ranks 71 are not in the catalog |
+| coding | exact ranks 77 are not in the catalog |

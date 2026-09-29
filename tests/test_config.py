@@ -20,7 +20,13 @@ from tests.helpers import ROOT
 from tff_catalog import collectors
 from tff_catalog.collectors import discover
 from tff_catalog.collectors.base import load_settings
-from tff_catalog.config import check_collectors, config_hash, load_config, ranking_hash
+from tff_catalog.config import (
+    check_category_ids,
+    check_collectors,
+    config_hash,
+    load_config,
+    ranking_hash,
+)
 from tff_catalog.config_model import CONFIG_FILES, Config, ConfigError
 from tff_catalog.paths import Paths
 from tff_catalog.records import GROUPS, NAMESPACES
@@ -190,6 +196,7 @@ UNKNOWN_KEYS = {
     "rank-table": ("ranking.toml", _set("ranks", "rising", "min_shares", value=0.1), "min_shares"),
     "licenses": ("licenses.toml", _set("allowd", value={}), "allowd"),
     "preinstalled": ("preinstalled.toml", _set("sytems", value={}), "sytems"),
+    "category-overrides": ("category-overrides.toml", _set("familes", value={}), "familes"),
 }
 
 
@@ -310,6 +317,87 @@ def test_missing_file_fails(cfg: ConfigCopy) -> None:
     (cfg.config / "licenses.toml").unlink()
     with pytest.raises(ConfigError, match=r"licenses\.toml: missing"):
         cfg.load()
+
+
+# --- config/category-overrides.toml (owner ruling of 2026-09-29, gate R round 1) --------------
+
+CATEGORIES_22 = {
+    "serif": {
+        "junicode",
+        "latin-modern",
+        "tex-gyre-termes",
+        "tex-gyre-pagella",
+        "tex-gyre-schola",
+        "tex-gyre-bonum",
+        "charter",
+        "gentium",
+        "fanwood",
+    },
+    "monospace": {"cozette", "miracode", "compagnon"},
+    "handwriting": {"tex-gyre-chorus"},
+    "sans-serif": {
+        "tex-gyre-heros",
+        "tex-gyre-heros-cn",
+        "tex-gyre-adventor",
+        "sn-pro-font-family",
+        "pretendard-std",
+        "sophia-nubian",
+        "tagmukay",
+        "heavy-data",
+        "awami-nastaliq",
+    },
+}
+
+
+def test_category_overrides_hold_the_owner_ruling_of_2026_09_29() -> None:
+    """categories_22 in data/reviews/review/2026-09-29.toml: every one of the 22 fonts is
+    listed, the nine the owner kept on sans-serif included."""
+    families = load_config(Paths.for_root(ROOT)).category_overrides.families
+    by_category: dict[str, set[str]] = {}
+    for fid, category in families.items():
+        by_category.setdefault(category, set()).add(fid)
+    assert by_category == CATEGORIES_22
+    assert len(families) == 22
+
+
+CATEGORY_BREAKS = {
+    "not-a-category": (_set("families", "junicode", value="slab"), "families.junicode: 'slab'"),
+    "not-a-string": (_set("families", "junicode", value=1), "expected a string"),
+    "not-an-id": (_set("families", "Junicode", value="serif"), "'Junicode' is not a family id"),
+    "no-table": (_drop("families"), "families: missing key"),
+    "schema": (_set("schema", value=2), "schema 2, expected 1"),
+}
+
+
+@pytest.mark.parametrize("case", sorted(CATEGORY_BREAKS))
+def test_category_overrides_load_strictly(cfg: ConfigCopy, case: str) -> None:
+    edit, message = CATEGORY_BREAKS[case]
+    cfg.change("category-overrides.toml", edit)
+    with pytest.raises(ConfigError, match=rf"category-overrides\.toml.*{re.escape(message)}"):
+        cfg.load()
+
+
+def test_category_overrides_count_toward_the_config_hash_only(cfg: ConfigCopy) -> None:
+    base = cfg.load()
+    cfg.change("category-overrides.toml", _set("families", "junicode", value="display"))
+    changed = cfg.load()
+    assert changed.category_overrides.families["junicode"] == "display"
+    assert config_hash(changed) != config_hash(base)
+    assert ranking_hash(changed) == ranking_hash(base)
+
+
+def test_strict_check_needs_every_overridden_family_in_the_id_registry(cfg: ConfigCopy) -> None:
+    loaded = cfg.load()
+    check_category_ids(loaded, cfg.paths)  # no registry yet: nothing to check against
+    ids = {fid: {"family": fid} for fid in loaded.category_overrides.families}
+    state_ids = cfg.root / "state" / "ids.json"
+    state_ids.parent.mkdir()
+    state_ids.write_text(json.dumps(ids), encoding="utf-8")
+    check_category_ids(loaded, cfg.paths)
+    del ids["tagmukay"]
+    state_ids.write_text(json.dumps(ids), encoding="utf-8")
+    with pytest.raises(ConfigError, match=r"not in the id registry \(state/ids\.json\): tagmukay"):
+        check_category_ids(loaded, cfg.paths)
 
 
 def test_bad_toml_fails(cfg: ConfigCopy) -> None:

@@ -106,6 +106,7 @@
               "homebrew",
               "http_archive",
               "jsdelivr",
+              "nerd",
               "npm_registry"
             ]
           },

@@ -6,14 +6,17 @@ Writes ``build/stage/facts.json`` ({id: Facts}).
 
 Rules (``derive_facts``), each fact decided by the first source that has it:
 
-- **category**: the category of ``google_metadata``, then ``google_repo`` (the
+- **category**: the owner's category from ``config/category-overrides.toml``
+  (basis "owner", owner ruling of 2026-09-29, gate R round 1), over every other
+  basis; then the category of ``google_metadata``, then ``google_repo`` (the
   METADATA.pb category, whose last value counts), then ``fontsource`` (its
   category, else its first classification other than "display", which counts
   only alone, because the list is alphabetical; "other" says nothing), then any
   other universe source; then "monospace" when the family is monospaced (as
   Fontsource files non-Google coding fonts); then the font's OS/2 panose and
   IBM class (``table_category``); else "sans-serif" (basis "default", listed in
-  the log for review).
+  the log for review, and in the gate R pack's ``checks.md`` for a catalog font).
+  An override id that the universe lacks fails the stage (``owner_categories``).
 - **is_monospace**: Google, then Fontsource, whose classifications are
   complete (a category without "monospace" means proportional), except the
   families ``GOOGLE_MONOSPACE`` lists, which Google files as proportional
@@ -22,7 +25,8 @@ Rules (``derive_facts``), each fact decided by the first source that has it:
   sources' explicit flags (Nerd Fonts ``isMonospaced``), except that a "yes"
   from them beats a "no" from the tables, because a coding font with a few
   wide glyphs leaves ``isFixedPitch`` off; else False. A family whose category
-  is "monospace" is always monospaced (the category's source decides both).
+  is "monospace" is always monospaced (the category's source decides both, so
+  an owner's "monospace" makes it monospaced with basis "owner").
 - **formats**: ``variable`` from Google or Fontsource, then the files (an
   ``fvar`` table; unread, a file whose role is "variable" or whose name follows
   the google/fonts rule ``Family[axes].ttf``), then other sources; ``static``
@@ -30,7 +34,7 @@ Rules (``derive_facts``), each fact decided by the first source that has it:
   instances), and otherwise unless every file seen is variable. Never both false.
 
 ``basis`` names the deciding source ("google_metadata", "fontsource",
-"font_file", "default", ...) when one decided all three facts, else
+"font_file", "owner", "default", ...) when one decided all three facts, else
 ``category=<b>;is_monospace=<b>;formats=<b>``.
 
 The stage reads one font file per family that the metadata leaves open (a
@@ -45,7 +49,7 @@ from collections import Counter, defaultdict
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field, replace
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Literal, get_args
+from typing import TYPE_CHECKING, Any, Literal, cast, get_args
 
 from tff_catalog import fontfiles, records, stageio
 from tff_catalog.fontfiles import FileRead, FontFacts, FontFileCache, ReadLog
@@ -54,6 +58,7 @@ from tff_catalog.keys import match_key
 if TYPE_CHECKING:
     import logging
 
+    from tff_catalog.config_model import CategoryOverridesConfig
     from tff_catalog.fetch import Fetcher
     from tff_catalog.records import FontFileRef, UniverseRecord
     from tff_catalog.stages import StageContext
@@ -70,6 +75,7 @@ METADATA_SOURCES = (*GOOGLE_SOURCES, FONTSOURCE)
 FONT_FILE = "font_file"
 DEFAULT = "default"
 DEFAULT_CATEGORY: Category = "sans-serif"
+OWNER = "owner"  # basis of a category from config/category-overrides.toml
 MAX_TRIES = 3  # font files tried per family before giving up
 FLUSH_EVERY = 100  # new cache rows kept in memory at most, so a crash loses little
 
@@ -280,12 +286,23 @@ def _basis(category: str, monospace: str, formats: str) -> str:
     return f"category={category};is_monospace={monospace};formats={formats}"
 
 
-def family_facts(recs: Iterable[UniverseRecord], font_facts: Mapping[str, FontFacts]) -> Facts:
-    """The facts of one family from its records and the facts of its files (by sha256)."""
+def family_facts(
+    recs: Iterable[UniverseRecord],
+    font_facts: Mapping[str, FontFacts],
+    owner_category: Category | None = None,
+) -> Facts:
+    """The facts of one family from its records and the facts of its files (by sha256).
+
+    ``owner_category``, the family's entry in ``config/category-overrides.toml``,
+    wins over every other basis, as basis "owner".
+    """
     ordered = sorted(recs, key=_record_order)
     files = _files(ordered, font_facts)
     mono = _monospace(ordered, files)
-    category, category_basis = _category(ordered, files, mono)
+    if owner_category is not None:
+        category, category_basis = owner_category, OWNER
+    else:
+        category, category_basis = _category(ordered, files, mono)
     if category == "monospace" and not mono[0]:
         # The "mono" category and the Spacing filter must agree (a source's
         # "monospace" category word is a monospace claim).
@@ -336,10 +353,54 @@ def group_records(u: Universe, recs: Iterable[UniverseRecord]) -> dict[str, list
 
 
 def derive_facts(
-    u: Universe, recs: Iterable[UniverseRecord], font_facts: Mapping[str, FontFacts]
+    u: Universe,
+    recs: Iterable[UniverseRecord],
+    font_facts: Mapping[str, FontFacts],
+    owner: Mapping[str, Category] | None = None,
 ) -> dict[str, Facts]:
-    """Facts for every eligible family; ``font_facts`` is keyed by file sha256."""
-    return {fid: family_facts(rs, font_facts) for fid, rs in group_records(u, recs).items()}
+    """Facts for every eligible family; ``font_facts`` is keyed by file sha256 and
+    ``owner`` holds the owner's categories by family id (``owner_categories``)."""
+    owner = owner or {}
+    return {
+        fid: family_facts(rs, font_facts, owner.get(fid))
+        for fid, rs in group_records(u, recs).items()
+    }
+
+
+def owner_categories(
+    overrides: CategoryOverridesConfig, u: Universe, log: logging.Logger | None = None
+) -> dict[str, Category]:
+    """The owner's categories (``config/category-overrides.toml``) by family id.
+
+    Raises ``config_model.ConfigError`` for an id that names no family of the
+    universe: a typo, or a family renamed or merged away since the ruling. An
+    entry for a family the universe drops changes nothing and is logged.
+    """
+    from tff_catalog.config_model import CATEGORY_OVERRIDES_FILE, ConfigError
+
+    unknown = sorted(set(overrides.families) - set(u.families))
+    if unknown:
+        raise ConfigError(
+            f"{CATEGORY_OVERRIDES_FILE}: families {', '.join(unknown)}: no family of this "
+            "run's universe has that id (a typo, or a family renamed or merged away); fix or "
+            "remove the entry"
+        )
+    dropped = sorted(fid for fid in overrides.families if u.families[fid].drop is not None)
+    if dropped and log is not None:
+        log.warning(
+            "facts: %s names families the universe drops, so their entries change nothing: %s",
+            CATEGORY_OVERRIDES_FILE,
+            ", ".join(dropped),
+        )
+    out: dict[str, Category] = {}
+    for fid, category in sorted(overrides.families.items()):
+        if category not in CATEGORIES:  # load_config refuses it first; a hand-built Config may not
+            raise ConfigError(
+                f"{CATEGORY_OVERRIDES_FILE}: families.{fid}: {category!r} is not one of "
+                f"{', '.join(CATEGORIES)}"
+            )
+        out[fid] = cast("Category", category)
+    return out
 
 
 # --- which files to read ------------------------------------------------------------------------
@@ -487,6 +548,7 @@ def _open_cache(ctx: StageContext) -> FontFileCache:
 def run(ctx: StageContext) -> None:
     """Stage "facts"."""
     u = stageio.load_stage(ctx.paths, "universe")
+    owner = owner_categories(ctx.config.category_overrides, u, ctx.log)  # fails before any read
     grouped = group_records(u, universe_records(ctx.paths.records))
     cache = _open_cache(ctx)
     replay_day = ctx.options.from_snapshots
@@ -509,7 +571,8 @@ def run(ctx: StageContext) -> None:
             ctx.log.warning("could not record font reads in the store: %s", exc)
     font_facts = {ff.sha256: ff for ff in by_url.values()}
     out = {
-        fid: family_facts(with_hashes(recs, by_url), font_facts) for fid, recs in grouped.items()
+        fid: family_facts(with_hashes(recs, by_url), font_facts, owner.get(fid))
+        for fid, recs in grouped.items()
     }
     stageio.dump_stage(ctx.paths, "facts", out)
     _report(ctx, out, len(by_url), resolver)

@@ -62,7 +62,7 @@ GROUP = {
     "homebrew": "homebrew",
     "arch": "arch",
     "github": "github_counters",
-    "nerd": "github_counters",
+    "nerd": "nerd",  # its own group: owner ruling of 2026-09-29 (gate R, R1)
     "debian": "debian",
     "fot": "fot",
     "almanac": "http_archive",
