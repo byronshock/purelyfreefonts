@@ -291,17 +291,17 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 
 ### Step 14: Official download links
 **Who:** Claude; the owner approves overrides. **Depends on:** 4, 6a; runs alongside steps 8–13.
-- [ ] Google families:
+- [x] Google families:
   - primary link: the specimen page;
   - designer link: `minisite_url` or `repository_url`, never googlefontdirectory-hg.
-- [ ] An override list (Inter, IBM Plex, JetBrains Mono, the Adobe Source families), approved by the owner.
-- [ ] Non-Google fonts:
+- [x] An override list (Inter, IBM Plex, JetBrains Mono, the Adobe Source families), approved by the owner. *(All 32 overrides in `config/link-overrides.toml` are approved in `data/reviews/links/`, the last on 2026-09-29.)*
+- [x] Non-Google fonts: *(2026-09-29: `links --check` on the real store passes all 500 catalog families with 0 failures; its only warnings are two designer links, Grandstander's 404 and Vollkorn's certificate mismatch.)*
   - link the designer's homepage or the repository's releases page;
   - never a release asset, `/releases/latest` or an aggregator (open-foundry.com counts as one: owner ruling of 2026-09-26);
   - web.archive.org counts as an aggregator for every automatic pick, but an override the owner approves may link a timestamped Wayback Machine capture of the designer's page when that page is gone, marked and labelled as archived (owner ruling of 2026-09-29);
   - auto-accept only when two sources agree, or when the owner-approved foundry list (`config/foundries.toml`, gate C3) gives the link (owner ruling of 2026-09-26);
   - an `http://` homepage is upgraded to `https://` and checked monthly (owner ruling of 2026-09-26).
-- [ ] A monthly link check.
+- [ ] A monthly link check. *(The check runs in every refresh and as `tff-catalog links --check`; the monthly schedule comes with step 19's workflow.)*
 
 **Done when:** every catalog font has a primary link that follows the policy and returns HTTP 200.
 
