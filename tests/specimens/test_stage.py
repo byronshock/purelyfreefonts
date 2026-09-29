@@ -472,6 +472,89 @@ def test_a_final_newline_does_not_pass_as_an_id_or_a_sha256(
     assert fetcher.calls == []
 
 
+ZIP = "https://fonts.example/downloads/Test-1.0.zip"
+
+
+def zip_of(members: dict[str, bytes]) -> bytes:
+    import io
+    import zipfile
+
+    out = io.BytesIO()
+    with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr("Test-1.0/README.txt", "A release archive.")
+        for name, data in members.items():
+            zf.writestr(name, data)
+    return out.getvalue()
+
+
+def _ranged_fetcher(files: dict[str, bytes], seen: list[str]) -> Fetcher:
+    """The real ``fetch.Fetcher`` on a mock server that answers Range requests."""
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request.headers.get("range", "whole"))
+        body = files.get(str(request.url))
+        if body is None:
+            return httpx.Response(404)
+        wanted = request.headers.get("range")
+        if wanted is None:
+            return httpx.Response(200, content=body)
+        first, last = (int(x) for x in wanted.removeprefix("bytes=").split("-"))
+        last = min(last, len(body) - 1)
+        span = {"content-range": f"bytes {first}-{last}/{len(body)}"}
+        return httpx.Response(206, content=body[first : last + 1], headers=span)
+
+    return Fetcher(
+        transport=httpx.MockTransport(handler), retries=0, min_interval={"fonts.example": 0.0}
+    )
+
+
+def test_fetch_font_reads_one_member_of_a_zip_archive(
+    tmp_path: Path, fonts: dict[str, bytes]
+) -> None:
+    font = fonts["good"]
+    url = f"{ZIP}#Test-1.0/TTF/Test%20Sans-Regular.ttf"
+    seen: list[str] = []
+    archive = zip_of({"Test-1.0/TTF/Test Sans-Regular.ttf": font})
+    with _ranged_fetcher({ZIP: archive}, seen) as fetcher:
+        path = stage.fetch_font(url, sha(font), fetcher, tmp_path)
+    assert path is not None
+    assert path.read_bytes() == font  # the member, unchanged, under its own sha256
+    assert path.name == sha(font)
+    assert seen
+    assert "whole" not in seen  # by range: never the whole archive
+    assert stage.fetch_font(url, sha(font), None, tmp_path) == path  # then from the cache
+
+
+def member_row(font_id: str, member: str, expected: bytes) -> dict:
+    ref = {"url": f"{ZIP}#{member}", "sha256": sha(expected), "size": len(expected)}
+    return {"id": font_id, "family": "Test Sans", "preview_ok": True,
+            "font_file": {**ref, "format": "ttf"}}  # fmt: skip
+
+
+def test_a_font_inside_an_archive_fails_closed(
+    ctx: StageContext, cache_dir: Path, fonts: dict[str, bytes]
+) -> None:
+    """A member whose bytes are not its sha256 is never cached and gives no image (the
+    stage's hash-mismatch flag); a member the archive lacks is a font that can't be had."""
+    good, other = fonts["good"], fonts["basic"]
+    archive = zip_of({"Test-1.0/good.ttf": good, "Test-1.0/other.ttf": other})
+    rows = [
+        member_row("good", "Test-1.0/good.ttf", good),
+        member_row("wrong", "Test-1.0/other.ttf", fonts["greek"]),  # other bytes than expected
+        member_row("missing", "Test-1.0/gone.ttf", other),
+    ]
+    seen: list[str] = []
+    with _ranged_fetcher({ZIP: archive}, seen) as fetcher:
+        previews = run_with(ctx, rows, fetcher)
+    assert previews["good"].path == "specimens/good.svg"
+    assert previews["wrong"] == Preview(
+        None, None, ("specimen_hash_mismatch",), "the font file does not match its sha256"
+    )
+    assert previews["missing"] == Preview(None, None, ("specimen_failed",), stage.UNAVAILABLE)
+    assert sorted(p.name for p in cache_dir.iterdir()) == [sha(good)]  # nothing else kept
+    assert sorted(svgs(ctx)) == ["good.svg"]
+
+
 def _mock_fetcher(files: dict[str, bytes], seen: list[str]) -> Fetcher:
     def handler(request: httpx.Request) -> httpx.Response:
         seen.append(str(request.url))

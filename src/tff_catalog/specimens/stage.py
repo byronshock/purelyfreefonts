@@ -1,7 +1,9 @@
 """The "specimens" stage (design-m2 §3). Owner: agent A5.
 
 1. For each ``preview_ok`` font, fetch ``font_file.url`` with the M1 fetcher
-   into ``~/.cache/tff/fonts/<sha256>``.
+   into ``~/.cache/tff/fonts/<sha256>``. A font inside a release archive
+   (``<archive>.zip#<member>``) is read out of it with ``fontfiles.read_zip_member``:
+   only that member's bytes, by range.
 2. Verify the sha256; a mismatch sets ``specimen_hash_mismatch`` and gives no image.
 3. Render ``build/specimens/<id>.svg``.
 4. Record ``preview {path, sha256}``.
@@ -46,7 +48,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from tff_catalog import jsonio, stageio
+from tff_catalog import fontfiles, jsonio, stageio
 from tff_catalog.specimens import BASIC_SAMPLE, MAX_FILE_BYTES, RENDERER_VERSION, SAMPLE
 
 if TYPE_CHECKING:
@@ -65,7 +67,8 @@ UNAVAILABLE = "the font file could not be had (a failed download, or no font cac
 
 
 class FontUnavailable(RuntimeError):
-    """The font file is not in the cache and there is no fetcher (replay)."""
+    """The font file is not in the cache and there is no fetcher (replay), or the release
+    archive it lives in holds no readable member of that name."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -109,9 +112,10 @@ def fetch_font(url: str, sha256: str, fetcher: Fetcher | None, cache_dir: Path) 
 
     The cache file is named by the expected sha256 and checked on every call,
     so a damaged entry is fetched again. A download is streamed to a temporary
-    file beside it and kept only when its hash matches. Raises
-    ``FontUnavailable`` when the file isn't cached and ``fetcher`` is None, and
-    lets the fetcher's own errors (``fetch.FetchError``) through.
+    file beside it and kept only when its hash matches; for a member of a zip
+    archive the hash is the member's. Raises ``FontUnavailable`` when the file
+    isn't cached and ``fetcher`` is None, or the archive has no readable member
+    of that name, and lets the fetcher's own errors (``fetch.FetchError``) through.
     """
     if not _SHA256.fullmatch(sha256):
         return None  # not a sha256 any file could match
@@ -128,7 +132,13 @@ def fetch_font(url: str, sha256: str, fetcher: Fetcher | None, cache_dir: Path) 
     os.close(fd)
     part = Path(name)
     try:
-        fetcher.get(url, to=part)
+        if fontfiles.split_member(url) is not None:
+            try:
+                part.write_bytes(fontfiles.read_zip_member(url, fetcher))
+            except fontfiles.FontFileError as exc:
+                raise FontUnavailable(str(exc)) from exc
+        else:
+            fetcher.get(url, to=part)
         if file_sha256(part) != sha256:
             return None
         part.replace(target)

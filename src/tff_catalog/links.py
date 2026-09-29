@@ -17,6 +17,19 @@ must not be a release asset or other file download (``/releases/download/``,
 ``/releases/latest`` link, the googlefontdirectory-hg mirror, or an aggregator
 (``AGGREGATOR_HOSTS``, ``AGGREGATOR_OWNERS``, ``AGGREGATOR_REPOS``).
 
+**Archived links** (owner ruling of 2026-09-29). The Wayback Machine
+(``WAYBACK_HOST``) is an aggregator for every automatic pick (sources, two
+sources agreeing, the foundry list), and so for the owner's picks among the
+candidates too. Only an override the owner approves and that is marked
+``archived`` may link a timestamped capture of the designer's page when that
+page is gone,
+``https://web.archive.org/web/<14-digit timestamp>/<original URL>``
+(``wayback_original``); the captured page must follow the policy apart from
+plain http (``policy_problems(url, archived=True)``). An archived override says
+so in its ``primary_label`` and says why in its ``primary_note``, which reach
+``catalog.json`` and ``catalog-site.json`` with the link, and its primary
+``Link`` carries ``archived``, so the check applies the same exception.
+
 **Choosing** (``choose``), in this order:
 
 1. An approved override (``config/link-overrides.toml``) wins, then a link the
@@ -142,6 +155,12 @@ SOURCE_ORDER = (
 )
 
 HG_MIRROR = "googlefontdirectory-hg"
+# The Wayback Machine: an aggregator, except for the primary of an owner-approved override
+# marked archived, which may be a timestamped capture (owner ruling of 2026-09-29).
+WAYBACK_HOST = "web.archive.org"
+_WAYBACK_CAPTURE_RE = re.compile(r"/web/[0-9]{14}/(?P<original>https?://\S+)")
+ARCHIVED_WORD = "archived"  # what an archived override's primary_label must say
+NOT_A_CAPTURE = "a Wayback Machine link that is not a timestamped capture (/web/<14 digits>/<URL>)"
 # Aggregators, never linked: font sites, CDNs, package indexes. A subdomain counts too.
 AGGREGATOR_HOSTS = frozenset(
     {
@@ -182,7 +201,7 @@ AGGREGATOR_HOSTS = frozenset(
         "tracker.debian.org",
         "unpkg.com",
         "urbanfonts.com",
-        "web.archive.org",  # an archived copy is never the official page
+        WAYBACK_HOST,  # an archived copy is never picked automatically (see WAYBACK_HOST)
     }
 )
 AGGREGATOR_OWNERS = frozenset({"fontist", "fontsource", "homebrew"})  # every GitHub repo of these
@@ -283,6 +302,10 @@ class Link:
     # What a visitor should know before following it, shown under the link in the font's
     # details (an override's ``primary_note``: why an archived mirror is the official link).
     note: str | None = None
+    # An archived copy of a page that is gone (``LinkOverride.archived``): the only link that
+    # may be a timestamped Wayback Machine capture (``policy_problems``). Not exported; the
+    # label and note say it on the site.
+    archived: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -399,11 +422,21 @@ def _aggregator(u: _Url, segs: list[str]) -> str | None:
     return _aggregator_repo(u.bare, "/".join(segs)) if segs else None
 
 
-def policy_problems(url: str) -> list[str]:
-    """Why ``url`` breaks the link policy (not https, release asset, /releases/latest, hg mirror, aggregator)."""
+def policy_problems(url: str, *, archived: bool = False) -> list[str]:
+    """Why ``url`` breaks the link policy (not https, release asset, /releases/latest, hg
+    mirror, aggregator).
+
+    ``archived``: ``url`` is the primary of an owner-approved override marked archived
+    (``LinkOverride.archived``), the only link that may be a timestamped Wayback Machine
+    capture (``wayback_original``) of a page that is gone. The capture must be https, and
+    the page it shows must follow the policy apart from plain http (owner ruling of
+    2026-09-29). Without ``archived``, web.archive.org is an aggregator like any other.
+    """
     u = _split(url)
     if u is None:
         return ["not a URL"]
+    if archived and u.host == WAYBACK_HOST:
+        return _capture_problems(url, u)
     out = []
     if u.scheme != "https":
         out.append("not https")
@@ -418,6 +451,31 @@ def policy_problems(url: str) -> list[str]:
     if aggregator is not None:
         out.append(f"an aggregator ({aggregator})")
     return out
+
+
+def wayback_original(url: str) -> str | None:
+    """The URL of the page a timestamped Wayback Machine capture shows, or None when ``url``
+    is not one: ``https://web.archive.org/web/<14-digit timestamp>/<http or https URL>``."""
+    u = _split(url)
+    if u is None or u.host != WAYBACK_HOST:
+        return None
+    m = _WAYBACK_CAPTURE_RE.fullmatch(u.path)
+    if m is None:
+        return None
+    return m["original"] + (f"?{u.query}" if u.query else "")
+
+
+def _capture_problems(url: str, u: _Url) -> list[str]:
+    """Why an archived link on the Wayback Machine breaks the policy (``policy_problems``)."""
+    out = [] if u.scheme == "https" else ["not https"]
+    original = wayback_original(url)
+    if original is None:
+        return [*out, NOT_A_CAPTURE]
+    # The captured page as the policy would link it: its old http is no fault of the capture.
+    problems = policy_problems("https://" + original.split("://", 1)[1])
+    if problems == ["not a URL"]:
+        return [*out, NOT_A_CAPTURE]
+    return out + [f"a capture of {p}" for p in problems]
 
 
 # --- resolving a source's URL ------------------------------------------------------------------
@@ -672,10 +730,16 @@ class LinkOverride:
     designer_label: str = ""
     primary_note: str = ""  # shown under the primary link in the font's details
     choice: str = "a"  # the answer to ``question`` that applies this override
+    # The primary is an archived copy of a page that is gone (a mirror, or a timestamped
+    # Wayback Machine capture, which only such an override may link); its primary_label says
+    # "archived" and its primary_note says why (owner ruling of 2026-09-29).
+    archived: bool = False
 
     def links(self) -> Links:
         designer = Link(self.designer, self.designer_label or None) if self.designer else None
-        primary = Link(self.primary, self.primary_label or None, self.primary_note or None)
+        primary = Link(
+            self.primary, self.primary_label or None, self.primary_note or None, self.archived
+        )
         return Links(primary, designer, "override")
 
 
@@ -692,20 +756,32 @@ def _check_override(o: LinkOverride, where: str) -> None:
         raise ConfigError(f"{where}.question: {o.question!r} is not a question id")
     if not _CHOICE_RE.fullmatch(o.choice):
         raise ConfigError(f"{where}.choice: {o.choice!r} is not one letter a-z")
+    if o.archived and (ARCHIVED_WORD not in o.primary_label.casefold() or not o.primary_note):
+        raise ConfigError(
+            f"{where}: an override marked archived needs a primary_label that says "
+            f"{ARCHIVED_WORD!r} and a primary_note that says why"
+        )
     for field in ("primary", "designer"):
         url = getattr(o, field)
         if field == "designer" and not url:
             continue
-        problems = policy_problems(url)
+        archived = o.archived and field == "primary"
+        problems = policy_problems(url, archived=archived)
         if problems:
-            raise ConfigError(f"{where}.{field}: {url} is {'; '.join(problems)}")
+            hint = ""
+            if not archived and _host(url) == WAYBACK_HOST:
+                hint = " (only an override marked archived = true may link a capture, as primary)"
+            raise ConfigError(f"{where}.{field}: {url} is {'; '.join(problems)}{hint}")
 
 
 def load_overrides(paths: Paths) -> tuple[LinkOverride, ...]:
     """``config/link-overrides.toml``, checked (no file: no overrides).
 
     Raises ``ConfigError`` for unknown or missing keys, a bad family or question
-    id, a family listed twice, or a URL the policy forbids.
+    id, a family listed twice, a URL the policy forbids (a Wayback Machine capture
+    is allowed only as the primary of an override marked ``archived``), or an
+    archived override whose ``primary_label`` does not say "archived" or that has
+    no ``primary_note``.
     """
     path = paths.config / OVERRIDES_FILE
     if not path.is_file():
@@ -837,14 +913,16 @@ def owner_picks(
 
 
 def _override_lines(items: Iterable[LinkOverride]) -> str:
-    """ "A, B: primary X, designer Y; C: primary Z", families with the same links together."""
-    names: dict[tuple[str, str], list[str]] = defaultdict(list)
+    """ "A, B: primary X, designer Y; C: primary Z (archived)", families with the same links
+    together."""
+    names: dict[tuple[str, bool, str], list[str]] = defaultdict(list)
     for o in items:
-        names[(o.primary, o.designer)].append(o.name)
+        names[(o.primary, o.archived, o.designer)].append(o.name)
     parts = []
-    for (primary, designer), group in names.items():
+    for (primary, archived, designer), group in names.items():
+        mark = " (archived)" if archived else ""
         tail = f", designer {designer}" if designer else ""
-        parts.append(f"{', '.join(group)}: primary {primary}{tail}")
+        parts.append(f"{', '.join(group)}: primary {primary}{mark}{tail}")
     return "; ".join(parts)
 
 
@@ -935,14 +1013,18 @@ class CheckRow:
         )
 
 
-def to_check(row: CheckRow) -> LinkCheck:
+def to_check(row: CheckRow, *, archived: bool = False) -> LinkCheck:
     """The verdict on a recorded answer: policy problems of the link and of where it
-    redirects, and the error when there was no answer."""
-    problems = policy_problems(row.url)
+    redirects, and the error when there was no answer. ``archived``: the link is an archived
+    override's (``Link.archived``), so it and its redirect may be Wayback Machine captures."""
+    problems = policy_problems(row.url, archived=archived)
     if row.error:
         problems.append(f"no answer: {row.error}")
     if row.final_url != row.url:
-        problems += [f"redirects to {row.final_url}, {p}" for p in policy_problems(row.final_url)]
+        problems += [
+            f"redirects to {row.final_url}, {p}"
+            for p in policy_problems(row.final_url, archived=archived)
+        ]
     return LinkCheck(row.url, row.status, row.final_url, tuple(problems))
 
 
@@ -1044,6 +1126,16 @@ def _link_urls(links: Mapping[str, Links]) -> list[str]:
     return sorted(urls)
 
 
+def _archived_urls(links: Mapping[str, Links]) -> frozenset[str]:
+    """The URLs linked as archived copies (``Link.archived``): approved overrides only."""
+    return frozenset(
+        link.url
+        for ls in links.values()
+        for link in (ls.primary, ls.designer)
+        if link is not None and link.archived
+    )
+
+
 def check(links: Mapping[str, Links], ctx: StageContext) -> dict[str, LinkCheck]:
     """HEAD-check every primary and designer link (through the store in replay).
 
@@ -1055,6 +1147,7 @@ def check(links: Mapping[str, Links], ctx: StageContext) -> dict[str, LinkCheck]
     "not checked".
     """
     urls = _link_urls(links)
+    archived = _archived_urls(links)
     day = ctx.options.from_snapshots or ctx.run_date
     recorded = recorded_checks(ctx.store, day) if ctx.store is not None else {}
     if ctx.fetcher is None:
@@ -1062,10 +1155,10 @@ def check(links: Mapping[str, Links], ctx: StageContext) -> dict[str, LinkCheck]
         for url in urls:
             row = recorded.get(url)
             if row is None:
-                problems = (*policy_problems(url), NOT_CHECKED)
+                problems = (*policy_problems(url, archived=url in archived), NOT_CHECKED)
                 out[url] = LinkCheck(url, 0, url, tuple(problems))
             else:
-                out[url] = to_check(row)
+                out[url] = to_check(row, archived=url in archived)
         return out
     todo = [
         url
@@ -1089,7 +1182,7 @@ def check(links: Mapping[str, Links], ctx: StageContext) -> dict[str, LinkCheck]
             "TFF_STORE is not set: link checks are not recorded, so a replay cannot repeat them"
         )
     rows = recorded | fresh
-    return {url: to_check(rows[url]) for url in urls}
+    return {url: to_check(rows[url], archived=url in archived) for url in urls}
 
 
 # --- the stage ------------------------------------------------------------------------------------
@@ -1271,7 +1364,7 @@ def cmd_check(ctx: StageContext) -> int:
             failures.append(f"{fid}: primary {_verdict(primary)}")
         if ls.designer is not None:
             designer = results[ls.designer.url]
-            if policy_problems(ls.designer.url):
+            if policy_problems(ls.designer.url, archived=ls.designer.archived):
                 failures.append(f"{fid}: designer {_verdict(designer)}")
             elif not designer.ok:
                 warnings.append(f"{fid}: designer {_verdict(designer)}")

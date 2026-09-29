@@ -25,15 +25,22 @@
 #   choice          the answer that applies it (default "a")
 #   primary         the official download link: https, never a release asset,
 #                   /releases/latest, the googlefontdirectory-hg mirror or an aggregator
-#   designer        optional second link, same rules
+#                   (web.archive.org counts as one, except in an archived override)
+#   designer        optional second link, same rules (never archived)
 #   primary_label, designer_label
 #                   optional destination names; by default the site derives one
 #                   ("GitHub: rsms/inter", or the host name)
 #   primary_note    optional sentence the font's details show under the primary link
+#   archived        optional, default false; true when the designer's page is gone and the
+#                   primary is an archived copy of it: a mirror, or a timestamped Wayback
+#                   Machine capture, https://web.archive.org/web/<14-digit timestamp>/<URL>,
+#                   which only an archived override may link (owner ruling of 2026-09-29).
+#                   Its primary_label must say "archived" and its primary_note why, so the
+#                   site shows that the link is archived.
 #   reason          why the override is needed
 #
-# All URLs below answered HTTP 200 on 2026-09-25 (the researched ones at the end on 2026-09-26
-# and 2026-09-28).
+# All URLs below answered HTTP 200 on 2026-09-25 (the researched ones at the end on 2026-09-26,
+# 2026-09-28 and 2026-09-29).
 
 schema = 1
 
@@ -186,6 +193,7 @@ family = "metropolis"
 name = "Metropolis"
 question = "K-metropolis-page"
 primary = "https://github.com/dw5/Metropolis"
+archived = true
 primary_label = "GitHub: dw5/Metropolis (archived mirror)"
 primary_note = "Metropolis has no official download any more: its designer, Chris Simpson, made his repository private in 2020 after a dispute over the name and said anyone may fork it. This is an archived, unchanged copy of his last version."
 reason = "No official page is left: the designer, Chris Simpson, made his repository private in October 2020 after a dispute over the name, and wrote that anyone may fork it. dw5/Metropolis is an archived copy of its last commit (June 2020, Unlicense). It has no releases, so the link is the repository itself."
@@ -269,3 +277,98 @@ primary = "https://download.gnome.org/sources/ttf-bitstream-vera/1.10/"
 primary_label = "GNOME: ttf-bitstream-vera 1.10"
 primary_note = "Bitstream gave the Vera fonts to the GNOME Foundation in 2003. This is GNOME's download folder for their last release, 1.10."
 reason = "gnome.org/fonts/, the fonts' old home page, answers 404. GNOME's download server still holds the 1.10 release (tar.gz, tar.bz2 and zip, with checksums), which is the release Nerd Fonts patches. DejaVu Sans Mono is a later, extended derivative, so Vera keeps its own link."
+
+# --- Researched on 2026-09-28 and 2026-09-29, ruled by the owner on 2026-09-29 --------------------
+# (K_3_corrected, K_sil_pages, K_dead_sites_policy). The real-store rebuild of 2026-09-28 held
+# these catalog members back without an accepted link. Anka/Coder, Awami Nastaliq, Cozette and
+# Monofur had printed candidates that are not the official page, so each family's own question
+# records "none of these is it" (data/reviews/links/2026-09-29.toml) and its entry below decides;
+# Sophia Nubian, Tagmukay and Heavy Data had no candidate at all. Each URL below answered
+# HTTP 200 on 2026-09-29.
+#
+# Archived links (owner ruling of 2026-09-29, K_dead_sites_policy): web.archive.org stays an
+# aggregator for every automatic pick, but an override the owner approves may link a timestamped
+# Wayback Machine capture of the designer's own page when that page is gone. Such an entry sets
+# `archived = true`, and its primary_label and primary_note say that the link is archived, as
+# Metropolis's do. K-monofur-page awaits the owner: the capture approved in chat,
+# https://web.archive.org/web/20220910011242/http://eurofurence.net/monofur.html, is a
+# registrar's "domain has expired" parking page, so the entry proposes the last capture of the
+# designer's page instead.
+
+# --- K-anka-coder-page ---------------------------------------------------------------------------
+
+[[override]]
+family = "anka-coder"
+name = "Anka/Coder"
+question = "K-anka-coder-page"
+primary = "https://github.com/loafer-mka/anka-coder-fonts"
+reason = "The designer's own repository: Andrey Makarov (loafer-mka) moved the fonts there from Google Code, with their sources and the OFL (its description: 'monospaced anka-coder fonts migrated from code.google.com'). It has no releases, so the link is the repository itself. The printed pick, code.google.com/p/anka-coder-fonts/, is a dead Google Code page."
+
+# --- K-awami-nastaliq-page -----------------------------------------------------------------------
+
+[[override]]
+family = "awami-nastaliq"
+name = "Awami Nastaliq"
+question = "K-awami-nastaliq-page"
+primary = "https://software.sil.org/awami/"
+reason = "SIL's own page for Awami Nastaliq, with its downloads, listed on SIL's fonts page (software.sil.org/fonts/). The printed pick, scripts.sil.org, is SIL's general scripts site, and the other candidate, software.sil.org/wstech/, SIL's writing systems technology page; neither is the font's page."
+
+# --- K-cozette-page ------------------------------------------------------------------------------
+
+[[override]]
+family = "cozette"
+name = "Cozette"
+question = "K-cozette-page"
+primary = "https://github.com/the-moonwitch/Cozette/releases"
+reason = "The designer's repository releases at the repository's current address. The printed pick, github.com/slavfox/Cozette/releases, is its old address, which now redirects here."
+
+# --- K-sophia-nubian-page ------------------------------------------------------------------------
+
+[[override]]
+family = "sophia-nubian"
+name = "Sophia Nubian"
+question = "K-sophia-nubian-page"
+primary = "https://software.sil.org/sophianubian/"
+reason = "SIL's own page for Sophia Nubian, with its downloads, listed on SIL's fonts page (software.sil.org/fonts/). No source gave a candidate: Fontist, its only source, lists the download file but no page."
+
+# --- K-tagmukay-page -----------------------------------------------------------------------------
+
+[[override]]
+family = "tagmukay"
+name = "Tagmukay"
+question = "K-tagmukay-page"
+primary = "https://software.sil.org/tagmukay/"
+reason = "SIL's own page for Tagmukay, with its downloads, listed on SIL's fonts page (software.sil.org/fonts/). No source gave a candidate: Fontist, its only source, lists the download file but no page."
+
+# --- K-heavy-data-page (archived) ----------------------------------------------------------------
+
+[[override]]
+family = "heavy-data"
+name = "Heavy Data"
+question = "K-heavy-data-page"
+primary = "https://web.archive.org/web/20221209161833/http://www.vicfieger.com/"
+archived = true
+primary_label = "Wayback Machine: vicfieger.com (archived copy)"
+primary_note = "Heavy Data is by Vic Fieger, whose own site, vicfieger.com, is gone: the address now shows only a registrar's placeholder. This is the Internet Archive's copy of his site from December 2022; its fonts section has his FAQ on how his free fonts may be used."
+reason = "The designer's own site, which Nerd Fonts credits for Heavy Data ('by Vic Fieger', linking vicfieger.com), is gone: http://www.vicfieger.com/ shows only the registrar's 'vicfieger.com is unavailable' page, and https does not connect. The Wayback Machine's capture of 2022-12-09 is his main page as he last updated it (April 2021), linking his fonts section and its FAQ, whose terms the owner ruled qualify (freeware, redistributable). Heavy Data itself (2008) is not among the fonts that section lists in 2019-2023, whose downloads go through dafont.com. No source gave a candidate: the Homebrew cask links only the Nerd Fonts repository."
+
+# --- K-monofur-page (archived) -------------------------------------------------------------------
+
+[[override]]
+family = "monofur"
+name = "Monofur"
+question = "K-monofur-page"
+primary = "https://web.archive.org/web/20200206093756/http://eurofurence.net/monofur.html"
+archived = true
+primary_label = "Wayback Machine: eurofurence.net/monofur.html (archived copy)"
+primary_note = "Monofur's designer, Tobias Benjamin Köhler, published it on his site, eurofurence.net, which has lapsed: the address now leads to an unrelated convention's site. This is the Internet Archive's copy of his Monofur page from February 2020, with its downloads. In 2018 he licensed Monofur under the SIL Open Font License 1.1."
+reason = "The designer's page is gone: eurofurence.net lapsed (the Wayback Machine holds only parking pages from November 2020 on) and now redirects to eurofurence.org, an unrelated convention. The Wayback Machine's last capture of the page itself, 2020-02-06, is unchanged since 2002 (the same content digest in every capture from 2002 to 2020), and its TrueType and Type 1 downloads are archived too. The printed pick, github.com/powerline/fonts/releases, is Powerline's collection of patched fonts. The September 2022 capture first proposed, 20220910011242, is a registrar's 'domain has expired' parking page."
+
+# --- K-tex-gyre-heros-cn-page --------------------------------------------------------------------
+
+[[override]]
+family = "tex-gyre-heros-cn"
+name = "TeX Gyre Heros Cn"
+question = "K-tex-gyre-heros-cn-page"
+primary = "https://www.gust.org.pl/projects/e-foundry/tex-gyre/heros"
+reason = "GUST's TeX Gyre Heros page, which offers the condensed faces (\"regular, italic, bold and bold italic and their condensed counterparts\"), just as each sister TeX Gyre family links its own page. The printed pick, gust.org.pl/projects/e-foundry/tex-gyre/, is the page for the whole collection."

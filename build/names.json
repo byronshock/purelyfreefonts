@@ -186,7 +186,7 @@
       "distinct_from": [],
       "family": "Adwaita Sans",
       "id": "adwaita-sans",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -785,7 +785,7 @@
       "distinct_from": [],
       "family": "Anka/Coder",
       "id": "anka-coder",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -1442,7 +1442,7 @@
       "distinct_from": [],
       "family": "Awami Nastaliq",
       "id": "awami-nastaliq",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -2371,7 +2371,7 @@
       "distinct_from": [],
       "family": "Bowlby One SC",
       "id": "bowlby-one-sc",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -3084,7 +3084,7 @@
       "distinct_from": [],
       "family": "Charter",
       "id": "charter",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -3634,7 +3634,7 @@
       "distinct_from": [],
       "family": "Cozette",
       "id": "cozette",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -4831,6 +4831,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Fanwood",
+      "id": "fanwood",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Fanwood Text",
       "id": "fanwood-text",
       "in_catalog": false,
@@ -4865,7 +4873,7 @@
       "distinct_from": [],
       "family": "Fascinate Inline",
       "id": "fascinate-inline",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -5545,7 +5553,7 @@
       ],
       "family": "Gentium Book Plus",
       "id": "gentium-book-plus",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [
         {
           "name": "Gentium Plus Book",
@@ -6301,7 +6309,7 @@
       "distinct_from": [],
       "family": "Heavy Data",
       "id": "heavy-data",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "detail": "nerd",
@@ -7324,7 +7332,7 @@
       "distinct_from": [],
       "family": "Ioskeley Mono",
       "id": "ioskeley-mono",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -9469,7 +9477,7 @@
       "distinct_from": [],
       "family": "Microsoft Selawik",
       "id": "microsoft-selawik",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -9525,7 +9533,7 @@
       "distinct_from": [],
       "family": "Miracode",
       "id": "miracode",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -9924,7 +9932,7 @@
       "distinct_from": [],
       "family": "Monocraft",
       "id": "monocraft",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "detail": "nerd",
@@ -9946,7 +9954,7 @@
       "distinct_from": [],
       "family": "Monofur",
       "id": "monofur",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
         {
           "detail": "powerline",
@@ -10023,6 +10031,14 @@
           "relation": "build"
         }
       ],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Monoisome",
+      "id": "monoisome",
+      "in_catalog": true,
+      "names": [],
       "superfamily_id": null
     },
     {
@@ -10302,7 +10318,7 @@
       "distinct_from": [],
       "family": "Myna",
       "id": "myna",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -12664,7 +12680,7 @@
       "distinct_from": [],
       "family": "Pretendard Std",
       "id": "pretendard-std",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -12791,7 +12807,7 @@
       "distinct_from": [],
       "family": "psudoFont Liga Mono",
       "id": "psudofont-liga-mono",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -14557,7 +14573,7 @@
       "distinct_from": [],
       "family": "SN Pro Font Family",
       "id": "sn-pro-font-family",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -14685,7 +14701,7 @@
       "distinct_from": [],
       "family": "Sophia Nubian",
       "id": "sophia-nubian",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -15103,7 +15119,7 @@
       "distinct_from": [],
       "family": "Sudo",
       "id": "sudo",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -15247,7 +15263,7 @@
       "distinct_from": [],
       "family": "Tagmukay",
       "id": "tagmukay",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -15450,6 +15466,19 @@
       "id": "tex-gyre-heros",
       "in_catalog": true,
       "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "TeX Gyre Heros Cn",
+      "id": "tex-gyre-heros-cn",
+      "in_catalog": true,
+      "names": [
+        {
+          "name": "TeXGyreHerosCondensed",
+          "relation": "postscript"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -15823,7 +15852,7 @@
       "distinct_from": [],
       "family": "Twilio Sans Mono",
       "id": "twilio-sans-mono",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -16674,7 +16703,7 @@
       "distinct_from": [],
       "family": "Zed Sans",
       "id": "zed-sans",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -18230,10 +18259,6 @@
     },
     {
       "name": "Fantasque Sans Mono NoLoopK",
-      "reason": "license"
-    },
-    {
-      "name": "Fanwood",
       "reason": "license"
     },
     {
@@ -20559,10 +20584,6 @@
     {
       "name": "Mongolian Baiti",
       "reason": "proprietary"
-    },
-    {
-      "name": "Monoisome",
-      "reason": "license"
     },
     {
       "name": "Monomaniac One",
@@ -22983,14 +23004,6 @@
     {
       "name": "TeX Gyre DejaVu Math",
       "reason": "icon"
-    },
-    {
-      "name": "TeX Gyre Heros Cn",
-      "reason": "license"
-    },
-    {
-      "name": "TeXGyreHerosCondensed",
-      "reason": "license"
     },
     {
       "name": "TeX Gyre Pagella Math",

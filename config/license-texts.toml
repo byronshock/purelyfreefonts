@@ -60,7 +60,8 @@ reason = "The only text the sources gave was openfontlicense.org, a web page. SI
 family = "juliamono"
 name = "JuliaMono"
 texts = ["https://raw.githubusercontent.com/cormullion/juliamono/0dfc749503778730d6af79183a17fcde668ae626/LICENSE"]
-reason = "The only text the sources gave was the OFL's web page (scripts.sil.org/OFL). The designer's repository has the OFL-1.1 text."
+files = ["https://raw.githubusercontent.com/cormullion/juliamono/5908c8613863806b3f053859e35049780c9c4784/JuliaMono-Regular.ttf"]
+reason = "The only text the sources gave was the OFL's web page (scripts.sil.org/OFL). The designer's repository has the OFL-1.1 text. The font file is the repository's JuliaMono-Regular.ttf at tag v0.060, the same bytes as in the release zip the sources name, because the site and the specimens can only use a file by itself, not one inside an archive."
 
 [[family]]
 family = "league-mono"
@@ -133,6 +134,12 @@ family = "tex-gyre-termes"
 name = "TeX Gyre Termes"
 texts = ["https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"]
 reason = "The sources gave GUST's licenses web page. The GUST Font License text is on the same site."
+
+[[family]]
+family = "tex-gyre-heros-cn"
+name = "TeX Gyre Heros Cn"
+texts = ["https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"]
+reason = "The condensed TeX Gyre Heros, in the same GUST release. The sources gave GUST's licenses web page and L2 says LPPL-1.3c; the GUST Font License text on the same site grants LPPL-1.3c (license_l3.GRANTS)."
 
 [[family]]
 family = "ibm-3270"
@@ -370,6 +377,24 @@ name = "Conakry"
 texts = ["https://www.evertype.com/fonts/nko/ConakryFont.zip#ConakryFont/OFL.txt"]
 reason = "Michael Everson's N'Ko font (Evertype, 2007; overall #570 with no license found). Its release zip, the one Homebrew installs, holds SIL's OFL-1.1 text (the template, with the copyright holder and Reserved Font Name left blank) and OFL-FAQ.txt, and the font's name ID 13 says 'Released under the Open Font License.' with name ID 14 pointing at scripts.sil.org/OFL. Used once the owner answers gate LIC on it (question LIC-conakry); until then L2 excludes it and nothing here is read."
 
+# --- families that came into scope with the batch-5 rulings (2026-09-28) ------------------------
+
+[[family]]
+family = "fanwood"
+name = "Fanwood"
+texts = ["https://raw.githubusercontent.com/theleagueof/fanwood/cbaaed9704e7d37d3dcdbdf0b472e9efd0e39432/Open%20Font%20License.markdown"]
+files = ["https://raw.githubusercontent.com/theleagueof/fanwood/cbaaed9704e7d37d3dcdbdf0b472e9efd0e39432/Fanwood.otf"]
+mentions = ["MIT"]
+reason = "The League of Moveable Type's repository at its last commit, the one the sources' webfont comes from. Its 'Open Font License.markdown' is OFL-1.1 with Barry Schwartz's copyright and the Reserved Font Name Fanwood. The font file is the repository's own OTF, not the webfont conversion (which has empty name IDs 13 and 14). The OTF's name ID 13 is the MIT License with Barry Schwartz's 2011 copyright, and name ID 14 links to it: the designer's own release terms. Both licenses are allowed, redistributable and without an attribution badge, so the label changes nothing."
+
+[[family]]
+family = "monoisome"
+name = "Monoisome"
+texts = ["https://raw.githubusercontent.com/larsenwork/monoid/fbd7a47a905b50b8f9e156eb91aaf6b1010ee42d/Readme.md"]
+files = ["https://raw.githubusercontent.com/larsenwork/monoid/fbd7a47a905b50b8f9e156eb91aaf6b1010ee42d/Monoisome/Monoisome-Regular.ttf"]
+mentions = ["MIT"]
+reason = "Monoisome ships in the Monoid repository, which has no license file: its Readme.md (tag 0.61, the release the sources' font comes from; text below) says 'Monoid is dual licensed with MIT and OFL licenses. Pick one:) Monoisome is OFL license.' and then gives both licenses. So Monoisome is OFL-1.1; the MIT License it also names covers only Monoid and is allowed on its own. The sources gave only a link to the README's license section, a web page."
+
 # --- families just outside the scope (overall 800-1000, extra ranks 150-300) ------------------
 # Found by a wider verify run on 2026-09-28, researched so that a small rank move does not
 # bring them in failing.
@@ -391,6 +416,12 @@ family = "scheherazade"
 name = "Scheherazade"
 texts = ["https://software.sil.org/downloads/r/scheherazade/Scheherazade-2.100.zip#Scheherazade-2.100/OFL.txt"]
 reason = "SIL's 2.100 release of the original Scheherazade, the one Homebrew installs; SIL's repository (silnrsi/font-scheherazade) tags only its successor's releases, Scheherazade New 2.900 on. The zip's OFL.txt is OFL-1.1. The sources gave no license text."
+
+[[family]]
+family = "eb-garamond-12-all-sc"
+name = "EB Garamond 12 All SC"
+texts = ["https://raw.githubusercontent.com/georgd/EB-Garamond/50b6aa76f32e7455479c1e21630d08cceffdf02e/COPYING"]
+reason = "Georg Duffner's original EB Garamond, tag v0.016, the release (EBGaramond-0.016.zip on Bitbucket) Fontist installs; its COPYING is OFL-1.1, the same bytes as in the zip. The sources gave only scripts.sil.org/OFL, a web page."
 
 [[family]]
 family = "science-gothic"
@@ -489,3 +520,9 @@ sha256 = "473c5e3123102434d05c66a9fc8b19cf285a3bf71cd8a91a41acef44d1448e62"
 licenses = ["OFL-1.1"]
 url = "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/sevillana/OFL.txt"
 reason = "Sevillana's OFL.txt (google/fonts and Fontsource, the same bytes) is the OFL-1.1 text word for word, followed by the Google Code page it was copied from ('Hide details, Change log, 19ca6107e016 by Dave Crossland on Dec 5, 2011 ... View raw file'), as with Henny Penny."
+
+[[text]]
+sha256 = "573b0ac124968d3ec5d797ae96a1567b9acb8be6a04e5d2c03034f520b141c2a"
+licenses = ["MIT", "OFL-1.1"]
+url = "https://raw.githubusercontent.com/larsenwork/monoid/fbd7a47a905b50b8f9e156eb91aaf6b1010ee42d/Readme.md"
+reason = "The Monoid repository's Readme.md at tag 0.61: installation notes, credits and a change log, then its Licenses section: 'Monoid is dual licensed with MIT and OFL licenses. Pick one:) Monoisome is OFL license.', the MIT License and the OFL-1.1, each word for word. Read whole, it restricts nothing and names no other license."

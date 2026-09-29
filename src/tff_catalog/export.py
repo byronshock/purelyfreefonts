@@ -84,7 +84,7 @@ from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING, Any
 from urllib.parse import urlsplit
 
-from tff_catalog import METHOD_VERSION, __version__, jsonio, stageio
+from tff_catalog import METHOD_VERSION, __version__, fontfiles, jsonio, stageio
 from tff_catalog.config_model import OS_FAMILIES
 from tff_catalog.config_model import RANK_KEYS as _CONFIG_RANK_KEYS
 from tff_catalog.keys import match_key
@@ -1061,11 +1061,17 @@ def attribution(family: str, license_title: str, copyright: str | None = None) -
 
 
 def font_file(l3: L3Result | None) -> dict[str, Any] | None:
-    """The file the license check read (Milestone 2 previews it), when it is complete."""
+    """The file the license check read (Milestone 2 previews it), when it is complete.
+
+    A font inside a release archive keeps its ``<archive>.zip#<member>`` reference
+    (``fontfiles.member_url``); its format, sha256 and size are the member's.
+    """
     ref = l3.font_file if l3 else None
     if ref is None or ref.sha256 is None or not ref.size:
         return None
-    fmt = PurePosixPath(urlsplit(ref.url).path).suffix.lower().lstrip(".")
+    member = fontfiles.split_member(ref.url)
+    path = member[1] if member is not None else urlsplit(ref.url).path
+    fmt = PurePosixPath(path).suffix.lower().lstrip(".")
     if fmt not in FONT_FORMATS:
         return None
     return {"url": ref.url, "sha256": ref.sha256, "size": ref.size, "format": fmt}

@@ -18,6 +18,7 @@ import json
 import os
 import sys
 import tarfile
+import zipfile
 from pathlib import Path
 
 import httpx
@@ -351,6 +352,87 @@ def test_fetch_fonts(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     assert third.fetched == ["f-good"]
     assert "sha256 mismatch" in third.failed["f-bad"]
     assert damaged.read_bytes() == FONT
+
+
+def _zip(members: dict[str, bytes], stored: bool = False) -> bytes:
+    out = io.BytesIO()
+    method = zipfile.ZIP_STORED if stored else zipfile.ZIP_DEFLATED
+    with zipfile.ZipFile(out, "w", method) as zf:
+        zf.writestr("TG-1.0/README.txt", "A release archive.")
+        for name, data in members.items():
+            zf.writestr(name, data)
+    return out.getvalue()
+
+
+def test_fetch_fonts_extracts_fonts_from_release_archives(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Fonts inside a zip archive: one download per archive, the member extracted unchanged
+    and kept only when its size and sha256 are the catalog's; anything else fails closed."""
+    up = "https://fonts.example/"
+    tg = _zip({"TG-1.0/otf/tg-regular.otf": OTHER, "TG-1.0/ttf/tg bold.ttf": FONT})
+    crc = bytearray(_zip({"x/crc.ttf": HOP}, stored=True))
+    crc[bytes(crc).index(HOP)] ^= 0xFF  # the member's bytes, damaged after its CRC was written
+    upstream = Upstream(
+        {
+            up + "tg.zip": [httpx.Response(200, content=tg)],
+            up + "crc.zip": [httpx.Response(200, content=bytes(crc))],
+        }
+    )
+    upstream.install(monkeypatch)
+    otf = up + "tg.zip#TG-1.0/otf/tg-regular.otf"
+    too_long = b"s" * (len(OTHER) + 1)
+    data = _catalog(
+        tmp_path / "catalog-site.json",
+        [
+            {"id": "f-regular", "preview_ok": True, "font_file": _file(otf, OTHER, format="otf")},
+            # found by its file name alone; the member path is percent-encoded
+            {"id": "f-bold", "preview_ok": True, "font_file": _file(up + "tg.zip#tg%20bold.ttf", FONT)},
+            {"id": "f-wrong", "preview_ok": True, "font_file": _file(otf, OTHER[:-1] + b"!")},
+            {"id": "f-size", "preview_ok": True, "font_file": _file(otf, too_long)},
+            {"id": "f-missing", "preview_ok": True, "font_file": _file(up + "tg.zip#gone.ttf", b"m")},
+            {"id": "f-crc", "preview_ok": True, "font_file": _file(up + "crc.zip#crc.ttf", HOP)},
+            {"id": "f-gone-a", "preview_ok": True, "font_file": _file(up + "gone.zip#a.ttf", b"a")},
+            {"id": "f-gone-b", "preview_ok": True, "font_file": _file(up + "gone.zip#b.ttf", b"b")},
+            {"id": "f-huge", "preview_ok": True,
+             "font_file": {**_file(otf, b"h"), "size": fonts.MAX_FONT_BYTES + 1}},
+        ],
+    )  # fmt: skip
+    cache = tmp_path / "cache"
+    report = fonts.fetch_fonts(data, cache)
+    assert report.fetched == ["f-bold", "f-regular"]
+    assert set(report.failed) == {
+        "f-wrong", "f-size", "f-missing", "f-crc", "f-gone-a", "f-gone-b", "f-huge"
+    }  # fmt: skip
+    assert "sha256 mismatch" in report.failed["f-wrong"]
+    assert f"is {len(OTHER)} bytes" in report.failed["f-size"]  # refused before a byte is read
+    assert "no archive entry" in report.failed["f-missing"]
+    assert "not a readable zip archive" in report.failed["f-crc"]
+    assert "HTTP 404" in report.failed["f-gone-a"]
+    assert report.failed["f-gone-b"] == report.failed["f-gone-a"]
+    assert "bad size" in report.failed["f-huge"]
+    assert upstream.requests.count(up + "tg.zip") == 1  # one download for all its fonts
+    assert upstream.requests.count(up + "gone.zip") == 1  # and a failed one is not retried
+    assert sorted(p.name for p in cache.iterdir()) == sorted(
+        hashlib.sha256(x).hexdigest() for x in (FONT, OTHER)
+    )  # no archive, part file or temporary folder is left
+    assert fonts.cache_path(hashlib.sha256(OTHER).hexdigest(), cache).read_bytes() == OTHER
+    assert fonts.cache_path(hashlib.sha256(FONT).hexdigest(), cache).read_bytes() == FONT
+
+    upstream.requests.clear()
+    good = [f for f in json.loads(data.read_text())["fonts"] if f["id"] in report.fetched]
+    again = fonts.fetch_fonts(_catalog(tmp_path / "good.json", good), cache)
+    assert (again.cached, upstream.requests) == (["f-bold", "f-regular"], [])  # from the cache
+
+
+def test_split_member() -> None:
+    assert fonts.split_member("https://x.example/A-1.0.zip#A%201.0/a.ttf") == (
+        "https://x.example/A-1.0.zip",
+        "A 1.0/a.ttf",
+    )
+    assert fonts.split_member("https://x.example/a.ttf") is None
+    assert fonts.split_member("https://x.example/a.ttf#frag") is None
+    assert fonts.split_member("https://x.example/A.zip#") is None
 
 
 def test_fetch_fonts_gives_up_after_retries(tmp_path: Path, monkeypatch) -> None:

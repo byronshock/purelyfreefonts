@@ -39,7 +39,10 @@ Contracts:
 - **Pseudo-source.** A live stage records every file it used with
   ``record_reads`` as ``font_facts/<date>/<stage>.jsonl`` (``FileRead`` rows,
   failures included); ``recorded_reads`` gives a replay the same url-to-sha256
-  answers, and the cache gives the facts.
+  answers, and the cache gives the facts. A row may also carry the file's
+  ``size`` in bytes when the stage knows it (stage "verify" records it, because
+  the file it read is the one the catalog publishes); rows written before that
+  field have none, and read as ``size`` None.
 
 fontTools is imported inside functions, so importing this module stays cheap.
 """
@@ -808,18 +811,27 @@ def facts_for(ref: FontFileRef, fetcher: Fetcher | None, cache: FontFileCache) -
     hash, or (read by range) is not the ``size`` the reference gives, and the
     fetcher's errors for failed requests.
     """
+    return facts_and_size(ref, fetcher, cache)[0]
+
+
+def facts_and_size(
+    ref: FontFileRef, fetcher: Fetcher | None, cache: FontFileCache
+) -> tuple[FontFacts, int | None]:
+    """``facts_for``, and the file's size in bytes when this call read the file (None when
+    the facts came from the cache, or a range read got no size from the server)."""
     found = cached_facts(ref, cache)
     if found is not None:
-        return found
+        return found, None
     if fetcher is None:
         raise FontFactsMissing(f"no cached facts for {ref.url} and no network (replay)")
     if split_member(ref.url) is not None:
-        facts = facts_from_bytes(read_zip_member(ref.url, fetcher), git_blob=ref.git_blob)
+        data = read_zip_member(ref.url, fetcher)
+        facts = facts_from_bytes(data, git_blob=ref.git_blob)
         if ref.sha256 is not None and facts.sha256 != ref.sha256:
             raise FontFileError(f"sha256 {facts.sha256} is not the expected {ref.sha256}")
         cache.put(facts)
         cache.put_url(ref.url, facts.sha256)
-        return facts
+        return facts, len(data)
     read = read_font(ref.url, FACT_TABLES, fetcher, whole=ref.sha256 is None)
     if ref.sha256 is not None and None not in (ref.size, read.size) and ref.size != read.size:
         # Range-read facts are filed under the reference's sha256 unchecked; a
@@ -828,7 +840,7 @@ def facts_for(ref: FontFileRef, fetcher: Fetcher | None, cache: FontFileCache) -
     facts = facts_from_read(read, sha256=ref.sha256, git_blob=ref.git_blob)
     cache.put(facts)
     cache.put_url(ref.url, facts.sha256)
-    return facts
+    return facts, len(read.data) if read.data is not None else read.size
 
 
 # --- the font_facts pseudo-source ---------------------------------------------------------------
@@ -841,15 +853,25 @@ class FileRead:
     url: str
     sha256: str | None  # None when the read failed
     error: str | None = None
+    size: int | None = None  # the file's bytes, when the stage knows them (module docstring)
 
     def to_json(self) -> dict[str, Any]:
-        return {"error": self.error, "sha256": self.sha256, "url": self.url}
+        """The row; ``size`` only when known, so rows without it keep their old form."""
+        row: dict[str, Any] = {"error": self.error, "sha256": self.sha256, "url": self.url}
+        if self.size is not None:
+            row["size"] = self.size
+        return row
 
     @classmethod
     def from_json(cls, d: dict[str, Any]) -> FileRead:
-        if set(d) != {"error", "sha256", "url"}:
-            raise ValueError(f"FileRead: expected error, sha256 and url, got {sorted(d)}")
-        return cls(url=str(d["url"]), sha256=d["sha256"], error=d["error"])
+        if set(d) - {"size"} != {"error", "sha256", "url"}:
+            raise ValueError(
+                f"FileRead: expected error, sha256, url and an optional size, got {sorted(d)}"
+            )
+        size = d.get("size")
+        if size is not None and (type(size) is not int or size < 0):
+            raise ValueError(f"FileRead: bad size {size!r}")
+        return cls(url=str(d["url"]), sha256=d["sha256"], error=d["error"], size=size)
 
 
 @dataclass(slots=True)
@@ -859,9 +881,14 @@ class ReadLog:
     reads: dict[str, FileRead] = field(default_factory=dict)
 
     def add(self, read: FileRead) -> None:
-        # A success is never replaced by a later failure of the same url.
+        # A success is never replaced by a later failure of the same url, and a size
+        # fills in one the same answer lacked.
         old = self.reads.get(read.url)
-        if old is None or old.sha256 is None:
+        if (
+            old is None
+            or old.sha256 is None
+            or (old.size is None and read.size is not None and read.sha256 == old.sha256)
+        ):
             self.reads[read.url] = read
 
     def rows(self) -> list[dict[str, Any]]:

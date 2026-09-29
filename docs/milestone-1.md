@@ -298,6 +298,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - [ ] Non-Google fonts:
   - link the designer's homepage or the repository's releases page;
   - never a release asset, `/releases/latest` or an aggregator (open-foundry.com counts as one: owner ruling of 2026-09-26);
+  - web.archive.org counts as an aggregator for every automatic pick, but an override the owner approves may link a timestamped Wayback Machine capture of the designer's page when that page is gone, marked and labelled as archived (owner ruling of 2026-09-29);
   - auto-accept only when two sources agree, or when the owner-approved foundry list (`config/foundries.toml`, gate C3) gives the link (owner ruling of 2026-09-26);
   - an `http://` homepage is upgraded to `https://` and checked monthly (owner ruling of 2026-09-26).
 - [ ] A monthly link check.

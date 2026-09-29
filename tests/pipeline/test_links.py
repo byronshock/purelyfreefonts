@@ -205,6 +205,76 @@ def test_policy_rejects_aggregators(url: str, aggregator: str) -> None:
     assert f"an aggregator ({aggregator})" in links.policy_problems(url)
 
 
+# --- rule: a Wayback Machine capture only as an archived override's link -------------------------
+
+CAPTURE = "https://web.archive.org/web/20221209161833/http://designer.example/fonts/"
+
+
+def test_only_an_archived_link_may_be_a_wayback_capture() -> None:
+    """Owner ruling of 2026-09-29: web.archive.org stays an aggregator, except for the
+    primary of an owner-approved override marked archived."""
+    assert links.policy_problems(CAPTURE) == ["an aggregator (web.archive.org)"]
+    assert links.policy_problems(CAPTURE, archived=True) == []
+    assert links.wayback_original(CAPTURE) == "http://designer.example/fonts/"
+    assert links.wayback_original("https://designer.example/fonts/") is None
+
+
+@pytest.mark.parametrize(
+    ("url", "problem"),
+    [
+        ("https://web.archive.org/web/2022/http://designer.example/", links.NOT_A_CAPTURE),
+        (
+            "https://web.archive.org/web/20221209161833id_/http://designer.example/",
+            links.NOT_A_CAPTURE,
+        ),
+        ("https://web.archive.org/web/*/designer.example/*", links.NOT_A_CAPTURE),
+        ("https://web.archive.org/save/https://designer.example/", links.NOT_A_CAPTURE),
+        ("http://web.archive.org/web/20221209161833/http://designer.example/", "not https"),
+        (
+            "https://web.archive.org/web/20221209161833/http://designer.example/Font-1.0.zip",
+            "a capture of a release asset or file download",
+        ),
+        (
+            "https://web.archive.org/web/20221209161833/https://www.dafont.com/some-font.font",
+            "a capture of an aggregator (dafont.com)",
+        ),
+        (
+            "https://web.archive.org/web/20221209161833/https://github.com/o/r/releases/latest",
+            "a capture of a /releases/latest link",
+        ),
+        # archived lifts nothing else: the rest of the policy holds off the Wayback Machine
+        ("https://www.dafont.com/some-font.font", "an aggregator (dafont.com)"),
+        ("https://github.com/o/r/releases/latest", "a /releases/latest link"),
+    ],
+)
+def test_an_archived_link_is_a_timestamped_capture_of_a_page_the_policy_allows(
+    url: str, problem: str
+) -> None:
+    assert problem in links.policy_problems(url, archived=True)
+
+
+def test_a_source_candidate_on_the_wayback_machine_is_still_rejected() -> None:
+    """No automatic pick links an archived copy: not two sources agreeing on it, and not
+    the owner-approved foundry list."""
+    capture = ("homepage", CAPTURE)
+    assert links.resolve(CAPTURE) == "an aggregator (web.archive.org)"
+    with pytest.raises(NoAcceptedLink) as caught:
+        choose(
+            rec("homebrew_casks", "Gone", capture, key="font-gone"),
+            rec("fontist", "Gone", capture),
+            rec("foundries", "Gone", capture),
+        )
+    assert caught.value.candidates == ()
+    assert {r.why for r in caught.value.rejected} == {"an aggregator (web.archive.org)"}
+
+
+def test_an_owner_pick_is_never_a_wayback_capture() -> None:
+    answer = reviews.Answer("K-gone", "x", "test", choice="a", values=(("url", CAPTURE),))
+    got = links.owner_picks(["gone"], {"K-gone": answer}, [])
+    assert got.links == {}
+    assert "an aggregator (web.archive.org)" in got.unusable["K-gone"]
+
+
 # --- resolving a source's URL -----------------------------------------------------------------
 
 
@@ -499,18 +569,42 @@ def test_committed_overrides_cover_the_gate_k_families() -> None:
         "K-droid-sans-mono-page",
         "K-go-mono-page",
         "K-bitstream-vera-page",
+        # Ruled on 2026-09-29: three corrected picks, two SIL pages and two archived pages.
+        "K-anka-coder-page",
+        "K-awami-nastaliq-page",
+        "K-cozette-page",
+        "K-sophia-nubian-page",
+        "K-tagmukay-page",
+        "K-heavy-data-page",
+        "K-monofur-page",
+        # Ruled later on 2026-09-29, after the next rebuild: TeX Gyre Heros Cn's family page.
+        "K-tex-gyre-heros-cn-page",
     }
+    # Every one is approved in data/reviews/links/ (Monofur's capture on the owner's second
+    # answer: the 2022 capture approved first turned out to be a parking page).
+    choices = links.gate_choices(Paths.for_root(ROOT))
+    assert {o.question for o in overrides if choices.get(o.question) != o.choice} == set()
     # The archived mirror says why it is the official link (owner ruling of 2026-09-28).
     assert "2020" in by_family["metropolis"].primary_note
     assert "archived mirror" in by_family["metropolis"].primary_label
+    # Only an archived override links a Wayback Machine capture, and every archived link says
+    # so in its label and explains in its note (owner ruling of 2026-09-29).
+    assert {o.family for o in overrides if o.archived} == {"metropolis", "heavy-data", "monofur"}
+    assert {o.family for o in overrides if links.wayback_original(o.primary)} == {
+        "heavy-data",
+        "monofur",
+    }
     for o in overrides:
         assert o.choice == "a"
         assert o.primary, o.family
+        assert (links.ARCHIVED_WORD in o.primary_label.casefold()) == o.archived, o.family
+        assert bool(o.primary_note) or not o.archived, o.family
         if o.question.startswith(("K-inter", "K-jetbrains", "K-ibm", "K-adobe")):
             # the four approved on 2026-09-26 name both links
             assert o.designer, o.family
-        for url in filter(None, (o.primary, o.designer)):
-            assert links.policy_problems(url) == [], (o.family, url)
+        assert links.policy_problems(o.primary, archived=o.archived) == [], (o.family, o.primary)
+        if o.designer:
+            assert links.policy_problems(o.designer) == [], (o.family, o.designer)
 
 
 def write_overrides(root: Path, *tables: str) -> Paths:
@@ -638,6 +732,88 @@ def test_a_family_is_overridden_once(tmp_path: Path) -> None:
     paths = write_overrides(tmp_path, INTER, INTER)
     with pytest.raises(ConfigError, match="listed twice"):
         links.load_overrides(paths)
+
+
+ARCHIVED_LABEL = "Wayback Machine: designer.example (archived copy)"
+ARCHIVED_NOTE = "The designer's site is gone; this is the Internet Archive's copy of it."
+ARCHIVED = f"""[[override]]
+family = "gone"
+name = "Gone"
+question = "K-gone-page"
+primary = "{CAPTURE}"
+archived = true
+primary_label = "{ARCHIVED_LABEL}"
+primary_note = "{ARCHIVED_NOTE}"
+reason = "The designer's page is gone."
+"""
+
+
+def test_an_approved_archived_override_links_a_wayback_capture(tmp_path: Path) -> None:
+    """Owner ruling of 2026-09-29: an override marked archived may link a timestamped capture
+    of the designer's page, labelled as archived, once the owner approves it."""
+    paths = write_overrides(tmp_path, ARCHIVED)
+    [entry] = links.load_overrides(paths)
+    assert entry.archived
+    gone = rec("homebrew_casks", "Gone", ("homepage", "https://gone.example/"), key="font-gone")
+    assert approved(paths) == {}  # a proposal until the owner rules
+    with pytest.raises(NoAcceptedLink):
+        choose(gone, fid="gone", overrides=approved(paths))
+
+    write_ruling(paths, "2026-10-01", "K-gone-page", "a")
+    got = choose(gone, fid="gone", overrides=approved(paths))
+    assert got == Links(
+        Link(CAPTURE, ARCHIVED_LABEL, ARCHIVED_NOTE, archived=True), None, "override"
+    )
+    # The owner is told the link is archived; the label and note go out with the link
+    # (catalog.json and catalog-site.json), so the site shows it too.
+    [question] = links.questions(paths)
+    assert f"primary {CAPTURE} (archived)" in question.text
+    assert export.link(got.primary) == {
+        "url": CAPTURE,
+        "label": ARCHIVED_LABEL,
+        "note": ARCHIVED_NOTE,
+    }
+
+
+@pytest.mark.parametrize(
+    ("change", "message"),
+    [
+        # Unmarked, a capture is an aggregator's link, as it was before the ruling.
+        (
+            ("archived = true\n", ""),
+            r"an aggregator \(web\.archive\.org\) \(only an override marked archived",
+        ),
+        (("archived = true\n", "archived = false\n"), r"an aggregator \(web\.archive\.org\)"),
+        # Marked, it must say so and say why, and be a timestamped capture.
+        ((ARCHIVED_LABEL, "Wayback Machine: designer.example"), "primary_label that says"),
+        ((f'primary_note = "{ARCHIVED_NOTE}"\n', ""), "primary_note that says why"),
+        (("/web/20221209161833/", "/web/2022/"), "not a timestamped capture"),
+        (("/web/20221209161833/", "/web/20221209161833id_/"), "not a timestamped capture"),
+        (("http://designer.example/fonts/", "http://designer.example/Font.zip"), "release asset"),
+        # A designer link is never archived.
+        (
+            ("reason = ", f'designer = "{CAPTURE}"\nreason = '),
+            r"designer: \S+ is an aggregator \(web\.archive\.org\)",
+        ),
+    ],
+)
+def test_an_archived_override_is_checked_strictly(
+    tmp_path: Path, change: tuple[str, str], message: str
+) -> None:
+    paths = write_overrides(tmp_path, ARCHIVED.replace(*change))
+    with pytest.raises(ConfigError, match=message):
+        links.load_overrides(paths)
+
+
+def test_archived_marks_a_mirror_too(tmp_path: Path) -> None:
+    """Metropolis links an archived mirror on GitHub: marked archived, the policy is the same."""
+    mirror = ARCHIVED.replace(CAPTURE, "https://github.com/someone/gone-mirror")
+    [entry] = links.load_overrides(write_overrides(tmp_path, mirror))
+    assert entry.links().primary.archived
+    with pytest.raises(ConfigError, match="releases/latest"):
+        links.load_overrides(
+            write_overrides(tmp_path, mirror.replace("gone-mirror", "gone-mirror/releases/latest"))
+        )
 
 
 def write_members(paths: Paths, *fids: str) -> None:
@@ -934,6 +1110,43 @@ def test_a_frozen_day_is_not_rewritten(paths: Paths, caplog: pytest.LogCaptureFi
     }
 
 
+def test_the_check_passes_a_capture_only_as_an_archived_link(paths: Paths) -> None:
+    # A capture may redirect to another capture of the page, but not to one the policy forbids.
+    moved = "https://web.archive.org/web/20221209000000/http://moved.example/"
+    later = "https://web.archive.org/web/20221210000000/http://moved.example/"
+    spam = "https://web.archive.org/web/20221209000000/http://spam.example/"
+    dafont = "https://web.archive.org/web/20221209000000/https://www.dafont.com/"
+    web = Web(
+        {
+            CAPTURE: (200, None),
+            moved: (302, later),
+            later: (200, None),
+            spam: (302, dafont),
+            dafont: (200, None),
+        }
+    )
+
+    def archived(*urls: str) -> dict[str, Links]:
+        return {
+            f"f{i}": Links(
+                Link(url, ARCHIVED_LABEL, ARCHIVED_NOTE, archived=True), None, "override"
+            )
+            for i, url in enumerate(urls)
+        }
+
+    checks = links.check(archived(CAPTURE, moved, spam), context(paths, web.fetcher()))
+    assert verdicts(checks) == {CAPTURE: (True, 200), moved: (True, 200), spam: (False, 200)}
+    assert checks[spam].problems == (
+        f"redirects to {dafont}, a capture of an aggregator (dafont.com)",
+    )
+    # A replay applies the same exception to the recorded answers ...
+    replay = context(paths, None, options=RunOptions(from_snapshots=DAY))
+    assert links.check(archived(CAPTURE, moved, spam), replay) == checks
+    # ... and the same URL as an ordinary link fails, whatever it answered.
+    plain = {"f": Links(Link(CAPTURE), None, links.PICK_BASIS)}
+    assert links.check(plain, replay)[CAPTURE].problems == ("an aggregator (web.archive.org)",)
+
+
 # --- the stage and links --check -------------------------------------------------------------------
 
 
@@ -1179,6 +1392,23 @@ def test_an_override_entry_on_the_family_question_decides_instead_of_the_pick(
     assert jsonio.load(paths.queues / links.QUEUE_FILE)["overrides"]["picked"] == {}
 
 
+def test_an_approved_archived_override_passes_the_stage_and_links_check(
+    paths: Paths, capsys: pytest.CaptureFixture[str]
+) -> None:
+    build_world(paths, members=["inter", "abel", "fira-code", "solo"])
+    solo = ARCHIVED.replace('"gone"', '"solo"').replace('"Gone"', '"Solo"')
+    write_overrides(paths.root, INTER, solo.replace("K-gone-page", "K-solo-page"))
+    answer_gate_k(paths, "2026-10-04", K_solo_page="a")
+    links.run(context(paths, Web({**WORLD_PAGES, CAPTURE: (200, None)}).fetcher()))
+    # The stage file keeps the mark, so a later check or replay applies the same exception.
+    assert stageio.load_stage(paths, "links")["solo"] == Links(
+        Link(CAPTURE, ARCHIVED_LABEL, ARCHIVED_NOTE, archived=True), None, "override"
+    )
+    assert jsonio.load(paths.queues / links.QUEUE_FILE)["failed_checks"] == {}
+    assert links.cmd_check(context(paths, None)) == 0
+    assert "4 families, 0 failures" in capsys.readouterr().out
+
+
 def test_a_replay_warns_about_links_accepted_after_its_run(
     paths: Paths, caplog: pytest.LogCaptureFixture
 ) -> None:
@@ -1257,8 +1487,9 @@ def test_committed_override_links_answer_200() -> None:
     overrides = links.load_overrides(Paths.for_root(ROOT))
     urls = {u for o in overrides for u in (o.primary, o.designer) if u}
     urls.add(links.specimen_url("Inter"))
+    archived = {o.primary for o in overrides if o.archived}
     with Fetcher() as fetcher:
         rows, fetched = links.check_urls(urls, fetcher)
-    bad = {url: links.to_check(row) for url, row in rows.items() if not links.to_check(row).ok}
-    assert bad == {}
+    checks = {url: links.to_check(row, archived=url in archived) for url, row in rows.items()}
+    assert {url: c for url, c in checks.items() if not c.ok} == {}
     assert len(fetched) >= len(urls)

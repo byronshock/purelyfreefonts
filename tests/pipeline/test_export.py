@@ -884,6 +884,31 @@ def test_the_exact_ranks_close_up_over_a_held_back_member(tmp_path: Path) -> Non
     assert all("gamma-serif" not in v for v in now.values())
 
 
+def test_an_archived_link_says_so_in_both_files(tmp_path: Path) -> None:
+    # Owner ruling of 2026-09-29: an approved override marked archived may link a Wayback
+    # Machine capture; its label and note reach catalog.json and catalog-site.json, so the
+    # site names the destination as archived and says why.
+    ctx = make_build(tmp_path)
+    capture = "https://web.archive.org/web/20221209161833/http://example.com/gamma/"
+    label = "Wayback Machine: example.com (archived copy)"
+    note = "The designer's site is gone; this is the Internet Archive's copy of it."
+    chosen = links()
+    chosen["gamma-serif"] = Links(Link(capture, label, note, archived=True), None, "override")
+    stageio.dump_stage(ctx.paths, "links", chosen)
+    docs = run_all(ctx)
+    for name in (export.CATALOG_FILE, export.SITE_FILE):
+        primary = fonts(docs[name])["gamma-serif"]["links"]["primary"]
+        assert primary == {"url": capture, "label": label, "note": note}, name
+    from tff_catalog.validate import schema_errors
+    from tff_site.data import destination_name, validate
+
+    for name, schema in export.SCHEMA_FILES.items():
+        assert schema_errors(ctx.paths.build / name, ROOT / "schemas" / schema) == [], name
+    site = docs[export.SITE_FILE]
+    validate(site)
+    assert destination_name(fonts(site)["gamma-serif"]["links"]["primary"]) == label
+
+
 def test_a_member_without_stage_data_fails_the_export(tmp_path: Path) -> None:
     ctx = make_build(tmp_path)
     facts = stageio.load_stage(ctx.paths, "facts")

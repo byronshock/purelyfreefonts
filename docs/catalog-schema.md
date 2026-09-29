@@ -68,12 +68,12 @@ The catalog is the overall top 500 plus the top 100 of the project rank and both
   - `redistributable` and `attribution_required`, and for the latter the `attribution` line to credit;
   - `text_url`, the license text that was checked, with its `text_sha256` and `checked_on` date;
   - `verified_level`: `L3` (the text matched a known license and the font's name table agrees), `ruling` (the owner ruled), or `L2`/`L1` for fonts the full check has not reached.
-- `font_file`: the upstream file the license check read, with its `url`, `sha256`, `size` and `format`. Previews are made from it. Null when the check read no file.
+- `font_file`: the upstream file the license check read, with its `url`, `sha256`, `size` and `format`. Previews are made from it. Null when the check read no file. When the family publishes only an archive, `url` names the file inside it as `<archive>.zip#<path in the archive>`, and `sha256`, `size` and `format` describe that file, not the archive.
 - `latin`: `coverage` (`basic` means basic Latin only, the "limited accents" badge) and `basis` (how it passed the Latin gate).
 - `formats`: `variable` and `static`.
 - `preview_ok`: the license lets the site show previews (redistributable fonts only). `preview`: the rendered specimen (`specimens/<id>.svg` and its sha256), or null.
 - `preinstalled_on[]`: systems that ship the font. `pulled_in_by[]`: Linux packages that install it on their own.
-- `links`: the `primary` download page and the `designer` page, each with an optional `label`. The primary link may also carry a `note`, a sentence the font's details show under it (for example why an archived mirror is the official download).
+- `links`: the `primary` download page and the `designer` page, each with an optional `label`. The primary link may also carry a `note`, a sentence the font's details show under it (for example why an archived mirror is the official download). When the designer's page is gone, an override the owner approves may link an archived copy of it, such as a Wayback Machine capture (owner ruling of 2026-09-29); its `label` then says "archived" and its `note` says why.
 - `first_seen`: the date the family first appeared in the universe.
 - `flags[]`:
   - `too_new`: too new to rank in some view;

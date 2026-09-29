@@ -31,6 +31,7 @@ from tff_catalog.fontfiles import (
     FontFactsMissing,
     FontFileCache,
     FontFileError,
+    ReadLog,
     cache_path,
     cmap_ranges,
     facts_for,
@@ -219,6 +220,7 @@ class FakeServer:
 
 
 URL = "https://fonts.example/synth/SynthSans-Regular.ttf"
+URL2 = "https://fonts.example/synth/SynthMono-Regular.ttf"
 
 
 # --- FontFacts ----------------------------------------------------------------------------------
@@ -652,6 +654,22 @@ def test_facts_for_reads_one_zip_member_by_range(tmp_path: Path) -> None:
     assert facts_for(ref, None, FontFileCache(tmp_path / "c.jsonl")) == ff  # replay: by url
 
 
+def test_facts_and_size_gives_the_size_of_a_file_it_read(tmp_path: Path) -> None:
+    """The size of a file read whole, by range (the server's Content-Range) or out of a
+    zip archive; None when the facts come from the cache."""
+    whole, ranged = big_font(), big_font(mono=True, panose=(2, 11, 9))
+    member = "SynthSans-1.0/fonts/ttf/SynthSans-Regular.ttf"
+    server = FakeServer({URL: whole, URL2: ranged, ZIP_URL: synth_zip({member: whole})})
+    cache = FontFileCache(tmp_path / "c.jsonl")
+    hashed = FontFileRef(url=URL2, sha256=hashlib.sha256(ranged).hexdigest())
+    zipped = FontFileRef(url=fontfiles.member_url(ZIP_URL, member))
+    for ref, data in ((FontFileRef(url=URL), whole), (hashed, ranged), (zipped, whole)):
+        facts, size = fontfiles.facts_and_size(ref, server, cache)
+        assert (facts.sha256, size) == (hashlib.sha256(data).hexdigest(), len(data))
+        assert fontfiles.facts_and_size(ref, server, cache) == (facts, None)  # cached
+        assert facts_for(ref, server, cache) == facts
+
+
 def test_a_zip_member_is_found_by_its_name_and_never_guessed(tmp_path: Path) -> None:
     font = big_font()
     archive = synth_zip({"a/SynthSans-Regular.ttf": font, "b/Other.ttf": font, "c/Other.ttf": font})
@@ -749,8 +767,29 @@ def test_recorded_reads_prefers_a_success_and_the_stage_asked_for(tmp_path: Path
 def test_file_read_json_is_strict() -> None:
     read = FileRead("https://a.example/A.ttf", "a" * 64)
     assert FileRead.from_json(read.to_json()) == read
+    assert read.to_json() == {"error": None, "sha256": "a" * 64, "url": read.url}  # old form
+    sized = FileRead("https://a.example/A.ttf", "a" * 64, size=1234)
+    assert sized.to_json()["size"] == 1234
+    assert FileRead.from_json(sized.to_json()) == sized
     with pytest.raises(ValueError, match="expected"):
         FileRead.from_json({"url": "x"})
+    with pytest.raises(ValueError, match="expected"):
+        FileRead.from_json({**sized.to_json(), "bytes": 1})
+    for bad in (-1, "12", 1.5, True):
+        with pytest.raises(ValueError, match="bad size"):
+            FileRead.from_json({**read.to_json(), "size": bad})
+
+
+def test_a_size_fills_in_the_same_answer_but_never_another() -> None:
+    log = ReadLog()
+    url = "https://a.example/A.ttf"
+    log.add(FileRead(url, "a" * 64))
+    log.add(FileRead(url, "b" * 64, size=9))  # another file: the first answer stands
+    assert log.reads[url] == FileRead(url, "a" * 64)
+    log.add(FileRead(url, "a" * 64, size=7))
+    assert log.reads[url] == FileRead(url, "a" * 64, size=7)
+    log.add(FileRead(url, None, "timeout"))
+    assert log.reads[url].size == 7
 
 
 # --- real fonts (network) -----------------------------------------------------------------------

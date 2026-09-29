@@ -665,14 +665,19 @@ class Texts:
 
 
 class FontReader:
-    """A ``FactsSource`` over a dict of URL -> facts."""
+    """A ``FactsSource`` over a dict of URL -> facts (and URL -> size, for files whose
+    size the reads found)."""
 
-    def __init__(self, facts: dict[str, Facts]) -> None:
+    def __init__(self, facts: dict[str, Facts], sizes: dict[str, int] | None = None) -> None:
         self.facts = facts
+        self.sizes = sizes or {}
 
     def get(self, ref: FontFileRef) -> tuple[Any, str | None]:
         found = self.facts.get(ref.url)
         return (found, None) if found else (None, "HTTP 404")
+
+    def size(self, url: str) -> int | None:
+        return self.sizes.get(url)
 
 
 TEXT_URL = f"{REPO}/ofl/examplesans/OFL.txt"
@@ -1853,6 +1858,158 @@ def test_store_facts_reads_live_and_replays_offline(tmp_path: Path) -> None:
     never = replay.get(FontFileRef(f"{REPO}/ofl/examplesans/Never.ttf"))
     assert never == (None, "no cached facts and no network (replay)")
     assert server.asked == [FONT_URL, gone]  # the replay fetched nothing
+
+
+def fresh_store(tmp_path: Path, name: str = "store") -> Any:
+    from tff_catalog.store import Store
+
+    (tmp_path / name).mkdir()
+    return Store(tmp_path / name)
+
+
+def test_store_facts_records_the_size_a_replay_publishes(tmp_path: Path) -> None:
+    """A file the source gives no size: the live read records its size in the font_facts
+    snapshot, and a replay answers the same size from the store alone."""
+    from tff_catalog import fontfiles
+
+    store = fresh_store(tmp_path)
+    font = small_font()
+    server = FontServer({FONT_URL: font})
+    live = license_l3.StoreFacts(
+        store, DAY, cast("Any", server), persist=True, font_cache=tmp_path / "fonts"
+    )
+    facts, _ = live.get(FontFileRef(FONT_URL))
+    assert (live.size(FONT_URL), server.asked) == (len(font), [FONT_URL])  # read once
+    live.close()
+    assert fontfiles.recorded_reads(store, DAY)[FONT_URL].size == len(font)
+    replay = license_l3.StoreFacts(store, DAY, None, persist=True)
+    assert replay.get(FontFileRef(FONT_URL)) == (facts, None)
+    assert replay.size(FONT_URL) == len(font)
+    assert replay.size(f"{REPO}/ofl/examplesans/Other.ttf") is None
+
+
+def cached_without_size(store: Any, font: bytes, day: date = LAST_MONTH) -> str:
+    """A store whose facts cache knows the file at FONT_URL, read on ``day`` in the old form
+    (no size): what a run before sizes were recorded left."""
+    from tff_catalog import fontfiles
+
+    cache = fontfiles.FontFileCache(fontfiles.cache_path(store.root))
+    facts = fontfiles.facts_from_bytes(font)
+    cache.put(facts)
+    cache.put_url(FONT_URL, facts.sha256)
+    cache.flush()
+    fontfiles.record_reads(
+        store, day, license_l3.STAGE, [fontfiles.FileRead(FONT_URL, facts.sha256)]
+    )
+    return facts.sha256
+
+
+def test_store_facts_finds_the_size_of_a_file_it_read_before(tmp_path: Path) -> None:
+    """Facts from the cache carry no size: it comes from the specimens' font cache, and a
+    later run takes it from the latest font_facts snapshot; neither downloads the file."""
+    store = fresh_store(tmp_path)
+    font = small_font()
+    sha256 = cached_without_size(store, font)
+    fonts = tmp_path / "fonts"
+    fonts.mkdir()
+    (fonts / sha256).write_bytes(font)
+    (fonts / ("0" * 64)).write_bytes(b"damaged")  # a cache entry is only trusted by its hash
+    server = FontServer({})
+    live = license_l3.StoreFacts(store, DAY, cast("Any", server), persist=True, font_cache=fonts)
+    assert live.get(FontFileRef(FONT_URL))[0] is not None
+    assert (live.size(FONT_URL), server.asked) == (len(font), [])
+    live.close()
+    later = license_l3.StoreFacts(
+        store, date(2026, 11, 3), cast("Any", server), persist=False, font_cache=tmp_path / "none"
+    )
+    assert later.get(FontFileRef(FONT_URL))[0] is not None
+    assert (later.size(FONT_URL), server.asked) == (len(font), [])
+
+
+def test_store_facts_downloads_a_file_again_for_its_size(tmp_path: Path) -> None:
+    """With no size anywhere in the store or the font cache, the file is fetched again, and
+    only the bytes the facts were read from give a size."""
+    font = small_font()
+    for served, size in ((font, len(font)), (small_font("Changed"), None)):
+        store = fresh_store(tmp_path, f"store-{size}")
+        cached_without_size(store, font)
+        server = FontServer({FONT_URL: served})
+        live = license_l3.StoreFacts(
+            store, DAY, cast("Any", server), persist=True, font_cache=tmp_path / "none"
+        )
+        assert live.get(FontFileRef(FONT_URL))[0] is not None
+        assert (live.size(FONT_URL), server.asked) == (size, [FONT_URL])
+        if size is None:
+            assert "another file" in live.size_problems[FONT_URL]
+
+
+def test_store_facts_finds_the_size_of_a_file_in_an_archive(tmp_path: Path) -> None:
+    from tests.test_fontfiles import ZIP_URL, FakeServer, synth_zip
+
+    from tff_catalog import fontfiles
+
+    font = small_font()
+    member = fontfiles.member_url(ZIP_URL, "SynthSans-1.0/fonts/ExampleSans.ttf")
+    store = fresh_store(tmp_path)
+    cache = fontfiles.FontFileCache(fontfiles.cache_path(store.root))
+    cache.put(fontfiles.facts_from_bytes(font))
+    cache.put_url(member, hashlib.sha256(font).hexdigest())
+    cache.flush()
+    server = FakeServer({ZIP_URL: synth_zip({"SynthSans-1.0/fonts/ExampleSans.ttf": font})})
+    live = license_l3.StoreFacts(
+        store, DAY, cast("Any", server), persist=False, font_cache=tmp_path / "none"
+    )
+    assert live.get(FontFileRef(member))[0] is not None
+    assert live.size(member) == len(font)
+    assert all(start is not None for _, start, _ in server.calls), "by range, never the archive"
+
+
+def test_font_file_takes_the_size_the_read_found(canon: Canon) -> None:
+    """Export publishes a font file only with its size: when the source gives none, L3's
+    font_file takes the size of the file it read; a source's own size stands."""
+    from tff_catalog.export import font_file
+
+    texts = Texts({TEXT_URL: ofl()})
+    sized = FontReader({FONT_URL: Facts(FONT_SHA)}, sizes={FONT_URL: 4321})
+    result = license_l3.check_family("example-sans", make_inputs(canon), texts, sized, DAY)
+    assert result.font_file is not None
+    assert result.font_file.size == 4321
+    assert font_file(result) == {"url": FONT_URL, "sha256": FONT_SHA, "size": 4321, "format": "ttf"}
+    unsized = FontReader({FONT_URL: Facts(FONT_SHA)})
+    result = license_l3.check_family("example-sans", make_inputs(canon), texts, unsized, DAY)
+    assert result.font_file is not None
+    assert (result.font_file.size, font_file(result)) == (None, None)
+    ev = {
+        "example-sans": Evidence(
+            texts=(TextRef(TEXT_URL),), files=(FontFileRef(FONT_URL, size=1000),)
+        )
+    }
+    result = license_l3.check_family(
+        "example-sans", make_inputs(canon, evidence=ev), texts, sized, DAY
+    )
+    assert result.font_file is not None
+    assert result.font_file.size == 1000
+
+
+def test_export_keeps_a_font_inside_a_zip_archive(canon: Canon) -> None:
+    """A font file read out of a release archive keeps its <archive>.zip#<member> reference;
+    its format is the member's, and a member that is no font file is left out."""
+    from tff_catalog.export import font_file
+
+    texts = Texts({TEXT_URL: ofl()})
+    reader = FontReader({FONT_URL: Facts(FONT_SHA)}, sizes={FONT_URL: 4321})
+    result = license_l3.check_family("example-sans", make_inputs(canon), texts, reader, DAY)
+    archive = "https://fonts.example/downloads/Example%201.0.zip"
+    for url, fmt in (
+        (f"{archive}#Example%201.0/OTF/Example%20Sans-Regular.otf", "otf"),
+        (f"{archive}#ExampleSans-Regular.woff2", "woff2"),
+        (f"{archive}#Example.ttc", None),
+        (archive, None),
+    ):
+        ref = FontFileRef(url, sha256=FONT_SHA, size=4321)
+        got = font_file(replace(result, font_file=ref))
+        want = {"url": url, "sha256": FONT_SHA, "size": 4321, "format": fmt} if fmt else None
+        assert got == want, url
 
 
 def test_the_font_file_notes(canon: Canon) -> None:

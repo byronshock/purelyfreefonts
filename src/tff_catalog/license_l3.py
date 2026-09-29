@@ -7,8 +7,10 @@ every family the last run failed (stage "rank" left those out, so no rank
 would bring one back once it is fixed): fetch the upstream license text,
 match its fingerprint against ``data/license-texts/<SPDX>.txt``, check
 name-table IDs 13 and 14, and record text_url, sha256, checked_on,
-font_version and ``font_file`` {url, sha256} (Milestone 2 builds previews
-from that file). Texts and font reads go through
+font_version and ``font_file`` {url, sha256, size} (Milestone 2 builds previews
+from that file; export publishes it only with its size, which comes from the
+source or, when the source gives none, from the ``font_facts`` read, ``StoreFacts``).
+Texts and font reads go through
 the ``license_texts`` and ``font_facts`` pseudo-sources, so replay is offline.
 
 A changed text hash puts the font back in the queue. A new exclusion makes
@@ -1329,6 +1331,10 @@ class FactsSource(Protocol):
         """The file's facts, or None and why."""
         ...
 
+    def size(self, url: str) -> int | None:
+        """The size in bytes of the file ``get`` read at ``url``, when known."""
+        ...
+
 
 _WEB_PAGE = re.compile(r"\A\s*(?:<!--.*?-->\s*)*<(?:!doctype\s+html|html)[\s>]", re.I | re.S)
 
@@ -1474,7 +1480,15 @@ class StoreTexts:
 
 
 class StoreFacts:
-    """Font-file facts through the facts cache and the ``font_facts`` pseudo-source."""
+    """Font-file facts through the facts cache and the ``font_facts`` pseudo-source.
+
+    Each read also records the file's size when the source gave none (``FileRead.size``),
+    because export publishes the file only with its size: a replay reads it from the
+    ``font_facts`` snapshot. A live run takes it from the file it downloaded, else from
+    the latest ``font_facts`` snapshot up to the run's day (same url and sha256), else
+    from the specimens' font cache (``~/.cache/tff/fonts/<sha256>``), else it downloads
+    the file again and checks its sha256.
+    """
 
     def __init__(
         self,
@@ -1484,6 +1498,7 @@ class StoreFacts:
         *,
         persist: bool,
         frozen: frozenset[date] = frozenset(),
+        font_cache: Path | None = None,
     ) -> None:
         from tff_catalog import fontfiles
 
@@ -1495,7 +1510,15 @@ class StoreFacts:
         self._recorded = (
             {} if fetcher is not None else fontfiles.recorded_reads(store, run_date, prefer=STAGE)
         )
+        self._known = {} if fetcher is None else _known_sizes(store, run_date)
+        if font_cache is None:
+            from tff_catalog.specimens.stage import FONT_CACHE
+
+            font_cache = FONT_CACHE
+        self._font_cache = font_cache.expanduser()
         self._reads = fontfiles.ReadLog()
+        self._sizes: dict[str, int] = {}
+        self.size_problems: dict[str, str] = {}  # url -> why its size stayed unknown (live)
 
     def get(self, ref: FontFileRef) -> tuple[FontFacts | None, str | None]:
         ff = self._ff
@@ -1506,16 +1529,52 @@ class StoreFacts:
             if read is not None:
                 ref = replace(ref, sha256=read.sha256)
             found = ff.cached_facts(ref, self._cache)
-            return (found, None) if found else (None, "no cached facts and no network (replay)")
+            if found is None:
+                return None, "no cached facts and no network (replay)"
+            if read is not None and read.size is not None and read.sha256 == found.sha256:
+                self._sizes[ref.url] = read.size
+            return found, None
         from tff_catalog.fetch import FetchError, HostNotAllowed
 
         try:
-            facts = ff.facts_for(ref, self._fetcher, self._cache)
+            facts, size = ff.facts_and_size(ref, self._fetcher, self._cache)
         except (ff.FontFileError, ff.FontFactsMissing, FetchError, HostNotAllowed) as exc:
             self._reads.add(ff.FileRead(ref.url, None, str(exc)[:300]))
             return None, str(exc)[:300]
-        self._reads.add(ff.FileRead(ref.url, facts.sha256))
+        if size is None and ref.size is None:
+            size = self._size_of(ref.url, facts.sha256)
+        if size is not None:
+            self._sizes[ref.url] = size
+        self._reads.add(ff.FileRead(ref.url, facts.sha256, size=size))
         return facts, None
+
+    def size(self, url: str) -> int | None:
+        return self._sizes.get(url)
+
+    def _size_of(self, url: str, sha256: str) -> int | None:
+        """The size of the file with ``sha256`` at ``url``, found without its facts read."""
+        known = self._known.get((url, sha256))
+        if known is not None:
+            return known
+        local = self._font_cache / sha256
+        if local.is_file() and hashlib.sha256(local.read_bytes()).hexdigest() == sha256:
+            return local.stat().st_size
+        from tff_catalog.fetch import FetchError, HostNotAllowed
+
+        ff = self._ff
+        assert self._fetcher is not None
+        try:
+            if ff.split_member(url) is not None:
+                data = ff.read_zip_member(url, self._fetcher)
+            else:
+                data = self._fetcher.get(url).content
+        except (ff.FontFileError, FetchError, HostNotAllowed) as exc:
+            self.size_problems[url] = str(exc)[:300]
+            return None
+        if hashlib.sha256(data).hexdigest() != sha256:
+            self.size_problems[url] = f"it now serves another file than sha256 {sha256}"
+            return None
+        return len(data)
 
     def close(self) -> None:
         """Save new facts in the cache and the reads as today's ``font_facts`` (live runs only)."""
@@ -1526,6 +1585,18 @@ class StoreFacts:
             self._ff.record_reads(
                 self._store, self._day, STAGE, self._reads.reads.values(), frozen=self._frozen_days
             )
+
+
+def _known_sizes(store: Store, run_date: date) -> dict[tuple[str, str], int]:
+    """Every recorded size in the latest ``font_facts`` snapshot up to ``run_date``,
+    by (url, sha256): a live run reuses them rather than download a file again."""
+    from tff_catalog import fontfiles
+
+    latest = store.latest(fontfiles.READS_SOURCE, run_date)
+    if latest is None:
+        return {}
+    reads = fontfiles.recorded_reads(store, latest.date).values()
+    return {(r.url, r.sha256): r.size for r in reads if r.sha256 and r.size is not None}
 
 
 @contextmanager
@@ -1557,6 +1628,8 @@ def open_sources(
     texts.close()
     facts.close()
     ctx.log.info("verify: %d license texts fetched, %d reused", texts.fetched, texts.reused)
+    for url, why in sorted(facts.size_problems.items()):
+        ctx.log.warning("verify: the size of %s is unknown, so export leaves it out: %s", url, why)
 
 
 # --- the check ----------------------------------------------------------------------------------
@@ -1832,7 +1905,11 @@ def check_family(
         name_ids=(found.license_description, found.license_url) if found else (None, None),
         font_version=found.version if found else None,
         font_file=FontFileRef(
-            url=ref.url, sha256=found.sha256, size=ref.size, role=ref.role, git_blob=ref.git_blob
+            url=ref.url,
+            sha256=found.sha256,
+            size=ref.size or facts.size(ref.url),
+            role=ref.role,
+            git_blob=ref.git_blob,
         )
         if ref is not None and found is not None
         else None,

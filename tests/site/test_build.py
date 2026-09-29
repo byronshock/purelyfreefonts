@@ -945,6 +945,23 @@ def test_a_specimen_with_a_script_fails(tmp_path, catalog, mini_site):
         run_build(catalog, tmp_path / "site", mini_site)
 
 
+def test_a_font_from_a_release_archive_is_served_like_any_other(tmp_path, catalog, mini_site):
+    """A font_file that names a member of a zip archive (<archive>.zip#<member>) validates,
+    and the build serves the member's bytes from the cache, named by the member's format."""
+    victim = "sample-sans-05"
+    url = "https://fonts.example/downloads/Sample%201.0.zip#Sample%201.0/OTF/Sample-Regular.otf"
+    edit_catalog(catalog[0], victim, font_file__url=url, font_file__format="otf")
+    out = tmp_path / "site"
+    run_build(catalog, out, mini_site)
+    page = parse((out / "index.html").read_text(encoding="utf-8"))
+    payload = load_json(out, next(a["data-details"] for t, a in page.tags if t == "ol"))
+    type_own = payload["fonts"][victim]["type_own"]
+    served = asset(out, type_own["url"])
+    assert served.read_bytes() == fake_font(victim)
+    assert served.name.startswith(f"{victim}.")
+    assert served.suffix == ".otf"
+
+
 def test_a_missing_font_file_fails(tmp_path, catalog, mini_site):
     cache = catalog[1]
     victim = next(f for f in SAMPLE["fonts"] if f["id"] == "sample-sans-05")
