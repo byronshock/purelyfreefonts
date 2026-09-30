@@ -1120,7 +1120,9 @@ def test_clear_filters_keeps_the_rank_and_sort_order(
     guarded, page = open_list(guarded_context)
     page.select_option("#f-rank", rank)
     page.select_option("#f-sort", "name")
-    for selector in ("#f-var", "#f-cat-serif", "#f-hide-attr", "#f-hide-limited"):
+    # "No credit required" shows only while some font needs credit (license_filter).
+    credit = page.locator("#f-hide-attr").count() > 0
+    for selector in ("#f-var", "#f-cat-serif", "#f-hide-limited", *(["#f-hide-attr"] * credit)):
         page.check(selector)
     page.select_option("#f-os", "android")
     page.fill("#f-q", "sa")
@@ -1132,7 +1134,9 @@ def test_clear_filters_keeps_the_rank_and_sort_order(
     assert page.input_value("#f-os") == ""
     assert page.input_value("#f-sort") == "name"
     assert not page.is_checked("#f-var")
-    assert not page.is_checked("#f-hide-attr")
+    assert not page.is_checked("#f-hide-limited")
+    if credit:
+        assert not page.is_checked("#f-hide-attr")
     assert page.text_content("#f-toggle .filters-count") == ""
     assert page.evaluate("document.activeElement.id") == "f-clear"
     guarded.assert_clean(page)
