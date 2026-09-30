@@ -1223,16 +1223,26 @@ def median(values: list[float]) -> float:
     ids=["wide", "table", "phone"],
 )
 def test_an_unranked_label_takes_a_line_of_its_own(
-    guarded_context: Any, viewport: dict[str, int]
+    guarded_context: Any, doc: dict[str, Any], viewport: dict[str, int]
 ) -> None:
     """The owner's site ruling of 2026-09-26 (list_layout): "Not ranked: <reason>" is kept,
     on a line of its own above the name instead of down the narrow rank column, and the row
-    estimates (``--row-est-h``) stay close to the measured heights."""
-    guarded, page = open_list(guarded_context, viewport=viewport)
+    estimates (``--row-est-h``) stay close to the measured heights.
+
+    The sample's default view has unranked rows; the real catalog's Overall ranks every font,
+    so the first view that has some is opened instead."""
+    view = next(
+        v["key"]
+        for v in doc["views"]
+        if v["available"]
+        and any(f["ranks"].get(v["key"], {}).get("unranked") for f in doc["fonts"])
+    )
+    hash = "" if view == doc["views"][0]["key"] else f"#rank={view}"
+    guarded, page = open_list(guarded_context, hash, viewport=viewport)
     laid = page.evaluate(LAYOUT_JS)
     unranked = [r for r in laid if r["label"].startswith(NOT_RANKED)]
     ranked = [r for r in laid if not r["label"].startswith(NOT_RANKED)]
-    assert unranked, "the sample's default view has unranked rows"
+    assert unranked, f"the {view} view has unranked rows"
     assert all(r["unranked"] for r in unranked)
     assert not any(r["unranked"] for r in ranked)
     for r in unranked:

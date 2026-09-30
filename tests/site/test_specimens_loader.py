@@ -456,7 +456,10 @@ UNSAFE_SOURCES = (
 
 
 def test_a_source_outside_the_specimens_folder_is_never_loaded(guarded_context: Any) -> None:
-    guarded = guarded_context(viewport=WIDE)
+    # Tall enough that rows after the unsafe ones come near the screen and load, even with
+    # the real catalog's taller rows.
+    tall = {"width": WIDE["width"], "height": 1600}
+    guarded = guarded_context(viewport=tall)
     page = guarded.new_page()
     sources = iter(UNSAFE_SOURCES)
 
@@ -479,7 +482,7 @@ def test_a_source_outside_the_specimens_folder_is_never_loaded(guarded_context: 
     unsafe = [r for r in listed if r["src"] in UNSAFE_SOURCES]
     assert len(unsafe) == len(UNSAFE_SOURCES)
     # These rows are near the screen, so each would have loaded with a proper source.
-    assert all(r["top"] < WIDE["height"] + MARGIN_PX - 100 for r in unsafe)
+    assert all(r["top"] < tall["height"] + MARGIN_PX - 100 for r in unsafe)
     assert [r["id"] for r in unsafe if r["set"] or r["mask"] not in {"", "none"}] == []
     assert set(requested(guarded)) <= {r["src"] for r in listed if r["set"]}
     paths = {urlsplit(url).path for url in guarded.requests}
@@ -718,9 +721,10 @@ def test_without_javascript_the_no_script_images_show(
           .filter((li) => !li.querySelector('.font-title.has-spec'))
           .map((li) => getComputedStyle(li.querySelector('h3.font-name')).opacity)"""
     )
-    assert fallbacks
-    assert set(fallbacks) == {"1"}
     families = {f["id"]: f["family"] for f in loader_doc["fonts"] if f["preview"]}
+    # The sample has rows without an image; in the real catalog every font has one.
+    assert len(fallbacks) == len(loader_doc["fonts"]) - len(families)
+    assert set(fallbacks) <= {"1"}
     assert {i["id"] for i in images} == set(families)
     for image in images:
         assert image["loading"] == "lazy"
