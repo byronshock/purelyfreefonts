@@ -969,7 +969,7 @@
       "distinct_from": [],
       "family": "Apfel Grotezk",
       "id": "apfel-grotezk",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -1330,30 +1330,6 @@
       "distinct_from": [],
       "family": "Atomic Age",
       "id": "atomic-age",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "AU Passata",
-      "id": "au-passata",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "AU Passata Light",
-      "id": "au-passata-light",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "AU Peto",
-      "id": "au-peto",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -3308,7 +3284,7 @@
       "distinct_from": [],
       "family": "Comic Relief",
       "id": "comic-relief",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -4691,6 +4667,14 @@
     },
     {
       "distinct_from": [],
+      "family": "ET Book",
+      "id": "et-book",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Euphoria Script",
       "id": "euphoria-script",
       "in_catalog": false,
@@ -5277,6 +5261,34 @@
     },
     {
       "distinct_from": [],
+      "family": "FreeFont",
+      "id": "freefont",
+      "in_catalog": true,
+      "names": [
+        {
+          "name": "GNU FreeFont",
+          "relation": "rename"
+        },
+        {
+          "detail": "",
+          "name": "FreeMono",
+          "relation": "build"
+        },
+        {
+          "detail": "",
+          "name": "FreeSans",
+          "relation": "build"
+        },
+        {
+          "detail": "",
+          "name": "FreeSerif",
+          "relation": "build"
+        }
+      ],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Freeman",
       "id": "freeman",
       "in_catalog": false,
@@ -5796,6 +5808,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Go",
+      "id": "go",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Go Mono",
       "id": "go-mono",
       "in_catalog": true,
@@ -6124,6 +6144,11 @@
       "id": "hack",
       "in_catalog": true,
       "names": [
+        {
+          "detail": "",
+          "name": "HackGen",
+          "relation": "build"
+        },
         {
           "detail": "nerd",
           "name": "Hack Nerd Font",
@@ -6492,7 +6517,7 @@
       "distinct_from": [],
       "family": "Hubot Sans",
       "id": "hubot-sans",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -7492,7 +7517,7 @@
       "distinct_from": [],
       "family": "Jersey 10",
       "id": "jersey-10",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -8449,6 +8474,22 @@
     },
     {
       "distinct_from": [],
+      "family": "Liberation Sans",
+      "id": "liberation-sans",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Liberation Serif",
+      "id": "liberation-serif",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Libertinus Keyboard",
       "id": "libertinus-keyboard",
       "in_catalog": true,
@@ -8648,6 +8689,22 @@
       "family": "Linden Hill",
       "id": "linden-hill",
       "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Linux Biolinum",
+      "id": "linux-biolinum",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Linux Libertine",
+      "id": "linux-libertine",
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -11499,7 +11556,7 @@
       "distinct_from": [],
       "family": "Paytone One",
       "id": "paytone-one",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -11651,7 +11708,7 @@
       "distinct_from": [],
       "family": "Platypi",
       "id": "platypi",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -15279,7 +15336,7 @@
       "distinct_from": [],
       "family": "Tangerine",
       "id": "tangerine",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -17106,6 +17163,18 @@
       "reason": "latin"
     },
     {
+      "name": "AU Passata",
+      "reason": "license"
+    },
+    {
+      "name": "AU Passata Light",
+      "reason": "license"
+    },
+    {
+      "name": "AU Peto",
+      "reason": "license"
+    },
+    {
       "name": "AurulentSansM",
       "reason": "latin"
     },
@@ -17608,14 +17677,6 @@
     {
       "name": "Church Slavonic Fonts",
       "reason": "license"
-    },
-    {
-      "name": "Cica",
-      "reason": "cjk"
-    },
-    {
-      "name": "Cica without emoji",
-      "reason": "cjk"
     },
     {
       "name": "Cinderella",
@@ -18198,10 +18259,6 @@
       "reason": "license"
     },
     {
-      "name": "ET Book",
-      "reason": "latin"
-    },
-    {
       "name": "ETmodules",
       "reason": "icon"
     },
@@ -18430,28 +18487,12 @@
       "reason": "proprietary"
     },
     {
-      "name": "FreeFont",
-      "reason": "license"
-    },
-    {
       "name": "Freehand",
       "reason": "latin"
     },
     {
-      "name": "FreeMono",
-      "reason": "license"
-    },
-    {
       "name": "FreeMonoTengwar",
       "reason": "latin"
-    },
-    {
-      "name": "FreeSans",
-      "reason": "license"
-    },
-    {
-      "name": "FreeSerif",
-      "reason": "license"
     },
     {
       "name": "FreightBig Pro",
@@ -18786,15 +18827,7 @@
       "reason": "cjk"
     },
     {
-      "name": "GNU FreeFont",
-      "reason": "license"
-    },
-    {
       "name": "GNU Unifont",
-      "reason": "latin"
-    },
-    {
-      "name": "Go",
       "reason": "latin"
     },
     {
@@ -19019,14 +19052,6 @@
     },
     {
       "name": "Hachi Maru Pop",
-      "reason": "cjk"
-    },
-    {
-      "name": "HackGen",
-      "reason": "cjk"
-    },
-    {
-      "name": "HackGenNerd",
       "reason": "cjk"
     },
     {
@@ -20006,14 +20031,6 @@
       "reason": "latin"
     },
     {
-      "name": "Liberation Sans",
-      "reason": "latin"
-    },
-    {
-      "name": "Liberation Serif",
-      "reason": "latin"
-    },
-    {
       "name": "Libertinus Math",
       "reason": "icon"
     },
@@ -20072,14 +20089,6 @@
     {
       "name": "LINE Seed JP",
       "reason": "cjk"
-    },
-    {
-      "name": "Linux Biolinum",
-      "reason": "latin"
-    },
-    {
-      "name": "Linux Libertine",
-      "reason": "latin"
     },
     {
       "name": "LiSu",
@@ -23528,7 +23537,7 @@
   ],
   "run": {
     "date": "2026-09-26",
-    "method_version": "2026-09-25"
+    "method_version": "2026-09-29"
   },
   "schema_version": "0.1.0-draft"
 }

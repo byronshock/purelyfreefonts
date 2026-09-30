@@ -13,7 +13,7 @@ and T4). The floor is the volume under which the engine censors a key.
 |---|---:|---:|
 | almanac | 0 | 0 |
 | arch | 0.3% | 78 |
-| debian | 100 installs | 318 |
+| debian | 100 installs | 317 |
 | ecosystems | 5 dependents | 1 |
 | fot | 3 sites | 220 |
 | github | 0 downloads a year | 27 |
@@ -114,7 +114,6 @@ and T4). The floor is the volume under which the engine censors a key.
 | 46 | `texlive-fonts-recommended` | deb-pkg | 16,867 |
 | 63 | `texlive-fonts-extra` | deb-pkg | 8,298 |
 | 88 | `texlive-fonts-extra-links` | deb-pkg | 7,538 |
-| 148 | `fonts-adwaita` | deb-pkg | 3,025 |
 | 203 | `fonts-tlwg-mono-ttf` | deb-pkg | 1,458 |
 | 204 | `fonts-tlwg-garuda-ttf` | deb-pkg | 1,457 |
 | 204 | `fonts-tlwg-loma-ttf` | deb-pkg | 1,457 |

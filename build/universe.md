@@ -4,8 +4,8 @@ Written by `tff-catalog universe` (milestone-1 step 4). Every universe key is in
 
 | Measure | Count |
 |---|---|
-| Families | 3141 |
-| Eligible families | 2786 |
+| Families | 3137 |
+| Eligible families | 2782 |
 | Dropped families | 355 |
 | Keys in a family | 9067 |
 | Keys kept out of every family | 98 |
@@ -20,7 +20,7 @@ Written by `tff-catalog universe` (milestone-1 step 4). Every universe key is in
 | foundries | 102 | 102 | 0 |
 | google_metadata | 1946 | 1919 | 27 |
 | google_repo | 2026 | 1991 | 35 |
-| homebrew_casks | 2484 | 2422 | 62 |
+| homebrew_casks | 2480 | 2418 | 62 |
 | nerdfonts | 65 | 64 | 1 |
 
 ## Keys per namespace
@@ -517,7 +517,7 @@ None.
 
 ## New ids this run
 
-First run: all 3141 ids are new (build/review/universe-keys.md lists them).
+First run: all 3137 ids are new (build/review/universe-keys.md lists them).
 
 ## Display names changed this run (record the old name in data/aliases.csv)
 

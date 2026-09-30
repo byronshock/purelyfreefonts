@@ -41,12 +41,14 @@ Stage "correct" (milestone-1 step 10), run date 2026-09-26. Generated; do not ed
 | `dep-debian-cousine` | accepted | Cousine (`cousine`) | debian | abstains: dependency | debian | texlive-fonts-extra | 80% |
 | `dep-debian-eb-garamond` | accepted | EB Garamond (`eb-garamond`) | debian | abstains: dependency | debian | texlive-fonts-extra | 100% |
 | `dep-debian-eb-garamond-12-all-sc` | accepted | EB Garamond 12 All SC (`eb-garamond-12-all-sc`) | debian | abstains: dependency | debian | texlive-fonts-extra | 100% |
+| `dep-debian-freefont` | accepted | FreeFont (`freefont`) | debian | abstains: dependency | debian | vlc-plugin-skins2 | 73% |
 | `dep-debian-gentium` | accepted | Gentium (`gentium`) | debian | abstains: dependency | debian | fonts-sil-gentium-basic | 99% |
 | `dep-debian-gentium-book-basic` | accepted | Gentium Book Basic (`gentium-book-basic`) | debian | abstains: dependency | debian | libreoffice | 67% |
 | `dep-debian-gentium-book-plus` | accepted | Gentium Book Plus (`gentium-book-plus`) | debian | abstains: dependency | debian | texlive-fonts-extra | 100% |
 | `dep-debian-gentium-plus` | accepted | Gentium Plus (`gentium-plus`) | debian | abstains: dependency | debian | texlive-fonts-extra | 100% |
 | `dep-debian-gfs-didot` | accepted | GFS Didot (`gfs-didot`) | debian | abstains: dependency | debian | texlive-fonts-extra | 100% |
 | `dep-debian-gfs-neohellenic` | accepted | GFS Neohellenic (`gfs-neohellenic`) | debian | abstains: dependency | debian | texlive-fonts-extra | 100% |
+| `dep-debian-go` | accepted | Go (`go`) | debian | abstains: dependency | debian | texlive-fonts-extra | 100% |
 | `dep-debian-go-mono` | accepted | Go Mono (`go-mono`) | debian | abstains: dependency | debian | texlive-fonts-extra | 100% |
 | `dep-debian-ibm-3270` | accepted | IBM 3270 (`ibm-3270`) | debian | abstains: dependency | debian | cool-retro-term | 68% |
 | `dep-debian-inter` | accepted | Inter (`inter`) | debian | abstains: dependency | debian | texlive-fonts-extra | 100% |
@@ -54,6 +56,8 @@ Stage "correct" (milestone-1 step 10), run date 2026-09-26. Generated; do not ed
 | `dep-debian-latin-modern` | accepted | Latin Modern (`latin-modern`) | debian | abstains: dependency | debian | texlive-base | 94% |
 | `dep-debian-lato` | accepted | Lato (`lato`) | debian | abstains: dependency | debian | sphinx-rtd-theme-common | 61% |
 | `dep-debian-league-spartan` | accepted | League Spartan (`league-spartan`) | debian | abstains: dependency | debian | fonts-recommended | 69% |
+| `dep-debian-linux-biolinum` | accepted | Linux Biolinum (`linux-biolinum`) | debian | abstains: dependency | debian | libreoffice | 70% |
+| `dep-debian-linux-libertine` | accepted | Linux Libertine (`linux-libertine`) | debian | abstains: dependency | debian | libreoffice | 70% |
 | `dep-debian-lobster` | accepted | Lobster (`lobster`) | debian | abstains: dependency | debian | fonts-lobstertwo | 100% |
 | `dep-debian-lobster-two` | accepted | Lobster Two (`lobster-two`) | debian | abstains: dependency | debian | texlive-fonts-extra | 100% |
 | `dep-debian-monofur` | accepted | Monofur (`monofur`) | debian | abstains: dependency | debian | fonts-eurofurence | 72% |
@@ -98,6 +102,8 @@ Stage "correct" (milestone-1 step 10), run date 2026-09-26. Generated; do not ed
 | `pre-arch-dejavu-serif` | accepted | DejaVu Serif (`dejavu-serif`) | arch | preinstalled | cachyos |  |  |
 | `pre-arch-hack` | accepted | Hack (`hack`) | arch | preinstalled | kde-plasma |  |  |
 | `pre-arch-liberation-mono` | accepted | Liberation Mono (`liberation-mono`) | arch | preinstalled | cachyos |  |  |
+| `pre-arch-liberation-sans` | accepted | Liberation Sans (`liberation-sans`) | arch | preinstalled | cachyos |  |  |
+| `pre-arch-liberation-serif` | accepted | Liberation Serif (`liberation-serif`) | arch | preinstalled | cachyos |  |  |
 | `pre-arch-noto-sans` | accepted | Noto Sans (`noto-sans`) | arch | preinstalled | cachyos |  |  |
 | `pre-arch-noto-sans-mono` | accepted | Noto Sans Mono (`noto-sans-mono`) | arch | preinstalled | cachyos |  |  |
 | `pre-arch-noto-serif` | accepted | Noto Serif (`noto-serif`) | arch | preinstalled | cachyos |  |  |
@@ -110,6 +116,8 @@ Stage "correct" (milestone-1 step 10), run date 2026-09-26. Generated; do not ed
 | `pre-debian-dejavu-serif` | accepted | DejaVu Serif (`dejavu-serif`) | debian | preinstalled | debian |  |  |
 | `pre-debian-hack` | accepted | Hack (`hack`) | debian | preinstalled | kde-plasma |  |  |
 | `pre-debian-liberation-mono` | accepted | Liberation Mono (`liberation-mono`) | debian | preinstalled | ubuntu |  |  |
+| `pre-debian-liberation-sans` | accepted | Liberation Sans (`liberation-sans`) | debian | preinstalled | ubuntu |  |  |
+| `pre-debian-liberation-serif` | accepted | Liberation Serif (`liberation-serif`) | debian | preinstalled | ubuntu |  |  |
 | `pre-debian-noto-sans` | accepted | Noto Sans (`noto-sans`) | debian | preinstalled | kde-plasma |  |  |
 | `pre-debian-noto-sans-display` | accepted | Noto Sans Display (`noto-sans-display`) | debian | preinstalled | ubuntu |  |  |
 | `pre-debian-noto-serif` | accepted | Noto Serif (`noto-serif`) | debian | preinstalled | ubuntu |  |  |
@@ -243,12 +251,16 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Lexend Tera (`lexend-tera`) | arch | `lexend-fonts-git` (bundle): 0.23%, credit 0.5 | censored, 0.11% |
 | Lexend Zetta (`lexend-zetta`) | arch | `lexend-fonts-git` (bundle): 0.23%, credit 0.5 | censored, 0.11% |
 | Liberation Mono (`liberation-mono`) | arch | `ttf-liberation` (bundle): 77.17%, credit 0.5; `ttf-liberation-mono-nerd` (bundle): 6.14% before the floor, 1.22% after, credit 0.5 | observed, 38.58% |
+| Liberation Sans (`liberation-sans`) | arch | `ttf-liberation` (bundle): 77.17%, credit 0.5; `ttf-liberation-mono-nerd` (bundle): 6.14% before the floor, 1.22% after, credit 0.5 | observed, 38.58% |
+| Liberation Serif (`liberation-serif`) | arch | `ttf-liberation` (bundle): 77.17%, credit 0.5; `ttf-liberation-mono-nerd` (bundle): 6.14% before the floor, 1.22% after, credit 0.5 | observed, 38.58% |
 | Libertinus Keyboard (`libertinus-keyboard`) | arch | `otf-libertinus` (bundle): 7.41%, credit 0.5 | observed, 3.71% |
 | Libertinus Mono (`libertinus-mono`) | arch | `otf-libertinus` (bundle): 7.41%, credit 0.5 | observed, 3.71% |
 | Libertinus Sans (`libertinus-sans`) | arch | `otf-libertinus` (bundle): 7.41%, credit 0.5 | observed, 3.71% |
 | Libertinus Serif (`libertinus-serif`) | arch | `otf-libertinus` (bundle): 7.41%, credit 0.5 | observed, 3.71% |
 | Libertinus Serif Display (`libertinus-serif-display`) | arch | `otf-libertinus` (bundle): 7.41%, credit 0.5 | observed, 3.71% |
 | Lilex (`lilex`) | arch | `ttf-lilex-nerd` (nerd): 5.62% before the floor, 0.70% after, credit 1; `ttf-lilex-variable` (variable): 0.05%, credit 1 | observed, 0.70% |
+| Linux Biolinum (`linux-biolinum`) | arch | `ttf-linux-libertine` (bundle): 6.14%, credit 0.5; `ttf-linux-libertine-g` (bundle): 2.99%, credit 0.5 | observed, 3.07% |
+| Linux Libertine (`linux-libertine`) | arch | `ttf-linux-libertine` (bundle): 6.14%, credit 0.5; `ttf-linux-libertine-g` (bundle): 2.99%, credit 0.5 | observed, 3.07% |
 | Literata (`literata`) | arch | `ttf-literata-variable-git` (variable): 0.08%, credit 1 | censored, 0.16% |
 | M PLUS Code Latin (`m-plus-code-latin`) | arch | `ttf-mplus-nerd` (bundle): 5.50% before the floor, 0.58% after, credit 0.5 | censored, 0.29% |
 | Maple Mono (`maple-mono`) | arch | `maplemono-nf` (nf): 0.11%, credit 1; `ttf-maplemono-cn` (cjk): 0.07%, credit 1; `ttf-maplemono-nf` (nf): 0.16%, credit 1; `ttf-maplemono-nf-cn` (cjk): 0.16%, credit 1 | censored, 0.21% |
@@ -356,6 +368,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Gentium Book Basic (`gentium-book-basic`) | debian | `fonts-sil-gentium-basic` (bundle): 22,524, credit 0.5 | observed, 11,262 |
 | Gentium Book Plus (`gentium-book-plus`) | debian | `fonts-sil-gentiumplus` (bundle): 8,090, credit 0.5 | observed, 4,045 |
 | Gentium Plus (`gentium-plus`) | debian | `fonts-sil-gentiumplus` (bundle): 8,090, credit 0.5 | observed, 7,990 |
+| Go (`go`) | debian | `fonts-go` (bundle): 7,946, credit 0.5 | observed, 3,973 |
 | Go Mono (`go-mono`) | debian | `fonts-go` (bundle): 7,946, credit 0.5 | observed, 3,973 |
 | Hack (`hack`) | debian | `fonts-hack-nerd` (nerd): 3, credit 1 | observed, 39,671 |
 | IBM Plex Mono (`ibm-plex-mono`) | debian | `fonts-ibm-plex` (bundle): 494, credit 0.5 | observed, 247 |
@@ -367,11 +380,15 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Karla (`karla`) | debian | `fonts-karla` (bundle): 191, credit 0.5 | censored, 95.50 |
 | Latin Modern (`latin-modern`) | debian | `fonts-lmodern` (bundle): 24,120, credit 0.5 | observed, 22,693 |
 | Liberation Mono (`liberation-mono`) | debian | `fonts-liberation` (bundle): 129,730, credit 0.5; `fonts-liberation2` (bundle): 46,260, credit 0.5; `ttf-liberation` (bundle): 1,131, credit 0.5 | observed, 64,865 |
+| Liberation Sans (`liberation-sans`) | debian | `fonts-liberation` (bundle): 129,730, credit 0.5; `fonts-liberation2` (bundle): 46,260, credit 0.5; `ttf-liberation` (bundle): 1,131, credit 0.5 | observed, 94,005 |
+| Liberation Serif (`liberation-serif`) | debian | `fonts-liberation` (bundle): 129,730, credit 0.5; `fonts-liberation2` (bundle): 46,260, credit 0.5; `ttf-liberation` (bundle): 1,131, credit 0.5 | observed, 64,865 |
 | Libertinus Keyboard (`libertinus-keyboard`) | debian | `fonts-libertinus` (bundle): 51, credit 0.5 | censored, 25.50 |
 | Libertinus Mono (`libertinus-mono`) | debian | `fonts-libertinus` (bundle): 51, credit 0.5 | censored, 25.50 |
 | Libertinus Sans (`libertinus-sans`) | debian | `fonts-libertinus` (bundle): 51, credit 0.5 | censored, 25.50 |
 | Libertinus Serif (`libertinus-serif`) | debian | `fonts-libertinus` (bundle): 51, credit 0.5 | censored, 25.50 |
 | Libertinus Serif Display (`libertinus-serif-display`) | debian | `fonts-libertinus` (bundle): 51, credit 0.5 | censored, 25.50 |
+| Linux Biolinum (`linux-biolinum`) | debian | `fonts-linuxlibertine` (bundle): 21,384, credit 0.5; `ttf-linux-libertine` (bundle): 19, credit 0.5 | observed, 10,692 |
+| Linux Libertine (`linux-libertine`) | debian | `fonts-linuxlibertine` (bundle): 21,384, credit 0.5; `ttf-linux-libertine` (bundle): 19, credit 0.5 | observed, 10,692 |
 | Monoid (`monoid`) | debian | `fonts-monoid` (bundle): 255, credit 0.5 | observed, 128 |
 | Monoisome (`monoisome`) | debian | `fonts-monoid` (bundle): 255, credit 0.5 | observed, 128 |
 | Montserrat (`montserrat`) | debian | `fonts-montserrat` (bundle): 195, credit 0.5 | censored, 97.50 |
@@ -914,6 +931,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Esteban (`esteban`) | homebrew | `font-esteban` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
 | Estedad (`estedad`) | homebrew | `font-estedad` (package): 38.54 before the floor, 18.54 after, credit 1 | censored, 18.54 |
 | Estonia (`estonia`) | homebrew | `font-estonia` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
+| ET Book (`et-book`) | homebrew | `font-et-book` (package): 141 before the floor, 121 after, credit 1 | observed, 121 |
 | Euphoria Script (`euphoria-script`) | homebrew | `font-euphoria-script` (package): 30 before the floor, 10 after, credit 1 | censored, 10 |
 | Ewert (`ewert`) | homebrew | `font-ewert` (package): 15 before the floor, 0 after, credit 1 | censored, 0 |
 | Exile (`exile`) | homebrew | `font-exile` (package): 21 before the floor, 1 after, credit 1 | censored, 1 |
@@ -967,6 +985,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Freckle Face (`freckle-face`) | homebrew | `font-freckle-face` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | Fredericka the Great (`fredericka-the-great`) | homebrew | `font-fredericka-the-great` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
 | Fredoka (`fredoka`) | homebrew | `font-fredoka` (package): 135 before the floor, 115 after, credit 1 | observed, 115 |
+| FreeFont (`freefont`) | homebrew | `font-freefont` (package): 275 before the floor, 255 after, credit 1 | observed, 255 |
 | Freeman (`freeman`) | homebrew | `font-freeman` (package): 24 before the floor, 4 after, credit 1 | censored, 4 |
 | Fresca (`fresca`) | homebrew | `font-fresca` (package): 17 before the floor, 0 after, credit 1 | censored, 0 |
 | Frijole (`frijole`) | homebrew | `font-frijole` (package): 19 before the floor, 0 after, credit 1 | censored, 0 |
@@ -1018,6 +1037,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Gloria Hallelujah (`gloria-hallelujah`) | homebrew | `font-gloria-hallelujah` (package): 36 before the floor, 16 after, credit 1 | censored, 16 |
 | Glory (`glory`) | homebrew | `font-glory` (package): 18 before the floor, 0 after, credit 1 | censored, 0 |
 | Gluten (`gluten`) | homebrew | `font-gluten` (package): 30 before the floor, 10 after, credit 1 | censored, 10 |
+| Go (`go`) | homebrew | `font-go` (package): 87 before the floor, 67 after, credit 1 | observed, 67 |
 | Go Mono (`go-mono`) | homebrew | `font-go-mono-nerd-font` (package): 16,165 before the floor, 14,032 after, credit 1 | observed, 14,032 |
 | Goblin One (`goblin-one`) | homebrew | `font-goblin-one` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | Gochi Hand (`gochi-hand`) | homebrew | `font-gochi-hand` (package): 25 before the floor, 5 after, credit 1 | censored, 5 |
@@ -1046,7 +1066,7 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Gupter (`gupter`) | homebrew | `font-gupter` (package): 12 before the floor, 0 after, credit 1 | censored, 0 |
 | Gwendolyn (`gwendolyn`) | homebrew | `font-gwendolyn` (package): 30 before the floor, 10 after, credit 1 | censored, 10 |
 | Habibi (`habibi`) | homebrew | `font-habibi` (package): 22 before the floor, 2 after, credit 1 | censored, 2 |
-| Hack (`hack`) | homebrew | `font-hack` (package): 3,389 before the floor, 3,369 after, credit 1; `font-hack-nerd-font` (package): 60,681 before the floor, 58,548 after, credit 1 | observed, 61,917 |
+| Hack (`hack`) | homebrew | `font-cica` (package): 648 before the floor, 628 after, credit 1; `font-cica-without-emoji` (package): 33 before the floor, 13 after, credit 1; `font-hack` (package): 3,389 before the floor, 3,369 after, credit 1; `font-hack-nerd-font` (package): 60,681 before the floor, 58,548 after, credit 1; `font-hackgen` (package): 2,421 before the floor, 2,401 after, credit 1; `font-hackgen-nerd` (package): 3,717 before the floor, 3,697 after, credit 1 | observed, 68,656 |
 | Halant (`halant`) | homebrew | `font-halant` (package): 20 before the floor, 0 after, credit 1 | censored, 0 |
 | Hammersmith One (`hammersmith-one`) | homebrew | `font-hammersmith-one` (package): 507 before the floor, 487 after, credit 1 | observed, 487 |
 | Hanalei (`hanalei`) | homebrew | `font-hanalei` (package): 16 before the floor, 0 after, credit 1 | censored, 0 |
@@ -1246,6 +1266,8 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Lexend Tera (`lexend-tera`) | homebrew | `font-lexend-tera` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
 | Lexend Zetta (`lexend-zetta`) | homebrew | `font-lexend-zetta` (package): 27 before the floor, 7 after, credit 1 | censored, 7 |
 | Liberation Mono (`liberation-mono`) | homebrew | `font-liberation` (bundle): 2,237 before the floor, 2,217 after, credit 0.5; `font-liberation-nerd-font` (package): 2,422 before the floor, 289 after, credit 1 | observed, 1,398 |
+| Liberation Sans (`liberation-sans`) | homebrew | `font-liberation` (bundle): 2,237 before the floor, 2,217 after, credit 0.5 | observed, 1,108 |
+| Liberation Serif (`liberation-serif`) | homebrew | `font-liberation` (bundle): 2,237 before the floor, 2,217 after, credit 0.5 | observed, 1,108 |
 | Libertinus Keyboard (`libertinus-keyboard`) | homebrew | `font-libertinus` (bundle): 728 before the floor, 708 after, credit 0.5; `font-libertinus-keyboard` (package): 47 before the floor, 27 after, credit 1 | observed, 381 |
 | Libertinus Mono (`libertinus-mono`) | homebrew | `font-libertinus` (bundle): 728 before the floor, 708 after, credit 0.5; `font-libertinus-mono` (package): 97 before the floor, 77 after, credit 1 | observed, 431 |
 | Libertinus Sans (`libertinus-sans`) | homebrew | `font-libertinus` (bundle): 728 before the floor, 708 after, credit 0.5; `font-libertinus-sans` (package): 146 before the floor, 126 after, credit 1 | observed, 480 |
@@ -1264,6 +1286,8 @@ Credited builds and bundles, and keys a key-level floor changed.
 | Lily Script One (`lily-script-one`) | homebrew | `font-lily-script-one` (package): 23 before the floor, 3 after, credit 1 | censored, 3 |
 | Limelight (`limelight`) | homebrew | `font-limelight` (package): 28 before the floor, 8 after, credit 1 | censored, 8 |
 | Linden Hill (`linden-hill`) | homebrew | `font-linden-hill` (package): 26 before the floor, 6 after, credit 1 | censored, 6 |
+| Linux Biolinum (`linux-biolinum`) | homebrew | `font-linux-biolinum` (package): 270 before the floor, 250 after, credit 1 | observed, 250 |
+| Linux Libertine (`linux-libertine`) | homebrew | `font-linux-libertine` (package): 698 before the floor, 678 after, credit 1 | observed, 678 |
 | Lisu Bosa (`lisu-bosa`) | homebrew | `font-lisu-bosa` (package): 13 before the floor, 0 after, credit 1 | censored, 0 |
 | Liter (`liter`) | homebrew | `font-liter` (package): 29 before the floor, 9 after, credit 1 | censored, 9 |
 | Literata (`literata`) | homebrew | `font-literata` (package): 296 before the floor, 276 after, credit 1 | observed, 276 |
@@ -2159,14 +2183,14 @@ Credited builds and bundles, and keys a key-level floor changed.
 
 | Source | Data date | Observed | Censored | Too new | Merged into parent | Flagged | Abstaining in most chosen |
 |---|---|---|---|---|---|---|---|
-| almanac | 2025-07-01 | 48 | 1595 | 82 | 22 | 0 | 0 |
-| arch | 2026-08-31 | 143 | 100 | 7 | 0 | 93 | 16 |
-| debian | 2026-09-25 | 144 | 50 | 0 | 0 | 80 | 84 |
+| almanac | 2025-07-01 | 48 | 1603 | 82 | 22 | 0 | 0 |
+| arch | 2026-08-31 | 148 | 101 | 7 | 0 | 97 | 18 |
+| debian | 2026-09-25 | 150 | 50 | 0 | 0 | 84 | 90 |
 | ecosystems | 2026-09-26 | 263 | 1304 | 0 | 0 | 15 | 0 |
-| fot | 2026-09-23 | 173 | 1564 | 10 | 0 | 0 | 0 |
+| fot | 2026-09-23 | 175 | 1570 | 10 | 0 | 0 | 0 |
 | github | 2026-09-26 | 72 | 0 | 0 | 0 | 14 | 0 |
 | google | 2026-09-26 | 1505 | 0 | 4 | 0 | 0 | 0 |
-| homebrew | 2026-09-26 | 295 | 1329 | 11 | 0 | 7 | 0 |
+| homebrew | 2026-09-26 | 302 | 1329 | 11 | 0 | 9 | 0 |
 | jsdelivr | 2026-09-25 | 781 | 815 | 0 | 0 | 0 | 0 |
 | nerd | 2026-09-26 | 60 | 6 | 2 | 0 | 12 | 0 |
 | npm_expo | 2026-09-24 | 249 | 1257 | 4 | 0 | 0 | 0 |

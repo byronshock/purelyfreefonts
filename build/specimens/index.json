@@ -251,13 +251,6 @@
     "reason": null,
     "sha256": "3197b12cd8558d7b4f12a9f7153dc721b0e3f37b733f667923e2fefa947011d6"
   },
-  "apfel-grotezk": {
-    "flags": [],
-    "key": "aa4517a9ae1d900f56acacad6dbacc0e1ace69b3902d569317054c0a1ae95fce",
-    "path": "specimens/apfel-grotezk.svg",
-    "reason": null,
-    "sha256": "511715808ebfc5a122949d84e3f655babd17e67849644f5f4fbcf74add74ad6a"
-  },
   "architects-daughter": {
     "flags": [],
     "key": "1135cdaa0716cb8ef6c5c2c66bb62d6e257cbb0fb3e39ad402eb72ea1abd2c52",
@@ -729,13 +722,6 @@
     "reason": null,
     "sha256": "ed964566279b0315cb0b6557f69e2efff1d726ff9bede44e79f8dbdc0a14655b"
   },
-  "comic-relief": {
-    "flags": [],
-    "key": "1078792cd316f3bf2b7dea3071616676efb25e201c7b48c22ff4db9194ff56e1",
-    "path": "specimens/comic-relief.svg",
-    "reason": null,
-    "sha256": "03c49a6130aa589e54f29fbaea3cdc9531a543cd13543448914a6e80074f2874"
-  },
   "commissioner": {
     "flags": [],
     "key": "c1d648f25127ac9fe0af39eb351df9909c74375e07de87e4353c00ddefd6b243",
@@ -1030,6 +1016,13 @@
     "reason": null,
     "sha256": "b4895b2e654d0508ceb5bdf517d9da0917e054d7225550e3648bc65e833e4c8f"
   },
+  "et-book": {
+    "flags": [],
+    "key": "50a904adbe82efda2714e7219520caf5990cd6d666bcdb769c82cda5d0c8dcd9",
+    "path": "specimens/et-book.svg",
+    "reason": null,
+    "sha256": "50b79a5f4fe9499c30d31d68966f835fc27384f179ef89eee29ba9885ebb8c3f"
+  },
   "exo": {
     "flags": [],
     "key": "e89fa393f95671100a044bf156172a53a73b5dd70847057c89ae972ec138787e",
@@ -1177,6 +1170,13 @@
     "reason": null,
     "sha256": "a48ebdcedd6bc6bad79e9d074e36cc4ff925d1d24987cb61f77ee0ed851da3ed"
   },
+  "freefont": {
+    "flags": [],
+    "key": "9f3af4259ae8ce450043d3bef2cb5eb5ec493b740605c55806d307d94ef68b49",
+    "path": "specimens/freefont.svg",
+    "reason": null,
+    "sha256": "73a7a17acf7485dc0008117b93cdd4686933172305eb20448264c58cac989aa7"
+  },
   "funnel-display": {
     "flags": [],
     "key": "a6307877be22e97eb3d14d4a368f5ed5421544db824e18a76807eb5a1ea4d45e",
@@ -1262,6 +1262,13 @@
     "path": "specimens/gloria-hallelujah.svg",
     "reason": null,
     "sha256": "4f674e0832defe96f4d212ae20a8db7ecb18a76d75c5802a154c8c58595c73c4"
+  },
+  "go": {
+    "flags": [],
+    "key": "8c198d4ab96b66b027c14c0161ef43f0a794c3cc4f22412b62532fb41ed7cf13",
+    "path": "specimens/go.svg",
+    "reason": null,
+    "sha256": "71f38ea40cbb606879783c6eb3b385f9012b20c2daf4287df731a933290db880"
   },
   "go-mono": {
     "flags": [],
@@ -1404,13 +1411,6 @@
     "path": "specimens/host-grotesk.svg",
     "reason": null,
     "sha256": "afa19aa03ccc94bd6d396d4aef60a661d6bee211f9ff9fd5a79796e0d4904a27"
-  },
-  "hubot-sans": {
-    "flags": [],
-    "key": "469d3a2e746d85a7fdd784fe3c68c0340f1cd068acb0c288d5d185bcbf60e82c",
-    "path": "specimens/hubot-sans.svg",
-    "reason": null,
-    "sha256": "948e3f4f69784c6e5198020a942edbc84b39a89923004d67d5e89146c54842bd"
   },
   "ia-writer-duo": {
     "flags": [],
@@ -1602,13 +1602,6 @@
     "path": "specimens/itim.svg",
     "reason": null,
     "sha256": "91262c7a95871149f03e51053b4ee468918e1c8615a2d18ff28cae3835ae7f15"
-  },
-  "jersey-10": {
-    "flags": [],
-    "key": "6e75ca52872bbad008897ef13759851215c333c51b47569117cb11c1664e243a",
-    "path": "specimens/jersey-10.svg",
-    "reason": null,
-    "sha256": "453690da3a1afdf90a679496f77cef16990c083b2f9716a3bdb5a4ff5cebd3c8"
   },
   "jetbrains-mono": {
     "flags": [],
@@ -1820,6 +1813,20 @@
     "reason": null,
     "sha256": "749b1a41c58c55f7acdee977ecd957c915570fbf4a3abcd524284522f80749df"
   },
+  "liberation-sans": {
+    "flags": [],
+    "key": "c0ed80f40a0ab8e7f58d3d769537d95ba6f83fdc2f54c80523a385dcfbcfab95",
+    "path": "specimens/liberation-sans.svg",
+    "reason": null,
+    "sha256": "889dffbbeb1c37e15a9b3196eb7171316177a65d4fc38b0f0e3e72644e5b4c85"
+  },
+  "liberation-serif": {
+    "flags": [],
+    "key": "f320c4784d6ceff376b04b4cce9ceb0695cda8950d30bf3756ed31a7c7cfa10a",
+    "path": "specimens/liberation-serif.svg",
+    "reason": null,
+    "sha256": "eb4c08a153261c53ebaabd86952c19d6feb66f58d5a690177a5acde643ed646a"
+  },
   "libertinus-keyboard": {
     "flags": [],
     "key": "f073f612b4acabb7bfe1c7ad1b670b85e0a2d3400135fb07dc39f4704d0e1c76",
@@ -1896,6 +1903,20 @@
     "path": "specimens/lilita-one.svg",
     "reason": null,
     "sha256": "158b57686c9f10521e213851ef403307144a8de1c7db8762fccd0f8ac481cc95"
+  },
+  "linux-biolinum": {
+    "flags": [],
+    "key": "fa0579ab2e62a6b2f584ccbd255c0e3231c4c96daf961142de0b2727257edf67",
+    "path": "specimens/linux-biolinum.svg",
+    "reason": null,
+    "sha256": "5103c3a15e5181f3fd677058628596fb6c5ec9892c185738bbe5c7a777b41dfc"
+  },
+  "linux-libertine": {
+    "flags": [],
+    "key": "1f290bfe71ec1571bc977d834b0cf4159c5489e6634396fc46a2923fa8c21e8f",
+    "path": "specimens/linux-libertine.svg",
+    "reason": null,
+    "sha256": "5fed68dbafc18966c24f4e73e06614cbafd69b828ac7c12db00f7dcc8709a49d"
   },
   "literata": {
     "flags": [],
@@ -2415,13 +2436,6 @@
     "reason": null,
     "sha256": "4d40e94a1312a78354e0600848e5cb00a47b683b8b0f5c63d98c5c2d834df0cb"
   },
-  "paytone-one": {
-    "flags": [],
-    "key": "64b683916639254f031394809bb9adcb69439bc6e28f2fd489bb51a8a59bfdf7",
-    "path": "specimens/paytone-one.svg",
-    "reason": null,
-    "sha256": "99f0c7e5fb4e40cde4c132a6722b4d16ed345e601cbbd9d68c541ea25b55374d"
-  },
   "permanent-marker": {
     "flags": [],
     "key": "3b091face5da99d2ab4f89bd642ac34f1c96019776cb06f0885d4c2858c1303e",
@@ -2456,13 +2470,6 @@
     "path": "specimens/pixelify-sans.svg",
     "reason": null,
     "sha256": "d0992012bc84b0ea9845574895223ed2f1f8d169324375d312e561a13ce7e4f7"
-  },
-  "platypi": {
-    "flags": [],
-    "key": "6b98c771d9f8fc84309fdfceed66882c21a0050e60793b48239db63215fd8488",
-    "path": "specimens/platypi.svg",
-    "reason": null,
-    "sha256": "782a8ad81491467f62736f4668c3a739bc16ff8959341d0979a82f401ad8d03c"
   },
   "play": {
     "flags": [],
@@ -3183,13 +3190,6 @@
     "path": "specimens/tagmukay.svg",
     "reason": null,
     "sha256": "47f319f7aefd44e6426b46a1f4cd576d188658ebb109890aef2aa6ad417a4028"
-  },
-  "tangerine": {
-    "flags": [],
-    "key": "1b1fab7d7df6264e7b1d1bdd672cbc3c8e65e7b9a7773c0b984d5d3f605c7a4a",
-    "path": "specimens/tangerine.svg",
-    "reason": null,
-    "sha256": "0cb32014e61b4e510093e899978c5fd4b6145c72c395570b680db6e0cea4b874"
   },
   "taviraj": {
     "flags": [],
