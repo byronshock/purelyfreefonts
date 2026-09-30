@@ -16,6 +16,7 @@ How the Contabo VPS and the three Cloudflare zones are set up. The settled decis
 | Cloudflare zone IDs | in `ops/SERVER.local.md`, or `ops/cf.sh GET /zones` |
 | Cloudflare token | `~/.config/trulyfreefonts/cloudflare.env` on the laptop (mode 600, never committed) |
 | Emergency access | Contabo panel → VNC console (address in `ops/SERVER.local.md`), root password in password manager |
+| Refresh access | the monthly refresh (`.github/workflows/refresh.yml`) reaches the private data store `byronshock/trulyfreefonts-data` with a deploy key; its private half is only the `DATA_STORE_KEY` secret of `byronshock/trulyfreefonts` (section J) |
 | Snapshots | 1 slot on this plan (2 on the next tier up), each deleted after 30 days. Use one as an undo point before risky changes, not as a backup. To rebuild, use `ops/` + `public/` + this checklist. |
 
 **Deploy the site** (from the project root): `rsync -av --delete public/ tff:/srv/trulyfreefonts/public/`
@@ -85,6 +86,17 @@ Hashed files under `/assets/` never change, so Cloudflare may cache them for a y
 ### I. Cloudflare's text in robots.txt (Claude)
 On the Free plan, a zone whose origin has no `robots.txt`, and whose managed robots.txt is off, gets Cloudflare's **Content Signals Policy** served as its `robots.txt`: about 25 lines of legal comments. On 2026-09-26 `https://trulyfreefonts.com/robots.txt` served it, because the stub site had no `robots.txt`. Byron found Bot Preference Sync (managed robots.txt's current name) off on `.com`. Cloudflare's documented opt-out, **Display Content Signals Policy** in the zone Overview's **Control AI Crawlers** card, wasn't in the dashboard.
 - [x] 24. **Serve our own `robots.txt`, so Cloudflare adds nothing.** *(Done 2026-09-26: deployed from `main` at the merge of #16. `https://trulyfreefonts.com/robots.txt` matches `public/robots.txt`, with no Cloudflare text; `www.`, `.org` and `.net` 301 to it.)* `public/robots.txt` allows everything, the same as having no file (M2-D8 (a)). Deploy it, then check that the live file matches the repo's. The site's own `robots.txt` (Milestone 2 step 1) replaces it when the stub goes; a site without one would bring the Cloudflare text back.
+
+### J. Monthly refresh access (Byron, by hand)
+Milestone 1 step 19. The refresh workflow opens its own pull request and reaches the private data store with a deploy key. Byron runs these, since they change security settings and create a key; Claude checks the result with read-only `gh` calls.
+- [x] 26. **GitHub Actions may open pull requests.** Settings → Actions → General → Workflow permissions: "Allow GitHub Actions to create and approve pull requests" on, and the default permissions left at read-only. *(Done 2026-09-30 with `gh api -X PUT repos/byronshock/trulyfreefonts/actions/permissions/workflow -f default_workflow_permissions=read -F can_approve_pull_request_reviews=true`; the API reports `can_approve_pull_request_reviews: true`.)*
+- [x] 27. **The data store's deploy key and the `DATA_STORE_KEY` secret.** An ed25519 key made for this alone: its public half is the deploy key "trulyfreefonts refresh (DATA_STORE_KEY)" on `byronshock/trulyfreefonts-data`, **read-write**, because the refresh's `store` job pushes the month's new snapshots; its private half is only the `DATA_STORE_KEY` secret of `byronshock/trulyfreefonts`, which the `refresh` job uses to clone the store (not kept) and the `store` job to push. Fingerprint `SHA256:iHpu23uBZ4qzimjNuXZAQYNMA2+N9cHgbKFjkKT/YM4`. The private key was made in a temporary folder that the command deleted; it exists nowhere else. *(Done 2026-09-30: `gh repo deploy-key list --repo byronshock/trulyfreefonts-data` shows the key, read-write, and its fingerprint matches; `gh secret list` shows `DATA_STORE_KEY`.)*
+
+  **To rotate it** (or if it may have leaked): run the same command again, which makes a new key, adds it and replaces the secret, then delete the old deploy key: `gh repo deploy-key list --repo byronshock/trulyfreefonts-data` gives its id, and `gh repo deploy-key delete <id> --repo byronshock/trulyfreefonts-data` removes it. Record the new fingerprint here.
+
+  ```bash
+  bash -c 'umask 077; d=$(mktemp -d); trap "rm -rf \"$d\"" EXIT; ssh-keygen -q -t ed25519 -N "" -C "trulyfreefonts refresh" -f "$d/key" && gh repo deploy-key add "$d/key.pub" --repo byronshock/trulyfreefonts-data --title "trulyfreefonts refresh (DATA_STORE_KEY)" --allow-write && gh secret set DATA_STORE_KEY --repo byronshock/trulyfreefonts < "$d/key" && ssh-keygen -l -f "$d/key.pub"'
+  ```
 
 ## Verification
 - `ssh tff sudo -n true` works; `ssh root@<IP>` and `ssh -o PubkeyAuthentication=no tff` are refused.

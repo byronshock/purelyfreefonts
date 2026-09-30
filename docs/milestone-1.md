@@ -15,7 +15,6 @@ Milestone 1 builds the ranked, license-checked catalog that the filterable list 
 
 The workflow, `.github/workflows/refresh.yml`, is written but has never run on GitHub. Its schedule stays off until the repository variable `REFRESH_SCHEDULE` is "on" (owner ruling of 2026-09-29).
 
-- [ ] Give the workflow the private data store: create the data repository's deploy key and this repository's `DATA_STORE_KEY` secret (D15), and record both in SERVER.md and here.
 - [ ] Run it once by hand (`workflow_dispatch`) and check:
   - that the collectors work on GitHub's runners: rate limits, the GitHub API budget, and whether Google's endpoints respond;
   - that it opens or updates the pull request on the fixed branch `refresh/monthly` with `catalog.json`, `catalog-site.json`, `review.md`, the `state/` changes, and the alias rows and seeds the run added to `data/`, and that a hard failure fails the job and opens an issue instead (the `publish` and `report` jobs, written but not yet run).
@@ -396,6 +395,7 @@ The finished steps and items, as they were ticked, with their evidence. The crit
 
 ### Step 19: Monthly GitHub Actions workflow
 - [x] Let refresh pull requests trigger CI: turn on "Allow GitHub Actions to create and approve pull requests" with `gh` (it is off now). The refresh job opens its pull request with `GITHUB_TOKEN` and then starts `ci.yml` on `refresh/monthly` itself, because pull requests that token opens trigger no workflows. No GitHub App or personal token is needed. *(Done 2026-09-30: the owner ran `gh api -X PUT repos/byronshock/trulyfreefonts/actions/permissions/workflow -f default_workflow_permissions=read -F can_approve_pull_request_reviews=true`; the API now reports `can_approve_pull_request_reviews: true`, with the default workflow permissions still read-only.)*
+- [x] Give the workflow the private data store: create the data repository's deploy key and this repository's `DATA_STORE_KEY` secret (D15), and record both in SERVER.md and here. *(Done 2026-09-30, recorded in [ops/SERVER.md](../ops/SERVER.md), item 27: the owner made an ed25519 key for this alone; its public half is the read-write deploy key "trulyfreefonts refresh (DATA_STORE_KEY)" on `byronshock/trulyfreefonts-data`, fingerprint `SHA256:iHpu23uBZ4qzimjNuXZAQYNMA2+N9cHgbKFjkKT/YM4`, and its private half only the `DATA_STORE_KEY` secret of this repository. `gh` lists both.)*
 
 ### Step 20: Handoff to Milestone 2
 **Who:** both. **Depends on:** 17, 19.
