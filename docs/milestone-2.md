@@ -225,7 +225,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 **Who:** Claude deploys; the owner gives the go-ahead. **Depends on:** 6, 7b, 8, 9, 10, 11, 13; M2-D8; M1 step 20 (`catalog-site.json` v1 frozen from a merged refresh); Caddy header phase B live on production (`ops/deploy/README.md`, step 6 of the move into releases), since /privacy says the server sends a CSP and production deploys refuse to run before it. Launching without the tip link needs an owner ruling in AUTHORITY.md, whose Funding section ties the link to this release.
 - [ ] Final checks on the test site: all CI checks, step 9's live test, step 10's numbers, the tip link.
 - [ ] Confirm each linked Nerd build's license check ([docs/nerd-fonts-link.md](nerd-fonts-link.md)) and hide the marker for any failure (owner ruling of 2026-09-29, `data/reviews/site/2026-09-29.toml`, `nerd_icon_licenses`): the base font's license and the patched icon sets. Stage "links" already leaves out a Nerd Fonts folder whose base license doesn't qualify; the rest is this check.
-- [ ] The page says it is an early version and that hiding the fonts you have is coming.
+- [ ] The page says it is an early version and that free font inventory tools are coming (the owner's wording of 2026-09-29, on every page's header).
 - [ ] Deploy to production, and remove the stub from `public/` in the repository.
 - [ ] On the live site: SERVER.md's and DONATIONS.md's Verification lines, step 9's live test, and `version.txt` matching the merged commit and run date. Tick DONATIONS.md step 12, with its deploy line changed to M2-D6's path.
 - [ ] Search engines per M2-D8 (`robots.txt`, `sitemap.xml`).

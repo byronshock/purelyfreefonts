@@ -80,3 +80,8 @@ reason = "The owner's own wording, given in chat: the front page's lead now says
 value = "inventory_tools"
 ruling = "Early version. Coming next: free font inventory tools."
 reason = "The owner's choice among three wordings Claude offered: the old line, \"hiding the fonts you already have\", read as if it hid the visitor's own fonts rather than leaving them out of the list."
+
+[privacy_coming_next]
+value = "owner_text"
+ruling = "The next release will let you inventory the free fonts you have and discover new ones."
+reason = "The owner's own wording, given in chat, for the privacy page's \"Coming next\" section, so that it agrees with every header's \"Coming next: free font inventory tools.\""
