@@ -4,3 +4,41 @@
 value = "16_KB_gzip"
 ruling = "A specimen may be up to 16 KB compressed (gzip -9, decimal kilobytes, about what a visitor downloads), in place of 30 KB uncompressed; a larger one is drawn with the family name only. The other specimen budgets stay: at least half at or under 5 KB gzip -9, all under 10 MB uncompressed."
 reason = "The owner, in chat: \"Why do we have a 30 KB threshold?\" Claude showed that the raw cap made six fonts name-only although each was 7 to 15 KB compressed (Geist Pixel: 215 KB raw, 7.1 KB gzip) and suggested a cap on compressed size of about 15 KB; the owner answered \"I am OK with files under 16 KB.\""
+
+[redistributable_only]
+value = "redistributable_fonts_only"
+ruling = "A font qualifies only if its license also lets anyone pass the font files on (Rule 3, in place of the rule of 2026-09-25 under which a use-unrestricted license that forbade redistribution still qualified). The site lists only redistributable fonts, drops the \"Redistributable fonts only\" option, the \"Not redistributable\" badge and the details panel's Redistributable row, and says less about sharing. The license review's option (b), \"Qualifies but not redistributable\", is retired: such a family is excluded."
+reason = "The owner, in chat during the local test drive of pull request #23: \"We only curate fonts that are redistributable. This gate won't shut on any of the September top 500. We could then simplify language about sharing the fonts.\" In the 2026-09-29 real run every one of the 500 catalog fonts was redistributable."
+
+[details_layout]
+choice = "a"
+recommended = true
+value = "essentials_first_evidence_folded"
+ruling = "A font's details panel shows essentials first: the \"Type your own text\" button (the font still loads only on a click), then one short list (Get it: the official, designer and Nerd Font build links; License, with whether credit is needed; Font: formats and Latin coverage; Comes with; Also known as; Rank: the rank chosen in the selector, with its likely range), then \"Report a problem\". A closed \"All ranks and sources\" disclosure holds every rank with tier and range, the tier legend, \"Pulled in by\" and the per-source tables. The section headings, the license-group row, the Redistributable row, the Spacing row and the repeated Nerd Font legend are dropped."
+reason = "The owner, in chat: \"This page is very busy when I drop down a font. We need to make it far less busy.\" Of three layouts Claude offered (this one; today's sections, trimmed; the evidence moved to its own page), the owner took Claude's recommendation."
+
+[monospace_category]
+choice = "a"
+recommended = true
+value = "monospace_in_category_only"
+ruling = "The Spacing filter (ruling spacing_filter of 2026-09-25) is removed. The Category filter's \"Monospace\" means every monospaced font (is_monospace, the list the Coding rank orders), and the other categories list proportional fonts only; the row's category label follows. The catalog's category field is unchanged. The Coding fonts rank stays. An old link with spacing=monospaced opens the Monospace category."
+reason = "The owner, in chat: \"it seems some of them duplicate one another. I want sensible filters.\" In the 2026-09-29 run Category \"Monospace\" held 89 fonts, Spacing \"Monospaced\" 97 and the Coding rank the same 97: one list three ways. Of three options (this one; keep Spacing and drop the category; this one and drop the Coding rank), the owner took Claude's recommendation."
+
+[license_filter]
+choice = "a"
+recommended = true
+value = "no_credit_required_only"
+ruling = "The License filter is one checkbox, \"No credit required\" (hash hide=attr), which hides the fonts whose license requires credit. It is shown only while some listed font needs credit. The four license-group checkboxes (ruling license_filter_groups of 2026-09-25) and \"Hide attribution required\" are removed; the groups remain the license classes of the data. This replaces the list_layout ruling of 2026-09-26 where it kept both attribution options."
+reason = "With Rule 3 of 2026-09-30 every listed font is redistributable, and in the 2026-09-29 run no catalog font needed credit, 476 of 500 were open font licenses and one was in \"Other free-use grants\": the group checkboxes and \"Hide attribution required\" repeated each other. Of three options (this one; one License select; no license filter), the owner took Claude's recommendation."
+
+[front_page_lead_sharing]
+choice = "a"
+recommended = true
+value = "you_may_share_the_files"
+ruling = "The front page's lead reads \"Every font here is free for any personal or commercial use, and you may share the files. They are ranked by how many people install them and use them in their work.\" in place of the owner's wording of 2026-09-29 (front_page_lead). The note \"Why isn't my favorite free font here?\" (why_not_listed) drops \"or don't let you pass the font files on\": its sentence now reads \"Some of these fonts ask you to credit the designer, and we mark those.\""
+reason = "Rule 3 of 2026-09-30 makes every listed font redistributable, so sharing is no longer restricted. Of two wordings (say the files may be shared; drop the clause), the owner took Claude's recommendation."
+
+[filters_layout]
+value = "plan_approved_2026-09-30"
+ruling = "The filters sit in this order: Search; Rank with its measures line; Category; Features (Variable, Nerd Font available, Accented letters, the last hiding fonts with basic Latin only); License (\"No credit required\"); \"Hide fonts that come with\" as one select (nothing, Windows, macOS, Linux or Android); \"Clear filters\". Sort (by rank or by name) moves to the list header beside the count. Row badges get shorter: \"Comes with\" names operating systems and apps only (Linux distributions become \"Linux\"), \"Pulled in by\" moves to the details panel, and the \"Monospace\" and \"Not redistributable\" badges go. The retired hash keys spacing, lic and redist are dropped from the URL, spacing=monospaced becoming cat=monospace."
+reason = "Claude's proposal in the plan the owner approved in chat on 2026-09-30. The owner called the plan provisional: more site cleanup items may follow."
