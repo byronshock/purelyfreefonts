@@ -77,7 +77,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/0xproto.svg",
-        "sha256": "00826382aa0dbdeb97e8ab519a2b2bfbf9695139833dfedcd9197fdd6d9260af"
+        "sha256": "66ea5776bbc53438075ed125e1382f8e1c84e2989ecbd9ec557bf22be4c869c9"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -313,7 +313,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/abeezee.svg",
-        "sha256": "cfafadd089a52f8191fc5e6d390f33c4b51f3687f23a3f90bcda03ebc50b2037"
+        "sha256": "088392f07775704c308860ddf79cac12ac73e54989569156c241a4108ed0401c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -535,7 +535,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/abel.svg",
-        "sha256": "d7a95299afe7267e52ea40277085d05d06931d72b590b39c6ab65f71fa0e4b4a"
+        "sha256": "ea4561feca03e8a19457b4f92dd3aa79d61bff3f358e8b85ea37dfd3993b7fc8"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -763,7 +763,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/abhaya-libre.svg",
-        "sha256": "050a50634c7fe766873db4e011dad5f0da977ae44f1dfbacfb640e14da138f3c"
+        "sha256": "0496d75cd3010557131994c603d0398a9699c5837d3941d7d3f62ea736d8e7ba"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -985,7 +985,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/abril-fatface.svg",
-        "sha256": "dca85d95ff63925f4da482507529951e47e6bcc229fd913689efa418571fe6a3"
+        "sha256": "426b080b92b4daf49ab5a4023714b205cbe782845aae17d346f079245c841b4c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -1214,7 +1214,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/acme.svg",
-        "sha256": "5eccf768ea2e1a77f9b25d6a92e144bde9d1efd60e43545a930663243abd5bea"
+        "sha256": "1a84413dbe70d829a43033e04b78df7fde194ef44814b12d16a61600e03a9f5d"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -1436,7 +1436,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/actor.svg",
-        "sha256": "23d881efb19f6450e7a740b5168d753895986174fab85994578aed4e668fb3fa"
+        "sha256": "263962ee16f3126497001224918108b2e0a9fef00f375152d822039d001ef8f8"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -1696,7 +1696,7 @@
       ],
       "preview": {
         "path": "specimens/adwaita-mono.svg",
-        "sha256": "d6ec99e8a579816c2cc1e452088d090ed9943c14cef7e3ebecd455cd48f975e4"
+        "sha256": "7b1508ae917aab0cc3884eb167ad71fdbc350365d74642a1d120f7aa4b9948f5"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -1955,7 +1955,7 @@
       ],
       "preview": {
         "path": "specimens/adwaita-sans.svg",
-        "sha256": "939d0a6dc2f3df28a5ee2a779f657322de33e002dda41aa436eca738d144b033"
+        "sha256": "951de934223aef2650998ad6296a5de1aeb461808ab005c21e5c511fe39a8266"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -2197,7 +2197,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/afacad.svg",
-        "sha256": "d030c73cb952449c0e0cff70eb8601fb1ad06a789f482e1ff071656dd4c628dc"
+        "sha256": "efb08ac2fbd3203c464554500a3f95cc2a4ea43c11a5e7f549cf5a5a1a2705e6"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -2445,7 +2445,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/agave.svg",
-        "sha256": "26de8a5c58ff0504790651e22ba1c4e8dc3666bdf65e09b9e0e512846624107a"
+        "sha256": "d44203c211025c7817c1e07f436ac7f67324eb683c31c865d72ab37b63a56288"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -2687,7 +2687,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/aileron.svg",
-        "sha256": "ed12343a00a938b451b65d399cc854b7fe4e9be12d4e18097affdceb5f91a41a"
+        "sha256": "76a50835959afa4a65e63a57158925bfa17a3c768fab5f55f700e729e955fd46"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -2908,7 +2908,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/alata.svg",
-        "sha256": "1046a05bc7fc2ff1a28387eee45d08ba4c850f67f34c6950c9e7c4c628dcc582"
+        "sha256": "6b578d57bc51035ce5b32aeaadbc29d5ab725919659f722d001000f42312ce73"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -3130,7 +3130,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/albert-sans.svg",
-        "sha256": "cd9155c7cdb26af51d39b3028e37183f1b4fe138af69756ed107705e9c5dc236"
+        "sha256": "e063e3a878a02cd9812d8bea290707101a67d6fd3f777862113427de7d251131"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -3353,7 +3353,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/aldrich.svg",
-        "sha256": "539c468522df8d03a4ff0660ec38173dc1f8c6080ccf58103d676338aef081b6"
+        "sha256": "885650fe5abcf701eb8f3f8576cab1499446dd5528e55ced87698a986290c0eb"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -3577,7 +3577,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/alegreya.svg",
-        "sha256": "e7efd049b70568fcf6af715bbdb0d8b806a2cd62fccb36d6d57d898a4fa43b17"
+        "sha256": "ee478f34cae2ae53dcd71a61b54f991a472215490ba65b12d529e9a4573fb629"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -3809,7 +3809,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/alegreya-sans.svg",
-        "sha256": "366a7c78fc69b25d3ef7257cf3fb1ffec15b34d80a95046a6f46806c525574ff"
+        "sha256": "aaac656578ecbad086d25089335fc4044a921d7570a7622470959c6d93170be1"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -4041,7 +4041,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/alegreya-sans-sc.svg",
-        "sha256": "1504e41ac65496b16c6f924c826b83bf2e2d94da83de6054fe92e62a04cf2df4"
+        "sha256": "17fe4438e32776ebfbd12432fffb4c51ce5935c5d6f6bf26c428f4d1643b2aa4"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -4267,7 +4267,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/alegreya-sc.svg",
-        "sha256": "093178b60a5e441bda74131498ddeb308d496dade92259b9357d9e31a8c756b2"
+        "sha256": "ead721ca069dd17d880f444c147bda922949c82c04253788a01c43e2945b57f4"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -4497,7 +4497,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/aleo.svg",
-        "sha256": "2c34a12ac5168fe439df7cec9be45dc145d9b1cc4b9f1cf3cbacff814897a081"
+        "sha256": "e1c975dbee9c253a6f9a80b05b354c1d0efecaae0b215c014143dcf1134648d3"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -4719,7 +4719,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/alex-brush.svg",
-        "sha256": "42c8a58dbda2cd7b3e24f624cc6b67fa287aa31991f152db865594c917aa669d"
+        "sha256": "adb1e3ce932acedf7cc7824d14e4cdc34f2b6b22e9ee3b2bcb85ead3de492b7c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -4947,7 +4947,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/alexandria.svg",
-        "sha256": "dd5ad9ba51937edb5f21d73b4a4b61f1c960602470fcb4a1146cf13048be15cf"
+        "sha256": "412282f590a302dea8baf125e92dff2803abceda46ed9f3003c95acd5e864c5c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -5169,7 +5169,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/alfa-slab-one.svg",
-        "sha256": "b7400ff0406ff417c1a5f40ae04e524f9020fbc75f5a09447d60111ee08053e9"
+        "sha256": "71e3a541835fd28ea9888d21f2e0e8827f4e4495d240a9e013d033516367db88"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -5391,7 +5391,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/alice.svg",
-        "sha256": "13ace714eff207c2969ccfd619ec406d7c975a8279a31e36bc6e7cc26cab40de"
+        "sha256": "ee654b07d43a12a346f1e9d45b7d6e73bfe89ac2961daf5da075c3a07155f065"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -5613,7 +5613,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/allura.svg",
-        "sha256": "2db35972ab8dcfb68e3e371f0a3bd5a5431f98ea3296cfc0f1060a641bf30b7f"
+        "sha256": "68f125f08a7ae5345648d59eab880bc3589949b7063e8f0af285ad75d7da8197"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -5841,7 +5841,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/alumni-sans.svg",
-        "sha256": "13c84b3b7b69e5e52e449e1c250a024f506ad64762c90f4643118d0b01b6a50f"
+        "sha256": "25e3fe4f02b22e2f7b153b7224f8699e4f37a9d5306d9e34dace981e0a303750"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -6063,7 +6063,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/amaranth.svg",
-        "sha256": "f93312c29a3886206d39cdca8c23d9a61d679632cf842ede6e078b89aac9b54a"
+        "sha256": "3772ac6adc4595d8c299772eef22b0e6dfc66f4ed1bd2b64badd32b70ebd0edf"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -6285,7 +6285,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/amatic-sc.svg",
-        "sha256": "34c3da3513fb3aa39b010112f31e0ea73b6105cd7e7ef743c67e15500677b3b4"
+        "sha256": "b788dc86238358313fe86c1b4e6e35eae5ab356a9eed317b3b896a49284d7ec8"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -6513,7 +6513,7 @@
       ],
       "preview": {
         "path": "specimens/amiri.svg",
-        "sha256": "96ca7130866b4b7f89943d8b40c2fb98a9b82500c4b45bca5c60efcdb48bb13f"
+        "sha256": "dba233a61ae29fe0a1412c1b84b17b59735742fbe541d8f514e508076da90384"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -6752,7 +6752,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/andika.svg",
-        "sha256": "346a428b3f402d3b9fae2dac348c4963137593a2f3098601cc73bd132fc464b7"
+        "sha256": "f7f897f40198e53ffe460dfbab1e6f376a7d0aaa3904116bfc6b0d99b7572bda"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -6994,7 +6994,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/anek-latin.svg",
-        "sha256": "cad546a16eedd134ab01bb4cd790bc249fc0107f1415dffcd0733e34fc88ac1a"
+        "sha256": "7f049c5093a2bd015430c41bb4f509b1e10e8b88631784a5fc57d101fff5b2bb"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -7216,7 +7216,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/anka-coder.svg",
-        "sha256": "1e8fa17939df10cdfe0caead65a70a171dc63e26967f3f187f1bc04e7aef0727"
+        "sha256": "c7d8d5767c6aabd4f1d9e8fca680dd8d7f60b7187f64c729c52d6f283bb70947"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -7482,7 +7482,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/annotation-mono.svg",
-        "sha256": "3817db1068ae0aabd6ff84ee30e4a1ffd94c361fc9b0baaa320be39fd108a365"
+        "sha256": "20e3f17e12271f6dfaa913c2f10b5007ba65fdfb2d7f2826efa98927cd95166c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -7746,7 +7746,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/anonymous-pro.svg",
-        "sha256": "e94d129347de5af9a6f3f0986c0a71a7e37309258cf68c118e061e601f26469e"
+        "sha256": "2cf372c91bf94009b72b48545638cf48977fb4f4cfa0bbcdad86798b8a9a8cd1"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -7993,7 +7993,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/anton.svg",
-        "sha256": "cf80f0d365e3b5f2b42047d566dd3a6817b74a5c53969634fc03760097140929"
+        "sha256": "d35287e5cffab541f360d7ff8397af7d7e05d1f91384285bf152a62b46aed3cc"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -8222,7 +8222,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/antonio.svg",
-        "sha256": "3197b12cd8558d7b4f12a9f7153dc721b0e3f37b733f667923e2fefa947011d6"
+        "sha256": "cc6f2043efb2e42e14306093c067952b4fd28e8b1b3613aca0d9b375bb9ab74c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -8445,7 +8445,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/architects-daughter.svg",
-        "sha256": "31bfbfc3638cef73df0c05ff956cdd8f0f455e23e731facf5ab9bdef58465987"
+        "sha256": "b57d5527144464022dba3c94f389900acef97a5e6b6f9164976d29a4111effa8"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -8676,7 +8676,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/archivo.svg",
-        "sha256": "490cdd3f635ce1b87e2b89e4f75076a631d9fd405c93b49556c8f50db467a1fe"
+        "sha256": "d778b36c5ddf4aa510778eebd0a340dfb8b22d81809ef8b1962b0eced60ba8b5"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -8907,7 +8907,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/archivo-black.svg",
-        "sha256": "ba1e71570529731d0e09d46940d0a60bdbe89ee90cba8cadcb23c61cbdac74c2"
+        "sha256": "3948727e1fc212cd03784173405927d64c54dd7bfb96bc22d477362a1eaa4c3e"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -9135,7 +9135,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/archivo-narrow.svg",
-        "sha256": "d04d31b0bbc2dbc008701bd792cd76aff425f228ee823831614db58255a2242b"
+        "sha256": "d8cddc09f3c0b3d266ff4dc34a25e460beead54e8ce0b61de57e4dadc31edd85"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -9395,7 +9395,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/arimo.svg",
-        "sha256": "c663d2480a5d2f37336169fee50c06728fd1af92e11cdbfdeb4a9c45d3012cc8"
+        "sha256": "fe506def84ccafcf2ff8a6a1396059caad8e24184a5ca2219e828e129dea0836"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -9638,7 +9638,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/arsenal.svg",
-        "sha256": "547ed52617d126f616267646897e8f18cc68d8782a3adc137423a99682c7e14c"
+        "sha256": "16a5ca4794bc1d509edc7207ea95b195611c04c1ca305b7bd1882080a3daff96"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -9860,7 +9860,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/arvo.svg",
-        "sha256": "c16d994f7fa6096cc781077c1425001e7fc9bcbfe111c1d0fbebe8fc405bfa80"
+        "sha256": "ab114a610d36f38c6221b7d8762343f8c31185d2219ec6252d24f521a835ad36"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -10085,7 +10085,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/asap.svg",
-        "sha256": "9009b23884d156e3f48d565a56102cecc46af36d4085bfd357036c9367566b75"
+        "sha256": "e9a1f909be0f711152e243ad7f563caa919aa1215c946994c162e0e00ec83f0d"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -10307,7 +10307,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/asap-condensed.svg",
-        "sha256": "5f1455a86a32e1b3d876490359ed6655f3972a24351dc173571d922ec536eae6"
+        "sha256": "64de08a4114f420655602a74fd14bb2aa008e78e8d7fc1a02820db0c2312dbbe"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -10529,7 +10529,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/assistant.svg",
-        "sha256": "2834032b566d3f479b26b8e07cf24ae9e971ba97acdbcef42df6ebbbaedd9c71"
+        "sha256": "9a8bcfb5b39abd2da442341bf8892ce1e53727bd60633e1a98990616147bd387"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -10754,7 +10754,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/atkinson-hyperlegible.svg",
-        "sha256": "4ca282ff704ac25b8c172dcdfdc5dd5621d5065222f6d3d3d810cf4915e3abe1"
+        "sha256": "140a4ae8a76f8ee69cbdb9e88725cd8707a0fadab3a7e856db0f2a5280a227aa"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -11016,7 +11016,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/atkinson-hyperlegible-mono.svg",
-        "sha256": "6f0596a750ef5b8b509ce1307bf24dcc62e0cd50b0ac94c9a4e3cd46ca9083fc"
+        "sha256": "f605ef7a97877df970c1637032521429f37ba6dba6aa4a1b7667578ebdfefbe1"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -11260,7 +11260,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/atkinson-hyperlegible-next.svg",
-        "sha256": "d52d2efab8ab1aecacef2907d2790c4129249c3ed9abfdf3258b672da26382c9"
+        "sha256": "1b8db8f440cda97bfcf029e186c6be0a8080c063a0c0bd584098d24bd87b55f1"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -11492,7 +11492,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/audiowide.svg",
-        "sha256": "06aed5aebd0146c3d75efedc64620634fab2bb3b07ef67394dcae29595faf030"
+        "sha256": "8783dde339d22ae368b2fcdb2ff027820f459c558ae4e5d9ac746c62f10dba3d"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -11712,7 +11712,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/awami-nastaliq.svg",
-        "sha256": "6af28b5a606de34e902c69da05a2ea8e5525fcd82fa27083acf94bd6fadd9304"
+        "sha256": "8b701a65ea2bfcce49896bd06209e69a42f8092dfb46ea0848beae97278f3b3e"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -11930,7 +11930,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/azeret-mono.svg",
-        "sha256": "16607807307a17fa56b70fcca3d38c4277798e5194f96240e0587f5d61eb5d9a"
+        "sha256": "033c8fcf9524b01d4087eb1359149c4bbd7b7a404986c2584fe469f0a8b7ae46"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -12174,7 +12174,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/b612-mono.svg",
-        "sha256": "0c54e5ccd7f5d3265f18942f82867ab6feafd6675706d46812b3190b9621ead2"
+        "sha256": "dad688d2462c99e9f5c09f3231a15bdce0cd88c9435b731f89fbc3ba96a62c19"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -12426,7 +12426,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/bad-script.svg",
-        "sha256": "39d09dd6f62de82f842c8e44dd4d0e2e4794a82b2e85c1fad4303fe3da382fcf"
+        "sha256": "3d771de28802bb0025680fc1a4da9dc0b76f83c7fbd9770b81cfd754352a65fd"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -12652,7 +12652,7 @@
       ],
       "preview": {
         "path": "specimens/bai-jamjuree.svg",
-        "sha256": "f5b3030883a12137e1c425a4d02940ba1cfa0eafb213ff8a6bf26724445a6cb9"
+        "sha256": "1171cbb8701955cee1f7b344ee317da36452b2ace5af536a961b4df17dcea578"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -12880,7 +12880,7 @@
       ],
       "preview": {
         "path": "specimens/baloo-2.svg",
-        "sha256": "aee188d48772491baa4fb77ca90d3ea6f034d72435fbcbc68f2bc9367eeb4ee1"
+        "sha256": "54122a909fe0d3ae757b488b98679ce80638e72f611881cb24f2d8fbc34208b5"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -13108,7 +13108,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/bangers.svg",
-        "sha256": "ff0259776c6f784584e27871fd0b2be7e29d25347f986ab6ed7e7b7193cf20a0"
+        "sha256": "4a488e1fcfd4859fdc6b1fdcfba7b65503d7b76560ec5f57cefb99ede320e619"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -13340,7 +13340,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/barlow.svg",
-        "sha256": "8ea6d88a390f3185f47f686ff2ba7c680a0ebdb88042c0367ab06a168f4d1109"
+        "sha256": "3c1aedb48263230810ea1ddb67486a4e460d0ecdcfea0de6183cebae724af220"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -13573,7 +13573,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/barlow-condensed.svg",
-        "sha256": "376110d4a7da790bb676397b70620408f270ab215a0a5365f160a4bc317dc889"
+        "sha256": "f580fa66a3dfba43ab62b47ea8f35a622ce6a767ad687261361666680ad1c688"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -13804,7 +13804,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/barlow-semi-condensed.svg",
-        "sha256": "8b8b427dff9ede99acb6c03bb2144cd3d89b3a9effe72c86b81e31119860c1fa"
+        "sha256": "bc95f35d5fae4e90061db4b8146acf3a97791049e86dd27f2dadd4eb8859ec58"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -14027,7 +14027,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/baskervville.svg",
-        "sha256": "28d48255622c73a22f0d41f98a3eba763b8f26a4f3f6ee71b03dd408bda3e783"
+        "sha256": "7c748106b37db75b4b5db80319ba99bd901ec14e27900e5dc80a7e2012a38dcd"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -14252,7 +14252,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/be-vietnam-pro.svg",
-        "sha256": "d5558d8cf279311652a5fbdf48c41a03cc0a7e5672bebb04c28eb28a45cb7d16"
+        "sha256": "3d88a115157a9d474b42f28cec45c6c3439ae6a209684f51a81efa17753fbcef"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -14482,7 +14482,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/bebas-neue.svg",
-        "sha256": "d487ad6eec59fa51719581a80ce6e5ca677399033e76d375e5fa7076db9f1c45"
+        "sha256": "b986c0d7b19a7b801c2bb695fcd28c884f06a58faa5ab1bc28f4f3f881c8dcde"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -14712,7 +14712,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/berkshire-swash.svg",
-        "sha256": "15cfa13d524f072d88cae9f1f6f5f0bb2af6ef2ebfff9f133a50460f99ff45e4"
+        "sha256": "215eb8b0f538d222fdc46af8f370f349b9c8325aa31e488b03fa466464501951"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -14934,7 +14934,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/besley.svg",
-        "sha256": "a85395e34692f3c1f78190948f32245ed82c647a5d1217a4491101d153db39d0"
+        "sha256": "fd93a2d1c939c6e599847fccf2b8d5062a497e95c28650b8f42154565a56c58c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -15154,7 +15154,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/big-shoulders-display.svg",
-        "sha256": "8c87652e8c59a739cbc8bed9052dc4eebcd8ea7950c7e0dced1aa85c35cb9391"
+        "sha256": "62c4aff9b967d1d40c4e436952bafb23dee9ed1b9262b0f6e1b1e8b316e51a90"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -15417,7 +15417,7 @@
       ],
       "preview": {
         "path": "specimens/bitstream-vera-sans-mono.svg",
-        "sha256": "91f78a40736b816548c40560abd0b880b291b8668ecd30410f0faf830d86af55"
+        "sha256": "755da7c3f0a9a81bbfa3949f5835152277ec3340cc20381904f17d8630447ae4"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -15658,7 +15658,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/bitter.svg",
-        "sha256": "63856599831d33c4f30badddefa5ec912eb347a02acf2eb834c4ec3aa6bab0d2"
+        "sha256": "995b109737e7a12e2b5e736f38686f256fd274398e19ec09134428af30fd2d5d"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -15887,7 +15887,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/black-ops-one.svg",
-        "sha256": "57f248913d1279a8b8d81359d3a47f354161f0c75f14e527bbaa2a2210215cf6"
+        "sha256": "b0728fd6e0a60a158c7a08edd55f2154766739eb22dbef67820775e14b46147a"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -16111,7 +16111,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/blinker.svg",
-        "sha256": "c7f2b8493fd1d4a18967daff86e8ceb96309b1b3d9e21bfe42deb38844690a69"
+        "sha256": "708a326742a19ec0f7dca23ae918941f50f4fb61dfa4af936cdaf6278a69f13c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -16333,7 +16333,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/bodoni-moda.svg",
-        "sha256": "1167bd9d3ec1e03de46aec0ac3906277b0dcd0b23f637cdf44734700dd454d4a"
+        "sha256": "5d6041661705fa27dba681c442ad0b7969bcd4d1801d52c9c4f1732df6e87ba0"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -16561,7 +16561,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/bree-serif.svg",
-        "sha256": "fbada8339be5a9a5db966ed0ef72cf1fbfcaf1d0d49ce0850606addfa39bb555"
+        "sha256": "70cc771b319868373aeb293e3e4df468e9f1bc9bfd7f16ffa2993eba5205224e"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -16785,7 +16785,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/bricolage-grotesque.svg",
-        "sha256": "148fd27976227775826263e2fa20c1531b37692f790c74b9ed16b8081dc7631d"
+        "sha256": "c0086a489e08882778d2ca3d1227bfc7668914686ac2cfe85dcbaee7446aa962"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -17013,7 +17013,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/bungee.svg",
-        "sha256": "c101bfac097492816fdaeb364e7c7b7609c96b3261c52cd1d3b556d5f755c501"
+        "sha256": "858a6ed1ddcf5135d1fbfd2d7c3e667ffb2f15e65cc1e4684f8a43a86ed41747"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -17237,7 +17237,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/caacupe-one.svg",
-        "sha256": "6c8accc3433a443af47408e6a4fd978ce85fc768e5958d933e1930530efd281b"
+        "sha256": "4c78e2423b7868eada91bdc342917647e4e036a08cda7eb15b4e0263e5a92a6f"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -17460,7 +17460,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/cabin.svg",
-        "sha256": "95af1e12d970c0964c5a6a8d8d75f5028954e3a16f108f3c208b580793795eef"
+        "sha256": "65199fd1087d7febccf220b1da1254bb13b0bb2cd00ec658e04b6c04f661eb89"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -17935,7 +17935,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/cairo.svg",
-        "sha256": "c991d6ec76fa63bf10fa8d129a4b0d239f9c3a49ce06acb9e0707c0dd4f3d0fc"
+        "sha256": "d1fd6786ac8bae932fd94417250fb1b3538d2cb0baee1871e62fa9edc152dcff"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -18164,7 +18164,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/cal-sans.svg",
-        "sha256": "2d111ac6878e8ea8f14d79f80b6e8f41421ddb8fc4d75935a3ac1bbc92bcab7d"
+        "sha256": "4cd945bb45ca92f86a876c9b9a3bc6bee9eecc77f145af7f3fd032ae6c953bb9"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -18397,7 +18397,7 @@
       ],
       "preview": {
         "path": "specimens/caladea.svg",
-        "sha256": "a62efad5cfa8b447a9c22cd974953b4374fe418bfb0d5029c190cd147b68ae8c"
+        "sha256": "7aec2ff1bc1d7ea350e881d9763a72ed5b7223ff24056ef56c08e605300a5242"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -18635,7 +18635,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/calistoga.svg",
-        "sha256": "0266492c9be40c7e4f78526e80943e4efdd674659315851d181204f2a5222f84"
+        "sha256": "5ea07cb035266a0f36797d08145aec35b754193e17adf8bd4e013b7b13da1c56"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -18870,7 +18870,7 @@
       ],
       "preview": {
         "path": "specimens/cantarell.svg",
-        "sha256": "830d921e616703847d484995f19bf597e989405fec988723236d301ba44c315c"
+        "sha256": "347ab3a0ac8ecbff220bfb278a5fa2e8f069b2006580811b9decd18948f71010"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -19119,7 +19119,7 @@
       ],
       "preview": {
         "path": "specimens/caprasimo.svg",
-        "sha256": "b4d0e6c4b39d758873895d39d4dc099f2906a152458dddfc21b72f732d22fda3"
+        "sha256": "ddd9b20772db9e91b46711a1a6aeebbc704b27efee7d81865cbdc0c44cbb4f10"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -19341,7 +19341,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/cardo.svg",
-        "sha256": "452048e7dbf6532f8b26933623395949723fdb5e2becc45bd082d7518522fc4b"
+        "sha256": "3f17cabc64033537daf95ed183436c3512daa728dee2b608e994dd40de7f68b4"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -19578,7 +19578,7 @@
       ],
       "preview": {
         "path": "specimens/carlito.svg",
-        "sha256": "398873e908ada5e33f6d7656fcc33ea6a6545e92368ab8d232e8163a85a260ef"
+        "sha256": "d916a28a9316f2afe534090ab32c8543acf9cef1f8971dd9d95977c83dcb58e2"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -19816,7 +19816,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/carter-one.svg",
-        "sha256": "ac5152a4d86fa1c7f62ef863ac2506fc23f88aec705e2b3a10415bc3e09d5fbc"
+        "sha256": "8482e414caab0f638ff13081af46195911301ace31210405732a1ac125ecd132"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -20080,7 +20080,7 @@
       ],
       "preview": {
         "path": "specimens/cascadia-code.svg",
-        "sha256": "4340a8883d0187864f06c0c370204fb8e550798192d5ca534ba72aabc55a09e6"
+        "sha256": "be7ae2f64aefa0fc29040ff61148e96bd851bf41db3139c67016dd0d018de53d"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -20362,7 +20362,7 @@
       ],
       "preview": {
         "path": "specimens/cascadia-mono.svg",
-        "sha256": "4c58ec985b872d23532fcfbffb7504727a65f1445d0fe294d18f841b4fa77768"
+        "sha256": "1820c52cff77c121b68d2e53d5d74bcd7b2351ff5a6258b5f0c282de7c4a6b41"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -20612,7 +20612,7 @@
       ],
       "preview": {
         "path": "specimens/catamaran.svg",
-        "sha256": "a8be87d8dc627c6b361e2349558a5b2674924d9a14323d710a07c373781b7913"
+        "sha256": "24a5c0f396e935beb485661a8d8cc4b4854779ee53f9085b0d58032f1cf9a2d9"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -20836,7 +20836,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/caveat.svg",
-        "sha256": "4e505668aaed8e287953b78316120e032664cb3d75c3d6590e54bb68e05d3728"
+        "sha256": "e0ca13dfd2815a1d969bfd57f955139362e642acfc006d305548b82caca812dd"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -21064,7 +21064,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/caveat-brush.svg",
-        "sha256": "d94307b552f1f31480fc4625b48b323c519d4f26afd8cab7f43129992efcaf73"
+        "sha256": "9daeb0bf2a52068adbdecc3aa3c517fc28d02961f3e78a09170e791038a44916"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -21290,7 +21290,7 @@
       ],
       "preview": {
         "path": "specimens/chakra-petch.svg",
-        "sha256": "3e9a3ddbbcdbfde7b66b28b0e62b881436b8127b03e9a315cd77e9d909875080"
+        "sha256": "897e4f30b39f567015a78f7a22911e299f3e0cf2a6111d0d335d0832828c6702"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -21518,7 +21518,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/changa.svg",
-        "sha256": "84cf0545e6ac80726778f502dda1d670bcc34c1581d72b3f76ff33517eb43d10"
+        "sha256": "38b2c7f28b37ee331dfa77dadc7e8967304311af87277f3703d307ab5803abbd"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -21740,7 +21740,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/charis-sil.svg",
-        "sha256": "9cb3a6ee589106ef7ef41076f26a43e684f0b0901445cde85643d183e588e794"
+        "sha256": "00ea9ee642e2c5efc9dd84f37a7f5fbf337e46c5dd7ed08de90539bfea4f1af6"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -21980,7 +21980,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/charter.svg",
-        "sha256": "807bbf01c10a487af9d3b4aa6a3bb9dbb60a584179c8a627dffb243c1aab703f"
+        "sha256": "2dec29541ab03523aa6f4fd112d38dc00b1a850568f941538b9bc6479649bab8"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -22201,7 +22201,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/chewy.svg",
-        "sha256": "2f1dcf4da9e82eca9907dc3e029eae125e17f241c32be323d35c26f9849c93b4"
+        "sha256": "4552dcf7383479b1f9a5e0f9cc853674f529331080a0a2c88947d5d78352d5d1"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -22423,7 +22423,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/chivo.svg",
-        "sha256": "ebab91992d66cc7b7b293b738770a5fe4fc349866bfbd0963b4e04b4fa7dbde1"
+        "sha256": "233d88c16d829b6eaadf04ccaad8f1689f5eff3ff2e4da06265eee35aa12ad28"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -22647,7 +22647,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/chivo-mono.svg",
-        "sha256": "ea54e1d2cd25f51a73f140c1fda17b92ba1f6eeaff09c5f0021e13a9a895705c"
+        "sha256": "6a78b24a953cdb91f4ddc930772735381d363045d39c8888d78b7c7bb4450593"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -22885,7 +22885,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/cinzel.svg",
-        "sha256": "c582a8fb00015b6b41fcabb7eec6754c0140dba17d3f8af8de2940c4a1a897ae"
+        "sha256": "246cb2024f0f2fc149a2fdd897ea39f5b5d3ffc10521a47eb693c2a7ebdf98b9"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -23113,7 +23113,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/cinzel-decorative.svg",
-        "sha256": "02535eb587e23f885d5963cc8deb133f97af316f7cec55debba6c68b19abf216"
+        "sha256": "1520048834b049e5245d58883b06a5c55ca3650b11daf3f7ad78bcafc3f9f0be"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -23335,7 +23335,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/clear-sans.svg",
-        "sha256": "ad80b4b82e54c90e13ff07ffa51b5e8bce9c1c79dff584f38ce011cc10424966"
+        "sha256": "232213987ff9c83d83fe23f03bf1d1a5fb70cf0d1456a13da0f60f5e16291f96"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -23574,7 +23574,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/comfortaa.svg",
-        "sha256": "8878a0db2adf37c137a22e51f476ea234f194ed10575e6067411e8c540b3612b"
+        "sha256": "c40a2d06cd6cda43b2d173fb3bc981eddbbc32eaf6fcf2e5fd0b507277dde4c4"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -23816,7 +23816,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/comic-neue.svg",
-        "sha256": "ed964566279b0315cb0b6557f69e2efff1d726ff9bede44e79f8dbdc0a14655b"
+        "sha256": "6a060a0b5978f2b9ebc66833f28b22c99d3238b0e77cc7923777a8a5df873b06"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -24059,7 +24059,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/commissioner.svg",
-        "sha256": "d244ea9adb512e80afdab700a109944768dfeaca42f67ef37b8a4bf616e52913"
+        "sha256": "b29a5fcf7b9b6f72f3b7b34abb30f39e6ee344efb90965db61f3d5ceb9703c88"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -24307,7 +24307,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/commit-mono.svg",
-        "sha256": "aa79ba1101d059c684fee9544810959ca5a5829820cbe7fc4eeea3de0ff32bcc"
+        "sha256": "b14b95c0c628e543dd3c418f2715603a70235feae16bab12967630b3ad57a7f7"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -24550,7 +24550,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/compagnon.svg",
-        "sha256": "b43c597ecdd85cb0aec174d9abbf18e380bf37c4380edd4501652cf00ec0bfd9"
+        "sha256": "df88e146bebf1557bbfb4507b53687fb82f14fbe9a171d821a02669fea53b7df"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -24777,7 +24777,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/cooper-hewitt.svg",
-        "sha256": "8408fef2c135b6960b1ab43703bf0a530f5d34ea030ba9e6664d3c9289d6e761"
+        "sha256": "2ceaaabb66fbd93d894cca13abb566e7fa73f7b14ce581ebdcb57574c7118884"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -25000,7 +25000,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/cormorant.svg",
-        "sha256": "ec693ea4841c372cb1cb17a9d325e028b31e000f442f28ffa6eefea3f9a9be36"
+        "sha256": "d990751977e089e6f9c9c5c216f397ff51328473e89e1af3537d28e15b003197"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -25232,7 +25232,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/cormorant-garamond.svg",
-        "sha256": "9617081ee75fdaf40c805dde592113ffb7aa3bf9d2bbedc83664004609f22f18"
+        "sha256": "92d4d8c6e141278dc73ea3e66364c8d676064550d71cc433fce31e9346c3f0a2"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -25464,7 +25464,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/cormorant-infant.svg",
-        "sha256": "bcef420a579d6bafe01db7c2b17f0fcb8630e534f6159a24142a106dfac8039e"
+        "sha256": "b004ba43624a795443952d8ac3c039963d8b7c630ef8336632229438ce089dd1"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -25695,7 +25695,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/cormorant-sc.svg",
-        "sha256": "370e72504a9a99dbb31feb738fd80e44931e90b434371fe8ada4c5f5630889d6"
+        "sha256": "e877565baf02e6bbd8b197297cbbb99a5620d6ec5be0cc257d73308d2376f727"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -25926,7 +25926,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/cormorant-unicase.svg",
-        "sha256": "219176b6ea6b29faec4136ff87a6635d0d48d497bbe45283c56f9a35bba016dd"
+        "sha256": "14bd943b0b5fe83b633958fcae29fa3b82e0af6678997ec2bc09f64bab5ffdc5"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -26154,7 +26154,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/cormorant-upright.svg",
-        "sha256": "c133706aa7ed57ed7daca107a93ff32079e43a3736dd42e0a0c727afebc56f5f"
+        "sha256": "fe15c1df2867dc3e1fbed501f2652512346ab5449a54ba70ad7bb2719f1a7e43"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -26380,7 +26380,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/courgette.svg",
-        "sha256": "74ca1f7316d14685068cef2939155ed7bce925c08fb73583617857669953bc77"
+        "sha256": "472c57010bea9b1cf94490748c73f51fdad0af18087e8749e300d6ab53d0f667"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -26605,7 +26605,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/courier-prime.svg",
-        "sha256": "6abb22b80c76aa23eb8eebb2488833b978a40cdee172f5278e8df1a78297c205"
+        "sha256": "ee1cdd66eacbbd3bf1b582b36734d7cd399b80a282f79c677583fa4f991bee7e"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -26857,7 +26857,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/courier-prime-code.svg",
-        "sha256": "105e32df844a35391fa013165e27070b098c174302aefcc88d421969565dfb6a"
+        "sha256": "9a79c63858a17a926336df6ce85c58f162b6d6a974bdb19acc72f0b2f957cbe8"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -27099,7 +27099,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/courier-prime-sans.svg",
-        "sha256": "51d249d483edf5f477b1d1c018248331c745b32a8fdb5c28b33fd9355ddc91ba"
+        "sha256": "957ec11ce09a8a75ee1c78a39e904d93b425f0bff732d47836ec5e9e906f0401"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -27371,7 +27371,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/cousine.svg",
-        "sha256": "564d3727b5923f0ed041bd9fba72ec175a8082a37706ac4942042fd679f03588"
+        "sha256": "e3773649e468a52e7de1de8b17e199a0c812cdb0b2b4344995fbd533b530f9b3"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -27628,7 +27628,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/covered-by-your-grace.svg",
-        "sha256": "3ad93053a7e20729365bcb9f1b55360c102a6e06066a1cf4ce11e9b3a24522cf"
+        "sha256": "81210d1279a32d16a19850c4948ee362fb7ad8bd1461f2d7aa757fdae69c296f"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -27854,7 +27854,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/cozette.svg",
-        "sha256": "7e271f4087876d860240649f979b7a2ffc5086f7e29c238954c542be934cbcad"
+        "sha256": "ca370a76fe903346784ca790bfdfcec9800b5ad039dc3a27c29874826f48a8bb"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -28088,7 +28088,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/creepster.svg",
-        "sha256": "52e7a3e5b11cfffbbc0561092222683bd1a1a76992016980bb6fc919007ce58b"
+        "sha256": "43538234765fe18757fa68f73affd84ad7a03520d2f2473b26d783951e892acf"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -28312,7 +28312,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/crimson-pro.svg",
-        "sha256": "a77c1e0e881856b9e4dd4c73aab0410070cf941674fb12a1526b635fbe2beb5f"
+        "sha256": "3c579ea6dd0597591f139222e1f9351d7b140ebddc381b279f02956a5e05281e"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -28541,7 +28541,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/crimson-text.svg",
-        "sha256": "efd28b7811fc55c526590c05e256a9d4e5dbb7a7c1b82860dbaf7c3e2c6a604d"
+        "sha256": "824a31ae6bcc88004fe50519812e1c221669f2e563b34aa6a21e1d7c5af08ed8"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -28777,7 +28777,7 @@
       ],
       "preview": {
         "path": "specimens/cutive-mono.svg",
-        "sha256": "e7e63b67cd4a84decf57fe1598938fd721e9464b66591353f5f48aec6d579df9"
+        "sha256": "36cfca2b77b6d85fc7fded7c98df1b176a292736784eac7cbecb867e117938d6"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -29020,7 +29020,7 @@
       ],
       "preview": {
         "path": "specimens/dancing-script.svg",
-        "sha256": "e879be7bd80374163c7daeefa6f133a809424c1940de83560d3aac8901f76099"
+        "sha256": "e2b4d31b1fabcd32a612592e128c7dc158af841e8c516d0987ec11357ce80ad8"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -29250,7 +29250,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/darker-grotesque.svg",
-        "sha256": "5fa9a3cf88b38f5bd2bb005ed79f478c0307bc1f79d9fbd2377648d862208ca0"
+        "sha256": "12a879a88ee60601336ddd123e378467d0e2e141243d530b1db82561f29759d9"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -29494,7 +29494,7 @@
       ],
       "preview": {
         "path": "specimens/dejavu-sans.svg",
-        "sha256": "ede5bd1e2b150499b5e13fba2643b712ab9adb7d6b73287696ec55d182c91cc1"
+        "sha256": "a4f5b4e868d43288e9dc05881370cf8530c67331a2f3395e7c560ecbd9f99372"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -29787,7 +29787,7 @@
       ],
       "preview": {
         "path": "specimens/dejavu-sans-mono.svg",
-        "sha256": "3ec234131dc6da4dd8ed1f7d992a65e59316ef09ae654f857bdfabc49d76b0e5"
+        "sha256": "c9f3573e7637cb44bfc187cc312b07b272f447602493d4b9a1704baceb4efc67"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -30069,7 +30069,7 @@
       ],
       "preview": {
         "path": "specimens/dejavu-serif.svg",
-        "sha256": "acac3345409ef35d34533476b2e6e741f65bad8cf51e55a0704c830406fbfd87"
+        "sha256": "df9e77a0dfb8aa249fc464fec184320b6a2d5ec1bc119ab8f0ca4a037a846f1d"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -30332,7 +30332,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/departure-mono.svg",
-        "sha256": "636d8ad23d626e017a7895d767a0514c217204499d28ed03af2594c38e55203a"
+        "sha256": "d39f77a27c4647df0bb63037eac38f97842730b9d000bcdb3bba386f82a52377"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -30570,7 +30570,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/didact-gothic.svg",
-        "sha256": "c547e903e81d27cb49aaa9901dcc717da2337832df9c14a8c142095eac2ad3ec"
+        "sha256": "f131459ab61653a5bfb20e8c29b11d241f63ec5992e93da29c266066c8600cba"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -30794,7 +30794,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/dm-mono.svg",
-        "sha256": "0e7673391b471e282b3714ab8de8ecab464b7518ced034fa71f0de88632924cc"
+        "sha256": "7d0e8e50647493c534e13d6751e85aa6c80d3f64535b7fc5db6581c9d018300e"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -31039,7 +31039,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/dm-sans.svg",
-        "sha256": "1627ae17562337a226b1c4a4c727cce5243f90643fb7dada853d684f73417ad7"
+        "sha256": "fa4552a59a845438e352936bcf6359448bc02c33fdcea8dac71e8b425c93a372"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -31270,7 +31270,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/dm-serif-display.svg",
-        "sha256": "110311517766fdd53fe5ac0250404783f887524a139ac4cbaef2859cd8bfc20f"
+        "sha256": "9d490de80f1bdd7d8e43410bd66e7d2c67b746cbf06323e282abb884d5c0df72"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -31498,7 +31498,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/dm-serif-text.svg",
-        "sha256": "82f8baf20b33de1030dee18304cb542b668742b8908ba4c66934e89e92c72b3d"
+        "sha256": "655a4f9e3dbd596372d05cdaa9f73be6442b00fb9aa9b3522114c2f4f923ecb7"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -31720,7 +31720,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/domine.svg",
-        "sha256": "a126279d0bd2ffb387a24afee951d53cb629632293d965b3ada3d982b2658fca"
+        "sha256": "0848f896f3fd91b2ca87a58fb8d15043f898ade0dca68163494294b2507255ec"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -31944,7 +31944,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/dosis.svg",
-        "sha256": "f0d7cb785afa6acb42bbe36ddf574f5439d3bafc88c4e039a25611b452807b7d"
+        "sha256": "a76ddfc080b01e19181feeb9b163167879f69fe36273a6e60dacfa1af068f34d"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -32216,7 +32216,7 @@
       ],
       "preview": {
         "path": "specimens/droid-sans-mono.svg",
-        "sha256": "122f65daa82c80bf090e6afcc21f453e9a90421a39e20f7de20294b141347843"
+        "sha256": "dd15e249485e93a57a43df7e0af4bc2f47b579a4d1a8dc8240153fb5606eda91"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -32465,7 +32465,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/eb-garamond.svg",
-        "sha256": "a4add074d57079149cf44ee1aa9c9d8881efbb1b9e215f73441d2014ea3d6adc"
+        "sha256": "8c928538193cd8eaa00d7ed913055a836b7e9a49ad733040a82cf40d4aba0418"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -32707,7 +32707,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/eczar.svg",
-        "sha256": "09da833850c0330a995dede090db7f9161030a0924dbe3225427f599c13943bc"
+        "sha256": "4cf938123ef52cea3b128f0ceb47ce5c168b0cadd809acd169f9acf41252a564"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -32929,7 +32929,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/el-messiri.svg",
-        "sha256": "7bfb9ca3daf16dc6a3fc3ba93f0d45cca1777e633f92461349b8abed4f547b55"
+        "sha256": "7752e05cf8a4500c10e1bf2ef3c459af07b83c59352c5c8e37b6c1cc5fcc327b"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -33151,7 +33151,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/encode-sans.svg",
-        "sha256": "7c0197ca6bd7e12c9606d76c001ece83a67ad72ddd2808d182f65f04559cf8d4"
+        "sha256": "530bde4528361c50059debfe27756dce9f2b060f6960e8a8a26cebf38e617eec"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -33373,7 +33373,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/encode-sans-condensed.svg",
-        "sha256": "09b7fec57bcb31175691cf6a7fef5c1608a2cb9ca46d42767e8113e8240238ed"
+        "sha256": "43605eb72047a1f5b981934194193a7458f5135a34feb6b93282e4f406cba74c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -33618,7 +33618,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/envy-code-r.svg",
-        "sha256": "c7c3bdade8b212d43a1603d94a11eb7facda1fedb3de1aa262961ed1cf4a9eb0"
+        "sha256": "4ab82f845e2b66cbef2d29cec3f84161136761aebfcfb89c7d637098a054d2c5"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -33852,7 +33852,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/epilogue.svg",
-        "sha256": "b4895b2e654d0508ceb5bdf517d9da0917e054d7225550e3648bc65e833e4c8f"
+        "sha256": "6c973593d7b55df6a36d7f337aecedea51a5764aa57f9fc514b51fb4181922d5"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -34072,7 +34072,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/et-book.svg",
-        "sha256": "50b79a5f4fe9499c30d31d68966f835fc27384f179ef89eee29ba9885ebb8c3f"
+        "sha256": "535f6986f8840fcdf358fb8d3f601ab81b83b29896606adbd4841b0f2f2116dd"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -34294,7 +34294,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/exo.svg",
-        "sha256": "0ebf28c1b4506fffa9676a7f260b7d71abe7a7ce39b60115a7cd3fe01da3cb89"
+        "sha256": "116b0bac5ac76e98a223f191dd3ab504f880eb7001835666c713dccc8544221f"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -34518,7 +34518,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/exo-2.svg",
-        "sha256": "5ababeb274b5d4344ad4daa56e255001f0117ec67c74f48da92e2f32cc5f8f8e"
+        "sha256": "5333f42efff0c3967350cb1afa97ec4b63db29ef42a9e37b8c292777e99140b8"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -34747,7 +34747,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/familjen-grotesk.svg",
-        "sha256": "3b03135ec12144d95d7e84fa90b94f6f51927472a3ec50663461fd9f2771c454"
+        "sha256": "6d842a9a2d3c29ecf23911156a0198ffb23aac889bfeee70ebe9167c2c2a11f6"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -34999,7 +34999,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/fantasque-sans-mono.svg",
-        "sha256": "dc8feb77416e3742c6cec35b205f839d80291f1569ca9e6463b3c52fcec1772c"
+        "sha256": "21561eb03cbf4027d49549bcd3a66ddd6b48fd27f1506cebb7f4ec7c6526d459"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -35237,7 +35237,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/fanwood.svg",
-        "sha256": "9fe7bdfade9879d31127cd03ee373c266c7af232c769a0b76d09a30162a42ecb"
+        "sha256": "e249917893f968ed2df875772ce2d23442da66a57cedf25c94e493c017d4804c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -35456,7 +35456,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/fascinate.svg",
-        "sha256": "e383a5ecda71c6f0583461a5d042a37f02dac6ce9fecf75dbb1fae29b82097ad"
+        "sha256": "0cc1ec08a4bceed6f15203c3b679a002ecb583da17b770c754077022b6487c1f"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -35681,7 +35681,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/faustina.svg",
-        "sha256": "28d0509c3b420f87360f9c2b48eab7fb5ba40628e7f3da124cfcf6da7e2c084a"
+        "sha256": "30e3f06a79c3283a6f597853e9a1ef40834f9f6dc606f892a77eafeba2da5f85"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -35905,7 +35905,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/figtree.svg",
-        "sha256": "3b533fbe1db4e30e886729f94174ba97aa380199a9bdef0b46a7d4b9c164c36c"
+        "sha256": "52fba7687f6bbb3b6f6c45618b844f46c7affb1a3ba54110914cb93229012d5e"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -36133,7 +36133,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/finlandica-headline.svg",
-        "sha256": "4f7e121371bf282326bae3a1379438dcaff33ab01d9e03cd14552d6076f678ae"
+        "sha256": "9a2974c883b35d9c1a7cc584312c856a66da7305dda6c38e0647d5a4e8b85868"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -36396,7 +36396,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/fira-code.svg",
-        "sha256": "389b47908027db07f9d7c01911966a9fe2d7754f99c4808e0e58e2a60cc70322"
+        "sha256": "07d7e8d50bb1a68ef358994c7eca99fbd2c148ea9ed4ba05b0cb224cdaa7aa8a"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -36672,7 +36672,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/fira-mono.svg",
-        "sha256": "0e466c04f4a92af8aab4e0455f5c0c516efebf221fd9c7cd1ed861cb9da05548"
+        "sha256": "328814f5f2ff608f328a4ad47be9be99dcbf16f3e38ee899d4c5a4cdabb2f874"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -36919,7 +36919,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/fira-sans.svg",
-        "sha256": "85ad4fc8505b62abf182673bb11aed5c926f735cd38f5ce68e037f017d139391"
+        "sha256": "2f2457e0084937e09806ec39edf1fc72f89bc5830c716113068e333be9bce640"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -37152,7 +37152,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/fira-sans-condensed.svg",
-        "sha256": "6835a5ce5d7c165774e4d78862827934b297e2659f9de094accec017f6d89e40"
+        "sha256": "22fb5819aba75b3ad1457113ec8893927ac470b5ee72b696e071782dc55ccab9"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -37381,7 +37381,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/fira-sans-extra-condensed.svg",
-        "sha256": "26ca3b38f86cdc5c69c451834f7fd36f3bf15a9187e3fa9c61f882fa2ac42b3f"
+        "sha256": "d11ba62611d705955fd717b5316433d0f5e12c3371a03205445a249c0dbf1830"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -37607,7 +37607,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/firago.svg",
-        "sha256": "59dab42d17f0de5e5636466ed1c7f173d8faeaa8c670bbb7404fbd1cace2bb4d"
+        "sha256": "e10d7d2bf4908b92e5c8a796eaf5dd0cd33496077a0420b300fdb2526226035c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -37835,7 +37835,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/fjalla-one.svg",
-        "sha256": "b0fc10b8325a00b59e2d0ada2738fb281a7ca849d83497cc246f4040fcf5c113"
+        "sha256": "4aa0075f0ed9cda2d54203f11885c2af5600210988251805e3892ad61f838154"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -38057,7 +38057,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/fragment-mono.svg",
-        "sha256": "56af54e0226c759d8636854812251b1b23d71dc206df6af49da967f15ee607cb"
+        "sha256": "66fc698aa03a90504b827065fbb283b6fa78ec783c55f2cb68a245986365b5af"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -38300,7 +38300,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/francois-one.svg",
-        "sha256": "1c8be3fa21154635560dae9ff8f77ef899fe63c1434768362dbd1571b4e2790a"
+        "sha256": "70dd36f2844f5a40d0bef35296dd4ffafe30fb811c609de8ed3a76d407aeddf3"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -38519,7 +38519,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/frank-ruhl-libre.svg",
-        "sha256": "2516ae13397d734f7e1ef96311f785e1619457eb97c38aacde5fbe0eca752e00"
+        "sha256": "df4048be0dd548ede17d9672962a731d7fae6f06b02315e6fd51dff55f4e19e9"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -38743,7 +38743,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/fraunces.svg",
-        "sha256": "339b234a94e49e107e94d8d75a1678a9feba51faef36fb104a7968aa3d9baebd"
+        "sha256": "b71148f38c178ac8ef2c3d5bcd1b77f77ad85921bbc5c6228f14ab6d084d3f8e"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -38978,7 +38978,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/fredoka.svg",
-        "sha256": "a48ebdcedd6bc6bad79e9d074e36cc4ff925d1d24987cb61f77ee0ed851da3ed"
+        "sha256": "5afb74f69bcea13824cf8d500c01804d7f3aeb334cb7ea6dad8a0d44440a35f8"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -39221,7 +39221,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/freefont.svg",
-        "sha256": "73a7a17acf7485dc0008117b93cdd4686933172305eb20448264c58cac989aa7"
+        "sha256": "ddb6ae7c71c599aeb329283c4478e13cf55c56f75305b8e798c293eb1fdbb99c"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -39463,7 +39463,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/funnel-display.svg",
-        "sha256": "b3c3310078bac3ef49ef5290c23477f45d267be7a8a56059e8796db368f9bfd8"
+        "sha256": "45a8b3b9d0ab36692f8cdd2d712802a4c8eafcdb2e6822e00b6964088f2265bb"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -39685,7 +39685,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/funnel-sans.svg",
-        "sha256": "da70880047a19444296e96102f305c4508386229ead776c97488041c1f1ae696"
+        "sha256": "1ccef8404888e9ef875c80c66fbd1862d92be97c6dcfca46ac8537728300989d"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -39907,7 +39907,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/gabarito.svg",
-        "sha256": "cbe7ba992347f390073ac91ca3561329cbd0e181e7afede0acdb495ae8744c1c"
+        "sha256": "547cc9a7e858e7d00504658552b24fc91fb6ddfd681bd0ae83b193fcded5bc30"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -40147,7 +40147,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/geist.svg",
-        "sha256": "d941ba810a4591cb8db1feea3a0d6ee88be16e35ba8d5f3088c1dd19cb3a0bd5"
+        "sha256": "5b77f818efbb7e7a26bbd6353ae1241ad21d7c88f5161582b8418ecfc2d4af8b"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -40410,7 +40410,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/geist-mono.svg",
-        "sha256": "0473834490a9f94a58d5fd2101ca4e720e62a5053c0fb82a8e0a377caff08a0c"
+        "sha256": "a5d35324e8f1a84114c3f1536e5fa366d0cf573da81f24624b69379e01e4e8d5"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -40884,7 +40884,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/gelasio.svg",
-        "sha256": "7347bb7d89045bfa20cd97a2986a591a2032df7f240b0396c06ad644bc652a82"
+        "sha256": "f64de641c544355b9d670af195907475313ff89c6bfece715f81744d8802e2f8"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -41111,7 +41111,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/gentium.svg",
-        "sha256": "885b2d227c658298bbbb0b9456c90d0f53ecdf2150547863ca22d1417d743a1e"
+        "sha256": "8021264da0ee259ab1c04d480ad72568a256a58152283b29312cabd021fecca1"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -41338,7 +41338,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/gentium-plus.svg",
-        "sha256": "c6cdf3c70d36b44eaf25cbfd6b2409256d5a5b2e2bdbb8baf8ea9714f6cb698b"
+        "sha256": "8786e8703bb96576ef66a8307cdb6a10eb88d73db0e8f404a141760ad91835ce"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -41577,7 +41577,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/geologica.svg",
-        "sha256": "9d2ae2aa7ab72c3d72d0a7fc39fc592a1e946a9272547e36001bceb0c326a060"
+        "sha256": "17989c2d42d37d65d8fd4b3d7cb4240396418b1ac3aadd6ab32a1160c1352fb4"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -41799,7 +41799,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/gilda-display.svg",
-        "sha256": "70895ef0c23d03bbcfca712cc3b0e4c89051cbd0d8d58eed1fdec1fa0b78089f"
+        "sha256": "4f366b8a52499ab2c5d195e2f3d4755fc02c49675a4b90a36e9eed99409b77b6"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -42021,7 +42021,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/gloria-hallelujah.svg",
-        "sha256": "4f674e0832defe96f4d212ae20a8db7ecb18a76d75c5802a154c8c58595c73c4"
+        "sha256": "7ed178d8abaa64ef3bc7ce6966d5b4fc24cd53cae11bbf33ec122e1f4d095e0c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -42245,7 +42245,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/go.svg",
-        "sha256": "71f38ea40cbb606879783c6eb3b385f9012b20c2daf4287df731a933290db880"
+        "sha256": "9586324853a54edc134393929f070433755af5aae76390cebce23f33c58aee67"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -42506,7 +42506,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/go-mono.svg",
-        "sha256": "c92ebea1ccb097cd514a8c15f7f318e4bc3f798e80652869a11beb13a15a671d"
+        "sha256": "559212af07274b39cbe4240367e58b0de15a7c4c152c0a976606254bfb835ab0"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -42753,7 +42753,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/gochi-hand.svg",
-        "sha256": "4edca650ddfeb1d57dc06aa0b9d8fffca21673db4529585a9db7dda35496fa4b"
+        "sha256": "54a7b740060f82d977d90623dee41bd98b73e18992f99ef4f01288d2e51cd1c0"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -42975,7 +42975,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/golos-text.svg",
-        "sha256": "04c4900628327852bc85c912e9777a4cad03b44af6a5b99a3212c12eef9db0ef"
+        "sha256": "06d13df98245ec48cef05c354f8120bd118e5017d121f6f485ed9357394d16fc"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -43200,7 +43200,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/google-sans.svg",
-        "sha256": "c01a72f7188672fca0eecf5f753e9f5850f6f9c4883fac708e7fee9bb0118851"
+        "sha256": "fea1fce68f6afd58dbb5888c0b34adaf6f297a2b2cc8e7729e2f3cf3d984ca38"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -43457,7 +43457,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/google-sans-code.svg",
-        "sha256": "f3175641900581d33fa6f0d259b8ae50aafe8a277f876293ab694a5a43203422"
+        "sha256": "bd831ee09759cd2932ccca785dafe5cb9573637dc7cae63aebd777ddd6fd54ab"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -43701,7 +43701,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/google-sans-flex.svg",
-        "sha256": "148a8eca2a37c67818abf7edf5b27b30ee59f0f496c3615cbe2c9279da061d91"
+        "sha256": "7ec3bc982a3ae54fcb21c2875d2ad0aab1933530f69011bb0eafaabc628815cb"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -43922,7 +43922,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/goudy-bookletter-1911.svg",
-        "sha256": "dfb4382b98a0a024bd9fe0fd557c4a7538032e4cb204c168b9e410a4c24bc710"
+        "sha256": "de01cbed5d76d18b8504ff106487f695bfc606f651ac4232c9acc7afc4133176"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -44149,7 +44149,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/grandstander.svg",
-        "sha256": "276e9245e590acf974118f30f0f91ee0a57dfe1c10c2202f0898571e055e4b14"
+        "sha256": "6ec15925ca2bd7bc667866e84b5906b3e937ce0bbe601e237640d605cbc6e99d"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -44373,7 +44373,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/great-vibes.svg",
-        "sha256": "f6d072fd8ae2cac8049b50760f7be2eea2bc231c3b49f8675d07c11870d03d44"
+        "sha256": "0c1fee3a51e5f49b578df95bed9b9bb001883ef9b78d4cb91766b53cfef047f9"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -44601,7 +44601,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/grenze-gotisch.svg",
-        "sha256": "b68b13af5f7e4ae080fca3baa433590dbf7d41b0de97f406c56fa627732b8347"
+        "sha256": "d0e04b62c7de1bdb1469b6406eeae37da78cdb02bc71ac957b956a0b932a28e6"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -44857,7 +44857,7 @@
       ],
       "preview": {
         "path": "specimens/hack.svg",
-        "sha256": "4d6233e97af1fa4a890d27842e6f1af18d80a5a02ac22387e27f3a1e103e9373"
+        "sha256": "2417e4b5e4d669adb59e28aaf7117279b0ba0fd841b92e8b61af16f3f7351c8d"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -45117,7 +45117,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/hammersmith-one.svg",
-        "sha256": "510fd8988d5887a0646be2a49f92f9f08c93bb58f92020d68e7940eda57a41db"
+        "sha256": "e643534487eb56c653a6efa1487a46188f6731ef2692d1ed0b75efcb80c36dfc"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -45345,7 +45345,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/handlee.svg",
-        "sha256": "a5a29b88a937f8d50f84c3aa4fa55fb5da2986c2e7a48994c760641c932faddd"
+        "sha256": "24f370c566d9a6d9506bd2ca6087f2fc98ea26a781f9d79f5d8a46a8fd91c615"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -45569,7 +45569,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/hanken-grotesk.svg",
-        "sha256": "61694f8b1352a0207da5e08126e5d3dc50a59799550a16762ad068a98bd9036d"
+        "sha256": "e373e5e4ac4e40f4e8caa645373fe1d97fe78ca50d6f0c9cd200bc1a0d1ca651"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -45827,7 +45827,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/hasklig.svg",
-        "sha256": "2c66a6bb8640c45b06918b1b9cb006ba2e74450da1d0bd29abb942132e9ae114"
+        "sha256": "527e3d3574be88ac6c172226a5c85309ff049477cedaa45d00616dec90313143"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -46090,7 +46090,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/heavy-data.svg",
-        "sha256": "5f628aed39d7b19b1d0daaeddfb9059faf0b950c5881edd10f0ae2efcbdd273c"
+        "sha256": "3d9bcf3bd547f9f9a4b4d38f64149d4ddebb2705a43f888d8a35ed65ff46d2ba"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -46312,7 +46312,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/heebo.svg",
-        "sha256": "e3627e176576ea3d95123beb1e8e2efcaa194de1d1d324a0bc2ab2bc36d42285"
+        "sha256": "ab68cc6c535af163a5fad8e4904f396929eeac0485b5f0da425045b7c8beb340"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -46541,7 +46541,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/hind.svg",
-        "sha256": "fb0b57eeb7355ae7e1c4dcd54b03d3b11a8c48a0f41add68bfb9215cdbb6e7e2"
+        "sha256": "83a22d2571dc709fa385ecec96d25dac25cffb287a0f62111e25c3a964dc5729"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -46991,7 +46991,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/host-grotesk.svg",
-        "sha256": "afa19aa03ccc94bd6d396d4aef60a661d6bee211f9ff9fd5a79796e0d4904a27"
+        "sha256": "4274a2846a687c5aec5248c3ed2f3ce40279fbe456b946e322b0ef154acfb1b1"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -47249,7 +47249,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/ia-writer-duo.svg",
-        "sha256": "43b8f06e71a7bb30ac88c8d345868a86a351ab67f42285980aaac135ff860878"
+        "sha256": "2e215ea0a97a5593268a09068a36730318c64e49f19567f82ae0360683b55281"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -47528,7 +47528,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/ia-writer-mono.svg",
-        "sha256": "afd7bb3eb8280c50cb23311cd573165a1cdcb53ac2b66019ccfc4f6f3bec6e59"
+        "sha256": "584abf35c810022c895d5275d9a441ecad791769a4742f1b107d3b74121c9862"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -47807,7 +47807,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/ia-writer-quattro.svg",
-        "sha256": "088beca39103a91265cebc22fe7683ed7247e9e19bf230743ccac30c7ec10948"
+        "sha256": "e1c77558a56f088f8de3a17ecc0790a65f68352a6cff8a6f26869a83c33252dc"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -48066,7 +48066,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/ibm-3270.svg",
-        "sha256": "e7db5c893e4694e90d11ab1fd01b19ae163dddd92b9a214d27b897fff6ee5bb5"
+        "sha256": "0319b84dc4847d07fd6accd2b68d9ace3537782ddb6254ca49b5a401db97adf6"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -48345,7 +48345,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/ibm-plex-mono.svg",
-        "sha256": "c3531eea5ca05b0bcf4f3b6e2c9d06bb78630d0856a1bc2fa791a536e26089be"
+        "sha256": "be766907d336d143ef314b11563cd133f2631af660dc9d23719a8112d8729578"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -48594,7 +48594,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/ibm-plex-sans.svg",
-        "sha256": "9425e6dce2e5bc120fb2102c74a7004672fe27b8778971d0ed003122e7a12c61"
+        "sha256": "1354d0329303882871db25c3e058330a1549390e3b3e3714978313aeccf4e5fa"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -48827,7 +48827,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/ibm-plex-sans-condensed.svg",
-        "sha256": "7ce34220fad9e8ee67be53db1d62f7085cd488e35658459cd100be5d47d8af71"
+        "sha256": "120d26f4310ff29235385f999e6b9bca14d6ed17a6d848dd6a9a59e5b515b8ed"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -49061,7 +49061,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/ibm-plex-serif.svg",
-        "sha256": "f5b1dd0410e0093da5abd20a8256690a1248e446cf87b7cb03cf58931378fed9"
+        "sha256": "1d502583e0994d72e4ca28b712513d06ecc135c87f021fca83f569787193bba7"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -49251,9 +49251,7 @@
       "category": "serif",
       "family": "IM Fell English",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_name_only"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "fe9705bbde51af802719246d4608d08d37bde956ab99d9a590da996a5221a24c",
@@ -49294,7 +49292,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/im-fell-english.svg",
-        "sha256": "7e5d2eabe267ee7ebb17677320d9954a3beb1ae2587b29b0e5942d58e571900e"
+        "sha256": "de3ab889f65ec4b5a1766600632ab59c64641d58b6c458797db9b50a0e86ba7c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -49587,7 +49585,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/inconsolata.svg",
-        "sha256": "fda0e9dc19ec2e40c25c685a7f84f26936e3d64bb077c2bfb3c3c7f1bc778ac4"
+        "sha256": "189ac2a0a9d7809ee5e175de1120314fffd9b84f43ee5f88ededfdd25557b53e"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -49858,7 +49856,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/inconsolata-lgc.svg",
-        "sha256": "05f059434ce1950f27e793834ee3690aeb81ec1addab43522d9616a688c4b194"
+        "sha256": "b1ebcf5b33db009171d39874ca697f31b099e6c7661bdf2062b66afbeacc0f4c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -50092,7 +50090,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/indie-flower.svg",
-        "sha256": "c9f9c35894c2b1e5d2849e5c6eaf8c64e5c3e96bb391f55e92918b543f4bc4a7"
+        "sha256": "805e6df33720f7678ee93f02fe4c97c03850339b189159c384593a999a9221c3"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -50315,7 +50313,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/inria-serif.svg",
-        "sha256": "36b920307015facb866d577a655a997e50d9fb846ca9f42171769901fb95f77b"
+        "sha256": "cf17b073a51b12d98eaec1525a11c27fd4e0ff0f7000aea81f64ffecf828b28f"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -50539,7 +50537,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/instrument-sans.svg",
-        "sha256": "48eb6ac62e604463ee88980ba2c13900882ca858a47c7856b0c6dba306d496d4"
+        "sha256": "f9e847f6bb8a4d14a7a4e25db033c8a5389ce579535c4541b9c796895c43ad05"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -50769,7 +50767,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/instrument-serif.svg",
-        "sha256": "5cf9306063ddad9f553c5cf6e13eeab1d343cb9e1fea2ff8d98a103e33f6b989"
+        "sha256": "71971c688bd25001e60b7e75ab1073dd65191547718acc75cd5fb327bea2ea61"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -51029,7 +51027,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/intel-one-mono.svg",
-        "sha256": "658c27d17459c21ff7204a4f4732f86c7d4c8bd432721e637403711acae180ea"
+        "sha256": "3fe146c04858be0f41e23e92bf8789509148dd55b1f0ef6516eb5611744b3bda"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -51293,7 +51291,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/inter.svg",
-        "sha256": "6f3e9e5405f47b196ded56ea07fce2ae63ab1f386dd07d2215307f8aad3e5d29"
+        "sha256": "57a4a8c567878013bec6bad5018d96ec83bfd00077e9832acc15f3bd6a747af3"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -51539,7 +51537,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/inter-tight.svg",
-        "sha256": "beef5a186bc660754789e8cdc7889931869efaecd944e69af512b7482d261f5f"
+        "sha256": "9166a10995b86b774450411f54ac911bd85da50794a44482530c5264530666df"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -51849,7 +51847,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/iosevka.svg",
-        "sha256": "305dcf5af38fad04824755608192ab278632fd822030d01e8c0182640a0702e5"
+        "sha256": "108950668bf2843223e95d5744ab728867f871f0b6664e05a1aa714df5cb7d6f"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -52094,7 +52092,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/iosevka-aile.svg",
-        "sha256": "ecd4c21013bd8186d0cbb7a54eb8c0d887135d01334973d0cd89eab703e53b1b"
+        "sha256": "b3236d6a67aa999b0e4503b12f7e885feaf68a42f2c297fe1c6f5e0147e1b027"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -52319,7 +52317,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/iosevka-charon.svg",
-        "sha256": "8a02083d32cf6978e898fe266db8e75723ada42c8d944fd9f5c39a32718bf10e"
+        "sha256": "0547f776b90c70528dc0f8836ddad68d6b1519b6ca6b63854f19f614bdaf4d68"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -52560,7 +52558,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/iosevka-charon-mono.svg",
-        "sha256": "dab12e91c6afd04770bd6dedbbc992577eeecd2728bc58e2c12151dfa077bd22"
+        "sha256": "62fd683cf932d852dc7a7032469ab73b25fd7c8742acf0affb7469babc7ff051"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -52799,7 +52797,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/iosevka-curly.svg",
-        "sha256": "3c3384f59d049bce086a6bb3ab291e77ab5257a5e6de0a355016655e9fd9a3d2"
+        "sha256": "8c8f85028b4b71e9dfa47789517fdd3a05b4fdcf648529cd62aae70281fae660"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -53036,7 +53034,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/iosevka-curly-slab.svg",
-        "sha256": "370a8995c4a9a15f20adf9e2ce4d6058cbc79310909fee317b04a0fabf1eeb1e"
+        "sha256": "daec79d3976953ba722b223f07c1c5ead1b948f1108654e336da521f6c7b85c8"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -53273,7 +53271,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/iosevka-etoile.svg",
-        "sha256": "ee84767ad0456959f78509805ed51682e2751228ce11860aea758a93d0703f56"
+        "sha256": "62d438175d4d38148c79168659c75b8a979da813674b6f1fcb3f3b6b6d4abda8"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -53500,7 +53498,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/ioskeley-mono.svg",
-        "sha256": "19fa493f30f62b7a4e58e0644f279ed943d8728b5ffd1b203f5c90b0b699f176"
+        "sha256": "8f54b516de70df5815b64c78787af678d7a3279739824827d27e580be19f4fbf"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -53733,7 +53731,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/itim.svg",
-        "sha256": "91262c7a95871149f03e51053b4ee468918e1c8615a2d18ff28cae3835ae7f15"
+        "sha256": "abe08006530369238441dec2f135fd47806fb416393c97df824ce7a301e4a4ce"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -53997,7 +53995,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/jetbrains-mono.svg",
-        "sha256": "6842201f030b93746f231f8d96a6a8328ace82fdf34c876ada217dcc674f80b3"
+        "sha256": "6a2dc1c04f106f67ec8d8b45498d231e56b7940f54bad21653569a2718bbbc76"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -54245,7 +54243,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/josefin-sans.svg",
-        "sha256": "062f651b4c6b1cfeeab1b0311b866a8304ab70ab4e4443608495ad1f0800ce52"
+        "sha256": "82624dbc6223c7d2ef9a5f2b5845776d9f58c24c9f3af8224eecd80caef00888"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -54474,7 +54472,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/josefin-slab.svg",
-        "sha256": "e3872ad731366095ae48e164bb599c2e0ecae837cf08494008f2ec00d7bfb8f4"
+        "sha256": "cb0193dc9f9b5096513fe9b2698e7e7c7607aaf77d5966075265f97d6bf93e00"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -54698,7 +54696,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/jost.svg",
-        "sha256": "067f2903772a11941caa1a9736b6a13f99af5bcc9bf3c52d5f856e12ed9669fc"
+        "sha256": "8b5a14e443b28ea426371c66c9b69dd665ee51463b8e59f6c273f79e004a57a6"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -54926,7 +54924,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/juliamono.svg",
-        "sha256": "30030f96237fa5588548b25deb7a109bb599836b1a2d89fa1b64f1c92cbab926"
+        "sha256": "53afaf3919f82deddc58ae1caa5dd4d45bc6526dea3acedb6fab0e09b79e27a5"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -55158,7 +55156,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/junicode.svg",
-        "sha256": "013a61fd3ce3a224b8b3874029ac6393a11afdb175924aafa26da1922f2ceca0"
+        "sha256": "e8ede7b4397d4c7eed639355e9eb4e626be352387c30f22defc540c5a9b8ffef"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -55379,7 +55377,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/jura.svg",
-        "sha256": "136ee9d6b2a21325215421b2a2d7b53d3e4dccfd1e98bd6338cbb30f28690466"
+        "sha256": "147c775c42fade1092a093d06f2bfcd798285f6f30a9075921c1d7a52a7c57c2"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -55608,7 +55606,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/kalam.svg",
-        "sha256": "071656dac52f2fbe225cb3eeeeea862e3d56f47a8bc6520ebe2efa07bc9b6acb"
+        "sha256": "04b0ca1d306c312f98e3f0dc4b0267b6948db87e35c3e6784fd7be38c590f18e"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -55838,7 +55836,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/kanit.svg",
-        "sha256": "d67c10e952f5a21dba84e8d818aa53284223a9d26efc8caa8fff97da464a0e68"
+        "sha256": "5a416b5632d2a46d7c642c9c7d74e5329ab83c9e54f41822200ccc9d266971c9"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -56069,7 +56067,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/karla.svg",
-        "sha256": "b2b9374873281f29c0ca1cde17da8457893ab166e3d5e80d6d8d6d0ed5ad4b81"
+        "sha256": "e7fa429176e2ddd997f8e20ad9c49261f9c8f5ac7edf589fea9b027159377226"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -56307,7 +56305,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/kaushan-script.svg",
-        "sha256": "6523b435cfd4d8440abf67b110193ff5fbc7fedeb95a864f563d47a71dbf5b37"
+        "sha256": "3c06443b87be3f7ab1243c8b366585daa9e3bc74b5f806de671ad93774f10373"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -56536,7 +56534,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/khand.svg",
-        "sha256": "60b3c87314930ef7a373c85fb6d85e0ce7d8a86ccd2a8b57813fac3941c41ac7"
+        "sha256": "ecae8946b5d955d811f55b8358929595aeeaafef854fbcefbd7943d7cf525d83"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -56758,7 +56756,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/knewave.svg",
-        "sha256": "d4df3774a2c3647fe6e44f17e166c02e278c37da63c5bcd6d1f8414e2bb2f42f"
+        "sha256": "af01e30c1df2572b2c1af5d50abfec11c1d2c451050b76ddf7f2c3be94d93b24"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -56981,7 +56979,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/kode-mono.svg",
-        "sha256": "27074c9f3497b4372ef98f6377c2006816e3c6180f00c660ee41c9112cb1a01d"
+        "sha256": "60e3bfe33670059bafebc66bdcd656e70c1e16bafe82b1924846ce69481f681a"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -57224,7 +57222,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/kumbh-sans.svg",
-        "sha256": "eba2b17574eb0d6b214c145f50d0d228e6965b988b4a8317cf4ec316e644ebb0"
+        "sha256": "b164964af21db0d6d42ebf1273a5054b973d3e6dfbc030f1ca947bf9cf3f5933"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -57444,7 +57442,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/la-belle-aurore.svg",
-        "sha256": "a1d3e51fe28031deddfb21bd1a56b133172ceafb90cf601a434a8b21efc5c622"
+        "sha256": "077c4c32f4ad73b1de555cec834eb6b811a50fa2d8be303b55475ddad7012a34"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -57666,7 +57664,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/lateef.svg",
-        "sha256": "958eba4c7bbee4cbba5cfcfe537ad0dd7d2ee8d68f6e9596f9dccc205a515653"
+        "sha256": "6d3f655d0101f792d0a38c19674a1ecb9c0209ad1b27a5d7b17902ac94f4ed0d"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -57893,7 +57891,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/latin-modern.svg",
-        "sha256": "3078d4b2bbfc54868d5c8668c13d76e33b95c7bd15c7cc623421f6725bf1b269"
+        "sha256": "17c8de8ed889f115cb9626ef181daa52dcc8354979f5dcc74e8b7992310aa43c"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -58132,7 +58130,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/lato.svg",
-        "sha256": "638399fe95052675c043290a19e2e0081e1c9505d93e8631d5783146b6c7f469"
+        "sha256": "aa765039608d9014dd117331815f98fadb1d3a0c05f6c5f348b10d582f0669fd"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -58371,7 +58369,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/league-gothic.svg",
-        "sha256": "3b29337dd9d8466583ea9fb772a5abb1c47babf8d7bb02f4e331d7b26cf3d881"
+        "sha256": "1329de067e2e1e7be57af5aa94d861f1a149329e83105a2414392161cf8021a7"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -58603,7 +58601,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/league-mono.svg",
-        "sha256": "b84b3dc01f755ce3da9280fd6696ae6df4dcbfdd1564a14f838812fbc5697ae0"
+        "sha256": "ce9f73af71cc6c145187c9cfc3359bb73b994125b9b311a3b6d62f1cbccabb29"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -58843,7 +58841,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/league-spartan.svg",
-        "sha256": "94c24108bd032a08a48513ede8186d171e1706e9c5c6401aaab1fef546471507"
+        "sha256": "81f1f6f3398dd15be184c6dcdf5a4edcfa6fd10d8037cfb57ccac82fb7482222"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -59108,7 +59106,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/lekton.svg",
-        "sha256": "51fb44352cb8e80087ab570fd6638e8b5f30fbfdc70587bc2a6b699ccc3cd185"
+        "sha256": "d5b9daf729e16bc33f3c4845edaa521e4df910904991d92af5288e1916788546"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -59352,7 +59350,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/lemonada.svg",
-        "sha256": "c945c5b6328210dab01475f4e869a8e134ab8902ade79122407c22094d1e9c0d"
+        "sha256": "cead2a79f122fe418135e59f6418822b3bc23ef8d52229ddea953a9fd009617c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -59584,7 +59582,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/lexend.svg",
-        "sha256": "81e99f9239c50ac0fd1115503382a1313a51a5576dcef2459b073c205ac86955"
+        "sha256": "0f804193d6e0b0b097b92e6a1de1536a90e1b3a075dcdf77e85f918a2c33c6ea"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -59816,7 +59814,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/lexend-deca.svg",
-        "sha256": "0b703c081a89510054319bed0801ea0b03b6c00290c739242d817daeb17f130e"
+        "sha256": "fb0c9770a19275be4fea7e2de7fe896e4d903615d08715337f1b1349bb4737bb"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -60047,7 +60045,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/lexend-exa.svg",
-        "sha256": "f1392f55e5e0d584ea89fc394fd2b00598fd4edd85d5a0a836f781ad1599f7aa"
+        "sha256": "dc96a972ea873033c4f5c2a98e18334a47c2def29c70182504f4a98537b92141"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -60272,7 +60270,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/lexend-giga.svg",
-        "sha256": "9d5ab63cd6d670225eca32bd34dee3789512030bdc04174692164bc6d7f59b6e"
+        "sha256": "6ce6b7b961c5eb6fd8a4687dcbcb1baeaa47bc4c143c7cb2774992291c2c2f73"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -60494,7 +60492,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/lexend-zetta.svg",
-        "sha256": "04b7006e81c8d93aa02929ca98bee6de716f767e0dd958734bc48f13a9dd05f9"
+        "sha256": "a3215010a0cba1eb6d5cd012ce9aa00131999196613bcc4212fec839a30de35b"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -60762,7 +60760,7 @@
       ],
       "preview": {
         "path": "specimens/liberation-mono.svg",
-        "sha256": "749b1a41c58c55f7acdee977ecd957c915570fbf4a3abcd524284522f80749df"
+        "sha256": "8469dbb5c62938d3634f8e1395359bf72ef69a87f7072ff0770efc78a4451a79"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -61030,7 +61028,7 @@
       ],
       "preview": {
         "path": "specimens/liberation-sans.svg",
-        "sha256": "889dffbbeb1c37e15a9b3196eb7171316177a65d4fc38b0f0e3e72644e5b4c85"
+        "sha256": "db0fba93a097f8739df60cafcc52b8948b56c56a266a4a1512d5678b2607685b"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -61282,7 +61280,7 @@
       ],
       "preview": {
         "path": "specimens/liberation-serif.svg",
-        "sha256": "eb4c08a153261c53ebaabd86952c19d6feb66f58d5a690177a5acde643ed646a"
+        "sha256": "cf26a7497dc9afee50baacb1b290d90d824cd7f8677828da89d1f0541f4a7507"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -61528,7 +61526,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/libertinus-keyboard.svg",
-        "sha256": "321e512755ba421e7750d847d2ac4722c247caf2f203d30cff7d9bb8bef30588"
+        "sha256": "f087e0b3e5b922ced6e773158d9f6267c46d782bc0fa462334c1810428c78669"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -61763,7 +61761,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/libertinus-mono.svg",
-        "sha256": "df48ce11917320527d6954f56dad706c0b80df930e940f6f9e2b93ea17083ad5"
+        "sha256": "6dcc74836abde2064e5a9cab9ccfe6f7fe65929a2bdb963ba720ee3c32430464"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -62012,7 +62010,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/libertinus-sans.svg",
-        "sha256": "c4b5a87e59543ef69f9046eb67fea951fc621802895613f16c18763f8e9c981f"
+        "sha256": "844eabd6b7e3420ae159f26f4117fb8544f0e9ae6eb89e165b2220e6f1e3387c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -62247,7 +62245,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/libertinus-serif.svg",
-        "sha256": "3a710928464bad0c27a1c0ee55eeca480c23f08e2b67284da3b0f68ca54ac6da"
+        "sha256": "69843775fee0fe581302f254120bdb14d9e2289c3ada60ab1bc6d663e99e7b04"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -62482,7 +62480,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/libertinus-serif-display.svg",
-        "sha256": "d32e7834559acfa3b2b13468b9564816ba6c814c0dff297c2e3138832fefe241"
+        "sha256": "95322b40fbb07a218fca05772028f6f146707223700b17c8a1a727bc1526bf10"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -62712,7 +62710,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/libre-baskerville.svg",
-        "sha256": "0da6c410af2d93e1fa8e14cc6dc5ad0f5b3a007a6af61c55c10f122690466ff8"
+        "sha256": "60a3eb3d8715dfcc179f49e526876e9103c18152f8aaee1a5fa214d54dbaf65c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -62943,7 +62941,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/libre-caslon-display.svg",
-        "sha256": "6ce38c45bd8416e8ed8c3f52b9d1926f832bb24f9deba0c093ded871a3c58836"
+        "sha256": "8c3d3a5f2dccea2eac750480ed28072802e6593c492b20fe91c607fe28cb3346"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -63171,7 +63169,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/libre-caslon-text.svg",
-        "sha256": "d29c75dbf9727ecd3b4f3e6114df5362cab6644a3de285a883d652ba5bef0e12"
+        "sha256": "ad2249b5f2a6b901709364beaf4275c808177d3da47fdf04eb29233bd3118f87"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -63401,7 +63399,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/libre-franklin.svg",
-        "sha256": "2d98171ed920cb9d076b00ff43a8286988f068eab31f951fa0c2837e8efeaa8a"
+        "sha256": "ea781440826375dc8ecdc3d7bbe1138285785ba383e44228a5365865315e02bf"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -63659,7 +63657,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/lilex.svg",
-        "sha256": "0f5a3a79a312819f80d8a1147ea61cad189b09181d48786d9b5ce0479d27aa2b"
+        "sha256": "16709b9c7ce8b7f20a0ae1f8edf10bfde098b9a0e5a9a5d7a4a6feedce6aa16d"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -63902,7 +63900,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/lilita-one.svg",
-        "sha256": "158b57686c9f10521e213851ef403307144a8de1c7db8762fccd0f8ac481cc95"
+        "sha256": "4902c2cfcfc7ac0b3f1a52c66525301621c208ae1730bb82ded6552e284d7b54"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -64124,7 +64122,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/linux-biolinum.svg",
-        "sha256": "5103c3a15e5181f3fd677058628596fb6c5ec9892c185738bbe5c7a777b41dfc"
+        "sha256": "d90a2f81c5173c0eae9cef78de3806b2750c2107fb5fdae8c1bd6a598060056a"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -64352,7 +64350,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/linux-libertine.svg",
-        "sha256": "5fed68dbafc18966c24f4e73e06614cbafd69b828ac7c12db00f7dcc8709a49d"
+        "sha256": "87e91ea66163618ee4731b662a4a994b3880af5248fbde6d8f5d92c242df7f69"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -64585,7 +64583,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/literata.svg",
-        "sha256": "d0cbe8b292ceb1f779f089429e0e500914c8ac3c4d981d9962b12983e44af72f"
+        "sha256": "189d6fb8ac598f2beef4a1d18cf5bd863e8daec10579f5aefaffb78f227d59b4"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -64814,7 +64812,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/lobster.svg",
-        "sha256": "55ab5422af81fb2f8bab6c5957d269b3507d73a8bdecfd3e389fe9fff7374895"
+        "sha256": "0a850a19cb73b8150df1c88719e279401628aa7d75d65e95c890192a50543e25"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -65052,7 +65050,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/lobster-two.svg",
-        "sha256": "1cfa4f95a0aa4801b5debe81c29d98d010db01f51285e9f251f7cef2f8cfbf26"
+        "sha256": "852bf23dda592b221da817f882e43e481c4857361024ada17416f4dc8161700d"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -65292,7 +65290,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/lora.svg",
-        "sha256": "5faa06dcd72257b977b4d3a6ca2e2dabda32979003376615f287f22a5882b511"
+        "sha256": "15f793a70894a326d3c1dbbb136f255e86eaf6a10b451554cec75227ee9e5f7c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -65520,7 +65518,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/luckiest-guy.svg",
-        "sha256": "d04301d0ae6dd04ecf180fa1fff5bab7d588e799a69f4a6eb4964ad852ffc423"
+        "sha256": "d739ca510a2f16c9b5e7703c5a5ac0b553f535c5b9cbbe67175c1a33c917554d"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -65780,7 +65778,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/m-plus-code-latin.svg",
-        "sha256": "61e9b81df707cc203de12c4fb5516013991dde6bde1497ce4c4f47fe5a01fa48"
+        "sha256": "c45124c063b77487900eb1cd981d2998b8e87c596ac498b03520371d9c19e184"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -66028,7 +66026,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/manrope.svg",
-        "sha256": "35bfae0ccf86f103dc6c1cbb2a074941841139775c8fe7c693d94c74d93e03cc"
+        "sha256": "6f0dfaf14a6580ac6356b94474a48a45e2cbd1275df037356efc370ee539bba8"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -66271,7 +66269,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/maple-mono.svg",
-        "sha256": "fee38105f9ae52da323f0d645fab477038be11588ceab7fb1f280182683a9e99"
+        "sha256": "1f7b891a9b37993dd60b4d67d48a3504709f29b4083a65a15f3282d09360ac19"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -66512,7 +66510,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/marcellus.svg",
-        "sha256": "c2d71d7282b88e1e079157354d8e33b1e205427c88f766f13f83cc750810566c"
+        "sha256": "281c2944c5aca3e04e0816f36192ea8c8406c52f02d1dc895c40c18a956cbd56"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -66734,7 +66732,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/marck-script.svg",
-        "sha256": "31b771c9c3c1447d186eec8e957e4afc710850d5ec5c9e24c3367cabcde84289"
+        "sha256": "cbfaa6e3ac8266613f2173ca8cb4e44e0fcefd8141d8ccf2092f9b43c455444a"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -66956,7 +66954,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/martel.svg",
-        "sha256": "a3838d80ba62897cdeabc93be360e2ace21b03735c18f01cf8c187ab4da3d30e"
+        "sha256": "cd2bd36605066f95be82dcf3987012d6d235fd0ab313d798f096728b82455c16"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -67222,7 +67220,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/martian-mono.svg",
-        "sha256": "9fff7367e2db3e70d2613ec75a1efdd8bd70c16cd9ee0a818900548312096bff"
+        "sha256": "c795ca952eb851897521ce9b5a6d41ee7f1d6487efd9476a355726fa945ddded"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -67467,7 +67465,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/maven-pro.svg",
-        "sha256": "e66c19a53891cc6b33f2745af6ffbee743c340dde77388568a98eeb29a4e6fe5"
+        "sha256": "ad89909dcf2f487aff01b5f5a132160dca29b62f2580ed0c1d1de4ebf72843b6"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -67696,7 +67694,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/merriweather.svg",
-        "sha256": "0a0ef2da5ffd7d5673a7c510e8b18be68597836b047f6cc282f601ff7a148994"
+        "sha256": "6ac7f7be126650264397450c7b9c966604f4c7ec2a456caae58bf61d01c179d8"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -67927,7 +67925,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/merriweather-sans.svg",
-        "sha256": "ecd67dd5a00727ae13c8e305a8be29b46b2aeacfd5d9caa212c6ed98f98750a4"
+        "sha256": "13ac7ea1aa74f04266c87b5adbd90a8c477c9095168325c0f4e8a993b8511e62"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -68190,7 +68188,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/meslo-lg.svg",
-        "sha256": "11b2211a57d8b7b8239f5e4dd684c8f0e40cc67a8d2410b4161fe644d33dbe16"
+        "sha256": "6c70f2d2ff8b841372d51e5eccca676268c82c866ec8d313e66b4e986f57b55f"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -68424,7 +68422,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/metropolis.svg",
-        "sha256": "156f0a77e70179b7fe3dd6b293cc43cc4ca2c70b70e01a78603aa8ea4462b8c2"
+        "sha256": "06de53466f855d9e0cbf22e775e9adcd52c7c6924e19792a9b96126febb94cba"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -68646,7 +68644,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/michroma.svg",
-        "sha256": "b716277a240fb361428369fd28f0aa7e7d5c2451772ae447c4b3fe4488fb1fe2"
+        "sha256": "3cc68ad3829523d6902714550ddc1a4bc1e63b5067262e3b926390845f19fff1"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -68868,7 +68866,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/microsoft-selawik.svg",
-        "sha256": "d075acbfe2b15b6b8493a634f38e658c3c716d84c32cda9108575bc9ba84d424"
+        "sha256": "c47db90e5dcec723ae3ae15cc81121e9767fdae292a0535d68585808b0e0063a"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -69086,7 +69084,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/miracode.svg",
-        "sha256": "d06c3c9866c8afae3a269817e710fe85bac72e1f2a9242c23131b129612e1079"
+        "sha256": "5ff16c731f833f0368b75d859a6f0faab122457465513f8130a12f2f933d774d"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -69319,7 +69317,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/molengo.svg",
-        "sha256": "f7a82b40d14617a07b3f6adaadde3547ea1db12d6d9ed5d5134906e65812bb6f"
+        "sha256": "6c0bf5420b19e188633c42b4bb74617ab496936f8ab47801be0d8a28478df682"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -69544,7 +69542,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/mona-sans.svg",
-        "sha256": "131e5de7f5e7219dd3c54c0053399781a20e3437fbec6822aeb0208d9e88cb87"
+        "sha256": "fd30ff2916a7242613347deac1d4371015f580d51271b03dd6e0d651f3ed9ac5"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -69819,7 +69817,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/monaspace-argon.svg",
-        "sha256": "1a6f967ac143843e03ccbcc9d41c2d188b9c22bb26d241ce05e7d175527588cd"
+        "sha256": "7927911dbed4eca8ee795d10017b23e1420a0978b985389cb862cb494f89c464"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -70104,7 +70102,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/monaspace-krypton.svg",
-        "sha256": "05fa3a8c3488f5ecf4907497df76dbfd7a6e9b6cbd06edb5cb2cb207de172e39"
+        "sha256": "9c83d70d1132e4202dd52aa2b61920ffd355a044352a09edb9e183ac975aa450"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -70396,7 +70394,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/monaspace-neon.svg",
-        "sha256": "fad89c520fe132bf1873a9b17d1cf351727382a00dc9f442a9112f19f0f53060"
+        "sha256": "0a6938011b9484320293542ec4839c6aa6d4c1f711d68ce1c65c9055ca1d9000"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -70684,7 +70682,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/monaspace-radon.svg",
-        "sha256": "60342e42e709d50e42e13ef9238108a95371d4fc4f0a041a6710727957e95527"
+        "sha256": "990eb52462021d234468fc7ec4cb8195d4b2d96aa10a722984d282b036f48f11"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -70966,7 +70964,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/monaspace-xenon.svg",
-        "sha256": "a89da024729ab0e82ffb0390b964bd5df3ca5e0b545b9c021d518af7118a3c1b"
+        "sha256": "45a7675861381f8e808b0751f4dd84ee3e2986c3efcf2c1983c57ea00c339f63"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -71218,7 +71216,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/monocraft.svg",
-        "sha256": "e3877983ef8a0fad90976ce8da984a2da1551eeac399f413b8cb50494e259c2d"
+        "sha256": "9dc1f2615e016a198802a3182e0a2fbb8daac0088424a69a9a391651bf354136"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -71485,7 +71483,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/monofur.svg",
-        "sha256": "71a0545ac22bd2c09472df36cf7652e8eb0cb22d45756786f79d465210426832"
+        "sha256": "8ac99bd9162ef1fa868507444709abecc48cde1ee7304e78b846d2db7d6a6fe3"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -71756,7 +71754,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/monoid.svg",
-        "sha256": "bb0d6735da7a1688b50d6c64dc9149383c583bd9d80585ab4dd22644f1c89ee4"
+        "sha256": "fba527301c2d357ac22994ab7d3a8031b82e21a2393d1908846edbcf91fac913"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -71992,7 +71990,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/monoisome.svg",
-        "sha256": "e5077dc4669fb569a94c9613f6082ff6ff7fd89e8c050b727ea7b00d6c88b8ff"
+        "sha256": "eb0507963be0f7d3c8844dd04f057747faabd0a4a346d10124a6e965842a1373"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -72252,7 +72250,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/mononoki.svg",
-        "sha256": "4ea2bdc5c743133cc7936a9c7d6e6e4fee4efa5bd76364afa7f84d89317c6086"
+        "sha256": "fdf915cb4ec334e33b6d6026eb3767b9c2b00a42214e5183b70179c58493546d"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -72503,7 +72501,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/monoton.svg",
-        "sha256": "3075cb426cffbfb9988733993c1ba8405c3707dfa2df87b017bbef5caa876616"
+        "sha256": "4631b3a21be652588b746ebdde985ba0d94dc460ff6ee25631c0649b41015f03"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -72728,7 +72726,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/montserrat.svg",
-        "sha256": "4359385588c712b17f0e8b4a4d91e27dbefc9981ecb0a7dac9ebba9935215bad"
+        "sha256": "85e1afe6d75fc9f6379146f79b5df6be0f448e521ed726048806818a587a3910"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -72961,7 +72959,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/montserrat-alternates.svg",
-        "sha256": "3d753d8214944b719f95dd917e1f8224d7ee957a6101d6d5531fccf684ca01a0"
+        "sha256": "373794c0a81b18e17ce4878dde58f8b8b35941886ad06186c06fc166695f66e7"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -73189,7 +73187,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/mrs-saint-delafield.svg",
-        "sha256": "9e7c3a28b8c0a52b8de5d190cf9b16008b77d83925e364ca38c8f67a75a46a53"
+        "sha256": "bacc71fed7122d2b80ce6ff9943eaaa34d0e53bec22fc5f76ce32e2e2c6898b4"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -73415,7 +73413,7 @@
       ],
       "preview": {
         "path": "specimens/mukta.svg",
-        "sha256": "a501a6eb44efb3eb14b3d02ec1b8ccf3087cff779fa84715cde8104c823455d4"
+        "sha256": "da2f40df2d8c48046e83fa2a4b61af0c52da2c2588e2fda38c9bb94c2048e4d8"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -73644,7 +73642,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/mulish.svg",
-        "sha256": "bceaca3c69a14f66d9aaf49d2b0af0246679b3f32200d4d7089c29bb4b17d963"
+        "sha256": "410f23e50819b86f2c571f12b3c30938454d8da04ff2f58cedbbd844d3251bea"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -73873,7 +73871,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/museomoderno.svg",
-        "sha256": "0c92ac0e04c302a1f5ddc25069eec9606483888bbb13d42214112af7cb14f10a"
+        "sha256": "8b06af1f5204a5bcb6f605067dc3ff4867e7905a00c79bc9a85700690946258b"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -74096,7 +74094,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/myna.svg",
-        "sha256": "9e638732174f79351fa289b4485be91062653d5262a5465e61c9aed491ccf8be"
+        "sha256": "de479e9065488ba6761c74780097954aefb1ad87989086c11953c220d20bb51e"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -74331,7 +74329,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/newsreader.svg",
-        "sha256": "8ee3efecb2a6c8c80b4ba8cd6a3664038eaf7a68752e1a543d820d8ff7148b18"
+        "sha256": "152d4a6c5e39745cb60d69842f0e47a61c739051d4ee211777c9be2dca4b67c0"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -74559,7 +74557,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/noto-kufi-arabic.svg",
-        "sha256": "2af6d729e74722c56fc83d639bc15d1e5f489d16de5162f53322a5b4011ef5c8"
+        "sha256": "d95086924395d4c36cac9292a1a98efcc99da9362caf342fb4103027a52478d9"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -74787,7 +74785,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/noto-naskh-arabic.svg",
-        "sha256": "ecf4748dc4dbff18261553fa6417e05abdb6310cab4b39b5accbd1be54d07327"
+        "sha256": "4855e06d3f1c1afc11dce88cdf479c7b594f60c01c060a47f8fe004c1e7f0068"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -75015,7 +75013,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/noto-nastaliq-urdu.svg",
-        "sha256": "cbc1257a7bc63d20e0e732c4287909f8ef3577ea426a18290aa08e795578b2ea"
+        "sha256": "8dbc8dc71056cbaf66a20ac5500681e512afa10b114ac3ce804ba1f15436ce0d"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -75305,7 +75303,7 @@
       ],
       "preview": {
         "path": "specimens/noto-sans.svg",
-        "sha256": "71f70491d5e10997b3e2677cff26dd0dae1681fa40050a348410d379e0e68597"
+        "sha256": "cf27c5c982d65fa75de86fb7a08db19686412757d8c6e6d4cff40f6d4cf2062e"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -75562,7 +75560,7 @@
       ],
       "preview": {
         "path": "specimens/noto-sans-display.svg",
-        "sha256": "aa786acf6f26ae1be39736f94f5af080855fa92a99b2712953d017f37411a4dc"
+        "sha256": "dfce40eb45879fa7f9e9d97598288a87e2114ebb68411ec168775429dad85d2b"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -75847,7 +75845,7 @@
       ],
       "preview": {
         "path": "specimens/noto-sans-mono.svg",
-        "sha256": "60c9fdab0e7fbfa15ad89f9bccf7a38039ed0c2bd45e2b5b66eebc8144482e44"
+        "sha256": "7a64dc258a85026f7a738543201ee2cda3fea3984f33fcba38ce57419e66f98a"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -76158,7 +76156,7 @@
       ],
       "preview": {
         "path": "specimens/noto-serif.svg",
-        "sha256": "3bbf01b70cb4a06a186a4e5b9762941dc4b502b8e622082e3a585eb9b3c67991"
+        "sha256": "bf7d7487a1bb6c2710ec4f1bfe03e9167fb82072beaabfd3234df832f7ce790c"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -76420,7 +76418,7 @@
       ],
       "preview": {
         "path": "specimens/noto-serif-display.svg",
-        "sha256": "549c19f3440549f991934d94e4afb52d7d3b0de1d87c2534f168247fead0d6c4"
+        "sha256": "b44633865984ebe1c1c6084f3d7fbae21e7477113be253fadc133b1e50113d18"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -76671,7 +76669,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/nunito.svg",
-        "sha256": "cd0b93745dd9a2a1eb2fb9cd3e9472b84b2c8bb8e12b83473cb347ce3f11582d"
+        "sha256": "64371a33f7c3e0dda47c40c05b7be64cd232945c5ab10b6720fe7f111dc0e26f"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -76904,7 +76902,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/nunito-sans.svg",
-        "sha256": "814b90fdf32b4113f3f5d952f52f79dd06710d1f7b488ffff22262773e4be07e"
+        "sha256": "c27018e800998403754023373e9a787ff6c1b5ecc0f9976441ef2c8446564924"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -77134,7 +77132,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/old-standard-tt.svg",
-        "sha256": "8754f6c0e0222212d7dcbd3005786a35af4f57cf73a72f9adcf3719c34259237"
+        "sha256": "b085fbddcbec3dcb92023941e834df3bd9ce3dcae7e67baa8911783343e2c48c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -77354,7 +77352,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/oleo-script.svg",
-        "sha256": "ee5652c083b2cd726994d5ffe51eac96ae6111604589593e981ddd01a6f77547"
+        "sha256": "dd7eb78c114c06e26614773aaec552e76c54b0e87422298b530f37912749fc35"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -77576,7 +77574,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/onest.svg",
-        "sha256": "0ba89573c78aed4dd0b48145df6716af5a012cd73175a64f6a16536772ac8784"
+        "sha256": "f504609726276ed087045a7834ba656e844123b2d4b37433189adba0d28a1916"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -77796,7 +77794,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/open-runde.svg",
-        "sha256": "7d91e13afdcbb27fb6a358e71b151f8ba48f7553d332f544b358f1fa60c01a3f"
+        "sha256": "42394424ba3067ec9f8c8d121e9e7a01faaa514449579c8ba463385dd3abcb47"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -78041,7 +78039,7 @@
       ],
       "preview": {
         "path": "specimens/open-sans.svg",
-        "sha256": "1cee24010fda6d7a335370bf3353f2e4cceb8850e614e24af1223703664b519d"
+        "sha256": "227b0f4188388da5e92ca86abc340d8735eef08a58bb2ae1ec24219a7d5bfd7d"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -78285,7 +78283,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/open-sauce-one.svg",
-        "sha256": "0d203c9ad743ce7e44d1dab901615ad6d96004b71c42e55fad4810f5c528926e"
+        "sha256": "252046582e2f8247725c8455501747cfe1cdd7a1456019cf41886c74b04efb4b"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -78503,7 +78501,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/open-sauce-sans.svg",
-        "sha256": "578a91795e1a9c7a060cf4fb167ba0be6a9f82e2691c013c695b70bacf0eeed6"
+        "sha256": "e35c8ad0e9a902a1b3f493de439654fbfd747944cfc6bd89be27b049ab9ef965"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -78749,7 +78747,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/opendyslexic.svg",
-        "sha256": "ce77c38870229babdebcd8379b2292b9cd43dc5b0c0b01374de64165c76eaf09"
+        "sha256": "84f1cd14fe5a16dff73828d6f60eb03bb08124a1fe45db69901f5560d9adb37a"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -78982,7 +78980,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/orbitron.svg",
-        "sha256": "3ca3a969e5927694ee8f55f4e9c17594dc4f79c2ac6f3fecd45094b7985a9bc9"
+        "sha256": "afaa8345d60ddb43372696e6b2d1bdd55c5c905e5735fdfbb18c2fb601f49c8a"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -79209,7 +79207,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/original-surfer.svg",
-        "sha256": "e838215215c09ad61037984ff17d89bdc4767291e8008417a6abda77a0d17419"
+        "sha256": "1ac0e6bc84a6f59dfef3326c5affe20be333f2356176a9ddb764609f470ff647"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -79436,7 +79434,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/oswald.svg",
-        "sha256": "cf4ecab28f455a44f290f72e5d9187c2b38e684b9efeda45d30df20eed7bd246"
+        "sha256": "419e29d4c71a46e4c9250fdde0f935519c5e72e076ac91f174cbbb628725644d"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -79668,7 +79666,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/outfit.svg",
-        "sha256": "fcb840287c92f85396debbf73d733b3df0676035364bc2c8075840a54e828454"
+        "sha256": "767acb689facc4a0c04f590dd1f0c9ee6705fdf5e7df58742adbe70e206ff8ec"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -79926,7 +79924,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/overpass.svg",
-        "sha256": "927408cf0dce73e9ae124bc1997cd1ac1a8bc79031c4dfd79d74f7407f03a59c"
+        "sha256": "a000bee3a4b403d74e08aebc0bf7b2d54d87dd0b3b2f8becf7145849693c8f99"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -80160,7 +80158,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/overpass-mono.svg",
-        "sha256": "c349cb50c1188d8dc4184bb7bd5be72c46a952dd6a0693345c8175618436650c"
+        "sha256": "55366ac59565fe158a08e4ed6ac6bca8ef2eecd40e1c28592c25cd6afb78eed0"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -80405,7 +80403,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/oxanium.svg",
-        "sha256": "39f46c28a7fb733ca769fb35b03e6c8bb2866f7b92bb3438bdc1a274628bf070"
+        "sha256": "3accc6c0ef45d290cd8e0c28520476537edd9bc92db3cde2ae08e66cb12a6272"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -80631,7 +80629,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/oxygen.svg",
-        "sha256": "25bc72b516992477198df53f0da2e4b9c45add6720830b6d1d567aa432ef0968"
+        "sha256": "4b5164a03aaeb981591a3f61974beeccc541a14d8a1fd5bb3faaeb5899dbb239"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -80863,7 +80861,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/oxygen-mono.svg",
-        "sha256": "e022f2c8077547ef105edc91da1a3f6469265d85e949bad27102097f89df3171"
+        "sha256": "deee90910997d6099daf77c447cc7b2c2e58db1ccd45d58267192d92df1e47a7"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -81109,7 +81107,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/pacifico.svg",
-        "sha256": "4197b16abe8114840c446914275fc270c8ee97a675642706ffa1f109c5068e32"
+        "sha256": "a1982772a2a163f44694765839c5133d5d4c0edf2a6809d12131bc27c4cc18ee"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -81339,7 +81337,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/palanquin.svg",
-        "sha256": "faed6d00d0e309b4e07a1f7225b24ccca287b07f9f76670323adde89bf9bc8fb"
+        "sha256": "d370e056000c27bd85b2bd1acfd92c7ff13351012622fca4fbef53a746aff9ce"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -81561,7 +81559,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/palanquin-dark.svg",
-        "sha256": "935bbaf63ea52ffcc8bf199446f26156776a904c699a3fe2edab91b7f3ad927b"
+        "sha256": "a4a9997a241c0916da9b993e1326b94dd316847cf81a65dacc664500eefc1259"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -81781,7 +81779,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/parisienne.svg",
-        "sha256": "8ea832fc80edbdac4c9aed459c6c067b1b4df6cae1c66dd89f619bcf2f8ed219"
+        "sha256": "674ec4160b94cc7adecf2e6c116185ff2061a1a44684359f0eed25213cdcfa17"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -82001,7 +81999,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/passion-one.svg",
-        "sha256": "55104176edc422ddd1d2d18097bd850ab0dab7684e66c1f0528bcac254b72dda"
+        "sha256": "8deb5fa049504bc757fe3e3e4210ef4c03a272b387cdc7b898eccfeb4fb2da3d"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -82221,7 +82219,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/patrick-hand.svg",
-        "sha256": "4d40e94a1312a78354e0600848e5cb00a47b683b8b0f5c63d98c5c2d834df0cb"
+        "sha256": "18138814ab0d316d1d5c48e3e471c21fa6aad606cf96263e539ec843cf87e42d"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -82449,7 +82447,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/permanent-marker.svg",
-        "sha256": "2924e3394016e096afb31e1d15dbea2e788faae6b043a7248d77f6cb902e64d0"
+        "sha256": "a3b8d8cafb07ffe4f2d05710f3b7691d7357e2e3900f29358bedbb5cd3d4ccd5"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -82677,7 +82675,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/petrona.svg",
-        "sha256": "8ed6f763b28b8ba2ab3d7cb64c71e6d659b39acdc29673dc359d69c1d2c0f133"
+        "sha256": "f770b7a5f2b6788336945f5700ee22b8bb84c2135aaca1642e05564d1ea4a124"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -82899,7 +82897,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/philosopher.svg",
-        "sha256": "51330675f45c1367c36715764e8a27cac2c363adba29cbfd61f2bd4a99633119"
+        "sha256": "dad2bc4f4e388850f90fe9e0d73689212ba7383c0df1b92d26f5d53a10562e5b"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -83121,7 +83119,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/pinyon-script.svg",
-        "sha256": "080de17e7e004bad59a5810d2d17b4648a2c628da0092df4c34af4c8a5e269b5"
+        "sha256": "e0971bf0bd14741ae2b9ab2838c152ccf6220455ebe2fca50e6ed02c5340f0f8"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -83343,7 +83341,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/pixelify-sans.svg",
-        "sha256": "d0992012bc84b0ea9845574895223ed2f1f8d169324375d312e561a13ce7e4f7"
+        "sha256": "e1ae8d88e7299ac9459de796e4f439e645be9f0fbaa770ab2594680661e66ae3"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -83563,7 +83561,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/play.svg",
-        "sha256": "314c9d25a53b382ede5d09786ff46e7ded4885b922e7111c0c2c9e48e6efbe5d"
+        "sha256": "a1d4945aa3a2ae2ae17091f648c041b63db15c67b5f191de91042c952e328a40"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -83792,7 +83790,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/playfair.svg",
-        "sha256": "c7b206c8694d8d8b2e24a57978d72acbc2140000e08f5b1d2b02a4ee25fda511"
+        "sha256": "61c7843e2fef04fb5ce6c8b16a75d3161449c6eb6218e58b10236ad014d3e609"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -84016,7 +84014,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/playfair-display.svg",
-        "sha256": "ee92923e38bac008e392db0f78ed1f91ddd1ab13d32a08b53aa8a8764bac76ab"
+        "sha256": "a306ef20e3fdf40635cf8390264934ef949d7823c72cfa37f2dddf4736619b89"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -84247,7 +84245,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/plus-jakarta-sans.svg",
-        "sha256": "4b92c83b8cc193fbbaf7b9fbe6a191a15642f0e27b2519c88cb1eeecf80c9e2c"
+        "sha256": "208ac328f51b46782719ed491c610ba5cc5fe34d029ccc54d5a84b295a06f8fa"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -84475,7 +84473,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/poiret-one.svg",
-        "sha256": "6c15bcc8a2c6e4cb15fa7f00f85d152538f46b97b3046931e2baef0176946aad"
+        "sha256": "3ae01ec06bc8b9734e0e38ec9f39a4426f2e8e6c83c8a1e02dcd62aa2fa68e0f"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -84704,7 +84702,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/poppins.svg",
-        "sha256": "78b2544dac5c09bc18c5749de028b1ac7fe798a1d6841d7875723aefd6aae2ef"
+        "sha256": "118343b353c74a83d0c74afbffd27ed26e178cba1b04091c7fa91c15863b7593"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -84935,7 +84933,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/prata.svg",
-        "sha256": "de262f2ea8960a722f3c41e2ed14b158255667545f47ee69653d7461093cb44e"
+        "sha256": "1063363c10529766434dbfa8f2bc52052fd81bd25285819e9c4cdcb874a52bf6"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -85157,7 +85155,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/press-start-2p.svg",
-        "sha256": "9e67ff658da888308b89083e0114315ae62c938f987c94c0abf6c9ed3b2250d3"
+        "sha256": "7eb368b21ecab291c79c2b597108fbf8988d8ecf75e698e44330d287b3ff5830"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -85383,7 +85381,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/pretendard-std.svg",
-        "sha256": "5bfdc99aedddf11049b866b8ef667186a192dae3963e88843f95e7c759828971"
+        "sha256": "69dc3bacb57014c891b608ffd8d1f54de8f265a4a88ac801e13f328caa447347"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -85627,7 +85625,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/profont.svg",
-        "sha256": "e30789285f880e48230955c96082c6a6fa6657dfecda6c0d76bbaa6e7f071416"
+        "sha256": "dd26438f8f7ff0aa0469d3ea8d6ec46e4cce27162e4dd5920ee2f88f21f2465f"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -85861,7 +85859,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/prompt.svg",
-        "sha256": "9445f5a470d5784d01448a612108d9c63b38a6fa1e24472751c57bd75d2a66b2"
+        "sha256": "48eea0edb19af556901e79f9f9c55239362d42c0716c6e1c3b2e63e52048d29f"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -86090,7 +86088,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/psudofont-liga-mono.svg",
-        "sha256": "8b18e9ec01354d21afa12d2fdd370383fb09aea602088375f21ee1bed96a5848"
+        "sha256": "f5b108c82d17317d2760df38ac8b39ace2e46be5475279cf502578ab02778bd9"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -86326,7 +86324,7 @@
       ],
       "preview": {
         "path": "specimens/pt-mono.svg",
-        "sha256": "af57f27d16c06cd25ed7c0f4392834a20ea6094317556c78999be675b3818be9"
+        "sha256": "8e276e65089e92d30a3011890df7f4e204f4f31754552efb8b46be8772a6b8a3"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -86586,7 +86584,7 @@
       ],
       "preview": {
         "path": "specimens/pt-sans.svg",
-        "sha256": "276a0400863a6ac1d0ad96d9f046b9d489912f2baeab350869eb1fcc7e8c4c07"
+        "sha256": "8414c1b5b39219776f088e926a7738eccdcb11b98d32bf1d3901bc854a8b61ff"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -86834,7 +86832,7 @@
       ],
       "preview": {
         "path": "specimens/pt-sans-caption.svg",
-        "sha256": "8d173c9d87f12c3da1646483aecc02d31804c923e4efedb44ebf49cacb6756e1"
+        "sha256": "339663d33c2d4495ae1dbca9b851f5cb3fb0a4d016d99df191eb14f468789eb7"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -87078,7 +87076,7 @@
       ],
       "preview": {
         "path": "specimens/pt-sans-narrow.svg",
-        "sha256": "83f738a7606480747c48c71ab7c37b6c386d3a2bd453e5d77116ce2a983d9e0c"
+        "sha256": "51fe9ae4036bba5bc255e9193b21bb3149f42d185e4aa21ac59f6151a2cc8236"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -87322,7 +87320,7 @@
       ],
       "preview": {
         "path": "specimens/pt-serif.svg",
-        "sha256": "6c66a3b450b93039b5e794fa72ec071a54963f01372a671ac436001af3903b7f"
+        "sha256": "2384740e49edf3182371c9e7e5094e88e1739a10f471d30d8f3f491043514aa5"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -87570,7 +87568,7 @@
       ],
       "preview": {
         "path": "specimens/pt-serif-caption.svg",
-        "sha256": "f4a3e9dae17733a4c165741a3bada874d74a297e0c008052b893e46f2ffaa73b"
+        "sha256": "133eaf039b75abdc4b536ffc80b8f2288a01768066abe033c17faff48ef36421"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -87816,7 +87814,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/public-sans.svg",
-        "sha256": "bab37cb6d70ff3abbc404cb646ca0540390d94a7a6275acae119a9f34361b820"
+        "sha256": "7c244da70ba4b9bce15d7a62e6840d63726165ccd66f8ff6a5c9cd678005822c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -88043,7 +88041,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/quantico.svg",
-        "sha256": "0ea4e20c201ab5774afdaddb52a7a2e23b3e06fcfa434425ab67d1ddb2800743"
+        "sha256": "997cb35aee318bfeb37930cb03b3bd705c15816214ac6619261161bf07c9d644"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -88265,7 +88263,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/quattrocento.svg",
-        "sha256": "7c97b06b7fce29af0674a9461f3bbd45b2bb6f107b711e4a9ab23370f4d414b4"
+        "sha256": "800380d8de0b9fb46a35c404d3b353cc8c0603c78bee38dfca1ceb0de0e6a889"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -88494,7 +88492,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/questrial.svg",
-        "sha256": "e335879e5499900570212a82a808b811d0c2d85163fdbeff4c4f93d4226804d6"
+        "sha256": "6d1395c51a14686e151bfefa6655ac1e62c3c6766a15e579ee219ac9a9d07ef7"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -88718,7 +88716,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/quicksand.svg",
-        "sha256": "de46713725ec658a4f95b0dcf81b4ee1bff9e6f50f7997e47e27eed3714550f1"
+        "sha256": "a009476426fa3e3586ab9606ee042038e03939be268b03c6eda83c31e05f5337"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -88957,7 +88955,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/quintessential.svg",
-        "sha256": "38c12e79b38f033951f500469374f4e88f89e29ce26f63ef7fb83ff8f145dcb4"
+        "sha256": "14e2acd48b73203ba7f3a696b4c90edd1bed2f2b18ed3b759db9679894d3e522"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -89183,7 +89181,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/qwigley.svg",
-        "sha256": "b5e9c66ed93e7a3793ea9a455b6b91ddb48c3c67c4fb290616b024c99192c775"
+        "sha256": "f1905f7954d07b52daf2b3d5da68c52f32c9b2245252773252253abacf85d1de"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -89408,7 +89406,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/radio-canada.svg",
-        "sha256": "e7e685c73c66476421e05a86b44dd0770e45416023852d0f5b00330fb5c244f1"
+        "sha256": "a085a40144892d11f0418f224de620a743dcd9647febd352c7b0813c78793b44"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -89632,7 +89630,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/rajdhani.svg",
-        "sha256": "7f03c1b105742ce03cac340804435aacf5de59678370fd34b4a3aef193bb78d2"
+        "sha256": "5243ed1bf80ee5980390ab20375dacb3ac369423e1764ce842171df18e13c0d2"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -89862,7 +89860,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/raleway.svg",
-        "sha256": "130b719b0a21c771dac42583fc075b32484d4148fa17c9f904f2d70621f8d950"
+        "sha256": "4990a7fe6abe4ea11fd9223e9f06b4e5bbeff784729e164cfdc8f2b70906ee66"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -90090,7 +90088,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/rambla.svg",
-        "sha256": "0c53fc648acf27fe6721a3a2719f0b225b1eed491f25fb149392abfc86d2f05e"
+        "sha256": "d0a0118488aa07520e25b5c4fe0dfb7b9bf1b233dd040b1261375db4e53cf439"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -90315,7 +90313,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/rammetto-one.svg",
-        "sha256": "ed4fde65face2d4881868cf7891f69e9ff16f3be42b2ab8419f28a8fb0a34402"
+        "sha256": "8f97806d51609068c1eb0cb7bd979808784efbcd43242449994451903db1e65d"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -90537,7 +90535,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/readex-pro.svg",
-        "sha256": "c9cf28fee681341a77536ece83569b865794619dae3e8f4d58199a1826c87bc5"
+        "sha256": "2bd1630f7ab73120ec86431814db7c0c57036772ba65928783ad628a4db835f3"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -90802,7 +90800,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/recursive.svg",
-        "sha256": "6b4ef2586a1696530421f3eaa8754e2a72748419deeaeaee7175275e5611afe0"
+        "sha256": "0f632130e320a61ec92adbb7200bf4cff37fe43a57fe7daa6cb20d9eff5217d6"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -91036,7 +91034,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/red-hat-display.svg",
-        "sha256": "c44ed026eee73f167e705fdfeae108fad187e13f6fe7b02c620c3587173be0e9"
+        "sha256": "300ed774bd3afc45c36121a3b88433209b74714ed8fc5996c9e762688b4688d3"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -91267,7 +91265,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/red-hat-mono.svg",
-        "sha256": "0d148ac52ad40191e2b411a478e36ef022bc67accb25aef9e06d46f91f6abe03"
+        "sha256": "23a61b5e44210ee86e028f37eda4114ccf59e33934609e6e7a8d53223b52d300"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -91512,7 +91510,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/red-hat-text.svg",
-        "sha256": "5051bfa7714c34497d7d6c3aca5c829dd79c3f7f6465e9993739382c10a82605"
+        "sha256": "21fc1cc1d3ccc3c7d63443c85e239fb04f323e434b4283739f94cc4a9cab18f8"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -91741,7 +91739,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/reddit-mono.svg",
-        "sha256": "85dccb6a69f30bbfebf8889337d8c3fc8167f87d65bb81f6da40c97ab006366a"
+        "sha256": "a0ec7015db7f609cc02c3d9b4340034b2616f7fbfcf04aaf681b9e91dadb53bb"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -91983,7 +91981,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/reddit-sans.svg",
-        "sha256": "96a6a48a93898fbde486010605217bf99ed709416f7457a50c2bf4014f9858f3"
+        "sha256": "abf563c92f74f49c26abe083a0e1c362d55048cf98bd218eea14eae66a66b734"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -92203,7 +92201,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/reenie-beanie.svg",
-        "sha256": "9983236e410909dd30b4f5de2eda77aacf372a8d223dad920521e122024d2037"
+        "sha256": "a1cec154e146d2560f99baa25b59a72f90f1c6c507bcfdb294ad7bcaed0b6cb8"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -92425,7 +92423,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/rethink-sans.svg",
-        "sha256": "a7dde16a59a16e79b550ab0fb7fa2be6d8cac1db4da106fb6a808d1bff4e0f85"
+        "sha256": "a17c590f40fa277f835d35f187b12ebd2b3a3ab44e9701bcaec5b9af3e6b38e6"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -92647,7 +92645,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/righteous.svg",
-        "sha256": "33d2fb39df0a03e0d6c0d449368a14326521df551998eff71129b43f7ee46976"
+        "sha256": "85182676d5d8302078e80bf9d834b509d5a867b7fd58c851febbc7bbab52fdd0"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -92881,7 +92879,7 @@
       ],
       "preview": {
         "path": "specimens/roboto.svg",
-        "sha256": "79c2f54d685479ae176d1dc00ac4949d91e13ff00b103988641eeb9c182a8c4a"
+        "sha256": "8d51038891aa3fa9e5e02e862bf984b9cc65599c5b707dcb88657316307d0fb3"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -93123,7 +93121,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/roboto-condensed.svg",
-        "sha256": "60952f11b37f71bf20b6c94323d3320e89d4e7d0da2fab439204e9a21aef1863"
+        "sha256": "eca855d86a63fb4226aba5bc5c41f75a75420a50bb5f6ce23f3b8b317bab986b"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -93367,7 +93365,7 @@
       ],
       "preview": {
         "path": "specimens/roboto-flex.svg",
-        "sha256": "aebefe1351bec5b3b25cf3ab6a95edbb8258dc8b67c98d77ee92bb29e679d418"
+        "sha256": "ed8a4edc96f9545ccf7c168030422a6ad81a47339461716b170276bbd48c908b"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -93626,7 +93624,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/roboto-mono.svg",
-        "sha256": "3898194648be5864fb54ece3050e30638661b2f791a46cd1626041708ec5200b"
+        "sha256": "9c2f221bc34eee2ee6e935576c918e7703e32c33bb726a1d885f5fbef5565e59"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -93871,7 +93869,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/roboto-serif.svg",
-        "sha256": "9b55985df3e822ad36945b8a3e73c71fb3c70355ca304ac5b7da32724cac8c61"
+        "sha256": "0d7757069f543d17ca6c5a806b8a8a83ec1c7d71985076cb60ac4a12b47e85f0"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -94102,7 +94100,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/roboto-slab.svg",
-        "sha256": "9fc1e22441b133d9593cb3750fe516dcb68840346e7da60c4753a7679400f162"
+        "sha256": "5566161a35011c8747117fdbdab1bf2fbbd0d9e6c10a1152ada23a39726df672"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -94304,9 +94302,7 @@
       "category": "handwriting",
       "family": "Rock Salt",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_name_only"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "c5421d1ced1949488f29d11b75b7ef967abe2d870f816246bf18fdc0f3e29c96",
@@ -94345,7 +94341,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/rock-salt.svg",
-        "sha256": "225c40a1f653ed44dab8c8f1b704d8a2ef257a2f5cce74c20edb7e4f86933165"
+        "sha256": "85d38e5b6b2b01cd6dd44873fe7bcc4cd2b25fcbafc08faa1af6ee4857116700"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -94567,7 +94563,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/rokkitt.svg",
-        "sha256": "cc1b6877a987f2440e3d159b8f29a143bcafbf9abc9a50b41c0329b20b39216b"
+        "sha256": "5ee0747e5af30bfe3492838d98add21dd11318f9453aa1733913330008943632"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -94795,7 +94791,7 @@
       ],
       "preview": {
         "path": "specimens/rubik.svg",
-        "sha256": "0756f4d94be2aa1628676f2c4d1c55d487ee4ee85cb95c9b7907006e6082b77c"
+        "sha256": "7eb804d282267c936bed9cf1c39a83a75483e6f3412067b8b30fb7f85e588a3b"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -95028,7 +95024,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/rubik-mono-one.svg",
-        "sha256": "a740d528ccdbfe74af97a86852cb326a329543ba64f2452fa92d4f146c89f5fd"
+        "sha256": "1aebad5603d5d2d0fcc0727af520a71746ae0cf9052b8aff394257789e541dd9"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -95262,7 +95258,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/russo-one.svg",
-        "sha256": "000b3e9b525c12808b3dd9ccbaa0e71f42b23feefcb7e119889500524737f998"
+        "sha256": "9d33246061232f83b8e77bed361860c80728a6e7843df4ae9af01679156f06e2"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -95482,7 +95478,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/rye.svg",
-        "sha256": "bfbcdb3b0bc26a612c63e8e812b7105e85e2fb3e1aa2548efebe001aed1db39a"
+        "sha256": "d20089f6e89736912d58acd54868c460a53e44e00fad73e79ae0e5e29fded532"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -95704,7 +95700,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/sacramento.svg",
-        "sha256": "ffc677e5213307ac764e4824a81f43270eb772b1f6bcb5132ee571b041af6cb3"
+        "sha256": "75f85769292343a7c862a5c1a4dc485ba05bfc864ec75e1152b8f5162f603f4b"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -95926,7 +95922,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/saira.svg",
-        "sha256": "eece84bc1f7121dd5ef2981c79f00428a9065d95e2c634e1d11d4bd21c658a9a"
+        "sha256": "80a0c1fb48e03875a10cb71ba80dfb2de12e1be6d39795b063abab4e20d02ee1"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -96148,7 +96144,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/saira-condensed.svg",
-        "sha256": "2ba2f0a43be77b2fee729f5ab49056255a0c0ef9eeebaa2f754adb6506ae0f1a"
+        "sha256": "a410dd012caabb8d269924cea8b388018bf40db878a51dd2a7b4c9c3bc8f42c6"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -96370,7 +96366,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/saira-semi-condensed.svg",
-        "sha256": "cec4cf425df5742a39c65b8e88d0aa7642bd212679776d11334f61ab07e3f078"
+        "sha256": "627fbbd405dca9c971b7e68dd2fb198ae85d7f1ab8ab9d001dc980d0b06f6e7c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -96590,7 +96586,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/sanchez.svg",
-        "sha256": "4f05e8de3fb7e632e53c79c9b82b6903083070337d0aac1512da4a19e080b925"
+        "sha256": "f66cb38f167dd1e93ba20bab9e0054e4b0770258702872dfda7f7ccec6a75c29"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -96816,7 +96812,7 @@
       ],
       "preview": {
         "path": "specimens/sarabun.svg",
-        "sha256": "3932264d2cd7d93a5cd2131519da9161320377ece80f377f644e1510b143d291"
+        "sha256": "17e355bf89ccd5d65e0c6c03863157bf8cc46eba7ba4997da53ef00dd6436c4a"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -97042,7 +97038,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/satisfy.svg",
-        "sha256": "e066b48c3d3593ae47be2eab43c5fce4565c49e814fd933d44c80f7f441c37ff"
+        "sha256": "2acd4a950569815981da3c8414a6aed3e6923f892903fed7b544db9b9bf38bd7"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -97264,7 +97260,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/scheherazade-new.svg",
-        "sha256": "3b4cfeae6eda76fbd1fe11d7579b13907a40c9829f74a15a74cf756762f10a3e"
+        "sha256": "31339c8d98bef77f8471276e34966a6a91a936afa991b33d779c85d060fc5cd5"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -97493,7 +97489,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/schibsted-grotesk.svg",
-        "sha256": "e7d9e85693ec87929c96a25ee64f59db3e5fa01b929c816d9b0fb8a7bf5c1933"
+        "sha256": "ffe63ec2777c2cfe80a982e945555f9dfafc522369aacf54f82140297a08dd37"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -97717,7 +97713,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/scoutie-sans.svg",
-        "sha256": "3510b29bed30a90a688906a620ff4611529e1ca55f630d417c612587b5a2be68"
+        "sha256": "315df5d7c8fd5747b5a85254ac65667922ca3dbbfba6bdb05c37bde747feefe9"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -97937,7 +97933,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/secular-one.svg",
-        "sha256": "00d1e27f7178fe5ebcb9d3403a3a32801ddb42e5022e86f81f5a45fed9ab1407"
+        "sha256": "d665cd73c71f90f4d06afa86eb5aec843a48981331270915fe5f93faba328618"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -98159,7 +98155,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/sen.svg",
-        "sha256": "e8ee754814eedcdee0cfa39dd61cefc784a979768a3968aff40aad0aa3603564"
+        "sha256": "b3da9b42d2e82efe743028d098f683f95bf9b6932605d173ce05c7e945079b28"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -98385,7 +98381,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/shadows-into-light.svg",
-        "sha256": "401b78bd3ef8b96394101d2b039c2866a584f9e5a24304018f2e51b94b48f466"
+        "sha256": "2972d5b839cba7c7a8785bdf89a3ac2c9343751e5f256c9425ee5b6a1908ba11"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -98607,7 +98603,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/shantell-sans.svg",
-        "sha256": "85a11e43926e8c4827081459275fcb1e7a5a291f89482c6da34effc0af5c1047"
+        "sha256": "cdfb5778ef2be54fb68d904155345d1169e6e908e85e0c462883515f1d9290b7"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -98837,7 +98833,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/share-tech.svg",
-        "sha256": "5ba24220c41cd22b5306b02873a97162989185ef05805774dd5255d961481b7f"
+        "sha256": "c6e5fd87f21613df929b8ca99722918d1bb31cc8e7d263bd949579960ad4701b"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -99092,7 +99088,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/share-tech-mono.svg",
-        "sha256": "140730a8be57a661b97366b07846e233d8e243a4e05dbe4123d833fd8735b96d"
+        "sha256": "f136094c54747793a728ba530950c796166ebc8fae54a96fbd8002855eb3d675"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -99336,7 +99332,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/shrikhand.svg",
-        "sha256": "ee70a143552b2c94148206b79782ca2a39ebef25460f0adade12fd968440b2b3"
+        "sha256": "12c1f5d96f1676f7da9eeb8d63c30a507f0e45e0b43c504814b7ae29f3b6aa0a"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -99560,7 +99556,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/signika.svg",
-        "sha256": "b02660307d5b3f2c4a163fd945d08d3e9f5a82337b44a19ea7f4b49276c2c843"
+        "sha256": "13f73896c2dd4d47e6bda6b1d1658b6a7d843e4b9b09fabfe9a7f7a40c7ad0ba"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -99791,7 +99787,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/signika-negative.svg",
-        "sha256": "bcab97b2401b8e47044a507ba370698547c9037bd114590efa5be907ff6f6309"
+        "sha256": "04b7d6901a86624da8385bfb9b07ebabe31e69d2de8525ae0f87b0761a0cbbb6"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -100020,7 +100016,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/silkscreen.svg",
-        "sha256": "60845711a35f2bdc75a460e7dae591bac589fb41166bba6a84973060174a249e"
+        "sha256": "579e747957aea929cb7b00a009d95d7ae7aab0eca6474db46ee49ce5516b7cc9"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -100242,7 +100238,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/slabo-27px.svg",
-        "sha256": "089fb1875887ded05d06abed5758c3a97ea9ff6ac54b6075b4e6e6ae1689f1af"
+        "sha256": "55a0b45869766ce3b576bf338a6e0959c68613002eb172256874090afc62f389"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -100464,7 +100460,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/sn-pro.svg",
-        "sha256": "e1c9e5a8d3b9957a6b79a1c9cb8daabd2469cbff04ffeba7dcc26d6fb8648576"
+        "sha256": "ee79f5e99a6a17ad52d839da1ff5f9470b9f6f079bde333e2b180240b07f2172"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -100683,7 +100679,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/sn-pro-font-family.svg",
-        "sha256": "4184bcec7cc80859f9d6be03838e9de1aef9b0f683966f140ff71578fc21de4c"
+        "sha256": "5fd306bd88c9e765d88331f6d5373ae967aab58eaa7f84998ab8a8d3b4995753"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -100901,7 +100897,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/sniglet.svg",
-        "sha256": "390f2497ae6cb9d7edf169e174c5311731c17f24c641eb131af13187fafadbb2"
+        "sha256": "cc5befeac4d7455197e1bf4d82fe36c1b1bb95a3f958cad720f446cd6752c7be"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -101126,7 +101122,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/sofia-sans.svg",
-        "sha256": "55c38991d36cab19936ef27ecece1db24a9a38ebb2d649108cc7f913a27b6f56"
+        "sha256": "fd98e078895df9766152962b2a48e16dfbaa3206f173cb90886956569c9cc842"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -101350,7 +101346,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/sofia-sans-condensed.svg",
-        "sha256": "7d06f895b9239294dfb56d3ffb9c0982e5d8be40c020f8e8683e95ee22daee71"
+        "sha256": "45af4b555649992d7a4d7428a85ffbb1225cdf8394ec79a487bc0d7094fa448c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -101572,7 +101568,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/sometype-mono.svg",
-        "sha256": "4473e017b5a7591ae64d060e92da08fb83c46bba61afcd4b666cde7c42b6df55"
+        "sha256": "66386e5079bdeef393bc008101d2d3a1386d50947d7b1824c3f0b32d9d1c7c9f"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -101812,7 +101808,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/sophia-nubian.svg",
-        "sha256": "6b8038ad0df38b7cecea4d57266de12cfb2bf08636cee2544f55195973c8d61f"
+        "sha256": "105b2bfdb4987ec00e48d0495a77c2d2cb22459a831ada6c9acb8de2c80702ae"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -102032,7 +102028,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/sora.svg",
-        "sha256": "a1b3554c307b245358a8d6d4479da40d78ca0d07030ef03e1761d8ff6f2e3d2c"
+        "sha256": "29055e08b03ea7ca6da04c0180ff848d61b4ca0e89f99568e583a2bc6727c314"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -102262,7 +102258,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/sorts-mill-goudy.svg",
-        "sha256": "5e7eafc1d5c52c0be1f7350102a930385689c239723bcbf1fa891a9b4d287961"
+        "sha256": "f5882c9f6e4f2674fce3f4d79f2a77f5be4dd45901db735c7e91e19ffc26bc1f"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -102519,7 +102515,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/source-code-pro.svg",
-        "sha256": "31006f579df7f9474643377edbb7f34b4a590564bd7727f17bc2bb219eb592eb"
+        "sha256": "b4b3ab550d6a7048b65770e1b98a4437128e5c5d954c42cf50eb6491655a71a6"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -102780,7 +102776,7 @@
       ],
       "preview": {
         "path": "specimens/source-sans-3.svg",
-        "sha256": "3ff9366e2a5d3492cc42434e31e04615ceebf725a10934c0c1efdd5189e6d149"
+        "sha256": "47ea9edc3a5998c8687bca8f96d40b7aee2b2e626c1308ac5082e7331ccb3842"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -103019,7 +103015,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/source-serif-4.svg",
-        "sha256": "b5ad64eb02ca3f9bf3fa4e34b1d1655bbfd17b272a16765667a73d40b5b8b504"
+        "sha256": "17504227adf6a260ca7a73d30085c9e9eddb7e3a34f258efc9bcc813b71f2798"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -103252,7 +103248,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/space-grotesk.svg",
-        "sha256": "d9bb034fcf81a32fc230f6da0de301019e85b18966e608edf014794b0cd5b314"
+        "sha256": "58636ed55ebb95354ca1f94430997435bb0a11ebfebb67e7066343b60dcfc4af"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -103511,7 +103507,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/space-mono.svg",
-        "sha256": "b0a562158143b4f44589882725b9b880a75c3d21bca2cfd8502822ab0fa6e127"
+        "sha256": "a3cad12596e18866f6e5e69426feef095607933d25cb790ba2cb3c80f1bcd5a3"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -103980,7 +103976,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/spectral.svg",
-        "sha256": "ddfacb817097c8aacd6c69e724ea5aacff0b14f0128dd6e2d8b084d4b05a5b7c"
+        "sha256": "a651621579c8ef961a99e8533c082320f4493d2513bb38b3f97fc111d611e8c0"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -104209,7 +104205,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/spline-sans.svg",
-        "sha256": "edc3e2e4e886dacba672b3a046d95a80f76c82459fd79c00eb3ccccc6c79c69f"
+        "sha256": "ff8ffc61a99a1ddfaaef840772c1a97190c8f3ed9a411d2d395c438c9f3ce6ec"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -104431,7 +104427,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/spline-sans-mono.svg",
-        "sha256": "4c566bc2078d3433864074e9b5fad08b5327a7d805fee60941a8a141af254926"
+        "sha256": "9a22d67730c3dca7728f1a76fd8460629e03fab9b44d3d6c138cf0be49010e53"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -104673,7 +104669,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/sriracha.svg",
-        "sha256": "4bf97b5ecf0afc32fbc85622e564c6074625589822f50461cad7d31c9505782a"
+        "sha256": "2eb699883d4ddccd4a823b61cc6e13f08cb5c7a0e0403a21b221e7f9262ba9d0"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -104895,7 +104891,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/staatliches.svg",
-        "sha256": "5a3c4add9838862b1fd634b3fcb5204b51afca92ff780b6ea7d19a2a8f9ac4bb"
+        "sha256": "7f3c43d90a801c2a6564f25e62e2ed4a58bf9dc3695e29760b0340016c18624e"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -105126,7 +105122,7 @@
       ],
       "preview": {
         "path": "specimens/stix-two-text.svg",
-        "sha256": "0598b836cebd9651e5a9c00f7a9c2a087f31338a31d91824b748f96310ecfe70"
+        "sha256": "19018008df83541a7920ac61c2385d9835b3d04f33d149516d614ed2143f4cec"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -105368,7 +105364,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/strichpunkt-sans.svg",
-        "sha256": "fc826d372452b93195bc79aa9635abd06fa8b136b18c324df8f3f3e1c4810d92"
+        "sha256": "d6eb64fab193dac45598c6b323dd7b752c1a85dd3f322627307235d45b78c127"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -105593,7 +105589,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/sudo.svg",
-        "sha256": "f698e0634df3933a1378e4ad23c30a2d3564997a1332c2fb1e8f43435c29cb62"
+        "sha256": "9d740b5f53716ad884a6af55e545793902046a139ecea0b895b07642e9bbb256"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -105773,9 +105769,7 @@
       "category": "handwriting",
       "family": "Sunshiney",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_name_only"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "2f41cbc6263c033c18f1db7ae6523a89eb50cd5665b0b7635cc3a4c9c9a0fe4d",
@@ -105814,7 +105808,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/sunshiney.svg",
-        "sha256": "56c4de470782443b3dac1f51f283e3bec8eb14f856339aeded4627e39d7ac55e"
+        "sha256": "6fe2ee2c2006c615fddb32eab1eb8cf31dafa9bd008e13dc5121b84ceb3f7dc0"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -106041,7 +106035,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/suse.svg",
-        "sha256": "1e0670f7b179f1077b21b76c1dae830c4248e4d7179ff9fd523ef587fa5f44cb"
+        "sha256": "febba4c0d40002e1b95b34923b8d8a45b732a916a8ca2b95d9cb7add29c3a639"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -106267,7 +106261,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/suse-mono.svg",
-        "sha256": "62159e5505c34bbf5dd41738b3ed8e59460b6f1564c8b59884af8f6f0e67f17a"
+        "sha256": "721ff2fb927045802954abf7339a9f0af6b0245738db0c3329ca023df71554d2"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -106505,7 +106499,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/syncopate.svg",
-        "sha256": "dd58aa475cfac25c492a0a421c26c6bdd185fad3eaac07e8b906560ea864e25d"
+        "sha256": "9093514deb9b64019470a43600967d1037e7723f713b988f783395ecfec96f17"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -106729,7 +106723,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/syne.svg",
-        "sha256": "c2355838c06b6b7c6716cd5e8b11b043ab010b1b5c275394219122afe4aefe0f"
+        "sha256": "314ef72ac385bebc15831dbccd892bf76db973da1734397f677313c02071b605"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -106955,7 +106949,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/tagmukay.svg",
-        "sha256": "47f319f7aefd44e6426b46a1f4cd576d188658ebb109890aef2aa6ad417a4028"
+        "sha256": "199cae0bea10f9e85492a3840a0e9d8b77be84e083b5395ffd3f79acdb31a17a"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -107173,7 +107167,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/taviraj.svg",
-        "sha256": "1942f30b0549d7f221e55143e0f56dbdd819ff6f2321b5f190bce672abbd80c1"
+        "sha256": "f6d4da6f16ef30b036c068d019cf0162eec6d1a481b11778de84295ab93d0452"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -107395,7 +107389,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/teko.svg",
-        "sha256": "ee957a5af141dae9ff8332ea71b852132d57b8d0591a95d6bd796c8564dc5550"
+        "sha256": "3ff2c63c1701ffe49b1cceab730a3849e4a7e371822f4202a3771dabebc648f0"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -107615,7 +107609,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/tenor-sans.svg",
-        "sha256": "84b38a2325f2120e7466e25e928b17d8ef399d6fe2c4d583493430f76b2f3256"
+        "sha256": "e01fdbadb7750e976a15cfa5a5d3b97f14f7ed78d284844f1392ba5bb49dc38b"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -107873,7 +107867,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/terminus.svg",
-        "sha256": "600e589319c4bd29f63c7ae29e58a41e7d3e8e4a343695a0832b3c1742411434"
+        "sha256": "488d07fecbf8e644654852fcea6e696fa737b2e14991da295a11d5385ecb94f5"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -108108,7 +108102,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/tex-gyre-adventor.svg",
-        "sha256": "dc5eccb482b3e88429a5ec1ba9f21fa412c18e12abcf93383b4a94009ce755b1"
+        "sha256": "9ed1efe8b4087ec54a0a205c81f163ac9f35d07ba6cc413731e22b7a187977f4"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -108336,7 +108330,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/tex-gyre-bonum.svg",
-        "sha256": "16bac448b8d6f6545e18bcfe6b4e95860e58ca3696578a0cc62edb778f90ae91"
+        "sha256": "76f5f55295786f6650964a2e7a5e688fbee6f15a2869f99203f74cbd35f71a3b"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -108564,7 +108558,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/tex-gyre-chorus.svg",
-        "sha256": "5f8071da26840b0ef893c34730c4b12de3b3c8356d12496b47b03c947ce565bb"
+        "sha256": "f4a80ff26f6ff9246c77ea737ac334ad42bf1bbbf94f619bf39d8c9b5e450b3d"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -108792,7 +108786,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/tex-gyre-cursor.svg",
-        "sha256": "50bf61a814ac2ed930a58e5df2598ae3ae8e931e29ac93b6a7f5207bdcbcca73"
+        "sha256": "0a32f1958a6f343ed593182ae140f8cfac22be9664d24649b3419e5857848d86"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -109034,7 +109028,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/tex-gyre-heros.svg",
-        "sha256": "8bec0c35ad37d63175512646c0b38e343bb2d67c796f3c54224740c0e3dccdd4"
+        "sha256": "0b2c19cc244d6935b8992fe8eb26fce6c03dacc2af755f82806565cbbcfc849d"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -109267,7 +109261,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/tex-gyre-heros-cn.svg",
-        "sha256": "7aaa1b796cb4086dbeb980eb39fe534f3369b6910d9bcd2d8adb8d008ec87fe6"
+        "sha256": "b251076e00710a81403fb53defbd4271e78efbf8a56f807aaf847dff38c31349"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -109494,7 +109488,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/tex-gyre-pagella.svg",
-        "sha256": "beb436eb6b2000ba46f61d92b2028834bd7fae87311447a667ec68d758e743eb"
+        "sha256": "045cfa38ada9120f041c5c2be390095dfd865e892bfdb97c3f93e5b9cdbc6301"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -109722,7 +109716,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/tex-gyre-schola.svg",
-        "sha256": "7e0e418bde7280cabebdd83fec1e1762fc7156f054698d8efbacce2096de76cc"
+        "sha256": "78abe447e21e95ee33e6b6386f9f04f9261f9517725652249ed73148e5675549"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -109950,7 +109944,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/tex-gyre-termes.svg",
-        "sha256": "aee0a631852b5492b2ff6ca294c4314b9548a0cde21775858258db55f0b07ab0"
+        "sha256": "a833e09a5a2399644230ec42a4e04eb080b0c438c2c712345a69397eb2ccdf54"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -110208,7 +110202,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/tinos.svg",
-        "sha256": "506cc4b824b7b6a5de7442593384bdac073d62de465d0784095fd112f7b77e26"
+        "sha256": "36eb5cc5db25e261a2c1a3536ca1af60f410387e22daf7eae8e040bcdc24c6f5"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -110449,7 +110443,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/titan-one.svg",
-        "sha256": "2836c3d67e04dcd790d0b21eeb8d832a3b2fcfec2d0dbd610fd94a3c00ab8dda"
+        "sha256": "11cbf50de09097f82250bbfc30576e89e19fca0e9335cc72e1aea6d64b1c2599"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -110671,7 +110665,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/titillium-web.svg",
-        "sha256": "1b83fad29117dc4863f1e5d4484f8d5b3fa115dc084af3a90d2603fa41cc9c99"
+        "sha256": "31ccfd5d48e54e6468dc9187bdec20181819c0b87c28ce55667df18e9db49255"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -110894,7 +110888,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/twilio-sans-mono.svg",
-        "sha256": "c00c56596b06692f6c8bb1184632a90224c55c6033a8d5cb479e7f0e92d8dac9"
+        "sha256": "e1b5997648b62cd21afefb3845ca8a2513abd8146e0e217e5adde5888867c034"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -111159,7 +111153,7 @@
       ],
       "preview": {
         "path": "specimens/ubuntu.svg",
-        "sha256": "679f54d6bdf7fd579f1110cb98b251274a0af4cee4b46626696716907b5df53e"
+        "sha256": "d7eb08974b0d652e16214da74f7d3946182844c0db6928567adbfa7f0fa19c5b"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -111394,7 +111388,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/ubuntu-condensed.svg",
-        "sha256": "919d1291dbcf1dd512d5fca44bac9ec426a2359f782c4fc8e92b4ea6061b765b"
+        "sha256": "6bded9daecb40eb5a0671d08dc00f4f44ee549e932bf488a97a6a0d0759083ec"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -111654,7 +111648,7 @@
       ],
       "preview": {
         "path": "specimens/ubuntu-mono.svg",
-        "sha256": "9647bfc69abffba5a71345a3792fe441c897c596f6ddf87ec5f9290a08521970"
+        "sha256": "3051e014d44fa6443b20f87daf9927fa69342cd09b86411b578396637b479b21"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -111936,7 +111930,7 @@
       ],
       "preview": {
         "path": "specimens/ubuntu-sans.svg",
-        "sha256": "7fe9efe4d8f1fa3434b5a552f42d1dec903ac4d8bba9052c7f8129973b0611d0"
+        "sha256": "26e94e71f70c5dfe50033214bc260952d25120956b46806d7d3cfaec6c70d7ba"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -112176,7 +112170,7 @@
       ],
       "preview": {
         "path": "specimens/ubuntu-sans-mono.svg",
-        "sha256": "98ce6d19fad2e503672d39e9a2ceac255eec6fffea3f753b2e9d0cefe103682c"
+        "sha256": "ab1c6ebb2fe1df6fc1b1c195df30a20c99f2dc68564ec38e52f81f3b87f067ce"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -112418,7 +112412,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/ultra.svg",
-        "sha256": "b66b04ce613682635c6ee655b2de2377020a3a4319e3def9bc145edd0f49b415"
+        "sha256": "7f7258978a23f94a5e57e546eda27a1dc29fb91ab76ba882a1feb8dcd3e38de0"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -112640,7 +112634,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/unbounded.svg",
-        "sha256": "1dc994ab6e03c5abffc48dd4109f97a1219d7f7afac1dcf2cbd99b8aa70cacda"
+        "sha256": "0aacddd2a78ff29ef48a43faf77deb5be363fba91812f854884d47bfdaf6362b"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -112871,7 +112865,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/uncut-sans.svg",
-        "sha256": "041e367f7d28b73fd0301314e198055d73efe7783ecf1748015ca4ff340ef79d"
+        "sha256": "6a9f1c59afe3a8a613339813abca1c2b42813c5390926674aa15f300c24a00e5"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -113096,7 +113090,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/unifrakturmaguntia.svg",
-        "sha256": "610c3eb9a47081922c826eebaaf2639a6d2c7ff3847f8452568e8fae75dbf27a"
+        "sha256": "d2d347de1b8e8eafafdb20eae19ef6fa99a86dc9ada32811f4fa8ab9513b3c72"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -113320,7 +113314,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/urbanist.svg",
-        "sha256": "7b5f12835bd51ce1ec8ad130401a8a45fadfba4233ffbafc30a4b52f452cf2c2"
+        "sha256": "07f758901e663ee815d257b25da25a7d891d355e61c3ef25a9f46035f5f485cf"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -113546,7 +113540,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/varela.svg",
-        "sha256": "46e073485a3e0b8832879818eca9690d4f541b346d6e19c452643bde310fb002"
+        "sha256": "3c77e4146bb40f3602ed97618622e3feae53ee6428b70e3d3ac969c0d7666d51"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -113768,7 +113762,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/varela-round.svg",
-        "sha256": "7ab2d09ec0d1c18a8a0a7f79246ecb2158f3f16f8f01af3333986db0b862ee19"
+        "sha256": "c16460657c166249c3c30d8fa401417cd423b0ed99935703688abc1ad7372cc3"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -113990,7 +113984,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/vazirmatn.svg",
-        "sha256": "5150ae562ba66c45aa29b6b408637582660a98a79ea793ab6481b78e18a66ad9"
+        "sha256": "b0d81cd88863ef00fe2883da16b6873579b2a869528b682179bf80913b944af9"
       },
       "preview_ok": true,
       "pulled_in_by": [
@@ -114256,7 +114250,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/victor-mono.svg",
-        "sha256": "f7244c019074068942aa41c0b9b7d425b45fbf993f4a3e82dc774666b41696fc"
+        "sha256": "58067be51bfba6221960132f647d93abe065055c28a617ba0fe36b357e8d2da7"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -114500,7 +114494,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/vollkorn.svg",
-        "sha256": "b9974768cfda5d9248eebe8b3bc556a51131835bc8e90f71be54d58dc504366e"
+        "sha256": "b3e8f531d6b1ce78331fec63dc1dae899f2319e119c08f60ea9da1b9be03bbc4"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -114732,7 +114726,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/vt323.svg",
-        "sha256": "2fd4d9c8dba20242bf5efc49879cb1482ce61f784994a8c81115495c032b7228"
+        "sha256": "e450812d4d20700db28f3d5aad56b0137825fee294f9ff5c634257537d0af4b7"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -114974,7 +114968,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/whisper.svg",
-        "sha256": "acfcb505858073332dbd08d54617de0950390f8c9eff640a66edefe78d8d9629"
+        "sha256": "4f0ae8e440c8cc3da3213a2ef246fbd0159c402d0fb68ff05c2ebc59b1729a8f"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -115208,7 +115202,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/wix-madefor-display.svg",
-        "sha256": "78c46216cf96c0c8de7520f30c8219bee9ad468aebef7f172888979b83ac3d59"
+        "sha256": "615da0c4a58f96c17eeaa45e79e036ea3246316e9a346f9e675831b75b0781d1"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -115440,7 +115434,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/wix-madefor-text.svg",
-        "sha256": "f1fd054bb195a672150e8d1b927c4db0a8efa1650305cc4dbdf46a6752ac8cbe"
+        "sha256": "f50782a966cbd4ee7cb53d866c91e5bcfbd762b160faf972381e54b0b744db4b"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -115665,7 +115659,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/work-sans.svg",
-        "sha256": "73fa02d2e2430980950f6ff6c1ede00d0e7848a1780df013cc3c8d46b8175e77"
+        "sha256": "e7b1e4c596470735047de2c279433283ceb5a2b4e821a14d4173a767c60a605c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -115895,7 +115889,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/yanone-kaffeesatz.svg",
-        "sha256": "397c4a6cbe91322ef1c8775e527881289db5694a58387131f82af785a72043b9"
+        "sha256": "5aa1f20a0ac6c23e6968dc284b3f924fba24f05332c8e746668ec5b657e45aba"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -116124,7 +116118,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/yantramanav.svg",
-        "sha256": "671e6edb2fa1176a6433d322830e5e3a8ba8709cd91800d8746244b58f10b5d8"
+        "sha256": "625e0588b52f3c086e84bd54fbbcbc54e3ccba25ac23f35da1cad89108e83a98"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -116344,7 +116338,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/yellowtail.svg",
-        "sha256": "917a61367ee777ed46efd899e774a07bd2fb97e2b69cb0b92066bbf3d52c647f"
+        "sha256": "b5df470cbe1d847e9e93ce9069224d428ffa379e9f56b02c414d27a8b00318d6"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -116566,7 +116560,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/yeseva-one.svg",
-        "sha256": "231a16ce3cec76a88cc2f7af65e43f121f07de9d3e3be1281e40a811463441c5"
+        "sha256": "6c9f168579a86a4a86c8c07e6f3f6f3ae171e5b1b7e9a082fc3cbe0d8dad3369"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -116788,7 +116782,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/young-serif.svg",
-        "sha256": "230e0bca975c2fc8ff1ff684d57353b26f0e173cd63382c6c182f7597eb0011b"
+        "sha256": "beb1f45a2790bac3fa9648bca746d1afe7f9b65486e0bcc47572daf307041d87"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -117010,7 +117004,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/zalando-sans.svg",
-        "sha256": "de02edeb4717c2e46eb0f7b3ad581f7a90118da30f9d0bb1f048de89cfc75d27"
+        "sha256": "58f50bf13f7e0c512af37ff71bd897ca504a82a37dbd661c592c9f85cc801dd4"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -117258,7 +117252,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/zed-mono.svg",
-        "sha256": "8c4eddc106f8a212f58877a2b6299e6358d0f3db08e39a66d819f41bfef92440"
+        "sha256": "c919b50a74a2eb75b20e07b09a6c364be23a9ccda38c0544e6ebf6ace489a1e5"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -117491,7 +117485,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/zed-sans.svg",
-        "sha256": "e2bc6f592a7b081c8f8e085018fec3079aa20fc1672bfe133dca835f254fa041"
+        "sha256": "11348c9aca05e2d92fe9006195d1960fdd58a084215e444006f6c70593492a5c"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -117712,7 +117706,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/zilla-slab.svg",
-        "sha256": "9a43314d5bfdc379fa349d47c1104a441f48dcc41f8e4dd42cbc1480ddf5934d"
+        "sha256": "4bec61c877e4dc7b1264c9cd4b784b3f1c959e67b5ee07e1a802b4f34b98aeb6"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -117891,7 +117885,7 @@
     }
   ],
   "run": {
-    "code_commit": "adbfed55069684e5728507ac1afd910f56f05dc5",
+    "code_commit": "adc28e04a57b4b349921c82646b473927d75802d",
     "config_sha256": "2e7e5669e91f8c07bc0d5de7559ac8c590ee70f3f2ddece6bba8a185429d445e",
     "date": "2026-09-26",
     "generator": "tff-catalog 0.1.0",
