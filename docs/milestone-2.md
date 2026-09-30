@@ -157,7 +157,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 
 ### Step 9: Privacy: headers, Cloudflare settings and logs
 **Who:** Claude, over SSH and the Cloudflare API; the owner does what the token can't. **Depends on:** 1 (page tests only). The Cloudflare items can be done now, on the stub.
-- [ ] Headers in `ops/Caddyfile`: *(All written in `ops/caddy/site.caddy`, tested under Caddy, and live since 2026-09-30 (SERVER.md item 25). Left: production drops the CSP until header phase B.)*
+- [x] Headers in `ops/Caddyfile`: *(All written in `ops/caddy/site.caddy`, tested under Caddy, and live since 2026-09-30 (SERVER.md item 25), the CSP included from header phase B the same day.)*
   - a CSP with no inline code: `default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'`;
   - `Permissions-Policy` turning off unused features, including `local-fonts=()` (M3 step 6 allows `self` on `/check/` only);
   - `Cross-Origin-Opener-Policy` and `Cross-Origin-Resource-Policy`: `same-origin`;
