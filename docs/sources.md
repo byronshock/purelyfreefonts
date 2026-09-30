@@ -118,7 +118,7 @@ Our catalog data is CC BY-SA 4.0, final since ruling T5. That matches the ShareA
 
 ### Foundry sites
 
-- **Use:** `config/foundries.toml`, a hand list of families from The League of Moveable Type, Velvetyne, Collletttivo, Open Foundry and Roundo. Claude seeds it once from the foundry sites and the owner reviews it. The sites are not scraped each month (ruling M12); each run only checks that the listed links still work.
+- **Use:** `config/foundries.toml`, a hand list of families from The League of Moveable Type, Velvetyne, Collletttivo, Open Foundry and Roundo. Claude seeds it once from the foundry sites and the owner reviews it. The sites are not scraped each month (ruling M12); each run only checks that the listed links still work. Since 2026-09-29 it also takes the families that someone asks for and the owner accepts (owner ruling `font_requests`).
 - **Terms:** each foundry's own site. No data is copied from them beyond family names and links.
 - **Ruling of 2026-09-26 (`default_sources`):** facts only. The list is our own file, so no fixture is needed.
 

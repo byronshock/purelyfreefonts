@@ -3,7 +3,7 @@
 Status as of 2026-09-25. Settled decisions are in [AUTHORITY.md](../AUTHORITY.md); each checklist has the detail.
 
 ## Milestone 1: catalog script and catalog.json
-- **Goal:** one script builds a ranked, license-checked catalog of about 500 truly free Latin font families.
+- **Goal:** one script builds a ranked, license-checked catalog of about 500 truly free Latin font families, and lists every other qualifying family A–Z without a rank (owner ruling of 2026-09-29, step 15b).
 - **Status:** Step 0 done: the methodology was approved and merged on 2026-09-25 ([pull request #1](https://github.com/byronshock/trulyfreefonts/pull/1)), with every decision recorded in AUTHORITY.md. Next: Step 1, project setup.
 - **Checklist:** [milestone-1.md](milestone-1.md)
 - **Depends on:** nothing.

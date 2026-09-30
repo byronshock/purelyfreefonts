@@ -1,5 +1,6 @@
 # "Missing font" (Milestone 2 step 12, M2-D10). The rules below restate
 # AUTHORITY.md's Rules 1-4 and D3 in plain words; change them together.
+# Requests are handled under the owner ruling font_requests of 2026-09-29.
 name: Missing font
 description: A free font you think belongs in the list isn't there.
 title: "Missing font: "
@@ -16,7 +17,7 @@ body:
         - it covers the Latin alphabet;
         - it is a font for text, not icons, emoji or symbols.
 
-        The list shows about the 500 most-used fonts that qualify, so a less-used font may be missing on purpose. Tell us anyway if you think it's popular.
+        Every font that qualifies is listed: the most-used are ranked, and the rest follow A–Z. So if a font that qualifies is missing, we haven't come across it yet, and we'd like to hear about it. Foundries and designers are welcome to ask for their own fonts.
   - type: input
     id: font_name
     attributes:
@@ -40,7 +41,7 @@ body:
     id: why
     attributes:
       label: Why it belongs
-      description: Where you see it used, or why you think it's popular. Links help.
+      description: Where its license text is, if the official page doesn't show it, or anything else we should know. Links help.
   - type: checkboxes
     id: searched
     attributes:
