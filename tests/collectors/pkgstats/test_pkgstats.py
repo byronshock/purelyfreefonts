@@ -613,7 +613,12 @@ def test_the_fixture_run_asks_only_for_the_new_month(tmp_path: Path) -> None:
     snap, urls = fetch(tmp_path, FIXTURE / "http", day=SNAPSHOT.date, previous=PREVIOUS)
     assert snap is not None
     assert urls == [normalized(list_url(AUG, 10_000, 0))]
-    assert snap.manifest.extracts == SNAPSHOT.manifest.extracts
+    # The fetched month is gzipped here, so its stored bytes depend on the zlib build.
+    assert (
+        regen.portable(snap.manifest)["extracts"] == regen.portable(SNAPSHOT.manifest)["extracts"]
+    )
+    for e in SNAPSHOT.manifest.extracts:
+        assert snap.read_bytes(e.path) == SNAPSHOT.read_bytes(e.path), e.path
     assert snap.manifest.notes == SNAPSHOT.manifest.notes
 
 

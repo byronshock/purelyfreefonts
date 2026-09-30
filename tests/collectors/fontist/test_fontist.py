@@ -208,9 +208,8 @@ def test_fetch_reads_only_root_and_sil_and_keeps_no_text(
         data = (snap.path / e.path).read_bytes()
         text = (gzip.decompress(data) if e.path.endswith(".gz") else data).decode()
         assert SENTINEL not in text, e.path
-    assert (
-        snap.path.joinpath(fontist.FORMULAS_EXTRACT).read_bytes()
-        == (FIXTURE / "snapshot" / fontist.FORMULAS_EXTRACT).read_bytes()
+    assert regen.golden(snap.path / fontist.FORMULAS_EXTRACT) == regen.golden(
+        FIXTURE / "snapshot" / fontist.FORMULAS_EXTRACT
     )
 
 

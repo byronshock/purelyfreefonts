@@ -24,10 +24,12 @@ A fixture directory holds:
 """
 
 import argparse
+import gzip
 import logging
 import sys
 from collections.abc import Iterable
 from pathlib import Path
+from typing import Any
 
 from tests.helpers import FIXTURES, ROOT
 
@@ -54,6 +56,35 @@ def load_snapshot(directory: Path, source: str) -> Snapshot:
     if manifest.source != source:
         raise ValueError(f"{directory}: manifest source {manifest.source!r}, expected {source!r}")
     return Snapshot(source=source, date=manifest.date, path=Path(directory), manifest=manifest)
+
+
+def golden(path: Path) -> object:
+    """What a golden-file test compares for ``path``: the same on every machine.
+
+    Builds of zlib (zlib, zlib-ng and their versions) compress the same input to different
+    bytes, and CI's Python (uv's) does not use this machine's zlib. So a ``.gz`` file
+    compares gunzipped, a snapshot's ``manifest.json`` as ``portable`` has it, and any
+    other file byte for byte.
+    """
+    path = Path(path)
+    if path.suffix == ".gz":
+        return gzip.decompress(path.read_bytes())
+    if path.name == MANIFEST_NAME:
+        return portable(Manifest.from_json(jsonio.load(path)))
+    return path.read_bytes()
+
+
+def portable(manifest: Manifest) -> dict[str, Any]:
+    """``manifest.to_json()`` without the stored ``sha256`` and ``bytes`` of gzipped extracts,
+    which depend on the zlib build (see ``golden``)."""
+    doc = manifest.to_json()
+    doc["extracts"] = [
+        {k: v for k, v in e.items() if k not in ("sha256", "bytes")}
+        if e["path"].endswith(".gz")
+        else e
+        for e in doc["extracts"]
+    ]
+    return doc
 
 
 def parse_records(collector: Collector, snapshot: Snapshot, settings: object) -> list[Record]:

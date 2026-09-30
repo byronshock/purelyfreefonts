@@ -512,10 +512,11 @@ def test_fetch_checks_out_only_family_json_and_the_small_registry_files(
 def test_fetch_reproduces_the_committed_snapshot(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """The fixture snapshot is what fetch() writes, byte for byte, so the two cannot drift."""
+    """The fixture snapshot is what fetch() writes, so the two cannot drift. Gzipped extracts
+    compare by content: their stored bytes depend on the zlib build (``regen.golden``)."""
     snap, _ = run_fetch(tmp_path, monkeypatch, FIXTURE / "http")
     committed = regen.load_snapshot(FIXTURE / "snapshot", "fontsource")
-    assert snap.manifest.to_json() == committed.manifest.to_json()
+    assert regen.portable(snap.manifest) == regen.portable(committed.manifest)
     for entry in committed.manifest.extracts:
         assert snap.read_bytes(entry.path) == committed.read_bytes(entry.path), entry.path
 

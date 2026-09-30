@@ -541,7 +541,7 @@ def test_file_roles(font: dict[str, Any], role: str) -> None:
 def test_fetch_reproduces_the_fixture_snapshot(git_env: Path) -> None:
     snap = build_fixture.run_fetch(git_env)
     for name in (EXTRACT, REPO_EXTRACT):
-        assert (snap.path / name).read_bytes() == (FIXTURE / "snapshot" / name).read_bytes()
+        assert regen.golden(snap.path / name) == regen.golden(FIXTURE / "snapshot" / name), name
     m = snap.manifest
     assert m.data_date == build_fixture.DAY  # the commit's date
     assert len(m.fetched) == 5

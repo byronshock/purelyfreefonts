@@ -792,6 +792,35 @@ def test_regen_writes_and_checks_golden_files(fake: Fake, monkeypatch: pytest.Mo
         regen.regen("no_such_collector", **kwargs)
 
 
+def test_golden_files_compare_gzip_by_content(tmp_path: Path) -> None:
+    """Two zlib builds (CI's and this machine's) may gzip one input to different bytes."""
+    data = b'{"family": "Aster Sans"}\n' * 40
+    fast, best = tmp_path / "fast.jsonl.gz", tmp_path / "best.jsonl.gz"
+    fast.write_bytes(gzip.compress(data, compresslevel=1, mtime=0))
+    best.write_bytes(gzip.compress(data, compresslevel=9, mtime=0))
+    assert fast.read_bytes() != best.read_bytes()
+    assert regen.golden(fast) == regen.golden(best) == data
+
+    manifest = regen.load_snapshot(
+        regen.fixture_dir("fontsource") / "snapshot", "fontsource"
+    ).manifest
+    gz = next(e for e in manifest.extracts if e.path.endswith(".gz"))
+    plain = next(e for e in manifest.extracts if not e.path.endswith(".gz"))
+
+    def swap(old: ExtractRecord, new: ExtractRecord) -> Manifest:
+        return dataclasses.replace(
+            manifest, extracts=tuple(new if e is old else e for e in manifest.extracts)
+        )
+
+    rezipped = swap(gz, dataclasses.replace(gz, sha256="0" * 64, bytes=gz.bytes + 1))
+    assert rezipped.to_json() != manifest.to_json()
+    assert regen.portable(rezipped) == regen.portable(manifest)
+    recounted = swap(gz, dataclasses.replace(gz, rows=gz.rows + 1))
+    assert regen.portable(recounted) != regen.portable(manifest)
+    unzipped_changed = swap(plain, dataclasses.replace(plain, sha256="0" * 64))
+    assert regen.portable(unzipped_changed) != regen.portable(manifest)
+
+
 @pytest.mark.parametrize(
     ("argv", "message"),
     [

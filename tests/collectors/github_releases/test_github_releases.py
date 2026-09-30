@@ -783,7 +783,7 @@ def test_fixture_is_what_build_fixture_writes(tmp_path: Path) -> None:
         assert got == want, f"{part}/ differs; run the build_fixture module"
         for rel in want:
             if (FIXTURE / rel).is_file():
-                assert (target / rel).read_bytes() == (FIXTURE / rel).read_bytes(), rel
+                assert regen.golden(target / rel) == regen.golden(FIXTURE / rel), rel
     assert (target / regen.EXPECTED).read_bytes() == (FIXTURE / regen.EXPECTED).read_bytes()
 
 

@@ -443,7 +443,7 @@ def test_fetch_keeps_facts_only(tmp_path: Path) -> None:
     assert snap.manifest.data_date == DAY
     assert "copyright files missing (404): 1" in snap.manifest.notes
     assert "copyright files not in DEP-5 format (no facts): 1" in snap.manifest.notes
-    assert snap.path.joinpath(EXTRACT).read_bytes() == (FIXTURE / "snapshot" / EXTRACT).read_bytes()
+    assert regen.golden(snap.path / EXTRACT) == regen.golden(FIXTURE / "snapshot" / EXTRACT)
 
 
 def test_second_fetch_is_conditional_and_carries_unchanged_rows(tmp_path: Path) -> None:
