@@ -99795,7 +99795,7 @@
     "method_version": "2026-09-29",
     "ranking_toml_sha256": "c22345a46e450ec826f9076b9f82ad87c3f5343ae9cce64c2da8574ae5a5992b"
   },
-  "schema_version": "1.0.0-draft",
+  "schema_version": "1.0.0",
   "sources": [
     {
       "data_date": "2026-09-26",
