@@ -17,15 +17,15 @@ A font is listed only if it passes all four rules.
 
 The font's license must allow use in every personal and commercial project, with no use restrictions. Licenses for display only, personal use only, demos or trials, or non-commercial use don't qualify. Nor do copyleft licenses without a font exception, such as CC BY-SA or plain GPL, or any license that bans changing or embedding the font.
 
-Some licenses, such as CC BY, ask you to credit the designer. Those fonts are listed with an "Attribution required" tag, and their details say what to credit.
+Some licenses, such as CC BY, ask you to credit the designer. Those fonts are listed with a "Credit required" tag, and their details say what to credit.
 
 ### 2. Latin script
 
 The list covers fonts for the Latin alphabet. A font that has only basic Latin, without the accented letters that languages such as Polish, Czech or Vietnamese need, carries a "Limited accents" tag.
 
-### 3. Sharing the font files is marked, not required
+### 3. Free to share
 
-Rule 1 is about using a font. A few licenses allow any use but don't let you pass the font files on, for example inside an app, a template or a download of your own. Those fonts are listed too, with a "Not redistributable" tag. To hide them, turn on "Redistributable fonts only" in the filters.
+The license must also let you pass the font files on, for example inside an app, a template or a download of your own. A few licenses allow any use but forbid that, and those fonts are left out.
 
 ### 4. No ITF Free Font License
 

@@ -60,10 +60,10 @@ SCHEMES = ("light", "dark")
 PHONE = {"width": 375, "height": 812}
 DESKTOP = {"width": 1280, "height": 900}
 VIEWPORTS = {"375": PHONE, "1280": DESKTOP}
-# A view with some filters on that still shows fonts, and the contract's empty view (Coding
-# holds only monospace fonts, and Proportional hides them: site/CONTRACT.md section 4).
-FILTERS_HASH = "#cat=sans-serif&spacing=proportional&hide=limited"
-NO_RESULTS_HASH = "#rank=coding&spacing=proportional"
+# A view with some filters on that still shows fonts, and an empty view (Coding holds only
+# monospaced fonts, which are all in Category Monospace: site/CONTRACT.md section 4).
+FILTERS_HASH = "#cat=sans-serif&hide=limited,windows"
+NO_RESULTS_HASH = "#rank=coding&cat=serif"
 # WCAG 1.4.12's test values.
 TEXT_SPACING_CSS = """
 * { line-height: 1.5 !important; letter-spacing: 0.12em !important;

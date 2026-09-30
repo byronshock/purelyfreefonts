@@ -410,16 +410,16 @@ def _refilter_steps(ranks: list[str]) -> list[tuple[str, str, str | None]]:
         ("check", "#f-cat-serif", None),
         ("check", "#f-cat-sans-serif", None),
         ("check", "#f-cat-all", None),
-        ("check", "#f-spacing-proportional", None),
-        ("check", "#f-spacing-monospaced", None),
-        ("check", "#f-spacing-any", None),
+        ("check", "#f-cat-monospace", None),
+        ("check", "#f-cat-display", None),
+        ("check", "#f-cat-all", None),
         ("check", "#f-var", None),
         ("uncheck", "#f-var", None),
         ("check", "#f-hide-limited", None),
-        ("check", "#f-redist", None),
-        ("check", "#f-hide-windows", None),
-        ("check", "#f-sort-name", None),
-        ("check", "#f-sort-rank", None),
+        ("check", "#f-nerd", None),
+        ("select", "#f-os", "windows"),
+        ("select", "#f-sort", "name"),
+        ("select", "#f-sort", "rank"),
     ]
     k = 0
     while len(steps) < REFILTER_STEPS:

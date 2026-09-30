@@ -101,9 +101,15 @@ CHANGES_JS = """(() => {
     event.detail.list.on('change', () => { window.__tffPrivacyChanges += 1; });
   });
 })();"""
-CONTROLS_JS = """() => Array.from(
-  document.querySelectorAll('#filters input[type=checkbox], #filters input[type=radio]'),
-  (el) => ({ id: el.id, type: el.type, name: el.name, checked: el.checked }))"""
+CONTROLS_JS = """() => [
+  ...Array.from(
+    document.querySelectorAll('#filters input[type=checkbox], #filters input[type=radio]'),
+    (el) => ({ id: el.id, type: el.type, name: el.name, checked: el.checked })),
+  // the systems to hide and the sort order are selects (owner ruling of 2026-09-30)
+  ...Array.from(document.querySelectorAll('#f-os, #f-sort'),
+    (el) => ({ id: el.id, type: 'select', name: el.name, value: el.value,
+               options: Array.from(el.options, (o) => o.value) })),
+]"""
 INDEX_JS = """async () => {
   const index = await globalThis.tff.list.index();
   return { n: index.n, ids: Array.from(index.ids), bits: Array.from(index.bits),
@@ -135,7 +141,7 @@ SETTLE_JS = """() => new Promise((resolve) =>
 AT_BOTTOM_JS = "() => innerHeight + scrollY >= document.documentElement.scrollHeight - 1"
 TYPE_OWN_BIT = 64  # list index bits (site/CONTRACT.md section 7)
 # The filter controls' names, which are the hash keys (site/CONTRACT.md sections 4 and 9).
-FILTER_NAMES = frozenset({"cat", "spacing", "var", "nerd", "hide", "lic", "redist", "sort"})
+FILTER_NAMES = frozenset({"cat", "var", "nerd", "hide", "sort"})
 
 
 def _origin(url: str) -> str:
@@ -327,6 +333,11 @@ class Sweep:
         if control["type"] == "checkbox":
             self._change(page, partial(page.check, selector))
             self._change(page, partial(page.uncheck, selector))
+        elif control["type"] == "select":
+            for value in control["options"]:
+                if value != control["value"]:
+                    self._change(page, partial(page.select_option, selector, value))
+            self._change(page, partial(page.select_option, selector, control["value"]))
         elif control["id"] != defaults.get(control["name"]):
             self._change(page, partial(page.check, selector))
             self._change(page, partial(page.check, f"#{defaults[control['name']]}"))
@@ -345,8 +356,8 @@ class Sweep:
     def _clear(self, page: Any) -> None:
         self._change(page, partial(page.check, "#f-var"))
         self._change(page, partial(page.click, "#f-clear"))
-        if not page.is_checked("#f-sort-rank"):
-            self._change(page, partial(page.check, "#f-sort-rank"))
+        if page.input_value("#f-sort") != "rank":
+            self._change(page, partial(page.select_option, "#f-sort", "rank"))
 
     def _phone(self, page: Any) -> None:
         page.set_viewport_size(PHONE)

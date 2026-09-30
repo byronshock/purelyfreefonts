@@ -615,19 +615,16 @@ def test_get_state_is_a_copy_with_only_the_hash_keys(hook):
     result = hook.evaluate(
         """() => {
           const state = tff.list.getState();
-          state.lic.push('changed');
-          return { state, after: tff.list.getState().lic };
+          state.hide.push('changed');
+          return { state, after: tff.list.getState().hide };
         }"""
     )
     assert result["state"] == {
         "rank": "overall",
         "cat": "",
-        "lic": ["changed"],
-        "spacing": "",
         "var": False,
         "nerd": False,
-        "hide": [],
-        "redist": False,
+        "hide": ["changed"],
         "q": "",
         "sort": "rank",
         "font": "",

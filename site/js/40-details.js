@@ -779,6 +779,8 @@ const Details = (() => {
       following = true;
       State.subscribe(onState);
     }
+    // State has read the hash's rank by now; a panel filled before that shows it.
+    if (openRow && openRow.isConnected) showRank(openRow);
   };
 
   const start = () => {

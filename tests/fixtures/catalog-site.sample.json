@@ -1016,7 +1016,7 @@
         "spdx": "LicenseRef-Sample-Free-Use",
         "name": "Sample Foundry Free-Use License",
         "class": "freeware",
-        "redistributable": false,
+        "redistributable": true,
         "attribution_required": false,
         "attribution": null,
         "text_url": "https://example.com/sample-foundry/free-use-license"
@@ -1881,7 +1881,7 @@
     {
       "id": "sample-mono-35",
       "family": "Sample Mono 35",
-      "category": "monospace",
+      "category": "sans-serif",
       "is_monospace": true,
       "formats": {"variable": false, "static": true},
       "latin": {"coverage": "extended", "basis": "glyph_test"},

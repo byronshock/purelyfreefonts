@@ -9,13 +9,12 @@ sections 4, 5, 9 and 10; Milestone 2 steps 3 and 6) in each engine given with ``
   the site data. ``View.compute`` is checked against ``oracle()``, an independent Python
   reading of the catalog and M2-D2, for every rank and many filter combinations.
 - **The built page**, served and driven as a visitor would: filters, numbering, band order,
-  alias search, "Redistributable fonts only", a copied URL opened in a fresh browser, Back,
+  alias search, old links with retired keys, a copied URL opened in a fresh browser, Back,
   extension keys in the hash, the no-results state, the phone disclosure, the live region and
   focus. Every page test ends with the privacy guards clean (``Guarded.assert_clean``).
 
 The data is the sample, or ``TFF_SITE_DATA``; tests that name sample fonts skip on other data.
-Handy selections (Milestone 2 design §8, step 3): ``-k redistributable_only``,
-``-k url_roundtrip``.
+Handy selections (Milestone 2 design §8, step 3): ``-k retired_keys``, ``-k url_roundtrip``.
 """
 
 import copy
@@ -113,14 +112,20 @@ def oracle(doc: dict[str, Any], state: dict[str, Any]) -> tuple[list[str], list[
     return [p[0] for p in pairs], [p[1] for p in pairs], len(universe)
 
 
+OSES = ("windows", "macos", "linux", "android")
+
+
+def _hide(items: Any) -> set[str]:
+    """``hide`` as State keeps it: at most one system, the first in the key's order."""
+    systems = [os_ for os_ in OSES if os_ in (items or ())]
+    return {i for i in (items or ()) if i not in OSES} | set(systems[:1])
+
+
 def _passes(doc: dict[str, Any], font: dict[str, Any], state: dict[str, Any]) -> bool:
     os_of = {s["id"]: s["os"] for s in doc["systems"]}
-    hide = set(state.get("hide", ()))
-    if state.get("cat") and font["category"] != state["cat"]:
-        return False
-    if state.get("spacing") == "proportional" and font["is_monospace"]:
-        return False
-    if state.get("spacing") == "monospaced" and not font["is_monospace"]:
+    hide = _hide(state.get("hide"))
+    # the site category (owner ruling of 2026-09-30): every monospaced font is Monospace
+    if state.get("cat") and data.site_category(font) != state["cat"]:
         return False
     if state.get("var") and not font["formats"]["variable"]:
         return False
@@ -131,10 +136,6 @@ def _passes(doc: dict[str, Any], font: dict[str, Any], state: dict[str, Any]) ->
     if "attr" in hide and font["license"]["attribution_required"]:
         return False
     if hide & {os_of[item["system"]] for item in font["preinstalled_on"]}:
-        return False
-    if state.get("lic") and font["license"]["class"] not in state["lic"]:
-        return False
-    if state.get("redist") and not font["license"]["redistributable"]:
         return False
     query = search_key(state.get("q", ""))
     names = [font["family"], *(alias["name"] for alias in font["aliases"])]
@@ -288,16 +289,22 @@ HASH_CASES = [
     ("#hide=windows,limited,windows", "#hide=limited,windows"),
     ("#hide=windows,nope", "#hide=windows"),
     ("#hide=limited%2Cattr", "#hide=limited,attr"),
+    ("#hide=linux,windows,limited", "#hide=limited,windows"),  # one system: the first
     ("#var=1&var=0", ""),  # the last one wins, and "0" is not a value
     ("#var=0&var=1", "#var=1"),
     ("#var", ""),
-    ("#redist=yes", ""),
-    ("#redist=1", "#redist=1"),
     ("#nerd=1", "#nerd=1"),
     ("#nerd=0", ""),
-    ("#redist=1&nerd=1&var=1", "#var=1&nerd=1&redist=1"),  # the Nerd filter sits after var
-    ("#spacing=monospaced", "#spacing=monospaced"),
+    ("#nerd=1&var=1", "#var=1&nerd=1"),  # the Nerd filter sits after var
+    # Retired keys (owner rulings of 2026-09-30): read, then dropped.
+    ("#redist=yes", ""),
+    ("#redist=1", ""),
+    ("#redist=1&nerd=1&var=1", "#var=1&nerd=1"),
+    ("#spacing=monospaced", "#cat=monospace"),
+    ("#spacing=monospaced&cat=serif", "#cat=serif"),
+    ("#spacing=proportional&var=1", "#var=1"),
     ("#spacing=mono", ""),
+    ("#lic=open-font,attribution&os=linux", "#os=linux"),
     ("#q=Source+Sans", "#q=Source%20Sans"),
     ("#q=caf%C3%A9", "#q=caf%C3%A9"),
     ("#q=%E0%A4", ""),  # undecodable
@@ -317,16 +324,12 @@ HASH_CASES = [
 
 def test_hash_parse_and_serialise(parts: Parts, index: dict[str, Any]) -> None:
     cases = [[given, want] for given, want in HASH_CASES]
-    lics = index["lics"]
-    if len(lics) >= 2:
-        cases.append([f"#lic={lics[1]},{lics[0]}", f"#lic={lics[0]},{lics[1]}"])
-        cases.append([f"#lic={lics[0]},nope", f"#lic={lics[0]}"])
     font = index["ids"][0]
     cases.append([f"#font={font}", f"#font={font}"])
     cases.append(
         [
             f"#font={font}&redist=1&hide=windows,limited&spacing=proportional&cat=serif&rank=project",
-            f"#rank=project&cat=serif&spacing=proportional&hide=limited,windows&redist=1&font={font}",
+            f"#rank=project&cat=serif&hide=limited,windows&font={font}",
         ]
     )
     got = parts.run(
@@ -347,7 +350,7 @@ def test_hash_parse_and_serialise(parts: Parts, index: dict[str, Any]) -> None:
 def test_setstate_partials_are_validated_like_the_hash(parts: Parts, index: dict[str, Any]) -> None:
     got = parts.run(
         "const c = (p) => P.State.coerce(p);"
-        "return [c({ var: true }).var, c({ var: 'yes' }).var, c({ redist: 1 }).redist,"
+        "return [c({ var: true }).var, c({ var: 'yes' }).var, c({ redist: 1 }).redist ?? null,"
         " c({ hide: ['android', 'limited', 'x'] }).hide, c({ hide: 'attr,windows' }).hide,"
         " c({ q: 5 }).q, c({ rank: 'rising' }).rank, c({ rank: 'coding' }).rank,"
         " c({ sort: 'name', spacing: 'proportional' }).sort, c({ nope: 1 }).nope,"
@@ -360,7 +363,7 @@ def test_setstate_partials_are_validated_like_the_hash(parts: Parts, index: dict
     assert got[:10] == [
         True,
         False,
-        True,
+        None,  # redist is retired (owner ruling of 2026-09-30)
         ["limited", "android"],
         ["attr", "windows"],
         "",
@@ -385,30 +388,19 @@ def test_setstate_partials_are_validated_like_the_hash(parts: Parts, index: dict
 
 
 def _filter_sets(doc: dict[str, Any]) -> list[dict[str, Any]]:
-    lics = [c["id"] for c in doc["license_classes"]]
     sets: list[dict[str, Any]] = [{}]
     sets += [{"cat": cat} for cat in data.CATEGORIES]
-    sets += [{"spacing": "proportional"}, {"spacing": "monospaced"}, {"var": True}]
-    sets += [{"nerd": True}, {"nerd": True, "spacing": "proportional"}]
-    sets += [
-        {"hide": [item]} for item in ("limited", "attr", "windows", "macos", "linux", "android")
-    ]
-    sets += [{"hide": ["limited", "attr", "windows", "macos", "linux", "android"]}]
-    sets += [{"lic": [lic]} for lic in lics] + [{"lic": lics[:2]}]
-    sets += [{"redist": True}]
+    sets += [{"var": True}, {"nerd": True}, {"nerd": True, "cat": "sans-serif"}]
+    sets += [{"hide": [item]} for item in ("limited", "attr", *OSES)]
+    sets += [{"hide": ["limited", "attr", *OSES]}]  # State keeps one system: Windows
+    sets += [{"hide": ["android", "linux"]}]  # and here Linux
     sets += [
         {"q": q} for q in ("sans", "Sample Sans Classic", "LODZ", "strasse", "mono", "zzz", "0")
     ]
     sets += [
         {"cat": "serif", "var": True},
-        {"spacing": "monospaced", "var": True, "redist": True},
-        {
-            "cat": "sans-serif",
-            "spacing": "proportional",
-            "hide": ["limited", "windows"],
-            "redist": True,
-            "q": "sample",
-        },
+        {"cat": "monospace", "var": True, "hide": ["attr"]},
+        {"cat": "sans-serif", "hide": ["limited", "windows"], "q": "sample"},
     ]
     return sets
 
@@ -446,30 +438,33 @@ def test_coding_lists_monospace_fonts_only(
         pytest.skip("no Coding view in this data")
     mono = {f["id"] for f in doc["fonts"] if f["is_monospace"]}
     got = parts.run(
-        "return ['', 'proportional', 'monospaced'].map((spacing) => {"
-        " const r = P.View.compute(P.State.coerce({ rank: 'coding', spacing }), index, []);"
+        "return ['', 'monospace', 'sans-serif'].map((cat) => {"
+        " const r = P.View.compute(P.State.coerce({ rank: 'coding', cat }), index, []);"
         " return [r.order.map((i) => index.ids[i]), r.total]; });"
     )
-    (every, total), (proportional, _), (monospaced, _) = got
+    (every, total), (monospace, _), (sans, _) = got
     assert set(every) == mono
     assert total == len(mono)
-    assert proportional == []  # Proportional leaves nothing on Coding
-    assert monospaced == every
+    assert monospace == every  # Category Monospace is exactly Coding's fonts
+    assert sans == []  # the other categories hold proportional fonts only
 
 
-def test_redistributable_only_hides_exactly_the_non_redistributable_fonts_in_every_rank(
+def test_category_monospace_is_every_monospaced_font(
     parts: Parts, doc: dict[str, Any], views: list[str]
 ) -> None:
-    not_redist = {f["id"] for f in doc["fonts"] if not f["license"]["redistributable"]}
+    """Owner ruling of 2026-09-30 (monospace_category), on every rank."""
+    mono = {f["id"] for f in doc["fonts"] if f["is_monospace"]}
+    filed_elsewhere = {i for i in mono if next(f for f in doc["fonts"] if f["id"] == i)["category"] != "monospace"}  # noqa: E501
+    if doc.get("synthetic"):
+        assert filed_elsewhere, "the sample has a monospaced font the catalog files elsewhere"
     got = parts.run(
-        "return arg.map((rank) => [false, true].map((redist) =>"
-        " P.View.compute(P.State.coerce({ rank, redist }), index, []).order.map((i) => index.ids[i])));",
+        "return arg.map((rank) => P.View.compute(P.State.coerce({ rank, cat: 'monospace' }),"
+        " index, []).order.map((i) => index.ids[i]));",
         views,
     )
-    for rank, (every, redist) in zip(views, got, strict=True):
+    for rank, ids in zip(views, got, strict=True):
         universe = {f["id"] for f in doc["fonts"] if rank in f["ranks"]}
-        assert set(every) == universe
-        assert set(every) - set(redist) == not_redist & universe, rank
+        assert set(ids) == mono & universe, rank
 
 
 def test_search_finds_source_sans_3_by_its_old_name(parts: Parts, doc: dict[str, Any]) -> None:
@@ -788,68 +783,64 @@ def test_rank_selector_numbers_every_view(
     guarded.assert_clean(page)
 
 
+HIDES = ("limited", "attr", *OSES)
+
+
+def hash_for(state: dict[str, Any]) -> str:
+    """The canonical hash of a partial state (CONTRACT section 9), as State writes it."""
+    pairs = []
+    if state.get("rank", "overall") != "overall":
+        pairs.append(f"rank={state['rank']}")
+    if state.get("cat"):
+        pairs.append(f"cat={state['cat']}")
+    pairs += [f"{key}=1" for key in ("var", "nerd") if state.get(key)]
+    hide = _hide(state.get("hide"))
+    if hide:
+        pairs.append("hide=" + ",".join(h for h in HIDES if h in hide))
+    if state.get("sort") == "name":
+        pairs.append("sort=name")
+    return "#" + "&".join(pairs) if pairs else ""
+
+
 def test_filters_on_the_page_match_the_oracle(guarded_context: Any, doc: dict[str, Any]) -> None:
     guarded, page = open_list(guarded_context)
-    lic = doc["license_classes"][0]["id"]
-    steps = [
-        ("#f-cat-sans-serif", {"cat": "sans-serif"}, "#cat=sans-serif", 1),
-        ("#f-var", {"var": True}, "#cat=sans-serif&var=1", 2),
-        ("#f-hide-limited", {"hide": ["limited"]}, "#cat=sans-serif&var=1&hide=limited", 3),
-        (
-            "#f-hide-windows",
-            {"hide": ["limited", "windows"]},
-            "#cat=sans-serif&var=1&hide=limited,windows",
-            4,
-        ),
-        (
-            f"#f-lic-{lic}",
-            {"lic": [lic]},
-            f"#cat=sans-serif&lic={lic}&var=1&hide=limited,windows",
-            5,
-        ),
-        (
-            "#f-spacing-proportional",
-            {"spacing": "proportional"},
-            f"#cat=sans-serif&lic={lic}&spacing=proportional&var=1&hide=limited,windows",
-            6,
-        ),
-        (
-            "#f-cat-all",
-            {"cat": ""},
-            f"#lic={lic}&spacing=proportional&var=1&hide=limited,windows",
-            5,
-        ),
-        (
-            "#f-sort-name",
-            {"sort": "name"},
-            f"#lic={lic}&spacing=proportional&var=1&hide=limited,windows&sort=name",
-            5,
-        ),
+    credit = any(f["license"]["attribution_required"] for f in doc["fonts"])
+    assert page.locator("#f-hide-attr").count() == int(credit)  # shown only when it can hide
+    steps: list[tuple[Any, dict[str, Any]]] = [
+        ("#f-cat-sans-serif", {"cat": "sans-serif"}),
+        ("#f-var", {"var": True}),
+        ("#f-hide-limited", {"hide": ["limited"]}),
+        (("#f-os", "windows"), {"hide": ["limited", "windows"]}),
+        (("#f-os", "linux"), {"hide": ["limited", "linux"]}),  # one system at a time
+        *([("#f-hide-attr", {"hide": ["limited", "attr", "linux"]})] if credit else []),
+        ("#f-cat-monospace", {"cat": "monospace"}),
+        ("#f-cat-all", {"cat": ""}),
+        (("#f-sort", "name"), {"sort": "name"}),
+        (("#f-os", ""), {"hide": ["limited", "attr"] if credit else ["limited"]}),
     ]
     state: dict[str, Any] = {}
-    for selector, change, want_hash, on in steps:
-        page.check(selector)
+    for selector, change in steps:
+        if isinstance(selector, tuple):
+            page.select_option(*selector)
+        else:
+            page.check(selector)
         state.update(change)
         assert rows(page) == expected_rows(doc, state), selector
-        assert hash_of(page) == want_hash
+        assert hash_of(page) == hash_for(state), selector
+        on = bool(state.get("cat")) + bool(state.get("var")) + len(_hide(state.get("hide")))
         assert page.text_content("#f-toggle .filters-count") == f"\u00a0({on})"
     guarded.assert_clean(page)
 
 
-def test_redistributable_only_hides_exactly_the_non_redistributable_fonts(
-    guarded_context: Any, doc: dict[str, Any], views: list[str]
+def test_retired_keys_in_old_links_open_the_nearest_view(
+    guarded_context: Any, doc: dict[str, Any]
 ) -> None:
-    guarded, page = open_list(guarded_context)
-    not_redist = {f["id"] for f in doc["fonts"] if not f["license"]["redistributable"]}
-    assert page.get_attribute("#f-redist", "aria-describedby") == "f-redist-help"
-    page.check("#f-redist")
-    assert hash_of(page) == "#redist=1"
-    for rank in views:
-        page.select_option("#f-rank", rank)
-        universe, _, _ = oracle(doc, {"rank": rank})
-        shown = {row[0] for row in rows(page)}
-        assert set(universe) - shown == not_redist & set(universe), rank
-        assert rows(page) == expected_rows(doc, {"rank": rank, "redist": True})
+    """Owner rulings of 2026-09-30: spacing, lic and redist are gone, but links keep working."""
+    guarded, page = open_list(guarded_context, "#spacing=monospaced&redist=1&lic=open-font&var=1")
+    assert hash_of(page) == "#cat=monospace&var=1"
+    assert page.is_checked("#f-cat-monospace")
+    assert rows(page) == expected_rows(doc, {"cat": "monospace", "var": True})
+    assert entries(page) == 0  # rewritten in place
     guarded.assert_clean(page)
 
 
@@ -871,7 +862,7 @@ def test_nerd_font_available_keeps_exactly_the_fonts_with_a_nerd_build(
         assert rows(page) == expected_rows(doc, {"rank": rank, "nerd": True})
     page.select_option("#f-rank", "overall")
     if not any(not f["is_monospace"] for f in doc["fonts"] if f["id"] in nerd):
-        page.check("#f-spacing-proportional")  # every Nerd build here is monospace
+        page.check("#f-cat-serif")  # every Nerd build here is monospace
         assert rows(page) == []
         assert "Nerd Font available" in page.text_content("#no-results-text")
     page.click("#f-clear")
@@ -904,27 +895,25 @@ def test_url_roundtrip_opens_the_same_view_in_a_fresh_browser(
     guarded_context: Any, doc: dict[str, Any], views: list[str]
 ) -> None:
     rank = "project" if "project" in views else views[-1]
-    lic = doc["license_classes"][0]["id"]
     guarded, page = open_list(guarded_context)
     page.select_option("#f-rank", rank)
     page.check("#f-cat-sans-serif")
     page.check("#f-hide-limited")
-    page.check(f"#f-lic-{lic}")
-    page.check("#f-sort-name")
+    page.select_option("#f-os", "macos")
+    page.select_option("#f-sort", "name")
     page.locator("#f-q").press_sequentially("sample")
     page.wait_for_function("() => location.hash.includes('q=sample')")
     state = {
         "rank": rank,
         "cat": "sans-serif",
-        "hide": ["limited"],
-        "lic": [lic],
+        "hide": ["limited", "macos"],
         "sort": "name",
         "q": "sample",
     }
     want = expected_rows(doc, state)
     assert rows(page) == want
     url, hash_a = page.url, hash_of(page)
-    assert hash_a == f"#rank={rank}&cat=sans-serif&lic={lic}&hide=limited&q=sample&sort=name"
+    assert hash_a == f"#rank={rank}&cat=sans-serif&hide=limited,macos&q=sample&sort=name"
     guarded.assert_clean(page)
 
     fresh = guarded_context()
@@ -937,8 +926,9 @@ def test_url_roundtrip_opens_the_same_view_in_a_fresh_browser(
     assert entries(other) == 0
     assert other.input_value("#f-rank") == rank
     assert other.input_value("#f-q") == "sample"
-    for selector in ("#f-cat-sans-serif", "#f-hide-limited", f"#f-lic-{lic}", "#f-sort-name"):
+    for selector in ("#f-cat-sans-serif", "#f-hide-limited"):
         assert other.is_checked(selector), selector
+    assert (other.input_value("#f-os"), other.input_value("#f-sort")) == ("macos", "name")
     assert not other.is_checked("#f-var")
     measures = {v["key"]: v["measures"] for v in doc["views"]}
     assert other.text_content("#f-rank-measures") == measures[rank]
@@ -1080,9 +1070,9 @@ def test_rows_are_the_server_rendered_nodes_moved_not_rebuilt(
     page.evaluate("() => { window.__rows = [...document.querySelectorAll('#list > li.font')]; }")
     page.select_option("#f-rank", views[-1])
     page.check("#f-cat-serif")
-    page.check("#f-sort-name")
+    page.select_option("#f-sort", "name")
     page.check("#f-cat-all")
-    page.check("#f-sort-rank")
+    page.select_option("#f-sort", "rank")
     page.select_option("#f-rank", views[0])
     assert page.evaluate(
         """() => {
@@ -1093,21 +1083,20 @@ def test_rows_are_the_server_rendered_nodes_moved_not_rebuilt(
     guarded.assert_clean(page)
 
 
-def test_no_results_names_the_spacing_filter_on_coding(
+def test_no_results_names_the_category_filter_on_coding(
     guarded_context: Any, doc: dict[str, Any], views: list[str]
 ) -> None:
     if "coding" not in views:
         pytest.skip("no Coding view in this data")
     guarded, page = open_list(guarded_context)
     page.select_option("#f-rank", "coding")
-    page.check("#f-spacing-proportional")
+    page.check("#f-cat-serif")  # Coding's fonts are all Monospace
     _, _, total = oracle(doc, {"rank": "coding"})
     assert rows(page) == []
     assert page.evaluate("document.querySelectorAll('li.font').length") == 0
     assert page.is_visible("#no-results")
     text = page.text_content("#no-results-text")
-    assert "Spacing" in text
-    assert "Proportional" in text
+    assert "Category: Serif" in text
     assert page.text_content("#count") == count_line(0, total)
     assert status(page) == text
     page.fill("#f-q", " - ")  # matches every font, so it isn't named as a filter to loosen
@@ -1130,24 +1119,20 @@ def test_clear_filters_keeps_the_rank_and_sort_order(
     rank = views[1]
     guarded, page = open_list(guarded_context)
     page.select_option("#f-rank", rank)
-    page.check("#f-sort-name")
-    for selector in (
-        "#f-var",
-        "#f-redist",
-        "#f-cat-serif",
-        "#f-hide-attr",
-        "#f-spacing-proportional",
-    ):
+    page.select_option("#f-sort", "name")
+    for selector in ("#f-var", "#f-cat-serif", "#f-hide-attr", "#f-hide-limited"):
         page.check(selector)
+    page.select_option("#f-os", "android")
     page.fill("#f-q", "sa")
     page.click("#f-clear")
     assert hash_of(page) == f"#rank={rank}&sort=name"
     assert rows(page) == expected_rows(doc, {"rank": rank, "sort": "name"})
     assert page.input_value("#f-q") == ""
     assert page.is_checked("#f-cat-all")
-    assert page.is_checked("#f-spacing-any")
+    assert page.input_value("#f-os") == ""
+    assert page.input_value("#f-sort") == "name"
     assert not page.is_checked("#f-var")
-    assert not page.is_checked("#f-redist")
+    assert not page.is_checked("#f-hide-attr")
     assert page.text_content("#f-toggle .filters-count") == ""
     assert page.evaluate("document.activeElement.id") == "f-clear"
     guarded.assert_clean(page)
@@ -1175,17 +1160,17 @@ def test_the_live_region_is_polite_coalesced_and_never_repeats_silently(
           const observer = new MutationObserver((list) => { count += list.length; });
           observer.observe(node, { childList: true, characterData: true, subtree: true });
           document.getElementById('f-var').click();
-          document.getElementById('f-redist').click();
+          document.getElementById('f-hide-limited').click();
           await new Promise((resolve) => setTimeout(resolve, 50));
           observer.disconnect();
           return count;
         }"""
     )
     assert records == 1  # two changes in one task: one announcement
-    ids, _, total = oracle(doc, {"var": True, "redist": True})
+    ids, _, total = oracle(doc, {"var": True, "hide": ["limited"]})
     line = count_line(len(ids), total)
     assert status(page) == line
-    page.check("#f-sort-name")  # same count: announced again, not skipped as unchanged
+    page.select_option("#f-sort", "name")  # same count: announced again, not skipped
     assert status(page) != line
     assert status(page).rstrip("\u00a0") == line
     # Typing is announced after a pause (timed exactly, with the page clock, in
@@ -1273,7 +1258,7 @@ def test_phone_filters_button_counts_active_filters(guarded_context: Any) -> Non
     assert toggle.get_attribute("aria-expanded") == "true"
     assert page.is_visible("#f-more")
     page.check("#f-var")
-    page.check("#f-hide-windows")
+    page.select_option("#f-os", "windows")
     assert page.get_by_role("button", name="Filters (2)").count() == 1
     toggle.click()
     assert toggle.get_attribute("aria-expanded") == "false"
@@ -1456,7 +1441,9 @@ def test_large_catalog_is_deterministic_valid_and_complete(tmp_path: Path) -> No
         f["id"] for f in fonts if f["is_monospace"]
     }
     traits = {
-        "noredist": any(not f["license"]["redistributable"] for f in fonts),
+        "mono_filed_elsewhere": any(
+            f["is_monospace"] and f["category"] != "monospace" for f in fonts
+        ),
         "attribution": any(f["license"]["attribution_required"] for f in fonts),
         "limited": any(f["latin"]["coverage"] == "basic" for f in fonts),
         "preinstalled": any(f["preinstalled_on"] for f in fonts),
@@ -1464,6 +1451,7 @@ def test_large_catalog_is_deterministic_valid_and_complete(tmp_path: Path) -> No
         "too_new": any("too_new" in f["flags"] for f in fonts),
     }
     assert all(traits.values()), traits
+    assert all(f["license"]["redistributable"] for f in fonts)  # Rule 3
     path = make_large_catalog.write(tmp_path / "large", fonts=60, seed=7)
     written = data.load(path)
     assert data.validate(written).fonts == 60
