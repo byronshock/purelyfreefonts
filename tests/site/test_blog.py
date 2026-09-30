@@ -859,13 +859,19 @@ def test_the_command_line_takes_drafts(tmp_path, site_data, monkeypatch, capsys)
     assert "--drafts" in capsys.readouterr().out
 
 
+SERVER_LOG = re.compile(r"\S+ - - \[[^\]]*\] ")  # http.server's log_message format
+
+
 def test_a_bad_post_fails_the_command_without_a_traceback(tmp_path, site_data, monkeypatch, capsys):
     folder = tmp_path / "blog"
     write_post(folder, "2026-10-01-a.md", post_text(title=None, author="x"))
     monkeypatch.setattr(build, "build", functools.partial(build.build, blog_dir=folder))
     argv = ["build", "--data", str(site_data), "--out", str(tmp_path / "out")]
     assert main([*argv, "--commit", FAKE_COMMIT, "--no-font-files"]) == 1
-    err = capsys.readouterr().err
+    # A test server running in another thread logs to the same captured stderr
+    # ("127.0.0.1 - - [date] Request timed out: ..."), so its lines are left out.
+    lines = capsys.readouterr().err.splitlines(keepends=True)
+    err = "".join(line for line in lines if not SERVER_LOG.match(line))
     assert err.startswith("tff-site build: failed\n")
     assert "missing title" in err
     assert "unknown front matter field(s) author" in err
