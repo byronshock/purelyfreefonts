@@ -40,7 +40,8 @@
 }
 
 #f-q,
-#f-rank {
+#f-rank,
+#f-os {
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
@@ -131,17 +132,6 @@
   margin-bottom: var(--space-1);
 }
 
-/* "Show only" inside License: a quieter heading for the class checkboxes. */
-.filters-more .subgroup {
-  margin-bottom: var(--space-1);
-}
-
-.filters-more .subgroup > legend {
-  font-size: var(--fs-small);
-  font-weight: 400;
-  color: var(--c-muted);
-}
-
 /* One option per line. The whole line is the label, and the box itself is 24 x 24 (2.5.8). */
 .opt {
   display: flex;
@@ -162,12 +152,86 @@
   cursor: pointer;
 }
 
-.filters-more .hint {
-  margin: 0 0 var(--space-2);
-  padding-left: calc(var(--target-min) + var(--space-2));
-  max-width: var(--measure);
-  font-size: var(--fs-small);
-  color: var(--c-muted);
+/* Category: one wrapping row of pills (owner ruling of 2026-09-30, filters_layout). Each is
+   a native radio stretched over its whole pill, invisible, so the pill is the 32px target
+   (2.5.8) and a click anywhere on it chooses it. The chosen pill gets an accent border, bold
+   text and a tick, not a fill, so the focus ring keeps its contrast on every pill (1.4.11). */
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.pills .opt {
+  position: relative;
+  gap: var(--space-1);
+  min-height: 2rem;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--c-border);
+  border-radius: 1rem;
+  background: var(--c-bg);
+}
+
+.pills .opt > input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.pills .opt:hover {
+  border-color: var(--c-fg);
+}
+
+.pills .opt:has(> input:checked) {
+  border-color: var(--c-accent);
+  box-shadow: inset 0 0 0 1px var(--c-accent);
+  font-weight: 600;
+}
+
+/* A tick drawn with borders, so it follows the text colour in every theme. */
+.pills .opt:has(> input:checked)::before {
+  content: "";
+  flex: none;
+  width: 0.3em;
+  height: 0.6em;
+  margin: -0.2em 0.1em 0 0;
+  border-right: 2px solid;
+  border-bottom: 2px solid;
+  transform: rotate(45deg);
+}
+
+.pills .opt:has(> input:focus-visible) {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+@media (forced-colors: active) {
+  .pills .opt:has(> input:checked) {
+    border: 2px solid Highlight;
+  }
+}
+
+/* Without :has() a chosen pill can't be drawn, so the radios show as they are. */
+@supports not selector(:has(a)) {
+  .pills .opt > input {
+    position: static;
+    width: var(--target-min);
+    height: var(--target-min);
+    opacity: 1;
+  }
+}
+
+/* "Hide fonts that come with": a label over one select, like the rank's. */
+.filters-select {
+  margin: 0 0 var(--space-4);
+}
+
+.filters-select > label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-weight: 600;
 }
 
 /* Below 60rem: #f-more is a panel under the bar, closed until #f-toggle opens it. */

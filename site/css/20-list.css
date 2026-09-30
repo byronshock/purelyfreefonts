@@ -133,6 +133,135 @@
   color: var(--c-muted);
 }
 
+/* The sort buttons over the rank and name columns (owner ruling of 2026-09-30, sort_header).
+   Each is a bordered button with a text label and an arrow: solid (up or down) with the
+   order's words on the column in use, a double arrow on the other. #list-sort ships
+   `hidden` and keeps its space until the script shows it, so the list doesn't move. From
+   40rem the Name button starts over the name column (6rem, as .font-row's rank column). */
+.list-sort {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  margin: 0 0 var(--space-2);
+}
+
+.list-sort[hidden] {
+  visibility: hidden;
+}
+
+@media (scripting: none) {
+  .list-sort[hidden] {
+    display: none;
+  }
+}
+
+@media (min-width: 40rem) {
+  .list-sort {
+    display: grid;
+    grid-template-columns: minmax(6rem, max-content) minmax(0, 1fr);
+    justify-items: start;
+  }
+}
+
+.sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--target-min);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-bg);
+  color: var(--c-fg);
+  font: inherit;
+  line-height: var(--lh-tight);
+  cursor: pointer;
+}
+
+.sort-btn:hover {
+  border-color: var(--c-fg);
+  background: var(--c-surface);
+}
+
+.sort-btn:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+.sort-label {
+  font-weight: 600;
+}
+
+/* The arrows: two stacked triangles drawn with borders, the sortable-column icon. Both are
+   grey on the column not in use; on the column in use the one for the current order is
+   filled with the accent and the other is faint. */
+.sort-arrow {
+  position: relative;
+  flex: none;
+  width: 0.9em;
+  height: 1.3em;
+}
+
+.sort-arrow::before,
+.sort-arrow::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  border-right: 0.45em solid transparent;
+  border-left: 0.45em solid transparent;
+}
+
+.sort-arrow::before {
+  top: 0;
+  border-bottom: 0.55em solid var(--c-muted);
+}
+
+.sort-arrow::after {
+  bottom: 0;
+  border-top: 0.55em solid var(--c-muted);
+}
+
+.sort-btn[data-dir="asc"] .sort-arrow::before,
+.sort-btn[data-dir="desc"] .sort-arrow::after {
+  border-bottom-color: var(--c-accent);
+  border-top-color: var(--c-accent);
+}
+
+.sort-btn[data-dir="asc"] .sort-arrow::after,
+.sort-btn[data-dir="desc"] .sort-arrow::before {
+  border-bottom-color: var(--c-divider);
+  border-top-color: var(--c-divider);
+}
+
+.sort-btn[aria-pressed="true"] {
+  border-color: var(--c-accent);
+}
+
+/* Forced colours keep the triangles: the filled one in the text colour, the faint one grey. */
+@media (forced-colors: active) {
+  .sort-arrow {
+    forced-color-adjust: none;
+  }
+
+  .sort-arrow::before {
+    border-bottom-color: CanvasText;
+  }
+
+  .sort-arrow::after {
+    border-top-color: CanvasText;
+  }
+
+  .sort-btn[data-dir="asc"] .sort-arrow::after,
+  .sort-btn[data-dir="desc"] .sort-arrow::before {
+    border-bottom-color: GrayText;
+    border-top-color: GrayText;
+  }
+}
+
+.sort-dir:empty {
+  display: none;
+}
+
 .no-results {
   margin: 0 0 var(--space-4);
   padding: var(--space-4);
@@ -389,11 +518,6 @@ li.font.is-dim .spec-fallback {
   font-size: var(--fs-small);
   line-height: var(--lh-body);
   overflow-wrap: anywhere;
-}
-
-.badge[data-badge="noredist"] {
-  background: var(--c-warn-bg);
-  color: var(--c-warn-fg);
 }
 
 .download {

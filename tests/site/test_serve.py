@@ -343,12 +343,11 @@ def test_the_command_says_when_the_port_is_taken(tmp_path):
 # runs Ext with all of them on the built list.
 DOUBLES = r"""
 const State = (() => {
-  const KEYS = Object.freeze(['rank', 'cat', 'lic', 'spacing', 'var', 'nerd', 'hide', 'redist',
-    'q', 'sort', 'font']);
-  let current = { rank: 'overall', cat: '', lic: [], spacing: '', var: false, nerd: false,
-    hide: [], redist: false, q: '', sort: 'rank', font: '', internal: 'not a hash key' };
+  const KEYS = Object.freeze(['rank', 'cat', 'var', 'nerd', 'hide', 'q', 'sort', 'font']);
+  let current = { rank: 'overall', cat: '', var: false, nerd: false, hide: [], q: '',
+    sort: 'rank', font: '', internal: 'not a hash key' };
   const calls = [];
-  const get = () => ({ ...current, lic: [...current.lic], hide: [...current.hide] });
+  const get = () => ({ ...current, hide: [...current.hide] });
   const set = (partial, options) => {
     calls.push([partial, options]);
     current = { ...current, ...partial };
@@ -615,19 +614,16 @@ def test_get_state_is_a_copy_with_only_the_hash_keys(hook):
     result = hook.evaluate(
         """() => {
           const state = tff.list.getState();
-          state.lic.push('changed');
-          return { state, after: tff.list.getState().lic };
+          state.hide.push('changed');
+          return { state, after: tff.list.getState().hide };
         }"""
     )
     assert result["state"] == {
         "rank": "overall",
         "cat": "",
-        "lic": ["changed"],
-        "spacing": "",
         "var": False,
         "nerd": False,
-        "hide": [],
-        "redist": False,
+        "hide": ["changed"],
         "q": "",
         "sort": "rank",
         "font": "",
@@ -703,7 +699,7 @@ def test_change_listeners_get_a_frozen_copy_and_can_stop(hook):
             last,
             shape: [change.shown, change.total, Object.keys(change.state).length],
             frozen: Object.isFrozen(change) && Object.isFrozen(change.state)
-              && Object.isFrozen(change.state.lic),
+              && Object.isFrozen(change.state.hide),
             internal: 'internal' in change.state,
             errors,
             reported: window.__h.log.errors.filter((m) => m.includes('listener bug')).length,
@@ -713,7 +709,7 @@ def test_change_listeners_get_a_frozen_copy_and_can_stop(hook):
     assert result == {
         "count": 1,
         "last": [2, 2],
-        "shape": [2, 3, 11],  # section 9's eleven keys, "nerd" included (TASK-2)
+        "shape": [2, 3, 8],  # section 9's eight keys since 2026-09-30, "nerd" included
         "frozen": True,
         "internal": False,
         "errors": ["TypeError", "TypeError"],

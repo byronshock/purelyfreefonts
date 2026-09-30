@@ -94,9 +94,9 @@ INDEX = """\
 {% for c in list.categories %}
 <input type="radio" id="f-cat-{{ c.value }}" name="cat" value="{{ c.value }}">{{ c.label }}
 {% endfor %}
-{% for c in list.license_classes %}
-<input type="checkbox" id="f-lic-{{ c.id }}" name="lic" value="{{ c.id }}">{{ c.label }}
-{% endfor %}
+{% if list.credit_filter %}
+<input type="checkbox" id="f-hide-attr" name="hide" value="attr">No credit required
+{% endif %}
 {% for s in list.systems_os %}
 <input type="checkbox" id="f-hide-{{ s.value }}" name="hide" value="{{ s.value }}">{{ s.label }}
 {% endfor %}
@@ -629,11 +629,13 @@ def test_rows_carry_specimens_and_fallbacks(tmp_path, catalog, mini_site):
 def test_row_badges_and_download_names():
     rows = {r["id"]: r for r in build._rows(SAMPLE, {})}
     badges = {i: [(b["key"], b["text"]) for b in r["badges"]] for i, r in rows.items()}
-    assert ("noredist", "Not redistributable") in badges["sample-sans-17"]
-    assert ("preinstalled", "Comes with Debian, Fedora, GNOME") in badges["sample-sans-08"]
-    assert ("pulled", "Pulled in by sample-office-common on Debian") in badges["sample-serif-30"]
+    # Short badges (owner ruling of 2026-09-30, filters_layout): Linux distributions are
+    # "Linux", apps follow the systems, and "Pulled in by" is in the details panel only.
+    assert ("preinstalled", "Comes with Linux") in badges["sample-sans-08"]
+    assert not any(k == "pulled" for b in badges.values() for k, _ in b)
     assert ("new", "New") in badges["sample-sans-29"]
-    assert ("attribution", "Attribution required") in badges["sample-hand-16"]
+    assert ("attribution", "Credit required") in badges["sample-hand-16"]
+    assert not any(k in ("monospace", "noredist") for b in badges.values() for k, _ in b)
     keys = [k for b in badges.values() for k, _ in b]
     for key in keys:
         assert key in build.BADGE_TEXT
@@ -649,6 +651,8 @@ def test_row_badges_and_download_names():
     assert rows["sample-sans-17"]["fallback"] == "license"
     assert rows["sample-display-18"]["fallback"] == "failed"
     assert rows["sample-sans-01"]["category_label"] == "Sans serif"
+    # filed as sans-serif by the catalog, but monospaced: the site says Monospace
+    assert rows["sample-mono-35"]["category_label"] == "Monospace"
     assert rows["sample-sans-01"]["license_name"] == "SIL Open Font License 1.1"
 
 
@@ -681,15 +685,14 @@ def test_list_index_format(tmp_path, catalog, mini_site):
     fonts_ = {f["id"]: f for f in doc["fonts"]}
     assert set(index) == set(LIST_KEYS)
     assert (index["v"], index["commit"], index["run_date"], index["n"]) == (
-        1,
+        2,
         COMMIT,
         "2026-09-25",
         n,
     )
-    for key in ("ids", "cat", "lic", "bits", "keys", "by_name"):
+    for key in ("ids", "cat", "bits", "keys", "by_name"):
         assert len(index[key]) == n, key
     assert index["cats"] == ["sans-serif", "serif", "display", "handwriting", "monospace"]
-    assert index["lics"] == [c["id"] for c in doc["license_classes"]]
     assert index["views"] == doc["views"]
     assert index["bands"] == BANDS
     assert index["why_labels"] == list(data.UNRANKED_LABELS.values())
@@ -700,8 +703,9 @@ def test_list_index_format(tmp_path, catalog, mini_site):
     assert names == sorted(names)
     for i, font_id in enumerate(index["ids"]):
         font = fonts_[font_id]
-        assert index["cats"][index["cat"][i]] == font["category"]
-        assert index["lics"][index["lic"][i]] == font["license"]["class"]
+        # the site category (owner ruling of 2026-09-30): every monospaced font is Monospace
+        site_cat = "monospace" if font["is_monospace"] else font["category"]
+        assert index["cats"][index["cat"][i]] == site_cat
         keys = index["keys"][i].split("|")
         assert keys == [search_key(font["family"])] + [
             search_key(a["name"]) for a in font["aliases"]
@@ -744,8 +748,6 @@ LIST_KEYS = (
     "ids",
     "cats",
     "cat",
-    "lics",
-    "lic",
     "bits",
     "keys",
     "by_name",
@@ -775,7 +777,6 @@ def test_list_index_bits():
     # a placeholder preview is no specimen; the font file still allows "Type your own text"
     assert bits_of(index, "sample-mono-02") & data.BIT_SPECIMEN == 0
     assert bits_of(index, "sample-mono-02") & data.BIT_MONOSPACE
-    assert bits_of(index, "sample-sans-17") & data.BIT_NO_REDIST
     assert bits_of(index, "sample-hand-16") & data.BIT_ATTRIBUTION
     assert bits_of(index, "sample-display-10") & data.BIT_LIMITED
     assert bits_of(index, "sample-sans-29") & data.BIT_NEW
@@ -788,8 +789,21 @@ def test_list_index_bits():
     for font in doc["fonts"]:
         bits = bits_of(index, font["id"])
         assert bool(bits & data.BIT_MONOSPACE) == font["is_monospace"]
-        assert bool(bits & data.BIT_NO_REDIST) == (not font["license"]["redistributable"])
+        assert bits & 16 == 0  # "not redistributable" until Rule 3 of 2026-09-30
         assert bool(bits & data.BIT_TYPE_OWN) == (font["font_file"] is not None)
+
+
+def test_comes_with_names_each_system_once_then_apps():
+    systems = {
+        "libreoffice": (0, "LibreOffice", "app"),
+        "ubuntu": (1, "Ubuntu", "linux"),
+        "macos": (2, "macOS", "macos"),
+        "fedora-workstation": (3, "Fedora Workstation", "linux"),
+        "windows-11": (4, "Windows 11", "windows"),
+    }
+    font = {"preinstalled_on": [{"system": s} for s in systems]}
+    assert build.comes_with(font, systems) == ["Windows", "macOS", "Linux", "LibreOffice"]
+    assert build.comes_with({"preinstalled_on": []}, systems) == []
 
 
 def test_an_apps_bundle_sets_no_os_bit():
@@ -1479,9 +1493,23 @@ def test_real_templates_render_the_list_contract(tmp_path, catalog, real_site):
     unranked = ["is-unranked" in a["class"].split() for a in lis]
     assert unranked == [label.startswith("Not ranked: ") for label in page.ranks]
     assert any(unranked)
-    options = [a["value"] for t, a in tags if t == "option"]
+    # the options of each select: rank, the systems to hide, and the sort order
+    selects: dict[str, list[str]] = {}
+    for t, a in tags:
+        if t == "select":
+            current = selects.setdefault(a["id"], [])
+        elif t == "option":
+            current.append(a["value"])
+    options = selects["f-rank"]
     assert options == [v["key"] for v in SAMPLE["views"] if v["available"]]
     assert options[0] == "overall"
+    assert selects["f-os"] == ["", "windows", "macos", "linux", "android"]
+    assert "f-sort" not in selects  # sorting is buttons over the list (sort_header)
+    sorts = [a for t, a in tags if t == "button" and a.get("data-sort")]
+    assert [(a["id"], a["aria-pressed"]) for a in sorts] == [
+        ("sort-rank", "true"),
+        ("sort-name", "false"),
+    ]
     # specimens: the script's span and the no-script image name the same hashed file
     spans = {a["aria-label"]: a["data-src"] for t, a in tags if a.get("class") == "spec"}
     imgs = [a for t, a in tags if t == "img" and a.get("class") == "spec-img"]

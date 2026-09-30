@@ -71,7 +71,7 @@ PAGES = {
     "404.html": ("/404.html", "Page not found", []),
 }
 METHODOLOGY_H3 = ["ranks", "numbers-and-bands", "not-ranked", "evidence-states"]
-ABOUT_H3 = ["1-free-for-any-use", "2-latin-script", "3-sharing-the-font-files-is-marked-not-required",
+ABOUT_H3 = ["1-free-for-any-use", "2-latin-script", "3-free-to-share",
             "4-no-itf-free-font-license"]  # fmt: skip
 
 
@@ -695,7 +695,7 @@ def test_about_page_states_the_rules(built):
     for phrase in (
         "personal and commercial",
         "Latin",
-        "Redistributable fonts only",
+        "pass the font files on",
         "ITF Free Font License",
         "Report a problem with this font",
     ):

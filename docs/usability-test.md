@@ -74,14 +74,14 @@ Each task has what to **say**, when it's **done** (for the notes, not read aloud
 ### 1. A coding font for an app
 
 - **Say:** "You're building an app and need a popular coding font, one where every letter takes the same width. You'll put the font file inside the app. Find one you're allowed to do that with."
-- **Done:** they pick a monospace font (from the *Coding fonts* rank, or with Spacing: *Monospaced*) that may be redistributed (no "Not redistributable" badge, "Redistributable: yes" in its details, or "Redistributable fonts only" on), and say why they think they may ship it.
-- **Watch for:** the route they take (the Coding rank, Spacing, search, or category Monospace); whether they connect "put the font file inside the app" with redistributing; whether they think every font on the list may be shipped.
+- **Done:** they pick a monospace font (from the *Coding fonts* rank, or with Category: *Monospace*), and say why they think they may ship it: the front page's "you may share the files", or the license in its details. Since 2026-09-30 every listed font may be redistributed (Rule 3).
+- **Watch for:** the route they take (the Coding rank, category Monospace, or search); whether they connect "put the font file inside the app" with sharing the files; whether they notice that every font here may be shipped, or go looking for a filter.
 
 ### 2. A body-text serif with Polish accents
 
 - **Say:** "You're setting a long report in Polish. Find a serif font that works for the body text and has all the Polish letters." For a tester who reads Vietnamese, say Vietnamese instead.
-- **Done:** category Serif, and a font without the "Limited accents" badge (or with "Hide limited accents" on), perhaps with Spacing: *Proportional*; they check the accented letters in the preview or on the official page.
-- **Watch for:** whether the "Limited accents" badge and "Hide limited accents" make sense; whether they look at the preview; whether they assume every serif suits body text (Proportional only leaves out monospace fonts). The site only knows "basic Latin" versus "more than basic Latin", so a font without the badge may still lack Vietnamese letters. If the tester trusts it for Vietnamese, note that as a finding about the data, not about the tester.
+- **Done:** category Serif, and a font without the "Limited accents" badge (or with "Accented letters" on); they check the accented letters in the preview or on the official page.
+- **Watch for:** whether the "Limited accents" badge and the "Accented letters" filter make sense; whether they look at the preview; whether they assume every serif suits body text. The site only knows "basic Latin" versus "more than basic Latin", so a font without the badge may still lack Vietnamese letters. If the tester trusts it for Vietnamese, note that as a finding about the data, not about the tester.
 
 ### 3. Is Inter free for commercial work?
 
@@ -92,19 +92,19 @@ Each task has what to **say**, when it's **done** (for the notes, not read aloud
 ### 4. Hide your computer's own fonts
 
 - **Say:** "Some fonts on this list came with your computer, so you already have them. Make the list leave those out." Phone testers: "came with your phone".
-- **Done:** they tick their system under "Hide fonts that come with" (Windows, macOS, Linux or Android).
+- **Done:** they choose their system under "Hide fonts that come with" (Windows, macOS, Linux or Android).
 - **Watch for:** whether they expect the site to know which fonts they have (Milestone 3's check), and the words they use for it; whether "come with" is clear. An iPhone has no option of its own: note what the tester does, as a finding, not a failure.
 
 ### 5. Most chosen and most installed
 
 - **Say:** "Switch the list to the fonts people installed on purpose. Then switch it to the fonts on the most computers. Why did the list change?"
-- **Done:** they choose *Desktop: most chosen*, then *Desktop: most installed*, and explain in their own words that *most chosen* leaves out the installs that Linux systems make on their own. A bonus: they spot a font marked "no evidence of deliberate installs" and its "Comes with" or "Pulled in by" tag.
+- **Done:** they choose *Desktop: most chosen*, then *Desktop: most installed*, and explain in their own words that *most chosen* leaves out the installs that Linux systems make on their own. A bonus: they spot a font marked "no evidence of deliberate installs" and its "Comes with" tag, or the "Pulled in by" line under its details' "All ranks and sources".
 - **Watch for:** whether they read the line under the rank selector; whether "most chosen" and "most installed" make sense; confusion with *Overall*.
 
 ### 6. Why does one font rank above another?
 
 - **Say:** "Why does <font A> rank above <font B>? How sure is the site about that?" Use the round's chosen pair.
-- **Done:** they open both fonts' details, point to the per-source ranks, and read the tier (Firm, Fair or Rough) or the range, saying in their own words how sure the site is. Opening *How we rank* counts too.
+- **Done:** they open both fonts' details and "All ranks and sources", point to the per-source ranks, and read the tier (Firm, Fair or Rough) or the range, saying in their own words how sure the site is. Opening *How we rank* counts too.
 - **Watch for:** jargon: tier, band, range, "below the floor", "not covered"; whether they follow a source to its credit on the methodology page; whether they trust the rank, and why.
 
 ### 7. A handwriting font's download page, on a phone

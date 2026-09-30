@@ -15,7 +15,7 @@ Compare the fonts a user already has installed with a ranked list of the most po
 
 1. **Licenses.** A font qualifies only if its license allows use in **all personal and commercial projects**. A truly free font has **no use restrictions**. Display-only licenses are excluded, and so are personal-use-only, demo/trial and non-commercial licenses. *(2026-09-25)*
 2. **Script.** Latin fonts only.
-3. **Redistribution.** Rule 1 is about use, so a license that places no restrictions on use but forbids redistributing the font files still qualifies. Each font records whether it may be redistributed. The web page has an option labelled **"Redistributable fonts only"** (or similar wording) that hides the rest; when it is off, those fonts are listed too. *(2026-09-25)*
+3. **Redistribution.** A font qualifies only if its license also lets anyone pass the font files on. The site lists only redistributable fonts, so it needs no "Redistributable fonts only" option, and its wording about sharing the files is simpler. This excludes none of the September 2026 top 500. It replaces the rule of 2026-09-25, under which a license with no use restrictions that forbade redistribution still qualified and the site offered that option. Recorded in `data/reviews/site/2026-09-30.toml` (`redistributable_only`). *(2026-09-30)*
 4. **Excluded licenses.**
    - **ITF Free Font License v2.0 (17 Aug 2026)**, used by 64 of Fontshare's 100 fonts. It has use restrictions: it forbids modification, including subsetting and format conversion, and it forbids offering the font to third parties through a website, app, SaaS, design tool or template editor. Fontshare fonts under the SIL OFL are unaffected. *(2026-09-25)*
 
@@ -33,7 +33,7 @@ Answers to the Milestone 1, Step 0 decisions in [docs/ranking-methodology.md](do
   - CC-BY fonts qualify, with an "attribution required" badge.
   - Copyleft licenses without a font exception (CC-BY-SA, plain GPL/LGPL, AGPL) are excluded.
   - Any ban on modification or embedding excludes a font, extending Rule 4.
-  - Previews are shown only for redistributable fonts, served unchanged.
+  - Previews are shown only for redistributable fonts, served unchanged. Since Rule 3 of 2026-09-30, every listed font is redistributable.
 
   *(2026-09-25)*
 - **D4: Latin.** Google's strict metadata test, plus dual-script families the owner approves from a reviewed short list. *(2026-09-25)*
@@ -182,10 +182,10 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
   - **When.** It ships with the list release (Milestone 2).
   - **Address.** Posts live at `/blog/`, with an Atom feed at `/blog/feed.xml`.
   - **License.** Post text and images are under CC BY-SA 4.0, the same as the catalog data.
-- **Spacing filter.** "Spacing: Any / Proportional / Monospaced" replaces D13's "Text only" filter and the "monospace only" checkbox. *Proportional* is the old "Text only": it hides monospace and coding fonts. The filter applies to every rank. Recorded in `data/reviews/site/2026-09-25.toml`. *(2026-09-25)*
+- **Spacing filter.** "Spacing: Any / Proportional / Monospaced" replaces D13's "Text only" filter and the "monospace only" checkbox. *Proportional* is the old "Text only": it hides monospace and coding fonts. The filter applies to every rank. Recorded in `data/reviews/site/2026-09-25.toml`. *(2026-09-25; replaced by **Filters (2026-09-30)**, below)*
 - **Project rank label.** On the site, the Project rank (D10) is labelled **"Used in projects"**. *(2026-09-25)*
 - **Site data fields (M2 step 2).** The `catalog-site.json` fields in `schemas/catalog-site.schema.json` are approved as drafted. Designer lists are left out, because D12 is usage only. *(2026-09-25)*
-- **License filter.** Four groups: open font licenses (OFL, UFL, Bitstream Vera); permissive (Apache, MIT, BSD, CC0); attribution required (CC BY); and other free-use grants, which allow any use but may forbid redistributing the files (Rule 3). *(2026-09-25)*
+- **License filter.** Four groups: open font licenses (OFL, UFL, Bitstream Vera); permissive (Apache, MIT, BSD, CC0); attribution required (CC BY); and other free-use grants, which allow any use but may forbid redistributing the files (Rule 3). *(2026-09-25; replaced by **Filters (2026-09-30)**, below. The four groups remain the license classes of the data and the pipeline.)*
 - **Nerd Fonts build link (TASK-2 ruling).** A catalog family with a Nerd Fonts build gets a third, nullable link, `links.nerd`, in both catalog schemas, landing before the M1 step 20 v1 freeze. One shared target: `https://github.com/ryanoasis/nerd-fonts/releases` — the repository's releases page, never a release asset or `/releases/latest`. Text: **"Nerd Fonts build"**, naming its destination per the M2 step 4 convention. It shows on the list row and in the details panel, in every view. The spike found no license obstacle: every base license and all 14 patched icon sets pass Rules 1–4 (Font Logos' "unlicensed" is The Unlicense). Findings: [docs/nerd-fonts-link.md](docs/nerd-fonts-link.md); recorded in `data/reviews/site/2026-09-28.toml`. *(2026-09-28)*
   - *Amended on 2026-09-29* (the owner's Nerd Font marker; Claude took TASK-2 over from Qwen). The field stays a nullable `links.nerd` in both schemas, before the freeze, and the placement stays the row and the details panel on every view. What changes:
     - **Which builds:** the Nerd Fonts project's builds and the makers' own NF builds (such as Maple Mono NF, Cascadia Code NF and Rec Mono).
@@ -214,6 +214,7 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
   - **No shift.** Every page preloads the upright. With `font-display: optional`, a font that arrives late is never swapped in, and that page view keeps Liberation Sans or Arial, which share Arimo's widths. Monospace text keeps the system monospace stack.
 - **Front-page note.** The front page carries "Why isn't my favorite free font here?" with the owner's text word for word (Claude's draft, accepted), the address a mailto link. On wide screens it is a textbook-style frame floated right beside the lead and privacy note, with the list starting below it. The owner kept this after seeing screenshots, and accepts the blank area it leaves below the short intro; Claude had suggested a wider frame. On phones it is a full-width frame folded to its heading, opened with one tap. Recorded in `data/reviews/site/2026-09-29.toml` (`why_not_listed`, `why_not_listed_layout`, `why_not_listed_gap`). *(2026-09-29)*
 - **Front-page lead.** The owner's wording: "Every font here is free for any personal or commercial use, although sharing the files may be restricted. They are ranked by how many people install them and use them in their work." The page's meta description stays as it was. *(2026-09-29)*
+  - *Changed on 2026-09-30*, after Rule 3 made every listed font redistributable: "Every font here is free for any personal or commercial use, and you may share the files. They are ranked by how many people install them and use them in their work." The front-page note "Why isn't my favorite free font here?" drops "or don't let you pass the font files on" and now reads "Some of these fonts ask you to credit the designer, and we mark those." Both were Claude's recommendation, taken by the owner. Recorded in `data/reviews/site/2026-09-30.toml` (`front_page_lead_sharing`).
 - **Early-version line.** Every page's header says "Early version. Coming next: free font inventory tools." (the owner's wording) until Milestone 3 removes it. *(2026-09-29)*
 - **Scores instead of numbers (Milestone 2).** The owner's idea, after a filtered list ran 1 to 25 and then showed bands. Recorded in `data/reviews/site/2026-09-29.toml` (`score_display`, `score_curve`, `score_held_fonts`, `score_field_timing`). *(2026-09-29)*
   - **Display.** The list shows each font's score, 0 to 100, as a blue bar where the rank number is now. Filters only hide rows: no renumbering, and no bands in the list. A font's details keep its rank and range. This replaces M2-D2 when it lands.
@@ -223,6 +224,38 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
 - **Font names.** A row with a specimen shows the family name once, drawn in the font by the specimen's first line. The text name stays in the page for screen readers, search and find-in-page, and shows whenever the specimen isn't shown. The NF marker moves to the end of the row's title cell (the specimen, or the text name where there is none), still in a column. The owner chose to hide the text name; Claude had recommended dropping the name from the specimen. Recorded in `data/reviews/site/2026-09-29.toml` (`name_once`, `nerd_marker_spot_title`). *(2026-09-29)*
 - **Specimen sample line.** "Dolorem ipsum quaerit nemo." (the owner's wording: Cicero's phrase behind Lorem ipsum, with descenders on both sides), in place of the Polish and Czech line of 2026-09-26 and of "Dolor dolorosus est.", chosen earlier the same day. "quaerit" is spelt without the æ ligature, which fonts with basic Latin only lack. Recorded in `data/reviews/site/2026-09-29.toml` (`specimen_sample_latin`). *(2026-09-29)*
 - **Specimen size cap.** A specimen may be up to 16 KB compressed (gzip -9), about what a visitor downloads, in place of 30 KB uncompressed; a larger one shows the family name only. The owner's answer after Claude showed that the raw cap made six fonts name-only although each was 7 to 15 KB compressed. Recorded in `data/reviews/site/2026-09-30.toml` (`specimen_max_size`). *(2026-09-30)*
+- **Filters (2026-09-30).** The owner found the filters repeated one another. The sidebar now holds, in order:
+  - Search;
+  - Rank, with its measures line;
+  - Category, where **Monospace** means every monospaced font (the list the Coding rank orders) and the other categories list proportional fonts only;
+  - Features: Variable, Nerd Font available, and Accented letters (which hides fonts with basic Latin only);
+  - License: one **"No credit required"** checkbox, shown only while some listed font needs credit;
+  - "Hide fonts that come with", as one select: Windows, macOS, Linux or Android;
+  - "Clear filters".
+
+  **Removed:** the Spacing filter, the four license-group checkboxes, "Hide attribution required" (now "No credit required") and "Redistributable fonts only" (Rule 3).
+
+  **Sort** (by rank or by name) moves to the list header, beside the count. *Changed the same day* (`sort_header`): sorting is a row of buttons over the list, one over the rank column and one over the names. Each is a bordered button with two stacked arrows and, on the column in use, the order's words ("best first" or "least used first", "A–Z" or "Z–A"). Clicking the button in use reverses its order, and clicking the other sorts by it in its usual order. Reversing the rank is a true reverse, with the unranked fonts first: that was the owner's choice, where Claude had recommended keeping them last. The header sits over the rank numbers until the score bars replace them.
+
+  **Rows:** the badges get shorter. "Comes with" names only the operating systems and apps, "Pulled in by" appears only in the details panel, and there are no "Monospace" or "Not redistributable" badges.
+
+  **Old links:** links that use the retired `spacing`, `lic` or `redist` keys still open; `spacing=monospaced` becomes the Monospace category.
+
+  **Variable fonts** are labelled "Adjustable weight (variable font)" in the filter and "Adjustable weight" on the rows, because "Variable" alone reads as "proportional" (letters of varying width). This was Claude's recommendation, taken by the owner (`variable_label`).
+
+  The monospace and license choices were the owner's, from Claude's recommended options. The rest was Claude's proposal in the plan the owner approved. Recorded in `data/reviews/site/2026-09-30.toml` (`monospace_category`, `license_filter`, `filters_layout`). *(2026-09-30)*
+- **Details panel (2026-09-30).** The owner found a font's opened details too busy, and chose essentials first with the evidence folded (Claude's recommended option). Recorded in `data/reviews/site/2026-09-30.toml` (`details_layout`). *(2026-09-30)*
+  - **Order.** First the "Type your own text" button, which still loads the font only when clicked. Then one short list:
+    - **Get it:** the official, designer and Nerd Font build links;
+    - **License:** the license, and whether credit is needed;
+    - **Font:** formats and Latin coverage;
+    - **Comes with:** the systems that preinstall it;
+    - **Also known as:** other names;
+    - **Rank:** the rank chosen in the selector, with its likely range.
+
+    Last comes "Report a problem".
+  - **Folded.** A closed "All ranks and sources" disclosure holds every rank with tier and range, the tier legend, "Pulled in by" and the per-source tables.
+  - **Dropped:** the section headings, the license-group row, the Redistributable row, the Spacing row, and the Nerd Font legend repeated from above the list.
 
 ## Infrastructure
 

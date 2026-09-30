@@ -110,14 +110,14 @@ Jinja2 with `autoescape=True`, `StrictUndefined`, `trim_blocks`, `lstrip_blocks`
 |---|---|
 | `views` | the available views, `{key, label, measures}`, in catalog order; the first is the default (Overall, M2-D1) |
 | `categories` | `{value, label}`: `sans-serif` Sans serif, `serif` Serif, `display` Display, `handwriting` Handwriting, `monospace` Monospace |
-| `license_classes` | `{id, label}` from the catalog |
+| `credit_filter` | true when some font needs credit (`attribution_required`): only then is "No credit required" shown (owner ruling of 2026-09-30, `license_filter`) |
 | `systems_os` | `{value, label}`: `windows` Windows, `macos` macOS, `linux` Linux, `android` Android |
 | `nerd` | the catalog's `nerd` wording, `{marker, label, legend}`, plus `after_marker`: the legend less its leading marker, so the legend shows its marker as the rows do |
 | `total` | number of fonts |
 | `index_url`, `details_url` | hashed URLs of the two payloads |
-| `rows` | one per font, in server order (section 7): `id`, `family`, `label` (the Overall rank label), `category_label`, `license_name`, `badges` [{`key`, `text`}], `specimen` {`url`, `width`, `height`} or none (`width` and `height` are the no-script `<img>`'s display size: 48 px high, the `--spec-h` box, and as wide as the SVG's aspect ratio makes it), `fallback` (none, `"license"` or `"failed"`), `download` {`url`, `label`}, `nerd` (true for a font with a Nerd Font build, `links.nerd`) |
+| `rows` | one per font, in server order (section 7): `id`, `family`, `label` (the Overall rank label), `category_label` (of the site category, `tff_site.data.site_category`: Monospace for every monospaced font), `license_name`, `badges` [{`key`, `text`}], `specimen` {`url`, `width`, `height`} or none (`width` and `height` are the no-script `<img>`'s display size: 48 px high, the `--spec-h` box, and as wide as the SVG's aspect ratio makes it), `fallback` (none, `"license"` or `"failed"`), `download` {`url`, `label`}, `nerd` (true for a font with a Nerd Font build, `links.nerd`) |
 
-Badge keys, in this order: `variable`, `monospace`, `limited` ("Limited accents"), `attribution` ("Attribution required"), `noredist` ("Not redistributable"), `preinstalled` ("Comes with Windows 11, macOS"), `pulled` ("Pulled in by sample-office-common on Debian", from `pulled_in_by`; several are joined with "; "), `new` ("New"). `preinstalled` and `pulled` are the tags that explain "Not ranked: no evidence of deliberate installs" in *most chosen* (Milestone 2 step 3).
+Badge keys, in this order: `variable` ("Adjustable weight", owner ruling of 2026-09-30, `variable_label`), `limited` ("Limited accents"), `attribution` ("Credit required"), `preinstalled` ("Comes with Windows, Linux, LibreOffice": each operating system once, every Linux distribution being "Linux", then apps; `tff_site.build.comes_with`), `new` ("New"). Kept short (owner ruling of 2026-09-30, `filters_layout`): there is no "Monospace" badge (the category says it) or "Not redistributable" one (Rule 3), and "Pulled in by" is in the details panel. `preinstalled` is the tag that explains "Not ranked: no evidence of deliberate installs" in *most chosen* (Milestone 2 step 3); the details panel names the packages.
 
 **Extra context for the blog pages** (`tff_site.blog.page_contexts`); dates are `yyyy-mm-dd` text:
 
@@ -160,33 +160,23 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
           Filters<span class="filters-count"> (3)</span></button>             <!-- narrow screens only -->
       </div>
       <div id="f-more" class="filters-more">
-        <fieldset id="f-cat"><legend>Category</legend>
+        <fieldset id="f-cat" class="pills"><legend>Category</legend>      <!-- radios drawn as pills -->
           <input type="radio" id="f-cat-all" name="cat" value="" checked> …
           <input type="radio" id="f-cat-serif" name="cat" value="serif"> …  <!-- f-cat-<value> -->
         </fieldset>
-        <fieldset id="f-spacing"><legend>Spacing</legend>                  <!-- site ruling 2026-09-25 -->
-          <input type="radio" id="f-spacing-any" name="spacing" value="" checked> …                  <!-- Any -->
-          <input type="radio" id="f-spacing-proportional" name="spacing" value="proportional"> …  <!-- Proportional -->
-          <input type="radio" id="f-spacing-monospaced" name="spacing" value="monospaced"> …      <!-- Monospaced -->
-        </fieldset>
-        <fieldset id="f-type"><legend>Type</legend>
-          <input type="checkbox" id="f-var" name="var" value="1">            <!-- Variable only -->
+        <fieldset id="f-type"><legend>Features</legend>
+          <input type="checkbox" id="f-var" name="var" value="1">  <!-- Adjustable weight (variable font) -->
           <input type="checkbox" id="f-nerd" name="nerd" value="1" aria-describedby="nf-legend">  <!-- Nerd Font available -->
-          <input type="checkbox" id="f-hide-limited" name="hide" value="limited">
+          <input type="checkbox" id="f-hide-limited" name="hide" value="limited">  <!-- Accented letters -->
         </fieldset>
-        <fieldset id="f-license"><legend>License</legend>
-          <input type="checkbox" id="f-lic-open-font" name="lic" value="open-font"> …  <!-- f-lic-<class id> -->
-          <input type="checkbox" id="f-hide-attr" name="hide" value="attr">
-          <input type="checkbox" id="f-redist" name="redist" value="1" aria-describedby="f-redist-help">
-          <p id="f-redist-help">…what redistributing means…</p>
+        <fieldset id="f-license"><legend>License</legend>                  <!-- only if list.credit_filter -->
+          <input type="checkbox" id="f-hide-attr" name="hide" value="attr">  <!-- No credit required -->
         </fieldset>
-        <fieldset id="f-system"><legend>Hide fonts that come with</legend>
-          <input type="checkbox" id="f-hide-windows" name="hide" value="windows"> …  <!-- f-hide-<os> -->
-        </fieldset>
-        <fieldset id="f-sort"><legend>Sort</legend>
-          <input type="radio" id="f-sort-rank" name="sort" value="rank" checked>
-          <input type="radio" id="f-sort-name" name="sort" value="name">
-        </fieldset>
+        <div id="f-system" class="filters-select">
+          <label for="f-os">Hide fonts that come with</label>
+          <select id="f-os" name="hide"><option value="" selected>Nothing</option>
+            <option value="windows">Windows</option>…</select>              <!-- one option per os -->
+        </div>
         <button type="button" id="f-clear">Clear filters</button>
       </div>
     </search>
@@ -204,6 +194,14 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
         <p id="no-results-text">…names the filters to loosen…</p>
         <button type="button" id="no-results-clear">Clear filters</button>
       </div>
+      <div id="list-sort" class="list-sort" role="group" aria-label="Sort the list" hidden>  <!-- shown by the script -->
+        <button type="button" class="sort-btn" id="sort-rank" data-sort="rank" data-asc="best first"
+          data-desc="least used first" data-asc-spoken="…" data-desc-spoken="…" aria-pressed="true"
+          data-dir="asc"><span class="visually-hidden">Sort by </span><span class="sort-label">Rank</span>
+          <span class="sort-arrow" aria-hidden="true"></span><span class="sort-dir">…</span></button>
+        <button type="button" class="sort-btn" id="sort-name" data-sort="name" data-asc="A–Z" data-desc="Z–A"
+          data-asc-spoken="A to Z" data-desc-spoken="Z to A" aria-pressed="false">…Name…</button>
+      </div>
       <ol id="list" class="font-list" data-index="/assets/list.<h>.json"
           data-details="/assets/details.<h>.json" data-run-date="2026-09-25">…rows…</ol>
     </section>
@@ -213,9 +211,10 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 
 - **The front page's note** (site rulings of 2026-09-29, `data/reviews/site/2026-09-29.toml`: `why_not_listed`, `why_not_listed_layout`): "Why isn't my favorite free font here?" and the owner's text, word for word, in `index.html.j2`, the address a `mailto:` link to `site.feedback.email`. It is in the HTML twice and the stylesheet displays one, so neither needs a script and nothing moves as the page loads: `div.why-wide` from `40rem` up, a frame floated right beside the lead and the privacy note, which wrap around it, while `.layout` clears it, so the list starts below the frame and rows are never narrowed; `details.why-fold` at `40rem` and below, full width under the intro, folded to its `summary`. The other copy is `display: none`, so screen readers get the text once.
 - The controls' `name` attributes are the hash keys (section 9); `value` is the key's value. Filters live in `<search>` and `<fieldset>`/`<legend>` groups, never in a `<form>`.
-- `#filters` carries `hidden` in the HTML; the script removes it. Showing it must not move the list (reserve its space in CSS), because the layout-shift budget is 0.1.
+- `#filters` and `#list-sort` carry `hidden` in the HTML; the script removes it. Showing them must not move the list (reserve their space in CSS), because the layout-shift budget is 0.1.
 - Narrow screens are below `60rem`: `#f-more` is hidden until `#f-toggle` expands it, and `#f-toggle`'s text includes the number of active filters. From `60rem` up, `#f-more` is always shown in the sidebar and `#f-toggle` is hidden.
-- `#f-spacing` (Any / Proportional / Monospaced) is shown on every rank; it replaces the old "Text only" and "Monospace only" boxes (owner's site ruling of 2026-09-25, `data/reviews/site/2026-09-25.toml`). Proportional hides monospace fonts. On Coding, whose fonts are all monospace, Proportional leaves nothing, and `#no-results-text` names the Spacing filter.
+- **The filter set** (owner rulings of 2026-09-30, `data/reviews/site/2026-09-30.toml`: `monospace_category`, `license_filter`, `filters_layout`). Category's **Monospace** is every monospaced font, the list Coding orders, and the other categories hold proportional fonts only: the list index's `cat` is the site category (section 7). There is no Spacing filter (it replaced "Text only" and "Monospace only" on 2026-09-25) and no license-group or "Redistributable fonts only" filter (Rule 3). `#f-hide-attr`, "No credit required", is rendered only while some font needs credit. `#f-os` offers one operating system at a time; its value joins `hide` with the checked boxes.
+- **Sorting** (owner ruling of 2026-09-30, `sort_header`): `#list-sort`, over the list, outside `#filters`, holds one `button.sort-btn[data-sort]` per column, Rank and Name. `aria-pressed="true"` and `data-dir` (`asc` or `desc`) mark the column in use: the CSS fills that one of its two stacked arrows (`.sort-arrow`), and `.sort-dir` holds the order's words, from the button's `data-asc`/`data-desc` (shown) and `data-asc-spoken`/`data-desc-spoken` (for screen readers, with what a click does). A click on the button in use reverses its order; a click on the other sorts by it, `asc`. The announcement after a sort change adds "Sorted by <label>, <spoken words>" to the count line.
 - `#f-nerd` ("Nerd Font available", owner's site ruling of 2026-09-29, `data/reviews/site/2026-09-29.toml`, `nerd_filter`) keeps only the fonts with a Nerd Font build, on every rank. `#nf-legend` describes it and explains the rows' marker: the catalog's `nerd.legend`, its leading marker shown as `span.nf-mark`.
 
 ### A row
@@ -233,7 +232,8 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
           width="…" height="…" loading="lazy"></noscript>
         <!-- or, with no specimen: -->
         <p class="spec-fallback">No preview: this font's license doesn't let us host its files.
-          See it on <a href="…">GitHub: rsms/inter</a>.</p>        <!-- fallback "license" -->
+          See it on <a href="…">GitHub: rsms/inter</a>.</p>        <!-- fallback "license": no preview_ok,
+                                                                        which Rule 3 leaves unused -->
         <p class="spec-fallback">Preview not available yet.</p>    <!-- fallback "failed" -->
       </div>
     </div>
@@ -259,7 +259,11 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
   - one `button.ext-action[type=button][data-action="<action id>"]` per action.
 
   Rows may grow when a note appears; that happens only after the visitor starts Milestone 3's check, so it is not a load-time layout shift.
-- **Details panel** (owned by `Details`; only these hooks are frozen): the panel's first child is `<h4 class="details-title" id="details-<id>-h" tabindex="-1">`, which receives focus when the panel opens from a `#font=` link, and it has a `button.details-close`. Esc or the close button returns focus to the row's `.details-toggle`. "Type your own text" is `button.typeown-load` ("Load font (312 KB) to type your own text") and then `input.typeown-input`. A font with a Nerd Font build lists its link after the official and designer links: the term is the marker (`span.nf-mark[role=img]`, as in the row), the link `a.details-nf-link` (text by section 1's Nerd rule), and `p.details-nf-legend` below the links holds `nerd.legend`.
+- **Details panel** (owned by `Details`; only these hooks are frozen): the panel's first child is `<h4 class="details-title" id="details-<id>-h" tabindex="-1">`, which receives focus when the panel opens from a `#font=` link, and it has a `button.details-close`. Esc or the close button returns focus to the row's `.details-toggle`. Its body, in order (owner ruling of 2026-09-30, `details_layout`):
+  1. "Type your own text": `button.typeown-load` ("Type your own text (loads 312 KB)"), then `input.typeown-input`;
+  2. `div.details-summary`, one `dl.details-essentials`: Get it (`ul.details-links`: "Official: …", "Designer: …", and for a Nerd Font build the marker `span.nf-mark[role=img]`, as in the row, and the link `a.details-nf-link`, text by section 1's Nerd rule; the legend is `#nf-legend`, above the list), License (`a.details-lic-link`, then "No credit needed." or "Credit required: …"), Font (formats and Latin coverage), Comes with, Also known as, and Rank (`span.details-rank-now`: the rank the selector shows, kept current);
+  3. `details.details-evidence`, closed, its `summary` "All ranks and sources": every rank with tier and range, the tier legend, "Pulled in by", and the per-source tables (`table.details-src-table[data-survey]`);
+  4. `p.details-report`.
 
 ### Shared classes
 
@@ -302,7 +306,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 4. Sort ranked fonts by `order`, then unranked fonts by `by_name`.
 5. Number per M2-D2: a counter counts only fonts with `top > 0`; others take their band label; unranked fonts take "Not ranked: <why label>".
 6. Apply the external filters with `affectsNumbering: false` (Milestone 3's "numbers stay as published").
-7. With `sort=name`, re-sort by `by_name`, keeping the labels.
+7. With `sort=name` or `name-desc`, re-sort by `by_name`, keeping the labels; then with `rank-desc` or `name-desc`, reverse the whole order (a true reverse: unranked fonts come first when the rank is reversed).
 8. Return `order` (font indexes to show, in order), `labels`, `dimmed` and `notes` (parallel to `order`), `shown` and `total` (the size of the rank's universe).
 
 ## 6. CSS parts and tokens
@@ -361,8 +365,8 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 | `--c-accent-fg` | text on `--c-accent` |
 | `--c-badge-bg` | badge background |
 | `--c-badge-fg` | badge text |
-| `--c-warn-bg` | "Not redistributable" badge background |
-| `--c-warn-fg` | "Not redistributable" badge text |
+| `--c-warn-bg` | warning background (a font file that didn't load) |
+| `--c-warn-fg` | warning text |
 | `--c-spec` | specimen fill: `currentColor`, `CanvasText` under forced colours |
 | `--c-header-bg` | the header's background: white in both themes |
 | `--c-header-fg` | the header's text (the light `--c-fg`, in both themes) |
@@ -379,15 +383,13 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 
 | Key | Type | Contents |
 |---|---|---|
-| `v` | int | format version, `1` |
+| `v` | int | format version, `2` (2026-09-30: `cat` is the site category, and `lics`/`lic` are gone) |
 | `commit` | string | the commit in `version.txt` |
 | `run_date` | string | `run.date` |
 | `n` | int | number of fonts |
 | `ids` | string[n] | font ids |
 | `cats` | string[] | the five categories, in schema order |
-| `cat` | int[n] | index into `cats` |
-| `lics` | string[] | license class ids, in `license_classes` order |
-| `lic` | int[n] | index into `lics` |
+| `cat` | int[n] | index into `cats` of the site category: `monospace` for every monospaced font, else the catalog's `category` (`tff_site.data.site_category`, owner ruling of 2026-09-30) |
 | `bits` | int[n] | flags, below |
 | `keys` | string[n] | `search_key` of the family, then of each alias in catalog order, joined by `\|` |
 | `by_name` | int[n] | font indexes sorted by Python `str.casefold()` of the family, then id |
@@ -396,7 +398,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 | `why_labels` | string[] | unranked-reason labels, in the order `no_deliberate_evidence`, `no_evidence`, `too_new` |
 | `r` | object | one entry per view with `available: true`, keyed by rank key, below |
 
-**`bits`**: 1 monospace (`is_monospace`), 2 variable, 4 limited accents (`latin.coverage` basic), 8 attribution required, 16 not redistributable, 32 has a specimen, 64 "Type your own text" available, 128 comes with Windows, 256 macOS, 512 Linux, 1024 Android (from `preinstalled_on` systems' `os`; a system with `os` `app`, an application's own bundle such as LibreOffice's, sets none; `pulled_in_by` doesn't count), 2048 new (flag `too_new`), 4096 pulled in by a package (`pulled_in_by` is not empty; no filter hides by it), 8192 a Nerd Font build (`links.nerd` is not null; "Nerd Font available" keeps only these, site ruling 2026-09-29). Spacing Proportional hides the fonts with bit 1 and Monospaced keeps only them (site ruling 2026-09-25).
+**`bits`**: 1 monospace (`is_monospace`), 2 variable, 4 limited accents (`latin.coverage` basic), 8 attribution required, 16 unused (it was "not redistributable" until Rule 3 of 2026-09-30), 32 has a specimen, 64 "Type your own text" available, 128 comes with Windows, 256 macOS, 512 Linux, 1024 Android (from `preinstalled_on` systems' `os`; a system with `os` `app`, an application's own bundle such as LibreOffice's, sets none; `pulled_in_by` doesn't count), 2048 new (flag `too_new`), 4096 pulled in by a package (`pulled_in_by` is not empty; no filter hides by it), 8192 a Nerd Font build (`links.nerd` is not null; "Nerd Font available" keeps only these, site ruling 2026-09-29). Category Monospace is exactly the fonts with bit 1.
 
 **`r.<rank key>`:**
 
@@ -431,31 +433,29 @@ The view lives after `#`, so it never reaches the server and nothing is stored.
 ```
 hash  = "#" [ pair *( "&" pair ) ]
 pair  = key "=" value              ; value encoded with encodeURIComponent; list items joined by ","
-key   = "rank" / "cat" / "lic" / "spacing" / "var" / "nerd" / "hide" / "redist" / "q" / "sort" / "font"
-      / ext-key                    ; an extension key, below
+key   = "rank" / "cat" / "var" / "nerd" / "hide" / "q" / "sort" / "font"
+      / retired-key / ext-key      ; below
 ```
 
 | Key | Value | Default (omitted) |
 |---|---|---|
 | `rank` | a view key with `available: true` | `overall` |
-| `cat` | `sans-serif`, `serif`, `display`, `handwriting` or `monospace` | any category |
-| `lic` | license class ids, in `license_classes` order: show only these | any license (nothing chosen) |
-| `spacing` | `proportional` (hides monospace fonts) or `monospaced` (monospace fonts only), on every rank | any |
+| `cat` | `sans-serif`, `serif`, `display`, `handwriting` or `monospace` (every monospaced font) | any category |
 | `var` | `1`: variable fonts only | off |
 | `nerd` | `1`: "Nerd Font available", fonts with a Nerd Font build only | off |
-| `hide` | any of `limited`, `attr`, `windows`, `macos`, `linux`, `android`, in this order | nothing hidden |
-| `redist` | `1`: "Redistributable fonts only" | off |
+| `hide` | any of `limited` (shown as "Accented letters"), `attr` ("No credit required"), and at most one of `windows`, `macos`, `linux`, `android`, in this order; a second system is dropped | nothing hidden |
 | `q` | search text, at most 100 characters | empty |
-| `sort` | `name` | `rank` |
+| `sort` | `rank-desc` (the whole rank order reversed, unranked fonts first), `name` (A–Z) or `name-desc` (Z–A) | `rank` (best first) |
 | `font` | a font id: its details panel is open | none |
 
 - **Writing:** keys in the table's order, defaults left out; the default view is the empty hash, restored with `history.replaceState(null, '', location.pathname + location.search)`. Discrete changes use `pushState`; search typing uses `replaceState`, debounced 300 ms.
 - **Reading:** split on `&`, then each pair at its first `=`; a key seen twice keeps the last value; for the keys in the table, undecodable and invalid values fall back to the default. If the canonical form differs from `location.hash`, it is rewritten with `replaceState`. `popstate` and `hashchange` apply the hash without pushing.
-- **Extension keys.** A key not in the table belongs to someone else, for example Milestone 3's system tabs (`os=linux`). `State` never interprets or drops one: when it reads, canonicalises or writes the hash, it keeps every extension pair exactly as written (key and raw value), in its original order, after its own keys. When it writes, it takes the extension pairs from `location.hash` as they stand at that moment, so a change Milestone 3 made meanwhile survives. The default view with extension keys is `#` plus those pairs. `State`'s tests must show that `#rank=project&os=linux` survives the first load, a filter change and Back.
+- **Retired keys** (owner rulings of 2026-09-30): `spacing`, `lic` and `redist` are read and dropped, so old links still open and the rewritten hash no longer has them. `spacing=monospaced` becomes `cat=monospace` when the hash has no `cat`; `spacing=proportional`, `lic` and `redist` add nothing (every listed font is redistributable). Milestone 3 must not use these names as extension keys.
+- **Extension keys.** A key not in the table and not retired belongs to someone else, for example Milestone 3's system tabs (`os=linux`). `State` never interprets or drops one: when it reads, canonicalises or writes the hash, it keeps every extension pair exactly as written (key and raw value), in its original order, after its own keys. When it writes, it takes the extension pairs from `location.hash` as they stand at that moment, so a change Milestone 3 made meanwhile survives. The default view with extension keys is `#` plus those pairs. `State`'s tests must show that `#rank=project&os=linux` survives the first load, a filter change and Back.
 - **In-page anchors.** `State` runs only on pages with `#list`. A hash of one token with no `=` or `&` that names an element in the document (the skip link's `#main`, `#font-<id>`) is not a view: `State` leaves `location.hash` alone for it, and its next write drops the anchor. A single token that names no element is read as a hash like any other.
 - **`font`.** A font the current view hides stays in the hash; its panel opens when a later view shows it.
 - `rank=rising` while Rising has `available: false` means `overall`.
-- Example: `#rank=project&cat=serif&spacing=proportional&hide=limited,windows&redist=1&font=inter`.
+- Example: `#rank=project&cat=serif&hide=limited,windows&font=inter`.
 
 ## 10. Milestone 3 hook (`globalThis.tff`)
 

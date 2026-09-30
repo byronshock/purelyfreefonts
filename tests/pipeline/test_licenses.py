@@ -61,6 +61,7 @@ CFG = LicensesConfig(
         "OFL-1.1": AllowedLicense("SIL Open Font License 1.1", "open-font", True, False),
         "MIT": AllowedLicense("MIT License", "permissive", True, False),
         "CC-BY-4.0": AllowedLicense("CC BY 4.0", "attribution", True, True),
+        # Forbids redistribution: excluded since Rule 3 of 2026-09-30.
         "LicenseRef-Grant": AllowedLicense("A free-use grant", "freeware", False, False),
         "GPL-2.0-or-later WITH Font-exception-2.0": AllowedLicense(
             "GPL with the font exception", "open-font", True, False
@@ -354,8 +355,7 @@ def test_classify_ties_prefer_the_first_group_and_no_exception() -> None:
     assert lic.classify("MIT OR OFL-1.1", REAL_CFG).spdx == "OFL-1.1"
     assert lic.classify("Apache-2.0 AND OFL-1.1", REAL_CFG).group == "open-font"
     assert lic.classify("Apache-2.0 OR MIT", REAL_CFG).spdx == "Apache-2.0"  # then by id
-    # Redistribution and attribution still come first.
-    assert lic.classify("MIT AND LicenseRef-Grant", CFG).group == "freeware"
+    # Attribution still comes first.
     assert lic.classify("OFL-1.1 AND CC-BY-4.0", CFG).group == "attribution"
 
 
@@ -367,8 +367,9 @@ def test_classify_and_needs_every_part() -> None:
         True,
         True,
     )
-    c = lic.classify("MIT AND LicenseRef-Grant", CFG)
-    assert (c.status, c.group, c.redistributable) == ("allowed", "freeware", False)
+    c = lic.classify("MIT AND LicenseRef-Grant", CFG)  # Rule 3: the grant forbids redistribution
+    assert (c.status, c.group, c.redistributable) == ("excluded", None, None)
+    assert "Rule 3" in c.reason
     c = lic.classify("MIT AND GPL-2.0-or-later", CFG)
     assert c.status == "excluded"
     assert "GPL-2.0-or-later" in c.reason
@@ -525,18 +526,26 @@ def _answer(qid: str, choice: str, **values: object) -> Answer:
 def test_apply_license_rulings() -> None:
     day = date(2026, 10, 4)
     qid = lic.license_question_id("Bitstream-Vera")
-    for choice, status, redistributable in (("a", "allowed", True), ("b", "allowed", False)):
-        cfg = lic.apply_license_rulings(CFG, {qid: (_answer(qid, choice), day)})
-        c = lic.classify("Bitstream-Vera", cfg)
-        assert (c.status, c.redistributable, c.group) == (status, redistributable, "open-font")
-        assert "Bitstream-Vera" not in cfg.ruling
+    cfg = lic.apply_license_rulings(CFG, {qid: (_answer(qid, "a"), day)})
+    c = lic.classify("Bitstream-Vera", cfg)
+    assert (c.status, c.redistributable, c.group) == ("allowed", True, "open-font")
+    assert "Bitstream-Vera" not in cfg.ruling
+    # (b), free to use but not redistributable, excludes since Rule 3 of 2026-09-30.
+    cfg = lic.apply_license_rulings(CFG, {qid: (_answer(qid, "b"), day)})
+    c = lic.classify("Bitstream-Vera", cfg)
+    assert c.status == "excluded"
+    assert "Rule 3" in c.reason
+    assert "Bitstream-Vera" not in cfg.ruling
     cfg = lic.apply_license_rulings(CFG, {qid: (_answer(qid, "c"), day)})
     assert "owner ruling" in lic.classify("Bitstream-Vera", cfg).reason
     cfg = lic.apply_license_rulings(CFG, {qid: (_answer(qid, "d"), day)})
     assert cfg == CFG
     mit = lic.license_question_id("MIT")
-    cfg = lic.apply_license_rulings(CFG, {mit: (_answer(mit, "b", group="freeware"), day)})
+    cfg = lic.apply_license_rulings(CFG, {mit: (_answer(mit, "a", group="freeware"), day)})
     assert (cfg.allowed["MIT"].name, cfg.allowed["MIT"].group) == ("MIT License", "freeware")
+    cfg = lic.apply_license_rulings(CFG, {mit: (_answer(mit, "b"), day)})
+    assert "MIT" in cfg.excluded
+    assert "MIT" not in cfg.allowed
     with pytest.raises(lic.RulingError):
         lic.apply_license_rulings(CFG, {qid: (_answer(qid, "e"), day)})
     bad = _answer(qid, "a", attribution_required="yes")
@@ -790,7 +799,8 @@ def test_stage_applies_owner_rulings(stage) -> None:
     )
     lic.run(stage.ctx)
     c = _verdicts(stage.paths)["ember-grotesk"].license
-    assert (c.status, c.group, c.redistributable) == ("allowed", "freeware", False)
+    assert c.status == "excluded"  # (b) excludes since 2026-09-30
+    assert "Rule 3" in c.reason
 
 
 @pytest.mark.parametrize(
@@ -859,7 +869,11 @@ def test_stage_every_flagged_candidate_is_queued(stage) -> None:
 
 def test_stage_family_ruling_with_spdx_lets_an_excluded_reading_in(stage) -> None:
     stage.rulings.append(
-        Ruling("LIC", date(2026, 10, 4), (_answer("LIC-heath-mono", "b", spdx="LicenseRef-Grant"),))
+        Ruling(
+            "LIC",
+            date(2026, 10, 4),
+            (_answer("LIC-heath-mono", "a", spdx="LicenseRef-Grant", group="freeware"),),
+        )
     )
     lic.run(stage.ctx)
     v = _verdicts(stage.paths)["heath-mono"]
@@ -867,8 +881,20 @@ def test_stage_family_ruling_with_spdx_lets_an_excluded_reading_in(stage) -> Non
         "LicenseRef-Grant",
         "allowed",
         "freeware",
-        False,
+        True,
     )
+
+
+def test_stage_family_ruling_b_excludes_under_rule_3(stage) -> None:
+    # Owner ruling of 2026-09-30 (redistributable_only): free to use but not
+    # redistributable no longer qualifies.
+    stage.rulings.append(
+        Ruling("LIC", date(2026, 10, 4), (_answer("LIC-heath-mono", "b", spdx="LicenseRef-Grant"),))
+    )
+    lic.run(stage.ctx)
+    v = _verdicts(stage.paths)["heath-mono"]
+    assert (v.license.status, v.preview_ok) == ("excluded", False)
+    assert "Rule 3" in v.license.reason
 
 
 def test_stage_question_asks_for_spdx_when_no_license_is_named(stage) -> None:

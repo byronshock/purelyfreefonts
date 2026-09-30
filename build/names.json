@@ -5176,14 +5176,6 @@
     },
     {
       "distinct_from": [],
-      "family": "fontopoSOLID",
-      "id": "fontoposolid",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
       "family": "Forum",
       "id": "forum",
       "in_catalog": false,
@@ -18425,6 +18417,10 @@
     {
       "name": "FontopoORIENTAL",
       "reason": "latin"
+    },
+    {
+      "name": "fontopoSOLID",
+      "reason": "license"
     },
     {
       "name": "fontopoSUBWAY",

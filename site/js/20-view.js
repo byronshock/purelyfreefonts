@@ -9,7 +9,6 @@ const View = (() => {
     variable: 2,
     limited: 4,
     attr: 8,
-    noRedist: 16,
     windows: 128,
     macos: 256,
     linux: 512,
@@ -83,11 +82,11 @@ const View = (() => {
     return kept;
   };
 
-  // The M2 filters and the search, as one test per font index.
+  // The M2 filters and the search, as one test per font index. The index's `cat` is the site
+  // category, so "monospace" holds every monospaced font (owner ruling of 2026-09-30).
   const matcher = (state, index) => {
-    const { bits, cat, cats, lic, lics, keys } = index;
+    const { bits, cat, cats, keys } = index;
     const catIndex = state.cat ? cats.indexOf(state.cat) : -1;
-    const licSet = state.lic.length ? new Set(state.lic.map((id) => lics.indexOf(id))) : null;
     let hideMask = 0;
     for (const item of state.hide) hideMask |= HIDE_BITS[item] || 0;
     const query = state.q ? Keys.searchKey(state.q) : '';
@@ -96,13 +95,9 @@ const View = (() => {
     return (i) => {
       const b = bits[i];
       if (state.cat && cat[i] !== catIndex) return false;
-      if (state.spacing === 'proportional' && b & BIT.mono) return false;
-      if (state.spacing === 'monospaced' && !(b & BIT.mono)) return false;
       if (state.var && !(b & BIT.variable)) return false;
       if (state.nerd && !(b & BIT.nerd)) return false;
       if (b & hideMask) return false;
-      if (licSet && !licSet.has(lic[i])) return false;
-      if (state.redist && b & BIT.noRedist) return false;
       if (query) {
         if (perName) return keys[i].split('|').some((key) => key.includes(query));
         return keys[i].includes(query);
@@ -162,11 +157,13 @@ const View = (() => {
     // 6. External filters that keep the published numbers.
     order = applyExternal(order, dim, keeping, index.ids);
 
-    // 7. By name, keeping the labels.
-    if (state.sort === 'name') {
+    // 7. By name, keeping the labels; then "-desc" reverses the whole order, unranked fonts
+    // included (owner ruling of 2026-09-30, sort_header: a true reverse).
+    if (state.sort === 'name' || state.sort === 'name-desc') {
       const position = new Map(index.by_name.map((i, k) => [i, k]));
       order = order.slice().sort((a, b) => position.get(a) - position.get(b));
     }
+    if (state.sort.endsWith('-desc')) order = order.slice().reverse();
 
     // 8. The result. Notes come from every filter, for every row shown.
     const labels = order.map((i) => labelOf.get(i));

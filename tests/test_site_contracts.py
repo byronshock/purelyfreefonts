@@ -132,8 +132,9 @@ def test_sample_covers_the_step_2_cases():
     assert any(f["ranks"]["overall"]["unranked"] for f in fonts_)
     assert any(e["gate_held"] for e in entries)
     assert any("too_new" in f["flags"] for f in fonts_)
-    # licenses: not redistributable, attribution required, every class used
-    assert any(not f["license"]["redistributable"] for f in fonts_)
+    # licenses: every font redistributable (Rule 3 of 2026-09-30), attribution required,
+    # every class used
+    assert all(f["license"]["redistributable"] for f in fonts_)
     assert any(f["license"]["attribution_required"] for f in fonts_)
     assert {f["license"]["class"] for f in fonts_} == {c["id"] for c in SAMPLE["license_classes"]}
     # limited accents; every category; each system's preinstalls; a package dependency
@@ -145,6 +146,8 @@ def test_sample_covers_the_step_2_cases():
         "handwriting",
         "monospace",
     }
+    # a monospaced font the catalog files elsewhere: the site lists it under Monospace
+    assert any(f["is_monospace"] and f["category"] != "monospace" for f in fonts_)
     pre = {p["system"] for f in fonts_ for p in f["preinstalled_on"]}
     pulled = {p["system"] for f in fonts_ for p in f["pulled_in_by"]}
     assert {system_os[s] for s in pre} == {"windows", "macos", "linux", "android"}
@@ -432,21 +435,33 @@ def test_project_rank_label_follows_the_site_ruling():
     assert views["project"]["label"] == SITE_RULINGS["project_rank_label"]["value"]
 
 
-def test_spacing_filter_follows_the_site_ruling():
-    """One Spacing filter (Any / Proportional / Monospaced) on every rank; no Text only box."""
-    ruling = SITE_RULINGS["spacing_filter"]
+RULINGS_0930 = tomllib.loads(
+    (ROOT / "data" / "reviews" / "site" / "2026-09-30.toml").read_text(encoding="utf-8")
+)
+
+
+def test_filters_follow_the_site_rulings_of_2026_09_30():
+    """monospace_category, license_filter and filters_layout: no Spacing, license-group or
+    "Redistributable fonts only" filter; Monospace is a category; "No credit required" only
+    while some font needs credit; one select of systems; Sort beside the count."""
+    assert {"monospace_category", "license_filter", "filters_layout"} <= set(RULINGS_0930)
+    filters = (TEMPLATES / "_filters.html.j2").read_text(encoding="utf-8")
+    listing = (TEMPLATES / "_list.html.j2").read_text(encoding="utf-8")
     dom = section(CONTRACT, "4. DOM")
-    assert f"<legend>{ruling['label']}</legend>" in dom
-    radios = re.findall(
-        r'<input type="radio" id="f-spacing-(\w+)" name="spacing" value="(\w*)".*<!-- (\w+) -->',
-        dom,
-    )
-    assert [label for _, _, label in radios] == ruling["options"]
-    assert [(i, v) for i, v, _ in radios] == [
-        ("any", ""),
-        ("proportional", "proportional"),
-        ("monospaced", "monospaced"),
-    ]
+    for text in (filters, dom):
+        for gone in ('name="spacing"', 'name="lic"', 'name="redist"', 'id="f-sort-rank"'):
+            assert gone not in text, gone
+    assert '<fieldset id="f-cat" class="pills">' in filters
+    assert "{% if list.credit_filter %}" in filters
+    assert 'name="hide" value="attr"> No credit required</label>' in filters
+    assert '<select id="f-os" name="hide">' in filters
+    # sort_header (the same day): buttons over the list replace the Sort select
+    assert '<div id="list-sort" class="list-sort" role="group"' in listing
+    assert 'id="f-sort"' not in listing
+    assert 'id="f-sort"' not in dom
+    assert 'id="sort-rank" data-sort="rank"' in dom
+    assert 'id="sort-name" data-sort="name"' in dom
+    assert "sort_header" in RULINGS_0930
     for gone in ('id="f-mono"', 'id="f-text"', 'name="mono"', 'name="text"', "desktop: true"):
         assert gone not in CONTRACT, gone
     assert (
@@ -486,15 +501,20 @@ def test_hash_grammar_matches_the_hash_table():
     keys = re.findall(r'"(\w+)"', grammar)
     table = [row[0] for row in table_after(hash_section, "| Key | Value |")]
     assert keys == table
-    assert "spacing" in keys
     assert keys.index("nerd") == keys.index("var") + 1  # "Nerd Font available", after var
-    assert not {"mono", "text"} & set(keys)
+    assert not {"mono", "text", "spacing", "lic", "redist"} & set(keys)
     assert "Extension keys" in hash_section  # Milestone 3's keys survive State (section 9)
+    retired = re.search(r"^- \*\*Retired keys\*\*.*$", hash_section, re.MULTILINE).group(0)
+    for key in ("spacing", "lic", "redist"):  # the owner rulings of 2026-09-30
+        assert f"`{key}`" in retired, key
 
 
-def test_pulled_in_by_reaches_the_list_page():
-    """Milestone 2 step 3: the pulled_in_by tag explains "no evidence of deliberate installs"."""
-    assert "`pulled` (" in section(CONTRACT, "3. Templates")
+def test_pulled_in_by_reaches_the_details_panel():
+    """Milestone 2 step 3: the pulled_in_by tag explains "no evidence of deliberate installs".
+    Since 2026-09-30 (filters_layout) it is in the details panel, not a row badge."""
+    assert "`pulled` (" not in section(CONTRACT, "3. Templates")
+    assert '"Pulled in by"' in section(CONTRACT, "4. DOM")
+    assert "'Pulled in by'" in (ROOT / "site" / "js" / "40-details.js").read_text(encoding="utf-8")
     assert "4096 pulled in by a package" in section(CONTRACT, "7. List index JSON")
 
 

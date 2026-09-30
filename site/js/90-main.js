@@ -114,15 +114,17 @@ const Main = (() => {
   };
 
   // Recompute the view from the state, the index and the external filters, and redraw.
-  // `announce`: false (silent), true (at once) or 'typing' (after a pause).
-  const refresh = ({ announce = false } = {}) => {
+  // `announce`: false (silent), true (at once) or 'typing' (after a pause). `note` follows
+  // the count line in the announcement ("Sorted by name, Z to A").
+  const refresh = ({ announce = false, note = '' } = {}) => {
     if (!index) return null;
     const state = State.get();
     result = View.compute(state, index, extFilters());
     const message = result.shown === 0 ? noResultsText(state) : '';
     const line = Render.apply(result, { message });
-    if (announce === 'typing') Announce.typing(message || line);
-    else if (announce) Announce.say(message || line);
+    const said = message || (note ? `${line}. ${note}.` : line);
+    if (announce === 'typing') Announce.typing(said);
+    else if (announce) Announce.say(said);
     emit(state);
     return result;
   };
@@ -134,7 +136,9 @@ const Main = (() => {
       emit(State.get());
       return;
     }
-    refresh({ announce: info.source === 'typing' ? 'typing' : true });
+    // A new sort order is said too: the list's content may not change, only its order.
+    const note = previous && state.sort !== previous.sort ? FiltersUI.sortSaid(state) : '';
+    refresh({ announce: info.source === 'typing' ? 'typing' : true, note });
   };
 
   const clearFilters = () => {

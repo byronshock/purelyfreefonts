@@ -85,11 +85,14 @@
   outline: none;
 }
 
-/* One column of sections; two balanced columns on a wide panel (below), in reading order.
-   Sources and the report line span both. */
+/* One column (owner ruling of 2026-09-30, details_layout): "Type your own text", the short
+   list of essentials, the folded evidence, the report line. */
 .details-body {
   grid-area: body;
+  display: grid;
+  gap: var(--space-3);
   min-width: 0;
+  max-width: 48rem;
   font-size: var(--fs-small);
 }
 
@@ -97,11 +100,71 @@
   margin: 0 0 var(--space-2);
 }
 
+.details-summary {
+  min-width: 0;
+  container-type: inline-size;
+}
+
+.details-links {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.details-links li + li {
+  margin-top: var(--space-1);
+}
+
+/* "All ranks and sources": closed until asked for. */
+.details-evidence {
+  min-width: 0;
+  border-top: 1px solid var(--c-divider);
+}
+
+.details-evidence-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target-min);
+  padding-block: var(--space-1);
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+}
+
+.details-evidence-toggle::-webkit-details-marker {
+  display: none;
+}
+
+/* A chevron drawn with borders, as on the Details buttons, so it follows the text colour. */
+.details-evidence-toggle::before {
+  content: "";
+  flex: none;
+  width: 0.45em;
+  height: 0.45em;
+  margin-inline: 0.1em;
+  border-right: 2px solid;
+  border-bottom: 2px solid;
+  transform: rotate(-45deg);
+  transition: transform var(--duration);
+}
+
+.details-evidence[open] > .details-evidence-toggle::before {
+  transform: rotate(45deg);
+}
+
+.details-evidence[open] > .details-evidence-toggle {
+  margin-bottom: var(--space-2);
+}
+
 .details-sec {
   min-width: 0;
   margin: 0 0 var(--space-4);
-  break-inside: avoid;
   container-type: inline-size;
+}
+
+.details-pulled {
+  margin: 0 0 var(--space-4);
 }
 
 .details-h {
@@ -159,9 +222,7 @@
 }
 
 .details-more,
-.details-link-note,
-.details-nf-legend,
-.typeown-note {
+.details-link-note {
   margin: var(--space-2) 0 0;
   color: var(--c-muted);
 }
@@ -217,10 +278,6 @@
   justify-items: start;
 }
 
-.typeown-note {
-  margin: 0;
-}
-
 .typeown-label {
   font-weight: 600;
 }
@@ -265,16 +322,6 @@
 }
 
 @container details (min-width: 44rem) {
-  .details-body {
-    column-count: 2;
-    column-gap: var(--space-6);
-  }
-
-  .details-sources,
-  .details-report {
-    column-span: all;
-  }
-
   /* The desktop and project tables side by side. */
   .details-sources {
     display: grid;

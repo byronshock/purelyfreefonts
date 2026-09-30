@@ -66,8 +66,8 @@ The catalog is the overall top 500 plus the top 100 of the project rank and both
 - `related[]`: families derived from or close to this one, with an optional `note` (Adwaita Sans is derived from Inter). Both families list each other.
 - `license`:
   - `spdx` and a readable `name`;
-  - `class`, the license filter group (`open-font`, `permissive`, `attribution`, `freeware`);
-  - `redistributable` and `attribution_required`, and for the latter the `attribution` line to credit;
+  - `class`, the license class (`open-font`, `permissive`, `attribution`, `freeware`);
+  - `redistributable` (always true since Rule 3 of 2026-09-30: only redistributable fonts qualify) and `attribution_required`, and for the latter the `attribution` line to credit;
   - `text_url`, the license text that was checked, with its `text_sha256` and `checked_on` date;
   - `verified_level`: `L3` (the text matched a known license and the font's name table agrees), `ruling` (the owner ruled), or `L2`/`L1` for fonts the full check has not reached.
 - `font_file`: the upstream file the license check read, with its `url`, `sha256`, `size` and `format`. Previews are made from it. Null when the check read no file. When the family publishes only an archive, `url` names the file inside it as `<archive>.zip#<path in the archive>`, and `sha256`, `size` and `format` describe that file, not the archive.

@@ -46,14 +46,9 @@ CORE_PART = ROOT / "site" / "js" / "00-core.js"
 SAMPLE = ROOT / "tests" / "fixtures" / "catalog-site.sample.json"
 SITE_DATA = Path(os.environ.get("TFF_SITE_DATA", SAMPLE))
 
-# The wording site/js/40-details.js shows (owner approval: Milestone 2 step 4).
-REDIST_YES = (
-    "Yes. You may pass the font files on, for example inside an app or on your own website."
-)
-REDIST_NO = (
-    "No. You may use the font for anything, but not pass its files on: point people to the "
-    "official download instead."
-)
+# The wording site/js/40-details.js shows (owner approval: Milestone 2 step 4; the layout of
+# 2026-09-30, details_layout).
+EVIDENCE = "All ranks and sources"
 GATE_LINE = "Held out of the top 100: only one group of sources has evidence for it."
 STALE_LINE = "The list was updated. Reload to see details."
 REPORT_LINK = "Report a problem with this font on GitHub"  # the link names its destination
@@ -74,7 +69,7 @@ def owner_ten(doc: dict[str, Any]) -> list[str]:
     picked = [f["id"] for f in fonts[:5]]
     edge_cases = (
         lambda f: f["license"]["attribution_required"],
-        lambda f: not f["license"]["redistributable"],
+        lambda f: f["links"]["nerd"] is not None,
         lambda f: any(entry["gate_held"] for entry in f["ranks"].values()),
         lambda f: bool(f["preinstalled_on"]),
         lambda f: bool(f["pulled_in_by"]),
@@ -540,8 +535,8 @@ def test_a_source_that_may_not_publish_ranks_never_shows_one(guarded_context):
     page.goto(f"/#font={font_id}")
     _wait_ready(page, font_id)
     cell = page.locator(f"#details-{font_id} tr[data-source='{source['id']}'] td")
-    assert cell.inner_text().startswith("observed; rank not published")
-    assert "#7" not in cell.inner_text()
+    assert cell.text_content().startswith("observed; rank not published")  # folded: not shown
+    assert "#7" not in cell.text_content()
     guarded.assert_clean(page)
 
 
@@ -557,7 +552,7 @@ def test_type_own_text_loads_the_font_only_on_request(guarded_context):
     _wait_ready(page, font_id)
     button = _panel(page, font_id).locator("button.typeown-load")
     kb = round(font["font_file"]["size"] / 1000)
-    assert button.inner_text() == f"Load font ({kb} KB) to type your own text"
+    assert button.inner_text() == f"Type your own text (loads {kb} KB)"
     assert _font_requests(guarded) == []
 
     button.focus()
@@ -649,6 +644,7 @@ def test_panel_reflows_at_320_px(guarded_context):
     for font_id in ids:
         _toggle(page, font_id).click()
         _wait_ready(page, font_id)
+        _panel(page, font_id).locator("summary.details-evidence-toggle").click()  # unfold
         width = page.evaluate("document.documentElement.scrollWidth")
         assert width <= 320, f"{font_id}: page is {width}px wide"
         overflowing = page.evaluate(
@@ -672,12 +668,16 @@ def test_axe_finds_nothing_in_an_open_panel(guarded_context, scheme):
     for font_id in ids:
         _toggle(page, font_id).click()
         _wait_ready(page, font_id)
-        results = Axe().run(
-            page,
-            context=f"#details-{font_id}",
-            options={"runOnly": {"type": "tag", "values": AXE_TAGS}},
-        )
-        assert results.violations_count == 0, results.generate_report()
+        # the evidence folded, then unfolded (owner ruling of 2026-09-30, details_layout)
+        for unfold in (False, True):
+            if unfold:
+                _panel(page, font_id).locator("summary.details-evidence-toggle").click()
+            results = Axe().run(
+                page,
+                context=f"#details-{font_id}",
+                options={"runOnly": {"type": "tag", "values": AXE_TAGS}},
+            )
+            assert results.violations_count == 0, results.generate_report()
 
 
 # ------------------------------------------------------------------------ the owner's ten
@@ -687,11 +687,12 @@ def _tier_label(tier: str) -> str:
     return f"Tier {tier}"
 
 
-def _place(entry: dict[str, Any]) -> str:
+def _place(entry: dict[str, Any], *, tier: bool = True) -> str:
     if entry["unranked"]:
         return f"Not ranked: {data.UNRANKED_LABELS[entry['unranked']]}"
     bits = [f"#{entry['rank']}" if entry["rank"] else f"Band {entry['band']}"]
-    bits.append(f"tier {entry['tier']}")
+    if tier:
+        bits.append(f"tier {entry['tier']}")
     low, high = entry["range"]
     bits.append(f"likely #{low}" if low == high else f"likely #{low} to #{high}")
     return ", ".join(bits)
@@ -713,35 +714,68 @@ def _source_text(doc: dict[str, Any], source: dict[str, Any], entry: dict[str, A
     return out
 
 
-def expected_panel(doc: dict[str, Any], font: dict[str, Any]) -> dict[str, Any]:
-    """What the panel of ``font`` must show, from the site data (the Python reference)."""
+def expected_panel(doc: dict[str, Any], font: dict[str, Any], rank: str = "overall") -> dict:
+    """What the panel of ``font`` must show, from the site data (the Python reference), with
+    ``rank`` chosen in the selector. The layout is the owner's of 2026-09-30 (details_layout):
+    the essentials, then every rank and source folded in "All ranks and sources"."""
     lic = font["license"]
-    classes = {c["id"]: c["label"] for c in doc["license_classes"]}
     systems = {s["id"]: s["label"] for s in doc["systems"]}
-    license_pairs = [["License", f"{lic['name']} ({lic['spdx']})"]]
-    if lic["class"] in classes:
-        license_pairs.append(["Group", classes[lic["class"]]])
-    license_pairs.append(["Redistributable", REDIST_YES if lic["redistributable"] else REDIST_NO])
-    credit = f"Required: {lic['attribution']}" if lic["attribution_required"] else "Not required."
-    license_pairs.append(["Credit", credit])
 
     primary, designer = font["links"]["primary"], font["links"]["designer"]
-    links = [["Official download", data.destination_name(primary), primary["url"]]]
+    links = [[f"Official: {data.destination_name(primary)}", primary["url"]]]
     if designer:
-        links.append(["Designer", data.destination_name(designer), designer["url"]])
-    nerd = font["links"]["nerd"]  # the marker is its term (owner ruling of 2026-09-29)
+        links.append([f"Designer: {data.destination_name(designer)}", designer["url"]])
+    nerd = font["links"]["nerd"]  # the marker comes first (owner ruling of 2026-09-29)
     if nerd:
-        links.append([doc["nerd"]["marker"], data.nerd_link_text(nerd), nerd["url"]])
+        links.append([f"{doc['nerd']['marker']} {data.nerd_link_text(nerd)}", nerd["url"]])
+
+    credit = (
+        f"Credit required: {lic['attribution']}"
+        if lic["attribution_required"]
+        else "No credit needed."
+    )
+    formats = font["formats"]
+    if formats["variable"] and formats["static"]:
+        kinds = "Variable and static"
+    else:
+        kinds = "Variable" if formats["variable"] else "Static"
+    latin = (
+        "Basic Latin only (limited accents)"
+        if font["latin"]["coverage"] == "basic"
+        else "Accented letters"
+    )
+    essentials = [
+        ["License", f"{lic['name']} ({lic['spdx']}). {credit}"],
+        ["Font", f"{kinds} · {latin}"],
+    ]
+    if font["preinstalled_on"]:
+        names = ", ".join(systems[p["system"]] for p in font["preinstalled_on"])
+        essentials.append(["Comes with", names])
+    if font["aliases"]:
+        names = [
+            f"{a['name']} (PostScript name)" if a["relation"] == "postscript" else a["name"]
+            for a in font["aliases"]
+        ]
+        essentials.append(["Also known as", ", ".join(names)])
+    views = [v for v in doc["views"] if v["available"] and v["key"] in font["ranks"]]
+    shown = next((v for v in views if v["key"] == rank), views[0])
+    entry = font["ranks"][shown["key"]]
+    rank_now = f"{shown['label']}: {_place(entry, tier=False)}"
+    essentials.append(["Rank", rank_now + (GATE_LINE if entry["gate_held"] else "")])
 
     ranks, tiers = [], set()
-    for view in doc["views"]:
-        entry = font["ranks"].get(view["key"])
-        if not view["available"] or entry is None:
-            continue
+    for view in views:
+        entry = font["ranks"][view["key"]]
         if entry["tier"]:
             tiers.add(entry["tier"])
         ranks.append([view["label"], _place(entry), GATE_LINE if entry["gate_held"] else None])
     tier_pairs = [[_tier_label(t), doc["tiers"][t]] for t in "ABC" if t in tiers]
+    pulled = []
+    if font["pulled_in_by"]:
+        packages = "; ".join(
+            f"{p['package']} on {systems[p['system']]}" for p in font["pulled_in_by"]
+        )
+        pulled.append(["Pulled in by", packages])
 
     sources = [
         [
@@ -753,38 +787,6 @@ def expected_panel(doc: dict[str, Any], font: dict[str, Any]) -> dict[str, Any]:
         ]
         for source in doc["sources"]
     ]
-
-    formats = font["formats"]
-    tags = []
-    if font["preinstalled_on"]:
-        tags.append(
-            ["Comes with", ", ".join(systems[p["system"]] for p in font["preinstalled_on"])]
-        )
-    if font["pulled_in_by"]:
-        pulled = "; ".join(
-            f"{p['package']} on {systems[p['system']]}" for p in font["pulled_in_by"]
-        )
-        tags.append(["Pulled in by", pulled])
-    if formats["variable"] and formats["static"]:
-        tags.append(["Formats", "Variable and static"])
-    else:
-        tags.append(["Formats", "Variable" if formats["variable"] else "Static"])
-    tags.append(["Spacing", "Monospaced" if font["is_monospace"] else "Proportional"])
-    coverage = font["latin"]["coverage"]
-    tags.append(
-        [
-            "Latin coverage",
-            "Basic Latin only (limited accents)"
-            if coverage == "basic"
-            else "Extended (accented letters)",
-        ]
-    )
-    if font["aliases"]:
-        names = [
-            f"{a['name']} (PostScript name)" if a["relation"] == "postscript" else a["name"]
-            for a in font["aliases"]
-        ]
-        tags.append(["Also known as", ", ".join(names)])
 
     run_date = doc["run"]["date"]
     subject = f"Problem with {font['family']} ({font['id']})"
@@ -799,15 +801,17 @@ def expected_panel(doc: dict[str, Any], font: dict[str, Any]) -> dict[str, Any]:
     }
     return {
         "title": f"Details for {font['family']}",
-        "license": license_pairs,
-        "license_href": lic["text_url"],
+        "terms": ["Get it", *(term for term, _ in essentials)],
         "links": links,
         "link_note": primary.get("note"),
-        "nerd_legend": doc["nerd"]["legend"] if nerd else None,
+        "essentials": essentials,
+        "license_href": lic["text_url"],
+        "evidence": EVIDENCE,
+        "evidence_open": False,
         "ranks": ranks,
         "tiers": tier_pairs,
+        "pulled": pulled,
         "sources": sources,
-        "tags": tags,
         "report": report,
     }
 
@@ -816,12 +820,11 @@ def expected_panel(doc: dict[str, Any], font: dict[str, Any]) -> dict[str, Any]:
 READ_PANEL = """(id) => {
   const panel = document.getElementById(`details-${id}`);
   const q = (sel) => panel.querySelector(sel);
-  const pairs = (root) => root ? [...root.querySelectorAll('.details-pair')].map((p) =>
+  const pairs = (root) => root ? [...root.querySelectorAll(':scope > .details-pair')].map((p) =>
       [p.querySelector('dt').textContent, p.querySelector('dd').textContent]) : [];
-  const links = [...panel.querySelectorAll('.details-links .details-pair')].map((p) => {
-    const a = p.querySelector('dd a');
-    return [p.querySelector('dt').textContent, a.textContent, a.getAttribute('href')];
-  });
+  const essentials = pairs(q('.details-essentials'));
+  const links = [...panel.querySelectorAll('.details-links li')].map((li) =>
+    [li.textContent, li.querySelector('a').getAttribute('href')]);
   const ranks = [...panel.querySelectorAll('.details-rank-list .details-pair')].map((p) => {
     const gate = p.querySelector('.details-gate');
     return [p.querySelector('dt').textContent, p.querySelector('.details-place').textContent,
@@ -835,19 +838,21 @@ READ_PANEL = """(id) => {
     }));
   const issue = q('.details-report-issue');
   const email = q('.details-report-email');
-  const note = q('.details-links .details-link-note');
-  const legend = q('.details-links .details-nf-legend');
+  const note = q('.details-link-note');
+  const evidence = q('details.details-evidence');
   return {
     title: q(':scope > .details-title').textContent,
-    license: pairs(q('.details-license')),
-    license_href: q('.details-lic-link').getAttribute('href'),
+    terms: essentials.map(([term]) => term),
     links,
     link_note: note && note.textContent,
-    nerd_legend: legend && legend.textContent,
+    essentials: essentials.filter(([term]) => term !== 'Get it'),
+    license_href: q('.details-lic-link').getAttribute('href'),
+    evidence: evidence && evidence.querySelector(':scope > summary').textContent,
+    evidence_open: evidence && evidence.open,
     ranks,
     tiers: pairs(q('.details-tiers')),
+    pulled: pairs(q('.details-pulled')),
     sources,
-    tags: pairs(q('.details-tags')),
     report: {
       issue: issue && issue.getAttribute('href'),
       issue_text: issue && issue.textContent,
@@ -885,25 +890,47 @@ NERD_FONTS = [f["id"] for f in DOC["fonts"] if f["links"]["nerd"]]
 
 @pytest.mark.parametrize("font_id", NERD_FONTS)
 def test_a_nerd_font_builds_link_and_legend(guarded_context, font_id):
-    """The panel lists the Nerd Font build's page after the official and designer links, with
-    the marker as its term and the legend below (owner rulings of 2026-09-29)."""
+    """The panel lists the Nerd Font build's page after the official and designer links, the
+    marker first (owner rulings of 2026-09-29). The legend is the one above the list, not
+    repeated in the panel (owner ruling of 2026-09-30, details_layout)."""
     guarded = guarded_context()
     page = _open_page(guarded, f"/#font={font_id}")
     _wait_ready(page, font_id)
     got = page.evaluate(READ_PANEL, font_id)
     want = expected_panel(DOC, FONTS[font_id])
-    assert (got["links"], got["nerd_legend"]) == (want["links"], want["nerd_legend"])
-    mark = page.locator(f"#details-{font_id} .details-links dt .nf-mark")
+    assert got["links"] == want["links"]
+    mark = page.locator(f"#details-{font_id} .details-links li .nf-mark")
     assert mark.get_attribute("role") == "img"
     assert mark.get_attribute("aria-label") == DOC["nerd"]["label"]
     link = page.locator(f"#details-{font_id} a.details-nf-link")
     assert link.get_attribute("href") == FONTS[font_id]["links"]["nerd"]["url"]
+    assert page.locator(f"#details-{font_id}").get_by_text(DOC["nerd"]["legend"]).count() == 0
+    guarded.assert_clean(page)
+
+
+def test_the_rank_line_follows_the_selector(guarded_context):
+    """Owner ruling of 2026-09-30 (details_layout): the essentials show the rank the selector
+    shows, and the evidence stays folded until asked for."""
+    font_id = next(i for i in OWNER_TEN if "desktop_chosen" in FONTS[i]["ranks"])
+    guarded = guarded_context()
+    page = _live_page(guarded, f"/#font={font_id}")
+    _wait_ready(page, font_id)
+    got = page.evaluate(READ_PANEL, font_id)
+    assert got["essentials"] == expected_panel(DOC, FONTS[font_id])["essentials"]
+    assert got["evidence_open"] is False
+    page.select_option("#f-rank", "desktop_chosen")
+    want = expected_panel(DOC, FONTS[font_id], "desktop_chosen")["essentials"]
+    _wait_for(
+        page,
+        f"document.querySelector('#details-{font_id} .details-rank-now').textContent"
+        f" === {json.dumps(want[-1][1])}",
+    )
     guarded.assert_clean(page)
 
 
 OWNER_TEN_CASES = {
     "attribution required": lambda f: f["license"]["attribution_required"],
-    "not redistributable": lambda f: not f["license"]["redistributable"],
+    "a Nerd Font build": lambda f: f["links"]["nerd"] is not None,
     "held by the gate": lambda f: any(e["gate_held"] for e in f["ranks"].values()),
     "preinstalled": lambda f: bool(f["preinstalled_on"]),
     "pulled in by a package": lambda f: bool(f["pulled_in_by"]),
@@ -917,7 +944,7 @@ def test_owner_ten_covers_the_edge_cases():
     missing = [name for name, case in OWNER_TEN_CASES.items() if not any(map(case, fonts))]
     if not _sample_data():
         # Real data need not hold every case (the first real run has no font that needs
-        # attribution or forbids redistribution); the sample always does.
+        # attribution); the sample always does.
         if missing:
             pytest.skip(f"this data has no font that is: {', '.join(missing)}")
         return

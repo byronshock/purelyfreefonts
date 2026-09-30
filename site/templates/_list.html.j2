@@ -5,7 +5,10 @@
   and `build` from the context; a later /check/ page includes this file unchanged.
   role="list" looks redundant, but Safari drops list semantics from lists styled with
   list-style: none, and step 6 wants each font announced as a list item. #nf-legend is the
-  owner's legend for the rows' "NF" marker (config/site.toml [nerd]).
+  owner's legend for the rows' "NF" marker (config/site.toml [nerd]). #list-sort, the sort
+  buttons over the rank and name columns, ships hidden like #filters and is shown by the
+  script (owner ruling of 2026-09-30, sort_header). The buttons carry their own words for
+  each order; the script redraws them (30-filters-ui.js).
 -#}
 <div class="layout">
 {% include "_filters.html.j2" %}
@@ -19,6 +22,10 @@
 <div id="no-results" class="no-results" hidden>
 <p id="no-results-text">No fonts match these filters. Try loosening some of them.</p>
 <button type="button" id="no-results-clear">Clear filters</button>
+</div>
+<div id="list-sort" class="list-sort" role="group" aria-label="Sort the list" hidden>
+<button type="button" class="sort-btn" id="sort-rank" data-sort="rank" data-asc="best first" data-desc="least used first" data-asc-spoken="best first" data-desc-spoken="least used first" aria-pressed="true" data-dir="asc" title="Show least used first instead"><span class="visually-hidden">Sort by </span><span class="sort-label">Rank</span> <span class="sort-arrow" aria-hidden="true"></span> <span class="sort-dir"><span aria-hidden="true">best first</span><span class="visually-hidden"> best first; select to show least used first</span></span></button>
+<button type="button" class="sort-btn" id="sort-name" data-sort="name" data-asc="A&#x2013;Z" data-desc="Z&#x2013;A" data-asc-spoken="A to Z" data-desc-spoken="Z to A" aria-pressed="false" title="Sort by name"><span class="visually-hidden">Sort by </span><span class="sort-label">Name</span> <span class="sort-arrow" aria-hidden="true"></span> <span class="sort-dir"></span></button>
 </div>
 <ol id="list" class="font-list" role="list" data-index="{{ list.index_url }}" data-details="{{ list.details_url }}" data-run-date="{{ build.run_date }}">
 {% for row in list.rows %}

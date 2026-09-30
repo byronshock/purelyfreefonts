@@ -117,20 +117,24 @@ STATE_JS = """
 }
 """
 # Times every change event from its creation to the second frame after it.
+# A redraw starts with a control's change event, or with a click on a sort button over the
+# list (sort_header, 2026-09-30), which fires no change event.
 REFILTER_JS = """
 (() => {
   window.__tffRefilter = [];
-  document.addEventListener('change', (e) => {
-    const t0 = e.timeStamp;
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      window.__tffRefilter.push({
-        ms: performance.now() - t0,
-        target: e.target.id,
-        count: document.getElementById('count').textContent,
-        rows: document.querySelectorAll('#list > li.font').length,
-        hash: location.hash,
-      });
-    }));
+  const record = (target, t0) => requestAnimationFrame(() => requestAnimationFrame(() => {
+    window.__tffRefilter.push({
+      ms: performance.now() - t0,
+      target,
+      count: document.getElementById('count').textContent,
+      rows: document.querySelectorAll('#list > li.font').length,
+      hash: location.hash,
+    });
+  }));
+  document.addEventListener('change', (e) => record(e.target.id, e.timeStamp), true);
+  document.addEventListener('click', (e) => {
+    const button = e.target.closest('[data-sort]');
+    if (button) record(button.id, e.timeStamp);
   }, true);
 })();
 """
@@ -410,16 +414,16 @@ def _refilter_steps(ranks: list[str]) -> list[tuple[str, str, str | None]]:
         ("check", "#f-cat-serif", None),
         ("check", "#f-cat-sans-serif", None),
         ("check", "#f-cat-all", None),
-        ("check", "#f-spacing-proportional", None),
-        ("check", "#f-spacing-monospaced", None),
-        ("check", "#f-spacing-any", None),
+        ("check", "#f-cat-monospace", None),
+        ("check", "#f-cat-display", None),
+        ("check", "#f-cat-all", None),
         ("check", "#f-var", None),
         ("uncheck", "#f-var", None),
         ("check", "#f-hide-limited", None),
-        ("check", "#f-redist", None),
-        ("check", "#f-hide-windows", None),
-        ("check", "#f-sort-name", None),
-        ("check", "#f-sort-rank", None),
+        ("check", "#f-nerd", None),
+        ("select", "#f-os", "windows"),
+        ("click", "#sort-name", None),
+        ("click", "#sort-rank", None),
     ]
     k = 0
     while len(steps) < REFILTER_STEPS:
@@ -445,6 +449,8 @@ def _refilter_once(
                 page.select_option(selector, value)
             elif action == "check":
                 page.check(selector)
+            elif action == "click":
+                page.click(selector)
             else:
                 page.uncheck(selector)
             for _ in range(200):

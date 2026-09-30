@@ -60,6 +60,7 @@ Unknown IDs are excluded.
 **License classes and previews (D3).**
 
 - **Qualify:** CC-BY qualifies, with an "attribution" badge. An informal freeware grant qualifies only if it explicitly allows any use.
+- **Redistribution (Rule 3, owner ruling of 2026-09-30):** a license must also let anyone pass the font files on. A grant that allows any use but forbids redistribution is excluded: in the 2026-09-29 run, the 14 families under fontopo's free license, none of them in the catalog. Before that ruling such fonts qualified and the site offered a "Redistributable fonts only" option.
 - **Excluded in v1:**
   - CC-BY-SA;
   - GPL/LGPL without the font exception;
@@ -70,7 +71,7 @@ Unknown IDs are excluded.
   - fonts with no license found. Claude researches any such family that would otherwise reach the overall top 700 before it drops out (owner ruling of 2026-09-26), and a license found goes to the owner as a gate LIC ruling that names it (the first 25 were ruled on 2026-09-28). Each month the review pack lists these families with the overall order each would get if its license were found, from a rerun of the ranking on a copy of the build.
 - **Previews (`preview_ok`):** a font may be previewed on our site only if it is redistributable. We serve the upstream files unchanged: no subsetting or format conversion of fonts with a Reserved Font Name. Whether conversion is fine under the OFL is *unverified*, so we avoid it.
 
-`config/licenses.toml` lists the licenses that qualify, in the groups the site's license filter shows, and the licenses that are excluded. A license it doesn't list is excluded. The owner's rulings on particular licenses and fonts are in `data/reviews/licenses/` (gate LIC) and `data/reviews/l3/` (gate L3).
+`config/licenses.toml` lists the licenses that qualify, in the license classes each font's details name, and the licenses that are excluded. A license it doesn't list is excluded. The owner's rulings on particular licenses and fonts are in `data/reviews/licenses/` (gate LIC) and `data/reviews/l3/` (gate L3).
 
 **Latin (D4).** A Google family is Latin when Google's metadata says so: its primary script is Latin or unset, and it has a `latin` subset. About 1,250 of Google's 1,946 families pass this strict test. It misses dual-script families such as Poppins (Latin and Devanagari), so those join from an allowlist the owner reviews.
 

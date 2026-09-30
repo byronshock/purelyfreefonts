@@ -76,11 +76,13 @@ def test_owner_rulings_are_applied(doc: str) -> None:
         h.split(".", 1)[0]: b for h, b in sections(sections(doc, "##")["Tasks"], "###").items()
     }
     views = site_views()
-    assert "Spacing" in tasks["1"]
-    assert "Monospaced" in tasks["1"]
-    assert "Spacing" in tasks["2"]
-    assert "Proportional" in tasks["2"]
+    # Owner rulings of 2026-09-30: no Spacing or redistribution filter; Category Monospace.
+    assert "Spacing" not in doc
+    assert "Redistributable fonts only" not in doc
+    assert "Category: *Monospace*" in tasks["1"]
+    assert '"Accented letters"' in tasks["2"]
     assert '"Hide fonts that come with"' in tasks["4"]
+    assert '"All ranks and sources"' in tasks["6"]
     assert views["desktop_chosen"] in tasks["5"]
     assert views["desktop_installed"] in tasks["5"]
 
@@ -94,24 +96,21 @@ def test_names_match_the_site(doc: str) -> None:
 
     templates = ROOT / "site" / "templates"
     filters = (templates / "_filters.html.j2").read_text(encoding="utf-8")
-    for text in (
-        "Hide fonts that come with",
-        "Hide limited accents",
-        "Redistributable fonts only",
-        "Spacing",
-        "Proportional",
-        "Monospaced",
-        ">Filters<",
-    ):
+    for text in ("Hide fonts that come with", "Accented letters", ">Filters<"):
         assert text.strip("<>") in doc, text
         assert text in filters, text
+    assert "{{ cat.label }}" in filters  # a category label
+    assert "*Monospace*" in doc
+    details = (ROOT / "site" / "js" / "40-details.js").read_text(encoding="utf-8")
+    assert "All ranks and sources" in details
     assert "How we rank" in doc
     assert "How we rank" in (templates / "base.html.j2").read_text(encoding="utf-8")
 
     build = (ROOT / "src" / "tff_site" / "build.py").read_text(encoding="utf-8")
-    for badge in ("Limited accents", "Not redistributable", "Comes with", "Pulled in by"):
+    for badge in ("Limited accents", "Comes with"):
         assert badge in doc, badge
         assert f'"{badge}' in build, badge
+    assert "'Pulled in by'" in details  # in the details panel since 2026-09-30
 
 
 def test_measures_and_participants(doc: str) -> None:

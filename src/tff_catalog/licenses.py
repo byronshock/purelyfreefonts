@@ -15,7 +15,11 @@
 
 Per family (``Verdict``): the agreed expression, its class (allowed, excluded
 or ruling), redistributable, attribution_required and ``preview_ok`` (D3:
-allowed and redistributable). Every eligible family gets a class:
+allowed and redistributable). Rule 3 (owner ruling of 2026-09-30,
+``redistributable_only``) lets a family in only if its license may also be
+redistributed, so an allowed class is always redistributable: a licenses.toml
+entry with ``redistributable = false`` classifies as excluded. Every eligible
+family gets a class:
 
 - no license fact at all: excluded ("no license found", D3), not queued;
 - facts, but none readable: class "ruling" (NOASSERTION), queued;
@@ -28,10 +32,12 @@ Owner rulings come from gate LIC (``reviews.gate_dir(paths, "LIC")``, that is
 ``LIC-<family id>`` for a family and ``LIC-spdx-<slug>`` for a license
 (``family_question_id``, ``license_question_id``). Every question has the
 same four options (``OPTIONS``): (a) qualifies and redistributable, (b)
-qualifies but not redistributable, (c) excluded, (d) research more. An answer
-may add values: ``spdx`` (the expression the ruling is about, for a family;
-required for (a) or (b) when the sources name no license or the provisional
-one is excluded), ``group`` (the site's license-class filter) and
+free to use but not redistributable, which excludes it under Rule 3 (before
+2026-09-30 it qualified, so a stored (b) answer now excludes too), (c)
+excluded, (d) research more. An answer may add values: ``spdx`` (the
+expression the ruling is about, for a family; required for (a) when the
+sources name no license or the provisional one is excluded), ``group`` (the
+site's license class) and
 ``attribution_required``. A "d" answer keeps the item in the queue. A ruling
 whose id matches no listed license and no eligible family is logged.
 
@@ -91,7 +97,7 @@ SOURCE_ORDER = (
 
 OPTIONS = (
     "Qualifies and redistributable",
-    "Qualifies but not redistributable",
+    "Excluded: free to use but not redistributable (Rule 3)",
     "Excluded",
     "Research more",
 )
@@ -102,13 +108,19 @@ CHOICES = ("a", "b", "c", "d")
 # first group names the class.
 GROUP_ORDER = ("open-font", "permissive", "attribution", "freeware")
 
-# Site filter group for a ruled license or family when nothing better is known:
-# (a) redistributable, (b) not redistributable ("Other free-use grants").
-DEFAULT_GROUPS = {"a": "permissive", "b": "freeware"}
+# License class for a license or family ruled (a) when nothing better is known.
+# (b) no longer lets a font in (Rule 3, 2026-09-30), so it has no group.
+DEFAULT_GROUPS = {"a": "permissive"}
+
+# The answers that keep a license or family out: (c), and (b) under Rule 3.
+EXCLUDING = frozenset({"b", "c"})
+NOT_REDISTRIBUTABLE_REASON = (
+    "free to use but may not be redistributed (Rule 3: only redistributable fonts qualify)"
+)
 
 # gate LIC (rec): Claude's recommended answer per ruling-class license, and the
-# site filter group if the owner answers (a) or (b). A license missing here is
-# recommended (d), research more.
+# license class if the owner answers (a). A license missing here is recommended
+# (d), research more.
 RULING_ADVICE: dict[str, tuple[str, str | None]] = {
     "Bitstream-Vera": ("a", "open-font"),
     "Bitstream-Charter": ("a", "open-font"),
@@ -530,6 +542,8 @@ def _leaf_class(node: _Id, cfg: LicensesConfig) -> LicenseClass:
     key = _render(node)
     if key in cfg.allowed:
         entry = cfg.allowed[key]
+        if not entry.redistributable:
+            return LicenseClass(key, "excluded", reason=NOT_REDISTRIBUTABLE_REASON)
         return LicenseClass(
             key,
             "allowed",
@@ -747,14 +761,16 @@ def apply_license_rulings(
         old = allowed.get(spdx)
         for table in (allowed, excluded, ruling):
             table.pop(spdx, None)
-        if answer.choice == "c":
+        if answer.choice in EXCLUDING:
+            if answer.choice == "b":
+                how = f"{how} ({NOT_REDISTRIBUTABLE_REASON})"
             excluded[spdx] = ExcludedLicense(reason=how)
             continue
         advice = RULING_ADVICE.get(spdx, (None, None))[1]
         allowed[spdx] = AllowedLicense(
             name=str(values.get("name", old.name if old else spdx)),
             group=_group(values, old.group if old else advice, answer.choice),
-            redistributable=answer.choice == "a",
+            redistributable=True,  # only (a) gets here (Rule 3)
             attribution_required=_flag(
                 answer,
                 values,
@@ -793,9 +809,9 @@ def _promote_rulings(cfg: LicensesConfig, choice: str) -> LicensesConfig:
 def _apply_family_ruling(check: Check, answer: Answer, day: date, cfg: LicensesConfig) -> Check:
     """The family's class as the owner ruled it; "d" keeps it in the queue.
 
-    An (a) or (b) answer must name the license (``spdx``) when the sources name
-    none, or when the provisional one is excluded: otherwise the catalog would
-    publish, say, CC-BY-SA-4.0 as an allowed license.
+    An (a) answer must name the license (``spdx``) when the sources name none,
+    or when the provisional one is excluded: otherwise the catalog would
+    publish, say, CC-BY-SA-4.0 as an allowed license. (b) and (c) exclude.
     """
     v = check.verdict
     choice = _choice(answer)
@@ -812,7 +828,9 @@ def _apply_family_ruling(check: Check, answer: Answer, day: date, cfg: LicensesC
             spdx = canonical(spdx)
         except ValueError as exc:
             raise RulingError(f"{answer.id}: spdx {spdx!r}: {exc}") from exc
-    if choice == "c":
+    if choice in EXCLUDING:
+        if choice == "b":
+            how = f"{how} ({NOT_REDISTRIBUTABLE_REASON})"
         lic = LicenseClass(spdx or NOASSERTION, "excluded", reason=how)
     else:
         if spdx is None:
@@ -828,7 +846,7 @@ def _apply_family_ruling(check: Check, answer: Answer, day: date, cfg: LicensesC
             spdx,
             "allowed",
             group=_group(values, base.group if ok else None, choice),
-            redistributable=choice == "a",
+            redistributable=True,  # only (a) gets here (Rule 3)
             attribution_required=_flag(
                 answer, values, "attribution_required", bool(ok and base.attribution_required)
             ),
@@ -877,7 +895,7 @@ def _family_item(check: Check, fam: Family) -> QueueItem:
         "Does it qualify, and may it be redistributed?"
     )
     if v.spdx is None or v.license is None or v.license.status == "excluded":
-        text += " An answer of (a) or (b) must name the license it is under (spdx)."
+        text += " An answer of (a) must name the license it is under (spdx)."
     question = reviews.Question(GATE, qid, text, OPTIONS, _recommend(v.license, check.ruling_ids))
     return QueueItem(qid, check.kinds[0], fam.id, (fam.id,), detail, question)
 

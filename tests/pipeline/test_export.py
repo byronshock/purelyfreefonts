@@ -12,8 +12,9 @@ The families, and what each one exercises:
   system, so Arch and Debian abstain in most chosen, overall and Coding.
 - ``gamma-serif``: CC BY (attribution); held past 100 by the two-group gate.
 - ``delta-display``: every term too new.
-- ``epsilon-hand``: a free-use grant that forbids redistribution (no preview);
-  in the 251-500 band; license at an owner ruling.
+- ``epsilon-hand``: a free-use grant ("Other free-use grants"; redistributable,
+  as Rule 3 requires since 2026-09-30), with no specimen; in the 251-500 band;
+  license at an owner ruling.
 - ``kappa-sans``: desktop evidence only from abstaining Linux sources, so it
   is unranked in most chosen ("no deliberate evidence") but ranked overall.
 - Developers & apps: every source is in the npm registry group, so no font
@@ -350,7 +351,7 @@ LICENSES = {
     "beta-mono": allowed("MIT", "permissive"),
     "gamma-serif": allowed("CC-BY-4.0", "attribution", credit=True),
     "delta-display": allowed("OFL-1.1", "open-font"),
-    "epsilon-hand": allowed("LicenseRef-Epsilon-Free", "freeware", redistributable=False),
+    "epsilon-hand": allowed("LicenseRef-Epsilon-Free", "freeware"),
     "kappa-sans": allowed("OFL-1.1", "open-font"),
     "alpha-slab": allowed("OFL-1.1", "open-font"),
     "zeta-sans": LicenseClass("LicenseRef-Zeta", "ruling", reason="needs the owner"),
@@ -1012,13 +1013,18 @@ def test_license_block(built) -> None:
     assert doc["gamma-serif"]["font_file"] is None  # the L3 check read no file
 
 
-def test_no_redistribution_means_no_preview(built) -> None:
-    _, docs = built
-    catalog = fonts(docs[export.CATALOG_FILE])["epsilon-hand"]
-    site = fonts(docs[export.SITE_FILE])["epsilon-hand"]
-    assert catalog["preview_ok"] is False
-    assert catalog["font_file"] is not None  # a fact about the license check
-    assert (site["preview_ok"], site["preview"], site["font_file"]) == (False, None, None)
+def test_export_refuses_a_font_that_may_not_be_redistributed(tmp_path: Path) -> None:
+    # Rule 3 (owner ruling of 2026-09-30): stage "licenses" excludes such a font, so one
+    # reaching export is a bug, not data to publish.
+    ctx = make_build(tmp_path, previews=PREVIEWS)
+    grant = allowed("LicenseRef-Epsilon-Free", "freeware", redistributable=False)
+    now = verdicts()
+    now["epsilon-hand"] = dataclasses.replace(now["epsilon-hand"], license=grant, preview_ok=False)
+    stageio.dump_stage(ctx.paths, "licenses", now)
+    with pytest.raises(
+        export.ExportError, match=r"epsilon-hand: .* not redistributable \(Rule 3\)"
+    ):
+        export.run(ctx)
 
 
 def test_previews_are_merged_into_both_files(built) -> None:

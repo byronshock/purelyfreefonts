@@ -228,7 +228,8 @@ def test_each_row_has_its_parts(dom, doc):
             assert squash(fallback.text) == "Preview not available yet."
 
         meta = row.find("p", class_="font-meta")
-        assert squash(meta.find(class_="font-cat").text) == data.CATEGORY_LABELS[font["category"]]
+        category = data.CATEGORY_LABELS[data.site_category(font)]  # Monospace if monospaced
+        assert squash(meta.find(class_="font-cat").text) == category
         assert squash(meta.find(class_="font-lic").text) == font["license"]["name"]
 
         download = row.find("a", class_="download")
@@ -264,9 +265,8 @@ def test_badges_follow_the_contract_order(dom, doc):
         assert keys == sorted(keys, key=BADGE_ORDER.index)
         assert keys, "an empty tag list is left out"
         seen.update(keys)
-        assert ("noredist" in keys) == (not font["license"]["redistributable"])
         assert ("variable" in keys) == font["formats"]["variable"]
-        assert ("monospace" in keys) == font["is_monospace"]
+        assert ("attribution" in keys) == font["license"]["attribution_required"]
     if doc.get("synthetic"):
         assert seen == set(BADGE_ORDER), set(BADGE_ORDER) - seen
 
@@ -320,39 +320,54 @@ def test_filter_controls_match_the_hash(dom, doc):
     assert radios(search, "cat") == [("f-cat-all", "", True, "Any")] + [
         (f"f-cat-{k}", k, False, v) for k, v in data.CATEGORY_LABELS.items()
     ]
-    assert radios(search, "spacing") == [
-        ("f-spacing-any", "", True, "Any"),
-        ("f-spacing-proportional", "proportional", False, "Proportional"),
-        ("f-spacing-monospaced", "monospaced", False, "Monospaced"),
+    assert "pills" in search.find(id="f-cat").classes
+    # Owner rulings of 2026-09-30: no Spacing, license-group or redistribution filter.
+    for name in ("spacing", "lic", "redist"):
+        assert search.find_all("input", name=name) == [], name
+    for gone in ("f-mono", "f-text", "f-spacing", "f-redist", "f-sort-rank"):
+        assert dom.find(id=gone) is None, gone
+    credit = any(f["license"]["attribution_required"] for f in doc["fonts"])
+    assert radios(search, "hide") == [
+        ("f-hide-limited", "limited", False, "Accented letters"),
+        *([("f-hide-attr", "attr", False, "No credit required")] if credit else []),
     ]
-    assert search.find(id="f-spacing").find("legend").text == "Spacing"
-    assert [(i, v) for i, v, _, _ in radios(search, "sort")] == [
-        ("f-sort-rank", "rank"),
-        ("f-sort-name", "name"),
+    systems = search.find("select", id="f-os")
+    assert systems.attrs["name"] == "hide"
+    assert squash(dom.find("label", for_="f-os").text) == "Hide fonts that come with"
+    assert [(o.attrs["value"], squash(o.text)) for o in systems.find_all("option")] == [
+        ("", "Nothing"),
+        *data.OS_LABELS.items(),
     ]
-    assert [(i, v) for i, v, _, _ in radios(search, "lic")] == [
-        (f"f-lic-{c['id']}", c["id"]) for c in doc["license_classes"]
-    ]
-    assert [v for _, v, _, _ in radios(search, "hide")] == [
-        "limited",
-        "attr",
-        "windows",
-        "macos",
-        "linux",
-        "android",
-    ]
-    assert [(i, v) for i, v, _, _ in radios(search, "var")] == [("f-var", "1")]
+    # owner ruling of 2026-09-30 (variable_label): not "Variable", which reads as "proportional"
+    assert radios(search, "var") == [("f-var", "1", False, "Adjustable weight (variable font)")]
     assert radios(search, "nerd") == [("f-nerd", "1", False, "Nerd Font available")]
     nerd = search.find("input", id="f-nerd")
-    assert nerd.parent.parent.attrs["id"] == "f-type"  # beside "Variable fonts only"
+    assert nerd.parent.parent.attrs["id"] == "f-type"  # beside "Adjustable weight"
     assert nerd.attrs["aria-describedby"] == "nf-legend"
-    assert [(i, v) for i, v, _, _ in radios(search, "redist")] == [("f-redist", "1")]
-    redist = search.find("input", id="f-redist")
     assert not any("checked" in i.attrs for i in search.find_all("input", type="checkbox"))
-    help_text = squash(dom.find(id=redist.attrs["aria-describedby"]).text)
-    assert "Redistributing means" in help_text
-    for gone in ("f-mono", "f-text"):
-        assert dom.find(id=gone) is None
+    # Sort: buttons over the list's columns, outside the filters, hidden until the script
+    # shows them (owner ruling of 2026-09-30, sort_header).
+    bar = dom.find("div", id="list-sort")
+    assert "hidden" in bar.attrs
+    assert (bar.attrs["role"], bar.attrs["aria-label"]) == ("group", "Sort the list")
+    assert search.find(class_="sort-btn") is None
+    buttons = bar.find_all("button")
+    assert [(b.attrs["id"], b.attrs["data-sort"], b.attrs["aria-pressed"]) for b in buttons] == [
+        ("sort-rank", "rank", "true"),
+        ("sort-name", "name", "false"),
+    ]
+    rank, name = buttons
+    assert (rank.attrs["data-asc"], rank.attrs["data-desc"]) == ("best first", "least used first")
+    assert (name.attrs["data-asc"], name.attrs["data-desc"]) == ("A\u2013Z", "Z\u2013A")
+    assert (name.attrs["data-asc-spoken"], name.attrs["data-desc-spoken"]) == ("A to Z", "Z to A")
+    assert rank.attrs["data-dir"] == "asc"
+    assert "data-dir" not in name.attrs
+    assert (
+        squash(rank.text) == "Sort by Rank best first best first; select to show least used first"
+    )
+    assert squash(name.text) == "Sort by Name"
+    for button in buttons:
+        assert button.find("span", class_="sort-arrow").attrs["aria-hidden"] == "true"
     toggle = search.find("button", id="f-toggle")
     assert toggle.attrs["aria-controls"] == "f-more"
     assert toggle.attrs["aria-expanded"] == "false"
@@ -375,17 +390,28 @@ def test_the_nerd_legend_is_the_owners(dom, doc):
         "count",
         "nf-legend",
     ]
+    assert results[-2].attrs["id"] == "list-sort"  # the sort buttons sit right over the list
 
 
 SITE_RULINGS_0929 = tomllib.loads(
     (ROOT / "data" / "reviews" / "site" / "2026-09-29.toml").read_text(encoding="utf-8")
 )
+SITE_RULINGS_0930 = tomllib.loads(
+    (ROOT / "data" / "reviews" / "site" / "2026-09-30.toml").read_text(encoding="utf-8")
+)
+# The note's sentence as the owner changed it on 2026-09-30 (front_page_lead_sharing).
+NOTE_0929 = "Some of these fonts ask you to credit the designer, or don't let you pass the font files on, and we mark those."
+NOTE_0930 = "Some of these fonts ask you to credit the designer, and we mark those."
 
 
 def test_the_front_page_note_is_the_owners(dom):
     """The owner's note, word for word, in both of its copies (site rulings of 2026-09-29,
     why_not_listed): a frame for wide screens, and a folded one for phones."""
     ruling = SITE_RULINGS_0929["why_not_listed"]
+    change = SITE_RULINGS_0930["front_page_lead_sharing"]["ruling"]
+    assert NOTE_0929 in ruling["text"]
+    assert NOTE_0930 in change
+    text = ruling["text"].replace(NOTE_0929, NOTE_0930)
     main = dom.find("main")
     wide = main.find("div", class_="why-wide")
     fold = main.find("details", class_="why-fold")
@@ -395,13 +421,15 @@ def test_the_front_page_note_is_the_owners(dom):
     assert squash(wide.find("h2").text) == ruling["heading"]
     assert squash(fold.find("summary").text) == ruling["heading"]
     for copy in (wide, fold):
-        assert squash(copy.find("p").text) == ruling["text"]
+        assert squash(copy.find("p").text) == text
         (link,) = copy.find("p").find_all("a")
         assert link.attrs["href"] == "mailto:admin@trulyfreefonts.com"
         assert squash(link.text) == "admin@trulyfreefonts.com"
     # The wide frame floats beside the lead and the privacy note, so it comes before them.
     kids = [n.attrs.get("class") or n.tag for n in main.elements()]
     assert kids[:6] == ["h1", "why why-wide", "lead", "privacy-note", "why why-fold", "layout"]
+    # The lead, in the owner's wording of 2026-09-30.
+    assert f'"{squash(main.find("p", class_="lead").text)}"' in change
 
 
 def test_count_and_no_results(dom, doc):
@@ -534,7 +562,8 @@ def test_narrow_screens_put_the_filters_behind_the_toggle(browser, site_url):
         assert not page.is_visible("#f-more")
         page.evaluate(OPEN_PANEL, True)
         assert page.is_visible("#f-more")
-        assert page.is_visible("#f-redist")
+        assert page.is_visible("#f-os")
+        assert page.is_visible("#list-sort")  # Sort sits over the list, outside the panel
     finally:
         context.close()
 

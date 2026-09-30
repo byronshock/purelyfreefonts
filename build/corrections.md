@@ -2183,11 +2183,11 @@ Credited builds and bundles, and keys a key-level floor changed.
 
 | Source | Data date | Observed | Censored | Too new | Merged into parent | Flagged | Abstaining in most chosen |
 |---|---|---|---|---|---|---|---|
-| almanac | 2025-07-01 | 48 | 1603 | 82 | 22 | 0 | 0 |
+| almanac | 2025-07-01 | 48 | 1602 | 82 | 22 | 0 | 0 |
 | arch | 2026-08-31 | 148 | 101 | 7 | 0 | 97 | 18 |
 | debian | 2026-09-25 | 150 | 50 | 0 | 0 | 84 | 90 |
 | ecosystems | 2026-09-26 | 263 | 1304 | 0 | 0 | 15 | 0 |
-| fot | 2026-09-23 | 175 | 1570 | 10 | 0 | 0 | 0 |
+| fot | 2026-09-23 | 175 | 1569 | 10 | 0 | 0 | 0 |
 | github | 2026-09-26 | 72 | 0 | 0 | 0 | 14 | 0 |
 | google | 2026-09-26 | 1505 | 0 | 4 | 0 | 0 | 0 |
 | homebrew | 2026-09-26 | 302 | 1329 | 11 | 0 | 9 | 0 |
