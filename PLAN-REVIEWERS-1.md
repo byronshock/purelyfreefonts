@@ -17,6 +17,13 @@ Every factual claim below was checked against the live site, the catalog or the 
 
 **Status (2026-09-30):** plan written. The owner has agreed to the outside reviewer's three priorities, which set the order of work, but no ruling is recorded in AUTHORITY.md yet and nothing is built. Step 1 comes first.
 
+**Since the reviews** (owner decisions of 2026-09-30, recorded and built by the lead session on branch `claude/projects-default`):
+- The fused Overall rank retires.
+- The list opens on the Project rank, now labelled **"Projects: most used"** in place of "Used in projects". The other ranks stay selectable.
+- The records are `data/reviews/method/2026-09-30.toml` (`overall_retired`) and `data/reviews/site/2026-09-30.toml` (`default_rank_project`, which also holds the label), plus AUTHORITY.md's D12 and M2-D1.
+
+This plan follows those decisions. Wherever it says "the default view", it means "Projects: most used".
+
 ## Priorities
 
 The owner: "I agree with the reviewer's priorities." In the reviewer's words, the three changes that matter most before launch are:
@@ -49,6 +56,8 @@ Tick each item as soon as it is done and verified. Checklists nest: a parent is 
 5. **The rest:** steps 2, 3, 4, 6 and 10, then step 5's second part, which waits for step 2.
 6. Step 11.
 
+Steps 4, 5, 8 and 9b change the templates, the no-JavaScript note or the front-page copy. They start from `origin/main` after the lead's `claude/projects-default` has merged, so the two don't conflict.
+
 Priorities 1 and 2, and steps 3, 4 and 6, land before usability round 1, so testers see the changed site. Priority 3 lands before the A–Z list or the inventory check is added to the list page.
 
 ---
@@ -61,6 +70,7 @@ Priorities 1 and 2, and steps 3, 4 and 6, land before usability round 1, so test
 - [ ] **"Why isn't my favorite free font here?" comes after the fonts,** on wide screens and phones. It becomes a short conversation with the reader and ends with the tip link. It also appears when a search finds nothing (step 5). This replaces `why_not_listed_layout` of 2026-09-29. (O; C items 3 and 5; R design 1)
 - [ ] **Funding, amended.** It now reads "A donation button on the site, and nothing more: no donation strategy or fundraising work." The amendment adds one short pitch, at the end of that note: the owner's idea to "sell the reader on buying me coffee". The Stripe Payment Link stays. Q7 settles the wording.
 - [ ] **"Popularity" replaces "Rank" over the score column.** (O note 2) Q2 settles the rest of the wording.
+- **The default view is "Projects: most used"**, and Overall retires. The owner chose the name in this plan's session, from four options Claude offered, after calling "Popularity (Projects)" "closer, still not there". It matches "Desktop: most chosen" and "Desktop: most installed", so the view name needn't repeat "Popularity". **The lead session records it**, with `default_rank_project`; this plan doesn't record it again.
 - [ ] **The outside reviewer's three priorities set the order of this work.** ("I agree with the reviewer's priorities.") Within them:
   - **The homepage's claims change to match the evidence** (priority 1). Q3 only confirms the exact sentences.
   - **"Comes with" names the systems** (priority 1, settling Q4). For example, Open Sans's row says "Comes with CachyOS, EndeavourOS", not "Comes with Linux". This amends the "Rows" part of **Filters (2026-09-30)**.
@@ -71,19 +81,22 @@ Priorities 1 and 2, and steps 3, 4 and 6, land before usability round 1, so test
 
 **1b. Questions for the owner,** asked in chat as grouped single-select questions, each with Claude's recommendation first:
 - [ ] **Q1. The score's scale.** (O note 4; C items 1–2; R design 3)
-  - **Today:** 100·Φ(z) (`score_curve`). Overall shows 53–99. How we rank says "a font scoring 90 stands above about 90% of them", which is wrong: the 500 listed fonts are the top of about 2,000 tracked families, yet the last shows 53.
+  - **Today:** 100·Φ(z) (`score_curve`). The listed fonts in "Projects: most used", now the default, run from 33 to 100. The retired Overall ran from 53 to 99. How we rank says "a font scoring 90 stands above about 90% of them", which is wrong. The 500 listed fonts are the top of about 2,000 tracked families, so even the last should stand above about 75% of them, yet the retired Overall's last font showed 53, and fonts placed in "Projects: most used" go as low as 33.
   - **(a) Recommended, the owner's idea:** each view's listed fonts span 1–100. The least popular listed font gets 1, the most popular gets 100, and fonts in between are placed linearly on the engine's score, so the gaps between fonts stay.
   - **(b)** keep 100·Φ(z) and rewrite the sentence.
   - **(c)** the font's percentile by position. This loses the gaps.
   - **Either way:** it replaces `score_curve`, `catalog-site.json` v1 is untouched, and TASK-4's triangles compare the stored score, not the number shown.
-- [ ] **Q2. Words.** (O notes 2–3; C item 4)
-  - The select's label: keep "Rank", or "Measured by", or "Popular with".
+- [ ] **Q2. Words.** (O notes 2–3; C item 4) The default view's name is settled ("Projects: most used", step 1a), and so is "Popularity" over the scores. What's left:
+  - The select's label: keep "Rank", or "Measured by", or "Popularity by". Its options read "Projects: most used", "Desktop: most chosen", and so on.
   - The sort button's order words: today "best first" and "least used first" (`sort_header`), or "most popular first" and "least popular first".
   - The page title: "How we measure popularity", or the owner's "How we evaluate popularity".
   - The nav link: the phone nav is already full at 375 px, so a short link such as "How it works".
   - Claude recommends keeping "rank" only in a font's details, for its exact place.
 - [ ] **Q3. Wording that claims too much.** (R round 1 and priority 1) The change is agreed. Only the sentences need confirming.
-  - The lead's "They are ranked by how many people install them and use them in their work" becomes "They are ranked by public install and usage counts" (the reviewer's words), or a longer version, "They are ranked by public counts of installs and use in websites, code and apps".
+  - The lead's "They are ranked by how many people install them and use them in their work" changes.
+    - **Recommended:** the lead session's proposal, which fits the new default view: "They are ranked by how widely they are used in websites, code and apps."
+    - The reviewer's "They are ranked by public install and usage counts" no longer fits, because the default view counts no installs.
+    - The lead session is asking the owner about this sentence too. **Ask it once:** whichever session asks first records the answer, and the other takes it from there.
   - The note's "with no limits on how they're used" becomes About's "with no use restrictions". The SIL Open Font License, used by 453 of the 500 fonts, does set conditions.
   - This replaces the wording of `front_page_lead_sharing`.
 - [x] **Q4. "Comes with Linux".** (R round 1) **Settled by priority 1** (step 1a): the row names the systems. Open Sans carries the tag only because CachyOS and EndeavourOS ship it.
@@ -134,14 +147,14 @@ Priorities 1 and 2, and steps 3, 4 and 6, land before usability round 1, so test
 - [ ] **Q12. Stop shipping the list in full in the HTML.** (priority 3; R round 3)
   - **What's actually doubled:** little. list.json holds filter and score data (ids, search keys, per-view scores, flags, categories), while the rows' HTML holds what is displayed. The weight is the HTML: all 500 rows, 639 KB raw, 48.9 KB compressed.
   - **Measured:** writing only the first 100 rows into the HTML takes it to 12.7 KB. Carrying rows 101–500 as data costs at most 17.1 KB (every text and link, before any trimming). That's a net saving of about 19 KB compressed on the first load, on top of Brotli.
-  - **Cost:** a contract change. Today `Render` only reorders rows the server wrote, and without JavaScript the page shows "the full list by overall rank" (site/CONTRACT.md §3).
-  - **(a) Recommended, the owner's refinement:** the front page's HTML holds the top 100 rows of Overall, and a static full-list page keeps every row a click away.
+  - **Cost:** a contract change. Today `Render` only reorders rows the server wrote, and without JavaScript the page shows the full list. The lead's `claude/projects-default` changes that list's order to the default view.
+  - **(a) Recommended, the owner's refinement:** the front page's HTML holds the top 100 rows of the default view, "Projects: most used", and a static full-list page keeps every row a click away.
     - **With JavaScript:** the script builds rows 101–500 from the data on load, so these visitors never need the full page.
       - Find-in-page works once the script has run.
       - The script's time counts against M2 step 10's blocking-time budget of 200 ms.
       - The per-row `<noscript>` specimen copies drop to 100.
     - **Without JavaScript:** visitors see the 100 and a plain link, "Show all 500 fonts", to a full-list page such as `/all/`.
-      - That page is static, like today's front page: every row, in Overall order.
+      - That page is static, like today's front page: every row, in the default view's order.
       - Only visitors who follow the link download it (about 49 KB compressed), so it sits outside the front page's budget.
       - The note reads something like: "Filters and search need JavaScript. These are the top 100; show all 500 fonts."
     - **The same script runs on both pages.** It builds only the rows missing from the HTML, and `/all/` has none, so a shared `/all/` link still filters and sorts as today.
@@ -178,7 +191,7 @@ Priorities 1 and 2, and steps 3, 4 and 6, land before usability round 1, so test
 **Who:** Claude. **Depends on:** Q2.
 - [ ] Update the templates, the sort header's script, `site/CONTRACT.md` §3, the nav, the methodology page's title, and their tests.
 - [ ] Check the sort button fits its 96 px column, including at 320 px reflow.
-- [ ] Update the "rank" wording in `docs/usability-test.md` tasks 5 and 6 to match.
+- [ ] Update `docs/usability-test.md` to match: the "rank" wording in tasks 5 and 6, and "Choose task 6's two fonts from the current Overall rank", since Overall retires. Unless the lead's branch already does this.
 
 **Done when:** CI passes, and no visible "Rank" is left over the score column.
 
@@ -234,7 +247,7 @@ Priorities 1 and 2, and steps 3, 4 and 6, land before usability round 1, so test
   - [ ] CI's budget measures what Q10 says.
 - [ ] **9b. Rows past the first ones built from data** (per Q12):
   - [ ] The build writes Q12's number of rows into the front page, plus a compact data file for the rest. Trim the file by writing links from ids where the pattern allows, such as the Google Fonts specimen pages.
-  - [ ] The build also writes the full-list page (`/all/`, per Q12): every row, from the same row template, in Overall order. It goes in `sitemap.xml`.
+  - [ ] The build also writes the full-list page (`/all/`, per Q12): every row, from the same row template, in the default view's order. It goes in `sitemap.xml`.
   - [ ] `Render` builds the rows missing from the HTML once on load (none on `/all/`), then reorders as today. Focus, announcements and layout shift behave as before.
   - [ ] Without JavaScript, the front page's note links to the full-list page: "Show all 500 fonts". The count follows the catalog.
   - [ ] `site/CONTRACT.md` §2 (build output: the new page), §3 and §5, and their contract tests, change in the same pull request.
