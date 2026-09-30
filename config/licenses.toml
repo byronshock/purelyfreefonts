@@ -12,8 +12,10 @@
 # Three classes:
 # - allowed: qualifies (Rule 1: all personal and commercial use, no use
 #   restrictions). `group` is the license-class filter on the site and must be
-#   an id in site.toml [[license_classes]]. `redistributable` feeds the
-#   "Redistributable fonts only" option (Rule 3) and preview_ok (D3).
+#   an id in site.toml [[license_classes]]. `redistributable` must be true:
+#   since 2026-09-30 Rule 3 lets in only licenses that allow passing the
+#   files on, and an allowed entry with `redistributable = false` classifies
+#   as excluded.
 #   `attribution_required` is the CC BY badge (D3), not the notice that most
 #   licenses ask to keep with redistributed copies.
 # - excluded: never qualifies; `reason` names the rule.

@@ -121,7 +121,7 @@ Step 3 waits on M1 steps 7 and 15, so steps 5–9 use a stand-in table until the
 
 ### Step 8: Results view
 **Who:** Claude; the owner reviews. **Depends on:** 5, 6; M3-D9, M3-D10, M3-D13; M2's filters and numbering (M2-D2); D6, D13.
-- [ ] Owned fonts drop out of every published rank and view, combined with the other filters (including "Redistributable fonts only").
+- [ ] Owned fonts drop out of every published rank and view, combined with the other filters (including "No credit required", which replaced "Redistributable fonts only" on 2026-09-30).
 - [ ] Rank numbers stay as published; a line reads, for example, "You have 41 of the top 100 in this view".
 - [ ] A "Show fonts I have" toggle, off by default, shows owned fonts dimmed, each saying how it matched.
 - [ ] Near-matches are shown as M3-D9 says. Each near-match, and each owned font under "Show fonts I have", has a "Wrong match?" link.

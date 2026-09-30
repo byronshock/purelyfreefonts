@@ -1029,6 +1029,9 @@ class CatalogBuilder:
             level = l3.level
         else:
             level = "L2" if len({s for s, _ in verdict.seen}) > 1 else "L1"
+        if lic is not None and lic.status == "allowed" and not lic.redistributable:
+            # Rule 3 (2026-09-30): stage "licenses" excludes these; one here is a bug.
+            raise ExportError(f"{fam.id}: {spdx} is allowed but not redistributable (Rule 3)")
         return {
             "spdx": spdx,
             "name": name,

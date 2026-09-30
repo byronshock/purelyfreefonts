@@ -57,7 +57,8 @@ A = "Firm: evidence from at least 2 kinds of source, and the rank is unlikely to
 B = "Fair: the rank could move by about its own size."
 C = "Rough: thin or conflicting evidence."
 
-# License-class filter groups (D3), in filter order. licenses.toml's allowed
+# License classes (D3), best first. Since 2026-09-30 the site filters on credit only
+# (license_filter); the classes stay in the data and the details panel. licenses.toml's allowed
 # licenses name one of these ids as their group.
 [[license_classes]]
 id = "open-font"
@@ -72,7 +73,7 @@ id = "attribution"
 label = "Attribution required (CC BY)"
 
 [[license_classes]]
-id = "freeware"                 # the fourth group of the owner's License filter (AUTHORITY.md, 2026-09-25): free-use grants that may forbid redistributing (Rule 3)
+id = "freeware"                 # the fourth group of the owner's license classes (AUTHORITY.md, 2026-09-25): other free-use grants; since Rule 3 of 2026-09-30 they must allow redistribution too
 label = "Other free-use grants"
 
 # The Nerd Font marker (owner rulings of 2026-09-29, data/reviews/site/2026-09-29.toml:
