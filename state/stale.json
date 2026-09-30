@@ -1,0 +1,82 @@
+{
+  "almanac": {
+    "last_good": "2026-09-26",
+    "stale_runs": 0
+  },
+  "arch_repos": {
+    "last_good": "2026-09-26",
+    "stale_runs": 0
+  },
+  "debian": {
+    "last_good": "2026-09-26",
+    "stale_runs": 0
+  },
+  "debian_copyright": {
+    "last_good": "2026-09-26",
+    "stale_runs": 0
+  },
+  "ecosystems": {
+    "last_good": "2026-09-26",
+    "stale_runs": 0
+  },
+  "fontist": {
+    "last_good": "2026-09-26",
+    "stale_runs": 0
+  },
+  "fontsource": {
+    "last_good": "2026-09-26",
+    "stale_runs": 0
+  },
+  "fontsource_stats": {
+    "last_good": "2026-09-26",
+    "stale_runs": 0
+  },
+  "fot": {
+    "last_good": "2026-09-26",
+    "stale_runs": 0
+  },
+  "foundries": {
+    "last_good": "2026-09-26",
+    "stale_runs": 0
+  },
+  "gf_stats": {
+    "last_good": "2026-09-26",
+    "stale_runs": 0
+  },
+  "github_releases": {
+    "last_good": "2026-09-26",
+    "stale_runs": 0
+  },
+  "google_metadata": {
+    "last_good": "2026-09-26",
+    "stale_runs": 0
+  },
+  "google_repo": {
+    "last_good": "2026-09-26",
+    "stale_runs": 0
+  },
+  "homebrew_analytics": {
+    "last_good": "2026-09-26",
+    "stale_runs": 0
+  },
+  "homebrew_casks": {
+    "last_good": "2026-09-26",
+    "stale_runs": 0
+  },
+  "nerd_releases": {
+    "last_good": "2026-09-26",
+    "stale_runs": 0
+  },
+  "nerdfonts": {
+    "last_good": "2026-09-26",
+    "stale_runs": 0
+  },
+  "npm": {
+    "last_good": "2026-09-26",
+    "stale_runs": 0
+  },
+  "pkgstats": {
+    "last_good": "2026-09-26",
+    "stale_runs": 0
+  }
+}
