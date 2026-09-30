@@ -89,7 +89,9 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
 - **Project rank label.** On the site, the Project rank (D10) is labelled **"Used in projects"**. *(2026-09-25)*
 - **Site data fields (M2 step 2).** The `catalog-site.json` fields in `schemas/catalog-site.schema.json` are approved as drafted. Designer lists are left out, because D12 is usage only. *(2026-09-25)*
 - **License filter.** Four groups: open font licenses (OFL, UFL, Bitstream Vera); permissive (Apache, MIT, BSD, CC0); attribution required (CC BY); and other free-use grants, which allow any use but may forbid redistributing the files (Rule 3). *(2026-09-25)*
-- **Headline font.** The site's headline, "Truly Free Fonts", is set in **League Gothic** (The League of Moveable Type, OFL 1.1). How the page delivers it, as an SVG wordmark or a web font, is still open. *(2026-09-29)*
+- **Headline font.** The site's headline is set in **League Gothic** (The League of Moveable Type, OFL 1.1). *(2026-09-29)*
+  - **Wordmark.** The headline is an SVG wordmark reading "Truly Free Fonts" in mixed case, with the letters drawn as outlines, scaled to be the site's headline. The file is `site/static/wordmark.svg`, drawn by `site/static/_src/make_wordmark.py`. *(2026-09-29)*
+  - **Colour.** Black on white in both light and dark mode: the header stays white when the rest of the page is dark. *(2026-09-29)*
 
 ## Infrastructure
 
