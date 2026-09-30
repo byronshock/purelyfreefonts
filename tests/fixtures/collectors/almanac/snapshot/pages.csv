@@ -1,0 +1,31 @@
+client,family,count,total,proportion
+desktop,Font Awesome,"4,702,803","12,155,048",38.69%
+desktop,Roboto,"2,758,095","12,155,048",22.69%
+desktop,Open Sans,"2,195,300","12,155,048",18.06%
+desktop,swiper-icons,"1,495,837","12,155,048",12.31%
+desktop,Poppins,"1,270,447","12,155,048",10.45%
+desktop,Inter,"814,244","12,155,048",6.70%
+desktop,Roboto Slab,"750,955","12,155,048",6.18%
+desktop,Source Sans Pro,"425,714","12,155,048",3.50%
+desktop,,"232,739","12,155,048",1.91%
+desktop,Muli,"130,135","12,155,048",1.07%
+desktop,poppins,"117,568","12,155,048",0.97%
+desktop,roboto,"91,613","12,155,048",0.75%
+desktop,open sans,"91,565","12,155,048",0.75%
+desktop,Open Sans Hebrew,"77,374","12,155,048",0.64%
+mobile,Font Awesome,"6,000,611","15,426,041",38.90%
+mobile,Roboto,"3,658,686","15,426,041",23.72%
+mobile,Open Sans,"2,776,255","15,426,041",18.00%
+mobile,Poppins,"1,637,838","15,426,041",10.62%
+mobile,Roboto Slab,"1,081,014","15,426,041",7.01%
+mobile,Inter,"1,015,577","15,426,041",6.58%
+mobile,Source Sans Pro,"530,938","15,426,041",3.44%
+mobile,Playfair Display,"518,612","15,426,041",3.36%
+mobile,,"287,174","15,426,041",1.86%
+mobile,avenir-lt-w01_35-light1475496,"240,893","15,426,041",1.56%
+mobile,Muli,"171,130","15,426,041",1.11%
+mobile,poppins,"152,875","15,426,041",0.99%
+mobile,open sans,"120,540","15,426,041",0.78%
+mobile,roboto,"115,084","15,426,041",0.75%
+mobile,playfair display,"98,377","15,426,041",0.64%
+mobile,VideoJS,"98,070","15,426,041",0.64%

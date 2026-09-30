@@ -1,0 +1,232 @@
+[
+ {
+  "name": "@fontsource/abeezee",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource/abeezee",
+  "dependent_repos_count": 10,
+  "dependent_packages_count": 2,
+  "downloads": 23337,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-08-22T05:25:34.900Z"
+ },
+ {
+  "name": "@fontsource/alegreya",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource/alegreya",
+  "dependent_repos_count": 14,
+  "dependent_packages_count": 1,
+  "downloads": 24803,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-07-24T17:15:06.147Z"
+ },
+ {
+  "name": "@fontsource/comic-neue",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource/comic-neue",
+  "dependent_repos_count": 12,
+  "dependent_packages_count": 1,
+  "downloads": 71712,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-08-22T05:30:37.562Z"
+ },
+ {
+  "name": "@fontsource/fira-mono",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource/fira-mono",
+  "dependent_repos_count": 2251,
+  "dependent_packages_count": 123,
+  "downloads": 152887,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-09-20T03:56:01.538Z"
+ },
+ {
+  "name": "@fontsource/ibm-plex-mono",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource/ibm-plex-mono",
+  "dependent_repos_count": 264,
+  "dependent_packages_count": 66,
+  "downloads": 5014860,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-09-20T02:08:05.227Z"
+ },
+ {
+  "name": "@fontsource/inter",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource/inter",
+  "dependent_repos_count": 2360,
+  "dependent_packages_count": 267,
+  "downloads": 10428000,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-09-20T00:31:26.851Z"
+ },
+ {
+  "name": "@fontsource/jetbrains-mono",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource/jetbrains-mono",
+  "dependent_repos_count": 396,
+  "dependent_packages_count": 24,
+  "downloads": 3691649,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-09-20T02:03:55.567Z"
+ },
+ {
+  "name": "@fontsource/lato",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource/lato",
+  "dependent_repos_count": 435,
+  "dependent_packages_count": 49,
+  "downloads": 1335013,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-09-20T00:46:05.785Z"
+ },
+ {
+  "name": "@fontsource/material-icons",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource/material-icons",
+  "dependent_repos_count": 122,
+  "dependent_packages_count": 89,
+  "downloads": 542628,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-08-22T05:01:32.408Z"
+ },
+ {
+  "name": "@fontsource/open-sans",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource/open-sans",
+  "dependent_repos_count": 1564,
+  "dependent_packages_count": 95,
+  "downloads": 1530710,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-09-13T00:36:41.882Z"
+ },
+ {
+  "name": "@fontsource/pacifico",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource/pacifico",
+  "dependent_repos_count": 29,
+  "dependent_packages_count": 2,
+  "downloads": 97345,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-09-20T02:07:52.977Z"
+ },
+ {
+  "name": "@fontsource/roboto",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource/roboto",
+  "dependent_repos_count": 14419,
+  "dependent_packages_count": 542,
+  "downloads": 4218724,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-07-31T15:15:15.476Z"
+ },
+ {
+  "name": "@fontsource/roboto-mono",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource/roboto-mono",
+  "dependent_repos_count": 473,
+  "dependent_packages_count": 51,
+  "downloads": 791841,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-09-20T02:37:59.302Z"
+ },
+ {
+  "name": "@fontsource/source-sans-pro",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource/source-sans-pro",
+  "dependent_repos_count": 254,
+  "dependent_packages_count": 55,
+  "downloads": 487401,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-09-20T02:05:06.120Z"
+ },
+ {
+  "name": "@fontsource/source-sans-3",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource/source-sans-3",
+  "dependent_repos_count": 9,
+  "dependent_packages_count": 3,
+  "downloads": 460582,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-09-20T02:21:32.679Z"
+ },
+ {
+  "name": "@fontsource/zilla-slab",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource/zilla-slab",
+  "dependent_repos_count": 14,
+  "dependent_packages_count": 3,
+  "downloads": 4600,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-07-15T11:27:16.649Z"
+ },
+ {
+  "name": "@fontsource-variable/alegreya",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource-variable/alegreya",
+  "dependent_repos_count": 1,
+  "dependent_packages_count": 0,
+  "downloads": 6958,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-09-05T23:30:05.067Z"
+ },
+ {
+  "name": "@fontsource-variable/jetbrains-mono",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource-variable/jetbrains-mono",
+  "dependent_repos_count": 6,
+  "dependent_packages_count": 8,
+  "downloads": 480562,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-09-20T00:24:54.854Z"
+ },
+ {
+  "name": "@fontsource-variable/inter",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource-variable/inter",
+  "dependent_repos_count": 83,
+  "dependent_packages_count": 0,
+  "downloads": 5809518,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-07-24T21:17:33.931Z"
+ },
+ {
+  "name": "@fontsource-variable/open-sans",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource-variable/open-sans",
+  "dependent_repos_count": 12,
+  "dependent_packages_count": 10,
+  "downloads": 363228,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-09-20T01:11:35.805Z"
+ },
+ {
+  "name": "@fontsource-variable/roboto-flex",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource-variable/roboto-flex",
+  "dependent_repos_count": 5,
+  "dependent_packages_count": 1,
+  "downloads": 135512,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-09-20T04:00:56.985Z"
+ },
+ {
+  "name": "@fontsource/geist-mono",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource/geist-mono",
+  "dependent_repos_count": 0,
+  "dependent_packages_count": 0,
+  "downloads": 1096693,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-09-13T00:18:52.355Z"
+ },
+ {
+  "name": "@fontsource-variable/geist-mono",
+  "ecosystem": "npm",
+  "purl": "pkg:npm/%40fontsource-variable/geist-mono",
+  "dependent_repos_count": 0,
+  "dependent_packages_count": 0,
+  "downloads": 3169009,
+  "downloads_period": "last-month",
+  "last_synced_at": "2026-09-13T00:44:29.376Z"
+ }
+]

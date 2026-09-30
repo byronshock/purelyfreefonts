@@ -1,0 +1,93 @@
+{
+	"classifications": [
+		"sans-serif"
+	],
+	"dateAdded": "2012-07-31",
+	"family": "Source Sans Pro",
+	"languages": [
+		"aa_Latn",
+		"ace_Latn",
+		"acf_Latn",
+		"ach_Latn"
+	],
+	"license": {
+		"attribution": "© 2010 - 2018 Adobe Systems Incorporated, with Reserved Font Name ‘Source’.",
+		"id": "OFL-1.1",
+		"url": "https://openfontlicense.org/open-font-license-official-text/"
+	},
+	"provenance": {
+		"directory": "ofl/sourcesanspro",
+		"repository": "google/fonts",
+		"revision": "a4f3deeca2d7547351ff746f7bf3b51f5528dbcf",
+		"type": "github"
+	},
+	"sourceModified": "2022-05-23",
+	"sources": [
+		{
+			"inspection": {
+				"axes": [],
+				"codepoints": 320,
+				"colorTables": [],
+				"features": {
+					"gpos": [
+						"kern",
+						"mark",
+						"mkmk"
+					],
+					"gsub": [
+						"aalt",
+						"case",
+						"ccmp"
+					]
+				},
+				"fontVersion": "Version 1.095;hotconv 1.0.109;makeotfexe 2.5.65596",
+				"glyphs": 1097,
+				"outline": "glyf",
+				"style": "italic",
+				"unicodeRange": "U+0020-007E, U+00A0-017E, U+0180, U+018F",
+				"weight": 400
+			},
+			"path": "ofl/sourcesanspro/SourceSansPro-Italic.ttf",
+			"sha256": "740798947aa0151c6bec4508ba73eb7cb22f9ef2e4354314fc638f66eaa2f072",
+			"size": 114984,
+			"variant": {
+				"style": "italic",
+				"weight": 400
+			}
+		},
+		{
+			"inspection": {
+				"axes": [],
+				"codepoints": 320,
+				"colorTables": [],
+				"features": {
+					"gpos": [
+						"kern",
+						"mark",
+						"mkmk"
+					],
+					"gsub": [
+						"aalt",
+						"c2sc",
+						"case"
+					]
+				},
+				"fontVersion": "Version 2.045;hotconv 1.0.109;makeotfexe 2.5.65596",
+				"glyphs": 1974,
+				"outline": "glyf",
+				"style": "normal",
+				"unicodeRange": "U+0020-007E, U+00A0-017E, U+0180, U+018F",
+				"weight": 400
+			},
+			"path": "ofl/sourcesanspro/SourceSansPro-Regular.ttf",
+			"sha256": "3d2e962599d4bd83b797ab813f2017f2c7f7e7e0e2e8e3a497f4e713a0b3c9c9",
+			"size": 254076,
+			"variant": {
+				"style": "normal",
+				"weight": 400
+			}
+		}
+	],
+	"status": "deprecated",
+	"tags": []
+}

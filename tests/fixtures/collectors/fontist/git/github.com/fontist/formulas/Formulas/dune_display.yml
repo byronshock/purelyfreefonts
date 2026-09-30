@@ -1,0 +1,22 @@
+schema_version: 5
+name: Dune Display
+description: Synthetic display face shipped as one font file.
+homepage: www.dune.synth.example
+resources:
+  Dune_Display.ttf:
+    urls:
+    - https://code.synth.example/foundry/dune/releases/download/v3.02/DUNE302.ttf
+    sha256: 5555555555555555555555555555555555555555555555555555555555555555
+    file_size: 98304
+fonts:
+- name: Dune Display
+  styles:
+  - family_name: Dune Display
+    type: Regular
+    full_name: Dune Display
+    post_script_name: DuneDisplay
+    version: '3.02'
+    font: DUNE302.ttf
+extract: {}
+license_url: 'http://scripts.synth.example/OFL '
+open_license: SENTINEL-LICENSE-TEXT Public domain dedication.

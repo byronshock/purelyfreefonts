@@ -13,6 +13,12 @@ the common flags ``--date``, ``--only``, ``--from-snapshots``, ``--refetch`` and
 
 Modules are imported only when their command runs, so ``--help`` and
 ``config`` stay fast and never load numpy.
+
+Expected failures end in one line, ``tff-catalog <command>: <message>``, and
+exit code 1, never a traceback: a fetch, host scope, budget, frozen snapshot or
+git error, a missing or malformed input or stage file, and each of validate's
+hard failures (already redacted, since Actions logs of the public repo are
+public). Any other exception is a bug and keeps its traceback.
 """
 
 import argparse
@@ -26,8 +32,12 @@ from pathlib import Path
 
 from tff_catalog import __version__, clock, stages
 from tff_catalog.config_model import ConfigError
+from tff_catalog.fetch import BudgetExceeded, FetchError, HostNotAllowed
+from tff_catalog.gitsrc import GitError
 from tff_catalog.paths import Paths, StoreNotConfigured
 from tff_catalog.reviews import GATES
+from tff_catalog.stageio import StageFileError
+from tff_catalog.store import SnapshotFrozen
 
 PROG = "tff-catalog"
 COMMANDS = frozenset({"config", *stages.names(), "refresh", "store", "questions", "rulings"})
@@ -116,7 +126,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--strict",
         action="store_true",
-        help="also check config/sources/ and ranking.toml against the collectors",
+        help="also check config/sources/ and ranking.toml against the collectors, and "
+        "category-overrides.toml against the family id registry",
     )
     p.set_defaults(func=_cmd_config)
 
@@ -179,6 +190,12 @@ def _add_mode_flags(name: str, p: argparse.ArgumentParser) -> None:
         )
     elif name in ("verify", "links", "specimens"):
         p.add_argument("--check", action="store_true", help="check the outputs instead of running")
+    elif name == "validate":
+        p.add_argument(
+            "--committed",
+            action="store_true",
+            help="check only what the committed outputs can show (no build/stage/)",
+        )
 
 
 # --- handlers -------------------------------------------------------------------------
@@ -216,6 +233,8 @@ def _mode(args: argparse.Namespace) -> tuple[str, dict[str, object]] | None:
         return "tff_catalog.links:cmd_check", {}
     if name == "specimens" and args.check:
         return "tff_catalog.specimens.budget:cmd_check", {}
+    if name == "validate" and args.committed:
+        return "tff_catalog.validate:cmd_committed", {}
     return None
 
 
@@ -236,12 +255,16 @@ def _cmd_stage(args: argparse.Namespace) -> int:
         network=stage.network,
         log=logging.getLogger("tff_catalog"),
     )
-    mode = _mode(args)
-    if mode is not None:
-        target, kwargs = mode
-        return _call(target, ctx, **kwargs)
-    stages.run_stage(stage.name, ctx)
-    return 0
+    try:
+        mode = _mode(args)
+        if mode is not None:
+            target, kwargs = mode
+            return _call(target, ctx, **kwargs)
+        stages.run_stage(stage.name, ctx)
+        return 0
+    finally:
+        if ctx.fetcher is not None:
+            ctx.fetcher.close()
 
 
 def _cmd_refresh(args: argparse.Namespace) -> int:
@@ -281,6 +304,29 @@ def _cmd_rulings_apply(args: argparse.Namespace) -> int:
 
 # --- main ---------------------------------------------------------------------------------
 
+# Expected failures (module docstring): a message and exit code 1. StageFileError
+# is a ValueError and FileNotFoundError an OSError; neither base is caught, so
+# other errors of those kinds keep their tracebacks.
+_FAILURES: tuple[type[Exception], ...] = (
+    FetchError,
+    HostNotAllowed,
+    BudgetExceeded,
+    SnapshotFrozen,
+    GitError,
+    StageFileError,
+    FileNotFoundError,
+)
+
+
+def _validation_failed() -> type[Exception]:
+    """``validate.ValidationFailed``, imported only once an exception needs matching.
+
+    ``validate`` pulls in ``export``, which ``--help`` and ``config`` do without.
+    """
+    from tff_catalog.validate import ValidationFailed
+
+    return ValidationFailed
+
 
 def _where(exc: BaseException) -> str:
     """``module.function`` of the innermost frame, which raised ``exc``."""
@@ -313,6 +359,8 @@ def main(argv: list[str] | None = None) -> int:
     logging.basicConfig(
         level=level, format="%(levelname)s %(name)s: %(message)s", stream=sys.stderr
     )
+    # httpx logs every request URL at INFO, and refresh runs with -v in public Actions logs.
+    logging.getLogger("httpx").setLevel(logging.WARNING)
     func: Callable[[argparse.Namespace], int] = args.func
     try:
         return func(args)
@@ -330,4 +378,11 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     except ConfigError as exc:
         print(f"{PROG} {args.command}: {exc}", file=sys.stderr)
+        return 1
+    except _FAILURES as exc:
+        print(f"{PROG} {args.command}: {exc}", file=sys.stderr)
+        return 1
+    except _validation_failed() as exc:
+        for failure in getattr(exc, "failures", ()) or (exc,):
+            print(f"{PROG} {args.command}: {failure}", file=sys.stderr)
         return 1

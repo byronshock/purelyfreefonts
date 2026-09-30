@@ -20,7 +20,13 @@ from tests.helpers import ROOT
 from tff_catalog import collectors
 from tff_catalog.collectors import discover
 from tff_catalog.collectors.base import load_settings
-from tff_catalog.config import check_collectors, config_hash, load_config, ranking_hash
+from tff_catalog.config import (
+    check_category_ids,
+    check_collectors,
+    config_hash,
+    load_config,
+    ranking_hash,
+)
 from tff_catalog.config_model import CONFIG_FILES, Config, ConfigError
 from tff_catalog.paths import Paths
 from tff_catalog.records import GROUPS, NAMESPACES
@@ -190,6 +196,7 @@ UNKNOWN_KEYS = {
     "rank-table": ("ranking.toml", _set("ranks", "rising", "min_shares", value=0.1), "min_shares"),
     "licenses": ("licenses.toml", _set("allowd", value={}), "allowd"),
     "preinstalled": ("preinstalled.toml", _set("sytems", value={}), "sytems"),
+    "category-overrides": ("category-overrides.toml", _set("familes", value={}), "familes"),
 }
 
 
@@ -267,6 +274,11 @@ SITE_BREAKS = {
         "listed once",
     ),
     "http-url": (_set("sources", "google", "url", value="http://fonts.google.com"), "https"),
+    "nerd-legend-without-its-marker": (
+        _set("nerd", "legend", value="Nerd Font version available."),
+        "must start with '<marker>: <label>'",
+    ),
+    "nerd-marker-empty": (_set("nerd", "marker", value=" "), "must not be empty"),
 }
 
 
@@ -312,6 +324,133 @@ def test_missing_file_fails(cfg: ConfigCopy) -> None:
         cfg.load()
 
 
+# --- config/category-overrides.toml (owner ruling of 2026-09-29, gate R round 1) --------------
+
+CATEGORIES_22 = {
+    "serif": {
+        "junicode",
+        "latin-modern",
+        "tex-gyre-termes",
+        "tex-gyre-pagella",
+        "tex-gyre-schola",
+        "tex-gyre-bonum",
+        "charter",
+        "gentium",
+        "fanwood",
+    },
+    "monospace": {"cozette", "miracode", "compagnon"},
+    "handwriting": {"tex-gyre-chorus"},
+    "sans-serif": {
+        "tex-gyre-heros",
+        "tex-gyre-heros-cn",
+        "tex-gyre-adventor",
+        "sn-pro-font-family",
+        "pretendard-std",
+        "sophia-nubian",
+        "tagmukay",
+        "heavy-data",
+        "awami-nastaliq",
+    },
+}
+
+
+# Later rulings of 2026-09-29: ET Book is a serif (gate LIC, LIC-et-book, which let it in), and
+# FreeFont stays monospace, as FreeMono's file makes it (gate R, freefont_category).
+LATER_CATEGORIES = {"et-book": "serif", "freefont": "monospace"}
+
+
+def test_category_overrides_hold_the_owner_ruling_of_2026_09_29() -> None:
+    """categories_22 in data/reviews/review/2026-09-29.toml: every one of the 22 fonts is
+    listed, the nine the owner kept on sans-serif included; and the later rulings."""
+    families = load_config(Paths.for_root(ROOT)).category_overrides.families
+    by_category: dict[str, set[str]] = {}
+    for fid, category in families.items():
+        if fid not in LATER_CATEGORIES:
+            by_category.setdefault(category, set()).add(fid)
+    assert by_category == CATEGORIES_22
+    assert len(families) == 22 + len(LATER_CATEGORIES)
+    assert {f: families.get(f) for f in LATER_CATEGORIES} == LATER_CATEGORIES
+
+
+CATEGORY_BREAKS = {
+    "not-a-category": (_set("families", "junicode", value="slab"), "families.junicode: 'slab'"),
+    "not-a-string": (_set("families", "junicode", value=1), "expected a string"),
+    "not-an-id": (_set("families", "Junicode", value="serif"), "'Junicode' is not a family id"),
+    "no-table": (_drop("families"), "families: missing key"),
+    "schema": (_set("schema", value=2), "schema 2, expected 1"),
+}
+
+
+@pytest.mark.parametrize("case", sorted(CATEGORY_BREAKS))
+def test_category_overrides_load_strictly(cfg: ConfigCopy, case: str) -> None:
+    edit, message = CATEGORY_BREAKS[case]
+    cfg.change("category-overrides.toml", edit)
+    with pytest.raises(ConfigError, match=rf"category-overrides\.toml.*{re.escape(message)}"):
+        cfg.load()
+
+
+def test_category_overrides_count_toward_the_config_hash_only(cfg: ConfigCopy) -> None:
+    base = cfg.load()
+    cfg.change("category-overrides.toml", _set("families", "junicode", value="display"))
+    changed = cfg.load()
+    assert changed.category_overrides.families["junicode"] == "display"
+    assert config_hash(changed) != config_hash(base)
+    assert ranking_hash(changed) == ranking_hash(base)
+
+
+def test_strict_check_needs_every_overridden_family_in_the_id_registry(cfg: ConfigCopy) -> None:
+    loaded = cfg.load()
+    check_category_ids(loaded, cfg.paths)  # no registry yet: nothing to check against
+    ids = {fid: {"family": fid} for fid in loaded.category_overrides.families}
+    state_ids = cfg.root / "state" / "ids.json"
+    state_ids.parent.mkdir()
+    state_ids.write_text(json.dumps(ids), encoding="utf-8")
+    check_category_ids(loaded, cfg.paths)
+    del ids["tagmukay"]
+    state_ids.write_text(json.dumps(ids), encoding="utf-8")
+    with pytest.raises(ConfigError, match=r"not in the id registry \(state/ids\.json\): tagmukay"):
+        check_category_ids(loaded, cfg.paths)
+
+
+NERD_HIDDEN_BREAKS = {
+    "no-reason": (_set("families", "hack", value="  "), "families.hack: give the reason"),
+    "not-a-string": (_set("families", "hack", value=True), "expected a string"),
+    "not-an-id": (_set("families", "Hack", value="Icons failed"), "'Hack' is not a family id"),
+    "no-table": (_drop("families"), "families: missing key"),
+    "schema": (_set("schema", value=2), "schema 2, expected 1"),
+}
+
+
+@pytest.mark.parametrize("case", sorted(NERD_HIDDEN_BREAKS))
+def test_hidden_nerd_builds_load_strictly(cfg: ConfigCopy, case: str) -> None:
+    """config/nerd-hidden.toml (owner ruling of 2026-09-29): family id -> a required reason."""
+    edit, message = NERD_HIDDEN_BREAKS[case]
+    cfg.change("nerd-hidden.toml", _set("families", "hack", value="Its icon sets failed."))
+    cfg.change("nerd-hidden.toml", edit)
+    with pytest.raises(ConfigError, match=rf"nerd-hidden\.toml.*{re.escape(message)}"):
+        cfg.load()
+
+
+def test_hidden_nerd_builds_count_toward_the_config_hash(cfg: ConfigCopy) -> None:
+    base = cfg.load()
+    assert base.nerd_hidden.families == {}  # nothing hidden yet
+    cfg.change("nerd-hidden.toml", _set("families", "hack", value="Its icon sets failed."))
+    changed = cfg.load()
+    assert changed.nerd_hidden.families == {"hack": "Its icon sets failed."}
+    assert config_hash(changed) != config_hash(base)
+    assert ranking_hash(changed) == ranking_hash(base)
+    # --strict: the id must be in the registry, as for category-overrides.toml.
+    ids = {fid: {"family": fid} for fid in changed.category_overrides.families}
+    state_ids = cfg.root / "state" / "ids.json"
+    state_ids.parent.mkdir()
+    state_ids.write_text(json.dumps(ids), encoding="utf-8")
+    with pytest.raises(ConfigError, match=r"nerd-hidden\.toml: families: not in the id registry"):
+        check_category_ids(changed, cfg.paths)
+    ids["hack"] = {"family": "Hack"}
+    state_ids.write_text(json.dumps(ids), encoding="utf-8")
+    check_category_ids(changed, cfg.paths)
+
+
 def test_bad_toml_fails(cfg: ConfigCopy) -> None:
     (cfg.config / "ranking.toml").write_text("[engine\n", encoding="utf-8")
     with pytest.raises(ConfigError, match=r"ranking\.toml"):
@@ -339,10 +478,18 @@ def test_every_settings_file_belongs_to_a_collector() -> None:
         assert path.stem in found, f"{path.name}: no collector of that name"
 
 
+def _drop_source_settings(cfg: ConfigCopy) -> None:
+    """Remove the copied sources/*.toml: with ``discover`` patched to {}, each real
+    settings file would fail as "no collector" before the check under test."""
+    for path in (cfg.config / "sources").glob("*.toml"):
+        path.unlink()
+
+
 def test_strict_check_rejects_a_stray_settings_file(
     cfg: ConfigCopy, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(collectors, "discover", lambda kind=None: {})
+    _drop_source_settings(cfg)
     cfg.write("sources/synth_source.toml", {"enabled": True})
     with pytest.raises(ConfigError, match=r"sources/synth_source\.toml: no collector"):
         check_collectors(cfg.load(), cfg.paths)
@@ -352,6 +499,7 @@ def test_strict_check_needs_a_collector_for_every_enabled_source(
     cfg: ConfigCopy, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(collectors, "discover", lambda kind=None: {})
+    _drop_source_settings(cfg)
     with pytest.raises(ConfigError, match=r"sources\.homebrew\.collector: no collector"):
         check_collectors(cfg.load(), cfg.paths)
 

@@ -1,0 +1,22 @@
+# Ranking collector gf_stats: Google Fonts views per family, from the
+# undocumented fonts.google.com/metadata/stats. Ruling T2: real data stays in
+# the private store, fixtures are synthetic, and only ranks and rank-based z
+# scores are published, never view counts (ranking.toml [sources.google]
+# publish_raw = false).
+enabled = true
+url = "https://fonts.google.com/metadata/stats"
+
+# Google's date ranges to emit, one Observation series each. The engine source
+# "google" reads "year"; Rising reads "30day"; the backtest reads all four.
+series = ["year", "90day", "30day", "7day"]
+
+# A list with fewer than this share of the previous snapshot's families is a
+# broken response: the fetch fails and the stale policy reuses the last good
+# snapshot. Google delists only a handful of families a year.
+min_share = 0.9
+
+# A series above with a count for fewer than this share of the families is a
+# renamed or dropped date range: the fetch fails, as above. On 2026-09-26 every
+# family had all four. (The engine falls back to google_metadata's popularity
+# only when this source has no rows, so a half-empty year must not get through.)
+min_coverage = 0.5

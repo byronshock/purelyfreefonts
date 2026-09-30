@@ -1,0 +1,13 @@
+{#-
+  about.html.j2: /about/ (Milestone 2 step 7). The text is site/content/about.md, rendered
+  by tff_site.pages (raw HTML off). Context: every page's, plus `heading` and `content`. No
+  script: the page needs none. Styles: site/css/40-pages.css.
+-#}
+{% extends "base.html.j2" %}
+{% block scripts %}{% endblock %}
+{% block main %}
+<article class="page page-prose">
+<h1>{{ heading }}</h1>
+{{ content }}
+</article>
+{% endblock %}

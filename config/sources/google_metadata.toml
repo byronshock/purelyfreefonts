@@ -1,0 +1,23 @@
+# Universe collector google_metadata: the live Google Fonts family list.
+# Ruling T2: real data stays in the private store; only ranks are published.
+enabled = true
+url = "https://fonts.google.com/metadata/fonts"
+
+# A list with fewer than this share of the previous snapshot's families is a
+# broken response: the fetch fails and the stale policy reuses the last good
+# snapshot. Google delists only a handful of families a year.
+min_share = 0.9
+
+# Non-text families, as universe drop codes (records.DROP_REASONS). A family
+# name matching a pattern takes its code; the first match wins.
+drop_names = [
+  ["icon", '^Material (Icons|Symbols)\b'],
+  ["barcode", '\bBarcode\b'],
+  ["math", '\bMath\b'],
+  ["music", '\bMusic(al)?\b'],
+  ["emoji", '\bEmoji\b'],
+]
+
+# Google's own classification of symbol, placeholder and pictograph fonts
+# (Noto Sans Symbols, Redacted, Wavefont, Yarndings): drop code "symbol".
+symbol_classifications = ["Symbols"]

@@ -1,14 +1,251 @@
-# L1 normalisation: a license string exactly as a source writes it, mapped to
-# an SPDX expression (milestone-1 step 6a). SKELETON.
-#
-# Filled in wave 1 by agent P3 (licenses.py); DEP-5 short names, Fontist and
-# Homebrew spellings go here. Loaded strictly by tff_catalog.config into
+# L1 normalisation (milestone-1 step 6a): a license string exactly as a source
+# writes it, mapped to an SPDX expression. Filled by agent P3
+# (tff_catalog.licenses.normalize). Loaded strictly by tff_catalog.config into
 # config_model.LicenseAliasesConfig: unknown or missing keys fail.
 #
-# [aliases]
-# "SIL-OFL-1.1" = "OFL-1.1"
-# "OFL-1.1-RFN" = "OFL-1.1"
+# How normalize() reads a string (whitespace runs count as one space):
+# 1. "<collector>::<string>" for that collector, then "<string>" for any source;
+#    exact first, then ignoring case.
+# 2. An id that appears in any value below, in any case ("mit" -> "MIT").
+# 3. A key ending in "*" matches any string that starts with the rest (longest wins).
+# 4. Otherwise the string is split on AND, OR and WITH (any case) and
+#    parentheses, and each part goes through 1-3 on its own, so
+#    "OFL-1.1-no-RFN or LGPL-2.1-only" and "GPL-2+ with Font exception" work.
+# A part that is still unknown makes the whole string unknown: it goes to the
+# review queue (tff-catalog licenses --queue), never to a guess. So does an
+# exception id outside WITH ("Font exception" on its own names no license).
+#
+# Values are canonical SPDX expressions. Every license id in them must be listed
+# in config/licenses.toml (the tests check), so a mapping never makes a license
+# excluded by accident. "NOASSERTION" means the source says nothing usable.
+# Reserved Font Names are not a separate license: OFL-1.1-RFN is OFL-1.1.
 
 schema = 1
 
 [aliases]
+# --- canonical ids (identity), so every id in licenses.toml is recognised ----
+"OFL-1.1" = "OFL-1.1"
+"OFL-1.0" = "OFL-1.0"
+"Apache-2.0" = "Apache-2.0"
+"MIT" = "MIT"
+"MIT-0" = "MIT-0"
+"BSD-2-Clause" = "BSD-2-Clause"
+"BSD-3-Clause" = "BSD-3-Clause"
+"BSD-3-Clause-Clear" = "BSD-3-Clause-Clear"
+"ISC" = "ISC"
+"0BSD" = "0BSD"
+"Zlib" = "Zlib"
+"Unlicense" = "Unlicense"
+"CC0-1.0" = "CC0-1.0"
+"X11" = "X11"                         # the four Debian licenses the owner classed on 2026-09-26
+"BSL-1.0" = "BSL-1.0"
+"Artistic-2.0" = "Artistic-2.0"
+"MPL-2.0" = "MPL-2.0"
+"Artistic-1.0" = "Artistic-1.0"
+"CC-BY-2.0" = "CC-BY-2.0"
+"CC-BY-2.5" = "CC-BY-2.5"
+"CC-BY-3.0" = "CC-BY-3.0"
+"CC-BY-4.0" = "CC-BY-4.0"
+"CC-BY-SA-1.0" = "CC-BY-SA-1.0"
+"CC-BY-SA-2.0" = "CC-BY-SA-2.0"
+"CC-BY-SA-2.5" = "CC-BY-SA-2.5"
+"CC-BY-SA-3.0" = "CC-BY-SA-3.0"
+"CC-BY-SA-4.0" = "CC-BY-SA-4.0"
+"CC-BY-ND-2.0" = "CC-BY-ND-2.0"
+"CC-BY-ND-2.5" = "CC-BY-ND-2.5"
+"CC-BY-ND-3.0" = "CC-BY-ND-3.0"
+"CC-BY-ND-4.0" = "CC-BY-ND-4.0"
+"CC-BY-NC-3.0" = "CC-BY-NC-3.0"
+"CC-BY-NC-4.0" = "CC-BY-NC-4.0"
+"CC-BY-NC-SA-3.0" = "CC-BY-NC-SA-3.0"
+"CC-BY-NC-SA-4.0" = "CC-BY-NC-SA-4.0"
+"CC-BY-NC-ND-3.0" = "CC-BY-NC-ND-3.0"
+"CC-BY-NC-ND-4.0" = "CC-BY-NC-ND-4.0"
+"GPL-1.0-only" = "GPL-1.0-only"
+"GPL-1.0-or-later" = "GPL-1.0-or-later"
+"GPL-2.0-only" = "GPL-2.0-only"
+"GPL-2.0-or-later" = "GPL-2.0-or-later"
+"GPL-3.0-only" = "GPL-3.0-only"
+"GPL-3.0-or-later" = "GPL-3.0-or-later"
+"LGPL-2.0-only" = "LGPL-2.0-only"
+"LGPL-2.0-or-later" = "LGPL-2.0-or-later"
+"LGPL-2.1-only" = "LGPL-2.1-only"
+"LGPL-2.1-or-later" = "LGPL-2.1-or-later"
+"LGPL-3.0-only" = "LGPL-3.0-only"
+"LGPL-3.0-or-later" = "LGPL-3.0-or-later"
+"AGPL-3.0-only" = "AGPL-3.0-only"
+"AGPL-3.0-or-later" = "AGPL-3.0-or-later"
+"Bitstream-Vera" = "Bitstream-Vera"
+"Bitstream-Charter" = "Bitstream-Charter"
+"Ubuntu-font-1.0" = "Ubuntu-font-1.0"
+"WTFPL" = "WTFPL"
+"LPPL-1.3c" = "LPPL-1.3c"
+"IPA" = "IPA"
+"Arphic-1999" = "Arphic-1999"
+"LicenseRef-GUST-Font-License" = "LicenseRef-GUST-Font-License"
+"LicenseRef-Monofur" = "LicenseRef-Monofur"
+"LicenseRef-VicFieger" = "LicenseRef-VicFieger"
+"LicenseRef-PublicDomain" = "LicenseRef-PublicDomain"
+"LicenseRef-Freeware" = "LicenseRef-Freeware"
+"LicenseRef-Microsoft-EULA" = "LicenseRef-Microsoft-EULA"
+"LicenseRef-Apple-EULA" = "LicenseRef-Apple-EULA"
+"LicenseRef-ITF-FFL" = "LicenseRef-ITF-FFL"
+"LicenseRef-Personal-Use-Only" = "LicenseRef-Personal-Use-Only"
+# Three licenses first read on 2026-09-29 (B612's EPL-2.0 in Debian; Fontist's ids for the
+# AU Passata and fontopo terms); they wait for the owner in licenses.toml [ruling] (gate LIC).
+"EPL-2.0" = "EPL-2.0"
+"LicenseRef-AarhusUniversity-Passata" = "LicenseRef-AarhusUniversity-Passata"
+"LicenseRef-fontopo-free" = "LicenseRef-fontopo-free"
+# SPDX exceptions, for the part after WITH.
+"Font-exception-2.0" = "Font-exception-2.0"
+"PS-or-PDF-font-exception-20170817" = "PS-or-PDF-font-exception-20170817"
+"Font exception" = "Font-exception-2.0"
+"Font-exception" = "Font-exception-2.0"
+
+# --- SIL Open Font License ----------------------------------------------------
+"OFL-1.1-RFN" = "OFL-1.1"             # Nerd Fonts, Fontist, Debian (Inter)
+"OFL-1.1-no-RFN" = "OFL-1.1"          # Nerd Fonts, Fontist
+"OFL-1.0-RFN" = "OFL-1.0"             # Arch (otf-monaspace-nerdfonts)
+"OFL-1.0-no-RFN" = "OFL-1.0"
+"OFL" = "OFL-1.1"                     # google/fonts METADATA.pb and folder, Arch
+"SIL-OFL-1.1" = "OFL-1.1"             # Debian (Cascadia)
+"SIL-OFL" = "OFL-1.1"
+"SIL OFL 1.1" = "OFL-1.1"
+"OFL 1.1" = "OFL-1.1"
+"SIL Open Font License" = "OFL-1.1"
+"SIL Open Font License 1.1" = "OFL-1.1"
+"SIL Open Font License v1.1" = "OFL-1.1"
+"SIL Open Font License, Version 1.1" = "OFL-1.1"
+"SIL Open Font License v.1.1" = "OFL-1.1"     # config/foundries.toml (Velvetyne, Collletttivo)
+"Open Font License" = "OFL-1.1"
+"sil_ofl" = "OFL-1.1"                 # Fontshare API license_type
+"LicenseRef-OFL" = "OFL-1.1"          # Arch (ttf-carlito)
+"LicenseRef-OFL-1.1" = "OFL-1.1"      # Arch (ttf-nunito)
+"custom:OFL" = "OFL-1.1"              # Arch (ttf-cascadia-code)
+"custom:SIL" = "OFL-1.1"
+
+# --- Apache, MIT, BSD, public-domain-like ------------------------------------
+"APACHE2" = "Apache-2.0"              # google/fonts METADATA.pb
+"apache" = "Apache-2.0"               # google/fonts folder; Arch legacy "Apache"
+"Apache-2" = "Apache-2.0"             # Debian
+"Apache 2.0" = "Apache-2.0"
+"Apache License 2.0" = "Apache-2.0"
+"Apache License, Version 2.0" = "Apache-2.0"
+"Expat" = "MIT"                       # Debian (Hack)
+"BSD" = "BSD-3-Clause"                # Arch legacy; every BSD variant is allowed alike
+"nerdfonts::BSD-3-Clause-Clear" = "BSD-3-Clause"  # Go Mono: Nerd Fonts' label; golang.org/x/image's README is BSD-3-Clause
+"CC0" = "CC0-1.0"
+"CC0 1.0 Universal" = "CC0-1.0"       # config/foundries.toml (Open Foundry)
+"public-domain" = "LicenseRef-PublicDomain"   # Debian
+"Public Domain" = "LicenseRef-PublicDomain"
+"Freeware" = "LicenseRef-Freeware"
+
+# --- Ubuntu Font Licence ------------------------------------------------------
+"UFL" = "Ubuntu-font-1.0"             # google/fonts METADATA.pb and folder
+"UFL-1.0" = "Ubuntu-font-1.0"         # Fontsource
+"LicenseRef-UbuntuFont" = "Ubuntu-font-1.0"   # Nerd Fonts
+"LicenseRef-Ubuntu-Font-1.0" = "Ubuntu-font-1.0"
+"Ubuntu-Font-Licence-1.0" = "Ubuntu-font-1.0"
+"Ubuntu Font Licence 1.0" = "Ubuntu-font-1.0"
+"Ubuntu Font License 1.0" = "Ubuntu-font-1.0"
+"custom:UFL" = "Ubuntu-font-1.0"
+"custom:Ubuntu Font Licence 1.0" = "Ubuntu-font-1.0"   # Arch (ttf-ubuntu-font-family)
+
+# --- Bitstream Vera -----------------------------------------------------------
+"BitstreamVera" = "Bitstream-Vera"    # Debian (Hack)
+"Bitstream Vera" = "Bitstream-Vera"
+"Bitstream" = "Bitstream-Vera"        # Debian (OpenDyslexic): the Vera license text
+"Bitstream Vera Font License" = "Bitstream-Vera"   # config/foundries.toml (Fungal)
+
+# --- GNU licenses (Debian DEP-5 short names, Arch legacy names, old SPDX ids) --
+"GPL" = "GPL-1.0-or-later"
+"GPL2" = "GPL-2.0-only"
+"GPL3" = "GPL-3.0-only"
+"GPL-2" = "GPL-2.0-only"
+"GPL-2+" = "GPL-2.0-or-later"
+"GPL-3" = "GPL-3.0-only"
+"GPL-3+" = "GPL-3.0-or-later"
+"GPL-2.0" = "GPL-2.0-only"
+"GPL-2.0+" = "GPL-2.0-or-later"
+"GPL-3.0" = "GPL-3.0-only"
+"GPL-3.0+" = "GPL-3.0-or-later"
+"LGPL" = "LGPL-2.0-or-later"
+"LGPL-2" = "LGPL-2.0-only"
+"LGPL-2+" = "LGPL-2.0-or-later"
+"LGPL-2.1" = "LGPL-2.1-only"
+"LGPL-2.1+" = "LGPL-2.1-or-later"
+"LGPL-3" = "LGPL-3.0-only"
+"LGPL-3+" = "LGPL-3.0-or-later"
+"LGPL-3.0" = "LGPL-3.0-only"
+"LGPL-3.0+" = "LGPL-3.0-or-later"
+"AGPL" = "AGPL-3.0-or-later"
+"AGPL3" = "AGPL-3.0-only"
+"AGPL-3" = "AGPL-3.0-only"
+"AGPL-3+" = "AGPL-3.0-or-later"
+"AGPL-3.0" = "AGPL-3.0-only"
+"GNU General Public License v.3.0" = "GPL-3.0-only"   # config/foundries.toml (Nimbus Sans L)
+# Debian's name for URW Base 35's license: the exception is the PostScript/PDF one.
+"AGPL-3 with Font exception" = "AGPL-3.0-only WITH PS-or-PDF-font-exception-20170817"
+"AGPL-3+ with Font exception" = "AGPL-3.0-or-later WITH PS-or-PDF-font-exception-20170817"
+
+# --- other font licenses ------------------------------------------------------
+"GFL" = "LicenseRef-GUST-Font-License"    # Debian (Latin Modern, TeX Gyre)
+"GUST Font License" = "LicenseRef-GUST-Font-License"
+"GUST-Font-License" = "LicenseRef-GUST-Font-License"
+"GUST Font License v.1.0" = "LicenseRef-GUST-Font-License"   # config/foundries.toml (TeX Gyre)
+"LicenseRef-GUST-Font-1.0" = "LicenseRef-GUST-Font-License"   # Arch (tex-gyre-fonts)
+"custom:Arphic_Public_License" = "Arphic-1999"   # Arch (ttf-arphic-*)
+"Arphic" = "Arphic-1999"
+
+# --- proprietary and restricted -----------------------------------------------
+"LicenseRef-Microsoft-*" = "LicenseRef-Microsoft-EULA"   # Fontist: LicenseRef-Microsoft-fontpack-19980728 and others
+"LicenseRef-Apple-*" = "LicenseRef-Apple-EULA"           # Fontist macOS formulas
+"itf_ffl" = "LicenseRef-ITF-FFL"                         # Fontshare API license_type
+"ITF FFL" = "LicenseRef-ITF-FFL"
+"ITF Free Font License" = "LicenseRef-ITF-FFL"
+"ITF Free Font License v2.0" = "LicenseRef-ITF-FFL"
+"Personal use only" = "LicenseRef-Personal-Use-Only"
+"Creative Commons BY-NC-SA 4.0" = "CC-BY-NC-SA-4.0"   # config/foundries.toml (BilboINC)
+
+# --- Debian DEP-5 spellings (debian_copyright, as of the 2026-09-26 snapshot) ---
+# Only strings that name one license unambiguously. Variant texts ("BSD-3-clause~typo")
+# and custom names stay unknown and go to the review queue. X11, MPL-2.0 and BSL-1.0 are
+# SPDX ids already; licenses.toml classes them (owner ruling of 2026-09-26).
+"Artistic" = "Artistic-1.0"           # Debian's short name for the Perl Artistic License 1.0
+"SIL-1.1" = "OFL-1.1"
+"SIL_Open_Font_License_1.1" = "OFL-1.1"
+"SIL Open Font License, Version 1.1 – 26 February 2007" = "OFL-1.1"
+"Open-Font-License" = "OFL-1.1"
+"IPA-1" = "IPA"
+"IPA-1.0" = "IPA"
+"Arphic-Public-License" = "Arphic-1999"
+"Bitstream-Vera-Fonts" = "Bitstream-Vera"
+"CC-BY-SA-3" = "CC-BY-SA-3.0"
+"CC-BY-SA-4.0-Int" = "CC-BY-SA-4.0"
+"GPL-1+" = "GPL-1.0-or-later"
+"GPL-2-or-later" = "GPL-2.0-or-later"
+"GPL-3-or-later" = "GPL-3.0-or-later"
+"GNU-GPL-3" = "GPL-3.0-only"
+"AGPL-3.0+" = "AGPL-3.0-or-later"
+"WTFPL-2" = "WTFPL"
+"PD" = "LicenseRef-PublicDomain"
+# The FSF font exception, spelled into one token.
+"GPL-2-fonts-exception" = "GPL-2.0-only WITH Font-exception-2.0"
+"GPL-2-with-font-embedding-exception" = "GPL-2.0-only WITH Font-exception-2.0"
+"GPL-2+FE" = "GPL-2.0-or-later WITH Font-exception-2.0"
+"GPL2+-with-font-exception" = "GPL-2.0-or-later WITH Font-exception-2.0"
+"GPL3+-with-font-exception" = "GPL-3.0-or-later WITH Font-exception-2.0"
+"GPL-3+FontException" = "GPL-3.0-or-later WITH Font-exception-2.0"
+"GPL-3+_with-font-exception" = "GPL-3.0-or-later WITH Font-exception-2.0"
+# fonts-freefont's font files: its "Special Font Exception" is the FSF font exception word for
+# word, followed by FreeFont's clarification of it (its source files are plain GPL-3+).
+"debian_copyright::GPL-3+ with Special Font Exception" = "GPL-3.0-or-later WITH Font-exception-2.0"
+# 3270font: the BSD 3-clause text, and the Fontforge source "optionally licensed under the SIL
+# Open Font License v1.1 with no Reserved Font Name".
+"debian_copyright::BSD3|SIL" = "BSD-3-Clause OR OFL-1.1"
+
+# --- no usable statement ------------------------------------------------------
+"custom" = "NOASSERTION"              # Arch: a license file ships, but the id says nothing
+"LicenseRef-custom" = "NOASSERTION"
+"Other" = "NOASSERTION"               # GitHub's license API for an unrecognised file
+"unknown" = "NOASSERTION"

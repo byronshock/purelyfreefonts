@@ -56,6 +56,15 @@
   --c-warn-bg: #fdf0e1;
   --c-warn-fg: #7a3a00;
   --c-spec: currentColor;
+
+  /* The header: white in both themes, behind the black wordmark (owner ruling of
+     2026-09-29, AUTHORITY.md "Headline font"), so its text keeps the light values. */
+  --c-header-bg: #ffffff;
+  --c-header-fg: #1b1d21;
+  --c-header-muted: #50555c;
+  --c-header-link: #0a56c2;
+  --c-header-focus: #0a56c2;
+  --c-wordmark-bg: #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -75,6 +84,13 @@
     --c-badge-fg: #e9eaec;
     --c-warn-bg: #3b2a14;
     --c-warn-fg: #ffd199;
+    /* The header stays white in dark mode too (the light values, restated). */
+    --c-header-bg: #ffffff;
+    --c-header-fg: #1b1d21;
+    --c-header-muted: #50555c;
+    --c-header-link: #0a56c2;
+    --c-header-focus: #0a56c2;
+    --c-wordmark-bg: #ffffff;
   }
 }
 
@@ -96,6 +112,13 @@
     --c-warn-bg: Canvas;
     --c-warn-fg: CanvasText;
     --c-spec: CanvasText;
+    --c-header-bg: Canvas;
+    --c-header-fg: CanvasText;
+    --c-header-muted: CanvasText;
+    --c-header-link: LinkText;
+    --c-header-focus: Highlight;
+    /* The wordmark is a black image: it keeps a white plate under any palette. */
+    --c-wordmark-bg: #ffffff;
   }
 }
 

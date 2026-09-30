@@ -1,0 +1,51 @@
+# "Missing font" (Milestone 2 step 12, M2-D10). The rules below restate
+# AUTHORITY.md's Rules 1-4 and D3 in plain words; change them together.
+# Requests are handled under the owner ruling font_requests of 2026-09-29.
+name: Missing font
+description: A free font you think belongs in the list isn't there.
+title: "Missing font: "
+labels: ["missing-font"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Reports are public:** anyone can read them, so please leave out anything private. No GitHub account? Email admin@trulyfreefonts.com instead.
+
+        Please search the list first, including the font's old names: "Source Sans Pro" finds Source Sans 3. A font is listed only if:
+
+        - its license lets anyone use it in any personal or commercial project, with no limits on use. Personal-use-only, demo, display-only and non-commercial licenses don't qualify, and neither do licenses that forbid modifying or embedding the font (such as the ITF Free Font License that many Fontshare fonts use), or copyleft licenses without a font exception (CC BY-SA, or the plain GPL, LGPL or AGPL);
+        - it covers the Latin alphabet;
+        - it is a font for text, not icons, emoji or symbols.
+
+        Every font that qualifies is listed: the most-used are ranked, and the rest follow A–Z. So if a font that qualifies is missing, we haven't come across it yet, and we'd like to hear about it. Foundries and designers are welcome to ask for their own fonts.
+  - type: input
+    id: font_name
+    attributes:
+      label: Font name
+    validations:
+      required: true
+  - type: input
+    id: official_url
+    attributes:
+      label: Official page
+      description: Where the font's maker publishes it, such as a foundry page, a GitHub repository or its Google Fonts page.
+      placeholder: https://
+    validations:
+      required: true
+  - type: input
+    id: license
+    attributes:
+      label: License
+      description: The license's name, if you know it. For example, SIL Open Font License 1.1.
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it belongs
+      description: Where its license text is, if the official page doesn't show it, or anything else we should know. Links help.
+  - type: checkboxes
+    id: searched
+    attributes:
+      label: Search
+      options:
+        - label: I searched the list for this font, including any other names it has.
+          required: true

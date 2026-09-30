@@ -1,0 +1,6 @@
+name,count,samples
+glibc,30000,30000
+lexend-fonts-git,40,30000
+nerd-fonts-jetbrains-mono,60,30000
+ttf-jetbrains-mono,5000,30000
+whisper-git,300,30000

@@ -1,0 +1,238 @@
+/* 40-pages: the content pages (methodology, privacy, about) and the 404 page, all inside
+   `article.page` (site/templates/*.html.j2), so nothing here reaches the list page.
+   Colours come only from the tokens. Prose keeps to --measure; long words, URLs and code
+   wrap, so 320 px (1.4.10), 200% zoom (1.4.4) and the 1.4.12 text-spacing overrides never
+   clip text or scroll sideways. */
+
+.page {
+  max-width: var(--measure);
+}
+
+.page h2 {
+  margin-block: var(--space-6) var(--space-3);
+}
+
+.page h3 {
+  margin-block: var(--space-5) var(--space-2);
+}
+
+.page h4 {
+  margin-block: 0 var(--space-2);
+}
+
+.page p,
+.page ul,
+.page ol,
+.page dl,
+.page blockquote,
+.page table {
+  margin-block: 0 var(--space-4);
+}
+
+.page ul,
+.page ol {
+  padding-inline-start: var(--space-5);
+}
+
+.page li + li {
+  margin-block-start: var(--space-2);
+}
+
+.page li > p {
+  margin-block-end: var(--space-2);
+}
+
+.page :is(p, li, dd, td, th) {
+  overflow-wrap: anywhere;
+}
+
+.page code {
+  padding-inline: 0.2em;
+  border-radius: var(--radius);
+  background-color: var(--c-badge-bg);
+  color: var(--c-badge-fg);
+}
+
+.page blockquote,
+.page .quoted {
+  padding-inline-start: var(--space-4);
+  border-inline-start: 4px solid var(--c-divider);
+}
+
+.page .quoted {
+  margin-block-end: var(--space-4);
+}
+
+.page .quoted > :last-child {
+  margin-block-end: 0;
+}
+
+/* Markdown tables: full width, wrapping cells, no sideways scroll. */
+.page table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.page th,
+.page td {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--c-divider);
+  text-align: start;
+  vertical-align: top;
+}
+
+/* A source credit linked to (#source-<id>, from a details panel) is marked by a wider rule
+   beside it, not by colour alone; the padding gives back the extra width, so the text
+   stays put. */
+.page .source:target {
+  padding-inline-start: calc(var(--space-4) - 4px);
+  border-inline-start-color: var(--c-focus);
+  border-inline-start-width: 6px;
+}
+
+/* ---- Lead and meta lines */
+
+.page-lead {
+  font-size: var(--fs-large);
+  line-height: var(--lh-body);
+}
+
+.page-meta {
+  color: var(--c-muted);
+  font-size: var(--fs-small);
+}
+
+/* ---- "On this page" */
+
+.toc {
+  margin-block: var(--space-5);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--c-divider);
+  border-radius: var(--radius);
+  background-color: var(--c-surface);
+}
+
+.page .toc-title {
+  margin-block: 0 var(--space-2);
+  font-size: var(--fs-base);
+}
+
+.page .toc ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.page .toc li + li {
+  margin-block-start: 0;
+}
+
+.toc a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+}
+
+/* ---- Definition lists: terms in bold, each meaning under its term. */
+
+.page dt {
+  font-weight: 700;
+}
+
+.page dd {
+  margin: 0 0 var(--space-3);
+}
+
+.page dd:last-child {
+  margin-block-end: 0;
+}
+
+/* Short facts (a source's date, license and site): term and value side by side where they
+   fit, one under the other on narrow screens. */
+.facts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 40rem) {
+  .facts {
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: var(--space-1) var(--space-4);
+  }
+
+  .page .facts dd {
+    margin: 0;
+  }
+}
+
+.page .facts dd ul {
+  margin: 0;
+}
+
+/* ---- Source credits */
+
+.page .sources {
+  margin-block-end: var(--space-5);
+  padding: 0;
+  list-style: none;
+}
+
+.page .source {
+  padding-block: var(--space-3);
+  padding-inline-start: var(--space-4);
+  border-inline-start: 2px solid var(--c-divider);
+}
+
+.page .source + .source {
+  margin-block-start: var(--space-3);
+}
+
+.source-name {
+  font-size: var(--fs-large);
+}
+
+.page .source > :last-child {
+  margin-block-end: 0;
+}
+
+.source-note {
+  color: var(--c-muted);
+  font-size: var(--fs-small);
+}
+
+.stale {
+  padding-inline: var(--space-1);
+  border-radius: var(--radius);
+  background-color: var(--c-warn-bg);
+  color: var(--c-warn-fg);
+}
+
+/* Forced colours drop backgrounds: the rules beside quotes and sources, and the box round
+   the table of contents, need full-strength borders to stay visible. */
+@media (forced-colors: active) {
+  .page blockquote,
+  .page .quoted,
+  .page .source,
+  .toc,
+  .page th,
+  .page td {
+    border-color: var(--c-border);
+  }
+
+  .page .source:target {
+    border-inline-start-color: var(--c-focus);
+  }
+
+  .stale {
+    border: 1px solid var(--c-border);
+  }
+}
+
+@media print {
+  .toc {
+    display: none;
+  }
+}

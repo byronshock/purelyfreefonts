@@ -1,0 +1,30 @@
+# Ranking collector fontsource_stats: monthly jsDelivr hits (and npm downloads)
+# per Fontsource package, from api.fontsource.org/v1/stats in one request.
+# Ruling T1: open data (Fontsource is MIT; jsDelivr and npm counts); raw counts
+# may be published. Only the monthly fields are read: the lifetime totals are
+# wrong (scout report, 2026-09-25).
+enabled = true
+url = "https://api.fontsource.org/v1/stats"
+
+# Observation series per monthly field. ranking.toml [sources.jsdelivr] reads
+# hits_series; nothing reads downloads_series yet (a cross-check for the npm
+# collector).
+hits_series = "jsdelivr_monthly"
+downloads_series = "npm_monthly"
+
+# Record keys: "fs-id" keys each row by its Fontsource id (resolves directly
+# against the fontsource universe collector; the package is an attr), "npm" by
+# its npm package (@fontsource/<id>, @fontsource-variable/<id>), as the npm and
+# ecosystems collectors do, which resolves only through npm alias rows.
+key_namespace = "fs-id"
+
+# npm's last-month and jsDelivr's month are 30 days, counted up to the day
+# before the data left Fontsource's server (fetch time less the CDN's Age).
+window_days = 30
+lag_days = 1
+
+# Fewer ids, or fewer packages with a positive jsDelivr count, than this share
+# of the previous snapshot's is a broken response: the fetch fails and the
+# stale policy reuses the last good snapshot. Fontsource keeps the stats of
+# retired ids, and about 99% of packages have hits.
+min_share = 0.9

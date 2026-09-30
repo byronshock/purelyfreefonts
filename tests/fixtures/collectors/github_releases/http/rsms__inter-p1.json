@@ -1,0 +1,32 @@
+[
+ {
+  "assets": [
+   {
+    "created_at": "2024-11-16T00:27:02Z",
+    "download_count": 1303595,
+    "name": "Inter-4.1.zip",
+    "state": "uploaded"
+   }
+  ],
+  "draft": false,
+  "html_url": "https://github.com/rsms/inter/releases/tag/v4.1",
+  "prerelease": false,
+  "published_at": "2024-11-16T00:27:07Z",
+  "tag_name": "v4.1"
+ },
+ {
+  "assets": [
+   {
+    "created_at": "2023-07-13T15:07:20Z",
+    "download_count": 5116,
+    "name": "Inter-4.0-beta9h.zip",
+    "state": "uploaded"
+   }
+  ],
+  "draft": false,
+  "html_url": "https://github.com/rsms/inter/releases/tag/v4.0-beta9h",
+  "prerelease": true,
+  "published_at": "2023-07-13T14:54:27Z",
+  "tag_name": "v4.0-beta9h"
+ }
+]

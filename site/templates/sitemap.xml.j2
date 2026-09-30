@@ -1,0 +1,18 @@
+{#-
+  sitemap.xml.j2: /sitemap.xml (M2-D8 (a)). `urls` holds the absolute URLs of the canonical
+  pages, sorted by path (tff_site.build); the 404 page is not canonical, so it is left out.
+  lastmod is the data's run date, and only on the pages that change with the data, so the
+  file is byte-identical for the same inputs.
+-#}
+{% set data_pages = [site.base_url ~ "/", site.base_url ~ "/methodology/"] %}
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{% for url in urls %}
+<url>
+<loc>{{ url }}</loc>
+{% if url in data_pages %}
+<lastmod>{{ build.run_date }}</lastmod>
+{% endif %}
+</url>
+{% endfor %}
+</urlset>

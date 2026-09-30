@@ -1,0 +1,13 @@
+# Owner rulings of 2026-09-26, given in chat after integration A (the first real run). Ruled by
+# the owner, Byron Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml).
+# Also in AUTHORITY.md. Where the owner picked Claude's recommendation, the reason is Claude's summary.
+
+[review_report]
+value = "accept"
+ruling = "review.md flags a move of more than 30 places and more than 30%; cross-check flags cover the top 500, and review.md lists them in the exact top 100 only, for moves of at least 3 places; the what-if table stays in the private review pack only."
+reason = "Claude's recommendation: review.md is public and should list what needs a look. The places limit is a key of its own, ranking.toml [review] move_places = 30 (it had reused first_run_move_places), as integration A recommended."
+
+[data_defaults]
+value = "accept_all_three"
+ruling = "Three data defaults: a family with no category defaults to sans-serif and is listed in the review pack; ecosyste.ms packages are flagged stale after 90 days without a sync, not 45; @fontsource/fira-mono is flagged at gate R; the backtest thresholds are revisited after 3 merged refreshes."
+reason = "Claude's recommendation. Applied: the pack's checks.md lists the catalog fonts whose category is the default and shows Fira Mono's rank in each source (review.GATE_R_WATCH); ranking.toml [sources.ecosystems] stale_sync_days = 90."

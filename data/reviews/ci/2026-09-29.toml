@@ -1,0 +1,9 @@
+# Owner rulings, gate CI: refresh pull requests and the watchdog (step 19).
+# Ruled by the owner in chat on 2026-09-29; recorded with `tff-catalog rulings apply`.
+# Each ruling: choice = the option picked; recommended = whether it was the recommended
+# option; ruling = what it means; reason = why, and whose words those are.
+
+[refresh_schedule]
+value = "off_switch"
+ruling = "Until Milestone 1 step 19 sets up the data store's deploy key and secret, the monthly schedule in .github/workflows/refresh.yml does nothing: a scheduled run starts only once the repository variable REFRESH_SCHEDULE is \"on\", as production deploys wait for PRODUCTION_DEPLOYS. Manual dispatches always run."
+reason = "Claude's recommendation, taken by the owner: merging Milestone 1 to main would otherwise start a monthly run on 3 October that fails for want of the key and opens an issue."

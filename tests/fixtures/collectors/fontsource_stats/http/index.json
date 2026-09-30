@@ -1,0 +1,15 @@
+{
+  "format": "tff-mockhttp",
+  "responses": [
+    {
+      "body": "stats.json",
+      "headers": {
+        "age": "55155",
+        "cache-control": "public, max-age=300",
+        "content-type": "application/json"
+      },
+      "url": "https://api.fontsource.org/v1/stats"
+    }
+  ],
+  "version": 1
+}

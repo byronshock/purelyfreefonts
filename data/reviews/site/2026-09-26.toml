@@ -1,0 +1,42 @@
+# Owner rulings of 2026-09-26, given in chat after integration A (the first real run). Ruled by
+# the owner, Byron Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml).
+# Also in AUTHORITY.md. Where the owner picked Claude's recommendation, the reason is Claude's summary.
+# Corrected on 2026-09-28 (the owner's note in the lead's record, [gates_2026-09-28] log_fields_note):
+# log_fields was Claude's recommendation in chat, so it records recommended = true.
+
+[tip_link]
+label = "Leave a tip ($5 suggested)"
+ruling = "One footer link on every page, worded \"Leave a tip ($5 suggested)\". Milestone 2 step 8 and ops/DONATIONS.md step 11 are reworded to match."
+reason = "Claude's recommendation."
+
+[about_page]
+value = "name_fonts_no_ads_not_owner"
+ruling = "The about page names Satoshi, General Sans and Clash Display as examples of the ITF license, keeps \"no ads\", and does not name the owner."
+reason = "Claude's recommendation."
+
+[log_fields]
+choice = "b"
+recommended = true
+value = "trim_referer_user_agent"
+ruling = "The Caddy access log also drops Referer and User-Agent; /privacy describes the log accordingly; the Caddyfile change goes out with its checked deploy line (ops/SERVER.md item 25); AUTHORITY.md's visitor-privacy line is updated."
+reason = "Claude's recommendation in chat, taken by the owner. Integration A's printed question (SITE, /privacy facts) had marked (a), confirming the log as written, and offered (b), trimming Referer and User-Agent; in chat Claude recommended (b). The same Caddyfile change also drops Cookie and Cloudflare's location headers finer than the country: the owner confirmed that on 2026-09-28 (../2026-09-28.toml, log_extra_headers)."
+
+[specimen_sample]
+value = "Zażółć gęślą jaźń · Příliš žluťoučký kůň"
+ruling = "The specimen sample line is \"Zażółć gęślą jaźń · Příliš žluťoučký kůň\", with the basic-Latin fallback \"Sphinx of black quartz, judge my vow\"."
+reason = "Claude's recommendation."
+
+[noscript_previews]
+value = "keep_all"
+ruling = "Keep every <noscript> preview image; Milestone 2 step 5's clause now reads that they carry loading=\"lazy\" (browsers load them all when scripts are off)."
+reason = "Claude's recommendation."
+
+[list_layout]
+value = "keep_both_fix_layout"
+ruling = "Keep \"Not ranked: no evidence of deliberate installs\", with the reason on its own line, and keep both attribution options; watch both in usability round 1."
+reason = "Claude's recommendation. Applied: an unranked row carries li.font.is-unranked (server and script), which puts its label on a line of its own above the name instead of down the rank column (site/css/20-list.css)."
+
+[top100_display]
+value = "exact_order"
+ruling = "Ranks show the exact order; the M11 hysteresis only decides catalog membership."
+reason = "Claude's recommendation."

@@ -1,0 +1,127 @@
+# Owner rulings of 2026-09-29 on the Nerd Font marker (Backlog TASK-2), and on listing every qualifying font (more_fonts, font_requests: given in chat to Claude in a separate session, and recorded with the rulings CLI). The Nerd Font rulings were given in chat to Claude, which took TASK-2 over from Qwen at the owner's request. Ruled by the owner, Byron Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml, [nerd_2026-09-29]). The owner took Claude's recommendation each time except the legend's wording, where the owner chose among alternatives. These replace the 2026-09-28 ruling nerd_fonts_link where they differ (a later file wins). Findings: docs/nerd-fonts-link.md. Also in AUTHORITY.md.
+
+[nerd_fonts_link]
+value = "nf_marker_per_build_page"
+ruling = "A font that has a Nerd Font build shows it: an \"NF\" marker, a legend, and a link to the build's own page. The builds that count are the Nerd Fonts project's (fonts.json) and the makers' own NF builds (such as Maple Mono NF, Cascadia Code NF and Rec Mono). The link goes to the build's folder in the Nerd Fonts repository at the current release tag, or to the maker's release page for a maker-built one, never a release asset or /releases/latest, and its label names the build (for example \"SauceCodePro Nerd Font\"). The field is a nullable links.nerd in catalog.json and catalog-site.json, added before the Milestone 1 step 20 freeze."
+reason = "The owner's idea of 2026-09-29, with Claude's recommendations: a per-build page shows that build's variants, icon credits and downloads, where the 2026-09-28 ruling's one shared releases page left visitors to search; makers' own NF builds are what many users install."
+
+[nerd_marker]
+value = "NF_text_all_views_row_and_details"
+ruling = "The marker is the text \"NF\", fixed-width, beside the font's name in every list row (rows keep their height) and in the details panel, on every rank. The Nerd Fonts logo may replace it if the Nerd Fonts maintainers agree (Backlog TASK-3)."
+reason = "Claude's recommendation: Nerd Fonts' LICENSE covers its code (MIT) and patched fonts (OFL 1.1) but not the logo."
+
+[nerd_legend]
+value = "short_form"
+ruling = "NF: Nerd Font version available (adds developer icons, which have their own licenses)."
+reason = "The owner's choice among three alternatives Claude offered, after declining Claude's first draft."
+
+[nerd_filter]
+value = "yes"
+ruling = "The site's filters gain a \"Nerd Font available\" option that shows only fonts with a Nerd Font build."
+reason = "Claude's recommendation: one checkbox, cheap once the field exists, and useful to developers."
+
+[nerd_icon_licenses]
+value = "note_and_check_before_launch"
+ruling = "The legend notes that the icons carry their own licenses. Before the site launches, Claude confirms the license check of every linked build and its patched icon sets (the 2026-09-28 findings: every base license and all 14 icon sets pass Rules 1-4, Font Logos being The Unlicense), and the marker is hidden for any build that fails."
+reason = "Claude's recommendation: Codicons and Font Awesome are CC BY 4.0 (attribution), so visitors should know the icons are licensed separately."
+
+[more_fonts]
+choice = "b"
+recommended = true
+ruling = "Every font that passes the gates (Rules 1-4, D3, D4) is listed on the site, not only the catalog. The catalog (the overall top 500 plus the top 100 of the project rank and both desktop views, with its hysteresis) keeps its ranks and bands. Every other qualifying font follows the ranked fonts in the same list, unranked and A-Z, under a heading such as \"More truly free fonts\". It shows no rank, band or \"501+\", and it takes the same filters, search, details, download-link policy (gate K) and preview rules (D3, M2-D5) as a catalog font. Milestone 3's comparison takes owned fonts out of it too."
+reason = "The owner's choice (b) of four options, and Claude's recommendation. In the 2026-09-29 real-store run 1,747 families pass every gate and 500 of them are in the catalog, so about 1,250 qualifying fonts were never shown. The pipeline already checks their licenses, and 1,143 of them are Google families with an automatic link. Past about #500 the evidence is too thin to order fonts usefully, so they are listed A-Z rather than ranked (option (d), a bigger ranked catalog, would have shown noise as precision). The owner's page text says that any font with a qualifying license is eligible to be listed."
+
+[font_requests]
+ruling = "The candidate universe also grows on request. Anyone, whether a foundry, a designer or a visitor, may ask for a font to be added: by email to admin@trulyfreefonts.com or with the site's \"Missing font\" issue form. Claude checks the font against the gates (Rules 1-4 and D3 for the license, D4 for Latin, a text font) and finds its official link under gate K, and the owner rules in chat. An accepted family goes into config/foundries.toml, which is no longer seeded only once (this amends M12), and is listed from the next refresh: ranked if its evidence places it in the catalog, otherwise in the A-Z list. Being added never counts as popularity. The public files record when a family was added on request, never who asked."
+reason = "The owner's own variant of option (c), which Claude had offered as option (b) plus more directories: the owner prefers to add foundries as they ask. It reaches fonts that no directory lists, without the terms review a new directory would need, and it matches the owner's page text, which invites anyone to ask by email."
+
+[why_not_listed]
+heading = "Why isn't my favorite free font here?"
+text = "Not every font that's free to download is free to use in every way, and not every license fits this project. Some fonts are free only for personal projects or as a trial, or only if you never change or embed them. Others come with terms that can reach into the documents or products you make with them. This list includes only fonts whose licenses let anyone use them in any project, personal or commercial, with no limits on how they're used. Examples include the SIL Open Font License, Apache, MIT and public-domain dedications. Some of these fonts ask you to credit the designer, or don't let you pass the font files on, and we mark those. We read each font's own license text rather than trusting a label. Any font with a qualifying license is eligible to be listed. If you think one belongs here, email admin@trulyfreefonts.com and ask us to consider it."
+ruling = "The front page carries a note headed \"Why isn't my favorite free font here?\" with this text, word for word; admin@trulyfreefonts.com is a mailto link. It lives on the front page, not on /about (site/templates/index.html.j2)."
+reason = "The owner's choice: the owner accepted the text as Claude drafted it."
+
+[why_not_listed_layout]
+value = "frame_right_on_wide_screens_folded_on_phones"
+ruling = "On wide screens the note is a textbook-style frame floated right beside the intro: the lead and the privacy note wrap around it, and the list (filters and rows) starts below it, so rows are never narrowed and keep their height. On phones it is a full-width frame showing only its heading, folded; one tap opens the text. It works without JavaScript, causes no layout shift, gives screen readers the text once, needs no inline style or script, and works in light and dark themes."
+reason = "The owner's choice."
+
+[nerd_readme_folders]
+value = "link_folder"
+ruling = "A Nerd Fonts folder that holds only a README (the fonts ship in the release) is still the build's page and stays linked: 13 families, such as 0xProto, Geist Mono and Commit Mono."
+reason = "Claude's recommendation, taken by the owner: the README names the build and links its download."
+
+[nerd_hide_switch]
+value = "add_now"
+ruling = "The owner can hide a build's NF marker and link, with a required reason, in config/nerd-hidden.toml (a family id per entry); it starts empty."
+reason = "The owner's choice; Claude had recommended adding the switch only when a check fails."
+
+[nerd_broken_link]
+value = "font_stays_link_hidden"
+ruling = "A Nerd link that fails its check is not shown: no marker, link or filter match, until it passes again. The font stays listed, and review.md flags it."
+reason = "The owner's own answer: \"The font stays listed but the NF link is not shown.\" Claude had recommended a warning only."
+
+[nerd_marker_spot]
+value = "end_of_name_cell"
+ruling = "The NF marker sits at the end of the name's cell. Every name reserves its width, so the markers line up in a column and no row changes height."
+reason = "Claude's recommendation, taken by the owner."
+
+[why_not_listed_gap]
+value = "keep_as_built"
+ruling = "On wide screens the frame stays as built: a narrow, right-floated frame beside the short intro, with the blank area below the intro accepted."
+reason = "The owner's choice after seeing the screenshots; Claude had recommended a wider, shorter frame."
+
+[front_page_lead]
+value = "owner_text"
+ruling = "Every font here is free for any personal or commercial use, although sharing the files may be restricted. They are ranked by how many people install them and use them in their work."
+reason = "The owner's own wording, given in chat: the front page's lead now says that some fonts may be used freely but not passed on (Rule 3)."
+
+[site_status_line]
+value = "inventory_tools"
+ruling = "Early version. Coming next: free font inventory tools."
+reason = "The owner's choice among three wordings Claude offered: the old line, \"hiding the fonts you already have\", read as if it hid the visitor's own fonts rather than leaving them out of the list."
+
+[privacy_coming_next]
+value = "owner_text"
+ruling = "The next release will let you inventory the free fonts you have and discover new ones."
+reason = "The owner's own wording, given in chat, for the privacy page's \"Coming next\" section, so that it agrees with every header's \"Coming next: free font inventory tools.\""
+
+[privacy_coming_next_how]
+value = "no_promise_how"
+ruling = "The privacy page's \"Coming next\" section no longer says how the inventory will work: the sentence \"That check will run in your browser.\" is removed."
+reason = "The owner, in chat: \"Let's not promise how it works.\""
+
+[specimen_sample_latin]
+value = "Dolorem ipsum quaerit nemo."
+ruling = "The specimen sample line is \"Dolorem ipsum quaerit nemo.\" (Cicero's line behind Lorem ipsum), with descenders on both sides, in place of 2026-09-26's \"Zażółć gęślą jaźń · Příliš žluťoučký kůň\" (specimen_sample) and of \"Dolor dolorosus est.\", chosen earlier the same day. \"quaerit\" is spelt without the æ ligature, which fonts with basic Latin only lack. The basic-Latin fallback \"Sphinx of black quartz, judge my vow\" stays, for a font that lacks one of the sample's letters."
+reason = "The owner, in chat, later on 2026-09-29: the sample text \"MUST be 'Dolorem ipsum quaerit nemo.' This has descenders on both sides.\" Asked about a ligature, Claude noted that æ is not in basic-Latin-only fonts, which would fall back to the English line."
+
+[score_display]
+value = "blue_bars"
+ruling = "From Milestone 2 the list shows each font's score, 0 to 100, as a blue bar where the rank number is now (the column is 96px wide from 640px; the phone layout is designed in Milestone 2). Filters only hide rows: no renumbering, and no bands in the list. A font's details keep its rank and range. This replaces M2-D2 (numbers under filters) when it lands."
+reason = "The owner's idea in chat, after a filtered list ran 1 to 25 and then showed bands: \"Rather than ranks, can we give a score based on log/logistic/likelihood that someone deliberately selected the font?\" Asked whether the score replaces the numbers, the owner answered \"Blue bars show the score.\""
+
+[score_curve]
+value = "normal"
+ruling = "The score is 100·Φ(z), the normal curve of the engine's fused score for that rank (ranks.<key>.score in catalog.json): the inverse of how the shared scale is built. It is relative standing among the fonts the sources track, not the chance that a given person chose the font."
+reason = "Claude's recommendation, taken by the owner, who had suggested the logistic curve; the two differ by about one point at most."
+
+[score_held_fonts]
+value = "sort_by_score"
+ruling = "The list sorts by score. A font the two-source rule holds back (gate_held) takes its score's place and carries a marker. The catalog's ranks and bands keep the rule."
+reason = "The owner's choice. Claude had recommended showing such a font no score, only a note."
+
+[score_field_timing]
+value = "field_now_display_m2"
+ruling = "catalog-site.json carries each rank's score from Milestone 1, before the step 20 freeze. The display is built in Milestone 2, and the Milestone 1 pull request merges without waiting for it."
+reason = "Claude's recommendation: adding the field is easy before the freeze and hard after it."
+
+[name_once]
+value = "hide_text_name"
+ruling = "A row with a specimen shows the family name once, drawn in the font by the specimen's first line. The text name stays in the page, for screen readers, search and find-in-page, and shows whenever the specimen is not shown: a font without a specimen, a specimen that fails to load, a browser without CSS masks."
+reason = "The owner, in chat: \"we show each font's name twice, first in the system font and then the SVG ... We need not spell out the font, then show an SVG that spells out the font.\" Asked which to drop, the owner chose to hide the text name; Claude had recommended dropping the name from the specimen."
+
+[nerd_marker_spot_title]
+value = "end_of_title_cell"
+ruling = "The NF marker sits at the end of the row's title cell: the specimen, or the text name where there is none. Every title cell reserves its width, so the markers line up in a column and no row changes height. This replaces nerd_marker_spot (the end of the name's cell), since the text name is hidden where a specimen shows."
+reason = "Claude's proposal, following name_once, in the plan the owner approved."

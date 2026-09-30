@@ -172,6 +172,13 @@ def test_sample_covers_the_step_2_cases():
     views = {v["key"]: v for v in SAMPLE["views"]}
     assert views["rising"]["available"] is False
     assert not any("rising" in f["ranks"] for f in fonts_)
+    # Nerd Font builds (TASK-2): a monospace font or two with one, of both kinds, null elsewhere
+    nerd = {f["id"]: f["links"]["nerd"] for f in fonts_ if f["links"]["nerd"] is not None}
+    assert 1 <= len(nerd) < len(fonts_)
+    assert all(f["is_monospace"] for f in fonts_ if f["id"] in nerd)
+    folders = [n for n in nerd.values() if "/ryanoasis/nerd-fonts/tree/" in n["url"]]
+    assert folders, "a Nerd Fonts project build"
+    assert len(folders) < len(nerd), "a maker's own build"
 
 
 def test_sample_has_a_font_found_only_by_alias():
@@ -294,6 +301,15 @@ SCHEMA_BREAKS = {
     "url with a trailing newline": _set(["data_license", "url"], "https://example.com/\n"),
     "provisional data license (ruling T5)": _set(["data_license", "provisional"], True),
     "a view with the old desktop flag": lambda d: d["views"][0].update(desktop=True),
+    "links without nerd": lambda d: d["fonts"][0]["links"].pop("nerd"),
+    "a nerd link without its label": lambda d: _font(d, "sample-mono-02")["links"]["nerd"].pop(
+        "label"
+    ),
+    "a nerd link with a note": lambda d: _font(d, "sample-mono-02")["links"]["nerd"].update(
+        note="x"
+    ),
+    "no nerd wording": lambda d: d.pop("nerd"),
+    "nerd wording without its legend": lambda d: d["nerd"].pop("legend"),
 }
 
 
@@ -397,6 +413,7 @@ def test_sample_wording_matches_config_site_toml():
     ]
     assert SAMPLE["tiers"] == site["tiers"]
     assert SAMPLE["license_classes"] == site["license_classes"]
+    assert SAMPLE["nerd"] == site["nerd"]
     for source in SAMPLE["sources"]:  # publish_rank stays synthetic: jsdelivr's is hidden here
         credit = site["sources"][source["id"]]
         assert {k: source[k] for k in ("name", "measures", "url", "license")} == {
@@ -438,6 +455,31 @@ def test_spacing_filter_follows_the_site_ruling():
     )
 
 
+NERD_RULINGS = tomllib.loads(
+    (ROOT / "data" / "reviews" / "site" / "2026-09-29.toml").read_text(encoding="utf-8")
+)
+
+
+def test_the_nerd_marker_follows_the_site_rulings():
+    """The owner's rulings of 2026-09-29 (TASK-2): the "NF" marker, the legend word for word,
+    and a "Nerd Font available" filter, in the config, the template and the contract."""
+    site = tomllib.loads((ROOT / "config" / "site.toml").read_text(encoding="utf-8"))["nerd"]
+    assert site["legend"] == NERD_RULINGS["nerd_legend"]["ruling"]
+    assert site["marker"] == "NF"
+    assert f'"{site["marker"]}"' in NERD_RULINGS["nerd_marker"]["ruling"]
+    assert site["label"] in site["legend"]
+    label = re.search(r'"([^"]+)" option', NERD_RULINGS["nerd_filter"]["ruling"]).group(1)
+    filters = (TEMPLATES / "_filters.html.j2").read_text(encoding="utf-8")
+    assert f'id="f-nerd" name="nerd" value="1" aria-describedby="nf-legend"> {label}</label>' in (
+        filters
+    )
+    dom = section(CONTRACT, "4. DOM")
+    assert 'id="f-nerd" name="nerd"' in dom
+    assert 'id="nf-legend"' in dom
+    assert '<span class="nf-mark" role="img"' in dom
+    assert "8192 a Nerd Font build" in section(CONTRACT, "7. List index JSON")
+
+
 def test_hash_grammar_matches_the_hash_table():
     hash_section = section(CONTRACT, "9. URL hash")
     grammar = re.search(r"^key   = (.*)$", hash_section, re.MULTILINE).group(1)
@@ -445,6 +487,7 @@ def test_hash_grammar_matches_the_hash_table():
     table = [row[0] for row in table_after(hash_section, "| Key | Value |")]
     assert keys == table
     assert "spacing" in keys
+    assert keys.index("nerd") == keys.index("var") + 1  # "Nerd Font available", after var
     assert not {"mono", "text"} & set(keys)
     assert "Extension keys" in hash_section  # Milestone 3's keys survive State (section 9)
 
@@ -479,6 +522,14 @@ def test_validate_command_rejects_a_non_json_file(tmp_path, capsys):
     assert "invalid" in capsys.readouterr().err
 
 
+def test_a_failed_build_prints_its_problems_not_a_traceback(tmp_path, capsys):
+    missing = tmp_path / "missing.json"
+    assert main(["build", "--data", str(missing), "--out", str(tmp_path / "site")]) == 1
+    err = capsys.readouterr().err
+    assert err.startswith("tff-site build: failed\n")
+    assert str(missing) in err
+
+
 def test_help_lists_every_command(capsys):
     assert main(["--help"]) == 0
     out = capsys.readouterr().out
@@ -495,42 +546,11 @@ def test_each_command_has_help(command, capsys):
 # ---------------------------------------------------------------- JS parts
 
 
-TOP_DECLARATION = re.compile(
-    r"^(?:export\s+)?(const|let|var|class|function\*?|async\s+function)\s+([A-Za-z_$][\w$]*)",
-    re.MULTILINE,
-)
-STORAGE_APIS = (
-    "localStorage",
-    "sessionStorage",
-    "indexedDB",
-    "document.cookie",
-    "caches.",
-    "serviceWorker",
-    "cookieStore",
-)
-
-
 def lint_part(filename: str, const: str, source: str) -> list[str]:
-    """The parts rule (site/CONTRACT.md section 5), as a plain text check."""
-    problems = []
-    declarations = TOP_DECLARATION.findall(source)
-    if declarations != [("const", const)]:
-        problems.append(f"top-level declarations {declarations}, want one const {const}")
-    for line in source.splitlines():
-        if not line or line[0].isspace() or line.startswith(("//", "/*", "*")):
-            continue
-        if line.startswith(f"const {const} = ") or re.match(r"^[)\]}]", line):
-            continue
-        if filename == "90-main.js" and line == "Main.start();":
-            continue
-        problems.append(f"top-level statement: {line[:60]}")
-    if re.search(r"^\s*(import|export)\b", source, re.MULTILINE):
-        problems.append("import or export")
-    problems += [f"forbidden: {bad}" for bad in assets.FORBIDDEN_JS if bad in source]
-    problems += [f"storage API: {api}" for api in STORAGE_APIS if api in source]
-    if re.search(r"fetch\(\s*['\"`](?:[a-z]+:)?//", source):
-        problems.append("fetch with an absolute URL")
-    return problems
+    """The parts rule (site/CONTRACT.md section 5): the build's own lint, so a part that
+    passes this test also passes the build. ``const`` must be the table's name for it."""
+    assert dict(assets.JS_PARTS).get(filename) == const, (filename, const)
+    return assets.lint_js_part(filename, source)
 
 
 JS_TABLE = table_after(section(CONTRACT, "5. JS parts"), "| File | Const |")
@@ -560,20 +580,50 @@ def test_js_part_follows_the_rule(filename, const):
     assert lint_part(filename, const, (JS_DIR / filename).read_text(encoding="utf-8")) == []
 
 
-@pytest.mark.parametrize(
-    "source",
-    [
-        "const Core = 1;\nconst Extra = 2;\n",
-        "const Core = 1;\nfunction helper() {}\n",
-        "const Core = 1;\ndocument.title = 'x';\n",
-        "import x from './x.js';\nconst Core = 1;\n",
-        "const Core = (() => {\n  node.innerHTML = s;\n})();\n",
-        "const Core = (() => {\n  fetch('https://example.com/x');\n})();\n",
-        "const Core = (() => {\n  localStorage.setItem('a', 1);\n})();\n",
-    ],
-)
-def test_the_parts_lint_catches(source):
-    assert lint_part("00-core.js", "Core", source) != []
+# One example per refusal in site/CONTRACT.md sections 5 and 6.
+BAD_JS = [
+    ("00-core.js", "const Core = 1;\nconst Extra = 2;\n"),
+    ("00-core.js", "const Core = 1;\nfunction helper() {}\n"),
+    ("00-core.js", "const Core = 1;\ndocument.title = 'x';\n"),
+    ("00-core.js", "import x from './x.js';\nconst Core = 1;\n"),
+    ("00-core.js", "const Core = (() => {\n  import('./x.js');\n})();\n"),
+    ("00-core.js", "const Core = (() => {\n  node.innerHTML = s;\n})();\n"),
+    ("00-core.js", "const Core = (() => {\n  fetch('https://example.com/x');\n})();\n"),
+    ("00-core.js", "const Core = (() => {\n  localStorage.setItem('a', 1);\n})();\n"),
+    ("00-core.js", "const Core = (() => {\n  return 1;\n})(); alert(1);\n"),
+    ("00-core.js", "const Core = (() => {\n  navigator.sendBeacon('/x', d);\n})();\n"),
+    ("00-core.js", "const Core = (() => {\n  new XMLHttpRequest();\n})();\n"),
+    ("00-core.js", "const Core = (() => {\n  new WebSocket('/x');\n})();\n"),
+    ("00-core.js", "const Core = (() => {\n  new EventSource('/x');\n})();\n"),
+    ("00-core.js", "const Core = (() => {\n  n.setAttribute('style', s);\n})();\n"),
+    ("90-main.js", "const Main = 1;\n"),
+    ("90-main.js", "const Main = 1;\nMain.start();\nMain.start();\n"),
+    ("90-main.js", "Main.start();\nconst Main = 1;\n"),
+]
+BAD_CSS = [
+    "@import url(other.css);\n",
+    "@font-face { font-family: X; src: url(/x.woff2); }\n",
+    "a { background: url(https://example.com/x.png); }\n",
+    "a { background: url(//example.com/x.png); }\n",
+    "a { background: url(data:image/png;base64,AAAA); }\n",
+]
+
+
+@pytest.mark.parametrize(("filename", "source"), BAD_JS)
+def test_the_parts_lint_catches(filename, source):
+    assert lint_part(filename, dict(assets.JS_PARTS)[filename], source) != []
+
+
+@pytest.mark.parametrize("name", assets.CSS_PARTS)
+def test_css_part_follows_the_rule(name):
+    path = ROOT / "site" / "css" / name
+    if path.is_file():
+        assert assets.lint_css_part(name, path.read_text(encoding="utf-8")) == []
+
+
+@pytest.mark.parametrize("source", BAD_CSS)
+def test_the_css_lint_catches(source):
+    assert assets.lint_css_part("10-base.css", source) != []
 
 
 # ---------------------------------------------------------------- CSS parts and tokens
@@ -653,7 +703,19 @@ CONTRAST_PAIRS = (
         ("--c-badge-fg", "--c-badge-bg", 4.5),
         ("--c-warn-fg", "--c-warn-bg", 4.5),
     ]
+    # The header, white in both themes (owner ruling of 2026-09-29).
+    + [
+        (fg, "--c-header-bg", 4.5)
+        for fg in ("--c-header-fg", "--c-header-muted", "--c-header-link")
+    ]
+    + [("--c-header-focus", "--c-header-bg", 3.0), ("--c-header-fg", "--c-wordmark-bg", 4.5)]
 )
+
+
+def test_the_header_is_white_in_both_themes():
+    for values in (LIGHT, {**LIGHT, **DARK}):
+        assert values["--c-header-bg"] == values["--c-wordmark-bg"] == "#ffffff"
+        assert all(values[f"--c-header-{k}"] == LIGHT[f"--c-{k}"] for k in ("fg", "muted", "link"))
 
 
 @pytest.mark.parametrize("theme", ["light", "dark"])
@@ -704,6 +766,7 @@ CONTEXT = {
             "mailto": "mailto:admin@trulyfreefonts.com?subject=trulyfreefonts.com",
         },
         "tip_url": None,
+        "blog": None,
     },
     "page": {
         "path": "/privacy/",

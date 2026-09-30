@@ -1,0 +1,21 @@
+{#-
+  blog-post.html.j2: /blog/<slug>/ (Milestone 2 step 7b; M2-D12). The text is
+  site/content/blog/<yyyy-mm-dd>-<slug>.md, rendered by tff_site.blog through
+  pages.render_markdown (raw HTML off). Context: every page's, plus `heading` (the title) and
+  `post` {url, title, date, updated, description, draft, content, license {name, url,
+  scope_url}}. No script. Each post gives its license, CC BY-SA 4.0 (LICENSE-DATA). Page text
+  is a draft for the owner's approval. Styles: site/css/40-pages.css and 45-blog.css.
+-#}
+{% extends "base.html.j2" %}
+{% block scripts %}{% endblock %}
+{% block main %}
+<article class="page page-prose blog-post">
+<h1>{{ heading }}</h1>
+<p class="page-meta blog-meta"><time datetime="{{ post.date }}">{{ post.date }}</time>{% if post.updated %}, updated <time datetime="{{ post.updated }}">{{ post.updated }}</time>{% endif %}{% if post.draft %} <span class="blog-draft">Draft: not published yet</span>{% endif %}</p>
+{{ post.content }}
+<div class="blog-post-end">
+<p class="blog-license">This post's text and images are under the <a href="{{ post.license.url }}">{{ post.license.name }}</a> license: you may share and adapt them, even commercially, if you give credit and share alike. <a href="{{ post.license.scope_url }}">What the license covers</a>.</p>
+<p class="blog-more"><a href="{{ site.blog.url }}">All posts</a> · <a href="{{ site.blog.feed_url }}">Atom feed</a></p>
+</div>
+</article>
+{% endblock %}

@@ -1,0 +1,46 @@
+{
+  "format": "tff-mockhttp",
+  "responses": [
+    {
+      "body": null,
+      "headers": {
+        "content-type": "application/binary",
+        "location": "https://doc-04-7g-sheets.googleusercontent.com/export/fixture-signature/pages/1otdu4p_CCI70B4FVzw6k02frStsPMrQoFu7jUim_0Bg?format=csv&gid=1668708562"
+      },
+      "method": "GET",
+      "status": 307,
+      "url": "https://docs.google.com/spreadsheets/d/1otdu4p_CCI70B4FVzw6k02frStsPMrQoFu7jUim_0Bg/export?format=csv&gid=1668708562"
+    },
+    {
+      "body": "pages.csv",
+      "headers": {
+        "content-disposition": "attachment; filename=\"Fonts 2025 - Design: Which families are popular in CSS?.csv\"",
+        "content-type": "text/csv; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://doc-04-7g-sheets.googleusercontent.com/export/fixture-signature/pages/1otdu4p_CCI70B4FVzw6k02frStsPMrQoFu7jUim_0Bg?format=csv&gid=1668708562"
+    },
+    {
+      "body": null,
+      "headers": {
+        "content-type": "application/binary",
+        "location": "https://doc-04-7g-sheets.googleusercontent.com/export/fixture-signature/services/1otdu4p_CCI70B4FVzw6k02frStsPMrQoFu7jUim_0Bg?format=csv&gid=1594814478"
+      },
+      "method": "GET",
+      "status": 307,
+      "url": "https://docs.google.com/spreadsheets/d/1otdu4p_CCI70B4FVzw6k02frStsPMrQoFu7jUim_0Bg/export?format=csv&gid=1594814478"
+    },
+    {
+      "body": "services.csv",
+      "headers": {
+        "content-disposition": "attachment; filename=\"Fonts 2025 - Performance: Which families are used broken down by service?.csv\"",
+        "content-type": "text/csv; charset=utf-8"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://doc-04-7g-sheets.googleusercontent.com/export/fixture-signature/services/1otdu4p_CCI70B4FVzw6k02frStsPMrQoFu7jUim_0Bg?format=csv&gid=1594814478"
+    }
+  ],
+  "version": 1
+}

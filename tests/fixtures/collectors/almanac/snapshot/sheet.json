@@ -1,0 +1,26 @@
+{
+  "crawl_date": "2025-07-01",
+  "edition": 2025,
+  "schema": 1,
+  "sheet_id": "1otdu4p_CCI70B4FVzw6k02frStsPMrQoFu7jUim_0Bg",
+  "tabs": {
+    "pages": {
+      "gid": 1668708562,
+      "preamble": {
+        "Normalization": "Pages",
+        "Question": "Which families are popular in CSS?",
+        "Section": "Design"
+      },
+      "rows": 30
+    },
+    "services": {
+      "gid": 1594814478,
+      "preamble": {
+        "Normalization": "Requests (parsed only)",
+        "Question": "Which families are used broken down by service?",
+        "Section": "Performance"
+      },
+      "rows": 35
+    }
+  }
+}

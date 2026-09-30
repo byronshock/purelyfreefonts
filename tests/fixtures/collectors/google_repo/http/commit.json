@@ -1,0 +1,16 @@
+{
+  "author": {
+    "date": "2026-10-03T00:00:00Z"
+  },
+  "committer": {
+    "date": "2026-10-03T00:00:00Z"
+  },
+  "message": "fixture github.com/google/fonts",
+  "parents": [],
+  "sha": "26b59081ff4ae5cc8bd244575fb8816a1714ef7b",
+  "tree": {
+    "sha": "65b813f5591514c196f39077b0b7bff3749d9f9f",
+    "url": "https://api.github.com/repos/google/fonts/git/trees/65b813f5591514c196f39077b0b7bff3749d9f9f"
+  },
+  "url": "https://api.github.com/repos/google/fonts/git/commits/26b59081ff4ae5cc8bd244575fb8816a1714ef7b"
+}

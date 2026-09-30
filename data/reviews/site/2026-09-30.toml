@@ -1,0 +1,6 @@
+# Owner rulings of 2026-09-30 on the site, given in chat to Claude during the local test drive of pull request #23. Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md.
+
+[specimen_max_size]
+value = "16_KB_gzip"
+ruling = "A specimen may be up to 16 KB compressed (gzip -9, decimal kilobytes, about what a visitor downloads), in place of 30 KB uncompressed; a larger one is drawn with the family name only. The other specimen budgets stay: at least half at or under 5 KB gzip -9, all under 10 MB uncompressed."
+reason = "The owner, in chat: \"Why do we have a 30 KB threshold?\" Claude showed that the raw cap made six fonts name-only although each was 7 to 15 KB compressed (Geist Pixel: 215 KB raw, 7.1 KB gzip) and suggested a cap on compressed size of about 15 KB; the owner answered \"I am OK with files under 16 KB.\""

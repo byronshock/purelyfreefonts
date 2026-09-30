@@ -1,0 +1,20 @@
+# Real Caddy serving a built site with the production headers (site.caddy), over plain HTTP on
+# the loopback interface. Used by CI's browser and performance jobs (tests/site/conftest.py
+# expects http://127.0.0.1:8080 when TFF_CADDY=1) and by tests/test_caddy_config.py. Never
+# deployed. TFF_SITE_DIR must be set; TFF_CADDY_PORT picks another port.
+#
+#   TFF_SITE_DIR=$PWD/build/site caddy run --config ops/caddy/ci.Caddyfile --adapter caddyfile
+
+{
+	admin off
+	auto_https off
+	persist_config off
+}
+
+import site.caddy
+
+:{$TFF_CADDY_PORT:8080} {
+	bind 127.0.0.1
+	root * {$TFF_SITE_DIR}
+	import tff_site
+}

@@ -9,7 +9,9 @@ Validation has two layers, and ``tff-site validate`` and ``tff-site build`` run 
   entry per source, ranks withheld for sources whose terms forbid them, and view universes
   (every font in every available view; ``coding`` holds exactly the monospace fonts).
 
-The payloads (``list_index`` and ``details``) are the formats in ``site/CONTRACT.md``.
+The payloads (``list_index`` and ``details``) are the formats in ``site/CONTRACT.md``
+(sections 7 and 8). They are pure functions of the document, so the same catalog always gives
+the same bytes once serialised with ``jsonio.canonical_bytes``.
 """
 
 import json
@@ -19,6 +21,9 @@ from dataclasses import dataclass
 from itertools import pairwise
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
+
+from tff_catalog.keys import search_key
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SCHEMA_PATH = REPO_ROOT / "schemas" / "catalog-site.schema.json"
@@ -56,6 +61,43 @@ SPECIMEN_FLAGS = frozenset({"specimen_failed", "specimen_name_only", "specimen_h
 # Written by the sample until the specimens are rendered: the build treats it as no preview.
 PLACEHOLDER_SHA256 = "0" * 64
 
+# The rank the list page shows first and server-renders (M2-D1).
+DEFAULT_VIEW = "overall"
+# Categories in schema order (the list index's ``cats``), with their page labels.
+CATEGORY_LABELS = {
+    "sans-serif": "Sans serif",
+    "serif": "Serif",
+    "display": "Display",
+    "handwriting": "Handwriting",
+    "monospace": "Monospace",
+}
+CATEGORIES = tuple(CATEGORY_LABELS)
+# Operating-system families for "Hide fonts that come with …", with their page labels.
+OS_LABELS = {"windows": "Windows", "macos": "macOS", "linux": "Linux", "android": "Android"}
+
+# List-index ``bits`` (site/CONTRACT.md section 7).
+BIT_MONOSPACE = 1
+BIT_VARIABLE = 2
+BIT_LIMITED = 4
+BIT_ATTRIBUTION = 8
+BIT_NO_REDIST = 16
+BIT_SPECIMEN = 32
+BIT_TYPE_OWN = 64
+OS_BITS = {"windows": 128, "macos": 256, "linux": 512, "android": 1024}  # os "app": no bit
+BIT_NEW = 2048
+BIT_PULLED = 4096
+BIT_NERD = 8192  # a Nerd Font build (links.nerd): the "NF" marker and filter (TASK-2)
+
+LIST_FORMAT = 1
+DETAILS_FORMAT = 1
+TIER_UNRANKED = "-"
+TIER_OUTSIDE = "."
+
+# Where people report problems (M2-D10): the license issue form, and the email fallback.
+REPO_URL = "https://github.com/byronshock/trulyfreefonts"
+FEEDBACK_EMAIL = "admin@trulyfreefonts.com"
+REPORT_ISSUE_URL = f"{REPO_URL}/issues/new?template=license.yml"
+
 
 class CatalogError(ValueError):
     """The catalog failed validation. ``errors`` holds one line per problem."""
@@ -74,9 +116,29 @@ class Validated:
 
 
 def load(path: Path) -> dict[str, Any]:
-    """Read a catalog-site JSON file (UTF-8) without validating it."""
-    with Path(path).open(encoding="utf-8") as fh:
-        return json.load(fh)
+    """Read a catalog-site JSON file (UTF-8) without validating it (see ``loads``)."""
+    return loads(Path(path).read_bytes())
+
+
+def loads(blob: bytes) -> dict[str, Any]:
+    """Parse catalog-site JSON bytes (UTF-8) without validating the document.
+
+    Stricter than ``json.loads``: a key repeated in one object, ``NaN`` and ``Infinity`` are
+    refused (``ValueError``), because the schema would see only one of the repeated values.
+    """
+    return json.loads(blob.decode("utf-8"), object_pairs_hook=_unique, parse_constant=_no_nan)
+
+
+def _unique(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    out = dict(pairs)
+    if len(out) != len(pairs):
+        dupes = sorted(k for k, n in Counter(k for k, _ in pairs).items() if n > 1)
+        raise ValueError(f"key repeated in one object: {dupes}")
+    return out
+
+
+def _no_nan(name: str) -> Any:
+    raise ValueError(f"{name} is not valid JSON")
 
 
 def schema() -> dict[str, Any]:
@@ -169,7 +231,7 @@ def validate_file(path: Path) -> Validated:
     """``validate(load(path))``; a file that isn't JSON raises ``CatalogError`` too."""
     try:
         doc = load(path)
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+    except (OSError, ValueError) as exc:  # ValueError: bad UTF-8 or JSON (see ``loads``)
         raise CatalogError([f"{path}: {exc}"]) from exc
     return validate(doc)
 
@@ -187,21 +249,178 @@ def list_index(doc: Mapping[str, Any], *, commit: str) -> dict[str, Any]:
 
     Font index ``i`` is the ``i``-th server-rendered row: Overall order, then fonts unranked
     in Overall by Python ``str.casefold`` of the family, then id.
+
+    Bit 32 (a specimen) is set for a ``preview`` whose sha256 is not the placeholder, and bit
+    64 ("Type your own text") for a ``font_file``: a build without font files passes a
+    document whose ``font_file`` values are null.
     """
-    raise NotImplementedError("M2 step 1")
+    fonts = server_order(doc)
+    system_os = {s["id"]: s["os"] for s in doc["systems"]}
+    lics = [c["id"] for c in doc["license_classes"]]
+    lic_index = {lic: i for i, lic in enumerate(lics)}
+    cat_index = {cat: i for i, cat in enumerate(CATEGORIES)}
+    bands = [b["label"] for b in doc["bands"]]
+    return {
+        "v": LIST_FORMAT,
+        "commit": commit,
+        "run_date": doc["run"]["date"],
+        "n": len(fonts),
+        "ids": [f["id"] for f in fonts],
+        "cats": list(CATEGORIES),
+        "cat": [cat_index[f["category"]] for f in fonts],
+        "lics": lics,
+        "lic": [lic_index[f["license"]["class"]] for f in fonts],
+        "bits": [font_bits(f, system_os) for f in fonts],
+        "keys": [search_keys(f) for f in fonts],
+        "by_name": sorted(range(len(fonts)), key=lambda i: name_order(fonts[i])),
+        "views": [dict(v) for v in doc["views"]],
+        "bands": bands,
+        "why_labels": list(UNRANKED_LABELS.values()),
+        "r": {
+            view["key"]: _view_columns(fonts, view["key"], bands)
+            for view in doc["views"]
+            if view["available"]
+        },
+    }
 
 
 def details(doc: Mapping[str, Any], *, font_assets: Mapping[str, str]) -> dict[str, Any]:
     """Return the details payload (``/assets/details.<h>.json``; format in site/CONTRACT.md).
 
     ``font_assets`` maps font id to the hashed ``/assets/fonts/…`` URL of its font file.
+    A font without an entry there gets ``type_own: null``.
     """
-    raise NotImplementedError("M2 step 4")
+    fonts = {f["id"]: f for f in doc["fonts"]}
+    stray = sorted(k for k in font_assets if fonts.get(k, {}).get("font_file") is None)
+    if stray:
+        raise ValueError(f"font_assets names fonts without a font_file: {stray}")
+    out: dict[str, Any] = {}
+    for font_id, font in fonts.items():
+        entry = {k: v for k, v in font.items() if k not in ("preview", "font_file")}
+        url = font_assets.get(font_id)
+        entry["type_own"] = None if url is None else {"url": url, "size": font["font_file"]["size"]}
+        out[font_id] = entry
+    return {
+        "v": DETAILS_FORMAT,
+        "run_date": doc["run"]["date"],
+        "views": doc["views"],
+        "bands": doc["bands"],
+        "tiers": doc["tiers"],
+        "sources": doc["sources"],
+        "systems": doc["systems"],
+        "license_classes": doc["license_classes"],
+        "nerd": doc["nerd"],
+        "state_labels": dict(STATE_LABELS),
+        "why_labels": dict(UNRANKED_LABELS),
+        "report": {"issue_url": REPORT_ISSUE_URL, "email": FEEDBACK_EMAIL},
+        "fonts": out,
+    }
 
 
 def server_order(doc: Mapping[str, Any]) -> list[Mapping[str, Any]]:
     """Return the fonts in server-rendered order (see ``list_index``)."""
-    raise NotImplementedError("M2 step 1")
+    ranked: list[tuple[int, Mapping[str, Any]]] = []
+    unranked: list[Mapping[str, Any]] = []
+    for font in doc["fonts"]:
+        entry = font["ranks"].get(DEFAULT_VIEW)
+        if entry is not None and entry["order"] is not None:
+            ranked.append((entry["order"], font))
+        else:
+            unranked.append(font)
+    ranked.sort(key=lambda pair: pair[0])
+    return [font for _, font in ranked] + sorted(unranked, key=name_order)
+
+
+def name_order(font: Mapping[str, Any]) -> tuple[str, str]:
+    """Sort key for "by name": Python ``str.casefold`` of the family, then the id."""
+    return (font["family"].casefold(), font["id"])
+
+
+def has_specimen(font: Mapping[str, Any]) -> bool:
+    """True when the font has a rendered specimen (a preview that isn't the placeholder)."""
+    preview = font["preview"]
+    return preview is not None and preview["sha256"] != PLACEHOLDER_SHA256
+
+
+def font_bits(font: Mapping[str, Any], system_os: Mapping[str, str]) -> int:
+    """Return the list-index ``bits`` of one font (site/CONTRACT.md section 7)."""
+    bits = 0
+    if font["is_monospace"]:
+        bits |= BIT_MONOSPACE
+    if font["formats"]["variable"]:
+        bits |= BIT_VARIABLE
+    if font["latin"]["coverage"] == "basic":
+        bits |= BIT_LIMITED
+    if font["license"]["attribution_required"]:
+        bits |= BIT_ATTRIBUTION
+    if not font["license"]["redistributable"]:
+        bits |= BIT_NO_REDIST
+    if has_specimen(font):
+        bits |= BIT_SPECIMEN
+    if font["preview_ok"] and font["font_file"] is not None:
+        bits |= BIT_TYPE_OWN
+    for item in font["preinstalled_on"]:
+        bits |= OS_BITS.get(system_os[item["system"]], 0)
+    if "too_new" in font["flags"]:
+        bits |= BIT_NEW
+    if font["pulled_in_by"]:
+        bits |= BIT_PULLED
+    if font["links"]["nerd"] is not None:
+        bits |= BIT_NERD
+    return bits
+
+
+def search_keys(font: Mapping[str, Any]) -> str:
+    """``search_key`` of the family, then of each alias in catalog order, joined by ``|``."""
+    names = [font["family"], *(alias["name"] for alias in font["aliases"])]
+    return "|".join(search_key(name) for name in names)
+
+
+def destination_name(link: Mapping[str, Any]) -> str:
+    """Name a link's destination (site/CONTRACT.md section 1, "Destination names")."""
+    if link.get("label"):
+        return link["label"]
+    return url_destination(link["url"])
+
+
+def url_destination(url: str) -> str:
+    """Name where ``url`` goes, from the URL alone (rules 2 to 4 of "Destination names")."""
+    parts = urlsplit(url)
+    host = (parts.hostname or "").removeprefix("www.")
+    segments = [s for s in parts.path.split("/") if s]
+    if host == "github.com" and len(segments) >= 2:
+        return f"GitHub: {segments[0]}/{segments[1].removesuffix('.git')}"
+    if host == "fonts.google.com":
+        return "Google Fonts"
+    return host
+
+
+def nerd_link_text(link: Mapping[str, Any]) -> str:
+    """The text of a Nerd Font build link (site/CONTRACT.md section 1): the build's name,
+    then where the link goes, "SauceCodePro Nerd Font (GitHub: ryanoasis/nerd-fonts)"."""
+    return f"{link['label']} ({url_destination(link['url'])})"
+
+
+def _view_columns(fonts: list[Mapping[str, Any]], key: str, bands: list[str]) -> dict[str, Any]:
+    band_index = {label: i for i, label in enumerate(bands)}
+    why_index = {reason: i for i, reason in enumerate(UNRANKED_LABELS)}
+    entries = [font["ranks"].get(key) for font in fonts]
+    ranked = sorted((e["order"], i) for i, e in enumerate(entries) if e and e["order"] is not None)
+    tiers = []
+    for entry in entries:
+        if entry is None:
+            tiers.append(TIER_OUTSIDE)
+        elif entry["order"] is None:
+            tiers.append(TIER_UNRANKED)
+        else:
+            tiers.append(entry["tier"])
+    return {
+        "order": [i for _, i in ranked],
+        "top": [(e["rank"] or 0) if e else 0 for e in entries],
+        "band": [band_index[e["band"]] if e and e["band"] is not None else -1 for e in entries],
+        "tier": "".join(tiers),
+        "why": [why_index[e["unranked"]] if e and e["unranked"] else -1 for e in entries],
+    }
 
 
 def _dupes(items: Iterable[str]) -> list[str]:

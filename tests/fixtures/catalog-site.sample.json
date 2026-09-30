@@ -3,7 +3,7 @@
   "synthetic": true,
   "run": {
     "date": "2026-09-25",
-    "method_version": "2026-09-25",
+    "method_version": "2026-09-29",
     "ranking_toml_sha256": "66dab0fd9a4c7adea63aebe6f8ed2970c7af49defbd9fda7f8ec0531c01f9453",
     "generator": "synthetic sample (hand-made, not a pipeline run)"
   },
@@ -22,7 +22,7 @@
     {
       "key": "dev_apps",
       "label": "Developers & apps",
-      "measures": "What builders choose: npm packages, projects that depend on them, and app frameworks.",
+      "measures": "What builders choose: npm packages, projects that depend on them, and app frameworks. Shown in bands only: all its sources come from npm, one kind of evidence, so no font gets an exact rank yet.",
       "available": true
     },
     {"key": "rising", "label": "Rising (beta)", "measures": "Fonts gaining share over the last 3 months.", "available": false}
@@ -85,7 +85,7 @@
     {
       "id": "nerd",
       "name": "Nerd Fonts release downloads",
-      "group": "github_counters",
+      "group": "nerd",
       "survey": "desktop",
       "measures": "Patched-build downloads, credited to the original font",
       "url": "https://github.com/ryanoasis/nerd-fonts/releases",
@@ -195,6 +195,11 @@
     {"id": "attribution", "label": "Attribution required (CC BY)"},
     {"id": "freeware", "label": "Other free-use grants"}
   ],
+  "nerd": {
+    "marker": "NF",
+    "label": "Nerd Font version available",
+    "legend": "NF: Nerd Font version available (adds developer icons, which have their own licenses)."
+  },
   "fonts": [
     {
       "id": "sample-sans-01",
@@ -213,25 +218,25 @@
         "text_url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/inter/OFL.txt"
       },
       "preview_ok": true,
-      "preview": {"path": "specimens/sample-sans-01.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
+      "preview": {"path": "specimens/sample-sans-01.svg", "sha256": "c9c7de3ee8ff5c3091164dbd1916faa8162771eeb5566c08bd738f8f57f8592f"},
       "font_file": {
         "url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/inter/Inter%5Bopsz%2Cwght%5D.ttf",
         "sha256": "29160a80ff49ddcab2c97711247e08b1fab27a484a329ce8b813d820dc559031",
         "size": 876576,
         "format": "ttf"
       },
-      "links": {"primary": {"url": "https://github.com/rsms/inter"}, "designer": {"url": "https://rsms.me/", "label": "Rasmus Andersson"}},
+      "links": {"primary": {"url": "https://github.com/rsms/inter"}, "designer": {"url": "https://rsms.me/", "label": "Rasmus Andersson"}, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [{"name": "Sample Sans 01 Variable", "relation": "build"}, {"name": "SampleSans01-Regular", "relation": "postscript"}],
       "first_seen": "2025-02-02",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 1, "band": null, "order": 1, "tier": "A", "range": [1, 6], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 3, "band": null, "order": 3, "tier": "A", "range": [1, 8], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 3, "band": null, "order": 3, "tier": "A", "range": [1, 8], "gate_held": false, "unranked": null},
-        "project": {"rank": 1, "band": null, "order": 1, "tier": "A", "range": [1, 6], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 2, "band": null, "order": 2, "tier": "A", "range": [1, 7], "gate_held": false, "unranked": null}
+        "overall": {"rank": 1, "band": null, "order": 1, "tier": "A", "range": [1, 6], "score": 2.303369, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 3, "band": null, "order": 3, "tier": "A", "range": [1, 8], "score": 1.964924, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 3, "band": null, "order": 3, "tier": "A", "range": [1, 8], "score": 1.964924, "gate_held": false, "unranked": null},
+        "project": {"rank": 1, "band": null, "order": 1, "tier": "A", "range": [1, 6], "score": 2.303369, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 2, "band": null, "order": 2, "tier": "A", "range": [1, 7], "score": 2.077417, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 2, "reason": null, "abstains_in": []},
@@ -265,26 +270,30 @@
         "text_url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/jetbrainsmono/OFL.txt"
       },
       "preview_ok": true,
-      "preview": {"path": "specimens/sample-mono-02.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
+      "preview": {"path": "specimens/sample-mono-02.svg", "sha256": "1f4b7051eab0d2d06aad42c9ad3859f877dd6d06c87f0a651a6e8a30447248aa"},
       "font_file": {
         "url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/jetbrainsmono/JetBrainsMono%5Bwght%5D.ttf",
         "sha256": "48715a42ec242c21e9f02692891e147d022299a52e48d5e413e1a942193ffeda",
         "size": 187208,
         "format": "ttf"
       },
-      "links": {"primary": {"url": "https://github.com/JetBrains/JetBrainsMono"}, "designer": null},
+      "links": {
+        "primary": {"url": "https://github.com/JetBrains/JetBrainsMono"},
+        "designer": null,
+        "nerd": {"url": "https://github.com/ryanoasis/nerd-fonts/tree/v3.5.1/patched-fonts/SampleMono02", "label": "SampleMono02 Nerd Font"}
+      },
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [{"name": "Sample Mono 02 NL", "relation": "build"}, {"name": "SampleMono02 Nerd Font", "relation": "build"}],
       "first_seen": "2025-03-03",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 2, "band": null, "order": 2, "tier": "A", "range": [1, 7], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 1, "band": null, "order": 1, "tier": "A", "range": [1, 6], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 1, "band": null, "order": 1, "tier": "A", "range": [1, 6], "gate_held": false, "unranked": null},
-        "project": {"rank": 14, "band": null, "order": 14, "tier": "A", "range": [11, 19], "gate_held": false, "unranked": null},
-        "coding": {"rank": 1, "band": null, "order": 1, "tier": "A", "range": [1, 6], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 9, "band": null, "order": 9, "tier": "A", "range": [6, 14], "gate_held": false, "unranked": null}
+        "overall": {"rank": 2, "band": null, "order": 2, "tier": "A", "range": [1, 7], "score": 2.077417, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 1, "band": null, "order": 1, "tier": "A", "range": [1, 6], "score": 2.303369, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 1, "band": null, "order": 1, "tier": "A", "range": [1, 6], "score": 2.303369, "gate_held": false, "unranked": null},
+        "project": {"rank": 14, "band": null, "order": 14, "tier": "A", "range": [11, 19], "score": 1.548062, "gate_held": false, "unranked": null},
+        "coding": {"rank": 1, "band": null, "order": 1, "tier": "A", "range": [1, 6], "score": 2.303369, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 9, "band": null, "order": 9, "tier": "A", "range": [6, 14], "score": 1.670695, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 1, "reason": null, "abstains_in": []},
@@ -322,7 +331,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://github.com/sample-foundry/sample-sans-03"},
-        "designer": {"url": "https://example.org/designers/studio-4", "label": "Example Type Studio 4"}
+        "designer": {"url": "https://example.org/designers/studio-4", "label": "Example Type Studio 4"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [],
@@ -330,11 +340,11 @@
       "first_seen": "2025-04-04",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 3, "band": null, "order": 3, "tier": "A", "range": [1, 8], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 7, "band": null, "order": 7, "tier": "A", "range": [4, 12], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 8, "band": null, "order": 8, "tier": "A", "range": [5, 13], "gate_held": false, "unranked": null},
-        "project": {"rank": 2, "band": null, "order": 2, "tier": "A", "range": [1, 7], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 1, "band": null, "order": 1, "tier": "A", "range": [1, 6], "gate_held": false, "unranked": null}
+        "overall": {"rank": 3, "band": null, "order": 3, "tier": "A", "range": [1, 8], "score": 1.964924, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 7, "band": null, "order": 7, "tier": "A", "range": [4, 12], "score": 1.738639, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 8, "band": null, "order": 8, "tier": "A", "range": [5, 13], "score": 1.702665, "gate_held": false, "unranked": null},
+        "project": {"rank": 2, "band": null, "order": 2, "tier": "A", "range": [1, 7], "score": 2.077417, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 1, "band": null, "order": 1, "tier": "A", "range": [1, 6], "score": 2.303369, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 6, "reason": null, "abstains_in": []},
@@ -370,18 +380,18 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-serif-04.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-serif-04/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-serif-04/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-05-05",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 4, "band": null, "order": 4, "tier": "A", "range": [1, 9], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 12, "band": null, "order": 12, "tier": "A", "range": [9, 17], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 13, "band": null, "order": 13, "tier": "A", "range": [10, 18], "gate_held": false, "unranked": null},
-        "project": {"rank": 3, "band": null, "order": 3, "tier": "A", "range": [1, 8], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 4, "band": null, "order": 4, "tier": "A", "range": [1, 9], "gate_held": false, "unranked": null}
+        "overall": {"rank": 4, "band": null, "order": 4, "tier": "A", "range": [1, 9], "score": 1.887791, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 12, "band": null, "order": 12, "tier": "A", "range": [9, 17], "score": 1.591404, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 13, "band": null, "order": 13, "tier": "A", "range": [10, 18], "score": 1.568982, "gate_held": false, "unranked": null},
+        "project": {"rank": 3, "band": null, "order": 3, "tier": "A", "range": [1, 8], "score": 1.964924, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 4, "band": null, "order": 4, "tier": "A", "range": [1, 9], "score": 1.887791, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 10, "reason": null, "abstains_in": []},
@@ -415,25 +425,25 @@
         "text_url": "https://raw.githubusercontent.com/adobe-fonts/source-sans/87b37a2daaed80fcb8e8ccb0085c4d72ddade12e/LICENSE.md"
       },
       "preview_ok": true,
-      "preview": {"path": "specimens/sample-sans-05.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
+      "preview": {"path": "specimens/sample-sans-05.svg", "sha256": "fc3435ef341cf945ff7cdd3f0b35ffb3e4071e8591c65c7f32b80436b215984e"},
       "font_file": {
         "url": "https://raw.githubusercontent.com/adobe-fonts/source-sans/87b37a2daaed80fcb8e8ccb0085c4d72ddade12e/OTF/SourceSans3-Regular.otf",
         "sha256": "08df266400933d3178d081a45f94a08814c3e55b4b7dd2e0ff69cb1329f13ab6",
         "size": 334924,
         "format": "otf"
       },
-      "links": {"primary": {"url": "https://github.com/adobe-fonts/source-sans"}, "designer": null},
+      "links": {"primary": {"url": "https://github.com/adobe-fonts/source-sans"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [{"name": "Sample Sans Classic", "relation": "rename"}, {"name": "SampleSans05-Regular", "relation": "postscript"}],
       "first_seen": "2025-06-06",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 5, "band": null, "order": 5, "tier": "A", "range": [2, 10], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 9, "band": null, "order": 9, "tier": "A", "range": [6, 14], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 10, "band": null, "order": 10, "tier": "A", "range": [7, 15], "gate_held": false, "unranked": null},
-        "project": {"rank": 4, "band": null, "order": 4, "tier": "A", "range": [1, 9], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 5, "band": null, "order": 5, "tier": "A", "range": [2, 10], "gate_held": false, "unranked": null}
+        "overall": {"rank": 5, "band": null, "order": 5, "tier": "A", "range": [2, 10], "score": 1.828438, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 9, "band": null, "order": 9, "tier": "A", "range": [6, 14], "score": 1.670695, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 10, "band": null, "order": 10, "tier": "A", "range": [7, 15], "score": 1.641872, "gate_held": false, "unranked": null},
+        "project": {"rank": 4, "band": null, "order": 4, "tier": "A", "range": [1, 9], "score": 1.887791, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 5, "band": null, "order": 5, "tier": "A", "range": [2, 10], "score": 1.828438, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 8, "reason": null, "abstains_in": []},
@@ -471,7 +481,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://example.com/fonts/sample-sans-06/"},
-        "designer": {"url": "https://example.org/designers/studio-2", "label": "Example Type Studio 2"}
+        "designer": {"url": "https://example.org/designers/studio-2", "label": "Example Type Studio 2"},
+        "nerd": null
       },
       "preinstalled_on": [{"system": "android"}],
       "pulled_in_by": [],
@@ -479,11 +490,11 @@
       "first_seen": "2025-07-07",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 6, "band": null, "order": 6, "tier": "A", "range": [3, 11], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 14, "band": null, "order": 14, "tier": "A", "range": [11, 19], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 15, "band": null, "order": 15, "tier": "A", "range": [12, 20], "gate_held": false, "unranked": null},
-        "project": {"rank": 5, "band": null, "order": 5, "tier": "A", "range": [2, 10], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 3, "band": null, "order": 3, "tier": "A", "range": [1, 8], "gate_held": false, "unranked": null}
+        "overall": {"rank": 6, "band": null, "order": 6, "tier": "A", "range": [3, 11], "score": 1.779889, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 14, "band": null, "order": 14, "tier": "A", "range": [11, 19], "score": 1.548062, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 15, "band": null, "order": 15, "tier": "A", "range": [12, 20], "score": 1.528441, "gate_held": false, "unranked": null},
+        "project": {"rank": 5, "band": null, "order": 5, "tier": "A", "range": [2, 10], "score": 1.828438, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 3, "band": null, "order": 3, "tier": "A", "range": [1, 8], "score": 1.964924, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 12, "reason": null, "abstains_in": []},
@@ -519,19 +530,19 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-mono-07.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://github.com/sample-foundry/sample-mono-07"}, "designer": null},
+      "links": {"primary": {"url": "https://github.com/sample-foundry/sample-mono-07"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [{"name": "Sample Mono 07 Nerd Font", "relation": "build"}, {"name": "SMono07 NF", "relation": "build"}],
       "first_seen": "2025-08-08",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 7, "band": null, "order": 7, "tier": "A", "range": [4, 12], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 2, "band": null, "order": 2, "tier": "A", "range": [1, 7], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 2, "band": null, "order": 2, "tier": "A", "range": [1, 7], "gate_held": false, "unranked": null},
-        "project": {"rank": 38, "band": null, "order": 38, "tier": "B", "range": [26, 57], "gate_held": false, "unranked": null},
-        "coding": {"rank": 2, "band": null, "order": 2, "tier": "A", "range": [1, 7], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 31, "band": null, "order": 31, "tier": "B", "range": [21, 46], "gate_held": false, "unranked": null}
+        "overall": {"rank": 7, "band": null, "order": 7, "tier": "A", "range": [4, 12], "score": 1.738639, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 2, "band": null, "order": 2, "tier": "A", "range": [1, 7], "score": 2.077417, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 2, "band": null, "order": 2, "tier": "A", "range": [1, 7], "score": 2.077417, "gate_held": false, "unranked": null},
+        "project": {"rank": 38, "band": null, "order": 38, "tier": "B", "range": [26, 57], "score": 1.246325, "gate_held": false, "unranked": null},
+        "coding": {"rank": 2, "band": null, "order": 2, "tier": "A", "range": [1, 7], "score": 2.077417, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 31, "band": null, "order": 31, "tier": "B", "range": [21, 46], "score": 1.311447, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 3, "reason": null, "abstains_in": []},
@@ -567,18 +578,18 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-sans-08.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-08/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-08/"}, "designer": null, "nerd": null},
       "preinstalled_on": [{"system": "debian"}, {"system": "fedora"}, {"system": "gnome"}],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-09-09",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 8, "band": null, "order": 8, "tier": "A", "range": [5, 13], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_deliberate_evidence"},
-        "desktop_installed": {"rank": 4, "band": null, "order": 4, "tier": "A", "range": [1, 9], "gate_held": false, "unranked": null},
-        "project": {"rank": 11, "band": null, "order": 11, "tier": "A", "range": [8, 16], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 20, "band": null, "order": 20, "tier": "A", "range": [17, 25], "gate_held": false, "unranked": null}
+        "overall": {"rank": 8, "band": null, "order": 8, "tier": "A", "range": [5, 13], "score": 1.702665, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_deliberate_evidence"},
+        "desktop_installed": {"rank": 4, "band": null, "order": 4, "tier": "A", "range": [1, 9], "score": 1.887791, "gate_held": false, "unranked": null},
+        "project": {"rank": 11, "band": null, "order": 11, "tier": "A", "range": [8, 16], "score": 1.615589, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 20, "band": null, "order": 20, "tier": "A", "range": [17, 25], "score": 1.444931, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "censored", "rank_in_source": null, "reason": "below_floor", "abstains_in": []},
@@ -616,7 +627,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://example.com/fonts/sample-serif-09/"},
-        "designer": {"url": "https://example.org/designers/studio-5", "label": "Example Type Studio 5"}
+        "designer": {"url": "https://example.org/designers/studio-5", "label": "Example Type Studio 5"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [],
@@ -624,11 +636,11 @@
       "first_seen": "2025-10-10",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 9, "band": null, "order": 9, "tier": "A", "range": [6, 14], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 41, "band": null, "order": 41, "tier": "B", "range": [28, 61], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 44, "band": null, "order": 44, "tier": "B", "range": [30, 66], "gate_held": false, "unranked": null},
-        "project": {"rank": 6, "band": null, "order": 6, "tier": "A", "range": [3, 11], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 7, "band": null, "order": 7, "tier": "A", "range": [4, 12], "gate_held": false, "unranked": null}
+        "overall": {"rank": 9, "band": null, "order": 9, "tier": "A", "range": [6, 14], "score": 1.670695, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 41, "band": null, "order": 41, "tier": "B", "range": [28, 61], "score": 1.221439, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 44, "band": null, "order": 44, "tier": "B", "range": [30, 66], "score": 1.198008, "gate_held": false, "unranked": null},
+        "project": {"rank": 6, "band": null, "order": 6, "tier": "A", "range": [3, 11], "score": 1.779889, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 7, "band": null, "order": 7, "tier": "A", "range": [4, 12], "score": 1.738639, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 35, "reason": null, "abstains_in": []},
@@ -662,25 +674,25 @@
         "text_url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/orbitron/OFL.txt"
       },
       "preview_ok": true,
-      "preview": {"path": "specimens/sample-display-10.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
+      "preview": {"path": "specimens/sample-display-10.svg", "sha256": "24014badfe8b8640c2cd4d7e70ce34b0b95e35331f387b8fccfebeb72930b8d9"},
       "font_file": {
         "url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/orbitron/Orbitron%5Bwght%5D.ttf",
         "sha256": "f42db2dd16e642258e35782916eceb1dcdbea06fb958d77ad71dc5963587e8fd",
         "size": 38576,
         "format": "ttf"
       },
-      "links": {"primary": {"url": "https://fonts.google.com/specimen/Orbitron"}, "designer": null},
+      "links": {"primary": {"url": "https://fonts.google.com/specimen/Orbitron"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-11-11",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 10, "band": null, "order": 10, "tier": "A", "range": [7, 15], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 33, "band": null, "order": 33, "tier": "B", "range": [22, 49], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 35, "band": null, "order": 35, "tier": "B", "range": [24, 52], "gate_held": false, "unranked": null},
-        "project": {"rank": 7, "band": null, "order": 7, "tier": "A", "range": [4, 12], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 11, "band": null, "order": 11, "tier": "A", "range": [8, 16], "gate_held": false, "unranked": null}
+        "overall": {"rank": 10, "band": null, "order": 10, "tier": "A", "range": [7, 15], "score": 1.641872, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 33, "band": null, "order": 33, "tier": "B", "range": [22, 49], "score": 1.291681, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 35, "band": null, "order": 35, "tier": "B", "range": [24, 52], "score": 1.272894, "gate_held": false, "unranked": null},
+        "project": {"rank": 7, "band": null, "order": 7, "tier": "A", "range": [4, 12], "score": 1.738639, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 11, "band": null, "order": 11, "tier": "A", "range": [8, 16], "score": 1.615589, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 28, "reason": null, "abstains_in": []},
@@ -716,18 +728,18 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-sans-11.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://github.com/sample-foundry/sample-sans-11"}, "designer": null},
+      "links": {"primary": {"url": "https://github.com/sample-foundry/sample-sans-11"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-12-12",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 12, "band": null, "order": 12, "tier": "A", "range": [9, 17], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 18, "band": null, "order": 18, "tier": "A", "range": [15, 23], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 19, "band": null, "order": 19, "tier": "A", "range": [16, 24], "gate_held": false, "unranked": null},
-        "project": {"rank": 10, "band": null, "order": 10, "tier": "A", "range": [7, 15], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 8, "band": null, "order": 8, "tier": "A", "range": [5, 13], "gate_held": false, "unranked": null}
+        "overall": {"rank": 12, "band": null, "order": 12, "tier": "A", "range": [9, 17], "score": 1.591404, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 18, "band": null, "order": 18, "tier": "A", "range": [15, 23], "score": 1.475851, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 19, "band": null, "order": 19, "tier": "A", "range": [16, 24], "score": 1.460035, "gate_held": false, "unranked": null},
+        "project": {"rank": 10, "band": null, "order": 10, "tier": "A", "range": [7, 15], "score": 1.641872, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 8, "band": null, "order": 8, "tier": "A", "range": [5, 13], "score": 1.702665, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 15, "reason": null, "abstains_in": []},
@@ -761,25 +773,25 @@
         "text_url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/lobster/OFL.txt"
       },
       "preview_ok": true,
-      "preview": {"path": "specimens/sample-script-12.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
+      "preview": {"path": "specimens/sample-script-12.svg", "sha256": "ae3298c0969928c2fc4f10f8a98f10a0b5c8bd8a74b06b9b3993d7a9facde79b"},
       "font_file": {
         "url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/lobster/Lobster-Regular.ttf",
         "sha256": "d6568e697fd50cedc0be04d8aae4127fe95add607e7bff954ca88604be80c205",
         "size": 406076,
         "format": "ttf"
       },
-      "links": {"primary": {"url": "https://fonts.google.com/specimen/Lobster"}, "designer": null},
+      "links": {"primary": {"url": "https://fonts.google.com/specimen/Lobster"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-01-13",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 15, "band": null, "order": 15, "tier": "A", "range": [12, 20], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 47, "band": null, "order": 47, "tier": "B", "range": [32, 70], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 50, "band": null, "order": 50, "tier": "B", "range": [34, 75], "gate_held": false, "unranked": null},
-        "project": {"rank": 8, "band": null, "order": 8, "tier": "A", "range": [5, 13], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 14, "band": null, "order": 14, "tier": "A", "range": [11, 19], "gate_held": false, "unranked": null}
+        "overall": {"rank": 15, "band": null, "order": 15, "tier": "A", "range": [12, 20], "score": 1.528441, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 47, "band": null, "order": 47, "tier": "B", "range": [32, 70], "score": 1.175846, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 50, "band": null, "order": 50, "tier": "B", "range": [34, 75], "score": 1.154805, "gate_held": false, "unranked": null},
+        "project": {"rank": 8, "band": null, "order": 8, "tier": "A", "range": [5, 13], "score": 1.702665, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 14, "band": null, "order": 14, "tier": "A", "range": [11, 19], "score": 1.548062, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 40, "reason": null, "abstains_in": []},
@@ -815,19 +827,23 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-mono-13.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://github.com/sample-foundry/sample-mono-13"}, "designer": null},
+      "links": {
+        "primary": {"url": "https://github.com/sample-foundry/sample-mono-13"},
+        "designer": null,
+        "nerd": {"url": "https://github.com/sample-foundry/sample-mono-13/releases", "label": "Sample Mono 13 NF"}
+      },
       "preinstalled_on": [{"system": "windows-11"}],
       "pulled_in_by": [],
       "aliases": [{"name": "Sample Mono 13 PL", "relation": "build"}],
       "first_seen": "2025-02-14",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 18, "band": null, "order": 18, "tier": "A", "range": [15, 23], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 4, "band": null, "order": 4, "tier": "A", "range": [1, 9], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 6, "band": null, "order": 6, "tier": "A", "range": [3, 11], "gate_held": false, "unranked": null},
-        "project": {"rank": 52, "band": null, "order": 52, "tier": "B", "range": [35, 78], "gate_held": false, "unranked": null},
-        "coding": {"rank": 3, "band": null, "order": 3, "tier": "A", "range": [1, 8], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 44, "band": null, "order": 44, "tier": "B", "range": [30, 66], "gate_held": false, "unranked": null}
+        "overall": {"rank": 18, "band": null, "order": 18, "tier": "A", "range": [15, 23], "score": 1.475851, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 4, "band": null, "order": 4, "tier": "A", "range": [1, 9], "score": 1.887791, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 6, "band": null, "order": 6, "tier": "A", "range": [3, 11], "score": 1.779889, "gate_held": false, "unranked": null},
+        "project": {"rank": 52, "band": null, "order": 52, "tier": "B", "range": [35, 78], "score": 1.141336, "gate_held": false, "unranked": null},
+        "coding": {"rank": 3, "band": null, "order": 3, "tier": "A", "range": [1, 8], "score": 1.964924, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 44, "band": null, "order": 44, "tier": "B", "range": [30, 66], "score": 1.198008, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 4, "reason": null, "abstains_in": []},
@@ -863,18 +879,18 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-sans-14.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-14/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-14/"}, "designer": null, "nerd": null},
       "preinstalled_on": [{"system": "macos"}],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-03-15",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 23, "band": null, "order": 23, "tier": "A", "range": [20, 28], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 26, "band": null, "order": 26, "tier": "B", "range": [18, 39], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 27, "band": null, "order": 27, "tier": "B", "range": [18, 40], "gate_held": false, "unranked": null},
-        "project": {"rank": 17, "band": null, "order": 17, "tier": "A", "range": [14, 22], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 19, "band": null, "order": 19, "tier": "A", "range": [16, 24], "gate_held": false, "unranked": null}
+        "overall": {"rank": 23, "band": null, "order": 23, "tier": "A", "range": [20, 28], "score": 1.403258, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 26, "band": null, "order": 26, "tier": "B", "range": [18, 39], "score": 1.366036, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 27, "band": null, "order": 27, "tier": "B", "range": [18, 40], "score": 1.354445, "gate_held": false, "unranked": null},
+        "project": {"rank": 17, "band": null, "order": 17, "tier": "A", "range": [14, 22], "score": 1.492458, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 19, "band": null, "order": 19, "tier": "A", "range": [16, 24], "score": 1.460035, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 21, "reason": null, "abstains_in": []},
@@ -912,7 +928,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://example.com/fonts/sample-serif-15/"},
-        "designer": {"url": "https://example.org/designers/studio-1", "label": "Example Type Studio 1"}
+        "designer": {"url": "https://example.org/designers/studio-1", "label": "Example Type Studio 1"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [],
@@ -920,11 +937,11 @@
       "first_seen": "2025-04-16",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 31, "band": null, "order": 31, "tier": "B", "range": [21, 46], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 29, "band": null, "order": 29, "tier": "B", "range": [20, 43], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 30, "band": null, "order": 30, "tier": "B", "range": [20, 45], "gate_held": false, "unranked": null},
-        "project": {"rank": 36, "band": null, "order": 36, "tier": "B", "range": [24, 54], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 40, "band": null, "order": 40, "tier": "B", "range": [27, 60], "gate_held": false, "unranked": null}
+        "overall": {"rank": 31, "band": null, "order": 31, "tier": "B", "range": [21, 46], "score": 1.311447, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 29, "band": null, "order": 29, "tier": "B", "range": [20, 43], "score": 1.332318, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 30, "band": null, "order": 30, "tier": "B", "range": [20, 45], "score": 1.321735, "gate_held": false, "unranked": null},
+        "project": {"rank": 36, "band": null, "order": 36, "tier": "B", "range": [24, 54], "score": 1.263834, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 40, "band": null, "order": 40, "tier": "B", "range": [27, 60], "score": 1.229563, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 24, "reason": null, "abstains_in": []},
@@ -960,18 +977,18 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-hand-16.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-hand-16/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-hand-16/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-05-17",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 42, "band": null, "order": 42, "tier": "B", "range": [28, 63], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 70, "band": null, "order": 70, "tier": "B", "range": [47, 105], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 72, "band": null, "order": 72, "tier": "B", "range": [48, 108], "gate_held": false, "unranked": null},
-        "project": {"rank": 28, "band": null, "order": 28, "tier": "B", "range": [19, 42], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 57, "band": null, "order": 57, "tier": "B", "range": [38, 85], "gate_held": false, "unranked": null}
+        "overall": {"rank": 42, "band": null, "order": 42, "tier": "B", "range": [28, 63], "score": 1.213477, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 70, "band": null, "order": 70, "tier": "B", "range": [47, 105], "score": 1.035668, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 72, "band": null, "order": 72, "tier": "B", "range": [48, 108], "score": 1.025297, "gate_held": false, "unranked": null},
+        "project": {"rank": 28, "band": null, "order": 28, "tier": "B", "range": [19, 42], "score": 1.343213, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 57, "band": null, "order": 57, "tier": "B", "range": [38, 85], "score": 1.109396, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 57, "reason": null, "abstains_in": []},
@@ -1007,18 +1024,18 @@
       "preview_ok": false,
       "preview": null,
       "font_file": null,
-      "links": {"primary": {"url": "https://type.example.org/sample-sans-17/"}, "designer": null},
+      "links": {"primary": {"url": "https://type.example.org/sample-sans-17/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-06-18",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 57, "band": null, "order": 57, "tier": "B", "range": [38, 85], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 23, "band": null, "order": 23, "tier": "A", "range": [20, 28], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 24, "band": null, "order": 24, "tier": "A", "range": [21, 29], "gate_held": false, "unranked": null},
-        "project": {"rank": 90, "band": null, "order": 90, "tier": "C", "range": [45, 200], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_evidence"}
+        "overall": {"rank": 57, "band": null, "order": 57, "tier": "B", "range": [38, 85], "score": 1.109396, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 23, "band": null, "order": 23, "tier": "A", "range": [20, 28], "score": 1.403258, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 24, "band": null, "order": 24, "tier": "A", "range": [21, 29], "score": 1.39041, "gate_held": false, "unranked": null},
+        "project": {"rank": 90, "band": null, "order": 90, "tier": "C", "range": [45, 200], "score": 0.940688, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_evidence"}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 19, "reason": null, "abstains_in": []},
@@ -1056,7 +1073,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://example.com/fonts/sample-display-18/"},
-        "designer": {"url": "https://example.org/designers/studio-4", "label": "Example Type Studio 4"}
+        "designer": {"url": "https://example.org/designers/studio-4", "label": "Example Type Studio 4"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [],
@@ -1064,11 +1082,11 @@
       "first_seen": "2025-07-19",
       "flags": ["specimen_failed"],
       "ranks": {
-        "overall": {"rank": 64, "band": null, "order": 64, "tier": "B", "range": [43, 96], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 58, "band": null, "order": 58, "tier": "B", "range": [39, 87], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 61, "band": null, "order": 61, "tier": "B", "range": [41, 91], "gate_held": false, "unranked": null},
-        "project": {"rank": 49, "band": null, "order": 49, "tier": "B", "range": [33, 73], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 66, "band": null, "order": 66, "tier": "B", "range": [44, 99], "gate_held": false, "unranked": null}
+        "overall": {"rank": 64, "band": null, "order": 64, "tier": "B", "range": [43, 96], "score": 1.068228, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 58, "band": null, "order": 58, "tier": "B", "range": [39, 87], "score": 1.103278, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 61, "band": null, "order": 61, "tier": "B", "range": [41, 91], "score": 1.085413, "gate_held": false, "unranked": null},
+        "project": {"rank": 49, "band": null, "order": 49, "tier": "B", "range": [33, 73], "score": 1.161702, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 66, "band": null, "order": 66, "tier": "B", "range": [44, 99], "score": 1.057119, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 48, "reason": null, "abstains_in": []},
@@ -1104,18 +1122,18 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-serif-19.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-serif-19/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-serif-19/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-08-20",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 78, "band": null, "order": 78, "tier": "B", "range": [52, 117], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 83, "band": null, "order": 83, "tier": "C", "range": [42, 186], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 86, "band": null, "order": 86, "tier": "C", "range": [43, 192], "gate_held": false, "unranked": null},
-        "project": {"rank": 60, "band": null, "order": 60, "tier": "B", "range": [40, 90], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 72, "band": null, "order": 72, "tier": "B", "range": [48, 108], "gate_held": false, "unranked": null}
+        "overall": {"rank": 78, "band": null, "order": 78, "tier": "B", "range": [52, 117], "score": 0.995463, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 83, "band": null, "order": 83, "tier": "C", "range": [42, 186], "score": 0.971915, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 86, "band": null, "order": 86, "tier": "C", "range": [43, 192], "score": 0.958298, "gate_held": false, "unranked": null},
+        "project": {"rank": 60, "band": null, "order": 60, "tier": "B", "range": [40, 90], "score": 1.091289, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 72, "band": null, "order": 72, "tier": "B", "range": [48, 108], "score": 1.025297, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 68, "reason": null, "abstains_in": []},
@@ -1151,19 +1169,19 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-mono-20.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-mono-20/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-mono-20/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [{"system": "cachyos", "package": "sample-desktop-settings"}],
       "aliases": [],
       "first_seen": "2025-09-21",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 88, "band": null, "order": 88, "tier": "B", "range": [59, 132], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 36, "band": null, "order": 36, "tier": "B", "range": [24, 54], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 22, "band": null, "order": 22, "tier": "A", "range": [19, 27], "gate_held": false, "unranked": null},
-        "project": {"rank": 95, "band": null, "order": 95, "tier": "C", "range": [48, 210], "gate_held": false, "unranked": null},
-        "coding": {"rank": 4, "band": null, "order": 4, "tier": "A", "range": [1, 9], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 85, "band": null, "order": 85, "tier": "C", "range": [43, 190], "gate_held": false, "unranked": null}
+        "overall": {"rank": 88, "band": null, "order": 88, "tier": "B", "range": [59, 132], "score": 0.949418, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 36, "band": null, "order": 36, "tier": "B", "range": [24, 54], "score": 1.263834, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 22, "band": null, "order": 22, "tier": "A", "range": [19, 27], "score": 1.416597, "gate_held": false, "unranked": null},
+        "project": {"rank": 95, "band": null, "order": 95, "tier": "C", "range": [48, 210], "score": 0.91948, "gate_held": false, "unranked": null},
+        "coding": {"rank": 4, "band": null, "order": 4, "tier": "A", "range": [1, 9], "score": 1.887791, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 85, "band": null, "order": 85, "tier": "C", "range": [43, 190], "score": 0.962797, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 17, "reason": null, "abstains_in": []},
@@ -1201,7 +1219,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://example.com/fonts/sample-sans-21/"},
-        "designer": {"url": "https://example.org/designers/studio-2", "label": "Example Type Studio 2"}
+        "designer": {"url": "https://example.org/designers/studio-2", "label": "Example Type Studio 2"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [],
@@ -1209,11 +1228,11 @@
       "first_seen": "2025-10-22",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 95, "band": null, "order": 95, "tier": "B", "range": [64, 142], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 97, "band": null, "order": 97, "tier": "C", "range": [49, 214], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 99, "band": null, "order": 99, "tier": "C", "range": [50, 218], "gate_held": false, "unranked": null},
-        "project": {"rank": 66, "band": null, "order": 66, "tier": "B", "range": [44, 99], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 50, "band": null, "order": 50, "tier": "B", "range": [34, 75], "gate_held": false, "unranked": null}
+        "overall": {"rank": 95, "band": null, "order": 95, "tier": "B", "range": [64, 142], "score": 0.91948, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 97, "band": null, "order": 97, "tier": "C", "range": [49, 214], "score": 0.911229, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 99, "band": null, "order": 99, "tier": "C", "range": [50, 218], "score": 0.903102, "gate_held": false, "unranked": null},
+        "project": {"rank": 66, "band": null, "order": 66, "tier": "B", "range": [44, 99], "score": 1.057119, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 50, "band": null, "order": 50, "tier": "B", "range": [34, 75], "score": 1.154805, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 79, "reason": null, "abstains_in": []},
@@ -1249,18 +1268,18 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-serif-22-long.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://type.example.org/sample-serif-22-long/"}, "designer": null},
+      "links": {"primary": {"url": "https://type.example.org/sample-serif-22-long/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-11-23",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 100, "band": null, "order": 100, "tier": "B", "range": [67, 150], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": null, "band": "101–250", "order": 121, "tier": "C", "range": [61, 262], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": null, "band": "101–250", "order": 118, "tier": "C", "range": [59, 256], "gate_held": false, "unranked": null},
-        "project": {"rank": 77, "band": null, "order": 77, "tier": "B", "range": [52, 115], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_evidence"}
+        "overall": {"rank": 100, "band": null, "order": 100, "tier": "B", "range": [67, 150], "score": 0.899084, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": null, "band": "101–250", "order": 121, "tier": "C", "range": [61, 262], "score": 0.820744, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": null, "band": "101–250", "order": 118, "tier": "C", "range": [59, 256], "score": 0.831304, "gate_held": false, "unranked": null},
+        "project": {"rank": 77, "band": null, "order": 77, "tier": "B", "range": [52, 115], "score": 1.00031, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_evidence"}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 94, "reason": null, "abstains_in": []},
@@ -1296,19 +1315,19 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-mono-23.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://github.com/sample-foundry/sample-mono-23"}, "designer": null},
+      "links": {"primary": {"url": "https://github.com/sample-foundry/sample-mono-23"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-12-24",
       "flags": [],
       "ranks": {
-        "overall": {"rank": null, "band": "101–250", "order": 101, "tier": "C", "range": [51, 222], "gate_held": true, "unranked": null},
-        "desktop_chosen": {"rank": null, "band": "101–250", "order": 101, "tier": "C", "range": [51, 222], "gate_held": true, "unranked": null},
-        "desktop_installed": {"rank": null, "band": "101–250", "order": 101, "tier": "C", "range": [51, 222], "gate_held": true, "unranked": null},
-        "project": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_evidence"},
-        "coding": {"rank": null, "band": "101–250", "order": 101, "tier": "C", "range": [51, 222], "gate_held": true, "unranked": null},
-        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_evidence"}
+        "overall": {"rank": null, "band": "101–250", "order": 101, "tier": "C", "range": [51, 222], "score": 0.895095, "gate_held": true, "unranked": null},
+        "desktop_chosen": {"rank": null, "band": "101–250", "order": 101, "tier": "C", "range": [51, 222], "score": 0.895095, "gate_held": true, "unranked": null},
+        "desktop_installed": {"rank": null, "band": "101–250", "order": 101, "tier": "C", "range": [51, 222], "score": 0.895095, "gate_held": true, "unranked": null},
+        "project": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_evidence"},
+        "coding": {"rank": null, "band": "101–250", "order": 101, "tier": "C", "range": [51, 222], "score": 0.895095, "gate_held": true, "unranked": null},
+        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_evidence"}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 80, "reason": null, "abstains_in": []},
@@ -1346,7 +1365,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://example.com/fonts/sample-sans-24/"},
-        "designer": {"url": "https://example.org/designers/studio-5", "label": "Example Type Studio 5"}
+        "designer": {"url": "https://example.org/designers/studio-5", "label": "Example Type Studio 5"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [],
@@ -1354,11 +1374,11 @@
       "first_seen": "2025-01-25",
       "flags": [],
       "ranks": {
-        "overall": {"rank": null, "band": "101–250", "order": 117, "tier": "B", "range": [78, 175], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": null, "band": "101–250", "order": 140, "tier": "C", "range": [70, 300], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": null, "band": "101–250", "order": 138, "tier": "C", "range": [69, 296], "gate_held": false, "unranked": null},
-        "project": {"rank": 92, "band": null, "order": 92, "tier": "B", "range": [62, 138], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 99, "band": null, "order": 99, "tier": "B", "range": [66, 148], "gate_held": false, "unranked": null}
+        "overall": {"rank": null, "band": "101–250", "order": 117, "tier": "B", "range": [78, 175], "score": 0.834867, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": null, "band": "101–250", "order": 140, "tier": "C", "range": [70, 300], "score": 0.757798, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": null, "band": "101–250", "order": 138, "tier": "C", "range": [69, 296], "score": 0.764134, "gate_held": false, "unranked": null},
+        "project": {"rank": 92, "band": null, "order": 92, "tier": "B", "range": [62, 138], "score": 0.932102, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 99, "band": null, "order": 99, "tier": "B", "range": [66, 148], "score": 0.903102, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 110, "reason": null, "abstains_in": []},
@@ -1394,18 +1414,18 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-display-25.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-display-25/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-display-25/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-02-26",
       "flags": ["specimen_name_only"],
       "ranks": {
-        "overall": {"rank": null, "band": "101–250", "order": 140, "tier": "C", "range": [70, 300], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": null, "band": "101–250", "order": 210, "tier": "C", "range": [105, 440], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": null, "band": "101–250", "order": 205, "tier": "C", "range": [103, 430], "gate_held": false, "unranked": null},
-        "project": {"rank": null, "band": "101–250", "order": 118, "tier": "C", "range": [59, 256], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_evidence"}
+        "overall": {"rank": null, "band": "101–250", "order": 140, "tier": "C", "range": [70, 300], "score": 0.757798, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": null, "band": "101–250", "order": 210, "tier": "C", "range": [105, 440], "score": 0.56571, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": null, "band": "101–250", "order": 205, "tier": "C", "range": [103, 430], "score": 0.577958, "gate_held": false, "unranked": null},
+        "project": {"rank": null, "band": "101–250", "order": 118, "tier": "C", "range": [59, 256], "score": 0.831304, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_evidence"}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 164, "reason": null, "abstains_in": []},
@@ -1441,18 +1461,18 @@
       "preview_ok": true,
       "preview": null,
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-hand-26/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-hand-26/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-03-27",
       "flags": ["specimen_hash_mismatch"],
       "ranks": {
-        "overall": {"rank": null, "band": "101–250", "order": 188, "tier": "C", "range": [94, 396], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": null, "band": "251–500", "order": 260, "tier": "C", "range": [130, 540], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": null, "band": "251–500", "order": 255, "tier": "C", "range": [128, 530], "gate_held": false, "unranked": null},
-        "project": {"rank": null, "band": "101–250", "order": 150, "tier": "C", "range": [75, 320], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": null, "band": "101–250", "order": 170, "tier": "C", "range": [85, 360], "gate_held": false, "unranked": null}
+        "overall": {"rank": null, "band": "101–250", "order": 188, "tier": "C", "range": [94, 396], "score": 0.621003, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": null, "band": "251–500", "order": 260, "tier": "C", "range": [130, 540], "score": 0.451421, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": null, "band": "251–500", "order": 255, "tier": "C", "range": [128, 530], "score": 0.462277, "gate_held": false, "unranked": null},
+        "project": {"rank": null, "band": "101–250", "order": 150, "tier": "C", "range": [75, 320], "score": 0.727006, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": null, "band": "101–250", "order": 170, "tier": "C", "range": [85, 360], "score": 0.6693, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 204, "reason": null, "abstains_in": []},
@@ -1490,7 +1510,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://example.com/fonts/sample-serif-27/"},
-        "designer": {"url": "https://example.org/designers/studio-3", "label": "Example Type Studio 3"}
+        "designer": {"url": "https://example.org/designers/studio-3", "label": "Example Type Studio 3"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [],
@@ -1498,11 +1519,11 @@
       "first_seen": "2025-04-01",
       "flags": [],
       "ranks": {
-        "overall": {"rank": null, "band": "101–250", "order": 230, "tier": "C", "range": [115, 480], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": null, "band": "101–250", "order": 188, "tier": "C", "range": [94, 396], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": null, "band": "101–250", "order": 190, "tier": "C", "range": [95, 400], "gate_held": false, "unranked": null},
-        "project": {"rank": null, "band": "251–500", "order": 301, "tier": "C", "range": [151, 622], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_evidence"}
+        "overall": {"rank": null, "band": "101–250", "order": 230, "tier": "C", "range": [115, 480], "score": 0.518346, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": null, "band": "101–250", "order": 188, "tier": "C", "range": [94, 396], "score": 0.621003, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": null, "band": "101–250", "order": 190, "tier": "C", "range": [95, 400], "score": 0.615818, "gate_held": false, "unranked": null},
+        "project": {"rank": null, "band": "251–500", "order": 301, "tier": "C", "range": [151, 622], "score": 0.366074, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_evidence"}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 152, "reason": null, "abstains_in": []},
@@ -1538,18 +1559,18 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-sans-28.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-28/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-28/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-05-02",
       "flags": [],
       "ranks": {
-        "overall": {"rank": null, "band": "101–250", "order": 250, "tier": "C", "range": [125, 520], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": null, "band": "101–250", "order": 244, "tier": "C", "range": [122, 508], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": null, "band": "101–250", "order": 240, "tier": "C", "range": [120, 500], "gate_held": false, "unranked": null},
-        "project": {"rank": null, "band": "251–500", "order": 262, "tier": "C", "range": [131, 544], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": null, "band": "101–250", "order": 230, "tier": "C", "range": [115, 480], "gate_held": false, "unranked": null}
+        "overall": {"rank": null, "band": "101–250", "order": 250, "tier": "C", "range": [125, 520], "score": 0.473245, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": null, "band": "101–250", "order": 244, "tier": "C", "range": [122, 508], "score": 0.486562, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": null, "band": "101–250", "order": 240, "tier": "C", "range": [120, 500], "score": 0.495538, "gate_held": false, "unranked": null},
+        "project": {"rank": null, "band": "251–500", "order": 262, "tier": "C", "range": [131, 544], "score": 0.447109, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": null, "band": "101–250", "order": 230, "tier": "C", "range": [115, 480], "score": 0.518346, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 192, "reason": null, "abstains_in": []},
@@ -1585,18 +1606,18 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-sans-29.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-29/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-29/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2026-08-20",
       "flags": ["too_new"],
       "ranks": {
-        "overall": {"rank": null, "band": "251–500", "order": 251, "tier": "C", "range": [126, 522], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "too_new"},
-        "desktop_installed": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "too_new"},
-        "project": {"rank": 64, "band": null, "order": 64, "tier": "B", "range": [43, 96], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "too_new"}
+        "overall": {"rank": null, "band": "251–500", "order": 251, "tier": "C", "range": [126, 522], "score": 0.471042, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "too_new"},
+        "desktop_installed": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "too_new"},
+        "project": {"rank": 64, "band": null, "order": 64, "tier": "B", "range": [43, 96], "score": 1.068228, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "too_new"}
       },
       "sources": {
         "homebrew": {"state": "too_new", "rank_in_source": null, "reason": null, "abstains_in": []},
@@ -1634,7 +1655,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://example.com/fonts/sample-serif-30/"},
-        "designer": {"url": "https://example.org/designers/studio-1", "label": "Example Type Studio 1"}
+        "designer": {"url": "https://example.org/designers/studio-1", "label": "Example Type Studio 1"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [{"system": "debian", "package": "sample-office-common"}],
@@ -1642,11 +1664,11 @@
       "first_seen": "2025-07-04",
       "flags": [],
       "ranks": {
-        "overall": {"rank": null, "band": "251–500", "order": 305, "tier": "C", "range": [153, 630], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_deliberate_evidence"},
-        "desktop_installed": {"rank": null, "band": "251–500", "order": 280, "tier": "C", "range": [140, 580], "gate_held": false, "unranked": null},
-        "project": {"rank": null, "band": "251–500", "order": 340, "tier": "C", "range": [170, 700], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_evidence"}
+        "overall": {"rank": null, "band": "251–500", "order": 305, "tier": "C", "range": [153, 630], "score": 0.358051, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_deliberate_evidence"},
+        "desktop_installed": {"rank": null, "band": "251–500", "order": 280, "tier": "C", "range": [140, 580], "score": 0.409029, "gate_held": false, "unranked": null},
+        "project": {"rank": null, "band": "251–500", "order": 340, "tier": "C", "range": [170, 700], "score": 0.28968, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_evidence"}
       },
       "sources": {
         "homebrew": {"state": "not_covered", "rank_in_source": null, "reason": "no_package", "abstains_in": []},
@@ -1682,18 +1704,18 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-display-31.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-display-31/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-display-31/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-08-05",
       "flags": [],
       "ranks": {
-        "overall": {"rank": null, "band": "251–500", "order": 377, "tier": "C", "range": [189, 774], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": null, "band": "251–500", "order": 402, "tier": "C", "range": [201, 824], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": null, "band": "251–500", "order": 410, "tier": "C", "range": [205, 840], "gate_held": false, "unranked": null},
-        "project": {"rank": null, "band": "251–500", "order": 290, "tier": "C", "range": [145, 600], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": null, "band": "251–500", "order": 350, "tier": "C", "range": [175, 720], "gate_held": false, "unranked": null}
+        "overall": {"rank": null, "band": "251–500", "order": 377, "tier": "C", "range": [189, 774], "score": 0.22028, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": null, "band": "251–500", "order": 402, "tier": "C", "range": [201, 824], "score": 0.174627, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": null, "band": "251–500", "order": 410, "tier": "C", "range": [205, 840], "score": 0.160182, "gate_held": false, "unranked": null},
+        "project": {"rank": null, "band": "251–500", "order": 290, "tier": "C", "range": [145, 600], "score": 0.388392, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": null, "band": "251–500", "order": 350, "tier": "C", "range": [175, 720], "score": 0.270669, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 328, "reason": null, "abstains_in": []},
@@ -1729,19 +1751,19 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-mono-32.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://github.com/sample-foundry/sample-mono-32"}, "designer": null},
+      "links": {"primary": {"url": "https://github.com/sample-foundry/sample-mono-32"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-09-06",
       "flags": [],
       "ranks": {
-        "overall": {"rank": null, "band": "251–500", "order": 441, "tier": "C", "range": [221, 902], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": null, "band": "101–250", "order": 190, "tier": "C", "range": [95, 400], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": null, "band": "101–250", "order": 195, "tier": "C", "range": [98, 410], "gate_held": false, "unranked": null},
-        "project": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_evidence"},
-        "coding": {"rank": 12, "band": null, "order": 12, "tier": "A", "range": [9, 17], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_evidence"}
+        "overall": {"rank": null, "band": "251–500", "order": 441, "tier": "C", "range": [221, 902], "score": 0.104791, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": null, "band": "101–250", "order": 190, "tier": "C", "range": [95, 400], "score": 0.615818, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": null, "band": "101–250", "order": 195, "tier": "C", "range": [98, 410], "score": 0.603003, "gate_held": false, "unranked": null},
+        "project": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_evidence"},
+        "coding": {"rank": 12, "band": null, "order": 12, "tier": "A", "range": [9, 17], "score": 1.591404, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_evidence"}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 156, "reason": null, "abstains_in": []},
@@ -1779,7 +1801,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://example.com/fonts/sample-hand-33/"},
-        "designer": {"url": "https://example.org/designers/studio-4", "label": "Example Type Studio 4"}
+        "designer": {"url": "https://example.org/designers/studio-4", "label": "Example Type Studio 4"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [],
@@ -1787,11 +1810,11 @@
       "first_seen": "2025-10-07",
       "flags": [],
       "ranks": {
-        "overall": {"rank": null, "band": "251–500", "order": 500, "tier": "C", "range": [250, 1020], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_evidence"},
-        "desktop_installed": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_evidence"},
-        "project": {"rank": null, "band": "251–500", "order": 400, "tier": "C", "range": [200, 820], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": null, "band": "251–500", "order": 420, "tier": "C", "range": [210, 860], "gate_held": false, "unranked": null}
+        "overall": {"rank": null, "band": "251–500", "order": 500, "tier": "C", "range": [250, 1020], "score": 0.000877, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_evidence"},
+        "desktop_installed": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_evidence"},
+        "project": {"rank": null, "band": "251–500", "order": 400, "tier": "C", "range": [200, 820], "score": 0.178249, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": null, "band": "251–500", "order": 420, "tier": "C", "range": [210, 860], "score": 0.142221, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "censored", "rank_in_source": null, "reason": "below_floor", "abstains_in": []},
@@ -1827,18 +1850,18 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-sans-34.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-34/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-34/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-11-08",
       "flags": [],
       "ranks": {
-        "overall": {"rank": null, "band": "501+", "order": 512, "tier": "C", "range": [256, 1044], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_evidence"},
-        "desktop_installed": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_evidence"},
-        "project": {"rank": 71, "band": null, "order": 71, "tier": "B", "range": [48, 106], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 38, "band": null, "order": 38, "tier": "B", "range": [26, 57], "gate_held": false, "unranked": null}
+        "overall": {"rank": null, "band": "501+", "order": 512, "tier": "C", "range": [256, 1044], "score": -0.020181, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_evidence"},
+        "desktop_installed": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_evidence"},
+        "project": {"rank": 71, "band": null, "order": 71, "tier": "B", "range": [48, 106], "score": 1.030454, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 38, "band": null, "order": 38, "tier": "B", "range": [26, 57], "score": 1.246325, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "censored", "rank_in_source": null, "reason": "below_floor", "abstains_in": []},
@@ -1874,19 +1897,19 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-mono-35.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-mono-35/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-mono-35/"}, "designer": null, "nerd": null},
       "preinstalled_on": [{"system": "endeavouros"}],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-12-09",
       "flags": [],
       "ranks": {
-        "overall": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_deliberate_evidence"},
-        "desktop_chosen": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_deliberate_evidence"},
-        "desktop_installed": {"rank": 64, "band": null, "order": 64, "tier": "B", "range": [43, 96], "gate_held": false, "unranked": null},
-        "project": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_evidence"},
-        "coding": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_deliberate_evidence"},
-        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_evidence"}
+        "overall": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_deliberate_evidence"},
+        "desktop_chosen": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_deliberate_evidence"},
+        "desktop_installed": {"rank": 64, "band": null, "order": 64, "tier": "B", "range": [43, 96], "score": 1.068228, "gate_held": false, "unranked": null},
+        "project": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_evidence"},
+        "coding": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_deliberate_evidence"},
+        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_evidence"}
       },
       "sources": {
         "homebrew": {"state": "censored", "rank_in_source": null, "reason": "below_floor", "abstains_in": []},
@@ -1924,7 +1947,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://type.example.org/sample-serif-36/"},
-        "designer": {"url": "https://example.org/designers/studio-2", "label": "Example Type Studio 2"}
+        "designer": {"url": "https://example.org/designers/studio-2", "label": "Example Type Studio 2"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [],
@@ -1932,11 +1956,11 @@
       "first_seen": "2025-01-10",
       "flags": [],
       "ranks": {
-        "overall": {"rank": null, "band": "501+", "order": 640, "tier": "C", "range": [320, 1300], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 93, "band": null, "order": 93, "tier": "C", "range": [47, 206], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 96, "band": null, "order": 96, "tier": "C", "range": [48, 212], "gate_held": false, "unranked": null},
-        "project": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_evidence"},
-        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_evidence"}
+        "overall": {"rank": null, "band": "501+", "order": 640, "tier": "C", "range": [320, 1300], "score": -0.249986, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 93, "band": null, "order": 93, "tier": "C", "range": [47, 206], "score": 0.927861, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 96, "band": null, "order": 96, "tier": "C", "range": [48, 212], "score": 0.915339, "gate_held": false, "unranked": null},
+        "project": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_evidence"},
+        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_evidence"}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 76, "reason": null, "abstains_in": []},
@@ -1972,18 +1996,18 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-sans-37.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-37/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-37/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-02-11",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 35, "band": null, "order": 35, "tier": "B", "range": [24, 52], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 52, "band": null, "order": 52, "tier": "B", "range": [35, 78], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 55, "band": null, "order": 55, "tier": "B", "range": [37, 82], "gate_held": false, "unranked": null},
-        "project": {"rank": 30, "band": null, "order": 30, "tier": "B", "range": [20, 45], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 25, "band": null, "order": 25, "tier": "A", "range": [22, 30], "gate_held": false, "unranked": null}
+        "overall": {"rank": 35, "band": null, "order": 35, "tier": "B", "range": [24, 52], "score": 1.272894, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 52, "band": null, "order": 52, "tier": "B", "range": [35, 78], "score": 1.141336, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 55, "band": null, "order": 55, "tier": "B", "range": [37, 82], "score": 1.121893, "gate_held": false, "unranked": null},
+        "project": {"rank": 30, "band": null, "order": 30, "tier": "B", "range": [20, 45], "score": 1.321735, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 25, "band": null, "order": 25, "tier": "A", "range": [22, 30], "score": 1.378014, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 44, "reason": null, "abstains_in": []},
@@ -2019,18 +2043,18 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-display-38.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-display-38/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-display-38/"}, "designer": null, "nerd": null},
       "preinstalled_on": [{"system": "macos"}],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-03-12",
       "flags": [],
       "ranks": {
-        "overall": {"rank": null, "band": "101–250", "order": 160, "tier": "C", "range": [80, 340], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": null, "band": "101–250", "order": 150, "tier": "C", "range": [75, 320], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": null, "band": "101–250", "order": 150, "tier": "C", "range": [75, 320], "gate_held": false, "unranked": null},
-        "project": {"rank": null, "band": "101–250", "order": 125, "tier": "C", "range": [63, 270], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_evidence"}
+        "overall": {"rank": null, "band": "101–250", "order": 160, "tier": "C", "range": [80, 340], "score": 0.69756, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": null, "band": "101–250", "order": 150, "tier": "C", "range": [75, 320], "score": 0.727006, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": null, "band": "101–250", "order": 150, "tier": "C", "range": [75, 320], "score": 0.727006, "gate_held": false, "unranked": null},
+        "project": {"rank": null, "band": "101–250", "order": 125, "tier": "C", "range": [63, 270], "score": 0.806947, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_evidence"}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 120, "reason": null, "abstains_in": []},
@@ -2068,7 +2092,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://example.com/fonts/sample-hand-39/"},
-        "designer": {"url": "https://example.org/designers/studio-5", "label": "Example Type Studio 5"}
+        "designer": {"url": "https://example.org/designers/studio-5", "label": "Example Type Studio 5"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [],
@@ -2076,11 +2101,11 @@
       "first_seen": "2025-04-13",
       "flags": [],
       "ranks": {
-        "overall": {"rank": null, "band": "251–500", "order": 320, "tier": "C", "range": [160, 660], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_evidence"},
-        "desktop_installed": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "gate_held": false, "unranked": "no_evidence"},
-        "project": {"rank": null, "band": "101–250", "order": 210, "tier": "C", "range": [105, 440], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": null, "band": "251–500", "order": 260, "tier": "C", "range": [130, 540], "gate_held": false, "unranked": null}
+        "overall": {"rank": null, "band": "251–500", "order": 320, "tier": "C", "range": [160, 660], "score": 0.328368, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_evidence"},
+        "desktop_installed": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "gate_held": false, "unranked": "no_evidence"},
+        "project": {"rank": null, "band": "101–250", "order": 210, "tier": "C", "range": [105, 440], "score": 0.56571, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": null, "band": "251–500", "order": 260, "tier": "C", "range": [130, 540], "score": 0.451421, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "censored", "rank_in_source": null, "reason": "below_floor", "abstains_in": []},
@@ -2116,18 +2141,18 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-sans-40.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-40/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-40/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
       "first_seen": "2025-05-14",
       "flags": [],
       "ranks": {
-        "overall": {"rank": 47, "band": null, "order": 47, "tier": "B", "range": [32, 70], "gate_held": false, "unranked": null},
-        "desktop_chosen": {"rank": 88, "band": null, "order": 88, "tier": "C", "range": [44, 196], "gate_held": false, "unranked": null},
-        "desktop_installed": {"rank": 90, "band": null, "order": 90, "tier": "C", "range": [45, 200], "gate_held": false, "unranked": null},
-        "project": {"rank": 20, "band": null, "order": 20, "tier": "A", "range": [17, 25], "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": 6, "band": null, "order": 6, "tier": "A", "range": [3, 11], "gate_held": false, "unranked": null}
+        "overall": {"rank": 47, "band": null, "order": 47, "tier": "B", "range": [32, 70], "score": 1.175846, "gate_held": false, "unranked": null},
+        "desktop_chosen": {"rank": 88, "band": null, "order": 88, "tier": "C", "range": [44, 196], "score": 0.949418, "gate_held": false, "unranked": null},
+        "desktop_installed": {"rank": 90, "band": null, "order": 90, "tier": "C", "range": [45, 200], "score": 0.940688, "gate_held": false, "unranked": null},
+        "project": {"rank": 20, "band": null, "order": 20, "tier": "A", "range": [17, 25], "score": 1.444931, "gate_held": false, "unranked": null},
+        "dev_apps": {"rank": 6, "band": null, "order": 6, "tier": "A", "range": [3, 11], "score": 1.779889, "gate_held": false, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 72, "reason": null, "abstains_in": []},

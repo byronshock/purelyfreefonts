@@ -1,0 +1,5 @@
+domain,category,body_font,heading_font,platform,sources,method,observed
+aster-labs.example,startups,Inter,Geist,,google,browser,2026-09-27
+birch-ai.example,startups,Inter,Inter,nextjs,self,browser,2026-09-27
+harbor-shop.example,popular,Poppins,Poppins,nextjs,,static,2026-09-27
+old-archive.example,popular,Verdana,Verdana,,,wayback-browser,2021-02-15

@@ -1,0 +1,100 @@
+{
+	"classifications": [
+		"sans-serif"
+	],
+	"designer": "Fixture Designer",
+	"family": "DejaVu Sans",
+	"languages": [
+		"aa_Latn",
+		"abi_Latn",
+		"abn_Latn",
+		"abq_Cyrl",
+		"abr_Latn",
+		"aii_Cyrl"
+	],
+	"license": {
+		"attribution": "Bitstream, Inc., the DejaVu Fonts team, and contributors",
+		"id": "Bitstream-Vera",
+		"url": "https://raw.githubusercontent.com/dejavu-fonts/dejavu-fonts/0eda8a319c08835009849583cd090bb5b141ce25/LICENSE"
+	},
+	"primaryScript": "Latn",
+	"project": {
+		"repository": "https://github.com/dejavu-fonts/dejavu-fonts",
+		"revision": "0eda8a319c08835009849583cd090bb5b141ce25"
+	},
+	"provenance": {
+		"directory": "sources/dejavu-sans",
+		"repository": "fontsource/font-files",
+		"revision": "9801131c1e5e185ad290bc571cf9a33b6047a5ed",
+		"type": "github"
+	},
+	"sourceModified": "2026-07-27",
+	"sources": [
+		{
+			"inspection": {
+				"axes": [],
+				"codepoints": 685,
+				"colorTables": [],
+				"features": {
+					"gpos": [
+						"kern",
+						"mark",
+						"mkmk"
+					],
+					"gsub": [
+						" RQD",
+						"aalt",
+						"case"
+					]
+				},
+				"fontVersion": "Version 2.37",
+				"glyphs": 6196,
+				"outline": "glyf",
+				"style": "normal",
+				"unicodeRange": "U+0020-007E, U+00A0-02E9, U+02EC-02EE, U+02F3",
+				"weight": 700
+			},
+			"path": "sources/dejavu-sans/files/DejaVuSans-Bold.ttf",
+			"sha256": "e6476c1b80502924294eed40894c5b18e06c181444ca953e5334262df9c27724",
+			"size": 705684,
+			"variant": {
+				"style": "normal",
+				"weight": 700
+			}
+		},
+		{
+			"inspection": {
+				"axes": [],
+				"codepoints": 685,
+				"colorTables": [],
+				"features": {
+					"gpos": [
+						"kern",
+						"mark",
+						"mkmk"
+					],
+					"gsub": [
+						" RQD",
+						"aalt",
+						"case"
+					]
+				},
+				"fontVersion": "Version 2.37",
+				"glyphs": 6253,
+				"outline": "glyf",
+				"style": "normal",
+				"unicodeRange": "U+0020-007E, U+00A0-02E9, U+02EC-02EE, U+02F3",
+				"weight": 400
+			},
+			"path": "sources/dejavu-sans/files/DejaVuSans.ttf",
+			"sha256": "7da195a74c55bef988d0d48f9508bd5d849425c1770dba5d7bfc6ce9ed848954",
+			"size": 757076,
+			"variant": {
+				"style": "normal",
+				"weight": 400
+			}
+		}
+	],
+	"status": "active",
+	"tags": []
+}

@@ -1,0 +1,8 @@
+Synthetic data (ruling T4: Fonts Over Time fixtures are synthetic).
+
+Every site, domain, title and description in synthetic/ and http/ is invented;
+domains use the reserved .example top-level domain. The rows only mimic the
+shape of the weekly files in https://github.com/fcjr/fontsovertime
+(data/snapshots/weekly/<week>.jsonl.gz) and of data/exports/latest.csv. The
+font names are ordinary family names. The commit shas, blob listings and
+response headers are made up or computed from these files.

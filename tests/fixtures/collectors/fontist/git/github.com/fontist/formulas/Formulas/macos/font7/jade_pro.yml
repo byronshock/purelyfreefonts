@@ -1,0 +1,10 @@
+schema_version: 5
+name: Jade Pro (macos folder, must not be read)
+fonts:
+- name: Jade Pro
+  styles:
+  - family_name: Jade Pro
+    type: Regular
+    font: JadePro.otf
+spdx_license: LicenseRef-Apple-Synth
+requires_license_agreement: SENTINEL-LICENSE-TEXT Apple.

@@ -5,6 +5,13 @@
   so ``-m "not browser"`` deselects them before any fixture runs, and this module imports no
   Playwright code at import time. Browsers come from pytest-playwright's ``--browser``;
   locally, ``TFF_CHROMIUM=/usr/bin/chromium`` swaps in a system Chromium.
+- **The real catalog** (site-real in CI and deploy.yml, ``TFF_SITE_DATA=build/catalog-site.json``)
+  runs with ``-m "not sample_only"``. A test marked ``sample_only`` runs on the sample catalog
+  only; one marked ``real_catalog(name=value, ...)`` runs every parameter on the sample but only
+  the named ones on the real catalog (the other parameters get ``sample_only`` at collection).
+  The accessibility grid is the main user: its repeats test the templates and CSS, which the
+  sample covers, and on the real catalog's 500 rows they ran past CI's 45-minute limit (owner
+  ruling of 2026-09-30, ``data/reviews/ci/2026-09-30.toml``).
 - ``site_data`` (session): ``TFF_SITE_DATA``, or the sample catalog.
 - ``site_dir`` (session): ``TFF_SITE_DIR`` if set (a site built elsewhere, as in CI), else a
   fresh ``tff-site build`` of ``site_data``. Font files are included when all of them are in
@@ -14,10 +21,15 @@
 - ``guarded_context``: a factory for contexts that load ``guards.js`` before any page
   script, record every request, abort requests to any other origin and collect console
   messages and page errors. Routing turns off the HTTP cache, so performance tests use plain
-  contexts instead.
+  contexts instead (in Chromium: see ``browser``). A page it opens keeps the context's
+  ``color_scheme`` (``keep_scheme``).
+- ``browser`` (session): pytest-playwright's, except that in Firefox every new context gets
+  a pass-through route.
 - ``no_network``: fails any connection or name lookup that isn't the loopback interface.
+- ``fetch_unencoded(route)``: ``route.fetch()`` for a route handler that reads the body.
 """
 
+import contextlib
 import os
 import re
 import socket
@@ -40,6 +52,7 @@ LOOPBACK = frozenset({"127.0.0.1", "::1", "localhost"})
 # Chromium: "... violates the following Content Security Policy directive ..." or "Refused to
 # load ..."; Firefox: "Content-Security-Policy: The page's settings blocked ...".
 CSP_MESSAGE = re.compile(r"content[- ]security[- ]policy|refused to", re.IGNORECASE)
+SCHEME_JS = "(dark) => matchMedia('(prefers-color-scheme: dark)').matches === dark"
 
 # Requesting any of these makes a test a browser test.
 BROWSER_FIXTURES = frozenset(
@@ -57,12 +70,20 @@ BROWSER_FIXTURES = frozenset(
 
 @pytest.hookimpl(tryfirst=True)
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
-    """Mark tests under tests/site that use a Playwright fixture with ``browser``."""
+    """Mark tests under tests/site that use a Playwright fixture with ``browser``, and the
+    parameters a ``real_catalog`` mark leaves out with ``sample_only``."""
     for item in items:
         if HERE not in Path(item.path).resolve().parents:
             continue
         if BROWSER_FIXTURES.intersection(getattr(item, "fixturenames", ())):
             item.add_marker(pytest.mark.browser)
+        keep = item.get_closest_marker("real_catalog")
+        if keep is not None:
+            params = getattr(getattr(item, "callspec", None), "params", {})
+            unknown = set(keep.kwargs) - set(params)
+            assert not unknown, f"{item.nodeid}: real_catalog names no parameter {unknown}"
+            if any(params[name] != value for name, value in keep.kwargs.items()):
+                item.add_marker(pytest.mark.sample_only)
 
 
 @pytest.fixture(scope="session")
@@ -113,6 +134,35 @@ def browser_context_args(browser_context_args: dict, site_url: str) -> dict:
     return {**browser_context_args, "base_url": site_url}
 
 
+def _pass_through(route: Any) -> None:
+    route.continue_()
+
+
+@pytest.fixture(scope="session")
+def browser(browser: Any, browser_name: str) -> Any:
+    """pytest-playwright's browser; in Firefox, each new context gets a pass-through route.
+
+    In a Firefox context without a route, ``page.goto`` sometimes never returns although the
+    page has loaded (``document.readyState`` is "complete"): 15 of 150 fresh-context loads
+    locally, and 25 page loads in one CI run. Waiting for the ready state instead hangs as
+    often. With a route it happened once in 150 locally, and never in 665 routed contexts
+    in CI. A context that adds its own route (``guarded_context``) handles every request
+    itself, so this one never runs there. Routing turns off the HTTP cache, which the
+    performance tests need, but they run in Chromium only.
+    """
+    if browser_name != "firefox":
+        return browser
+    new_context = browser.new_context
+
+    def routed(*args: Any, **kwargs: Any) -> Any:
+        context = new_context(*args, **kwargs)
+        context.route("**/*", _pass_through)
+        return context
+
+    browser.new_context = routed
+    return browser
+
+
 @pytest.fixture(scope="session")
 def browser_type_launch_args(browser_type_launch_args: dict, browser_name: str) -> dict:
     """Use ``TFF_CHROMIUM`` as the Chromium executable when it is set."""
@@ -128,6 +178,7 @@ class Guarded:
 
     context: Any
     origin: str
+    color_scheme: str | None = None  # the context's, re-applied to each page (keep_scheme)
     requests: list[str] = field(default_factory=list)
     blocked: list[str] = field(default_factory=list)
     responses: list[Any] = field(default_factory=list)
@@ -146,9 +197,12 @@ class Guarded:
         self.context.route("**/*", lambda route: self._route(route))
 
     def new_page(self) -> Any:
-        """Open a page in this context, with console and error capture."""
+        """Open a page in this context, with console and error capture, keeping the
+        context's colour scheme (``keep_scheme``)."""
         page = self.context.new_page()
         self._watch(page)
+        if self.color_scheme in ("light", "dark"):
+            keep_scheme(page, self.color_scheme)
         return page
 
     def records(self, page: Any) -> dict[str, list]:
@@ -184,11 +238,60 @@ class Guarded:
 
     def _route(self, route: Any) -> None:
         url = route.request.url
-        if _origin(url) == self.origin:
-            route.continue_()
-        else:
+        allowed = _origin(url) == self.origin
+        if not allowed:
             self.blocked.append(url)
-            route.abort()
+        answer = route.continue_ if allowed else route.abort
+        try:
+            answer()
+        except Exception as exc:
+            # Playwright keeps an exception from a test's own route handler and raises it at
+            # the next call, which is often this one. Let through, it would leave this request
+            # unanswered and, at teardown, the context open with it, and in Firefox later
+            # pages stop loading. The error is recorded for assert_clean, and the request
+            # is answered: the saved error is gone once raised.
+            self.errors.append(f"a route handler raised: {exc!r}")
+            answer()
+
+
+def fetch_unencoded(route: Any) -> Any:
+    """``route.fetch()``, asking for the body as stored rather than content-encoded.
+
+    Firefox accepts zstd even over plain HTTP, and CI's Caddy (site.caddy's ``encode zstd
+    gzip``) then sends it, but Playwright's fetch doesn't decode zstd: ``text()`` and
+    ``json()`` raise, the route is never answered, and later pages time out. A route handler
+    that reads or rewrites the body fetches it this way. The response carries no
+    ``Content-Encoding``, but it keeps the file's ``Content-Length``, which
+    ``route.fulfill(response=...)`` passes on: a handler that fulfils with a new body leaves
+    that header out.
+    """
+    return route.fetch(headers={**route.request.headers, "accept-encoding": "identity"})
+
+
+def keep_scheme(page: Any, scheme: str) -> None:
+    """Make ``page``'s first ``goto`` end in ``scheme`` (light or dark), and check it.
+
+    Playwright's Firefox drops the context's ``color_scheme`` when a navigation lands on a
+    page sent with ``Cross-Origin-Opener-Policy: same-origin`` (site.caddy's header: the
+    process swap loses it, while ``forced_colors`` and ``reduced_motion`` survive), so a
+    "dark" test would silently run light. A page-level scheme set after that sticks, so the
+    first ``goto`` sets it and reloads when the page isn't in the scheme already.
+    """
+    goto = page.goto
+    first = True
+
+    def goto_in_scheme(url: str, **kwargs: Any) -> Any:
+        nonlocal first
+        response = goto(url, **kwargs)
+        if first:
+            first = False
+            if not page.evaluate(SCHEME_JS, scheme == "dark"):
+                page.emulate_media(color_scheme=scheme)
+                page.reload(wait_until=kwargs.get("wait_until", "load"))
+            assert page.evaluate(SCHEME_JS, scheme == "dark"), f"the {scheme} scheme isn't on"
+        return response
+
+    page.goto = goto_in_scheme
 
 
 def _origin(url: str) -> str:
@@ -204,12 +307,17 @@ def guarded_context(browser: Any, site_url: str) -> Iterator[Callable[..., Guard
     def make(**kwargs: Any) -> Guarded:
         context = browser.new_context(base_url=site_url, **kwargs)
         made.append(context)
-        guarded = Guarded(context=context, origin=_origin(site_url))
+        scheme = kwargs.get("color_scheme")
+        guarded = Guarded(context=context, origin=_origin(site_url), color_scheme=scheme)
         guarded.attach()
         return guarded
 
     yield make
     for context in made:
+        # Raise and so drop any error a route handler left behind (see Guarded._route):
+        # close() would raise it after marking the context closed, and leave it open.
+        with contextlib.suppress(Exception):
+            context.cookies()
         context.close()
 
 

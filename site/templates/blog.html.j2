@@ -1,0 +1,23 @@
+{#-
+  blog.html.j2: /blog/ (Milestone 2 step 7b; M2-D12), written only once a post is published.
+  Context: every page's, plus `heading` and `posts` (newest first; each {url, title, date,
+  updated, description, draft}), from tff_site.blog. No script. Page text is a draft for the
+  owner's approval. Styles: site/css/40-pages.css and 45-blog.css.
+-#}
+{% extends "base.html.j2" %}
+{% block scripts %}{% endblock %}
+{% block main %}
+<div class="page blog-index">
+<h1>{{ heading }}</h1>
+<p class="page-lead">Notes on how the list is made, what changes, and why some fonts are left out. Follow new posts with the <a href="{{ site.blog.feed_url }}">Atom feed</a>.</p>
+<ul class="blog-list">
+{% for post in posts %}
+<li class="blog-item">
+<h2 class="blog-item-title"><a href="{{ post.url }}">{{ post.title }}</a></h2>
+<p class="blog-meta"><time datetime="{{ post.date }}">{{ post.date }}</time>{% if post.updated %}, updated <time datetime="{{ post.updated }}">{{ post.updated }}</time>{% endif %}{% if post.draft %} <span class="blog-draft">Draft</span>{% endif %}</p>
+<p class="blog-summary">{{ post.description }}</p>
+</li>
+{% endfor %}
+</ul>
+</div>
+{% endblock %}

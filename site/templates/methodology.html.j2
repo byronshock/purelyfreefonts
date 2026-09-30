@@ -1,0 +1,171 @@
+{#-
+  methodology.html.j2: /methodology/ (Milestone 2 step 7). The method text comes from
+  docs/ranking-methodology.md, cut out by tff_site.pages at build time, so the page and the
+  document can't drift; the rest comes from the catalog (ranks, bands, tiers, source credits,
+  licenses, this run). Context: every page's, plus `heading` and `method` (pages.py).
+
+  Anchors are stable, whatever the document's headings say: the section ids below, and
+  #source-<id> on each source's credit, which the details panel links to (site/CONTRACT.md
+  section 8). tests/site/test_pages.py pins them. The page needs no script, so it loads none.
+  Page text is a draft for the owner's approval (M2 step 7). Styles: site/css/40-pages.css.
+-#}
+{% extends "base.html.j2" %}
+{# The Project rank's label is "Used in projects" (site ruling 2026-09-25). #}
+{% set survey_titles = {"desktop": "Desktop installs", "project": "Used in projects: websites, code and apps"} %}
+{% set unranked_meaning = {
+  "no_deliberate_evidence": "The font's only evidence in this rank is installs that Linux systems made on their own, and every rank except Desktop: most installed leaves those out. The font keeps a tag naming those systems or packages, and its place in Desktop: most installed.",
+  "no_evidence": "None of this rank's sources counted the font.",
+  "too_new": "The font has been on this rank's sources for less than 60 days.",
+} %}
+{% set state_meaning = {
+  "observed": "the source counted the font.",
+  "censored": "the source could have counted the font, but its count is below the source's floor or missing. It still counts, as a low value.",
+  "not_covered": "the source doesn't carry the font, so it is left out rather than counted as zero.",
+  "too_new": "the font has been on the source for less than 60 days, so it doesn't count there yet.",
+} %}
+{% block scripts %}{% endblock %}
+{% block main %}
+<article class="page page-method">
+<h1>{{ heading }}</h1>
+<p class="page-lead">We rank fonts by public counts of how often they are installed on computers and used in websites, code and apps. The method text on this page is taken from the <a href="{{ method.full_text_url }}">full methodology on GitHub</a> each time the site is built, so the two always agree.</p>
+<p class="page-meta">Data from {{ method.run_date }}. Method version {{ method.method_version }}.{% if method.stale %} <a href="#this-run">{{ method.stale | length }} stale {{ "source" if method.stale | length == 1 else "sources" }}</a>.{% endif %}</p>
+
+<nav class="toc" aria-labelledby="toc-h">
+<h2 id="toc-h" class="toc-title">On this page</h2>
+<ul>
+<li><a href="#in-plain-words">In plain words</a></li>
+<li><a href="#desktop-views">The two desktop views</a></li>
+<li><a href="#reading-ranks">Reading the ranks</a></li>
+<li><a href="#tiers">Confidence tiers</a></li>
+<li><a href="#biases">Known biases</a></li>
+<li><a href="#sources">Sources and credits</a></li>
+<li><a href="#licenses">Licenses</a></li>
+<li><a href="#this-run">This run</a></li>
+</ul>
+</nav>
+
+<section class="page-section">
+<h2 id="in-plain-words">In plain words</h2>
+{{ method.plain_words }}
+</section>
+
+<section class="page-section">
+<h2 id="desktop-views">The two desktop views</h2>
+{{ method.desktop_views }}
+</section>
+
+<section class="page-section">
+<h2 id="reading-ranks">Reading the ranks</h2>
+<h3 id="ranks">The ranks</h3>
+<p>Choose a rank at the top of the list. Each one answers a different question:</p>
+<dl class="terms">
+{% for view in method.views %}
+<dt>{{ view.label }}</dt>
+<dd>{{ view.measures }}{% if not view.available %} Not shown yet.{% endif %}</dd>
+{% endfor %}
+</dl>
+<p>For the most popular fonts of one kind, such as serif or handwriting, use the Category filter.</p>
+
+<h3 id="numbers-and-bands">Numbers and bands</h3>
+<p>The top 100 of each rank are numbered. Past 100 the data can't tell fonts apart precisely, so they show a band instead: {% for band in method.bands %}{{ band }}{{ ", " if not loop.last }}{% endfor %}. Fonts in a band are still listed in score order.</p>
+<p>When you filter the list, the numbers start again from 1 among the fonts shown. Bands stay bands.</p>
+
+<h3 id="not-ranked">Fonts that aren't ranked</h3>
+<p>A font can be in the catalog but not ranked in one view. It is listed last, with the reason:</p>
+<dl class="terms">
+{% for item in method.unranked %}
+<dt>Not ranked: {{ item.label }}</dt>
+<dd>{{ unranked_meaning[item.key] }}</dd>
+{% endfor %}
+</dl>
+
+<h3 id="evidence-states">Each source's view of a font</h3>
+<p>A font's details show its rank in every source, or one of these states:</p>
+<ul>
+{% for item in method.states %}
+<li><strong>{{ item.label | capitalize }}</strong>: {{ state_meaning[item.key] }}</li>
+{% endfor %}
+</ul>
+<p>A Linux source can also be "left out of" some ranks: it counted the font, but Linux systems install that font on their own, and only Desktop: most installed counts such installs.</p>
+</section>
+
+<section class="page-section">
+<h2 id="tiers">Confidence tiers</h2>
+<p>Every ranked font, numbered or in a band, comes with a tier that says how firm its place is. The details also show a range: the ranks the font would likely take if the sources or their weights changed a little.</p>
+<dl class="terms">
+{% for item in method.tiers %}
+<dt>Tier {{ item.tier }}</dt>
+<dd>{{ item.text }}</dd>
+{% endfor %}
+</dl>
+<p>In the methodology's own words:</p>
+<div class="quoted">
+{{ method.confidence }}
+</div>
+</section>
+
+<section class="page-section">
+<h2 id="biases">Known biases</h2>
+{{ method.biases }}
+</section>
+
+<section class="page-section">
+<h2 id="sources">Sources and credits</h2>
+<p>The ranks are built from counts that others publish. Thank you to all of them. The full methodology gives each source's weight and how its counts are cleaned.</p>
+{% for survey in method.surveys %}
+<h3 id="sources-{{ survey.key }}">{{ survey_titles[survey.key] }}</h3>
+<ul class="sources">
+{% for source in survey.sources %}
+<li class="source" id="source-{{ source.id }}">
+<h4 class="source-name">{{ source.name }}</h4>
+<p>{{ source.measures }}</p>
+<dl class="facts">
+<dt>Data from</dt>
+<dd>{{ source.data_date }}{% if source.stale %} <strong class="stale">Stale</strong>: its latest update failed, so its previous data is used, for up to 2 months.{% endif %}</dd>
+<dt>License or terms</dt>
+<dd>{{ source.license }}</dd>
+<dt>Website</dt>
+<dd><a href="{{ source.url }}">{{ source.link_label }}</a></dd>
+</dl>
+{% if not source.publish_rank %}
+<p class="source-note">It counts toward the ranks, but a font's rank in this source isn't shown.</p>
+{% endif %}
+</li>
+{% endfor %}
+</ul>
+{% endfor %}
+<p>The lists of candidate fonts and the license facts we collect come from other sources, credited in the <a href="{{ method.credits_url }}">project's README on GitHub</a>.</p>
+</section>
+
+<section class="page-section">
+<h2 id="licenses">Licenses</h2>
+<p>The ranking data is published under <a href="{{ method.data_license.url }}">{{ method.data_license.name }}</a>{% if not method.data_license.provisional %}, and that choice is final{% endif %}. You may share and adapt it, also commercially, if you credit Truly Free Fonts and share what you make from it under the same license. The repository says <a href="{{ method.data_license.scope_url }}">which files the data license covers</a>.</p>
+<p>The code that collects the data and builds this site is under the <a href="{{ method.code_license.url }}">{{ method.code_license.name }}</a>.</p>
+<p>The fonts are not ours. Each keeps its own license, linked from its details. The counts come from the <a href="#sources">sources above</a>, under their own terms.</p>
+</section>
+
+<section class="page-section">
+<h2 id="this-run">This run</h2>
+<dl class="facts">
+<dt>Data from</dt>
+<dd>{{ method.run_date }}</dd>
+<dt>Method version</dt>
+<dd>{{ method.method_version }}</dd>
+<dt>Stale sources</dt>
+{% if method.stale %}
+<dd>
+<ul>
+{% for source in method.stale %}
+<li><a href="#source-{{ source.id }}">{{ source.name }}</a>, data from {{ source.data_date }}</li>
+{% endfor %}
+</ul>
+</dd>
+{% else %}
+<dd>None: every source updated this month.</dd>
+{% endif %}
+</dl>
+<p>The data is refreshed every month. A source is stale when its update fails: its previous data is used for up to 2 months, then it is dropped until it works again.</p>
+<p>Read the <a href="{{ method.full_text_url }}">full methodology on GitHub</a> for the formulas, weights, checks and decisions behind all of this.</p>
+</section>
+</article>
+{% endblock %}

@@ -1,0 +1,13 @@
+Synthetic fixtures (BRIEF item 12), written for these tests. They copy the
+shape of the old top-100 run's seed files in the private store, not their rows:
+
+- agg_mono.py.txt: the layout of _seed/oldlib-2026-09-23/agg_mono.py (tables
+  NF, BREW_MAP, ARCH_MAP, DEB_MAP, STARS, helper functions), with a handful of
+  rows. It raises SystemExit if run, because the miner must only parse it.
+- brew365.json: the envelope of Homebrew's cask-install/365d analytics, with
+  invented counts.
+- canon_items.json: the {raw, canonical, status, note} rows of
+  _seed/probe-2026-09-25/oldlib/canon_items.json, with invented notes and one
+  invented foundry name.
+
+Font, package and cask names only: no people, email addresses or personal sites.

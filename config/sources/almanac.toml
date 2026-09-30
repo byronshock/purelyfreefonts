@@ -1,0 +1,37 @@
+# Ranking collector almanac: the HTTP Archive Web Almanac's Fonts chapter sheet
+# (Apache-2.0; ruling T1: raw counts may be published).
+#
+# One edition at a time. When a new edition comes out (yearly, methodology §10),
+# switch edition, sheet_id, crawl_date and both tabs together, and flag the switch
+# in that month's pull request. The sheet link is under "View data" on the chapter
+# (https://almanac.httparchive.org/en/<year>/fonts); the crawl date is the `date`
+# in the chapter's SQL (github.com/HTTPArchive/almanac.httparchive.org, sql/<year>/fonts).
+enabled = true
+edition = 2025
+sheet_id = "1otdu4p_CCI70B4FVzw6k02frStsPMrQoFu7jUim_0Bg"
+crawl_date = 2025-07-01
+
+# The crawls in the sheet; each must have at least min_rows rows in each tab, or the
+# export is taken as broken (the sheets list the top 100). The engine reads pages/mobile
+# (config/ranking.toml, the larger crawl).
+clients = ["desktop", "mobile"]
+min_rows = 10
+
+# A tab with fewer than this share of the previous snapshot's rows for the same sheet
+# is a broken export: the fetch fails and the stale policy keeps the last good snapshot.
+min_share = 0.9
+
+# Gate M6 (a), ruled 2026-09-25: this tab is the term (series pages/<client>).
+[pages]
+gid = 1668708562
+question = "Which families are popular in CSS?"
+normalization = "Pages"
+columns = ["client", "family", "count", "total", "proportion"]
+
+# Gate M6 (a): this tab adds no term; it only flags parent merges
+# (series requests/<client>/<service>).
+[services]
+gid = 1594814478
+question = "Which families are used broken down by service?"
+normalization = "Requests (parsed only)"
+columns = ["client", "service", "family", "count", "total", "proportion", "rank"]

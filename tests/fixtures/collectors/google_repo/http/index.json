@@ -1,0 +1,41 @@
+{
+  "format": "tff-mockhttp",
+  "responses": [
+    {
+      "body": "commit.json",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "url": "https://api.github.com/repos/google/fonts/git/commits/26b59081ff4ae5cc8bd244575fb8816a1714ef7b"
+    },
+    {
+      "body": "tree-root.json",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "url": "https://api.github.com/repos/google/fonts/git/trees/65b813f5591514c196f39077b0b7bff3749d9f9f"
+    },
+    {
+      "body": "tree-ofl.json",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "url": "https://api.github.com/repos/google/fonts/git/trees/6d96e5075b55808df8b38d8c6bc24e29fbebabb4?recursive=1"
+    },
+    {
+      "body": "tree-apache.json",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "url": "https://api.github.com/repos/google/fonts/git/trees/6452f3d4cc02a646cc3ff0d13231648a2e3765e6?recursive=1"
+    },
+    {
+      "body": "tree-ufl.json",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "url": "https://api.github.com/repos/google/fonts/git/trees/971efc84ae9bf3f18b91b7ced2dd1b19f36713de?recursive=1"
+    }
+  ],
+  "version": 1
+}

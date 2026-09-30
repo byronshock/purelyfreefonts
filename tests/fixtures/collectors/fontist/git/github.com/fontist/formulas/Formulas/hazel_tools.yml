@@ -1,0 +1,13 @@
+schema_version: 5
+name: Hazel Tools
+description: Synthetic formula that installs no font the formula names.
+homepage: https://hazel.synth.example
+resources:
+  hazel.zip:
+    urls:
+    - https://hazel.synth.example/hazel.zip
+    sha256: 8888888888888888888888888888888888888888888888888888888888888888
+    file_size: 2048
+extract: {}
+spdx_license: Apache-2.0
+open_license: SENTINEL-LICENSE-TEXT Apache.

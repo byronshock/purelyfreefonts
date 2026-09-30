@@ -1,0 +1,14 @@
+{
+  "commit": "194ccc790a1e2f11df7ff1eb841b4f0819297334",
+  "folders": [
+    ".",
+    "sil"
+  ],
+  "formulas": 9,
+  "ref": "v5",
+  "repository": "https://github.com/fontist/formulas",
+  "skipped": [
+    "fern_legacy: schema_version 4, expected 5",
+    "garnet_broken: unreadable YAML (ParserError)"
+  ]
+}

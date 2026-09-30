@@ -1,0 +1,9 @@
+alias,ns,target_ns,target,relation,detail,source,evidence,auto
+font-darwin,brew-cask,brew-cask,font-hundar,rename,,homebrew,https://github.com/Homebrew/homebrew-cask/blob/main/cask_renames.json,false
+font-hanamina,brew-cask,brew-cask,font-hanamin,rename,,homebrew,https://github.com/Homebrew/homebrew-cask/blob/main/cask_renames.json,false
+font-maple,brew-cask,brew-cask,font-maple-mono,rename,,homebrew,https://github.com/Homebrew/homebrew-cask/blob/main/cask_renames.json,false
+font-monaspace-nerd-font,brew-cask,brew-cask,font-monaspice-nerd-font,rename,,homebrew,https://github.com/Homebrew/homebrew-cask/blob/main/cask_renames.json,false
+font-mplus-nerd-font,brew-cask,brew-cask,font-m+-nerd-font,rename,,homebrew,https://github.com/Homebrew/homebrew-cask/blob/main/cask_renames.json,false
+font-open-dyslexic,brew-cask,brew-cask,font-opendyslexic,rename,,homebrew,https://github.com/Homebrew/homebrew-cask/blob/main/cask_renames.json,false
+font-open-dyslexic-nerd-font,brew-cask,brew-cask,font-opendyslexic-nerd-font,rename,,homebrew,https://github.com/Homebrew/homebrew-cask/blob/main/cask_renames.json,false
+font-rounded-m+,brew-cask,brew-cask,font-rounded-mplus,rename,,homebrew,https://github.com/Homebrew/homebrew-cask/blob/main/cask_renames.json,false

@@ -1,0 +1,27 @@
+{
+  "category": "cask_install",
+  "total_items": 18,
+  "start_date": "2025-09-01",
+  "end_date": "2026-09-01",
+  "total_count": 999999,
+  "items": [
+    {"number": 1, "cask": "fontforge-app", "count": "40,001", "percent": "4.00"},
+    {"number": 2, "cask": "font-jetbrains-mono", "count": "31,002", "percent": "3.10"},
+    {"number": 3, "cask": "font-jetbrains-mono-nerd-font", "count": "30,003", "percent": "3.00"},
+    {"number": 4, "cask": "font-inter", "count": "20,004", "percent": "2.00"},
+    {"number": 5, "cask": "font-sauce-code-pro-nerd-font", "count": "10,005", "percent": "1.00"},
+    {"number": 6, "cask": "font-source-code-pro", "count": "9,006", "percent": "0.90"},
+    {"number": 7, "cask": "font-roboto", "count": "8,007", "percent": "0.80"},
+    {"number": 8, "cask": "font-roboto-slab", "count": "7,008", "percent": "0.70"},
+    {"number": 9, "cask": "font-roboto-flex", "count": "6,009", "percent": "0.60"},
+    {"number": 10, "cask": "font-lexend", "count": "5,010", "percent": "0.50"},
+    {"number": 11, "cask": "font-lexend-deca", "count": "4,011", "percent": "0.40"},
+    {"number": 12, "cask": "font-jetbrains-mono-nl", "count": "3,012", "percent": "0.30"},
+    {"number": 13, "cask": "font-liberation", "count": "2,013", "percent": "0.20"},
+    {"number": 14, "cask": "font-powerline-symbols", "count": "1,014", "percent": "0.10"},
+    {"number": 15, "cask": "font-symbols-only-nerd-font", "count": "915", "percent": "0.09"},
+    {"number": 16, "cask": "font-dejavu-sans-mono-for-powerline", "count": "816", "percent": "0.08"},
+    {"number": 17, "cask": "example/fonts-extra/font-some-tap-font", "count": "717", "percent": "0.07"},
+    {"number": 18, "cask": "font-roboto", "count": "618", "percent": "0.06"}
+  ]
+}

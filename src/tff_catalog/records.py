@@ -72,6 +72,7 @@ GROUPS = frozenset(
         "arch",
         "debian",
         "github_counters",
+        "nerd",  # its own group since the owner's ruling of 2026-09-29 (gate R, R1)
         "flutter",
     }
 )  # independence groups, methodology §6; gate T3 dropped Chocolatey from v1
@@ -116,7 +117,26 @@ RESERVED_ATTRS: dict[str, tuple[AttrKind, str]] = {
     "method": ("str", "Fonts Over Time: how the site was measured (browser or static)"),
     "category": ("str", "Fonts Over Time: the site's category (the startup cap, D11)"),
     "last_synced_at": ("date", "ecosyste.ms: the day the package was last synced"),
+    "distro": (
+        "str",
+        "the package system a distro record comes from, a config/site.toml [package_systems] "
+        "id (arch, cachyos, debian); on a Relation, the system of that dependency edge",
+    ),
+    "asset": ("str", "GitHub or Nerd Fonts: the release asset's file name"),
+    "font_like": (
+        "bool",
+        "a distro package that is a font package: Section fonts, a font package name, the "
+        "nerd-fonts group, or provides ttf-font",
+    ),
+    "url": ("str", "Homebrew: the cask's download URL (gate M5 matches it to GitHub assets)"),
+    "category_sites": (
+        "int",
+        "Fonts Over Time: the sites counted that week for the row's category and method "
+        "(the denominator of the D11 startup cap)",
+    ),
 }
+# Not reserved: "repo" means the pacman repository on arch_repos records and
+# owner/name on GitHub Observations; readers tell them apart by source.
 # Engine-source exposures that come from a collector's first_seen attr (config_model.Exposure).
 EXPOSURE_ATTR_KINDS = frozenset({"add_date", "first_nonzero_day", "asset_created"})
 
@@ -152,12 +172,17 @@ class Observation:
 
 @dataclass(frozen=True, slots=True)
 class FontFileRef:
-    url: str  # commit- or version-pinned where possible
+    # commit- or version-pinned where possible; "<archive>.zip#<member path>" names one font
+    # inside a zip archive (fontfiles.member_url), read by range; its sha256 is the member's
+    url: str
     sha256: str | None = None
     size: int | None = None
     role: FileRole = "regular"
     codepoints: int | None = None  # when the source inspected the file (Fontsource registry)
     unicode_range: str | None = None
+    # git blob sha1 when the source lists it (the google/fonts tree): a facts-cache
+    # key that survives the monthly commit pin of ``url`` (design-m1 gap G8)
+    git_blob: str | None = None
 
 
 @dataclass(frozen=True, slots=True)

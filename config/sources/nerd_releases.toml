@@ -1,0 +1,35 @@
+# Ranking collector nerd_releases: Nerd Fonts release downloads, every release,
+# through GitHub GraphQL (needs GITHUB_TOKEN). GitHub counts are open data
+# (ruling T1); no author or uploader is kept.
+enabled = true
+repo = "ryanoasis/nerd-fonts"
+
+# GraphQL page sizes. GitHub refuses a query that touches too many assets
+# ("Resource limits for this query exceeded": 10 releases of 100 assets failed
+# on 2026-09-25, 5 passed); a refused page is asked again at half the size.
+releases_per_page = 4
+assets_per_page = 100
+
+# Font assets are archives named <folderName><suffix>; any other file
+# (SHA-256.txt) is not a font. The base is the name without the suffix.
+suffixes = [".tar.xz", ".zip"]
+
+# Archive bases that are not text fonts of a known family.
+exclude = [
+  "FontPatcher",           # the patcher script
+  "NerdFontsSymbolsOnly",  # the icon glyphs alone
+  # Four stray v2.0.0 uploads (about 1,100-1,500 downloads each) named by style
+  # alone: no family can be credited with them, and at about 150 a year they
+  # pulled the engine's Nerd 10th-percentile floor, taken over every key, down
+  # from about 212,500 to 183,600 a year (2026-09-26 data). Delete these four
+  # lines to keep them; an `ineligible` alias row would not lift the floor.
+  "Bold",
+  "BoldItalic",
+  "Italic",
+  "Regular",
+]
+
+# Fewer font assets than this share of the previous snapshot's (counted under
+# the settings above) is a broken answer: the fetch fails and the stale policy
+# reuses the last good snapshot. Nerd Fonts does not delete releases.
+min_share = 0.9

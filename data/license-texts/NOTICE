@@ -1,0 +1,54 @@
+Canonical license texts for L3 fingerprints (tff_catalog.license_l3, milestone-1 step 6b)
+
+Each file is a license's own text, copied verbatim. It belongs to the license's
+steward (SIL International for the OFL, the Apache Software Foundation for
+Apache-2.0, Canonical for the Ubuntu Font Licence, the Free Software Foundation
+for the GNU licenses, and so on). License texts are published to be copied
+unchanged; nothing here is modified.
+
+<SPDX id>.txt and exceptions/<SPDX exception id>.txt
+  Source: the SPDX License List data, release v3.29.0
+  (https://github.com/spdx/license-list-data, tag v3.29.0, commit
+  31ba1a50e5397e00a304dbadc76531740e89ee48), files text/<id>.txt.
+  Retrieved 2026-09-25.
+
+variants/<SPDX id>/<name>.txt: other published forms of the same license
+  - Apache-2.0/no-appendix.txt: the SPDX Apache-2.0 text up to and including
+    "END OF TERMS AND CONDITIONS", without the appendix, as many projects
+    ship it.
+  - Apache-2.0/notice.txt: the standard notice from the same SPDX text's
+    appendix ("How to apply the Apache License to your work"), from
+    "Copyright [yyyy]" to the end. The Apache Software Foundation publishes
+    it for projects to put in their files; it grants the license by
+    reference, and Droid Sans Mono and Meslo ship it as their license file.
+  - Bitstream-Vera/gnome-1.10-COPYRIGHT.txt: COPYRIGHT.TXT from the
+    Bitstream Vera 1.10 release by Bitstream and the GNOME Foundation
+    (https://download.gnome.org/sources/ttf-bitstream-vera/1.10/ttf-bitstream-vera-1.10.tar.bz2,
+    sha256 db5b27df7bbb318036ebdb75acd3e98f1bd6eb6608fb70a67d478cd243d178dc),
+    retrieved 2026-09-28: the license with release notes above it and
+    Bitstream's copyright FAQ below it.
+  - CC-BY-4.0/legalcode.txt and CC-BY-SA-4.0/legalcode.txt: the plain-text
+    legal code from creativecommons.org
+    (https://creativecommons.org/licenses/by/4.0/legalcode.txt and
+    .../by-sa/4.0/legalcode.txt), retrieved 2026-09-25. It ends with Creative
+    Commons' notice, which the SPDX text leaves out. Creative Commons
+    dedicates the text of its public licenses to the public domain (CC0).
+
+variants/LicenseRef-<name>/<name>.txt: licenses the SPDX list lacks, with
+every published form under the license's own folder
+  - LicenseRef-GUST-Font-License/GUST-FONT-LICENSE-1.0.txt: the GUST Font
+    License, version 1.0 of 22 June 2009, from its steward GUST, the Polish
+    TeX Users Group
+    (https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt),
+    retrieved 2026-09-28, CRLF line ends kept.
+  - LicenseRef-GUST-Font-License/tex-gyre-2.501-preliminary.txt: the
+    preliminary version of 2006-09-30 that GUST's TeX Gyre 2.501 still ships
+    (https://mirrors.ctan.org/fonts/tex-gyre/doc/GUST-FONT-LICENSE.txt),
+    retrieved 2026-09-28. Its words from "This work may be distributed" on
+    are the same as version 1.0's.
+
+A variant counts as the license it is filed under. Add one only for a text
+the license's steward publishes, never for a family's own edited copy: a
+family whose text differs goes to the L3 queue instead. There, research
+may list that exact text, by its sha256, in config/license-texts.toml
+(owner ruling L3_32), or the owner rules on it (gate L3).

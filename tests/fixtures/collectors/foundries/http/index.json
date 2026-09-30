@@ -1,0 +1,48 @@
+{
+  "format": "tff-mockhttp",
+  "responses": [
+    {
+      "headers": {
+        "content-type": "text/html; charset=utf-8"
+      },
+      "method": "HEAD",
+      "url": "https://github.com/aster-type/aster-sans"
+    },
+    {
+      "headers": {
+        "content-type": "text/html; charset=utf-8"
+      },
+      "method": "HEAD",
+      "url": "https://github.com/birch-foundry/dune-display"
+    },
+    {
+      "headers": {
+        "content-type": "text/html; charset=utf-8"
+      },
+      "method": "HEAD",
+      "url": "https://gitlab.com/aster-type/birch-mono"
+    },
+    {
+      "headers": {
+        "content-type": "text/html; charset=utf-8"
+      },
+      "method": "HEAD",
+      "url": "https://open-foundry.com/fonts/aster-sans"
+    },
+    {
+      "headers": {
+        "content-type": "text/html; charset=utf-8"
+      },
+      "method": "HEAD",
+      "url": "https://www.fontshare.com/fonts/dune-display"
+    },
+    {
+      "headers": {
+        "content-type": "text/html; charset=utf-8"
+      },
+      "method": "HEAD",
+      "url": "https://www.theleagueofmoveabletype.com/aster-sans"
+    }
+  ],
+  "version": 1
+}

@@ -1,0 +1,23 @@
+Trimmed real data (ruling T1: GitHub download counts are open data).
+
+source.json holds 27 release assets of 11 repositories, as the GitHub REST and
+GraphQL APIs reported them on 2026-09-26: release tag, publish time,
+prerelease flag, asset name, download count and asset creation time. Nothing
+else is kept: no author, uploader, release notes or URLs, so no personal data.
+Every other repository listed in config/sources/github_releases.toml answers
+with no releases.
+
+http/ and snapshot/ are generated from source.json by
+`uv run python -m tests.collectors.github_releases.build_fixture`, through the
+fake API in tests/collectors/github_releases/fakegithub.py: the response
+bodies keep the API's field names but only the fields above (plus each
+release's html_url, rebuilt from the repository and tag), and the GraphQL
+cursors, the Link header's repository id and the response headers are
+invented. expected.jsonl is the collector's parse of snapshot/.
+
+Source: https://docs.github.com/en/rest/releases/releases and
+https://docs.github.com/en/graphql (the repositories' public releases).
+GitHub's Acceptable Use Policies allow collecting public, non-personal
+information through the API. The download counts state no licence; they are
+used under GitHub's Terms of Service. Tag and asset names are the
+repositories' own; each font's licence is in its repository.

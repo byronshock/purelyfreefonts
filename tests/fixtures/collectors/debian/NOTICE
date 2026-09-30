@@ -1,0 +1,19 @@
+Trimmed real data (ruling T1: Debian package data and popcon are open sources).
+
+- http/Packages.xz: 20 stanzas of Debian 13 (trixie) main binary-amd64
+  Packages.xz, https://deb.debian.org/debian/dists/trixie/main/binary-amd64/Packages.xz,
+  as published on 2026-09-12. The Maintainer, Filename, Size, MD5sum, SHA256
+  and Description-md5 fields were removed, and so was elpa-ligature's
+  Homepage (a personal account); nothing else was changed.
+- http/by_inst.gz: the header and 24 of the 224,225 rows of the Debian
+  Popularity Contest report https://popcon.debian.org/by_inst.gz of
+  2026-09-25. Maintainer names of individual people were replaced by
+  "(removed)", and the Total row was recomputed for these rows.
+- http/all-popcon-results-head.gz: the first four lines of
+  https://popcon.debian.org/all-popcon-results.gz of 2026-09-25.
+- snapshot/ and expected.jsonl are derived from these files by the collector.
+
+The popcon material and the Debian web site content are available under the
+MIT (Expat) License or, at your option, the GNU General Public License,
+version 2 or any later version (https://www.debian.org/license). Package
+metadata is published by the Debian project (https://www.debian.org/).

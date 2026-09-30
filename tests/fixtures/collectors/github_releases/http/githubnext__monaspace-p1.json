@@ -1,0 +1,23 @@
+[
+ {
+  "assets": [
+   {
+    "created_at": "2026-03-27T23:12:24Z",
+    "download_count": 17480,
+    "name": "monaspace-nerdfonts-v1.400.zip",
+    "state": "uploaded"
+   },
+   {
+    "created_at": "2026-03-27T23:12:24Z",
+    "download_count": 108998,
+    "name": "monaspace-static-v1.400.zip",
+    "state": "uploaded"
+   }
+  ],
+  "draft": false,
+  "html_url": "https://github.com/githubnext/monaspace/releases/tag/v1.400",
+  "prerelease": false,
+  "published_at": "2026-03-28T00:19:59Z",
+  "tag_name": "v1.400"
+ }
+]

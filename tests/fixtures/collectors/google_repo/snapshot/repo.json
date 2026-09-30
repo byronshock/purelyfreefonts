@@ -1,0 +1,50 @@
+{
+  "commit": "26b59081ff4ae5cc8bd244575fb8816a1714ef7b",
+  "committed_at": "2026-10-03T00:00:00Z",
+  "folders": [
+    "ofl",
+    "apache",
+    "ufl"
+  ],
+  "pending": {
+    "to_delist.txt": [
+      {
+        "dir": "ofl/cobaltsymbols",
+        "section": ""
+      }
+    ],
+    "to_production.txt": [
+      {
+        "dir": "ofl/claritycity",
+        "section": "new"
+      },
+      {
+        "dir": "ofl/jetbrainsmono",
+        "section": "upgrade"
+      }
+    ],
+    "to_sandbox.txt": [
+      {
+        "dir": "ofl/astersans",
+        "section": "upgrade"
+      },
+      {
+        "dir": "ofl/dunesans",
+        "section": "new"
+      },
+      {
+        "dir": "ofl/embercolor",
+        "section": "metadata / description / license"
+      }
+    ]
+  },
+  "ref": "main",
+  "repository": "https://github.com/google/fonts",
+  "truncated": [],
+  "unparsed": [
+    {
+      "dir": "ofl/brokenfam",
+      "error": "5:9 : Expected \"}\"."
+    }
+  ]
+}

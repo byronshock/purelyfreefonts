@@ -1,0 +1,522 @@
+[
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "0xType/0xProto",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 3,
+    "latest": 0,
+    "releases": 1,
+    "renamed_to": null,
+    "repo": "adobe-fonts/source-code-pro",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "adobe-fonts/source-sans",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "adobe-fonts/source-serif",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "ahatem/IoskeleyMono",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "alerque/libertinus",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "antijingoist/opendyslexic",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "arrowtype/recursive",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "arrowtype/shantell-sans",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "graphql",
+    "assets": 6,
+    "latest": 24,
+    "releases": 2,
+    "renamed_to": null,
+    "repo": "be5invis/Iosevka",
+    "status": "ok",
+    "total_releases": 2
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "belluzj/fantasque-sans",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "blobject/agave",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "calcom/sans",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "canonical/Ubuntu-Sans-fonts",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "canonical/Ubuntu-Sans-Mono-fonts",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "cormullion/juliamono",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "crozynski/comicneue",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "dejavu-fonts/dejavu-fonts",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "eigilnikolajsen/commit-mono",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "evilmartians/mono",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "fcambus/spleen",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "github/hubot-sans",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "github/mona-sans",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 2,
+    "latest": 0,
+    "releases": 1,
+    "renamed_to": null,
+    "repo": "githubnext/monaspace",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "googlefonts/googlesans-code",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "i-tu/Hasklig",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 1,
+    "latest": 0,
+    "releases": 1,
+    "renamed_to": null,
+    "repo": "IBM/plex",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "IdreesInc/Monocraft",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "intel/intel-one-mono",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "jenskutilek/sudo-font",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 2,
+    "latest": 0,
+    "releases": 2,
+    "renamed_to": null,
+    "repo": "JetBrains/JetBrainsMono",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "kaspernordkvist/uncut_sans",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "lauridskern/open-runde",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "madmalik/mononoki",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 2,
+    "latest": 0,
+    "releases": 2,
+    "renamed_to": null,
+    "repo": "microsoft/cascadia-code",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "mishamyrt/Lilex",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "oppiliappan/scientifica",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "psb1558/Junicode-font",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 1,
+    "latest": 0,
+    "releases": 1,
+    "renamed_to": null,
+    "repo": "rbanffy/3270font",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "RedHatOfficial/Overpass",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "rektdeckard/departure-mono",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 2,
+    "latest": 0,
+    "releases": 2,
+    "renamed_to": null,
+    "repo": "rsms/inter",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 2,
+    "latest": 0,
+    "releases": 1,
+    "renamed_to": null,
+    "repo": "source-foundry/Hack",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "subframe7536/maple-font",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 3,
+    "latest": 0,
+    "releases": 1,
+    "renamed_to": null,
+    "repo": "the-moonwitch/Cozette",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "theleagueof/league-gothic",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "theleagueof/league-mono",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "theleagueof/league-spartan",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 2,
+    "latest": 0,
+    "releases": 2,
+    "renamed_to": null,
+    "repo": "tonsky/FiraCode",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "uswds/public-sans",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "vercel/geist-font",
+    "status": "ok",
+    "total_releases": null
+  },
+  {
+    "api": "rest",
+    "assets": 0,
+    "latest": 0,
+    "releases": 0,
+    "renamed_to": null,
+    "repo": "zed-industries/zed-fonts",
+    "status": "ok",
+    "total_releases": null
+  }
+]

@@ -1,0 +1,46 @@
+{
+  "format": "tff-mockhttp",
+  "responses": [
+    {
+      "body": "ref.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "url": "https://api.github.com/repos/fcjr/fontsovertime/git/ref/heads/main"
+    },
+    {
+      "body": "latest.csv",
+      "headers": {
+        "accept-ranges": "bytes",
+        "content-type": "text/plain; charset=utf-8"
+      },
+      "request_headers": {
+        "range": "bytes=0-4095"
+      },
+      "status": 206,
+      "url": "https://raw.githubusercontent.com/fcjr/fontsovertime/3a5f9c1e7b2d4f6a8c0e1b3d5f7a9c2e4b6d8f01/data/exports/latest.csv"
+    },
+    {
+      "body": "weekly.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "url": "https://api.github.com/repos/fcjr/fontsovertime/contents/data/snapshots/weekly?ref=3a5f9c1e7b2d4f6a8c0e1b3d5f7a9c2e4b6d8f01"
+    },
+    {
+      "body": "2026-W39.jsonl.gz",
+      "headers": {
+        "content-type": "application/octet-stream"
+      },
+      "url": "https://raw.githubusercontent.com/fcjr/fontsovertime/3a5f9c1e7b2d4f6a8c0e1b3d5f7a9c2e4b6d8f01/data/snapshots/weekly/2026-W39.jsonl.gz"
+    },
+    {
+      "body": "2026-W40.jsonl.gz",
+      "headers": {
+        "content-type": "application/octet-stream"
+      },
+      "url": "https://raw.githubusercontent.com/fcjr/fontsovertime/3a5f9c1e7b2d4f6a8c0e1b3d5f7a9c2e4b6d8f01/data/snapshots/weekly/2026-W40.jsonl.gz"
+    }
+  ],
+  "version": 1
+}

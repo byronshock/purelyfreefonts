@@ -1,0 +1,757 @@
+)]}'
+{
+ "axisRegistry": [
+  {
+   "tag": "wght",
+   "displayName": "Weight",
+   "min": 1.0,
+   "max": 1000.0,
+   "defaultValue": 400.0
+  }
+ ],
+ "familyMetadataList": [
+  {
+   "family": "Aster Sans",
+   "displayName": null,
+   "category": "Sans Serif",
+   "stroke": "Sans Serif",
+   "classifications": [],
+   "size": 123456,
+   "subsets": [
+    "menu",
+    "cyrillic",
+    "latin",
+    "latin-ext",
+    "vietnamese"
+   ],
+   "fonts": {
+    "400": {
+     "thickness": 5,
+     "slant": 1,
+     "width": 7,
+     "lineHeight": 1.2
+    }
+   },
+   "axes": [
+    {
+     "tag": "opsz",
+     "min": 14.0,
+     "max": 32.0,
+     "defaultValue": 14.0,
+     "precision": 0
+    },
+    {
+     "tag": "wght",
+     "min": 100.0,
+     "max": 900.0,
+     "defaultValue": 400.0
+    }
+   ],
+   "designers": [
+    "Example Foundry"
+   ],
+   "lastModified": "2026-05-10",
+   "dateAdded": "2019-03-14",
+   "popularity": 3,
+   "trending": 500,
+   "defaultSort": 42,
+   "androidFragment": null,
+   "isNoto": false,
+   "colorCapabilities": [],
+   "primaryScript": "",
+   "primaryLanguage": "",
+   "isOpenSource": true,
+   "isBrandFont": false,
+   "languages": []
+  },
+  {
+   "family": "Birch Mono",
+   "displayName": null,
+   "category": "Monospace",
+   "stroke": null,
+   "classifications": [
+    "Monospace"
+   ],
+   "size": 123456,
+   "subsets": [
+    "menu",
+    "latin",
+    "latin-ext"
+   ],
+   "fonts": {
+    "400": {
+     "thickness": 5,
+     "slant": 1,
+     "width": 7,
+     "lineHeight": 1.2
+    }
+   },
+   "axes": [
+    {
+     "tag": "wght",
+     "min": 100.0,
+     "max": 900.0,
+     "defaultValue": 400.0
+    }
+   ],
+   "designers": [
+    "Example Foundry"
+   ],
+   "lastModified": "2026-05-10",
+   "dateAdded": "2021-06-01",
+   "popularity": 12,
+   "trending": 500,
+   "defaultSort": 42,
+   "androidFragment": null,
+   "isNoto": false,
+   "colorCapabilities": [],
+   "primaryScript": "",
+   "primaryLanguage": "",
+   "isOpenSource": true,
+   "isBrandFont": false,
+   "languages": []
+  },
+  {
+   "family": "Cobalt Serif",
+   "displayName": null,
+   "category": "Serif",
+   "stroke": "Serif",
+   "classifications": [],
+   "size": 123456,
+   "subsets": [
+    "menu",
+    "latin",
+    "latin-ext"
+   ],
+   "fonts": {
+    "400": {
+     "thickness": 5,
+     "slant": 1,
+     "width": 7,
+     "lineHeight": 1.2
+    }
+   },
+   "axes": [],
+   "designers": [
+    "Example Foundry"
+   ],
+   "lastModified": "2026-05-10",
+   "dateAdded": "2021-06-01",
+   "popularity": 7,
+   "trending": 500,
+   "defaultSort": 42,
+   "androidFragment": null,
+   "isNoto": false,
+   "colorCapabilities": [],
+   "primaryScript": "",
+   "primaryLanguage": "en_Latn",
+   "isOpenSource": true,
+   "isBrandFont": false,
+   "languages": []
+  },
+  {
+   "family": "Dune Display",
+   "displayName": null,
+   "category": "Display",
+   "stroke": null,
+   "classifications": [
+    "Display"
+   ],
+   "size": 123456,
+   "subsets": [
+    "menu",
+    "latin",
+    "latin-ext"
+   ],
+   "fonts": {
+    "400": {
+     "thickness": 5,
+     "slant": 1,
+     "width": 7,
+     "lineHeight": 1.2
+    }
+   },
+   "axes": [],
+   "designers": [
+    "Example Foundry"
+   ],
+   "lastModified": "2026-05-10",
+   "dateAdded": "2021-06-01",
+   "popularity": 250,
+   "trending": 500,
+   "defaultSort": 42,
+   "androidFragment": null,
+   "isNoto": false,
+   "colorCapabilities": [],
+   "primaryScript": "",
+   "primaryLanguage": "",
+   "isOpenSource": true,
+   "isBrandFont": false,
+   "languages": []
+  },
+  {
+   "family": "Elm Script",
+   "displayName": "Elm Script Handwriting",
+   "category": "Handwriting",
+   "stroke": null,
+   "classifications": [
+    "Handwriting"
+   ],
+   "size": 123456,
+   "subsets": [
+    "menu",
+    "latin",
+    "latin-ext"
+   ],
+   "fonts": {
+    "400": {
+     "thickness": 5,
+     "slant": 1,
+     "width": 7,
+     "lineHeight": 1.2
+    }
+   },
+   "axes": [],
+   "designers": [
+    "Example Foundry"
+   ],
+   "lastModified": "2026-05-10",
+   "dateAdded": "2026-08-20",
+   "popularity": 400,
+   "trending": 500,
+   "defaultSort": 42,
+   "androidFragment": null,
+   "isNoto": false,
+   "colorCapabilities": [],
+   "primaryScript": "",
+   "primaryLanguage": "",
+   "isOpenSource": true,
+   "isBrandFont": false,
+   "languages": []
+  },
+  {
+   "family": "Fjord Sans JP",
+   "displayName": "Fjord Sans Japanese",
+   "category": "Sans Serif",
+   "stroke": "Sans Serif",
+   "classifications": [],
+   "size": 123456,
+   "subsets": [
+    "menu",
+    "japanese",
+    "latin",
+    "latin-ext"
+   ],
+   "fonts": {
+    "400": {
+     "thickness": 5,
+     "slant": 1,
+     "width": 7,
+     "lineHeight": 1.2
+    }
+   },
+   "axes": [
+    {
+     "tag": "wght",
+     "min": 100.0,
+     "max": 900.0,
+     "defaultValue": 400.0
+    }
+   ],
+   "designers": [
+    "Example Foundry"
+   ],
+   "lastModified": "2026-05-10",
+   "dateAdded": "2021-06-01",
+   "popularity": 9,
+   "trending": 500,
+   "defaultSort": 42,
+   "androidFragment": null,
+   "isNoto": true,
+   "colorCapabilities": [],
+   "primaryScript": "Jpan",
+   "primaryLanguage": "",
+   "isOpenSource": true,
+   "isBrandFont": true,
+   "languages": [
+    "ja_Jpan",
+    "en_Latn",
+    "fr_Latn"
+   ]
+  },
+  {
+   "family": "Garnet Sans Devanagari",
+   "displayName": null,
+   "category": "Sans Serif",
+   "stroke": "Sans Serif",
+   "classifications": [],
+   "size": 123456,
+   "subsets": [
+    "menu",
+    "devanagari",
+    "latin",
+    "latin-ext"
+   ],
+   "fonts": {
+    "400": {
+     "thickness": 5,
+     "slant": 1,
+     "width": 7,
+     "lineHeight": 1.2
+    }
+   },
+   "axes": [],
+   "designers": [
+    "Example Foundry"
+   ],
+   "lastModified": "2026-05-10",
+   "dateAdded": "2021-06-01",
+   "popularity": 600,
+   "trending": 500,
+   "defaultSort": 42,
+   "androidFragment": null,
+   "isNoto": false,
+   "colorCapabilities": [],
+   "primaryScript": "Deva",
+   "primaryLanguage": "",
+   "isOpenSource": true,
+   "isBrandFont": false,
+   "languages": []
+  },
+  {
+   "family": "Harbor Barcode 39",
+   "displayName": null,
+   "category": "Display",
+   "stroke": null,
+   "classifications": [
+    "Display",
+    "Symbols"
+   ],
+   "size": 123456,
+   "subsets": [
+    "menu",
+    "latin"
+   ],
+   "fonts": {
+    "400": {
+     "thickness": 5,
+     "slant": 1,
+     "width": 7,
+     "lineHeight": 1.2
+    }
+   },
+   "axes": [],
+   "designers": [
+    "Example Foundry"
+   ],
+   "lastModified": "2026-05-10",
+   "dateAdded": "2021-06-01",
+   "popularity": 900,
+   "trending": 500,
+   "defaultSort": 42,
+   "androidFragment": null,
+   "isNoto": false,
+   "colorCapabilities": [],
+   "primaryScript": "",
+   "primaryLanguage": "",
+   "isOpenSource": true,
+   "isBrandFont": false,
+   "languages": []
+  },
+  {
+   "family": "Iris Math",
+   "displayName": null,
+   "category": "Serif",
+   "stroke": null,
+   "classifications": [],
+   "size": 123456,
+   "subsets": [
+    "menu",
+    "math"
+   ],
+   "fonts": {
+    "400": {
+     "thickness": 5,
+     "slant": 1,
+     "width": 7,
+     "lineHeight": 1.2
+    }
+   },
+   "axes": [],
+   "designers": [
+    "Example Foundry"
+   ],
+   "lastModified": "2026-05-10",
+   "dateAdded": "2021-06-01",
+   "popularity": 1200,
+   "trending": 500,
+   "defaultSort": 42,
+   "androidFragment": null,
+   "isNoto": false,
+   "colorCapabilities": [],
+   "primaryScript": "",
+   "primaryLanguage": "",
+   "isOpenSource": true,
+   "isBrandFont": false,
+   "languages": []
+  },
+  {
+   "family": "Juniper Emoji",
+   "displayName": null,
+   "category": "Sans Serif",
+   "stroke": "Sans Serif",
+   "classifications": [],
+   "size": 123456,
+   "subsets": [
+    "menu",
+    "emoji"
+   ],
+   "fonts": {
+    "400": {
+     "thickness": 5,
+     "slant": 1,
+     "width": 7,
+     "lineHeight": 1.2
+    }
+   },
+   "axes": [],
+   "designers": [
+    "Example Foundry"
+   ],
+   "lastModified": "2026-05-10",
+   "dateAdded": "2021-06-01",
+   "popularity": 150,
+   "trending": 500,
+   "defaultSort": 42,
+   "androidFragment": null,
+   "isNoto": false,
+   "colorCapabilities": [
+    "COLRV1",
+    "OTSVG"
+   ],
+   "primaryScript": "",
+   "primaryLanguage": "",
+   "isOpenSource": true,
+   "isBrandFont": false,
+   "languages": []
+  },
+  {
+   "family": "Kestrel Color",
+   "displayName": null,
+   "category": "Display",
+   "stroke": null,
+   "classifications": [],
+   "size": 123456,
+   "subsets": [
+    "menu",
+    "emoji"
+   ],
+   "fonts": {
+    "400": {
+     "thickness": 5,
+     "slant": 1,
+     "width": 7,
+     "lineHeight": 1.2
+    }
+   },
+   "axes": [],
+   "designers": [
+    "Example Foundry"
+   ],
+   "lastModified": "2026-05-10",
+   "dateAdded": "2021-06-01",
+   "popularity": 1500,
+   "trending": 500,
+   "defaultSort": 42,
+   "androidFragment": null,
+   "isNoto": false,
+   "colorCapabilities": [],
+   "primaryScript": "",
+   "primaryLanguage": "",
+   "isOpenSource": true,
+   "isBrandFont": false,
+   "languages": []
+  },
+  {
+   "family": "Lumen Sans Mono",
+   "displayName": null,
+   "category": "Sans Serif",
+   "stroke": "Sans Serif",
+   "classifications": [
+    "Monospace"
+   ],
+   "size": 123456,
+   "subsets": [
+    "menu",
+    "latin",
+    "latin-ext"
+   ],
+   "fonts": {
+    "400": {
+     "thickness": 5,
+     "slant": 1,
+     "width": 7,
+     "lineHeight": 1.2
+    }
+   },
+   "axes": [
+    {
+     "tag": "wght",
+     "min": 100.0,
+     "max": 900.0,
+     "defaultValue": 400.0
+    }
+   ],
+   "designers": [
+    "Example Foundry"
+   ],
+   "lastModified": "2026-05-10",
+   "dateAdded": "2021-06-01",
+   "popularity": 300,
+   "trending": 500,
+   "defaultSort": 42,
+   "androidFragment": null,
+   "isNoto": false,
+   "colorCapabilities": [],
+   "primaryScript": "",
+   "primaryLanguage": "",
+   "isOpenSource": true,
+   "isBrandFont": false,
+   "languages": []
+  },
+  {
+   "family": "Moss Blocks",
+   "displayName": null,
+   "category": "Display",
+   "stroke": null,
+   "classifications": [
+    "Display",
+    "Symbols"
+   ],
+   "size": 123456,
+   "subsets": [
+    "menu",
+    "latin",
+    "latin-ext"
+   ],
+   "fonts": {
+    "400": {
+     "thickness": 5,
+     "slant": 1,
+     "width": 7,
+     "lineHeight": 1.2
+    }
+   },
+   "axes": [],
+   "designers": [
+    "Example Foundry"
+   ],
+   "lastModified": "2026-05-10",
+   "dateAdded": "2021-06-01",
+   "popularity": 1700,
+   "trending": 500,
+   "defaultSort": 42,
+   "androidFragment": null,
+   "isNoto": false,
+   "colorCapabilities": [],
+   "primaryScript": "",
+   "primaryLanguage": "",
+   "isOpenSource": true,
+   "isBrandFont": false,
+   "languages": []
+  },
+  {
+   "family": "Nimbus Brand",
+   "displayName": null,
+   "category": "Sans Serif",
+   "stroke": "Sans Serif",
+   "classifications": [],
+   "size": 123456,
+   "subsets": [
+    "menu",
+    "latin",
+    "latin-ext"
+   ],
+   "fonts": {
+    "400": {
+     "thickness": 5,
+     "slant": 1,
+     "width": 7,
+     "lineHeight": 1.2
+    }
+   },
+   "axes": [],
+   "designers": [
+    "Example Foundry"
+   ],
+   "lastModified": "2026-05-10",
+   "dateAdded": "2021-06-01",
+   "popularity": 30,
+   "trending": 500,
+   "defaultSort": 42,
+   "androidFragment": null,
+   "isNoto": false,
+   "colorCapabilities": [],
+   "primaryScript": "",
+   "primaryLanguage": "",
+   "isOpenSource": false,
+   "isBrandFont": true,
+   "languages": []
+  },
+  {
+   "family": "Opal Serif",
+   "displayName": null,
+   "category": "Serif",
+   "stroke": "Serif",
+   "classifications": [],
+   "size": 123456,
+   "subsets": [
+    "menu",
+    "latin",
+    "latin-ext"
+   ],
+   "fonts": {
+    "400": {
+     "thickness": 5,
+     "slant": 1,
+     "width": 7,
+     "lineHeight": 1.2
+    }
+   },
+   "axes": [],
+   "designers": [
+    "Example Foundry"
+   ],
+   "lastModified": "2026-05-10",
+   "dateAdded": "",
+   "popularity": null,
+   "trending": 500,
+   "defaultSort": 42,
+   "androidFragment": null,
+   "isNoto": false,
+   "colorCapabilities": [],
+   "primaryScript": "",
+   "primaryLanguage": "",
+   "isOpenSource": true,
+   "isBrandFont": false,
+   "languages": []
+  },
+  {
+   "family": "Quill Musical Notation",
+   "displayName": null,
+   "category": "Sans Serif",
+   "stroke": "Sans Serif",
+   "classifications": [
+    "Symbols"
+   ],
+   "size": 123456,
+   "subsets": [
+    "menu",
+    "latin",
+    "latin-ext"
+   ],
+   "fonts": {
+    "400": {
+     "thickness": 5,
+     "slant": 1,
+     "width": 7,
+     "lineHeight": 1.2
+    }
+   },
+   "axes": [],
+   "designers": [
+    "Example Foundry"
+   ],
+   "lastModified": "2026-05-10",
+   "dateAdded": "2021-06-01",
+   "popularity": 1900,
+   "trending": 500,
+   "defaultSort": 42,
+   "androidFragment": null,
+   "isNoto": false,
+   "colorCapabilities": [],
+   "primaryScript": "",
+   "primaryLanguage": "",
+   "isOpenSource": true,
+   "isBrandFont": false,
+   "languages": []
+  },
+  {
+   "family": "",
+   "displayName": null,
+   "category": "Sans Serif",
+   "stroke": "Sans Serif",
+   "classifications": [],
+   "size": 123456,
+   "subsets": [
+    "menu",
+    "latin",
+    "latin-ext"
+   ],
+   "fonts": {
+    "400": {
+     "thickness": 5,
+     "slant": 1,
+     "width": 7,
+     "lineHeight": 1.2
+    }
+   },
+   "axes": [],
+   "designers": [
+    "Example Foundry"
+   ],
+   "lastModified": "2026-05-10",
+   "dateAdded": "2021-06-01",
+   "popularity": 2000,
+   "trending": 500,
+   "defaultSort": 42,
+   "androidFragment": null,
+   "isNoto": false,
+   "colorCapabilities": [],
+   "primaryScript": "",
+   "primaryLanguage": "",
+   "isOpenSource": true,
+   "isBrandFont": false,
+   "languages": []
+  },
+  {
+   "family": "Aster Sans",
+   "displayName": null,
+   "category": "Sans Serif",
+   "stroke": "Sans Serif",
+   "classifications": [],
+   "size": 123456,
+   "subsets": [
+    "menu",
+    "latin",
+    "latin-ext"
+   ],
+   "fonts": {
+    "400": {
+     "thickness": 5,
+     "slant": 1,
+     "width": 7,
+     "lineHeight": 1.2
+    }
+   },
+   "axes": [],
+   "designers": [
+    "Example Foundry"
+   ],
+   "lastModified": "2026-05-10",
+   "dateAdded": "2021-06-01",
+   "popularity": 4,
+   "trending": 500,
+   "defaultSort": 42,
+   "androidFragment": null,
+   "isNoto": false,
+   "colorCapabilities": [],
+   "primaryScript": "",
+   "primaryLanguage": "",
+   "isOpenSource": true,
+   "isBrandFont": false,
+   "languages": []
+  }
+ ],
+ "promotedScript": null
+}

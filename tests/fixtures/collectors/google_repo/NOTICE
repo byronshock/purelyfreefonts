@@ -1,0 +1,29 @@
+Fixture for the google_repo collector: a small stand-in for the google/fonts
+repository (https://github.com/google/fonts), served as a local git remote,
+plus GitHub API answers generated from it (tests/collectors/google_repo/
+build_fixture.py). Ruling T1 allows trimmed real google/fonts files here.
+
+Trimmed real files, from google/fonts at commit
+23e54b51ddffbc7713c583748e3bd86f62b1fa4a (2026-09-24):
+
+- ofl/jetbrainsmono, ofl/claritycity, ofl/notosansnko_todelist:
+  METADATA.pb and OFL.txt, under the SIL Open Font License 1.1 (the text is in
+  each OFL.txt);
+- apache/robotoslab: METADATA.pb and LICENSE.txt, under the Apache License 2.0
+  (the text is in LICENSE.txt);
+- ufl/ubuntu: METADATA.pb and UFL.txt, and ufl/ubuntusans: METADATA.pb and
+  LICENCE.txt, under the Ubuntu Font Licence 1.0 (the text is in UFL.txt and
+  LICENCE.txt).
+
+The google/fonts README says: "The top-level directories indicate the license
+of all files found within them." In the METADATA.pb files, designer lists are
+cut to the company name and font and source-file lists are shortened; the
+license texts are byte for byte.
+
+Synthetic: the families Aster Sans, Birch Mono, Broken Family, Cobalt Symbols,
+Dune Sans and Ember Color, ofl/orphanfolder, README.md and the three to_*.txt
+lists (their headings and layout mimic the real files). Their OFL.txt files use
+the real OFL 1.1 text under invented copyright lines. The *.ttf files are
+placeholders of a few bytes, not fonts; the collector never downloads them.
+Hosts ending in .synth.example and the github.com/synth/ URLs are invented,
+and so are the pull-request numbers in the lists other than 10848.

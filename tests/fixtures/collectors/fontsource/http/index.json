@@ -1,0 +1,15 @@
+{
+  "format": "tff-mockhttp",
+  "responses": [
+    {
+      "body": "fonts.json",
+      "headers": {
+        "cache-control": "public, max-age=300",
+        "content-type": "application/json",
+        "etag": "W/\"fixture-v1-fonts\""
+      },
+      "url": "https://api.fontsource.org/v1/fonts"
+    }
+  ],
+  "version": 1
+}

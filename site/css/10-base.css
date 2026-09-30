@@ -1,0 +1,348 @@
+/* 10-base: the page shell (site/templates/base.html.j2) and element defaults for every page.
+   Colours come only from the tokens in 00-tokens.css, which already switch for dark mode and
+   forced colours, so this part has no theme of its own and nothing to toggle.
+   Resilience rules, for WCAG 2.2 AA: sizes in rem/em, no fixed heights on text, and long
+   words wrap, so 200% zoom (1.4.4), 320 px reflow (1.4.10) and the 1.4.12 text-spacing
+   overrides never clip or overlap text. The shell has no sticky parts, so nothing can cover
+   the focused element (2.4.11). */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background-color: var(--c-bg);
+  color: var(--c-fg);
+  font-family: var(--font-ui);
+  font-size: 100%;
+  line-height: var(--lh-body);
+  overflow-wrap: break-word;
+}
+
+/* Header, main and footer in three rows, so the footer sits at the bottom of short pages.
+   The skip link is positioned, so it takes no row. */
+body {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100vh;
+  margin: 0;
+  background-color: var(--c-bg);
+}
+
+/* Each band spans the window (its rule or background does too) and centres its content in
+   at most 80rem, with at least a 1rem gutter. */
+.site-header,
+main,
+.site-footer {
+  padding-inline: max(var(--space-4), (100% - 80rem) / 2);
+}
+
+/* ---- Text */
+
+h1,
+h2,
+h3,
+h4 {
+  line-height: var(--lh-tight);
+}
+
+h1 {
+  margin-block: 0 var(--space-4);
+  font-size: var(--fs-2xl);
+}
+
+h2 {
+  font-size: var(--fs-xl);
+}
+
+h3 {
+  font-size: var(--fs-large);
+}
+
+h4 {
+  font-size: var(--fs-base);
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.9375em;
+}
+
+/* Code blocks wrap instead of scrolling sideways: a scrolling box with nothing focusable in
+   it can't be scrolled by keyboard (2.1.1; axe's scrollable-region-focusable), and wrapping
+   keeps the page free of sideways scrolling at 320 px (1.4.10). */
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+hr {
+  border: 0;
+  border-block-start: 1px solid var(--c-divider);
+}
+
+/* ---- Links: underlined, so colour is never the only cue (1.4.1). */
+
+a {
+  color: var(--c-link);
+  text-decoration-thickness: max(1px, 0.0625em);
+  text-underline-offset: 0.15em;
+}
+
+a:visited {
+  color: var(--c-link-visited);
+}
+
+a:hover {
+  text-decoration-thickness: max(2px, 0.125em);
+}
+
+/* ---- Focus: one ring everywhere (site/CONTRACT.md, "CSS parts and tokens"). */
+
+:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+/* The skip link's target: focus lands here, and the next Tab continues from here. A ring
+   round the whole page would only get in the way. */
+main:focus {
+  outline: none;
+}
+
+/* A linked-to element keeps a little space above it. */
+:target {
+  scroll-margin-block-start: var(--space-4);
+}
+
+/* ---- Controls: the page's own font and text spacing, the accent on native checkboxes and
+   radios, and at least a 24 px target (2.5.8). Parts style their own controls further. */
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
+}
+
+button {
+  min-height: var(--target-min);
+  min-width: var(--target-min);
+  cursor: pointer;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--c-accent);
+}
+
+/* ---- Shared classes (site/CONTRACT.md, "Shared classes"). */
+
+/* Hidden from sight, still read by screen readers (the #status live region, "for Inter"). */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Off-screen until focused; then it sits on top, over the header, fully visible at once (no
+   transition, so it is never half-hidden while focused). */
+.skip-link {
+  position: absolute;
+  inset-block-start: var(--space-2);
+  inset-inline-start: var(--space-2);
+  z-index: 100;
+  padding: var(--space-2) var(--space-4);
+  border: 2px solid var(--c-border);
+  border-radius: var(--radius);
+  background-color: var(--c-bg);
+  font-weight: 700;
+  transform: translateY(calc(-100% - var(--space-4)));
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+/* ---- Header: the wordmark, the Site navigation and the early-version line. It wraps rather
+   than scrolls, down to 320 px and at 400% zoom. It is white in both themes, behind the
+   black wordmark (owner ruling of 2026-09-29), so it takes the --c-header-* tokens, whose
+   dark values are the light ones; its focus ring too, so the ring keeps 3:1 on white. */
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-5);
+  padding-block: var(--space-3);
+  border-block-end: 1px solid var(--c-divider);
+  background-color: var(--c-header-bg);
+  color: var(--c-header-fg);
+}
+
+.site-header :focus-visible {
+  outline-color: var(--c-header-focus);
+}
+
+.site-name {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  text-decoration: none;
+}
+
+/* The wordmark (site/static/wordmark.svg, viewBox 8275 x 1862): about 48 px tall on wide
+   screens and 32 px on phones; the width follows. */
+.site-name-mark {
+  display: block;
+  width: auto;
+  height: 3rem;
+  max-width: 100%;
+}
+
+@media (max-width: 40rem) {
+  .site-name-mark {
+    height: 2rem;
+  }
+}
+
+.site-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  padding-block: var(--space-1);
+  text-decoration: none;
+}
+
+.site-nav a,
+.site-nav a:visited {
+  color: var(--c-header-link);
+}
+
+.site-nav a:hover {
+  text-decoration: underline;
+}
+
+/* The current page: bold and underlined, not colour alone. */
+.site-nav a[aria-current="page"] {
+  color: var(--c-header-fg);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: max(2px, 0.125em);
+  text-underline-offset: 0.3em;
+}
+
+.site-status {
+  flex: 1 1 100%;
+  margin: 0;
+  color: var(--c-header-muted);
+  font-size: var(--fs-small);
+}
+
+/* ---- Main */
+
+main {
+  padding-block: var(--space-5) var(--space-7);
+}
+
+/* ---- Footer: the feedback spot first, in the same place on every page (3.2.6), then the
+   tip link and the data date. */
+
+.site-footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-block: var(--space-5) var(--space-6);
+  border-block-start: 1px solid var(--c-divider);
+  background-color: var(--c-surface);
+  color: var(--c-fg);
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+/* A footer link moves to the next line whole rather than breaking across two, unless it is
+   wider than the line. */
+.site-footer a {
+  display: inline-block;
+  max-width: 100%;
+}
+
+.footer-meta {
+  color: var(--c-muted);
+  font-size: var(--fs-small);
+}
+
+/* ---- Preferences. Light or dark comes from the tokens; there is no switch, since a switch
+   would have to store the choice. */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Forced colours replace every colour with a system colour (the tokens already point there)
+   and drop backgrounds, so the footer's grey band needs a full-strength rule to stay apart. */
+@media (forced-colors: active) {
+  .site-header,
+  .site-footer {
+    border-color: var(--c-border);
+  }
+
+  /* The wordmark is black ink on nothing: under a dark palette it keeps a white plate. */
+  .site-name-mark {
+    forced-color-adjust: none;
+    background-color: var(--c-wordmark-bg);
+  }
+}
+
+@media print {
+  .skip-link,
+  .site-nav,
+  .tip {
+    display: none;
+  }
+
+  /* `none`, not a colour keyword: colours come only from the tokens. */
+  .site-footer {
+    background: none;
+  }
+}

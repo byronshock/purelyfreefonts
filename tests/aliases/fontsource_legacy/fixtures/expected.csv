@@ -1,0 +1,21 @@
+alias,ns,target_ns,target,relation,detail,source,evidence,auto
+edu-vic-wa-nt-hand,fs-id,fs-id,edu-au-vic-wa-nt-hand,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+ek-mukta,fs-id,fs-id,mukta,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+fredoka-one,fs-id,fs-id,fredoka,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+geist-sans,fs-id,fs-id,geist,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+material-icons-rounded,fs-id,font-name,Material Icons Rounded,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/material-icons-rounded@4.5.4/metadata.json,false
+muli,fs-id,gf-family,Muli,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/muli@4.1.0/metadata.json,false
+ostrich-sans-dashed,fs-id,font-name,Ostrich Sans Dashed,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/ostrich-sans-dashed@4.5.3/metadata.json,false
+source-sans-pro,fs-id,fs-id,source-sans-3,rename,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+spartan,fs-id,gf-family,Spartan,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/spartan@4.5.8/metadata.json,false
+youngserif,fs-id,font-name,YoungSerif,rename,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/youngserif@4.5.2/metadata.json,false
+@fontsource-variable/edu-vic-wa-nt-hand,npm,fs-id,edu-au-vic-wa-nt-hand,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/edu-vic-wa-nt-hand,npm,fs-id,edu-au-vic-wa-nt-hand,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/fredoka-one,npm,fs-id,fredoka,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/geist-sans,npm,fs-id,geist,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/material-icons-rounded,npm,font-name,Material Icons Rounded,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/material-icons-rounded@4.5.4/metadata.json,false
+@fontsource/muli,npm,gf-family,Muli,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/muli@4.1.0/metadata.json,false
+@fontsource/ostrich-sans-dashed,npm,font-name,Ostrich Sans Dashed,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/ostrich-sans-dashed@4.5.3/metadata.json,false
+@fontsource/source-sans-pro,npm,fs-id,source-sans-3,package,,fontsource_legacy,https://github.com/fontsource/fontsource/blob/43cfc04f7f53ef63cc5781c018c4058d8908f485/registry/data/replacements.json,false
+@fontsource/spartan,npm,gf-family,Spartan,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/spartan@4.5.8/metadata.json,false
+@fontsource/youngserif,npm,font-name,YoungSerif,package,,fontsource_legacy,https://cdn.jsdelivr.net/npm/@fontsource/youngserif@4.5.2/metadata.json,false

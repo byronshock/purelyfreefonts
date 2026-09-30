@@ -1,0 +1,2 @@
+alias,ns,target_ns,target,relation,detail,source,evidence,auto
+font-jetbrains-maple-mono-nf,brew-cask,brew-cask,font-jetbrains-maple-mono,build,nf,builds,universe: JetBrains Maple Mono NF is JetBrains Maple Mono plus build tokens,false

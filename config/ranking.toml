@@ -26,12 +26,13 @@ overlap_full = 50               # overlap with the ruler that earns full weight
 overlap_off = 15                # below this overlap the source is switched off
 top100_min_groups = 2           # D14: independence groups needed for a top-100 place
 min_observed_terms = 1          # "ranked at all"
-github_homebrew_same_group = "cask_asset"  # gate M5 (rec): GitHub counts join the homebrew group when the cask's url is that repo's asset; "never" keeps them apart
+github_homebrew_same_group = "cask_asset"  # gate M5 (rec): GitHub release counts join the homebrew group when the cask's url is that repo's asset; "never" keeps them apart. Nerd Fonts never joins (owner ruling 2026-09-29, R1)
 
 [engine.guard]                  # outlier guard (§4)
 gap = 1.5                       # gate M1 (rec): keep the guard; (b) is gap = 1.6
 min_terms = 3                   # gate M1 (rec); (c) is min_terms = 4
 factor = 0.5                    # weight multiplier for the outlying term
+basis = "median"                # owner ruling 2026-09-26 (guard_basis): the median of all the font's terms; "others_mean" is M1's mean of the others
 
 [corrections]
 min_exposure_days = 60          # "too new" under 60 days on a channel, counted from the data date
@@ -44,6 +45,17 @@ dependency_abstain = 0.5        # D8: top reverse dependency share at which a Li
 dependency_review = 0.35        # gate M8 (rec): shares from here up to dependency_abstain are flagged
 dependency_rule = "top"         # gate M8 (rec): the top single dependent; "sum" adds all dependents
 dependency_alternatives = "first"  # gate M8 (rec): an `a | b` group credits its first alternative
+per_system_basis = "largest_package"  # owner ruling 2026-09-26: popcon/pkgstats count a family's most-installed package, not the sum
+abstain_scope = "by_package_system"   # owner ruling 2026-09-26: a preinstalled system silences only the sources that count it; "all" silences every Linux source
+
+[corrections.abstain_sources]   # abstain_scope = "by_package_system": Linux system (preinstalled.toml) -> Linux sources it silences
+cachyos = ["arch"]              # Arch family: pkgstats only
+endeavouros = ["arch"]
+debian = ["debian"]             # Debian family: popcon only
+ubuntu = ["debian"]
+gnome = ["arch", "debian"]      # desktops ship on both
+kde-plasma = ["arch", "debian"]
+fedora-workstation = []         # counted by neither (RPM: pkgstats and popcon never see it), so it only tags
 
 # --- Engine sources -----------------------------------------------------------
 # Engine sources are not collectors: each maps to one collector plus a selector.
@@ -97,10 +109,11 @@ rate = "per_year"
 floor = 0.0
 censor_below = 0.0
 release_history = "all"         # gate M2 (rec): all releases of main-channel repos; "latest24" or "24months" otherwise
+prerelease_repos = ["antijingoist/opendyslexic"]  # owner ruling 2026-09-26 (opendyslexic_prereleases): owner/repo, lower case; repos that publish only prereleases, whose prereleases count
 
 [sources.nerd]                  # Nerd Fonts release downloads, credited to the original font
 collector = "nerd_releases"
-group = "github_counters"
+group = "nerd"                  # owner ruling 2026-09-29 (gate R, R1): its own group, never Homebrew's under M5 (Homebrew's Nerd casks are a small share of Nerd's downloads)
 survey = "desktop"
 enabled = true
 linux = false
@@ -208,7 +221,7 @@ rate = "count"
 floor = 0.0
 censor_below = 5.0
 scopes = ["@fontsource", "@fontsource-variable"]  # gate M7 (rec): Fontsource only; (b) adds "@expo-google-fonts"
-stale_sync_days = 45            # flag packages whose last_synced_at is older
+stale_sync_days = 90            # flag packages whose last_synced_at is older (owner ruling 2026-09-26, data_defaults; was 45)
 
 [sources.jsdelivr]              # jsDelivr hits (Fontsource stats)
 collector = "fontsource_stats"
@@ -243,7 +256,7 @@ scopes = ["@expo-google-fonts"]
 collector = "flutter"
 group = "flutter"
 survey = "project"
-enabled = false                 # off in the first build (deferred until a token is chosen)
+enabled = false                 # owner ruling 2026-09-26 (default_sources): off in v1; later it needs a search service, a token and a terms ruling
 linux = false
 publish_raw = false
 series = "code_search"
@@ -353,6 +366,8 @@ leave = 550                     # ... left after leave_runs runs below 550
 leave_runs = 2
 extra_top = 100                 # plus the top 100 of these ranks
 extra_ranks = ["project", "desktop_chosen", "desktop_installed"]
+l3_overall_max = 700            # L3 license checks (step 6b): overall order 700 or better ...
+l3_extra_top = 150              # ... and the top 150 of each extra rank, so a font is checked before it can enter
 
 [membership.top100]             # hysteresis of each published top-100 list
 enabled = true                  # gate M11 (rec): enter at 90 or better, leave after 2 runs worse than 110; false means none
@@ -390,14 +405,15 @@ top100_from_below = 250         # top-100 entries that came from below this
 disagreement_top = 50           # top 50 of most chosen or project ...
 disagreement_other = 300        # ... but below 300 in the other
 what_if_factors = [0.5, 2.0]    # each weight halved and doubled
+move_places = 30                # owner ruling 2026-09-26 (review_report): a move is flagged when over 30 places AND over crosscheck.move_flag
 first_run_move_places = 30      # first run: explain every move of more than 30 places
 
 # --- Gates before ranking ------------------------------------------------------
 
 [latin]                         # D4: non-Google fonts, tested against the GF glyphsets
-kernel_missing_max = 0          # gate L1 (rec, pending measurement): GF_Latin_Kernel fully covered
-core_missing_marks_max = 2      # gate L1 (rec, pending measurement): GF_Latin_Core, at most 2 combining marks missing
-latin_share_min = 0.40          # gate L1 (rec, pending measurement): the methodology text says 0.50
+kernel_missing_max = 2          # gate L1, owner ruling 2026-09-26 (relaxed): at most 2 GF_Latin_Kernel code points missing
+core_missing_max = 3            # gate L1, owner ruling 2026-09-26 (relaxed): "extended" with at most 3 GF_Latin_Core code points missing, of any kind
+latin_share_min = 0.30          # gate L1, owner ruling 2026-09-26 (relaxed): the methodology text first said 0.50
 cjk_codepoints_below = 1000     # fewer than 1,000 CJK code points
 
 [universe]

@@ -4,6 +4,8 @@ This is the working checklist for Backlog task TASK-2 (`backlog task view TASK-2
 
 Many developers install the Nerd Fonts build of a coding font instead of the original. About 59% of Homebrew font installs are Nerd builds (ranking-methodology.md, known biases), and D7 already counts those installs toward the original family. This investigation asks whether a font that has a Nerd build should also get a Nerd Fonts link beside its official one. It ends in findings and a recommendation; the owner rules. Nothing is built here.
 
+**Status (2026-09-29):** TASK-2 is Done. Qwen delivered the findings in [docs/nerd-fonts-link.md](docs/nerd-fonts-link.md) rather than in the Findings section below. The owner ruled on 2026-09-28 and amended the ruling on 2026-09-29; both rulings are in AUTHORITY.md and `data/reviews/site/`. The build work is in milestone-1 steps 14 and 15 and milestone-2 steps 2–4. This checklist's items were not ticked one by one; it stays as the record of what the spike set out to check.
+
 Limits that already apply:
 - M1 step 14 never allows a release asset, `/releases/latest` or an aggregator as a font's primary link.
 - The site data has room for an official link and an optional designer link only (`links.primary`, `links.designer` in `schemas/catalog-site.schema.json`).

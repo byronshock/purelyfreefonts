@@ -1,0 +1,580 @@
+/* 20-list: the list page: layout, results and rows (site/CONTRACT.md sections 4 and 6).
+   Phones (below 40rem) get cards; from 40rem rows are table-like, and once the list itself is
+   46rem wide the specimen gets its own column (a container query, so the sidebar's width
+   doesn't matter). Colours come only from the tokens. Rows use content-visibility, which
+   clips painting to each li's padding box, so every focusable thing in a row keeps at least
+   the focus ring's width (3px + 2px offset) of padding around it. */
+
+.lead {
+  margin: 0 0 var(--space-2);
+  max-width: var(--measure);
+}
+
+.privacy-note {
+  margin: 0 0 var(--space-5);
+  max-width: var(--measure);
+  font-size: var(--fs-small);
+  color: var(--c-muted);
+}
+
+/* "Why isn't my favorite free font here?", the owner's note (site rulings of 2026-09-29).
+   Wide screens: a frame floated right, beside the lead and the privacy note, which wrap
+   around it; the list starts below it (.layout clears it), so rows are never narrowed.
+   Phones (40rem and below): the same text in a <details> under the intro, folded to its
+   heading. Exactly one of the two is displayed, so screen readers get the text once; both
+   are in the HTML and neither needs a script, so nothing moves as the page loads. */
+.why {
+  border: 1px solid var(--c-divider);
+  border-radius: var(--radius);
+  background-color: var(--c-surface);
+  color: var(--c-fg);
+  font-size: var(--fs-small);
+}
+
+.why p {
+  margin: 0;
+  max-width: var(--measure);
+}
+
+.why-wide {
+  float: right;
+  width: min(34rem, 45%);
+  margin: 0 0 var(--space-4) var(--space-5);
+  padding: var(--space-3) var(--space-4);
+}
+
+.why-wide h2 {
+  margin: 0 0 var(--space-2);
+  font-size: var(--fs-base);
+}
+
+.why-fold {
+  display: none;
+}
+
+.layout {
+  clear: both;
+}
+
+@media (max-width: 40rem) {
+  .why-wide {
+    display: none;
+  }
+
+  .why-fold {
+    display: block;
+    margin: 0 0 var(--space-5);
+  }
+
+  .why-fold summary {
+    display: list-item;
+    min-height: var(--target-min);
+    padding: var(--space-2) var(--space-3);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .why-fold p {
+    padding: 0 var(--space-3) var(--space-3);
+  }
+}
+
+/* Filters above the list below 60rem; a sidebar beside it from 60rem (M2-D4). */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+}
+
+/* min-width rather than range syntax, so Safari before 16.4 gets the wide layouts too. */
+@media (min-width: 60rem) {
+  .layout {
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+    gap: var(--space-6);
+    align-items: start;
+  }
+}
+
+/* Without scripting the filters stay out, so the list takes the full width. (The details
+   button is hidden too, after its own rules below.) */
+@media (scripting: none) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.noscript-note {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-surface);
+  color: var(--c-fg);
+}
+
+.results {
+  min-width: 0;
+}
+
+.results > h2 {
+  margin: 0;
+  font-size: var(--fs-xl);
+  line-height: var(--lh-tight);
+}
+
+.ext-summary {
+  margin: var(--space-2) 0 0;
+  max-width: var(--measure);
+}
+
+.count {
+  margin: var(--space-1) 0 var(--space-3);
+  font-size: var(--fs-small);
+  color: var(--c-muted);
+}
+
+.no-results {
+  margin: 0 0 var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-surface);
+}
+
+.no-results[hidden] {
+  display: none;
+}
+
+.no-results p {
+  margin: 0 0 var(--space-3);
+  max-width: var(--measure);
+}
+
+/* Buttons on the list page (the filter ones are in 25-filters.css). */
+.details-toggle,
+#no-results-clear,
+.ext-action {
+  min-width: var(--target-min);
+  min-height: var(--target-min);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-bg);
+  color: var(--c-fg);
+  font: inherit;
+  line-height: var(--lh-tight);
+  cursor: pointer;
+}
+
+.details-toggle:hover,
+.ext-action:hover {
+  background: var(--c-surface);
+}
+
+#no-results-clear {
+  border-color: var(--c-accent);
+  background: var(--c-accent);
+  color: var(--c-accent-fg);
+}
+
+.results :focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+/* ---- rows ---- */
+
+.font-list {
+  container: font-list / inline-size;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--c-divider);
+}
+
+li.font {
+  /* Row heights measured on the real list of 2026-09-29, with the name shown once (median of
+     cards and 3-column rows about 170px; 4-column rows about 116px, set below), so the
+     scrollbar barely moves as rows render. */
+  --row-est-h: 11rem;
+
+  content-visibility: auto;
+  contain-intrinsic-size: auto var(--row-est-h);
+  padding: 0 var(--space-2);
+  border-bottom: 1px solid var(--c-divider);
+}
+
+li.font.is-dim {
+  /* Dimmed by a Milestone 3 filter: muted text keeps 4.5:1, so no opacity. */
+  color: var(--c-muted);
+}
+
+li.font.is-dim .font-name {
+  font-weight: 400;
+}
+
+/* Phones: a card. The rank sits beside the title ("Not ranked: ..." takes a line of its own,
+   below), then one thing per line, and download and details side by side last. */
+.font-row {
+  display: grid;
+  grid-template-columns: fit-content(40%) minmax(0, 1fr) auto;
+  grid-template-areas:
+    "rank title title"
+    "meta meta meta"
+    "badges badges badges"
+    "download download toggle";
+  column-gap: var(--space-3);
+  align-items: start;
+  padding: var(--space-3) 0;
+}
+
+.font-row > .rank {
+  grid-area: rank;
+  font-size: var(--fs-base);
+  font-weight: 700;
+  /* One line of the name, so a number sits level with it. */
+  line-height: calc(var(--fs-large) * var(--lh-tight));
+  font-variant-numeric: tabular-nums;
+}
+
+/* The title: the heading, the Nerd Font marker and the specimen box (owner rulings of
+   2026-09-29, name_once and nerd_marker_spot_title). Its second column is the marker's width,
+   left free on every row, marker or not, so the markers line up and no row's height depends
+   on one. Where there is a specimen, the heading lies over the box's first line, the name
+   drawn in the font, and stops being painted once the specimen shows (below); without one,
+   the heading comes first and the fallback note under it. */
+.font-title {
+  grid-area: title;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) calc(2.25rem + var(--space-2));
+  align-items: start;
+  min-width: 0;
+}
+
+.font-name {
+  grid-column: 1;
+  grid-row: 1;
+  margin: 0;
+  font-size: var(--fs-large);
+  font-weight: 600;
+  line-height: var(--lh-tight);
+  overflow-wrap: anywhere;
+}
+
+/* The specimen is showing (45-specimens.js marks the title once the file has loaded and the
+   mask is set), so its first line is the name: the heading stays for screen readers, search
+   and find-in-page, but isn't painted. Only where masks work: elsewhere the heading shows. */
+@supports (mask-image: none) or (-webkit-mask-image: none) {
+  .font-title.is-drawn > .font-name {
+    opacity: 0;
+  }
+}
+
+/* Without scripting the <noscript> image draws the name; its alt text stands in if it fails. */
+@media (scripting: none) {
+  .font-title.has-spec > .font-name {
+    opacity: 0;
+  }
+}
+
+/* The Nerd Font marker (TASK-2, owner ruling of 2026-09-29): a fixed-width "NF" for a font
+   with a Nerd Font build, in its row, in its details and in the legend. In a row it sits at
+   the end of the title's first line, in the column every title leaves free, and is no taller
+   than that line: rows keep their height. */
+.nf-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 2.25rem;
+  height: 1.375rem;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-badge-bg);
+  color: var(--c-badge-fg);
+  font-size: var(--fs-small);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.font-title > .nf-mark {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  /* Centred on the first line: one line of --fs-large at --lh-tight. */
+  margin-top: calc((var(--fs-large) * var(--lh-tight) - 1.375rem) / 2);
+}
+
+.nf-legend {
+  margin: 0 0 var(--space-3);
+  max-width: var(--measure);
+  font-size: var(--fs-small);
+  color: var(--c-muted);
+}
+
+.font-spec {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  min-width: 0;
+  min-height: var(--spec-h);
+  margin-top: var(--space-2);
+}
+
+/* The heading and the specimen share one cell, so hiding the heading moves nothing. The
+   heading is painted above the box, whose empty span would otherwise cover it (nothing in the
+   box takes a click), so its text is on top while it shows. */
+.font-title.has-spec > .font-spec {
+  grid-column: 1;
+  grid-row: 1;
+  margin-top: 0;
+}
+
+.font-title.has-spec > .font-name {
+  position: relative;
+  z-index: 1;
+}
+
+/* The no-script image may be wider than a phone; scale it down, never crop or stretch it. */
+.font-spec img {
+  max-width: 100%;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.spec-fallback {
+  margin: 0;
+  max-width: var(--measure);
+  font-size: var(--fs-small);
+  color: var(--c-muted);
+  overflow-wrap: anywhere;
+}
+
+.font-meta {
+  grid-area: meta;
+  margin: var(--space-2) 0 0;
+  font-size: var(--fs-small);
+  color: var(--c-muted);
+  overflow-wrap: anywhere;
+}
+
+li.font.is-dim .font-meta,
+li.font.is-dim .spec-fallback {
+  color: inherit;
+}
+
+/* A separator screen readers skip ("/ ''"); browsers without that syntax keep the first line. */
+.font-lic::before {
+  content: "\00B7\00A0";
+  content: "\00B7\00A0" / "";
+}
+
+.badges {
+  grid-area: badges;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.badge,
+.ext-badge {
+  padding: 0 var(--space-2);
+  border-radius: var(--radius);
+  background: var(--c-badge-bg);
+  color: var(--c-badge-fg);
+  font-size: var(--fs-small);
+  line-height: var(--lh-body);
+  overflow-wrap: anywhere;
+}
+
+.badge[data-badge="noredist"] {
+  background: var(--c-warn-bg);
+  color: var(--c-warn-fg);
+}
+
+.download {
+  grid-area: download;
+  justify-self: start;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  margin-top: var(--space-3);
+  color: var(--c-link);
+  font-size: var(--fs-small);
+  overflow-wrap: anywhere;
+}
+
+.download:visited {
+  color: var(--c-link-visited);
+}
+
+.details-toggle {
+  grid-area: toggle;
+  justify-self: end;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  margin-top: var(--space-3);
+  white-space: nowrap;
+}
+
+/* A chevron drawn with borders, so it follows the text colour in every theme. */
+.details-toggle::after {
+  content: "";
+  flex: none;
+  width: 0.45em;
+  height: 0.45em;
+  margin: -0.2em 0 0 var(--space-2);
+  border-right: 2px solid;
+  border-bottom: 2px solid;
+  transform: rotate(45deg);
+  transition: transform var(--duration);
+}
+
+.details-toggle[aria-expanded="true"] {
+  background: var(--c-surface);
+}
+
+.details-toggle[aria-expanded="true"]::after {
+  margin-top: 0.25em;
+  transform: rotate(-135deg);
+}
+
+/* Without scripting the details button could open nothing, so it isn't shown. This must come
+   after the .details-toggle rules above, which set display too. */
+@media (scripting: none) {
+  .details-toggle {
+    display: none;
+  }
+}
+
+/* Milestone 3's slot: one div.ext per filter note, full width at the end of the row. The
+   notes are auto-placed in the first grid row with room, so a row without tags would put
+   the first one in the empty tags cell, above the download link. This empty box fills that
+   cell on every row (it overlaps the tags when there are some, and takes no space). */
+.font-row::after {
+  content: "";
+  grid-area: badges;
+}
+
+.font-row > .ext {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  font-size: var(--fs-small);
+}
+
+.ext-note {
+  margin: 0;
+}
+
+.ext-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  color: var(--c-link);
+}
+
+@media (forced-colors: active) {
+  .badge,
+  .ext-badge {
+    border: 1px solid var(--c-border);
+  }
+}
+
+/* An unranked row: "Not ranked: <reason>" gets a line of its own above the name, instead of
+   wrapping down the narrow rank column (the owner's site ruling of 2026-09-26, list_layout).
+   That line (two on a phone) makes the row taller: about 190px on the real list, cards and
+   3-column rows alike. */
+li.font.is-unranked {
+  --row-est-h: 12.25rem;
+}
+
+li.font.is-unranked .font-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "rank rank"
+    "title title"
+    "meta meta"
+    "badges badges"
+    "download toggle";
+}
+
+/* From 40rem: table-like rows. The rank has its own column; download and details close the
+   row, so a download link that wraps never pushes the name block apart. */
+@media (min-width: 40rem) {
+  .font-row {
+    grid-template-columns: 6rem minmax(0, 1fr) auto;
+    grid-template-areas:
+      "rank title ."
+      "rank meta ."
+      "rank badges ."
+      "rank download toggle";
+  }
+
+  .font-row > .ext {
+    grid-column: 2 / -1;
+  }
+
+  li.font.is-unranked .font-row {
+    grid-template-columns: 6rem minmax(0, 1fr) auto;
+    grid-template-areas:
+      "rank rank rank"
+      ". title ."
+      ". meta ."
+      ". badges ."
+      ". download toggle";
+  }
+}
+
+/* A wide list: the title (the specimen, which draws the name) takes the wider second column,
+   level with the rank; the meta line, the tags and the download link stack in the third, and
+   the details button closes the last line. */
+@container font-list (min-width: 46rem) {
+  li.font {
+    --row-est-h: 7.5rem;
+  }
+
+  .font-row {
+    grid-template-columns: 6rem minmax(0, 1.25fr) minmax(11rem, 1fr) auto;
+    grid-template-areas:
+      "rank title meta ."
+      "rank title badges ."
+      "rank title download toggle";
+  }
+
+  /* The label's own line adds one line to the row. */
+  li.font.is-unranked {
+    --row-est-h: 9rem;
+  }
+
+  li.font.is-unranked .font-row {
+    grid-template-columns: 6rem minmax(0, 1.25fr) minmax(11rem, 1fr) auto;
+    grid-template-areas:
+      "rank rank rank rank"
+      ". title meta ."
+      ". title badges ."
+      ". title download toggle";
+  }
+
+  /* Beside the stack, the meta line starts level with the title's first line. */
+  .font-meta {
+    margin-top: 0;
+  }
+
+  .download {
+    align-self: end;
+  }
+
+  .details-toggle {
+    align-self: end;
+  }
+}

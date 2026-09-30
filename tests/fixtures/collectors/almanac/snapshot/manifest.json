@@ -1,0 +1,76 @@
+{
+  "collector_version": 1,
+  "complete": true,
+  "data_date": "2025-07-01",
+  "date": "2026-10-01",
+  "extracts": [
+    {
+      "bytes": 1465,
+      "path": "pages.csv",
+      "rows": 30,
+      "sha256": "504d173df07b140ff1c089dcf4bd6b9e943e3c496b50e47b10c4f512c028c237"
+    },
+    {
+      "bytes": 2124,
+      "path": "services.csv",
+      "rows": 35,
+      "sha256": "782fff95381712b16bce64af20f596e58a25320fc4824624a27460a7c2fd3f0e"
+    },
+    {
+      "bytes": 609,
+      "path": "sheet.json",
+      "rows": null,
+      "sha256": "731ed546917170d4da942d7d5ce89422ee76f110658aab7c4ce3e6e6ee73ac81"
+    }
+  ],
+  "fetched": [
+    {
+      "bytes": 2107,
+      "etag": null,
+      "fetched_at": "2026-10-01T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "4a0838c66752cd079cda173ed48bdd311b2a7e28a84ee51d8f2b3f7d50d90a6d",
+      "status": 200,
+      "url": "https://docs.google.com/spreadsheets/d/1otdu4p_CCI70B4FVzw6k02frStsPMrQoFu7jUim_0Bg/export?format=csv&gid=1668708562"
+    },
+    {
+      "bytes": 2107,
+      "etag": null,
+      "fetched_at": "2026-10-01T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "4a0838c66752cd079cda173ed48bdd311b2a7e28a84ee51d8f2b3f7d50d90a6d",
+      "status": 200,
+      "url": "https://doc-04-7g-sheets.googleusercontent.com/export/fixture-signature/pages/1otdu4p_CCI70B4FVzw6k02frStsPMrQoFu7jUim_0Bg?format=csv&gid=1668708562"
+    },
+    {
+      "bytes": 4724,
+      "etag": null,
+      "fetched_at": "2026-10-01T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "107a2fce86db335df687fff58330e09ef1742a96959a8ad0e3810dd65368c503",
+      "status": 200,
+      "url": "https://docs.google.com/spreadsheets/d/1otdu4p_CCI70B4FVzw6k02frStsPMrQoFu7jUim_0Bg/export?format=csv&gid=1594814478"
+    },
+    {
+      "bytes": 4724,
+      "etag": null,
+      "fetched_at": "2026-10-01T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "107a2fce86db335df687fff58330e09ef1742a96959a8ad0e3810dd65368c503",
+      "status": 200,
+      "url": "https://doc-04-7g-sheets.googleusercontent.com/export/fixture-signature/services/1otdu4p_CCI70B4FVzw6k02frStsPMrQoFu7jUim_0Bg?format=csv&gid=1594814478"
+    }
+  ],
+  "notes": [],
+  "schema": 1,
+  "source": "almanac",
+  "stale_of": null,
+  "window": {
+    "end": "2025-07-01",
+    "start": "2025-07-01"
+  }
+}

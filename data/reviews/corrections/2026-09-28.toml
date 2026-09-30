@@ -1,0 +1,727 @@
+# Owner rulings of 2026-09-28, gate X (new preinstalled and dependency cases), given in chat after
+# the finish-gates-2 run. Ruled by the owner, Byron Shock; recorded by Claude from the lead's notes
+# (design/rulings-2026-09-26.toml, [gates_2026-09-28]: X_17). Also in AUTHORITY.md. The owner
+# accepted the three groups as recommended; each member carries its group as batch.
+# Batch 4, after the finish-gates-3 run ([gates_2026-09-28_b4]: X_40): the 40 new cases in
+# eight groups (seven groups and pre-debian-hack), all accepted as recommended.
+# Batch 5 ([gates_2026-09-28_b5]: new_X47_LIC5): the 46 cases the new bundle rows raised, in
+# twelve groups asked group by group, all left out of most chosen.
+
+[dep-debian-noto-sans-mono]
+choice = "a"
+recommended = true
+batch = "all-X-2632604a91"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 7 together."
+
+[dep-debian-roboto]
+choice = "a"
+recommended = true
+batch = "all-X-2632604a91"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 7 together."
+
+[dep-debian-roboto-condensed]
+choice = "a"
+recommended = true
+batch = "all-X-2632604a91"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 7 together."
+
+[dep-debian-roboto-slab]
+choice = "a"
+recommended = true
+batch = "all-X-2632604a91"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 7 together."
+
+[pre-arch-dejavu-sans]
+choice = "a"
+recommended = true
+batch = "all-X-2632604a91"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 7 together."
+
+[pre-arch-dejavu-serif]
+choice = "a"
+recommended = true
+batch = "all-X-2632604a91"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 7 together."
+
+[pre-arch-noto-sans]
+choice = "a"
+recommended = true
+batch = "all-X-2632604a91"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 7 together."
+
+[pre-arch-noto-sans-mono]
+choice = "a"
+recommended = true
+batch = "all-X-58f108ab4c"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 8 together."
+
+[pre-arch-noto-serif]
+choice = "a"
+recommended = true
+batch = "all-X-58f108ab4c"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 8 together."
+
+[pre-arch-noto-serif-display]
+choice = "a"
+recommended = true
+batch = "all-X-58f108ab4c"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 8 together."
+
+[pre-debian-dejavu-sans]
+choice = "a"
+recommended = true
+batch = "all-X-58f108ab4c"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 8 together."
+
+[pre-debian-dejavu-sans-mono]
+choice = "a"
+recommended = true
+batch = "all-X-58f108ab4c"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 8 together."
+
+[pre-debian-dejavu-serif]
+choice = "a"
+recommended = true
+batch = "all-X-58f108ab4c"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 8 together."
+
+[pre-debian-noto-sans]
+choice = "a"
+recommended = true
+batch = "all-X-58f108ab4c"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 8 together."
+
+[pre-debian-noto-sans-display]
+choice = "a"
+recommended = true
+batch = "all-X-58f108ab4c"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted all 8 together."
+
+[pre-debian-noto-serif]
+choice = "a"
+recommended = true
+batch = "all-X-7eea9203c5"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted both together."
+
+[pre-debian-noto-serif-display]
+choice = "a"
+recommended = true
+batch = "all-X-7eea9203c5"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_17): the rule of ruling M8 and the preinstalled list (C1) apply; the owner accepted both together."
+
+[dep-arch-charis]
+choice = "a"
+recommended = true
+batch = "all-X-5337043387"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-arch-doulos-sil]
+choice = "a"
+recommended = true
+batch = "all-X-5337043387"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-agave]
+choice = "a"
+recommended = true
+batch = "all-X-5337043387"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-andika]
+choice = "a"
+recommended = true
+batch = "all-X-5337043387"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-annapurna-sil]
+choice = "a"
+recommended = true
+batch = "all-X-5337043387"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-caladea]
+choice = "a"
+recommended = true
+batch = "all-X-5337043387"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-carlito]
+choice = "a"
+recommended = true
+batch = "all-X-5337043387"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-charis-sil]
+choice = "a"
+recommended = true
+batch = "all-X-5337043387"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-clear-sans]
+choice = "a"
+recommended = true
+batch = "all-X-7a7cf1aa9e"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-comfortaa]
+choice = "a"
+recommended = true
+batch = "all-X-7a7cf1aa9e"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-comic-neue]
+choice = "a"
+recommended = true
+batch = "all-X-7a7cf1aa9e"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-gentium]
+choice = "a"
+recommended = true
+batch = "all-X-7a7cf1aa9e"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-gentium-plus]
+choice = "a"
+recommended = true
+batch = "all-X-7a7cf1aa9e"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-gfs-didot]
+choice = "a"
+recommended = true
+batch = "all-X-7a7cf1aa9e"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-gfs-neohellenic]
+choice = "a"
+recommended = true
+batch = "all-X-7a7cf1aa9e"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-ibm-3270]
+choice = "a"
+recommended = true
+batch = "all-X-7a7cf1aa9e"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-inter]
+choice = "a"
+recommended = true
+batch = "all-X-16136abeed"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-latin-modern]
+choice = "a"
+recommended = true
+batch = "all-X-16136abeed"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-lato]
+choice = "a"
+recommended = true
+batch = "all-X-16136abeed"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-league-spartan]
+choice = "a"
+recommended = true
+batch = "all-X-16136abeed"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-lobster]
+choice = "a"
+recommended = true
+batch = "all-X-16136abeed"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-lobster-two]
+choice = "a"
+recommended = true
+batch = "all-X-16136abeed"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-mononoki]
+choice = "a"
+recommended = true
+batch = "all-X-16136abeed"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-open-sans]
+choice = "a"
+recommended = true
+batch = "all-X-ec5119bcf0"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-quicksand]
+choice = "a"
+recommended = true
+batch = "all-X-ec5119bcf0"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-scheherazade]
+choice = "a"
+recommended = true
+batch = "all-X-ec5119bcf0"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-tuffy]
+choice = "a"
+recommended = true
+batch = "all-X-ec5119bcf0"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[dep-debian-vazirmatn]
+choice = "a"
+recommended = true
+batch = "all-X-ec5119bcf0"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each is pulled in by one package for most of its installs."
+
+[pre-arch-adwaita-mono]
+choice = "a"
+recommended = true
+batch = "all-X-d8ef80d3de"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each comes with a system or desktop's default install."
+
+[pre-arch-bitstream-vera-sans-mono]
+choice = "a"
+recommended = true
+batch = "all-X-d8ef80d3de"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each comes with a system or desktop's default install."
+
+[pre-arch-cantarell]
+choice = "a"
+recommended = true
+batch = "all-X-d8ef80d3de"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each comes with a system or desktop's default install."
+
+[pre-arch-hack]
+choice = "a"
+recommended = true
+batch = "all-X-d8ef80d3de"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each comes with a system or desktop's default install."
+
+[pre-arch-open-sans]
+choice = "a"
+recommended = true
+batch = "all-X-dac2dacc8b"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each comes with a system or desktop's default install."
+
+[pre-debian-adwaita-sans]
+choice = "a"
+recommended = true
+batch = "all-X-dac2dacc8b"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each comes with a system or desktop's default install."
+
+[pre-debian-cantarell]
+choice = "a"
+recommended = true
+batch = "all-X-dac2dacc8b"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: each comes with a system or desktop's default install."
+
+[pre-debian-hack]
+choice = "a"
+recommended = true
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation (X_40), taken by the owner: Hack comes with KDE Plasma's default install."
+
+[rev-arch-carlito]
+choice = "a"
+recommended = true
+batch = "all-X-28ee739204"
+ruling = "Yes: keep counting it"
+reason = "Claude's recommendation (X_40), taken by the owner: no single package pulls in half of their installs (35-50%, flagged for review), so they keep counting."
+
+[rev-debian-dosis]
+choice = "a"
+recommended = true
+batch = "all-X-28ee739204"
+ruling = "Yes: keep counting it"
+reason = "Claude's recommendation (X_40), taken by the owner: no single package pulls in half of their installs (35-50%, flagged for review), so they keep counting."
+
+[rev-debian-inconsolata]
+choice = "a"
+recommended = true
+batch = "all-X-28ee739204"
+ruling = "Yes: keep counting it"
+reason = "Claude's recommendation (X_40), taken by the owner: no single package pulls in half of their installs (35-50%, flagged for review), so they keep counting."
+
+[rev-debian-terminus]
+choice = "a"
+recommended = true
+batch = "all-X-28ee739204"
+ruling = "Yes: keep counting it"
+reason = "Claude's recommendation (X_40), taken by the owner: no single package pulls in half of their installs (35-50%, flagged for review), so they keep counting."
+
+[dep-debian-amiri]
+choice = "a"
+recommended = true
+batch = "all-X-a20be97e6c"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-arimo]
+choice = "a"
+recommended = true
+batch = "all-X-a20be97e6c"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-b612]
+choice = "a"
+recommended = true
+batch = "all-X-a20be97e6c"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-b612-mono]
+choice = "a"
+recommended = true
+batch = "all-X-00f13ad026"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-cabin]
+choice = "a"
+recommended = true
+batch = "all-X-00f13ad026"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-cabin-condensed]
+choice = "a"
+recommended = true
+batch = "all-X-00f13ad026"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-courier-prime]
+choice = "a"
+recommended = true
+batch = "all-X-3cea5eec56"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-courier-prime-code]
+choice = "a"
+recommended = true
+batch = "all-X-3cea5eec56"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-courier-prime-sans]
+choice = "a"
+recommended = true
+batch = "all-X-3cea5eec56"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-cousine]
+choice = "a"
+recommended = true
+batch = "all-X-3cea5eec56"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-eb-garamond]
+choice = "a"
+recommended = true
+batch = "all-X-3cea5eec56"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-eb-garamond-12-all-sc]
+choice = "a"
+recommended = true
+batch = "all-X-3cea5eec56"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-gentium-book-basic]
+choice = "a"
+recommended = true
+batch = "all-X-3b7f1852f1"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-gentium-book-plus]
+choice = "a"
+recommended = true
+batch = "all-X-3b7f1852f1"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-go-mono]
+choice = "a"
+recommended = true
+batch = "all-X-3b7f1852f1"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-karla]
+choice = "a"
+recommended = true
+batch = "all-X-d226ca7c07"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-monofur]
+choice = "a"
+recommended = true
+batch = "all-X-d226ca7c07"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-padauk]
+choice = "a"
+recommended = true
+batch = "all-X-eed6158aee"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-padauk-book]
+choice = "a"
+recommended = true
+batch = "all-X-eed6158aee"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-pt-mono]
+choice = "a"
+recommended = true
+batch = "all-X-eed6158aee"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-pt-sans]
+choice = "a"
+recommended = true
+batch = "all-X-eed6158aee"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-pt-sans-caption]
+choice = "a"
+recommended = true
+batch = "all-X-eed6158aee"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-pt-sans-narrow]
+choice = "a"
+recommended = true
+batch = "all-X-eed6158aee"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-pt-serif]
+choice = "a"
+recommended = true
+batch = "all-X-ff3ee341ad"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-pt-serif-caption]
+choice = "a"
+recommended = true
+batch = "all-X-ff3ee341ad"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-rasa]
+choice = "a"
+recommended = true
+batch = "all-X-ff3ee341ad"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-sixtyfour]
+choice = "a"
+recommended = true
+batch = "all-X-1930a04fd3"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-stix-two-text]
+choice = "a"
+recommended = true
+batch = "all-X-1930a04fd3"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-tex-gyre-adventor]
+choice = "a"
+recommended = true
+batch = "all-X-1930a04fd3"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-tex-gyre-bonum]
+choice = "a"
+recommended = true
+batch = "all-X-1930a04fd3"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-tex-gyre-chorus]
+choice = "a"
+recommended = true
+batch = "all-X-1930a04fd3"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-tex-gyre-cursor]
+choice = "a"
+recommended = true
+batch = "all-X-1930a04fd3"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-tex-gyre-heros]
+choice = "a"
+recommended = true
+batch = "all-X-1930a04fd3"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-tex-gyre-heros-cn]
+choice = "a"
+recommended = true
+batch = "all-X-1930a04fd3"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-tex-gyre-pagella]
+choice = "a"
+recommended = true
+batch = "all-X-4fab77cf11"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-tex-gyre-schola]
+choice = "a"
+recommended = true
+batch = "all-X-4fab77cf11"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-tex-gyre-termes]
+choice = "a"
+recommended = true
+batch = "all-X-4fab77cf11"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-tinos]
+choice = "a"
+recommended = true
+batch = "all-X-4fab77cf11"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[dep-debian-yrsa]
+choice = "a"
+recommended = true
+batch = "all-X-4fab77cf11"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[pre-arch-adwaita-sans]
+choice = "a"
+recommended = true
+batch = "all-X-b8a254087a"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[pre-arch-liberation-mono]
+choice = "a"
+recommended = true
+batch = "all-X-b8a254087a"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[pre-debian-liberation-mono]
+choice = "a"
+recommended = true
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[pre-debian-ubuntu]
+choice = "a"
+recommended = true
+batch = "all-X-c526506b2d"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[pre-debian-ubuntu-mono]
+choice = "a"
+recommended = true
+batch = "all-X-c526506b2d"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[pre-debian-ubuntu-sans]
+choice = "a"
+recommended = true
+batch = "all-X-c526506b2d"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."
+
+[pre-debian-ubuntu-sans-mono]
+choice = "a"
+recommended = true
+batch = "all-X-c526506b2d"
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner in chat on 2026-09-28 (batch 5), group by group (new_X47_LIC5): the cases the new bundle rows raised."

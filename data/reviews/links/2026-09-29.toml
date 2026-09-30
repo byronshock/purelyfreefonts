@@ -1,0 +1,229 @@
+# Owner rulings of 2026-09-29, gate K, given in chat in one batch (batch 6) after the real-store
+# rebuild of 2026-09-28 (646c4a2), which held 20 catalog members back without an accepted link.
+# Ruled by the owner, Byron Shock; recorded by Claude from the lead's notes
+# (design/rulings-2026-09-26.toml, [gates_2026-09-29_b6]: K_13_own_pages, K_3_corrected,
+# K_sil_pages, K_dead_sites_policy). Also in AUTHORITY.md. The owner took Claude's recommendation
+# each time, so each reason is Claude's summary; each pick names its url.
+# K_13_own_pages: the 13 printed picks. K_3_corrected, K_sil_pages and K_dead_sites_policy:
+# researched overrides of config/link-overrides.toml, each under a new question id and approved as
+# "Approve the override". Where an override replaces a printed candidate (Anka/Coder, Awami
+# Nastaliq, Cozette, Monofur), the family's own question records its research option ("none of
+# these is it"), which Claude recommended in chat, and the approved override wins, as
+# K-dejavu-site did on 2026-09-28.
+# K_dead_sites_policy: web.archive.org stays an aggregator for every automatic pick, but an
+# override the owner approves and marks archived may link a timestamped Wayback Machine capture of
+# the designer's page when that page is gone (Heavy Data). K-monofur-page is asked separately: the
+# capture approved in chat, 20220910011242, turned out to be a registrar's parking page, so its
+# override proposes the last capture of the designer's page, of 2020-02-06, instead.
+# K-go-page and K-liberation-serif: the owner's answer to question 6 of 2026-09-29, given in chat
+# later that day, once Go and Liberation Serif had font files (config/font-files.toml). K-et-book,
+# K-linux-libertine and K-linux-biolinum: the printed picks for the families the owner let in that
+# day. The owner took Claude's recommendation each time.
+
+[K-adwaita-sans]
+choice = "a"
+recommended = true
+url = "https://gitlab.gnome.org/GNOME/adwaita-fonts"
+ruling = "https://gitlab.gnome.org/GNOME/adwaita-fonts (from fontsource)"
+reason = "Claude's recommendation (K_13_own_pages): GNOME's own adwaita-fonts project, as for Adwaita Mono on 2026-09-26; the only candidate."
+
+[K-charter]
+choice = "a"
+recommended = true
+url = "https://practicaltypography.com/charter.html"
+ruling = "https://practicaltypography.com/charter.html (from homebrew_casks)"
+reason = "Claude's recommendation (K_13_own_pages): Matthew Butterick's Charter page on Practical Typography, which offers his free versions of Bitstream Charter; the only candidate."
+
+[K-sn-pro-font-family]
+choice = "a"
+recommended = true
+url = "https://supernotes.app/open-source/sn-pro"
+ruling = "https://supernotes.app/open-source/sn-pro (from homebrew_casks)"
+reason = "Claude's recommendation (K_13_own_pages): Supernotes' own SN Pro page (it answers 308 to the same path with a trailing slash); the only candidate."
+
+[K-sudo]
+choice = "a"
+recommended = true
+url = "https://www.kutilek.de/sudo-font/"
+ruling = "https://www.kutilek.de/sudo-font/ (from homebrew_casks)"
+reason = "Claude's recommendation (K_13_own_pages): the designer's page, Jens Kutilek's Sudo site; the only candidate."
+
+[K-ioskeley-mono]
+choice = "a"
+recommended = true
+url = "https://github.com/ahatem/IoskeleyMono/releases"
+ruling = "https://github.com/ahatem/IoskeleyMono/releases (from homebrew_casks)"
+reason = "Claude's recommendation (K_13_own_pages): the designer's repository releases; the only candidate."
+
+[K-microsoft-selawik]
+choice = "a"
+recommended = true
+url = "https://github.com/microsoft/Selawik/releases"
+ruling = "https://github.com/microsoft/Selawik/releases (from homebrew_casks)"
+reason = "Claude's recommendation (K_13_own_pages): Microsoft's own Selawik repository releases; the only candidate."
+
+[K-miracode]
+choice = "a"
+recommended = true
+url = "https://github.com/IdreesInc/Miracode/releases"
+ruling = "https://github.com/IdreesInc/Miracode/releases (from homebrew_casks)"
+reason = "Claude's recommendation (K_13_own_pages): the designer's repository releases (Idrees Hassan); the only candidate."
+
+[K-monocraft]
+choice = "a"
+recommended = true
+url = "https://github.com/IdreesInc/Monocraft/releases"
+ruling = "https://github.com/IdreesInc/Monocraft/releases (from homebrew_casks)"
+reason = "Claude's recommendation (K_13_own_pages): the designer's repository releases (Idrees Hassan); the only candidate."
+
+[K-myna]
+choice = "a"
+recommended = true
+url = "https://github.com/sayyadirfanali/Myna/releases"
+ruling = "https://github.com/sayyadirfanali/Myna/releases (from homebrew_casks)"
+reason = "Claude's recommendation (K_13_own_pages): the designer's repository releases; the only candidate."
+
+[K-pretendard-std]
+choice = "a"
+recommended = true
+url = "https://github.com/orioncactus/pretendard/releases"
+ruling = "https://github.com/orioncactus/pretendard/releases (from homebrew_casks)"
+reason = "Claude's recommendation (K_13_own_pages): the Pretendard project's releases, which carry Pretendard Std; the only candidate."
+
+[K-psudofont-liga-mono]
+choice = "a"
+recommended = true
+url = "https://github.com/psudo-dev/psudofont-liga-mono/releases"
+ruling = "https://github.com/psudo-dev/psudofont-liga-mono/releases (from homebrew_casks)"
+reason = "Claude's recommendation (K_13_own_pages): the designer's repository releases; the only candidate."
+
+[K-twilio-sans-mono]
+choice = "a"
+recommended = true
+url = "https://github.com/twilio/twilio-sans-mono/releases"
+ruling = "https://github.com/twilio/twilio-sans-mono/releases (from homebrew_casks)"
+reason = "Claude's recommendation (K_13_own_pages): Twilio's own repository releases; the only candidate."
+
+[K-zed-sans]
+choice = "a"
+recommended = true
+url = "https://github.com/zed-industries/zed-fonts/releases"
+ruling = "https://github.com/zed-industries/zed-fonts/releases (from homebrew_casks)"
+reason = "Claude's recommendation (K_13_own_pages): Zed Industries' zed-fonts releases, as for Zed Mono on 2026-09-26; the only candidate."
+
+[K-anka-coder]
+choice = "b"
+recommended = true
+recommendation = "b"
+ruling = "Research the official page: none of these is it"
+reason = "Claude's recommendation (K_3_corrected): none of these is the official page. The printed pick, code.google.com/p/anka-coder-fonts/, is a dead Google Code page; the override K-anka-coder-page links the designer's own repository, github.com/loafer-mka/anka-coder-fonts, instead."
+
+[K-awami-nastaliq]
+choice = "c"
+recommended = true
+recommendation = "c"
+ruling = "Research the official page: none of these is it"
+reason = "Claude's recommendation (K_3_corrected): none of these is the official page. The printed pick, scripts.sil.org, is SIL's general scripts site and software.sil.org/wstech/ its writing systems technology page; the override K-awami-nastaliq-page links SIL's Awami Nastaliq page, software.sil.org/awami/, instead."
+
+[K-cozette]
+choice = "b"
+recommended = true
+recommendation = "b"
+ruling = "Research the official page: none of these is it"
+reason = "Claude's recommendation (K_3_corrected): none of these is the official page. The printed pick, github.com/slavfox/Cozette/releases, is the repository's old address, which now redirects; the override K-cozette-page links github.com/the-moonwitch/Cozette/releases instead."
+
+[K-monofur]
+choice = "b"
+recommended = true
+recommendation = "b"
+ruling = "Research the official page: none of these is it"
+reason = "Claude's recommendation (K_dead_sites_policy): none of these is the official page. The printed pick, github.com/powerline/fonts/releases, is Powerline's collection of patched fonts; Monofur links an archived capture of its designer's page instead, under the override K-monofur-page."
+
+[K-anka-coder-page]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation (K_3_corrected): the designer's own repository, github.com/loafer-mka/anka-coder-fonts (Andrey Makarov), where he moved the fonts from Google Code; it has no releases, so the link is the repository itself. It replaces the printed pick of K-anka-coder, a dead Google Code page."
+
+[K-awami-nastaliq-page]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation (K_3_corrected): SIL's own Awami Nastaliq page, software.sil.org/awami/. It replaces the printed pick of K-awami-nastaliq, scripts.sil.org, SIL's general scripts site."
+
+[K-cozette-page]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation (K_3_corrected): the designer's releases at the repository's current address, github.com/the-moonwitch/Cozette/releases. It replaces the printed pick of K-cozette, the old slavfox/Cozette address, which now redirects there."
+
+[K-sophia-nubian-page]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation (K_sil_pages): SIL's own Sophia Nubian page, software.sil.org/sophianubian/, listed on SIL's fonts page; no source gave a candidate."
+
+[K-tagmukay-page]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation (K_sil_pages): SIL's own Tagmukay page, software.sil.org/tagmukay/, listed on SIL's fonts page; no source gave a candidate."
+
+[K-heavy-data-page]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation (K_dead_sites_policy): Vic Fieger's site is gone (vicfieger.com shows only a registrar's placeholder), so Heavy Data links the Wayback Machine's capture of it from 2022-12-09, marked archived and labelled \"archived copy\", with a note that says why. web.archive.org stays banned for every automatic pick; only an override the owner approves and marks archived may link a timestamped capture."
+
+[K-monofur-page]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation, taken by the owner in chat (K_monofur_capture): the Wayback Machine's last capture of the designer's Monofur page, 2020-02-06, unchanged since 2002 and with its downloads archived, marked archived and labelled \"archived copy\". The 2022 capture first approved (K_dead_sites_policy), 20220910011242, is a registrar's parking page."
+
+[K-tex-gyre-heros-cn]
+choice = "b"
+recommended = true
+recommendation = "b"
+ruling = "Research the official page: none of these is it"
+reason = "Claude's recommendation, taken by the owner in chat (K_heros_cn): the printed pick, GUST's page for the whole TeX Gyre collection, is not the family's own page; the override K-tex-gyre-heros-cn-page links GUST's TeX Gyre Heros page, which offers the condensed faces, as each sister TeX Gyre family links its own page."
+
+[K-tex-gyre-heros-cn-page]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation, taken by the owner in chat (K_heros_cn): GUST's TeX Gyre Heros page, https://www.gust.org.pl/projects/e-foundry/tex-gyre/heros, offers regular, italic, bold and bold italic and their condensed counterparts; it replaces the printed pick of K-tex-gyre-heros-cn."
+
+[K-go-page]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation (question 6 of 2026-09-29), taken by the owner: Go links the Go project's post on its fonts, https://go.dev/blog/go-fonts, as Go Mono does (K-go-mono-page); the printed pick, the README file of the fonts' folder on go.googlesource.com, is no page about the fonts."
+
+[K-liberation-serif]
+choice = "a"
+recommended = true
+url = "https://github.com/liberationfonts/liberation-fonts/releases"
+ruling = "https://github.com/liberationfonts/liberation-fonts/releases (from fontist)"
+reason = "Claude's recommendation (question 6 of 2026-09-29), taken by the owner: the Liberation fonts' releases page, as Liberation Mono and Liberation Sans link; the only candidate."
+
+[K-et-book]
+choice = "a"
+recommended = true
+url = "https://edwardtufte.github.io/et-book/"
+ruling = "https://edwardtufte.github.io/et-book/ (from homebrew_casks)"
+reason = "Claude's recommendation (the gate K picks of 2026-09-29, taken by the owner): ET Book's own page on Edward Tufte's site, with the fonts and their license; the only candidate."
+
+[K-linux-libertine]
+choice = "a"
+recommended = true
+url = "https://libertine-fonts.org/"
+ruling = "https://libertine-fonts.org/ (from homebrew_casks)"
+reason = "Claude's recommendation (the gate K picks of 2026-09-29, taken by the owner): the Libertine Open Fonts Project's own site, which links the releases on SourceForge; the only candidate."
+
+[K-linux-biolinum]
+choice = "a"
+recommended = true
+url = "https://libertine-fonts.org/"
+ruling = "https://libertine-fonts.org/ (from homebrew_casks)"
+reason = "Claude's recommendation (the gate K picks of 2026-09-29, taken by the owner): as for Linux Libertine, released with it, the Libertine Open Fonts Project's site; the only candidate."

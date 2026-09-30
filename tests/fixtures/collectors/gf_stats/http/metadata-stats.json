@@ -1,0 +1,476 @@
+)]}'
+[
+  {
+    "family": "Aster Sans",
+    "designers": [
+      "Synthetic Foundry"
+    ],
+    "totalViews": 2400000000000,
+    "rate": 12.5,
+    "viewsByDateRange": {
+      "7day": {
+        "views": 18100000000,
+        "change": 0.04
+      },
+      "30day": {
+        "views": 78500000000,
+        "change": -0.02
+      },
+      "90day": {
+        "views": 231000000000,
+        "change": 0.11
+      },
+      "year": {
+        "views": 912000000000,
+        "change": 0.35
+      }
+    },
+    "viewsByBrowser": {
+      "Chrome": 0.61,
+      "Firefox": 0.05,
+      "Others": 0.04,
+      "Safari": 0.3
+    },
+    "viewsByOS": {
+      "Linux": 0.2,
+      "Macintosh": 0.2,
+      "Others": 0.1,
+      "Windows": 0.3,
+      "iPhone": 0.2
+    }
+  },
+  {
+    "family": "Birch Mono",
+    "designers": [
+      "Synthetic Foundry"
+    ],
+    "totalViews": 12000000000,
+    "rate": 12.5,
+    "viewsByDateRange": {
+      "7day": {
+        "views": 95300000,
+        "change": 0.04
+      },
+      "30day": {
+        "views": 402000000,
+        "change": -0.02
+      },
+      "90day": {
+        "views": 1180000000,
+        "change": 0.11
+      },
+      "year": {
+        "views": 4630000000,
+        "change": 0.35
+      }
+    },
+    "viewsByBrowser": {
+      "Chrome": 0.61,
+      "Firefox": 0.05,
+      "Others": 0.04,
+      "Safari": 0.3
+    },
+    "viewsByOS": {
+      "Linux": 0.2,
+      "Macintosh": 0.2,
+      "Others": 0.1,
+      "Windows": 0.3,
+      "iPhone": 0.2
+    }
+  },
+  {
+    "family": "Cobalt Serif",
+    "designers": [
+      "Synthetic Foundry"
+    ],
+    "totalViews": 300000000000,
+    "rate": 12.5,
+    "viewsByDateRange": {
+      "7day": {
+        "views": 1610000000,
+        "change": 0.04
+      },
+      "30day": {
+        "views": 7050000000,
+        "change": -0.02
+      },
+      "90day": {
+        "views": 21900000000,
+        "change": 0.11
+      },
+      "year": {
+        "views": 88200000000,
+        "change": 0.35
+      }
+    },
+    "viewsByBrowser": {
+      "Chrome": 0.61,
+      "Firefox": 0.05,
+      "Others": 0.04,
+      "Safari": 0.3
+    },
+    "viewsByOS": {
+      "Linux": 0.2,
+      "Macintosh": 0.2,
+      "Others": 0.1,
+      "Windows": 0.3,
+      "iPhone": 0.2
+    }
+  },
+  {
+    "family": "Dune Display",
+    "designers": [
+      "Synthetic Foundry"
+    ],
+    "totalViews": 1900000000,
+    "rate": 12.5,
+    "viewsByDateRange": {
+      "30day": {
+        "views": 44100000,
+        "change": -0.02
+      },
+      "90day": {
+        "views": 130500000,
+        "change": 0.11
+      },
+      "year": {
+        "views": 512000000,
+        "change": 0.35
+      }
+    },
+    "viewsByBrowser": {
+      "Chrome": 0.61,
+      "Firefox": 0.05,
+      "Others": 0.04,
+      "Safari": 0.3
+    },
+    "viewsByOS": {
+      "Linux": 0.2,
+      "Macintosh": 0.2,
+      "Others": 0.1,
+      "Windows": 0.3,
+      "iPhone": 0.2
+    }
+  },
+  {
+    "family": "Elm Script",
+    "designers": [
+      "Synthetic Foundry"
+    ],
+    "totalViews": 6400000,
+    "rate": 12.5,
+    "viewsByDateRange": {
+      "7day": {
+        "views": 1300000,
+        "change": 0.04
+      },
+      "30day": {
+        "views": 5100000,
+        "change": -0.02
+      },
+      "90day": {
+        "views": 6400000,
+        "change": 0.11
+      },
+      "year": {
+        "views": 6400000,
+        "change": 0.35
+      }
+    },
+    "viewsByBrowser": {
+      "Chrome": 0.61,
+      "Firefox": 0.05,
+      "Others": 0.04,
+      "Safari": 0.3
+    },
+    "viewsByOS": {
+      "Linux": 0.2,
+      "Macintosh": 0.2,
+      "Others": 0.1,
+      "Windows": 0.3,
+      "iPhone": 0.2
+    }
+  },
+  {
+    "family": "Fjord Sans JP",
+    "designers": [
+      "Synthetic Foundry"
+    ],
+    "totalViews": 70000000000,
+    "rate": 12.5,
+    "viewsByDateRange": {
+      "7day": {
+        "views": 530000000,
+        "change": 0.04
+      },
+      "30day": {
+        "views": 2290000000,
+        "change": -0.02
+      },
+      "90day": {
+        "views": 6820000000,
+        "change": 0.11
+      },
+      "year": {
+        "views": 27300000000,
+        "change": 0.35
+      },
+      "1day": {
+        "views": 75000000,
+        "change": 0.0
+      }
+    },
+    "viewsByBrowser": {
+      "Chrome": 0.61,
+      "Firefox": 0.05,
+      "Others": 0.04,
+      "Safari": 0.3
+    },
+    "viewsByOS": {
+      "Linux": 0.2,
+      "Macintosh": 0.2,
+      "Others": 0.1,
+      "Windows": 0.3,
+      "iPhone": 0.2
+    }
+  },
+  {
+    "family": "Lumen Sans Mono",
+    "designers": [
+      "Synthetic Foundry"
+    ],
+    "totalViews": 3000000000,
+    "rate": 12.5,
+    "viewsByDateRange": {
+      "7day": {
+        "views": 5900000,
+        "change": 0.04
+      },
+      "30day": {
+        "views": null,
+        "change": -0.02
+      },
+      "90day": {
+        "views": -5,
+        "change": 0.11
+      },
+      "year": {
+        "views": 1020000000,
+        "change": 0.35
+      }
+    },
+    "viewsByBrowser": {
+      "Chrome": 0.61,
+      "Firefox": 0.05,
+      "Others": 0.04,
+      "Safari": 0.3
+    },
+    "viewsByOS": {
+      "Linux": 0.2,
+      "Macintosh": 0.2,
+      "Others": 0.1,
+      "Windows": 0.3,
+      "iPhone": 0.2
+    }
+  },
+  {
+    "family": "Opal Serif",
+    "designers": [
+      "Synthetic Foundry"
+    ],
+    "totalViews": 9000000,
+    "rate": 12.5,
+    "viewsByBrowser": {
+      "Chrome": 0.61,
+      "Firefox": 0.05,
+      "Others": 0.04,
+      "Safari": 0.3
+    },
+    "viewsByOS": {
+      "Linux": 0.2,
+      "Macintosh": 0.2,
+      "Others": 0.1,
+      "Windows": 0.3,
+      "iPhone": 0.2
+    }
+  },
+  {
+    "family": "Pebble Icons Outlined",
+    "designers": [
+      "Synthetic Foundry"
+    ],
+    "totalViews": 4000000000000,
+    "rate": 12.5,
+    "viewsByDateRange": {
+      "7day": {
+        "views": 28000000000,
+        "change": 0.04
+      },
+      "30day": {
+        "views": 121000000000,
+        "change": -0.02
+      },
+      "90day": {
+        "views": 360000000000,
+        "change": 0.11
+      },
+      "year": {
+        "views": 1450000000000,
+        "change": 0.35
+      }
+    },
+    "viewsByBrowser": {
+      "Chrome": 0.61,
+      "Firefox": 0.05,
+      "Others": 0.04,
+      "Safari": 0.3
+    },
+    "viewsByOS": {
+      "Linux": 0.2,
+      "Macintosh": 0.2,
+      "Others": 0.1,
+      "Windows": 0.3,
+      "iPhone": 0.2
+    }
+  },
+  {
+    "family": "Øresund Serif",
+    "designers": [
+      "Synthetic Foundry"
+    ],
+    "totalViews": 7000000000,
+    "rate": 12.5,
+    "viewsByDateRange": {
+      "7day": {
+        "views": true,
+        "change": 0.04
+      },
+      "30day": {
+        "views": "212,000,000",
+        "change": -0.02
+      },
+      "90day": {
+        "views": 610000000.0,
+        "change": 0.11
+      },
+      "year": {
+        "views": 2500000000.0,
+        "change": 0.35
+      }
+    },
+    "viewsByBrowser": {
+      "Chrome": 0.61,
+      "Firefox": 0.05,
+      "Others": 0.04,
+      "Safari": 0.3
+    },
+    "viewsByOS": {
+      "Linux": 0.2,
+      "Macintosh": 0.2,
+      "Others": 0.1,
+      "Windows": 0.3,
+      "iPhone": 0.2
+    }
+  },
+  {
+    "family": "",
+    "designers": [
+      "Synthetic Foundry"
+    ],
+    "rate": 12.5,
+    "viewsByDateRange": {
+      "7day": {
+        "views": 1,
+        "change": 0.04
+      },
+      "30day": {
+        "views": 1,
+        "change": -0.02
+      },
+      "90day": {
+        "views": 1,
+        "change": 0.11
+      },
+      "year": {
+        "views": 1,
+        "change": 0.35
+      }
+    },
+    "viewsByBrowser": {
+      "Chrome": 0.61,
+      "Firefox": 0.05,
+      "Others": 0.04,
+      "Safari": 0.3
+    },
+    "viewsByOS": {
+      "Linux": 0.2,
+      "Macintosh": 0.2,
+      "Others": 0.1,
+      "Windows": 0.3,
+      "iPhone": 0.2
+    }
+  },
+  {
+    "designers": [
+      "Synthetic Foundry"
+    ],
+    "viewsByDateRange": {
+      "7day": {
+        "views": 2,
+        "change": 0.04
+      },
+      "30day": {
+        "views": 2,
+        "change": -0.02
+      },
+      "90day": {
+        "views": 2,
+        "change": 0.11
+      },
+      "year": {
+        "views": 2,
+        "change": 0.35
+      }
+    }
+  },
+  {
+    "family": "Aster Sans",
+    "designers": [
+      "Synthetic Foundry"
+    ],
+    "totalViews": 1,
+    "rate": 12.5,
+    "viewsByDateRange": {
+      "7day": {
+        "views": 1,
+        "change": 0.04
+      },
+      "30day": {
+        "views": 1,
+        "change": -0.02
+      },
+      "90day": {
+        "views": 1,
+        "change": 0.11
+      },
+      "year": {
+        "views": 1,
+        "change": 0.35
+      }
+    },
+    "viewsByBrowser": {
+      "Chrome": 0.61,
+      "Firefox": 0.05,
+      "Others": 0.04,
+      "Safari": 0.3
+    },
+    "viewsByOS": {
+      "Linux": 0.2,
+      "Macintosh": 0.2,
+      "Others": 0.1,
+      "Windows": 0.3,
+      "iPhone": 0.2
+    }
+  },
+  "not a row"
+]

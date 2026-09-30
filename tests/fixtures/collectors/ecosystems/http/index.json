@@ -1,0 +1,57 @@
+{
+  "format": "tff-mockhttp",
+  "responses": [
+    {
+      "body": "org-fontsource.json",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "url": "https://registry.npmjs.org/-/org/fontsource/package"
+    },
+    {
+      "body": "org-fontsource-variable.json",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "url": "https://registry.npmjs.org/-/org/fontsource-variable/package"
+    },
+    {
+      "body": "bulk-0001.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "method": "POST",
+      "request_json": {
+        "purls": [
+          "pkg:npm/%40fontsource-variable/akt",
+          "pkg:npm/%40fontsource-variable/alegreya",
+          "pkg:npm/%40fontsource-variable/geist-mono",
+          "pkg:npm/%40fontsource-variable/inter",
+          "pkg:npm/%40fontsource-variable/jetbrains-mono",
+          "pkg:npm/%40fontsource-variable/open-sans",
+          "pkg:npm/%40fontsource-variable/roboto-flex",
+          "pkg:npm/%40fontsource/abeezee",
+          "pkg:npm/%40fontsource/akt",
+          "pkg:npm/%40fontsource/alegreya",
+          "pkg:npm/%40fontsource/comic-neue",
+          "pkg:npm/%40fontsource/fira-mono",
+          "pkg:npm/%40fontsource/geist-mono",
+          "pkg:npm/%40fontsource/ibm-plex-mono",
+          "pkg:npm/%40fontsource/inter",
+          "pkg:npm/%40fontsource/jetbrains-mono",
+          "pkg:npm/%40fontsource/lato",
+          "pkg:npm/%40fontsource/material-icons",
+          "pkg:npm/%40fontsource/open-sans",
+          "pkg:npm/%40fontsource/pacifico",
+          "pkg:npm/%40fontsource/roboto",
+          "pkg:npm/%40fontsource/roboto-mono",
+          "pkg:npm/%40fontsource/source-sans-3",
+          "pkg:npm/%40fontsource/source-sans-pro",
+          "pkg:npm/%40fontsource/zilla-slab"
+        ]
+      },
+      "url": "https://packages.ecosyste.ms/api/v1/packages/bulk_lookup"
+    }
+  ],
+  "version": 1
+}

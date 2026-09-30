@@ -1,0 +1,12 @@
+{#-
+  robots.txt.j2: /robots.txt. M2-D8 (a), the default: search engines may index the site
+  during the soft launch; only announcements wait for Milestone 4. Under (b), Caddy would send
+  X-Robots-Tag: noindex instead, and this file would stay as it is. The test site sends noindex
+  from Caddy either way. The live file must match this one (M2 step 1): Cloudflare's robots.txt
+  settings must stay off, or they add lines.
+-#}
+# {{ site.name }}: every page may be crawled and indexed.
+User-agent: *
+Allow: /
+
+Sitemap: {{ site.base_url }}/sitemap.xml

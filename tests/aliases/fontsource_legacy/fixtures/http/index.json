@@ -1,0 +1,79 @@
+{
+  "format": "tff-mockhttp",
+  "responses": [
+    {
+      "body": "org-fontsource.json",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://registry.npmjs.org/-/org/fontsource/package"
+    },
+    {
+      "body": "org-fontsource-variable.json",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://registry.npmjs.org/-/org/fontsource-variable/package"
+    },
+    {
+      "body": "metadata-muli.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-jsd-version": "4.1.0",
+        "x-jsd-version-type": "version"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://cdn.jsdelivr.net/npm/@fontsource/muli/metadata.json"
+    },
+    {
+      "body": "metadata-spartan.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-jsd-version": "4.5.8",
+        "x-jsd-version-type": "version"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://cdn.jsdelivr.net/npm/@fontsource/spartan/metadata.json"
+    },
+    {
+      "body": "metadata-ostrich-sans-dashed.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-jsd-version": "4.5.3",
+        "x-jsd-version-type": "version"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://cdn.jsdelivr.net/npm/@fontsource/ostrich-sans-dashed/metadata.json"
+    },
+    {
+      "body": "metadata-youngserif.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-jsd-version": "4.5.2",
+        "x-jsd-version-type": "version"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://cdn.jsdelivr.net/npm/@fontsource/youngserif/metadata.json"
+    },
+    {
+      "body": "metadata-material-icons-rounded.json",
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "x-jsd-version": "4.5.4",
+        "x-jsd-version-type": "version"
+      },
+      "method": "GET",
+      "status": 200,
+      "url": "https://cdn.jsdelivr.net/npm/@fontsource/material-icons-rounded/metadata.json"
+    }
+  ],
+  "version": 1
+}

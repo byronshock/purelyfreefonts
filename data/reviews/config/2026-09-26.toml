@@ -1,0 +1,26 @@
+# Owner rulings, gate C: the step 2 config (preinstalled.toml, foundries.toml).
+# Ruled by the owner, Byron Shock, in chat on 2026-09-26; recorded by Claude from the lead's
+# notes (design/rulings-2026-09-26.toml). Also in AUTHORITY.md. Reasons are Claude's summaries.
+
+[C1]
+choice = "a"
+recommended = true
+ruling = "Approve"
+reason = "Approved as shown. LibreOffice's bundled fonts are listed under a new os \"app\", which tags fonts but never sets the Windows bit or makes a Linux source abstain; Meslo stays on CachyOS."
+
+[C2]
+choice = "a"
+recommended = true
+ruling = "Take its fonts into preinstalled.toml from eos-base-group"
+reason = "EndeavourOS lists no font dependencies of its own; its eos-base-group installs the fonts, so those are its preinstalled fonts."
+
+[C3]
+choice = "a"
+recommended = true
+ruling = "Approve"
+reason = "Approved as shown. Blackout becomes its three families (Blackout Midnight, Blackout Sunrise, Blackout Two AM). A foundry family whose URLs all die stays listed with a review note. The owner may later browse velvetyne.fr and collletttivo.it for missing families."
+
+[abstain_scope]
+value = "by_package_system"
+ruling = "A preinstalled Linux system silences only the Linux sources that count its installs: Arch-family entries (CachyOS, EndeavourOS) silence Arch pkgstats only, Debian and Ubuntu entries silence popcon only, and desktops (GNOME, KDE Plasma) silence both."
+reason = "Claude's recommendation: a system's preinstalled fonts inflate only the statistics of the package system it runs on. Applied in ranking.toml [corrections] abstain_scope and abstain_sources."

@@ -1,0 +1,18 @@
+Trimmed real data (ruling T1: GitHub counts are open data).
+
+releases.json holds 6 of the 40 releases of ryanoasis/nerd-fonts on GitHub
+(v3.5.1, v3.4.0, v3.0.0, v2.3.0-RC, v2.0.0 and v0.7.0) and 30 of their 2,091
+release assets: tag, draft and prerelease flags, publish time, and per asset
+its name, download count and creation time, as GitHub's API reported them on
+2026-09-25 and 2026-09-26 (UTC). Nothing else is kept: no author, uploader or
+other personal data.
+https://github.com/ryanoasis/nerd-fonts/releases
+
+http/ is derived from releases.json by tests/collectors/nerd_releases/
+test_nerd_releases.py (simulate): the GraphQL answers, with totalCount set to
+the trimmed lists and invented page cursors. snapshot/ is what fetch() makes of
+them, and expected.jsonl what parse() makes of snapshot/.
+
+The asset names are Nerd Fonts' folder names; Nerd Fonts' own files are under
+the MIT License (Copyright (c) 2014 Ryan L McIntyre). The download counts come
+from the GitHub API, used under GitHub's Terms of Service.

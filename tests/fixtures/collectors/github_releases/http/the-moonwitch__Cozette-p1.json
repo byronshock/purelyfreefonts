@@ -1,0 +1,35 @@
+[
+ {
+  "assets": [
+   {
+    "created_at": "2025-07-30T07:36:51Z",
+    "download_count": 6424,
+    "name": "CozetteFonts-v-1-30-0.zip",
+    "state": "uploaded"
+   },
+   {
+    "created_at": "2025-07-30T07:37:06Z",
+    "download_count": 4696,
+    "name": "CozetteVector.ttf",
+    "state": "uploaded"
+   },
+   {
+    "created_at": "2025-07-30T07:37:02Z",
+    "download_count": 233,
+    "name": "LICENSE",
+    "state": "uploaded"
+   },
+   {
+    "created_at": "2025-07-30T07:37:00Z",
+    "download_count": 2146,
+    "name": "cozette.otb",
+    "state": "uploaded"
+   }
+  ],
+  "draft": false,
+  "html_url": "https://github.com/the-moonwitch/Cozette/releases/tag/v.1.30.0",
+  "prerelease": false,
+  "published_at": "2025-07-30T07:36:51Z",
+  "tag_name": "v.1.30.0"
+ }
+]

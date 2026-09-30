@@ -1,0 +1,43 @@
+# Universe collector debian_copyright: license short names from the DEP-5
+# copyright files of Debian's font source packages (one input to the license
+# cross-check, milestone-1 step 6a). Facts only: the license identifiers, never
+# the file text; synthetic fixtures (docs/sources.md).
+enabled = true
+
+# sid's source index; a package is a font package when its own section or any
+# of its binaries' sections is listed in `sections`.
+sources_url = "https://deb.debian.org/debian/dists/sid/main/source/Sources.xz"
+sections = ["fonts"]
+
+# The copyright file of a package is <metadata_base><Directory minus pool/>/<copyright_name>.
+metadata_base = "https://metadata.ftp-master.debian.org/changelogs/"
+copyright_name = "unstable_copyright"
+
+# A font-package list below this share of the previous snapshot's is a broken
+# index: the fetch fails and the stale policy reuses the last good snapshot.
+min_share = 0.9
+
+# Copyright requests that may fail (after the fetcher's retries) before the
+# whole fetch fails; a failed package keeps its previous row.
+max_failures = 10
+
+# Files stanzas whose every pattern matches one of these globs (fnmatch, where
+# "*" also matches "/") do not describe fonts, so they give no license fact: the
+# cross-check ANDs every fact of a source, and a build script's GPL or an
+# AppStream file's CC0 says nothing about the fonts. Stanzas under debian/ (the
+# packaging) are always skipped. Drawn up by Claude from the 2026-09-26 snapshot and
+# approved by the owner on 2026-09-26 (debian_nonfont_filter, recorded in
+# data/reviews/corrections/); keep it to paths that never hold fonts or font sources.
+non_font_files = [
+  # AppStream metadata
+  "appstream/*", "*.metainfo.xml", "*.appdata.xml",
+  # build tooling, bundled npm dependencies, tests
+  "node_modules/*", "scripts/*", "tools/*", "tests/*", "test/*",
+  "*.py", "*.pl", "*.sh", "*.pe",
+  # autotools and make
+  "Makefile*", "configure*", "aclocal.m4", "m4/*", "*install-sh", "missing",
+  # fontconfig rules, LaTeX support files, web assets
+  "*.conf", "latex/*", "css/*", "less/*", "scss/*", "*.css", "*.js",
+  # documentation
+  "doc/*", "docs/*", "_docs/*", "documentation/*", "README*", "*.md", "OFL-FAQ.txt",
+]

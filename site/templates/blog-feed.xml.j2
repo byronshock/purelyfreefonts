@@ -1,0 +1,33 @@
+{#-
+  blog-feed.xml.j2: /blog/feed.xml, the blog's Atom feed (RFC 4287; Milestone 2 step 7b).
+  Context: every page's, plus `feed` {id, title, subtitle, self_url, alternate_url, updated,
+  rights, entries [{id, url, title, published, updated, summary, content}]} from
+  tff_site.blog. Every URL is absolute and every time comes from the posts' front matter, so
+  the file is byte-identical for the same posts. Autoescape escapes `content`, the post's
+  HTML, as the text of a type="html" element.
+-#}
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+<id>{{ feed.id }}</id>
+<title>{{ feed.title }}</title>
+<subtitle>{{ feed.subtitle }}</subtitle>
+<link rel="self" type="application/atom+xml" href="{{ feed.self_url }}"/>
+<link rel="alternate" type="text/html" href="{{ feed.alternate_url }}"/>
+<updated>{{ feed.updated }}</updated>
+<author>
+<name>{{ site.name }}</name>
+<uri>{{ site.base_url }}/</uri>
+</author>
+<rights>{{ feed.rights }}</rights>
+{% for entry in feed.entries %}
+<entry>
+<id>{{ entry.id }}</id>
+<title>{{ entry.title }}</title>
+<link rel="alternate" type="text/html" href="{{ entry.url }}"/>
+<published>{{ entry.published }}</published>
+<updated>{{ entry.updated }}</updated>
+<summary>{{ entry.summary }}</summary>
+<content type="html">{{ entry.content }}</content>
+</entry>
+{% endfor %}
+</feed>

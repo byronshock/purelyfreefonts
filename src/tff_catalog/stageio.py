@@ -55,6 +55,8 @@ class StageFile:
 
 # Frozen contract: a new file, or a change of shape or row type, goes through the lead.
 STAGE_FILES: dict[str, StageFile] = {
+    "stale": StageFile("stale.json", "parse", "map", "tff_catalog.parse:StaleSource"),
+    "snapshots": StageFile("snapshots.json", "parse", "map", "tff_catalog.parse:SourceSnapshot"),
     "universe": StageFile("universe.json", "universe", "doc", "tff_catalog.universe:Universe"),
     "latin": StageFile("latin.json", "latin", "map", "tff_catalog.latin:LatinResult"),
     "facts": StageFile("facts.json", "facts", "map", "tff_catalog.facts:Facts"),

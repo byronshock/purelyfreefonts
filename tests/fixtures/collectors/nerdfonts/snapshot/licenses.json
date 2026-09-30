@@ -1,0 +1,26 @@
+{
+  "commit": "64a084f95480ee5efb62132c01cd142ab6147655",
+  "dir": "src/unpatched-fonts",
+  "files": [
+    "0xProto/LICENSE",
+    "3270/LICENSE.txt",
+    "AnonymousPro/OFL.txt",
+    "BigBlueTerminal/LICENSE.TXT",
+    "CascadiaCode/LICENSE",
+    "EnvyCodeR/LICENCE.md",
+    "FiraMono/LICENSE",
+    "Go-Mono/LICENSE.txt",
+    "Hack/LICENSE.md",
+    "MPlus/OFL.txt",
+    "Meslo/LICENSE.txt",
+    "Monoid/LICENSE",
+    "NerdFontsSymbolsOnly/LICENSE",
+    "Overpass/LICENSE.md",
+    "Overpass/Mono/LICENSE.md",
+    "Overpass/Non-Mono/LICENSE.md",
+    "Recursive/LICENSE.txt",
+    "Ubuntu/LICENCE-FAQ.txt",
+    "Ubuntu/LICENCE.txt"
+  ],
+  "schema": 1
+}

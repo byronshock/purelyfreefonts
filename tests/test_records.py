@@ -83,6 +83,7 @@ files = st.builds(
     role=st.sampled_from(sorted(FILE_ROLES)),
     codepoints=optional(counts),
     unicode_range=optional(text),
+    git_blob=optional(st.from_regex(r"\A[0-9a-f]{40}\Z")),
 )
 universe_records = st.builds(
     UniverseRecord,

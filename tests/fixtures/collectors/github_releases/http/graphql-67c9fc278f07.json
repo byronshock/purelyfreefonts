@@ -1,0 +1,74 @@
+{
+ "data": {
+  "repository": {
+   "nameWithOwner": "be5invis/Iosevka",
+   "releases": {
+    "nodes": [
+     {
+      "isDraft": false,
+      "isPrerelease": false,
+      "publishedAt": "2026-08-22T14:51:50Z",
+      "releaseAssets": {
+       "nodes": [
+        {
+         "createdAt": "2026-08-22T14:39:28Z",
+         "downloadCount": 1494,
+         "name": "PkgTTC-Iosevka-34.8.1.zip"
+        },
+        {
+         "createdAt": "2026-08-22T14:39:28Z",
+         "downloadCount": 1847,
+         "name": "PkgTTC-IosevkaAile-34.8.1.zip"
+        },
+        {
+         "createdAt": "2026-08-22T14:39:43Z",
+         "downloadCount": 280,
+         "name": "PkgTTC-IosevkaSS01-34.8.1.zip"
+        }
+       ],
+       "pageInfo": {
+        "endCursor": "asset:v34.8.1:3",
+        "hasNextPage": false
+       }
+      },
+      "tagName": "v34.8.1"
+     },
+     {
+      "isDraft": false,
+      "isPrerelease": false,
+      "publishedAt": "2026-07-26T12:51:06Z",
+      "releaseAssets": {
+       "nodes": [
+        {
+         "createdAt": "2026-07-26T12:38:45Z",
+         "downloadCount": 1419,
+         "name": "PkgTTC-Iosevka-34.8.0.zip"
+        },
+        {
+         "createdAt": "2026-07-26T12:38:45Z",
+         "downloadCount": 1421,
+         "name": "PkgTTC-IosevkaAile-34.8.0.zip"
+        },
+        {
+         "createdAt": "2026-07-26T12:38:59Z",
+         "downloadCount": 245,
+         "name": "PkgTTC-IosevkaSS01-34.8.0.zip"
+        }
+       ],
+       "pageInfo": {
+        "endCursor": "asset:v34.8.0:3",
+        "hasNextPage": false
+       }
+      },
+      "tagName": "v34.8.0"
+     }
+    ],
+    "pageInfo": {
+     "endCursor": "rel:2",
+     "hasNextPage": false
+    },
+    "totalCount": 2
+   }
+  }
+ }
+}

@@ -1,0 +1,40 @@
+# Universe collector homebrew_casks: Homebrew's font casks from the cask API,
+# with the casks' renames (BSD-2-Clause data; ruling T1).
+enabled = true
+cask_url = "https://formulae.brew.sh/api/cask.json"
+# The API's own /api/cask_renames.json answers 404; the tap repository has the file.
+renames_url = "https://raw.githubusercontent.com/Homebrew/homebrew-cask/main/cask_renames.json"
+tap_migrations_url = "https://formulae.brew.sh/api/cask_tap_migrations.json"
+
+# Font casks are the tokens with this prefix (2,599 on 2026-09-25).
+token_prefix = "font-"
+
+# A cask list with fewer than this share of the previous snapshot's font casks
+# is a broken response: the fetch fails and the stale policy reuses the last
+# good snapshot. Homebrew removes only a handful of font casks a year.
+min_share = 0.9
+
+# A cask name that names the font it was built from: "CaskaydiaCove Nerd Font
+# (Cascadia Code)". With parent_relation "build" the family is the parent and
+# the build's name is asserted as a build name, as nerdfonts' records do, so the
+# universe folds the build into the parent. "related" keeps the build's name as
+# the family and only mentions the parent (for parents that are not family names;
+# Nerd Fonts' own data names "Fira", "Noto" and "MPlus" as parents too).
+build_pattern = '^(?P<family>.+?\bNerd Font)(?: families)?\s*\((?P<parent>[^()]+)\)$'
+parent_relation = "build"
+
+# Non-text families, as universe drop codes (records.DROP_REASONS). A family
+# name matching a pattern takes its code; the first match wins. One record's
+# code drops the whole family in the universe, so keep the patterns narrow.
+drop_names = [
+  ["icon", '\bIcon(?:s|ic)?\b|^(?:Academicons|Codicon|Devicons)$|^Font Awesome\b|^Material (?:Icons|Symbols)\b|^Symbols Nerd Font\b'],
+  ["emoji", '\bEmoji\b'],
+  ["barcode", '\bBarcode\b'],
+  ["math", '\bMath\b'],
+  ["music", '\bMusic(?:al)?\b'],
+  ["symbol", '\bSymbols?\b|\b(?:Web|Wing|Yarn)dings\b|\bDingbats?\b'],
+]
+
+# Download hosts whose fonts are licensed for one vendor's platforms only:
+# drop code "proprietary" (Apple's SF and New York casks).
+proprietary_hosts = ["devimages-cdn.apple.com"]

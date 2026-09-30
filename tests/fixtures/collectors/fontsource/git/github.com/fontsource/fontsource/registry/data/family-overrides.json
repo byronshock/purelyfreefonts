@@ -1,0 +1,23 @@
+{
+	"bravura": {
+		"sampleText": {
+			"short": "♩♪♫♬♭♮♯"
+		}
+	},
+	"flow-circular": {
+		"languages": [],
+		"sampleText": {
+			"short": "Wireframe content"
+		}
+	},
+	"material-icons": {
+		"previewContext": {
+			"fallbackFamilies": [
+				"sans-serif"
+			]
+		},
+		"sampleText": {
+			"short": "photo_camera thumb_up assignment create_new_folder insert_invitation drafts credit_card timer check_box close"
+		}
+	}
+}

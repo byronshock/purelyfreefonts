@@ -10,6 +10,9 @@ checks that need the collectors themselves: every ``config/sources/<name>.toml``
 belongs to a discovered collector and loads into its ``Settings``, and every
 enabled engine source reads a discovered ranking collector. It is separate
 because it imports every collector module; CI runs it once the collectors exist.
+``--strict`` also runs ``check_category_ids``: every family of
+``category-overrides.toml`` and of ``nerd-hidden.toml`` is in the id registry, when
+there is one.
 
 ``config_hash(cfg)`` is the sha256 of the canonical JSON of the effective
 config, so two runs with the same values give the same hash whatever the
@@ -27,13 +30,17 @@ from typing import Any
 
 from tff_catalog import jsonio
 from tff_catalog.config_model import (
+    CATEGORY_OVERRIDES_FILE,
     CONFIG_FILES,
+    NERD_HIDDEN_FILE,
     RANK_KEYS,
     SCHEMA_VERSION,
+    CategoryOverridesConfig,
     Config,
     ConfigError,
     FoundriesConfig,
     LicensesConfig,
+    NerdHiddenConfig,
     PreinstalledConfig,
     RankingConfig,
     SiteConfig,
@@ -66,7 +73,10 @@ def load_config(paths: Paths) -> Config:
     check_licenses(cfg.licenses)
     check_preinstalled(cfg.preinstalled)
     check_foundries(cfg.foundries)
+    check_abstain_scope(cfg)
     check_site(cfg)
+    check_category_overrides(cfg.category_overrides)
+    check_nerd_hidden(cfg.nerd_hidden)
     return cfg
 
 
@@ -127,6 +137,13 @@ def check_ranking(r: RankingConfig) -> None:
         if name not in getattr(r.surveys, src.survey).weights:
             _fail(f"ranking.toml: sources.{name}", f"missing from surveys.{src.survey}.weights")
     _check_project_groups(r, sources)
+    for repo in r.sources.github.prerelease_repos:
+        # Stage "correct" compares them with the lower-cased repo of each observation.
+        if repo != repo.lower() or not re.fullmatch(r"[a-z0-9_.-]+/[a-z0-9_.-]+", repo):
+            _fail(
+                "ranking.toml: sources.github.prerelease_repos",
+                f"{repo!r} is not owner/repo in lower case",
+            )
 
     e = r.engine
     for key in ("ruler", "alt_ruler"):
@@ -138,6 +155,14 @@ def check_ranking(r: RankingConfig) -> None:
         _fail("ranking.toml: engine", "kappa >= 0, 0 <= guard.factor <= 1 and guard.gap > 0")
 
     c = r.corrections
+    linux_sources = {name for name, src in sources.items() if src.linux}
+    for system, silenced in c.abstain_sources.items():
+        unknown = sorted(set(silenced) - linux_sources)
+        if unknown:
+            _fail(
+                f"ranking.toml: corrections.abstain_sources.{system}",
+                f"not Linux sources: {unknown}",
+            )
     for key in ("nerd_credit", "cjk_build_credit", "bundle_credit"):
         if not 0 <= getattr(c, key) <= 1:
             _fail(f"ranking.toml: corrections.{key}", "must be between 0 and 1")
@@ -171,6 +196,12 @@ def check_ranking(r: RankingConfig) -> None:
     for key in m.extra_ranks:
         if key not in RANK_KEYS:
             _fail("ranking.toml: membership.extra_ranks", f"unknown rank key {key!r}")
+    if m.l3_overall_max < m.leave or m.l3_extra_top < m.extra_top:
+        _fail(
+            "ranking.toml: membership",
+            "need l3_overall_max >= leave and l3_extra_top >= extra_top (L3 checks every "
+            "font that can enter)",
+        )
     t = m.top100
     if not t.enter <= d.exact_top <= t.leave or t.leave_runs < 1:
         _fail("ranking.toml: membership.top100", "need enter <= exact_top <= leave")
@@ -229,6 +260,54 @@ def check_collectors(cfg: Config, paths: Paths) -> None:
             _fail(where, f"{src.collector!r} is not a ranking collector")
 
 
+def check_category_overrides(c: CategoryOverridesConfig) -> None:
+    """Each key is a family id and each value one of ``facts.CATEGORIES``."""
+    from tff_catalog.facts import CATEGORIES
+    from tff_catalog.names import ID_PATTERN
+
+    for fid, category in c.families.items():
+        where = f"{CATEGORY_OVERRIDES_FILE}: families.{fid}"
+        if not ID_PATTERN.fullmatch(fid):
+            _fail(where, f"{fid!r} is not a family id")
+        if category not in CATEGORIES:
+            _fail(where, f"{category!r} is not one of {', '.join(CATEGORIES)}")
+
+
+def check_nerd_hidden(c: NerdHiddenConfig) -> None:
+    """Each key is a family id, and each value the reason its Nerd Font build is hidden."""
+    from tff_catalog.names import ID_PATTERN
+
+    for fid, reason in c.families.items():
+        where = f"{NERD_HIDDEN_FILE}: families.{fid}"
+        if not ID_PATTERN.fullmatch(fid):
+            _fail(where, f"{fid!r} is not a family id")
+        if not reason.strip():
+            _fail(where, "give the reason the build is hidden")
+
+
+def check_category_ids(cfg: Config, paths: Paths) -> None:
+    """``--strict``: every family of ``category-overrides.toml`` and ``nerd-hidden.toml``
+    is in the id registry (``state/ids.json``, or the one the latest run proposed in
+    ``build/state/``).
+
+    Without a registry (a clone before the first merged refresh) there is nothing to
+    check against; stages "facts" and "links" still fail on any id their universe lacks.
+    """
+    from tff_catalog.state import read_part
+
+    known = read_part(paths, "ids")
+    for filename, families in (
+        (CATEGORY_OVERRIDES_FILE, cfg.category_overrides.families),
+        (NERD_HIDDEN_FILE, cfg.nerd_hidden.families),
+    ):
+        unknown = sorted(set(families) - set(known)) if known else []
+        if unknown:
+            _fail(
+                f"{filename}: families",
+                f"not in the id registry (state/ids.json): {', '.join(unknown)}",
+            )
+
+
 def check_licenses(lic: LicensesConfig) -> None:
     """No license id may sit in two classes."""
     seen: dict[str, str] = {}
@@ -251,6 +330,19 @@ def check_preinstalled(pre: PreinstalledConfig) -> None:
             _fail(f"preinstalled.toml: systems.{system}.source", "must be an https URL")
 
 
+def check_abstain_scope(cfg: Config) -> None:
+    """With ``abstain_scope = "by_package_system"``, every Linux system of preinstalled.toml
+    says which Linux sources it silences (``corrections.abstain_sources``), and only those."""
+    c = cfg.ranking.corrections
+    linux = {sid for sid, entry in cfg.preinstalled.systems.items() if entry.os == "linux"}
+    listed = set(c.abstain_sources)
+    where = "ranking.toml: corrections.abstain_sources"
+    if c.abstain_scope == "by_package_system" and linux - listed:
+        _fail(where, f"missing Linux systems of preinstalled.toml: {sorted(linux - listed)}")
+    if listed - linux:
+        _fail(where, f"not Linux systems in preinstalled.toml: {sorted(listed - linux)}")
+
+
 def check_foundries(f: FoundriesConfig) -> None:
     """Foundry ids are tokens and every URL is https."""
     for foundry_id, foundry in f.foundries.items():
@@ -259,6 +351,7 @@ def check_foundries(f: FoundriesConfig) -> None:
             _fail(where, "foundry ids must be lower-case tokens")
         urls = [foundry.url] + [fam.url for fam in foundry.families]
         urls += [fam.repository for fam in foundry.families if fam.repository]
+        urls += [url for fam in foundry.families for url in fam.files]
         for url in urls:
             if not _HTTPS.match(url):
                 _fail(where, f"{url!r} is not an https URL")
@@ -281,6 +374,11 @@ def check_site(cfg: Config) -> None:
     for spdx, entry in cfg.licenses.allowed.items():
         if entry.group not in classes:
             _fail(f"licenses.toml: allowed.{spdx}.group", f"{entry.group!r} is not in site.toml")
+    nerd = site.nerd
+    if not nerd.marker.strip() or not nerd.label.strip():
+        _fail("site.toml: nerd", "marker and label must not be empty")
+    if not nerd.legend.startswith(f"{nerd.marker}: {nerd.label}"):
+        _fail("site.toml: nerd.legend", "must start with '<marker>: <label>', as the rows show it")
     for system, entry in site.package_systems.items():
         if not _TOKEN.match(system):
             _fail(f"site.toml: package_systems.{system}", "system ids must be lower-case tokens")
@@ -308,6 +406,7 @@ def cmd_config(args: argparse.Namespace) -> int:
         cfg = load_config(paths)
         if getattr(args, "strict", False):
             check_collectors(cfg, paths)
+            check_category_ids(cfg, paths)
     except ConfigError as exc:
         print(f"tff-catalog config: {exc}", file=sys.stderr)
         return 1

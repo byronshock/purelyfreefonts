@@ -1,0 +1,204 @@
+# Owner rulings of 2026-09-26, given in chat after integration A (the first real run). Ruled by
+# the owner, Byron Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml).
+# Also in AUTHORITY.md. Where the owner picked Claude's recommendation, the reason is Claude's summary.
+
+[LIC-spdx-bitstream-vera]
+choice = "a"
+recommended = true
+group = "open-font"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (owner_ruling_12). It allows use, changes under a new name and redistribution; it only forbids selling the fonts on their own."
+
+[LIC-spdx-bitstream-charter]
+choice = "a"
+recommended = true
+group = "open-font"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (owner_ruling_12)."
+
+[LIC-spdx-ubuntu-font-1-0]
+choice = "a"
+recommended = true
+group = "open-font"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (owner_ruling_12)."
+
+[LIC-spdx-licenseref-gust-font-license]
+choice = "a"
+recommended = true
+group = "open-font"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (owner_ruling_12)."
+
+[LIC-spdx-ipa]
+choice = "a"
+recommended = true
+group = "open-font"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (owner_ruling_12)."
+
+[LIC-spdx-wtfpl]
+choice = "a"
+recommended = true
+group = "permissive"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (owner_ruling_12)."
+
+[LIC-spdx-lppl-1-3c]
+choice = "a"
+recommended = true
+group = "permissive"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (owner_ruling_12)."
+
+[LIC-spdx-licenseref-publicdomain]
+choice = "a"
+recommended = true
+group = "permissive"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (owner_ruling_12)."
+
+[LIC-spdx-licenseref-monofur]
+choice = "d"
+recommended = true
+ruling = "Research more"
+reason = "Claude's recommendation (owner_ruling_12). Claude researches Monofur's terms and asks again."
+
+[LIC-spdx-licenseref-vicfieger]
+choice = "d"
+recommended = true
+ruling = "Research more"
+reason = "Claude's recommendation (owner_ruling_12). Claude researches Vic Fieger's terms and asks again."
+
+[LIC-spdx-licenseref-freeware]
+choice = "d"
+recommended = true
+ruling = "Research more"
+reason = "Claude's recommendation (owner_ruling_12). Each informal freeware grant is researched before it can qualify."
+
+[LIC-spdx-arphic-1999]
+choice = "d"
+recommended = true
+ruling = "Research more"
+reason = "Claude's recommendation (owner_ruling_12)."
+
+[LIC-spdx-artistic-1-0]
+choice = "d"
+recommended = true
+ruling = "Research more"
+reason = "The debian_unclassed ruling: Artistic 1.0 is researched and comes back to the owner."
+
+[debian_unclassed]
+value = "allow_four"
+ruling = "Four licenses Debian's copyright files name qualify: X11, BSL-1.0 and Artistic-2.0 as permissive, MPL-2.0 as an open font license (all redistributable). Artistic-1.0 is researched and comes back to the owner. In config/licenses.toml [allowed]."
+reason = "Claude's recommendation."
+
+[gpl_font_exception]
+value = "allowed"
+ruling = "GPL and LGPL with the font exception (Font-exception-2.0) are allowed, in the open-font group."
+reason = "Claude's recommendation; config/licenses.toml already lists them."
+
+[no_license_families]
+value = "research_top700"
+ruling = "A family with no license found stays excluded automatically, but Claude researches any such family that would reach the overall top 700."
+reason = "Claude's recommendation. Applied: stage review reruns stages correct and rank on a copy of the build with those families' licenses counted as allowed (tff_catalog.nolicense) and lists the order each would get in the review pack (no-license.md); a license Claude finds goes to the owner as a LIC-<family id> question with spdx. On the 2026-09-26 build, 25 of the 77 such families would reach the top 700."
+
+[LIC-lack]
+choice = "c"
+recommended = true
+ruling = "Excluded"
+reason = "Lack (Velvetyne) publishes no license and the font says All rights reserved: excluded until a license is published."
+
+[LIC-letters]
+choice = "d"
+recommended = true
+ruling = "Research more"
+reason = "Letters (Velvetyne): the repository's LICENSE.txt is the OFL but the font's license field says Creative Commons; Claude researches it and asks again."
+
+[LIC-opendyslexic]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (LIC_14): the upstream repository says OFL-1.1; the Bitstream Vera label (Debian, Nerd Fonts) is outdated."
+
+[LIC-overpass]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (LIC_14): google/fonts, Fontsource and Fontist say OFL-1.1; Nerd Fonts' LGPL-2.1 OR OFL-1.1 is the older dual license."
+
+[LIC-roboto-mono]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (LIC_14): Roboto Mono moved from google/fonts apache/ to ofl/; the Apache-2.0 label is outdated."
+
+[LIC-tinos]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (LIC_14): google/fonts and Fontsource say OFL-1.1; Nerd Fonts' Apache-2.0 label is outdated."
+
+[LIC-tex-gyre-heros]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "LicenseRef-GUST-Font-License"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (LIC_14): TeX Gyre fonts are under the GUST Font License, which qualifies (owner_ruling_12); Fontist's LPPL-1.3c label is the license GUST derives from."
+
+[LIC-cascadia-code]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (LIC_14): Microsoft publishes Cascadia under OFL-1.1; Windows 11 also preinstalls it."
+
+[LIC-cascadia-mono]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (LIC_14): Microsoft publishes Cascadia under OFL-1.1; Windows 11 also preinstalls it."
+
+[LIC-hack]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "Bitstream-Vera AND MIT"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (LIC_14): MIT for Hack's own work plus the Bitstream Vera license for the glyphs it derives from; both qualify."
+
+[LIC-salaowu]
+choice = "d"
+recommended = true
+ruling = "Research more"
+reason = "Claude's recommendation (LIC_14): no source states a license; Claude researches it and asks again."
+
+[LIC-salaowu-book]
+choice = "d"
+recommended = true
+ruling = "Research more"
+reason = "Claude's recommendation (LIC_14): no source states a license; Claude researches it and asks again."
+
+[LIC-salaowu-extra-light]
+choice = "d"
+recommended = true
+ruling = "Research more"
+reason = "Claude's recommendation (LIC_14): no source states a license; Claude researches it and asks again."
+
+[LIC-salaowu-light]
+choice = "d"
+recommended = true
+ruling = "Research more"
+reason = "Claude's recommendation (LIC_14): no source states a license; Claude researches it and asks again."

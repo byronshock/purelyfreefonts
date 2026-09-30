@@ -1,0 +1,44 @@
+# Synthetic hand list for the foundries contract fixture: invented foundries and
+# families, on the collector's checked hosts plus one host it never contacts.
+# The contract test's fetch() reads it through FetchContext.paths. Rebuild the
+# fixture after editing it:
+#     uv run python -m tests.collectors.foundries.regen_fixture
+
+schema = 1
+
+[foundries.aster-type]
+name = "Aster Type"
+url = "https://aster.synth.example"
+
+[[foundries.aster-type.families]]
+name = "Aster Sans"
+url = "https://www.theleagueofmoveabletype.com/aster-sans"
+license = "Open Font License"
+repository = "https://github.com/aster-type/aster-sans"
+
+[[foundries.aster-type.families]]
+name = "Birch Mono"
+url = "https://gitlab.com/aster-type/birch-mono"
+license = "SIL Open Font License 1.1"
+repository = "https://gitlab.com/aster-type/birch-mono"
+
+[[foundries.aster-type.families]]
+name = "Cobalt Serif"
+url = "https://velvetyne.fr/fonts/cobalt-serif"
+license = "NOASSERTION"
+
+[foundries.birch-foundry]
+name = "Birch Foundry"
+url = "https://birch.synth.example"
+
+[[foundries.birch-foundry.families]]
+name = "Aster Sans"
+url = "https://open-foundry.com/fonts/aster-sans"
+license = "SIL Open Font License v.1.1"
+repository = "https://github.com/aster-type/aster-sans"
+
+[[foundries.birch-foundry.families]]
+name = "Dune Display"
+url = "https://www.fontshare.com/fonts/dune-display"
+license = ""
+repository = "https://github.com/birch-foundry/dune-display"

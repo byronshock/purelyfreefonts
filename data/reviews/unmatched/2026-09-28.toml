@@ -1,0 +1,3193 @@
+# Rulings of 2026-09-28, gate U (unmatched source keys). U_noto_mono and A_U_queues are owner
+# rulings given in chat, recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml,
+# [links_research_2026-09-28] noto_mono and [gates_2026-09-28] A_U_queues); the gate A side is in
+# ../aliases/2026-09-28.toml. The U-<hash> tables with by = "claude" are Claude's own rulings under
+# the owner's A_U_queues delegation (mechanical keys only); their hand rows are in data/aliases.csv
+# (source hand, reviewed_by claude:2026-09-28).
+# Batch 4, after the finish-gates-3 run ([gates_2026-09-28_b4]): the owner's name rules (Wix
+# Madefor web names, Google Sans Text, Maple's CJK zip, the retired name spartan) and the four
+# keys left unmatched (answer (d): TeX Live's font packages and ttf-google-fonts-git); Claude's
+# rows under the owner's rulings pkg_rules and multi_family_packages: the 103 keys with the new
+# reasons not_font, non_latin and unlisted, the bundle and metapackage keys, and the researched
+# leftover packages.
+# Batch 5: the eight researched leftover keys, settled with their gate A items.
+
+[U_noto_mono]
+value = "leave_out_superseded"
+ruling = "font-noto-mono counts toward Noto Sans Mono, replacing U_rules' row font-noto-mono -> Noto Mono. The Nerd Fonts Noto keys (ttf-noto-nerd, font-noto-nerd-font, the Noto folder and its font names) keep their bundle rows for Noto Sans, Noto Sans Mono and Noto Serif and lose the one for Noto Mono, which folds into Noto Sans Mono as its superseded name."
+reason = "Claude's recommendation (noto_mono): Noto Mono is left out as superseded by Noto Sans Mono."
+
+[U-6986b62274e1]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "almanac-name:swiper-icons"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an icon font of a web framework or plugin (methodology section 2: icon fonts are not text). Row in data/aliases.csv: almanac-name:swiper-icons."
+
+[U-e6e961e9ec43]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "almanac-name:star"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an icon font of a web framework or plugin (methodology section 2: icon fonts are not text). Row in data/aliases.csv: almanac-name:star."
+
+[U-b12a698254cf]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "almanac-name:dashicons"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an icon font of a web framework or plugin (methodology section 2: icon fonts are not text). Row in data/aliases.csv: almanac-name:dashicons."
+
+[U-0a58808b1ddc]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "almanac-name:vc_grid_v1"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an icon font of a web framework or plugin (methodology section 2: icon fonts are not text). Row in data/aliases.csv: almanac-name:vc_grid_v1."
+
+[U-36f401b34c38]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "almanac-name:vcpb-plugin-icons"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an icon font of a web framework or plugin (methodology section 2: icon fonts are not text). Row in data/aliases.csv: almanac-name:vcpb-plugin-icons."
+
+[U-21d4ea06a026]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "almanac-name:JudgemeStar"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an icon font of a web framework or plugin (methodology section 2: icon fonts are not text). Row in data/aliases.csv: almanac-name:JudgemeStar."
+
+[U-f1f289669815]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "almanac-name:webflow-icons"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an icon font of a web framework or plugin (methodology section 2: icon fonts are not text). Row in data/aliases.csv: almanac-name:webflow-icons."
+
+[U-17ee2ca65880]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "almanac-name:VideoJS"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an icon font of a web framework or plugin (methodology section 2: icon fonts are not text). Row in data/aliases.csv: almanac-name:VideoJS."
+
+[U-2322bd7b6f2b]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "npm:@fontsource/material-icons"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: Material Icons and Symbols are icon fonts (owner ruling U_rules of 2026-09-26). Row in data/aliases.csv: npm:@fontsource/material-icons."
+
+[U-04dd27397e00]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "npm:@fontsource/material-icons-outlined"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: Material Icons and Symbols are icon fonts (owner ruling U_rules of 2026-09-26). Row in data/aliases.csv: npm:@fontsource/material-icons-outlined."
+
+[U-19dd3c04b682]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "npm:@fontsource/material-symbols-rounded"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: Material Icons and Symbols are icon fonts (owner ruling U_rules of 2026-09-26). Row in data/aliases.csv: npm:@fontsource/material-symbols-rounded."
+
+[U-92c9b4d404ad]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "npm:@fontsource-variable/material-symbols-rounded"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: Material Icons and Symbols are icon fonts (owner ruling U_rules of 2026-09-26). Row in data/aliases.csv: npm:@fontsource-variable/material-symbols-rounded."
+
+[U-e1e41bdcc014]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "npm:@fontsource/material-symbols-outlined"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: Material Icons and Symbols are icon fonts (owner ruling U_rules of 2026-09-26). Row in data/aliases.csv: npm:@fontsource/material-symbols-outlined."
+
+[U-ded6431cb287]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "npm:@fontsource-variable/material-symbols-outlined"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: Material Icons and Symbols are icon fonts (owner ruling U_rules of 2026-09-26). Row in data/aliases.csv: npm:@fontsource-variable/material-symbols-outlined."
+
+[U-650c95ebe4b4]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "deb-pkg:fonts-glyphicons-halflings"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an icon font package (methodology section 2). Row in data/aliases.csv: deb-pkg:fonts-glyphicons-halflings."
+
+[U-8c4b4e632dae]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "deb-pkg:fonts-font-logos"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an icon font package (methodology section 2). Row in data/aliases.csv: deb-pkg:fonts-font-logos."
+
+[U-9bfe4c341a86]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "deb-pkg:fonts-elusive-icons"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an icon font package (methodology section 2). Row in data/aliases.csv: deb-pkg:fonts-elusive-icons."
+
+[U-dd05ebf0b7e6]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "deb-pkg:fonts-fork-awesome"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an icon font package (methodology section 2). Row in data/aliases.csv: deb-pkg:fonts-fork-awesome."
+
+[U-3c4df810f6a2]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "deb-pkg:fonts-font-awesome-legacy"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an icon font package (methodology section 2). Row in data/aliases.csv: deb-pkg:fonts-font-awesome-legacy."
+
+[U-93d6bd48e666]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "deb-pkg:fonts-katex"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: math fonts only (methodology section 2: math fonts are not text). Row in data/aliases.csv: deb-pkg:fonts-katex."
+
+[U-2ab291540077]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "deb-pkg:fonts-oflb-asana-math"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: math fonts only (methodology section 2: math fonts are not text). Row in data/aliases.csv: deb-pkg:fonts-oflb-asana-math."
+
+[U-542091065218]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "deb-pkg:fonts-texgyre-math"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: math fonts only (methodology section 2: math fonts are not text). Row in data/aliases.csv: deb-pkg:fonts-texgyre-math."
+
+[U-ae56adb5bf81]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "arch-pkg:ttf-symbola"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: Symbola is a symbol font (methodology section 2). Row in data/aliases.csv: arch-pkg:ttf-symbola."
+
+[U-948a9d7c41f8]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "arch-pkg:ttf-joypixels"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an emoji font (methodology section 2). Row in data/aliases.csv: arch-pkg:ttf-joypixels."
+
+[U-079c3211adef]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "icon"
+key = "arch-pkg:ttf-twemoji"
+ruling = "Not a font we list: ineligible row (icon)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an emoji font (methodology section 2). Row in data/aliases.csv: arch-pkg:ttf-twemoji."
+
+[U-8efa47daab55]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Graphik"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Graphik."
+
+[U-557388e42ee1]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Suisse Intl"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Suisse Intl."
+
+[U-df9f41d28732]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Aeonik"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Aeonik."
+
+[U-eff2caa1c34b]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:gdsherpa"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:gdsherpa."
+
+[U-62faff8d0cc3]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Roobert"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Roobert."
+
+[U-43e8c294b117]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:PP Neue Montreal"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:PP Neue Montreal."
+
+[U-1b62737102b7]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Avenir"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Avenir."
+
+[U-d3804d519148]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:GT America"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:GT America."
+
+[U-ccc40508ffa8]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Avenir Next"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Avenir Next."
+
+[U-fd756189bced]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Circular"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Circular."
+
+[U-f779ff076405]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Tiempos Headline"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Tiempos Headline."
+
+[U-14804b2f6c5f]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:IRANSans"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:IRANSans."
+
+[U-8c86d11b7a74]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Sohne"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Sohne."
+
+[U-1e9e8e0657a3]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Neue Montreal"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Neue Montreal."
+
+[U-ab59d1b56e7e]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Season Mix"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Season Mix."
+
+[U-24c22a9efbd3]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:ABC Diatype"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:ABC Diatype."
+
+[U-be231c703ff8]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Helvetica Now Display"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Helvetica Now Display."
+
+[U-1048018865a7]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Soehne"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Soehne."
+
+[U-f62349f26425]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Berkeley Mono"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Berkeley Mono."
+
+[U-36f483696f22]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:PP Mori"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:PP Mori."
+
+[U-9e729450bfda]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Roobert-Medium"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Roobert-Medium."
+
+[U-bb13a7e35f2a]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Unify Sans"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Unify Sans."
+
+[U-90194045c022]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Untitled Sans"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Untitled Sans."
+
+[U-98e029ab7278]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Matter"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Matter."
+
+[U-278a5966a36f]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:suisse"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:suisse."
+
+[U-7cabb1084bc4]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Aeonik Pro"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Aeonik Pro."
+
+[U-874e7911f520]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Moderat"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Moderat."
+
+[U-f88c0acc4109]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Söhne"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Söhne."
+
+[U-8a698ad7c743]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Diatype"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Diatype."
+
+[U-7edb4a37e3a3]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:TWK Lausanne"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:TWK Lausanne."
+
+[U-9f51469f13bd]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Circular Std"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Circular Std."
+
+[U-29bb3477b1b7]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Helvetica Now Text"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Helvetica Now Text."
+
+[U-ad2073804045]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Saans"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Saans."
+
+[U-96f9c16697ec]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Calibre"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Calibre."
+
+[U-0de101ce5825]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:National 2"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:National 2."
+
+[U-2c0940724fd8]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:STK Bureau Serif"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:STK Bureau Serif."
+
+[U-25d755ba00e8]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:SharpGrotesk-Bold"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:SharpGrotesk-Bold."
+
+[U-fdef7d9ba61f]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Apercu"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Apercu."
+
+[U-1fdb1bd3f476]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Averta"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Averta."
+
+[U-4bf64241cbbd]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:CircularXX"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:CircularXX."
+
+[U-da8fe6343d5d]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Fkgrotesk"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Fkgrotesk."
+
+[U-13ee184f2f28]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Gellix"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Gellix."
+
+[U-4393cdf287fb]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Martina Plantijn"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Martina Plantijn."
+
+[U-8ff47702739b]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:PolySans"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:PolySans."
+
+[U-66fd00f4df84]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Recoleta"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Recoleta."
+
+[U-1fa795b93874]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:TTNormsPro"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:TTNormsPro."
+
+[U-8c2c80c7b183]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:tiempos"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:tiempos."
+
+[U-958a952a5f49]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Helvetica Neue"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Helvetica Neue."
+
+[U-fd6ebf24951b]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Helvetica"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Helvetica."
+
+[U-d1df797d1568]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Times"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Times."
+
+[U-2acd7ab36d3d]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Helvetica Neue Light"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Helvetica Neue Light."
+
+[U-98e30793d451]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:avenir-lt-w01_35-light1475496"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:avenir-lt-w01_35-light1475496."
+
+[U-36d1d3ff2635]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "fot-name:Palatino"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a commercial retail or corporate font (methodology section 2: proprietary fonts are out). Row in data/aliases.csv: fot-name:Palatino."
+
+[U-da1897c6d6e7]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "almanac-name:helvetica-w01"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a web-kit name of a commercial font (methodology section 2). Row in data/aliases.csv: almanac-name:helvetica-w01."
+
+[U-43f97388abcb]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "almanac-name:din-next-w01"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a web-kit name of a commercial font (methodology section 2). Row in data/aliases.csv: almanac-name:din-next-w01."
+
+[U-46a857620c00]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "almanac-name:avenir-lt-w01_35-light1475496"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a web-kit name of a commercial font (methodology section 2). Row in data/aliases.csv: almanac-name:avenir-lt-w01_35-light1475496."
+
+[U-f6ad03e8639a]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "almanac-name:helvetica-w01-roman"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a web-kit name of a commercial font (methodology section 2). Row in data/aliases.csv: almanac-name:helvetica-w01-roman."
+
+[U-78982c4eba8e]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "almanac-name:avenir-lt-w01_85-heavy1475544"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a web-kit name of a commercial font (methodology section 2). Row in data/aliases.csv: almanac-name:avenir-lt-w01_85-heavy1475544."
+
+[U-f3a9e78e6ac1]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "almanac-name:futura-lt-w01"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a web-kit name of a commercial font (methodology section 2). Row in data/aliases.csv: almanac-name:futura-lt-w01."
+
+[U-419d760618f5]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "almanac-name:proxima-n-w01-reg"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a web-kit name of a commercial font (methodology section 2). Row in data/aliases.csv: almanac-name:proxima-n-w01-reg."
+
+[U-affadc392579]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "almanac-name:Helvetica Neue"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a web-kit name of a commercial font (methodology section 2). Row in data/aliases.csv: almanac-name:Helvetica Neue."
+
+[U-cdb12344271a]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "fot-name:SF Pro Display"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an Apple or Microsoft operating-system font (methodology section 3: SF Pro is the example). Row in data/aliases.csv: fot-name:SF Pro Display."
+
+[U-d6b5119795cc]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "fot-name:SFMono-Regular"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an Apple or Microsoft operating-system font (methodology section 3: SF Pro is the example). Row in data/aliases.csv: fot-name:SFMono-Regular."
+
+[U-175db6e0901a]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "fot-name:Menlo"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an Apple or Microsoft operating-system font (methodology section 3: SF Pro is the example). Row in data/aliases.csv: fot-name:Menlo."
+
+[U-fe619ae79099]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "fot-name:メイリオ"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an Apple or Microsoft operating-system font (methodology section 3: SF Pro is the example). Row in data/aliases.csv: fot-name:メイリオ."
+
+[U-1e35a9f0ec8a]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "fot-name:SF Mono"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an Apple or Microsoft operating-system font (methodology section 3: SF Pro is the example). Row in data/aliases.csv: fot-name:SF Mono."
+
+[U-09e40abb1a40]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "fot-name:Hiragino Kaku Gothic Pro"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an Apple or Microsoft operating-system font (methodology section 3: SF Pro is the example). Row in data/aliases.csv: fot-name:Hiragino Kaku Gothic Pro."
+
+[U-6fd84efe5ab0]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "fot-name:ヒラギノ角ゴ Pro W3"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an Apple or Microsoft operating-system font (methodology section 3: SF Pro is the example). Row in data/aliases.csv: fot-name:ヒラギノ角ゴ Pro W3."
+
+[U-fa8b6dfd7738]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "fot-name:PingFang SC"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an Apple or Microsoft operating-system font (methodology section 3: SF Pro is the example). Row in data/aliases.csv: fot-name:PingFang SC."
+
+[U-00aef0509f70]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "fot-name:SF Pro Text"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an Apple or Microsoft operating-system font (methodology section 3: SF Pro is the example). Row in data/aliases.csv: fot-name:SF Pro Text."
+
+[U-c484b904d56f]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "fot-name:Hiragino Kaku Gothic ProN"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an Apple or Microsoft operating-system font (methodology section 3: SF Pro is the example). Row in data/aliases.csv: fot-name:Hiragino Kaku Gothic ProN."
+
+[U-b18d79c150b9]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "fot-name:PingFangSC-Regular"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an Apple or Microsoft operating-system font (methodology section 3: SF Pro is the example). Row in data/aliases.csv: fot-name:PingFangSC-Regular."
+
+[U-bea36aa76fec]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "fot-name:Iowan Old Style"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: an Apple or Microsoft operating-system font (methodology section 3: SF Pro is the example). Row in data/aliases.csv: fot-name:Iowan Old Style."
+
+[U-dc8a5b9ee078]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "itf"
+key = "fot-name:Satoshi Variable"
+ruling = "Not a font we list: ineligible row (itf)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: Satoshi is under the ITF Free Font License (Rule 4). Row in data/aliases.csv: fot-name:Satoshi Variable."
+
+[U-29f39415a45b]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "generic"
+key = "fot-name:fontSans"
+ruling = "Not a font we list: ineligible row (generic)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a generic stack name, not a font. Row in data/aliases.csv: fot-name:fontSans."
+
+[U-d76541a62139]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "arch-pkg:ttf-ms-fonts"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: installs Microsoft, Apple, Adobe or WPS proprietary fonts (methodology section 2). Row in data/aliases.csv: arch-pkg:ttf-ms-fonts."
+
+[U-ef3452d8ba61]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "arch-pkg:ttf-vista-fonts"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: installs Microsoft, Apple, Adobe or WPS proprietary fonts (methodology section 2). Row in data/aliases.csv: arch-pkg:ttf-vista-fonts."
+
+[U-cab3ba117010]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "arch-pkg:ttf-ms-win10-auto"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: installs Microsoft, Apple, Adobe or WPS proprietary fonts (methodology section 2). Row in data/aliases.csv: arch-pkg:ttf-ms-win10-auto."
+
+[U-003c8082656e]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "arch-pkg:ttf-ms-win11-auto"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: installs Microsoft, Apple, Adobe or WPS proprietary fonts (methodology section 2). Row in data/aliases.csv: arch-pkg:ttf-ms-win11-auto."
+
+[U-8389f0bed556]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "arch-pkg:ttf-mac-fonts"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: installs Microsoft, Apple, Adobe or WPS proprietary fonts (methodology section 2). Row in data/aliases.csv: arch-pkg:ttf-mac-fonts."
+
+[U-8151cc6f5ecf]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "arch-pkg:apple-fonts"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: installs Microsoft, Apple, Adobe or WPS proprietary fonts (methodology section 2). Row in data/aliases.csv: arch-pkg:apple-fonts."
+
+[U-ba1e443b01aa]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "arch-pkg:ttf-monaco"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: installs Microsoft, Apple, Adobe or WPS proprietary fonts (methodology section 2). Row in data/aliases.csv: arch-pkg:ttf-monaco."
+
+[U-5de50170277c]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "arch-pkg:ttf-wps-fonts"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: installs Microsoft, Apple, Adobe or WPS proprietary fonts (methodology section 2). Row in data/aliases.csv: arch-pkg:ttf-wps-fonts."
+
+[U-e443e115d269]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "arch-pkg:adobe-base-14-fonts"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: installs Microsoft, Apple, Adobe or WPS proprietary fonts (methodology section 2). Row in data/aliases.csv: arch-pkg:adobe-base-14-fonts."
+
+[U-225fe514fcaa]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "proprietary"
+key = "deb-pkg:ttf-mscorefonts-installer"
+ruling = "Not a font we list: ineligible row (proprietary)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: installs Microsoft's proprietary core fonts. Row in data/aliases.csv: deb-pkg:ttf-mscorefonts-installer."
+
+[U-0c5c3b4cf97f]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "deb-pkg:xfonts-base"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: the X11 core fonts or Wine's Windows replacements: system fonts, not chosen text fonts. Row in data/aliases.csv: deb-pkg:xfonts-base."
+
+[U-35549fa52e64]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "deb-pkg:xfonts-75dpi"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: the X11 core fonts or Wine's Windows replacements: system fonts, not chosen text fonts. Row in data/aliases.csv: deb-pkg:xfonts-75dpi."
+
+[U-36d006143dc4]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "deb-pkg:xfonts-100dpi"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: the X11 core fonts or Wine's Windows replacements: system fonts, not chosen text fonts. Row in data/aliases.csv: deb-pkg:xfonts-100dpi."
+
+[U-56510156ac02]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "deb-pkg:xfonts-scalable"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: the X11 core fonts or Wine's Windows replacements: system fonts, not chosen text fonts. Row in data/aliases.csv: deb-pkg:xfonts-scalable."
+
+[U-9db7855417ff]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "deb-pkg:fonts-wine"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: the X11 core fonts or Wine's Windows replacements: system fonts, not chosen text fonts. Row in data/aliases.csv: deb-pkg:fonts-wine."
+
+[U-de14286862b1]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "arch-pkg:xorg-fonts-misc"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: the X11 core fonts: system fonts, not chosen text fonts. Row in data/aliases.csv: arch-pkg:xorg-fonts-misc."
+
+[U-9d4262b2904a]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "arch-pkg:xorg-fonts-75dpi"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: the X11 core fonts: system fonts, not chosen text fonts. Row in data/aliases.csv: arch-pkg:xorg-fonts-75dpi."
+
+[U-abd1a0a5f172]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "arch-pkg:xorg-fonts-100dpi"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: the X11 core fonts: system fonts, not chosen text fonts. Row in data/aliases.csv: arch-pkg:xorg-fonts-100dpi."
+
+[U-82d79c76477f]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "arch-pkg:xorg-fonts-type1"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: the X11 core fonts: system fonts, not chosen text fonts. Row in data/aliases.csv: arch-pkg:xorg-fonts-type1."
+
+[U-0b885267ac3e]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "system"
+key = "arch-pkg:xorg-fonts-cyrillic"
+ruling = "Not a font we list: ineligible row (system)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: the X11 core fonts: system fonts, not chosen text fonts. Row in data/aliases.csv: arch-pkg:xorg-fonts-cyrillic."
+
+[U-b6f18e1e115b]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "deb-pkg:fonts-droid-fallback"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package (methodology section 2). Row in data/aliases.csv: deb-pkg:fonts-droid-fallback."
+
+[U-2e6659330d83]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "deb-pkg:fonts-vlgothic"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package (methodology section 2). Row in data/aliases.csv: deb-pkg:fonts-vlgothic."
+
+[U-8cad9653af07]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "deb-pkg:fonts-takao-gothic"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package (methodology section 2). Row in data/aliases.csv: deb-pkg:fonts-takao-gothic."
+
+[U-6cdbd39c39c6]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "deb-pkg:fonts-wqy-zenhei"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package (methodology section 2). Row in data/aliases.csv: deb-pkg:fonts-wqy-zenhei."
+
+[U-05fe96eee078]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "deb-pkg:fonts-wqy-microhei"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package (methodology section 2). Row in data/aliases.csv: deb-pkg:fonts-wqy-microhei."
+
+[U-32300cd08ac4]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "deb-pkg:fonts-arphic-uming"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package (methodology section 2). Row in data/aliases.csv: deb-pkg:fonts-arphic-uming."
+
+[U-3b69007a1970]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "deb-pkg:fonts-arphic-bkai00mp"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package (methodology section 2). Row in data/aliases.csv: deb-pkg:fonts-arphic-bkai00mp."
+
+[U-01743db36511]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "deb-pkg:fonts-arphic-gbsn00lp"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package (methodology section 2). Row in data/aliases.csv: deb-pkg:fonts-arphic-gbsn00lp."
+
+[U-9afed18c426c]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "deb-pkg:fonts-arphic-bsmi00lp"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package (methodology section 2). Row in data/aliases.csv: deb-pkg:fonts-arphic-bsmi00lp."
+
+[U-d3127e6d1f67]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "deb-pkg:fonts-arphic-gkai00mp"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package (methodology section 2). Row in data/aliases.csv: deb-pkg:fonts-arphic-gkai00mp."
+
+[U-be76d56e1a11]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "deb-pkg:fonts-unfonts-core"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package (methodology section 2). Row in data/aliases.csv: deb-pkg:fonts-unfonts-core."
+
+[U-a2b5704fff6d]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "deb-pkg:fonts-unfonts-extra"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package (methodology section 2). Row in data/aliases.csv: deb-pkg:fonts-unfonts-extra."
+
+[U-4166f3f49e34]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "deb-pkg:fonts-baekmuk"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package (methodology section 2). Row in data/aliases.csv: deb-pkg:fonts-baekmuk."
+
+[U-929e44cf40f4]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "deb-pkg:fonts-nanum"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package (methodology section 2). Row in data/aliases.csv: deb-pkg:fonts-nanum."
+
+[U-e5c3e5bd8c75]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "arch-pkg:ttf-arphic-uming"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package with no universe family (methodology section 2). Row in data/aliases.csv: arch-pkg:ttf-arphic-uming."
+
+[U-4a18b4e086de]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "arch-pkg:ttf-arphic-ukai"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package with no universe family (methodology section 2). Row in data/aliases.csv: arch-pkg:ttf-arphic-ukai."
+
+[U-a7c739ba21d1]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "arch-pkg:ttf-baekmuk"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package with no universe family (methodology section 2). Row in data/aliases.csv: arch-pkg:ttf-baekmuk."
+
+[U-df7d965fd5b3]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "arch-pkg:opendesktop-fonts"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package with no universe family (methodology section 2). Row in data/aliases.csv: arch-pkg:opendesktop-fonts."
+
+[U-5104fb54ece9]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "arch-pkg:ttf-sazanami"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package with no universe family (methodology section 2). Row in data/aliases.csv: arch-pkg:ttf-sazanami."
+
+[U-ee143006fc43]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "arch-pkg:ttf-hanazono"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package with no universe family (methodology section 2). Row in data/aliases.csv: arch-pkg:ttf-hanazono."
+
+[U-271f3a59aeb8]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "arch-pkg:ttf-hannom"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package with no universe family (methodology section 2). Row in data/aliases.csv: arch-pkg:ttf-hannom."
+
+[U-7b1d58c6af50]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "arch-pkg:adobe-source-han-serif-cn-fonts"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package with no universe family (methodology section 2). Row in data/aliases.csv: arch-pkg:adobe-source-han-serif-cn-fonts."
+
+[U-77fa949fac2d]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "arch-pkg:adobe-source-han-serif-otc-fonts"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package with no universe family (methodology section 2). Row in data/aliases.csv: arch-pkg:adobe-source-han-serif-otc-fonts."
+
+[U-f30cac9e89b8]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "arch-pkg:adobe-source-han-serif-jp-fonts"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package with no universe family (methodology section 2). Row in data/aliases.csv: arch-pkg:adobe-source-han-serif-jp-fonts."
+
+[U-bc8f72e4b0fc]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "cjk"
+key = "arch-pkg:adobe-source-han-serif-tw-fonts"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a CJK font package with no universe family (methodology section 2). Row in data/aliases.csv: arch-pkg:adobe-source-han-serif-tw-fonts."
+
+[U-4087535e7d4d]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "source-sans-3"
+key = "fot-name:Source Sans Pro Web"
+ruling = "A family's name or package: build row to source-sans-3"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: the web build of Source Sans Pro, Source Sans 3's old name. Row in data/aliases.csv: font-name:Source Sans Pro Web."
+
+[U-4160bec1f1b8]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "source-serif-4"
+key = "fot-name:Source Serif Pro"
+ruling = "A family's name or package: rename row to source-serif-4"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: Source Serif 4's old name (Adobe and Google renamed it; same designer). Row in data/aliases.csv: font-name:Source Serif Pro."
+
+[U-0d7c0479f646]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "geist"
+key = "fot-name:Geist Variable"
+ruling = "A family's name or package: build row to geist (variable)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: Fontsource's name for Geist's variable build. Row in data/aliases.csv: font-name:Geist Variable."
+
+[U-1ec4c74831ad]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "geist-mono"
+key = "fot-name:Geist Mono Variable"
+ruling = "A family's name or package: build row to geist-mono (variable)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: Fontsource's name for Geist Mono's variable build. Row in data/aliases.csv: font-name:Geist Mono Variable."
+
+[U-36d5d54b252b]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "jetbrains-mono"
+key = "fot-name:JetBrains Mono Variable"
+ruling = "A family's name or package: build row to jetbrains-mono (variable)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: Fontsource's name for JetBrains Mono's variable build. Row in data/aliases.csv: font-name:JetBrains Mono Variable."
+
+[U-43d18b37bd88]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "manrope"
+key = "fot-name:Manrope Variable"
+ruling = "A family's name or package: build row to manrope (variable)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: Fontsource's name for Manrope's variable build. Row in data/aliases.csv: font-name:Manrope Variable."
+
+[U-cdfe6db7c8e7]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "inter"
+key = "fot-name:Inter var"
+ruling = "A family's name or package: build row to inter (variable)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: the family name of Inter 3's variable files. Row in data/aliases.csv: font-name:Inter var."
+
+[U-15ecfb6fa526]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "merriweather"
+key = "fot-name:Merriweather Web"
+ruling = "A family's name or package: build row to merriweather"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: a web build of Merriweather. Row in data/aliases.csv: font-name:Merriweather Web."
+
+[U-660e5a3448d7]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "public-sans"
+key = "fot-name:Public Sans Web"
+ruling = "A family's name or package: build row to public-sans"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: USWDS's web build of Public Sans. Row in data/aliases.csv: font-name:Public Sans Web."
+
+[U-98ec6b73c21d]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "roboto"
+key = "fot-name:Roboto-Regular"
+ruling = "A family's name or package: postscript row to roboto"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: the family's own PostScript name. Row in data/aliases.csv: font-name:Roboto-Regular."
+
+[U-d06ed461b1e7]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "open-sans"
+key = "fot-name:OpenSans-Regular"
+ruling = "A family's name or package: postscript row to open-sans"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: the family's own PostScript name. Row in data/aliases.csv: font-name:OpenSans-Regular."
+
+[U-503fc9560171]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "poppins"
+key = "fot-name:Poppins-Medium"
+ruling = "A family's name or package: postscript row to poppins"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: the family's own PostScript name. Row in data/aliases.csv: font-name:Poppins-Medium."
+
+[U-81fc03fb0eed]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "inter"
+key = "fot-name:Inter-Regular"
+ruling = "A family's name or package: postscript row to inter"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: the family's own PostScript name. Row in data/aliases.csv: font-name:Inter-Regular."
+
+[U-66557790b51b]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "open-sans"
+key = "npm:@expo-google-fonts/open-sans-condensed"
+ruling = "A family's name or package: package row to open-sans"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: Open Sans Condensed is a width of Open Sans (A_structure). Row in data/aliases.csv: npm:@expo-google-fonts/open-sans-condensed."
+
+[U-0e5ef721a168]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "source-sans-3"
+key = "npm:@expo-google-fonts/source-sans-pro"
+ruling = "A family's name or package: package row to source-sans-3"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: Source Sans Pro is Source Sans 3's old name. Row in data/aliases.csv: npm:@expo-google-fonts/source-sans-pro."
+
+[U-ad7770240190]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "source-serif-4"
+key = "npm:@expo-google-fonts/source-serif-pro"
+ruling = "A family's name or package: package row to source-serif-4"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: Source Serif Pro is Source Serif 4's old name. Row in data/aliases.csv: npm:@expo-google-fonts/source-serif-pro."
+
+[U-e2e06f8f53d2]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "fredoka"
+key = "npm:@expo-google-fonts/fredoka-one"
+ruling = "A family's name or package: package row to fredoka"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: Fredoka One is Fredoka's old name (owner ruling fredoka_one, 2026-09-28). Row in data/aliases.csv: npm:@expo-google-fonts/fredoka-one."
+
+[U-b9de6781828e]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "big-shoulders-display"
+key = "npm:@expo-google-fonts/big-shoulders-display"
+ruling = "A family's name or package: package row to big-shoulders-display"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: exact name of the universe family Big Shoulders Display. Row in data/aliases.csv: npm:@expo-google-fonts/big-shoulders-display."
+
+[U-12297a11a6ae]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "liberation-sans"
+key = "deb-pkg:fonts-liberation-sans-narrow"
+ruling = "A family's name or package: package row to liberation-sans"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: ships LiberationSansNarrow-*: a width in Liberation Sans's own files (A_structure). Row in data/aliases.csv: deb-pkg:fonts-liberation-sans-narrow."
+
+[U-07a2ed903ca2]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "aurulent-sans-mono"
+key = "arch-pkg:otf-aurulent-nerd"
+ruling = "A family's name or package: build row to aurulent-sans-mono (nerd)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: ships AurulentSansMono Nerd Font files only. Row in data/aliases.csv: arch-pkg:otf-aurulent-nerd."
+
+[U-59a631f6a4b1]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "source-han-sans"
+key = "arch-pkg:adobe-source-han-sans-otc-fonts"
+ruling = "A family's name or package: package row to source-han-sans"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: ships SourceHanSans.ttc only. Row in data/aliases.csv: arch-pkg:adobe-source-han-sans-otc-fonts."
+
+[U-c33338d5f404]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "source-han-sans-k"
+key = "arch-pkg:adobe-source-han-sans-kr-fonts"
+ruling = "A family's name or package: package row to source-han-sans-k"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: ships SourceHanSansK-* only. Row in data/aliases.csv: arch-pkg:adobe-source-han-sans-kr-fonts."
+
+[U-40aa6ca28d48]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "source-han-sans"
+key = "arch-pkg:adobe-source-han-sans-tw-fonts"
+ruling = "A family's name or package: build row to source-han-sans (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: ships SourceHanSansTW-*: a region build of Source Han Sans (D7). Row in data/aliases.csv: arch-pkg:adobe-source-han-sans-tw-fonts."
+
+[U-e952f6725182]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "source-han-sans"
+key = "arch-pkg:adobe-source-han-sans-hk-fonts"
+ruling = "A family's name or package: build row to source-han-sans (cjk)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: ships SourceHanSansHK-*: a region build of Source Han Sans (D7). Row in data/aliases.csv: arch-pkg:adobe-source-han-sans-hk-fonts."
+
+[U-f5d0b8bd22fd]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "ipa-fonts"
+key = "deb-pkg:fonts-ipafont-gothic"
+ruling = "A family's name or package: package row to ipa-fonts"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: ships IPAGothic and IPAPGothic, part of the IPA Fonts family. Row in data/aliases.csv: deb-pkg:fonts-ipafont-gothic."
+
+[U-c54a57267b6f]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "ipa-fonts"
+key = "deb-pkg:fonts-ipafont-mincho"
+ruling = "A family's name or package: package row to ipa-fonts"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: ships IPAMincho and IPAPMincho, part of the IPA Fonts family. Row in data/aliases.csv: deb-pkg:fonts-ipafont-mincho."
+
+[U-a0b5136c6c02]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "ipaex-fonts"
+key = "deb-pkg:fonts-ipaexfont-gothic"
+ruling = "A family's name or package: package row to ipaex-fonts"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: ships IPAexGothic, part of the IPAex Fonts family. Row in data/aliases.csv: deb-pkg:fonts-ipaexfont-gothic."
+
+[U-096bfa19929b]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "ipaex-fonts"
+key = "deb-pkg:fonts-ipaexfont-mincho"
+ruling = "A family's name or package: package row to ipaex-fonts"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: ships IPAexMincho, part of the IPAex Fonts family. Row in data/aliases.csv: deb-pkg:fonts-ipaexfont-mincho."
+
+[U-8b5169a91f86]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "gentium-plus"
+key = "deb-pkg:fonts-sil-gentiumplus-compact"
+ruling = "A family's name or package: build row to gentium-plus"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: ships GentiumPlusCompact-*: SIL's tighter-spaced build of Gentium Plus. Row in data/aliases.csv: deb-pkg:fonts-sil-gentiumplus-compact."
+
+[U-1d43e16b3749]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "charis-sil"
+key = "deb-pkg:fonts-sil-charis"
+ruling = "A family's name or package: package row to charis-sil"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: ships CharisSIL-* only. Row in data/aliases.csv: deb-pkg:fonts-sil-charis."
+
+[U-614522be4e6a]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "crimson-text"
+key = "arch-pkg:ttf-crimson"
+ruling = "A family's name or package: package row to crimson-text"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: ships Crimson-*: Crimson Text under its original name. Row in data/aliases.csv: arch-pkg:ttf-crimson."
+
+[U-d1fb7ae05f66]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "terminus"
+key = "arch-pkg:terminus-font"
+ruling = "A family's name or package: package row to terminus"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: ships the Terminus bitmap fonts (ter-*.pcf) only. Row in data/aliases.csv: arch-pkg:terminus-font."
+
+[U-4cbde2e65d5d]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "terminus"
+key = "deb-pkg:xfonts-terminus"
+ruling = "A family's name or package: package row to terminus"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: ships the Terminus bitmap fonts (ter-*.pcf) only. Row in data/aliases.csv: deb-pkg:xfonts-terminus."
+
+[U-d25427737a75]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "terminus"
+key = "deb-pkg:fonts-terminus-otb"
+ruling = "A family's name or package: package row to terminus"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: ships the Terminus bitmap fonts (ter-*.otb) only. Row in data/aliases.csv: deb-pkg:fonts-terminus-otb."
+
+[U-b671914ed24c]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "ia-writer-duo"
+key = "arch-pkg:ttf-iawriter-nerd"
+ruling = "A family's name or package: bundle row to ia-writer-duo (3)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the gate A and U rules: ships the Nerd Fonts iA Writer folder (iMWritingDuo, Mono, Quat), as font-im-writing-nerd-font (A_cleanup bundle). Row in data/aliases.csv: arch-pkg:ttf-iawriter-nerd."
+
+[A_U_queues]
+choice = "b"
+recommended = false
+value = "claude_settles_mechanical"
+ruling = "Claude settles the mechanical keys of the gate U queue and records them as Claude's rulings (by = \"claude\", hand rows reviewed_by claude:2026-09-28), citing this delegation: exact name or package-name matches to one family, clear build, rename and package rows that the approved gate A rules already decide, keys of excluded or ineligible fonts (icon, CJK, proprietary) as ineligible rows, and keys the owner's earlier answers already decide. Every key with any doubt stays open and goes to the owner, grouped. The same ruling covers gate A (../aliases/2026-09-28.toml)."
+reason = "The owner's choice, not Claude's recommendation: Claude had recommended asking about 20 grouped questions covering the whole queue."
+
+[U-8c89cb83c0c3]
+choice = "a"
+recommended = true
+family_id = "wix-madefor-text"
+key = "almanac-name:madefor-text"
+recommendation = "a"
+relation = "build"
+ruling = "A family's name or package: build row to wix-madefor-text"
+reason = "name_rules: Wix's own web-font name for Wix Madefor. Row in data/aliases.csv: font-name:madefor-text."
+
+[U-facca3c2d9ed]
+choice = "a"
+recommended = true
+family_id = "wix-madefor-display"
+key = "almanac-name:madefor-display"
+recommendation = "a"
+relation = "build"
+ruling = "A family's name or package: build row to wix-madefor-display"
+reason = "name_rules: Wix's own web-font name for Wix Madefor. Row in data/aliases.csv: font-name:madefor-display."
+
+[U-718ce65f39cc]
+choice = "a"
+recommended = true
+family_id = "wix-madefor-text"
+key = "almanac-name:wixmadefortextapp"
+recommendation = "a"
+relation = "build"
+ruling = "A family's name or package: build row to wix-madefor-text"
+reason = "name_rules: Wix's own web-font name for Wix Madefor. Row in data/aliases.csv: font-name:wixmadefortextapp."
+
+[U-54c98ad70517]
+choice = "a"
+recommended = true
+family_id = "wix-madefor-display"
+key = "almanac-name:wixmadefordisplayapp"
+recommendation = "a"
+relation = "build"
+ruling = "A family's name or package: build row to wix-madefor-display"
+reason = "name_rules: Wix's own web-font name for Wix Madefor. Row in data/aliases.csv: font-name:wixmadefordisplayapp."
+
+[U-04fff4027322]
+choice = "a"
+recommended = true
+family_id = "google-sans"
+key = "almanac-name:Google Sans Text"
+recommendation = "a"
+relation = "build"
+ruling = "A family's name or package: build row to google-sans (opsz)"
+reason = "name_rules: Google Sans Text is the text optical size of Google Sans. Row in data/aliases.csv: font-name:Google Sans Text."
+
+[U-b31377a09aa1]
+choice = "b"
+recommended = true
+ineligible_reason = "cjk"
+key = "gh-asset:subframe7536/maple-font/cn-base-static.zip"
+recommendation = "b"
+ruling = "Not a font we list: ineligible row (cjk)"
+reason = "name_rules: Maple Mono's CN base build is its CJK build (cn-base-static.zip). Row in data/aliases.csv: gh-asset:subframe7536/maple-font/cn-base-static.zip."
+
+[U-6f98200ce44a]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "arch-pkg:font-manager"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: arch-pkg:font-manager."
+
+[U-d4aaf9b8b480]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "arch-pkg:gnome-font-viewer"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: arch-pkg:gnome-font-viewer."
+
+[U-58fac36bf73b]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "arch-pkg:lib32-sdl2_ttf"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: arch-pkg:lib32-sdl2_ttf."
+
+[U-66425f16b6ed]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "arch-pkg:lib32-sdl_ttf"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: arch-pkg:lib32-sdl_ttf."
+
+[U-cffb5531e6a6]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "arch-pkg:perl-font-ttf"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: arch-pkg:perl-font-ttf."
+
+[U-5796eee62e6d]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "arch-pkg:sdl2_ttf"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: arch-pkg:sdl2_ttf."
+
+[U-2aa5b7973a4e]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "arch-pkg:sdl3_ttf"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: arch-pkg:sdl3_ttf."
+
+[U-ac31c20a8761]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "arch-pkg:sdl_ttf"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: arch-pkg:sdl_ttf."
+
+[U-f06c5eca6f0e]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "unlisted"
+key = "arch-pkg:ttf-eurof"
+ruling = "Not a font we list: ineligible row (unlisted)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a Latin font that no catalog source lists (the GFS Greek fonts, the ADF fonts, osifont, Dustin's and sjfonts, Eurofurence, HomeInfo, Aspekta). Row in data/aliases.csv: arch-pkg:ttf-eurof."
+
+[U-61d7eb82fd78]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "unlisted"
+key = "arch-pkg:ttf-homeinfo"
+ruling = "Not a font we list: ineligible row (unlisted)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a Latin font that no catalog source lists (the GFS Greek fonts, the ADF fonts, osifont, Dustin's and sjfonts, Eurofurence, HomeInfo, Aspekta). Row in data/aliases.csv: arch-pkg:ttf-homeinfo."
+
+[U-33d3b9796200]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "arch-pkg:ttf-indic-otf"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: arch-pkg:ttf-indic-otf."
+
+[U-bce3eedd01b6]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "arch-pkg:ttf-khmer"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: arch-pkg:ttf-khmer."
+
+[U-477f2914aba3]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "arch-pkg:ttf-tibetan-machine"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: arch-pkg:ttf-tibetan-machine."
+
+[U-837127d75a30]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "arch-pkg:woff2"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: arch-pkg:woff2."
+
+[U-d677e0a8c4e3]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "arch-pkg:xorg-font-util"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: arch-pkg:xorg-font-util."
+
+[U-3ad516cadf23]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "arch-pkg:xorg-font-utils"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: arch-pkg:xorg-font-utils."
+
+[U-ead8ee51791f]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "arch-pkg:xorg-fonts-alias-100dpi"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: arch-pkg:xorg-fonts-alias-100dpi."
+
+[U-6aa470e9d036]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "arch-pkg:xorg-fonts-alias-75dpi"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: arch-pkg:xorg-fonts-alias-75dpi."
+
+[U-2fa75c95abd8]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "arch-pkg:xorg-fonts-alias-cyrillic"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: arch-pkg:xorg-fonts-alias-cyrillic."
+
+[U-56396206404f]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "arch-pkg:xorg-fonts-alias-misc"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: arch-pkg:xorg-fonts-alias-misc."
+
+[U-ffde36b813a8]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "arch-pkg:xorg-fonts-encodings"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: arch-pkg:xorg-fonts-encodings."
+
+[U-211aff3954e2]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "deb-pkg:font-manager"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: deb-pkg:font-manager."
+
+[U-c4b64031bc8e]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "deb-pkg:font-manager-common"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: deb-pkg:font-manager-common."
+
+[U-d3dbf3f97e8d]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "deb-pkg:font-viewer"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: deb-pkg:font-viewer."
+
+[U-549e52e7a539]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "unlisted"
+key = "deb-pkg:fonts-adf-accanthis"
+ruling = "Not a font we list: ineligible row (unlisted)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a Latin font that no catalog source lists (the GFS Greek fonts, the ADF fonts, osifont, Dustin's and sjfonts, Eurofurence, HomeInfo, Aspekta). Row in data/aliases.csv: deb-pkg:fonts-adf-accanthis."
+
+[U-9382782ceaf1]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "unlisted"
+key = "deb-pkg:fonts-adf-berenis"
+ruling = "Not a font we list: ineligible row (unlisted)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a Latin font that no catalog source lists (the GFS Greek fonts, the ADF fonts, osifont, Dustin's and sjfonts, Eurofurence, HomeInfo, Aspekta). Row in data/aliases.csv: deb-pkg:fonts-adf-berenis."
+
+[U-9d577b8e2291]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "unlisted"
+key = "deb-pkg:fonts-adf-gillius"
+ruling = "Not a font we list: ineligible row (unlisted)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a Latin font that no catalog source lists (the GFS Greek fonts, the ADF fonts, osifont, Dustin's and sjfonts, Eurofurence, HomeInfo, Aspekta). Row in data/aliases.csv: deb-pkg:fonts-adf-gillius."
+
+[U-8bb1b08e5ca6]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "unlisted"
+key = "deb-pkg:fonts-adf-universalis"
+ruling = "Not a font we list: ineligible row (unlisted)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a Latin font that no catalog source lists (the GFS Greek fonts, the ADF fonts, osifont, Dustin's and sjfonts, Eurofurence, HomeInfo, Aspekta). Row in data/aliases.csv: deb-pkg:fonts-adf-universalis."
+
+[U-2b06d51e909c]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-beng"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-beng."
+
+[U-0c22d5397c16]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-beng-extra"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-beng-extra."
+
+[U-f34add5dd688]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-deva"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-deva."
+
+[U-652d44578cf3]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-deva-extra"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-deva-extra."
+
+[U-3b5876ae0f83]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "unlisted"
+key = "deb-pkg:fonts-dustin"
+ruling = "Not a font we list: ineligible row (unlisted)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a Latin font that no catalog source lists (the GFS Greek fonts, the ADF fonts, osifont, Dustin's and sjfonts, Eurofurence, HomeInfo, Aspekta). Row in data/aliases.csv: deb-pkg:fonts-dustin."
+
+[U-7aad269c47b8]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-gargi"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-gargi."
+
+[U-2d83410d8ae8]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "unlisted"
+key = "deb-pkg:fonts-gfs-artemisia"
+ruling = "Not a font we list: ineligible row (unlisted)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a Latin font that no catalog source lists (the GFS Greek fonts, the ADF fonts, osifont, Dustin's and sjfonts, Eurofurence, HomeInfo, Aspekta). Row in data/aliases.csv: deb-pkg:fonts-gfs-artemisia."
+
+[U-95f4c3b3a3ed]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "unlisted"
+key = "deb-pkg:fonts-gfs-baskerville"
+ruling = "Not a font we list: ineligible row (unlisted)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a Latin font that no catalog source lists (the GFS Greek fonts, the ADF fonts, osifont, Dustin's and sjfonts, Eurofurence, HomeInfo, Aspekta). Row in data/aliases.csv: deb-pkg:fonts-gfs-baskerville."
+
+[U-e37601ce7c45]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "unlisted"
+key = "deb-pkg:fonts-gfs-bodoni-classic"
+ruling = "Not a font we list: ineligible row (unlisted)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a Latin font that no catalog source lists (the GFS Greek fonts, the ADF fonts, osifont, Dustin's and sjfonts, Eurofurence, HomeInfo, Aspekta). Row in data/aliases.csv: deb-pkg:fonts-gfs-bodoni-classic."
+
+[U-89c193861a35]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "unlisted"
+key = "deb-pkg:fonts-gfs-complutum"
+ruling = "Not a font we list: ineligible row (unlisted)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a Latin font that no catalog source lists (the GFS Greek fonts, the ADF fonts, osifont, Dustin's and sjfonts, Eurofurence, HomeInfo, Aspekta). Row in data/aliases.csv: deb-pkg:fonts-gfs-complutum."
+
+[U-31ef55bd558c]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "unlisted"
+key = "deb-pkg:fonts-gfs-didot-classic"
+ruling = "Not a font we list: ineligible row (unlisted)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a Latin font that no catalog source lists (the GFS Greek fonts, the ADF fonts, osifont, Dustin's and sjfonts, Eurofurence, HomeInfo, Aspekta). Row in data/aliases.csv: deb-pkg:fonts-gfs-didot-classic."
+
+[U-a7266db35218]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "unlisted"
+key = "deb-pkg:fonts-gfs-gazis"
+ruling = "Not a font we list: ineligible row (unlisted)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a Latin font that no catalog source lists (the GFS Greek fonts, the ADF fonts, osifont, Dustin's and sjfonts, Eurofurence, HomeInfo, Aspekta). Row in data/aliases.csv: deb-pkg:fonts-gfs-gazis."
+
+[U-167c05443c00]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "unlisted"
+key = "deb-pkg:fonts-gfs-olga"
+ruling = "Not a font we list: ineligible row (unlisted)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a Latin font that no catalog source lists (the GFS Greek fonts, the ADF fonts, osifont, Dustin's and sjfonts, Eurofurence, HomeInfo, Aspekta). Row in data/aliases.csv: deb-pkg:fonts-gfs-olga."
+
+[U-33165e6c7f5c]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "unlisted"
+key = "deb-pkg:fonts-gfs-porson"
+ruling = "Not a font we list: ineligible row (unlisted)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a Latin font that no catalog source lists (the GFS Greek fonts, the ADF fonts, osifont, Dustin's and sjfonts, Eurofurence, HomeInfo, Aspekta). Row in data/aliases.csv: deb-pkg:fonts-gfs-porson."
+
+[U-19efef6e9562]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "unlisted"
+key = "deb-pkg:fonts-gfs-solomos"
+ruling = "Not a font we list: ineligible row (unlisted)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a Latin font that no catalog source lists (the GFS Greek fonts, the ADF fonts, osifont, Dustin's and sjfonts, Eurofurence, HomeInfo, Aspekta). Row in data/aliases.csv: deb-pkg:fonts-gfs-solomos."
+
+[U-eacec2837b6c]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "unlisted"
+key = "deb-pkg:fonts-gfs-theokritos"
+ruling = "Not a font we list: ineligible row (unlisted)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a Latin font that no catalog source lists (the GFS Greek fonts, the ADF fonts, osifont, Dustin's and sjfonts, Eurofurence, HomeInfo, Aspekta). Row in data/aliases.csv: deb-pkg:fonts-gfs-theokritos."
+
+[U-7c26e19fb645]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-gujr"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-gujr."
+
+[U-c9109c9da626]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-gujr-extra"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-gujr-extra."
+
+[U-a5e9ea00129a]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-guru"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-guru."
+
+[U-a4cbf3db177a]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-guru-extra"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-guru-extra."
+
+[U-ec145203552a]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-kalapi"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-kalapi."
+
+[U-fbc2d464c288]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-lohit-beng-assamese"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-lohit-beng-assamese."
+
+[U-f54ddff503e8]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-lohit-deva"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-lohit-deva."
+
+[U-f71704d429d8]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-lohit-gujr"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-lohit-gujr."
+
+[U-e6a7389fdba1]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-lohit-guru"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-lohit-guru."
+
+[U-3ef2f0bb911e]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-lohit-knda"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-lohit-knda."
+
+[U-9419e53bc491]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-lohit-taml-classical"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-lohit-taml-classical."
+
+[U-54e6e2641122]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-lohit-telu"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-lohit-telu."
+
+[U-f0634408e265]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-nakula"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-nakula."
+
+[U-702079aa2e4b]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-noto-ui-core"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-noto-ui-core."
+
+[U-53fb36ab3f07]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-noto-ui-extra"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-noto-ui-extra."
+
+[U-4f7d8f10dae3]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "unlisted"
+key = "deb-pkg:fonts-osifont"
+ruling = "Not a font we list: ineligible row (unlisted)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a Latin font that no catalog source lists (the GFS Greek fonts, the ADF fonts, osifont, Dustin's and sjfonts, Eurofurence, HomeInfo, Aspekta). Row in data/aliases.csv: deb-pkg:fonts-osifont."
+
+[U-292369df6cab]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-sahadeva"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-sahadeva."
+
+[U-6c57f5bd9474]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-samyak-deva"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-samyak-deva."
+
+[U-7fbba6dc2ec3]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-samyak-gujr"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-samyak-gujr."
+
+[U-6bbb572d15f9]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-samyak-taml"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-samyak-taml."
+
+[U-bf59bf3dac94]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-sarai"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-sarai."
+
+[U-6bb769b89668]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "unlisted"
+key = "deb-pkg:fonts-sjfonts"
+ruling = "Not a font we list: ineligible row (unlisted)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a Latin font that no catalog source lists (the GFS Greek fonts, the ADF fonts, osifont, Dustin's and sjfonts, Eurofurence, HomeInfo, Aspekta). Row in data/aliases.csv: deb-pkg:fonts-sjfonts."
+
+[U-4f4df77616d9]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-taml"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-taml."
+
+[U-25ee47c2373c]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-telu"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-telu."
+
+[U-933ab41b891e]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-telu-extra"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-telu-extra."
+
+[U-738e9145370b]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-teluguvijayam"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-teluguvijayam."
+
+[U-9de99ea7fcb2]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-garuda"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-garuda."
+
+[U-1870e6de5fea]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-garuda-otf"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-garuda-otf."
+
+[U-0cf8d02bcf2d]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-kinnari"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-kinnari."
+
+[U-5477c6295deb]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-kinnari-otf"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-kinnari-otf."
+
+[U-bb0ecbc905c7]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-laksaman"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-laksaman."
+
+[U-9225d83e6aa1]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-laksaman-otf"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-laksaman-otf."
+
+[U-6e24b8fa52cc]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-loma"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-loma."
+
+[U-981035ec7777]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-loma-otf"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-loma-otf."
+
+[U-86afef040e44]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-mono"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-mono."
+
+[U-26985f75ccab]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-mono-otf"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-mono-otf."
+
+[U-fa2b5db0209d]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-norasi"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-norasi."
+
+[U-f70ca8c5bd48]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-norasi-otf"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-norasi-otf."
+
+[U-25ae014d9aea]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-purisa"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-purisa."
+
+[U-35178c617f61]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-purisa-otf"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-purisa-otf."
+
+[U-806ba301afea]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-purisa-ttf"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-purisa-ttf."
+
+[U-e0e17a47bfae]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-sawasdee"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-sawasdee."
+
+[U-71f04493ca82]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-sawasdee-otf"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-sawasdee-otf."
+
+[U-28db7b0b6691]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-sawasdee-ttf"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-sawasdee-ttf."
+
+[U-ba49d663d7c5]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-typewriter"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-typewriter."
+
+[U-ba45a0cbbba4]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-typewriter-otf"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-typewriter-otf."
+
+[U-917992bd8afa]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-typist"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-typist."
+
+[U-b2c6d170153e]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-typist-otf"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-typist-otf."
+
+[U-3e406c42866a]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-typo"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-typo."
+
+[U-b2bb667d04c2]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-typo-otf"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-typo-otf."
+
+[U-f33197fc0724]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-umpush"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-umpush."
+
+[U-02330f0997bc]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-umpush-otf"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-umpush-otf."
+
+[U-af846b0c8a66]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-waree"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-waree."
+
+[U-e61f2024f92a]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-waree-otf"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-waree-otf."
+
+[U-415ade4cacaf]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "non_latin"
+key = "deb-pkg:fonts-tlwg-waree-ttf"
+ruling = "Not a font we list: ineligible row (non_latin)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a font for another script (Thai, Indic, Khmer, Tibetan, or Noto's non-Latin UI families). Row in data/aliases.csv: deb-pkg:fonts-tlwg-waree-ttf."
+
+[U-654af096df8d]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "deb-pkg:toilet-fonts"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: deb-pkg:toilet-fonts."
+
+[U-d67be30c4700]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "deb-pkg:xfonts-encodings"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: deb-pkg:xfonts-encodings."
+
+[U-b6f8a2d898ea]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "deb-pkg:xfonts-utils"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a program, library or other package that holds no typeface (font tools, viewers, SDL_ttf, encoding and alias files, FIGlet fonts). Row in data/aliases.csv: deb-pkg:xfonts-utils."
+
+[U-a36dda9a777a]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "unlisted"
+key = "fot-name:Aspekta"
+ruling = "Not a font we list: ineligible row (unlisted)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28 (the 103 keys get the new reasons): a Latin font that no catalog source lists (the GFS Greek fonts, the ADF fonts, osifont, Dustin's and sjfonts, Eurofurence, HomeInfo, Aspekta). Row in data/aliases.csv: fot-name:Aspekta."
+
+[U-932c3571c1ea]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["monoid", "monoisome"]
+key = "arch-pkg:ttf-monoid"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to monoid, monoisome"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Monoid and Monoisome (2 families shipped); https://archlinux.org/packages/extra/any/ttf-monoid/files/. Rows in data/aliases.csv: arch-pkg:ttf-monoid."
+
+[U-0485f889abad]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["eb-garamond", "eb-garamond-12-all-sc", "eb-garamond-sc"]
+key = "deb-pkg:fonts-ebgaramond-extra"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to eb-garamond, eb-garamond-12-all-sc, eb-garamond-sc"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: EB Garamond, EB Garamond SC and EB Garamond 12 All SC (OTF, TTF and WOFF) (3 families shipped); https://packages.debian.org/sid/all/fonts-ebgaramond-extra/filelist. Rows in data/aliases.csv: deb-pkg:fonts-ebgaramond-extra."
+
+[U-4321852ebb85]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["amiri", "amiri-quran"]
+key = "deb-pkg:fonts-hosny-amiri"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to amiri, amiri-quran"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Amiri and Amiri Quran (2 families shipped); https://packages.debian.org/sid/all/fonts-hosny-amiri/filelist. Rows in data/aliases.csv: deb-pkg:fonts-hosny-amiri."
+
+[U-d296602c9302]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["cabin", "cabin-condensed"]
+key = "deb-pkg:fonts-cabin"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to cabin, cabin-condensed"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Cabin and Cabin Condensed (2 families shipped); https://packages.debian.org/sid/all/fonts-cabin/filelist. Rows in data/aliases.csv: deb-pkg:fonts-cabin."
+
+[U-59af92fbd358]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["cascadia-code", "cascadia-mono"]
+key = "arch-pkg:ttf-cascadia-code"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to cascadia-code, cascadia-mono"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Cascadia Code and Cascadia Mono (the PL files are their Powerline builds) (2 families shipped); https://archlinux.org/packages/extra/any/ttf-cascadia-code/files/. Rows in data/aliases.csv: arch-pkg:ttf-cascadia-code."
+
+[U-c2c48edf8d36]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["cascadia-code", "cascadia-mono"]
+key = "arch-pkg:otf-cascadia-code"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to cascadia-code, cascadia-mono"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Cascadia Code and Cascadia Mono (the PL files are their Powerline builds) (2 families shipped); https://archlinux.org/packages/extra/any/otf-cascadia-code/files/. Rows in data/aliases.csv: arch-pkg:otf-cascadia-code."
+
+[U-c55d3452348c]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["cormorant", "cormorant-garamond", "cormorant-infant", "cormorant-sc", "cormorant-unicase", "cormorant-upright"]
+key = "arch-pkg:ttf-cormorant"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to cormorant, cormorant-garamond, cormorant-infant, cormorant-sc, cormorant-unicase, cormorant-upright"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: the six Cormorant families (6 families shipped); https://archlinux.org/packages/extra/any/ttf-cormorant/files/. Rows in data/aliases.csv: arch-pkg:ttf-cormorant."
+
+[U-620e19c08741]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["overpass", "overpass-mono"]
+key = "arch-pkg:otf-overpass"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to overpass, overpass-mono"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Overpass and Overpass Mono (2 families shipped); https://archlinux.org/packages/extra/any/otf-overpass/files/. Rows in data/aliases.csv: arch-pkg:otf-overpass."
+
+[U-0610192c26c2]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["go", "go-mono"]
+key = "deb-pkg:fonts-go"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to go, go-mono"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Go, Go Mono and Go Smallcaps (not a universe family) (3 families shipped); https://packages.debian.org/sid/all/fonts-go/filelist. Rows in data/aliases.csv: deb-pkg:fonts-go."
+
+[U-cc9c3e359079]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["c059", "d050000l", "nimbus-mono-ps", "nimbus-roman", "nimbus-sans", "nimbus-sans-narrow", "p052", "standard-symbols-ps", "urw-bookman", "urw-gothic", "z003"]
+key = "deb-pkg:fonts-urw-base35"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to c059, d050000l, nimbus-mono-ps, nimbus-roman, nimbus-sans, nimbus-sans-narrow, p052, standard-symbols-ps, urw-bookman, urw-gothic, z003"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: the 11 URW base 35 families (11 families shipped); https://packages.debian.org/sid/all/fonts-urw-base35/filelist. Rows in data/aliases.csv: deb-pkg:fonts-urw-base35."
+
+[U-f8d77bb0e57c]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["liberation-mono", "liberation-sans", "liberation-serif"]
+key = "arch-pkg:ttf-liberation-mono-nerd"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to liberation-mono, liberation-sans, liberation-serif"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Nerd Fonts' Liberation folder: Literation Mono, Sans and Serif Nerd Font, the Nerd builds of Liberation Mono, Sans and Serif (3 families shipped); https://archlinux.org/packages/extra/any/ttf-liberation-mono-nerd/files/. Rows in data/aliases.csv: arch-pkg:ttf-liberation-mono-nerd."
+
+[U-999c06360c93]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["padauk", "padauk-book"]
+key = "deb-pkg:fonts-sil-padauk"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to padauk, padauk-book"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Padauk and Padauk Book (2 families shipped); https://packages.debian.org/sid/all/fonts-sil-padauk/filelist. Rows in data/aliases.csv: deb-pkg:fonts-sil-padauk."
+
+[U-7d2d2d482df0]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["adwaita-mono", "adwaita-sans"]
+key = "arch-pkg:adwaita-fonts"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to adwaita-mono, adwaita-sans"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Adwaita Sans and Adwaita Mono (2 families shipped); https://archlinux.org/packages/extra/any/adwaita-fonts/files/. Rows in data/aliases.csv: arch-pkg:adwaita-fonts."
+
+[U-ee9dcb46c5d8]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["ubuntu", "ubuntu-condensed", "ubuntu-mono"]
+key = "arch-pkg:ttf-ubuntu-font-family"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to ubuntu, ubuntu-condensed, ubuntu-mono"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Ubuntu, Ubuntu Condensed (Ubuntu-C) and Ubuntu Mono (3 families shipped); https://archlinux.org/packages/extra/any/ttf-ubuntu-font-family/files/. Rows in data/aliases.csv: arch-pkg:ttf-ubuntu-font-family."
+
+[U-1e908c917ae6]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["bitstream-vera-sans-mono"]
+key = "deb-pkg:ttf-bitstream-vera"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to bitstream-vera-sans-mono"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Bitstream Vera Sans, Sans Mono and Serif; only Sans Mono is a universe family (the umbrella Bitstream Vera became a bundle of its members, umbrella_casks) (3 families shipped); https://packages.debian.org/sid/all/ttf-bitstream-vera/filelist. Rows in data/aliases.csv: deb-pkg:ttf-bitstream-vera."
+
+[U-b4bb1774dd41]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["bitstream-vera-sans-mono"]
+key = "arch-pkg:ttf-bitstream-vera"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to bitstream-vera-sans-mono"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Bitstream Vera Sans, Sans Mono and Serif; only Sans Mono is a universe family (the umbrella Bitstream Vera became a bundle of its members, umbrella_casks) (3 families shipped); https://archlinux.org/packages/extra/any/ttf-bitstream-vera/files/. Rows in data/aliases.csv: arch-pkg:ttf-bitstream-vera."
+
+[U-865ff130a46f]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["latin-modern", "latin-modern-math"]
+key = "deb-pkg:fonts-lmodern"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to latin-modern, latin-modern-math"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Latin Modern (one family, A_structure) and Latin Modern Math (latinmodern-math.otf) (2 families shipped); https://packages.debian.org/sid/all/fonts-lmodern/filelist. Rows in data/aliases.csv: deb-pkg:fonts-lmodern."
+
+[U-89b03649d438]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["liberation-mono", "liberation-sans", "liberation-serif"]
+key = "deb-pkg:fonts-liberation"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to liberation-mono, liberation-sans, liberation-serif"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Liberation Mono, Sans and Serif (3 families shipped); https://packages.debian.org/sid/all/fonts-liberation/filelist. Rows in data/aliases.csv: deb-pkg:fonts-liberation."
+
+[U-905e1aebaf2c]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["liberation-mono", "liberation-sans", "liberation-serif"]
+key = "deb-pkg:fonts-liberation2"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to liberation-mono, liberation-sans, liberation-serif"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Liberation Mono, Sans and Serif (bookworm) (3 families shipped); https://packages.debian.org/bookworm/all/fonts-liberation2/filelist. Rows in data/aliases.csv: deb-pkg:fonts-liberation2."
+
+[U-49151ebedc8f]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["liberation-mono", "liberation-sans", "liberation-serif"]
+key = "arch-pkg:ttf-liberation"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to liberation-mono, liberation-sans, liberation-serif"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Liberation Mono, Sans and Serif (3 families shipped); https://archlinux.org/packages/extra/any/ttf-liberation/files/. Rows in data/aliases.csv: arch-pkg:ttf-liberation."
+
+[U-fb090646d960]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["linux-biolinum", "linux-libertine"]
+key = "deb-pkg:fonts-linuxlibertine"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to linux-biolinum, linux-libertine"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Linux Libertine (with its Display and Mono) and Linux Biolinum (with its Keyboard) (5 families shipped); https://packages.debian.org/sid/all/fonts-linuxlibertine/filelist. Rows in data/aliases.csv: deb-pkg:fonts-linuxlibertine."
+
+[U-9e82b3cae20d]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["linux-biolinum", "linux-libertine"]
+key = "arch-pkg:ttf-linux-libertine"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to linux-biolinum, linux-libertine"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Linux Libertine (with its Display and Mono) and Linux Biolinum (with its Keyboard) (5 families shipped); https://archlinux.org/packages/extra/any/ttf-linux-libertine/files/. Rows in data/aliases.csv: arch-pkg:ttf-linux-libertine."
+
+[U-3b01fca93344]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["linux-biolinum", "linux-libertine"]
+key = "arch-pkg:ttf-linux-libertine-g"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to linux-biolinum, linux-libertine"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: the Graphite builds of Linux Libertine (with its Display) and Linux Biolinum (3 families shipped); https://archlinux.org/packages/extra/any/ttf-linux-libertine-g/files/. Rows in data/aliases.csv: arch-pkg:ttf-linux-libertine-g."
+
+[U-2fad5c13020f]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["gentium-book-plus", "gentium-plus"]
+key = "deb-pkg:fonts-sil-gentiumplus"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to gentium-book-plus, gentium-plus"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Gentium Plus and Gentium Book Plus (2 families shipped); https://packages.debian.org/sid/all/fonts-sil-gentiumplus/filelist. Rows in data/aliases.csv: deb-pkg:fonts-sil-gentiumplus."
+
+[U-800103f146fc]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["stix-two-math", "stix-two-text"]
+key = "deb-pkg:fonts-stix"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to stix-two-math, stix-two-text"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: STIX Two Text and STIX Two Math (2 families shipped); https://packages.debian.org/sid/all/fonts-stix/filelist. Rows in data/aliases.csv: deb-pkg:fonts-stix."
+
+[U-919be940be74]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["gentium-basic", "gentium-book-basic"]
+key = "deb-pkg:fonts-sil-gentium-basic"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to gentium-basic, gentium-book-basic"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Gentium Basic (GenBas*) and Gentium Book Basic (GenBkBas*) (2 families shipped); https://packages.debian.org/sid/all/fonts-sil-gentium-basic/filelist. Rows in data/aliases.csv: deb-pkg:fonts-sil-gentium-basic."
+
+[U-1c78ad6ce204]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["tex-gyre-adventor", "tex-gyre-bonum", "tex-gyre-chorus", "tex-gyre-cursor", "tex-gyre-heros", "tex-gyre-heros-cn", "tex-gyre-pagella", "tex-gyre-schola", "tex-gyre-termes"]
+key = "deb-pkg:fonts-texgyre"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to tex-gyre-adventor, tex-gyre-bonum, tex-gyre-chorus, tex-gyre-cursor, tex-gyre-heros, tex-gyre-heros-cn, tex-gyre-pagella, tex-gyre-schola, tex-gyre-termes"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: the nine TeX Gyre text families (9 families shipped); https://packages.debian.org/sid/all/fonts-texgyre/filelist. Rows in data/aliases.csv: deb-pkg:fonts-texgyre."
+
+[U-5d5bb09b9e98]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["tex-gyre-adventor", "tex-gyre-bonum", "tex-gyre-chorus", "tex-gyre-cursor", "tex-gyre-heros", "tex-gyre-heros-cn", "tex-gyre-pagella", "tex-gyre-schola", "tex-gyre-termes"]
+key = "arch-pkg:tex-gyre-fonts"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to tex-gyre-adventor, tex-gyre-bonum, tex-gyre-chorus, tex-gyre-cursor, tex-gyre-heros, tex-gyre-heros-cn, tex-gyre-pagella, tex-gyre-schola, tex-gyre-termes"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: the nine TeX Gyre text families (9 families shipped); https://archlinux.org/packages/extra/any/tex-gyre-fonts/files/. Rows in data/aliases.csv: arch-pkg:tex-gyre-fonts."
+
+[U-268336e654b7]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["arimo", "cousine", "tinos"]
+key = "arch-pkg:ttf-croscore"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to arimo, cousine, tinos"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Arimo, Cousine and Tinos (3 families shipped); https://archlinux.org/packages/extra/any/ttf-croscore/files/. Rows in data/aliases.csv: arch-pkg:ttf-croscore."
+
+[U-d67d5bd6974e]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["arimo", "cousine", "tinos"]
+key = "deb-pkg:fonts-croscore"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to arimo, cousine, tinos"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Arimo, Cousine and Tinos (3 families shipped); https://packages.debian.org/sid/all/fonts-croscore/filelist. Rows in data/aliases.csv: deb-pkg:fonts-croscore."
+
+[U-778f32ca5b47]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["pt-mono", "pt-sans", "pt-sans-caption", "pt-sans-narrow", "pt-serif", "pt-serif-caption"]
+key = "deb-pkg:fonts-paratype"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to pt-mono, pt-sans, pt-sans-caption, pt-sans-narrow, pt-serif, pt-serif-caption"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: PT Sans (PTS), PT Sans Caption (PTC), PT Sans Narrow (PTN), PT Serif (PTF), PT Serif Caption (PTZ) and PT Mono (PTM) (6 families shipped); https://packages.debian.org/sid/all/fonts-paratype/filelist. Rows in data/aliases.csv: deb-pkg:fonts-paratype."
+
+[U-6b8a2e1fdd6e]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["rasa", "yrsa"]
+key = "deb-pkg:fonts-yrsa-rasa"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to rasa, yrsa"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: Yrsa and Rasa (2 families shipped); https://packages.debian.org/sid/all/fonts-yrsa-rasa/filelist. Rows in data/aliases.csv: deb-pkg:fonts-yrsa-rasa."
+
+[U-e907302cc4c0]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["computer-modern"]
+key = "deb-pkg:fonts-lyx"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to computer-modern"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling multi_family_packages of 2026-09-28: LyX's TeX fonts: Computer Modern (cmr10, cmmi10, cmsy10, cmex10) and eight math and symbol fonts no catalog source lists (dsrom10, esint10, eufm10, msam10, msbm10, rsfs10, stmary10, wasy10) (9 families shipped); https://packages.debian.org/sid/all/fonts-lyx/filelist. Rows in data/aliases.csv: deb-pkg:fonts-lyx."
+
+[U-57eae1b8f81f]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["roboto", "roboto-condensed"]
+key = "deb-pkg:fonts-roboto"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to roboto, roboto-condensed"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28: a metapackage that depends on fonts-roboto-unhinted (Roboto and Roboto Condensed) (2 families shipped); https://packages.debian.org/sid/fonts-roboto. Rows in data/aliases.csv: deb-pkg:fonts-roboto."
+
+[U-eeb0aaf90085]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["noto-sans", "noto-sans-display", "noto-sans-mono", "noto-serif", "noto-serif-display"]
+key = "deb-pkg:fonts-noto"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to noto-sans, noto-sans-display, noto-sans-mono, noto-serif, noto-serif-display"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28: a metapackage that depends on fonts-noto-core, which depends on fonts-noto-mono (Latin text families only, as for fonts-noto-core) (191 families shipped); https://packages.debian.org/sid/fonts-noto. Rows in data/aliases.csv: deb-pkg:fonts-noto."
+
+[U-72a2a83b789a]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["noto-sans", "noto-sans-display", "noto-sans-mono", "noto-serif", "noto-serif-display"]
+key = "deb-pkg:fonts-noto-hinted"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to noto-sans, noto-sans-display, noto-sans-mono, noto-serif, noto-serif-display"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28: an obsolete metapackage that depends on fonts-noto-core (and through it fonts-noto-mono) and fonts-noto-ui-core, whose UI families are all non-Latin (209 families shipped); https://packages.debian.org/sid/fonts-noto-hinted. Rows in data/aliases.csv: deb-pkg:fonts-noto-hinted."
+
+[U-8902d05a6236]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["dejavu-math-tex-gyre", "dejavu-sans", "dejavu-sans-mono", "dejavu-serif"]
+key = "deb-pkg:ttf-dejavu"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to dejavu-math-tex-gyre, dejavu-sans, dejavu-sans-mono, dejavu-serif"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28: a transitional package (removed after buster) that depends on fonts-dejavu, ttf-dejavu-core and ttf-dejavu-extra (4 families shipped); https://sources.debian.org/src/fonts-dejavu/2.37-1/debian/control/. Rows in data/aliases.csv: deb-pkg:ttf-dejavu."
+
+[U-d0c711123946]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["dejavu-sans", "dejavu-sans-mono", "dejavu-serif"]
+key = "deb-pkg:ttf-dejavu-core"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to dejavu-sans, dejavu-sans-mono, dejavu-serif"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28: a transitional package (removed after buster) that depends on fonts-dejavu-core (DejaVu Sans, Sans Mono and Serif) (3 families shipped); https://sources.debian.org/src/fonts-dejavu/2.37-1/debian/control/. Rows in data/aliases.csv: deb-pkg:ttf-dejavu-core."
+
+[U-f046e5f0db9e]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["dejavu-math-tex-gyre", "dejavu-sans", "dejavu-sans-mono", "dejavu-serif"]
+key = "deb-pkg:ttf-dejavu-extra"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to dejavu-math-tex-gyre, dejavu-sans, dejavu-sans-mono, dejavu-serif"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28: a transitional package (removed after buster) that depends on fonts-dejavu-extra, which depends on fonts-dejavu-core (4 families shipped); https://sources.debian.org/src/fonts-dejavu/2.37-1/debian/control/. Rows in data/aliases.csv: deb-pkg:ttf-dejavu-extra."
+
+[U-ecf063d18180]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["droid-sans-mono"]
+key = "deb-pkg:fonts-droid"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to droid-sans-mono"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28: the old Droid package (jessie, removed since): Droid*.ttf from fonts-android, 15 families of which only Droid Sans Mono is a universe family, as for arch-pkg:ttf-droid (15 families shipped); https://sources.debian.org/src/fonts-android/1:4.4.4r2-6/debian/fonts-droid.install/. Rows in data/aliases.csv: deb-pkg:fonts-droid."
+
+[U-eb17420f3b32]
+choice = "b"
+recommended = false
+by = "claude"
+ineligible_reason = "not_font"
+key = "deb-pkg:fonts-noto-unhinted"
+ruling = "Not a font we list: ineligible row (not_font)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28: an empty package since bullseye ('currently this package is empty: all Noto families has hinting') with no dependencies, so it pulls in no font; https://sources.debian.org/src/fonts-noto/20201225-2/debian/control/. Row in data/aliases.csv: deb-pkg:fonts-noto-unhinted."
+
+[U-99f797fca16f]
+choice = "a"
+recommended = false
+by = "claude"
+key = "deb-pkg:fonts-ipafont"
+ruling = "A family's name or package: package row (gate A A-c549a6d8e3)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling pkg_rules of 2026-09-28: a metapackage that depends on fonts-ipafont-gothic and fonts-ipafont-mincho (IPA Fonts); https://packages.debian.org/sid/fonts-ipafont. The row comes from the accepted gate A item A-c549a6d8e3."
+
+[U-d015b5d92ef4]
+choice = "a"
+recommended = true
+family_id = "league-spartan"
+key = "npm:@fontsource/spartan"
+recommendation = "a"
+ruling = "A family's name or package: package row to league-spartan (gate A A-d090de5c92)"
+reason = "name_rules: npm:@fontsource/spartan is Google's retired name, and League Spartan is its successor. The row comes from the accepted gate A item A-d090de5c92."
+
+[U-b0038bcce0cf]
+choice = "a"
+recommended = false
+by = "claude"
+key = "deb-pkg:fonts-freefont-ttf"
+ruling = "A family's name or package: package row (gate A A-b8c075c663)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues): GNU FreeFont (FreeMono, FreeSans, FreeSerif), one family (A_structure, 2026-09-26); https://packages.debian.org/sid/all/fonts-freefont-ttf/filelist. The row comes from the accepted gate A item A-b8c075c663."
+
+[U-6780155e4f0e]
+choice = "a"
+recommended = false
+by = "claude"
+key = "deb-pkg:fonts-freefont-otf"
+ruling = "A family's name or package: package row (gate A A-f1ca4dbb11)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues): GNU FreeFont (FreeMono, FreeSans, FreeSerif), one family (A_structure, 2026-09-26); https://packages.debian.org/sid/all/fonts-freefont-otf/filelist. The row comes from the accepted gate A item A-f1ca4dbb11."
+
+[U-7de7c3578818]
+choice = "a"
+recommended = false
+by = "claude"
+key = "arch-pkg:gnu-free-fonts"
+ruling = "A family's name or package: package row (gate A A-ec905664d0)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues): GNU FreeFont (FreeMono, FreeSans, FreeSerif), one family (A_structure, 2026-09-26); https://archlinux.org/packages/extra/any/gnu-free-fonts/files/. The row comes from the accepted gate A item A-ec905664d0."
+
+[U-540e3bc7e8d0]
+choice = "d"
+recommended = true
+key = "deb-pkg:texlive-fonts-recommended"
+recommendation = "d"
+ruling = "Leave it unmatched: no row fits, and it stays in unmatched.md"
+reason = "multi_family_packages: TeX Live's font package ships hundreds of font families, so no row fits and the key stays in unmatched.md."
+
+[U-30bb9df9c870]
+choice = "d"
+recommended = true
+key = "deb-pkg:texlive-fonts-extra"
+recommendation = "d"
+ruling = "Leave it unmatched: no row fits, and it stays in unmatched.md"
+reason = "multi_family_packages: TeX Live's font package ships hundreds of font families, so no row fits and the key stays in unmatched.md."
+
+[U-353299d64ab0]
+choice = "d"
+recommended = true
+key = "deb-pkg:texlive-fonts-extra-links"
+recommendation = "d"
+ruling = "Leave it unmatched: no row fits, and it stays in unmatched.md"
+reason = "multi_family_packages: TeX Live's font package ships hundreds of font families, so no row fits and the key stays in unmatched.md."
+
+[U-5d53fcaf410a]
+choice = "d"
+recommended = true
+key = "arch-pkg:ttf-google-fonts-git"
+recommendation = "d"
+ruling = "Leave it unmatched: no row fits, and it stays in unmatched.md"
+reason = "multi_family_packages: the AUR's ttf-google-fonts-git ships the whole Google Fonts collection, so no row fits and the key stays in unmatched.md."
+
+[U-eac7a1fc2230]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["courier-prime", "courier-prime-code", "courier-prime-sans"]
+key = "arch-pkg:ttf-courier-prime"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to courier-prime, courier-prime-code, courier-prime-sans"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling leftover_packages of 2026-09-28: AUR PKGBUILD installs the TTFs of four quoteunquoteapps zips: Courier Prime (4 styles plus its Medium and SemiBold weights, which Homebrew lists as Courier Prime Medium & Semi-Bold and which fold into Courier Prime), Courier Prime Sans (4) and Courier Prime Code (2) (https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=ttf-courier-prime). Settled with gate A item A-2c66023cc9."
+
+[U-fc588f5d403f]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "merriweather"
+key = "arch-pkg:ttf-merriweather"
+relation = "package"
+ruling = "A family's name or package: package row to merriweather (gate A A-fbff8a4ec6)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling leftover_packages of 2026-09-28: AUR PKGBUILD downloads and installs 8 Merriweather-*.ttf (Light..Black + italics) from SorkinType/Merriweather 06e56b5 fonts/ttfs; no Merriweather Sans. (https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=ttf-merriweather). Settled with gate A item A-fbff8a4ec6."
+
+[U-15e2d2c60cba]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "meslo-lg"
+key = "arch-pkg:ttf-meslo-nerd-font-powerlevel10k"
+relation = "build"
+ruling = "A family's name or package: build row to meslo-lg (nerd) (gate A A-5a79261653)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling leftover_packages of 2026-09-28: AUR PKGBUILD installs the 4 \"MesloLGS NF\" TTFs from romkatv/powerlevel10k-media: Nerd-patched Meslo LG S. Universe also lists the cask \"meslo-nerd-font-for-powerlevel10k\". (https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=ttf-meslo-nerd-font-powerlevel10k). Settled with gate A item A-5a79261653."
+
+[U-69d6e1cec3b5]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["oxygen", "oxygen-mono"]
+key = "arch-pkg:ttf-oxygen"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to oxygen, oxygen-mono"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling leftover_packages of 2026-09-28: AUR PKGBUILD builds KDE oxygen-fonts v5.4.3 with cmake, which generates Oxygen-Sans.ttf, Oxygen-Sans-Bold.ttf and OxygenMono-Regular.ttf (families Oxygen and Oxygen Mono). (https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=ttf-oxygen). Settled with gate A item A-a3f85bb0d6."
+
+[U-fd5eaf145718]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "rubik"
+key = "arch-pkg:ttf-rubik-vf"
+relation = "build"
+ruling = "A family's name or package: build row to rubik (variable) (gate A A-0e6537b8cd)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling leftover_packages of 2026-09-28: AUR PKGBUILD downloads and installs only Rubik[wght].ttf and Rubik-Italic[wght].ttf from googlefonts/rubik e337a5f. (https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=ttf-rubik-vf). Settled with gate A item A-0e6537b8cd."
+
+[U-d2ce4c80e983]
+choice = "a"
+recommended = false
+by = "claude"
+families = ["signika", "signika-negative"]
+key = "arch-pkg:ttf-signika"
+relation = "bundle"
+ruling = "A family's name or package: bundle rows to signika, signika-negative"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling leftover_packages of 2026-09-28: AUR PKGBUILD installs fonts/{ttf,variable,variable_negative}/*.ttf of googlefonts/Signika 7361a22: Signika-* and SignikaNegative-* statics plus Signika[GRAD,wght] and SignikaNegative[wght]. (https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=ttf-signika). Settled with gate A item A-e4da7e6ea2."
+
+[U-1d51f3a7e2de]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "unifont"
+key = "arch-pkg:ttf-unifont"
+relation = "package"
+ruling = "A family's name or package: package row to unifont (gate A A-0357c47324)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling leftover_packages of 2026-09-28: AUR PKGBUILD builds and installs Unifont.ttf plus its coverage companions Unifont_Upper, Unifont_jp and Unifont_CSUR (none listed separately). (https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=ttf-unifont). Settled with gate A item A-0357c47324."
+
+[U-115b853c4cd3]
+choice = "a"
+recommended = false
+by = "claude"
+family_id = "adwaita-sans"
+key = "deb-pkg:fonts-adwaita"
+relation = "package"
+ruling = "A family's name or package: package row to adwaita-sans (gate A A-a49b3ac465)"
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues) and the owner's ruling leftover_packages of 2026-09-28: Debian binary fonts-adwaita (49.0 to 51.0, in sid) is a metapackage: \"Depends: fonts-adwaita-sans\"; Adwaita Mono is not built in Debian. fonts-adwaita-sans installs sans/*.ttf (Adwaita Sans). (https://sources.debian.org/data/main/f/fonts-adwaita/51.0+dfsg-1/debian/control). Settled with gate A item A-a49b3ac465."

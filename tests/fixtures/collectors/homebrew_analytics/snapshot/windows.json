@@ -1,0 +1,20 @@
+{
+  "30d": {
+    "end_date": "2026-09-26",
+    "start_date": "2026-08-27",
+    "total_count": 1114193,
+    "total_items": 9594
+  },
+  "365d": {
+    "end_date": "2026-09-26",
+    "start_date": "2025-09-26",
+    "total_count": 24772689,
+    "total_items": 23898
+  },
+  "90d": {
+    "end_date": "2026-09-26",
+    "start_date": "2026-06-28",
+    "total_count": 5702987,
+    "total_items": 16681
+  }
+}

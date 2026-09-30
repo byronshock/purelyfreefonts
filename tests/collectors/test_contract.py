@@ -60,7 +60,7 @@ from tff_catalog.collectors import universe as universe_pkg
 from tff_catalog.collectors.base import Collector, FetchContext, load_settings
 from tff_catalog.config import load_config
 from tff_catalog.config_model import ConfigError, SourceBase
-from tff_catalog.fetch import Budget, Fetcher
+from tff_catalog.fetch import Budget, Fetcher, host_allowed
 from tff_catalog.paths import Paths
 from tff_catalog.records import (
     EXPOSURE_ATTR_KINDS,
@@ -82,6 +82,11 @@ CHECKS = ("identity", "fetch", "parse", "records", "end_to_end")
 KINDS = ("universe", "ranking", "license")
 _NAME = re.compile(r"^[a-z][a-z0-9_]*$")
 _HOST = re.compile(r"^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$")
+# fetch's narrow pattern: "*" in the leftmost label only, beside literal text, then a
+# domain of two or more labels (doc-*-sheets.googleusercontent.com).
+_HOST_PATTERN = re.compile(
+    r"^(?=[^.]*[a-z0-9])[a-z0-9-]*\*[a-z0-9*-]*(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?){2,}$"
+)
 RECORDS_SCHEMA = Draft202012Validator(
     json.loads((ROOT / "schemas/stage/records.schema.json").read_text(encoding="utf-8"))
 )
@@ -124,7 +129,10 @@ def check_identity(c: Collector, folder: str, module: str) -> None:
     assert type(c.needs_baseline) is bool, "needs_baseline must be a bool"
     assert isinstance(c.hosts, tuple), "hosts must be a tuple"
     for host in c.hosts:
-        assert _HOST.match(host), f"host {host!r} must be a bare lower-case host name"
+        assert _HOST.match(host) or _HOST_PATTERN.match(host), (
+            f"host {host!r} must be a bare lower-case host name, or one with '*' in its "
+            "leftmost label only"
+        )
     assert len(set(c.hosts)) == len(c.hosts), "hosts has duplicates"
     assert isinstance(c.emits, tuple), "emits must be a tuple"
     assert c.emits, "emits must not be empty"
@@ -248,7 +256,8 @@ def check_fetch_output(
     assert not unmatched, f"requests with no recorded response: {unmatched}"
     for url in requested:
         host = urlsplit(url).hostname
-        assert host in c.hosts, f"contacted {host!r}, which is not in hosts {c.hosts}"
+        assert host is not None, f"no host in {url}"
+        assert host_allowed(host, c.hosts), f"contacted {host!r}, which is not in hosts {c.hosts}"
     manifest = jsonio.load(snapshot_dir / MANIFEST_NAME)
     errors = sorted(MANIFEST_SCHEMA.iter_errors(manifest), key=str)
     assert not errors, f"manifest fails its schema: {errors[0].message}"
@@ -287,8 +296,14 @@ def check_fetch_output(
 def run_fetch(
     c: Collector, fixture: Path, paths: Paths, tmp: Path, monkeypatch: pytest.MonkeyPatch
 ) -> tuple[Snapshot, mockhttp.MockHTTP]:
-    """Run ``c.fetch()`` against the fixture's recorded network into a fresh store."""
+    """Run ``c.fetch()`` against the fixture's recorded network into a fresh store.
+
+    A fixture with a ``root/`` directory is the repository ``fetch()`` sees
+    (``FetchContext.paths``), for a collector whose input list lives in
+    ``config/``; its settings still come from ``paths``.
+    """
     settings = load_settings(c, paths)
+    root = fixture / "root"
     day = date.fromisoformat(jsonio.load(fixture / "snapshot" / MANIFEST_NAME)["date"])
     http = fixture / "http"
     mock = mockhttp.MockHTTP.from_dir(http) if (http / mockhttp.INDEX).is_file() else None
@@ -319,6 +334,7 @@ def run_fetch(
             previous=previous,
             settings=settings,
             log=regen.LOG.getChild(c.name),
+            paths=Paths.for_root(root) if root.is_dir() else paths,
         )
         c.fetch(ctx)
     snap = snapshots.snapshot(c.name, day)
@@ -774,6 +790,35 @@ def test_regen_writes_and_checks_golden_files(fake: Fake, monkeypatch: pytest.Mo
     assert regen.regen(FAKE, check=True, **kwargs) is False
     with pytest.raises(KeyError, match="unknown collector"):
         regen.regen("no_such_collector", **kwargs)
+
+
+def test_golden_files_compare_gzip_by_content(tmp_path: Path) -> None:
+    """Two zlib builds (CI's and this machine's) may gzip one input to different bytes."""
+    data = b'{"family": "Aster Sans"}\n' * 40
+    fast, best = tmp_path / "fast.jsonl.gz", tmp_path / "best.jsonl.gz"
+    fast.write_bytes(gzip.compress(data, compresslevel=1, mtime=0))
+    best.write_bytes(gzip.compress(data, compresslevel=9, mtime=0))
+    assert fast.read_bytes() != best.read_bytes()
+    assert regen.golden(fast) == regen.golden(best) == data
+
+    manifest = regen.load_snapshot(
+        regen.fixture_dir("fontsource") / "snapshot", "fontsource"
+    ).manifest
+    gz = next(e for e in manifest.extracts if e.path.endswith(".gz"))
+    plain = next(e for e in manifest.extracts if not e.path.endswith(".gz"))
+
+    def swap(old: ExtractRecord, new: ExtractRecord) -> Manifest:
+        return dataclasses.replace(
+            manifest, extracts=tuple(new if e is old else e for e in manifest.extracts)
+        )
+
+    rezipped = swap(gz, dataclasses.replace(gz, sha256="0" * 64, bytes=gz.bytes + 1))
+    assert rezipped.to_json() != manifest.to_json()
+    assert regen.portable(rezipped) == regen.portable(manifest)
+    recounted = swap(gz, dataclasses.replace(gz, rows=gz.rows + 1))
+    assert regen.portable(recounted) != regen.portable(manifest)
+    unzipped_changed = swap(plain, dataclasses.replace(plain, sha256="0" * 64))
+    assert regen.portable(unzipped_changed) != regen.portable(manifest)
 
 
 @pytest.mark.parametrize(

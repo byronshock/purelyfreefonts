@@ -1,0 +1,194 @@
+# Owner rulings of 2026-09-26, given in chat after integration A (the first real run). Ruled by
+# the owner, Byron Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml).
+# Also in AUTHORITY.md. Where the owner picked Claude's recommendation, the reason is Claude's summary.
+
+[K-adobe-source]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation: Adobe's releases carry the desktop and web builds."
+
+[K-ibm-plex]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation: IBM publishes every Plex family on its own site and releases page."
+
+[K-inter]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation: the designer's site offers the full release."
+
+[K-jetbrains-mono]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation: JetBrains' own release, including the NL cut Google Fonts lacks."
+
+[link_rules]
+value = "accept_all_four"
+ruling = "Four link rules: a family on the foundry list may take the foundry's page as its single source; an http link is upgraded to https and checked monthly; Inter Tight keeps its Google Fonts page; open-foundry.com is an aggregator, not an official source."
+reason = "Claude's recommendation."
+
+[K-0xproto]
+choice = "a"
+recommended = true
+ruling = "https://github.com/0xType/0xProto/releases (from homebrew_casks)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-adwaita-mono]
+choice = "a"
+recommended = true
+ruling = "https://gitlab.gnome.org/GNOME/adwaita-fonts (from fontsource)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-agave]
+choice = "a"
+recommended = true
+ruling = "https://b.agaric.net/page/agave (from homebrew_casks)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-annotation-mono]
+choice = "a"
+recommended = true
+ruling = "https://qwerasd205.github.io/AnnotationMono/ (from homebrew_casks)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-clear-sans]
+choice = "a"
+recommended = true
+ruling = "https://github.com/intel/clear-sans/releases (from fontsource)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-departure-mono]
+choice = "a"
+recommended = true
+ruling = "https://github.com/rektdeckard/departure-mono/releases (from homebrew_casks)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-envy-code-r]
+choice = "a"
+recommended = true
+ruling = "https://damieng.com/blog/2008/envy-code-r-preview-7-coding-font-released/ (from homebrew_casks)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-fantasque-sans-mono]
+choice = "a"
+recommended = true
+ruling = "https://github.com/belluzj/fantasque-sans/releases (from homebrew_casks)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-inconsolata-lgc]
+choice = "a"
+recommended = true
+ruling = "https://github.com/MihailJP/Inconsolata-LGC/releases (from homebrew_casks)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-liberation-mono]
+choice = "a"
+recommended = true
+ruling = "https://github.com/liberationfonts/liberation-fonts/releases (from fontist)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-monaspace-argon]
+choice = "a"
+recommended = true
+ruling = "https://github.com/githubnext/monaspace/releases (from fontsource)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-monaspace-krypton]
+choice = "a"
+recommended = true
+ruling = "https://github.com/githubnext/monaspace/releases (from fontsource)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-monaspace-neon]
+choice = "a"
+recommended = true
+ruling = "https://github.com/githubnext/monaspace/releases (from fontsource)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-monaspace-radon]
+choice = "a"
+recommended = true
+ruling = "https://github.com/githubnext/monaspace/releases (from fontsource)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-monaspace-xenon]
+choice = "a"
+recommended = true
+ruling = "https://github.com/githubnext/monaspace/releases (from fontsource)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-open-runde]
+choice = "a"
+recommended = true
+ruling = "https://github.com/lauridskern/open-runde/releases (from fontsource)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-open-sauce-one]
+choice = "a"
+recommended = true
+ruling = "https://github.com/marcologous/Open-Sauce-Fonts/releases (from fontsource)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-open-sauce-sans]
+choice = "a"
+recommended = true
+ruling = "https://github.com/marcologous/Open-Sauce-Fonts/releases (from fontsource)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-open-sauce-two]
+choice = "a"
+recommended = true
+ruling = "https://github.com/marcologous/Open-Sauce-Fonts/releases (from fontsource)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-uncut-sans]
+choice = "a"
+recommended = true
+ruling = "https://github.com/kaspernordkvist/uncut_sans/releases (from fontsource)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-zed-mono]
+choice = "a"
+recommended = true
+ruling = "https://github.com/zed-industries/zed-fonts/releases (from homebrew_casks)"
+reason = "The only candidate; checked by Claude. The owner accepted all 21 single-candidate links together."
+
+[K-commit-mono]
+choice = "a"
+recommended = true
+ruling = "https://commitmono.com/ (from homebrew_casks)"
+reason = "The designer's site is primary, per the link policy's first preference; the owner chose this for all four two-candidate fonts."
+
+[K-geist-sans]
+choice = "a"
+recommended = true
+ruling = "https://vercel.com/font (from homebrew_casks)"
+reason = "The designer's site is primary, per the link policy's first preference; the owner chose this for all four two-candidate fonts."
+
+[K-maple-mono]
+choice = "a"
+recommended = true
+ruling = "https://font.subf.dev/en/ (from homebrew_casks)"
+reason = "The designer's site is primary, per the link policy's first preference; the owner chose this for all four two-candidate fonts."
+
+[K-mononoki]
+choice = "a"
+recommended = true
+ruling = "https://madmalik.github.io/mononoki/ (from homebrew_casks)"
+reason = "The designer's site is primary, per the link policy's first preference; the owner chose this for all four two-candidate fonts."
+
+[K-metropolis]
+choice = "b"
+recommended = false
+ruling = "Research the official page: none of these is it"
+reason = "Its author deleted the original repository in 2020; only a mirror remains. Research a current official source first."
+
+[K-noto-mono]
+choice = "b"
+recommended = false
+ruling = "Research the official page: none of these is it"
+reason = "The candidate is an archived Google repository, and the family is superseded by Noto Sans Mono. Research first."

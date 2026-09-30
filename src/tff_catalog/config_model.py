@@ -19,6 +19,8 @@ Files and their owners:
 - ``config/preinstalled.toml`` → ``PreinstalledConfig`` (D8)
 - ``config/foundries.toml`` → ``FoundriesConfig`` (universe)
 - ``config/site.toml`` → ``SiteConfig`` (the site wording export-site copies)
+- ``config/category-overrides.toml`` → ``CategoryOverridesConfig`` (the owner's
+  categories, which stage "facts" puts over every other basis)
 - ``config/sources/<collector>.toml`` → kept raw in ``Config.sources``; each
   collector's ``Settings`` types it.
 """
@@ -47,7 +49,9 @@ RANK_KEYS = (
     "rising",
 )
 SURVEYS = ("desktop", "project")
-OS_FAMILIES = ("windows", "macos", "linux", "android")
+# "app": fonts an application bundles for its own use (LibreOffice's installers). Such an
+# entry only tags fonts: no "comes with" bit on the site and never an abstention.
+OS_FAMILIES = ("windows", "macos", "linux", "android", "app")
 
 
 class ConfigError(ValueError):
@@ -187,6 +191,9 @@ class Guard:
     gap: float
     min_terms: int
     factor: float
+    # What a term is compared with: "median" of all the font's terms (owner ruling of
+    # 2026-09-26, guard_basis) or "others_mean", the mean of its other terms (ruling M1).
+    basis: Literal["median", "others_mean"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -215,6 +222,14 @@ class Corrections:
     dependency_review: float  # gate M8
     dependency_rule: Literal["top", "sum"]  # gate M8
     dependency_alternatives: Literal["first", "all"]  # gate M8
+    # Owner ruling of 2026-09-26 (per_system_basis): a Linux source's family value is its
+    # most-installed package ("largest_package"), not the "sum" of its packages.
+    per_system_basis: Literal["largest_package", "sum"]
+    # Owner ruling of 2026-09-26 (abstain_scope): a preinstalled Linux system silences only
+    # the Linux sources that count its installs ("by_package_system", through
+    # abstain_sources), or every Linux source ("all", D8 as first written).
+    abstain_scope: Literal["by_package_system", "all"]
+    abstain_sources: dict[str, tuple[str, ...]]  # Linux system id -> the Linux sources it silences
 
 
 @dataclass(frozen=True, slots=True)
@@ -257,6 +272,9 @@ class ArchSource(SourceBase):
 @dataclass(frozen=True, slots=True)
 class GithubSource(SourceBase):
     release_history: Literal["all", "latest24", "24months"]  # gate M2
+    # Repos ("owner/name", lower case) that publish only prereleases, whose prereleases
+    # count (owner ruling of 2026-09-26, opendyslexic_prereleases); others' never do.
+    prerelease_repos: tuple[str, ...]
 
 
 @dataclass(frozen=True, slots=True)
@@ -405,6 +423,8 @@ class Membership:
     extra_top: int
     extra_ranks: tuple[str, ...]
     top100: Top100Hysteresis
+    l3_overall_max: int  # stage "verify" (L3) checks overall order this or better ...
+    l3_extra_top: int  # ... and the top this many of each extra rank
 
 
 @dataclass(frozen=True, slots=True)
@@ -446,13 +466,14 @@ class Review:
     disagreement_top: int
     disagreement_other: int
     what_if_factors: tuple[float, ...]
+    move_places: int  # owner ruling 2026-09-26 (review_report): a monthly move flag needs more places than this
     first_run_move_places: int
 
 
 @dataclass(frozen=True, slots=True)
 class Latin:
     kernel_missing_max: int  # gate L1
-    core_missing_marks_max: int  # gate L1
+    core_missing_max: int  # gate L1: GF_Latin_Core code points of any kind missing for "extended"
     latin_share_min: float  # gate L1
     cjk_codepoints_below: int
 
@@ -531,7 +552,7 @@ class LicenseAliasesConfig:
 @dataclass(frozen=True, slots=True)
 class PreinstalledSystem:
     label: str  # "Ubuntu 24.04 desktop"
-    os: Literal["windows", "macos", "linux", "android"]  # only linux entries abstain (D8)
+    os: Literal["windows", "macos", "linux", "android", "app"]  # only linux entries abstain (D8)
     families: tuple[str, ...]  # family names as the system ships them
     source: str  # where the list comes from (https URL)
     note: str = ""
@@ -552,6 +573,9 @@ class FoundryFamily:
     url: str  # the family's page at the foundry (https)
     license: str  # as the foundry states it; L1 normalises it
     repository: str = ""
+    # One Regular font file (https, pinned to a commit), so the Latin gate and L3 can read
+    # the family: the list itself carries no files otherwise.
+    files: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -612,6 +636,15 @@ class SourceCredit:
 
 
 @dataclass(frozen=True, slots=True)
+class NerdText:
+    """The Nerd Font marker's wording (owner ruling of 2026-09-29, TASK-2)."""
+
+    marker: str  # the text beside a font's name: "NF"
+    label: str  # the marker's accessible name: "Nerd Font version available"
+    legend: str  # the site's legend: "<marker>: <label> (...)."
+
+
+@dataclass(frozen=True, slots=True)
 class SiteConfig:
     """Wording for ``catalog-site.json``; owner rulings on wording live here."""
 
@@ -620,16 +653,69 @@ class SiteConfig:
     views: tuple[ViewText, ...]  # rank selector order; every RANK_KEYS entry once
     tiers: TierTexts
     license_classes: tuple[LicenseClassText, ...]  # filter order
+    nerd: NerdText
     package_systems: dict[str, PackageSystem]  # pulled_in_by system id -> label
     sources: dict[str, SourceCredit]  # engine source id -> credit
+
+
+# --- config/category-overrides.toml -------------------------------------------
+
+CATEGORY_OVERRIDES_FILE = "category-overrides.toml"
+
+
+@dataclass(frozen=True, slots=True)
+class CategoryOverridesConfig:
+    """The owner's categories (owner ruling of 2026-09-29, gate R round 1, categories_22).
+
+    Stage "facts" gives each listed family this category, with basis "owner", over
+    every other basis; "monospace" also makes the family monospaced.
+    ``config.check_category_overrides`` checks that each key is a family id and each
+    value a ``facts.CATEGORIES`` word; stage "facts" fails on an id its universe lacks.
+    """
+
+    schema: int
+    families: dict[str, str]  # family id (state/ids.json) -> category
+
+
+# --- config/nerd-hidden.toml ----------------------------------------------------
+
+NERD_HIDDEN_FILE = "nerd-hidden.toml"
+
+
+@dataclass(frozen=True, slots=True)
+class NerdHiddenConfig:
+    """Families whose Nerd Font build the owner hides (owner ruling of 2026-09-29, TASK-2).
+
+    Stage "links" gives a listed family no ``links.nerd``, so the site shows no NF
+    marker, link or filter match for it, whatever build it has.
+    ``config.check_nerd_hidden`` checks that each key is a family id and each reason is
+    given; ``--strict`` checks the ids against the registry, and stage "links" fails on an
+    id its universe lacks.
+    """
+
+    schema: int
+    families: dict[str, str]  # family id (state/ids.json) -> why its build is hidden
 
 
 # --- everything ---------------------------------------------------------------
 
 
+def _no_category_overrides() -> CategoryOverridesConfig:
+    return CategoryOverridesConfig(schema=SCHEMA_VERSION, families={})
+
+
+def _no_nerd_hidden() -> NerdHiddenConfig:
+    return NerdHiddenConfig(schema=SCHEMA_VERSION, families={})
+
+
 @dataclass(frozen=True, slots=True)
 class Config:
-    """The effective configuration of one run; ``config.config_hash`` hashes it."""
+    """The effective configuration of one run; ``config.config_hash`` hashes it.
+
+    ``load_config`` fills every field from its file. ``category_overrides`` and
+    ``nerd_hidden`` have defaults (none) only so that a test can build a ``Config``
+    without them.
+    """
 
     ranking: RankingConfig
     licenses: LicensesConfig
@@ -638,6 +724,10 @@ class Config:
     foundries: FoundriesConfig
     site: SiteConfig
     sources: dict[str, dict[str, Any]]  # collector -> raw config/sources/<collector>.toml
+    category_overrides: CategoryOverridesConfig = dataclasses.field(
+        default_factory=_no_category_overrides
+    )
+    nerd_hidden: NerdHiddenConfig = dataclasses.field(default_factory=_no_nerd_hidden)
 
 
 # File name -> (Config field, dataclass).
@@ -648,4 +738,6 @@ CONFIG_FILES: dict[str, tuple[str, type]] = {
     "preinstalled.toml": ("preinstalled", PreinstalledConfig),
     "foundries.toml": ("foundries", FoundriesConfig),
     "site.toml": ("site", SiteConfig),
+    CATEGORY_OVERRIDES_FILE: ("category_overrides", CategoryOverridesConfig),
+    NERD_HIDDEN_FILE: ("nerd_hidden", NerdHiddenConfig),
 }

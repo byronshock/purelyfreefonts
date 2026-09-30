@@ -1,9 +1,14 @@
-# /etc/caddy/Caddyfile for trulyfreefonts. This copy in ops/ is the source of truth.
-# Deploy: scp ops/Caddyfile tff:/tmp/Caddyfile && ssh tff 'sudo -u caddy caddy validate --config /tmp/Caddyfile --adapter caddyfile && sudo install -m 644 /tmp/Caddyfile /etc/caddy/Caddyfile && sudo systemctl reload caddy'
+# /etc/caddy/Caddyfile for trulyfreefonts. This copy in ops/ is the source of truth, together
+# with ops/caddy/site.caddy (the site's headers, shared with staging, CI and tff-site serve),
+# which it imports from its own directory. Deploy both with this line; it validates them as a
+# pair before installing either:
+# ssh tff 'install -d -m 755 /tmp/caddy-new' && scp ops/Caddyfile ops/caddy/site.caddy tff:/tmp/caddy-new/ && ssh tff 'sudo -u caddy caddy validate --config /tmp/caddy-new/Caddyfile --adapter caddyfile && sudo install -m 644 /tmp/caddy-new/site.caddy /etc/caddy/site.caddy && sudo install -m 644 /tmp/caddy-new/Caddyfile /etc/caddy/Caddyfile && sudo systemctl reload caddy'
 # (Validate as the caddy user: validating as root creates root-owned log files that Caddy then can't write.)
 #
 # Cloudflare proxies every hostname and terminates public TLS. Caddy uses the
-# Cloudflare Origin CA certificate (valid to 2041), so it never requests certificates itself.
+# Cloudflare Origin CA certificate (valid to 2041), so it never requests certificates itself;
+# for the staging block it must also name *.trulyfreefonts.com. CI validates this file (the
+# caddy job in .github/workflows/ci.yml).
 
 {
 	servers {
@@ -13,27 +18,20 @@
 	}
 }
 
+import site.caddy
+
 (origin_tls) {
 	tls /etc/caddy/certs/origin.pem /etc/caddy/certs/origin.key
 }
 
-trulyfreefonts.com {
-	import origin_tls
-	root * /srv/trulyfreefonts/public
-	encode zstd gzip
-	file_server
-
-	header {
-		Strict-Transport-Security "max-age=31536000"
-		X-Content-Type-Options "nosniff"
-		Referrer-Policy "strict-origin-when-cross-origin"
-		X-Frame-Options "SAMEORIGIN"
-		-Server
-	}
-
-	# Visitor privacy: IP addresses are masked (IPv4 to /16, IPv6 to /32) and the
-	# IP-carrying headers dropped before anything is written. Caddy's size-based
-	# rolling is off; logrotate keeps 14 days (ops/logrotate-caddy).
+# Visitor privacy: IP addresses are masked (IPv4 to /16, IPv6 to /32) and the
+# IP-carrying headers dropped before anything is written, including the ones Cloudflare
+# adds only when a setting turns them on (True-Client-IP, pseudo IPv4, visitor location
+# headers other than the country). Referer and User-Agent are dropped too (owner ruling of
+# 2026-09-26, log_fields); so are Cookie and the location headers (owner ruling of 2026-09-28,
+# log_extra_headers). Caddy's size-based rolling is off; logrotate keeps 14 days
+# (ops/logrotate-caddy). Production and staging share the file; Caddy opens it once.
+(privacy_log) {
 	log {
 		output file /var/log/caddy/access.log {
 			roll_disabled
@@ -46,9 +44,50 @@ trulyfreefonts.com {
 				request>remote_port delete
 				request>headers>Cf-Connecting-Ip delete
 				request>headers>X-Forwarded-For delete
+				request>headers>Cf-Connecting-Ipv6 delete
+				request>headers>Cf-Pseudo-Ipv4 delete
+				request>headers>True-Client-Ip delete
+				request>headers>X-Real-Ip delete
+				request>headers>Cf-Ipcity delete
+				request>headers>Cf-Iplatitude delete
+				request>headers>Cf-Iplongitude delete
+				request>headers>Cf-Postal-Code delete
+				request>headers>Cf-Region delete
+				request>headers>Cf-Region-Code delete
+				request>headers>Cf-Metro-Code delete
+				request>headers>Cf-Ipcontinent delete
+				request>headers>Cf-Timezone delete
+				request>headers>Referer delete
+				request>headers>User-Agent delete
+				request>headers>Cookie delete
 			}
 		}
 	}
+}
+
+trulyfreefonts.com {
+	import origin_tls
+	# A root-owned symlink to prod/current once the site deploys as releases (ops/deploy/).
+	root * /srv/trulyfreefonts/public
+	# Header phase A (design-m2 §4): no CSP yet, because it would block the live stub's inline
+	# <style>. Phase B, once the stub is a release with its style in stub.css: delete this line.
+	# It must stay above the import: deferred header changes run last-written first, so only
+	# a removal written before tff_security's block runs after it. (The removal doesn't reach
+	# the 404 route, which re-applies every header; the stub has no 404.html, so its 404s stay
+	# bare, with no body and no security headers, as they are today.)
+	header -Content-Security-Policy
+	import tff_site
+	import privacy_log
+}
+
+# The test site: the same headers, kept out of search engines. Deployed from the staging
+# branch by the deploy-staging user, which can write only under /srv/trulyfreefonts/staging.
+staging.trulyfreefonts.com {
+	import origin_tls
+	root * /srv/trulyfreefonts/staging/current
+	import tff_site
+	header X-Robots-Tag "noindex, nofollow"
+	import privacy_log
 }
 
 # Every other hostname goes to the canonical site, keeping the path and query.

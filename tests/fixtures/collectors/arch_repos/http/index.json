@@ -1,0 +1,42 @@
+{
+  "format": "tff-mockhttp",
+  "responses": [
+    {
+      "body": "core.db",
+      "headers": {
+        "content-type": "application/octet-stream",
+        "etag": "\"6ab74f0a-1fb4d\"",
+        "last-modified": "Fri, 25 Sep 2026 01:37:12 GMT"
+      },
+      "url": "https://geo.mirror.pkgbuild.com/core/os/x86_64/core.db"
+    },
+    {
+      "body": "extra.db",
+      "headers": {
+        "content-type": "application/octet-stream",
+        "etag": "\"6ab74f0a-873a18\"",
+        "last-modified": "Fri, 25 Sep 2026 04:50:18 GMT"
+      },
+      "url": "https://geo.mirror.pkgbuild.com/extra/os/x86_64/extra.db"
+    },
+    {
+      "body": "multilib.db",
+      "headers": {
+        "content-type": "application/octet-stream",
+        "etag": "\"6ab4c1e0-14e9a\"",
+        "last-modified": "Thu, 24 Sep 2026 19:02:40 GMT"
+      },
+      "url": "https://geo.mirror.pkgbuild.com/multilib/os/x86_64/multilib.db"
+    },
+    {
+      "body": "cachyos.db",
+      "headers": {
+        "content-type": "application/octet-stream",
+        "etag": "\"6ab729a2-80dc7\"",
+        "last-modified": "Thu, 24 Sep 2026 02:10:42 GMT"
+      },
+      "url": "https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos.db"
+    }
+  ],
+  "version": 1
+}

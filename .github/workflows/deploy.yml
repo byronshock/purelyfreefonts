@@ -1,0 +1,415 @@
+name: Deploy
+
+# Build, test and deploy trulyfreefonts.com (Milestone 2 step 11; design-m2 §5; how the
+# server side works is in ops/deploy/README.md).
+#
+# - A push to main deploys to production (trulyfreefonts.com); a push to staging deploys to
+#   the test site (staging.trulyfreefonts.com). The GitHub environments "production" (main
+#   only) and "staging" (staging only) hold the secrets DEPLOY_SSH_KEY, DEPLOY_KNOWN_HOSTS
+#   and DEPLOY_HOST, and the variables DEPLOY_USER and SITE_URL.
+# - Roll back in one command: gh workflow run deploy.yml --ref main -f action=rollback
+#   (-f commit=<sha> picks a kept release). A dispatch with action=deploy and a commit
+#   deploys that commit; production takes only commits on main.
+# - build -> deploy -> live; a failure anywhere opens an issue labelled deploy-failure, or
+#   comments on the one already open. One deploy per environment at a time, never cancelled.
+# - The deploy key can only run tff-receive (plan, upload, activate, rollback, status).
+#   Caddyfile changes never go through here: they use the checked line in ops/Caddyfile.
+# - Until the soft launch (Milestone 2 step 14, the owner's go-ahead), a push to main deploys
+#   nothing: production deploys on push only once the repository variable PRODUCTION_DEPLOYS
+#   is "on" (gh variable set PRODUCTION_DEPLOYS --body on). Dispatches always run.
+
+on:
+  push:
+    branches: [main, staging]
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "deploy a commit, or roll back to the previous release (or the given one)"
+        type: choice
+        options: [deploy, rollback]
+        default: deploy
+      commit:
+        description: "Full 40-character commit (default: the branch head for deploy, the previous release for rollback)"
+        type: string
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.ref_name == 'main' && 'production' || 'staging' }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  ENVIRONMENT: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
+  ACTION: ${{ inputs.action || 'deploy' }}
+  INPUT_COMMIT: ${{ inputs.commit }}
+
+jobs:
+  build:
+    name: build
+    # Gate M2 step 14 (soft launch): pushes to main wait for PRODUCTION_DEPLOYS == 'on'.
+    if: >-
+      ${{ inputs.action != 'rollback' && (github.event_name != 'push'
+      || github.ref_name != 'main' || vars.PRODUCTION_DEPLOYS == 'on') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      CADDY_VERSION: 2.11.4
+      # sha256 of caddy_2.11.4_linux_amd64.tar.gz (checked against the release's sha512 list).
+      CADDY_SHA256: 527fbf917c39189a1e3b31d34fa955601680b2d5c8055d2a87b8b9588dec7bb9
+    outputs:
+      commit: ${{ steps.commit.outputs.sha }}
+    steps:
+      - name: Choose the commit
+        id: commit
+        run: |
+          sha=${INPUT_COMMIT:-$GITHUB_SHA}
+          if ! [[ $sha =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::commit must be a full 40-character lowercase sha, not '$sha'"
+            exit 1
+          fi
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "SHA=$sha" >> "$GITHUB_ENV"
+          echo "TFF_SITE_DIR=$RUNNER_TEMP/release/site" >> "$GITHUB_ENV"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ steps.commit.outputs.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Production takes only commits on main, staging only commits on staging or main
+        run: |
+          # A dispatch names any commit, including an unmerged branch's or a fork pull
+          # request's (refs/pull/*); the deploy job runs its code with the environment's key.
+          branches=(main)
+          if [ "$ENVIRONMENT" = staging ]; then branches+=(staging); fi
+          for branch in "${branches[@]}"; do
+            if git merge-base --is-ancestor "$SHA" "origin/$branch" 2> /dev/null; then
+              exit 0
+            fi
+          done
+          echo "::error::$SHA is not on ${branches[*]}"
+          exit 1
+      - name: Production waits for Caddy header phase B
+        if: env.ENVIRONMENT == 'production'
+        run: |
+          # Phase A strips the CSP from production (ops/Caddyfile) while the stub has an inline
+          # style; the list page must never go live without it (/privacy says it is sent).
+          if grep -Eq '^[[:space:]]*header -Content-Security-Policy' ops/Caddyfile; then
+            echo "::error::ops/Caddyfile is still in header phase A; do phase B first (ops/deploy/README.md)"
+            exit 1
+          fi
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          enable-cache: true
+      - run: uv sync --locked --group browser
+      - name: Choose the catalog
+        run: |
+          data=build/catalog-site.json
+          if [ ! -f "$data" ]; then
+            if [ "$ENVIRONMENT" = production ]; then
+              echo "::error::build/catalog-site.json is missing; production never gets the sample"
+              exit 1
+            fi
+            # Until Milestone 1's first real run, the test site shows the synthetic sample.
+            data=tests/fixtures/catalog-site.sample.json
+            echo "::warning::no build/catalog-site.json at $SHA; staging gets the synthetic sample"
+          fi
+          if [ "$ENVIRONMENT" = production ] && jq -e '.synthetic == true' "$data" > /dev/null; then
+            echo "::error::$data is synthetic; production never gets synthetic data"
+            exit 1
+          fi
+          echo "TFF_SITE_DATA=$data" >> "$GITHUB_ENV"
+      - name: Cache the font files
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/tff/fonts
+          key: tff-fonts-${{ hashFiles('build/catalog-site.json', 'tests/fixtures/catalog-site.sample.json') }}
+          # The cache is keyed by each file's sha256, so an older one only saves downloads.
+          restore-keys: tff-fonts-
+      - run: uv run --locked tff-site fetch-fonts --data "$TFF_SITE_DATA"
+      - name: Build (the test site also publishes draft blog posts, M2 step 7b)
+        run: |
+          set --
+          if [ "$ENVIRONMENT" = staging ]; then set -- --drafts; fi
+          uv run --locked tff-site build --data "$TFF_SITE_DATA" --out "$TFF_SITE_DIR" --commit "$SHA" "$@"
+      - run: uv run --locked tff-site check "$TFF_SITE_DIR"
+      - name: Find the Playwright version
+        id: pw
+        run: |
+          version=$(uv run --locked python -c "import importlib.metadata as m; print(m.version('playwright'))")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Cache Playwright's browsers
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-${{ runner.os }}-${{ steps.pw.outputs.version }}
+      - name: Install the browsers
+        run: uv run --locked playwright install --with-deps chromium firefox
+      - name: Install Caddy
+        run: |
+          tarball="caddy_${CADDY_VERSION}_linux_amd64.tar.gz"
+          curl -sSfL -o "$RUNNER_TEMP/$tarball" \
+            "https://github.com/caddyserver/caddy/releases/download/v${CADDY_VERSION}/${tarball}"
+          echo "${CADDY_SHA256}  $RUNNER_TEMP/$tarball" | sha256sum --check --strict -
+          mkdir -p "$RUNNER_TEMP/bin"
+          tar -xzf "$RUNNER_TEMP/$tarball" -C "$RUNNER_TEMP/bin" caddy
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+      - name: Serve the build with Caddy on 127.0.0.1:8080
+        run: |
+          caddy start --config ops/caddy/ci.Caddyfile --adapter caddyfile > "$RUNNER_TEMP/caddy.log" 2>&1
+          curl -sSf -o /dev/null http://127.0.0.1:8080/version.txt
+      # The performance budget runs in CI (site-perf, and site-real on a committed catalog);
+      # here it would measure a synthetic site, not this build. The size budgets and the CSP
+      # rules of this build are checked above by tff-site check.
+      # The accessibility grid's repeats (marked sample_only) run in CI's site-browser on the
+      # sample; here a lighter pass runs on the real rows (owner ruling of 2026-09-30).
+      - name: Test the build in Chromium and Firefox
+        env:
+          TFF_CADDY: "1"
+        run: |
+          uv run --locked pytest tests/site -m "not live and not sample_only" \
+            --ignore=tests/site/test_perf.py --browser chromium --browser firefox
+      - name: Pack the manifest
+        run: |
+          uv run --locked tff-site pack "$TFF_SITE_DIR" --out /dev/null --only /dev/null \
+            --manifest "$RUNNER_TEMP/release/site.manifest.json"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release
+          path: ${{ runner.temp }}/release
+          if-no-files-found: error
+          retention-days: 7
+
+  deploy:
+    name: deploy
+    needs: build
+    if: >-
+      ${{ !cancelled() && (needs.build.result == 'success'
+      || (needs.build.result == 'skipped' && inputs.action == 'rollback')) }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment:
+      name: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
+      url: ${{ steps.target.outputs.site_url }}
+    outputs:
+      commit: ${{ steps.live.outputs.commit }}
+      site_url: ${{ steps.target.outputs.site_url }}
+    env:
+      SHA: ${{ needs.build.outputs.commit }}
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+      SITE_URL: ${{ vars.SITE_URL }}
+    steps:
+      - name: Choose the site
+        id: target
+        run: |
+          url=$SITE_URL
+          if [ -z "$url" ]; then
+            case $ENVIRONMENT in
+            production) url=https://trulyfreefonts.com ;;
+            *) url=https://staging.trulyfreefonts.com ;;
+            esac
+          fi
+          echo "site_url=$url" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: env.ACTION == 'deploy'
+        with:
+          ref: ${{ needs.build.outputs.commit }}
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        if: env.ACTION == 'deploy'
+        with:
+          enable-cache: true
+      - if: env.ACTION == 'deploy'
+        run: uv sync --locked
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        if: env.ACTION == 'deploy'
+        with:
+          name: release
+          path: ${{ runner.temp }}/release
+      - name: Set up the deploy key
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          for name in DEPLOY_SSH_KEY DEPLOY_KNOWN_HOSTS DEPLOY_HOST DEPLOY_USER; do
+            if [ -z "${!name}" ]; then
+              echo "::error::$name is not set in the $ENVIRONMENT environment"
+              exit 1
+            fi
+          done
+          install -d -m 700 ~/.ssh
+          (umask 077 && printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy)
+          # The secret holds the server's host key lines: known_hosts lines, or bare keys (the
+          # contents of /etc/ssh/ssh_host_ed25519_key.pub), which get the host put in front.
+          while read -r line; do
+            read -r keytype key _ <<< "$line"
+            case $keytype in
+            '' | '#'*) ;;
+            ssh-* | ecdsa-* | sk-*) printf '%s %s %s\n' "$DEPLOY_HOST" "$keytype" "$key" ;;
+            *) printf '%s\n' "$line" ;;
+            esac
+          done <<< "${DEPLOY_KNOWN_HOSTS//$'\r'/}" > ~/.ssh/known_hosts
+          if ! [ -s ~/.ssh/known_hosts ]; then
+            echo "::error::DEPLOY_KNOWN_HOSTS holds no host key"
+            exit 1
+          fi
+          # receive VERB [ARGS]: one tff-receive call; sshd's forced command fixes the rest.
+          mkdir -p "$RUNNER_TEMP/deploy-bin"
+          cat > "$RUNNER_TEMP/deploy-bin/receive" << 'EOF'
+          #!/bin/bash
+          exec ssh -i "$HOME/.ssh/deploy" -o IdentitiesOnly=yes -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$HOME/.ssh/known_hosts" \
+            -o ConnectTimeout=20 -o ServerAliveInterval=15 -o LogLevel=ERROR \
+            "$DEPLOY_USER@$DEPLOY_HOST" "$@"
+          EOF
+          chmod 755 "$RUNNER_TEMP/deploy-bin/receive"
+          echo "$RUNNER_TEMP/deploy-bin" >> "$GITHUB_PATH"
+      - name: Upload the changed files and switch
+        if: env.ACTION == 'deploy'
+        run: |
+          release=$RUNNER_TEMP/release
+          receive plan "$SHA" < "$release/site.manifest.json" > "$RUNNER_TEMP/need.txt"
+          total=$(jq '.files | length' "$release/site.manifest.json")
+          echo "Uploading $(wc -l < "$RUNNER_TEMP/need.txt") of $total files."
+          uv run --locked tff-site pack "$release/site" --only "$RUNNER_TEMP/need.txt" \
+            | receive upload "$SHA"
+          receive activate "$SHA" < /dev/null
+      - name: Roll back
+        if: env.ACTION == 'rollback'
+        run: |
+          if [ -z "$INPUT_COMMIT" ]; then
+            receive rollback < /dev/null
+          elif [[ $INPUT_COMMIT =~ ^[0-9a-f]{40}$ ]]; then
+            receive rollback "$INPUT_COMMIT" < /dev/null
+          else
+            echo "::error::commit must be a full 40-character lowercase sha"
+            exit 1
+          fi
+      - name: Record the live release
+        id: live
+        run: |
+          receive status < /dev/null | tee "$RUNNER_TEMP/status.txt"
+          current=$(sed -n 's/^current: //p' "$RUNNER_TEMP/status.txt")
+          if ! [[ $current =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::tff-receive status names no current release"
+            exit 1
+          fi
+          if [ "$ACTION" = deploy ] && [ "$current" != "$SHA" ]; then
+            echo "::error::the server's current release is $current, not $SHA"
+            exit 1
+          fi
+          echo "commit=$current" >> "$GITHUB_OUTPUT"
+          echo "$ENVIRONMENT now serves $current (${ACTION})." >> "$GITHUB_STEP_SUMMARY"
+      - name: Remove the deploy key
+        if: always()
+        run: rm -f ~/.ssh/deploy
+
+  live:
+    name: live
+    needs: deploy
+    # Explicit, because a rollback skips build, and the implicit success() also looks at the
+    # jobs deploy needs: without this, a rollback would never be checked on the live site.
+    if: ${{ !cancelled() && needs.deploy.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      SITE_URL: ${{ needs.deploy.outputs.site_url }}
+      COMMIT: ${{ needs.deploy.outputs.commit }}
+    steps:
+      - name: Wait for the live version.txt to name the commit
+        run: |
+          seen=
+          for _ in $(seq 20); do
+            seen=$(curl -fsS --max-time 15 -H 'Cache-Control: no-cache' "$SITE_URL/version.txt" \
+              | sed -n 's/^commit=//p') || true
+            if [ "$seen" = "$COMMIT" ]; then
+              echo "$SITE_URL/version.txt says commit=$COMMIT."
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "::error::$SITE_URL/version.txt says '${seen:-nothing}', not $COMMIT"
+          exit 1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.deploy.outputs.commit }}
+          persist-credentials: false
+      - name: Look for the live tests
+        id: tests
+        run: |
+          if [ -d tests/live ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::no tests/live at $COMMIT; only version.txt was checked"
+          fi
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        if: steps.tests.outputs.present == 'true'
+        with:
+          enable-cache: true
+      - if: steps.tests.outputs.present == 'true'
+        run: uv sync --locked --group browser
+      - name: Find the Playwright version
+        id: pw
+        if: steps.tests.outputs.present == 'true'
+        run: |
+          version=$(uv run --locked python -c "import importlib.metadata as m; print(m.version('playwright'))")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Cache Playwright's browsers
+        if: steps.tests.outputs.present == 'true'
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-${{ runner.os }}-${{ steps.pw.outputs.version }}
+      - name: Install the browsers
+        if: steps.tests.outputs.present == 'true'
+        run: uv run --locked playwright install --with-deps chromium firefox
+      # From a GitHub runner in the US, where Cloudflare would inject its beacon if a setting
+      # let it (design-m2 §0): the live tests prove it doesn't.
+      - name: Run the live tests in Chromium and Firefox
+        if: steps.tests.outputs.present == 'true'
+        run: |
+          uv run --locked pytest tests/live --base-url "$SITE_URL" --expect-commit "$COMMIT" \
+            --browser chromium --browser firefox
+
+  report:
+    name: report
+    needs: [build, deploy, live]
+    if: ${{ failure() }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - name: Open or update the deploy-failure issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ needs.build.outputs.commit || inputs.commit || github.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="Deploy failed on $ENVIRONMENT: ${SHA:0:7}"
+          body=$RUNNER_TEMP/issue.md
+          cat > "$body" << EOF
+          The $ACTION of \`$SHA\` to $ENVIRONMENT failed: $RUN_URL
+
+          The run log names the failed job and step. If the site is broken, roll back with
+          \`gh workflow run deploy.yml --ref ${GITHUB_REF_NAME} -f action=rollback\` or, from
+          the laptop, \`ops/deploy.sh rollback $ENVIRONMENT\`. Close this issue once a deploy
+          to $ENVIRONMENT succeeds.
+          EOF
+          number=$(gh issue list --repo "$GITHUB_REPOSITORY" --label deploy-failure --state open \
+            --json number --jq '.[0].number // empty')
+          if [ -n "$number" ]; then
+            gh issue comment "$number" --repo "$GITHUB_REPOSITORY" --body-file "$body"
+          elif ! gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" \
+            --label deploy-failure --body-file "$body"; then
+            # Without the label (not created yet), still report.
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --body-file "$body"
+          fi

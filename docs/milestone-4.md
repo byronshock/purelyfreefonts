@@ -51,7 +51,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 **Who:** Claude; the owner runs the tools on their own machine. **Depends on:** 1; M3-D11 (accuracy targets); final D3 and D4.
 - [ ] Test lists, at least one per path: real output from the owner's CachyOS machine, a Windows 11 machine or VM, and a Mac; synthetic stock installs from Apple's and Microsoft's published font lists and Debian, Ubuntu and Fedora defaults; Milestone 3's known-answer list (renames, Nerd builds, siblings, variable builds, near-matches).
 - [ ] Run every list through the release candidate for every published rank, and compare paste with the button on the same machine (M3-D11's agreement target).
-- [ ] Spot check 20 random catalog fonts (10 from the overall top 100, 10 from ranks 101–500) plus every owner-ruled font: class, redistributable and attribution fields against the license link, and the download link reaching the official page.
+- [ ] Spot check 25 random fonts (10 from the overall top 100, 10 from ranks 101–500, 5 listed only) plus every owner-ruled font: class, redistributable and attribution fields against the license link, and the download link reaching the official page.
 - [ ] `docs/release-checks.md` records the test lists, errors and fixes, never a real person's font list.
 
 **Done when:**
@@ -192,6 +192,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   6. The monthly section goes out (step 13); the owner closes fixed issues.
   7. Over `ssh tff`: pending reboot, disk space, and Caddy, fail2ban, unattended-upgrades, the watchdog and `cloudflare-ips-sync` running.
   8. Usage counts (step 5) and the owner's time go into `ops/USAGE.local.md`.
+- [ ] Font requests (owner ruling `font_requests` of 2026-09-29), in `ops/MONTHLY.md`: the owner passes each emailed request on to Claude, and Claude reads `missing-font` issues itself. Claude checks the font against the gates and the link policy and proposes a ruling; once the owner rules, an accepted family goes into `config/foundries.toml` and is listed from the next refresh. Claude drafts the reply, and the owner sends it.
 - [ ] Test M1 step 19's watchdog (a VPS timer that also warns after 50 days without a commit to `main`) once with a past date, and confirm the alert reaches the owner.
 - [ ] When the watchdog fires: check the Actions tab, re-enable the workflow if disabled, run it by hand, read the failure issue.
 - [ ] Yearly tasks, each with its timing:

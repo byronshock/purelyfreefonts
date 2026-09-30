@@ -43,7 +43,9 @@ measures = "Monospace fonts, ranked by developers' installs and downloads."
 [[views]]
 key = "dev_apps"
 label = "Developers & apps"
-measures = "What builders choose: npm packages, projects that depend on them, and app frameworks."
+# Owner ruling of 2026-09-26 (dev_apps_display): bands only, and the line says so, while every
+# source is on npm (one independence group) and none can pass the two-group gate.
+measures = "What builders choose: npm packages, projects that depend on them, and app frameworks. Shown in bands only: all its sources come from npm, one kind of evidence, so no font gets an exact rank yet."
 
 [[views]]
 key = "rising"
@@ -70,8 +72,18 @@ id = "attribution"
 label = "Attribution required (CC BY)"
 
 [[license_classes]]
-id = "freeware"                 # not in M2 gate Q4's recommended three: free-use grants that forbid redistributing; needs the owner's ruling
+id = "freeware"                 # the fourth group of the owner's License filter (AUTHORITY.md, 2026-09-25): free-use grants that may forbid redistributing (Rule 3)
 label = "Other free-use grants"
+
+# The Nerd Font marker (owner rulings of 2026-09-29, data/reviews/site/2026-09-29.toml:
+# nerd_marker and nerd_legend). `marker` is the fixed-width text beside the name of a font
+# with a Nerd Font build (links.nerd), in every row and in the details panel; `label` is its
+# accessible name; `legend` is the site's legend, word for word as the owner chose it. The
+# legend starts with "<marker>: <label>" (checked).
+[nerd]
+marker = "NF"
+label = "Nerd Font version available"
+legend = "NF: Nerd Font version available (adds developer icons, which have their own licenses)."
 
 # Distributions whose package data can pull a font in (pulled_in_by systems).
 # Always Linux. An id that preinstalled.toml also uses must have the same label.

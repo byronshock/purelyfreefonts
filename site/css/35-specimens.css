@@ -1,0 +1,57 @@
+/* 35-specimens: font previews (Milestone 2 step 5; site/CONTRACT.md sections 4 and 6).
+   The specimen is an SVG of outlines used as a CSS mask over the text colour, so it reads in
+   light, dark and forced colours without any colour in the file. 45-specimens.js sets the mask
+   as its row nears the screen; the box has its size before that, so a row never changes
+   height when its specimen arrives (rows use content-visibility). 20-list.css places the box
+   and styles the fallback text. */
+
+.spec {
+  display: block;
+  width: 100%;
+  height: var(--spec-h);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: left center;
+  mask-position: left center;
+}
+
+/* Filled only once the mask is set, and only where masks work: an unmasked fill would be a
+   solid bar. */
+@supports (mask-image: none) or (-webkit-mask-image: none) {
+  .spec[data-state="set"] {
+    background-color: var(--c-spec);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* Forced colours would repaint the fill with the background colour and hide the outlines;
+   the token is CanvasText there. */
+@media (forced-colors: active) {
+  .spec {
+    forced-color-adjust: none;
+  }
+}
+
+/* Without scripting nothing sets the mask; the <noscript> image shows instead. */
+@media (scripting: none) {
+  .spec {
+    display: none;
+  }
+}
+
+/* The no-script image: black outlines, the same box as the mask, loaded lazily (its loading
+   attribute). Its width and height attributes keep the aspect ratio. */
+.spec-img {
+  display: block;
+  width: auto;
+  height: var(--spec-h);
+}
+
+@media (prefers-color-scheme: dark) {
+  .spec-img {
+    filter: invert(1);
+  }
+}

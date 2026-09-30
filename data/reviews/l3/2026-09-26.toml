@@ -1,0 +1,8 @@
+# Owner rulings of 2026-09-26, gate L3 (license verification failures), given in chat after
+# integration B. Ruled by the owner, Byron Shock; recorded by Claude from the lead's notes
+# (design/rulings-2026-09-26.toml, gates_batch2). Also in AUTHORITY.md.
+
+[L3_32]
+value = "claude_researches_all"
+ruling = "Claude researches all 32 fonts that failed the automatic license check: fetches the proper license files, verifies them again, and asks the owner only about genuine conflicts."
+reason = "Claude's recommendation: most failures are technical (a web page instead of a license file, a Nerd Fonts copy that differs word for word). Expected genuine conflicts: Cascadia's name table (terms of use), GFS Didot's (may not be distributed), Roboto Condensed's (Apache) and Junicode's (GPL)."

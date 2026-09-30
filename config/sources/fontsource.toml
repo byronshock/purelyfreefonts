@@ -1,0 +1,26 @@
+# Universe collector fontsource: the Fontsource registry (MIT; ruling T1), read
+# from a sparse git clone, plus the API's /v1/fonts rows for ids the registry
+# lacks (design-m1 §2.4: the API is stale, so the registry comes first).
+enabled = true
+repository = "https://github.com/fontsource/fontsource"
+ref = "main"
+api_url = "https://api.fontsource.org/v1/fonts"
+
+# Registry groups whose font files keep their full unicodeRange in the extract.
+# The Latin stage reads it instead of downloading files (design-m1 C13); Google
+# families are judged on Google's metadata, and their ranges would add about
+# 3 MB to each monthly snapshot.
+full_ranges = ["fontsource"]
+
+# Drop codes (records.DROP_REASONS) for families whose name matches a pattern,
+# when the registry's group, special-use tags and classifications give none.
+# The API lists "Material Symbols" (id material-symbols) as a monospace font.
+drop_names = [
+  ["icon", '^Material (Icons|Symbols)\b'],
+]
+
+# Registry classifications that mark a family as a symbol font (drop code
+# "symbol"), as google_metadata and google_repo rule on Google's "Symbols".
+# On 2026-09-25 all 42 registry families carrying it were symbol, placeholder
+# or punctuation-only fonts (Noto Sans Symbols, Flow, Redacted, YakuHan, ...).
+symbol_classifications = ["symbols"]

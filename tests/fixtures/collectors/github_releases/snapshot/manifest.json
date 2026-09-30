@@ -1,0 +1,547 @@
+{
+  "collector_version": 1,
+  "complete": true,
+  "data_date": "2026-09-26",
+  "date": "2026-09-26",
+  "extracts": [
+    {
+      "bytes": 1069,
+      "path": "assets.jsonl.gz",
+      "rows": 26,
+      "sha256": "8eaa229c4b13d836f913d550bf159aabf4069f3f82bc3d95bca1c69c35cb276e"
+    },
+    {
+      "bytes": 9791,
+      "path": "repos.json",
+      "rows": 52,
+      "sha256": "59a3d3c29b1fa9b1120331e0e5277ad5816b8177030db5c141f19deb4ffd4dcd"
+    }
+  ],
+  "fetched": [
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/0xType/0xProto/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 747,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "e99ce35d38b344c8771ca77939761e575bf4399db477fc8cf97867cdbcb8edc5",
+      "status": 200,
+      "url": "https://api.github.com/repos/adobe-fonts/source-code-pro/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/adobe-fonts/source-sans/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/adobe-fonts/source-serif/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/ahatem/IoskeleyMono/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/alerque/libertinus/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/antijingoist/opendyslexic/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/arrowtype/recursive/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/arrowtype/shantell-sans/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 1699,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "67c9fc278f079ee19c6b96c86d7ae6ac6d9ae5e09b184c1cd64ee4a67205561b",
+      "status": 200,
+      "url": "https://api.github.com/graphql"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/belluzj/fantasque-sans/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/blobject/agave/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/calcom/sans/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/canonical/Ubuntu-Sans-fonts/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/canonical/Ubuntu-Sans-Mono-fonts/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/cormullion/juliamono/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/crozynski/comicneue/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/dejavu-fonts/dejavu-fonts/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/eigilnikolajsen/commit-mono/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/evilmartians/mono/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/fcambus/spleen/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/github/hubot-sans/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/github/mona-sans/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 513,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "473ad64119ba45d945a7c13feff543a637792192c1c6232e3eaad03200337b77",
+      "status": 200,
+      "url": "https://api.github.com/repos/githubnext/monaspace/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/googlefonts/googlesans-code/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/i-tu/Hasklig/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 366,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "5511bcc1a27b315483b2d0e86b2d7a87aa7f48a04777320b856538b70338a323",
+      "status": 200,
+      "url": "https://api.github.com/repos/IBM/plex/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/IdreesInc/Monocraft/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/intel/intel-one-mono/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/jenskutilek/sudo-font/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 716,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "3e4fb0660118939819b652e0632bb027b4ff483934268d5526a8d07a657d14b5",
+      "status": 200,
+      "url": "https://api.github.com/repos/JetBrains/JetBrainsMono/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/kaspernordkvist/uncut_sans/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/lauridskern/open-runde/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/madmalik/mononoki/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 733,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "712928816b4c0115c0591facd15d4ba8ffebf37c4c5fb58d8f271ccfe142501c",
+      "status": 200,
+      "url": "https://api.github.com/repos/microsoft/cascadia-code/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/mishamyrt/Lilex/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/oppiliappan/scientifica/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/psb1558/Junicode-font/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 351,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "a832c6eeb21286a4f71a563964e2e359523d2540e79e03682be24a555785d25e",
+      "status": 200,
+      "url": "https://api.github.com/repos/rbanffy/3270font/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/RedHatOfficial/Overpass/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/rektdeckard/departure-mono/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 682,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "c97557f12bacd466c4b541f5c1c0c03e8159b537c04f89b14c1a9ab2b80d8879",
+      "status": 200,
+      "url": "https://api.github.com/repos/rsms/inter/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 497,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "0d73f515cbd131d033be5e39c8fdf95f0576e300518753d70199a8bcf08122b2",
+      "status": 200,
+      "url": "https://api.github.com/repos/source-foundry/Hack/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/subframe7536/maple-font/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 759,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "63154c31ac7a15fb25160bdb1567cf2c45114a3b456e51954c00407c22bb2120",
+      "status": 200,
+      "url": "https://api.github.com/repos/the-moonwitch/Cozette/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/theleagueof/league-gothic/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/theleagueof/league-mono/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/theleagueof/league-spartan/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 679,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "efeb5d208c11c6b98548e03985b7e3d60ddd6179bceb5d15cc9ffbba9210afaa",
+      "status": 200,
+      "url": "https://api.github.com/repos/tonsky/FiraCode/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/uswds/public-sans/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/vercel/geist-font/releases?per_page=100&page=1"
+    },
+    {
+      "bytes": 3,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "status": 200,
+      "url": "https://api.github.com/repos/zed-industries/zed-fonts/releases?per_page=100&page=1"
+    }
+  ],
+  "notes": [],
+  "schema": 1,
+  "source": "github_releases",
+  "stale_of": null,
+  "window": null
+}

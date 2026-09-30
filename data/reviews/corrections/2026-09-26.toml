@@ -1,0 +1,56 @@
+# Owner rulings of 2026-09-26, given in chat after integration A (the first real run). Ruled by
+# the owner, Byron Shock; recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml).
+# Also in AUTHORITY.md. Where the owner picked Claude's recommendation, the reason is Claude's summary.
+
+[per_system_basis]
+value = "largest_package"
+ruling = "Popcon's and pkgstats' family count, and the M8 dependency share, use the family's most-installed package, not the sum of its packages; a removed (not in sid) package maps only when nothing current replaces it."
+reason = "Claude's recommendation: one system installs each package once, so a sum counts a system twice."
+
+[opendyslexic_prereleases]
+value = "per_repo_setting"
+ruling = "A repository that publishes only prereleases has them counted (a per-repository setting)."
+reason = "Claude's recommendation: OpenDyslexic publishes only prereleases. Applied: ranking.toml [sources.github] prerelease_repos = [\"antijingoist/opendyslexic\"], and the github_repos alias miner keeps that repository's prerelease assets."
+
+[virtual_deps_never_pull]
+ruling = "A virtual dependency (Provides) never pulls a font in."
+reason = "Claude's recommendation. Methodology §5's dependency rule now says so (it had named Provides among the edges that pull)."
+
+[almanac_merge_flag_services_only]
+ruling = "The Almanac's parent-merge flag reads its services tab only."
+reason = "Claude's recommendation (ruling M6 made the pages tab the term)."
+
+[gnu_unifont]
+value = "out"
+ruling = "GNU Unifont is out: it is mainly CJK."
+reason = "Claude's recommendation."
+
+[debian_nonfont_filter]
+ruling = "debian_copyright's non_font_files globs are approved (AppStream metadata, node_modules, scripts and tools, autotools, fontconfig .conf files, LaTeX support files, web assets, docs): a Files stanza that matches only them gives no license fact. The remaining GPL-and-OFL cases (SMC and TLWG packages) go to the LIC queue. In config/sources/debian_copyright.toml."
+reason = "Claude's recommendation."
+
+[fontist_agreement_proprietary]
+ruling = "Fontist formulas under a proprietary agreement are excluded (this drops mitimasu)."
+reason = "Claude's recommendation."
+
+[google_sans_no_ruling]
+ruling = "Google Sans needs no ruling: Google's own license excludes it."
+reason = "Claude's recommendation."
+
+[ios_and_vietnamese_as_findings]
+ruling = "iOS coverage and Vietnamese coverage are findings to watch in usability round 1, not changes now."
+reason = "Claude's recommendation."
+
+[dep-debian-noto-mono]
+choice = "a"
+recommended = true
+batch = "all-X-cd3efad083"
+ruling = "Yes: leave it out of most chosen"
+reason = "Both are automatic installs (fonts-droid-fallback on Debian; CachyOS default), so they stay out of most chosen and still count in most installed."
+
+[pre-arch-dejavu-sans-mono]
+choice = "a"
+recommended = true
+batch = "all-X-cd3efad083"
+ruling = "Yes: leave it out of most chosen"
+reason = "Both are automatic installs (fonts-droid-fallback on Debian; CachyOS default), so they stay out of most chosen and still count in most installed."

@@ -1,0 +1,60 @@
+{
+	"classifications": [
+		"symbols"
+	],
+	"family": "Bravura",
+	"languages": [],
+	"license": {
+		"attribution": "Steinberg Media Technologies GmbH",
+		"id": "OFL-1.1",
+		"url": "https://raw.githubusercontent.com/steinbergmedia/bravura/02e8ed29a29115df35007d1178cebaeee26c20e1/LICENSE.txt"
+	},
+	"project": {
+		"repository": "https://github.com/steinbergmedia/bravura",
+		"revision": "02e8ed29a29115df35007d1178cebaeee26c20e1"
+	},
+	"provenance": {
+		"directory": "sources/bravura",
+		"repository": "fontsource/font-files",
+		"revision": "f67c93c7336863d2cb6037eb86269cad5d545b7f",
+		"type": "github"
+	},
+	"sampleText": {
+		"short": "♩♪♫♬♭♮♯"
+	},
+	"sourceModified": "2026-07-27",
+	"sources": [
+		{
+			"inspection": {
+				"axes": [],
+				"codepoints": 6,
+				"colorTables": [],
+				"features": {
+					"gpos": [
+						"kern"
+					],
+					"gsub": [
+						"ccmp",
+						"liga",
+						"salt"
+					]
+				},
+				"fontVersion": "Version 1.392",
+				"glyphs": 3693,
+				"outline": "cff",
+				"style": "normal",
+				"unicodeRange": "U+0000, U+0020, U+00BC-00BE, U+215B",
+				"weight": 400
+			},
+			"path": "sources/bravura/files/Bravura.otf",
+			"sha256": "dca2d90c88437a701b1c2e71fa54e76f9fa41d7deee935d74dc871ea66ecfdd2",
+			"size": 512924,
+			"variant": {
+				"style": "normal",
+				"weight": 400
+			}
+		}
+	],
+	"status": "active",
+	"tags": []
+}

@@ -1,0 +1,64 @@
+{
+  "data": {
+    "repository": {
+      "releases": {
+        "totalCount": 6,
+        "pageInfo": {
+          "hasNextPage": false,
+          "endCursor": "releases:6"
+        },
+        "nodes": [
+          {
+            "tagName": "v2.0.0",
+            "isDraft": false,
+            "isPrerelease": false,
+            "publishedAt": "2018-04-01T21:01:40Z",
+            "releaseAssets": {
+              "totalCount": 4,
+              "pageInfo": {
+                "hasNextPage": false,
+                "endCursor": "v2.0.0:4"
+              },
+              "nodes": [
+                {
+                  "name": "Monoid.zip",
+                  "downloadCount": 10673,
+                  "createdAt": "2018-04-01T21:06:08Z"
+                },
+                {
+                  "name": "Meslo.zip",
+                  "downloadCount": 37478,
+                  "createdAt": "2018-04-01T21:07:07Z"
+                },
+                {
+                  "name": "Hack.zip",
+                  "downloadCount": 186694,
+                  "createdAt": "2018-04-01T21:10:03Z"
+                },
+                {
+                  "name": "Regular.zip",
+                  "downloadCount": 1505,
+                  "createdAt": "2018-04-01T21:10:33Z"
+                }
+              ]
+            }
+          },
+          {
+            "tagName": "v0.7.0",
+            "isDraft": false,
+            "isPrerelease": false,
+            "publishedAt": "2016-04-19T01:26:24Z",
+            "releaseAssets": {
+              "totalCount": 0,
+              "pageInfo": {
+                "hasNextPage": false,
+                "endCursor": "v0.7.0:0"
+              },
+              "nodes": []
+            }
+          }
+        ]
+      }
+    }
+  }
+}

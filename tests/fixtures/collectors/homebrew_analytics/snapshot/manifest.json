@@ -1,0 +1,163 @@
+{
+  "collector_version": 1,
+  "complete": true,
+  "data_date": "2026-09-26",
+  "date": "2026-09-26",
+  "extracts": [
+    {
+      "bytes": 1575,
+      "path": "adds.json",
+      "rows": null,
+      "sha256": "22ad8853e6091c7ee79d5ee11c05ba0a342bff66a44dfec90a1cc11eba10564b"
+    },
+    {
+      "bytes": 734,
+      "path": "cask-install-30d.jsonl",
+      "rows": 17,
+      "sha256": "7f7421de336cfd93884c4d1a6197a420ca5ac35315276701864802b7a08e3d92"
+    },
+    {
+      "bytes": 1513,
+      "path": "cask-install-365d.jsonl",
+      "rows": 31,
+      "sha256": "ce6d84ba1c49f9364dba803fe2b9e2ad4a6b981f4d6fe861829947eced0f1840"
+    },
+    {
+      "bytes": 967,
+      "path": "cask-install-90d.jsonl",
+      "rows": 21,
+      "sha256": "86dc6b8722b803d6d7d9b9a8c9300bd8990c81aecafc2b60c22e637428fd64ab"
+    },
+    {
+      "bytes": 397,
+      "path": "windows.json",
+      "rows": null,
+      "sha256": "e29db3adb820faaa62d21cc7d8d9da27527438a4ab29ad94317a034e81894eb9"
+    }
+  ],
+  "fetched": [
+    {
+      "bytes": 2050,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "0e5162cf13b2e0b48454b1acdb1627b198e978a000d911ea6d6f68901c0ae659",
+      "status": 200,
+      "url": "https://formulae.brew.sh/api/analytics/cask-install/30d.json"
+    },
+    {
+      "bytes": 2514,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "3a772e93c65b1b406310d4af6f904c955619b574e8e86aa030a67c129635f20e",
+      "status": 200,
+      "url": "https://formulae.brew.sh/api/analytics/cask-install/90d.json"
+    },
+    {
+      "bytes": 3813,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "73ed84feb44e517f6161eb1e04c51365c669f18a0415c901d70f4825fbd13e0d",
+      "status": 200,
+      "url": "https://formulae.brew.sh/api/analytics/cask-install/365d.json"
+    },
+    {
+      "bytes": 139,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "e676fb79efdd17824b6edaabd618280fd2771957abfff27947589e03e55b14ce",
+      "status": 200,
+      "url": "https://api.github.com/repos/Homebrew/homebrew-cask/commits?sha=main&until=2025-09-26T00%3A00%3A00Z&per_page=1"
+    },
+    {
+      "bytes": 139,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "e13cab07a2a82e9effdc4c8a16817f63e2df26c3f1cff4cb2afcbc10b4f7059e",
+      "status": 200,
+      "url": "https://api.github.com/repos/Homebrew/homebrew-cask/commits?sha=main&until=2026-09-27T00%3A00%3A00Z&per_page=1"
+    },
+    {
+      "bytes": 3523,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "9ac34e56bd6a2d9cfb353985d3fb0507e879ac1d093f37b2aeab102b93761dc9",
+      "status": 200,
+      "url": "https://api.github.com/repos/Homebrew/homebrew-cask/git/trees/d0a16499293d26df8689ee244ccf3b92e14493d6:Casks/font?recursive=1"
+    },
+    {
+      "bytes": 4082,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "4b72ba85974cfb8ce996e7be6345baddc34c01d397bc1f81478edde36ad148c0",
+      "status": 200,
+      "url": "https://api.github.com/repos/Homebrew/homebrew-cask/git/trees/81097d41aaaa8d6927a697667b01112ab1817a96:Casks/font?recursive=1"
+    },
+    {
+      "bytes": 442,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "ecc57555879b4a168085e3e1b6634a655d5a0c857f0b9f05df98a7edce38c980",
+      "status": 200,
+      "url": "https://raw.githubusercontent.com/Homebrew/homebrew-cask/81097d41aaaa8d6927a697667b01112ab1817a96/cask_renames.json"
+    },
+    {
+      "bytes": 411,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "e247d820214a7a0b962d4b5c810de3b134fe85fd91c5e947a77fdbf226bc52a2",
+      "status": 200,
+      "url": "https://api.github.com/repos/Homebrew/homebrew-cask/commits?sha=main&path=Casks%2Ffont%2Ffont-a%2Ffont-akt.rb&since=2025-09-26T00%3A00%3A00Z&per_page=100"
+    },
+    {
+      "bytes": 1091,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "6b05e5c7271635566ab491932c13959c8a4cdeb2adeaa937e10b114a0368c81a",
+      "status": 200,
+      "url": "https://api.github.com/repos/Homebrew/homebrew-cask/commits?sha=main&path=Casks%2Ffont%2Ffont-d%2Ffont-dejavu-sans.rb&since=2025-09-26T00%3A00%3A00Z&per_page=100"
+    },
+    {
+      "bytes": 547,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "48ccc5056b6ff0d7cbd3c3b910adbb122a5051d8a0ce5d9e01636ee2eb5237f5",
+      "status": 200,
+      "url": "https://api.github.com/repos/Homebrew/homebrew-cask/commits?sha=main&path=Casks%2Ffont%2Ffont-i%2Ffont-ioskeley-mono.rb&since=2025-09-26T00%3A00%3A00Z&per_page=100"
+    }
+  ],
+  "notes": [
+    "https://formulae.brew.sh/api/analytics/cask-install/30d.json: 17 font rows, 0 of them from third-party taps",
+    "https://formulae.brew.sh/api/analytics/cask-install/90d.json: 21 font rows, 1 of them from third-party taps",
+    "https://formulae.brew.sh/api/analytics/cask-install/365d.json: 31 font rows, 3 of them from third-party taps",
+    "add dates: 15 font casks at d0a16499293d (2025-09-25), 17 at 81097d41aaaa (2026-09-26); 5 added (3 looked up, 2 renames), 3 removed"
+  ],
+  "schema": 1,
+  "source": "homebrew_analytics",
+  "stale_of": null,
+  "window": {
+    "end": "2026-09-26",
+    "start": "2025-09-26"
+  }
+}

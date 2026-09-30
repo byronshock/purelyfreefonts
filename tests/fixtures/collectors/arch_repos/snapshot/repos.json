@@ -1,0 +1,38 @@
+[
+  {
+    "dependents": 0,
+    "distro": "arch",
+    "extract": "core.jsonl.gz",
+    "fonts": 0,
+    "name": "core",
+    "packages": 2,
+    "url": "https://geo.mirror.pkgbuild.com/core/os/x86_64/core.db"
+  },
+  {
+    "dependents": 7,
+    "distro": "arch",
+    "extract": "extra.jsonl.gz",
+    "fonts": 25,
+    "name": "extra",
+    "packages": 38,
+    "url": "https://geo.mirror.pkgbuild.com/extra/os/x86_64/extra.db"
+  },
+  {
+    "dependents": 1,
+    "distro": "arch",
+    "extract": "multilib.jsonl.gz",
+    "fonts": 0,
+    "name": "multilib",
+    "packages": 2,
+    "url": "https://geo.mirror.pkgbuild.com/multilib/os/x86_64/multilib.db"
+  },
+  {
+    "dependents": 5,
+    "distro": "cachyos",
+    "extract": "cachyos.jsonl.gz",
+    "fonts": 4,
+    "name": "cachyos",
+    "packages": 10,
+    "url": "https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos.db"
+  }
+]

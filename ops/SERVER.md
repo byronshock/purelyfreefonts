@@ -10,8 +10,8 @@ How the Contabo VPS and the three Cloudflare zones are set up. The settled decis
 | IPv4 / IPv6 | in `ops/SERVER.local.md` (not in git) |
 | SSH | `ssh tff` (user `byron`, key `~/.ssh/id_ed25519`, passwordless sudo) |
 | Site root | `/srv/trulyfreefonts/public` |
-| Web server config | [ops/Caddyfile](Caddyfile) → `/etc/caddy/Caddyfile` |
-| Access log | `/var/log/caddy/access.log`: IPs masked to /16 (IPv4) and /32 (IPv6), IP headers and port dropped; 14 days kept by logrotate ([ops/logrotate-caddy](logrotate-caddy) → `/etc/logrotate.d/caddy-trulyfreefonts`) |
+| Web server config | [ops/Caddyfile](Caddyfile) → `/etc/caddy/Caddyfile`, which imports [ops/caddy/site.caddy](caddy/site.caddy) → `/etc/caddy/site.caddy` (the site's headers) and other sites' snippets from `/etc/caddy/sites/*.caddy` |
+| Access log | `/var/log/caddy/access.log`: IPs masked to /16 (IPv4) and /32 (IPv6), IP headers and port dropped; from item 25, also `Referer` and `User-Agent` (owner ruling of 2026-09-26), `Cookie` and the location headers finer than the country; 14 days kept by logrotate ([ops/logrotate-caddy](logrotate-caddy) → `/etc/logrotate.d/caddy-trulyfreefonts`) |
 | Origin cert | `/etc/caddy/certs/` (Cloudflare Origin CA, 15 years) |
 | Cloudflare zone IDs | in `ops/SERVER.local.md`, or `ops/cf.sh GET /zones` |
 | Cloudflare token | `~/.config/trulyfreefonts/cloudflare.env` on the laptop (mode 600, never committed) |
@@ -20,7 +20,7 @@ How the Contabo VPS and the three Cloudflare zones are set up. The settled decis
 
 **Deploy the site** (from the project root): `rsync -av --delete public/ tff:/srv/trulyfreefonts/public/`
 
-**Change the web server config:** edit [ops/Caddyfile](Caddyfile), then run the deploy line at the top of that file.
+**Change the web server config:** edit [ops/Caddyfile](Caddyfile) or [ops/caddy/site.caddy](caddy/site.caddy), then run the deploy line at the top of the Caddyfile: it validates both and installs both.
 
 **Cloudflare API:** `ops/cf.sh METHOD /path [json]`, e.g. `ops/cf.sh GET /zones`. It reads the token from the env file and never prints it.
 
@@ -58,6 +58,7 @@ How the Contabo VPS and the three Cloudflare zones are set up. The settled decis
 ### F. Visitor privacy (Claude)
 - [x] 17. Cloudflare Network Error Logging (the `NEL` / `Report-To` headers, which made browsers report connection failures to a.nel.cloudflare.com) turned off on all 3 zones (`PATCH /zones/<id>/settings/nel` `{"value":{"enabled":false}}`). *(2026-09-25)*
 - [x] 18. Access log privacy: the Caddyfile log filter masks `remote_ip` and `client_ip` (/16, /32) and drops `remote_port`, `Cf-Connecting-Ip` and `X-Forwarded-For`; Caddy's rolling is off; `logrotate` installed and keeps 14 days, rotated daily. Lines logged before the change were masked in place. *(2026-09-25)*
+- [ ] 25. Deploy the access-log trim of 2026-09-26 with the deploy line at the top of [ops/Caddyfile](Caddyfile), then run the log check under Verification. It drops `Referer` and `User-Agent` (owner ruling of 2026-09-26, `log_fields`) and `Cookie` and Cloudflare's location headers finer than the country (owner ruling of 2026-09-28, `log_extra_headers`) (`Cf-Ipcity`, `Cf-Region`, `Cf-Postal-Code` and the like), plus the rarer IP headers (`Cf-Connecting-Ipv6`, `Cf-Pseudo-Ipv4`, `True-Client-Ip`, `X-Real-Ip`). */privacy/* already describes the trimmed log. *(Not yet deployed: on 2026-09-26 the live `/etc/caddy/Caddyfile` still had the filter of item 18. It ships with the Milestone 2 Caddyfile, which also adds `site.caddy`.)*
 - [x] 19. On all 3 zones: Email Address Obfuscation off (`PATCH /zones/<id>/settings/email_obfuscation` `{"value":"off"}`), since it injects a script; Rocket Loader and Always Online confirmed off; Browser Cache TTL set to "Respect Existing Headers" (`browser_cache_ttl` `{"value":0}`, was 14400). *(2026-09-25; Milestone 2 step 9)*
 
 ### G. Visitor privacy, dashboard only (Byron, by hand)
@@ -96,4 +97,4 @@ On the Free plan, a zone whose origin has no `robots.txt`, and whose managed rob
 - `ops/cf.sh GET /zones/<id>/rulesets/phases/http_request_cache_settings/entrypoint` on the `.com` zone shows the one `/assets/` rule, enabled. `curl -sI https://trulyfreefonts.com/` shows `cf-cache-status: DYNAMIC` (HTML is never edge-cached); once the site is live, a second request for a hashed `/assets/` file shows `cf-cache-status: HIT`.
 - On each zone, `ops/cf.sh GET /zones/<id>/settings/<name>` gives `email_obfuscation` off, `rocket_loader` off, `always_online` off and `browser_cache_ttl` 0.
 - Injection checks must send a browser's `Accept: text/html` header. Plain `curl` sends `Accept: */*`, and Cloudflare injects nothing into that response, so it misses the beacon. `curl -s -H 'Accept: text/html' https://trulyfreefonts.com/ | grep -c -E 'cloudflareinsights|data-cf-beacon|/cdn-cgi/'` gives 0, and the same request with `-D - -o /dev/null` shows no `set-cookie`. First confirm that `curl -s https://trulyfreefonts.com/cdn-cgi/trace` shows `loc=US`: the default Web Analytics setting skips visitors in the EU, EEA, UK and Switzerland, so a clean result from there proves nothing.
-- `ssh tff 'sudo tail -1 /var/log/caddy/access.log'` shows a masked `client_ip` (ending `.0.0` or `::`), no `remote_port`, and no `Cf-Connecting-Ip` or `X-Forwarded-For` header. `sudo logrotate --debug /etc/logrotate.d/caddy-trulyfreefonts` reports no errors.
+- `ssh tff 'sudo tail -1 /var/log/caddy/access.log'` shows a masked `client_ip` (ending `.0.0` or `::`), no `remote_port`, and no `Cf-Connecting-Ip` or `X-Forwarded-For` header; once item 25 is deployed, also no `Referer`, `User-Agent` or `Cookie` header, and no Cloudflare location header but `Cf-Ipcountry`. `sudo logrotate --debug /etc/logrotate.d/caddy-trulyfreefonts` reports no errors.

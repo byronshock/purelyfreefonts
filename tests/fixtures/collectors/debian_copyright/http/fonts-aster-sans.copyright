@@ -1,0 +1,22 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Aster Sans
+Upstream-Contact: The Aster Sans Project Authors
+Source: https://code.aster.example/aster-sans
+
+Files: *
+Copyright: 2024 The Aster Sans Project Authors
+ .
+ "Aster" is a Reserved Font Name.
+License: OFL-1.1-RFN
+
+Files: debian/*
+Copyright: 2025 Synthetic Fonts Team
+License: GPL-2+
+
+License: OFL-1.1-RFN
+ On Debian systems, the complete text of the SIL Open Font License
+ version 1.1 can be found in "/usr/share/common-licenses/OFL-1.1".
+
+License: GPL-2+
+ On Debian systems, the complete text of the GNU General Public License
+ version 2 can be found in "/usr/share/common-licenses/GPL-2".

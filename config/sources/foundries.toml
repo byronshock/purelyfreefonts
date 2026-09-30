@@ -1,0 +1,16 @@
+# Universe collector foundries: the hand list of foundry families (ruling M12 (a):
+# seeded once from the foundry sites and reviewed by the owner; never scraped).
+enabled = true
+
+# The list, from the repository root. The fetch keeps a copy in the snapshot, so
+# a replay sees the list as it stood on the run date.
+list_file = "config/foundries.toml"
+
+# HEAD every family page and repository once a run (one GET when a HEAD is not
+# answered 2xx). Only hosts named in the collector are contacted; the answers
+# and every problem go to the snapshot's checks.jsonl and manifest notes.
+check_urls = true
+
+# A URL answering one of these is gone: it is left out of the family's record
+# (and counted in its gone_urls attr). The family itself stays in the universe.
+gone_statuses = [404, 410]

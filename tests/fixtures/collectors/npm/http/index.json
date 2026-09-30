@@ -1,0 +1,119 @@
+{
+  "format": "tff-mockhttp",
+  "responses": [
+    {
+      "body": "last-day.json",
+      "headers": {
+        "cache-control": "public, max-age=300",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "url": "https://api.npmjs.org/downloads/point/last-day"
+    },
+    {
+      "body": "org-fontsource.json",
+      "headers": {
+        "cache-control": "public, max-age=300",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "url": "https://registry.npmjs.org/-/org/fontsource/package"
+    },
+    {
+      "body": "org-fontsource-variable.json",
+      "headers": {
+        "cache-control": "public, max-age=300",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "url": "https://registry.npmjs.org/-/org/fontsource-variable/package"
+    },
+    {
+      "body": "org-expo-google-fonts.json",
+      "headers": {
+        "cache-control": "public, max-age=300",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "url": "https://registry.npmjs.org/-/org/expo-google-fonts/package"
+    },
+    {
+      "body": "range-fontsource--aster-sans.json.gz",
+      "headers": {
+        "cache-control": "public, max-age=300",
+        "content-encoding": "gzip",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "url": "https://api.npmjs.org/downloads/range/2025-04-11:2026-10-02/@fontsource/aster-sans"
+    },
+    {
+      "body": "range-fontsource--birch-mono.json.gz",
+      "headers": {
+        "cache-control": "public, max-age=300",
+        "content-encoding": "gzip",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "url": "https://api.npmjs.org/downloads/range/2025-04-11:2026-10-02/@fontsource/birch-mono"
+    },
+    {
+      "body": "range-fontsource--cobalt-serif.json.gz",
+      "headers": {
+        "cache-control": "public, max-age=300",
+        "content-encoding": "gzip",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "url": "https://api.npmjs.org/downloads/range/2025-04-11:2026-10-02/@fontsource/cobalt-serif"
+    },
+    {
+      "body": "range-fontsource--dune-display.json.gz",
+      "headers": {
+        "cache-control": "public, max-age=300",
+        "content-encoding": "gzip",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "url": "https://api.npmjs.org/downloads/range/2025-04-11:2026-10-02/@fontsource/dune-display"
+    },
+    {
+      "body": "range-fontsource--ember-script.json",
+      "headers": {
+        "cache-control": "public, max-age=300",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "status": 404,
+      "url": "https://api.npmjs.org/downloads/range/2025-04-11:2026-10-02/@fontsource/ember-script"
+    },
+    {
+      "body": "range-fontsource-variable--aster-sans.json.gz",
+      "headers": {
+        "cache-control": "public, max-age=300",
+        "content-encoding": "gzip",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "url": "https://api.npmjs.org/downloads/range/2025-04-11:2026-10-02/@fontsource-variable/aster-sans"
+    },
+    {
+      "body": "range-fontsource-variable--fjord-sans.json.gz",
+      "headers": {
+        "cache-control": "public, max-age=300",
+        "content-encoding": "gzip",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "url": "https://api.npmjs.org/downloads/range/2025-04-11:2026-10-02/@fontsource-variable/fjord-sans"
+    },
+    {
+      "body": "range-expo-google-fonts--aster-sans.json.gz",
+      "headers": {
+        "cache-control": "public, max-age=300",
+        "content-encoding": "gzip",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "url": "https://api.npmjs.org/downloads/range/2025-04-11:2026-10-02/@expo-google-fonts/aster-sans"
+    },
+    {
+      "body": "range-expo-google-fonts--birch-mono.json.gz",
+      "headers": {
+        "cache-control": "public, max-age=300",
+        "content-encoding": "gzip",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "url": "https://api.npmjs.org/downloads/range/2025-04-11:2026-10-02/@expo-google-fonts/birch-mono"
+    }
+  ],
+  "version": 1
+}

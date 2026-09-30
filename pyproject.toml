@@ -84,6 +84,8 @@ markers = [
   "network: real network (deselected in CI)",
   "store: needs $TFF_STORE",
   "browser: Playwright",
+  "sample_only: runs on the sample catalog only; site-real and deploy.yml deselect it",
+  "real_catalog(**params): on the real catalog, only these parameters run (the rest get sample_only)",
   "slow",
 ]
 timeout = 300

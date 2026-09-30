@@ -1,0 +1,19 @@
+# Universe collector nerdfonts: the families Nerd Fonts patches, from its fonts.json
+# (MIT; ruling T1). The file is fetched at the last commit that changed it.
+enabled = true
+repo = "ryanoasis/nerd-fonts"
+ref = "master"
+path = "bin/scripts/lib/fonts.json"
+
+# Where the entries' imagePreviewFontSource paths start: the original font
+# files, linked (pinned to the commit) as each family's font file.
+unpatched_dir = "src/unpatched-fonts"
+
+# A list with fewer than this share of the previous snapshot's entries is a
+# broken file: the fetch fails and the stale policy reuses the last good
+# snapshot. Nerd Fonts rarely retires a font.
+min_share = 0.9
+
+# Folders that are not text families, as universe drop codes (records.DROP_REASONS).
+[drop]
+NerdFontsSymbolsOnly = "icon"  # the Nerd Font icon glyphs alone

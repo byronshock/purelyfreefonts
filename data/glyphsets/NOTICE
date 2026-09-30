@@ -1,0 +1,23 @@
+GF Latin glyphsets
+
+GF_Latin_Kernel.nam and GF_Latin_Core.nam are copied unmodified from
+googlefonts/glyphsets, the Google Fonts glyph set definitions:
+
+  Repository: https://github.com/googlefonts/glyphsets
+  Commit:     432104e3ecb119c44b3cc29d7209d7b54bf41017 (main, 2026-09-22)
+  Paths:      Lib/glyphsets/results/nam/GF_Latin_Kernel.nam
+              Lib/glyphsets/results/nam/GF_Latin_Core.nam
+              (both last changed upstream on 2024-11-01, commit 87be2b9c)
+
+  sha256:
+    671a2ae5f835f7d0d9e82b3118bd6f946378821d8b1e50ba320208abbd114329  GF_Latin_Kernel.nam
+    26936a4812ff33ee62a2e8156b9976173755909be84138ca4794a33f123b7d18  GF_Latin_Core.nam
+
+Copyright the googlefonts/glyphsets authors. Licensed under the Apache License,
+Version 2.0; a copy is in LICENSE next to this file (the upstream LICENSE,
+unmodified). The upstream repository has no NOTICE file.
+
+They are used by tff_catalog.latin, the Latin gate of the trulyfreefonts
+catalog (docs/milestone-1.md, step 5). To update them, fetch both files at a
+new commit, then update this notice and GLYPHSET_COMMIT and GLYPHSET_SHA256 in
+src/tff_catalog/latin.py.

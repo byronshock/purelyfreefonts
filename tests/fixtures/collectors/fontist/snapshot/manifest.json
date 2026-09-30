@@ -1,0 +1,29 @@
+{
+  "collector_version": 1,
+  "complete": true,
+  "data_date": null,
+  "date": "2026-10-03",
+  "extracts": [
+    {
+      "bytes": 1311,
+      "path": "formulas.jsonl.gz",
+      "rows": 9,
+      "sha256": "0cbd06557977057dce8c26fe6a3028d3b84076cf985727cf9a253c024d4eb762"
+    },
+    {
+      "bytes": 305,
+      "path": "source.json",
+      "rows": null,
+      "sha256": "08e19cce49d17b6d46ca03419e789f8fb4c84793eb3fe2f2f1134cc91f02e4c3"
+    }
+  ],
+  "fetched": [],
+  "notes": [
+    "git sparse clone https://github.com/fontist/formulas v5 at 194ccc790a1e2f11df7ff1eb841b4f0819297334: /Formulas/*.yml /Formulas/sil/*.yml",
+    "skipped 2 of 11 formulas (source.json)"
+  ],
+  "schema": 1,
+  "source": "fontist",
+  "stale_of": null,
+  "window": null
+}

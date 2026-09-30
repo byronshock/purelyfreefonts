@@ -1,0 +1,22 @@
+Trimmed real data (ruling T1). http/pages.csv and http/services.csv are rows of
+the CSV exports of two tabs of the HTTP Archive Web Almanac 2025 Fonts chapter's
+results sheet ("Fonts 2025", sheet 1otdu4p_CCI70B4FVzw6k02frStsPMrQoFu7jUim_0Bg,
+linked as "View data" from https://almanac.httparchive.org/en/2025/fonts),
+downloaded 2026-09-26:
+
+  gid 1668708562  Design: Which families are popular in CSS?
+                  (30 of 200 data rows)
+  gid 1594814478  Performance: Which families are used broken down by service?
+                  (35 of 1,203 data rows)
+
+Each file keeps the tab's preamble rows, its header row and the chosen data rows
+byte for byte (CRLF line ends, the pivot-table cells to the right included);
+the other rows are left out. snapshot/ is what almanac.fetch() makes of them.
+The redirect URLs in http/index.json are invented: the real export redirects to
+a signed URL, which is not kept.
+
+The data is the result of the Almanac's queries on the HTTP Archive crawl of
+July 2025 (github.com/HTTPArchive/almanac.httparchive.org, sql/2025/fonts/).
+The chapter says: "© Web Almanac. Licensed under Apache 2.0." A copy of the
+license, the repository's LICENSE file, is in LICENSE next to this file. The
+repository has no NOTICE file.

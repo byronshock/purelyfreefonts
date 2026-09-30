@@ -1,0 +1,922 @@
+alias,ns,target_ns,target,relation,detail,source,evidence,auto
+0xType/0xProto/0xProto-Regular.otf,gh-asset,font-name,0xProto,package,,github_repos,https://github.com/0xType/0xProto/releases,false
+0xType/0xProto/0xProto-Regular.ttf,gh-asset,font-name,0xProto,package,,github_repos,https://github.com/0xType/0xProto/releases,false
+0xType/0xProto/0xProto-Regular.woff2,gh-asset,font-name,0xProto,package,,github_repos,https://github.com/0xType/0xProto/releases,false
+0xType/0xProto/0xProto.zip,gh-asset,font-name,0xProto,package,,github_repos,https://github.com/0xType/0xProto/releases,false
+IBM/plex/IBM-Plex-Mono.zip,gh-asset,font-name,IBM Plex Mono,package,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/IBM-Plex-Sans-Arabic.zip,gh-asset,font-name,IBM Plex Sans Arabic,package,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/IBM-Plex-Sans-Condensed.zip,gh-asset,font-name,IBM Plex Sans Condensed,package,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/IBM-Plex-Sans-Devanagari.zip,gh-asset,font-name,IBM Plex Sans Devanagari,package,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/IBM-Plex-Sans-Hebrew.zip,gh-asset,font-name,IBM Plex Sans Hebrew,package,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/IBM-Plex-Sans-JP.zip,gh-asset,font-name,IBM Plex Sans JP,package,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/IBM-Plex-Sans-KR.zip,gh-asset,font-name,IBM Plex Sans KR,package,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/IBM-Plex-Sans-Thai-Looped.zip,gh-asset,font-name,IBM Plex Sans Thai Looped,package,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/IBM-Plex-Sans-Thai.zip,gh-asset,font-name,IBM Plex Sans Thai,package,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/IBM-Plex-Sans-Var.zip,gh-asset,font-name,IBM Plex Sans,package,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/IBM-Plex-Sans.zip,gh-asset,font-name,IBM Plex Sans,package,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/IBM-Plex-Serif.zip,gh-asset,font-name,IBM Plex Serif,package,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/OpenType.zip,gh-asset,font-name,IBM Plex Mono,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/OpenType.zip,gh-asset,font-name,IBM Plex Sans,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/OpenType.zip,gh-asset,font-name,IBM Plex Sans Arabic,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/OpenType.zip,gh-asset,font-name,IBM Plex Sans Condensed,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/OpenType.zip,gh-asset,font-name,IBM Plex Sans Devanagari,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/OpenType.zip,gh-asset,font-name,IBM Plex Sans Hebrew,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/OpenType.zip,gh-asset,font-name,IBM Plex Sans JP,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/OpenType.zip,gh-asset,font-name,IBM Plex Sans KR,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/OpenType.zip,gh-asset,font-name,IBM Plex Sans TC,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/OpenType.zip,gh-asset,font-name,IBM Plex Sans Thai,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/OpenType.zip,gh-asset,font-name,IBM Plex Sans Thai Looped,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/OpenType.zip,gh-asset,font-name,IBM Plex Serif,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/TrueType.zip,gh-asset,font-name,IBM Plex Mono,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/TrueType.zip,gh-asset,font-name,IBM Plex Sans,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/TrueType.zip,gh-asset,font-name,IBM Plex Sans Arabic,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/TrueType.zip,gh-asset,font-name,IBM Plex Sans Condensed,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/TrueType.zip,gh-asset,font-name,IBM Plex Sans Devanagari,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/TrueType.zip,gh-asset,font-name,IBM Plex Sans Hebrew,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/TrueType.zip,gh-asset,font-name,IBM Plex Sans JP,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/TrueType.zip,gh-asset,font-name,IBM Plex Sans KR,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/TrueType.zip,gh-asset,font-name,IBM Plex Sans TC,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/TrueType.zip,gh-asset,font-name,IBM Plex Sans Thai,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/TrueType.zip,gh-asset,font-name,IBM Plex Sans Thai Looped,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/TrueType.zip,gh-asset,font-name,IBM Plex Serif,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/Web.zip,gh-asset,font-name,IBM Plex Mono,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/Web.zip,gh-asset,font-name,IBM Plex Sans,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/Web.zip,gh-asset,font-name,IBM Plex Sans Arabic,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/Web.zip,gh-asset,font-name,IBM Plex Sans Condensed,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/Web.zip,gh-asset,font-name,IBM Plex Sans Devanagari,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/Web.zip,gh-asset,font-name,IBM Plex Sans Hebrew,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/Web.zip,gh-asset,font-name,IBM Plex Sans JP,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/Web.zip,gh-asset,font-name,IBM Plex Sans KR,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/Web.zip,gh-asset,font-name,IBM Plex Sans TC,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/Web.zip,gh-asset,font-name,IBM Plex Sans Thai,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/Web.zip,gh-asset,font-name,IBM Plex Sans Thai Looped,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/Web.zip,gh-asset,font-name,IBM Plex Serif,bundle,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/ibm-plex-math.zip,gh-asset,font-name,IBM Plex Math,package,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/ibm-plex-sans-sc.zip,gh-asset,font-name,IBM Plex Sans SC,package,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/ibm-plex-sans-tc.zip,gh-asset,font-name,IBM Plex Sans TC,package,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/plex-mono-variable.zip,gh-asset,font-name,IBM Plex Mono,package,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/plex-sans-variable.zip,gh-asset,font-name,IBM Plex Sans,package,,github_repos,https://github.com/IBM/plex/releases,false
+IBM/plex/plex-serif-variable.zip,gh-asset,font-name,IBM Plex Serif,package,,github_repos,https://github.com/IBM/plex/releases,false
+IdreesInc/Monocraft/MinecraftMono.otf,gh-asset,font-name,Monocraft,package,,github_repos,https://github.com/IdreesInc/Monocraft/releases,false
+IdreesInc/Monocraft/Monocraft-nerd-fonts-patched.ttc,gh-asset,font-name,Monocraft,build,nerd,github_repos,https://github.com/IdreesInc/Monocraft/releases,false
+IdreesInc/Monocraft/Monocraft-nerd-fonts-patched.ttf,gh-asset,font-name,Monocraft,build,nerd,github_repos,https://github.com/IdreesInc/Monocraft/releases,false
+IdreesInc/Monocraft/Monocraft-no-ligatures.ttc,gh-asset,font-name,Monocraft,package,,github_repos,https://github.com/IdreesInc/Monocraft/releases,false
+IdreesInc/Monocraft/Monocraft-no-ligatures.ttf,gh-asset,font-name,Monocraft,package,,github_repos,https://github.com/IdreesInc/Monocraft/releases,false
+IdreesInc/Monocraft/Monocraft-otf.zip,gh-asset,font-name,Monocraft,package,,github_repos,https://github.com/IdreesInc/Monocraft/releases,false
+IdreesInc/Monocraft/Monocraft-ttf-otf.zip,gh-asset,font-name,Monocraft,package,,github_repos,https://github.com/IdreesInc/Monocraft/releases,false
+IdreesInc/Monocraft/Monocraft-ttf.zip,gh-asset,font-name,Monocraft,package,,github_repos,https://github.com/IdreesInc/Monocraft/releases,false
+IdreesInc/Monocraft/Monocraft.otf,gh-asset,font-name,Monocraft,package,,github_repos,https://github.com/IdreesInc/Monocraft/releases,false
+IdreesInc/Monocraft/Monocraft.ttc,gh-asset,font-name,Monocraft,package,,github_repos,https://github.com/IdreesInc/Monocraft/releases,false
+IdreesInc/Monocraft/Monocraft.ttf,gh-asset,font-name,Monocraft,package,,github_repos,https://github.com/IdreesInc/Monocraft/releases,false
+JetBrains/JetBrainsMono/JetBrains.Mono.zip,gh-asset,font-name,JetBrains Mono,package,,github_repos,https://github.com/JetBrains/JetBrainsMono/releases,false
+JetBrains/JetBrainsMono/JetBrainsMono.zip,gh-asset,font-name,JetBrains Mono,package,,github_repos,https://github.com/JetBrains/JetBrainsMono/releases,false
+RedHatOfficial/Overpass/overpass-desktop-fonts.zip,gh-asset,font-name,Overpass,bundle,,github_repos,https://github.com/RedHatOfficial/Overpass/releases,false
+RedHatOfficial/Overpass/overpass-desktop-fonts.zip,gh-asset,font-name,Overpass Mono,bundle,,github_repos,https://github.com/RedHatOfficial/Overpass/releases,false
+RedHatOfficial/Overpass/overpass-fonts-1.fc23.noarch.rpm,gh-asset,font-name,Overpass,package,,github_repos,https://github.com/RedHatOfficial/Overpass/releases,false
+RedHatOfficial/Overpass/overpass-fonts-ttf-2.zip,gh-asset,font-name,Overpass,package,,github_repos,https://github.com/RedHatOfficial/Overpass/releases,false
+RedHatOfficial/Overpass/overpass-fonts-ttf.zip,gh-asset,font-name,Overpass,package,,github_repos,https://github.com/RedHatOfficial/Overpass/releases,false
+RedHatOfficial/Overpass/overpass-fonts-web-fonts.zip,gh-asset,font-name,Overpass,package,,github_repos,https://github.com/RedHatOfficial/Overpass/releases,false
+RedHatOfficial/Overpass/overpass-webfonts.zip,gh-asset,font-name,Overpass,bundle,,github_repos,https://github.com/RedHatOfficial/Overpass/releases,false
+RedHatOfficial/Overpass/overpass-webfonts.zip,gh-asset,font-name,Overpass Mono,bundle,,github_repos,https://github.com/RedHatOfficial/Overpass/releases,false
+RedHatOfficial/Overpass/overpass.tar.gz,gh-asset,font-name,Overpass,package,,github_repos,https://github.com/RedHatOfficial/Overpass/releases,false
+RedHatOfficial/Overpass/overpass.zip,gh-asset,font-name,Overpass,bundle,,github_repos,https://github.com/RedHatOfficial/Overpass/releases,false
+RedHatOfficial/Overpass/overpass.zip,gh-asset,font-name,Overpass Mono,bundle,,github_repos,https://github.com/RedHatOfficial/Overpass/releases,false
+adobe-fonts/source-code-pro/OTF-source-code-pro.zip,gh-asset,font-name,Source Code Pro,package,,github_repos,https://github.com/adobe-fonts/source-code-pro/releases,false
+adobe-fonts/source-code-pro/SourceCodeVariable-Italic.otf,gh-asset,font-name,Source Code Pro,package,,github_repos,https://github.com/adobe-fonts/source-code-pro/releases,false
+adobe-fonts/source-code-pro/SourceCodeVariable-Italic.ttf,gh-asset,font-name,Source Code Pro,package,,github_repos,https://github.com/adobe-fonts/source-code-pro/releases,false
+adobe-fonts/source-code-pro/SourceCodeVariable-Roman.otf,gh-asset,font-name,Source Code Pro,package,,github_repos,https://github.com/adobe-fonts/source-code-pro/releases,false
+adobe-fonts/source-code-pro/SourceCodeVariable-Roman.ttf,gh-asset,font-name,Source Code Pro,package,,github_repos,https://github.com/adobe-fonts/source-code-pro/releases,false
+adobe-fonts/source-code-pro/TTF-source-code-pro.zip,gh-asset,font-name,Source Code Pro,package,,github_repos,https://github.com/adobe-fonts/source-code-pro/releases,false
+adobe-fonts/source-code-pro/VAR-source-code-var.zip,gh-asset,font-name,Source Code Pro,package,,github_repos,https://github.com/adobe-fonts/source-code-pro/releases,false
+adobe-fonts/source-code-pro/VF-source-code-VF.zip,gh-asset,font-name,Source Code Pro,package,,github_repos,https://github.com/adobe-fonts/source-code-pro/releases,false
+adobe-fonts/source-code-pro/WOFF-source-code-pro.zip,gh-asset,font-name,Source Code Pro,package,,github_repos,https://github.com/adobe-fonts/source-code-pro/releases,false
+adobe-fonts/source-code-pro/WOFF2-source-code-pro.zip,gh-asset,font-name,Source Code Pro,package,,github_repos,https://github.com/adobe-fonts/source-code-pro/releases,false
+adobe-fonts/source-code-pro/source-code-pro.zip,gh-asset,font-name,Source Code Pro,package,,github_repos,https://github.com/adobe-fonts/source-code-pro/releases,false
+adobe-fonts/source-sans/OTF-source-sans.zip,gh-asset,font-name,Source Sans 3,package,,github_repos,https://github.com/adobe-fonts/source-sans/releases,false
+adobe-fonts/source-sans/SourceSansVariable-Italic.otf,gh-asset,font-name,Source Sans 3,package,,github_repos,https://github.com/adobe-fonts/source-sans/releases,false
+adobe-fonts/source-sans/SourceSansVariable-Italic.ttf,gh-asset,font-name,Source Sans 3,package,,github_repos,https://github.com/adobe-fonts/source-sans/releases,false
+adobe-fonts/source-sans/SourceSansVariable-Roman.otf,gh-asset,font-name,Source Sans 3,package,,github_repos,https://github.com/adobe-fonts/source-sans/releases,false
+adobe-fonts/source-sans/SourceSansVariable-Roman.ttf,gh-asset,font-name,Source Sans 3,package,,github_repos,https://github.com/adobe-fonts/source-sans/releases,false
+adobe-fonts/source-sans/TTF-source-sans.zip,gh-asset,font-name,Source Sans 3,package,,github_repos,https://github.com/adobe-fonts/source-sans/releases,false
+adobe-fonts/source-sans/VAR-source-sans.zip,gh-asset,font-name,Source Sans 3,package,,github_repos,https://github.com/adobe-fonts/source-sans/releases,false
+adobe-fonts/source-sans/VF-source-sans.zip,gh-asset,font-name,Source Sans 3,package,,github_repos,https://github.com/adobe-fonts/source-sans/releases,false
+adobe-fonts/source-sans/WOFF-source-sans.zip,gh-asset,font-name,Source Sans 3,package,,github_repos,https://github.com/adobe-fonts/source-sans/releases,false
+adobe-fonts/source-sans/WOFF2-source-sans.zip,gh-asset,font-name,Source Sans 3,package,,github_repos,https://github.com/adobe-fonts/source-sans/releases,false
+adobe-fonts/source-sans/source-sans-3.zip,gh-asset,font-name,Source Sans 3,package,,github_repos,https://github.com/adobe-fonts/source-sans/releases,false
+adobe-fonts/source-sans/source-sans-pro.zip,gh-asset,font-name,Source Sans 3,package,,github_repos,https://github.com/adobe-fonts/source-sans/releases,false
+adobe-fonts/source-sans/source-sans.zip,gh-asset,font-name,Source Sans 3,package,,github_repos,https://github.com/adobe-fonts/source-sans/releases,false
+adobe-fonts/source-serif/SourceSerifVariable-Roman.otf,gh-asset,font-name,Source Serif 4,package,,github_repos,https://github.com/adobe-fonts/source-serif/releases,false
+adobe-fonts/source-serif/SourceSerifVariable-Roman.ttf,gh-asset,font-name,Source Serif 4,package,,github_repos,https://github.com/adobe-fonts/source-serif/releases,false
+adobe-fonts/source-serif/source-serif-pro.zip,gh-asset,font-name,Source Serif 4,package,,github_repos,https://github.com/adobe-fonts/source-serif/releases,false
+adobe-fonts/source-serif/source-serif.zip,gh-asset,font-name,Source Serif 4,package,,github_repos,https://github.com/adobe-fonts/source-serif/releases,false
+adobe-fonts/source-serif/source-serif_Desktop.zip,gh-asset,font-name,Source Serif 4,package,,github_repos,https://github.com/adobe-fonts/source-serif/releases,false
+adobe-fonts/source-serif/source-serif_WOFF.zip,gh-asset,font-name,Source Serif 4,package,,github_repos,https://github.com/adobe-fonts/source-serif/releases,false
+adobe-fonts/source-serif/source-serif_WOFF2.zip,gh-asset,font-name,Source Serif 4,package,,github_repos,https://github.com/adobe-fonts/source-serif/releases,false
+ahatem/IoskeleyMono/IoskeleyMono-Condensed.zip,gh-asset,font-name,Ioskeley Mono,package,,github_repos,https://github.com/ahatem/IoskeleyMono/releases,false
+ahatem/IoskeleyMono/IoskeleyMono-Hinted.zip,gh-asset,font-name,Ioskeley Mono,package,,github_repos,https://github.com/ahatem/IoskeleyMono/releases,false
+ahatem/IoskeleyMono/IoskeleyMono-NL-NerdFont.zip,gh-asset,font-name,Ioskeley Mono,build,nerd,github_repos,https://github.com/ahatem/IoskeleyMono/releases,false
+ahatem/IoskeleyMono/IoskeleyMono-NL.zip,gh-asset,font-name,Ioskeley Mono,build,nl,github_repos,https://github.com/ahatem/IoskeleyMono/releases,false
+ahatem/IoskeleyMono/IoskeleyMono-NerdFont-Condensed.zip,gh-asset,font-name,Ioskeley Mono,build,nerd,github_repos,https://github.com/ahatem/IoskeleyMono/releases,false
+ahatem/IoskeleyMono/IoskeleyMono-NerdFont-Normal.zip,gh-asset,font-name,Ioskeley Mono,build,nerd,github_repos,https://github.com/ahatem/IoskeleyMono/releases,false
+ahatem/IoskeleyMono/IoskeleyMono-NerdFont-SemiCondensed.zip,gh-asset,font-name,Ioskeley Mono,build,nerd,github_repos,https://github.com/ahatem/IoskeleyMono/releases,false
+ahatem/IoskeleyMono/IoskeleyMono-NerdFont.zip,gh-asset,font-name,Ioskeley Mono,build,nerd,github_repos,https://github.com/ahatem/IoskeleyMono/releases,false
+ahatem/IoskeleyMono/IoskeleyMono-Normal.zip,gh-asset,font-name,Ioskeley Mono,package,,github_repos,https://github.com/ahatem/IoskeleyMono/releases,false
+ahatem/IoskeleyMono/IoskeleyMono-SemiCondensed.zip,gh-asset,font-name,Ioskeley Mono,package,,github_repos,https://github.com/ahatem/IoskeleyMono/releases,false
+ahatem/IoskeleyMono/IoskeleyMono-TTF-Hinted.zip,gh-asset,font-name,Ioskeley Mono,package,,github_repos,https://github.com/ahatem/IoskeleyMono/releases,false
+ahatem/IoskeleyMono/IoskeleyMono-TTF-Unhinted.zip,gh-asset,font-name,Ioskeley Mono,package,,github_repos,https://github.com/ahatem/IoskeleyMono/releases,false
+ahatem/IoskeleyMono/IoskeleyMono-Term-NerdFont.zip,gh-asset,font-name,Ioskeley Mono,build,nerd,github_repos,https://github.com/ahatem/IoskeleyMono/releases,false
+ahatem/IoskeleyMono/IoskeleyMono-Term.zip,gh-asset,font-name,Ioskeley Mono,package,,github_repos,https://github.com/ahatem/IoskeleyMono/releases,false
+ahatem/IoskeleyMono/IoskeleyMono-Unhinted.zip,gh-asset,font-name,Ioskeley Mono,package,,github_repos,https://github.com/ahatem/IoskeleyMono/releases,false
+ahatem/IoskeleyMono/IoskeleyMono-Web-Full.zip,gh-asset,font-name,Ioskeley Mono,package,,github_repos,https://github.com/ahatem/IoskeleyMono/releases,false
+ahatem/IoskeleyMono/IoskeleyMono-Web.zip,gh-asset,font-name,Ioskeley Mono,package,,github_repos,https://github.com/ahatem/IoskeleyMono/releases,false
+ahatem/IoskeleyMono/IoskeleyMono.zip,gh-asset,font-name,Ioskeley Mono,package,,github_repos,https://github.com/ahatem/IoskeleyMono/releases,false
+alerque/libertinus/Libertinus-r0-g53ece34.tar.xz,gh-asset,font-name,Libertinus Keyboard,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus-r0-g53ece34.tar.xz,gh-asset,font-name,Libertinus Math,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus-r0-g53ece34.tar.xz,gh-asset,font-name,Libertinus Mono,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus-r0-g53ece34.tar.xz,gh-asset,font-name,Libertinus Sans,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus-r0-g53ece34.tar.xz,gh-asset,font-name,Libertinus Serif,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus-r0-g53ece34.tar.xz,gh-asset,font-name,Libertinus Serif Display,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus-r0-g53ece34.tar.xz,gh-asset,font-name,Libertinus Serif Initials,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus-r0-g53ece34.zip,gh-asset,font-name,Libertinus Keyboard,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus-r0-g53ece34.zip,gh-asset,font-name,Libertinus Math,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus-r0-g53ece34.zip,gh-asset,font-name,Libertinus Mono,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus-r0-g53ece34.zip,gh-asset,font-name,Libertinus Sans,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus-r0-g53ece34.zip,gh-asset,font-name,Libertinus Serif,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus-r0-g53ece34.zip,gh-asset,font-name,Libertinus Serif Display,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus-r0-g53ece34.zip,gh-asset,font-name,Libertinus Serif Initials,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.tar.xz,gh-asset,font-name,Libertinus Keyboard,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.tar.xz,gh-asset,font-name,Libertinus Math,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.tar.xz,gh-asset,font-name,Libertinus Mono,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.tar.xz,gh-asset,font-name,Libertinus Sans,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.tar.xz,gh-asset,font-name,Libertinus Serif,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.tar.xz,gh-asset,font-name,Libertinus Serif Display,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.tar.xz,gh-asset,font-name,Libertinus Serif Initials,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.tar.zst,gh-asset,font-name,Libertinus Keyboard,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.tar.zst,gh-asset,font-name,Libertinus Math,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.tar.zst,gh-asset,font-name,Libertinus Mono,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.tar.zst,gh-asset,font-name,Libertinus Sans,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.tar.zst,gh-asset,font-name,Libertinus Serif,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.tar.zst,gh-asset,font-name,Libertinus Serif Display,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.tar.zst,gh-asset,font-name,Libertinus Serif Initials,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.zip,gh-asset,font-name,Libertinus Keyboard,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.zip,gh-asset,font-name,Libertinus Math,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.zip,gh-asset,font-name,Libertinus Mono,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.zip,gh-asset,font-name,Libertinus Sans,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.zip,gh-asset,font-name,Libertinus Serif,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.zip,gh-asset,font-name,Libertinus Serif Display,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/Libertinus.zip,gh-asset,font-name,Libertinus Serif Initials,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/libertine.zip,gh-asset,font-name,Libertinus Keyboard,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/libertine.zip,gh-asset,font-name,Libertinus Math,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/libertine.zip,gh-asset,font-name,Libertinus Mono,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/libertine.zip,gh-asset,font-name,Libertinus Sans,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/libertine.zip,gh-asset,font-name,Libertinus Serif,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/libertine.zip,gh-asset,font-name,Libertinus Serif Display,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+alerque/libertinus/libertine.zip,gh-asset,font-name,Libertinus Serif Initials,bundle,,github_repos,https://github.com/alerque/libertinus/releases,false
+antijingoist/opendyslexic/opendyslexic-alpha.zip,gh-asset,font-name,OpenDyslexic,package,,github_repos,https://github.com/antijingoist/opendyslexic/releases,false
+antijingoist/opendyslexic/opendyslexic-beta.zip,gh-asset,font-name,OpenDyslexic,package,,github_repos,https://github.com/antijingoist/opendyslexic/releases,false
+antijingoist/opendyslexic/opendyslexic-rc1.zip,gh-asset,font-name,OpenDyslexic,package,,github_repos,https://github.com/antijingoist/opendyslexic/releases,false
+antijingoist/opendyslexic/opendyslexic-rc2.zip,gh-asset,font-name,OpenDyslexic,package,,github_repos,https://github.com/antijingoist/opendyslexic/releases,false
+arrowtype/recursive/ArrowType-Recursive.zip,gh-asset,font-name,Recursive,package,,github_repos,https://github.com/arrowtype/recursive/releases,false
+arrowtype/recursive/Recursive-Beta.zip,gh-asset,font-name,Recursive,package,,github_repos,https://github.com/arrowtype/recursive/releases,false
+arrowtype/recursive/Recursive.zip,gh-asset,font-name,Recursive,package,,github_repos,https://github.com/arrowtype/recursive/releases,false
+arrowtype/shantell-sans/Shantell_Sans.zip,gh-asset,font-name,Shantell Sans,package,,github_repos,https://github.com/arrowtype/shantell-sans/releases,false
+arrowtype/shantell-sans/shantell_sans-for-googlefonts.zip,gh-asset,font-name,Shantell Sans,package,,github_repos,https://github.com/arrowtype/shantell-sans/releases,false
+be5invis/Iosevka/PkgTTC-Iosevka.zip,gh-asset,font-name,Iosevka,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaAile.zip,gh-asset,font-name,Iosevka Aile,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaCurly.zip,gh-asset,font-name,Iosevka Curly,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaCurlySlab.zip,gh-asset,font-name,Iosevka Curly Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaEtoile.zip,gh-asset,font-name,Iosevka Etoile,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaSS01.zip,gh-asset,font-name,Iosevka SS01,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaSS02.zip,gh-asset,font-name,Iosevka SS02,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaSS03.zip,gh-asset,font-name,Iosevka SS03,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaSS04.zip,gh-asset,font-name,Iosevka SS04,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaSS05.zip,gh-asset,font-name,Iosevka SS05,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaSS06.zip,gh-asset,font-name,Iosevka SS06,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaSS07.zip,gh-asset,font-name,Iosevka SS07,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaSS08.zip,gh-asset,font-name,Iosevka SS08,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaSS09.zip,gh-asset,font-name,Iosevka SS09,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaSS10.zip,gh-asset,font-name,Iosevka SS10,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaSS11.zip,gh-asset,font-name,Iosevka SS11,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaSS12.zip,gh-asset,font-name,Iosevka SS12,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaSS13.zip,gh-asset,font-name,Iosevka SS13,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaSS14.zip,gh-asset,font-name,Iosevka SS14,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaSS15.zip,gh-asset,font-name,Iosevka SS15,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaSS16.zip,gh-asset,font-name,Iosevka SS16,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaSS17.zip,gh-asset,font-name,Iosevka SS17,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaSS18.zip,gh-asset,font-name,Iosevka SS18,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-IosevkaSlab.zip,gh-asset,font-name,Iosevka Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-Iosevka.zip,gh-asset,font-name,Iosevka,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaCurly.zip,gh-asset,font-name,Iosevka Curly,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaCurlySlab.zip,gh-asset,font-name,Iosevka Curly Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixed.zip,gh-asset,font-name,Iosevka,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedCurly.zip,gh-asset,font-name,Iosevka Curly,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedCurlySlab.zip,gh-asset,font-name,Iosevka Curly Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedSS01.zip,gh-asset,font-name,Iosevka SS01,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedSS02.zip,gh-asset,font-name,Iosevka SS02,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedSS03.zip,gh-asset,font-name,Iosevka SS03,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedSS04.zip,gh-asset,font-name,Iosevka SS04,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedSS05.zip,gh-asset,font-name,Iosevka SS05,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedSS06.zip,gh-asset,font-name,Iosevka SS06,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedSS07.zip,gh-asset,font-name,Iosevka SS07,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedSS08.zip,gh-asset,font-name,Iosevka SS08,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedSS09.zip,gh-asset,font-name,Iosevka SS09,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedSS10.zip,gh-asset,font-name,Iosevka SS10,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedSS11.zip,gh-asset,font-name,Iosevka SS11,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedSS12.zip,gh-asset,font-name,Iosevka SS12,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedSS13.zip,gh-asset,font-name,Iosevka SS13,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedSS14.zip,gh-asset,font-name,Iosevka SS14,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedSS15.zip,gh-asset,font-name,Iosevka SS15,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedSS16.zip,gh-asset,font-name,Iosevka SS16,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedSS17.zip,gh-asset,font-name,Iosevka SS17,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedSS18.zip,gh-asset,font-name,Iosevka SS18,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaFixedSlab.zip,gh-asset,font-name,Iosevka Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaSS01.zip,gh-asset,font-name,Iosevka SS01,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaSS02.zip,gh-asset,font-name,Iosevka SS02,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaSS03.zip,gh-asset,font-name,Iosevka SS03,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaSS04.zip,gh-asset,font-name,Iosevka SS04,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaSS05.zip,gh-asset,font-name,Iosevka SS05,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaSS06.zip,gh-asset,font-name,Iosevka SS06,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaSS07.zip,gh-asset,font-name,Iosevka SS07,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaSS08.zip,gh-asset,font-name,Iosevka SS08,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaSS09.zip,gh-asset,font-name,Iosevka SS09,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaSS10.zip,gh-asset,font-name,Iosevka SS10,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaSS11.zip,gh-asset,font-name,Iosevka SS11,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaSS12.zip,gh-asset,font-name,Iosevka SS12,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaSS13.zip,gh-asset,font-name,Iosevka SS13,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaSS14.zip,gh-asset,font-name,Iosevka SS14,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaSS15.zip,gh-asset,font-name,Iosevka SS15,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaSS16.zip,gh-asset,font-name,Iosevka SS16,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaSS17.zip,gh-asset,font-name,Iosevka SS17,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaSS18.zip,gh-asset,font-name,Iosevka SS18,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaSlab.zip,gh-asset,font-name,Iosevka Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTerm.zip,gh-asset,font-name,Iosevka,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermCurly.zip,gh-asset,font-name,Iosevka Curly,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermCurlySlab.zip,gh-asset,font-name,Iosevka Curly Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermSS01.zip,gh-asset,font-name,Iosevka SS01,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermSS02.zip,gh-asset,font-name,Iosevka SS02,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermSS03.zip,gh-asset,font-name,Iosevka SS03,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermSS04.zip,gh-asset,font-name,Iosevka SS04,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermSS05.zip,gh-asset,font-name,Iosevka SS05,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermSS06.zip,gh-asset,font-name,Iosevka SS06,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermSS07.zip,gh-asset,font-name,Iosevka SS07,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermSS08.zip,gh-asset,font-name,Iosevka SS08,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermSS09.zip,gh-asset,font-name,Iosevka SS09,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermSS10.zip,gh-asset,font-name,Iosevka SS10,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermSS11.zip,gh-asset,font-name,Iosevka SS11,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermSS12.zip,gh-asset,font-name,Iosevka SS12,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermSS13.zip,gh-asset,font-name,Iosevka SS13,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermSS14.zip,gh-asset,font-name,Iosevka SS14,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermSS15.zip,gh-asset,font-name,Iosevka SS15,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermSS16.zip,gh-asset,font-name,Iosevka SS16,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermSS17.zip,gh-asset,font-name,Iosevka SS17,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermSS18.zip,gh-asset,font-name,Iosevka SS18,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTC-SGr-IosevkaTermSlab.zip,gh-asset,font-name,Iosevka Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Iosevka.zip,gh-asset,font-name,Iosevka,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaAile.zip,gh-asset,font-name,Iosevka Aile,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaCurly.zip,gh-asset,font-name,Iosevka Curly,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaCurlySlab.zip,gh-asset,font-name,Iosevka Curly Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaEtoile.zip,gh-asset,font-name,Iosevka Etoile,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixed.zip,gh-asset,font-name,Iosevka,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedCurly.zip,gh-asset,font-name,Iosevka Curly,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedCurlySlab.zip,gh-asset,font-name,Iosevka Curly Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedSS01.zip,gh-asset,font-name,Iosevka SS01,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedSS02.zip,gh-asset,font-name,Iosevka SS02,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedSS03.zip,gh-asset,font-name,Iosevka SS03,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedSS04.zip,gh-asset,font-name,Iosevka SS04,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedSS05.zip,gh-asset,font-name,Iosevka SS05,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedSS06.zip,gh-asset,font-name,Iosevka SS06,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedSS07.zip,gh-asset,font-name,Iosevka SS07,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedSS08.zip,gh-asset,font-name,Iosevka SS08,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedSS09.zip,gh-asset,font-name,Iosevka SS09,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedSS10.zip,gh-asset,font-name,Iosevka SS10,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedSS11.zip,gh-asset,font-name,Iosevka SS11,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedSS12.zip,gh-asset,font-name,Iosevka SS12,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedSS13.zip,gh-asset,font-name,Iosevka SS13,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedSS14.zip,gh-asset,font-name,Iosevka SS14,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedSS15.zip,gh-asset,font-name,Iosevka SS15,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedSS16.zip,gh-asset,font-name,Iosevka SS16,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedSS17.zip,gh-asset,font-name,Iosevka SS17,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedSS18.zip,gh-asset,font-name,Iosevka SS18,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaFixedSlab.zip,gh-asset,font-name,Iosevka Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaSS01.zip,gh-asset,font-name,Iosevka SS01,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaSS02.zip,gh-asset,font-name,Iosevka SS02,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaSS03.zip,gh-asset,font-name,Iosevka SS03,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaSS04.zip,gh-asset,font-name,Iosevka SS04,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaSS05.zip,gh-asset,font-name,Iosevka SS05,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaSS06.zip,gh-asset,font-name,Iosevka SS06,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaSS07.zip,gh-asset,font-name,Iosevka SS07,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaSS08.zip,gh-asset,font-name,Iosevka SS08,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaSS09.zip,gh-asset,font-name,Iosevka SS09,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaSS10.zip,gh-asset,font-name,Iosevka SS10,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaSS11.zip,gh-asset,font-name,Iosevka SS11,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaSS12.zip,gh-asset,font-name,Iosevka SS12,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaSS13.zip,gh-asset,font-name,Iosevka SS13,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaSS14.zip,gh-asset,font-name,Iosevka SS14,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaSS15.zip,gh-asset,font-name,Iosevka SS15,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaSS16.zip,gh-asset,font-name,Iosevka SS16,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaSS17.zip,gh-asset,font-name,Iosevka SS17,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaSS18.zip,gh-asset,font-name,Iosevka SS18,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaSlab.zip,gh-asset,font-name,Iosevka Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTerm.zip,gh-asset,font-name,Iosevka,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermCurly.zip,gh-asset,font-name,Iosevka Curly,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermCurlySlab.zip,gh-asset,font-name,Iosevka Curly Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermSS01.zip,gh-asset,font-name,Iosevka SS01,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermSS02.zip,gh-asset,font-name,Iosevka SS02,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermSS03.zip,gh-asset,font-name,Iosevka SS03,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermSS04.zip,gh-asset,font-name,Iosevka SS04,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermSS05.zip,gh-asset,font-name,Iosevka SS05,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermSS06.zip,gh-asset,font-name,Iosevka SS06,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermSS07.zip,gh-asset,font-name,Iosevka SS07,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermSS08.zip,gh-asset,font-name,Iosevka SS08,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermSS09.zip,gh-asset,font-name,Iosevka SS09,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermSS10.zip,gh-asset,font-name,Iosevka SS10,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermSS11.zip,gh-asset,font-name,Iosevka SS11,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermSS12.zip,gh-asset,font-name,Iosevka SS12,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermSS13.zip,gh-asset,font-name,Iosevka SS13,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermSS14.zip,gh-asset,font-name,Iosevka SS14,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermSS15.zip,gh-asset,font-name,Iosevka SS15,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermSS16.zip,gh-asset,font-name,Iosevka SS16,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermSS17.zip,gh-asset,font-name,Iosevka SS17,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermSS18.zip,gh-asset,font-name,Iosevka SS18,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-IosevkaTermSlab.zip,gh-asset,font-name,Iosevka Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-Iosevka.zip,gh-asset,font-name,Iosevka,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaAile.zip,gh-asset,font-name,Iosevka Aile,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaCurly.zip,gh-asset,font-name,Iosevka Curly,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaCurlySlab.zip,gh-asset,font-name,Iosevka Curly Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaEtoile.zip,gh-asset,font-name,Iosevka Etoile,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixed.zip,gh-asset,font-name,Iosevka,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedCurly.zip,gh-asset,font-name,Iosevka Curly,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedCurlySlab.zip,gh-asset,font-name,Iosevka Curly Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedSS01.zip,gh-asset,font-name,Iosevka SS01,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedSS02.zip,gh-asset,font-name,Iosevka SS02,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedSS03.zip,gh-asset,font-name,Iosevka SS03,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedSS04.zip,gh-asset,font-name,Iosevka SS04,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedSS05.zip,gh-asset,font-name,Iosevka SS05,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedSS06.zip,gh-asset,font-name,Iosevka SS06,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedSS07.zip,gh-asset,font-name,Iosevka SS07,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedSS08.zip,gh-asset,font-name,Iosevka SS08,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedSS09.zip,gh-asset,font-name,Iosevka SS09,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedSS10.zip,gh-asset,font-name,Iosevka SS10,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedSS11.zip,gh-asset,font-name,Iosevka SS11,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedSS12.zip,gh-asset,font-name,Iosevka SS12,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedSS13.zip,gh-asset,font-name,Iosevka SS13,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedSS14.zip,gh-asset,font-name,Iosevka SS14,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedSS15.zip,gh-asset,font-name,Iosevka SS15,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedSS16.zip,gh-asset,font-name,Iosevka SS16,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedSS17.zip,gh-asset,font-name,Iosevka SS17,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedSS18.zip,gh-asset,font-name,Iosevka SS18,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaFixedSlab.zip,gh-asset,font-name,Iosevka Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaSS01.zip,gh-asset,font-name,Iosevka SS01,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaSS02.zip,gh-asset,font-name,Iosevka SS02,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaSS03.zip,gh-asset,font-name,Iosevka SS03,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaSS04.zip,gh-asset,font-name,Iosevka SS04,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaSS05.zip,gh-asset,font-name,Iosevka SS05,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaSS06.zip,gh-asset,font-name,Iosevka SS06,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaSS07.zip,gh-asset,font-name,Iosevka SS07,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaSS08.zip,gh-asset,font-name,Iosevka SS08,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaSS09.zip,gh-asset,font-name,Iosevka SS09,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaSS10.zip,gh-asset,font-name,Iosevka SS10,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaSS11.zip,gh-asset,font-name,Iosevka SS11,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaSS12.zip,gh-asset,font-name,Iosevka SS12,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaSS13.zip,gh-asset,font-name,Iosevka SS13,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaSS14.zip,gh-asset,font-name,Iosevka SS14,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaSS15.zip,gh-asset,font-name,Iosevka SS15,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaSS16.zip,gh-asset,font-name,Iosevka SS16,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaSS17.zip,gh-asset,font-name,Iosevka SS17,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaSS18.zip,gh-asset,font-name,Iosevka SS18,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaSlab.zip,gh-asset,font-name,Iosevka Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTerm.zip,gh-asset,font-name,Iosevka,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermCurly.zip,gh-asset,font-name,Iosevka Curly,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermCurlySlab.zip,gh-asset,font-name,Iosevka Curly Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermSS01.zip,gh-asset,font-name,Iosevka SS01,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermSS02.zip,gh-asset,font-name,Iosevka SS02,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermSS03.zip,gh-asset,font-name,Iosevka SS03,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermSS04.zip,gh-asset,font-name,Iosevka SS04,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermSS05.zip,gh-asset,font-name,Iosevka SS05,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermSS06.zip,gh-asset,font-name,Iosevka SS06,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermSS07.zip,gh-asset,font-name,Iosevka SS07,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermSS08.zip,gh-asset,font-name,Iosevka SS08,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermSS09.zip,gh-asset,font-name,Iosevka SS09,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermSS10.zip,gh-asset,font-name,Iosevka SS10,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermSS11.zip,gh-asset,font-name,Iosevka SS11,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermSS12.zip,gh-asset,font-name,Iosevka SS12,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermSS13.zip,gh-asset,font-name,Iosevka SS13,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermSS14.zip,gh-asset,font-name,Iosevka SS14,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermSS15.zip,gh-asset,font-name,Iosevka SS15,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermSS16.zip,gh-asset,font-name,Iosevka SS16,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermSS17.zip,gh-asset,font-name,Iosevka SS17,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermSS18.zip,gh-asset,font-name,Iosevka SS18,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgTTF-Unhinted-IosevkaTermSlab.zip,gh-asset,font-name,Iosevka Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Iosevka.zip,gh-asset,font-name,Iosevka,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaAile.zip,gh-asset,font-name,Iosevka Aile,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaCurly.zip,gh-asset,font-name,Iosevka Curly,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaCurlySlab.zip,gh-asset,font-name,Iosevka Curly Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaEtoile.zip,gh-asset,font-name,Iosevka Etoile,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixed.zip,gh-asset,font-name,Iosevka,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedCurly.zip,gh-asset,font-name,Iosevka Curly,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedCurlySlab.zip,gh-asset,font-name,Iosevka Curly Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedSS01.zip,gh-asset,font-name,Iosevka SS01,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedSS02.zip,gh-asset,font-name,Iosevka SS02,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedSS03.zip,gh-asset,font-name,Iosevka SS03,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedSS04.zip,gh-asset,font-name,Iosevka SS04,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedSS05.zip,gh-asset,font-name,Iosevka SS05,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedSS06.zip,gh-asset,font-name,Iosevka SS06,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedSS07.zip,gh-asset,font-name,Iosevka SS07,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedSS08.zip,gh-asset,font-name,Iosevka SS08,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedSS09.zip,gh-asset,font-name,Iosevka SS09,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedSS10.zip,gh-asset,font-name,Iosevka SS10,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedSS11.zip,gh-asset,font-name,Iosevka SS11,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedSS12.zip,gh-asset,font-name,Iosevka SS12,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedSS13.zip,gh-asset,font-name,Iosevka SS13,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedSS14.zip,gh-asset,font-name,Iosevka SS14,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedSS15.zip,gh-asset,font-name,Iosevka SS15,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedSS16.zip,gh-asset,font-name,Iosevka SS16,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedSS17.zip,gh-asset,font-name,Iosevka SS17,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedSS18.zip,gh-asset,font-name,Iosevka SS18,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaFixedSlab.zip,gh-asset,font-name,Iosevka Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaSS01.zip,gh-asset,font-name,Iosevka SS01,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaSS02.zip,gh-asset,font-name,Iosevka SS02,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaSS03.zip,gh-asset,font-name,Iosevka SS03,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaSS04.zip,gh-asset,font-name,Iosevka SS04,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaSS05.zip,gh-asset,font-name,Iosevka SS05,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaSS06.zip,gh-asset,font-name,Iosevka SS06,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaSS07.zip,gh-asset,font-name,Iosevka SS07,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaSS08.zip,gh-asset,font-name,Iosevka SS08,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaSS09.zip,gh-asset,font-name,Iosevka SS09,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaSS10.zip,gh-asset,font-name,Iosevka SS10,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaSS11.zip,gh-asset,font-name,Iosevka SS11,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaSS12.zip,gh-asset,font-name,Iosevka SS12,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaSS13.zip,gh-asset,font-name,Iosevka SS13,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaSS14.zip,gh-asset,font-name,Iosevka SS14,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaSS15.zip,gh-asset,font-name,Iosevka SS15,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaSS16.zip,gh-asset,font-name,Iosevka SS16,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaSS17.zip,gh-asset,font-name,Iosevka SS17,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaSS18.zip,gh-asset,font-name,Iosevka SS18,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaSlab.zip,gh-asset,font-name,Iosevka Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTerm.zip,gh-asset,font-name,Iosevka,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermCurly.zip,gh-asset,font-name,Iosevka Curly,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermCurlySlab.zip,gh-asset,font-name,Iosevka Curly Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermSS01.zip,gh-asset,font-name,Iosevka SS01,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermSS02.zip,gh-asset,font-name,Iosevka SS02,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermSS03.zip,gh-asset,font-name,Iosevka SS03,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermSS04.zip,gh-asset,font-name,Iosevka SS04,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermSS05.zip,gh-asset,font-name,Iosevka SS05,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermSS06.zip,gh-asset,font-name,Iosevka SS06,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermSS07.zip,gh-asset,font-name,Iosevka SS07,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermSS08.zip,gh-asset,font-name,Iosevka SS08,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermSS09.zip,gh-asset,font-name,Iosevka SS09,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermSS10.zip,gh-asset,font-name,Iosevka SS10,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermSS11.zip,gh-asset,font-name,Iosevka SS11,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermSS12.zip,gh-asset,font-name,Iosevka SS12,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermSS13.zip,gh-asset,font-name,Iosevka SS13,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermSS14.zip,gh-asset,font-name,Iosevka SS14,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermSS15.zip,gh-asset,font-name,Iosevka SS15,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermSS16.zip,gh-asset,font-name,Iosevka SS16,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermSS17.zip,gh-asset,font-name,Iosevka SS17,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermSS18.zip,gh-asset,font-name,Iosevka SS18,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-IosevkaTermSlab.zip,gh-asset,font-name,Iosevka Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-Iosevka.zip,gh-asset,font-name,Iosevka,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaAile.zip,gh-asset,font-name,Iosevka Aile,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaCurly.zip,gh-asset,font-name,Iosevka Curly,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaCurlySlab.zip,gh-asset,font-name,Iosevka Curly Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaEtoile.zip,gh-asset,font-name,Iosevka Etoile,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixed.zip,gh-asset,font-name,Iosevka,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedCurly.zip,gh-asset,font-name,Iosevka Curly,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedCurlySlab.zip,gh-asset,font-name,Iosevka Curly Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedSS01.zip,gh-asset,font-name,Iosevka SS01,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedSS02.zip,gh-asset,font-name,Iosevka SS02,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedSS03.zip,gh-asset,font-name,Iosevka SS03,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedSS04.zip,gh-asset,font-name,Iosevka SS04,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedSS05.zip,gh-asset,font-name,Iosevka SS05,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedSS06.zip,gh-asset,font-name,Iosevka SS06,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedSS07.zip,gh-asset,font-name,Iosevka SS07,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedSS08.zip,gh-asset,font-name,Iosevka SS08,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedSS09.zip,gh-asset,font-name,Iosevka SS09,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedSS10.zip,gh-asset,font-name,Iosevka SS10,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedSS11.zip,gh-asset,font-name,Iosevka SS11,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedSS12.zip,gh-asset,font-name,Iosevka SS12,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedSS13.zip,gh-asset,font-name,Iosevka SS13,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedSS14.zip,gh-asset,font-name,Iosevka SS14,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedSS15.zip,gh-asset,font-name,Iosevka SS15,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedSS16.zip,gh-asset,font-name,Iosevka SS16,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedSS17.zip,gh-asset,font-name,Iosevka SS17,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedSS18.zip,gh-asset,font-name,Iosevka SS18,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaFixedSlab.zip,gh-asset,font-name,Iosevka Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaSS01.zip,gh-asset,font-name,Iosevka SS01,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaSS02.zip,gh-asset,font-name,Iosevka SS02,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaSS03.zip,gh-asset,font-name,Iosevka SS03,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaSS04.zip,gh-asset,font-name,Iosevka SS04,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaSS05.zip,gh-asset,font-name,Iosevka SS05,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaSS06.zip,gh-asset,font-name,Iosevka SS06,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaSS07.zip,gh-asset,font-name,Iosevka SS07,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaSS08.zip,gh-asset,font-name,Iosevka SS08,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaSS09.zip,gh-asset,font-name,Iosevka SS09,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaSS10.zip,gh-asset,font-name,Iosevka SS10,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaSS11.zip,gh-asset,font-name,Iosevka SS11,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaSS12.zip,gh-asset,font-name,Iosevka SS12,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaSS13.zip,gh-asset,font-name,Iosevka SS13,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaSS14.zip,gh-asset,font-name,Iosevka SS14,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaSS15.zip,gh-asset,font-name,Iosevka SS15,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaSS16.zip,gh-asset,font-name,Iosevka SS16,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaSS17.zip,gh-asset,font-name,Iosevka SS17,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaSS18.zip,gh-asset,font-name,Iosevka SS18,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaSlab.zip,gh-asset,font-name,Iosevka Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTerm.zip,gh-asset,font-name,Iosevka,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermCurly.zip,gh-asset,font-name,Iosevka Curly,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermCurlySlab.zip,gh-asset,font-name,Iosevka Curly Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermSS01.zip,gh-asset,font-name,Iosevka SS01,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermSS02.zip,gh-asset,font-name,Iosevka SS02,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermSS03.zip,gh-asset,font-name,Iosevka SS03,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermSS04.zip,gh-asset,font-name,Iosevka SS04,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermSS05.zip,gh-asset,font-name,Iosevka SS05,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermSS06.zip,gh-asset,font-name,Iosevka SS06,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermSS07.zip,gh-asset,font-name,Iosevka SS07,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermSS08.zip,gh-asset,font-name,Iosevka SS08,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermSS09.zip,gh-asset,font-name,Iosevka SS09,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermSS10.zip,gh-asset,font-name,Iosevka SS10,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermSS11.zip,gh-asset,font-name,Iosevka SS11,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermSS12.zip,gh-asset,font-name,Iosevka SS12,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermSS13.zip,gh-asset,font-name,Iosevka SS13,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermSS14.zip,gh-asset,font-name,Iosevka SS14,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermSS15.zip,gh-asset,font-name,Iosevka SS15,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermSS16.zip,gh-asset,font-name,Iosevka SS16,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermSS17.zip,gh-asset,font-name,Iosevka SS17,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermSS18.zip,gh-asset,font-name,Iosevka SS18,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/PkgWebFont-Unhinted-IosevkaTermSlab.zip,gh-asset,font-name,Iosevka Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-Iosevka.zip,gh-asset,font-name,Iosevka,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaAile.zip,gh-asset,font-name,Iosevka Aile,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaCurly.zip,gh-asset,font-name,Iosevka Curly,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaCurlySlab.zip,gh-asset,font-name,Iosevka Curly Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaEtoile.zip,gh-asset,font-name,Iosevka Etoile,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaSS01.zip,gh-asset,font-name,Iosevka SS01,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaSS02.zip,gh-asset,font-name,Iosevka SS02,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaSS03.zip,gh-asset,font-name,Iosevka SS03,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaSS04.zip,gh-asset,font-name,Iosevka SS04,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaSS05.zip,gh-asset,font-name,Iosevka SS05,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaSS06.zip,gh-asset,font-name,Iosevka SS06,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaSS07.zip,gh-asset,font-name,Iosevka SS07,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaSS08.zip,gh-asset,font-name,Iosevka SS08,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaSS09.zip,gh-asset,font-name,Iosevka SS09,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaSS10.zip,gh-asset,font-name,Iosevka SS10,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaSS11.zip,gh-asset,font-name,Iosevka SS11,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaSS12.zip,gh-asset,font-name,Iosevka SS12,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaSS13.zip,gh-asset,font-name,Iosevka SS13,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaSS14.zip,gh-asset,font-name,Iosevka SS14,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaSS15.zip,gh-asset,font-name,Iosevka SS15,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaSS16.zip,gh-asset,font-name,Iosevka SS16,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaSS17.zip,gh-asset,font-name,Iosevka SS17,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaSS18.zip,gh-asset,font-name,Iosevka SS18,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-IosevkaSlab.zip,gh-asset,font-name,Iosevka Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-Iosevka.zip,gh-asset,font-name,Iosevka,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaCurly.zip,gh-asset,font-name,Iosevka Curly,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaCurlySlab.zip,gh-asset,font-name,Iosevka Curly Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixed.zip,gh-asset,font-name,Iosevka,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedCurly.zip,gh-asset,font-name,Iosevka Curly,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedCurlySlab.zip,gh-asset,font-name,Iosevka Curly Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedSS01.zip,gh-asset,font-name,Iosevka SS01,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedSS02.zip,gh-asset,font-name,Iosevka SS02,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedSS03.zip,gh-asset,font-name,Iosevka SS03,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedSS04.zip,gh-asset,font-name,Iosevka SS04,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedSS05.zip,gh-asset,font-name,Iosevka SS05,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedSS06.zip,gh-asset,font-name,Iosevka SS06,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedSS07.zip,gh-asset,font-name,Iosevka SS07,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedSS08.zip,gh-asset,font-name,Iosevka SS08,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedSS09.zip,gh-asset,font-name,Iosevka SS09,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedSS10.zip,gh-asset,font-name,Iosevka SS10,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedSS11.zip,gh-asset,font-name,Iosevka SS11,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedSS12.zip,gh-asset,font-name,Iosevka SS12,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedSS13.zip,gh-asset,font-name,Iosevka SS13,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedSS14.zip,gh-asset,font-name,Iosevka SS14,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedSS15.zip,gh-asset,font-name,Iosevka SS15,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedSS16.zip,gh-asset,font-name,Iosevka SS16,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedSS17.zip,gh-asset,font-name,Iosevka SS17,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedSS18.zip,gh-asset,font-name,Iosevka SS18,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaFixedSlab.zip,gh-asset,font-name,Iosevka Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaSS01.zip,gh-asset,font-name,Iosevka SS01,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaSS02.zip,gh-asset,font-name,Iosevka SS02,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaSS03.zip,gh-asset,font-name,Iosevka SS03,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaSS04.zip,gh-asset,font-name,Iosevka SS04,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaSS05.zip,gh-asset,font-name,Iosevka SS05,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaSS06.zip,gh-asset,font-name,Iosevka SS06,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaSS07.zip,gh-asset,font-name,Iosevka SS07,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaSS08.zip,gh-asset,font-name,Iosevka SS08,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaSS09.zip,gh-asset,font-name,Iosevka SS09,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaSS10.zip,gh-asset,font-name,Iosevka SS10,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaSS11.zip,gh-asset,font-name,Iosevka SS11,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaSS12.zip,gh-asset,font-name,Iosevka SS12,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaSS13.zip,gh-asset,font-name,Iosevka SS13,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaSS14.zip,gh-asset,font-name,Iosevka SS14,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaSS15.zip,gh-asset,font-name,Iosevka SS15,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaSS16.zip,gh-asset,font-name,Iosevka SS16,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaSS17.zip,gh-asset,font-name,Iosevka SS17,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaSS18.zip,gh-asset,font-name,Iosevka SS18,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaSlab.zip,gh-asset,font-name,Iosevka Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTerm.zip,gh-asset,font-name,Iosevka,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermCurly.zip,gh-asset,font-name,Iosevka Curly,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermCurlySlab.zip,gh-asset,font-name,Iosevka Curly Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermSS01.zip,gh-asset,font-name,Iosevka SS01,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermSS02.zip,gh-asset,font-name,Iosevka SS02,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermSS03.zip,gh-asset,font-name,Iosevka SS03,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermSS04.zip,gh-asset,font-name,Iosevka SS04,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermSS05.zip,gh-asset,font-name,Iosevka SS05,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermSS06.zip,gh-asset,font-name,Iosevka SS06,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermSS07.zip,gh-asset,font-name,Iosevka SS07,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermSS08.zip,gh-asset,font-name,Iosevka SS08,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermSS09.zip,gh-asset,font-name,Iosevka SS09,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermSS10.zip,gh-asset,font-name,Iosevka SS10,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermSS11.zip,gh-asset,font-name,Iosevka SS11,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermSS12.zip,gh-asset,font-name,Iosevka SS12,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermSS13.zip,gh-asset,font-name,Iosevka SS13,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermSS14.zip,gh-asset,font-name,Iosevka SS14,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermSS15.zip,gh-asset,font-name,Iosevka SS15,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermSS16.zip,gh-asset,font-name,Iosevka SS16,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermSS17.zip,gh-asset,font-name,Iosevka SS17,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermSS18.zip,gh-asset,font-name,Iosevka SS18,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+be5invis/Iosevka/SuperTTC-SGr-IosevkaTermSlab.zip,gh-asset,font-name,Iosevka Slab,package,,github_repos,https://github.com/be5invis/Iosevka/releases,false
+belluzj/fantasque-sans/CosmicSansNeueMono.zip,gh-asset,font-name,Fantasque Sans Mono,package,,github_repos,https://github.com/belluzj/fantasque-sans/releases,false
+belluzj/fantasque-sans/FantasqueSansMono-LargeLineHeight-NoLoopK.tar.gz,gh-asset,font-name,Fantasque Sans Mono,package,,github_repos,https://github.com/belluzj/fantasque-sans/releases,false
+belluzj/fantasque-sans/FantasqueSansMono-LargeLineHeight-NoLoopK.zip,gh-asset,font-name,Fantasque Sans Mono,package,,github_repos,https://github.com/belluzj/fantasque-sans/releases,false
+belluzj/fantasque-sans/FantasqueSansMono-LargeLineHeight.tar.gz,gh-asset,font-name,Fantasque Sans Mono,package,,github_repos,https://github.com/belluzj/fantasque-sans/releases,false
+belluzj/fantasque-sans/FantasqueSansMono-LargeLineHeight.zip,gh-asset,font-name,Fantasque Sans Mono,package,,github_repos,https://github.com/belluzj/fantasque-sans/releases,false
+belluzj/fantasque-sans/FantasqueSansMono-NoLoopK.tar.gz,gh-asset,font-name,Fantasque Sans Mono,package,,github_repos,https://github.com/belluzj/fantasque-sans/releases,false
+belluzj/fantasque-sans/FantasqueSansMono-NoLoopK.zip,gh-asset,font-name,Fantasque Sans Mono,package,,github_repos,https://github.com/belluzj/fantasque-sans/releases,false
+belluzj/fantasque-sans/FantasqueSansMono-Normal.tar.gz,gh-asset,font-name,Fantasque Sans Mono,package,,github_repos,https://github.com/belluzj/fantasque-sans/releases,false
+belluzj/fantasque-sans/FantasqueSansMono-Normal.zip,gh-asset,font-name,Fantasque Sans Mono,package,,github_repos,https://github.com/belluzj/fantasque-sans/releases,false
+belluzj/fantasque-sans/FantasqueSansMono.tar.gz,gh-asset,font-name,Fantasque Sans Mono,package,,github_repos,https://github.com/belluzj/fantasque-sans/releases,false
+belluzj/fantasque-sans/FantasqueSansMono.zip,gh-asset,font-name,Fantasque Sans Mono,package,,github_repos,https://github.com/belluzj/fantasque-sans/releases,false
+belluzj/fantasque-sans/FantasqueSansMono_ss01.zip,gh-asset,font-name,Fantasque Sans Mono,package,,github_repos,https://github.com/belluzj/fantasque-sans/releases,false
+blobject/agave/Agave-Bold-parenbulged.ttf,gh-asset,font-name,Agave,package,,github_repos,https://github.com/blobject/agave/releases,false
+blobject/agave/Agave-Bold-slashed.ttf,gh-asset,font-name,Agave,package,,github_repos,https://github.com/blobject/agave/releases,false
+blobject/agave/Agave-Bold-zeroslashed-parenbulged.ttf,gh-asset,font-name,Agave,package,,github_repos,https://github.com/blobject/agave/releases,false
+blobject/agave/Agave-Bold-zeroslashed.ttf,gh-asset,font-name,Agave,package,,github_repos,https://github.com/blobject/agave/releases,false
+blobject/agave/Agave-Bold.ttf,gh-asset,font-name,Agave,package,,github_repos,https://github.com/blobject/agave/releases,false
+blobject/agave/Agave-Regular-parenbulged.ttf,gh-asset,font-name,Agave,package,,github_repos,https://github.com/blobject/agave/releases,false
+blobject/agave/Agave-Regular-slashed.ttf,gh-asset,font-name,Agave,package,,github_repos,https://github.com/blobject/agave/releases,false
+blobject/agave/Agave-Regular-zeroslashed-parenbulged.ttf,gh-asset,font-name,Agave,package,,github_repos,https://github.com/blobject/agave/releases,false
+blobject/agave/Agave-Regular-zeroslashed.ttf,gh-asset,font-name,Agave,package,,github_repos,https://github.com/blobject/agave/releases,false
+blobject/agave/Agave-Regular.ttf,gh-asset,font-name,Agave,package,,github_repos,https://github.com/blobject/agave/releases,false
+blobject/agave/agave-r-just.ttf,gh-asset,font-name,Agave,package,,github_repos,https://github.com/blobject/agave/releases,false
+blobject/agave/agave-r.ttf,gh-asset,font-name,Agave,package,,github_repos,https://github.com/blobject/agave/releases,false
+blobject/agave/agave.tar.gz,gh-asset,font-name,Agave,package,,github_repos,https://github.com/blobject/agave/releases,false
+calcom/sans/CalSansVF.ttf,gh-asset,font-name,Cal Sans,package,,github_repos,https://github.com/calcom/sans/releases,false
+calcom/sans/CalSansVF.woff2,gh-asset,font-name,Cal Sans,package,,github_repos,https://github.com/calcom/sans/releases,false
+calcom/sans/CalSans_Semibold.zip,gh-asset,font-name,Cal Sans,package,,github_repos,https://github.com/calcom/sans/releases,false
+calcom/sans/calsans-static-essentials.zip,gh-asset,font-name,Cal Sans,package,,github_repos,https://github.com/calcom/sans/releases,false
+calcom/sans/calsans-static-full.zip,gh-asset,font-name,Cal Sans,package,,github_repos,https://github.com/calcom/sans/releases,false
+canonical/Ubuntu-Sans-Mono-fonts/Ubuntu-Sans-Mono-fonts-fonts.zip,gh-asset,font-name,Ubuntu Sans Mono,package,,github_repos,https://github.com/canonical/Ubuntu-Sans-Mono-fonts/releases,false
+canonical/Ubuntu-Sans-Mono-fonts/Ubuntu-Sans-Mono-fonts.zip,gh-asset,font-name,Ubuntu Sans Mono,package,,github_repos,https://github.com/canonical/Ubuntu-Sans-Mono-fonts/releases,false
+canonical/Ubuntu-Sans-Mono-fonts/UbuntuMono-fonts-fonts.zip,gh-asset,font-name,Ubuntu Sans Mono,package,,github_repos,https://github.com/canonical/Ubuntu-Sans-Mono-fonts/releases,false
+canonical/Ubuntu-Sans-Mono-fonts/UbuntuMono-fonts.zip,gh-asset,font-name,Ubuntu Sans Mono,package,,github_repos,https://github.com/canonical/Ubuntu-Sans-Mono-fonts/releases,false
+canonical/Ubuntu-Sans-fonts/Ubuntu-fonts.zip,gh-asset,font-name,Ubuntu Sans,package,,github_repos,https://github.com/canonical/Ubuntu-Sans-fonts/releases,false
+canonical/Ubuntu-Sans-fonts/UbuntuSans-fonts.zip,gh-asset,font-name,Ubuntu Sans,package,,github_repos,https://github.com/canonical/Ubuntu-Sans-fonts/releases,false
+cormullion/juliamono/JuliaMono-ttf.tar.gz,gh-asset,font-name,JuliaMono,package,,github_repos,https://github.com/cormullion/juliamono/releases,false
+cormullion/juliamono/JuliaMono-ttf.zip,gh-asset,font-name,JuliaMono,package,,github_repos,https://github.com/cormullion/juliamono/releases,false
+cormullion/juliamono/JuliaMono-webfonts.tar.gz,gh-asset,font-name,JuliaMono,package,,github_repos,https://github.com/cormullion/juliamono/releases,false
+cormullion/juliamono/JuliaMono-webfonts.zip,gh-asset,font-name,JuliaMono,package,,github_repos,https://github.com/cormullion/juliamono/releases,false
+cormullion/juliamono/JuliaMono.tar.gz,gh-asset,font-name,JuliaMono,package,,github_repos,https://github.com/cormullion/juliamono/releases,false
+cormullion/juliamono/JuliaMono.zip,gh-asset,font-name,JuliaMono,package,,github_repos,https://github.com/cormullion/juliamono/releases,false
+crozynski/comicneue/comicneue-master.zip,gh-asset,font-name,Comic Neue,package,,github_repos,https://github.com/crozynski/comicneue/releases,false
+dejavu-fonts/dejavu-fonts/dejavu-fonts-ttf.tar.bz2,gh-asset,font-name,DejaVu Math TeX Gyre,bundle,,github_repos,https://github.com/dejavu-fonts/dejavu-fonts/releases,false
+dejavu-fonts/dejavu-fonts/dejavu-fonts-ttf.tar.bz2,gh-asset,font-name,DejaVu Sans,bundle,,github_repos,https://github.com/dejavu-fonts/dejavu-fonts/releases,false
+dejavu-fonts/dejavu-fonts/dejavu-fonts-ttf.tar.bz2,gh-asset,font-name,DejaVu Sans Mono,bundle,,github_repos,https://github.com/dejavu-fonts/dejavu-fonts/releases,false
+dejavu-fonts/dejavu-fonts/dejavu-fonts-ttf.tar.bz2,gh-asset,font-name,DejaVu Serif,bundle,,github_repos,https://github.com/dejavu-fonts/dejavu-fonts/releases,false
+dejavu-fonts/dejavu-fonts/dejavu-fonts-ttf.zip,gh-asset,font-name,DejaVu Math TeX Gyre,bundle,,github_repos,https://github.com/dejavu-fonts/dejavu-fonts/releases,false
+dejavu-fonts/dejavu-fonts/dejavu-fonts-ttf.zip,gh-asset,font-name,DejaVu Sans,bundle,,github_repos,https://github.com/dejavu-fonts/dejavu-fonts/releases,false
+dejavu-fonts/dejavu-fonts/dejavu-fonts-ttf.zip,gh-asset,font-name,DejaVu Sans Mono,bundle,,github_repos,https://github.com/dejavu-fonts/dejavu-fonts/releases,false
+dejavu-fonts/dejavu-fonts/dejavu-fonts-ttf.zip,gh-asset,font-name,DejaVu Serif,bundle,,github_repos,https://github.com/dejavu-fonts/dejavu-fonts/releases,false
+dejavu-fonts/dejavu-fonts/dejavu-lgc-fonts-ttf.tar.bz2,gh-asset,font-name,DejaVu Sans,bundle,lgc,github_repos,https://github.com/dejavu-fonts/dejavu-fonts/releases,false
+dejavu-fonts/dejavu-fonts/dejavu-lgc-fonts-ttf.tar.bz2,gh-asset,font-name,DejaVu Sans Mono,bundle,lgc,github_repos,https://github.com/dejavu-fonts/dejavu-fonts/releases,false
+dejavu-fonts/dejavu-fonts/dejavu-lgc-fonts-ttf.tar.bz2,gh-asset,font-name,DejaVu Serif,bundle,lgc,github_repos,https://github.com/dejavu-fonts/dejavu-fonts/releases,false
+dejavu-fonts/dejavu-fonts/dejavu-lgc-fonts-ttf.zip,gh-asset,font-name,DejaVu Sans,bundle,lgc,github_repos,https://github.com/dejavu-fonts/dejavu-fonts/releases,false
+dejavu-fonts/dejavu-fonts/dejavu-lgc-fonts-ttf.zip,gh-asset,font-name,DejaVu Sans Mono,bundle,lgc,github_repos,https://github.com/dejavu-fonts/dejavu-fonts/releases,false
+dejavu-fonts/dejavu-fonts/dejavu-lgc-fonts-ttf.zip,gh-asset,font-name,DejaVu Serif,bundle,lgc,github_repos,https://github.com/dejavu-fonts/dejavu-fonts/releases,false
+dejavu-fonts/dejavu-fonts/dejavu-sans-ttf.zip,gh-asset,font-name,DejaVu Sans,package,,github_repos,https://github.com/dejavu-fonts/dejavu-fonts/releases,false
+eigilnikolajsen/commit-mono/CommitMono.zip,gh-asset,font-name,Commit Mono,package,,github_repos,https://github.com/eigilnikolajsen/commit-mono/releases,false
+evilmartians/mono/martian-mono-otf.zip,gh-asset,font-name,Martian Mono,package,,github_repos,https://github.com/evilmartians/mono/releases,false
+evilmartians/mono/martian-mono-ttf.zip,gh-asset,font-name,Martian Mono,package,,github_repos,https://github.com/evilmartians/mono/releases,false
+evilmartians/mono/martian-mono-variable.zip,gh-asset,font-name,Martian Mono,package,,github_repos,https://github.com/evilmartians/mono/releases,false
+evilmartians/mono/martian-mono-woff2.zip,gh-asset,font-name,Martian Mono,package,,github_repos,https://github.com/evilmartians/mono/releases,false
+fcambus/spleen/spleen.tar.gz,gh-asset,font-name,Spleen,package,,github_repos,https://github.com/fcambus/spleen/releases,false
+github/hubot-sans/Hubot-Sans.zip,gh-asset,font-name,Hubot Sans,package,,github_repos,https://github.com/github/hubot-sans/releases,false
+github/hubot-sans/Hubot.Sans.zip,gh-asset,font-name,Hubot Sans,package,,github_repos,https://github.com/github/hubot-sans/releases,false
+github/mona-sans/Mona.Sans.zip,gh-asset,font-name,Mona Sans,package,,github_repos,https://github.com/github/mona-sans/releases,false
+github/mona-sans/MonaSans.zip,gh-asset,font-name,Mona Sans,package,,github_repos,https://github.com/github/mona-sans/releases,false
+github/mona-sans/fonts-mona-sans_all.deb,gh-asset,font-name,Mona Sans,package,,github_repos,https://github.com/github/mona-sans/releases,false
+github/mona-sans/mona-sans-complete.zip,gh-asset,font-name,Mona Sans,package,,github_repos,https://github.com/github/mona-sans/releases,false
+github/mona-sans/mona-sans-static.zip,gh-asset,font-name,Mona Sans,package,,github_repos,https://github.com/github/mona-sans/releases,false
+github/mona-sans/mona-sans-variable.zip,gh-asset,font-name,Mona Sans,package,,github_repos,https://github.com/github/mona-sans/releases,false
+github/mona-sans/mona-sans-webfonts.zip,gh-asset,font-name,Mona Sans,package,,github_repos,https://github.com/github/mona-sans/releases,false
+githubnext/monaspace/monaspace-frozen.zip,gh-asset,font-name,Monaspace Argon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-frozen.zip,gh-asset,font-name,Monaspace Krypton,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-frozen.zip,gh-asset,font-name,Monaspace Neon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-frozen.zip,gh-asset,font-name,Monaspace Radon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-frozen.zip,gh-asset,font-name,Monaspace Xenon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-nerdfonts.zip,gh-asset,font-name,Monaspace Argon,bundle,nerd,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-nerdfonts.zip,gh-asset,font-name,Monaspace Krypton,bundle,nerd,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-nerdfonts.zip,gh-asset,font-name,Monaspace Neon,bundle,nerd,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-nerdfonts.zip,gh-asset,font-name,Monaspace Radon,bundle,nerd,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-nerdfonts.zip,gh-asset,font-name,Monaspace Xenon,bundle,nerd,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-static.zip,gh-asset,font-name,Monaspace Argon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-static.zip,gh-asset,font-name,Monaspace Krypton,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-static.zip,gh-asset,font-name,Monaspace Neon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-static.zip,gh-asset,font-name,Monaspace Radon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-static.zip,gh-asset,font-name,Monaspace Xenon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-variable.zip,gh-asset,font-name,Monaspace Argon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-variable.zip,gh-asset,font-name,Monaspace Krypton,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-variable.zip,gh-asset,font-name,Monaspace Neon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-variable.zip,gh-asset,font-name,Monaspace Radon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-variable.zip,gh-asset,font-name,Monaspace Xenon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-webfont-nerdfonts.zip,gh-asset,font-name,Monaspace Argon,bundle,nerd,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-webfont-nerdfonts.zip,gh-asset,font-name,Monaspace Krypton,bundle,nerd,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-webfont-nerdfonts.zip,gh-asset,font-name,Monaspace Neon,bundle,nerd,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-webfont-nerdfonts.zip,gh-asset,font-name,Monaspace Radon,bundle,nerd,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-webfont-nerdfonts.zip,gh-asset,font-name,Monaspace Xenon,bundle,nerd,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-webfont-static.zip,gh-asset,font-name,Monaspace Argon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-webfont-static.zip,gh-asset,font-name,Monaspace Krypton,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-webfont-static.zip,gh-asset,font-name,Monaspace Neon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-webfont-static.zip,gh-asset,font-name,Monaspace Radon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-webfont-static.zip,gh-asset,font-name,Monaspace Xenon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-webfont-variable.zip,gh-asset,font-name,Monaspace Argon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-webfont-variable.zip,gh-asset,font-name,Monaspace Krypton,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-webfont-variable.zip,gh-asset,font-name,Monaspace Neon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-webfont-variable.zip,gh-asset,font-name,Monaspace Radon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace-webfont-variable.zip,gh-asset,font-name,Monaspace Xenon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace.zip,gh-asset,font-name,Monaspace Argon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace.zip,gh-asset,font-name,Monaspace Krypton,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace.zip,gh-asset,font-name,Monaspace Neon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace.zip,gh-asset,font-name,Monaspace Radon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+githubnext/monaspace/monaspace.zip,gh-asset,font-name,Monaspace Xenon,bundle,,github_repos,https://github.com/githubnext/monaspace/releases,false
+googlefonts/googlesans-code/GoogleSansCode-Android.zip,gh-asset,font-name,Google Sans Code,package,,github_repos,https://github.com/googlefonts/googlesans-code/releases,false
+googlefonts/googlesans-code/GoogleSansCode.zip,gh-asset,font-name,Google Sans Code,package,,github_repos,https://github.com/googlefonts/googlesans-code/releases,false
+i-tu/Hasklig/Hasklig.zip,gh-asset,font-name,Hasklig,package,,github_repos,https://github.com/i-tu/Hasklig/releases,false
+intel/intel-one-mono/Web.zip,gh-asset,font-name,Intel One Mono,package,,github_repos,https://github.com/intel/intel-one-mono/releases,false
+intel/intel-one-mono/otf.zip,gh-asset,font-name,Intel One Mono,package,,github_repos,https://github.com/intel/intel-one-mono/releases,false
+intel/intel-one-mono/ttf.zip,gh-asset,font-name,Intel One Mono,package,,github_repos,https://github.com/intel/intel-one-mono/releases,false
+intel/intel-one-mono/woff.zip,gh-asset,font-name,Intel One Mono,package,,github_repos,https://github.com/intel/intel-one-mono/releases,false
+intel/intel-one-mono/woff2.zip,gh-asset,font-name,Intel One Mono,package,,github_repos,https://github.com/intel/intel-one-mono/releases,false
+jenskutilek/sudo-font/fonts-sudo-1_all.deb,gh-asset,font-name,Sudo,package,,github_repos,https://github.com/jenskutilek/sudo-font/releases,false
+jenskutilek/sudo-font/sudo-font.zip,gh-asset,font-name,Sudo,package,,github_repos,https://github.com/jenskutilek/sudo-font/releases,false
+jenskutilek/sudo-font/sudo.zip,gh-asset,font-name,Sudo,package,,github_repos,https://github.com/jenskutilek/sudo-font/releases,false
+kaspernordkvist/uncut_sans/Uncut-Sans.zip,gh-asset,font-name,Uncut Sans,package,,github_repos,https://github.com/kaspernordkvist/uncut_sans/releases,false
+lauridskern/open-runde/OpenRunde.zip,gh-asset,font-name,Open Runde,package,,github_repos,https://github.com/lauridskern/open-runde/releases,false
+madmalik/mononoki/mononoki.zip,gh-asset,font-name,Mononoki,package,,github_repos,https://github.com/madmalik/mononoki/releases,false
+madmalik/mononoki/mononoki_preview.zip,gh-asset,font-name,Mononoki,package,,github_repos,https://github.com/madmalik/mononoki/releases,false
+microsoft/cascadia-code/Cascadia.ttf,gh-asset,font-name,Cascadia Code,package,,github_repos,https://github.com/microsoft/cascadia-code/releases,false
+microsoft/cascadia-code/CascadiaCode.zip,gh-asset,font-name,Cascadia Code,bundle,,github_repos,https://github.com/microsoft/cascadia-code/releases,false
+microsoft/cascadia-code/CascadiaCode.zip,gh-asset,font-name,Cascadia Mono,bundle,,github_repos,https://github.com/microsoft/cascadia-code/releases,false
+microsoft/cascadia-code/CascadiaMono.ttf,gh-asset,font-name,Cascadia Mono,package,,github_repos,https://github.com/microsoft/cascadia-code/releases,false
+microsoft/cascadia-code/CascadiaMonoPL.ttf,gh-asset,font-name,Cascadia Mono,build,powerline,github_repos,https://github.com/microsoft/cascadia-code/releases,false
+microsoft/cascadia-code/CascadiaPL.ttf,gh-asset,font-name,Cascadia Code,build,powerline,github_repos,https://github.com/microsoft/cascadia-code/releases,false
+mishamyrt/Lilex/Lilex.zip,gh-asset,font-name,Lilex,package,,github_repos,https://github.com/mishamyrt/Lilex/releases,false
+mishamyrt/Lilex/LilexDuo.zip,gh-asset,font-name,Lilex,package,,github_repos,https://github.com/mishamyrt/Lilex/releases,false
+oppiliappan/scientifica/scientifica-doubled.tar.gz,gh-asset,font-name,Scientifica,package,,github_repos,https://github.com/oppiliappan/scientifica/releases,false
+oppiliappan/scientifica/scientifica.tar,gh-asset,font-name,Scientifica,package,,github_repos,https://github.com/oppiliappan/scientifica/releases,false
+oppiliappan/scientifica/scientifica.tar.gz,gh-asset,font-name,Scientifica,package,,github_repos,https://github.com/oppiliappan/scientifica/releases,false
+psb1558/Junicode-font/Junicode.zip,gh-asset,font-name,Junicode,package,,github_repos,https://github.com/psb1558/Junicode-font/releases,false
+rbanffy/3270font/3270_fonts.zip,gh-asset,font-name,IBM 3270,package,,github_repos,https://github.com/rbanffy/3270font/releases,false
+rektdeckard/departure-mono/DepartureMono.zip,gh-asset,font-name,Departure Mono,package,,github_repos,https://github.com/rektdeckard/departure-mono/releases,false
+romeovs/creep/creep.bdf,gh-asset,font-name,Creep,package,,github_repos,https://github.com/romeovs/creep/releases,false
+romeovs/creep/creep.dfont,gh-asset,font-name,Creep,package,,github_repos,https://github.com/romeovs/creep/releases,false
+romeovs/creep/creepRegular.dfont,gh-asset,font-name,Creep,package,,github_repos,https://github.com/romeovs/creep/releases,false
+rsms/inter/Inter-UI.zip,gh-asset,font-name,Inter,package,,github_repos,https://github.com/rsms/inter/releases,false
+rsms/inter/Inter.zip,gh-asset,font-name,Inter,package,,github_repos,https://github.com/rsms/inter/releases,false
+source-foundry/Hack/Hack-otf.tar.gz,gh-asset,font-name,Hack,package,,github_repos,https://github.com/source-foundry/Hack/releases,false
+source-foundry/Hack/Hack-otf.tar.xz,gh-asset,font-name,Hack,package,,github_repos,https://github.com/source-foundry/Hack/releases,false
+source-foundry/Hack/Hack-otf.zip,gh-asset,font-name,Hack,package,,github_repos,https://github.com/source-foundry/Hack/releases,false
+source-foundry/Hack/Hack-ttf.tar.gz,gh-asset,font-name,Hack,package,,github_repos,https://github.com/source-foundry/Hack/releases,false
+source-foundry/Hack/Hack-ttf.tar.xz,gh-asset,font-name,Hack,package,,github_repos,https://github.com/source-foundry/Hack/releases,false
+source-foundry/Hack/Hack-ttf.zip,gh-asset,font-name,Hack,package,,github_repos,https://github.com/source-foundry/Hack/releases,false
+source-foundry/Hack/Hack-webfonts.tar.gz,gh-asset,font-name,Hack,package,,github_repos,https://github.com/source-foundry/Hack/releases,false
+source-foundry/Hack/Hack-webfonts.tar.xz,gh-asset,font-name,Hack,package,,github_repos,https://github.com/source-foundry/Hack/releases,false
+source-foundry/Hack/Hack-webfonts.zip,gh-asset,font-name,Hack,package,,github_repos,https://github.com/source-foundry/Hack/releases,false
+subframe7536/maple-font/Maple.Code.CN.ttf,gh-asset,font-name,Maple Mono,build,cjk,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/Maple.Code.NF.ttf,gh-asset,font-name,Maple Mono,build,nf,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/Maple.Code.V3.Bold.Italic.ttf,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/Maple.Code.V3.Bold.ttf,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/Maple.Code.V3.CN.ttf,gh-asset,font-name,Maple Mono,build,cjk,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/Maple.Code.V3.Italic.ttf,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/Maple.Code.V3.Pure.ttf,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/Maple.Code.V3.Regular.ttf,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/Maple.Code.ttf,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/Maple.Mono.Bold.Italic.ttf,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/Maple.Mono.Bold.ttf,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/Maple.Mono.Italic.ttf,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/Maple.Mono.NF.ttf,gh-asset,font-name,Maple Mono,build,nf,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/Maple.Mono.otf.zip,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/Maple.Mono.ttf,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/Maple.Mono.ttf.zip,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMono-CN-unhinted.zip,gh-asset,font-name,Maple Mono,build,cjk,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMono-CN.zip,gh-asset,font-name,Maple Mono,build,cjk,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMono-NF-CN-unhinted.zip,gh-asset,font-name,Maple Mono,build,nf,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMono-NF-CN.zip,gh-asset,font-name,Maple Mono,build,nf,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMono-NF-unhinted.zip,gh-asset,font-name,Maple Mono,build,nf,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMono-NF.zip,gh-asset,font-name,Maple Mono,build,nf,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMono-OTF.zip,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMono-SC-NF.zip,gh-asset,font-name,Maple Mono,build,nf,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMono-TTF-AutoHint.zip,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMono-TTF.zip,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMono-Variable.zip,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMono-Woff2.zip,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMono.zip,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNL-CN-unhinted.zip,gh-asset,font-name,Maple Mono,build,cjk,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNL-CN.zip,gh-asset,font-name,Maple Mono,build,cjk,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNL-NF-CN-unhinted.zip,gh-asset,font-name,Maple Mono,build,nf,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNL-NF-CN.zip,gh-asset,font-name,Maple Mono,build,nf,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNL-NF-unhinted.zip,gh-asset,font-name,Maple Mono,build,nf,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNL-NF.zip,gh-asset,font-name,Maple Mono,build,nf,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNL-OTF.zip,gh-asset,font-name,Maple Mono,build,nl,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNL-TTF-AutoHint.zip,gh-asset,font-name,Maple Mono,build,nl,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNL-TTF.zip,gh-asset,font-name,Maple Mono,build,nl,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNL-Variable.zip,gh-asset,font-name,Maple Mono,build,nl,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNL-Woff2.zip,gh-asset,font-name,Maple Mono,build,nl,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormal-CN-unhinted.zip,gh-asset,font-name,Maple Mono,build,cjk,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormal-CN.zip,gh-asset,font-name,Maple Mono,build,cjk,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormal-NF-CN-unhinted.zip,gh-asset,font-name,Maple Mono,build,nf,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormal-NF-CN.zip,gh-asset,font-name,Maple Mono,build,nf,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormal-NF-unhinted.zip,gh-asset,font-name,Maple Mono,build,nf,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormal-NF.zip,gh-asset,font-name,Maple Mono,build,nf,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormal-OTF.zip,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormal-TTF-AutoHint.zip,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormal-TTF.zip,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormal-Variable.zip,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormal-Woff2.zip,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormalNL-CN-unhinted.zip,gh-asset,font-name,Maple Mono,build,cjk,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormalNL-CN.zip,gh-asset,font-name,Maple Mono,build,cjk,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormalNL-NF-CN-unhinted.zip,gh-asset,font-name,Maple Mono,build,nf,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormalNL-NF-CN.zip,gh-asset,font-name,Maple Mono,build,nf,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormalNL-NF-unhinted.zip,gh-asset,font-name,Maple Mono,build,nf,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormalNL-NF.zip,gh-asset,font-name,Maple Mono,build,nf,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormalNL-OTF.zip,gh-asset,font-name,Maple Mono,build,nl,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormalNL-TTF-AutoHint.zip,gh-asset,font-name,Maple Mono,build,nl,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormalNL-TTF.zip,gh-asset,font-name,Maple Mono,build,nl,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormalNL-Variable.zip,gh-asset,font-name,Maple Mono,build,nl,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleMonoNormalNL-Woff2.zip,gh-asset,font-name,Maple Mono,build,nl,github_repos,https://github.com/subframe7536/maple-font/releases,false
+the-moonwitch/Cozette/CozetteCrossedSevenVector.dfont,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteCrossedSevenVector.otf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteCrossedSevenVector.ttf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteCrossedSevenVector.woff,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteCrossedSevenVector.woff2,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteCrossedSevenVectorBold.dfont,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteCrossedSevenVectorBold.otf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteCrossedSevenVectorBold.ttf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteCrossedSevenVectorBold.woff,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteCrossedSevenVectorBold.woff2,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteFonts-woff.zip,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteFonts.zip,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteVector.dfont,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteVector.otf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteVector.otf.dfont,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteVector.ttf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteVector.woff,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteVector.woff2,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteVectorBold.dfont,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteVectorBold.otf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteVectorBold.ttf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteVectorBold.woff,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/CozetteVectorBold.woff2,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozette-10.bdf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozette-10.fnt,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozette.bdf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozette.dfont,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozette.fnt,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozette.otb,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozette.psf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozette.ttf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozette_bitmap.dfont,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozette_bitmap.ttf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozette_hidpi.bdf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozette_hidpi.dfont,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozette_hidpi.fnt,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozette_hidpi.otb,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozette_hidpi.psf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozettecrossedseven.bdf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozettecrossedseven.dfont,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozettecrossedseven.fnt,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozettecrossedseven.otb,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozettecrossedseven.psf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozettecrossedseven_hidpi.bdf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozettecrossedseven_hidpi.dfont,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozettecrossedseven_hidpi.fnt,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozettecrossedseven_hidpi.otb,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+the-moonwitch/Cozette/cozettecrossedseven_hidpi.psf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
+theleagueof/league-gothic/LeagueGothic.tar.xz,gh-asset,font-name,League Gothic,package,,github_repos,https://github.com/theleagueof/league-gothic/releases,false
+theleagueof/league-gothic/LeagueGothic.zip,gh-asset,font-name,League Gothic,package,,github_repos,https://github.com/theleagueof/league-gothic/releases,false
+theleagueof/league-mono/LeagueMono.tar.xz,gh-asset,font-name,League Mono,package,,github_repos,https://github.com/theleagueof/league-mono/releases,false
+theleagueof/league-mono/LeagueMono.zip,gh-asset,font-name,League Mono,package,,github_repos,https://github.com/theleagueof/league-mono/releases,false
+theleagueof/league-spartan/LeagueSpartan.tar.xz,gh-asset,font-name,League Spartan,package,,github_repos,https://github.com/theleagueof/league-spartan/releases,false
+theleagueof/league-spartan/LeagueSpartan.zip,gh-asset,font-name,League Spartan,package,,github_repos,https://github.com/theleagueof/league-spartan/releases,false
+tonsky/FiraCode/FiraCode-Regular.otf,gh-asset,font-name,Fira Code,package,,github_repos,https://github.com/tonsky/FiraCode/releases,false
+tonsky/FiraCode/FiraCode-Regular.ttf,gh-asset,font-name,Fira Code,package,,github_repos,https://github.com/tonsky/FiraCode/releases,false
+tonsky/FiraCode/FiraCode.zip,gh-asset,font-name,Fira Code,package,,github_repos,https://github.com/tonsky/FiraCode/releases,false
+uswds/public-sans/public-sans.zip,gh-asset,font-name,Public Sans,package,,github_repos,https://github.com/uswds/public-sans/releases,false
+vercel/geist-font/Geist.Mono.zip,gh-asset,font-name,Geist Mono,package,,github_repos,https://github.com/vercel/geist-font/releases,false
+vercel/geist-font/Geist.Sans.zip,gh-asset,font-name,Geist,package,,github_repos,https://github.com/vercel/geist-font/releases,false
+vercel/geist-font/Geist.zip,gh-asset,font-name,Geist,package,,github_repos,https://github.com/vercel/geist-font/releases,false
+vercel/geist-font/GeistMono.zip,gh-asset,font-name,Geist Mono,package,,github_repos,https://github.com/vercel/geist-font/releases,false
+vercel/geist-font/geist-font.zip,gh-asset,font-name,Geist,bundle,,github_repos,https://github.com/vercel/geist-font/releases,false
+vercel/geist-font/geist-font.zip,gh-asset,font-name,Geist Mono,bundle,,github_repos,https://github.com/vercel/geist-font/releases,false
+vercel/geist-font/geist-font.zip,gh-asset,font-name,Geist Pixel,bundle,,github_repos,https://github.com/vercel/geist-font/releases,false
+zed-industries/zed-fonts/zed-app-fonts.zip,gh-asset,font-name,Zed Mono,bundle,,github_repos,https://github.com/zed-industries/zed-fonts/releases,false
+zed-industries/zed-fonts/zed-app-fonts.zip,gh-asset,font-name,Zed Sans,bundle,,github_repos,https://github.com/zed-industries/zed-fonts/releases,false
+zed-industries/zed-fonts/zed-mono.zip,gh-asset,font-name,Zed Mono,package,,github_repos,https://github.com/zed-industries/zed-fonts/releases,false
+zed-industries/zed-fonts/zed-sans.zip,gh-asset,font-name,Zed Sans,package,,github_repos,https://github.com/zed-industries/zed-fonts/releases,false

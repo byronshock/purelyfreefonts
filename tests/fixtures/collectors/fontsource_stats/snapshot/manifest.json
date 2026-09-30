@@ -1,0 +1,34 @@
+{
+  "collector_version": 1,
+  "complete": true,
+  "data_date": "2026-09-24",
+  "date": "2026-09-26",
+  "extracts": [
+    {
+      "bytes": 464,
+      "path": "stats.jsonl.gz",
+      "rows": 14,
+      "sha256": "a511b3e3dc9e824be1be47bba43c27c0fd16854022bea1b5b247b49251405697"
+    }
+  ],
+  "fetched": [
+    {
+      "bytes": 4731,
+      "etag": null,
+      "fetched_at": "2026-09-26T06:00:00Z",
+      "kept": false,
+      "last_modified": null,
+      "sha256": "9f1b2716eac9ea2929c9cea4f75070de20b1ba365ed8c96e60ce49974e7ce92e",
+      "status": 200,
+      "url": "https://api.fontsource.org/v1/stats"
+    }
+  ],
+  "notes": [],
+  "schema": 1,
+  "source": "fontsource_stats",
+  "stale_of": null,
+  "window": {
+    "end": "2026-09-24",
+    "start": "2026-08-26"
+  }
+}

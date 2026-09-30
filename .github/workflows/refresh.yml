@@ -1,0 +1,391 @@
+name: Refresh
+
+# The monthly catalog refresh (milestone-1 step 19; design-m1 §4; gate CI1 (rec)).
+#
+# Four jobs, so the one that downloads and parses third-party data holds no write token:
+#
+# 1. refresh (contents: read): fetch every source into the private snapshot store and
+#    run the pipeline (tff-catalog refresh), then commit the new snapshots to the store
+#    locally, even when the run failed, so a rerun the same day reuses them. Replay the
+#    same snapshots offline from a clean checkout of the same commit; build/ must come
+#    out identical (methodology §9: a rerun from the same snapshots giving different
+#    output is a hard failure). It uploads the store's new commits as a git bundle and
+#    the pull request's files as an artifact. The store is cloned without keeping its
+#    key, and the job's GITHUB_TOKEN can only read (the collectors' API budget).
+# 2. store: pushes that bundle to the data repository. It runs no repository code.
+# 3. publish (contents, pull-requests and actions: write): opens or updates the pull
+#    request on the fixed branch refresh/monthly with the artifact's files (build/
+#    outputs, build/state/ copied to state/, and the alias table and seeds the run
+#    changed). A later run replaces an unmerged one (or, when main's workflows changed
+#    in between, deletes its branch, which closes it, and opens a new one). Pushes made
+#    with GITHUB_TOKEN start no workflows, so this job dispatches ci.yml on the branch
+#    itself; its checks attach to the branch's head commit. This needs "Allow GitHub
+#    Actions to create and approve pull requests". It parses nothing from the run.
+# 4. report (issues: write): a hard failure anywhere opens (or comments on) an issue.
+#
+# Nothing from the run's log goes into the issue or the pull request: rulings T2
+# and T4 keep Google and Fonts Over Time raw values private.
+#
+# Until Milestone 1 step 19 sets up the data store's key (owner ruling of 2026-09-29), the
+# schedule does nothing: a scheduled run starts only once the repository variable
+# REFRESH_SCHEDULE is "on" (gh variable set REFRESH_SCHEDULE --body on). A skipped refresh
+# skips the other jobs too, and opens no issue. Dispatches always run.
+
+on:
+  schedule:
+    - cron: "17 6 3 * *" # 06:17 UTC on the 3rd of each month
+  workflow_dispatch:
+    inputs:
+      from_snapshots:
+        description: "Replay the store's snapshots of this date (YYYY-MM-DD) instead of fetching"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    name: refresh
+    # Owner ruling of 2026-09-29: scheduled runs wait for REFRESH_SCHEDULE == 'on'.
+    if: ${{ github.event_name != 'schedule' || vars.REFRESH_SCHEDULE == 'on' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 345
+    # Read only: this job downloads and parses third-party data, so it holds no write token.
+    # Its GITHUB_TOKEN is the collectors' GitHub API budget (1,000 requests an hour).
+    permissions:
+      contents: read
+    outputs:
+      run_date: ${{ steps.prep.outputs.run_date }}
+      store_bundle: ${{ steps.store-bundle.outputs.bundle }}
+      pull_request: ${{ steps.pr-files.outputs.changed }}
+    # Job-level env may use only the github, needs, strategy, matrix, vars, secrets and
+    # inputs contexts (not runner), so Prepare sets TFF_RAW from $RUNNER_TEMP.
+    env:
+      BRANCH: refresh/monthly
+      FROM_SNAPSHOTS: ${{ inputs.from_snapshots }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      TFF_STORE: ${{ github.workspace }}/_store
+      # The store's new commits are pushed by the "store" job, which holds its key.
+      TFF_STORE_PUSH: "0"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # The key clones the store and is not kept: nothing later in this job can push.
+      - name: Check out the snapshot store
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: byronshock/trulyfreefonts-data
+          ssh-key: ${{ secrets.DATA_STORE_KEY }}
+          path: _store
+          fetch-depth: 1
+          persist-credentials: false
+
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          enable-cache: true
+
+      - run: uv sync --locked
+
+      # Stage "specimens" renders every catalog font from ~/.cache/tff/fonts; without the
+      # cache each run downloads every font again.
+      - name: Cache the font files
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/tff/fonts
+          key: tff-fonts-refresh-${{ github.run_id }}
+          restore-keys: tff-fonts-refresh-
+
+      - name: Prepare
+        id: prep
+        run: |
+          # The store is a separate clone inside the workspace: never part of a commit here.
+          echo "/_store/" >> .git/info/exclude
+          echo "TFF_RAW=$RUNNER_TEMP/raw" >> "$GITHUB_ENV"
+          if [ -n "$FROM_SNAPSHOTS" ]; then
+            if ! [[ "$FROM_SNAPSHOTS" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+              echo "::error::from_snapshots must be YYYY-MM-DD, got '$FROM_SNAPSHOTS'"
+              exit 1
+            fi
+            run_date=$FROM_SNAPSHOTS
+          else
+            run_date=$(date -u +%F)
+          fi
+          echo "run_date=$run_date" >> "$GITHUB_OUTPUT"
+          git -C _store config user.name "github-actions[bot]"
+          git -C _store config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Refresh
+        id: refresh
+        env:
+          RUN_DATE: ${{ steps.prep.outputs.run_date }}
+          # The GitHub API budget of the collectors (1,000 requests an hour); read only.
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          args=(refresh --date "$RUN_DATE")
+          if [ -n "$FROM_SNAPSHOTS" ]; then
+            args+=(--from-snapshots "$FROM_SNAPSHOTS")
+          fi
+          start=$SECONDS
+          uv run --locked tff-catalog -v "${args[@]}"
+          echo "Refresh of $RUN_DATE: $((SECONDS - start)) s" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Check the specimens' size budget
+        if: ${{ !cancelled() && steps.refresh.outcome == 'success' }}
+        run: uv run --locked tff-catalog specimens --check
+
+      - name: Check the store
+        id: store-check
+        if: ${{ !cancelled() && steps.refresh.outcome != 'skipped' }}
+        run: uv run --locked tff-catalog store check
+
+      - name: Commit the new snapshots to the store
+        if: ${{ !cancelled() && steps.store-check.outcome == 'success' }}
+        env:
+          RUN_DATE: ${{ steps.prep.outputs.run_date }}
+        run: uv run --locked tff-catalog store commit -m "snapshots $RUN_DATE"
+
+      - name: Bundle the store's new commits
+        id: store-bundle
+        if: ${{ !cancelled() && steps.store-check.outcome == 'success' }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/store"
+          # Commits the clone has beyond the fetched head; none (nothing new) is no bundle.
+          if [ -n "$(git -C _store rev-list '@{upstream}..HEAD')" ]; then
+            git -C _store bundle create "$RUNNER_TEMP/store/store.bundle" '@{upstream}..HEAD'
+            echo "bundle=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "bundle=false" >> "$GITHUB_OUTPUT"
+            echo "No new snapshots to push to the store." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: ${{ !cancelled() && steps.store-bundle.outputs.bundle == 'true' }}
+        with:
+          name: store-bundle
+          path: ${{ runner.temp }}/store
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Replay offline from a clean checkout
+        env:
+          RUN_DATE: ${{ steps.prep.outputs.run_date }}
+        run: |
+          snapshots=${FROM_SNAPSHOTS:-$RUN_DATE}
+          replay="$RUNNER_TEMP/replay"
+          git worktree add --detach "$replay" HEAD
+          # The live run's miners rewrote data/alias-seeds/ and refresh may have applied
+          # accepted rows to data/aliases.csv. The pull request carries both, so the
+          # replay, which runs no miner, starts from them.
+          rm -rf "$replay/data/alias-seeds"
+          cp -R data/alias-seeds data/aliases.csv "$replay/data/"
+          cd "$replay"
+          uv sync --locked
+          # Cut the network where the runner allows it: root makes the namespace, the
+          # replay runs in it as the runner user, with this step's environment. The
+          # whole wrapper is tried first, so a runner that refuses any part of it
+          # falls back to a warning instead of failing the run.
+          offline=(sudo -n --preserve-env unshare --net --
+            sudo -n --preserve-env -u "$(id -un)" env "PATH=$PATH")
+          if ! "${offline[@]}" true 2>/dev/null; then
+            offline=()
+            echo "::warning::could not cut the network; the replay ran with it up"
+          fi
+          start=$SECONDS
+          "${offline[@]}" uv run --locked --offline tff-catalog -v refresh \
+            --date "$RUN_DATE" --from-snapshots "$snapshots"
+          echo "Offline replay: $((SECONDS - start)) s" >> "$GITHUB_STEP_SUMMARY"
+          if ! diff -r --brief --exclude=cache "$GITHUB_WORKSPACE/build" "$replay/build"; then
+            echo "::error::the replay of $snapshots gave a different build/"
+            exit 1
+          fi
+          if ! diff --brief "$GITHUB_WORKSPACE/data/aliases.csv" "$replay/data/aliases.csv"; then
+            echo "::error::the replay of $snapshots gave a different data/aliases.csv"
+            exit 1
+          fi
+          echo "Replay matched: identical build/" >> "$GITHUB_STEP_SUMMARY"
+
+      # The pull request's commit is made here and handed over as a git bundle, so the job
+      # that pushes it parses nothing the run produced.
+      - name: Commit the pull request's files
+        id: pr-files
+        if: ${{ github.ref == 'refs/heads/main' }}
+        env:
+          RUN_DATE: ${{ steps.prep.outputs.run_date }}
+        run: |
+          git switch --force-create "$BRANCH"
+          # Merging this pull request is what advances state/ (design-m1 §5).
+          uv run --locked python -c \
+            'from pathlib import Path; from tff_catalog.state import apply_state; apply_state(Path("state"), Path("build/state"))'
+          # .gitignore keeps build/stage, build/state, build/cache and the review pack out.
+          # The alias table and seeds change when refresh applied accepted rows or a miner
+          # found new candidates (the replay above started from them).
+          git add --all -- state build data/aliases.csv data/alias-seeds
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Nothing changed against main; no pull request." | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git -c user.name="github-actions[bot]" \
+            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit --quiet -m "Monthly refresh $RUN_DATE" -m "Run: $RUN_URL"
+          out="$RUNNER_TEMP/pull-request"
+          mkdir -p "$out"
+          git bundle create "$out/pr.bundle" "$GITHUB_SHA..$BRANCH"
+          stale=none
+          if [ -f build/stage/stale.json ]; then
+            stale=$(jq -r 'to_entries | map(.key + (if .value.dropped then " (dropped)" else "" end))
+              | join(", ") | if . == "" then "none" else . end' build/stage/stale.json)
+          fi
+          printf '%s\n' "$stale" > "$out/stale.txt"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: ${{ steps.pr-files.outputs.changed == 'true' }}
+        with:
+          name: pull-request
+          path: ${{ runner.temp }}/pull-request
+          if-no-files-found: error
+          retention-days: 7
+
+  store:
+    name: store
+    needs: refresh
+    if: ${{ !cancelled() && needs.refresh.outputs.store_bundle == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Check out the snapshot store
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: byronshock/trulyfreefonts-data
+          ssh-key: ${{ secrets.DATA_STORE_KEY }}
+          path: _store
+          fetch-depth: 1
+          persist-credentials: true
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: store-bundle
+          path: ${{ runner.temp }}/store
+      - name: Push the new snapshots to the store
+        run: |
+          git -C _store bundle verify "$RUNNER_TEMP/store/store.bundle"
+          git -C _store fetch --quiet "$RUNNER_TEMP/store/store.bundle" HEAD
+          git -C _store merge --ff-only --quiet FETCH_HEAD
+          git -C _store push --quiet origin HEAD
+
+  publish:
+    name: publish
+    needs: refresh
+    if: ${{ github.ref == 'refs/heads/main' && needs.refresh.outputs.pull_request == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write # push refresh/monthly
+      pull-requests: write # open or update its pull request
+      actions: write # dispatch ci.yml on refresh/monthly (gate CI1)
+    env:
+      BRANCH: refresh/monthly
+      RUN_DATE: ${{ needs.refresh.outputs.run_date }}
+      FROM_SNAPSHOTS: ${{ inputs.from_snapshots }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: pull-request
+          path: ${{ runner.temp }}/pull-request
+      - name: Open or update the refresh pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git bundle verify "$RUNNER_TEMP/pull-request/pr.bundle"
+          git fetch --quiet "$RUNNER_TEMP/pull-request/pr.bundle" "refs/heads/$BRANCH:refs/heads/$BRANCH"
+          git switch --quiet "$BRANCH"
+          # The refresh job may change only these paths; anything else is refused.
+          outside=$(git diff --name-only "$GITHUB_SHA" HEAD -- . \
+            ':!state' ':!build' ':!data/aliases.csv' ':!data/alias-seeds')
+          if [ -n "$outside" ]; then
+            echo "::error::the refresh commit changes files outside its paths: $outside"
+            exit 1
+          fi
+          gh auth setup-git
+          # GITHUB_TOKEN may not change .github/workflows on a branch, and moving the old
+          # branch onto a main whose workflows have changed since would. Then delete it
+          # first: GitHub closes its pull request, and a new one is opened below.
+          if git fetch --quiet --depth=1 origin "+refs/heads/$BRANCH:refs/remotes/origin/$BRANCH" 2>/dev/null &&
+            ! git diff --quiet "origin/$BRANCH" HEAD -- .github/workflows; then
+            echo "::notice::workflows changed on main since $BRANCH was pushed; replacing the branch"
+            git push origin --delete "$BRANCH"
+          fi
+          git push --force origin "HEAD:refs/heads/$BRANCH"
+
+          stale=$(head -n 1 "$RUNNER_TEMP/pull-request/stale.txt" | tr -cd '[:alnum:] ,()_-')
+          title="Monthly refresh $RUN_DATE"
+          body="$RUNNER_TEMP/pr-body.md"
+          cat > "$body" <<EOF
+          The monthly catalog refresh of $RUN_DATE ([run]($RUN_URL)).
+
+          - Snapshots: ${FROM_SNAPSHOTS:-$RUN_DATE}. Stale or dropped sources: ${stale:-none}.
+          - A replay of the same snapshots from a clean checkout gave an identical \`build/\`.
+          - CI was dispatched on this branch; its checks appear below.
+
+          Please review \`build/review.md\`: it lists entries, exits, big moves, license
+          changes and every flag. Merging copies this run's state into \`state/\`. If this
+          pull request is not merged, next month's run replaces it.
+          EOF
+          number=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$BRANCH" --base main \
+            --state open --json number --jq '.[0].number // empty')
+          if [ -n "$number" ]; then
+            gh pr edit "$number" --repo "$GITHUB_REPOSITORY" --title "$title" --body-file "$body"
+          else
+            gh pr create --repo "$GITHUB_REPOSITORY" --base main --head "$BRANCH" \
+              --title "$title" --body-file "$body"
+          fi
+          gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref "$BRANCH"
+
+  report:
+    name: report
+    needs: [refresh, store, publish]
+    if: ${{ failure() }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      issues: write # report a hard failure
+    env:
+      RUN_DATE: ${{ needs.refresh.outputs.run_date }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - name: Report the failure in an issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="Monthly refresh failed"
+          body="$RUNNER_TEMP/issue-body.md"
+          cat > "$body" <<EOF
+          The refresh of ${RUN_DATE:-this month} failed: $RUN_URL
+
+          No refresh pull request was opened or updated. The run log names the failed
+          step and, for hard-check failures, each failure. New snapshots were committed
+          to the store if the store check passed, so a rerun today reuses them; a later
+          rerun can replay them with the workflow's from_snapshots input.
+          EOF
+          number=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open \
+            --search "\"$title\" in:title" --json number,title \
+            --jq "map(select(.title == \"$title\")) | .[0].number // empty")
+          if [ -n "$number" ]; then
+            gh issue comment "$number" --repo "$GITHUB_REPOSITORY" --body-file "$body"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --body-file "$body"
+          fi

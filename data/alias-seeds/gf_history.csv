@@ -1,0 +1,32 @@
+alias,ns,target_ns,target,relation,detail,source,evidence,auto
+amiriqurancolored,gf-dir,gf-dir,amiriquran,rename,,gf_history,https://github.com/google/fonts/blob/a738d4327fc541d8eb6fcb93660dd5aad941ccf6/to_delist.txt,true
+azeret,gf-dir,gf-dir,azeretmono,rename,,gf_history,https://github.com/google/fonts/commit/641a022ebbf8e5b68d024bc9d0d521f82a3aa1d0,true
+bbhsansbartle,gf-dir,gf-dir,bbhbartle,rename,,gf_history,https://github.com/google/fonts/commit/8b81217e56b08597989bfbd1029db1dd11266885,true
+bbhsansbogle,gf-dir,gf-dir,bbhbogle,rename,,gf_history,https://github.com/google/fonts/commit/9373da8165f91709ccaf5ba7d5862f97dea155c1,true
+bbhsanshegarty,gf-dir,gf-dir,bbhhegarty,rename,,gf_history,https://github.com/google/fonts/commit/152d80b0c60c7f8dfc132cb6955540533601fd7a,true
+ddcuchen,gf-dir,gf-dir,uchen,rename,,gf_history,https://github.com/google/fonts/commit/32fdf7e129fef1d3dcd335506fa07bc852d306d9,true
+eduvicwantarrows,gf-dir,gf-dir,eduauvicwantarrows,rename,,gf_history,https://github.com/google/fonts/commit/69cc6cf72628a4cc4e513815779263671638e316,true
+gentiumplusbook,gf-dir,gf-dir,gentiumbookplus,rename,,gf_history,https://github.com/google/fonts/commit/72b7c99c1f65683ff7687595ab2891a5352a35ce,true
+justfonthuninn,gf-dir,gf-dir,huninn,rename,,gf_history,https://github.com/google/fonts/commit/2f44570b13382fd72b4124358074b8165c76dcbe,true
+muli,gf-dir,gf-dir,mulish,rename,,gf_history,https://github.com/google/fonts/commit/1831e5b6933f19eb000e1a8615503c313afc394f,true
+nuosu,gf-dir,gf-dir,nuosusil,rename,,gf_history,https://github.com/google/fonts/commit/f02ae1b6160f938704f00fbeee26c9f708bbe27c,true
+wdxllubrifontjp,gf-dir,gf-dir,wdxllubrifontjpn,rename,,gf_history,https://github.com/google/fonts/commit/ab00f2dedc90e3fe7a4f8f00e3caddd354f43335 https://github.com/google/fonts/commit/cfad6cf746d370d6eb6f1774df3128368818d415 https://github.com/google/fonts/commit/b6f99650f7938f5a3ff9247c66f3331ef58cc5f9,true
+xllubrifontjp,gf-dir,gf-dir,wdxllubrifontjpn,rename,,gf_history,https://github.com/google/fonts/commit/cfad6cf746d370d6eb6f1774df3128368818d415 https://github.com/google/fonts/commit/b6f99650f7938f5a3ff9247c66f3331ef58cc5f9,true
+xllubrifontjpn,gf-dir,gf-dir,wdxllubrifontjpn,rename,,gf_history,https://github.com/google/fonts/commit/b6f99650f7938f5a3ff9247c66f3331ef58cc5f9,true
+xllubrifontsc,gf-dir,gf-dir,wdxllubrifontsc,rename,,gf_history,https://github.com/google/fonts/commit/e61f1ada0ba12f64057761f87967fd67461619f2,true
+xllubrifonttc,gf-dir,gf-dir,wdxllubrifonttc,rename,,gf_history,https://github.com/google/fonts/commit/5ee9d445a7940c989faaa051f9fd87847172d6f1,true
+42dot Sans,gf-family,gf-family,Asta Sans,rename,,gf_history,https://github.com/google/fonts/commit/db2611132856bfec1fa194602b4d1aa6ec1c09e8,true
+Amiri Quran Colored,gf-family,gf-family,Amiri Quran,rename,,gf_history,https://github.com/google/fonts/blob/a738d4327fc541d8eb6fcb93660dd5aad941ccf6/to_delist.txt,true
+BBH Sans Bartle,gf-family,gf-family,BBH Bartle,rename,,gf_history,https://github.com/google/fonts/commit/8b81217e56b08597989bfbd1029db1dd11266885,true
+BBH Sans Bogle,gf-family,gf-family,BBH Bogle,rename,,gf_history,https://github.com/google/fonts/commit/9373da8165f91709ccaf5ba7d5862f97dea155c1,true
+BBH Sans Hegarty,gf-family,gf-family,BBH Hegarty,rename,,gf_history,https://github.com/google/fonts/commit/152d80b0c60c7f8dfc132cb6955540533601fd7a,true
+DDC Uchen,gf-family,gf-family,Uchen,rename,,gf_history,https://github.com/google/fonts/commit/32fdf7e129fef1d3dcd335506fa07bc852d306d9,true
+Edu VIC WA NT Arrows,gf-family,gf-family,Edu AU VIC WA NT Arrows,rename,,gf_history,https://github.com/google/fonts/commit/69cc6cf72628a4cc4e513815779263671638e316,true
+Finlandica,gf-family,gf-family,Finlandica Headline,related,split,gf_history,https://github.com/google/fonts/blob/3c0208e3870d940cd0c9bda8f473ac0c5deafcd5/to_delist.txt,false
+Finlandica,gf-family,gf-family,Finlandica Text,related,split,gf_history,https://github.com/google/fonts/blob/3c0208e3870d940cd0c9bda8f473ac0c5deafcd5/to_delist.txt,false
+Gentium Plus Book,gf-family,gf-family,Gentium Book Plus,rename,,gf_history,https://github.com/google/fonts/commit/72b7c99c1f65683ff7687595ab2891a5352a35ce,true
+Justfont Huninn,gf-family,gf-family,Huninn,rename,,gf_history,https://github.com/google/fonts/commit/2f44570b13382fd72b4124358074b8165c76dcbe,true
+Montserrat Subrayada,gf-family,gf-family,Montserrat Underline,rename,,gf_history,https://github.com/google/fonts/blob/d9e5ded1d4700801405290264cd45481c6153689/to_delist.txt,true
+Muli,gf-family,gf-family,Mulish,rename,,gf_history,https://github.com/google/fonts/commit/1831e5b6933f19eb000e1a8615503c313afc394f,true
+Nuosu,gf-family,gf-family,Nuosu SIL,rename,,gf_history,https://github.com/google/fonts/commit/f02ae1b6160f938704f00fbeee26c9f708bbe27c,true
+Saira Stencil One,gf-family,gf-family,Saira Stencil,rename,,gf_history,https://github.com/google/fonts/blob/3c0208e3870d940cd0c9bda8f473ac0c5deafcd5/to_delist.txt,true

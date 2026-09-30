@@ -1,0 +1,58 @@
+{
+  "added": [
+    {
+      "cask": "font-akt",
+      "commit": "f4d28fc7dbebd9380a2fa3f2a222c9fe99c23f5e",
+      "first_seen": "2026-05-03",
+      "path": "Casks/font/font-a/font-akt.rb",
+      "renamed_from": null
+    },
+    {
+      "cask": "font-dejavu-sans",
+      "commit": "8aed1d087690c3209fb509b958af3e068ca7f7b4",
+      "first_seen": "2026-02-05",
+      "path": "Casks/font/font-d/font-dejavu-sans.rb",
+      "renamed_from": null
+    },
+    {
+      "cask": "font-ioskeley-mono",
+      "commit": "b688e4d42b4d2b3c6424bee8a20395453129edcf",
+      "first_seen": "2026-03-30",
+      "path": "Casks/font/font-i/font-ioskeley-mono.rb",
+      "renamed_from": null
+    },
+    {
+      "cask": "font-opendyslexic",
+      "commit": null,
+      "first_seen": "2025-09-25",
+      "path": "Casks/font/font-o/font-opendyslexic.rb",
+      "renamed_from": "font-open-dyslexic"
+    },
+    {
+      "cask": "font-opendyslexic-nerd-font",
+      "commit": null,
+      "first_seen": "2025-09-25",
+      "path": "Casks/font/font-o/font-opendyslexic-nerd-font.rb",
+      "renamed_from": "font-open-dyslexic-nerd-font"
+    }
+  ],
+  "base": {
+    "casks": 15,
+    "commit": "d0a16499293d26df8689ee244ccf3b92e14493d6",
+    "date": "2025-09-25"
+  },
+  "branch": "main",
+  "head": {
+    "casks": 17,
+    "commit": "81097d41aaaa8d6927a697667b01112ab1817a96",
+    "date": "2026-09-26"
+  },
+  "removed": [
+    "font-ibm-plex",
+    "font-open-dyslexic",
+    "font-open-dyslexic-nerd-font"
+  ],
+  "repo": "Homebrew/homebrew-cask",
+  "since": "2025-09-26T00:00:00Z",
+  "until": "2026-09-27T00:00:00Z"
+}

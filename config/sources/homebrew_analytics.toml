@@ -1,0 +1,33 @@
+# Ranking collector homebrew_analytics: Homebrew cask installs (the ruler, design-m1 §2.4).
+# Ruling T1: open data (BSD-2-Clause site); raw counts may be published.
+enabled = true
+base_url = "https://formulae.brew.sh/api/analytics/cask-install"
+
+# Windows the analytics API serves; each becomes an Observation series.
+windows = ["30d", "90d", "365d"]
+
+# Add dates (design-m1 C4): casks added inside this window get their add date
+# from the GitHub commits API; older casks count as present before it.
+dates_window = "365d"
+
+token_prefix = "font-"
+
+# Rows under these taps are kept, with a `tap` attr; a bare token is main_tap's.
+# Any other tap is third-party: kept in the extract, left out of the records.
+main_tap = "homebrew/cask"
+legacy_taps = ["caskroom/cask", "caskroom/fonts", "homebrew/cask-fonts"]
+
+# A window with fewer font rows than this share of the previous snapshot's is
+# a broken response: the fetch fails and the stale policy keeps the last good
+# ruler. Font casks come and go by a few dozen a year.
+min_share = 0.75
+
+# The cask repository, read through the GitHub API for add dates.
+repo = "Homebrew/homebrew-cask"
+branch = "main"
+font_dir = "Casks/font"
+renames_file = "cask_renames.json"
+
+# Add-date lookups per run (one GitHub call each, rarely two). A first run
+# needs about 100, a monthly run a handful; far more means the layout moved.
+max_lookups = 300

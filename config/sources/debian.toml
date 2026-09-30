@@ -1,0 +1,24 @@
+# Ranking collector debian: popcon installs (by_inst.gz) of font packages and the
+# packages that depend on them, with dependency edges from Packages.xz (ruling T1:
+# open data; popcon is MIT (Expat) or GPL-2.0-or-later). One collector for both
+# files (design gap C6).
+enabled = true
+
+# The Packages index read: dists/<suite>/<component>/binary-<architecture>/Packages.xz.
+# The amd64 index already holds every Architecture: all package; binary-all is
+# never read (it would count them twice). Change the suite at the next Debian
+# release.
+suite = "trixie"
+component = "main"
+architecture = "amd64"
+
+# A package is a font package when its Section is listed here or its name
+# matches name_pattern. Popcon rows are kept for those, for every package that
+# depends on one (Depends, Pre-Depends, Recommends, Suggests), and for any name
+# matching the pattern (fonts only in testing or sid, removed ttf-* packages).
+sections = ["fonts"]
+name_pattern = '^(?:fonts|xfonts|ttf|otf|t1)-'
+
+# Fewer rows than this share of the previous snapshot's (same selection) is a
+# broken file: the fetch fails and the stale policy reuses the last good snapshot.
+min_share = 0.9
