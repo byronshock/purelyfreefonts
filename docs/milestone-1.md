@@ -15,7 +15,6 @@ Milestone 1 builds the ranked, license-checked catalog that the filterable list 
 
 The workflow, `.github/workflows/refresh.yml`, is written but has never run on GitHub. Its schedule stays off until the repository variable `REFRESH_SCHEDULE` is "on" (owner ruling of 2026-09-29).
 
-- [ ] Let refresh pull requests trigger CI: turn on "Allow GitHub Actions to create and approve pull requests" with `gh` (it is off now). The refresh job opens its pull request with `GITHUB_TOKEN` and then starts `ci.yml` on `refresh/monthly` itself, because pull requests that token opens trigger no workflows. No GitHub App or personal token is needed.
 - [ ] Give the workflow the private data store: create the data repository's deploy key and this repository's `DATA_STORE_KEY` secret (D15), and record both in SERVER.md and here.
 - [ ] Run it once by hand (`workflow_dispatch`) and check:
   - that the collectors work on GitHub's runners: rate limits, the GitHub API budget, and whether Google's endpoints respond;
@@ -394,6 +393,9 @@ The finished steps and items, as they were ticked, with their evidence. The crit
 - [x] `--from-snapshots <date>` replays a run offline. *(2026-09-26, with the network blocked: 99 s, and every file in `build/` and `data/` came out byte for byte the same. A replay in a clean clone is still open for the done-when.)*
 
 **Done when:** a clean clone produces identical output from the same snapshots, and the run time is recorded. *(Met 2026-09-29: a clean clone of `m1/wave1` at 4df41d3, replaying a copy of the store at 928ba2d with a fresh HOME, TMPDIR and TFF_RAW (no font cache) and the network blocked (`unshare -rn`, `uv run --offline --frozen`), ran 21 stages in 118.5 s (119 s wall) on a Ryzen 9 9950X with 32 threads, under load 10–11 from other jobs. Every committed file in `build/` and `data/` came out byte-identical except `catalog.json`'s `run.code_commit`, which names the checkout that ran it; all 500 specimens were kept from `build/specimens/index.json`. With the font cache the run took 121.9 s and gave the same bytes. Compare with `git diff --exit-code -I'"code_commit": "[0-9a-f]{40}",?$'`. So that `code_commit` names a commit that reproduces the outputs, code changes are committed before the rebuild whose outputs are committed. Still open, under step 3: the real-refresh variant of the two-runs test, whose `[real]` cases xfail.)*
+
+### Step 19: Monthly GitHub Actions workflow
+- [x] Let refresh pull requests trigger CI: turn on "Allow GitHub Actions to create and approve pull requests" with `gh` (it is off now). The refresh job opens its pull request with `GITHUB_TOKEN` and then starts `ci.yml` on `refresh/monthly` itself, because pull requests that token opens trigger no workflows. No GitHub App or personal token is needed. *(Done 2026-09-30: the owner ran `gh api -X PUT repos/byronshock/trulyfreefonts/actions/permissions/workflow -f default_workflow_permissions=read -F can_approve_pull_request_reviews=true`; the API now reports `can_approve_pull_request_reviews: true`, with the default workflow permissions still read-only.)*
 
 ### Step 20: Handoff to Milestone 2
 **Who:** both. **Depends on:** 17, 19.
