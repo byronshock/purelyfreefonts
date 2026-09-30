@@ -47,7 +47,7 @@ const Details = (() => {
     latinBasic: 'Basic Latin only (limited accents)',
     latinExtended: 'Accented letters',
     evidence: 'All ranks and sources',
-    gate: 'Held out of the top 100: only one group of sources has evidence for it.',
+    gate: 'Held out of the numbered top 100: its score rests on one kind of source.',
     sourcesNote: 'Each source links to its credit on the How we rank page.',
     typeownLoad: (size) => `Type your own text (loads ${size})`,
     typeownLoading: 'Loading font…',

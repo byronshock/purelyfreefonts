@@ -1,5 +1,6 @@
-// 20-view: which fonts a state shows, in which order, with which rank labels (site/CONTRACT.md
-// section 5, "View.compute"; numbering per M2-D2). Pure: the same state, index and filters
+// 20-view: which fonts a state shows, in which order, with which scores (site/CONTRACT.md
+// section 5, "View.compute"; scores per the owner's rulings of 2026-09-29, score_display and
+// score_held_fonts, which replaced M2-D2's numbers). Pure: the same state, index and filters
 // give the same result, and nothing outside the arguments is read or changed, except that a
 // Milestone 3 filter that throws is reported (reportError) and treated as 'show' / no note.
 const View = (() => {
@@ -106,25 +107,30 @@ const View = (() => {
     };
   };
 
-  // compute(state, index, filters) -> { order, labels, dimmed, notes, shown, total }
+  // compute(state, index, filters) -> { order, labels, scores, held, dimmed, notes, shown,
+  //   total, note }
   //   state:   State's object (section 9 keys)
   //   index:   the list index (section 7)
   //   filters: Milestone 3's filters in the order added: { id, classify, note,
   //            affectsNumbering }
-  // order lists font indexes to show; labels, dimmed and notes run parallel to it. notes[k]
-  // is null or [{ filter, note }] in filter order. total is the size of the rank's universe.
+  // order lists font indexes to show; labels (each row's .rank text), scores (0-100, or -1
+  // unranked), held (a hollow bar), dimmed and notes run parallel to it. notes[k] is null or
+  // [{ filter, note }] in filter order. total is the size of the rank's universe; note is the
+  // view's note, or null.
   const compute = (state, index, filters = []) => {
     const rank = index.r[state.rank] ? state.rank : DEFAULT_RANK;
     const view = index.r[rank];
-    const { tier, top, band, why } = view;
+    const { tier, why, s } = view;
+    const note = view.note || null;
+    const words = index.score_words;
     const n = index.n;
 
     // 1. The universe: every font whose tier isn't "." (Coding: monospace fonts only).
     let total = 0;
     for (let i = 0; i < n; i += 1) if (tier[i] !== OUTSIDE) total += 1;
 
-    // 4 (first, as it doesn't depend on the filters). Ranked fonts by order, then unranked
-    // fonts by name.
+    // 4 (first, as it doesn't depend on the filters). Ranked fonts by score (the index's
+    // `order`), then unranked fonts by name.
     const sequence = view.order.slice();
     for (const i of index.by_name) if (tier[i] === UNRANKED) sequence.push(i);
 
@@ -132,32 +138,26 @@ const View = (() => {
     const test = matcher(state, index);
     let order = sequence.filter(test);
 
-    // 3. External filters that renumber.
+    // 3 and 6. External filters: those with affectsNumbering first, then the others. With
+    // scores in place of numbers both only hide or dim; the flag stays for the frozen hook.
     const dim = new Set();
     const renumbering = filters.filter((f) => f && f.affectsNumbering === true);
     const keeping = filters.filter((f) => f && f.affectsNumbering !== true);
     order = applyExternal(order, dim, renumbering, index.ids);
-
-    // 5. Numbers (M2-D2): the exact top 100 count from 1; others show their band, and
-    // unranked fonts "Not ranked: <reason>".
-    const labelOf = new Map();
-    let count = 0;
-    for (const i of order) {
-      if (top[i] > 0) {
-        count += 1;
-        labelOf.set(i, String(count));
-      } else if (band[i] >= 0) {
-        labelOf.set(i, index.bands[band[i]]);
-      } else {
-        const reason = why[i] >= 0 ? index.why_labels[why[i]] : '';
-        labelOf.set(i, reason ? `${NOT_RANKED}: ${reason}` : NOT_RANKED);
-      }
-    }
-
-    // 6. External filters that keep the published numbers.
     order = applyExternal(order, dim, keeping, index.ids);
 
-    // 7. By name, keeping the labels; then "-desc" reverses the whole order, unranked fonts
+    // 5. Scores: filters only hide rows, so a font's score and bar never depend on them. A
+    // held font's bar is hollow, except in a view with a note (held_marker_dev_apps).
+    const heldOf = (i) => !note && s[i] >= 0 && view.held[i] === '1';
+    const labelOf = (i) => {
+      if (s[i] >= 0) {
+        return `${words.before}${s[i]}${words.after}${heldOf(i) ? words.held : ''}`;
+      }
+      const reason = why[i] >= 0 ? index.why_labels[why[i]] : '';
+      return reason ? `${NOT_RANKED}: ${reason}` : NOT_RANKED;
+    };
+
+    // 7. By name, keeping the scores; then "-desc" reverses the whole order, unranked fonts
     // included (owner ruling of 2026-09-30, sort_header: a true reverse).
     if (state.sort === 'name' || state.sort === 'name-desc') {
       const position = new Map(index.by_name.map((i, k) => [i, k]));
@@ -166,7 +166,9 @@ const View = (() => {
     if (state.sort.endsWith('-desc')) order = order.slice().reverse();
 
     // 8. The result. Notes come from every filter, for every row shown.
-    const labels = order.map((i) => labelOf.get(i));
+    const labels = order.map(labelOf);
+    const scores = order.map((i) => s[i]);
+    const held = order.map(heldOf);
     const dimmed = order.map((i) => dim.has(i));
     const noting = filters.filter((f) => f && typeof f.note === 'function');
     const notes = order.map((i) => {
@@ -178,7 +180,7 @@ const View = (() => {
       }
       return found.length ? found : null;
     });
-    return { order, labels, dimmed, notes, shown: order.length, total };
+    return { order, labels, scores, held, words, dimmed, notes, shown: order.length, total, note };
   };
 
   return Object.freeze({ compute, BIT, NOT_RANKED });

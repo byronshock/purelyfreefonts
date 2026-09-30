@@ -120478,8 +120478,8 @@
     }
   ],
   "run": {
-    "code_commit": "2a90087263b94ddc42ecc5407d84b0047b2b7b0b",
-    "config_sha256": "f7f88755af8beefa1330e948eb1b9b063aaea8c0323feeb2ab63aa992879c73e",
+    "code_commit": "90e24bf12532d4cb080d00cb235d042c1f95ad7c",
+    "config_sha256": "918896eb0be81d834889325ba8382e8efdd3d5e0137258c8d12d377980893079",
     "date": "2026-09-26",
     "generator": "tff-catalog 0.1.0",
     "method_version": "2026-09-29",

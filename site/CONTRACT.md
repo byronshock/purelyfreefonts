@@ -189,6 +189,9 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
       <p id="count" class="count">Showing 540 of 540 fonts</p>
       <p id="nf-legend" class="nf-legend"><span class="nf-mark">NF</span>: Nerd Font version available
         (adds developer icons, which have their own licenses).</p>     <!-- the catalog's nerd.legend -->
+      <p id="held-legend" class="held-legend is-held" hidden>…a hollow bar… Hollow bar: this score
+        rests on one kind of source, so it may move more.</p>          <!-- shown while a held row is -->
+      <p id="view-note" class="view-note" hidden></p>                 <!-- the view's note (list index r.<key>.note) -->
       <div id="status" class="visually-hidden" role="status"></div>  <!-- Announce's only live region -->
       <div id="no-results" class="no-results" hidden>
         <p id="no-results-text">…names the filters to loosen…</p>
@@ -222,7 +225,8 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 ```html
 <li class="font" id="font-inter" data-id="inter">
   <div class="font-row">
-    <span class="rank">1</span>                                  <!-- number, band, or "Not ranked: <reason>" -->
+    <span class="rank"><span class="visually-hidden">Score </span>83<span class="visually-hidden">
+      of 100</span><i class="bar b83"></i></span>                <!-- or <span class="rank">Not ranked: <reason></span> -->
     <div class="font-title has-spec">                            <!-- has-spec only with a specimen -->
       <h3 class="font-name" id="font-inter-name">Inter</h3>
       <span class="nf-mark" role="img" aria-label="Nerd Font version available">NF</span>  <!-- only with links.nerd -->
@@ -251,7 +255,8 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 - **The name, once** (owner ruling of 2026-09-29, `name_once`). `div.font-title` holds the heading, the marker and the specimen box. With a specimen (`has-spec`), the heading shares the box's cell and lies over its first line, which draws the family name in the font; once the specimen shows, the title is `is-drawn` and the heading isn't painted (`opacity: 0`), though screen readers, search and find-in-page still have it. Where the specimen doesn't show (no specimen, a file that fails to load, no CSS masks, no IntersectionObserver, the loader paused), the heading does. Without scripting the `<noscript>` image draws the name and the heading isn't painted. Hiding the heading moves nothing: it and the box share one cell.
 - **The Nerd Font marker** (owner rulings of 2026-09-29, TASK-2, `nerd_marker_spot_title`): a font with a Nerd Font build (`links.nerd`) has `span.nf-mark[role=img]` right after its `h3`, on every rank: the catalog's `nerd.marker` as text, `nerd.label` as its accessible name. It sits at the end of the title's first line, in the title's second column, which every row leaves free, marker or not, at a fixed width and no taller than that line, so the markers line up and no row's height depends on one. The heading's text stays the family name alone.
 - `span.spec[data-src]` is always `/assets/specimens/<id>.<h>.svg`. `Specimens` ignores any other value, so a `data-src` can never break out of the CSS `url("…")` it becomes.
-- `Render` moves rows in and out of `#list` (hidden rows are detached, not given `hidden`) and changes only `.rank` text. Rows carry `content-visibility: auto`, so they must not change height when their specimen arrives.
+- **The score** (owner rulings of 2026-09-29, `score_display` and `score_curve`, which replaced M2-D2's numbers and bands). A ranked row's `.rank` holds its score in this rank, 100·Φ(`ranks.<key>.score`) rounded (list index `s`), as text, and a blue bar that long: an empty `i.bar.b<score>`, whose fill is its `::before`, sized by the width class `.b0` to `.b100` in `20-list.css`, since the CSP forbids style attributes. Screen readers hear the cell's text, "Score 83 of 100" (list index `score_words`). A font the two-source rule holds back (`gate_held`) has `.rank.is-held`, a hollow bar, and ", from one kind of source" after the score (owner ruling of 2026-09-30, `held_marker_style`), except in a view with a note (`r.<key>.note`: Developers & apps, `held_marker_dev_apps`), which marks no row. `#held-legend` shows while a held row is shown (the server shows it when its list has one), and `#view-note` holds the view's note. An unranked row's `.rank` is the text "Not ranked: <reason>".
+- `Render` moves rows in and out of `#list` (hidden rows are detached, not given `hidden`) and changes only the `.rank` cell, drawn as the server draws it. Rows carry `content-visibility: auto`, so they must not change height when their specimen arrives.
 - **States set by scripts:** `html[data-js]` once the script runs; `span.spec[data-state]`: `loading` while its file loads, then `set` once its mask is set (and its `div.font-title` gets `is-drawn`), or `failed` when the file can't be had; `li.font.is-dim` for a row a Milestone 3 filter dims; `li.font.is-unranked` for a row whose `.rank` reads "Not ranked: <reason>" (the server sets it too), which puts that label on a line of its own above the name (the owner's site ruling of 2026-09-26).
 - **The Milestone 3 slot** (section 10). For each filter whose `note` gives a row something to show, `Render` adds one `<div class="ext" data-filter="<filter id>">` at the end of `.font-row` (created on demand, removed when that filter no longer has a note for the row), built with `Core.el` only:
   - `span.ext-badge` for `badge`, `p.ext-note` for `text`;
@@ -273,7 +278,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 
 ## 5. JS parts
 
-The build concatenates `site/js/*.js` in filename order into one ES module, `/assets/app.<h>.js`, loaded by `<script type="module" src>`. The rule, which the build's lint enforces:
+The build concatenates `site/js/*.js` in filename order into one ES module, `/assets/app.<h>.js`, loaded by `<script type="module" src>`, leaving out the lines that hold only a `//` comment (outside template literals; `assets.strip_js_comments`), which ship no code but cost the page budget. The rule, which the build's lint enforces on the parts as written:
 
 - Each part declares **exactly one** top-level binding: `const <Name> = …;`, usually an IIFE that returns a frozen object. Top-level lines start at column 0; everything inside is indented.
 - No other top-level declaration (`let`, `var`, `function`, `class`, a second `const`), and no `import`, `export` or dynamic `import(`. The one top-level statement allowed besides the declarations is `Main.start();`, exactly once, as the last top-level line of `90-main.js`.
@@ -289,8 +294,8 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 | `05-keys.js` | `Keys` | A7 | written | `matchKey(s)`, `searchKey(s)`, `DROP_CODEPOINTS` and `CASEFOLD_EXTRA` (equal to `tests/vectors/name-keys.json`'s `spec`; casefold is the table, then `toLowerCase()` with ß→ss and ς→σ, one code point at a time) |
 | `10-data.js` | `Data` | A3 | written | `loadIndex()` and `loadDetails()` (memoised promises; details only on first use; a 404 rejects with `Data.Stale`, shown as "The list was updated. Reload to see details.") |
 | `15-state.js` | `State` | A3 | written | the state object, hash parse and serialise (section 9), `pushState` for discrete changes, `replaceState` for search (300 ms), `popstate`/`hashchange` |
-| `20-view.js` | `View` | A3 | written | pure `compute(state, index, filters)` → `{order, labels, dimmed, notes, shown, total}` (below) |
-| `25-render.js` | `Render` | A3 | written | reorders server-rendered rows through a `DocumentFragment`, updates `.rank`, `#count`, `#no-results`, keeps focus |
+| `20-view.js` | `View` | A3 | written | pure `compute(state, index, filters)` → `{order, labels, scores, held, words, dimmed, notes, shown, total, note}` (below) |
+| `25-render.js` | `Render` | A3 | written | reorders server-rendered rows through a `DocumentFragment`, redraws `.rank`, updates `#count`, `#no-results`, `#held-legend`, `#view-note`, keeps focus |
 | `30-filters-ui.js` | `FiltersUI` | A3 | written | the controls in `#filters`: reads and reflects state, the phone disclosure, `#f-rank-measures` |
 | `35-announce.js` | `Announce` | A3 | written | `#status`: immediate for discrete changes (coalesced per microtask), 500 ms debounce for search, silent on first load |
 | `40-details.js` | `Details` | A4 | written | `open(id, {focus})`, `close()`, the panel built with `Core.el`, "Type your own text" (`FontFace` + CSSOM `style.fontFamily`). Owns `.details-toggle` clicks. Before `tff:list-ready` it writes the hash's `font` pair itself, keeping every other pair as written. After it, it records `font` through `State.set` and follows `State.subscribe`, having subscribed after `Main` |
@@ -303,15 +308,15 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 1. The universe is the fonts in the rank's universe (tier character not `.`, section 7).
 2. Apply the filters and search (`Keys.searchKey(state.q)` as a substring of `keys[i]`).
 3. Apply the external filters with `affectsNumbering: true`.
-4. Sort ranked fonts by `order`, then unranked fonts by `by_name`.
-5. Number per M2-D2: a counter counts only fonts with `top > 0`; others take their band label; unranked fonts take "Not ranked: <why label>".
-6. Apply the external filters with `affectsNumbering: false` (Milestone 3's "numbers stay as published").
+4. Sort ranked fonts by score (the index's `order`), then unranked fonts by `by_name`.
+5. Scores: each ranked font keeps its score `s[i]`, whatever the filters (owner ruling of 2026-09-29, `score_display`: filters only hide rows, with no renumbering and no bands in the list); `held` is `r.held[i]`, unless the view has a `note`; unranked fonts take "Not ranked: <why label>".
+6. Apply the external filters with `affectsNumbering: false`. Since scores replaced numbers, steps 3 and 6 only hide or dim; the flag stays, as the hook is frozen.
 7. With `sort=name` or `name-desc`, re-sort by `by_name`, keeping the labels; then with `rank-desc` or `name-desc`, reverse the whole order (a true reverse: unranked fonts come first when the rank is reversed).
-8. Return `order` (font indexes to show, in order), `labels`, `dimmed` and `notes` (parallel to `order`), `shown` and `total` (the size of the rank's universe).
+8. Return `order` (font indexes to show, in order), `labels` (each row's `.rank` text), `scores`, `held`, `dimmed` and `notes` (parallel to `order`), `words` (the index's `score_words`), `shown`, `total` (the size of the rank's universe) and `note` (the view's note, or null).
 
 ## 6. CSS parts and tokens
 
-`site/css/*.css` is concatenated in filename order into `/assets/style.<h>.css`: `00-tokens.css` (wave 0), `10-base.css` (A14), `20-list.css` and `25-filters.css` (A2), `30-details.css` (A4), `35-specimens.css` (A6), `40-pages.css` (A8), `45-blog.css` (the blog, step 7b).
+`site/css/*.css` is concatenated in filename order into `/assets/style.<h>.css`, without its `/* … */` comments (`assets.strip_css_comments`): `00-tokens.css` (wave 0), `10-base.css` (A14), `20-list.css` and `25-filters.css` (A2), `30-details.css` (A4), `35-specimens.css` (A6), `40-pages.css` (A8), `45-blog.css` (the blog, step 7b).
 
 - Colours come only from the tokens; no other part writes a colour value.
 - Focus: `outline: var(--focus-ring); outline-offset: var(--focus-offset);` on `:focus-visible`. No sticky header, so focus is never hidden (2.4.11).
@@ -379,11 +384,11 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 
 `/assets/list.<h>.json`, built by `tff_site.data.list_index`, preloaded by `<link rel="preload" as="fetch" crossorigin href>` in the list page's `head` block and fetched from `#list[data-index]`. Columnar: every per-font array has `n` entries, indexed by font index.
 
-**Font index** `i` is the server-rendered order: fonts ranked in Overall by `order`, then fonts unranked in Overall by Python `str.casefold()` of the family, then by id.
+**Font index** `i` is the server-rendered order: fonts ranked in Overall by score, best first, ties by `order` (`tff_site.data.score_order`), then fonts unranked in Overall by Python `str.casefold()` of the family, then by id.
 
 | Key | Type | Contents |
 |---|---|---|
-| `v` | int | format version, `2` (2026-09-30: `cat` is the site category, and `lics`/`lic` are gone) |
+| `v` | int | format version, `3` (2026-09-30: scores, `r.<key>.s`, `held` and `note`, and `order` by score; `2`: `cat` is the site category, and `lics`/`lic` are gone) |
 | `commit` | string | the commit in `version.txt` |
 | `run_date` | string | `run.date` |
 | `n` | int | number of fonts |
@@ -396,6 +401,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 | `views` | object[] | the catalog's `views`, unchanged |
 | `bands` | string[] | band labels, in order |
 | `why_labels` | string[] | unranked-reason labels, in the order `no_deliberate_evidence`, `no_evidence`, `too_new` |
+| `score_words` | object | the words around a score for screen readers: `before` ("Score "), `after` (" of 100"), `held` (", from one kind of source") |
 | `r` | object | one entry per view with `available: true`, keyed by rank key, below |
 
 **`bits`**: 1 monospace (`is_monospace`), 2 variable, 4 limited accents (`latin.coverage` basic), 8 attribution required, 16 unused (it was "not redistributable" until Rule 3 of 2026-09-30), 32 has a specimen, 64 "Type your own text" available, 128 comes with Windows, 256 macOS, 512 Linux, 1024 Android (from `preinstalled_on` systems' `os`; a system with `os` `app`, an application's own bundle such as LibreOffice's, sets none; `pulled_in_by` doesn't count), 2048 new (flag `too_new`), 4096 pulled in by a package (`pulled_in_by` is not empty; no filter hides by it), 8192 a Nerd Font build (`links.nerd` is not null; "Nerd Font available" keeps only these, site ruling 2026-09-29). Category Monospace is exactly the fonts with bit 1.
@@ -404,7 +410,10 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 
 | Key | Type | Contents |
 |---|---|---|
-| `order` | int[] | the font indexes ranked in this view, by `order` |
+| `order` | int[] | the font indexes ranked in this view, best score first, ties by the catalog's `order` (a font the two-source rule holds back takes its score's place) |
+| `s` | int[n] | the score, 0 to 100 (100·Φ(`score`), rounded), if ranked; else -1 |
+| `held` | string (n chars) | `1` if ranked and held back by the two-source rule (`gate_held`), else `0` |
+| `note` | string or null | a note shown above the list in this view instead of held markers (Developers & apps) |
 | `top` | int[n] | exact rank 1–100, or 0 |
 | `band` | int[n] | index into `bands`, or -1 |
 | `tier` | string (n chars) | `A`, `B` or `C` if ranked; `-` if in the view's universe but unranked; `.` if not in the universe (a non-monospace font in Coding) |
@@ -485,7 +494,7 @@ document.dispatchEvent(new CustomEvent('tff:list-ready', { detail: globalThis.tf
 ```
 
 - **Edge cases.** `addFilter` with an existing id replaces that filter in place; bad arguments throw `TypeError`. `classify` and `note` are called with the options object as `this`. A `classify` that throws or returns anything but `show`, `dim` or `hide` counts as `show`, and a `note` that throws gives no note; each is reported once per filter through `reportError`. Note links keep only relative same-site or `https://` hrefs. `on` knows only `'change'`. `setSummary('')` hides like `null`. `index()` is a deep-frozen copy, loaded once.
-- Filters run in the order added; `hide` from any filter wins over `dim`. `affectsNumbering: false` keeps the published numbers (View step 6); `true` renumbers (View step 3).
+- Filters run in the order added; `hide` from any filter wins over `dim`. `affectsNumbering: true` filters run first (View step 3), then the others (step 6). Since scores replaced numbers (2026-09-29), no filter changes a score, so the flag no longer changes what is shown; it stays, as the hook is frozen.
 - `dim` rows get `li.font.is-dim`; dimmed text must keep 4.5:1 contrast (no opacity). A note shows on any row that is shown, dimmed or not; when several filters give a note, each gets its own `div.ext`, in the order the filters were added.
 - A click on `button.ext-action` dispatches `document` event `tff:row-action` with `detail: { filterId, fontId, actionId }` (delegated from `#list`). Focus stays on the button; if the action hides its row, focus moves to the `.details-toggle` of the next shown row, or to `#main` when none is left.
 - `index()` gives what Milestone 3 needs for counts such as "You have 41 of the top 100 in this view": `r[rank].top[i] > 0` marks the exact top 100 of a view, and `ids[i]` names font `i`.

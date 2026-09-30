@@ -162,12 +162,29 @@ def test_rows_are_in_server_order_with_overall_labels(dom, doc):
     ordered = data.server_order(doc)
     rows = dom.find("ol", id="list").elements()
     assert [li.attrs["data-id"] for li in rows] == [f["id"] for f in ordered]
-    assert [squash(li.find(class_="rank").text) for li in rows] == build.rank_labels(ordered)
+    cells = build.rank_cells(ordered)
+    assert [squash(li.find(class_="rank").text) for li in rows] == [c["label"] for c in cells]
     labels = [squash(li.find(class_="rank").text) for li in rows]
-    assert any(re.fullmatch(r"\d+", label) for label in labels)
+    assert any(re.fullmatch(r"Score \d{1,3} of 100", label) for label in labels)
     assert any(label.startswith("Not ranked: ") for label in labels) or not any(
         f["ranks"]["overall"]["order"] is None for f in doc["fonts"]
     )
+
+
+def test_the_held_legend_shows_when_the_server_list_has_a_held_font(dom, doc):
+    """Owner ruling of 2026-09-30 (held_marker_style): the hollow bar's legend, word for word,
+    is in the page whenever a row the server draws is held, so it explains the bar without
+    scripts too; the script then follows the view (#view-note starts hidden)."""
+    legend = dom.find("p", id="held-legend")
+    rulings = tomllib.loads((ROOT / "data/reviews/site/2026-09-30.toml").read_text())
+    assert squash(legend.text) in rulings["held_marker_style"]["ruling"]
+    held = [
+        f
+        for f in doc["fonts"]
+        if (e := f["ranks"]["overall"])["order"] is not None and e["gate_held"]
+    ]
+    assert ("hidden" not in legend.attrs) == bool(held)
+    assert "hidden" in dom.find("p", id="view-note").attrs
 
 
 def test_each_row_has_its_parts(dom, doc):
@@ -179,9 +196,25 @@ def test_each_row_has_its_parts(dom, doc):
         assert li.attrs["id"] == f"font-{font_id}"
         row = li.elements()[0]
         assert row.classes == ["font-row"]
-        # rank first, then the title: Render rewrites only the .rank text
+        # rank first, then the title: Render redraws only the .rank cell, which holds the
+        # score and its bar (score_display), or the "Not ranked" text alone
         assert [c.classes[0] for c in row.elements()[:2]] == ["rank", "font-title"]
-        assert row.elements()[0].elements() == []
+        cell = row.elements()[0]
+        if li.classes == ["font", "is-unranked"]:
+            assert cell.elements() == []
+        else:
+            before, after, bar = cell.elements()
+            assert [before.classes, after.classes] == [["visually-hidden"]] * 2
+            number = int(re.fullmatch(r"Score (\d+) of 100.*", squash(cell.text))[1])
+            assert (bar.tag, bar.classes, bar.elements(), bar.text) == (
+                "i",
+                ["bar", f"b{number}"],
+                [],
+                "",
+            )
+            assert ("is-held" in cell.classes) == squash(cell.text).endswith(
+                ", from one kind of source"
+            )
         title = row.elements()[1]
         heading = title.elements()[0]
         assert (heading.tag, heading.classes) == ("h3", ["font-name"])

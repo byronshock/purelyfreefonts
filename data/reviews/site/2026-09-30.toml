@@ -90,3 +90,10 @@ recommended = true
 value = "two_line_sort_buttons"
 ruling = "The sort buttons put the order's words on a second, smaller line inside the button (\"Rank\" with its arrows, then \"best first\" or \"least used first\"; \"Name\", then \"A–Z\" or \"Z–A\"), so from 40rem the Rank button fits over the 96px rank column and the Name button starts exactly over the names, as sort_header asks."
 reason = "Claude's Milestone 2 audit, checked in Chromium and Firefox: on one line the Rank button was 138px wide (181px with \"least used first\"), wider than the 96px rank column that score_display keeps, so the Name button sat 34px right of the names. Of three options (two-line buttons; side by side as before, rewording sort_header; the order's words moved to the count line), the owner took Claude's recommendation."
+
+[held_marker_style]
+choice = "a"
+recommended = true
+value = "hollow_bar"
+ruling = "A font the two-source rule holds back (gate_held) shows its score with a hollow bar, drawn as an outline instead of solid blue, and one legend line above the list explains it: \"Hollow bar: this score rests on one kind of source, so it may move more.\" Screen readers hear \"Score 71 of 100, from one kind of source\". Developers & apps marks no row (held_marker_dev_apps)."
+reason = "Asked with the plan for the score bars, the owner took Claude's recommendation over a solid bar with a dagger after the number."

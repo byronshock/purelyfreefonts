@@ -18,6 +18,8 @@
 <p id="ext-summary" class="ext-summary" hidden></p>
 <p id="count" class="count">Showing {{ list.total }} of {{ list.total }} {{ "font" if list.total == 1 else "fonts" }}</p>
 <p id="nf-legend" class="nf-legend"><span class="nf-mark">{{ list.nerd.marker }}</span>{{ list.nerd.after_marker }}</p>
+<p id="held-legend" class="held-legend is-held"{% if not list.held_shown %} hidden{% endif %}><i class="bar b60"></i> {{ list.held_legend }}</p>
+<p id="view-note" class="view-note" hidden></p>
 <div id="status" class="visually-hidden" role="status"></div>
 <div id="no-results" class="no-results" hidden>
 <p id="no-results-text">No fonts match these filters. Try loosening some of them.</p>

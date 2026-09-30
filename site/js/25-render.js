@@ -1,8 +1,8 @@
 // 25-render: puts a View result on the page (site/CONTRACT.md sections 4 and 10). It reuses
 // the server-rendered li.font rows: the rows to show go back into #list, in order, through
 // one DocumentFragment; the others are detached (kept here, never given `hidden`). Only the
-// .rank text (with the is-unranked class that follows it), the dim class and the Milestone 3
-// slots change inside a row, and only when they
+// .rank cell (a score and its bar, or "Not ranked: <reason>", with the is-unranked class that
+// follows it), the dim class and the Milestone 3 slots change inside a row, and only when they
 // differ, so an unchanged view costs no DOM work. Focus stays where it was, or moves to a
 // neighbouring row when its own row leaves.
 const Render = (() => {
@@ -17,6 +17,8 @@ const Render = (() => {
   let count = null;
   let noResults = null;
   let noResultsText = null;
+  let heldLegend = null;
+  let viewNote = null;
 
   // Bind to #list and the rows by font index (rows[i] is font i's li.font). The labels and
   // order already on the page are read back, so a result equal to the server's changes
@@ -35,6 +37,25 @@ const Render = (() => {
     count = document.getElementById('count');
     noResults = document.getElementById('no-results');
     noResultsText = document.getElementById('no-results-text');
+    heldLegend = document.getElementById('held-legend');
+    viewNote = document.getElementById('view-note');
+  };
+  // Draw a .rank cell as _row.html.j2 does: the score with its words for screen readers and
+  // a bar (hollow when held), or, with no score (-1), the text `label` ("Not ranked: …").
+  // Either way its text equals `label`.
+  const hiddenText = (text) => Core.el('span', { class: 'visually-hidden', text });
+  const drawRank = (node, score, held, label, words) => {
+    node.classList.toggle('is-held', held);
+    if (score < 0) {
+      node.textContent = label;
+      return;
+    }
+    node.replaceChildren(
+      hiddenText(words.before),
+      String(score),
+      hiddenText(`${words.after}${held ? words.held : ''}`),
+      Core.el('i', { class: `bar b${score}` }),
+    );
   };
 
   // An href a note may use: a relative URL on this site, or https://. Anything else is
@@ -158,7 +179,9 @@ const Render = (() => {
       const i = result.order[k];
       const label = result.labels[k];
       if (label !== labelNow[i] && rankNodes[i]) {
-        rankNodes[i].textContent = label;
+        const score = result.scores ? result.scores[k] : -1;
+        const held = Boolean(result.held && result.held[k]);
+        drawRank(rankNodes[i], score, held, label, result.words);
         // "Not ranked: <reason>" gets a line of its own (site ruling of 2026-09-26).
         rows[i].classList.toggle('is-unranked', label.startsWith(View.NOT_RANKED));
         labelNow[i] = label;
@@ -182,6 +205,13 @@ const Render = (() => {
       }
     }
     orderNow = result.order.slice();
+
+    // The hollow bar's legend while a held font is shown; the view's note (Developers & apps).
+    if (heldLegend) Core.setHidden(heldLegend, !(result.held || []).some(Boolean));
+    if (viewNote) {
+      Core.text(viewNote, result.note || '');
+      Core.setHidden(viewNote, !result.note);
+    }
 
     const of = Core.plural(result.total, 'font', 'fonts');
     const line = `Showing ${Core.formatCount(result.shown)} of ${of}`;

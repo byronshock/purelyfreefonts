@@ -94,6 +94,8 @@ _CLOSER = re.compile(r"^[)\]}][)\]}()\w$.\s]*;?\s*(?://.*)?$")
 _IMPORT_EXPORT = re.compile(r"^\s*(?:import|export)\b|\bimport\s*\(", re.MULTILINE)
 _ABSOLUTE_FETCH = re.compile(r"fetch\(\s*['\"`](?:[a-z][a-z0-9+.-]*:|//)", re.IGNORECASE)
 _CSS_COMMENT = re.compile(r"/\*.*?\*/", re.DOTALL)
+_BACKTICK = re.compile(r"(?<!\\)`")
+_BLANK_RUN = re.compile(r"\n{3,}")
 _CSS_FORBIDDEN = (
     (re.compile(r"@import\b", re.IGNORECASE), "@import (the site ships one stylesheet)"),
     (
@@ -195,8 +197,31 @@ def lint_css_part(filename: str, source: str) -> list[str]:
 
 
 def concat_js(parts_dir: Path) -> str:
-    """Lint and concatenate ``parts_dir/*.js`` in filename order into one ES module."""
-    return _concat(Path(parts_dir), "*.js", lint_js_part)
+    """Lint and concatenate ``parts_dir/*.js`` in filename order into one ES module, without
+    whole-line comments (``strip_js_comments``)."""
+    return _concat(Path(parts_dir), "*.js", lint_js_part, strip_js_comments)
+
+
+def strip_js_comments(source: str) -> str:
+    """``source`` without the lines that hold only a ``//`` comment, which ship no code but
+    cost the page budget (M2 step 10). A line inside a template literal stays: a backtick
+    that no backslash escapes opens or closes one. Comments after code stay too."""
+    kept: list[str] = []
+    inside = False
+    for line in source.split("\n"):
+        if inside or not line.lstrip().startswith("//"):
+            kept.append(line)
+        if len(_BACKTICK.findall(line)) % 2:
+            inside = not inside
+    return "\n".join(kept)
+
+
+def strip_css_comments(source: str) -> str:
+    """``source`` without its ``/* … */`` comments and the lines they leave empty (M2 step
+    10). The parts put no comment marker inside a string."""
+    stripped = _CSS_COMMENT.sub("", source)
+    lines = "\n".join(line.rstrip() for line in stripped.split("\n"))
+    return _BLANK_RUN.sub("\n\n", lines).lstrip("\n")
 
 
 def font_faces(family: str, faces: list[tuple[str, str]], weights: str) -> str:
@@ -220,8 +245,9 @@ def font_faces(family: str, faces: list[tuple[str, str]], weights: str) -> str:
 
 
 def concat_css(parts_dir: Path) -> str:
-    """Concatenate ``parts_dir/*.css`` in filename order into one stylesheet."""
-    return _concat(Path(parts_dir), "*.css", lint_css_part)
+    """Concatenate ``parts_dir/*.css`` in filename order into one stylesheet, without
+    comments (``strip_css_comments``)."""
+    return _concat(Path(parts_dir), "*.css", lint_css_part, strip_css_comments)
 
 
 def write_hashed(out_dir: Path, name: str, data: bytes) -> str:
@@ -235,7 +261,12 @@ def write_hashed(out_dir: Path, name: str, data: bytes) -> str:
     return f"/{rel}"
 
 
-def _concat(parts_dir: Path, pattern: str, lint: Callable[[str, str], list[str]]) -> str:
+def _concat(
+    parts_dir: Path,
+    pattern: str,
+    lint: Callable[[str, str], list[str]],
+    strip: Callable[[str], str],
+) -> str:
     paths = sorted(parts_dir.glob(pattern), key=lambda p: p.name)
     if not paths:
         raise AssetError([f"{parts_dir}: no {pattern} parts"])
@@ -245,7 +276,7 @@ def _concat(parts_dir: Path, pattern: str, lint: Callable[[str, str], list[str]]
         # utf-8-sig drops a byte-order mark, which would land mid-file once concatenated.
         source = path.read_text(encoding="utf-8-sig").replace("\r\n", "\n")
         problems += lint(path.name, source)
-        texts.append(source.rstrip() + "\n")
+        texts.append(strip(source).strip("\n") + "\n")
     if problems:
         raise AssetError(problems)
     return "\n".join(texts)

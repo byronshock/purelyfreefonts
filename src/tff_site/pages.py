@@ -100,7 +100,7 @@ TEMPLATE_IDS = frozenset(
         "desktop-views",
         "reading-ranks",
         "ranks",
-        "numbers-and-bands",
+        "scores",
         "not-ranked",
         "evidence-states",
         "tiers",

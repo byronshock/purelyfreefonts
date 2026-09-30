@@ -16,6 +16,7 @@ the same bytes once serialised with ``jsonio.canonical_bytes``.
 """
 
 import json
+import math
 from collections import Counter
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
@@ -52,6 +53,17 @@ UNRANKED_LABELS = {
     "no_evidence": "no evidence in this rank",
     "too_new": "too new to rank",
 }
+# Views where every score rests on one kind of source: one note above the list says so, and
+# no row carries the held marker (owner ruling of 2026-09-30, held_marker_dev_apps).
+VIEW_NOTES = {
+    "dev_apps": "Every score in this rank rests on one kind of source, so these scores may "
+    "move more than in the other ranks.",
+}
+# The words around a row's score for screen readers ("Score 83 of 100"), and after it for a
+# font the two-source rule holds back (the hollow bar, owner ruling of 2026-09-30,
+# held_marker_style). The list index carries them, so the script holds no copy.
+SCORE_WORDS = {"before": "Score ", "after": " of 100", "held": ", from one kind of source"}
+HELD_LEGEND = "Hollow bar: this score rests on one kind of source, so it may move more."
 STATE_LABELS = {
     "observed": "observed",
     "censored": "below the floor",
@@ -89,7 +101,7 @@ BIT_NEW = 2048
 BIT_PULLED = 4096
 BIT_NERD = 8192  # a Nerd Font build (links.nerd): the "NF" marker and filter (TASK-2)
 
-LIST_FORMAT = 2  # 2 (2026-09-30): site categories; no lics/lic columns
+LIST_FORMAT = 3  # 3 (2026-09-30): scores (s, held, note), order by score; 2: site categories
 DETAILS_FORMAT = 1
 TIER_UNRANKED = "-"
 TIER_OUTSIDE = "."
@@ -248,8 +260,8 @@ def band_of(order: int, bands: list[Mapping[str, Any]]) -> str | None:
 def list_index(doc: Mapping[str, Any], *, commit: str) -> dict[str, Any]:
     """Return the list-index payload (``/assets/list.<h>.json``; format in site/CONTRACT.md).
 
-    Font index ``i`` is the ``i``-th server-rendered row: Overall order, then fonts unranked
-    in Overall by Python ``str.casefold`` of the family, then id.
+    Font index ``i`` is the ``i``-th server-rendered row: Overall by score (``score_order``),
+    then fonts unranked in Overall by Python ``str.casefold`` of the family, then id.
 
     Bit 32 (a specimen) is set for a ``preview`` whose sha256 is not the placeholder, and bit
     64 ("Type your own text") for a ``font_file``: a build without font files passes a
@@ -273,6 +285,7 @@ def list_index(doc: Mapping[str, Any], *, commit: str) -> dict[str, Any]:
         "views": [dict(v) for v in doc["views"]],
         "bands": bands,
         "why_labels": list(UNRANKED_LABELS.values()),
+        "score_words": dict(SCORE_WORDS),
         "r": {
             view["key"]: _view_columns(fonts, view["key"], bands)
             for view in doc["views"]
@@ -316,16 +329,11 @@ def details(doc: Mapping[str, Any], *, font_assets: Mapping[str, str]) -> dict[s
 
 def server_order(doc: Mapping[str, Any]) -> list[Mapping[str, Any]]:
     """Return the fonts in server-rendered order (see ``list_index``)."""
-    ranked: list[tuple[int, Mapping[str, Any]]] = []
-    unranked: list[Mapping[str, Any]] = []
-    for font in doc["fonts"]:
-        entry = font["ranks"].get(DEFAULT_VIEW)
-        if entry is not None and entry["order"] is not None:
-            ranked.append((entry["order"], font))
-        else:
-            unranked.append(font)
-    ranked.sort(key=lambda pair: pair[0])
-    return [font for _, font in ranked] + sorted(unranked, key=name_order)
+    fonts = doc["fonts"]
+    ranked = score_order([font["ranks"].get(DEFAULT_VIEW) for font in fonts])
+    placed = set(ranked)
+    unranked = [font for i, font in enumerate(fonts) if i not in placed]
+    return [fonts[i] for i in ranked] + sorted(unranked, key=name_order)
 
 
 def site_category(font: Mapping[str, Any]) -> str:
@@ -404,11 +412,32 @@ def nerd_link_text(link: Mapping[str, Any]) -> str:
     return f"{link['label']} ({url_destination(link['url'])})"
 
 
+def display_score(z: float | None) -> int:
+    """A rank's score as the list shows it, 0 to 100: 100·Φ(z), the normal curve of
+    ``ranks.<key>.score``, rounded (owner rulings of 2026-09-29, score_display and
+    score_curve); -1 for none."""
+    return -1 if z is None else round(50 * (1 + math.erf(z / math.sqrt(2))))
+
+
+def score_order(entries: list[Mapping[str, Any] | None]) -> list[int]:
+    """The indexes of the entries ranked in a view (``order`` not null), best score first,
+    ties by ``order``. A font the two-source rule holds back takes its score's place
+    (owner ruling of 2026-09-29, score_held_fonts)."""
+
+    def best_first(i: int) -> tuple[float, int]:
+        entry = entries[i]
+        assert entry is not None
+        return (-entry["score"] if entry["score"] is not None else math.inf, entry["order"])
+
+    ranked = (i for i, e in enumerate(entries) if e and e["order"] is not None)
+    return sorted(ranked, key=best_first)
+
+
 def _view_columns(fonts: list[Mapping[str, Any]], key: str, bands: list[str]) -> dict[str, Any]:
     band_index = {label: i for i, label in enumerate(bands)}
     why_index = {reason: i for i, reason in enumerate(UNRANKED_LABELS)}
     entries = [font["ranks"].get(key) for font in fonts]
-    ranked = sorted((e["order"], i) for i, e in enumerate(entries) if e and e["order"] is not None)
+    ranked = [e if e and e["order"] is not None else None for e in entries]
     tiers = []
     for entry in entries:
         if entry is None:
@@ -418,7 +447,10 @@ def _view_columns(fonts: list[Mapping[str, Any]], key: str, bands: list[str]) ->
         else:
             tiers.append(entry["tier"])
     return {
-        "order": [i for _, i in ranked],
+        "order": score_order(entries),
+        "s": [display_score(e["score"]) if e else -1 for e in ranked],
+        "held": "".join("1" if e and e["gate_held"] else "0" for e in ranked),
+        "note": VIEW_NOTES.get(key),
         "top": [(e["rank"] or 0) if e else 0 for e in entries],
         "band": [band_index[e["band"]] if e and e["band"] is not None else -1 for e in entries],
         "tier": "".join(tiers),

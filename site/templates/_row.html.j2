@@ -1,7 +1,8 @@
 {#-
   _row.html.j2: one font (site/CONTRACT.md, "A row"), included once per `row` of list.rows.
-  Render moves whole li.font nodes and rewrites only the .rank text, so .rank holds text and
-  nothing else. The specimen box keeps its height whether or not the mask has arrived, since
+  Render moves whole li.font nodes and redraws only the .rank cell: a ranked font's score and
+  its bar (hollow for a held font; owner rulings score_display and held_marker_style), or
+  "Not ranked: <reason>". Its text is what screen readers hear: "Score 83 of 100". The specimen box keeps its height whether or not the mask has arrived, since
   rows use content-visibility. The title cell holds the heading, the Nerd Font marker and the
   specimen: where there is a specimen, the heading lies over its first line, the drawn name,
   and is hidden once the specimen shows (owner rulings of 2026-09-29, name_once and
@@ -11,7 +12,11 @@
 -#}
 <li class="font{% if row.unranked %} is-unranked{% endif %}" id="font-{{ row.id }}" data-id="{{ row.id }}">
 <div class="font-row">
+{% if row.score is none %}
 <span class="rank">{{ row.label }}</span>
+{% else %}
+<span class="rank{% if row.held %} is-held{% endif %}"><span class="visually-hidden">{{ list.score_words.before }}</span>{{ row.score }}<span class="visually-hidden">{{ list.score_words.after }}{% if row.held %}{{ list.score_words.held }}{% endif %}</span><i class="bar b{{ row.score }}"></i></span>
+{% endif %}
 <div class="font-title{% if row.specimen %} has-spec{% endif %}">
 <h3 class="font-name" id="font-{{ row.id }}-name">{{ row.family }}</h3>
 {% if row.nerd %}

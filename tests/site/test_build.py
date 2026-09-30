@@ -16,6 +16,7 @@ import json
 import os
 import re
 import shutil
+import statistics
 import subprocess
 import sys
 import textwrap
@@ -270,7 +271,8 @@ def load_json(root: Path, url: str) -> Any:
 
 
 class Tags(HTMLParser):
-    """Start tags with their attributes, and the text inside each <script> and <span class=rank>."""
+    """Start tags with their attributes, and the text inside each <script> and each rank cell
+    (<span class="rank">, spans inside it included)."""
 
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
@@ -278,17 +280,25 @@ class Tags(HTMLParser):
         self.script_text: list[str] = []
         self.ranks: list[str] = []
         self._in: str | None = None
+        self._depth = 0  # open spans inside the rank cell
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         self.tags.append((tag, dict(attrs)))
         if tag == "script":
             self._in = "script"
             self.script_text.append("")
-        elif tag == "span" and dict(attrs).get("class") == "rank":
+        elif self._in == "rank" and tag == "span":
+            self._depth += 1
+        elif tag == "span" and "rank" in (dict(attrs).get("class") or "").split():
             self._in = "rank"
+            self._depth = 1
             self.ranks.append("")
 
     def handle_endtag(self, tag: str) -> None:
+        if self._in == "rank" and tag == "span":
+            self._depth -= 1
+            if self._depth:
+                return
         self._in = None
 
     def handle_data(self, text: str) -> None:
@@ -505,12 +515,41 @@ def test_js_and_css_are_the_parts_in_filename_order(tmp_path, catalog, mini_site
     index = parse((out / "index.html").read_text(encoding="utf-8"))
     js = asset(out, next(a["src"] for t, a in index.tags if t == "script")).read_text()
     css = asset(out, next(a["href"] for t, a in index.tags if a.get("rel") == "stylesheet"))
-    assert js == "\n".join(textwrap.dedent(JS[n]).rstrip() + "\n" for n in sorted(JS))
+    strip_js, strip_css = assets.strip_js_comments, assets.strip_css_comments
+    assert js == "\n".join(strip_js(textwrap.dedent(JS[n])).strip("\n") + "\n" for n in sorted(JS))
     # The interface font's @font-face rules come first, then the parts.
     faces = [(ui_font_url(out, name), style) for name, style in build.UI_FONTS]
     head = assets.font_faces(build.UI_FONT_FAMILY, faces, build.UI_FONT_WEIGHTS)
-    assert css.read_text() == head + "\n".join(CSS[n] for n in sorted(CSS))
+    parts = "\n".join(strip_css(CSS[n]).strip("\n") + "\n" for n in sorted(CSS))
+    assert css.read_text() == head + parts
     assert js.rstrip().endswith("Main.start();")
+
+
+def test_comments_are_not_shipped():
+    """M2 step 10: whole-line // comments and /* */ comments cost the page budget and ship
+    no code, so the build leaves them out; code, and a template literal's lines, stay."""
+    js = (
+        "// a part header\n"
+        "const A = (() => {\n"
+        "  // a note\n"
+        "  const url = 'https://example.org/'; // kept: after code\n"
+        "  const t = `line one\n"
+        "  // inside a template literal: kept\n"
+        "  `;\n"
+        "  return Object.freeze({ url, t });\n"
+        "})();\n"
+    )
+    assert assets.strip_js_comments(js) == (
+        "const A = (() => {\n"
+        "  const url = 'https://example.org/'; // kept: after code\n"
+        "  const t = `line one\n"
+        "  // inside a template literal: kept\n"
+        "  `;\n"
+        "  return Object.freeze({ url, t });\n"
+        "})();\n"
+    )
+    css = "/* header */\n.a {\n  color: red; /* why */\n}\n\n\n/* two\n   lines */\n.b {\n  margin: 0;\n}\n"
+    assert assets.strip_css_comments(css) == ".a {\n  color: red;\n}\n\n.b {\n  margin: 0;\n}\n"
 
 
 # ---------------------------------------------------------------------- the CSP lint
@@ -571,18 +610,18 @@ def test_a_missing_context_field_fails_the_build(tmp_path, catalog, mini_site):
 
 
 def expected_labels(doc: dict) -> list[str]:
-    """M2-D2 numbering of the unfiltered Overall view, written out independently."""
-    ordered = data.server_order(doc)
-    labels, count = [], 0
-    for font in ordered:
+    """The unfiltered Overall view's rank cells as text, written out independently: each
+    ranked font's score, 100·Φ(z) rounded, as screen readers hear it (owner rulings of
+    2026-09-29 and 2026-09-30: score_display, score_curve, held_marker_style)."""
+    labels = []
+    for font in data.server_order(doc):
         entry = font["ranks"]["overall"]
         if entry["unranked"]:
             labels.append("Not ranked: " + data.UNRANKED_LABELS[entry["unranked"]])
-        elif entry["band"]:
-            labels.append(entry["band"])
-        else:
-            count += 1
-            labels.append(str(count))
+            continue
+        score = round(100 * statistics.NormalDist().cdf(entry["score"]))
+        held = ", from one kind of source" if entry["gate_held"] else ""
+        labels.append(f"Score {score} of 100{held}")
     return labels
 
 
@@ -596,15 +635,18 @@ def test_index_is_server_rendered_in_overall_order(tmp_path, catalog, mini_site)
     assert len(rows) == 40
     overall = {f["id"]: f["ranks"]["overall"] for f in SAMPLE["fonts"]}
     ranked = [i for i in rows if overall[i]["order"] is not None]
-    assert ranked == sorted(ranked, key=lambda i: overall[i]["order"])
+    # By score, best first: a font the two-source rule holds back takes its score's place.
+    assert ranked == sorted(ranked, key=lambda i: (-overall[i]["score"], overall[i]["order"]))
+    # The sample's held sample-mono-23 (order 101) scores above fonts in the top 100.
+    assert ranked != sorted(ranked, key=lambda i: overall[i]["order"])
     assert rows[: len(ranked)] == ranked
     unranked = [f for f in SAMPLE["fonts"] if f["id"] in rows[len(ranked) :]]
     assert rows[len(ranked) :] == [
         f["id"] for f in sorted(unranked, key=lambda f: (f["family"].casefold(), f["id"]))
     ]
     assert page.ranks == expected_labels(SAMPLE)
-    assert page.ranks[:3] == ["1", "2", "3"]
-    assert set(BANDS) <= set(page.ranks)
+    assert not set(BANDS) & set(page.ranks)  # no bands, and no numbers, in the list
+    assert any(label.endswith(", from one kind of source") for label in page.ranks)
     assert page.ranks[-1] == "Not ranked: no evidence of deliberate installs"
 
 
@@ -685,7 +727,7 @@ def test_list_index_format(tmp_path, catalog, mini_site):
     fonts_ = {f["id"]: f for f in doc["fonts"]}
     assert set(index) == set(LIST_KEYS)
     assert (index["v"], index["commit"], index["run_date"], index["n"]) == (
-        2,
+        3,
         COMMIT,
         "2026-09-25",
         n,
@@ -732,9 +774,20 @@ def test_list_index_format(tmp_path, catalog, mini_site):
                 assert col["band"][i] == (
                     index["bands"].index(entry["band"]) if entry["band"] else -1
                 )
-        orders = [fonts_[index["ids"][i]]["ranks"][key]["order"] for i in col["order"]]
-        assert orders == sorted(orders)
+        best = [
+            (-(e := fonts_[index["ids"][i]]["ranks"][key])["score"], e["order"])
+            for i in col["order"]
+        ]
+        assert best == sorted(best)  # by score, best first
         assert len(col["order"]) == sum(c in "ABC" for c in col["tier"])
+        assert len(col["s"]) == len(col["held"]) == n
+        assert col["note"] == data.VIEW_NOTES.get(key)
+        for i, font_id in enumerate(index["ids"]):
+            entry = fonts_[font_id]["ranks"].get(key)
+            ranked = entry is not None and entry["order"] is not None
+            score = round(100 * statistics.NormalDist().cdf(entry["score"])) if ranked else -1
+            assert col["s"][i] == score
+            assert col["held"][i] == ("1" if ranked and entry["gate_held"] else "0")
     coding = index["r"]["coding"]["tier"]
     for i, font_id in enumerate(index["ids"]):
         assert (coding[i] != ".") == fonts_[font_id]["is_monospace"]
@@ -754,6 +807,7 @@ LIST_KEYS = (
     "views",
     "bands",
     "why_labels",
+    "score_words",
     "r",
 )
 

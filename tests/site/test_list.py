@@ -20,6 +20,8 @@ Handy selections (Milestone 2 design §8, step 3): ``-k retired_keys``, ``-k url
 import copy
 import hashlib
 import json
+import re
+import statistics
 from collections.abc import Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -72,39 +74,45 @@ ROWS_JS = """() => Array.from(document.querySelectorAll('#list > li.font'),
 SAMPLE_ONLY = "names fonts of the sample catalog"
 FAILED_NOTE = "Filters and search didn\u2019t load. Check your connection, then reload the page."
 NOT_RANKED = "Not ranked: "
+HELD = ", from one kind of source"
 
 
 # ---------------------------------------------------------------------------- the oracle
 
 
+def score_of(entry: dict[str, Any]) -> int:
+    """A ranked entry's score as the list shows it: 100·Φ(z), rounded (score_curve)."""
+    return round(100 * statistics.NormalDist().cdf(entry["score"]))
+
+
 def oracle(doc: dict[str, Any], state: dict[str, Any]) -> tuple[list[str], list[str], int]:
     """What the list should show for ``state``: ``(ids, labels, universe size)``.
 
-    Written from the catalog, not the list index: the view's universe, ranked fonts by
-    ``order`` then unranked ones by name, the filters and search, and M2-D2's numbering (the
-    exact top 100 count from 1; bands and "Not ranked: <reason>" otherwise).
+    Written from the catalog, not the list index: the view's universe, ranked fonts by score
+    (best first, ties by ``order``: a font the two-source rule holds back takes its score's
+    place) then unranked ones by name, the filters and search, and each rank cell's text:
+    "Score 83 of 100", which no filter changes, plus ", from one kind of source" for a held
+    font outside Developers & apps (owner rulings score_display, score_held_fonts,
+    held_marker_style and held_marker_dev_apps), or "Not ranked: <reason>".
     """
     rank = state.get("rank", "overall")
     universe = [f for f in data.server_order(doc) if rank in f["ranks"]]
     ranked = sorted(
         (f for f in universe if f["ranks"][rank]["order"] is not None),
-        key=lambda f: f["ranks"][rank]["order"],
+        key=lambda f: (-f["ranks"][rank]["score"], f["ranks"][rank]["order"]),
     )
     unranked = sorted(
         (f for f in universe if f["ranks"][rank]["order"] is None), key=data.name_order
     )
     shown = [f for f in ranked + unranked if _passes(doc, f, state)]
     labels = []
-    count = 0
     for font in shown:
         entry = font["ranks"][rank]
-        if entry["rank"] is not None:
-            count += 1
-            labels.append(str(count))
-        elif entry["band"] is not None:
-            labels.append(entry["band"])
-        else:
+        if entry["order"] is None:
             labels.append(NOT_RANKED + data.UNRANKED_LABELS[entry["unranked"]])
+            continue
+        held = entry["gate_held"] and rank != "dev_apps"
+        labels.append(f"Score {score_of(entry)} of 100" + (HELD if held else ""))
     pairs = [(f["id"], label) for f, label in zip(shown, labels, strict=True)]
     sort = state.get("sort", "rank")
     if sort in ("name", "name-desc"):
@@ -145,20 +153,18 @@ def _passes(doc: dict[str, Any], font: dict[str, Any], state: dict[str, Any]) ->
     return not query or any(query in search_key(name) for name in names)
 
 
-def band_order_ok(labels: list[str], bands: list[str]) -> bool:
-    """Numbers 1, 2, 3 … first, then bands in their order, then unranked fonts."""
+def scores_descend(labels: list[str]) -> bool:
+    """Scores, best first, then unranked fonts; no numbers and no bands (score_display)."""
     kinds = []
     for label in labels:
-        if label.isdigit():
-            kinds.append((0, int(label)))
-        elif label in bands:
-            kinds.append((1, bands.index(label)))
+        found = re.fullmatch(rf"Score (\d{{1,3}}) of 100(?:{HELD})?", label)
+        if found:
+            kinds.append((0, -int(found[1])))
         elif label.startswith(NOT_RANKED):
-            kinds.append((2, 0))
+            kinds.append((1, 0))
         else:
             return False
-    numbers = [n for kind, n in kinds if kind == 0]
-    return kinds == sorted(kinds) and numbers == list(range(1, len(numbers) + 1))
+    return kinds == sorted(kinds)
 
 
 def count_line(shown: int, total: int) -> str:
@@ -426,7 +432,6 @@ def test_view_matches_the_oracle_for_every_rank_and_filter(
         " r.dimmed.every((d) => d === false), r.notes.every((n) => n === null)]; });",
         states,
     )
-    bands = [b["label"] for b in doc["bands"]]
     for state, (ids, labels, total, shown, undimmed, unnoted) in zip(states, got, strict=True):
         want_ids, want_labels, want_total = oracle(doc, state)
         assert (ids, labels, total) == (want_ids, want_labels, want_total), state
@@ -434,7 +439,7 @@ def test_view_matches_the_oracle_for_every_rank_and_filter(
         assert undimmed, state
         assert unnoted, state
         if state["sort"] == "rank":
-            assert band_order_ok(labels, bands), state
+            assert scores_descend(labels), state
 
 
 def test_coding_lists_monospace_fonts_only(
@@ -519,7 +524,7 @@ def test_search_by_alias_and_accents(parts: Parts, sample: dict[str, Any]) -> No
     assert dict(zip(cases, got, strict=True)) == cases
 
 
-def test_external_filters_renumber_or_keep_the_published_numbers(
+def test_external_filters_hide_or_dim_and_never_change_a_score(
     parts: Parts, sample: dict[str, Any]
 ) -> None:
     got = parts.run(
@@ -547,17 +552,11 @@ def test_external_filters_renumber_or_keep_the_published_numbers(
         """
     )
     first = oracle(sample, {})
-    assert [tuple(r[:2]) for r in got["keep"]][:3] == [
-        ("sample-sans-01", "1"),
-        ("sample-mono-02", "2"),
-        ("sample-serif-04", "4"),  # numbers stay as published
-    ]
-    assert [tuple(r[:2]) for r in got["renumber"]][:3] == [
-        ("sample-sans-01", "1"),
-        ("sample-mono-02", "2"),
-        ("sample-serif-04", "3"),
-    ]
-    assert got["dim"][0] == ["sample-sans-01", "1", True, None]
+    label = dict(zip(first[0], first[1], strict=True))
+    kept = [(i, label[i]) for i in ("sample-sans-01", "sample-mono-02", "sample-serif-04")]
+    assert [tuple(r[:2]) for r in got["keep"]][:3] == kept  # scores, whatever is hidden
+    assert [tuple(r[:2]) for r in got["renumber"]][:3] == kept  # affectsNumbering: the same
+    assert got["dim"][0] == ["sample-sans-01", label["sample-sans-01"], True, None]
     assert [r[2] for r in got["dim"][1:]] == [False] * 4
     assert got["hideWins"][0][0] == "sample-mono-02"
     assert got["notes"][0][3] == [
@@ -772,17 +771,16 @@ def test_first_load_shows_the_server_list_silently(
     guarded.assert_clean(page)
 
 
-def test_rank_selector_numbers_every_view(
+def test_rank_selector_scores_every_view(
     guarded_context: Any, doc: dict[str, Any], views: list[str]
 ) -> None:
     guarded, page = open_list(guarded_context)
-    bands = [b["label"] for b in doc["bands"]]
     measures = {v["key"]: v["measures"] for v in doc["views"]}
     for rank in [*views[1:], views[0]]:
         page.select_option("#f-rank", rank)
         ids, labels, total = oracle(doc, {"rank": rank})
         assert rows(page) == list(zip(ids, labels, strict=True)), rank
-        assert band_order_ok(labels, bands), rank
+        assert scores_descend(labels), rank
         assert page.text_content("#count") == count_line(len(ids), total)
         assert page.text_content("#f-rank-measures") == measures[rank]
         assert hash_of(page) == ("" if rank == "overall" else f"#rank={rank}")
@@ -886,7 +884,8 @@ def test_alias_search_while_typing(guarded_context: Any, sample: dict[str, Any])
     guarded, page = open_list(guarded_context)
     before = entries(page)
     page.locator("#f-q").press_sequentially("Sample Sans Classic")
-    assert rows(page) == [("sample-sans-05", "1")]
+    label = dict(zip(*oracle(sample, {})[:2], strict=True))
+    assert rows(page) == [("sample-sans-05", label["sample-sans-05"])]
     # Typing replaces the history entry after a pause, and is announced after a longer one.
     page.wait_for_function("() => location.hash === '#q=Sample%20Sans%20Classic'")
     assert entries(page) == before
@@ -895,7 +894,7 @@ def test_alias_search_while_typing(guarded_context: Any, sample: dict[str, Any])
     )
     page.fill("#f-q", "")
     page.locator("#f-q").press_sequentially("łódź")
-    assert rows(page) == [("sample-sans-37", "1")]
+    assert rows(page) == [("sample-sans-37", label["sample-sans-37"])]
     page.fill("#f-q", "STRASSE")
     assert rows(page) == expected_rows(sample, {"q": "STRASSE"})
     assert [row[0] for row in rows(page)] == ["sample-serif-27"]
@@ -1274,6 +1273,62 @@ def test_an_unranked_label_takes_a_line_of_its_own(
     guarded.assert_clean(page)
 
 
+BARS_JS = """() => Array.from(document.querySelectorAll('#list > li.font'), (li) => {
+  const cell = li.querySelector('.rank');
+  const bar = cell.querySelector('.bar');
+  const style = bar && getComputedStyle(bar, '::before');
+  return {
+    id: li.dataset.id,
+    text: cell.textContent,
+    held: cell.classList.contains('is-held'),
+    fill: bar ? bar.className : null,
+    share: bar ? parseFloat(style.width) / bar.getBoundingClientRect().width : null,
+    hollow: style
+      ? parseFloat(style.borderTopWidth) > 0 && style.backgroundColor !== style.borderTopColor
+      : null,
+  };
+})"""
+
+
+def test_score_bars_match_the_scores_and_held_fonts_are_hollow(
+    guarded_context: Any, doc: dict[str, Any], views: list[str]
+) -> None:
+    """Owner rulings of 2026-09-29 and 2026-09-30 (score_display, score_held_fonts,
+    held_marker_style, held_marker_dev_apps): each ranked row's bar is its score long, the
+    list is in score order, a held font's bar is hollow and explained by #held-legend, and
+    Developers & apps marks no row but shows its note. Filters never change a score."""
+    guarded, page = open_list(guarded_context, viewport={"width": 1280, "height": 900})
+    for rank in [*views[1:], views[0]]:
+        page.select_option("#f-rank", rank)
+        got = page.evaluate(BARS_JS)
+        ids, labels, _ = oracle(doc, {"rank": rank})
+        assert [(r["id"], r["text"]) for r in got] == list(zip(ids, labels, strict=True))
+        for row in got:
+            found = re.fullmatch(rf"Score (\d+) of 100({HELD})?", row["text"])
+            if not found:
+                assert row["fill"] is None, row  # "Not ranked: <reason>": no bar
+                continue
+            score = int(found[1])
+            assert row["fill"] == f"bar b{score}", row
+            assert row["share"] == pytest.approx(score / 100, abs=0.02), row
+            assert row["held"] == row["hollow"] == bool(found[2]), row
+        held_shown = any(r["held"] for r in got)
+        assert page.is_visible("#held-legend") == held_shown, rank
+        note = data.VIEW_NOTES.get(rank)
+        assert page.is_visible("#view-note") == bool(note), rank
+        if note:
+            assert page.text_content("#view-note") == note
+            assert not held_shown
+        # A filter only hides rows: every row shown keeps its text.
+        before = {r["id"]: r["text"] for r in got}
+        page.click("#f-cat-monospace")
+        after = page.evaluate(BARS_JS)
+        assert after, rank
+        assert all(before[r["id"]] == r["text"] for r in after), rank
+        page.click("#f-cat-all")
+    guarded.assert_clean(page)
+
+
 SORT_LAYOUT_JS = """() => {
   const box = (el) => el.getBoundingClientRect();
   const title = document.querySelector('li.font:not(.is-unranked) .font-title');
@@ -1370,9 +1425,7 @@ def test_details_keep_their_font_key_through_filter_changes(
     guarded.assert_clean(page)
 
 
-def test_milestone_3_notes_actions_and_numbering(
-    guarded_context: Any, sample: dict[str, Any]
-) -> None:
+def test_milestone_3_notes_actions_and_scores(guarded_context: Any, sample: dict[str, Any]) -> None:
     guarded, page = open_list(guarded_context)
     if page.evaluate("typeof globalThis.tff") != "object":
         pytest.skip("this build has no Milestone 3 hook (50-ext.js)")
@@ -1390,8 +1443,9 @@ def test_milestone_3_notes_actions_and_numbering(
         }"""
     )
     shown = rows(page)
+    labels = dict(zip(*oracle(sample, {})[:2], strict=True))
     assert "sample-sans-03" not in [r[0] for r in shown]
-    assert ("sample-serif-04", "4") in shown  # affectsNumbering false: published numbers
+    assert ("sample-serif-04", labels["sample-serif-04"]) in shown  # a filter keeps scores
     assert page.evaluate(
         "document.getElementById('font-sample-sans-01').classList.contains('is-dim')"
     )
@@ -1415,11 +1469,11 @@ def test_milestone_3_notes_actions_and_numbering(
     focused_row = page.evaluate("document.activeElement.closest('li').dataset.id")
     assert page.evaluate("document.activeElement.className") == "details-toggle"
     assert focused_row == "sample-sans-05"
-    # affectsNumbering: true renumbers.
+    # affectsNumbering: true hides the same way; since scores replaced numbers, none changes.
     page.evaluate(
         "tff.list.addFilter('v', { classify: (id) => (id === 'sample-sans-01' ? 'hide' : 'show'), affectsNumbering: true })"
     )
-    assert rows(page)[0] == ("sample-mono-02", "1")
+    assert rows(page)[0] == ("sample-mono-02", labels["sample-mono-02"])
     page.evaluate("['t', 'u', 'v'].forEach((id) => tff.list.removeFilter(id))")
     assert rows(page) == expected_rows(sample, {})
     assert page.locator(".ext").count() == 0
