@@ -112,7 +112,7 @@ None of these exist yet (checked read-only on 2026-09-26). GitHub creates an unp
 
 1. **Environments.** `production`, deployments from `main` only; `staging`, deployments from `staging` only (Settings → Environments → Deployment branches and tags → Selected branches).
 2. **Environment secrets** (each environment its own): `DEPLOY_SSH_KEY`, `DEPLOY_KNOWN_HOSTS` and `DEPLOY_HOST`; **variables** `DEPLOY_USER` (`deploy` or `deploy-staging`) and, optionally, `SITE_URL`. `DEPLOY_HOST` is the origin's IP address, kept only as an environment secret (Actions masks it in logs). Never create a DNS name for it: an unproxied (grey-cloud) record would publish the origin IP, which lets anyone bypass Cloudflare (AUTHORITY.md, `ops/SERVER.local.md`).
-3. **Labels** the issue forms and the deploy report apply; GitHub silently drops a form label that doesn't exist (the list is `REPO_LABELS` in `tests/test_issue_forms.py`):
+3. **Labels** the issue forms and the deploy report apply; GitHub silently drops a form label that doesn't exist (the list is `REPO_LABELS` in `tests/test_issue_forms.py`). *(Done by Claude with `gh` on 2026-09-30.)*
    ```sh
    gh label create license --description "License report (issue form)"
    gh label create missing-font --description "Missing font (issue form)"
