@@ -14,13 +14,6 @@ Milestone 1 builds the ranked, license-checked catalog that the filterable list 
 **Who:** both. **Needs:** nothing more: step 19's live run and schedule moved after Milestone 2 (`refresh_timing`).
 
 - [ ] Freeze `catalog-site.json` v1: `schema_version` goes from `1.0.0-draft` to `1.0.0`, with the sample file and the schema doc. First, Milestone 2's step 2 approves the fields added since it approved the list on 2026-09-25, each from an owner ruling: the `nerd` group, the `app` system type, a link `note`, `score` and `previous_score`.
-- [ ] A handoff note lists what Milestone 2 must settle:
-  - the default rank order;
-  - numbering under filters, now scores in place of numbers (AUTHORITY.md, "Scores instead of numbers");
-  - the deploy path to the VPS;
-  - the methodology page.
-- [ ] A runbook lists the manual monthly tasks (methodology §10). None exists yet in `ops/` or `docs/`.
-- [ ] "Current step" in AUTHORITY.md moves to Milestone 2, and `docs/roadmap.md` shows the new status.
 
 **Done when:** the owner accepts the handoff.
 
@@ -387,5 +380,12 @@ The finished steps and items, as they were ticked, with their evidence. The crit
 ### Step 20: Handoff to Milestone 2
 **Who:** both. **Depends on:** 17, 19.
 - [x] Before the freeze, each rank entry carries `previous_score`, last month's published score, so the rising and falling markers of Backlog TASK-4 need no schema change later; until a monthly refresh is merged it equals `score` (owner ruling of 2026-09-30, `score_previous_bootstrap`). *(Both schemas; `export.py` and the state file `published_scores.json`; `validate`'s `previous_score` checks, in a run and with `--committed`; `tests/pipeline/test_export.py` and `test_validate.py`.)*
+- [x] A handoff note lists what Milestone 2 must settle: *(Done 2026-09-30: [milestone-1-handoff.md](milestone-1-handoff.md). Each is settled: M2-D1 in AUTHORITY.md; "Scores instead of numbers" there; M2-D6, with [ops/deploy/README.md](../ops/deploy/README.md) and [ops/SERVER.md](../ops/SERVER.md); and `/methodology/`, built from [ranking-methodology.md](ranking-methodology.md) in Milestone 2 step 7.)*
+  - the default rank order;
+  - numbering under filters, now scores in place of numbers (AUTHORITY.md, "Scores instead of numbers");
+  - the deploy path to the VPS;
+  - the methodology page.
+- [x] A runbook lists the manual monthly tasks (methodology §10). *(Done 2026-09-30: [ops/MONTHLY.md](../ops/MONTHLY.md), each month's steps in order with the commands that exist today, the steps that wait for [milestone-refresh.md](milestone-refresh.md) marked, and §10's yearly, one-off and on-request tasks. Milestone 4 step 12 extends it.)*
+- [x] "Current step" in AUTHORITY.md moves to Milestone 2, and `docs/roadmap.md` shows the new status. *(Done 2026-09-30: Milestone 1 is handed off, pending the owner's acceptance, and Milestone 2 is in progress.)*
 
 </details>

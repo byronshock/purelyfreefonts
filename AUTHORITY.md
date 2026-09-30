@@ -311,8 +311,8 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
 ## Current step
 
 1. Survey the tools that already exist for this, or for parts of it. *(done 2026-09-25; findings in [docs/prior-art.md](docs/prior-art.md))*
-2. Milestone 1: Step 0 is done; the methodology was approved and merged on 2026-09-25 ([docs/milestone-1.md](docs/milestone-1.md)). Step 1, project setup, has met its done-when (2026-09-25, [pull request #6](https://github.com/byronshock/trulyfreefonts/pull/6)); its layout item fills in with steps 2, 7 and 15. Steps 2 and 3 are under way. *(2026-09-25)*
-3. Milestone 2: Step 0 decisions are answered and the checklist is merged ([docs/milestone-2.md](docs/milestone-2.md)). Its steps 1–12 can start on a sample catalog alongside Milestone 1. Milestones 3 and 4 keep their Step 0 until each starts ([docs/roadmap.md](docs/roadmap.md)). *(2026-09-25)*
+2. Milestone 1: handed off to Milestone 2 (step 20). The 2026-09-26 catalog is built, reviewed by the owner and committed, and `catalog-site.json` v1 is frozen. The handoff note is [docs/milestone-1-handoff.md](docs/milestone-1-handoff.md), and the monthly tasks are in [ops/MONTHLY.md](ops/MONTHLY.md). Left in [docs/milestone-1.md](docs/milestone-1.md): the owner's acceptance of the handoff, and three smaller items (steps 3, 5 and 13). *(2026-09-30)*
+3. **Milestone 2 is the current step:** the filterable list goes live ([docs/milestone-2.md](docs/milestone-2.md)). Its Step 0 decisions are answered, and the questions Milestone 1 left for it are settled (the handoff note). After it come the first live monthly refresh ([docs/milestone-refresh.md](docs/milestone-refresh.md)) and Milestone 3. Milestones 3 and 4 keep their Step 0 until each starts ([docs/roadmap.md](docs/roadmap.md)). *(2026-09-30)*
 
 ## Background
 
