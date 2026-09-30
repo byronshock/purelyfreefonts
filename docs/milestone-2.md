@@ -18,12 +18,11 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - the methodology, privacy and about pages are live, the blog builds and deploys with the site (M2-D12), and the tip link passes the checks in [ops/DONATIONS.md](../ops/DONATIONS.md);
 - the live privacy test passes: no request to another site, no cookie, nothing stored in the browser, the CSP enforced, no Cloudflare error-report headers;
 - the WCAG 2.2 AA check is clean and the performance budget is met;
-- a monthly refresh has reached the live site through the chosen deploy path;
 - usability rounds 1 and 2 are done, with no blocker or major finding open;
 - nothing has been announced (that is Milestone 4);
 - AUTHORITY.md records M2-D1 to M2-D12, and the owner has accepted the handoff.
 
-**Critical path:** 0 → 1 → 3 → 4 → 6 → 13 → 14 → 15 → 17. Steps 1–12 run on step 2's sample catalog while Milestone 1 is still building; steps 13–16 need its real data.
+**Critical path:** 0 → 1 → 3 → 4 → 6 → 13 → 14 → 15 → 17. Steps 1–12 run on step 2's sample catalog while Milestone 1 is still building; steps 13–15 need its real data. (Step 16, the first monthly refresh on the live site, moved on 2026-09-30 to [milestone-refresh.md](milestone-refresh.md), `refresh_timing`.)
 
 ---
 
@@ -253,16 +252,10 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 **Done when:** no blocker or major is open, and the notes are in step 17's handoff.
 
 ### Step 16: The first monthly refresh reaches the live site
-**Who:** Claude; the owner merges. **Depends on:** 11, 14; M1 step 19.
-- [ ] CI on the refresh pull request (M1 step 19) also builds and tests the site, so a catalog that breaks the page can't merge.
-- [ ] After the merge the site updates by itself (M2-D6 (b)) or by `ops/deploy.sh` (a); the live `version.txt` shows the new run date.
-- [ ] Only fonts whose files changed get new specimens; old ones leave with old releases.
-- [ ] Usage baseline without analytics: Claude adds `ops/*.local.md` to `.gitignore`; each refresh, Cloudflare's monthly requests and unique visitors go into `ops/USAGE.local.md` for Milestone 4's two-month review (M4-D4), read by the owner from the dashboard or fetched by Claude if the token gains Analytics read.
-
-**Done when:** one refresh has gone from merge to live site with no step beyond the merge (or one command under M2-D6 (a)), and the post-deploy test has passed.
+*Moved on 2026-09-30.* The owner moved the first live refresh after Milestone 2 (`refresh_timing`, AUTHORITY.md). This step is now step 2 of [milestone-refresh.md](milestone-refresh.md), with its items and its done-when; until then the live site shows the 2026-09-26 catalog.
 
 ### Step 17: Record decisions and hand off to Milestones 3 and 4
-**Who:** both. **Depends on:** 15, 16.
+**Who:** both. **Depends on:** 15.
 - [ ] AUTHORITY.md has dated entries for M2-D1 to M2-D12, including any that testing changed.
 - [ ] SERVER.md covers the deploy, test site, headers and Cloudflare settings.
 - [ ] Handoff note for Milestone 3: the aliases and step 3's `search_key` vectors; `connect-src 'self'` stays, since matching runs on the device; `local-fonts` stays off except on `/check/` (M3 step 6); the specimen loader's pause (step 5); the hook's missing way to announce a change (WCAG 4.1.3; site/CONTRACT.md section 10), for M3 step 0 to add as an additive v1 field; the test site; and what rounds 2 and 3 learned about pasting a command's output.

@@ -282,10 +282,11 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
 - **Tracked docs.** These are versioned:
   - `docs/ranking-methodology.md`;
   - `docs/roadmap.md`;
-  - the milestone checklists `docs/milestone-1.md` to `docs/milestone-4.md`, and `docs/milestone-more-fonts.md` *(2026-09-30)*;
+  - the milestone checklists `docs/milestone-1.md` to `docs/milestone-4.md`, and `docs/milestone-refresh.md` and `docs/milestone-more-fonts.md` *(2026-09-30)*;
   - `docs/owned-fonts.md`, the notes for Milestone 3;
   - `PLAN-NERD-FONTS.md`, the working checklist for Backlog TASK-2. *(2026-09-28)*
 - **Monthly data refresh.** A scheduled GitHub Actions workflow runs the pipeline and opens a pull request with the new catalog and anything flagged for review. The owner reviews and merges it.
+  - **Timing (2026-09-30).** The first live refresh and the monthly schedule wait until after Milestone 2's launch, and come before Milestone 3: [milestone-refresh.md](docs/milestone-refresh.md), which takes the rest of Milestone 1 step 19 and Milestone 2 step 16. Until then the site shows the 2026-09-26 catalog, which `state/` holds as the first published run (#31). Recorded in `data/reviews/ci/2026-09-30.toml` (`refresh_timing`).
   - **Off switch (2026-09-29).** Until Milestone 1 step 19 sets up the data store's key, the schedule does nothing. A scheduled run starts only once the repository variable `REFRESH_SCHEDULE` is "on", as production deploys wait for `PRODUCTION_DEPLOYS`; manual runs always work. So merging the workflow to `main` starts no failing monthly run. Recorded in `data/reviews/ci/2026-09-29.toml`.
 - **Site tests on the real catalog.** *(2026-09-30)* CI's `site-real` job and `deploy.yml` run the site tests on the committed catalog (500 rows) with a lighter accessibility pass:
   - **On the real catalog:** axe on every page in both themes at desktop width, axe with a details panel open, reflow at 320 px, and every test that depends on the data (list, details, specimens, privacy, serving).
