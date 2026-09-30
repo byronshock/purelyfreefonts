@@ -35,6 +35,7 @@ from urllib.parse import quote
 
 import httpx
 import pytest
+from tests.site.conftest import fetch_unencoded
 
 from tff_site import assets, cli, data, linkcheck
 
@@ -531,7 +532,7 @@ def test_a_source_that_may_not_publish_ranks_never_shows_one(guarded_context):
     page = guarded.new_page()
 
     def tampered(route: Any) -> None:
-        payload = route.fetch().json()
+        payload = fetch_unencoded(route).json()
         payload["fonts"][font_id]["sources"][source["id"]]["rank_in_source"] = 7
         route.fulfill(json=payload)
 

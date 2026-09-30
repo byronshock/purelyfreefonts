@@ -16,6 +16,7 @@
   messages and page errors. Routing turns off the HTTP cache, so performance tests use plain
   contexts instead. A page it opens keeps the context's ``color_scheme`` (``keep_scheme``).
 - ``no_network``: fails any connection or name lookup that isn't the loopback interface.
+- ``fetch_unencoded(route)``: ``route.fetch()`` for a route handler that reads the body.
 """
 
 import os
@@ -194,6 +195,18 @@ class Guarded:
         else:
             self.blocked.append(url)
             route.abort()
+
+
+def fetch_unencoded(route: Any) -> Any:
+    """``route.fetch()``, asking for the body as stored rather than content-encoded.
+
+    Firefox accepts zstd even over plain HTTP, and CI's Caddy (site.caddy's ``encode zstd
+    gzip``) then sends it, but Playwright's fetch doesn't decode zstd: ``text()`` and
+    ``json()`` raise, the route is never answered, and later pages time out. A route handler
+    that reads or rewrites the body fetches it this way; its response carries no
+    ``Content-Encoding``, so ``route.fulfill(response=...)`` with a new body stays correct.
+    """
+    return route.fetch(headers={**route.request.headers, "accept-encoding": "identity"})
 
 
 def keep_scheme(page: Any, scheme: str) -> None:

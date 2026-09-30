@@ -45,6 +45,7 @@ from typing import Any
 from urllib.parse import urlsplit
 
 import pytest
+from tests.site.conftest import fetch_unencoded
 
 ROOT = Path(__file__).resolve().parents[2]
 STANDINS = ROOT / "tests" / "fixtures" / "specimens"
@@ -465,7 +466,7 @@ def test_a_source_outside_the_specimens_folder_is_never_loaded(guarded_context: 
 
     def rewrite(route: Any) -> None:
         # The list page with its first rows' data-src replaced; its headers (the CSP) as sent.
-        response = route.fetch()
+        response = fetch_unencoded(route)
         route.fulfill(response=response, body=re.sub(r'data-src="[^"]*"', swap, response.text()))
 
     page.route(lambda url: urlsplit(url).path == "/", rewrite)
