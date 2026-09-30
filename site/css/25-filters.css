@@ -153,8 +153,9 @@
 }
 
 /* Category: one wrapping row of pills (owner ruling of 2026-09-30, filters_layout). Each is
-   a native radio whose whole label is the target, 32px high (2.5.8); the checked pill is
-   filled, and the focus ring goes round the pill. */
+   a native radio stretched over its whole pill, invisible, so the pill is the 32px target
+   (2.5.8) and a click anywhere on it chooses it. The chosen pill gets an accent border, bold
+   text and a tick, not a fill, so the focus ring keeps its contrast on every pill (1.4.11). */
 .pills {
   display: flex;
   flex-wrap: wrap;
@@ -163,6 +164,7 @@
 
 .pills .opt {
   position: relative;
+  gap: var(--space-1);
   min-height: 2rem;
   padding: 0 var(--space-3);
   border: 1px solid var(--c-border);
@@ -172,19 +174,32 @@
 
 .pills .opt > input {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   opacity: 0;
 }
 
 .pills .opt:hover {
-  background: var(--c-surface);
+  border-color: var(--c-fg);
 }
 
 .pills .opt:has(> input:checked) {
   border-color: var(--c-accent);
-  background: var(--c-accent);
-  color: var(--c-accent-fg);
+  box-shadow: inset 0 0 0 1px var(--c-accent);
+  font-weight: 600;
+}
+
+/* A tick drawn with borders, so it follows the text colour in every theme. */
+.pills .opt:has(> input:checked)::before {
+  content: "";
+  flex: none;
+  width: 0.3em;
+  height: 0.6em;
+  margin: -0.2em 0.1em 0 0;
+  border-right: 2px solid;
+  border-bottom: 2px solid;
+  transform: rotate(45deg);
 }
 
 .pills .opt:has(> input:focus-visible) {
@@ -194,14 +209,11 @@
 
 @media (forced-colors: active) {
   .pills .opt:has(> input:checked) {
-    forced-color-adjust: none;
-    border-color: Highlight;
-    background: Highlight;
-    color: HighlightText;
+    border: 2px solid Highlight;
   }
 }
 
-/* Without :has() a checked pill can't be drawn, so the radios show as they are. */
+/* Without :has() a chosen pill can't be drawn, so the radios show as they are. */
 @supports not selector(:has(a)) {
   .pills .opt > input {
     position: static;
