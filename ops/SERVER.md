@@ -9,7 +9,9 @@ How the Contabo VPS and the three Cloudflare zones are set up. The settled decis
 | Host | Contabo Cloud VPS 4 (2026), Seattle, Debian 13 (Trixie) |
 | IPv4 / IPv6 | in `ops/SERVER.local.md` (not in git) |
 | SSH | `ssh tff` (user `byron`, key `~/.ssh/id_ed25519`, passwordless sudo) |
-| Site root | `/srv/trulyfreefonts/public` |
+| Site root | `/srv/trulyfreefonts/public`, a root-owned symlink to `prod/current`, which points to one release in `prod/releases/<commit>/` (since 2026-09-30; layout in [ops/deploy/README.md](deploy/README.md)) |
+| Test site | `staging.trulyfreefonts.com` (proxied DNS; `X-Robots-Tag: noindex, nofollow`), served from `/srv/trulyfreefonts/staging/current` |
+| Deploy users | `deploy` and `deploy-staging` (stage A of [ops/deploy/README.md](deploy/README.md), 2026-09-30); they run only `/usr/local/sbin/tff-receive` |
 | Web server config | [ops/Caddyfile](Caddyfile) → `/etc/caddy/Caddyfile`, which imports [ops/caddy/site.caddy](caddy/site.caddy) → `/etc/caddy/site.caddy` (the site's headers) and other sites' snippets from `/etc/caddy/sites/*.caddy` |
 | Access log | `/var/log/caddy/access.log`: IPs masked to /16 (IPv4) and /32 (IPv6), IP headers and port dropped; from item 25, also `Referer` and `User-Agent` (owner ruling of 2026-09-26), `Cookie` and the location headers finer than the country; 14 days kept by logrotate ([ops/logrotate-caddy](logrotate-caddy) → `/etc/logrotate.d/caddy-trulyfreefonts`) |
 | Origin cert | `/etc/caddy/certs/` (Cloudflare Origin CA, 15 years) |
@@ -19,7 +21,13 @@ How the Contabo VPS and the three Cloudflare zones are set up. The settled decis
 | Refresh access | the monthly refresh (`.github/workflows/refresh.yml`) reaches the private data store `byronshock/trulyfreefonts-data` with a deploy key; its private half is only the `DATA_STORE_KEY` secret of `byronshock/trulyfreefonts` (section J) |
 | Snapshots | 1 slot on this plan (2 on the next tier up), each deleted after 30 days. Use one as an undo point before risky changes, not as a backup. To rebuild, use `ops/` + `public/` + this checklist. |
 
-**Deploy the site** (from the project root): `rsync -av --delete public/ tff:/srv/trulyfreefonts/public/`
+**Deploy the site** (from the project root; never rsync into `public/`, which is now a live release):
+- the test site: `ops/deploy.sh staging` (builds HEAD in a temporary worktree, runs the site tests, uploads, switches, then the live test);
+- production: `ops/deploy.sh production --commit <sha on origin/main>` (it refuses until Caddy header phase B);
+- **rollback**, one command: `ops/deploy.sh rollback production` (or `staging`; add `--hold` to stop the next deploy, then `ops/deploy.sh unhold production`);
+- what is live: `ops/deploy.sh status production`, or `curl -s https://trulyfreefonts.com/version.txt`.
+
+Details, the release layout and the Actions deploys are in [ops/deploy/README.md](deploy/README.md).
 
 **Change the web server config:** edit [ops/Caddyfile](Caddyfile) or [ops/caddy/site.caddy](caddy/site.caddy), then run the deploy line at the top of the Caddyfile: it validates both and installs both.
 

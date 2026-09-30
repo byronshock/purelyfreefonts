@@ -126,15 +126,17 @@ None of these exist yet (checked read-only on 2026-09-26). GitHub creates an unp
 
 ## Moving the live site into releases (one time)
 
-The stub in `public/` is a real directory today. After the users exist and the stub's `<style>` has moved to `stub.css`:
+*Done on 2026-09-30, with the stub at 0e3d4cb (`stub.css`, #37). Steps 1–5 below are as run; step 6, Caddy phase B, waits for the launch.*
+
+The stub in `public/` was a real directory. After the users exist and the stub's `<style>` has moved to `stub.css`:
 
 1. `ops/deploy.sh production --dir public --commit <sha of the externalized-stub PR> --no-live`
 2. `ssh tff sudo ln -s prod/current /srv/trulyfreefonts/public.new`
-3. `ssh tff sudo mv --exchange /srv/trulyfreefonts/public.new /srv/trulyfreefonts/public` (atomic; `public.new` then holds the old directory)
+3. `ssh tff sudo mv -T --exchange /srv/trulyfreefonts/public.new /srv/trulyfreefonts/public` (atomic; `public.new` then holds the old directory). The `-T` matters: without it `mv` takes the directory `public` as a destination folder and fails.
 4. Check: `curl -s -H 'Accept: text/html' https://trulyfreefonts.com/ | grep 'Coming soon'` and `ssh tff readlink -f /srv/trulyfreefonts/public`
-5. `ssh tff 'sudo rm -r /srv/trulyfreefonts/public.new && sudo chown root:root /srv/trulyfreefonts'`
+5. `ssh tff 'sudo mv -T /srv/trulyfreefonts/public.new /root/public-stub-<date> && sudo chown root:root /srv/trulyfreefonts'` (the old stub is kept aside in `/root`, not deleted)
 6. Caddy phase B (design-m2 §4): delete the `header -Content-Security-Policy` line from the production block of `ops/Caddyfile`, merge, and run the deploy line at the top of the file. Check: `curl -sI https://trulyfreefonts.com/ | grep -i content-security-policy`. Production deploys of the list refuse to run until this is done.
-7. Replace the rsync line in ops/SERVER.md and DONATIONS.md step 12: after the migration, `rsync … public/` would write straight into a live release.
+7. Replace the rsync line in ops/SERVER.md and DONATIONS.md step 12: after the migration, `rsync … public/` would write straight into a live release. *(Done 2026-09-30.)*
 
 ## Tests
 

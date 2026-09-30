@@ -37,7 +37,7 @@ Byron needs a checking account to accept Stripe payments.
 These steps wait for release 1 in [AUTHORITY.md](../AUTHORITY.md#releases). The current stub gets no link.
 - [x] 10. Put the link in the Facts table above.
 - [x] 11. Add one plain link to the footer of every page, worded **Leave a tip ($5 suggested)** (the owner's ruling of 2026-09-26): `<a href="https://buy.stripe.com/dRm00beFeaJ307651Qf7i00">Leave a tip ($5 suggested)</a>`. It loads no third-party script and sets no cookies, and the Caddyfile headers don't need to change.
-- [ ] 12. Deploy with the command in [SERVER.md](SERVER.md): `rsync -av --delete public/ tff:/srv/trulyfreefonts/public/`.
+- [ ] 12. Deploy with the command in [SERVER.md](SERVER.md): `ops/deploy.sh production --commit <sha>` (M2-D6; since 2026-09-30 the site deploys as releases).
 
 ### E. After launch (Byron)
 - [ ] 13. The first real tip shows up in Stripe → Payments, and the payout reaches the bank.
