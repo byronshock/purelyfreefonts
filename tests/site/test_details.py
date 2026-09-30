@@ -49,7 +49,7 @@ SITE_DATA = Path(os.environ.get("TFF_SITE_DATA", SAMPLE))
 # The wording site/js/40-details.js shows (owner approval: Milestone 2 step 4; the layout of
 # 2026-09-30, details_layout).
 EVIDENCE = "All ranks and sources"
-GATE_LINE = "Held out of the top 100: only one group of sources has evidence for it."
+GATE_LINE = "Held out of the numbered top 100: its score rests on one kind of source."
 STALE_LINE = "The list was updated. Reload to see details."
 REPORT_LINK = "Report a problem with this font on GitHub"  # the link names its destination
 SURVEY_CAPTIONS = {"desktop": "Desktop sources", "project": "Project sources"}
@@ -397,8 +397,13 @@ def test_font_link_with_another_rank_lands_on_the_moved_row(guarded_context):
     _wait_for(
         page, f"document.activeElement && document.activeElement.id === 'details-{font_id}-h'"
     )
-    rank = page.locator(f"#font-{font_id} .rank").inner_text()
-    assert rank == "2"
+    place = page.evaluate(
+        "(id) => [...document.querySelectorAll('#list > li.font')]"
+        ".findIndex((li) => li.dataset.id === id)",
+        font_id,
+    )
+    assert place == 1  # second, by its Coding score
+    assert page.locator(f"#font-{font_id} .rank").text_content().startswith("Score ")
     top = page.evaluate(f"document.getElementById('font-{font_id}').getBoundingClientRect().top")
     assert -1 <= top < 800
     guarded.assert_clean(page)

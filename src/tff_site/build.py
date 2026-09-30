@@ -258,24 +258,32 @@ def site_context(*, blog_nav: Mapping[str, str] | None = None) -> dict[str, Any]
     }
 
 
-def rank_labels(fonts_in_order: list[Mapping[str, Any]], key: str = data.DEFAULT_VIEW) -> list[str]:
-    """Rank labels of an unfiltered view, as ``View.compute`` numbers it (M2-D2).
+def rank_text(score: int, held: bool) -> str:
+    """A ranked row's ``.rank`` text, as screen readers hear it: "Score 83 of 100", plus
+    ", from one kind of source" for a held font (``data.SCORE_WORDS``)."""
+    words = data.SCORE_WORDS
+    return f"{words['before']}{score}{words['after']}{words['held'] if held else ''}"
 
-    A counter counts the exact top 100 only; fonts past it show their band, and unranked
-    fonts "Not ranked: <reason>".
-    """
-    labels: list[str] = []
-    count = 0
+
+def rank_cells(
+    fonts_in_order: list[Mapping[str, Any]], key: str = data.DEFAULT_VIEW
+) -> list[dict[str, Any]]:
+    """Each row's rank cell in an unfiltered view, as ``View.compute`` gives it: the score
+    (``data.display_score``), whether the bar is hollow (a font the two-source rule holds
+    back, except in a view with a note, ``data.VIEW_NOTES``) and the cell's text; or, for an
+    unranked font, "Not ranked: <reason>" and no score. Filters never change a score."""
+    marks_held = key not in data.VIEW_NOTES
+    cells: list[dict[str, Any]] = []
     for font in fonts_in_order:
         entry = font["ranks"][key]
         if entry["order"] is None:
-            labels.append(UNRANKED_PREFIX + data.UNRANKED_LABELS[entry["unranked"]])
-        elif entry["rank"] is not None:
-            count += 1
-            labels.append(str(count))
-        else:
-            labels.append(entry["band"])
-    return labels
+            label = UNRANKED_PREFIX + data.UNRANKED_LABELS[entry["unranked"]]
+            cells.append({"score": None, "held": False, "label": label})
+            continue
+        score = data.display_score(entry["score"])
+        held = marks_held and entry["gate_held"]
+        cells.append({"score": score, "held": held, "label": rank_text(score, held)})
+    return cells
 
 
 def svg_size(svg: bytes) -> tuple[int, int]:
@@ -392,6 +400,9 @@ def _list_context(
             "after_marker": nerd["legend"].removeprefix(nerd["marker"]),
         },
         "total": len(doc["fonts"]),
+        # The hollow bar's legend, shown by the script while the view has held fonts.
+        "held_legend": data.HELD_LEGEND,
+        "score_words": data.SCORE_WORDS,
         "index_url": urls["list.json"],
         "details_url": urls["details.json"],
         "rows": _rows(doc, specimens),
@@ -402,17 +413,19 @@ def _rows(doc: Mapping[str, Any], specimens: Mapping[str, Specimen]) -> list[dic
     systems = {s["id"]: (i, s["label"], s["os"]) for i, s in enumerate(doc["systems"])}
     ordered = data.server_order(doc)
     rows = []
-    for font, label in zip(ordered, rank_labels(ordered), strict=True):
+    for font, cell in zip(ordered, rank_cells(ordered), strict=True):
         spec = specimens.get(font["id"])
         primary = font["links"]["primary"]
         rows.append(
             {
                 "id": font["id"],
                 "family": font["family"],
-                "label": label,
+                "label": cell["label"],
+                "score": cell["score"],
+                "held": cell["held"],
                 # The owner's site ruling of 2026-09-26 (list_layout): an unranked row puts
                 # its "Not ranked: <reason>" label on a line of its own (li.font.is-unranked).
-                "unranked": label.startswith(UNRANKED_PREFIX),
+                "unranked": cell["score"] is None,
                 "category_label": data.CATEGORY_LABELS[data.site_category(font)],
                 "license_name": font["license"]["name"],
                 "badges": _badges(font, systems),

@@ -162,9 +162,10 @@ def test_rows_are_in_server_order_with_overall_labels(dom, doc):
     ordered = data.server_order(doc)
     rows = dom.find("ol", id="list").elements()
     assert [li.attrs["data-id"] for li in rows] == [f["id"] for f in ordered]
-    assert [squash(li.find(class_="rank").text) for li in rows] == build.rank_labels(ordered)
+    cells = build.rank_cells(ordered)
+    assert [squash(li.find(class_="rank").text) for li in rows] == [c["label"] for c in cells]
     labels = [squash(li.find(class_="rank").text) for li in rows]
-    assert any(re.fullmatch(r"\d+", label) for label in labels)
+    assert any(re.fullmatch(r"Score \d{1,3} of 100", label) for label in labels)
     assert any(label.startswith("Not ranked: ") for label in labels) or not any(
         f["ranks"]["overall"]["order"] is None for f in doc["fonts"]
     )
@@ -179,9 +180,24 @@ def test_each_row_has_its_parts(dom, doc):
         assert li.attrs["id"] == f"font-{font_id}"
         row = li.elements()[0]
         assert row.classes == ["font-row"]
-        # rank first, then the title: Render rewrites only the .rank text
+        # rank first, then the title: Render redraws only the .rank cell, which holds the
+        # score and its bar (score_display), or the "Not ranked" text alone
         assert [c.classes[0] for c in row.elements()[:2]] == ["rank", "font-title"]
-        assert row.elements()[0].elements() == []
+        cell = row.elements()[0]
+        if li.classes == ["font", "is-unranked"]:
+            assert cell.elements() == []
+        else:
+            score, bar = cell.elements()
+            assert (score.classes, bar.classes, bar.attrs["aria-hidden"]) == (
+                ["score"],
+                ["bar"],
+                "true",
+            )
+            number = int(re.fullmatch(r"Score (\d+) of 100.*", squash(cell.text))[1])
+            assert bar.elements()[0].classes == ["fill", f"b{number}"]
+            assert ("is-held" in cell.classes) == squash(cell.text).endswith(
+                ", from one kind of source"
+            )
         title = row.elements()[1]
         heading = title.elements()[0]
         assert (heading.tag, heading.classes) == ("h3", ["font-name"])

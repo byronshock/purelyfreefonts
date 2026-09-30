@@ -66,9 +66,11 @@
 </dl>
 <p>For the most popular fonts of one kind, such as serif or handwriting, use the Category filter.</p>
 
-<h3 id="numbers-and-bands">Numbers and bands</h3>
-<p>The top 100 of each rank are numbered. Past 100 the data can't tell fonts apart precisely, so they show a band instead: {% for band in method.bands %}{{ band }}{{ ", " if not loop.last }}{% endfor %}. Fonts in a band are still listed in score order.</p>
-<p>When you filter the list, the numbers start again from 1 among the fonts shown. Bands stay bands.</p>
+<h3 id="scores">Scores</h3>
+<p>Each ranked font shows a score from 0 to 100, and a blue bar that long. The score is the font's standing among all the fonts the sources track: a font scoring 90 stands above about 90% of them. It is not the chance that a given person chose the font.</p>
+<p>The list is in score order. Filters only hide fonts, so a font's score is the same whatever else is shown.</p>
+<p>A hollow bar marks a score that rests on one kind of source. The two-source rule keeps such a font out of the numbered top 100, and its score may move more from month to month. In Developers & apps every score rests on one kind of source, so a note above the list says so once instead.</p>
+<p>A font's details keep its exact place in the top 100 of each rank. Past 100 the data can't tell fonts apart precisely, so the details give a band instead: {% for band in method.bands %}{{ band }}{{ ", " if not loop.last }}{% endfor %}.</p>
 
 <h3 id="not-ranked">Fonts that aren't ranked</h3>
 <p>A font can be in the catalog but not ranked in one view. It is listed last, with the reason:</p>

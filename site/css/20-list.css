@@ -384,6 +384,485 @@ li.font.is-dim .font-name {
   font-variant-numeric: tabular-nums;
 }
 
+/* A ranked row's score, 0 to 100, and a blue bar that long (owner rulings of 2026-09-29,
+   score_display): the number, then the bar filling the rest of the rank cell, which is 6rem
+   (96px) wide on every screen, beside the name. A font the two-source rule holds back has a
+   hollow bar (owner ruling of 2026-09-30, held_marker_style), explained by #held-legend. */
+li.font:not(.is-unranked) .font-row > .rank {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 6rem;
+}
+
+.rank .score {
+  min-width: 3ch;
+  text-align: right;
+}
+
+.bar {
+  display: block;
+  flex: 1 1 auto;
+  height: 0.625rem;
+  border-radius: 2px;
+  background: var(--c-divider);
+}
+
+.fill {
+  display: block;
+  box-sizing: border-box;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--c-accent);
+}
+
+.is-held .fill {
+  border: 2px solid var(--c-accent);
+  background: var(--c-bg);
+}
+
+.held-legend,
+.view-note {
+  margin: 0 0 var(--space-3);
+  max-width: var(--measure);
+  font-size: var(--fs-small);
+  color: var(--c-muted);
+}
+
+.held-legend .bar {
+  display: inline-block;
+  width: 3rem;
+  vertical-align: middle;
+}
+
+.held-legend[hidden],
+.view-note[hidden] {
+  display: none;
+}
+
+/* Forced colours: the bar in the text colour, a hollow one outlined, on a visible track. */
+@media (forced-colors: active) {
+  .bar {
+    forced-color-adjust: none;
+    border: 1px solid GrayText;
+    background: Canvas;
+  }
+
+  .fill {
+    background: CanvasText;
+  }
+
+  .is-held .fill {
+    border-color: CanvasText;
+    background: Canvas;
+  }
+}
+
+/* The bar's length: .b<score>, 0 to 100 (the CSP forbids style attributes). */
+.b0 {
+  width: 0%;
+}
+
+.b1 {
+  width: 1%;
+}
+
+.b2 {
+  width: 2%;
+}
+
+.b3 {
+  width: 3%;
+}
+
+.b4 {
+  width: 4%;
+}
+
+.b5 {
+  width: 5%;
+}
+
+.b6 {
+  width: 6%;
+}
+
+.b7 {
+  width: 7%;
+}
+
+.b8 {
+  width: 8%;
+}
+
+.b9 {
+  width: 9%;
+}
+
+.b10 {
+  width: 10%;
+}
+
+.b11 {
+  width: 11%;
+}
+
+.b12 {
+  width: 12%;
+}
+
+.b13 {
+  width: 13%;
+}
+
+.b14 {
+  width: 14%;
+}
+
+.b15 {
+  width: 15%;
+}
+
+.b16 {
+  width: 16%;
+}
+
+.b17 {
+  width: 17%;
+}
+
+.b18 {
+  width: 18%;
+}
+
+.b19 {
+  width: 19%;
+}
+
+.b20 {
+  width: 20%;
+}
+
+.b21 {
+  width: 21%;
+}
+
+.b22 {
+  width: 22%;
+}
+
+.b23 {
+  width: 23%;
+}
+
+.b24 {
+  width: 24%;
+}
+
+.b25 {
+  width: 25%;
+}
+
+.b26 {
+  width: 26%;
+}
+
+.b27 {
+  width: 27%;
+}
+
+.b28 {
+  width: 28%;
+}
+
+.b29 {
+  width: 29%;
+}
+
+.b30 {
+  width: 30%;
+}
+
+.b31 {
+  width: 31%;
+}
+
+.b32 {
+  width: 32%;
+}
+
+.b33 {
+  width: 33%;
+}
+
+.b34 {
+  width: 34%;
+}
+
+.b35 {
+  width: 35%;
+}
+
+.b36 {
+  width: 36%;
+}
+
+.b37 {
+  width: 37%;
+}
+
+.b38 {
+  width: 38%;
+}
+
+.b39 {
+  width: 39%;
+}
+
+.b40 {
+  width: 40%;
+}
+
+.b41 {
+  width: 41%;
+}
+
+.b42 {
+  width: 42%;
+}
+
+.b43 {
+  width: 43%;
+}
+
+.b44 {
+  width: 44%;
+}
+
+.b45 {
+  width: 45%;
+}
+
+.b46 {
+  width: 46%;
+}
+
+.b47 {
+  width: 47%;
+}
+
+.b48 {
+  width: 48%;
+}
+
+.b49 {
+  width: 49%;
+}
+
+.b50 {
+  width: 50%;
+}
+
+.b51 {
+  width: 51%;
+}
+
+.b52 {
+  width: 52%;
+}
+
+.b53 {
+  width: 53%;
+}
+
+.b54 {
+  width: 54%;
+}
+
+.b55 {
+  width: 55%;
+}
+
+.b56 {
+  width: 56%;
+}
+
+.b57 {
+  width: 57%;
+}
+
+.b58 {
+  width: 58%;
+}
+
+.b59 {
+  width: 59%;
+}
+
+.b60 {
+  width: 60%;
+}
+
+.b61 {
+  width: 61%;
+}
+
+.b62 {
+  width: 62%;
+}
+
+.b63 {
+  width: 63%;
+}
+
+.b64 {
+  width: 64%;
+}
+
+.b65 {
+  width: 65%;
+}
+
+.b66 {
+  width: 66%;
+}
+
+.b67 {
+  width: 67%;
+}
+
+.b68 {
+  width: 68%;
+}
+
+.b69 {
+  width: 69%;
+}
+
+.b70 {
+  width: 70%;
+}
+
+.b71 {
+  width: 71%;
+}
+
+.b72 {
+  width: 72%;
+}
+
+.b73 {
+  width: 73%;
+}
+
+.b74 {
+  width: 74%;
+}
+
+.b75 {
+  width: 75%;
+}
+
+.b76 {
+  width: 76%;
+}
+
+.b77 {
+  width: 77%;
+}
+
+.b78 {
+  width: 78%;
+}
+
+.b79 {
+  width: 79%;
+}
+
+.b80 {
+  width: 80%;
+}
+
+.b81 {
+  width: 81%;
+}
+
+.b82 {
+  width: 82%;
+}
+
+.b83 {
+  width: 83%;
+}
+
+.b84 {
+  width: 84%;
+}
+
+.b85 {
+  width: 85%;
+}
+
+.b86 {
+  width: 86%;
+}
+
+.b87 {
+  width: 87%;
+}
+
+.b88 {
+  width: 88%;
+}
+
+.b89 {
+  width: 89%;
+}
+
+.b90 {
+  width: 90%;
+}
+
+.b91 {
+  width: 91%;
+}
+
+.b92 {
+  width: 92%;
+}
+
+.b93 {
+  width: 93%;
+}
+
+.b94 {
+  width: 94%;
+}
+
+.b95 {
+  width: 95%;
+}
+
+.b96 {
+  width: 96%;
+}
+
+.b97 {
+  width: 97%;
+}
+
+.b98 {
+  width: 98%;
+}
+
+.b99 {
+  width: 99%;
+}
+
+.b100 {
+  width: 100%;
+}
+
 /* The title: the heading, the Nerd Font marker and the specimen box (owner rulings of
    2026-09-29, name_once and nerd_marker_spot_title). Its second column is the marker's width,
    left free on every row, marker or not, so the markers line up and no row's height depends

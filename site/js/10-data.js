@@ -51,9 +51,10 @@ const Data = (() => {
     const sized = (column) => column != null && column.length === n;
     const ok =
       Boolean(index) &&
-      index.v === 2 &&
+      index.v === 3 &&
       Number.isInteger(n) &&
       [index.views, index.cats, index.bands, index.why_labels].every(Array.isArray) &&
+      Boolean(index.score_words) &&
       [index.ids, index.cat, index.bits, index.keys, index.by_name].every(
         (column) => Array.isArray(column) && sized(column),
       ) &&
@@ -63,9 +64,9 @@ const Data = (() => {
         (view) =>
           Boolean(view) &&
           Array.isArray(view.order) &&
-          [view.top, view.band, view.why, view.tier].every(sized),
+          [view.top, view.band, view.why, view.tier, view.s, view.held].every(sized),
       );
-    if (!ok) throw new Error('Data: the list index is not in format 2');
+    if (!ok) throw new Error('Data: the list index is not in format 3');
     return deepFreeze(index);
   };
 
