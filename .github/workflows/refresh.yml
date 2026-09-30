@@ -25,6 +25,11 @@ name: Refresh
 #
 # Nothing from the run's log goes into the issue or the pull request: rulings T2
 # and T4 keep Google and Fonts Over Time raw values private.
+#
+# Until Milestone 1 step 19 sets up the data store's key (owner ruling of 2026-09-29), the
+# schedule does nothing: a scheduled run starts only once the repository variable
+# REFRESH_SCHEDULE is "on" (gh variable set REFRESH_SCHEDULE --body on). A skipped refresh
+# skips the other jobs too, and opens no issue. Dispatches always run.
 
 on:
   schedule:
@@ -47,6 +52,8 @@ concurrency:
 jobs:
   refresh:
     name: refresh
+    # Owner ruling of 2026-09-29: scheduled runs wait for REFRESH_SCHEDULE == 'on'.
+    if: ${{ github.event_name != 'schedule' || vars.REFRESH_SCHEDULE == 'on' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 345
     # Read only: this job downloads and parses third-party data, so it holds no write token.

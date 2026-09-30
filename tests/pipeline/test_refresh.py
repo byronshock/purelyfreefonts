@@ -676,6 +676,13 @@ def test_workflow_triggers_and_settings() -> None:
     assert doc["permissions"] == {"contents": "read"}
     jobs = doc["jobs"]
     assert list(jobs) == ["refresh", "store", "publish", "report"]
+    # Owner ruling of 2026-09-29: the schedule is off until the variable turns it on; a
+    # skipped refresh leaves the others skipped (no store bundle, no pull request, no failure).
+    assert jobs["refresh"]["if"] == (
+        "${{ github.event_name != 'schedule' || vars.REFRESH_SCHEDULE == 'on' }}"
+    )
+    assert jobs["store"]["needs"] == jobs["publish"]["needs"] == "refresh"
+    assert jobs["report"]["if"] == "${{ failure() }}"
     # Least privilege: the job that downloads and parses third-party data can only read;
     # the jobs that write parse nothing the run produced.
     assert jobs["refresh"]["permissions"] == {"contents": "read"}
