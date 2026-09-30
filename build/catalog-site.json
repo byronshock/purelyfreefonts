@@ -100044,7 +100044,7 @@
       "available": true,
       "key": "dev_apps",
       "label": "Developers & apps",
-      "measures": "What builders choose: npm packages, projects that depend on them, and app frameworks. Shown in bands only: all its sources come from npm, one kind of evidence, so no font gets an exact rank yet."
+      "measures": "What builders choose: npm packages, projects that depend on them, and app frameworks. All its sources come from npm, one kind of evidence, so no font gets an exact rank yet."
     },
     {
       "available": false,
