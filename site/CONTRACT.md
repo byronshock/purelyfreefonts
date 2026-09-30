@@ -116,7 +116,7 @@ Jinja2 with `autoescape=True`, `StrictUndefined`, `trim_blocks`, `lstrip_blocks`
 | `index_url`, `details_url` | hashed URLs of the two payloads |
 | `rows` | one per font, in server order (section 7): `id`, `family`, `label` (the Overall rank label), `category_label` (of the site category, `tff_site.data.site_category`: Monospace for every monospaced font), `license_name`, `badges` [{`key`, `text`}], `specimen` {`url`, `width`, `height`} or none (`width` and `height` are the no-script `<img>`'s display size: 48 px high, the `--spec-h` box, and as wide as the SVG's aspect ratio makes it), `fallback` (none, `"license"` or `"failed"`), `download` {`url`, `label`}, `nerd` (true for a font with a Nerd Font build, `links.nerd`) |
 
-Badge keys, in this order: `variable`, `limited` ("Limited accents"), `attribution` ("Credit required"), `preinstalled` ("Comes with Windows, Linux, LibreOffice": each operating system once, every Linux distribution being "Linux", then apps; `tff_site.build.comes_with`), `new` ("New"). Kept short (owner ruling of 2026-09-30, `filters_layout`): there is no "Monospace" badge (the category says it) or "Not redistributable" one (Rule 3), and "Pulled in by" is in the details panel. `preinstalled` is the tag that explains "Not ranked: no evidence of deliberate installs" in *most chosen* (Milestone 2 step 3); the details panel names the packages.
+Badge keys, in this order: `variable` ("Adjustable weight", owner ruling of 2026-09-30, `variable_label`), `limited` ("Limited accents"), `attribution` ("Credit required"), `preinstalled` ("Comes with Windows, Linux, LibreOffice": each operating system once, every Linux distribution being "Linux", then apps; `tff_site.build.comes_with`), `new` ("New"). Kept short (owner ruling of 2026-09-30, `filters_layout`): there is no "Monospace" badge (the category says it) or "Not redistributable" one (Rule 3), and "Pulled in by" is in the details panel. `preinstalled` is the tag that explains "Not ranked: no evidence of deliberate installs" in *most chosen* (Milestone 2 step 3); the details panel names the packages.
 
 **Extra context for the blog pages** (`tff_site.blog.page_contexts`); dates are `yyyy-mm-dd` text:
 
@@ -164,7 +164,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
           <input type="radio" id="f-cat-serif" name="cat" value="serif"> …  <!-- f-cat-<value> -->
         </fieldset>
         <fieldset id="f-type"><legend>Features</legend>
-          <input type="checkbox" id="f-var" name="var" value="1">            <!-- Variable -->
+          <input type="checkbox" id="f-var" name="var" value="1">  <!-- Adjustable weight (variable font) -->
           <input type="checkbox" id="f-nerd" name="nerd" value="1" aria-describedby="nf-legend">  <!-- Nerd Font available -->
           <input type="checkbox" id="f-hide-limited" name="hide" value="limited">  <!-- Accented letters -->
         </fieldset>

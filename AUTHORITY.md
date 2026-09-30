@@ -237,6 +237,8 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
 
   **Old links:** links that use the retired `spacing`, `lic` or `redist` keys still open; `spacing=monospaced` becomes the Monospace category.
 
+  **Variable fonts** are labelled "Adjustable weight (variable font)" in the filter and "Adjustable weight" on the rows, because "Variable" alone reads as "proportional" (letters of varying width). This was Claude's recommendation, taken by the owner (`variable_label`).
+
   The monospace and license choices were the owner's, from Claude's recommended options. The rest was Claude's proposal in the plan the owner approved. Recorded in `data/reviews/site/2026-09-30.toml` (`monospace_category`, `license_filter`, `filters_layout`). *(2026-09-30)*
 - **Details panel (2026-09-30).** The owner found a font's opened details too busy, and chose essentials first with the evidence folded (Claude's recommended option). Recorded in `data/reviews/site/2026-09-30.toml` (`details_layout`). *(2026-09-30)*
   - **Order.** First the "Type your own text" button, which still loads the font only when clicked. Then one short list:

@@ -1273,6 +1273,8 @@ def test_phone_filters_button_counts_active_filters(guarded_context: Any) -> Non
     assert page.is_visible("#f-more")
     page.check("#f-var")
     page.select_option("#f-os", "windows")
+    # The count follows the redraw, which a busy machine may run a moment later.
+    page.get_by_role("button", name="Filters (2)").wait_for()
     assert page.get_by_role("button", name="Filters (2)").count() == 1
     toggle.click()
     assert toggle.get_attribute("aria-expanded") == "false"

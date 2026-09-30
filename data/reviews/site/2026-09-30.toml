@@ -42,3 +42,10 @@ reason = "Rule 3 of 2026-09-30 makes every listed font redistributable, so shari
 value = "plan_approved_2026-09-30"
 ruling = "The filters sit in this order: Search; Rank with its measures line; Category; Features (Variable, Nerd Font available, Accented letters, the last hiding fonts with basic Latin only); License (\"No credit required\"); \"Hide fonts that come with\" as one select (nothing, Windows, macOS, Linux or Android); \"Clear filters\". Sort (by rank or by name) moves to the list header beside the count. Row badges get shorter: \"Comes with\" names operating systems and apps only (Linux distributions become \"Linux\"), \"Pulled in by\" moves to the details panel, and the \"Monospace\" and \"Not redistributable\" badges go. The retired hash keys spacing, lic and redist are dropped from the URL, spacing=monospaced becoming cat=monospace."
 reason = "Claude's proposal in the plan the owner approved in chat on 2026-09-30. The owner called the plan provisional: more site cleanup items may follow."
+
+[variable_label]
+choice = "a"
+recommended = true
+value = "adjustable_weight"
+ruling = "Variable fonts are labelled \"Adjustable weight (variable font)\" in the filter and \"Adjustable weight\" on the rows' badge, in place of \"Variable\". The details panel's Font line (\"Variable and static\") stays, as it names the file formats."
+reason = "The owner, in chat, after asking what separates a monospace font from a variable one: \"Ah, the confusion is 'variable' vs. 'proportional'.\" Of three labels Claude offered (this one; \"Variable font\"; keep \"Variable\"), the owner took Claude's recommendation: it says what a visitor gets, and nearly every variable font has a weight axis."

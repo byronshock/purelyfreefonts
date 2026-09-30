@@ -338,10 +338,11 @@ def test_filter_controls_match_the_hash(dom, doc):
         ("", "Nothing"),
         *data.OS_LABELS.items(),
     ]
-    assert radios(search, "var") == [("f-var", "1", False, "Variable")]
+    # owner ruling of 2026-09-30 (variable_label): not "Variable", which reads as "proportional"
+    assert radios(search, "var") == [("f-var", "1", False, "Adjustable weight (variable font)")]
     assert radios(search, "nerd") == [("f-nerd", "1", False, "Nerd Font available")]
     nerd = search.find("input", id="f-nerd")
-    assert nerd.parent.parent.attrs["id"] == "f-type"  # beside "Variable"
+    assert nerd.parent.parent.attrs["id"] == "f-type"  # beside "Adjustable weight"
     assert nerd.attrs["aria-describedby"] == "nf-legend"
     assert not any("checked" in i.attrs for i in search.find_all("input", type="checkbox"))
     # Sort sits beside the count, outside the filters, hidden until the script shows it.

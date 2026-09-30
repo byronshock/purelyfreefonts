@@ -89,7 +89,7 @@ NOT_FOUND_PAGE = {
 # redistributable (Rule 3), "Comes with" names operating systems and apps only, and "Pulled
 # in by" is in the details panel.
 BADGE_TEXT = {
-    "variable": "Variable",
+    "variable": "Adjustable weight",  # owner ruling of 2026-09-30, variable_label
     "limited": "Limited accents",
     "attribution": "Credit required",
     "preinstalled": "Comes with {}",

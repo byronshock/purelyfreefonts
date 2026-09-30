@@ -97,7 +97,8 @@ const FiltersUI = (() => {
   };
 
   // The filters that are on, named as the controls name them, in the order they appear:
-  // "Category: Serif", "Variable", "Hide fonts that come with Windows", "Search: “inter”".
+  // "Category: Serif", "Adjustable weight (variable font)", "Hide fonts that come with Windows",
+  // "Search: “inter”".
   const describe = (state) => {
     if (!root) return [];
     const names = [];
