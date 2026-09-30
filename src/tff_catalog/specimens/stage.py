@@ -28,7 +28,7 @@ Details:
   flags}}. It is committed with the SVGs it describes (they are committed
   because ``tff-site build`` is offline), so a fresh clone or a CI runner knows
   which inputs drew each committed file. The "sample" part of the key is every
-  text the specimen may draw (family name, accented line, basic line). The
+  text the specimen may draw (family name, sample line, basic line). The
   font is still read and checked on a hit; only drawing is skipped.
 - When the font can't be had (replay without the font cache, or a download
   that fails) but the index holds a specimen for the same inputs, that one is

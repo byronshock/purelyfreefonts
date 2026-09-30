@@ -32,6 +32,7 @@ import copy
 import hashlib
 from collections.abc import Mapping
 from pathlib import Path
+from statistics import NormalDist
 from typing import Any
 
 import numpy as np
@@ -157,6 +158,8 @@ def _rank_view(
             "order": position,
             "tier": tier,
             "range": [max(1, position - width), position + width],
+            # A fused score that falls with the position, on the z scale, as the engine's.
+            "score": round(NormalDist().inv_cdf(1 - (position - 0.5) / (2 * len(ranked))), 6),
             "gate_held": False,
             "unranked": None,
         }
@@ -174,6 +177,7 @@ def _unranked(reason: str) -> dict[str, Any]:
         "order": None,
         "tier": None,
         "range": None,
+        "score": None,
         "gate_held": False,
         "unranked": reason,
     }

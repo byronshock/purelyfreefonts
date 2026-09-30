@@ -280,10 +280,10 @@
       }
     },
     "rank_entry": {
-      "description": "A font's place in one rank. Ranked: an exact rank (1-100) or a band, plus order, tier and range. Unranked: every placement field null and a reason.",
+      "description": "A font's place in one rank. Ranked: an exact rank (1-100) or a band, plus order, tier, range and score. Unranked: every placement field null and a reason; score is the fused score, if any, as in catalog.json.",
       "type": "object",
       "additionalProperties": false,
-      "required": ["rank", "band", "order", "tier", "range", "gate_held", "unranked"],
+      "required": ["rank", "band", "order", "tier", "range", "score", "gate_held", "unranked"],
       "properties": {
         "rank": {"type": ["integer", "null"], "minimum": 1, "maximum": 100},
         "band": {
@@ -312,6 +312,10 @@
             }
           ]
         },
+        "score": {
+          "description": "The fused score on the shared z scale, as in catalog.json. From Milestone 2 the list shows 100·Φ(score) as a bar (site rulings of 2026-09-29, score_display and score_curve).",
+          "type": ["number", "null"]
+        },
         "gate_held": {
           "description": "The two-group evidence gate held the font out of the top 100.",
           "type": "boolean"
@@ -335,7 +339,8 @@
         "properties": {
           "order": {"type": "integer"},
           "tier": {"type": "string"},
-          "range": {"type": "array"}
+          "range": {"type": "array"},
+          "score": {"type": "number"}
         },
         "oneOf": [
           {

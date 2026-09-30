@@ -141,7 +141,7 @@ def _widen(glyph: object, peak: float) -> list[TupleVariation]:
 
 
 def sample_chars(family: str = "Test Sans", *, extra: str = "") -> str:
-    """Every character a specimen of ``family`` can draw (name, accented and basic lines)."""
+    """Every character a specimen of ``family`` can draw (name, sample and basic lines)."""
     return family + SAMPLE + BASIC_SAMPLE + extra
 
 

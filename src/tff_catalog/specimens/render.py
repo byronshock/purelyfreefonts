@@ -9,7 +9,7 @@
 - ``<svg xmlns=… width=W height=H viewBox="0 0 W H"><path d="…"/></svg>\\n``:
   fixed attribute order, no timestamps, byte-stable across runs.
 - Missing glyphs: a cmap test before shaping and a ``gid 0`` check after. The
-  accented line falls back to the basic line, then to the name only; failing
+  sample line falls back to the basic line, then to the name only; failing
   that, no specimen (the font is flagged ``specimen_failed``).
 
 Layout, in ems of the name's size (``UNITS_PER_EM`` grid units): each line box is
@@ -50,7 +50,7 @@ type Segment = tuple[str, tuple[Point, ...]]  # ("L" | "Q" | "C", points ending 
 @dataclass(frozen=True, slots=True)
 class Specimen:
     svg: bytes
-    line: Literal["accented", "basic", "name"]  # what line 2 shows ("name": no line 2)
+    line: Literal["sample", "basic", "name"]  # what line 2 shows ("name": no line 2)
     width: int
     height: int
 
@@ -329,8 +329,8 @@ def render(
 
     name_line = _Line(family, NAME_SIZE_EM, 0.0)
     second_top = NAME_SIZE_EM * LINE_HEIGHT * UNITS_PER_EM
-    candidates: list[tuple[Literal["accented", "basic"], str]] = (
-        [] if name_only else [("accented", sample), ("basic", basic)]
+    candidates: list[tuple[Literal["sample", "basic"], str]] = (
+        [] if name_only else [("sample", sample), ("basic", basic)]
     )
     for kind, text in candidates:
         if missing(cmap, text):
@@ -392,7 +392,7 @@ def _draw_line(
 
 
 def _specimen(
-    pen: RelPathPen, advance: float, box_bottom: float, kind: Literal["accented", "basic", "name"]
+    pen: RelPathPen, advance: float, box_bottom: float, kind: Literal["sample", "basic", "name"]
 ) -> Specimen:
     """Frame the drawing: the fixed box, grown (never clipped) to hold all the ink."""
     left, top, right, bottom = pen.bounds() or (0, 0, 0, 0)

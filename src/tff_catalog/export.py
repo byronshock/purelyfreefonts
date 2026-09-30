@@ -1155,7 +1155,7 @@ def site_font(
     file = font["font_file"] if preview_ok else None
     if file is not None and file["size"] > SITE_MAX_FONT_BYTES:
         file = None  # too big to serve for "Type your own text"
-    rank_fields = ("rank", "band", "order", "tier", "range", "gate_held", "unranked")
+    rank_fields = ("rank", "band", "order", "tier", "range", "score", "gate_held", "unranked")
     return {
         "id": font["id"],
         "family": font["family"],

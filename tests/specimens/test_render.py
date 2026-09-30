@@ -84,10 +84,10 @@ def test_svg_has_the_fixed_form_and_integer_coordinates(full_font: bytes) -> Non
     assert [child.tag for child in root] == ["{http://www.w3.org/2000/svg}path"]
 
 
-def test_line_1_is_the_name_and_line_2_the_accented_sample(full_font: bytes) -> None:
+def test_line_1_is_the_name_and_line_2_the_sample(full_font: bytes) -> None:
     spec = draw(full_font)
     assert spec is not None
-    assert spec.line == "accented"
+    assert spec.line == "sample"
     assert spec.height == BOX_TWO_LINES
     name_glyphs = len(FAMILY.replace(" ", ""))
     sample_glyphs = len(SAMPLE.replace(" ", ""))
@@ -145,8 +145,9 @@ def test_the_shaping_language_is_pinned_never_the_process_locale(
 # --- fallbacks -------------------------------------------------------------------------------
 
 
-def test_a_missing_accent_falls_back_to_the_basic_line() -> None:
-    font = fontmaker.make_font(fontmaker.without(fontmaker.sample_chars(), "ť"))
+def test_a_missing_sample_character_falls_back_to_the_basic_line() -> None:
+    # The sample's full stop: the basic line has none.
+    font = fontmaker.make_font(fontmaker.without(fontmaker.sample_chars(), "."))
     spec = draw(font)
     assert spec is not None
     assert spec.line == "basic"
@@ -165,7 +166,7 @@ def test_gid_0_after_shaping_is_caught_even_when_the_cmap_test_passes(
     expected = draw(basic_font)
     monkeypatch.setattr(render, "missing", lambda cmap, text: set())
     spec = draw(basic_font)
-    assert spec == expected  # the accented line shaped to .notdef and was dropped
+    assert spec == expected  # the sample line shaped to .notdef and was dropped
     assert spec is not None
     assert spec.line == "basic"
 
@@ -205,7 +206,7 @@ def test_a_missing_space_is_a_gap_never_a_notdef_box() -> None:
     font = fontmaker.make_font(fontmaker.sample_chars(), space=False)
     spec = draw(font)
     assert spec is not None
-    assert spec.line == "accented"
+    assert spec.line == "sample"
     glyphs = len((FAMILY + SAMPLE).replace(" ", ""))
     assert len(contours_of(spec)) == glyphs  # .notdef would add two contours per space
 

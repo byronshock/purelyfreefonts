@@ -42,13 +42,14 @@ def test_specimen_matches_the_committed_file(pin_and_font: tuple[pinned.Pin, byt
     assert spec.svg == expected, "run: uv run python -m tests.specimens.regen, and review"
 
 
-def test_basic_latin_fonts_fall_back_and_the_others_do_not(
+def test_every_pinned_font_draws_the_sample_line(
     pin_and_font: tuple[pinned.Pin, bytes],
 ) -> None:
+    """The sample needs no accents, so a basic-Latin font (Orbitron) draws it too."""
     pin, font = pin_and_font
     spec = render.render(font, pin.family, SAMPLE, BASIC_SAMPLE)
     assert spec is not None
-    assert spec.line == ("basic" if pin.latin == "basic" else "accented")
+    assert spec.line == "sample"
 
 
 def test_variable_fonts_draw_wght_400_and_static_fonts_their_only_instance(

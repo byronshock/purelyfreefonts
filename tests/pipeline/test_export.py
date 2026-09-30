@@ -1127,7 +1127,9 @@ def test_site_wording_comes_from_site_toml(built) -> None:
 def test_site_keeps_only_the_site_fields(built) -> None:
     _, docs = built
     alpha = fonts(docs[export.SITE_FILE])["alpha-sans"]
-    assert "score" not in alpha["ranks"]["overall"]
+    full = fonts(docs[export.CATALOG_FILE])["alpha-sans"]["ranks"]["overall"]
+    assert "groups" not in alpha["ranks"]["overall"]
+    assert alpha["ranks"]["overall"]["score"] == full["score"]  # for Milestone 2's score bars
     assert set(alpha["sources"]["homebrew"]) == {"state", "rank_in_source", "reason", "abstains_in"}
     assert "gate_held" not in fonts(docs[export.SITE_FILE])["gamma-serif"]["flags"]
 

@@ -59,7 +59,7 @@ def fonts() -> dict[str, bytes]:
         "good": fontmaker.make_font(chars),
         "basic": fontmaker.make_font(fontmaker.basic_chars()),
         "greek": fontmaker.make_font("ΑΒΓΔαβγδ"),
-        "noisy": fontmaker.make_font(chars, noisy=240),
+        "noisy": fontmaker.make_font(chars, noisy=320),  # over 30 KB with the sample line
     }
 
 

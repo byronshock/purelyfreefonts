@@ -148,7 +148,7 @@ The same as in `catalog.json`, trimmed:
 - `preview` and `font_file` only for fonts whose license allows previews; `font_file` also only up to 20 MB;
 - `aliases[]` only the renames, builds and PostScript names, which the search uses;
 - `flags[]` only `too_new` and the specimen flags (the others are in the rank entries);
-- each rank without `score` and `groups`;
+- each rank without `groups`, but with `score`, the fused score, which Milestone 2 shows as a 0–100 bar, 100·Φ(score) (site rulings of 2026-09-29, `score_display`, `score_curve`); every ranked entry has one;
 - each source as `state`, `rank_in_source`, `reason` and `abstains_in` only. The file never holds a raw value.
 
 The site build checks more than the schema can: unique ids, bands that follow each other, rank equal to order in the top 100, known classes and systems, one source entry per source, and each font in every available view (`tff_site.data.semantic_errors`).
