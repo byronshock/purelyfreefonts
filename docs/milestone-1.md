@@ -333,6 +333,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - `preview` {path, sha256} for fonts with a preview.
 
   At the top level, the file also carries the run date, method version, stale sources with their data dates, the data license and the source credits. Milestone 2's step 2 reviews this list before it is frozen.
+- [ ] Each rank entry in `catalog-site.json` also carries the rank's `score`, the engine's fused score (null when unranked), before step 20's freeze (site rulings of 2026-09-29, `score_field_timing`; Milestone 2 shows it as a 0–100 bar).
 - [x] `names.json`: the names and aliases of every eligible family in the universe, not only the catalog. Milestone 3's matching uses it, so a real font outside the catalog is recognised instead of showing up as a near-match. *(`build/names.json`: the 1,750 families that pass the gates, 500 of them in the catalog, plus 1,692 ineligible names with their reasons; `tests/pipeline/test_export.py::test_names_lists_every_eligible_family`.)*
 - [x] A monthly diff (entries, exits, big moves, license changes) and the flags, written to `build/review.md`. *(`review.py`; the what-if table stays in the private review pack (owner ruling of 2026-09-26); `tests/pipeline/test_review.py`. The first run has no diff yet.)*
 - [x] `docs/catalog-schema.md` documents both files. *(It covers `catalog.json`, `catalog-site.json` and `names.json`, with the validation checks.)*

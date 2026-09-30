@@ -90,3 +90,38 @@ reason = "The owner's own wording, given in chat, for the privacy page's \"Comin
 value = "no_promise_how"
 ruling = "The privacy page's \"Coming next\" section no longer says how the inventory will work: the sentence \"That check will run in your browser.\" is removed."
 reason = "The owner, in chat: \"Let's not promise how it works.\""
+
+[specimen_sample_latin]
+value = "Dolor dolorosus est."
+ruling = "The specimen sample line is \"Dolor dolorosus est.\", a play on Lorem ipsum, in place of 2026-09-26's \"Zażółć gęślą jaźń · Příliš žluťoučký kůň\" (specimen_sample). The basic-Latin fallback \"Sphinx of black quartz, judge my vow\" stays, for a font that lacks one of the sample's letters."
+reason = "The owner, in chat: \"the sampler seems to be in Czech, could we get some latin? I want a play on Lorum ipsum: Dolor dolorosus est.\""
+
+[score_display]
+value = "blue_bars"
+ruling = "From Milestone 2 the list shows each font's score, 0 to 100, as a blue bar where the rank number is now (the column is 96px wide from 640px; the phone layout is designed in Milestone 2). Filters only hide rows: no renumbering, and no bands in the list. A font's details keep its rank and range. This replaces M2-D2 (numbers under filters) when it lands."
+reason = "The owner's idea in chat, after a filtered list ran 1 to 25 and then showed bands: \"Rather than ranks, can we give a score based on log/logistic/likelihood that someone deliberately selected the font?\" Asked whether the score replaces the numbers, the owner answered \"Blue bars show the score.\""
+
+[score_curve]
+value = "normal"
+ruling = "The score is 100·Φ(z), the normal curve of the engine's fused score for that rank (ranks.<key>.score in catalog.json): the inverse of how the shared scale is built. It is relative standing among the fonts the sources track, not the chance that a given person chose the font."
+reason = "Claude's recommendation, taken by the owner, who had suggested the logistic curve; the two differ by about one point at most."
+
+[score_held_fonts]
+value = "sort_by_score"
+ruling = "The list sorts by score. A font the two-source rule holds back (gate_held) takes its score's place and carries a marker. The catalog's ranks and bands keep the rule."
+reason = "The owner's choice. Claude had recommended showing such a font no score, only a note."
+
+[score_field_timing]
+value = "field_now_display_m2"
+ruling = "catalog-site.json carries each rank's score from Milestone 1, before the step 20 freeze. The display is built in Milestone 2, and the Milestone 1 pull request merges without waiting for it."
+reason = "Claude's recommendation: adding the field is easy before the freeze and hard after it."
+
+[name_once]
+value = "hide_text_name"
+ruling = "A row with a specimen shows the family name once, drawn in the font by the specimen's first line. The text name stays in the page, for screen readers, search and find-in-page, and shows whenever the specimen is not shown: a font without a specimen, a specimen that fails to load, a browser without CSS masks."
+reason = "The owner, in chat: \"we show each font's name twice, first in the system font and then the SVG ... We need not spell out the font, then show an SVG that spells out the font.\" Asked which to drop, the owner chose to hide the text name; Claude had recommended dropping the name from the specimen."
+
+[nerd_marker_spot_title]
+value = "end_of_title_cell"
+ruling = "The NF marker sits at the end of the row's title cell: the specimen, or the text name where there is none. Every title cell reserves its width, so the markers line up in a column and no row changes height. This replaces nerd_marker_spot (the end of the name's cell), since the text name is hidden where a specimen shows."
+reason = "Claude's proposal, following name_once, in the plan the owner approved."
