@@ -135,13 +135,21 @@ Priorities 1 and 2, and steps 3, 4 and 6, land before usability round 1, so test
   - **What's actually doubled:** little. list.json holds filter and score data (ids, search keys, per-view scores, flags, categories), while the rows' HTML holds what is displayed. The weight is the HTML: all 500 rows, 639 KB raw, 48.9 KB compressed.
   - **Measured:** writing only the first 100 rows into the HTML takes it to 12.7 KB. Carrying rows 101–500 as data costs at most 17.1 KB (every text and link, before any trimming). That's a net saving of about 19 KB compressed on the first load, on top of Brotli.
   - **Cost:** a contract change. Today `Render` only reorders rows the server wrote, and without JavaScript the page shows "the full list by overall rank" (site/CONTRACT.md §3).
-  - **(a) Recommended:** the HTML holds the first 100 rows of Overall, and the script builds the rest from the data on load.
-    - Without JavaScript, visitors see the top 100 and a note.
-    - Find-in-page works once the script has run.
-    - Its time counts against M2 step 10's blocking-time budget of 200 ms.
-    - The per-row `<noscript>` specimen copies drop to 100.
-  - **(b)** the first 50 rows, which saves a little more and gives a no-JavaScript view of 50.
-  - **(c)** all rows stay in the HTML, and only Brotli (Q10) lightens the page.
+  - **(a) Recommended, the owner's refinement:** the front page's HTML holds the top 100 rows of Overall, and a static full-list page keeps every row a click away.
+    - **With JavaScript:** the script builds rows 101–500 from the data on load, so these visitors never need the full page.
+      - Find-in-page works once the script has run.
+      - The script's time counts against M2 step 10's blocking-time budget of 200 ms.
+      - The per-row `<noscript>` specimen copies drop to 100.
+    - **Without JavaScript:** visitors see the 100 and a plain link, "Show all 500 fonts", to a full-list page such as `/all/`.
+      - That page is static, like today's front page: every row, in Overall order.
+      - Only visitors who follow the link download it (about 49 KB compressed), so it sits outside the front page's budget.
+      - The note reads something like: "Filters and search need JavaScript. These are the top 100; show all 500 fonts."
+    - **The same script runs on both pages.** It builds only the rows missing from the HTML, and `/all/` has none, so a shared `/all/` link still filters and sorts as today.
+    - **One full page, not pages of 100.** The static server can't vary a page by a `?page=` query, so paging would need a path per block, such as `/fonts/2/`. One page gives the whole list in one step.
+    - **Search engines:** `/all/` goes in `sitemap.xml`. It's the one page that lists every font in plain HTML.
+    - **Growth:** when the A–Z list arrives (the more-fonts milestone), `/all/` grows by about 1,250 rows, to roughly 120 KB compressed. If that's too much, it can then split by letter.
+  - **(b)** as (a), but with 50 rows on the front page. That saves a little more, and the full-list page stays.
+  - **(c)** all rows stay in the front page's HTML, and only Brotli (Q10) lightens the page.
 - [ ] Record each ruling and answer in AUTHORITY.md under Site (Milestone 2), and in `data/reviews/site/<date>.toml` with `choice`, `recommended`, `value`, `ruling` and `reason`, as earlier site rulings are.
 - [ ] Add milestone-2.md step 12b, "Changes from the first reviews", linking this plan, and make step 13 depend on it.
 
@@ -225,10 +233,12 @@ Priorities 1 and 2, and steps 3, 4 and 6, land before usability round 1, so test
   - [ ] Through Cloudflare, check that a browser gets `content-encoding: br`. Today it gets gzip, even when it offers `br` and `zstd`. If Cloudflare changes the encoding, record what it does.
   - [ ] CI's budget measures what Q10 says.
 - [ ] **9b. Rows past the first ones built from data** (per Q12):
-  - [ ] The build writes Q12's number of rows into the HTML, plus a compact data file for the rest. Trim it by writing links from ids where the pattern allows, such as the Google Fonts specimen pages.
-  - [ ] `Render` builds the missing rows once on load, then reorders as today. Focus, announcements and layout shift behave as before.
-  - [ ] The no-JavaScript note says the page shows the top rows, and that the full list needs JavaScript.
-  - [ ] `site/CONTRACT.md` §2, §3 and §5 and their contract tests change in the same pull request. The accessibility and privacy tests run on the built rows.
+  - [ ] The build writes Q12's number of rows into the front page, plus a compact data file for the rest. Trim the file by writing links from ids where the pattern allows, such as the Google Fonts specimen pages.
+  - [ ] The build also writes the full-list page (`/all/`, per Q12): every row, from the same row template, in Overall order. It goes in `sitemap.xml`.
+  - [ ] `Render` builds the rows missing from the HTML once on load (none on `/all/`), then reorders as today. Focus, announcements and layout shift behave as before.
+  - [ ] Without JavaScript, the front page's note links to the full-list page: "Show all 500 fonts". The count follows the catalog.
+  - [ ] `site/CONTRACT.md` §2 (build output: the new page), §3 and §5, and their contract tests, change in the same pull request.
+  - [ ] Axe, the privacy test and the no-JavaScript test cover both pages. The budget check holds the front page to the 100 KB and gives `/all/` a cap of its own.
   - [ ] `catalog-site.json` v1 doesn't change. This is display only, in `tff_site`.
 
 **Done when:** `curl` shows Brotli from staging through Cloudflare; the first load, compressed as sent, is lighter than today's 96.1 KB by at least 15 KB after 9a (19.4 KB measured) and by at least 30 KB after 9b, unless Q12 is (c); and M2 step 10's load-speed numbers, including blocking time, still pass.
