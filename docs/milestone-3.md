@@ -60,7 +60,7 @@ Step 3 waits on M1 steps 7 and 15, so steps 5–9 use a stand-in table until the
 **Who:** Claude; the owner reviews flagged collisions. **Depends on:** M1 step 7 (alias table) and step 15 (`catalog-site.json`, and `names.json` with every eligible family's names and aliases); D2, D4. Until then, a hand-built stand-in (the old Top 100 plus Nerd Fonts' `fonts.json`) is used.
 - [ ] The export stage also writes a versioned `build/match-site.json`, published under a content-hashed name, with:
   - every catalog family's names, and each alias with its relation: rename; build (Nerd Font, NF, NFM, NFP, Propo, Powerline, NL, CJK); PostScript prefix; related; folded sibling (D2);
-  - the listed-only families (M1 step 15b), matched like catalog families, so owned ones leave the A–Z list too (owner ruling `more_fonts` of 2026-09-29);
+  - the listed-only families, once [milestone-more-fonts.md](milestone-more-fonts.md) has shipped them, matched like catalog families, so owned ones leave the A–Z list too (owner ruling `more_fonts` of 2026-09-29);
   - eligible families that are held back, as "known, not listed", so they never raise a near-match;
   - ineligible names with their reason (proprietary, ITF, CJK, icon, generic, system, not a font, non-Latin, unlisted);
   - strippable style words (weights, slopes, SemBd, Med, Ret, Obl …) and Nerd suffixes;
@@ -85,7 +85,7 @@ Step 3 waits on M1 steps 7 and 15, so steps 5–9 use a stand-in table until the
 ### Step 5: Name matching
 **Who:** Claude; the owner reviews the near-match rules. **Depends on:** 3 (the stand-in until then), 4; M3-D3 to M3-D5.
 - [ ] Per entry, names are tried in order: the first name (fontconfig's WWS or typographic family, or the macOS family), the other family names, the full name, the PostScript name's family part. Each is looked up exactly by `match_key`; on a miss, trailing style words are stripped one at a time. The longest exact hit wins; nothing matches by prefix.
-- [ ] Each catalog and listed-only family ends up:
+- [ ] Each catalog family, and each listed-only family once they are listed, ends up:
   - **owned:** an exact family hit, or a rename or build alias counted by M3-D3 and M3-D4, labelled with the name matched ("as FiraCode Nerd Font");
   - **near-match:** a related or folded-sibling hit (M3-D5), an ambiguous name without confirming evidence, a known family plus an unknown remainder, or a close spelling (edit distance ≤ 2, 6+ characters) that isn't a known name;
   - **missing.**

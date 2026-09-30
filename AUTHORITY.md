@@ -203,6 +203,7 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
     - **Marker:** it stays at the end of the name's cell, in a column. *Moved later that day* to the end of the row's title cell, since the text name is hidden where a specimen shows (**Font names**, below).
 - **Every qualifying font is listed.** Recorded in `data/reviews/site/2026-09-29.toml` (`more_fonts`, `font_requests`). *(2026-09-29)*
   - **The rest, A–Z (the owner's choice (b), Claude's recommendation).** Every font that passes the gates is listed, not only the catalog. The catalog keeps its ranks and bands. The other qualifying fonts (about 1,250 in the 2026-09-29 run) follow the ranked fonts in the same list, unranked and A–Z, under a heading such as "More truly free fonts". They show no rank, band or "501+", and they take the same filters, search, details, link policy and preview rules. The owned-font comparison takes owned fonts out of them too.
+  - **Timing (2026-09-30).** Not part of getting the site live. The A–Z list and fonts added on request move out of Milestone 1 (step 15b) into a milestone of their own, [milestone-more-fonts.md](docs/milestone-more-fonts.md), after Milestone 2's launch and before or after Milestone 3's owned-font tools; the owner chooses which when Milestone 2 is done. Until then the site lists the ranked catalog only. Recorded in `data/reviews/site/2026-09-30.toml` (`more_fonts_timing`).
   - **Fonts added on request (the owner's variant of option (c)).** Anyone, whether a foundry, a designer or a visitor, may ask for a missing font by email to admin@trulyfreefonts.com or with the "Missing font" form. Claude checks it against Rules 1–4, D3, D4 and the link policy, and the owner rules in chat. An accepted family joins `config/foundries.toml` (amending M12) and is listed from the next refresh: ranked if its evidence places it in the catalog, otherwise A–Z. Being added never counts as popularity, and the public files never say who asked.
 - **Headline font.** The site's headline is set in **League Gothic** (The League of Moveable Type, OFL 1.1). *(2026-09-29)*
   - **Wordmark.** The headline is an SVG wordmark reading "Truly Free Fonts" in mixed case, with the letters drawn as outlines, scaled to be the site's headline. The file is `site/static/wordmark.svg`, drawn by `site/static/_src/make_wordmark.py`. *(2026-09-29)*
@@ -280,7 +281,7 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
 - **Tracked docs.** These are versioned:
   - `docs/ranking-methodology.md`;
   - `docs/roadmap.md`;
-  - the milestone checklists `docs/milestone-1.md` to `docs/milestone-4.md`;
+  - the milestone checklists `docs/milestone-1.md` to `docs/milestone-4.md`, and `docs/milestone-more-fonts.md` *(2026-09-30)*;
   - `docs/owned-fonts.md`, the notes for Milestone 3;
   - `PLAN-NERD-FONTS.md`, the working checklist for Backlog TASK-2. *(2026-09-28)*
 - **Monthly data refresh.** A scheduled GitHub Actions workflow runs the pipeline and opens a pull request with the new catalog and anything flagged for review. The owner reviews and merges it.
