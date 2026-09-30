@@ -725,8 +725,10 @@ def test_token_contrast(theme, fg, bg, minimum):
     assert _contrast(values[fg], values[bg]) >= minimum, (values[fg], values[bg])
 
 
-def test_interface_uses_the_system_font_stack():
-    assert LIGHT["--font-ui"].startswith("system-ui")
+def test_interface_uses_arimo_then_fonts_with_its_metrics():
+    """AUTHORITY.md, "Interface font": Arimo, which the build declares ahead of the parts,
+    then Liberation Sans and Arial, which share its metrics."""
+    assert LIGHT["--font-ui"].startswith('"Arimo", "Liberation Sans", Arial, ')
     assert "@font-face" not in TOKENS_CSS.read_text(encoding="utf-8")
 
 
@@ -774,7 +776,11 @@ CONTEXT = {
         "description": "No cookies & no tracking.",
         "canonical": True,
     },
-    "assets": {"css": "/assets/style.0123456789.css", "js": "/assets/app.0123456789.js"},
+    "assets": {
+        "css": "/assets/style.0123456789.css",
+        "js": "/assets/app.0123456789.js",
+        "font": "/assets/ui/arimo.0123456789.woff2",
+    },
     "build": {"commit": "0" * 40, "run_date": "2026-09-25"},
 }
 

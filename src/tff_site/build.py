@@ -6,7 +6,8 @@ socket guard), reads no clock, and two builds of the same inputs are byte-identi
 Steps: validate the data (``tff_site.data``); concatenate and hash the JS and CSS parts
 (``tff_site.assets``); write the list-index and details JSON; copy each ``preview`` SVG from
 ``specimens/`` next to the data file to ``/assets/specimens/<id>.<h>.svg``, checking its
-sha256; copy each ``font_file`` from the font cache to ``/assets/fonts/<id>.<h>.<ext>``;
+sha256; copy each ``font_file`` from the font cache to ``/assets/fonts/<id>.<h>.<ext>``, and the
+interface font (``UI_FONTS``, from ``site/static/fonts/``) to ``/assets/ui/<stem>.<h>.woff2``;
 render the templates (``site/templates``, Jinja2 with autoescape and StrictUndefined) and the
 pages (``tff_site.pages``); write ``robots.txt``, ``sitemap.xml``, the static files and
 ``version.txt``. Output layout: site/CONTRACT.md, "Build output".
@@ -98,6 +99,12 @@ BADGE_TEXT = {
 UNRANKED_PREFIX = "Not ranked: "
 # Copied from site/static/ to the site root (site/CONTRACT.md section 2).
 STATIC_FILES = ("apple-touch-icon.png", "favicon.ico", "favicon.svg", "share.png", "wordmark.svg")
+# The interface font (AUTHORITY.md, "Interface font"): (file in site/static/fonts/, style).
+# Each is copied to /assets/ui/<stem>.<h>.woff2 and declared ahead of the CSS parts; the first
+# is preloaded (site/CONTRACT.md section 6).
+UI_FONT_FAMILY = "Arimo"
+UI_FONTS = (("arimo.woff2", "normal"), ("arimo-italic.woff2", "italic"))
+UI_FONT_WEIGHTS = "400 700"
 # The deploy receiver accepts only these paths (site/CONTRACT.md section 2).
 SAFE_PATH = re.compile(r"^([a-z0-9][a-z0-9._-]*/)*[a-z0-9][a-z0-9._-]*$")
 COMMIT_PATTERN = re.compile(r"^[0-9a-f]{40}(-dirty)?$")
@@ -329,8 +336,11 @@ def _write_site(
     commit = version["commit"]
     urls = assets.AssetManifest().urls
     urls["app.js"] = assets.write_hashed(out, "app.js", assets.concat_js(site_dir / "js").encode())
-    css = assets.concat_css(site_dir / "css").encode()
-    urls["style.css"] = assets.write_hashed(out, "style.css", css)
+    ui_fonts = _copy_ui_fonts(out, site_dir / "static" / "fonts")
+    faces = [(ui_fonts[name], style) for name, style in UI_FONTS]
+    css = assets.font_faces(UI_FONT_FAMILY, faces, UI_FONT_WEIGHTS)
+    css += assets.concat_css(site_dir / "css")
+    urls["style.css"] = assets.write_hashed(out, "style.css", css.encode())
 
     specimens, errors = _copy_specimens(out, site_doc, data_dir)
     font_assets, font_errors = _copy_fonts(out, site_doc, fonts_dir)
@@ -346,7 +356,11 @@ def _write_site(
     blog.write_images(out, posts)
     common = {
         "site": site_context(blog_nav=blog.nav(posts)),
-        "assets": {"css": urls["style.css"], "js": urls["app.js"]},
+        "assets": {
+            "css": urls["style.css"],
+            "js": urls["app.js"],
+            "font": ui_fonts[UI_FONTS[0][0]],
+        },
         "build": {"commit": commit, "run_date": doc["run"]["date"]},
     }
     list_context = _list_context(site_doc, specimens, urls)
@@ -498,6 +512,19 @@ def _copy_fonts(
             continue
         found[font["id"]] = assets.write_hashed(out, f"fonts/{font['id']}.{wanted['format']}", blob)
     return found, errors
+
+
+def _copy_ui_fonts(out: Path, fonts_dir: Path) -> dict[str, str]:
+    """Copy ``UI_FONTS`` to ``/assets/ui/`` and return each file's URL by name."""
+    missing = [name for name, _ in UI_FONTS if not (fonts_dir / name).is_file()]
+    if missing:
+        raise BuildError(
+            [f"{fonts_dir}: missing {', '.join(missing)} (site/static/_src/make_ui_font.py)"]
+        )
+    return {
+        name: assets.write_hashed(out, f"ui/{name}", (fonts_dir / name).read_bytes())
+        for name, _ in UI_FONTS
+    }
 
 
 def _copy_static(out: Path, static_dir: Path) -> list[str]:

@@ -623,12 +623,13 @@ def _noise(size: int, seed: int = 7) -> bytes:
 
 def _fake_site(root: Path, *, html_extra: str = "", sizes: dict[str, int] | None = None) -> Path:
     """A minimal built site: the list page and its four assets, with incompressible filler."""
-    sizes = {"css": 1000, "js": 1000, "list": 1000, "details": 1000, **(sizes or {})}
+    sizes = {"css": 1000, "js": 1000, "list": 1000, "details": 1000, "font": 1000, **(sizes or {})}
     files = {
         "assets/style.0123456789.css": sizes["css"],
         "assets/app.0123456789.js": sizes["js"],
         "assets/list.0123456789.json": sizes["list"],
         "assets/details.0123456789.json": sizes["details"],
+        "assets/ui/arimo.0123456789.woff2": sizes["font"],
     }
     for k, (rel, size) in enumerate(files.items()):
         path = root / rel
@@ -636,6 +637,8 @@ def _fake_site(root: Path, *, html_extra: str = "", sizes: dict[str, int] | None
         path.write_bytes(_noise(size, seed=k))
     (root / "index.html").write_text(
         "<!doctype html><html lang=en><head><meta charset=utf-8><title>t</title>"
+        '<link rel="preload" href="/assets/ui/arimo.0123456789.woff2" as="font"'
+        ' type="font/woff2" crossorigin>'
         '<link rel="stylesheet" href="/assets/style.0123456789.css">'
         '<script type="module" src="/assets/app.0123456789.js"></script>'
         '<link rel="preload" href="/assets/list.0123456789.json" as="fetch" crossorigin>'
@@ -658,6 +661,7 @@ def test_a_small_site_passes(tmp_path: Path) -> None:
         ({"css": 60_000, "js": 45_000}, "index.html", "HTML + CSS + JS"),
         ({"list": 101_000}, "assets/list.0123456789.json", "list index"),
         ({"details": 151_000}, "assets/details.0123456789.json", "details payload"),
+        ({"font": 31_000}, "assets/ui/arimo.0123456789.woff2", "interface font"),
     ],
 )
 def test_each_size_budget_fails_when_exceeded(
@@ -667,6 +671,15 @@ def test_each_size_budget_fails_when_exceeded(
     assert [p.path for p in problems] == [path], problems
     assert words in problems[0].message
     assert "over the" in problems[0].message
+
+
+def test_a_preloaded_font_must_be_in_the_site(tmp_path: Path) -> None:
+    site = _fake_site(tmp_path)
+    (site / "assets" / "ui" / "arimo.0123456789.woff2").unlink()
+    problems = budgets.check(site)
+    assert [(p.path, p.message) for p in problems] == [
+        ("index.html", "/assets/ui/arimo.0123456789.woff2: preloaded, but not in the site")
+    ]
 
 
 def test_a_details_shard_is_held_to_the_budget(tmp_path: Path) -> None:

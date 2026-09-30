@@ -58,6 +58,7 @@ Contents:
 | `assets/details.<h>.json` | the details payload (section 8), fetched on first use | immutable |
 | `assets/specimens/<id>.<h>.svg` | one specimen per font with a preview | immutable |
 | `assets/fonts/<id>.<h>.<ext>` | the unchanged upstream font file, for "Type your own text" | immutable |
+| `assets/ui/arimo.<h>.woff2`, `assets/ui/arimo-italic.<h>.woff2` | the interface font, Arimo upright and italic, cut to Latin in `site/static/fonts/` (section 6) | immutable |
 | `blog/index.html` | the blog, newest post first (only once a post is published, below) | `no-cache, no-transform` |
 | `blog/<slug>/index.html` | one page per post | `no-cache, no-transform` |
 | `blog/feed.xml` | the blog's Atom feed (RFC 4287) | `no-cache, no-transform` |
@@ -99,7 +100,7 @@ Jinja2 with `autoescape=True`, `StrictUndefined`, `trim_blocks`, `lstrip_blocks`
 |---|---|
 | `site` | `name` ("Truly Free Fonts"), `base_url` ("https://trulyfreefonts.com"), `repo_url`, `feedback` {`issues_url`, `email`, `mailto`}, `tip_url` (the Stripe link from ops/DONATIONS.md, or none until M2 step 8), `blog` (none until a post is published; then {`url` "/blog/", `feed_url` "/blog/feed.xml"}, which adds the nav's Blog link and a `<link rel="alternate">` to the feed) |
 | `page` | `path` ("/", "/methodology/" …), `title`, `description`, `canonical` (false on the 404 page) |
-| `assets` | `css`, `js` (hashed URLs) |
+| `assets` | `css`, `js` and `font`, the upright interface font that `base.html.j2` preloads (hashed URLs) |
 | `build` | `commit`, `run_date` |
 | `urls` | the absolute URLs of the canonical pages, sorted by path, for the sitemap |
 
@@ -314,13 +315,14 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 - Specimens: `.spec { mask-size: contain; mask-repeat: no-repeat; mask-position: left center; height: var(--spec-h); }` and `.spec[data-state="set"] { background-color: var(--c-spec); }`, so the box fills only once its mask is set (an unmasked fill is a solid bar); `.spec` is hidden under `(scripting: none)`, where the `<noscript>` image shows instead; under `forced-colors`, `forced-color-adjust: none` (the token becomes `CanvasText`). The noscript image gets `filter: invert(1)` in dark mode.
 - The name once: `.font-title.is-drawn > .font-name { opacity: 0; }` inside `@supports (mask-image: none)`, and `.font-title.has-spec > .font-name` likewise under `@media (scripting: none)` (section 4).
 - No `@import`, no `@font-face`, and no `url()` with a scheme or another host, a `data:` URL included: the page loads only its own files. The build's lint refuses them.
+- The interface font (AUTHORITY.md, "Interface font"): the build writes one `@font-face` for Arimo upright and one for its italic ahead of the parts, both `font-weight: 400 700` and `font-display: optional`, from `/assets/ui/` (section 2). Every page preloads the upright with `<link rel="preload" as="font" type="font/woff2" crossorigin>`, so it is usually there by the first paint. A font that comes later is never swapped in, so no text moves: that page view keeps Liberation Sans or Arial, which have Arimo's widths, and the next page has Arimo from the cache. `tff-site check` holds each file to 30 KB.
 - Rows: `li.font { content-visibility: auto; contain-intrinsic-size: auto var(--row-est-h); }`.
 
 **Tokens** (defined in `00-tokens.css` on `:root`; every `--c-` token is redefined for dark mode and for forced colours):
 
 | Token | Use |
 |---|---|
-| `--font-ui` | the system font stack for all interface text |
+| `--font-ui` | all interface text: Arimo, then Liberation Sans and Arial (same metrics) |
 | `--font-mono` | the system monospace stack |
 | `--fs-small` | small text: badges, meta lines |
 | `--fs-base` | body text |

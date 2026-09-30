@@ -12,7 +12,7 @@ Truly Free Fonts doesn't track you. The pages set no cookies, run no analytics, 
 - **No cookies.** Neither we nor Cloudflare, which delivers the site, set one.
 - **No analytics or tracking.** No script, ours or anyone else's, counts or follows visitors.
 - **Nothing stored in your browser.** The site uses no local storage, session storage, IndexedDB, cache storage or service worker. Your filters live in the page address, after the `#`, and browsers never send that part to any server.
-- **Nothing loaded from other sites.** Every file the pages use comes from trulyfreefonts.com, including the font previews and the fonts for "Type your own text". Links to other sites, such as download pages, GitHub or the tip page, load nothing until you click them.
+- **Nothing loaded from other sites.** Every file the pages use comes from trulyfreefonts.com, including the site's own font, the font previews and the fonts for "Type your own text". Links to other sites, such as download pages, GitHub or the tip page, load nothing until you click them.
 - **Enforced by your browser.** Our server sends a Content Security Policy that tells your browser to block any script, style, image, font or connection from another site, even if something tried to add one.
 
 ## Check for yourself
