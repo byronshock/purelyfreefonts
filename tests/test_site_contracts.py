@@ -81,6 +81,36 @@ def test_catalog_site_schema_version_matches_code():
     assert not list(_keyword_uses(schema, "format")), "use pattern ^https:// instead of format"
 
 
+# The frozen v1 schema, descriptions aside (owner ruling of 2026-09-30, site_fields_v1).
+V1_SCHEMA_SHA256 = "724e11e1e28ab0aa04f4c890ab09096f9c25ed7f334233aac818df0055514cf5"
+
+
+def _without_descriptions(node):
+    if isinstance(node, dict):
+        return {
+            k: _without_descriptions(v)
+            for k, v in node.items()
+            if k not in ("description", "$comment")
+        }
+    if isinstance(node, list):
+        return [_without_descriptions(v) for v in node]
+    return node
+
+
+def test_the_v1_schema_is_frozen():
+    """Milestone 1 step 20 froze catalog-site.json v1: while the version is 1.0.0, no field,
+    type or constraint may change. Only the descriptions may."""
+    schema = json.loads(data.SCHEMA_PATH.read_text(encoding="utf-8"))
+    if data.SCHEMA_VERSION != "1.0.0":
+        pytest.skip("a later version has its own pin")
+    canonical = json.dumps(
+        _without_descriptions(schema), sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    )
+    assert hashlib.sha256(canonical.encode()).hexdigest() == V1_SCHEMA_SHA256, (
+        "a v1 change needs v2 (owner ruling of 2026-09-30, site_fields_v1)"
+    )
+
+
 def _keyword_uses(node: Any, keyword: str, under_properties: bool = False):
     """Yield every schema object that uses ``keyword`` (property names don't count)."""
     if isinstance(node, dict):
