@@ -27,6 +27,7 @@ Files (all JSON, written with ``jsonio.dump``)::
     license_hashes.json {id: {text_url, text_sha256, checked_on, font_version, font_file: {url, sha256}, level}}
     stale.json          {source: {last_good: date, stale_runs: int}}
     published_ranks.json {rank_key: {id: order}}
+    published_scores.json {rank_key: {id: score}}   each rank entry's score, for next month's previous_score
     smoothing.json      {month: "YYYY-MM", fot_ewma: {id: z}, fot_ewma_base: {id: z},
                          fot_weeks: [week], rising: {source: {id: [share_m-2, share_m-1, share_m]}}}
                         (month: the run month that wrote it; fot_ewma_base: the EWMA that
@@ -59,6 +60,7 @@ STATE_FILES: dict[str, str] = {
     "license_hashes": "license_hashes.json",
     "stale": "stale.json",
     "published_ranks": "published_ranks.json",
+    "published_scores": "published_scores.json",
     "smoothing": "smoothing.json",
 }
 MAX_RUN_HISTORY = 24
@@ -72,6 +74,7 @@ STATE_OWNERS: dict[str, tuple[str, ...]] = {
     "membership": ("membership",),
     "license_hashes": ("verify",),
     "published_ranks": ("export",),
+    "published_scores": ("export",),
     "run_history": ("refresh",),
 }
 _EMPTY: dict[str, Any] = {"run_history": []}
@@ -135,6 +138,7 @@ class State:
     license_hashes: dict[str, dict[str, Any]] = field(default_factory=dict)
     stale: dict[str, dict[str, Any]] = field(default_factory=dict)
     published_ranks: dict[str, dict[str, int]] = field(default_factory=dict)
+    published_scores: dict[str, dict[str, float]] = field(default_factory=dict)
     smoothing: dict[str, Any] = field(default_factory=dict)
 
     def snapshot_dates(self, source: str) -> tuple[date, ...]:
@@ -180,6 +184,7 @@ class NextState:
     license_hashes: dict[str, dict[str, Any]] = field(default_factory=dict)
     stale: dict[str, dict[str, Any]] = field(default_factory=dict)
     published_ranks: dict[str, dict[str, int]] = field(default_factory=dict)
+    published_scores: dict[str, dict[str, float]] = field(default_factory=dict)
     smoothing: dict[str, Any] = field(default_factory=dict)
 
     @classmethod

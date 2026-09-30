@@ -152,7 +152,7 @@ def _rank_view(
     for position, font in enumerate(ranked, start=1):
         width = max(1, position // 4)
         tier = "A" if position <= 30 else "B" if position <= 150 else "C"
-        font["ranks"][key] = {
+        font["ranks"][key] = entry = {
             "rank": position if position <= TOP_N else None,
             "band": None if position <= TOP_N else _band_of(position, bands),
             "order": position,
@@ -163,6 +163,7 @@ def _rank_view(
             "gate_held": False,
             "unranked": None,
         }
+        entry["previous_score"] = entry["score"]  # the bootstrap: nothing has moved
     for font in unranked:
         deliberate = key == "desktop_chosen" and (font["preinstalled_on"] or font["pulled_in_by"])
         font["ranks"][key] = _unranked("no_deliberate_evidence" if deliberate else "no_evidence")
@@ -178,6 +179,7 @@ def _unranked(reason: str) -> dict[str, Any]:
         "tier": None,
         "range": None,
         "score": None,
+        "previous_score": None,
         "gate_held": False,
         "unranked": reason,
     }

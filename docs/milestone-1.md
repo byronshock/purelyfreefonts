@@ -390,6 +390,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 ### Step 20: Handoff to Milestone 2
 **Who:** both. **Depends on:** 17, 19.
 - [ ] `catalog-site.json` v1 is frozen, with a sample file and the schema doc, but only after Milestone 2's step 2 has approved its fields. *(Not yet: `schema_version` is still `1.0.0-draft`. Milestone 2's step 2 approved the fields on 2026-09-25; since then the schema has gained the `nerd` group, the `app` system type and a link `note`, each from an owner ruling.)*
+  - [x] Before the freeze, each rank entry carries `previous_score`, last month's published score, so the rising and falling markers of Backlog TASK-4 need no schema change later; until a monthly refresh is merged it equals `score` (owner ruling of 2026-09-30, `score_previous_bootstrap`). *(Both schemas; `export.py` and the state file `published_scores.json`; `validate`'s `previous_score` checks, in a run and with `--committed`; `tests/pipeline/test_export.py` and `test_validate.py`.)*
 - [ ] A handoff note lists what Milestone 2 must settle:
   - the default rank order;
   - numbering under filters;
