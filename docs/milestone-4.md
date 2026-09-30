@@ -182,9 +182,9 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 **Done when:** every channel chosen in M4-D2 has a recorded post, submission or pull request, and the launch-week triage (step 9) is done.
 
 ### Step 12: Monthly operations runbook
-**Who:** Claude writes it and does the monthly work; the owner reviews, rules and merges. **Depends on:** M1 steps 19–20; M2-D6 (deploy path); D12, D15. Written alongside steps 2–7.
+**Who:** Claude writes it and does the monthly work; the owner reviews, rules and merges. **Depends on:** M1 step 20 and [milestone-refresh.md](milestone-refresh.md); M2-D6 (deploy path); D12, D15. Written alongside steps 2–7.
 - [ ] `ops/MONTHLY.md`, extending M1 step 20's manual tasks. Each month:
-  1. The refresh pull request arrives (M1 step 19); after a hard failure, Claude fixes the cause and reruns it.
+  1. The refresh pull request arrives ([milestone-refresh.md](milestone-refresh.md) step 1); after a hard failure, Claude fixes the cause and reruns it.
   2. Claude summarizes `review.md` with a proposed ruling per flag: aliases (including M3 step 12's ownership changes), licenses, preinstalled and dependency entries, stale sources, big moves, failed links.
   3. The owner rules; Claude pushes fixes (broken links through the override list) until CI passes.
   4. The owner merges, which also resets GitHub's 60-day inactivity clock.
@@ -193,14 +193,14 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   7. Over `ssh tff`: pending reboot, disk space, and Caddy, fail2ban, unattended-upgrades, the watchdog and `cloudflare-ips-sync` running.
   8. Usage counts (step 5) and the owner's time go into `ops/USAGE.local.md`.
 - [ ] Font requests (owner ruling `font_requests` of 2026-09-29), in `ops/MONTHLY.md`: the owner passes each emailed request on to Claude, and Claude reads `missing-font` issues itself. Claude checks the font against the gates and the link policy and proposes a ruling; once the owner rules, an accepted family goes into `config/foundries.toml` and is listed from the next refresh. Claude drafts the reply, and the owner sends it.
-- [ ] Test M1 step 19's watchdog (a VPS timer that also warns after 50 days without a commit to `main`) once with a past date, and confirm the alert reaches the owner.
+- [ ] Test the refresh watchdog ([milestone-refresh.md](milestone-refresh.md) step 1; a VPS timer that also warns after 50 days without a commit to `main`) once with a past date, and confirm the alert reaches the owner.
 - [ ] When the watchdog fires: check the Actions tab, re-enable the workflow if disabled, run it by hand, read the failure issue.
 - [ ] Yearly tasks, each with its timing:
   - the new Web Almanac edition, when its sheets appear;
   - designer lists in January (if D12 is (a));
   - in the launch month, L3 for every catalog font whatever its hash, and `licenses.toml` checked for new license versions;
   - `preinstalled.toml` each spring and autumn;
-  - tokens and keys (M1 step 19's access, M2-D6's deploy key) renewed before expiry;
+  - tokens and keys (the refresh's access, [ops/SERVER.md](../ops/SERVER.md) section J; M2-D6's deploy key) renewed before expiry;
   - the snapshot store's size (D15);
   - domain auto-renewal, payment cards and Debian 13 support;
   - Stripe's yearly export ([ops/DONATIONS.md](../ops/DONATIONS.md) step 14).

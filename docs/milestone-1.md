@@ -2,7 +2,7 @@
 
 Milestone 1 builds the ranked, license-checked catalog that the filterable list (Milestone 2) publishes. The method is in [ranking-methodology.md](ranking-methodology.md), and settled decisions are in [AUTHORITY.md](../AUTHORITY.md).
 
-**Where it stands (2026-09-30).** The catalog is built, reviewed by the owner and committed: 500 fonts, ranked and license-checked, and the site's data file is ready. Two steps are left: switching on the monthly refresh (step 19) and handing off to Milestone 2 (step 20). Four smaller items can be done any time. Everything finished is under [Completed](#completed) at the bottom, with its evidence.
+**Where it stands (2026-09-30).** The catalog is built, reviewed by the owner and committed: 500 fonts, ranked and license-checked, and the site's data file is ready. One step is left: handing off to Milestone 2 (step 20). Three smaller items can be done any time. The monthly refresh's first live run and its schedule moved on 2026-09-30 to [milestone-refresh.md](milestone-refresh.md), after Milestone 2. Everything finished is under [Completed](#completed) at the bottom, with its evidence.
 
 **How to read it.** *Who* says who does the work, *Needs* what must be finished first, and *Done when* what must be true to close a step. When an item is done and verified, tick it and move it to Completed.
 
@@ -10,22 +10,8 @@ Milestone 1 builds the ranked, license-checked catalog that the filterable list 
 
 ## Still to do
 
-### Step 19: Switch on the monthly refresh
-**Who:** Claude sets it up with `gh` (owner ruling CI1, 2026-09-26); the owner merges the first refresh pull request. **Needs:** nothing more: the one-command refresh (step 18) is done.
-
-The workflow, `.github/workflows/refresh.yml`, is written but has never run on GitHub. Its schedule stays off until the repository variable `REFRESH_SCHEDULE` is "on" (owner ruling of 2026-09-29).
-
-- [ ] Run it once by hand (`workflow_dispatch`) and check: *(Partly done 2026-09-30. Run A, a replay of the 2026-09-26 snapshots ([run 36729682504](https://github.com/byronshock/trulyfreefonts/actions/runs/36729682504)), cloned the store with the new key, replayed identically from a clean checkout, and opened [#31](https://github.com/byronshock/trulyfreefonts/pull/31), which CI passed and the owner had merged: `state/` now holds the 2026-09-26 run, the catalog the site launches with. Left: a live run, planned for October 3 once September is a complete month, for the collectors on GitHub's runners, and a hard failure's issue.)*
-  - that the collectors work on GitHub's runners: rate limits, the GitHub API budget, and whether Google's endpoints respond;
-  - that it opens or updates the pull request on the fixed branch `refresh/monthly` with `catalog.json`, `catalog-site.json`, `review.md`, the `state/` changes, and the alias rows and seeds the run added to `data/`, and that a hard failure fails the job and opens an issue instead (the `publish` and `report` jobs, written but not yet run).
-- [ ] Make the refresh pull request's CI count without a hand. GitHub holds the `pull_request` CI run on a pull request the bot opens ("action_required"), and branch protection waits for that run even though the CI the workflow dispatches on `refresh/monthly` passes: #31 was BLOCKED until the held run was approved (`gh api -X POST repos/byronshock/trulyfreefonts/actions/runs/<id>/approve`). Decide between a monthly runbook step that approves it and a change to the workflow, before the schedule is on.
-- [ ] Install the watchdog on the VPS. GitHub disables scheduled workflows in public repositories after 60 days without activity, so a timer outside GitHub, reading its public API, warns the owner if no refresh pull request has appeared for 35 days, or `main` has had no commit for 50 days. (Written: `ops/refresh-watchdog/`, a script with a systemd timer.)
-- [ ] Turn the schedule on with `gh variable set REFRESH_SCHEDULE --body on`. The workflow then runs at 06:17 UTC on the 3rd of each month (`17 6 3 * *`) and on demand, with a uv cache, the `refresh` concurrency group, and write permission for `contents`, `pull-requests` and `issues`.
-
-**Done when:** a manual run opens a correct pull request, CI runs on it, and the owner merges it.
-
 ### Step 20: Hand off to Milestone 2
-**Who:** both. **Needs:** step 19.
+**Who:** both. **Needs:** nothing more: step 19's live run and schedule moved after Milestone 2 (`refresh_timing`).
 
 - [ ] Freeze `catalog-site.json` v1: `schema_version` goes from `1.0.0-draft` to `1.0.0`, with the sample file and the schema doc. First, Milestone 2's step 2 approves the fields added since it approved the list on 2026-09-25, each from an owner ruling: the `nerd` group, the `app` system type, a link `note`, `score` and `previous_score`.
 - [ ] A handoff note lists what Milestone 2 must settle:
@@ -39,19 +25,18 @@ The workflow, `.github/workflows/refresh.yml`, is written but has never run on G
 **Done when:** the owner accepts the handoff.
 
 ### Smaller items, any time
-None of these blocks the refresh or the handoff.
+None of these blocks the handoff.
 
-- [ ] <a id="step-3"></a>**Step 3, run state.** The state that carries from month to month is built (`state.py`): a run writes it to `build/state/`, the one `refresh/monthly` pull request copies it to `state/`, and a new run replaces an unmerged one. `state/` stays empty until the first refresh pull request is merged. Still open:
+- [ ] <a id="step-3"></a>**Step 3, run state.** The state that carries from month to month is built (`state.py`): a run writes it to `build/state/`, the one `refresh/monthly` pull request copies it to `state/`, and a new run replaces an unmerged one. Since #31, `state/` holds the 2026-09-26 run. Still open:
   - the four `[real]` cases of `tests/pipeline/test_state_two_runs.py` (two runs without a merge give the same state as one run) xfail until the synthetic store holds the real collectors' extract formats; the stub pipeline and the real state and parse modules pass;
-  - no run has yet fetched one real source twice on one date to show that it keeps exactly one snapshot per date (the fake-collector tests in `tests/test_store.py` and `tests/test_fetch.py` pass).
 - [ ] **Step 5, fonts without a readable file.** 129 families are out as `no_file`, because the pipeline has no file of theirs to test for Latin coverage.
   - Next, now that the Milestone 1 pull request has merged (owner ruling `no_file_builds`, 2026-09-29): the builds and umbrella casks among them, and the 21 Iosevka variants.
   - Waiting for the pipeline to read tar archives (`no_file_files`): Computer Modern, New Computer Modern, Spleen and Scientifica.
   - Out anyway: Microsoft's and Apple's fonts and the mainly CJK fonts; no ranking source counts the 64 others.
 - [ ] **Step 13, backtest.** Run `tff-catalog backtest` on the real store and commit its report to `docs/backtests/`. (Built: `backtest.py`; `tests/pipeline/test_backtest.py`. `ranking.toml [review]` keeps the §9 alert thresholds until the owner revisits them after 3 merged refreshes, ruling of 2026-09-26.)
-- [ ] **Step 14, a monthly link check that tells someone.** The check runs in every refresh and as `tff-catalog links --check`, but a failure reaches only the log and `build/stage/queues/links.json`: `review.md`, validate and gate K don't report it, and `refresh.yml` doesn't run `links --check`. So a link that breaks later would stay published without a flag.
 
 ### Moved out of this milestone
+- **Step 19's remaining items**, the first live refresh, the held CI of refresh pull requests, the watchdog and the schedule, with step 14's link-check alerts and step 3's check of a real source fetched twice: moved on 2026-09-30 to [milestone-refresh.md](milestone-refresh.md), after Milestone 2 and before Milestone 3 (`refresh_timing`, AUTHORITY.md).
 - **Step 15b**, every other qualifying font A–Z and fonts added on request: moved on 2026-09-30 to [milestone-more-fonts.md](milestone-more-fonts.md), after Milestone 2's launch (`more_fonts_timing`, AUTHORITY.md).
 
 ---
@@ -397,6 +382,7 @@ The finished steps and items, as they were ticked, with their evidence. The crit
 ### Step 19: Monthly GitHub Actions workflow
 - [x] Let refresh pull requests trigger CI: turn on "Allow GitHub Actions to create and approve pull requests" with `gh` (it is off now). The refresh job opens its pull request with `GITHUB_TOKEN` and then starts `ci.yml` on `refresh/monthly` itself, because pull requests that token opens trigger no workflows. No GitHub App or personal token is needed. *(Done 2026-09-30: the owner ran `gh api -X PUT repos/byronshock/trulyfreefonts/actions/permissions/workflow -f default_workflow_permissions=read -F can_approve_pull_request_reviews=true`; the API now reports `can_approve_pull_request_reviews: true`, with the default workflow permissions still read-only.)*
 - [x] Give the workflow the private data store: create the data repository's deploy key and this repository's `DATA_STORE_KEY` secret (D15), and record both in SERVER.md and here. *(Done 2026-09-30, recorded in [ops/SERVER.md](../ops/SERVER.md), item 27: the owner made an ed25519 key for this alone; its public half is the read-write deploy key "trulyfreefonts refresh (DATA_STORE_KEY)" on `byronshock/trulyfreefonts-data`, fingerprint `SHA256:iHpu23uBZ4qzimjNuXZAQYNMA2+N9cHgbKFjkKT/YM4`, and its private half only the `DATA_STORE_KEY` secret of this repository. `gh` lists both.)*
+- [x] Run A: a replay of the 2026-09-26 snapshots on GitHub ([run 36729682504](https://github.com/byronshock/trulyfreefonts/actions/runs/36729682504), `gh workflow run refresh.yml --ref main -f from_snapshots=2026-09-26`). *(Done 2026-09-30: it cloned the store with the new key, replayed identically from a clean checkout, and opened [#31](https://github.com/byronshock/trulyfreefonts/pull/31), which CI passed once the held pull-request run was approved and `site-perf`'s stalled browser install was rerun; the owner had it merged, so `state/` holds the 2026-09-26 run, the catalog the site launches with.)*
 
 ### Step 20: Handoff to Milestone 2
 **Who:** both. **Depends on:** 17, 19.

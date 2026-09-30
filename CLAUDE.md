@@ -1,7 +1,7 @@
 # truly_free_fonts
 
 - [AUTHORITY.md](AUTHORITY.md) holds the settled decisions. Read it before acting, and record new owner decisions there.
-- The plan is in the milestone checklists, `docs/milestone-1.md` to `docs/milestone-4.md`, plus `docs/milestone-more-fonts.md` (after launch). Backlog.md holds only loose items: ideas, bugs and later work that no checklist covers. Don't copy checklist items into it, and never use `backlog/decisions/`.
+- The plan is in the milestone checklists, `docs/milestone-1.md` to `docs/milestone-4.md`, plus `docs/milestone-refresh.md` and `docs/milestone-more-fonts.md` (after launch). Backlog.md holds only loose items: ideas, bugs and later work that no checklist covers. Don't copy checklist items into it, and never use `backlog/decisions/`.
 - This repository is public. Tasks must never contain server IPs, zone IDs, secrets or anything from `PLAN.md` or `ops/*.local.md`.
 - `main` takes changes only through pull requests. Change a task's status in the same pull request as its work.
 

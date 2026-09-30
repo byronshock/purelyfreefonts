@@ -14,6 +14,12 @@ Status as of 2026-09-25. Settled decisions are in [AUTHORITY.md](../AUTHORITY.md
 - **Checklist:** [milestone-2.md](milestone-2.md)
 - **Depends on:** Milestone 1. Its step 20 freezes `catalog-site.json` v1 after this milestone's step 2 approves the fields; the soft launch waits for that freeze.
 
+## Monthly refresh goes live (after Milestone 2)
+- **Goal:** the monthly refresh runs live for the first time and its schedule goes on, so the catalog updates itself each month and the update reaches the live site.
+- **Status:** moved out of Milestones 1 and 2 on 2026-09-30 (`refresh_timing`). Done so far: the data store's key and secret, and a replay run on GitHub whose pull request (#31) filled `state/` with the 2026-09-26 run. Until the first live refresh, the site shows that catalog.
+- **Checklist:** [milestone-refresh.md](milestone-refresh.md)
+- **Depends on:** Milestone 2's live site and deploy path. Comes before Milestone 3.
+
 ## More truly free fonts (after launch)
 - **Goal:** every other font that passes the gates is listed A–Z without a rank, after the ranked fonts, and fonts can be added on request (owner rulings of 2026-09-29).
 - **Status:** moved out of Milestone 1 on 2026-09-30 (`more_fonts_timing`): not needed to go live. It comes after Milestone 2's launch, before or after Milestone 3; the owner chooses when Milestone 2 is done.
@@ -30,4 +36,4 @@ Status as of 2026-09-25. Settled decisions are in [AUTHORITY.md](../AUTHORITY.md
 - **Goal:** switch the comparison on for everyone, announce the site, and run the monthly refresh. Two months after launch, a review decides between new features and maintenance only.
 - **Status:** draft checklist awaiting its Step 0.
 - **Checklist:** [milestone-4.md](milestone-4.md)
-- **Depends on:** Milestone 3 done; the tip link live; Milestone 1's monthly workflow.
+- **Depends on:** Milestone 3 done; the tip link live; the monthly refresh live ([milestone-refresh.md](milestone-refresh.md)).
