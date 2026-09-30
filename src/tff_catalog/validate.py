@@ -55,6 +55,12 @@ How each check reads the run (``CHECKS``, in order; ``docs/catalog-schema.md``):
   most) can't be told from chance, so the stages writing reports keep them out
   (``corrections``, ``mapping``, ``review``).
 
+- ``previous_score``: every rank entry's ``previous_score``, in ``catalog.json`` and
+  ``catalog-site.json``, is the font's score in that rank in the last published catalog
+  (``published_scores`` of the state this run started from), or null if it had none there.
+  With none published yet (the bootstrap), it equals ``score``, so nothing shows as moved
+  (owner ruling of 2026-09-30, score_previous_bootstrap).
+
 - ``private_fields``: no committed JSON output (``build/*.json``,
   ``build/specimens/index.json``, ``state/`` and this run's ``build/state/``)
   holds, under the id of a source whose ``publish_raw`` is false, anything but
@@ -69,8 +75,12 @@ still fails ``schema``, through the site's cross-references (one font per order)
 **Committed outputs only** (``validate --committed``, CI's ``site-real`` job):
 ``COMMITTED_CHECKS`` run on what a clone holds, without ``build/stage/``:
 ``schema``, ``private_fields``, the ``catalog.json`` half of
-``raw_value_published``, and the known answers ``names.json`` can answer
-(``committed_known_answers``).
+``raw_value_published``, the known answers ``names.json`` can answer
+(``committed_known_answers``), and ``previous_score`` for the bootstrap
+(``committed_previous_scores``): while ``state/run_history.json`` holds at most one run,
+the committed catalog was built with no earlier scores, so every ``previous_score``
+equals its ``score``. Later, ``state/`` holds the merged run's own scores, not those it
+started from, so a clone can't check more.
 
 A check that can't run (a missing file, or any error in it) fails with the
 reason, and the others still run. Each check lists at most ``MAX_PER_CHECK``
@@ -551,6 +561,36 @@ def check_committed_known_answers(run: Run) -> Iterator[Failure]:
             yield Failure("known_answer", f"{parent} holds the name {sibling}", other)
 
 
+def _previous_score_failures(
+    run: Run, expected: Callable[[str, str, Mapping[str, Any]], float | None]
+) -> Iterator[Failure]:
+    """Every rank entry in both outputs whose ``previous_score`` isn't ``expected(key, id,
+    entry)``."""
+    for name in (export.CATALOG_FILE, export.SITE_FILE):
+        for font in run.doc(name)["fonts"]:
+            for key, entry in sorted(font["ranks"].items()):
+                if entry["previous_score"] != expected(key, font["id"], entry):
+                    yield Failure(
+                        "previous_score", f"{name}: {key} previous_score is wrong", font["id"]
+                    )
+
+
+def check_previous_scores(run: Run) -> Iterator[Failure]:
+    """``previous_score``: last month's published score, or ``score`` in the bootstrap."""
+    published = run.ctx.state.published_scores
+    if not published:
+        return _previous_score_failures(run, lambda key, fid, entry: entry["score"])
+    return _previous_score_failures(run, lambda key, fid, entry: published.get(key, {}).get(fid))
+
+
+def check_committed_previous_scores(run: Run) -> Iterator[Failure]:
+    """The bootstrap on a clone: with at most one run in ``state/run_history.json``, every
+    ``previous_score`` equals its ``score``."""
+    if len(run.ctx.state.run_history) > 1:
+        return iter(())
+    return _previous_score_failures(run, lambda key, fid, entry: entry["score"])
+
+
 CHECKS: tuple[tuple[str, Check], ...] = (
     ("schema", check_schema),
     ("ineligible_ranked", check_ineligible_ranked),
@@ -561,6 +601,7 @@ CHECKS: tuple[tuple[str, Check], ...] = (
     ("desktop_views_differ", check_desktop_views),
     ("abstention_leak", check_abstention_leak),
     ("raw_value_published", check_raw_values),
+    ("previous_score", check_previous_scores),
     ("private_fields", check_private_fields),
 )
 # What ``validate --committed`` runs: the checks a clone's committed files can answer.
@@ -568,6 +609,7 @@ COMMITTED_CHECKS: tuple[tuple[str, Check], ...] = (
     ("schema", check_schema),
     ("known_answer", check_committed_known_answers),
     ("raw_value_published", check_catalog_raw_values),
+    ("previous_score", check_committed_previous_scores),
     ("private_fields", check_private_fields),
 )
 

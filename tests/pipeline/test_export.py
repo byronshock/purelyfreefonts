@@ -685,7 +685,7 @@ def test_rank_entries_bands_and_gate(built) -> None:
     _, docs = built
     doc = fonts(docs[export.CATALOG_FILE])
     alpha = doc["alpha-sans"]["ranks"]["overall"]
-    assert alpha | {"score": None} == {
+    assert alpha | {"score": None, "previous_score": None} == {
         "rank": 1,
         "band": None,
         "order": 1,
@@ -694,6 +694,7 @@ def test_rank_entries_bands_and_gate(built) -> None:
         "gate_held": False,
         "unranked": None,
         "score": None,
+        "previous_score": None,
         "groups": 5,
     }
     gamma = doc["gamma-serif"]
@@ -1088,6 +1089,39 @@ def test_published_ranks_state(built) -> None:
     }
     assert "alpha-slab" not in published["desktop_installed"]  # not a catalog font
     assert published["coding"] == {"beta-mono": 1}
+
+
+def test_published_scores_state(built) -> None:
+    ctx, docs = built
+    published = jsonio.load(ctx.paths.next_state / "published_scores.json")
+    assert published == export.published_scores(docs[export.CATALOG_FILE])
+    alpha = fonts(docs[export.CATALOG_FILE])["alpha-sans"]["ranks"]["overall"]
+    assert published["overall"]["alpha-sans"] == alpha["score"]
+    assert "alpha-slab" not in published["desktop_installed"]  # not a catalog font
+
+
+def test_previous_score_is_the_score_before_any_catalog_is_published(built) -> None:
+    # Owner ruling of 2026-09-30 (score_previous_bootstrap): with no published scores in the
+    # state, last month's score is this month's, so no font shows as rising or falling.
+    _, docs = built
+    for name in (export.CATALOG_FILE, export.SITE_FILE):
+        entries = [e for f in docs[name]["fonts"] for e in f["ranks"].values()]
+        assert entries
+        assert all(e["previous_score"] == e["score"] for e in entries), name
+
+
+def test_previous_score_is_last_months_published_score(tmp_path: Path) -> None:
+    last_month = {"overall": {"alpha-sans": 1.25, "beta-mono": -0.5}}
+    ctx = make_build(tmp_path, state=State(published_scores=last_month), previews=PREVIEWS)
+    docs = run_all(ctx)
+    for name in (export.CATALOG_FILE, export.SITE_FILE):
+        doc = fonts(docs[name])
+        assert doc["alpha-sans"]["ranks"]["overall"]["previous_score"] == 1.25, name
+        assert doc["beta-mono"]["ranks"]["overall"]["previous_score"] == -0.5, name
+        # no score in that rank last month
+        assert doc["gamma-serif"]["ranks"]["overall"]["previous_score"] is None, name
+        assert doc["alpha-sans"]["ranks"]["desktop_chosen"]["previous_score"] is None, name
+        assert doc["alpha-sans"]["ranks"]["overall"]["score"] != 1.25, name
 
 
 def test_missing_stage_file_names_its_stage(tmp_path: Path) -> None:

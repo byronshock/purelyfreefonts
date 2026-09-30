@@ -283,7 +283,7 @@
       "description": "A font's place in one rank. Ranked: an exact rank (1-100) or a band, plus order, tier, range and score. Unranked: every placement field null and a reason; score is the fused score, if any, as in catalog.json.",
       "type": "object",
       "additionalProperties": false,
-      "required": ["rank", "band", "order", "tier", "range", "score", "gate_held", "unranked"],
+      "required": ["rank", "band", "order", "tier", "range", "score", "previous_score", "gate_held", "unranked"],
       "properties": {
         "rank": {"type": ["integer", "null"], "minimum": 1, "maximum": 100},
         "band": {
@@ -314,6 +314,10 @@
         },
         "score": {
           "description": "The fused score on the shared z scale, as in catalog.json. From Milestone 2 the list shows 100·Φ(score) as a bar (site rulings of 2026-09-29, score_display and score_curve).",
+          "type": ["number", "null"]
+        },
+        "previous_score": {
+          "description": "This font's score in this rank in the last published catalog (catalog.json's previous_score), on the same scale as score, or null if it had none there. Before any catalog has been published it equals score, so nothing shows as moved (owner ruling of 2026-09-30, score_previous_bootstrap). Kept for the rising and falling markers of Backlog TASK-4.",
           "type": ["number", "null"]
         },
         "gate_held": {

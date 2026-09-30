@@ -893,6 +893,43 @@ def test_committed_build_outputs_validate() -> None:
         validate_site(jsonio.load(ROOT / "build" / export.SITE_FILE))
 
 
+def set_previous_score(ctx: StageContext, name: str, fid: str, key: str, value: Any) -> None:
+    path = ctx.paths.build / name
+    doc = jsonio.load(path)
+    next(f for f in doc["fonts"] if f["id"] == fid)["ranks"][key]["previous_score"] = value
+    jsonio.dump(doc, path)
+
+
+def committed_failures(ctx: StageContext, check: str) -> list[validate.Failure]:
+    return [f for f in validate.hard_checks(ctx, validate.COMMITTED_CHECKS) if f.check == check]
+
+
+def test_a_bootstrap_previous_score_must_be_the_score(ctx: StageContext) -> None:
+    # Owner ruling of 2026-09-30 (score_previous_bootstrap): before any catalog is
+    # published, nothing may show as moved; checked in a run and on a clone.
+    set_previous_score(ctx, export.SITE_FILE, "alpha-sans", "overall", 0.0)
+    assert ids(checks(ctx)["previous_score"]) == {"alpha-sans"}
+    assert ids(committed_failures(ctx, "previous_score")) == {"alpha-sans"}
+
+
+def test_a_previous_score_must_be_last_months(tmp_path: Path) -> None:
+    last_month = {"overall": {"alpha-sans": 1.25}}
+    ctx = make_build(tmp_path, state=State(published_scores=last_month), previews=PREVIEWS)
+    run_all(ctx)
+    assert "previous_score" not in checks(ctx)
+    set_previous_score(ctx, export.CATALOG_FILE, "alpha-sans", "overall", 1.5)
+    assert ids(checks(ctx)["previous_score"]) == {"alpha-sans"}
+
+
+def test_a_clone_checks_previous_scores_only_while_bootstrapping(ctx: StageContext) -> None:
+    # After a second merged run, state/ holds that run's own scores, not the ones it started
+    # from, so a clone can't tell a wrong previous_score from a real move.
+    set_previous_score(ctx, export.SITE_FILE, "alpha-sans", "overall", 0.0)
+    runs = ({"run_date": "2026-09-26"}, {"run_date": "2026-10-26"})
+    later = dataclasses.replace(ctx, state=dataclasses.replace(ctx.state, run_history=runs))
+    assert committed_failures(later, "previous_score") == []
+
+
 # --- the committed outputs alone (validate --committed) --------------------------------------
 
 

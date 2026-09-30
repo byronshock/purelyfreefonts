@@ -107,6 +107,7 @@ The catalog is the overall top 500 plus the top 100 of the project rank and both
   - `too_new`: its terms in that rank are too new; in Rising, the font's first day on any channel is under 90 days ago (the "New" list);
   - `no_evidence`: anything else.
 - Either way, `score` is the fused score (null without a term) and `groups` the number of independence groups among observed terms.
+- `previous_score` is the font's score in that rank in the last published catalog (`state/published_scores.json`, which each run's export writes for the next), or null if it had none there. Before any catalog has been published it equals `score`, so nothing shows as moved (owner ruling of 2026-09-30, `score_previous_bootstrap`). It is kept for the rising and falling markers of Backlog TASK-4.
 
 ### Each source
 
@@ -148,7 +149,7 @@ The same as in `catalog.json`, trimmed:
 - `preview` and `font_file` only for fonts whose license allows previews; `font_file` also only up to 20 MB;
 - `aliases[]` only the renames, builds and PostScript names, which the search uses;
 - `flags[]` only `too_new` and the specimen flags (the others are in the rank entries);
-- each rank without `groups`, but with `score`, the fused score, which Milestone 2 shows as a 0–100 bar, 100·Φ(score) (site rulings of 2026-09-29, `score_display`, `score_curve`); every ranked entry has one;
+- each rank without `groups`, but with `score`, the fused score, which Milestone 2 shows as a 0–100 bar, 100·Φ(score) (site rulings of 2026-09-29, `score_display`, `score_curve`); every ranked entry has one; and `previous_score`, as in `catalog.json`;
 - each source as `state`, `rank_in_source`, `reason` and `abstains_in` only. The file never holds a raw value.
 
 The site build checks more than the schema can: unique ids, bands that follow each other, rank equal to order in the top 100, known classes and systems, one source entry per source, and each font in every available view (`tff_site.data.semantic_errors`).
@@ -182,6 +183,7 @@ The names Milestone 3 needs to recognise installed fonts. It covers the whole un
 8. **Abstentions don't leak.** A Linux source that abstains for a font in *most chosen* has no evidence for it in any other view where Linux sources abstain, and carries no weight in the overall rank.
 9. **No forbidden raw values.** `catalog.json` has no value for a source whose `publish_raw` is false. No committed report (`build/*.md`, `docs/backtests/*.md`) shows such a source's count of 100,000 or more (Google's of 10,000 or more) on a line that also names its font. Smaller counts, such as Fonts Over Time's, can't be told from chance, so the stages that write reports keep them out themselves. The review stage writes `build/review.md` before validation, so a run's own review is scanned.
 10. **No private fields.** No committed JSON file (`build/*.json`, the specimen index, `state/`) holds anything but ranks, rank-based z, states and reasons under the id of a source whose `publish_raw` is false.
+11. **Previous scores are last month's.** Every rank entry's `previous_score`, in both files, is the font's score in the last published catalog, or null if it had none. With no catalog published yet (no scores in `state/`), it equals `score`. `validate --committed` checks that bootstrap on a clone while `state/run_history.json` holds at most one run; later, `state/` holds the merged run's own scores, so only the run itself can check more.
 
 A check that can't run, because a file is missing or the check itself fails, counts as a failure; the other checks still run. Failures go to the log and, in the monthly refresh, to a public issue, so no failure message repeats a count the terms keep private.
 

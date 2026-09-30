@@ -791,6 +791,7 @@
         "gate_held",
         "groups",
         "order",
+        "previous_score",
         "range",
         "rank",
         "score",
@@ -852,6 +853,13 @@
           ]
         },
         "score": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "previous_score": {
+          "description": "This font's score in this rank in the last published catalog (state published_scores), on the same scale as score, or null if it had none there. Before any catalog has been published it equals score, so nothing shows as moved (owner ruling of 2026-09-30, score_previous_bootstrap). Kept for the rising and falling markers of Backlog TASK-4.",
           "type": [
             "number",
             "null"

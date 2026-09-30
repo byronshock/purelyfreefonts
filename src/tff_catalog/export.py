@@ -1,8 +1,10 @@
 """Stages "export" and "export-site" (milestone-1 step 15). Owner: agent P12.
 
 - "export" (15) writes ``build/catalog.json`` (``schemas/catalog.schema.json``,
-  methodology §7) from every stage output, and its part of the next state,
-  ``published_ranks`` ({rank key: {id: order}} for the catalog's fonts).
+  methodology §7) from every stage output, and its parts of the next state:
+  ``published_ranks`` ({rank key: {id: order}} for the catalog's fonts) and
+  ``published_scores`` ({rank key: {id: score}}), which next month's run reads for each
+  rank entry's ``previous_score``.
 - "specimens" (15b, Milestone 2) runs between them and fills ``preview``.
 - "export-site" (15c) copies the specimens' ``preview`` and flags into
   ``build/catalog.json``, then writes ``build/catalog-site.json``
@@ -748,11 +750,19 @@ def state_reason(term: Term | None, src: SourceBase) -> tuple[str, str | None]:
 class CatalogBuilder:
     """Builds catalog.json's parts from ``Inputs``; every method is a pure function."""
 
-    def __init__(self, cfg: Config, inputs: Inputs, run_date: date, views: tuple[str, ...]) -> None:
+    def __init__(
+        self,
+        cfg: Config,
+        inputs: Inputs,
+        run_date: date,
+        views: tuple[str, ...],
+        previous: Mapping[str, Mapping[str, float]] | None = None,
+    ) -> None:
         self.cfg = cfg
         self.inputs = inputs
         self.run_date = run_date
         self.views = views
+        self.previous = previous or {}
         self.sources = published_sources(cfg, inputs)
         self.src = cfg.ranking.sources.all()
         from tff_catalog.surveys import FOT
@@ -907,8 +917,10 @@ class CatalogBuilder:
         scores = self.inputs.scores.get(key)
         fused = scores.fused.get(fid) if scores else None
         placed = self.inputs.ranks.get(key, {}).get(fid)
+        score = num(fused.score) if fused else None
         entry: dict[str, Any] = {
-            "score": num(fused.score) if fused else None,
+            "score": score,
+            "previous_score": self.previous_score(key, fid, score),
             "groups": len(fused.groups) if fused else 0,
         }
         if placed is None:
@@ -941,6 +953,15 @@ class CatalogBuilder:
             "gate_held": placed.gate_held,
             "unranked": None,
         }
+
+    def previous_score(self, key: str, fid: str, score: float | None) -> float | None:
+        """The font's score in ``key`` in the last published catalog (state
+        ``published_scores``), or None if it had none there. Before any catalog has been
+        published (the bootstrap), the score itself, so nothing shows as moved (owner
+        ruling of 2026-09-30, score_previous_bootstrap)."""
+        if not self.previous:
+            return score
+        return self.previous.get(key, {}).get(fid)
 
     def unranked(self, key: str, fid: str) -> str:
         if key != "rising":
@@ -1092,7 +1113,7 @@ def catalog_document(
 ) -> dict[str, Any]:
     """``catalog.json`` from loaded inputs (``build_catalog`` without the file reads)."""
     views = available_views(cfg, state, run_date)
-    return CatalogBuilder(cfg, inputs, run_date, views).document(commit)
+    return CatalogBuilder(cfg, inputs, run_date, views, state.published_scores).document(commit)
 
 
 def build_catalog(ctx: StageContext) -> dict[str, Any]:
@@ -1109,6 +1130,17 @@ def published_ranks(catalog: Mapping[str, Any]) -> dict[str, dict[str, int]]:
         for key, entry in font["ranks"].items():
             if entry["order"] is not None:
                 out.setdefault(key, {})[font["id"]] = entry["order"]
+    return {k: dict(sorted(v.items())) for k, v in sorted(out.items())}
+
+
+def published_scores(catalog: Mapping[str, Any]) -> dict[str, dict[str, float]]:
+    """State ``published_scores``: {rank key: {id: score}} for every catalog font's rank
+    entry with a score, read by next month's run for ``previous_score``."""
+    out: dict[str, dict[str, float]] = {}
+    for font in catalog["fonts"]:
+        for key, entry in font["ranks"].items():
+            if entry["score"] is not None:
+                out.setdefault(key, {})[font["id"]] = entry["score"]
     return {k: dict(sorted(v.items())) for k, v in sorted(out.items())}
 
 
@@ -1158,7 +1190,17 @@ def site_font(
     file = font["font_file"] if preview_ok else None
     if file is not None and file["size"] > SITE_MAX_FONT_BYTES:
         file = None  # too big to serve for "Type your own text"
-    rank_fields = ("rank", "band", "order", "tier", "range", "score", "gate_held", "unranked")
+    rank_fields = (
+        "rank",
+        "band",
+        "order",
+        "tier",
+        "range",
+        "score",
+        "previous_score",
+        "gate_held",
+        "unranked",
+    )
     return {
         "id": font["id"],
         "family": font["family"],
@@ -1335,6 +1377,7 @@ def run(ctx: StageContext) -> None:
     doc = catalog_document(inputs, ctx.config, ctx.state, ctx.run_date, code_commit(ctx.paths.root))
     jsonio.dump(doc, ctx.paths.build / CATALOG_FILE)
     write_part(ctx.paths, "published_ranks", published_ranks(doc), stage="export")
+    write_part(ctx.paths, "published_scores", published_scores(doc), stage="export")
     ctx.log.info(
         "export: %d fonts, %d sources (commit %s)",
         len(doc["fonts"]),

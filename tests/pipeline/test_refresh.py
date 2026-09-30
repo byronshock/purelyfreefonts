@@ -97,7 +97,7 @@ PARTS: dict[str, tuple[str, ...]] = {
     "rank": ("smoothing",),
     "membership": ("membership", "first_seen"),
     "verify": ("license_hashes",),
-    "export": ("published_ranks",),
+    "export": ("published_ranks", "published_scores"),
 }
 
 

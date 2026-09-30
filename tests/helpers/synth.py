@@ -489,6 +489,7 @@ def advance(base: State, inputs: Inputs, run_date: date) -> tuple[dict[str, Any]
         "license_hashes": _license_hashes(base, run, members),
         "stale": _stale(base, inputs),
         "published_ranks": {"overall": {f: order[f] for f in members}},
+        "published_scores": {"overall": {f: scores[f] for f in members}},
         "smoothing": {"fot_ewma": {}, "rising": _rising(base, run)},
     }
     catalog = {
