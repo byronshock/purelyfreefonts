@@ -642,8 +642,10 @@ def deployed_rows(browser: Any, deployed_url: str) -> int:
     finally:
         context.close()
     rows = len(ROW.findall(html))
-    if rows == 0:
-        pytest.fail(f"{PERF_URL_ENV}={deployed_url} serves no list")
+    if rows < MIN_LARGE_FONTS:  # the budgets are for the full catalog, not a small sample
+        pytest.fail(
+            f"{PERF_URL_ENV}={deployed_url} lists {rows} fonts, fewer than {MIN_LARGE_FONTS}"
+        )
     return rows
 
 
