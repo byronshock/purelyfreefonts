@@ -21,6 +21,9 @@ const State = (() => {
   const DEFAULT_RANK = 'overall';
   const HIDES = Object.freeze(['limited', 'attr', 'windows', 'macos', 'linux', 'android']);
   const OSES = Object.freeze(['windows', 'macos', 'linux', 'android']);
+  // The sort orders (owner ruling of 2026-09-30, sort_header): by rank, best first (the
+  // default) or reversed, and by name, A to Z or reversed.
+  const SORTS = Object.freeze(['rank', 'rank-desc', 'name', 'name-desc']);
   const MAX_Q = 100;
   const TYPING_MS = 300;
   // Font ids, as the schema allows them.
@@ -102,7 +105,7 @@ const State = (() => {
       case 'q':
         return typeof value === 'string' ? clip(value) : '';
       case 'sort':
-        return value === 'name' ? 'name' : 'rank';
+        return SORTS.includes(value) ? value : 'rank';
       case 'font': {
         const id = String(value ?? '');
         if (!ID.test(id)) return '';
@@ -349,6 +352,7 @@ const State = (() => {
     DEFAULTS,
     HIDES,
     OSES,
+    SORTS,
     MAX_Q,
     parse,
     serialize,

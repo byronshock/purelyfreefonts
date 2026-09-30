@@ -157,11 +157,13 @@ const View = (() => {
     // 6. External filters that keep the published numbers.
     order = applyExternal(order, dim, keeping, index.ids);
 
-    // 7. By name, keeping the labels.
-    if (state.sort === 'name') {
+    // 7. By name, keeping the labels; then "-desc" reverses the whole order, unranked fonts
+    // included (owner ruling of 2026-09-30, sort_header: a true reverse).
+    if (state.sort === 'name' || state.sort === 'name-desc') {
       const position = new Map(index.by_name.map((i, k) => [i, k]));
       order = order.slice().sort((a, b) => position.get(a) - position.get(b));
     }
+    if (state.sort.endsWith('-desc')) order = order.slice().reverse();
 
     // 8. The result. Notes come from every filter, for every row shown.
     const labels = order.map((i) => labelOf.get(i));

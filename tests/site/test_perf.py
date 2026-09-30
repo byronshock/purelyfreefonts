@@ -418,8 +418,8 @@ def _refilter_steps(ranks: list[str]) -> list[tuple[str, str, str | None]]:
         ("check", "#f-hide-limited", None),
         ("check", "#f-nerd", None),
         ("select", "#f-os", "windows"),
-        ("select", "#f-sort", "name"),
-        ("select", "#f-sort", "rank"),
+        ("click", "#sort-name", None),
+        ("click", "#sort-rank", None),
     ]
     k = 0
     while len(steps) < REFILTER_STEPS:
@@ -445,6 +445,8 @@ def _refilter_once(
                 page.select_option(selector, value)
             elif action == "check":
                 page.check(selector)
+            elif action == "click":
+                page.click(selector)
             else:
                 page.uncheck(selector)
             for _ in range(200):

@@ -106,9 +106,12 @@ def oracle(doc: dict[str, Any], state: dict[str, Any]) -> tuple[list[str], list[
         else:
             labels.append(NOT_RANKED + data.UNRANKED_LABELS[entry["unranked"]])
     pairs = [(f["id"], label) for f, label in zip(shown, labels, strict=True)]
-    if state.get("sort") == "name":
+    sort = state.get("sort", "rank")
+    if sort in ("name", "name-desc"):
         names = {f["id"]: data.name_order(f) for f in shown}
         pairs.sort(key=lambda pair: names[pair[0]])
+    if sort.endswith("-desc"):  # a true reverse (owner ruling of 2026-09-30, sort_header)
+        pairs.reverse()
     return [p[0] for p in pairs], [p[1] for p in pairs], len(universe)
 
 
@@ -311,6 +314,9 @@ HASH_CASES = [
     ("#q=" + "a" * 150, "#q=" + "a" * 100),
     ("#sort=name", "#sort=name"),
     ("#sort=rank", ""),
+    ("#sort=name-desc", "#sort=name-desc"),
+    ("#sort=rank-desc&cat=serif", "#cat=serif&sort=rank-desc"),
+    ("#sort=desc", ""),
     ("#font=nope", ""),
     ("#font=Bad%20Id", ""),
     ("#os=linux", "#os=linux"),
@@ -412,7 +418,7 @@ def test_view_matches_the_oracle_for_every_rank_and_filter(
         {**filters, "rank": rank, "sort": sort}
         for rank in views
         for filters in _filter_sets(doc)
-        for sort in ("rank", "name")
+        for sort in ("rank", "rank-desc", "name", "name-desc")
     ]
     got = parts.run(
         "return arg.map((partial) => { const r = P.View.compute(P.State.coerce(partial), index, []);"
@@ -797,8 +803,8 @@ def hash_for(state: dict[str, Any]) -> str:
     hide = _hide(state.get("hide"))
     if hide:
         pairs.append("hide=" + ",".join(h for h in HIDES if h in hide))
-    if state.get("sort") == "name":
-        pairs.append("sort=name")
+    if state.get("sort", "rank") != "rank":
+        pairs.append(f"sort={state['sort']}")
     return "#" + "&".join(pairs) if pairs else ""
 
 
@@ -815,13 +821,16 @@ def test_filters_on_the_page_match_the_oracle(guarded_context: Any, doc: dict[st
         *([("#f-hide-attr", {"hide": ["limited", "attr", "linux"]})] if credit else []),
         ("#f-cat-monospace", {"cat": "monospace"}),
         ("#f-cat-all", {"cat": ""}),
-        (("#f-sort", "name"), {"sort": "name"}),
+        ("#sort-name", {"sort": "name"}),
+        ("#sort-name", {"sort": "name-desc"}),  # the button in use reverses its order
         (("#f-os", ""), {"hide": ["limited", "attr"] if credit else ["limited"]}),
     ]
     state: dict[str, Any] = {}
     for selector, change in steps:
         if isinstance(selector, tuple):
             page.select_option(*selector)
+        elif selector.startswith("#sort-"):
+            page.click(selector)
         else:
             page.check(selector)
         state.update(change)
@@ -900,7 +909,7 @@ def test_url_roundtrip_opens_the_same_view_in_a_fresh_browser(
     page.check("#f-cat-sans-serif")
     page.check("#f-hide-limited")
     page.select_option("#f-os", "macos")
-    page.select_option("#f-sort", "name")
+    page.click("#sort-name")
     page.locator("#f-q").press_sequentially("sample")
     page.wait_for_function("() => location.hash.includes('q=sample')")
     state = {
@@ -928,7 +937,9 @@ def test_url_roundtrip_opens_the_same_view_in_a_fresh_browser(
     assert other.input_value("#f-q") == "sample"
     for selector in ("#f-cat-sans-serif", "#f-hide-limited"):
         assert other.is_checked(selector), selector
-    assert (other.input_value("#f-os"), other.input_value("#f-sort")) == ("macos", "name")
+    assert other.input_value("#f-os") == "macos"
+    assert other.get_attribute("#sort-name", "aria-pressed") == "true"
+    assert other.get_attribute("#sort-name", "data-dir") == "asc"
     assert not other.is_checked("#f-var")
     measures = {v["key"]: v["measures"] for v in doc["views"]}
     assert other.text_content("#f-rank-measures") == measures[rank]
@@ -1070,9 +1081,9 @@ def test_rows_are_the_server_rendered_nodes_moved_not_rebuilt(
     page.evaluate("() => { window.__rows = [...document.querySelectorAll('#list > li.font')]; }")
     page.select_option("#f-rank", views[-1])
     page.check("#f-cat-serif")
-    page.select_option("#f-sort", "name")
+    page.click("#sort-name")
     page.check("#f-cat-all")
-    page.select_option("#f-sort", "rank")
+    page.click("#sort-rank")
     page.select_option("#f-rank", views[0])
     assert page.evaluate(
         """() => {
@@ -1119,7 +1130,7 @@ def test_clear_filters_keeps_the_rank_and_sort_order(
     rank = views[1]
     guarded, page = open_list(guarded_context)
     page.select_option("#f-rank", rank)
-    page.select_option("#f-sort", "name")
+    page.click("#sort-name")
     # "No credit required" shows only while some font needs credit (license_filter).
     credit = page.locator("#f-hide-attr").count() > 0
     for selector in ("#f-var", "#f-cat-serif", "#f-hide-limited", *(["#f-hide-attr"] * credit)):
@@ -1132,7 +1143,7 @@ def test_clear_filters_keeps_the_rank_and_sort_order(
     assert page.input_value("#f-q") == ""
     assert page.is_checked("#f-cat-all")
     assert page.input_value("#f-os") == ""
-    assert page.input_value("#f-sort") == "name"
+    assert page.get_attribute("#sort-name", "aria-pressed") == "true"  # the order stays
     assert not page.is_checked("#f-var")
     assert not page.is_checked("#f-hide-limited")
     if credit:
@@ -1174,9 +1185,8 @@ def test_the_live_region_is_polite_coalesced_and_never_repeats_silently(
     ids, _, total = oracle(doc, {"var": True, "hide": ["limited"]})
     line = count_line(len(ids), total)
     assert status(page) == line
-    page.select_option("#f-sort", "name")  # same count: announced again, not skipped
-    assert status(page) != line
-    assert status(page).rstrip("\u00a0") == line
+    page.click("#sort-name")  # same count, a new order: the order is said too
+    assert status(page) == f"{line}. Sorted by name, A to Z."
     # Typing is announced after a pause (timed exactly, with the page clock, in
     # test_search_writes_the_url_after_300_ms_and_speaks_after_500_ms). "zz" alone
     # finds Piazzolla in the real catalog.

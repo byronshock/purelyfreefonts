@@ -1437,7 +1437,12 @@ def test_real_templates_render_the_list_contract(tmp_path, catalog, real_site):
     assert options == [v["key"] for v in SAMPLE["views"] if v["available"]]
     assert options[0] == "overall"
     assert selects["f-os"] == ["", "windows", "macos", "linux", "android"]
-    assert selects["f-sort"] == ["rank", "name"]
+    assert "f-sort" not in selects  # sorting is buttons over the list (sort_header)
+    sorts = [a for t, a in tags if t == "button" and a.get("data-sort")]
+    assert [(a["id"], a["aria-pressed"]) for a in sorts] == [
+        ("sort-rank", "true"),
+        ("sort-name", "false"),
+    ]
     # specimens: the script's span and the no-script image name the same hashed file
     spans = {a["aria-label"]: a["data-src"] for t, a in tags if a.get("class") == "spec"}
     imgs = [a for t, a in tags if t == "img" and a.get("class") == "spec-img"]

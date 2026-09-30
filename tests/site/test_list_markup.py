@@ -345,16 +345,26 @@ def test_filter_controls_match_the_hash(dom, doc):
     assert nerd.parent.parent.attrs["id"] == "f-type"  # beside "Adjustable weight"
     assert nerd.attrs["aria-describedby"] == "nf-legend"
     assert not any("checked" in i.attrs for i in search.find_all("input", type="checkbox"))
-    # Sort sits beside the count, outside the filters, hidden until the script shows it.
-    sort_by = dom.find("p", id="sort-by")
-    assert "hidden" in sort_by.attrs
-    assert search.find(id="f-sort") is None
-    sort = sort_by.find("select", id="f-sort")
-    assert sort.attrs["name"] == "sort"
-    assert [(o.attrs["value"], "selected" in o.attrs) for o in sort.find_all("option")] == [
-        ("rank", True),
-        ("name", False),
+    # Sort: buttons over the list's columns, outside the filters, hidden until the script
+    # shows them (owner ruling of 2026-09-30, sort_header).
+    bar = dom.find("div", id="list-sort")
+    assert "hidden" in bar.attrs
+    assert (bar.attrs["role"], bar.attrs["aria-label"]) == ("group", "Sort the list")
+    assert search.find(class_="sort-btn") is None
+    buttons = bar.find_all("button")
+    assert [(b.attrs["id"], b.attrs["data-sort"], b.attrs["aria-pressed"]) for b in buttons] == [
+        ("sort-rank", "rank", "true"),
+        ("sort-name", "name", "false"),
     ]
+    rank, name = buttons
+    assert (rank.attrs["data-asc"], rank.attrs["data-desc"]) == ("best first", "least used first")
+    assert (name.attrs["data-asc"], name.attrs["data-desc"]) == ("A\u2013Z", "Z\u2013A")
+    assert (name.attrs["data-asc-spoken"], name.attrs["data-desc-spoken"]) == ("A to Z", "Z to A")
+    assert rank.attrs["data-dir"] == "asc" and "data-dir" not in name.attrs
+    assert squash(rank.text) == "Sort by Rank best first best first; select to show least used first"
+    assert squash(name.text) == "Sort by Name"
+    for button in buttons:
+        assert button.find("span", class_="sort-arrow").attrs["aria-hidden"] == "true"
     toggle = search.find("button", id="f-toggle")
     assert toggle.attrs["aria-controls"] == "f-more"
     assert toggle.attrs["aria-expanded"] == "false"
@@ -371,13 +381,13 @@ def test_the_nerd_legend_is_the_owners(dom, doc):
     mark = legend.elements()[0]
     assert (mark.tag, mark.classes, squash(mark.text)) == ("span", ["nf-mark"], "NF")
     results = dom.find("section", id="results").elements()
-    assert [n.attrs.get("id") or n.attrs.get("class") for n in results[:4]] == [
+    assert [n.attrs.get("id") for n in results[:4]] == [
         "results-h",
         "ext-summary",
-        "list-head",  # the count and Sort
+        "count",
         "nf-legend",
     ]
-    assert results[2].find("p", id="count") is not None
+    assert results[-2].attrs["id"] == "list-sort"  # the sort buttons sit right over the list
 
 
 SITE_RULINGS_0929 = tomllib.loads(
@@ -549,7 +559,7 @@ def test_narrow_screens_put_the_filters_behind_the_toggle(browser, site_url):
         page.evaluate(OPEN_PANEL, True)
         assert page.is_visible("#f-more")
         assert page.is_visible("#f-os")
-        assert page.is_visible("#f-sort")  # Sort sits beside the count, outside the panel
+        assert page.is_visible("#list-sort")  # Sort sits over the list, outside the panel
     finally:
         context.close()
 

@@ -185,18 +185,21 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
       <p id="ext-summary" class="ext-summary" hidden></p>             <!-- Milestone 3: tff.list.setSummary -->
       <!-- Main inserts <p id="load-note" class="noscript-note"> here, before #count, when the
            list index fails to load or doesn't match the rows; the server's list stays. -->
-      <div class="list-head">
-        <p id="count" class="count">Showing 540 of 540 fonts</p>
-        <p id="sort-by" class="sort-by" hidden><label for="f-sort">Sort</label>   <!-- shown by the script -->
-          <select id="f-sort" name="sort"><option value="rank" selected>By rank</option>
-            <option value="name">By name</option></select></p>
-      </div>
+      <p id="count" class="count">Showing 540 of 540 fonts</p>
       <p id="nf-legend" class="nf-legend"><span class="nf-mark">NF</span>: Nerd Font version available
         (adds developer icons, which have their own licenses).</p>     <!-- the catalog's nerd.legend -->
       <div id="status" class="visually-hidden" role="status"></div>  <!-- Announce's only live region -->
       <div id="no-results" class="no-results" hidden>
         <p id="no-results-text">…names the filters to loosen…</p>
         <button type="button" id="no-results-clear">Clear filters</button>
+      </div>
+      <div id="list-sort" class="list-sort" role="group" aria-label="Sort the list" hidden>  <!-- shown by the script -->
+        <button type="button" class="sort-btn" id="sort-rank" data-sort="rank" data-asc="best first"
+          data-desc="least used first" data-asc-spoken="…" data-desc-spoken="…" aria-pressed="true"
+          data-dir="asc"><span class="visually-hidden">Sort by </span><span class="sort-label">Rank</span>
+          <span class="sort-arrow" aria-hidden="true"></span><span class="sort-dir">…</span></button>
+        <button type="button" class="sort-btn" id="sort-name" data-sort="name" data-asc="A–Z" data-desc="Z–A"
+          data-asc-spoken="A to Z" data-desc-spoken="Z to A" aria-pressed="false">…Name…</button>
       </div>
       <ol id="list" class="font-list" data-index="/assets/list.<h>.json"
           data-details="/assets/details.<h>.json" data-run-date="2026-09-25">…rows…</ol>
@@ -207,9 +210,10 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 
 - **The front page's note** (site rulings of 2026-09-29, `data/reviews/site/2026-09-29.toml`: `why_not_listed`, `why_not_listed_layout`): "Why isn't my favorite free font here?" and the owner's text, word for word, in `index.html.j2`, the address a `mailto:` link to `site.feedback.email`. It is in the HTML twice and the stylesheet displays one, so neither needs a script and nothing moves as the page loads: `div.why-wide` from `40rem` up, a frame floated right beside the lead and the privacy note, which wrap around it, while `.layout` clears it, so the list starts below the frame and rows are never narrowed; `details.why-fold` at `40rem` and below, full width under the intro, folded to its `summary`. The other copy is `display: none`, so screen readers get the text once.
 - The controls' `name` attributes are the hash keys (section 9); `value` is the key's value. Filters live in `<search>` and `<fieldset>`/`<legend>` groups, never in a `<form>`.
-- `#filters` and `#sort-by` carry `hidden` in the HTML; the script removes it. Showing them must not move the list (reserve their space in CSS), because the layout-shift budget is 0.1.
+- `#filters` and `#list-sort` carry `hidden` in the HTML; the script removes it. Showing them must not move the list (reserve their space in CSS), because the layout-shift budget is 0.1.
 - Narrow screens are below `60rem`: `#f-more` is hidden until `#f-toggle` expands it, and `#f-toggle`'s text includes the number of active filters. From `60rem` up, `#f-more` is always shown in the sidebar and `#f-toggle` is hidden.
-- **The filter set** (owner rulings of 2026-09-30, `data/reviews/site/2026-09-30.toml`: `monospace_category`, `license_filter`, `filters_layout`). Category's **Monospace** is every monospaced font, the list Coding orders, and the other categories hold proportional fonts only: the list index's `cat` is the site category (section 7). There is no Spacing filter (it replaced "Text only" and "Monospace only" on 2026-09-25) and no license-group or "Redistributable fonts only" filter (Rule 3). `#f-hide-attr`, "No credit required", is rendered only while some font needs credit. `#f-os` offers one operating system at a time; its value joins `hide` with the checked boxes. Sort (`#f-sort`) sits beside `#count`, outside `#filters`.
+- **The filter set** (owner rulings of 2026-09-30, `data/reviews/site/2026-09-30.toml`: `monospace_category`, `license_filter`, `filters_layout`). Category's **Monospace** is every monospaced font, the list Coding orders, and the other categories hold proportional fonts only: the list index's `cat` is the site category (section 7). There is no Spacing filter (it replaced "Text only" and "Monospace only" on 2026-09-25) and no license-group or "Redistributable fonts only" filter (Rule 3). `#f-hide-attr`, "No credit required", is rendered only while some font needs credit. `#f-os` offers one operating system at a time; its value joins `hide` with the checked boxes.
+- **Sorting** (owner ruling of 2026-09-30, `sort_header`): `#list-sort`, over the list, outside `#filters`, holds one `button.sort-btn[data-sort]` per column, Rank and Name. `aria-pressed="true"` and `data-dir` (`asc` or `desc`) mark the column in use: the CSS fills that one of its two stacked arrows (`.sort-arrow`), and `.sort-dir` holds the order's words, from the button's `data-asc`/`data-desc` (shown) and `data-asc-spoken`/`data-desc-spoken` (for screen readers, with what a click does). A click on the button in use reverses its order; a click on the other sorts by it, `asc`. The announcement after a sort change adds "Sorted by <label>, <spoken words>" to the count line.
 - `#f-nerd` ("Nerd Font available", owner's site ruling of 2026-09-29, `data/reviews/site/2026-09-29.toml`, `nerd_filter`) keeps only the fonts with a Nerd Font build, on every rank. `#nf-legend` describes it and explains the rows' marker: the catalog's `nerd.legend`, its leading marker shown as `span.nf-mark`.
 
 ### A row
@@ -301,7 +305,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 4. Sort ranked fonts by `order`, then unranked fonts by `by_name`.
 5. Number per M2-D2: a counter counts only fonts with `top > 0`; others take their band label; unranked fonts take "Not ranked: <why label>".
 6. Apply the external filters with `affectsNumbering: false` (Milestone 3's "numbers stay as published").
-7. With `sort=name`, re-sort by `by_name`, keeping the labels.
+7. With `sort=name` or `name-desc`, re-sort by `by_name`, keeping the labels; then with `rank-desc` or `name-desc`, reverse the whole order (a true reverse: unranked fonts come first when the rank is reversed).
 8. Return `order` (font indexes to show, in order), `labels`, `dimmed` and `notes` (parallel to `order`), `shown` and `total` (the size of the rank's universe).
 
 ## 6. CSS parts and tokens
@@ -439,7 +443,7 @@ key   = "rank" / "cat" / "var" / "nerd" / "hide" / "q" / "sort" / "font"
 | `nerd` | `1`: "Nerd Font available", fonts with a Nerd Font build only | off |
 | `hide` | any of `limited` (shown as "Accented letters"), `attr` ("No credit required"), and at most one of `windows`, `macos`, `linux`, `android`, in this order; a second system is dropped | nothing hidden |
 | `q` | search text, at most 100 characters | empty |
-| `sort` | `name` | `rank` |
+| `sort` | `rank-desc` (the whole rank order reversed, unranked fonts first), `name` (A–Z) or `name-desc` (Z–A) | `rank` (best first) |
 | `font` | a font id: its details panel is open | none |
 
 - **Writing:** keys in the table's order, defaults left out; the default view is the empty hash, restored with `history.replaceState(null, '', location.pathname + location.search)`. Discrete changes use `pushState`; search typing uses `replaceState`, debounced 300 ms.

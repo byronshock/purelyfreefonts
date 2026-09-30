@@ -105,10 +105,13 @@ CONTROLS_JS = """() => [
   ...Array.from(
     document.querySelectorAll('#filters input[type=checkbox], #filters input[type=radio]'),
     (el) => ({ id: el.id, type: el.type, name: el.name, checked: el.checked })),
-  // the systems to hide and the sort order are selects (owner ruling of 2026-09-30)
-  ...Array.from(document.querySelectorAll('#f-os, #f-sort'),
+  // the systems to hide are a select, and the sort order buttons over the list
+  // (owner rulings of 2026-09-30)
+  ...Array.from(document.querySelectorAll('#f-os'),
     (el) => ({ id: el.id, type: 'select', name: el.name, value: el.value,
                options: Array.from(el.options, (o) => o.value) })),
+  ...Array.from(document.querySelectorAll('#list-sort button[data-sort]'),
+    (el) => ({ id: el.id, type: 'sort', name: 'sort' })),
 ]"""
 INDEX_JS = """async () => {
   const index = await globalThis.tff.list.index();
@@ -333,6 +336,14 @@ class Sweep:
         if control["type"] == "checkbox":
             self._change(page, partial(page.check, selector))
             self._change(page, partial(page.uncheck, selector))
+        elif control["type"] == "sort":
+            # Each button twice: its column, then reversed; then back to the default order.
+            self._change(page, partial(page.click, selector))
+            self._change(page, partial(page.click, selector))
+            if page.evaluate("() => location.hash.includes('sort=')"):
+                self._change(page, partial(page.click, "#sort-rank"))
+                if page.evaluate("() => location.hash.includes('sort=')"):
+                    self._change(page, partial(page.click, "#sort-rank"))
         elif control["type"] == "select":
             for value in control["options"]:
                 if value != control["value"]:
@@ -356,8 +367,8 @@ class Sweep:
     def _clear(self, page: Any) -> None:
         self._change(page, partial(page.check, "#f-var"))
         self._change(page, partial(page.click, "#f-clear"))
-        if page.input_value("#f-sort") != "rank":
-            self._change(page, partial(page.select_option, "#f-sort", "rank"))
+        while page.evaluate("() => location.hash.includes('sort=')"):
+            self._change(page, partial(page.click, "#sort-rank"))
 
     def _phone(self, page: Any) -> None:
         page.set_viewport_size(PHONE)
