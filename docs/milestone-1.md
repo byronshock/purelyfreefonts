@@ -1,19 +1,68 @@
 # Milestone 1 checklist: build catalog.json (about 500 families)
 
-Milestone 1 builds the ranked, license-checked catalog that the filterable list (Milestone 2) will publish. The method is in [ranking-methodology.md](ranking-methodology.md), and settled decisions go in [AUTHORITY.md](../AUTHORITY.md).
+Milestone 1 builds the ranked, license-checked catalog that the filterable list (Milestone 2) publishes. The method is in [ranking-methodology.md](ranking-methodology.md), and settled decisions are in [AUTHORITY.md](../AUTHORITY.md).
 
-**How to read each step:**
+**Where it stands (2026-09-30).** The catalog is built, reviewed by the owner and committed: 500 fonts, ranked and license-checked, and the site's data file is ready. Two steps are left: switching on the monthly refresh (step 19) and handing off to Milestone 2 (step 20). Four smaller items can be done any time. Everything finished is under [Completed](#completed) at the bottom, with its evidence.
 
-- **Who:** the owner, Claude, or both.
-- **Depends on:** the steps that must finish first.
-- **Done when:** what must be true before the step is ticked.
-- **Parallel:** where Claude can run several agents at once.
-
-Tick each item as soon as it is done and verified. If an item is only partly done, leave it unticked and note what's left.
-
-**Critical path:** 0 → 1 → 2 → 3 → 4 → (5, 5b, 6a and 7, alongside 8) → 9 → 10 → 11 → 12 → 6b → 13 → 15 → 16 → (17 and 18) → 19 → 20. Step 14 runs alongside steps 8–13.
+**How to read it.** *Who* says who does the work, *Needs* what must be finished first, and *Done when* what must be true to close a step. When an item is done and verified, tick it and move it to Completed.
 
 ---
+
+## Still to do
+
+### Step 19: Switch on the monthly refresh
+**Who:** Claude sets it up with `gh` (owner ruling CI1, 2026-09-26); the owner merges the first refresh pull request. **Needs:** nothing more: the one-command refresh (step 18) is done.
+
+The workflow, `.github/workflows/refresh.yml`, is written but has never run on GitHub. Its schedule stays off until the repository variable `REFRESH_SCHEDULE` is "on" (owner ruling of 2026-09-29).
+
+- [ ] Let refresh pull requests trigger CI: turn on "Allow GitHub Actions to create and approve pull requests" with `gh` (it is off now). The refresh job opens its pull request with `GITHUB_TOKEN` and then starts `ci.yml` on `refresh/monthly` itself, because pull requests that token opens trigger no workflows. No GitHub App or personal token is needed.
+- [ ] Give the workflow the private data store: create the data repository's deploy key and this repository's `DATA_STORE_KEY` secret (D15), and record both in SERVER.md and here.
+- [ ] Run it once by hand (`workflow_dispatch`) and check:
+  - that the collectors work on GitHub's runners: rate limits, the GitHub API budget, and whether Google's endpoints respond;
+  - that it opens or updates the pull request on the fixed branch `refresh/monthly` with `catalog.json`, `catalog-site.json`, `review.md`, the `state/` changes, and the alias rows and seeds the run added to `data/`, and that a hard failure fails the job and opens an issue instead (the `publish` and `report` jobs, written but not yet run).
+- [ ] Install the watchdog on the VPS. GitHub disables scheduled workflows in public repositories after 60 days without activity, so a timer outside GitHub, reading its public API, warns the owner if no refresh pull request has appeared for 35 days, or `main` has had no commit for 50 days. (Written: `ops/refresh-watchdog/`, a script with a systemd timer.)
+- [ ] Turn the schedule on with `gh variable set REFRESH_SCHEDULE --body on`. The workflow then runs at 06:17 UTC on the 3rd of each month (`17 6 3 * *`) and on demand, with a uv cache, the `refresh` concurrency group, and write permission for `contents`, `pull-requests` and `issues`.
+
+**Done when:** a manual run opens a correct pull request, CI runs on it, and the owner merges it.
+
+### Step 20: Hand off to Milestone 2
+**Who:** both. **Needs:** step 19.
+
+- [ ] Freeze `catalog-site.json` v1: `schema_version` goes from `1.0.0-draft` to `1.0.0`, with the sample file and the schema doc. First, Milestone 2's step 2 approves the fields added since it approved the list on 2026-09-25, each from an owner ruling: the `nerd` group, the `app` system type, a link `note`, `score` and `previous_score`.
+- [ ] A handoff note lists what Milestone 2 must settle:
+  - the default rank order;
+  - numbering under filters, now scores in place of numbers (AUTHORITY.md, "Scores instead of numbers");
+  - the deploy path to the VPS;
+  - the methodology page.
+- [ ] A runbook lists the manual monthly tasks (methodology §10). None exists yet in `ops/` or `docs/`.
+- [ ] "Current step" in AUTHORITY.md moves to Milestone 2, and `docs/roadmap.md` shows the new status.
+
+**Done when:** the owner accepts the handoff.
+
+### Smaller items, any time
+None of these blocks the refresh or the handoff.
+
+- [ ] <a id="step-3"></a>**Step 3, run state.** The state that carries from month to month is built (`state.py`): a run writes it to `build/state/`, the one `refresh/monthly` pull request copies it to `state/`, and a new run replaces an unmerged one. `state/` stays empty until the first refresh pull request is merged. Still open:
+  - the four `[real]` cases of `tests/pipeline/test_state_two_runs.py` (two runs without a merge give the same state as one run) xfail until the synthetic store holds the real collectors' extract formats; the stub pipeline and the real state and parse modules pass;
+  - no run has yet fetched one real source twice on one date to show that it keeps exactly one snapshot per date (the fake-collector tests in `tests/test_store.py` and `tests/test_fetch.py` pass).
+- [ ] **Step 5, fonts without a readable file.** 129 families are out as `no_file`, because the pipeline has no file of theirs to test for Latin coverage.
+  - Next, now that the Milestone 1 pull request has merged (owner ruling `no_file_builds`, 2026-09-29): the builds and umbrella casks among them, and the 21 Iosevka variants.
+  - Waiting for the pipeline to read tar archives (`no_file_files`): Computer Modern, New Computer Modern, Spleen and Scientifica.
+  - Out anyway: Microsoft's and Apple's fonts and the mainly CJK fonts; no ranking source counts the 64 others.
+- [ ] **Step 13, backtest.** Run `tff-catalog backtest` on the real store and commit its report to `docs/backtests/`. (Built: `backtest.py`; `tests/pipeline/test_backtest.py`. `ranking.toml [review]` keeps the §9 alert thresholds until the owner revisits them after 3 merged refreshes, ruling of 2026-09-26.)
+- [ ] **Step 14, a monthly link check that tells someone.** The check runs in every refresh and as `tff-catalog links --check`, but a failure reaches only the log and `build/stage/queues/links.json`: `review.md`, validate and gate K don't report it, and `refresh.yml` doesn't run `links --check`. So a link that breaks later would stay published without a flag.
+
+### Moved out of this milestone
+- **Step 15b**, every other qualifying font A–Z and fonts added on request: moved on 2026-09-30 to [milestone-more-fonts.md](milestone-more-fonts.md), after Milestone 2's launch (`more_fonts_timing`, AUTHORITY.md).
+
+---
+
+## Completed
+
+The finished steps and items, as they were ticked, with their evidence. The critical path was 0 → 1 → 2 → 3 → 4 → (5, 5b, 6a and 7, alongside 8) → 9 → 10 → 11 → 12 → 6b → 13 → 15 → 16 → (17 and 18) → 19 → 20, with step 14 alongside steps 8–13.
+
+<details>
+<summary>Every finished step and item, with its evidence (click to open)</summary>
 
 ### Step 0: Owner reviews the ranking methodology
 **Who:** owner; Claude answers questions and makes edits. **Depends on:** nothing.
@@ -89,11 +138,6 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - font-relevant extracts plus a manifest (url, sha256, fetched_at, status) in `<store>/<source>/<YYYY-MM-DD>/`;
   - big raw files expire after the run;
   - a size check.
-- [ ] Run-state design: *(Built in `state.py`; `refresh.yml` copies `build/state/` to `state/` in the one `refresh/monthly` pull request, which a new run replaces; `tests/pipeline/test_refresh.py`. `state/` holds only `.gitkeep` until the first refresh pull request is merged.)*
-  - `state/` on `main` holds membership counters, first_seen, license hashes, stale counters, last published ranks and snapshot baselines;
-  - state advances only when a refresh pull request is merged;
-  - a new run replaces an unmerged refresh pull request;
-  - test: two runs without a merge give the same state as one run. *(Proven for the stub pipeline and the real state and parse modules; the four `[real]` cases of `tests/pipeline/test_state_two_runs.py` still xfail until the synthetic store holds the real collectors' extract formats.)*
 - [x] Stale-data policy: reuse the last snapshot for up to 2 months, flagged. *(`[stale] max_months = 2`: `parse` takes the newest snapshot of the last 62 days, flags the source stale in `review.md` and the catalog's `sources`, then drops it; `tests/test_parse.py::test_stale_and_dropped_sources`, `tests/test_fetch.py`.)*
 - [x] Terms audit, one row per source, recording whether raw values and fixtures may be republished. The result goes in `docs/sources.md`. *(Rulings T1–T5 given 2026-09-25, in `data/reviews/terms/`; `docs/sources.md` written and its links and quotes checked 2026-09-25. The owner ruled its two open points on 2026-09-26: ecosyste.ms is collected and credited per its terms, and Google's shares stay in the private data repository (`data/reviews/terms/2026-09-26.toml`).)* Rows:
   - Google's undocumented endpoints;
@@ -108,16 +152,6 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - Chocolatey;
   - GitHub.
 - [x] Claude drafts a request to the Fonts Over Time author for an explicit data license (for example CC BY 4.0); the owner posts it. *(Posted 2026-09-25 as [fcjr/fontsovertime#1](https://github.com/fcjr/fontsovertime/issues/1).)*
-
-**Done when:**
-- fetching one real source twice leaves exactly one snapshot per date, with no duplicates;
-- the state test passes;
-- the owner has ruled on the terms table;
-- the data license is final.
-
-*(Still open: no run has yet fetched one real source twice on one date (the fake-collector tests in `tests/test_store.py` and `tests/test_fetch.py` pass), and the four `[real]` cases of the state test xfail. The terms are ruled, and the data license is final.)*
-
-**Parallel:** split the terms audit by source.
 
 ### Step 4: Candidate universe
 **Who:** Claude. **Depends on:** 2, 3.
@@ -145,11 +179,6 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 **Who:** Claude; the owner signs off the allowlist. **Depends on:** 4 and D4.
 - [x] Google families: apply rule A (expect 1,264). *(`latin.rule_a`; on Google's list of 2026-09-26 it passes 1,248 of the 1,946 families, not the 1,264 of earlier data; `tests/pipeline/test_latin.py::test_rule_a`.)*
 - [x] Dual-script review sheet: about 30 candidates, sorted by Google year views, with the Latin-language counts from each family's metadata. The owner marks the allowlist. *(2026-09-26: the real sheet had 443 candidates; the owner ruled a rule instead (gate L2), which Claude applied family by family in `data/reviews/latin/2026-09-26.toml`: 178 included, 206 script companions and 59 basic-Latin-only families left out. 2026-09-28: the owner confirmed that the 149 companions the first count had put on the include side stay out (`data/reviews/latin/2026-09-28.toml`); the latest run's latin stage has the 178 as `owner_allowlist`.)*
-- [ ] Non-Google fonts: *(Built: `latin.py` and `fontfiles.py` test one file per family, or Fontsource's full code-point list, against the GF glyphsets with fontTools, cache the result by file sha256 and record basic or extended; `tests/pipeline/test_latin.py`, `tests/test_fontfiles.py`. The 2026-09-29 audit found 141 families with no readable file, out as `no_file` without a test. 2026-09-29: `config/font-files.toml` (`fontfiles.load_font_files`, read by stages latin, facts and verify) names a pinned official file for 10 of them: Go, Liberation Sans and Serif, ET Book and Open Sans Hebrew and Condensed pass; Humor Sans, Routed Gothic, Tamzen and Liga Comic Mono fail on the Kernel (checked in a replay of the 2026-09-26 snapshots with those files read live). The owner's rulings of the same day (`data/reviews/latin/2026-09-29.toml`, `data/reviews/aliases/2026-09-29.toml`): Linux Libertine and Linux Biolinum take CTAN's copies of the designer's 5.3.0 files, pinned by sha256 (the table takes such a file as `{url, sha256, size}`), and pass with extended coverage; Open Sans Hebrew and Condensed stay out as basic-Latin Hebrew versions of Open Sans. Still open: 129 are out as `no_file`. The builds and umbrella casks among them and the 21 Iosevka variants wait until after the Milestone 1 pull request (owner ruling of 2026-09-29, `no_file_builds`), and so do Computer Modern, New Computer Modern, Spleen and Scientifica, which wait for the pipeline to read tar archives (`no_file_files`); Microsoft's and Apple's fonts and mainly CJK fonts are out anyway, and the 64 others no ranking source counts.)*
-  - fetch one Regular file per candidate;
-  - test it against the GF glyphsets with fontTools;
-  - cache the result by file hash;
-  - record coverage (basic or latin-ext).
 - [x] Map CJK builds to their Latin parent at `cjk_build_credit`, and exclude families that are mainly CJK. *(Built: `build` rows with detail `cjk` fold CJK builds into their parent (Maple Mono's CN casks), and the real run keeps 367 mainly-CJK families out; `tests/pipeline/test_latin.py`, `tests/pipeline/test_corrections.py`. 2026-09-29: Homebrew's four HackGen and Cica casks fold into Hack as builds, as gate A made Arch's `ttf-hackgen` and `ttf-cica` on 2026-09-28 (Claude's ruling `claude-hackgen-cica-casks`, `data/reviews/aliases/2026-09-29.toml`); in a replay of the 2026-09-26 snapshots the four families are gone and 363 mainly-CJK families are out.)*
 
 **Done when:**
@@ -177,7 +206,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - [x] L1: map every license string to an SPDX ID through `licenses.toml`. *(Built: `licenses.normalize` and `classify` read strings through `config/license-aliases.toml` and `licenses.toml`; `tests/pipeline/test_licenses.py`. 2026-09-29: the 8 strings the run could not read are mapped: Arch's `LicenseRef-OFL-1.1`, `LicenseRef-GUST-Font-1.0` and `custom:Ubuntu Font Licence 1.0`; Debian's `BSD3|SIL` (IBM 3270), `OFL-1.1-no-RFN or EPL-2.0 or BSD-3-clause` (B612) and `GPL-3+ with Special Font Exception` (FreeFont's font files); and Fontist's AU Passata and fontopo ids. EPL-2.0 and those two Fontist licenses are new, so `licenses.toml` holds them in the ruling class for the owner. In a replay of the 2026-09-26 snapshots `licenses --queue` has no L1 item left.)*
 - [x] L2: cross-check the google/fonts folder, Fontsource, Fontist, Nerd Fonts, Debian DEP-5 and Arch. *(`licenses.cross_check` combines the license facts of all six and queues disagreements; `tests/pipeline/test_licenses.py`.)*
 - [x] Per font, provisionally: class, redistributable, attribution_required and preview_ok (per D3). *(`licenses.Verdict` for all 1,816 candidates of the 2026-09-29 run: 1,747 allowed, 65 excluded, and 4 waiting on strings L1 can't read (AU Passata, AU Passata Light, AU Peto, fontoPoSOLID); `tests/pipeline/test_licenses.py::test_d3_classes`. Later that day, with 6 more families through the Latin gate: 1,822 candidates, 1,750 allowed, 68 excluded (ET Book and Open Sans Hebrew and Condensed have no license found), and the same 4 waiting on the owner's rulings of their now readable licenses.)*
-- [ ] Rule 3 of 2026-09-30 (owner ruling `redistributable_only`): only redistributable fonts qualify. Gate LIC's option (b) now reads "Excluded: free to use but not redistributable (Rule 3)", and a stored (b) answer excludes; a `licenses.toml` entry with `redistributable = false` classifies as excluded; export fails on an allowed font that isn't redistributable. *(Built on branch `claude/calmer-details-filters`: `tff_catalog.licenses`, `export`; `tests/pipeline/test_licenses.py`, `test_export.py`. Left: the next real-store run, which should drop the 14 fontopo families (`LIC-spdx-licenseref-fontopo-free` was ruled (b) on 2026-09-29), none of them in the catalog, and leave the 500 unchanged.)*
+- [x] Rule 3 of 2026-09-30 (owner ruling `redistributable_only`): only redistributable fonts qualify. Gate LIC's option (b) now reads "Excluded: free to use but not redistributable (Rule 3)", and a stored (b) answer excludes; a `licenses.toml` entry with `redistributable = false` classifies as excluded; export fails on an allowed font that isn't redistributable. *(`tff_catalog.licenses`, `export`; `tests/pipeline/test_licenses.py`, `test_export.py`. Merged in [#25](https://github.com/byronshock/trulyfreefonts/pull/25); its real-store rebuild (d6144b1) dropped fontopoSOLID, the one family under `LIC-spdx-licenseref-fontopo-free` that had been in the qualifying universe, and left the 500 catalog fonts unchanged.)*
 - [x] Review queue for NOASSERTION results, custom texts and disagreements (DejaVu, Hack, Cascadia, OpenDyslexic, URW, Roboto Mono). Owner rulings are saved in `data/reviews/`. *(2026-09-26: the owner's 14 answers are recorded. 2026-09-28: the 5 Monaspace families and the 25 researched no-license families are ruled (`data/reviews/licenses/2026-09-28.toml`). Later batches that day ruled the researched Monofur, Vic Fieger (Heavy Data), Salaowu and Letters licenses, the Debian disagreements, Conakry and five more disagreements. No gate LIC question is open on the real store (replay of 2026-09-29); the queue's 8 remaining items are L1's unread strings. 2026-09-29, later: with those strings read, the queue holds 13 owner questions instead: 11 disagreements they raise (8 TeX Gyre families, as TeX Gyre Heros's of 2026-09-26; IBM 3270; B612 and B612 Mono) and the two new Fontist licenses. The owner ruled them the same day (`data/reviews/licenses/2026-09-29.toml`): the 11 qualify and are redistributable (the TeX Gyre families under the GUST Font License), AU Passata's terms are excluded and fontopo's qualify but are not redistributable; so do FreeFont (GPL-3.0-or-later with the font exception), ET Book (MIT) and Linux Libertine and Biolinum (OFL-1.1, the disagreement their new files raised).)*
 
 **Done when:** every candidate has a provisional class, and the queue is empty. *(Met 2026-09-29: in a replay of the 2026-09-26 snapshots with the owner's rulings of that day, all 1,822 candidates have a class (1,755 allowed, 67 excluded, none waiting) and `licenses --queue --count` is 0.)*
@@ -296,9 +325,6 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 ### Step 13: Confidence and stability
 **Who:** Claude. **Depends on:** 6b.
 - [x] 200 weight perturbations plus leave-one-source-out runs, giving ranges, tiers and bands. *(`confidence.perturb` and `tier`; `tests/pipeline/test_confidence.py::test_stage_gives_every_ranked_font_a_range_and_a_tier`.)*
-- [ ] A backtest on historical windows (pkgstats series, 18 months of npm, Homebrew 30/90/365 days, Google's windows), used to set the alert thresholds. *(Built: `backtest.py`, `tff-catalog backtest`; `tests/pipeline/test_backtest.py`. Still open: it hasn't run on the real store, so there is no `docs/backtests/` report, and `ranking.toml [review]` keeps the §9 defaults. The owner ruled on 2026-09-26 that the thresholds are revisited after 3 merged refreshes.)*
-
-**Done when:** every ranked font has a range and a tier, and the backtest report is committed. *(Still open: the backtest report. Every placed font in `build/catalog.json` has a range and a tier.)*
 
 ### Step 14: Official download links
 **Who:** Claude; the owner approves overrides. **Depends on:** 4, 6a; runs alongside steps 8–13.
@@ -312,8 +338,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - web.archive.org counts as an aggregator for every automatic pick, but an override the owner approves may link a timestamped Wayback Machine capture of the designer's page when that page is gone, marked and labelled as archived (owner ruling of 2026-09-29);
   - auto-accept only when two sources agree, or when the owner-approved foundry list (`config/foundries.toml`, gate C3) gives the link (owner ruling of 2026-09-26);
   - an `http://` homepage is upgraded to `https://` and checked monthly (owner ruling of 2026-09-26).
-- [ ] Nerd Font build link (owner rulings of 2026-09-28 and 2026-09-29, TASK-2): for every family with a Nerd Font build, whether a Nerd Fonts project build (`fonts.json`; alias rows with relation `build`, detail `nerd`) or the maker's own NF build, set `links.nerd` to that build's own page: the build's folder in the Nerd Fonts repository at the current release tag, or the maker's release page for a maker-built one. Never a release asset or `/releases/latest`. Its label names the build (for example "SauceCodePro Nerd Font"), and the monthly link check covers it. *(The 2026-09-29 ruling replaces the 2026-09-28 ruling's one shared releases page. Built 2026-09-29, not yet verified on the real store: `links.nerd_builds` (the maker's own build first, then the Nerd Fonts folder at the newest release tag of the `nerd_releases` records, only with a base license `licenses.toml` allows), `policy_problems(nerd=True)`, and the stage check and `links --check` covering the Nerd links; `tests/pipeline/test_links.py`.)*
-- [ ] A monthly link check. *(The check runs in every refresh and as `tff-catalog links --check`; the monthly schedule comes with step 19's workflow. Still open (2026-09-29): a failed check reaches only the log and `build/stage/queues/links.json`. `review.md`, validate and gate K don't report it, and `refresh.yml` doesn't run `links --check`, so a link that breaks later would stay published without a flag.)*
+- [x] Nerd Font build link (owner rulings of 2026-09-28 and 2026-09-29, TASK-2): for every family with a Nerd Font build, whether a Nerd Fonts project build (`fonts.json`; alias rows with relation `build`, detail `nerd`) or the maker's own NF build, set `links.nerd` to that build's own page: the build's folder in the Nerd Fonts repository at the current release tag, or the maker's release page for a maker-built one. Never a release asset or `/releases/latest`. Its label names the build (for example "SauceCodePro Nerd Font"), and the monthly link check covers it. *(The 2026-09-29 ruling replaces the 2026-09-28 ruling's one shared releases page. Built 2026-09-29 and checked on the real store on 2026-09-30: 70 catalog fonts have a Nerd link, 60 to their folder in the Nerd Fonts repository at v3.5.1 and 10 to the maker's releases page (Cascadia Code's and Mono's among them), each labelled with the build's name, none a release asset or `/releases/latest`, and `links --check` passes all 500 catalog families. The code: `links.nerd_builds` (the maker's own build first, then the Nerd Fonts folder at the newest release tag of the `nerd_releases` records, only with a base license `licenses.toml` allows), `policy_problems(nerd=True)`, and the stage check and `links --check` covering the Nerd links; `tests/pipeline/test_links.py`.)*
 
 **Done when:** every catalog font has a primary link that follows the policy and returns HTTP 200. *(Met 2026-09-29: `links --check` passes all 500 catalog families on the real store, and every primary follows the policy, Heavy Data's and Monofur's as approved archived overrides.)*
 
@@ -339,10 +364,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - [x] A monthly diff (entries, exits, big moves, license changes) and the flags, written to `build/review.md`. *(`review.py`; the what-if table stays in the private review pack (owner ruling of 2026-09-26); `tests/pipeline/test_review.py`. The first run has no diff yet.)*
 - [x] `docs/catalog-schema.md` documents both files. *(It covers `catalog.json`, `catalog-site.json` and `names.json`, with the validation checks.)*
 
-**Done when:** the three files validate in CI and the hard checks pass on the real run. *(Still open: CI checks the committed files once they are in a pull request. Locally, `tests/pipeline/test_validate.py::test_committed_build_outputs_validate` and `tff-catalog validate --committed` pass, and validate's 10 hard checks pass on the real run.)*
-
-### Step 15b: Every other qualifying font, and fonts added on request
-*Moved on 2026-09-30.* The owner took this step out of the work of getting the site live (`more_fonts_timing`, AUTHORITY.md). Its items are now step 1 of [milestone-more-fonts.md](milestone-more-fonts.md), which comes after Milestone 2's launch.
+**Done when:** the three files validate in CI and the hard checks pass on the real run. *(Met 2026-09-30: CI's `test` job runs `tests/pipeline/test_validate.py::test_committed_build_outputs_validate` on every pull request, and its `site-real` jobs run `tff-catalog validate --committed`, green on [#23](https://github.com/byronshock/trulyfreefonts/pull/23) to [#27](https://github.com/byronshock/trulyfreefonts/pull/27); validate's hard checks pass on the real run.)*
 
 ### Step 16: First full run and owner review of the top lists
 **Who:** both. **Depends on:** 15.
@@ -373,30 +395,8 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 
 **Done when:** a clean clone produces identical output from the same snapshots, and the run time is recorded. *(Met 2026-09-29: a clean clone of `m1/wave1` at 4df41d3, replaying a copy of the store at 928ba2d with a fresh HOME, TMPDIR and TFF_RAW (no font cache) and the network blocked (`unshare -rn`, `uv run --offline --frozen`), ran 21 stages in 118.5 s (119 s wall) on a Ryzen 9 9950X with 32 threads, under load 10–11 from other jobs. Every committed file in `build/` and `data/` came out byte-identical except `catalog.json`'s `run.code_commit`, which names the checkout that ran it; all 500 specimens were kept from `build/specimens/index.json`. With the font cache the run took 121.9 s and gave the same bytes. Compare with `git diff --exit-code -I'"code_commit": "[0-9a-f]{40}",?$'`. So that `code_commit` names a commit that reproduces the outputs, code changes are committed before the rebuild whose outputs are committed. Still open, under step 3: the real-refresh variant of the two-runs test, whose `[real]` cases xfail.)*
 
-### Step 19: Monthly GitHub Actions workflow
-**Who:** Claude builds it and sets up access with `gh` (owner ruling CI1, 2026-09-26); the owner merges. **Depends on:** 18 and D15.
-- [ ] Claude (ruling CI1, 2026-09-26), when this step is ready: let refresh pull requests trigger CI by turning on "Allow GitHub Actions to create and approve pull requests" with `gh`, which the repository currently has off. The refresh job opens the pull request with `GITHUB_TOKEN` and then dispatches `ci.yml` on `refresh/monthly`, because pull requests that `GITHUB_TOKEN` opens trigger no workflows. No GitHub App or personal token is needed.
-- [ ] Claude (ruling CI1, 2026-09-26), with `gh`: create the private data repository's deploy key and this repository's `DATA_STORE_KEY` secret (D15), and record both in SERVER.md and here. A token for Flutter code search comes only if that is turned on after v1.
-- [ ] The workflow: *(Written: `.github/workflows/refresh.yml` has this cron, `workflow_dispatch`, a uv cache, the `refresh` concurrency group and each job's write permissions. It hasn't run on GitHub yet. Since 2026-09-29 the schedule is off until the repository variable `REFRESH_SCHEDULE` is "on" (owner ruling); this step turns it on, with `gh variable set REFRESH_SCHEDULE --body on`, once the deploy key and secret exist.)*
-  - runs on a monthly cron at an off-minute (for example `17 6 3 * *`) and on `workflow_dispatch`;
-  - uses a uv cache and a concurrency group;
-  - has write permission for `contents`, `pull-requests` and `issues`.
-- [ ] It opens or updates a pull request on the fixed branch `refresh/monthly`, with `catalog.json`, `catalog-site.json`, `review.md`, the `state/` changes, and the alias rows and seeds the run added to `data/`. A hard failure fails the job and opens an issue instead. *(Written: `refresh.yml`'s `publish` and `report` jobs. Not yet run.)*
-- [ ] Check the collectors on GitHub's runners: rate limits, the GitHub API budget, and whether Google's endpoints respond.
-- [ ] A watchdog for GitHub's rule that disables scheduled workflows in public repositories after 60 days without activity. It runs outside this repository's schedule (for example a timer on the VPS reading GitHub's public API, which the rule can't disable), and warns the owner if no refresh pull request has appeared for 35 days, or `main` has had no commit for 50 days. *(Written: `ops/refresh-watchdog/`, a script with a systemd timer. Not yet installed on the VPS.)*
-
-**Done when:** a manual dispatch opens a correct pull request, CI runs on it, and the owner merges it.
-
 ### Step 20: Handoff to Milestone 2
 **Who:** both. **Depends on:** 17, 19.
-- [ ] `catalog-site.json` v1 is frozen, with a sample file and the schema doc, but only after Milestone 2's step 2 has approved its fields. *(Not yet: `schema_version` is still `1.0.0-draft`. Milestone 2's step 2 approved the fields on 2026-09-25; since then the schema has gained the `nerd` group, the `app` system type and a link `note`, each from an owner ruling.)*
-  - [x] Before the freeze, each rank entry carries `previous_score`, last month's published score, so the rising and falling markers of Backlog TASK-4 need no schema change later; until a monthly refresh is merged it equals `score` (owner ruling of 2026-09-30, `score_previous_bootstrap`). *(Both schemas; `export.py` and the state file `published_scores.json`; `validate`'s `previous_score` checks, in a run and with `--committed`; `tests/pipeline/test_export.py` and `test_validate.py`.)*
-- [ ] A handoff note lists what Milestone 2 must settle:
-  - the default rank order;
-  - numbering under filters;
-  - the deploy path to the VPS;
-  - the methodology page.
-- [ ] The runbook lists the manual tasks (methodology §10). *(Not yet: no runbook in `ops/` or `docs/` lists them.)*
-- [ ] "Current step" in AUTHORITY.md moves to Milestone 2, and `docs/roadmap.md` shows the new status.
+- [x] Before the freeze, each rank entry carries `previous_score`, last month's published score, so the rising and falling markers of Backlog TASK-4 need no schema change later; until a monthly refresh is merged it equals `score` (owner ruling of 2026-09-30, `score_previous_bootstrap`). *(Both schemas; `export.py` and the state file `published_scores.json`; `validate`'s `previous_score` checks, in a run and with `--committed`; `tests/pipeline/test_export.py` and `test_validate.py`.)*
 
-**Done when:** the owner accepts the handoff.
+</details>
