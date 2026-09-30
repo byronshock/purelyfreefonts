@@ -15,7 +15,7 @@
 {% if row.score is none %}
 <span class="rank">{{ row.label }}</span>
 {% else %}
-<span class="rank{% if row.held %} is-held{% endif %}"><span class="score"><span class="visually-hidden">{{ list.score_words.before }}</span>{{ row.score }}<span class="visually-hidden">{{ list.score_words.after }}{% if row.held %}{{ list.score_words.held }}{% endif %}</span></span><span class="bar" aria-hidden="true"><span class="fill b{{ row.score }}"></span></span></span>
+<span class="rank{% if row.held %} is-held{% endif %}"><span class="visually-hidden">{{ list.score_words.before }}</span>{{ row.score }}<span class="visually-hidden">{{ list.score_words.after }}{% if row.held %}{{ list.score_words.held }}{% endif %}</span><i class="bar b{{ row.score }}"></i></span>
 {% endif %}
 <div class="font-title{% if row.specimen %} has-spec{% endif %}">
 <h3 class="font-name" id="font-{{ row.id }}-name">{{ row.family }}</h3>

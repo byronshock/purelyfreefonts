@@ -1322,7 +1322,7 @@
       "first_seen": "2025-12-24",
       "flags": [],
       "ranks": {
-        "overall": {"rank": null, "band": "101–250", "order": 101, "tier": "C", "range": [51, 222], "score": 0.895095, "previous_score": 0.895095, "gate_held": true, "unranked": null},
+        "overall": {"rank": null, "band": "101–250", "order": 101, "tier": "C", "range": [51, 222], "score": 1.75, "previous_score": 1.75, "gate_held": true, "unranked": null},
         "desktop_chosen": {"rank": null, "band": "101–250", "order": 101, "tier": "C", "range": [51, 222], "score": 0.895095, "previous_score": 0.895095, "gate_held": true, "unranked": null},
         "desktop_installed": {"rank": null, "band": "101–250", "order": 101, "tier": "C", "range": [51, 222], "score": 0.895095, "previous_score": 0.895095, "gate_held": true, "unranked": null},
         "project": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "previous_score": null, "gate_held": false, "unranked": "no_evidence"},
@@ -1472,7 +1472,7 @@
         "desktop_chosen": {"rank": null, "band": "251–500", "order": 260, "tier": "C", "range": [130, 540], "score": 0.451421, "previous_score": 0.451421, "gate_held": false, "unranked": null},
         "desktop_installed": {"rank": null, "band": "251–500", "order": 255, "tier": "C", "range": [128, 530], "score": 0.462277, "previous_score": 0.462277, "gate_held": false, "unranked": null},
         "project": {"rank": null, "band": "101–250", "order": 150, "tier": "C", "range": [75, 320], "score": 0.727006, "previous_score": 0.727006, "gate_held": false, "unranked": null},
-        "dev_apps": {"rank": null, "band": "101–250", "order": 170, "tier": "C", "range": [85, 360], "score": 0.6693, "previous_score": 0.6693, "gate_held": false, "unranked": null}
+        "dev_apps": {"rank": null, "band": "101–250", "order": 170, "tier": "C", "range": [85, 360], "score": 0.6693, "previous_score": 0.6693, "gate_held": true, "unranked": null}
       },
       "sources": {
         "homebrew": {"state": "observed", "rank_in_source": 204, "reason": null, "abstains_in": []},

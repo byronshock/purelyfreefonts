@@ -51,18 +51,10 @@ const Render = (() => {
       return;
     }
     node.replaceChildren(
-      Core.el(
-        'span',
-        { class: 'score' },
-        hiddenText(words.before),
-        String(score),
-        hiddenText(`${words.after}${held ? words.held : ''}`),
-      ),
-      Core.el(
-        'span',
-        { class: 'bar', 'aria-hidden': 'true' },
-        Core.el('span', { class: `fill b${score}` }),
-      ),
+      hiddenText(words.before),
+      String(score),
+      hiddenText(`${words.after}${held ? words.held : ''}`),
+      Core.el('i', { class: `bar b${score}` }),
     );
   };
 

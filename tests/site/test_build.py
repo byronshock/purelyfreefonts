@@ -515,12 +515,41 @@ def test_js_and_css_are_the_parts_in_filename_order(tmp_path, catalog, mini_site
     index = parse((out / "index.html").read_text(encoding="utf-8"))
     js = asset(out, next(a["src"] for t, a in index.tags if t == "script")).read_text()
     css = asset(out, next(a["href"] for t, a in index.tags if a.get("rel") == "stylesheet"))
-    assert js == "\n".join(textwrap.dedent(JS[n]).rstrip() + "\n" for n in sorted(JS))
+    strip_js, strip_css = assets.strip_js_comments, assets.strip_css_comments
+    assert js == "\n".join(strip_js(textwrap.dedent(JS[n])).strip("\n") + "\n" for n in sorted(JS))
     # The interface font's @font-face rules come first, then the parts.
     faces = [(ui_font_url(out, name), style) for name, style in build.UI_FONTS]
     head = assets.font_faces(build.UI_FONT_FAMILY, faces, build.UI_FONT_WEIGHTS)
-    assert css.read_text() == head + "\n".join(CSS[n] for n in sorted(CSS))
+    parts = "\n".join(strip_css(CSS[n]).strip("\n") + "\n" for n in sorted(CSS))
+    assert css.read_text() == head + parts
     assert js.rstrip().endswith("Main.start();")
+
+
+def test_comments_are_not_shipped():
+    """M2 step 10: whole-line // comments and /* */ comments cost the page budget and ship
+    no code, so the build leaves them out; code, and a template literal's lines, stay."""
+    js = (
+        "// a part header\n"
+        "const A = (() => {\n"
+        "  // a note\n"
+        "  const url = 'https://example.org/'; // kept: after code\n"
+        "  const t = `line one\n"
+        "  // inside a template literal: kept\n"
+        "  `;\n"
+        "  return Object.freeze({ url, t });\n"
+        "})();\n"
+    )
+    assert assets.strip_js_comments(js) == (
+        "const A = (() => {\n"
+        "  const url = 'https://example.org/'; // kept: after code\n"
+        "  const t = `line one\n"
+        "  // inside a template literal: kept\n"
+        "  `;\n"
+        "  return Object.freeze({ url, t });\n"
+        "})();\n"
+    )
+    css = "/* header */\n.a {\n  color: red; /* why */\n}\n\n\n/* two\n   lines */\n.b {\n  margin: 0;\n}\n"
+    assert assets.strip_css_comments(css) == ".a {\n  color: red;\n}\n\n.b {\n  margin: 0;\n}\n"
 
 
 # ---------------------------------------------------------------------- the CSP lint
@@ -608,6 +637,8 @@ def test_index_is_server_rendered_in_overall_order(tmp_path, catalog, mini_site)
     ranked = [i for i in rows if overall[i]["order"] is not None]
     # By score, best first: a font the two-source rule holds back takes its score's place.
     assert ranked == sorted(ranked, key=lambda i: (-overall[i]["score"], overall[i]["order"]))
+    # The sample's held sample-mono-23 (order 101) scores above fonts in the top 100.
+    assert ranked != sorted(ranked, key=lambda i: overall[i]["order"])
     assert rows[: len(ranked)] == ranked
     unranked = [f for f in SAMPLE["fonts"] if f["id"] in rows[len(ranked) :]]
     assert rows[len(ranked) :] == [

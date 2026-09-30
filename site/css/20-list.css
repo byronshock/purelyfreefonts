@@ -385,30 +385,29 @@ li.font.is-dim .font-name {
 }
 
 /* A ranked row's score, 0 to 100, and a blue bar that long (owner rulings of 2026-09-29,
-   score_display): the number, then the bar filling the rest of the rank cell, which is 6rem
-   (96px) wide on every screen, beside the name. A font the two-source rule holds back has a
-   hollow bar (owner ruling of 2026-09-30, held_marker_style), explained by #held-legend. */
+   score_display): the number, right-aligned, then the bar, which ends at the edge of the rank
+   cell (6rem, 96px, on every screen) so the bars line up. The bar is an empty i.bar, its fill
+   ::before. A font the two-source rule holds back has a hollow bar (owner ruling of
+   2026-09-30, held_marker_style), explained by #held-legend. */
 li.font:not(.is-unranked) .font-row > .rank {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: var(--space-2);
   width: 6rem;
 }
 
-.rank .score {
-  min-width: 3ch;
-  text-align: right;
-}
-
 .bar {
   display: block;
-  flex: 1 1 auto;
+  flex: none;
+  width: 3.5rem;
   height: 0.625rem;
   border-radius: 2px;
   background: var(--c-divider);
 }
 
-.fill {
+.bar::before {
+  content: "";
   display: block;
   box-sizing: border-box;
   height: 100%;
@@ -416,7 +415,7 @@ li.font:not(.is-unranked) .font-row > .rank {
   background: var(--c-accent);
 }
 
-.is-held .fill {
+.is-held .bar::before {
   border: 2px solid var(--c-accent);
   background: var(--c-bg);
 }
@@ -448,418 +447,418 @@ li.font:not(.is-unranked) .font-row > .rank {
     background: Canvas;
   }
 
-  .fill {
+  .bar::before {
     background: CanvasText;
   }
 
-  .is-held .fill {
+  .is-held .bar::before {
     border-color: CanvasText;
     background: Canvas;
   }
 }
 
 /* The bar's length: .b<score>, 0 to 100 (the CSP forbids style attributes). */
-.b0 {
+.b0::before {
   width: 0%;
 }
 
-.b1 {
+.b1::before {
   width: 1%;
 }
 
-.b2 {
+.b2::before {
   width: 2%;
 }
 
-.b3 {
+.b3::before {
   width: 3%;
 }
 
-.b4 {
+.b4::before {
   width: 4%;
 }
 
-.b5 {
+.b5::before {
   width: 5%;
 }
 
-.b6 {
+.b6::before {
   width: 6%;
 }
 
-.b7 {
+.b7::before {
   width: 7%;
 }
 
-.b8 {
+.b8::before {
   width: 8%;
 }
 
-.b9 {
+.b9::before {
   width: 9%;
 }
 
-.b10 {
+.b10::before {
   width: 10%;
 }
 
-.b11 {
+.b11::before {
   width: 11%;
 }
 
-.b12 {
+.b12::before {
   width: 12%;
 }
 
-.b13 {
+.b13::before {
   width: 13%;
 }
 
-.b14 {
+.b14::before {
   width: 14%;
 }
 
-.b15 {
+.b15::before {
   width: 15%;
 }
 
-.b16 {
+.b16::before {
   width: 16%;
 }
 
-.b17 {
+.b17::before {
   width: 17%;
 }
 
-.b18 {
+.b18::before {
   width: 18%;
 }
 
-.b19 {
+.b19::before {
   width: 19%;
 }
 
-.b20 {
+.b20::before {
   width: 20%;
 }
 
-.b21 {
+.b21::before {
   width: 21%;
 }
 
-.b22 {
+.b22::before {
   width: 22%;
 }
 
-.b23 {
+.b23::before {
   width: 23%;
 }
 
-.b24 {
+.b24::before {
   width: 24%;
 }
 
-.b25 {
+.b25::before {
   width: 25%;
 }
 
-.b26 {
+.b26::before {
   width: 26%;
 }
 
-.b27 {
+.b27::before {
   width: 27%;
 }
 
-.b28 {
+.b28::before {
   width: 28%;
 }
 
-.b29 {
+.b29::before {
   width: 29%;
 }
 
-.b30 {
+.b30::before {
   width: 30%;
 }
 
-.b31 {
+.b31::before {
   width: 31%;
 }
 
-.b32 {
+.b32::before {
   width: 32%;
 }
 
-.b33 {
+.b33::before {
   width: 33%;
 }
 
-.b34 {
+.b34::before {
   width: 34%;
 }
 
-.b35 {
+.b35::before {
   width: 35%;
 }
 
-.b36 {
+.b36::before {
   width: 36%;
 }
 
-.b37 {
+.b37::before {
   width: 37%;
 }
 
-.b38 {
+.b38::before {
   width: 38%;
 }
 
-.b39 {
+.b39::before {
   width: 39%;
 }
 
-.b40 {
+.b40::before {
   width: 40%;
 }
 
-.b41 {
+.b41::before {
   width: 41%;
 }
 
-.b42 {
+.b42::before {
   width: 42%;
 }
 
-.b43 {
+.b43::before {
   width: 43%;
 }
 
-.b44 {
+.b44::before {
   width: 44%;
 }
 
-.b45 {
+.b45::before {
   width: 45%;
 }
 
-.b46 {
+.b46::before {
   width: 46%;
 }
 
-.b47 {
+.b47::before {
   width: 47%;
 }
 
-.b48 {
+.b48::before {
   width: 48%;
 }
 
-.b49 {
+.b49::before {
   width: 49%;
 }
 
-.b50 {
+.b50::before {
   width: 50%;
 }
 
-.b51 {
+.b51::before {
   width: 51%;
 }
 
-.b52 {
+.b52::before {
   width: 52%;
 }
 
-.b53 {
+.b53::before {
   width: 53%;
 }
 
-.b54 {
+.b54::before {
   width: 54%;
 }
 
-.b55 {
+.b55::before {
   width: 55%;
 }
 
-.b56 {
+.b56::before {
   width: 56%;
 }
 
-.b57 {
+.b57::before {
   width: 57%;
 }
 
-.b58 {
+.b58::before {
   width: 58%;
 }
 
-.b59 {
+.b59::before {
   width: 59%;
 }
 
-.b60 {
+.b60::before {
   width: 60%;
 }
 
-.b61 {
+.b61::before {
   width: 61%;
 }
 
-.b62 {
+.b62::before {
   width: 62%;
 }
 
-.b63 {
+.b63::before {
   width: 63%;
 }
 
-.b64 {
+.b64::before {
   width: 64%;
 }
 
-.b65 {
+.b65::before {
   width: 65%;
 }
 
-.b66 {
+.b66::before {
   width: 66%;
 }
 
-.b67 {
+.b67::before {
   width: 67%;
 }
 
-.b68 {
+.b68::before {
   width: 68%;
 }
 
-.b69 {
+.b69::before {
   width: 69%;
 }
 
-.b70 {
+.b70::before {
   width: 70%;
 }
 
-.b71 {
+.b71::before {
   width: 71%;
 }
 
-.b72 {
+.b72::before {
   width: 72%;
 }
 
-.b73 {
+.b73::before {
   width: 73%;
 }
 
-.b74 {
+.b74::before {
   width: 74%;
 }
 
-.b75 {
+.b75::before {
   width: 75%;
 }
 
-.b76 {
+.b76::before {
   width: 76%;
 }
 
-.b77 {
+.b77::before {
   width: 77%;
 }
 
-.b78 {
+.b78::before {
   width: 78%;
 }
 
-.b79 {
+.b79::before {
   width: 79%;
 }
 
-.b80 {
+.b80::before {
   width: 80%;
 }
 
-.b81 {
+.b81::before {
   width: 81%;
 }
 
-.b82 {
+.b82::before {
   width: 82%;
 }
 
-.b83 {
+.b83::before {
   width: 83%;
 }
 
-.b84 {
+.b84::before {
   width: 84%;
 }
 
-.b85 {
+.b85::before {
   width: 85%;
 }
 
-.b86 {
+.b86::before {
   width: 86%;
 }
 
-.b87 {
+.b87::before {
   width: 87%;
 }
 
-.b88 {
+.b88::before {
   width: 88%;
 }
 
-.b89 {
+.b89::before {
   width: 89%;
 }
 
-.b90 {
+.b90::before {
   width: 90%;
 }
 
-.b91 {
+.b91::before {
   width: 91%;
 }
 
-.b92 {
+.b92::before {
   width: 92%;
 }
 
-.b93 {
+.b93::before {
   width: 93%;
 }
 
-.b94 {
+.b94::before {
   width: 94%;
 }
 
-.b95 {
+.b95::before {
   width: 95%;
 }
 
-.b96 {
+.b96::before {
   width: 96%;
 }
 
-.b97 {
+.b97::before {
   width: 97%;
 }
 
-.b98 {
+.b98::before {
   width: 98%;
 }
 
-.b99 {
+.b99::before {
   width: 99%;
 }
 
-.b100 {
+.b100::before {
   width: 100%;
 }
 

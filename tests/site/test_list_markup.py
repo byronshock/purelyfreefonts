@@ -171,6 +171,22 @@ def test_rows_are_in_server_order_with_overall_labels(dom, doc):
     )
 
 
+def test_the_held_legend_shows_when_the_server_list_has_a_held_font(dom, doc):
+    """Owner ruling of 2026-09-30 (held_marker_style): the hollow bar's legend, word for word,
+    is in the page whenever a row the server draws is held, so it explains the bar without
+    scripts too; the script then follows the view (#view-note starts hidden)."""
+    legend = dom.find("p", id="held-legend")
+    rulings = tomllib.loads((ROOT / "data/reviews/site/2026-09-30.toml").read_text())
+    assert squash(legend.text) in rulings["held_marker_style"]["ruling"]
+    held = [
+        f
+        for f in doc["fonts"]
+        if (e := f["ranks"]["overall"])["order"] is not None and e["gate_held"]
+    ]
+    assert ("hidden" not in legend.attrs) == bool(held)
+    assert "hidden" in dom.find("p", id="view-note").attrs
+
+
 def test_each_row_has_its_parts(dom, doc):
     fonts = {f["id"]: f for f in doc["fonts"]}
     for li in dom.find("ol", id="list").elements():
@@ -187,14 +203,15 @@ def test_each_row_has_its_parts(dom, doc):
         if li.classes == ["font", "is-unranked"]:
             assert cell.elements() == []
         else:
-            score, bar = cell.elements()
-            assert (score.classes, bar.classes, bar.attrs["aria-hidden"]) == (
-                ["score"],
-                ["bar"],
-                "true",
-            )
+            before, after, bar = cell.elements()
+            assert [before.classes, after.classes] == [["visually-hidden"]] * 2
             number = int(re.fullmatch(r"Score (\d+) of 100.*", squash(cell.text))[1])
-            assert bar.elements()[0].classes == ["fill", f"b{number}"]
+            assert (bar.tag, bar.classes, bar.elements(), bar.text) == (
+                "i",
+                ["bar", f"b{number}"],
+                [],
+                "",
+            )
             assert ("is-held" in cell.classes) == squash(cell.text).endswith(
                 ", from one kind of source"
             )

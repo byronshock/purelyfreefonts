@@ -386,6 +386,7 @@ def _list_context(
     if not views or views[0]["key"] != data.DEFAULT_VIEW:
         raise BuildError([f"the first available view must be {data.DEFAULT_VIEW!r} (M2-D1)"])
     nerd = doc["nerd"]
+    rows = _rows(doc, specimens)
     return {
         "views": views,
         "categories": [{"value": k, "label": v} for k, v in data.CATEGORY_LABELS.items()],
@@ -405,7 +406,8 @@ def _list_context(
         "score_words": data.SCORE_WORDS,
         "index_url": urls["list.json"],
         "details_url": urls["details.json"],
-        "rows": _rows(doc, specimens),
+        "rows": rows,
+        "held_shown": any(row["held"] for row in rows),
     }
 
 

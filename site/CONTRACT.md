@@ -225,9 +225,8 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 ```html
 <li class="font" id="font-inter" data-id="inter">
   <div class="font-row">
-    <span class="rank"><span class="score"><span class="visually-hidden">Score </span>83<span
-      class="visually-hidden"> of 100</span></span><span class="bar" aria-hidden="true"><span
-      class="fill b83"></span></span></span>                     <!-- or <span class="rank">Not ranked: <reason></span> -->
+    <span class="rank"><span class="visually-hidden">Score </span>83<span class="visually-hidden">
+      of 100</span><i class="bar b83"></i></span>                <!-- or <span class="rank">Not ranked: <reason></span> -->
     <div class="font-title has-spec">                            <!-- has-spec only with a specimen -->
       <h3 class="font-name" id="font-inter-name">Inter</h3>
       <span class="nf-mark" role="img" aria-label="Nerd Font version available">NF</span>  <!-- only with links.nerd -->
@@ -256,7 +255,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 - **The name, once** (owner ruling of 2026-09-29, `name_once`). `div.font-title` holds the heading, the marker and the specimen box. With a specimen (`has-spec`), the heading shares the box's cell and lies over its first line, which draws the family name in the font; once the specimen shows, the title is `is-drawn` and the heading isn't painted (`opacity: 0`), though screen readers, search and find-in-page still have it. Where the specimen doesn't show (no specimen, a file that fails to load, no CSS masks, no IntersectionObserver, the loader paused), the heading does. Without scripting the `<noscript>` image draws the name and the heading isn't painted. Hiding the heading moves nothing: it and the box share one cell.
 - **The Nerd Font marker** (owner rulings of 2026-09-29, TASK-2, `nerd_marker_spot_title`): a font with a Nerd Font build (`links.nerd`) has `span.nf-mark[role=img]` right after its `h3`, on every rank: the catalog's `nerd.marker` as text, `nerd.label` as its accessible name. It sits at the end of the title's first line, in the title's second column, which every row leaves free, marker or not, at a fixed width and no taller than that line, so the markers line up and no row's height depends on one. The heading's text stays the family name alone.
 - `span.spec[data-src]` is always `/assets/specimens/<id>.<h>.svg`. `Specimens` ignores any other value, so a `data-src` can never break out of the CSS `url("…")` it becomes.
-- **The score** (owner rulings of 2026-09-29, `score_display` and `score_curve`, which replaced M2-D2's numbers and bands). A ranked row's `.rank` holds its score in this rank, 100·Φ(`ranks.<key>.score`) rounded (list index `s`), as text, and a blue bar that long: `span.fill.b<score>`, whose width class `.b0` to `.b100` is in `20-list.css`, since the CSP forbids style attributes. Screen readers hear the cell's text, "Score 83 of 100" (list index `score_words`). A font the two-source rule holds back (`gate_held`) has `.rank.is-held`, a hollow bar, and ", from one kind of source" after the score (owner ruling of 2026-09-30, `held_marker_style`), except in a view with a note (`r.<key>.note`: Developers & apps, `held_marker_dev_apps`), which marks no row. `#held-legend` shows while a held row is shown, `#view-note` holds the view's note. An unranked row's `.rank` is the text "Not ranked: <reason>".
+- **The score** (owner rulings of 2026-09-29, `score_display` and `score_curve`, which replaced M2-D2's numbers and bands). A ranked row's `.rank` holds its score in this rank, 100·Φ(`ranks.<key>.score`) rounded (list index `s`), as text, and a blue bar that long: an empty `i.bar.b<score>`, whose fill is its `::before`, sized by the width class `.b0` to `.b100` in `20-list.css`, since the CSP forbids style attributes. Screen readers hear the cell's text, "Score 83 of 100" (list index `score_words`). A font the two-source rule holds back (`gate_held`) has `.rank.is-held`, a hollow bar, and ", from one kind of source" after the score (owner ruling of 2026-09-30, `held_marker_style`), except in a view with a note (`r.<key>.note`: Developers & apps, `held_marker_dev_apps`), which marks no row. `#held-legend` shows while a held row is shown (the server shows it when its list has one), and `#view-note` holds the view's note. An unranked row's `.rank` is the text "Not ranked: <reason>".
 - `Render` moves rows in and out of `#list` (hidden rows are detached, not given `hidden`) and changes only the `.rank` cell, drawn as the server draws it. Rows carry `content-visibility: auto`, so they must not change height when their specimen arrives.
 - **States set by scripts:** `html[data-js]` once the script runs; `span.spec[data-state]`: `loading` while its file loads, then `set` once its mask is set (and its `div.font-title` gets `is-drawn`), or `failed` when the file can't be had; `li.font.is-dim` for a row a Milestone 3 filter dims; `li.font.is-unranked` for a row whose `.rank` reads "Not ranked: <reason>" (the server sets it too), which puts that label on a line of its own above the name (the owner's site ruling of 2026-09-26).
 - **The Milestone 3 slot** (section 10). For each filter whose `note` gives a row something to show, `Render` adds one `<div class="ext" data-filter="<filter id>">` at the end of `.font-row` (created on demand, removed when that filter no longer has a note for the row), built with `Core.el` only:
@@ -279,7 +278,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 
 ## 5. JS parts
 
-The build concatenates `site/js/*.js` in filename order into one ES module, `/assets/app.<h>.js`, loaded by `<script type="module" src>`. The rule, which the build's lint enforces:
+The build concatenates `site/js/*.js` in filename order into one ES module, `/assets/app.<h>.js`, loaded by `<script type="module" src>`, leaving out the lines that hold only a `//` comment (outside template literals; `assets.strip_js_comments`), which ship no code but cost the page budget. The rule, which the build's lint enforces on the parts as written:
 
 - Each part declares **exactly one** top-level binding: `const <Name> = …;`, usually an IIFE that returns a frozen object. Top-level lines start at column 0; everything inside is indented.
 - No other top-level declaration (`let`, `var`, `function`, `class`, a second `const`), and no `import`, `export` or dynamic `import(`. The one top-level statement allowed besides the declarations is `Main.start();`, exactly once, as the last top-level line of `90-main.js`.
@@ -295,7 +294,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 | `05-keys.js` | `Keys` | A7 | written | `matchKey(s)`, `searchKey(s)`, `DROP_CODEPOINTS` and `CASEFOLD_EXTRA` (equal to `tests/vectors/name-keys.json`'s `spec`; casefold is the table, then `toLowerCase()` with ß→ss and ς→σ, one code point at a time) |
 | `10-data.js` | `Data` | A3 | written | `loadIndex()` and `loadDetails()` (memoised promises; details only on first use; a 404 rejects with `Data.Stale`, shown as "The list was updated. Reload to see details.") |
 | `15-state.js` | `State` | A3 | written | the state object, hash parse and serialise (section 9), `pushState` for discrete changes, `replaceState` for search (300 ms), `popstate`/`hashchange` |
-| `20-view.js` | `View` | A3 | written | pure `compute(state, index, filters)` → `{order, labels, dimmed, notes, shown, total}` (below) |
+| `20-view.js` | `View` | A3 | written | pure `compute(state, index, filters)` → `{order, labels, scores, held, words, dimmed, notes, shown, total, note}` (below) |
 | `25-render.js` | `Render` | A3 | written | reorders server-rendered rows through a `DocumentFragment`, redraws `.rank`, updates `#count`, `#no-results`, `#held-legend`, `#view-note`, keeps focus |
 | `30-filters-ui.js` | `FiltersUI` | A3 | written | the controls in `#filters`: reads and reflects state, the phone disclosure, `#f-rank-measures` |
 | `35-announce.js` | `Announce` | A3 | written | `#status`: immediate for discrete changes (coalesced per microtask), 500 ms debounce for search, silent on first load |
@@ -317,7 +316,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 
 ## 6. CSS parts and tokens
 
-`site/css/*.css` is concatenated in filename order into `/assets/style.<h>.css`: `00-tokens.css` (wave 0), `10-base.css` (A14), `20-list.css` and `25-filters.css` (A2), `30-details.css` (A4), `35-specimens.css` (A6), `40-pages.css` (A8), `45-blog.css` (the blog, step 7b).
+`site/css/*.css` is concatenated in filename order into `/assets/style.<h>.css`, without its `/* … */` comments (`assets.strip_css_comments`): `00-tokens.css` (wave 0), `10-base.css` (A14), `20-list.css` and `25-filters.css` (A2), `30-details.css` (A4), `35-specimens.css` (A6), `40-pages.css` (A8), `45-blog.css` (the blog, step 7b).
 
 - Colours come only from the tokens; no other part writes a colour value.
 - Focus: `outline: var(--focus-ring); outline-offset: var(--focus-offset);` on `:focus-visible`. No sticky header, so focus is never hidden (2.4.11).

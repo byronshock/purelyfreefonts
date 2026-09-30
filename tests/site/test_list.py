@@ -1276,15 +1276,13 @@ def test_an_unranked_label_takes_a_line_of_its_own(
 BARS_JS = """() => Array.from(document.querySelectorAll('#list > li.font'), (li) => {
   const cell = li.querySelector('.rank');
   const bar = cell.querySelector('.bar');
-  const fill = cell.querySelector('.fill');
-  const width = (el) => el.getBoundingClientRect().width;
-  const style = fill && getComputedStyle(fill);
+  const style = bar && getComputedStyle(bar, '::before');
   return {
     id: li.dataset.id,
     text: cell.textContent,
     held: cell.classList.contains('is-held'),
-    fill: fill ? fill.className : null,
-    share: bar ? width(fill) / width(bar) : null,
+    fill: bar ? bar.className : null,
+    share: bar ? parseFloat(style.width) / bar.getBoundingClientRect().width : null,
     hollow: style
       ? parseFloat(style.borderTopWidth) > 0 && style.backgroundColor !== style.borderTopColor
       : null,
@@ -1311,7 +1309,7 @@ def test_score_bars_match_the_scores_and_held_fonts_are_hollow(
                 assert row["fill"] is None, row  # "Not ranked: <reason>": no bar
                 continue
             score = int(found[1])
-            assert row["fill"] == f"fill b{score}", row
+            assert row["fill"] == f"bar b{score}", row
             assert row["share"] == pytest.approx(score / 100, abs=0.02), row
             assert row["held"] == row["hollow"] == bool(found[2]), row
         held_shown = any(r["held"] for r in got)
