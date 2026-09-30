@@ -52,8 +52,10 @@ Contracts:
   (with ``text_sha256`` when the collector hashed the text) and
   ``UniverseRecord.urls`` with role "license"; font files from
   ``UniverseRecord.files``. Both are ordered best first: research's own
-  (``apply_research``), pinned URLs, then the source order ``SOURCE_ORDER``
-  (the google/fonts folder first, as methodology §2 allows), then the URL.
+  (``apply_research``), then for font files those ``config/font-files.toml``
+  lists for a family no source gives a readable one (``apply_font_files``),
+  pinned URLs, then the source order ``SOURCE_ORDER`` (the google/fonts
+  folder first, as methodology §2 allows), then the URL.
 - **A family passes (level "L3")** when a fetched text matches licenses that
   satisfy its L2 expression (``build/stage/licenses.json``; every matched id
   must be allowed in ``licenses.toml`` with gate LIC's license rulings applied,
@@ -1173,6 +1175,21 @@ def check_mentions(research: Research, allowed: Iterable[str]) -> None:
                 )
 
 
+def apply_font_files(
+    evidence: Mapping[str, Evidence], hand: Mapping[str, Sequence[FontFileRef]]
+) -> dict[str, Evidence]:
+    """``evidence`` with each family's files from ``config/font-files.toml``
+    (``fontfiles.load_font_files``) before the sources' ones; ``apply_research``,
+    applied after this, puts research's own files before both."""
+    from tff_catalog.fontfiles import with_hand_files
+
+    out = dict(evidence)
+    for fid, refs in hand.items():
+        old = out.get(fid, Evidence())
+        out[fid] = Evidence(texts=old.texts, files=tuple(with_hand_files(old.files, refs)))
+    return dict(sorted(out.items()))
+
+
 def apply_research(evidence: Mapping[str, Evidence], research: Research) -> dict[str, Evidence]:
     """``evidence`` with each researched family's texts and font files first, in the
     order ``config/license-texts.toml`` lists them."""
@@ -2108,6 +2125,7 @@ def load_inputs(ctx: StageContext) -> tuple[Inputs, list[str]]:
     (``licenses.effective_config``), as stage "licenses" used them.
     """
     from tff_catalog import licenses
+    from tff_catalog.fontfiles import load_font_files
 
     paths = ctx.paths
     universe = _require(paths, "universe", "universe")
@@ -2134,10 +2152,11 @@ def load_inputs(ctx: StageContext) -> tuple[Inputs, list[str]]:
     if unknown:
         ctx.log.warning("verify: %s lists families not in the universe: %s", RESEARCH_FILE, unknown)
     evidence = gather(iter_records(paths.records), key_index(universe), universe)
+    hand = load_font_files(paths.config)  # stage "latin" checked the ids
     inputs = Inputs(
         names={fid: universe.families[fid].family for fid in ids},
         verdicts=verdicts,
-        evidence=apply_research(evidence, research),
+        evidence=apply_research(apply_font_files(evidence, hand), research),
         previous=ctx.state.license_hashes,
         rulings=load_l3_rulings(paths, ctx.log),
         canon=load_canon(canon_dir(paths)),

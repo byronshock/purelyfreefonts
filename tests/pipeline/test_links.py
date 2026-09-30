@@ -12,6 +12,7 @@ from collections.abc import Iterable
 from dataclasses import replace
 from datetime import date
 from pathlib import Path
+from types import SimpleNamespace
 from typing import cast
 
 import httpx
@@ -19,12 +20,19 @@ import pytest
 from tests.helpers import ROOT
 
 from tff_catalog import export, jsonio, links, records, reviews, stageio
-from tff_catalog.config_model import Config, ConfigError
+from tff_catalog.aliases import AliasRow
+from tff_catalog.config_model import (
+    AllowedLicense,
+    Config,
+    ConfigError,
+    ExcludedLicense,
+    LicensesConfig,
+)
 from tff_catalog.fetch import Fetcher
 from tff_catalog.links import Link, Links, NoAcceptedLink, Target
 from tff_catalog.membership import Membership, MemberState
 from tff_catalog.paths import Paths
-from tff_catalog.records import SourceKey, UniverseRecord
+from tff_catalog.records import LicenseFact, Observation, SourceKey, UniverseRecord
 from tff_catalog.stages import RunOptions, StageContext
 from tff_catalog.state import State
 from tff_catalog.store import Store
@@ -203,6 +211,42 @@ def test_policy_rejects_the_hg_mirror(url: str) -> None:
 )
 def test_policy_rejects_aggregators(url: str, aggregator: str) -> None:
     assert f"an aggregator ({aggregator})" in links.policy_problems(url)
+
+
+# --- rule: a Nerd Fonts build folder only as a Nerd link ---------------------------------------
+
+NERD_FOLDER = "https://github.com/ryanoasis/nerd-fonts/tree/v3.5.1/patched-fonts/SourceCodePro"
+
+
+def test_a_nerd_fonts_build_folder_is_allowed_only_as_a_nerd_link() -> None:
+    """Owner ruling of 2026-09-29: Nerd Fonts' page for its own build is no aggregator for
+    the Nerd link; the primary link's ban on the repository stands."""
+    assert links.policy_problems(NERD_FOLDER) == ["an aggregator (github.com/ryanoasis/nerd-fonts)"]
+    assert links.policy_problems(NERD_FOLDER, nerd=True) == []
+    assert links.is_nerd_folder(NERD_FOLDER)
+    # A maker's own release page follows the ordinary policy either way.
+    maker = "https://github.com/subframe7536/maple-font/releases"
+    assert links.policy_problems(maker, nerd=True) == links.policy_problems(maker) == []
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "https://github.com/ryanoasis/nerd-fonts",
+        "https://github.com/ryanoasis/nerd-fonts/releases",
+        "https://github.com/ryanoasis/nerd-fonts/releases/latest",
+        "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.5.1/SourceCodePro.zip",
+        "https://github.com/ryanoasis/nerd-fonts/tree/v3.5.1/patched-fonts",
+        "https://github.com/ryanoasis/nerd-fonts/tree/v3.5.1/patched-fonts/Hack/Ligatures",
+        "https://github.com/ryanoasis/nerd-fonts/blob/v3.5.1/patched-fonts/Hack/readme.md",
+        "https://github.com/ryanoasis/nerd-fonts/tree/v3.5.1/patched-fonts/Hack?tab=readme",
+        "http://github.com/ryanoasis/nerd-fonts/tree/v3.5.1/patched-fonts/Hack",
+        "https://www.nerdfonts.com/font-downloads",
+        "https://github.com/subframe7536/maple-font/releases/latest",
+    ],
+)
+def test_a_nerd_link_is_held_to_the_rest_of_the_policy(url: str) -> None:
+    assert links.policy_problems(url, nerd=True) != []
 
 
 # --- rule: a Wayback Machine capture only as an archived override's link -------------------------
@@ -1477,6 +1521,387 @@ def test_links_check_fails_on_a_missing_or_broken_primary(
 
 def test_links_check_without_a_links_file(paths: Paths) -> None:
     assert links.cmd_check(context(paths, None)) == 1
+
+
+# --- the Nerd Font build (owner rulings of 2026-09-28 and 2026-09-29, TASK-2) --------------------
+
+NERD_TAG = "v3.5.1"
+
+
+def nerd_url(folder: str, tag: str = NERD_TAG) -> str:
+    return f"https://github.com/ryanoasis/nerd-fonts/tree/{tag}/patched-fonts/{folder}"
+
+
+def nerd_rec(folder: str, family: str, patched: str) -> UniverseRecord:
+    """A nerdfonts record: one fonts.json entry."""
+    return UniverseRecord(
+        source="nerdfonts",
+        key=SourceKey("nerd-folder", folder),
+        family=family,
+        urls=(("homepage", "https://github.com/ryanoasis/nerd-fonts"),),
+        attrs=records.attrs(patched_name=patched),
+    )
+
+
+def nerd_fact(folder: str, license_id: str) -> LicenseFact:
+    return LicenseFact(
+        source="nerdfonts", key=SourceKey("nerd-folder", folder), raw=license_id, spdx=license_id
+    )
+
+
+def release(tag: str, published: str, *folders: str, prerelease: bool = False) -> list[Observation]:
+    """nerd_releases Observations: one per folder archive of release ``tag``."""
+    day = date.fromisoformat(published)
+    return [
+        Observation(
+            source="nerd_releases",
+            series="lifetime",
+            key=SourceKey("nerd-folder", folder),
+            value=100.0,
+            unit="downloads",
+            start=day,
+            end=DAY,
+            attrs=records.attrs(
+                first_seen=published, prerelease=prerelease, published_at=published, release=tag
+            ),
+        )
+        for folder in folders
+    ]
+
+
+def cask(token: str, name: str, repo: str) -> UniverseRecord:
+    """A Homebrew cask that downloads a release asset of GitHub repository ``repo``."""
+    return UniverseRecord(
+        source="homebrew_casks",
+        key=SourceKey("brew-cask", token),
+        family=name,
+        urls=(("homepage", f"https://github.com/{repo}"),),
+        attrs=records.attrs(
+            github_repo=repo, url=f"https://github.com/{repo}/releases/download/v1/{token}.zip"
+        ),
+    )
+
+
+def alias(key: str, ns: str, fid: str, relation: str = "build", detail: str = "nerd") -> AliasRow:
+    return AliasRow(key, ns, fid, relation, detail, "hand", DAY, "owner:2026-09-29")
+
+
+NERD_LICENSES = LicensesConfig(
+    schema=1,
+    allowed={
+        "OFL-1.1": AllowedLicense(
+            name="SIL Open Font License 1.1",
+            group="open-font",
+            redistributable=True,
+            attribution_required=False,
+        )
+    },
+    excluded={"CC-BY-SA-4.0": ExcludedLicense(reason="copyleft without a font exception (D3)")},
+    ruling={},
+)
+NERD_LICENSE_ALIASES = {
+    "OFL-1.1-RFN": "OFL-1.1",
+    "OFL-1.1-no-RFN": "OFL-1.1",
+    "CC-BY-SA-4.0": "CC-BY-SA-4.0",
+}
+
+
+def nerd_world() -> tuple[Universe, list[UniverseRecord], dict[str, Links], links.NerdInputs]:
+    """Families with every kind of Nerd Font build, and some with only a sign of one."""
+    fontsource = rec(
+        "fontsource",
+        "Maple Mono",
+        ("repository", "https://github.com/subframe7536/maple-font"),
+        key="maple-mono",
+    )
+    google = rec(
+        "google_metadata",
+        "Cascadia Code",
+        ("repository", "https://github.com/microsoft/cascadia-code"),
+    )
+    by_family: dict[str, list[UniverseRecord]] = {
+        "source-code-pro": [nerd_rec("SourceCodePro", "Source Code Pro", "SauceCodePro")],
+        "maple-mono": [
+            fontsource,
+            cask("font-maple-mono-nf", "Maple Mono NF", "subframe7536/Maple-font"),
+            cask("font-maple-mono-nl-nf", "Maple Mono NL NF", "subframe7536/Maple-font"),
+        ],
+        "cascadia-code": [
+            google,
+            nerd_rec("CascadiaCode", "Cascadia Code", "CaskaydiaCove"),
+            cask("font-cascadia-code-nf", "Cascadia Code NF", "microsoft/cascadia-code"),
+            cask("font-delugia-complete", "Delugia Code", "adam7/delugia-code"),
+        ],
+        "iosevka": [
+            nerd_rec("Iosevka", "Iosevka", "Iosevka"),
+            nerd_rec("IosevkaTerm", "Iosevka Term", "IosevkaTerm"),
+        ],
+        "noto-sans": [rec("google_metadata", "Noto Sans")],
+        "noto-serif": [rec("google_metadata", "Noto Serif")],
+        "monaspace-neon": [rec("fontsource", "Monaspace Neon", key="monaspace-neon")],
+        "bigblue": [nerd_rec("BigBlueTerminal", "BigBlue Terminal", "BigBlueTerm")],
+        "new-mono": [nerd_rec("NewMono", "New Mono", "NewMono")],
+        "cozy": [rec("homebrew_casks", "Cozy", key="font-cozy")],
+        "delugia-only": [cask("font-delugia-mono", "Delugia Only NF", "adam7/delugia-code")],
+        "plain": [rec("fontist", "Plain")],
+    }
+    names = {
+        "source-code-pro": "Source Code Pro",
+        "maple-mono": "Maple Mono",
+        "cascadia-code": "Cascadia Code",
+        "iosevka": "Iosevka",
+        "noto-sans": "Noto Sans",
+        "noto-serif": "Noto Serif",
+        "monaspace-neon": "Monaspace Neon",
+        "bigblue": "BigBlue Terminal",
+        "new-mono": "New Mono",
+        "cozy": "Cozy",
+        "delugia-only": "Delugia Only",
+        "plain": "Plain",
+    }
+    noto = nerd_rec("Noto", "Noto", "Noto")  # a bundle folder: no family holds its key
+    families = {fid: fam(fid, names[fid], recs) for fid, recs in by_family.items()}
+    u = Universe(families=families, unmapped=(), excluded=((noto.key, "bundle"),))
+    recs = [r for group in by_family.values() for r in group] + [noto]
+    rows = (
+        alias("font-maple-mono-nf", "brew-cask", "maple-mono", detail="nf"),
+        alias("font-maple-mono-nl-nf", "brew-cask", "maple-mono", detail="nf"),
+        alias("font-cascadia-code-nf", "brew-cask", "cascadia-code", detail="nf"),
+        alias("font-delugia-complete", "brew-cask", "cascadia-code"),
+        alias("font-delugia-mono", "brew-cask", "delugia-only"),
+        alias("IosevkaTerm", "nerd-folder", "iosevka"),
+        alias("Noto", "nerd-folder", "noto-sans", relation="bundle", detail="2"),
+        alias("Noto", "nerd-folder", "noto-serif", relation="bundle", detail="2"),
+        alias(
+            "githubnext/monaspace/monaspace-nerdfonts.zip",
+            "gh-asset",
+            "monaspace-neon",
+            relation="bundle",
+        ),
+        alias("nerd-fonts-cozy-ttf", "arch-pkg", "cozy"),
+    )
+    chosen = {
+        fid: Links(Link(f"https://example.org/{fid}/"), None, "two_sources") for fid in families
+    }
+    chosen["monaspace-neon"] = Links(
+        Link("https://github.com/githubnext/monaspace/releases"), None, "owner_pick"
+    )
+    by_key: dict[SourceKey, list[UniverseRecord]] = {}
+    for r in recs:
+        by_key.setdefault(r.key, []).append(r)
+    folders = ("SourceCodePro", "CascadiaCode", "Iosevka", "IosevkaTerm", "Noto", "BigBlueTerminal")
+    inputs = links.NerdInputs(
+        rows=rows,
+        records={k: tuple(v) for k, v in by_key.items()},
+        facts={
+            "SourceCodePro": nerd_fact("SourceCodePro", "OFL-1.1-RFN"),
+            "CascadiaCode": nerd_fact("CascadiaCode", "OFL-1.1-RFN"),
+            "Iosevka": nerd_fact("Iosevka", "OFL-1.1-no-RFN"),
+            "Noto": nerd_fact("Noto", "OFL-1.1-no-RFN"),
+            "BigBlueTerminal": nerd_fact("BigBlueTerminal", "CC-BY-SA-4.0"),
+            "NewMono": nerd_fact("NewMono", "OFL-1.1-no-RFN"),
+        },
+        release=links.nerd_release(
+            [
+                *release("v3.4.0", "2025-04-24", *folders),
+                *release(NERD_TAG, "2026-08-21", *folders),
+                *release("v3.6.0-rc1", "2026-09-20", *folders, "NewMono", prerelease=True),
+            ]
+        ),
+        license_problem=links.nerd_license_checker(NERD_LICENSES, NERD_LICENSE_ALIASES),
+    )
+    return u, recs, chosen, inputs
+
+
+def test_the_current_release_is_the_newest_that_is_not_a_prerelease() -> None:
+    got = links.nerd_release(
+        [
+            *release("v3.4.0", "2025-04-24", "Hack", "Old"),
+            *release(NERD_TAG, "2026-08-21", "Hack"),
+            *release("v3.6.0-rc1", "2026-09-20", "Hack", "New", prerelease=True),
+        ]
+    )
+    assert got == links.NerdRelease(NERD_TAG, frozenset({"Hack"}))
+    assert links.nerd_release([]) is None
+    assert links.nerd_folder_url(NERD_TAG, "Go-Mono") == nerd_url("Go-Mono")
+
+
+def test_each_family_gets_its_nerd_font_builds_page() -> None:
+    u, recs, chosen, inputs = nerd_world()
+    builds, unlinked = links.nerd_builds(u, links.group_records(u, recs), chosen, inputs)
+    got = {fid: (b.kind, b.link.url, b.link.label) for fid, b in builds.items()}
+    assert got == {
+        # The Nerd Fonts project's build: its folder at the current tag, named by patchedName.
+        "source-code-pro": (
+            "nerd_fonts",
+            nerd_url("SourceCodePro"),
+            "SauceCodePro Nerd Font",
+        ),
+        # The folder of the family's own name, not the Term build's.
+        "iosevka": ("nerd_fonts", nerd_url("Iosevka"), "Iosevka Nerd Font"),
+        # A bundle folder links each of its members.
+        "noto-sans": ("nerd_fonts", nerd_url("Noto"), "Noto Nerd Font"),
+        "noto-serif": ("nerd_fonts", nerd_url("Noto"), "Noto Nerd Font"),
+        # The maker's own build: its release page, spelled as the family's own sources spell
+        # it, named by the shortest cask name.
+        "maple-mono": (
+            "maker",
+            "https://github.com/subframe7536/maple-font/releases",
+            "Maple Mono NF",
+        ),
+        # Both exist: the maker's own build wins; Delugia, a third party's, counts for nothing.
+        "cascadia-code": (
+            "maker",
+            "https://github.com/microsoft/cascadia-code/releases",
+            "Cascadia Code NF",
+        ),
+        # A maker's release asset with no cask: "<family> NF".
+        "monaspace-neon": (
+            "maker",
+            "https://github.com/githubnext/monaspace/releases",
+            "Monaspace Neon NF",
+        ),
+    }
+    assert builds["cascadia-code"].evidence == ("brew-cask:font-cascadia-code-nf",)
+    assert builds["source-code-pro"].evidence == ("nerd-folder:SourceCodePro",)
+    assert unlinked == {
+        "bigblue": (
+            "Nerd Fonts folder BigBlueTerminal: its base license CC-BY-SA-4.0 is excluded: "
+            "copyleft without a font exception (D3)"
+        ),
+        "new-mono": "Nerd Fonts folder NewMono is not in release v3.5.1",
+        "cozy": (
+            "neither a Nerd Fonts folder nor a build of the maker's own; shown only by "
+            "arch-pkg:nerd-fonts-cozy-ttf"
+        ),
+        "delugia-only": (
+            "neither a Nerd Fonts folder nor a build of the maker's own; shown only by "
+            "brew-cask:font-delugia-mono"
+        ),
+    }
+    assert all(links.policy_problems(b.link.url, nerd=True) == [] for b in builds.values())
+
+
+def test_no_nerd_fonts_release_links_no_folder() -> None:
+    u, recs, chosen, inputs = nerd_world()
+    inputs = replace(inputs, release=None)
+    builds, unlinked = links.nerd_builds(u, links.group_records(u, recs), chosen, inputs)
+    assert {b.kind for b in builds.values()} == {"maker"}
+    assert unlinked["source-code-pro"] == (
+        "Nerd Fonts folder SourceCodePro: no Nerd Fonts release in this run's records"
+    )
+
+
+def test_a_nerd_fonts_build_without_a_license_fact_is_not_linked() -> None:
+    u, recs, chosen, inputs = nerd_world()
+    inputs = replace(inputs, facts={})
+    builds, unlinked = links.nerd_builds(u, links.group_records(u, recs), chosen, inputs)
+    assert "source-code-pro" not in builds
+    assert unlinked["source-code-pro"].endswith("fonts.json states no license for it")
+
+
+def write_nerd_world(paths: Paths) -> None:
+    """The stage's inputs for two families: Source Code Pro with a Nerd Fonts folder, and
+    Plain without a build; the alias table is left out."""
+    sauce = nerd_rec("SourceCodePro", "Source Code Pro", "SauceCodePro")
+    brew = rec("homebrew_casks", "Source Code Pro", ("homepage", "https://ok.example/"))
+    plain = rec("homebrew_casks", "Plain", ("homepage", "https://ok.example/"), key="font-plain")
+    families = {
+        "source-code-pro": fam("source-code-pro", "Source Code Pro", [sauce, brew]),
+        "plain": fam("plain", "Plain", [plain]),
+    }
+    stageio.dump_stage(paths, "universe", Universe(families=families, unmapped=()))
+    records.write_jsonl(
+        [sauce, nerd_fact("SourceCodePro", "OFL-1.1-RFN")], paths.records / "nerdfonts.jsonl"
+    )
+    records.write_jsonl(
+        release(NERD_TAG, "2026-08-21", "SourceCodePro"), paths.records / "nerd_releases.jsonl"
+    )
+    records.write_jsonl([brew, plain], paths.records / "homebrew_casks.jsonl")
+    write_overrides(
+        paths.root,
+        '[[override]]\nfamily = "source-code-pro"\nname = "Source Code Pro"\n'
+        'question = "K-source-code-pro"\nprimary = "https://ok.example/"\nreason = "r"\n',
+        '[[override]]\nfamily = "plain"\nname = "Plain"\nquestion = "K-plain"\n'
+        'primary = "https://ok.example/plain/"\nreason = "r"\n',
+    )
+    write_ruling(paths, "2026-10-01", "K-source-code-pro", "a")
+    write_ruling(paths, "2026-10-02", "K-plain", "a")
+    member = MemberState(member=True, entered=DAY, runs_outside=0)
+    stageio.dump_stage(
+        paths,
+        "membership",
+        Membership(catalog=dict.fromkeys(families, member), top100={}),
+    )
+
+
+def nerd_context(paths: Paths, fetcher: Fetcher | None, **options: object) -> StageContext:
+    """A stage context with the licenses and license aliases the Nerd test reads."""
+    aliases = SimpleNamespace(aliases=NERD_LICENSE_ALIASES)
+    config = cast(Config, SimpleNamespace(licenses=NERD_LICENSES, license_aliases=aliases))
+    return replace(context(paths, fetcher, options=RunOptions(**options)), config=config)  # type: ignore[arg-type]
+
+
+def test_the_stage_writes_checks_and_reports_the_nerd_link(
+    paths: Paths, capsys: pytest.CaptureFixture[str]
+) -> None:
+    write_nerd_world(paths)
+    folder = nerd_url("SourceCodePro")
+    pages = {
+        "https://ok.example/": (200, None),
+        "https://ok.example/plain/": (200, None),
+        folder: (200, None),
+    }
+    web = Web(pages)
+    links.run(nerd_context(paths, web.fetcher()))
+    chosen = stageio.load_stage(paths, "links")
+    assert chosen["source-code-pro"].nerd == Link(folder, "SauceCodePro Nerd Font")
+    assert chosen["plain"].nerd is None
+    assert ("HEAD", folder) in web.requests  # the stage check covers it
+    queue = jsonio.load(paths.queues / links.QUEUE_FILE)
+    assert queue["nerd"] == {"release": NERD_TAG, "unlinked": {}}
+    assert queue["failed_checks"] == {}
+    assert links.cmd_check(nerd_context(paths, None)) == 0
+    assert "2 families, 0 failures, 0 warnings" in capsys.readouterr().out
+
+    # A replay checks it from the recorded answers, and gives the same stage file.
+    first = stageio.stage_path(paths, "links").read_bytes()
+    links.run(nerd_context(paths, None, from_snapshots=DAY))
+    assert stageio.stage_path(paths, "links").read_bytes() == first
+
+    # A Nerd link that stops answering is reported, like a designer link, not failed.
+    broken = Web({**pages, folder: (404, None)})
+    links.run(nerd_context(paths, broken.fetcher(), refetch=True))
+    queue = jsonio.load(paths.queues / links.QUEUE_FILE)
+    assert queue["failed_checks"][folder]["used_by"] == ["source-code-pro:nerd"]
+    assert links.cmd_check(nerd_context(paths, None)) == 0
+    out = capsys.readouterr().out
+    assert f"warning: source-code-pro: nerd {folder}: HTTP 404" in out
+
+
+def test_links_check_fails_a_nerd_link_the_policy_forbids(
+    paths: Paths, capsys: pytest.CaptureFixture[str]
+) -> None:
+    write_nerd_world(paths)
+    pages = {"https://ok.example/": (200, None), "https://ok.example/plain/": (200, None)}
+    links.run(nerd_context(paths, Web(pages).fetcher()))  # records the primaries' answers
+    shared = "https://github.com/ryanoasis/nerd-fonts/releases"
+    stageio.dump_stage(
+        paths,
+        "links",
+        {
+            "source-code-pro": Links(
+                Link("https://ok.example/"), None, "override", nerd=Link(shared, "SauceCodePro")
+            ),
+            "plain": Links(Link("https://ok.example/plain/"), None, "override"),
+        },
+    )
+    capsys.readouterr()
+    assert links.cmd_check(nerd_context(paths, None)) == 1
+    out = capsys.readouterr().out
+    assert f"FAIL source-code-pro: nerd {shared}" in out
+    assert "an aggregator (github.com/ryanoasis/nerd-fonts)" in out
+    assert "FAIL source-code-pro: primary" not in out
 
 
 # --- network -------------------------------------------------------------------------------------

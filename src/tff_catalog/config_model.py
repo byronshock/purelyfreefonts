@@ -636,6 +636,15 @@ class SourceCredit:
 
 
 @dataclass(frozen=True, slots=True)
+class NerdText:
+    """The Nerd Font marker's wording (owner ruling of 2026-09-29, TASK-2)."""
+
+    marker: str  # the text beside a font's name: "NF"
+    label: str  # the marker's accessible name: "Nerd Font version available"
+    legend: str  # the site's legend: "<marker>: <label> (...)."
+
+
+@dataclass(frozen=True, slots=True)
 class SiteConfig:
     """Wording for ``catalog-site.json``; owner rulings on wording live here."""
 
@@ -644,6 +653,7 @@ class SiteConfig:
     views: tuple[ViewText, ...]  # rank selector order; every RANK_KEYS entry once
     tiers: TierTexts
     license_classes: tuple[LicenseClassText, ...]  # filter order
+    nerd: NerdText
     package_systems: dict[str, PackageSystem]  # pulled_in_by system id -> label
     sources: dict[str, SourceCredit]  # engine source id -> credit
 

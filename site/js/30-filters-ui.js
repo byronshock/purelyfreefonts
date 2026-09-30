@@ -33,6 +33,7 @@ const FiltersUI = (() => {
       case 'hide':
         return { [name]: inputs.filter((input) => input.checked).map((input) => input.value) };
       case 'var':
+      case 'nerd':
       case 'redist':
         return { [name]: inputs.some((input) => input.checked) };
       case 'q':
@@ -48,6 +49,7 @@ const FiltersUI = (() => {
     (state.cat ? 1 : 0) +
     (state.spacing ? 1 : 0) +
     (state.var ? 1 : 0) +
+    (state.nerd ? 1 : 0) +
     state.hide.length +
     state.lic.length +
     (state.redist ? 1 : 0);
@@ -68,7 +70,7 @@ const FiltersUI = (() => {
     for (const name of ['lic', 'hide']) {
       for (const input of byName(name)) setChecked(input, state[name].includes(input.value));
     }
-    for (const name of ['var', 'redist']) {
+    for (const name of ['var', 'nerd', 'redist']) {
       for (const input of byName(name)) setChecked(input, state[name]);
     }
     const q = Core.$('#f-q', root);
@@ -98,6 +100,7 @@ const FiltersUI = (() => {
     choice('cat', 'f-cat');
     choice('spacing', 'f-spacing');
     if (state.var) boxes('var', '1');
+    if (state.nerd) boxes('nerd', '1');
     if (state.hide.includes('limited')) boxes('hide', 'limited');
     if (state.lic.length) {
       const chosen = byName('lic').filter((i) => state.lic.includes(i.value)).map(labelOf);

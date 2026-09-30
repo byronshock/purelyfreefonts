@@ -160,6 +160,7 @@
 
 .details-more,
 .details-link-note,
+.details-nf-legend,
 .typeown-note {
   margin: var(--space-2) 0 0;
   color: var(--c-muted);

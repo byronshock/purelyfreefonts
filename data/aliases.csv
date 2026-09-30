@@ -449,7 +449,9 @@ adwaita-fonts,arch-pkg,adwaita-mono,bundle,2,hand,2026-09-28,claude:2026-09-28
 font-adwaita,brew-cask,adwaita-mono,bundle,2,hand,2026-09-28,owner:2026-09-28
 adwaita-fonts,arch-pkg,adwaita-sans,bundle,2,hand,2026-09-28,claude:2026-09-28
 font-adwaita,brew-cask,adwaita-sans,bundle,2,hand,2026-09-28,owner:2026-09-28
+fonts-adwaita,deb-pkg,adwaita-sans,package,,hand,2026-09-28,claude:2026-09-28
 fonts-adwaita-sans,deb-pkg,adwaita-sans,package,,distro+oldlib,2026-09-28,claude:2026-09-28
+fonts-adwaita,deb-src,adwaita-sans,package,,hand,2026-09-28,claude:2026-09-28
 nerd-fonts-agave,arch-pkg,agave,build,nerd,distro,2026-09-28,claude:2026-09-28
 ttf-agave-nerd,arch-pkg,agave,build,nerd,distro,2026-09-28,claude:2026-09-28
 Agave Nerd Font,font-name,agave,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
@@ -1250,7 +1252,12 @@ nerd-fonts-hack,arch-pkg,hack,build,nerd,distro,2026-09-28,claude:2026-09-28
 ttf-cica,arch-pkg,hack,build,,distro,2026-09-28,owner:2026-09-28
 ttf-hackgen,arch-pkg,hack,build,,distro,2026-09-28,owner:2026-09-28
 ttf-hack-nerd,arch-pkg,hack,build,nerd,distro+oldlib,2026-09-28,claude:2026-09-28
+font-cica,brew-cask,hack,build,,hand,2026-09-29,claude:2026-09-29
+font-cica-without-emoji,brew-cask,hack,build,,hand,2026-09-29,claude:2026-09-29
+font-hackgen,brew-cask,hack,build,,hand,2026-09-29,claude:2026-09-29
+font-hackgen-nerd,brew-cask,hack,build,,hand,2026-09-29,claude:2026-09-29
 fonts-hack-nerd,deb-pkg,hack,build,nerd,distro,2026-09-28,owner:2026-09-28
+HackGen,font-name,hack,build,,hand,2026-09-29,claude:2026-09-29
 Hack Nerd Font,font-name,hack,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 Hack Nerd Font Mono,font-name,hack,build,nfm,nerd,2026-09-26,auto:nerd_unpatched
 Hack Nerd Font Propo,font-name,hack,build,propo,nerd,2026-09-26,auto:nerd_unpatched

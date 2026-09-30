@@ -3,7 +3,7 @@
   "synthetic": true,
   "run": {
     "date": "2026-09-25",
-    "method_version": "2026-09-25",
+    "method_version": "2026-09-29",
     "ranking_toml_sha256": "66dab0fd9a4c7adea63aebe6f8ed2970c7af49defbd9fda7f8ec0531c01f9453",
     "generator": "synthetic sample (hand-made, not a pipeline run)"
   },
@@ -195,6 +195,11 @@
     {"id": "attribution", "label": "Attribution required (CC BY)"},
     {"id": "freeware", "label": "Other free-use grants"}
   ],
+  "nerd": {
+    "marker": "NF",
+    "label": "Nerd Font version available",
+    "legend": "NF: Nerd Font version available (adds developer icons, which have their own licenses)."
+  },
   "fonts": [
     {
       "id": "sample-sans-01",
@@ -220,7 +225,7 @@
         "size": 876576,
         "format": "ttf"
       },
-      "links": {"primary": {"url": "https://github.com/rsms/inter"}, "designer": {"url": "https://rsms.me/", "label": "Rasmus Andersson"}},
+      "links": {"primary": {"url": "https://github.com/rsms/inter"}, "designer": {"url": "https://rsms.me/", "label": "Rasmus Andersson"}, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [{"name": "Sample Sans 01 Variable", "relation": "build"}, {"name": "SampleSans01-Regular", "relation": "postscript"}],
@@ -272,7 +277,11 @@
         "size": 187208,
         "format": "ttf"
       },
-      "links": {"primary": {"url": "https://github.com/JetBrains/JetBrainsMono"}, "designer": null},
+      "links": {
+        "primary": {"url": "https://github.com/JetBrains/JetBrainsMono"},
+        "designer": null,
+        "nerd": {"url": "https://github.com/ryanoasis/nerd-fonts/tree/v3.5.1/patched-fonts/SampleMono02", "label": "SampleMono02 Nerd Font"}
+      },
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [{"name": "Sample Mono 02 NL", "relation": "build"}, {"name": "SampleMono02 Nerd Font", "relation": "build"}],
@@ -322,7 +331,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://github.com/sample-foundry/sample-sans-03"},
-        "designer": {"url": "https://example.org/designers/studio-4", "label": "Example Type Studio 4"}
+        "designer": {"url": "https://example.org/designers/studio-4", "label": "Example Type Studio 4"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [],
@@ -370,7 +380,7 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-serif-04.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-serif-04/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-serif-04/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
@@ -422,7 +432,7 @@
         "size": 334924,
         "format": "otf"
       },
-      "links": {"primary": {"url": "https://github.com/adobe-fonts/source-sans"}, "designer": null},
+      "links": {"primary": {"url": "https://github.com/adobe-fonts/source-sans"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [{"name": "Sample Sans Classic", "relation": "rename"}, {"name": "SampleSans05-Regular", "relation": "postscript"}],
@@ -471,7 +481,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://example.com/fonts/sample-sans-06/"},
-        "designer": {"url": "https://example.org/designers/studio-2", "label": "Example Type Studio 2"}
+        "designer": {"url": "https://example.org/designers/studio-2", "label": "Example Type Studio 2"},
+        "nerd": null
       },
       "preinstalled_on": [{"system": "android"}],
       "pulled_in_by": [],
@@ -519,7 +530,7 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-mono-07.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://github.com/sample-foundry/sample-mono-07"}, "designer": null},
+      "links": {"primary": {"url": "https://github.com/sample-foundry/sample-mono-07"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [{"name": "Sample Mono 07 Nerd Font", "relation": "build"}, {"name": "SMono07 NF", "relation": "build"}],
@@ -567,7 +578,7 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-sans-08.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-08/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-08/"}, "designer": null, "nerd": null},
       "preinstalled_on": [{"system": "debian"}, {"system": "fedora"}, {"system": "gnome"}],
       "pulled_in_by": [],
       "aliases": [],
@@ -616,7 +627,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://example.com/fonts/sample-serif-09/"},
-        "designer": {"url": "https://example.org/designers/studio-5", "label": "Example Type Studio 5"}
+        "designer": {"url": "https://example.org/designers/studio-5", "label": "Example Type Studio 5"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [],
@@ -669,7 +681,7 @@
         "size": 38576,
         "format": "ttf"
       },
-      "links": {"primary": {"url": "https://fonts.google.com/specimen/Orbitron"}, "designer": null},
+      "links": {"primary": {"url": "https://fonts.google.com/specimen/Orbitron"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
@@ -716,7 +728,7 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-sans-11.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://github.com/sample-foundry/sample-sans-11"}, "designer": null},
+      "links": {"primary": {"url": "https://github.com/sample-foundry/sample-sans-11"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
@@ -768,7 +780,7 @@
         "size": 406076,
         "format": "ttf"
       },
-      "links": {"primary": {"url": "https://fonts.google.com/specimen/Lobster"}, "designer": null},
+      "links": {"primary": {"url": "https://fonts.google.com/specimen/Lobster"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
@@ -815,7 +827,11 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-mono-13.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://github.com/sample-foundry/sample-mono-13"}, "designer": null},
+      "links": {
+        "primary": {"url": "https://github.com/sample-foundry/sample-mono-13"},
+        "designer": null,
+        "nerd": {"url": "https://github.com/sample-foundry/sample-mono-13/releases", "label": "Sample Mono 13 NF"}
+      },
       "preinstalled_on": [{"system": "windows-11"}],
       "pulled_in_by": [],
       "aliases": [{"name": "Sample Mono 13 PL", "relation": "build"}],
@@ -863,7 +879,7 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-sans-14.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-14/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-14/"}, "designer": null, "nerd": null},
       "preinstalled_on": [{"system": "macos"}],
       "pulled_in_by": [],
       "aliases": [],
@@ -912,7 +928,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://example.com/fonts/sample-serif-15/"},
-        "designer": {"url": "https://example.org/designers/studio-1", "label": "Example Type Studio 1"}
+        "designer": {"url": "https://example.org/designers/studio-1", "label": "Example Type Studio 1"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [],
@@ -960,7 +977,7 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-hand-16.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-hand-16/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-hand-16/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
@@ -1007,7 +1024,7 @@
       "preview_ok": false,
       "preview": null,
       "font_file": null,
-      "links": {"primary": {"url": "https://type.example.org/sample-sans-17/"}, "designer": null},
+      "links": {"primary": {"url": "https://type.example.org/sample-sans-17/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
@@ -1056,7 +1073,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://example.com/fonts/sample-display-18/"},
-        "designer": {"url": "https://example.org/designers/studio-4", "label": "Example Type Studio 4"}
+        "designer": {"url": "https://example.org/designers/studio-4", "label": "Example Type Studio 4"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [],
@@ -1104,7 +1122,7 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-serif-19.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-serif-19/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-serif-19/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
@@ -1151,7 +1169,7 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-mono-20.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-mono-20/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-mono-20/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [{"system": "cachyos", "package": "sample-desktop-settings"}],
       "aliases": [],
@@ -1201,7 +1219,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://example.com/fonts/sample-sans-21/"},
-        "designer": {"url": "https://example.org/designers/studio-2", "label": "Example Type Studio 2"}
+        "designer": {"url": "https://example.org/designers/studio-2", "label": "Example Type Studio 2"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [],
@@ -1249,7 +1268,7 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-serif-22-long.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://type.example.org/sample-serif-22-long/"}, "designer": null},
+      "links": {"primary": {"url": "https://type.example.org/sample-serif-22-long/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
@@ -1296,7 +1315,7 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-mono-23.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://github.com/sample-foundry/sample-mono-23"}, "designer": null},
+      "links": {"primary": {"url": "https://github.com/sample-foundry/sample-mono-23"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
@@ -1346,7 +1365,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://example.com/fonts/sample-sans-24/"},
-        "designer": {"url": "https://example.org/designers/studio-5", "label": "Example Type Studio 5"}
+        "designer": {"url": "https://example.org/designers/studio-5", "label": "Example Type Studio 5"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [],
@@ -1394,7 +1414,7 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-display-25.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-display-25/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-display-25/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
@@ -1441,7 +1461,7 @@
       "preview_ok": true,
       "preview": null,
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-hand-26/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-hand-26/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
@@ -1490,7 +1510,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://example.com/fonts/sample-serif-27/"},
-        "designer": {"url": "https://example.org/designers/studio-3", "label": "Example Type Studio 3"}
+        "designer": {"url": "https://example.org/designers/studio-3", "label": "Example Type Studio 3"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [],
@@ -1538,7 +1559,7 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-sans-28.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-28/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-28/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
@@ -1585,7 +1606,7 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-sans-29.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-29/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-29/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
@@ -1634,7 +1655,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://example.com/fonts/sample-serif-30/"},
-        "designer": {"url": "https://example.org/designers/studio-1", "label": "Example Type Studio 1"}
+        "designer": {"url": "https://example.org/designers/studio-1", "label": "Example Type Studio 1"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [{"system": "debian", "package": "sample-office-common"}],
@@ -1682,7 +1704,7 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-display-31.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-display-31/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-display-31/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
@@ -1729,7 +1751,7 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-mono-32.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://github.com/sample-foundry/sample-mono-32"}, "designer": null},
+      "links": {"primary": {"url": "https://github.com/sample-foundry/sample-mono-32"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
@@ -1779,7 +1801,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://example.com/fonts/sample-hand-33/"},
-        "designer": {"url": "https://example.org/designers/studio-4", "label": "Example Type Studio 4"}
+        "designer": {"url": "https://example.org/designers/studio-4", "label": "Example Type Studio 4"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [],
@@ -1827,7 +1850,7 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-sans-34.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-34/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-34/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
@@ -1874,7 +1897,7 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-mono-35.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-mono-35/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-mono-35/"}, "designer": null, "nerd": null},
       "preinstalled_on": [{"system": "endeavouros"}],
       "pulled_in_by": [],
       "aliases": [],
@@ -1924,7 +1947,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://type.example.org/sample-serif-36/"},
-        "designer": {"url": "https://example.org/designers/studio-2", "label": "Example Type Studio 2"}
+        "designer": {"url": "https://example.org/designers/studio-2", "label": "Example Type Studio 2"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [],
@@ -1972,7 +1996,7 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-sans-37.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-37/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-37/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],
@@ -2019,7 +2043,7 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-display-38.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-display-38/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-display-38/"}, "designer": null, "nerd": null},
       "preinstalled_on": [{"system": "macos"}],
       "pulled_in_by": [],
       "aliases": [],
@@ -2068,7 +2092,8 @@
       "font_file": null,
       "links": {
         "primary": {"url": "https://example.com/fonts/sample-hand-39/"},
-        "designer": {"url": "https://example.org/designers/studio-5", "label": "Example Type Studio 5"}
+        "designer": {"url": "https://example.org/designers/studio-5", "label": "Example Type Studio 5"},
+        "nerd": null
       },
       "preinstalled_on": [],
       "pulled_in_by": [],
@@ -2116,7 +2141,7 @@
       "preview_ok": true,
       "preview": {"path": "specimens/sample-sans-40.svg", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
       "font_file": null,
-      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-40/"}, "designer": null},
+      "links": {"primary": {"url": "https://example.com/fonts/sample-sans-40/"}, "designer": null, "nerd": null},
       "preinstalled_on": [],
       "pulled_in_by": [],
       "aliases": [],

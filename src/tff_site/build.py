@@ -31,7 +31,9 @@ Static files: exactly ``STATIC_FILES`` are copied from ``site/static/`` (section
 else there (``_src/``, drafts) never ships.
 
 A row's ``specimen`` ``width`` and ``height`` are the size the no-script ``<img>`` shows at:
-``SPEC_BOX_PX`` high (``--spec-h``), with the SVG's aspect ratio.
+``SPEC_BOX_PX`` high (``--spec-h``), with the SVG's aspect ratio. A row's ``nerd`` is true
+for a font with a Nerd Font build (``links.nerd``), which shows the catalog's ``nerd`` marker
+beside its name; the list context's ``nerd`` carries that wording for the rows and the legend.
 
 The output is written to a sibling staging directory and swapped in at the end, so a failed
 build leaves the previous site as it was. Only a directory that holds a previous build (a
@@ -360,11 +362,19 @@ def _list_context(
     ]
     if not views or views[0]["key"] != data.DEFAULT_VIEW:
         raise BuildError([f"the first available view must be {data.DEFAULT_VIEW!r} (M2-D1)"])
+    nerd = doc["nerd"]
     return {
         "views": views,
         "categories": [{"value": k, "label": v} for k, v in data.CATEGORY_LABELS.items()],
         "license_classes": [{"id": c["id"], "label": c["label"]} for c in doc["license_classes"]],
         "systems_os": [{"value": k, "label": v} for k, v in data.OS_LABELS.items()],
+        # The legend shows its leading marker as the rows do: "<marker>" + "<after_marker>".
+        "nerd": {
+            "marker": nerd["marker"],
+            "label": nerd["label"],
+            "legend": nerd["legend"],
+            "after_marker": nerd["legend"].removeprefix(nerd["marker"]),
+        },
         "total": len(doc["fonts"]),
         "index_url": urls["list.json"],
         "details_url": urls["details.json"],
@@ -395,6 +405,8 @@ def _rows(doc: Mapping[str, Any], specimens: Mapping[str, Specimen]) -> list[dic
                 else {"url": spec.url, "width": spec.width, "height": spec.height},
                 "fallback": None if spec else ("failed" if font["preview_ok"] else "license"),
                 "download": {"url": primary["url"], "label": data.destination_name(primary)},
+                # A Nerd Font build (TASK-2): the "NF" marker beside the name.
+                "nerd": font["links"]["nerd"] is not None,
             }
         )
     return rows

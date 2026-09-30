@@ -172,6 +172,13 @@ def test_sample_covers_the_step_2_cases():
     views = {v["key"]: v for v in SAMPLE["views"]}
     assert views["rising"]["available"] is False
     assert not any("rising" in f["ranks"] for f in fonts_)
+    # Nerd Font builds (TASK-2): a monospace font or two with one, of both kinds, null elsewhere
+    nerd = {f["id"]: f["links"]["nerd"] for f in fonts_ if f["links"]["nerd"] is not None}
+    assert 1 <= len(nerd) < len(fonts_)
+    assert all(f["is_monospace"] for f in fonts_ if f["id"] in nerd)
+    folders = [n for n in nerd.values() if "/ryanoasis/nerd-fonts/tree/" in n["url"]]
+    assert folders, "a Nerd Fonts project build"
+    assert len(folders) < len(nerd), "a maker's own build"
 
 
 def test_sample_has_a_font_found_only_by_alias():
@@ -294,6 +301,15 @@ SCHEMA_BREAKS = {
     "url with a trailing newline": _set(["data_license", "url"], "https://example.com/\n"),
     "provisional data license (ruling T5)": _set(["data_license", "provisional"], True),
     "a view with the old desktop flag": lambda d: d["views"][0].update(desktop=True),
+    "links without nerd": lambda d: d["fonts"][0]["links"].pop("nerd"),
+    "a nerd link without its label": lambda d: _font(d, "sample-mono-02")["links"]["nerd"].pop(
+        "label"
+    ),
+    "a nerd link with a note": lambda d: _font(d, "sample-mono-02")["links"]["nerd"].update(
+        note="x"
+    ),
+    "no nerd wording": lambda d: d.pop("nerd"),
+    "nerd wording without its legend": lambda d: d["nerd"].pop("legend"),
 }
 
 
@@ -397,6 +413,7 @@ def test_sample_wording_matches_config_site_toml():
     ]
     assert SAMPLE["tiers"] == site["tiers"]
     assert SAMPLE["license_classes"] == site["license_classes"]
+    assert SAMPLE["nerd"] == site["nerd"]
     for source in SAMPLE["sources"]:  # publish_rank stays synthetic: jsdelivr's is hidden here
         credit = site["sources"][source["id"]]
         assert {k: source[k] for k in ("name", "measures", "url", "license")} == {
@@ -438,6 +455,31 @@ def test_spacing_filter_follows_the_site_ruling():
     )
 
 
+NERD_RULINGS = tomllib.loads(
+    (ROOT / "data" / "reviews" / "site" / "2026-09-29.toml").read_text(encoding="utf-8")
+)
+
+
+def test_the_nerd_marker_follows_the_site_rulings():
+    """The owner's rulings of 2026-09-29 (TASK-2): the "NF" marker, the legend word for word,
+    and a "Nerd Font available" filter, in the config, the template and the contract."""
+    site = tomllib.loads((ROOT / "config" / "site.toml").read_text(encoding="utf-8"))["nerd"]
+    assert site["legend"] == NERD_RULINGS["nerd_legend"]["ruling"]
+    assert site["marker"] == "NF"
+    assert f'"{site["marker"]}"' in NERD_RULINGS["nerd_marker"]["ruling"]
+    assert site["label"] in site["legend"]
+    label = re.search(r'"([^"]+)" option', NERD_RULINGS["nerd_filter"]["ruling"]).group(1)
+    filters = (TEMPLATES / "_filters.html.j2").read_text(encoding="utf-8")
+    assert f'id="f-nerd" name="nerd" value="1" aria-describedby="nf-legend"> {label}</label>' in (
+        filters
+    )
+    dom = section(CONTRACT, "4. DOM")
+    assert 'id="f-nerd" name="nerd"' in dom
+    assert 'id="nf-legend"' in dom
+    assert '<span class="nf-mark" role="img"' in dom
+    assert "8192 a Nerd Font build" in section(CONTRACT, "7. List index JSON")
+
+
 def test_hash_grammar_matches_the_hash_table():
     hash_section = section(CONTRACT, "9. URL hash")
     grammar = re.search(r"^key   = (.*)$", hash_section, re.MULTILINE).group(1)
@@ -445,6 +487,7 @@ def test_hash_grammar_matches_the_hash_table():
     table = [row[0] for row in table_after(hash_section, "| Key | Value |")]
     assert keys == table
     assert "spacing" in keys
+    assert keys.index("nerd") == keys.index("var") + 1  # "Nerd Font available", after var
     assert not {"mono", "text"} & set(keys)
     assert "Extension keys" in hash_section  # Milestone 3's keys survive State (section 9)
 

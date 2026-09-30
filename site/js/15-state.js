@@ -1,7 +1,7 @@
 // 15-state: the view the visitor asked for, kept in the URL after "#" (site/CONTRACT.md
 // section 9). The fragment never reaches the server and nothing is stored anywhere.
 //
-// The state is { rank, cat, lic[], spacing, var, hide[], redist, q, sort, font }. The hash
+// The state is { rank, cat, lic[], spacing, var, nerd, hide[], redist, q, sort, font }. The hash
 // holds the keys in that order, with defaults left out, then every extension pair (a key
 // this page doesn't own, such as Milestone 3's os=linux) exactly as written, in its original
 // order. Discrete changes push a history entry; search typing replaces the current one after
@@ -10,7 +10,7 @@
 // parse(), serialize(), coerce() and same() are pure, for tests/site/test_list.py.
 const State = (() => {
   const KEYS = Object.freeze([
-    'rank', 'cat', 'lic', 'spacing', 'var', 'hide', 'redist', 'q', 'sort', 'font',
+    'rank', 'cat', 'lic', 'spacing', 'var', 'nerd', 'hide', 'redist', 'q', 'sort', 'font',
   ]);
   const OWN = new Set(KEYS);
   const LISTS = new Set(['lic', 'hide']);
@@ -28,6 +28,7 @@ const State = (() => {
     lic: Object.freeze([]),
     spacing: '',
     var: false,
+    nerd: false,
     hide: Object.freeze([]),
     redist: false,
     q: '',
@@ -91,6 +92,7 @@ const State = (() => {
       case 'spacing':
         return SPACINGS.includes(value) ? value : '';
       case 'var':
+      case 'nerd':
       case 'redist':
         return isOn(value);
       case 'hide':
@@ -167,6 +169,7 @@ const State = (() => {
     if (state.lic.length) pairs.push(`lic=${state.lic.map(encode).join(',')}`);
     if (state.spacing) pairs.push(`spacing=${encode(state.spacing)}`);
     if (state.var) pairs.push('var=1');
+    if (state.nerd) pairs.push('nerd=1');
     if (state.hide.length) pairs.push(`hide=${state.hide.map(encode).join(',')}`);
     if (state.redist) pairs.push('redist=1');
     if (state.q) pairs.push(`q=${encode(state.q)}`);
@@ -178,7 +181,10 @@ const State = (() => {
 
   // Every filter off; the rank, sort order and open details stay.
   const cleared = (state) =>
-    coerce({ cat: '', lic: [], spacing: '', var: false, hide: [], redist: false, q: '' }, state);
+    coerce(
+      { cat: '', lic: [], spacing: '', var: false, nerd: false, hide: [], redist: false, q: '' },
+      state,
+    );
 
   // True when no filter (search included) is on.
   const isClear = (state) => same(cleared(state), state);

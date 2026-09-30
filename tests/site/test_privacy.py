@@ -135,7 +135,7 @@ SETTLE_JS = """() => new Promise((resolve) =>
 AT_BOTTOM_JS = "() => innerHeight + scrollY >= document.documentElement.scrollHeight - 1"
 TYPE_OWN_BIT = 64  # list index bits (site/CONTRACT.md section 7)
 # The filter controls' names, which are the hash keys (site/CONTRACT.md sections 4 and 9).
-FILTER_NAMES = frozenset({"cat", "spacing", "var", "hide", "lic", "redist", "sort"})
+FILTER_NAMES = frozenset({"cat", "spacing", "var", "nerd", "hide", "lic", "redist", "sort"})
 
 
 def _origin(url: str) -> str:

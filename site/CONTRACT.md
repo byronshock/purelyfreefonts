@@ -21,7 +21,8 @@ Contents:
 
 - **`catalog-site.json`**, draft schema `schemas/catalog-site.schema.json` (`schema_version` `1.0.0-draft`; Milestone 1 step 20 freezes v1). `tff_site.data.validate` runs the schema and then the cross-reference checks the schema can't express (`semantic_errors`). `tff-site validate FILE` prints `valid (1.0.0-draft), N fonts`.
   - **Stricter than JSON:** a key repeated in one object, `NaN` and `Infinity` make the file invalid (`tff_site.data.loads`), because the schema would check only one of the repeated values while the page showed another.
-- **Wording** in the catalog (view labels and measures lines, tiers, license classes, source credits, system labels) comes from `config/site.toml`, the one home for the owner's wording rulings; Milestone 1's export copies it, and a contract test keeps the sample equal to it.
+- **Wording** in the catalog (view labels and measures lines, tiers, license classes, the Nerd Font marker and legend, source credits, system labels) comes from `config/site.toml`, the one home for the owner's wording rulings; Milestone 1's export copies it, and a contract test keeps the sample equal to it.
+- **Nerd Font builds** (owner rulings of 2026-09-28 and 2026-09-29, TASK-2). A font whose `links.nerd` is set has a Nerd Font build: the list shows the catalog's `nerd.marker` ("NF") beside its name, named `nerd.label` ("Nerd Font version available") for screen readers, the list and the details panel show `nerd.legend`, and the "Nerd Font available" filter keeps only these fonts. The sample gives one to `sample-mono-02` (a Nerd Fonts folder) and `sample-mono-13` (a maker's own build).
 - **The sample**, `tests/fixtures/catalog-site.sample.json`: 40 invented fonts (`"synthetic": true`, ids `sample-*`, families `Sample …`). Five of them point `font_file` at the real OFL files pinned in `tests/fixtures/specimen-fonts.toml`, so specimens and "Type your own text" run on real outlines: `sample-sans-01` (Inter), `sample-mono-02` (JetBrains Mono), `sample-sans-05` (Source Sans 3, CFF), `sample-display-10` (Orbitron, basic Latin only) and `sample-script-12` (Lobster).
 - **Specimens.** `preview.path` is `specimens/<id>.svg`, relative to the directory holding the data file: `build/specimens/` for real data, `tests/fixtures/specimens/` for the sample. The build copies each one after checking its sha256. A specimen may not contain `<script`, `<foreignObject`, an `on…=` handler, or an `href` other than `#…` (a link inside the file); the build refuses it.
   - **Placeholder:** a `preview.sha256` of 64 zeros means "not rendered yet". The build treats it as no preview ("Preview not available yet") instead of failing. In the sample, the five fonts with real font files carry the hashes of their committed specimens, `tests/fixtures/specimens/*.svg`, and the contract test requires the two to match (a changed sample line means regenerating both with `tests.specimens.regen`); the other fonts keep the placeholder.
@@ -34,6 +35,8 @@ Contents:
   4. otherwise the host name without a leading `www.`.
 
   A primary link may carry `link.note`, a sentence `Details` shows as `p.details-link-note` under the panel's links (Metropolis: why an archived mirror is its official download).
+
+  A Nerd Font build's link, `links.nerd`, always has a `label`, which names the build. Its text names the build and then the destination by rules 2 to 4: `<label> (<destination>)`, "SauceCodePro Nerd Font (GitHub: ryanoasis/nerd-fonts)" (`tff_site.data.nerd_link_text`, `Details.nerdText`).
 
 ## 2. Build output
 
@@ -106,9 +109,10 @@ Jinja2 with `autoescape=True`, `StrictUndefined`, `trim_blocks`, `lstrip_blocks`
 | `categories` | `{value, label}`: `sans-serif` Sans serif, `serif` Serif, `display` Display, `handwriting` Handwriting, `monospace` Monospace |
 | `license_classes` | `{id, label}` from the catalog |
 | `systems_os` | `{value, label}`: `windows` Windows, `macos` macOS, `linux` Linux, `android` Android |
+| `nerd` | the catalog's `nerd` wording, `{marker, label, legend}`, plus `after_marker`: the legend less its leading marker, so the legend shows its marker as the rows do |
 | `total` | number of fonts |
 | `index_url`, `details_url` | hashed URLs of the two payloads |
-| `rows` | one per font, in server order (section 7): `id`, `family`, `label` (the Overall rank label), `category_label`, `license_name`, `badges` [{`key`, `text`}], `specimen` {`url`, `width`, `height`} or none (`width` and `height` are the no-script `<img>`'s display size: 48 px high, the `--spec-h` box, and as wide as the SVG's aspect ratio makes it), `fallback` (none, `"license"` or `"failed"`), `download` {`url`, `label`} |
+| `rows` | one per font, in server order (section 7): `id`, `family`, `label` (the Overall rank label), `category_label`, `license_name`, `badges` [{`key`, `text`}], `specimen` {`url`, `width`, `height`} or none (`width` and `height` are the no-script `<img>`'s display size: 48 px high, the `--spec-h` box, and as wide as the SVG's aspect ratio makes it), `fallback` (none, `"license"` or `"failed"`), `download` {`url`, `label`}, `nerd` (true for a font with a Nerd Font build, `links.nerd`) |
 
 Badge keys, in this order: `variable`, `monospace`, `limited` ("Limited accents"), `attribution` ("Attribution required"), `noredist` ("Not redistributable"), `preinstalled` ("Comes with Windows 11, macOS"), `pulled` ("Pulled in by sample-office-common on Debian", from `pulled_in_by`; several are joined with "; "), `new` ("New"). `preinstalled` and `pulled` are the tags that explain "Not ranked: no evidence of deliberate installs" in *most chosen* (Milestone 2 step 3).
 
@@ -154,6 +158,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
         </fieldset>
         <fieldset id="f-type"><legend>Type</legend>
           <input type="checkbox" id="f-var" name="var" value="1">            <!-- Variable only -->
+          <input type="checkbox" id="f-nerd" name="nerd" value="1" aria-describedby="nf-legend">  <!-- Nerd Font available -->
           <input type="checkbox" id="f-hide-limited" name="hide" value="limited">
         </fieldset>
         <fieldset id="f-license"><legend>License</legend>
@@ -179,6 +184,8 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
       <!-- Main inserts <p id="load-note" class="noscript-note"> here, before #count, when the
            list index fails to load or doesn't match the rows; the server's list stays. -->
       <p id="count" class="count">Showing 540 of 540 fonts</p>
+      <p id="nf-legend" class="nf-legend"><span class="nf-mark">NF</span>: Nerd Font version available
+        (adds developer icons, which have their own licenses).</p>     <!-- the catalog's nerd.legend -->
       <div id="status" class="visually-hidden" role="status"></div>  <!-- Announce's only live region -->
       <div id="no-results" class="no-results" hidden>
         <p id="no-results-text">…names the filters to loosen…</p>
@@ -195,6 +202,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 - `#filters` carries `hidden` in the HTML; the script removes it. Showing it must not move the list (reserve its space in CSS), because the layout-shift budget is 0.1.
 - Narrow screens are below `60rem`: `#f-more` is hidden until `#f-toggle` expands it, and `#f-toggle`'s text includes the number of active filters. From `60rem` up, `#f-more` is always shown in the sidebar and `#f-toggle` is hidden.
 - `#f-spacing` (Any / Proportional / Monospaced) is shown on every rank; it replaces the old "Text only" and "Monospace only" boxes (owner's site ruling of 2026-09-25, `data/reviews/site/2026-09-25.toml`). Proportional hides monospace fonts. On Coding, whose fonts are all monospace, Proportional leaves nothing, and `#no-results-text` names the Spacing filter.
+- `#f-nerd` ("Nerd Font available", owner's site ruling of 2026-09-29, `data/reviews/site/2026-09-29.toml`, `nerd_filter`) keeps only the fonts with a Nerd Font build, on every rank. `#nf-legend` describes it and explains the rows' marker: the catalog's `nerd.legend`, its leading marker shown as `span.nf-mark`.
 
 ### A row
 
@@ -203,6 +211,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
   <div class="font-row">
     <span class="rank">1</span>                                  <!-- number, band, or "Not ranked: <reason>" -->
     <h3 class="font-name" id="font-inter-name">Inter</h3>
+    <span class="nf-mark" role="img" aria-label="Nerd Font version available">NF</span>  <!-- only with links.nerd -->
     <div class="font-spec">
       <span class="spec" role="img" aria-label="Inter sample" data-src="/assets/specimens/inter.<h>.svg"></span>
       <noscript><img class="spec-img" src="/assets/specimens/inter.<h>.svg" alt="Inter sample"
@@ -223,6 +232,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 ```
 
 - Font index `i` (section 7) is the `i`-th `li.font` in the server-rendered `#list`.
+- **The Nerd Font marker** (owner rulings of 2026-09-29, TASK-2): a font with a Nerd Font build (`links.nerd`) has `span.nf-mark[role=img]` right after its `h3`, on every rank: the catalog's `nerd.marker` as text, `nerd.label` as its accessible name. It sits in the name's grid cell, at its end, at a fixed width and no taller than the name's first line, in the width every row's name leaves free (`.font-name`'s end padding, marker or not), so no row's height depends on it. The heading's text stays the family name alone.
 - `span.spec[data-src]` is always `/assets/specimens/<id>.<h>.svg`. `Specimens` ignores any other value, so a `data-src` can never break out of the CSS `url("…")` it becomes.
 - `Render` moves rows in and out of `#list` (hidden rows are detached, not given `hidden`) and changes only `.rank` text. Rows carry `content-visibility: auto`, so they must not change height when their specimen arrives.
 - **States set by scripts:** `html[data-js]` once the script runs; `span.spec[data-state="set"]` once its mask is set; `li.font.is-dim` for a row a Milestone 3 filter dims; `li.font.is-unranked` for a row whose `.rank` reads "Not ranked: <reason>" (the server sets it too), which puts that label on a line of its own above the name (the owner's site ruling of 2026-09-26).
@@ -232,7 +242,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
   - one `button.ext-action[type=button][data-action="<action id>"]` per action.
 
   Rows may grow when a note appears; that happens only after the visitor starts Milestone 3's check, so it is not a load-time layout shift.
-- **Details panel** (owned by `Details`; only these hooks are frozen): the panel's first child is `<h4 class="details-title" id="details-<id>-h" tabindex="-1">`, which receives focus when the panel opens from a `#font=` link, and it has a `button.details-close`. Esc or the close button returns focus to the row's `.details-toggle`. "Type your own text" is `button.typeown-load` ("Load font (312 KB) to type your own text") and then `input.typeown-input`.
+- **Details panel** (owned by `Details`; only these hooks are frozen): the panel's first child is `<h4 class="details-title" id="details-<id>-h" tabindex="-1">`, which receives focus when the panel opens from a `#font=` link, and it has a `button.details-close`. Esc or the close button returns focus to the row's `.details-toggle`. "Type your own text" is `button.typeown-load` ("Load font (312 KB) to type your own text") and then `input.typeown-input`. A font with a Nerd Font build lists its link after the official and designer links: the term is the marker (`span.nf-mark[role=img]`, as in the row), the link `a.details-nf-link` (text by section 1's Nerd rule), and `p.details-nf-legend` below the links holds `nerd.legend`.
 
 ### Shared classes
 
@@ -359,7 +369,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 | `why_labels` | string[] | unranked-reason labels, in the order `no_deliberate_evidence`, `no_evidence`, `too_new` |
 | `r` | object | one entry per view with `available: true`, keyed by rank key, below |
 
-**`bits`**: 1 monospace (`is_monospace`), 2 variable, 4 limited accents (`latin.coverage` basic), 8 attribution required, 16 not redistributable, 32 has a specimen, 64 "Type your own text" available, 128 comes with Windows, 256 macOS, 512 Linux, 1024 Android (from `preinstalled_on` systems' `os`; a system with `os` `app`, an application's own bundle such as LibreOffice's, sets none; `pulled_in_by` doesn't count), 2048 new (flag `too_new`), 4096 pulled in by a package (`pulled_in_by` is not empty; no filter hides by it). Spacing Proportional hides the fonts with bit 1 and Monospaced keeps only them (site ruling 2026-09-25).
+**`bits`**: 1 monospace (`is_monospace`), 2 variable, 4 limited accents (`latin.coverage` basic), 8 attribution required, 16 not redistributable, 32 has a specimen, 64 "Type your own text" available, 128 comes with Windows, 256 macOS, 512 Linux, 1024 Android (from `preinstalled_on` systems' `os`; a system with `os` `app`, an application's own bundle such as LibreOffice's, sets none; `pulled_in_by` doesn't count), 2048 new (flag `too_new`), 4096 pulled in by a package (`pulled_in_by` is not empty; no filter hides by it), 8192 a Nerd Font build (`links.nerd` is not null; "Nerd Font available" keeps only these, site ruling 2026-09-29). Spacing Proportional hides the fonts with bit 1 and Monospaced keeps only them (site ruling 2026-09-25).
 
 **`r.<rank key>`:**
 
@@ -379,7 +389,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 |---|---|
 | `v` | `1` |
 | `run_date` | `run.date` |
-| `views`, `bands`, `tiers`, `sources`, `systems`, `license_classes` | as in the catalog |
+| `views`, `bands`, `tiers`, `sources`, `systems`, `license_classes`, `nerd` | as in the catalog |
 | `state_labels` | `{observed, censored, not_covered, too_new}` → label (`censored` → "below the floor") |
 | `why_labels` | `{no_deliberate_evidence, no_evidence, too_new}` → label |
 | `report` | `{issue_url, email}`: `https://github.com/byronshock/trulyfreefonts/issues/new?template=license.yml`, to which `Details` appends `&font_id=<id>&data_date=<run_date>`, and the fallback address for a `mailto:` link |
@@ -394,7 +404,7 @@ The view lives after `#`, so it never reaches the server and nothing is stored.
 ```
 hash  = "#" [ pair *( "&" pair ) ]
 pair  = key "=" value              ; value encoded with encodeURIComponent; list items joined by ","
-key   = "rank" / "cat" / "lic" / "spacing" / "var" / "hide" / "redist" / "q" / "sort" / "font"
+key   = "rank" / "cat" / "lic" / "spacing" / "var" / "nerd" / "hide" / "redist" / "q" / "sort" / "font"
       / ext-key                    ; an extension key, below
 ```
 
@@ -405,6 +415,7 @@ key   = "rank" / "cat" / "lic" / "spacing" / "var" / "hide" / "redist" / "q" / "
 | `lic` | license class ids, in `license_classes` order: show only these | any license (nothing chosen) |
 | `spacing` | `proportional` (hides monospace fonts) or `monospaced` (monospace fonts only), on every rank | any |
 | `var` | `1`: variable fonts only | off |
+| `nerd` | `1`: "Nerd Font available", fonts with a Nerd Font build only | off |
 | `hide` | any of `limited`, `attr`, `windows`, `macos`, `linux`, `android`, in this order | nothing hidden |
 | `redist` | `1`: "Redistributable fonts only" | off |
 | `q` | search text, at most 100 characters | empty |

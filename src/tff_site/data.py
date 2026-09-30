@@ -86,6 +86,7 @@ BIT_TYPE_OWN = 64
 OS_BITS = {"windows": 128, "macos": 256, "linux": 512, "android": 1024}  # os "app": no bit
 BIT_NEW = 2048
 BIT_PULLED = 4096
+BIT_NERD = 8192  # a Nerd Font build (links.nerd): the "NF" marker and filter (TASK-2)
 
 LIST_FORMAT = 1
 DETAILS_FORMAT = 1
@@ -308,6 +309,7 @@ def details(doc: Mapping[str, Any], *, font_assets: Mapping[str, str]) -> dict[s
         "sources": doc["sources"],
         "systems": doc["systems"],
         "license_classes": doc["license_classes"],
+        "nerd": doc["nerd"],
         "state_labels": dict(STATE_LABELS),
         "why_labels": dict(UNRANKED_LABELS),
         "report": {"issue_url": REPORT_ISSUE_URL, "email": FEEDBACK_EMAIL},
@@ -363,6 +365,8 @@ def font_bits(font: Mapping[str, Any], system_os: Mapping[str, str]) -> int:
         bits |= BIT_NEW
     if font["pulled_in_by"]:
         bits |= BIT_PULLED
+    if font["links"]["nerd"] is not None:
+        bits |= BIT_NERD
     return bits
 
 
@@ -376,7 +380,12 @@ def destination_name(link: Mapping[str, Any]) -> str:
     """Name a link's destination (site/CONTRACT.md section 1, "Destination names")."""
     if link.get("label"):
         return link["label"]
-    parts = urlsplit(link["url"])
+    return url_destination(link["url"])
+
+
+def url_destination(url: str) -> str:
+    """Name where ``url`` goes, from the URL alone (rules 2 to 4 of "Destination names")."""
+    parts = urlsplit(url)
     host = (parts.hostname or "").removeprefix("www.")
     segments = [s for s in parts.path.split("/") if s]
     if host == "github.com" and len(segments) >= 2:
@@ -384,6 +393,12 @@ def destination_name(link: Mapping[str, Any]) -> str:
     if host == "fonts.google.com":
         return "Google Fonts"
     return host
+
+
+def nerd_link_text(link: Mapping[str, Any]) -> str:
+    """The text of a Nerd Font build link (site/CONTRACT.md section 1): the build's name,
+    then where the link goes, "SauceCodePro Nerd Font (GitHub: ryanoasis/nerd-fonts)"."""
+    return f"{link['label']} ({url_destination(link['url'])})"
 
 
 def _view_columns(fonts: list[Mapping[str, Any]], key: str, bands: list[str]) -> dict[str, Any]:

@@ -128,7 +128,7 @@ Answers to the Milestone 1, Step 0 decisions in [docs/ranking-methodology.md](do
 
   *(2026-09-29)*
 - **Final method (Milestone 1 step 17).** The method the owner approved at gate R round 2 is final. The entries above hold each decision; this one says where the final state lives.
-  - **Method:** the code implements method version 2026-09-25 (`METHOD_VERSION` in `src/tff_catalog/__init__.py`, which each catalog records as `run.method_version`), with every ruling above up to gate R round 2. Its public text is [docs/ranking-methodology.md](docs/ranking-methodology.md), published on 2026-09-29.
+  - **Method:** the code implements method version 2026-09-29 (`METHOD_VERSION` in `src/tff_catalog/__init__.py`, which each catalog records as `run.method_version`), with every ruling above up to gate R round 2. The owner's ruling of 2026-09-29 moved it on from 2026-09-25 with the Nerd Font build link (`links.nerd`, TASK-2), which changes the published fields, not the ranks. Its public text is [docs/ranking-methodology.md](docs/ranking-methodology.md), published on 2026-09-29.
   - **Weights:** every weight and parameter is in `config/ranking.toml`, as the approved run used it (`run.ranking_toml_sha256` `c22345a4…` in `build/catalog.json`). The headline values:
     - overall: desktop (*most chosen*) 50% and project 50% (D12);
     - desktop: Homebrew 1.0, Arch 0.75, GitHub 0.5, Nerd Fonts 0.3, Debian 0.25 (D9);

@@ -14,6 +14,7 @@ const View = (() => {
     macos: 256,
     linux: 512,
     android: 1024,
+    nerd: 8192,
   });
   // "hide" values and the bit each one hides.
   const HIDE_BITS = Object.freeze({
@@ -98,6 +99,7 @@ const View = (() => {
       if (state.spacing === 'proportional' && b & BIT.mono) return false;
       if (state.spacing === 'monospaced' && !(b & BIT.mono)) return false;
       if (state.var && !(b & BIT.variable)) return false;
+      if (state.nerd && !(b & BIT.nerd)) return false;
       if (b & hideMask) return false;
       if (licSet && !licSet.has(lic[i])) return false;
       if (state.redist && b & BIT.noRedist) return false;

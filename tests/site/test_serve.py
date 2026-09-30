@@ -326,10 +326,10 @@ def test_the_command_says_when_the_port_is_taken(tmp_path):
 # runs Ext with all of them on the built list.
 DOUBLES = r"""
 const State = (() => {
-  const KEYS = Object.freeze(['rank', 'cat', 'lic', 'spacing', 'var', 'hide', 'redist', 'q',
-    'sort', 'font']);
-  let current = { rank: 'overall', cat: '', lic: [], spacing: '', var: false, hide: [],
-    redist: false, q: '', sort: 'rank', font: '', internal: 'not a hash key' };
+  const KEYS = Object.freeze(['rank', 'cat', 'lic', 'spacing', 'var', 'nerd', 'hide', 'redist',
+    'q', 'sort', 'font']);
+  let current = { rank: 'overall', cat: '', lic: [], spacing: '', var: false, nerd: false,
+    hide: [], redist: false, q: '', sort: 'rank', font: '', internal: 'not a hash key' };
   const calls = [];
   const get = () => ({ ...current, lic: [...current.lic], hide: [...current.hide] });
   const set = (partial, options) => {
@@ -608,6 +608,7 @@ def test_get_state_is_a_copy_with_only_the_hash_keys(hook):
         "lic": ["changed"],
         "spacing": "",
         "var": False,
+        "nerd": False,
         "hide": [],
         "redist": False,
         "q": "",
@@ -695,7 +696,7 @@ def test_change_listeners_get_a_frozen_copy_and_can_stop(hook):
     assert result == {
         "count": 1,
         "last": [2, 2],
-        "shape": [2, 3, 10],
+        "shape": [2, 3, 11],  # section 9's eleven keys, "nerd" included (TASK-2)
         "frozen": True,
         "internal": False,
         "errors": ["TypeError", "TypeError"],

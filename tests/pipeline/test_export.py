@@ -909,6 +909,29 @@ def test_an_archived_link_says_so_in_both_files(tmp_path: Path) -> None:
     assert destination_name(fonts(site)["gamma-serif"]["links"]["primary"]) == label
 
 
+def test_a_nerd_font_build_reaches_both_files(tmp_path: Path) -> None:
+    # Owner rulings of 2026-09-28 and 2026-09-29 (TASK-2): links.nerd, the build's own page
+    # with a label naming the build, is in both files, and null for a font without one.
+    ctx = make_build(tmp_path)
+    folder = "https://github.com/ryanoasis/nerd-fonts/tree/v3.5.1/patched-fonts/BetaMono"
+    chosen = links()
+    chosen["beta-mono"] = dataclasses.replace(
+        chosen["beta-mono"], nerd=Link(folder, "BetaMono Nerd Font")
+    )
+    stageio.dump_stage(ctx.paths, "links", chosen)
+    docs = run_all(ctx)
+    for name in (export.CATALOG_FILE, export.SITE_FILE):
+        found = {fid: f["links"]["nerd"] for fid, f in fonts(docs[name]).items()}
+        assert found["beta-mono"] == {"url": folder, "label": "BetaMono Nerd Font"}, name
+        assert all(v is None for fid, v in found.items() if fid != "beta-mono"), name
+    from tff_catalog.validate import schema_errors
+    from tff_site.data import validate
+
+    for name, schema in export.SCHEMA_FILES.items():
+        assert schema_errors(ctx.paths.build / name, ROOT / "schemas" / schema) == [], name
+    validate(docs[export.SITE_FILE])
+
+
 def test_a_member_without_stage_data_fails_the_export(tmp_path: Path) -> None:
     ctx = make_build(tmp_path)
     facts = stageio.load_stage(ctx.paths, "facts")
@@ -1069,6 +1092,11 @@ def test_site_wording_comes_from_site_toml(built) -> None:
         )
     assert [b["label"] for b in site["bands"]] == ["101\u2013250", "251\u2013500", "501+"]
     assert site["bands"][-1]["to"] is None
+    assert site["nerd"] == {
+        "marker": cfg.nerd.marker,
+        "label": cfg.nerd.label,
+        "legend": cfg.nerd.legend,
+    }
 
 
 def test_site_keeps_only_the_site_fields(built) -> None:

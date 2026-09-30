@@ -353,6 +353,11 @@ def check_site(cfg: Config) -> None:
     for spdx, entry in cfg.licenses.allowed.items():
         if entry.group not in classes:
             _fail(f"licenses.toml: allowed.{spdx}.group", f"{entry.group!r} is not in site.toml")
+    nerd = site.nerd
+    if not nerd.marker.strip() or not nerd.label.strip():
+        _fail("site.toml: nerd", "marker and label must not be empty")
+    if not nerd.legend.startswith(f"{nerd.marker}: {nerd.label}"):
+        _fail("site.toml: nerd.legend", "must start with '<marker>: <label>', as the rows show it")
     for system, entry in site.package_systems.items():
         if not _TOKEN.match(system):
             _fail(f"site.toml: package_systems.{system}", "system ids must be lower-case tokens")

@@ -124,6 +124,8 @@ def _passes(doc: dict[str, Any], font: dict[str, Any], state: dict[str, Any]) ->
         return False
     if state.get("var") and not font["formats"]["variable"]:
         return False
+    if state.get("nerd") and font["links"]["nerd"] is None:
+        return False
     if "limited" in hide and font["latin"]["coverage"] == "basic":
         return False
     if "attr" in hide and font["license"]["attribution_required"]:
@@ -291,6 +293,9 @@ HASH_CASES = [
     ("#var", ""),
     ("#redist=yes", ""),
     ("#redist=1", "#redist=1"),
+    ("#nerd=1", "#nerd=1"),
+    ("#nerd=0", ""),
+    ("#redist=1&nerd=1&var=1", "#var=1&nerd=1&redist=1"),  # the Nerd filter sits after var
     ("#spacing=monospaced", "#spacing=monospaced"),
     ("#spacing=mono", ""),
     ("#q=Source+Sans", "#q=Source%20Sans"),
@@ -347,7 +352,9 @@ def test_setstate_partials_are_validated_like_the_hash(parts: Parts, index: dict
         " c({ q: 5 }).q, c({ rank: 'rising' }).rank, c({ rank: 'coding' }).rank,"
         " c({ sort: 'name', spacing: 'proportional' }).sort, c({ nope: 1 }).nope,"
         " P.State.isClear(c({ sort: 'name', rank: 'coding' })), P.State.isClear(c({ q: 'a' })),"
-        " P.State.cleared(c({ rank: 'coding', sort: 'name', var: true, q: 'x', font: arg })) ];",
+        " P.State.cleared(c({ rank: 'coding', sort: 'name', var: true, q: 'x', font: arg,"
+        " nerd: true })), c({ nerd: '1' }).nerd, c({ nerd: 'yes' }).nerd,"
+        " P.State.isClear(c({ nerd: true })) ];",
         index["ids"][0],
     )
     assert got[:10] == [
@@ -370,6 +377,8 @@ def test_setstate_partials_are_validated_like_the_hash(parts: Parts, index: dict
         index["ids"][0],
     )
     assert (cleared["var"], cleared["q"], cleared["cat"], cleared["hide"]) == (False, "", "", [])
+    assert cleared["nerd"] is False
+    assert got[13:] == [True, False, False]  # "1" is on, "yes" is not; the Nerd filter is a filter
 
 
 # --------------------------------------------------------------------- pure: View.compute
@@ -380,6 +389,7 @@ def _filter_sets(doc: dict[str, Any]) -> list[dict[str, Any]]:
     sets: list[dict[str, Any]] = [{}]
     sets += [{"cat": cat} for cat in data.CATEGORIES]
     sets += [{"spacing": "proportional"}, {"spacing": "monospaced"}, {"var": True}]
+    sets += [{"nerd": True}, {"nerd": True, "spacing": "proportional"}]
     sets += [
         {"hide": [item]} for item in ("limited", "attr", "windows", "macos", "linux", "android")
     ]
@@ -840,6 +850,33 @@ def test_redistributable_only_hides_exactly_the_non_redistributable_fonts(
         shown = {row[0] for row in rows(page)}
         assert set(universe) - shown == not_redist & set(universe), rank
         assert rows(page) == expected_rows(doc, {"rank": rank, "redist": True})
+    guarded.assert_clean(page)
+
+
+def test_nerd_font_available_keeps_exactly_the_fonts_with_a_nerd_build(
+    guarded_context: Any, doc: dict[str, Any], views: list[str]
+) -> None:
+    """The owner's site ruling of 2026-09-29 (nerd_filter), on every rank."""
+    guarded, page = open_list(guarded_context)
+    nerd = {f["id"] for f in doc["fonts"] if f["links"]["nerd"] is not None}
+    assert nerd, "the sample needs a font with a Nerd Font build"
+    assert page.get_attribute("#f-nerd", "aria-describedby") == "nf-legend"
+    page.check("#f-nerd")
+    assert hash_of(page) == "#nerd=1"
+    assert page.text_content("#f-toggle .filters-count") == "\u00a0(1)"
+    for rank in views:
+        page.select_option("#f-rank", rank)
+        universe, _, _ = oracle(doc, {"rank": rank})
+        assert {row[0] for row in rows(page)} == nerd & set(universe), rank
+        assert rows(page) == expected_rows(doc, {"rank": rank, "nerd": True})
+    page.select_option("#f-rank", "overall")
+    if not any(not f["is_monospace"] for f in doc["fonts"] if f["id"] in nerd):
+        page.check("#f-spacing-proportional")  # every Nerd build here is monospace
+        assert rows(page) == []
+        assert "Nerd Font available" in page.text_content("#no-results-text")
+    page.click("#f-clear")
+    assert hash_of(page) == ""
+    assert not page.is_checked("#f-nerd")
     guarded.assert_clean(page)
 
 

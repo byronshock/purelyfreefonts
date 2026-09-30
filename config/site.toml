@@ -75,6 +75,16 @@ label = "Attribution required (CC BY)"
 id = "freeware"                 # the fourth group of the owner's License filter (AUTHORITY.md, 2026-09-25): free-use grants that may forbid redistributing (Rule 3)
 label = "Other free-use grants"
 
+# The Nerd Font marker (owner rulings of 2026-09-29, data/reviews/site/2026-09-29.toml:
+# nerd_marker and nerd_legend). `marker` is the fixed-width text beside the name of a font
+# with a Nerd Font build (links.nerd), in every row and in the details panel; `label` is its
+# accessible name; `legend` is the site's legend, word for word as the owner chose it. The
+# legend starts with "<marker>: <label>" (checked).
+[nerd]
+marker = "NF"
+label = "Nerd Font version available"
+legend = "NF: Nerd Font version available (adds developer icons, which have their own licenses)."
+
 # Distributions whose package data can pull a font in (pulled_in_by systems).
 # Always Linux. An id that preinstalled.toml also uses must have the same label.
 [package_systems.arch]

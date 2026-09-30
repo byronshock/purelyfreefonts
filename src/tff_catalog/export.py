@@ -16,7 +16,8 @@ Output is canonical (``jsonio.dump``), so the same inputs give the same bytes.
 Every piece of site wording comes from ``config/site.toml`` (``cfg.site``),
 never from code or the sample: ``data_license``, ``views`` (``available`` is
 computed: Rising needs ``ranks.rising.min_history_months`` of history),
-``tiers``, ``license_classes``, the source credits (``sources[].name``,
+``tiers``, ``license_classes``, the Nerd Font marker's wording (``nerd``:
+``marker``, ``label`` and ``legend``), the source credits (``sources[].name``,
 ``measures``, ``url``, ``license``, ``publish_rank``; ``group`` and ``survey``
 come from ``ranking.toml``) and the labels of package systems. Preinstalled
 systems take their labels from ``preinstalled.toml``. Band labels are derived
@@ -885,6 +886,7 @@ class CatalogBuilder:
             "links": {
                 "primary": link(links.primary),
                 "designer": link(links.designer) if links.designer else None,
+                "nerd": link(links.nerd) if links.nerd else None,
             },
             "first_seen": fam.first_seen.isoformat(),
             "flags": self.flags(fid, tags, ranks),
@@ -1231,6 +1233,7 @@ def site_document(
         ],
         "systems": systems(cfg),
         "license_classes": [{"id": c.id, "label": c.label} for c in site.license_classes],
+        "nerd": {"marker": site.nerd.marker, "label": site.nerd.label, "legend": site.nerd.legend},
         "fonts": [
             site_font(f, frozenset(s["id"] for s in shown), frozenset(views))
             for f in catalog["fonts"]

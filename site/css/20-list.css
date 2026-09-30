@@ -178,10 +178,50 @@ li.font.is-dim .font-name {
 .font-name {
   grid-area: name;
   margin: 0;
+  /* Every name leaves the Nerd Font marker's width free at its end (below), marker or not,
+     so no row's height depends on the marker. */
+  padding-inline-end: calc(2.25rem + var(--space-2));
   font-size: var(--fs-large);
   font-weight: 600;
   line-height: var(--lh-tight);
   overflow-wrap: anywhere;
+}
+
+/* The Nerd Font marker (TASK-2, owner ruling of 2026-09-29): a fixed-width "NF" for a font
+   with a Nerd Font build, beside its name in the row, in its details and in the legend. In a
+   row it shares the name's cell, at its end, in the width every name leaves free, and is no
+   taller than the name's first line: rows keep their height. */
+.nf-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 2.25rem;
+  height: 1.375rem;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-badge-bg);
+  color: var(--c-badge-fg);
+  font-size: var(--fs-small);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.font-row > .nf-mark {
+  grid-area: name;
+  justify-self: end;
+  align-self: start;
+  /* Centred on the name's first line: one line of --fs-large at --lh-tight. */
+  margin-top: calc((var(--fs-large) * var(--lh-tight) - 1.375rem) / 2);
+}
+
+.nf-legend {
+  margin: 0 0 var(--space-3);
+  max-width: var(--measure);
+  font-size: var(--fs-small);
+  color: var(--c-muted);
 }
 
 .font-spec {

@@ -3,4 +3,4 @@
 __version__ = "0.1.0"
 
 # Date of the ranking methodology this code implements (docs/ranking-methodology.md).
-METHOD_VERSION = "2026-09-25"
+METHOD_VERSION = "2026-09-29"

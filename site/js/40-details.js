@@ -24,7 +24,9 @@ const Details = (() => {
   const { el, append, clear, text, formatBytes } = Core;
 
   // The hash keys of site/CONTRACT.md section 9, in order; any other key is someone else's.
-  const HASH_KEYS = ['rank', 'cat', 'lic', 'spacing', 'var', 'hide', 'redist', 'q', 'sort', 'font'];
+  const HASH_KEYS = [
+    'rank', 'cat', 'lic', 'spacing', 'var', 'nerd', 'hide', 'redist', 'q', 'sort', 'font',
+  ];
   const ID = /^[a-z0-9-]+$/;
   // "Type your own text" loads only a hashed font file of this site.
   const FONT_URL = /^\/assets\/fonts\/[a-z0-9][a-z0-9._-]*$/;
@@ -296,14 +298,14 @@ const Details = (() => {
       ? el('a', { href, ...props }, label)
       : el('span', {}, label);
 
-  // Destination names (CONTRACT section 1), as tff_site.data.destination_name gives them.
-  const destination = (target) => {
-    if (target.label) return target.label;
+  // Where a URL goes, from the URL alone (CONTRACT section 1, rules 2 to 4), as
+  // tff_site.data.url_destination names it.
+  const place = (href) => {
     let url;
     try {
-      url = new URL(target.url);
+      url = new URL(href);
     } catch {
-      return target.url;
+      return href;
     }
     const host = url.hostname.replace(/^www\./, '');
     const segments = url.pathname.split('/').filter(Boolean);
@@ -314,6 +316,17 @@ const Details = (() => {
     return host;
   };
 
+  // Destination names (CONTRACT section 1), as tff_site.data.destination_name gives them.
+  const destination = (target) => (target.label ? target.label : place(target.url));
+
+  // A Nerd Font build link's text: the build, then where it goes (CONTRACT section 1), as
+  // tff_site.data.nerd_link_text gives it: "SauceCodePro Nerd Font (GitHub: ryanoasis/…)".
+  const nerdText = (target) => `${target.label} (${place(target.url)})`;
+
+  // The "NF" marker (owner ruling of 2026-09-29), named as in the rows: payload.nerd.
+  const nerdMark = (words) =>
+    el('span', { class: 'nf-mark', role: 'img', 'aria-label': words.label, text: words.marker });
+
   const section = (name, title, ...children) =>
     el(
       'section',
@@ -322,7 +335,8 @@ const Details = (() => {
       ...children,
     );
 
-  // A description list; each item is [term, ...description nodes or strings], or false.
+  // A description list; each item is [term, ...description nodes or strings], or false. A
+  // term is a string or a node.
   const pairs = (items, cls) =>
     el(
       'dl',
@@ -330,13 +344,13 @@ const Details = (() => {
       items
         .filter(Boolean)
         .map(([term, ...desc]) =>
-          el('div', { class: 'details-pair' }, el('dt', { text: term }), el('dd', {}, ...desc)),
+          el('div', { class: 'details-pair' }, el('dt', {}, term), el('dd', {}, ...desc)),
         ),
     );
 
   const sections = (payload, font) => [
     licenseSection(payload, font),
-    linksSection(font),
+    linksSection(payload, font),
     ranksSection(payload, font),
     sourcesSection(payload, font),
     tagsSection(payload, font),
@@ -360,17 +374,21 @@ const Details = (() => {
   };
 
   // A link's note (link.note: why an archived mirror is the official download, say) follows
-  // the pairs as plain text.
-  const linksSection = (font) => {
-    const { primary, designer } = font.links;
+  // the pairs as plain text. A Nerd Font build's link (TASK-2) takes the "NF" marker as its
+  // term, and the legend follows as plain text.
+  const linksSection = (payload, font) => {
+    const { primary, designer, nerd } = font.links;
+    const words = nerd && payload.nerd;
     return section(
       'links',
       'Get the font',
       pairs([
         ['Official download', link(primary.url, destination(primary))],
         designer && ['Designer', link(designer.url, destination(designer))],
+        words && [nerdMark(words), link(nerd.url, nerdText(nerd), { class: 'details-nf-link' })],
       ]),
       primary.note && el('p', { class: 'details-link-note', text: primary.note }),
+      words && el('p', { class: 'details-nf-legend', text: words.legend }),
     );
   };
 
@@ -731,6 +749,7 @@ const Details = (() => {
     hashFont,
     hashWith,
     destination,
+    nerdText,
     WORDS,
   });
 })();

@@ -429,6 +429,26 @@ name = "Science Gothic"
 mentions = ["Apache"]
 reason = "Its OFL.txt (google/fonts and Fontsource, the same bytes) is OFL-1.1 with one more sentence above the body: 'ADDITIONAL non-font source files are licensed to others under the Apache 2.0 open source license'. The fonts are OFL-1.1; Apache-2.0 covers only the build sources, and both licenses are allowed and redistributable, so the mention changes nothing."
 
+# --- families whose font file comes from config/font-files.toml (researched 2026-09-29) --------
+
+[[family]]
+family = "go"
+name = "Go"
+texts = ["https://raw.githubusercontent.com/golang/image/b06f1de3f4900ff828b8f114c37eb9ea10dfed90/font/gofont/ttfs/README"]
+reason = "Go Mono's sister family, in the same folder of golang.org/x/image under the same README: the Go project's BSD-3-Clause license, whose text is researched below. The sources gave no text; the font file is config/font-files.toml's Go-Regular.ttf from that folder."
+
+[[family]]
+family = "liberation-sans"
+name = "Liberation Sans"
+texts = ["https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/src/unpatched-fonts/LiberationMono/LICENSE"]
+reason = "The sources gave only the OFL's web page (scripts.sil.org/OFL). Liberation 2.1.5 ships only as a tar archive; its LICENSE, OFL-1.1, is byte for byte this one in the Nerd Fonts folder config/font-files.toml takes the font file from, the text Liberation Mono is verified with."
+
+[[family]]
+family = "liberation-serif"
+name = "Liberation Serif"
+texts = ["https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/src/unpatched-fonts/LiberationMono/LICENSE"]
+reason = "As for Liberation Sans: the 2.1.5 release's LICENSE, OFL-1.1, byte for byte in the Nerd Fonts folder config/font-files.toml takes the font file from."
+
 # --- researched texts --------------------------------------------------------------------------
 
 [[text]]

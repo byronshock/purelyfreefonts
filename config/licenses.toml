@@ -376,3 +376,15 @@ question = "The Artistic License 1.0 (Debian's 'Artistic') lets anyone use and r
 
 [ruling."Arphic-1999"]
 question = "The Arphic Public License is a copyleft license written for fonts, with no separate font exception. Does it qualify under D3, and may the fonts be redistributed?"
+
+# Three licenses first read on 2026-09-29, when config/license-aliases.toml learned the last
+# strings L1 could not read. None is ruled yet.
+
+[ruling."EPL-2.0"]
+question = "The Eclipse Public License 2.0 (Debian lists it as one of B612's three alternative licenses, with OFL-1.1 and BSD-3-Clause) allows use, changes and redistribution; changed files that are distributed must stay under the EPL with their source available, like the MPL-2.0 the owner allowed. Does it qualify, and may the fonts be redistributed?"
+
+[ruling."LicenseRef-AarhusUniversity-Passata"]
+question = "Aarhus University's AU Passata, AU Passata Light and AU Peto (Fontist's LicenseRef-AarhusUniversity-Passata), downloaded from the university's staff design manual (medarbejdere.au.dk): Fontist's only license text is the note 'Passata requires no licences.', and the fonts say 'Copyright (c) 2008 by 1508 A/S. All rights reserved.' No grant to the public is published. Does it qualify, and may the fonts be redistributed?"
+
+[ruling."LicenseRef-fontopo-free"]
+question = "fontopo's own terms (fontopo.com, Fontist's LicenseRef-fontopo-free, for fontopoSOLID and the site's other fonts outside its IPA and Apache ones): 'All fonts on this site can be downloaded and used for commercial purposes for free.' They say nothing about changing or redistributing the fonts. Do they qualify, and may the fonts be redistributed?"

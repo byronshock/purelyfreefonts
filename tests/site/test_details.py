@@ -185,6 +185,20 @@ def test_destination_names_match_python(part):
     assert got == [data.destination_name(link) for link in links]
 
 
+def test_nerd_link_texts_match_python(part):
+    """A Nerd Font build's link names the build, then where it goes (CONTRACT section 1)."""
+    links = [f["links"]["nerd"] for f in DOC["fonts"] if f["links"]["nerd"]] + [
+        {
+            "url": "https://github.com/ryanoasis/nerd-fonts/tree/v3.5.1/patched-fonts/X",
+            "label": "X",
+        },
+        {"url": "https://www.example.org/nf/", "label": "Example NF"},
+    ]
+    got = part.run("arg.map((link) => D.nerdText(link))", links)
+    assert got == [data.nerd_link_text(link) for link in links]
+    assert data.nerd_link_text(links[-2]) == "X (GitHub: ryanoasis/nerd-fonts)"
+
+
 @pytest.mark.parametrize(
     ("hash_", "font_id", "want"),
     [
@@ -714,6 +728,9 @@ def expected_panel(doc: dict[str, Any], font: dict[str, Any]) -> dict[str, Any]:
     links = [["Official download", data.destination_name(primary), primary["url"]]]
     if designer:
         links.append(["Designer", data.destination_name(designer), designer["url"]])
+    nerd = font["links"]["nerd"]  # the marker is its term (owner ruling of 2026-09-29)
+    if nerd:
+        links.append([doc["nerd"]["marker"], data.nerd_link_text(nerd), nerd["url"]])
 
     ranks, tiers = [], set()
     for view in doc["views"]:
@@ -785,6 +802,7 @@ def expected_panel(doc: dict[str, Any], font: dict[str, Any]) -> dict[str, Any]:
         "license_href": lic["text_url"],
         "links": links,
         "link_note": primary.get("note"),
+        "nerd_legend": doc["nerd"]["legend"] if nerd else None,
         "ranks": ranks,
         "tiers": tier_pairs,
         "sources": sources,
@@ -817,12 +835,14 @@ READ_PANEL = """(id) => {
   const issue = q('.details-report-issue');
   const email = q('.details-report-email');
   const note = q('.details-links .details-link-note');
+  const legend = q('.details-links .details-nf-legend');
   return {
     title: q(':scope > .details-title').textContent,
     license: pairs(q('.details-license')),
     license_href: q('.details-lic-link').getAttribute('href'),
     links,
     link_note: note && note.textContent,
+    nerd_legend: legend && legend.textContent,
     ranks,
     tiers: pairs(q('.details-tiers')),
     sources,
@@ -856,6 +876,27 @@ def test_owner_ten_fields_match_the_data(guarded_context, font_id):
     assert not any("/assets/fonts/" in h for h in hrefs)
     if font_file:
         assert font_file["url"] not in hrefs
+    guarded.assert_clean(page)
+
+
+NERD_FONTS = [f["id"] for f in DOC["fonts"] if f["links"]["nerd"]]
+
+
+@pytest.mark.parametrize("font_id", NERD_FONTS)
+def test_a_nerd_font_builds_link_and_legend(guarded_context, font_id):
+    """The panel lists the Nerd Font build's page after the official and designer links, with
+    the marker as its term and the legend below (owner rulings of 2026-09-29)."""
+    guarded = guarded_context()
+    page = _open_page(guarded, f"/#font={font_id}")
+    _wait_ready(page, font_id)
+    got = page.evaluate(READ_PANEL, font_id)
+    want = expected_panel(DOC, FONTS[font_id])
+    assert (got["links"], got["nerd_legend"]) == (want["links"], want["nerd_legend"])
+    mark = page.locator(f"#details-{font_id} .details-links dt .nf-mark")
+    assert mark.get_attribute("role") == "img"
+    assert mark.get_attribute("aria-label") == DOC["nerd"]["label"]
+    link = page.locator(f"#details-{font_id} a.details-nf-link")
+    assert link.get_attribute("href") == FONTS[font_id]["links"]["nerd"]["url"]
     guarded.assert_clean(page)
 
 
@@ -930,6 +971,8 @@ def _catalog(tmp_path: Path, fonts: list[dict[str, Any]]) -> Path:
         font["license"]["text_url"] = spec["text_url"]
         font["links"]["primary"] = {"url": spec["primary"]}
         font["links"]["designer"] = {"url": spec["designer"]} if spec.get("designer") else None
+        nerd = spec.get("nerd")
+        font["links"]["nerd"] = {"url": nerd, "label": "A Nerd Font"} if nerd else None
         out.append(font)
     doc["fonts"] = out
     path = tmp_path / "catalog-site.json"
@@ -946,6 +989,7 @@ def test_linkcheck_checks_every_link_once_and_paces_each_host(tmp_path, fake_net
                 "text_url": "https://licenses.test/ofl.txt",
                 "primary": "https://code.test/a",
                 "designer": "https://people.test/a",
+                "nerd": "https://nerd.test/a",
             },
             {
                 "id": "b",
@@ -965,6 +1009,7 @@ def test_linkcheck_checks_every_link_once_and_paces_each_host(tmp_path, fake_net
         ("a", "license.text_url", "https://licenses.test/ofl.txt", 200),
         ("a", "links.primary", "https://code.test/a", 200),
         ("a", "links.designer", "https://people.test/a", 200),
+        ("a", "links.nerd", "https://nerd.test/a", 200),
         ("b", "license.text_url", "https://licenses.test/ofl.txt", 200),
         ("b", "links.primary", "https://code.test/b", 200),
         ("c", "license.text_url", "https://licenses.test/apache.txt", 200),
@@ -972,7 +1017,7 @@ def test_linkcheck_checks_every_link_once_and_paces_each_host(tmp_path, fake_net
     ]
     log = fake_net["log"]
     urls = [url for _, _, url in log]
-    assert len(urls) == len(set(urls)) == 6
+    assert len(urls) == len(set(urls)) == 7
     assert all(method == "GET" for _, method, _ in log)
     by_host: dict[str, list[float]] = {}
     for when, _, url in log:

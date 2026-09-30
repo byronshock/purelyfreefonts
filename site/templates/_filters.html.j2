@@ -5,7 +5,8 @@
   section 9). The block ships with `hidden`; the script removes it, and 25-filters.css
   reserves its space so that doesn't move the list. Below 60rem everything but search and
   rank sits behind #f-toggle, whose aria-expanded drives the disclosure. Spacing follows the
-  owner's site ruling of 2026-09-25 (data/reviews/site/2026-09-25.toml).
+  owner's site ruling of 2026-09-25 (data/reviews/site/2026-09-25.toml), and "Nerd Font
+  available" the one of 2026-09-29 (2026-09-29.toml, nerd_filter), described by the legend.
 -#}
 <search id="filters" class="filters" aria-label="Filter fonts" hidden>
 <div class="filters-bar">
@@ -37,6 +38,7 @@
 <fieldset id="f-type">
 <legend>Type</legend>
 <label class="opt"><input type="checkbox" id="f-var" name="var" value="1"> Variable fonts only</label>
+<label class="opt"><input type="checkbox" id="f-nerd" name="nerd" value="1" aria-describedby="nf-legend"> Nerd Font available</label>
 <label class="opt"><input type="checkbox" id="f-hide-limited" name="hide" value="limited" aria-describedby="f-hide-limited-help"> Hide limited accents</label>
 <p id="f-hide-limited-help" class="hint">Fonts that cover basic Latin only, without the accented letters of languages such as Polish or Czech.</p>
 </fieldset>

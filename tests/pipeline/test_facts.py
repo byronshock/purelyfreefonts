@@ -586,6 +586,15 @@ def test_candidates_prefer_hashed_regular_files_and_skip_archives() -> None:
         "https://cdn.example/b/X-Italic.ttf",
         "https://cdn.example/a/X-Regular.ttf",
     ]
+    # config/font-files.toml's files come first, whatever the records say about theirs.
+    hand = (ref("https://cdn.example/a/X-Regular.ttf"), ref("https://cdn.example/h/X.ttf"))
+    assert [r.url for r in candidates(recs, hand_files=hand)] == [
+        "https://cdn.example/a/X-Regular.ttf",
+        "https://cdn.example/h/X.ttf",
+        "https://cdn.example/f/X-Regular.ttf",
+        "https://cdn.example/f/X[wght].ttf",
+        "https://cdn.example/b/X-Italic.ttf",
+    ]
 
 
 def test_settled_by_metadata() -> None:
@@ -854,6 +863,35 @@ def test_a_replay_warns_when_the_store_lacks_facts_the_live_run_had(
         run(_ctx(paths, None, store=store, replay=RUN_DAY))
     assert stageio.load_stage(paths, "facts")["synth-mono"].basis == "default"
     assert any("no cached facts" in r.getMessage() for r in caplog.records)
+
+
+HAND_URL = (
+    "https://raw.githubusercontent.com/o/z/0123456789abcdef0123456789abcdef01234567/Zipped.ttf"
+)
+
+
+def test_a_family_with_hand_files_is_read_from_them(tmp_path: Path) -> None:
+    """config/font-files.toml gives "zipped", whose only file is a whole archive, a file."""
+    paths = _setup(tmp_path)
+    paths.config.mkdir(parents=True)
+    (paths.config / "font-files.toml").write_text(
+        f'schema = 1\n[[family]]\nfamily = "zipped"\nname = "Zipped"\nfiles = ["{HAND_URL}"]\n'
+        'reason = "Test."\n',
+        encoding="utf-8",
+    )
+    fonts = {**_fonts(), HAND_URL: build_font(family="Zipped", mono=True, panose=(2, 2, 9))}
+    store = Store(tmp_path / "store")
+    server = FakeServer(fonts)
+    run(_ctx(paths, server, store=store))
+    out = stageio.load_stage(paths, "facts")
+    assert out["zipped"] == Facts("monospace", True, False, True, "font_file")
+    assert {f: out[f] for f in out if f != "zipped"} == {
+        f: x for f, x in EXPECTED.items() if f != "zipped"
+    }
+    assert (HAND_URL, None, None) in server.calls  # no sha256: downloaded whole
+    first = stageio.stage_path(paths, "facts").read_bytes()
+    run(_ctx(paths, None, store=store, replay=RUN_DAY))
+    assert stageio.stage_path(paths, "facts").read_bytes() == first
 
 
 def test_the_output_is_canonical_json(tmp_path: Path) -> None:

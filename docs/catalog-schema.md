@@ -76,6 +76,11 @@ The catalog is the overall top 500 plus the top 100 of the project rank and both
 - `preview_ok`: the license lets the site show previews (redistributable fonts only). `preview`: the rendered specimen (`specimens/<id>.svg` and its sha256), or null.
 - `preinstalled_on[]`: systems that ship the font. `pulled_in_by[]`: Linux packages that install it on their own.
 - `links`: the `primary` download page and the `designer` page, each with an optional `label`. The primary link may also carry a `note`, a sentence the font's details show under it (for example why an archived mirror is the official download). When the designer's page is gone, an override the owner approves may link an archived copy of it, such as a Wayback Machine capture (owner ruling of 2026-09-29); its `label` then says "archived" and its `note` says why.
+- `links.nerd`: the page of the font's Nerd Font build, with a `label` that names the build, or null when it has none (owner rulings of 2026-09-28 and 2026-09-29, TASK-2). Two kinds of build count:
+  - **the maker's own**, such as Maple Mono NF or Cascadia Code NF: a Homebrew cask or GitHub release asset that the alias table marks as a Nerd build of the family and that comes from the family's own repository. The link is that repository's releases page, and the label the build's Homebrew name ("Maple Mono NF"), or "<family> NF" when no cask names it;
+  - **the Nerd Fonts project's**: the family's folder in Nerd Fonts' `fonts.json`, or the bundle folder it belongs to (Noto, M+, iA Writer). The link is the folder in the Nerd Fonts repository at the current release tag, `https://github.com/ryanoasis/nerd-fonts/tree/<tag>/patched-fonts/<folder>`. The tag is the newest release that is not a prerelease, read from the run's Nerd Fonts release data, so each monthly refresh moves it forward, and the folder must be one that release ships. The label is the build's name in `fonts.json` plus "Nerd Font" ("SauceCodePro Nerd Font"). It is linked only when the build's base license, `fonts.json`'s `licenseId`, is one `config/licenses.toml` allows, with the owner's license rulings.
+
+  When both exist, the maker's own build wins, since it is the official source; so it does over a Nerd Fonts folder that holds only a README (`repoRelease: false` in `fonts.json`, such as CascadiaMono and Monaspace). Without a maker's build, such a folder is still linked: its README names the build, its variants and its downloads. A Nerd link is never a release asset or `/releases/latest`. Nerd Fonts' page for its own build is not an aggregator for this link, while the primary link still may not name `ryanoasis/nerd-fonts` or nerdfonts.com. The monthly link check covers it.
 - `first_seen`: the date the family first appeared in the universe.
 - `flags[]`:
   - `too_new`: too new to rank in some view;
@@ -118,7 +123,7 @@ A source whose terms forbid showing ranks (`publish_rank = false` in `config/sit
 
 The trimmed catalog the site is built from. The owner approves its field list in Milestone 2 step 2, and Milestone 1 step 20 freezes version 1 after that; until then the schema is a draft. `site/CONTRACT.md` describes how the site uses it.
 
-Every piece of wording in it comes from `config/site.toml`: the view labels and their one-line descriptions, the tier meanings, the license classes and the source credits. System labels come from `config/preinstalled.toml` and, for package systems, from `site.toml`. Band labels come from `config/ranking.toml [display]`.
+Every piece of wording in it comes from `config/site.toml`: the view labels and their one-line descriptions, the tier meanings, the license classes, the Nerd Font marker and legend, and the source credits. System labels come from `config/preinstalled.toml` and, for package systems, from `site.toml`. Band labels come from `config/ranking.toml [display]`.
 
 ### Top level
 
@@ -130,6 +135,7 @@ Every piece of wording in it comes from `config/site.toml`: the view labels and 
 - `sources[]`: the source credits (name, what it measures, URL, license or terms), its `group` and `survey`, `data_date`, `stale`, and `publish_rank` (whether the page may show each font's rank in it).
 - `systems[]`: every system a font can come with or be pulled in by, with its operating system; the "Hide fonts that come with …" filter uses it.
 - `license_classes[]`: the license filter groups, in filter order.
+- `nerd`: the Nerd Font marker's wording (owner rulings of 2026-09-29): the `marker` shown beside the name of a font whose `links.nerd` is set ("NF"), its accessible `label` ("Nerd Font version available"), and the `legend` the list and the details panel show ("NF: Nerd Font version available (adds developer icons, which have their own licenses).").
 - `fonts[]`.
 
 ### Each font

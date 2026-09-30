@@ -1,7 +1,8 @@
 """``tff-site linkcheck``: check that license texts and download links answer HTTP 200.
 
-It visits each chosen font's ``license.text_url``, ``links.primary`` and ``links.designer``,
-at most ``rate`` requests a second per host, following redirects. This is the Milestone 2
+It visits each chosen font's ``license.text_url``, ``links.primary``, ``links.designer`` and
+``links.nerd`` (its Nerd Font build's page), at most ``rate`` requests a second per host,
+following redirects. This is the Milestone 2
 step 4 check for the owner's ten fonts; Milestone 1 step 14 checks every link monthly.
 
 How it behaves:
@@ -34,7 +35,7 @@ MAX_REDIRECTS = 10
 TIMEOUT_S = 20.0
 USER_AGENT = "tff-site-linkcheck/1 (+https://trulyfreefonts.com)"
 REDIRECTS = frozenset({301, 302, 303, 307, 308})
-FIELDS = ("license.text_url", "links.primary", "links.designer")
+FIELDS = ("license.text_url", "links.primary", "links.designer", "links.nerd")
 
 # Seams for tests: the HTTP client and the clock (monotonic, never the wall clock).
 _monotonic: Callable[[], float] = time.monotonic
@@ -88,12 +89,14 @@ def linkcheck(
 
 
 def font_links(font: Mapping[str, Any]) -> Iterator[tuple[str, str]]:
-    """Yield ``(field, url)`` for a font's license text, official page and designer page."""
+    """Yield ``(field, url)`` for a font's license text, official page, designer page and Nerd
+    Font build page."""
     yield FIELDS[0], font["license"]["text_url"]
     yield FIELDS[1], font["links"]["primary"]["url"]
-    designer = font["links"].get("designer")
-    if designer:
-        yield FIELDS[2], designer["url"]
+    for field, key in ((FIELDS[2], "designer"), (FIELDS[3], "nerd")):
+        found = font["links"].get(key)
+        if found:
+            yield field, found["url"]
 
 
 @dataclass(slots=True)

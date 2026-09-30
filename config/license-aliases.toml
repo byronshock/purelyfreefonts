@@ -91,6 +91,11 @@ schema = 1
 "LicenseRef-Apple-EULA" = "LicenseRef-Apple-EULA"
 "LicenseRef-ITF-FFL" = "LicenseRef-ITF-FFL"
 "LicenseRef-Personal-Use-Only" = "LicenseRef-Personal-Use-Only"
+# Three licenses first read on 2026-09-29 (B612's EPL-2.0 in Debian; Fontist's ids for the
+# AU Passata and fontopo terms); they wait for the owner in licenses.toml [ruling] (gate LIC).
+"EPL-2.0" = "EPL-2.0"
+"LicenseRef-AarhusUniversity-Passata" = "LicenseRef-AarhusUniversity-Passata"
+"LicenseRef-fontopo-free" = "LicenseRef-fontopo-free"
 # SPDX exceptions, for the part after WITH.
 "Font-exception-2.0" = "Font-exception-2.0"
 "PS-or-PDF-font-exception-20170817" = "PS-or-PDF-font-exception-20170817"
@@ -115,6 +120,7 @@ schema = 1
 "Open Font License" = "OFL-1.1"
 "sil_ofl" = "OFL-1.1"                 # Fontshare API license_type
 "LicenseRef-OFL" = "OFL-1.1"          # Arch (ttf-carlito)
+"LicenseRef-OFL-1.1" = "OFL-1.1"      # Arch (ttf-nunito)
 "custom:OFL" = "OFL-1.1"              # Arch (ttf-cascadia-code)
 "custom:SIL" = "OFL-1.1"
 
@@ -143,6 +149,7 @@ schema = 1
 "Ubuntu Font Licence 1.0" = "Ubuntu-font-1.0"
 "Ubuntu Font License 1.0" = "Ubuntu-font-1.0"
 "custom:UFL" = "Ubuntu-font-1.0"
+"custom:Ubuntu Font Licence 1.0" = "Ubuntu-font-1.0"   # Arch (ttf-ubuntu-font-family)
 
 # --- Bitstream Vera -----------------------------------------------------------
 "BitstreamVera" = "Bitstream-Vera"    # Debian (Hack)
@@ -186,6 +193,7 @@ schema = 1
 "GUST Font License" = "LicenseRef-GUST-Font-License"
 "GUST-Font-License" = "LicenseRef-GUST-Font-License"
 "GUST Font License v.1.0" = "LicenseRef-GUST-Font-License"   # config/foundries.toml (TeX Gyre)
+"LicenseRef-GUST-Font-1.0" = "LicenseRef-GUST-Font-License"   # Arch (tex-gyre-fonts)
 "custom:Arphic_Public_License" = "Arphic-1999"   # Arch (ttf-arphic-*)
 "Arphic" = "Arphic-1999"
 
@@ -229,6 +237,12 @@ schema = 1
 "GPL3+-with-font-exception" = "GPL-3.0-or-later WITH Font-exception-2.0"
 "GPL-3+FontException" = "GPL-3.0-or-later WITH Font-exception-2.0"
 "GPL-3+_with-font-exception" = "GPL-3.0-or-later WITH Font-exception-2.0"
+# fonts-freefont's font files: its "Special Font Exception" is the FSF font exception word for
+# word, followed by FreeFont's clarification of it (its source files are plain GPL-3+).
+"debian_copyright::GPL-3+ with Special Font Exception" = "GPL-3.0-or-later WITH Font-exception-2.0"
+# 3270font: the BSD 3-clause text, and the Fontforge source "optionally licensed under the SIL
+# Open Font License v1.1 with no Reserved Font Name".
+"debian_copyright::BSD3|SIL" = "BSD-3-Clause OR OFL-1.1"
 
 # --- no usable statement ------------------------------------------------------
 "custom" = "NOASSERTION"              # Arch: a license file ships, but the id says nothing

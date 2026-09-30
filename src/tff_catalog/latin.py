@@ -30,9 +30,12 @@ the owner's ruling of 2026-09-26):
 Coverage is ``extended`` when the subsets include ``latin-ext``, else ``basic``.
 
 **Other families** take the glyph test on one file: the first readable one of
-the family's ``FontFileRef``s (``candidate_files``): files of the records named
-like the family first (a build's file, Nerd or CJK, only when the family has
-none of its own), then by role (regular, variable, other, italic), then refs
+the family's ``FontFileRef``s. The files ``config/font-files.toml`` lists for
+the family come first (``fontfiles.load_font_files``: official files research
+found for a family no source gives a readable one; an id the universe lacks
+fails the stage), then the records' (``candidate_files``): files of the records
+named like the family first (a build's file, Nerd or CJK, only when the family
+has none of its own), then by role (regular, variable, other, italic), then refs
 with a complete code point list, then refs with a sha256 (read by range, not
 downloaded), then URL. Its code points come from the ref's ``unicode_range``
 when the source inspected the whole file and listed it in full (the Fontsource
@@ -905,16 +908,20 @@ def decide(
     cmap_for: CmapFor = lambda ref: None,
     glyphsets: Glyphsets | None = None,
     cache: dict[str, Measure] | None = None,
+    hand_files: Mapping[str, Sequence[FontFileRef]] | None = None,
 ) -> dict[str, LatinResult]:
     """The Latin verdict for every eligible family (module docstring), sorted by id.
 
     ``records`` maps each universe key to its records; ``cmap_for`` reads a
     file's code points (None when it cannot); ``cache`` maps file sha256 to a
-    measurement and is filled as files are measured.
+    measurement and is filled as files are measured. ``hand_files`` holds the
+    files of ``config/font-files.toml`` by family id, tried before the records'
+    (not for a Google family judged on its metadata).
     """
     gs = glyphsets or default_glyphsets()
     rulings = allowlist or {}
     memo = cache if cache is not None else {}
+    hand = hand_files or {}
     out: dict[str, LatinResult] = {}
     for fid in sorted(u.families):
         fam = u.families[fid]
@@ -927,7 +934,9 @@ def decide(
         if google is not None:
             res = google_result(google)
         else:
-            refs = candidate_files(recs, cjk_keys, family=fam.family)
+            refs = fontfiles.with_hand_files(
+                candidate_files(recs, cjk_keys, family=fam.family), hand.get(fid)
+            )
             m = _measure_family(refs, cmap_for, gs, memo)
             res = LatinResult(False, None, None, "no_file") if m is None else verdict(m, th)
         if fid in rulings:
@@ -1139,6 +1148,7 @@ def run(ctx: StageContext) -> None:
         log.warning("latin: rulings name families not in the universe: %s", ", ".join(unknown))
     gs = load_glyphsets(paths.data / GLYPHSET_DIR)
     cjk_keys = cjk_build_keys(_alias_rows(paths))
+    hand = hand_files(u, paths.config, log)
     replay = ctx.options.replay
     # A replay starts from no measurements, so its file choices are the live run's.
     cache = {} if replay else load_cache(paths.cache / CACHE_PATH, gs)
@@ -1157,6 +1167,7 @@ def run(ctx: StageContext) -> None:
             cmap_for=cmaps,
             glyphsets=gs,
             cache=cache,
+            hand_files=hand,
         )
     finally:
         cmaps.cache.flush()
@@ -1166,6 +1177,13 @@ def run(ctx: StageContext) -> None:
         dump_cache(paths.cache / CACHE_PATH, gs, cache)
 
     google = _google_records(u, records)
+    ignored = sorted(f for f in set(hand) & set(google) if not menu_only(google[f]))
+    if ignored:
+        log.warning(
+            "latin: %s names Google families, which their metadata decides: %s",
+            fontfiles.FONT_FILES,
+            ", ".join(ignored),
+        )
     ranks = views_ranks(paths.records, ctx.config.ranking.sources.google, key_index(u))
     candidates = dual_script_candidates(
         google, ranks, allowlist, _latin_languages(google, u, records)
@@ -1184,6 +1202,36 @@ def _alias_rows(paths: Paths) -> list[AliasRow]:
     from tff_catalog.aliases import load_aliases
 
     return load_aliases(paths.aliases_csv) if paths.aliases_csv.is_file() else []
+
+
+def hand_files(
+    u: Universe, config_dir: Path, log: logging.Logger | None = None
+) -> dict[str, tuple[FontFileRef, ...]]:
+    """``config/font-files.toml`` (``fontfiles.load_font_files``), checked against the universe.
+
+    Raises ``config_model.ConfigError`` for a family id the universe lacks: a typo,
+    or a family renamed or merged away. A dropped family's entry changes nothing and is
+    logged. (Nor does a Google family's, unless Google serves only its menu subset: its
+    metadata decides it; ``run`` logs those.)
+    """
+    from tff_catalog.config_model import ConfigError
+
+    hand = fontfiles.load_font_files(config_dir)
+    unknown = sorted(set(hand) - set(u.families))
+    if unknown:
+        raise ConfigError(
+            f"{fontfiles.FONT_FILES}: families {', '.join(unknown)}: no family of this run's "
+            "universe has that id (a typo, or a family renamed or merged away); fix or remove "
+            "the entry"
+        )
+    dropped = sorted(fid for fid in hand if u.families[fid].drop is not None)
+    if dropped and log is not None:
+        log.warning(
+            "latin: %s names families the universe drops: %s",
+            fontfiles.FONT_FILES,
+            ", ".join(dropped),
+        )
+    return hand
 
 
 def _google_records(

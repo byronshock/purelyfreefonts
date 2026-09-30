@@ -630,7 +630,9 @@ def test_without_javascript_the_no_script_images_show(
     disabled (an anti-tracking rule), and Chromium and Firefox follow it, so a row's image
     far below the screen is fetched too. Nothing here asserts that it isn't.
     """
-    viewport = {"width": 375, "height": 640}
+    # A 375 x 812 phone (iPhone X class): the first row sits below the lead, the no-script
+    # note, the count and the Nerd Font legend (TASK-2), which takes two lines at this width.
+    viewport = {"width": 375, "height": 812}
     guarded = guarded_context(java_script_enabled=False, viewport=viewport, color_scheme=scheme)
     page = goto(guarded, scheme)
     page.wait_for_load_state("load")

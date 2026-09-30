@@ -37,8 +37,9 @@ Rules (``derive_facts``), each fact decided by the first source that has it:
 "font_file", "owner", "default", ...) when one decided all three facts, else
 ``category=<b>;is_monospace=<b>;formats=<b>``.
 
-The stage reads one font file per family that the metadata leaves open (a
-Regular with a known sha256 first), through ``fontfiles.facts_for`` and the
+The stage reads one font file per family that the metadata leaves open (the
+files ``config/font-files.toml`` lists for it first, ``fontfiles.load_font_files``;
+then a Regular with a known sha256), through ``fontfiles.facts_for`` and the
 store's cache. A live run records its reads in the ``font_facts``
 pseudo-source; a replay resolves the same files from that record and the cache.
 """
@@ -46,7 +47,7 @@ pseudo-source; a replay resolves the same files from that record and the cache.
 import json
 import re
 from collections import Counter, defaultdict
-from collections.abc import Iterable, Mapping
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal, cast, get_args
@@ -290,14 +291,16 @@ def family_facts(
     recs: Iterable[UniverseRecord],
     font_facts: Mapping[str, FontFacts],
     owner_category: Category | None = None,
+    hand_files: Sequence[FontFileRef] = (),
 ) -> Facts:
     """The facts of one family from its records and the facts of its files (by sha256).
 
     ``owner_category``, the family's entry in ``config/category-overrides.toml``,
-    wins over every other basis, as basis "owner".
+    wins over every other basis, as basis "owner". ``hand_files``, its files in
+    ``config/font-files.toml``, come before the records' files.
     """
     ordered = sorted(recs, key=_record_order)
-    files = _files(ordered, font_facts)
+    files = _files(ordered, font_facts, hand_files)
     mono = _monospace(ordered, files)
     if owner_category is not None:
         category, category_basis = owner_category, OWNER
@@ -318,11 +321,13 @@ def family_facts(
 
 
 def _files(
-    recs: list[UniverseRecord], font_facts: Mapping[str, FontFacts]
+    recs: list[UniverseRecord],
+    font_facts: Mapping[str, FontFacts],
+    hand_files: Sequence[FontFileRef] = (),
 ) -> list[tuple[FontFileRef, FontFacts | None]]:
     """Each distinct file of the family with its facts when known, best candidates first."""
     seen: dict[str, tuple[FontFileRef, FontFacts | None]] = {}
-    for ref in candidates(recs, readable_only=False):
+    for ref in candidates(recs, readable_only=False, hand_files=hand_files):
         if ref.url not in seen:
             seen[ref.url] = (ref, font_facts.get(ref.sha256) if ref.sha256 else None)
     return list(seen.values())
@@ -357,12 +362,15 @@ def derive_facts(
     recs: Iterable[UniverseRecord],
     font_facts: Mapping[str, FontFacts],
     owner: Mapping[str, Category] | None = None,
+    hand: Mapping[str, Sequence[FontFileRef]] | None = None,
 ) -> dict[str, Facts]:
-    """Facts for every eligible family; ``font_facts`` is keyed by file sha256 and
-    ``owner`` holds the owner's categories by family id (``owner_categories``)."""
+    """Facts for every eligible family; ``font_facts`` is keyed by file sha256,
+    ``owner`` holds the owner's categories by family id (``owner_categories``) and
+    ``hand`` the files of ``config/font-files.toml`` by family id."""
     owner = owner or {}
+    hand = hand or {}
     return {
-        fid: family_facts(rs, font_facts, owner.get(fid))
+        fid: family_facts(rs, font_facts, owner.get(fid), hand.get(fid, ()))
         for fid, rs in group_records(u, recs).items()
     }
 
@@ -419,8 +427,14 @@ def settled_by_metadata(recs: Iterable[UniverseRecord]) -> bool:
     )
 
 
-def candidates(recs: Iterable[UniverseRecord], *, readable_only: bool = True) -> list[FontFileRef]:
-    """The family's font files, best first: known sha256, Regular, Google/Fontsource, then url.
+def candidates(
+    recs: Iterable[UniverseRecord],
+    *,
+    readable_only: bool = True,
+    hand_files: Sequence[FontFileRef] = (),
+) -> list[FontFileRef]:
+    """The family's font files, best first: its ``hand_files`` (``config/font-files.toml``),
+    then the records' by known sha256, Regular, Google/Fontsource, then url.
 
     ``readable_only`` keeps only font files and zip members (not archives or pages).
     """
@@ -437,7 +451,8 @@ def candidates(recs: Iterable[UniverseRecord], *, readable_only: bool = True) ->
             )
             if ref.url not in refs or order < refs[ref.url][0]:
                 refs[ref.url] = (order, ref)
-    return [ref for _, ref in sorted(refs.values(), key=lambda item: item[0])]
+    listed = [ref for _, ref in sorted(refs.values(), key=lambda item: item[0])]
+    return fontfiles.with_hand_files(listed, hand_files)
 
 
 # --- the stage ----------------------------------------------------------------------------------
@@ -506,15 +521,19 @@ class _Resolver:
 
 
 def resolve_files(
-    grouped: Mapping[str, list[UniverseRecord]], resolver: _Resolver
+    grouped: Mapping[str, list[UniverseRecord]],
+    resolver: _Resolver,
+    hand: Mapping[str, Sequence[FontFileRef]] | None = None,
 ) -> dict[str, FontFacts]:
-    """Read one file for each family the metadata leaves open; url -> facts."""
+    """Read one file for each family the metadata leaves open, trying the family's files
+    in ``hand`` (``config/font-files.toml``) first; url -> facts."""
     found: dict[str, FontFacts] = {}
+    hand = hand or {}
     for fid in sorted(grouped):
         recs = grouped[fid]
         if settled_by_metadata(recs):
             continue
-        for ref in candidates(recs)[:MAX_TRIES]:
+        for ref in candidates(recs, hand_files=hand.get(fid, ()))[:MAX_TRIES]:
             ff = found.get(ref.url) or resolver.facts(ref)
             if ff is not None:
                 found[ref.url] = ff
@@ -528,14 +547,19 @@ def with_hashes(
     """Records whose file refs without a sha256 get the one their url turned out to have."""
     out = []
     for r in recs:
-        files = tuple(
-            replace(ref, sha256=by_url[ref.url].sha256)
-            if ref.sha256 is None and ref.url in by_url
-            else ref
-            for ref in r.files
-        )
+        files = hashed(r.files, by_url)
         out.append(replace(r, files=files) if files != r.files else r)
     return out
+
+
+def hashed(refs: Iterable[FontFileRef], by_url: Mapping[str, FontFacts]) -> tuple[FontFileRef, ...]:
+    """``refs``, each without a sha256 given the one its url turned out to have."""
+    return tuple(
+        replace(ref, sha256=by_url[ref.url].sha256)
+        if ref.sha256 is None and ref.url in by_url
+        else ref
+        for ref in refs
+    )
 
 
 def _open_cache(ctx: StageContext) -> FontFileCache:
@@ -556,7 +580,8 @@ def run(ctx: StageContext) -> None:
     if ctx.fetcher is None and ctx.store is not None:
         recorded = fontfiles.recorded_reads(ctx.store, replay_day or ctx.run_date, prefer=STAGE)
     resolver = _Resolver(cache, ctx.fetcher, recorded, ctx.log)
-    by_url = resolve_files(grouped, resolver)
+    hand = fontfiles.load_font_files(ctx.paths.config)  # stage "latin" checked the ids
+    by_url = resolve_files(grouped, resolver, hand)
     cache.flush()
     if ctx.fetcher is not None and ctx.store is not None and resolver.reads.reads:
         try:
@@ -571,7 +596,12 @@ def run(ctx: StageContext) -> None:
             ctx.log.warning("could not record font reads in the store: %s", exc)
     font_facts = {ff.sha256: ff for ff in by_url.values()}
     out = {
-        fid: family_facts(with_hashes(recs, by_url), font_facts, owner.get(fid))
+        fid: family_facts(
+            with_hashes(recs, by_url),
+            font_facts,
+            owner.get(fid),
+            hashed(hand.get(fid, ()), by_url),
+        )
         for fid, recs in grouped.items()
     }
     stageio.dump_stage(ctx.paths, "facts", out)

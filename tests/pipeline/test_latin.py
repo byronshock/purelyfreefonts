@@ -26,7 +26,7 @@ from tests.helpers import ROOT
 
 from tff_catalog import fontfiles, jsonio, latin, reviews, stageio
 from tff_catalog.aliases import AliasRow, write_aliases
-from tff_catalog.config_model import Latin, RankingConfig, from_mapping, load_toml
+from tff_catalog.config_model import ConfigError, Latin, RankingConfig, from_mapping, load_toml
 from tff_catalog.fetch import USER_AGENT, FetchError, HostNotAllowed
 from tff_catalog.fontfiles import FileRead, FontFacts, FontFileCache, record_reads
 from tff_catalog.keys import match_key
@@ -704,6 +704,50 @@ def test_owner_include_of_a_non_google_family() -> None:
     )
 
 
+# config/font-files.toml: a font file research found for a family no source gives one.
+HAND_URL = "https://raw.githubusercontent.com/o/r/0123456789abcdef0123456789abcdef01234567/Hand.ttf"
+
+
+def test_hand_files_are_tried_before_the_records_files(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setitem(CMAPS, HAND_URL, LATIN)
+    hand = {fid: (FontFileRef(HAND_URL),) for fid in ("nerd-only", "pretendard", "inter")}
+    calls: list[str] = []
+
+    def reading(r: FontFileRef) -> frozenset[int] | None:
+        calls.append(r.url)
+        return read_cmap(r)
+
+    out = latin.decide(universe(), BY_KEY, TH, cmap_for=reading, hand_files=hand)
+    got = {f: (out[f].latin, out[f].basis, out[f].coverage) for f in ("nerd-only", "pretendard")}
+    # A family no source gives a file passes on its hand file; one whose own file is mainly
+    # CJK is tested on the hand file instead, because it comes first.
+    assert got == dict.fromkeys(got, (True, "glyph_test", "extended"))
+    assert "https://files.example/Pretendard-Regular.ttf" not in calls
+    assert (out["inter"].basis, out["inter"].coverage) == ("gf_metadata", "extended")  # Google's
+    assert out == latin.decide(universe(), BY_KEY, TH, cmap_for=read_cmap, hand_files=hand)
+
+
+def test_hand_files_must_name_families_of_the_universe(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    def table(*fids: str) -> Path:
+        body = "".join(
+            f'[[family]]\nfamily = "{f}"\nname = "{f}"\nfiles = ["{HAND_URL}"]\nreason = "r"\n'
+            for f in fids
+        )
+        (tmp_path / "font-files.toml").write_text("schema = 1\n" + body, encoding="utf-8")
+        return tmp_path
+
+    u = universe()
+    assert latin.hand_files(u, tmp_path) == {}  # no table
+    assert list(latin.hand_files(u, table("nerd-only"))) == ["nerd-only"]
+    with pytest.raises(ConfigError, match=r"font-files\.toml: families no-such-font: no family"):
+        latin.hand_files(u, table("nerd-only", "no-such-font"))
+    with caplog.at_level(logging.WARNING, logger=LOG.name):
+        assert list(latin.hand_files(u, table("material-icons"), LOG)) == ["material-icons"]
+    assert any("drops: material-icons" in r.getMessage() for r in caplog.records)
+
+
 # --- views ranks and the sheet ------------------------------------------------------------------
 
 
@@ -1042,6 +1086,33 @@ def test_a_replay_with_nothing_recorded_tests_only_listed_code_points(
     out = stageio.load_stage(ctx.paths, "latin")
     assert out["iosevka"].latin  # from the registry's unicode range, no download
     assert out["pretendard"].reason == "no_file"
+    assert calls == []
+
+
+def test_the_stage_reads_the_hand_files_and_a_replay_repeats_them(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    ctx, calls = make_run(tmp_path, monkeypatch)
+    monkeypatch.setitem(CMAPS, HAND_URL, LATIN)
+    ctx.paths.config.mkdir(parents=True)
+    (ctx.paths.config / fontfiles.FONT_FILES).write_text(
+        f'schema = 1\n[[family]]\nfamily = "nerd-only"\nname = "Nerd Only"\n'
+        f'files = ["{HAND_URL}"]\nreason = "Test: the designer\'s own file."\n',
+        encoding="utf-8",
+    )
+    latin.run(ctx)
+    first = outputs(ctx)
+    out = stageio.load_stage(ctx.paths, "latin")
+    assert (out["nerd-only"].latin, out["nerd-only"].basis) == (True, "glyph_test")
+    assert HAND_URL in calls
+    assert ctx.store is not None
+    snap = ctx.store.snapshot(fontfiles.READS_SOURCE, DAY)
+    assert snap is not None
+    assert HAND_URL in {r["url"] for r in snap.iter_jsonl("latin.jsonl")}
+    shutil.rmtree(ctx.paths.cache)
+    calls.clear()
+    latin.run(replay(ctx))
+    assert outputs(ctx) == first
     assert calls == []
 
 

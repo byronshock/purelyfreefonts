@@ -1,0 +1,85 @@
+# Font files by hand, for families no source gives a readable file (milestone-1 steps 5
+# and 5b). Read by tff_catalog.fontfiles.load_font_files.
+#
+# The Latin gate tests one font file per non-Google family, and a family with no
+# readable file is out as "no_file" without a test. Most such families come from a
+# Homebrew cask or Fontist formula that downloads a tar archive, a page or a plain-http
+# file, which the pipeline and the site cannot read. The 2026-09-29 audit found 141 of
+# them (docs/milestone-1.md, step 5). This table names an official file that research
+# found for such a family, so the glyph test runs. Stages "latin" and "facts" read these
+# files before the sources' own, and stage "verify" (L3) before the sources' own but
+# after config/license-texts.toml's. Stage "latin" fails on a family id its universe
+# lacks.
+#
+# [[family]]: one per family.
+#   family   family id (state/ids.json), listed once
+#   name     display name, for people
+#   files    font files, best first: https URLs of a font file, or
+#            archive.zip#path/in/archive for one inside a zip archive, pinned to a
+#            commit or a release (license_l3.is_pinned)
+#   reason   where the file comes from, and why it is the family's official file
+#
+# Researched by Claude on 2026-09-29; every URL below answered HTTP 200 that day, and the
+# glyph test results are those of the files named here.
+
+schema = 1
+
+[[family]]
+family = "go"
+name = "Go"
+files = ["https://raw.githubusercontent.com/golang/image/b06f1de3f4900ff828b8f114c37eb9ea10dfed90/font/gofont/ttfs/Go-Regular.ttf"]
+reason = "The Go fonts' own folder in golang.org/x/image (github.com/golang/image), at the commit config/license-texts.toml pins for Go Mono. Homebrew's font-go downloads this folder as a tar archive from go.googlesource.com."
+
+[[family]]
+family = "liberation-sans"
+name = "Liberation Sans"
+files = ["https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/src/unpatched-fonts/LiberationMono/LiberationSans-Regular.ttf"]
+reason = "Liberation 2.1.5 ships only as a tar archive (github.com/liberationfonts/liberation-fonts release 2.1.5, liberation-fonts-ttf-2.1.5.tar.gz), and its repository holds only sources. Nerd Fonts keeps the release's files unchanged, at the commit Liberation Mono's catalog file comes from: this LiberationSans-Regular.ttf is byte for byte the release's (sha256 76d04c18ea243f426b7de1f3ad208e927008f961dc5945e5aad352d0dfde8ee8), and the folder's LICENSE is the release's."
+
+[[family]]
+family = "liberation-serif"
+name = "Liberation Serif"
+files = ["https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/src/unpatched-fonts/LiberationMono/LiberationSerif-Regular.ttf"]
+reason = "As for Liberation Sans: the 2.1.5 release's LiberationSerif-Regular.ttf, byte for byte (sha256 058ea80864aef09a23f45cbec2bb5400bc3dfbdea01c3f10538a21fcb497fb74), kept unchanged by Nerd Fonts at the commit Liberation Mono's catalog file comes from."
+
+[[family]]
+family = "et-book"
+name = "ET Book"
+files = ["https://raw.githubusercontent.com/edwardtufte/et-book/24d3a3bbfc880095d3df2b9e9d60d05819138e89/et-book/et-book-roman-line-figures/et-book-roman-line-figures.ttf"]
+reason = "Edward Tufte's own repository (github.com/edwardtufte/et-book, branch gh-pages), which Homebrew's font-et-book downloads as a tar archive; the roman with lining figures."
+
+[[family]]
+family = "open-sans-hebrew"
+name = "Open Sans Hebrew"
+files = ["https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/apache/opensanshebrew/OpenSansHebrew-Regular.ttf"]
+reason = "Google Fonts Early Access keeps the family in google/fonts apache/opensanshebrew (no METADATA.pb, so the google_repo collector skips the folder), at the commit the 2026-09-26 google_repo snapshot pins; Homebrew's font-open-sans-hebrew installs these files."
+
+[[family]]
+family = "open-sans-hebrew-condensed"
+name = "Open Sans Hebrew Condensed"
+files = ["https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/apache/opensanshebrewcondensed/OpenSansHebrewCondensed-Regular.ttf"]
+reason = "As for Open Sans Hebrew: google/fonts apache/opensanshebrewcondensed, the Early Access folder Homebrew's font-open-sans-hebrew-condensed installs, at the commit the 2026-09-26 google_repo snapshot pins."
+
+[[family]]
+family = "humor-sans"
+name = "Humor Sans"
+files = ["https://salsa.debian.org/fonts-team/fonts-humor-sans/-/raw/3a5224f717e4f46e3c1be35ed14d2590e00e1e80/Humor-Sans.ttf"]
+reason = "The designer serves the font only over plain http (antiyawn.com/uploads/Humor-Sans-1.0.ttf, which Homebrew's font-humor-sans downloads; its https answer has another site's certificate). Debian's fonts-humor-sans repository keeps it on its upstream branch; that file is byte for byte the designer's (sha256 2ded6a27448c9ed30aaff177744e2bcf1e52e0aab018b2a8be64565df633318f)."
+
+[[family]]
+family = "routed-gothic"
+name = "Routed Gothic"
+files = ["https://raw.githubusercontent.com/dse/routed-gothic/15bcb19c9071d60055531ed18e9ab3d5b20ad335/dist/ttf/routed-gothic.ttf"]
+reason = "The designer's repository (github.com/dse/routed-gothic) at tag v1.0.0, the release Homebrew's font-routed-gothic downloads as a tar archive."
+
+[[family]]
+family = "tamzen"
+name = "Tamzen"
+files = ["https://raw.githubusercontent.com/sunaku/tamzen-font/caa2a5dcf65f82deba1c08cfc7147d76b807eeb6/ttf/Tamzen8x16r.ttf"]
+reason = "The maintainer's repository (github.com/sunaku/tamzen-font) at tag Tamzen-1.11.6, the release Homebrew's font-tamzen downloads as a tar archive; the 8x16 regular."
+
+[[family]]
+family = "liga-comic-mono"
+name = "Liga Comic Mono"
+files = ["https://raw.githubusercontent.com/wayou/comic-mono-font/b38be28f75acece142a1f2c9afcaa629269ac201/LigaComicMono.ttf"]
+reason = "The maintainer's repository (github.com/wayou/comic-mono-font), whose default branch Homebrew's font-liga-comic-mono downloads as a tar archive, at its commit of 2026-07-20."

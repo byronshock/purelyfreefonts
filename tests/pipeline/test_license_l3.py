@@ -1279,6 +1279,24 @@ def test_researched_texts_and_files_are_tried_first(canon: Canon) -> None:
     assert result.font_file.url == upstream_file
 
 
+def test_hand_files_come_after_research_and_before_the_sources(canon: Canon) -> None:
+    """config/font-files.toml's files (fontfiles.load_font_files) are read before the
+    sources' files, and after config/license-texts.toml's."""
+    hand_file = f"{REPO}/hand/ExampleSans-Regular.ttf"
+    research_file = f"{REPO}/upstream/ExampleSans-Regular.ttf"
+    old = make_inputs(canon).evidence
+    hand = {"example-sans": (FontFileRef(hand_file), FontFileRef(FONT_URL))}
+    with_hand = license_l3.apply_font_files(old, hand)
+    assert [f.url for f in with_hand["example-sans"].files] == [hand_file, FONT_URL]
+    assert with_hand["example-sans"].texts == old["example-sans"].texts
+    fam = license_l3.FamilyResearch("example-sans", "Example", "test", files=(research_file,))
+    evidence = license_l3.apply_research(with_hand, research(families=[fam]))
+    assert [f.url for f in evidence["example-sans"].files] == [research_file, hand_file, FONT_URL]
+    # A family no source gives any evidence for gets its hand files all the same.
+    alone = license_l3.apply_font_files({}, {"other-sans": (FontFileRef(hand_file),)})
+    assert alone == {"other-sans": license_l3.Evidence(files=(FontFileRef(hand_file),))}
+
+
 def write_research(tmp_path: Path, body: str) -> Paths:
     (tmp_path / "config").mkdir(exist_ok=True)
     (tmp_path / "config" / "license-texts.toml").write_text("schema = 1\n" + body)

@@ -15,6 +15,7 @@
     "sources",
     "systems",
     "license_classes",
+    "nerd",
     "fonts"
   ],
   "properties": {
@@ -179,6 +180,17 @@
         }
       }
     },
+    "nerd": {
+      "description": "The Nerd Font marker's wording (owner rulings of 2026-09-29, config/site.toml [nerd]): the marker beside the name of a font whose links.nerd is set, its accessible name, and the legend.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["marker", "label", "legend"],
+      "properties": {
+        "marker": {"$ref": "#/$defs/text"},
+        "label": {"$ref": "#/$defs/text"},
+        "legend": {"$ref": "#/$defs/text"}
+      }
+    },
     "fonts": {
       "type": "array",
       "minItems": 1,
@@ -255,6 +267,16 @@
           "description": "What a visitor should know before following the link, shown under it in the font's details.",
           "$ref": "#/$defs/text"
         }
+      }
+    },
+    "nerd_link": {
+      "description": "The page of a font's Nerd Font build (owner rulings of 2026-09-28 and 2026-09-29, TASK-2): the maker's own release page, or the build's folder in the Nerd Fonts repository at the current release tag. The label names the build (\"SauceCodePro Nerd Font\", \"Maple Mono NF\"); the page adds the destination.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url", "label"],
+      "properties": {
+        "url": {"$ref": "#/$defs/https_url"},
+        "label": {"$ref": "#/$defs/text"}
       }
     },
     "rank_entry": {
@@ -518,10 +540,11 @@
         "links": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["primary", "designer"],
+          "required": ["primary", "designer", "nerd"],
           "properties": {
             "primary": {"$ref": "#/$defs/link"},
-            "designer": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/link"}]}
+            "designer": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/link"}]},
+            "nerd": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/nerd_link"}]}
           }
         },
         "preinstalled_on": {

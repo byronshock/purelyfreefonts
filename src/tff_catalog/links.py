@@ -74,7 +74,51 @@ an override under a new question id, and the family's own question is then no
 longer asked. An override entry on the family's own question decides instead
 of the pick.
 
-**The check** (``check``) HEADs every primary and designer link of the
+**The Nerd Font build** (``nerd_builds``; owner rulings of 2026-09-28 and
+2026-09-29, TASK-2, AUTHORITY.md). A family with a Nerd Font build gets a third
+link, ``Links.nerd``, to that build's own page, labelled with the build's name.
+Two kinds of build count:
+
+- **The maker's own** (``maker_build``): a Homebrew cask or a GitHub release
+  asset that ``data/aliases.csv`` marks as a Nerd build of the family
+  (relation build or bundle, detail in ``NERD_DETAILS``), published from a
+  forge repository that is the family's own (``own_repositories``: one its
+  chosen primary or designer link points into, or that the repository,
+  homepage or minisite URLs, or a cask's download, of its records give,
+  leaving out every build's record). A third party's patch (Delugia, a
+  cask of another repository) is neither. The link is that repository's
+  releases page, spelled as the family's own sources spell it, and the label is
+  the shortest Homebrew cask name among the build's casks ("Maple Mono NF"),
+  else "<family> NF" (``MAKER_LABEL``).
+- **The Nerd Fonts project's** (``nerd_fonts_build``): a folder of Nerd Fonts'
+  ``fonts.json`` (collector nerdfonts, key ``nerd-folder:<folderName>``) that
+  the family holds, or that a bundle row names it a member of (Noto, M+, iA
+  Writer). With several, the folder whose original (``unpatchedName``) is the
+  family's name, else the first by name. The link is the folder at the current
+  release tag, ``https://github.com/ryanoasis/nerd-fonts/tree/<tag>/patched-fonts/<folderName>``:
+  the tag is the newest release that is not a prerelease in stage "parse"'s
+  ``nerd_releases`` records (``nerd_release``), so each monthly refresh moves it
+  forward, and the folder must be among the ones that release ships. The label
+  is fonts.json's ``patchedName`` plus " Nerd Font" ("SauceCodePro Nerd Font").
+  The link is made only when the build's base license, fonts.json's
+  ``licenseId`` read through ``config/license-aliases.toml``, classifies as
+  allowed under ``config/licenses.toml`` with the owner's gate LIC rulings
+  (``licenses.effective_config``): the automatic part of the owner's "hide the
+  marker for any build that fails".
+
+When both kinds exist, the maker's own build wins: it is the official source.
+So does a maker's build over a Nerd Fonts folder that holds only a README
+(fonts.json ``repoRelease: false``: CascadiaMono, Monaspace); without a maker's
+build, such a folder is still the build's page, since its README names the
+build, its variants and its downloads. Never a release asset or
+``/releases/latest``. Nerd Fonts' page for its own build is no aggregator for
+this link (``policy_problems(nerd=True)`` allows exactly a build folder,
+``is_nerd_folder``), while the primary link's ban on ``ryanoasis/nerd-fonts``
+and nerdfonts.com stands. A family with some sign of a Nerd build but no link
+(a distribution's package of a third party's patch, say) is listed with the
+reason in the queue's ``nerd.unlinked``.
+
+**The check** (``check``) HEADs every primary, designer and Nerd link of the
 catalog's families (all chosen links when there is no membership yet), one
 worker per host at the fetcher's per-host pace, and falls back to one GET when
 a HEAD is not answered 200. A link passes when it answers 200, follows the
@@ -93,7 +137,8 @@ them to ``link_checks/D/`` (not recorded once a merged run has used ``D``).
 
 Outputs: ``build/stage/links.json`` (accepted links only, by family id) and
 ``build/stage/queues/links.json`` (families without an accepted link, overrides
-waiting for gate K, owner picks, failed checks).
+waiting for gate K, owner picks, failed checks, and the Nerd Fonts release used
+with the families whose Nerd Font build has no link).
 """
 
 import dataclasses
@@ -102,19 +147,23 @@ import logging
 import re
 import sys
 from collections import defaultdict
-from collections.abc import Iterable, Mapping
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import date
 from typing import TYPE_CHECKING, Any, Literal
-from urllib.parse import parse_qsl, quote_plus, urlsplit, urlunsplit
+from urllib.parse import parse_qsl, quote, quote_plus, urlsplit, urlunsplit
 
 from tff_catalog import jsonio, stageio
 from tff_catalog.config_model import ConfigError, from_mapping, load_toml
 from tff_catalog.fetch import FetchError, HostNotAllowed
+from tff_catalog.keys import match_key
 from tff_catalog.names import ID_PATTERN
+from tff_catalog.records import LicenseFact, Observation, SourceKey, read_jsonl
 
 if TYPE_CHECKING:
+    from tff_catalog.aliases import AliasRow
+    from tff_catalog.config_model import Config, LicensesConfig
     from tff_catalog.fetch import Fetcher
     from tff_catalog.paths import Paths
     from tff_catalog.records import UniverseRecord
@@ -292,6 +341,23 @@ PICK_URL = "url"  # an answer's value naming the picked link; else its ruling te
 # records the picked one as the ruling.
 _PICKED_OPTION_RE = re.compile(r"(?P<url>https://\S+) \(from [^()]*\)")
 
+# The Nerd Font build link (owner rulings of 2026-09-28 and 2026-09-29, TASK-2; module doc).
+NERD_REPO = "ryanoasis/nerd-fonts"  # the Nerd Fonts project (collectors nerdfonts, nerd_releases)
+NERD_NS = "nerd-folder"  # both collectors key a build by its fonts.json folderName
+NERD_SOURCE = "nerdfonts"  # fonts.json: the builds, their names and base licenses
+NERD_RELEASES = "nerd_releases"  # the releases: the current tag and the folders it ships
+NERD_FOLDER_URL = "https://github.com/" + NERD_REPO + "/tree/{tag}/patched-fonts/{folder}"
+# Alias rows (data/aliases.csv) of these relations and details are Nerd Font builds.
+NERD_RELATIONS = frozenset({"build", "bundle"})
+NERD_DETAILS = frozenset({"nerd", "nf", "nfm", "nfp", "propo"})
+# Where a maker's own build is published: a Homebrew cask (its download's repository) or a
+# GitHub release asset ("<owner>/<repo>/<asset>").
+MAKER_NAMESPACES = frozenset({"brew-cask", "gh-asset"})
+CASK_SOURCE = "homebrew_casks"
+NERD_LABEL = "{} Nerd Font"  # the Nerd Fonts project's build, by patchedName
+MAKER_LABEL = "{} NF"  # a maker's build that no Homebrew cask names
+NerdKind = Literal["maker", "nerd_fonts"]
+
 Kind = Literal["homepage", "repository"]
 
 
@@ -313,6 +379,15 @@ class Links:
     primary: Link
     designer: Link | None
     basis: str  # "google_specimen", "override", "two_sources", ...
+    # The page of the family's Nerd Font build, labelled with the build's name, or None
+    # (``nerd_builds``). ``choose`` leaves it None; stage "links" adds it.
+    nerd: Link | None = None
+
+    @property
+    def by_role(self) -> tuple[tuple[str, Link], ...]:
+        """(role, link) for each link the family has: primary, designer, nerd."""
+        roles = (("primary", self.primary), ("designer", self.designer), ("nerd", self.nerd))
+        return tuple((role, link) for role, link in roles if link is not None)
 
 
 @dataclass(frozen=True, slots=True)
@@ -422,7 +497,7 @@ def _aggregator(u: _Url, segs: list[str]) -> str | None:
     return _aggregator_repo(u.bare, "/".join(segs)) if segs else None
 
 
-def policy_problems(url: str, *, archived: bool = False) -> list[str]:
+def policy_problems(url: str, *, archived: bool = False, nerd: bool = False) -> list[str]:
     """Why ``url`` breaks the link policy (not https, release asset, /releases/latest, hg
     mirror, aggregator).
 
@@ -431,6 +506,11 @@ def policy_problems(url: str, *, archived: bool = False) -> list[str]:
     capture (``wayback_original``) of a page that is gone. The capture must be https, and
     the page it shows must follow the policy apart from plain http (owner ruling of
     2026-09-29). Without ``archived``, web.archive.org is an aggregator like any other.
+
+    ``nerd``: ``url`` is a family's Nerd Font build link (``Links.nerd``). Nerd Fonts' page
+    for its own build, a build folder of its repository (``is_nerd_folder``), is no
+    aggregator for it (owner ruling of 2026-09-29); every other page of that repository,
+    and nerdfonts.com, still is, and every other rule applies.
     """
     u = _split(url)
     if u is None:
@@ -448,9 +528,25 @@ def policy_problems(url: str, *, archived: bool = False) -> list[str]:
     if _is_asset(u, segs):
         out.append("a release asset or file download")
     aggregator = _aggregator(u, segs)
-    if aggregator is not None:
+    if aggregator is not None and not (nerd and is_nerd_folder(url)):
         out.append(f"an aggregator ({aggregator})")
     return out
+
+
+def is_nerd_folder(url: str) -> bool:
+    """Whether ``url`` is a build folder of the Nerd Fonts repository,
+    ``https://github.com/ryanoasis/nerd-fonts/tree/<ref>/patched-fonts/<folder>``, with
+    nothing after the folder: the one page of that repository a Nerd link may name."""
+    u = _split(url)
+    if u is None or u.scheme != "https" or u.bare != "github.com" or u.query:
+        return False
+    segs = u.segments
+    return (
+        len(segs) == 6
+        and "/".join(segs[:2]).lower() == NERD_REPO
+        and segs[2] == "tree"
+        and segs[4] == "patched-fonts"
+    )
 
 
 def wayback_original(url: str) -> str | None:
@@ -711,6 +807,332 @@ def choose_all(
         except NoAcceptedLink as exc:
             undecided[fid] = exc
     return links, undecided
+
+
+# --- the Nerd Font build ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True, slots=True)
+class NerdRelease:
+    """The Nerd Fonts release the folder links name: its tag, and the folders it ships."""
+
+    tag: str
+    folders: frozenset[str]
+
+
+def nerd_release(observations: Iterable[Observation]) -> NerdRelease | None:
+    """The newest release that is not a prerelease (by ``published_at``, then tag) among
+    collector nerd_releases' Observations, with the folders it has archives for; None
+    when there is none."""
+    found: dict[str, tuple[str, set[str]]] = {}
+    for o in observations:
+        if o.source != NERD_RELEASES or o.key.ns != NERD_NS:
+            continue
+        a = dict(o.attrs)
+        tag, published = a.get("release"), a.get("published_at")
+        if a.get("prerelease") is True or not (isinstance(tag, str) and isinstance(published, str)):
+            continue
+        found.setdefault(tag, (published, set()))[1].add(o.key.key)
+    if not found:
+        return None
+    tag = max(found, key=lambda t: (found[t][0], t))
+    return NerdRelease(tag, frozenset(found[tag][1]))
+
+
+def nerd_folder_url(tag: str, folder: str) -> str:
+    """A Nerd Fonts build's folder at release ``tag``."""
+    return NERD_FOLDER_URL.format(tag=quote(tag, safe=""), folder=quote(folder, safe=""))
+
+
+@dataclass(frozen=True, slots=True)
+class NerdBuild:
+    """A family's Nerd Font build, as ``nerd_builds`` links it."""
+
+    kind: NerdKind
+    link: Link  # the build's page, labelled with the build's name
+    evidence: tuple[str, ...]  # the keys that show the build ("<ns>:<key>"), sorted
+
+
+@dataclass(frozen=True, slots=True)
+class NerdInputs:
+    """What the Nerd Font build link is chosen from (``load_nerd_inputs``)."""
+
+    rows: tuple[AliasRow, ...]  # data/aliases.csv
+    records: Mapping[SourceKey, tuple[UniverseRecord, ...]]  # every universe record, by key
+    facts: Mapping[str, LicenseFact]  # nerdfonts' base-license facts, by folder
+    release: NerdRelease | None
+    # Why a Nerd Fonts build's base license keeps its link out (None: it passes).
+    license_problem: Callable[[LicenseFact | None], str | None]
+
+
+def nerd_license_checker(
+    cfg: LicensesConfig, aliases: Mapping[str, str]
+) -> Callable[[LicenseFact | None], str | None]:
+    """The license test of a Nerd Fonts build (module doc): its base license, fonts.json's
+    ``licenseId`` (the fact's SPDX field, else its raw string) read through
+    ``license-aliases.toml``, must classify as allowed under ``cfg``, which carries the
+    owner's gate LIC rulings (``licenses.effective_config``)."""
+    from tff_catalog.licenses import AliasIndex, classify, normalize
+
+    index = AliasIndex(aliases)
+
+    def expression(fact: LicenseFact) -> str | None:
+        for text in (fact.spdx, fact.raw):
+            if text and (expr := normalize(text, fact.source, index)) is not None:
+                return expr
+        return None
+
+    def problem(fact: LicenseFact | None) -> str | None:
+        if fact is None:
+            return "fonts.json states no license for it"
+        expr = expression(fact)
+        if expr is None:
+            return f"its base license {fact.raw!r} is not one license-aliases.toml reads"
+        found = classify(expr, cfg)
+        if found.status != "allowed":
+            return f"its base license {expr} is {found.status}: {found.reason}"
+        return None
+
+    return problem
+
+
+def _stage_records(paths: Paths, source: str) -> list[Any]:
+    """The records of ``build/stage/records/<source>.jsonl`` (none when it is missing)."""
+    path = paths.records / f"{source}.jsonl"
+    return read_jsonl(path) if path.is_file() else []
+
+
+def load_nerd_inputs(paths: Paths, config: Config, recs: Iterable[UniverseRecord]) -> NerdInputs:
+    """The Nerd inputs of a run: the alias table, ``recs`` by key, and from
+    ``build/stage/records/`` nerdfonts' license facts and nerd_releases' current release.
+    The license test reads ``config`` and the gate LIC rulings on its first use only."""
+    from tff_catalog.aliases import load_aliases
+    from tff_catalog.licenses import effective_config
+
+    rows = tuple(load_aliases(paths.aliases_csv)) if paths.aliases_csv.is_file() else ()
+    by_key: dict[SourceKey, list[UniverseRecord]] = defaultdict(list)
+    for r in recs:
+        by_key[r.key].append(r)
+    facts: dict[str, LicenseFact] = {}
+    for fact in _stage_records(paths, NERD_SOURCE):
+        if isinstance(fact, LicenseFact) and fact.key.ns == NERD_NS:
+            facts.setdefault(fact.key.key, fact)
+    releases = [o for o in _stage_records(paths, NERD_RELEASES) if isinstance(o, Observation)]
+    checker: list[Callable[[LicenseFact | None], str | None]] = []
+
+    def license_problem(fact: LicenseFact | None) -> str | None:
+        if not checker:
+            cfg = effective_config(paths, config.licenses)
+            checker.append(nerd_license_checker(cfg, config.license_aliases.aliases))
+        return checker[0](fact)
+
+    return NerdInputs(
+        rows=rows,
+        records={k: tuple(v) for k, v in by_key.items()},
+        facts=facts,
+        release=nerd_release(releases),
+        license_problem=license_problem,
+    )
+
+
+def _row_index(rows: Iterable[AliasRow]) -> dict[tuple[str, str], list[AliasRow]]:
+    index: dict[tuple[str, str], list[AliasRow]] = defaultdict(list)
+    for row in rows:
+        index[(row.ns, match_key(row.alias))].append(row)
+    return index
+
+
+def _is_nerd_row(row: AliasRow) -> bool:
+    return row.relation in NERD_RELATIONS and row.detail in NERD_DETAILS
+
+
+def _cask_urls(r: UniverseRecord) -> list[str]:
+    """A Homebrew cask's download repository and download URL (attrs ``github_repo``, ``url``);
+    none for another source's record."""
+    if r.source != CASK_SOURCE:
+        return []
+    a = dict(r.attrs)
+    repo, url = a.get("github_repo"), a.get("url")
+    found = [f"https://github.com/{repo}"] if isinstance(repo, str) and repo else []
+    return found + ([url] if isinstance(url, str) and url else [])
+
+
+def _repository(url: str) -> Target | None:
+    """The forge repository ``url`` points into (its releases page as ``url``), or None."""
+    found = resolve(url)
+    return found if isinstance(found, Target) and found.kind == "repository" else None
+
+
+def _cask_repository(r: UniverseRecord) -> Target | None:
+    """The forge repository a Homebrew cask downloads from, or None."""
+    for url in _cask_urls(r):
+        if (target := _repository(url)) is not None:
+            return target
+    return None
+
+
+def own_repositories(
+    links: Links | None,
+    recs: Iterable[UniverseRecord],
+    is_build: Callable[[SourceKey], bool],
+) -> dict[str, str]:
+    """The forge repositories that are a family's own, by ``Target.key``, each with its
+    releases page as the family's sources spell it, first found first: the ones its chosen
+    primary and designer links point into, then the ones the repository, homepage and
+    minisite URLs (and a cask's download) of its records give. A build's record (a key with
+    a build row in the alias table) and Nerd Fonts' records give none: a third party's patch
+    names its own repository, not the maker's."""
+    urls = []
+    if links is not None:
+        urls += [link.url for role, link in links.by_role if role != "nerd"]
+    for r in sorted(recs, key=_record_order):
+        if r.source == NERD_SOURCE or is_build(r.key):
+            continue
+        urls += [url for role, url in r.urls if role in CANDIDATE_ROLES]
+        urls += _cask_urls(r)
+    found: dict[str, str] = {}
+    for url in urls:
+        target = _repository(url)
+        if target is not None:
+            found.setdefault(target.key, target.url)
+    return found
+
+
+def maker_build(
+    fam: Family,
+    rows: Iterable[AliasRow],
+    records: Mapping[SourceKey, Sequence[UniverseRecord]],
+    own: Mapping[str, str],
+) -> NerdBuild | None:
+    """The maker's own Nerd Font build of ``fam`` (module doc), from its alias ``rows``: a
+    Homebrew cask or GitHub release asset marked as its Nerd build, published from one of its
+    ``own`` repositories. None when there is no such build."""
+    evidence: dict[str, set[str]] = defaultdict(set)  # repository key -> "ns:key"
+    names: dict[str, set[str]] = defaultdict(set)  # repository key -> cask names
+    for row in rows:
+        if not _is_nerd_row(row) or row.ns not in MAKER_NAMESPACES:
+            continue
+        found: list[tuple[Target | None, str | None]]
+        if row.ns == "gh-asset":  # "<owner>/<repo>/<asset>"
+            found = [(_repository(f"https://github.com/{row.alias}"), None)]
+        else:
+            casks = records.get(SourceKey(row.ns, row.alias), ())
+            found = [(_cask_repository(r), r.family) for r in casks if r.source == CASK_SOURCE]
+        for target, name in found:
+            if target is None or target.key not in own:
+                continue  # Nerd Fonts' own casks, and third parties' builds
+            evidence[target.key].add(f"{row.ns}:{row.alias}")
+            if name and match_key(name) != match_key(fam.family):
+                names[target.key].add(name)
+    if not evidence:
+        return None
+    order = list(own)
+    key = min(evidence, key=lambda k: (-len(evidence[k]), order.index(k)))
+    named = sorted(names[key], key=lambda n: (len(n), n))
+    label = named[0] if named else MAKER_LABEL.format(fam.family)
+    return NerdBuild("maker", Link(own[key], label), tuple(sorted(evidence[key])))
+
+
+def nerd_folders(
+    u: Universe, rows: Iterable[AliasRow], folders: Iterable[str]
+) -> dict[str, list[str]]:
+    """Each eligible family's Nerd Fonts folders among ``folders`` (fonts.json's): the
+    ``nerd-folder`` keys it holds, and the ones a build or bundle row names it for (a bundle
+    folder such as Noto or M+ is no family's key), spelled as fonts.json spells them."""
+    spelled = {match_key(f): f for f in sorted(folders)}
+    eligible = u.eligible()
+    out: dict[str, set[str]] = defaultdict(set)
+    for fid, fam in eligible.items():
+        for key in (*fam.keys, *(k for k, _ in fam.shared)):
+            if key.ns == NERD_NS and match_key(key.key) in spelled:
+                out[fid].add(spelled[match_key(key.key)])
+    for row in rows:
+        named = row.ns == NERD_NS and row.relation in NERD_RELATIONS
+        if named and row.family_id in eligible and match_key(row.alias) in spelled:
+            out[row.family_id].add(spelled[match_key(row.alias)])
+    return {fid: sorted(found) for fid, found in out.items()}
+
+
+def nerd_fonts_build(
+    fam: Family,
+    folders: Sequence[str],
+    inputs: NerdInputs,
+) -> tuple[NerdBuild | None, str | None]:
+    """The Nerd Fonts project's build of ``fam`` in one of its ``folders`` (module doc), or
+    None with the reason it gets no link."""
+    nerd = {
+        key.key: r
+        for key in (SourceKey(NERD_NS, f) for f in folders)
+        for r in inputs.records.get(key, ())
+        if r.source == NERD_SOURCE
+    }
+
+    def rank(folder: str) -> tuple[bool, str, str]:
+        r = nerd.get(folder)
+        other = r is None or match_key(r.family) != match_key(fam.family)
+        return (other, folder.casefold(), folder)
+
+    folder = min(folders, key=rank)
+    release = inputs.release
+    if release is None:
+        return None, f"Nerd Fonts folder {folder}: no Nerd Fonts release in this run's records"
+    if folder not in release.folders:
+        return None, f"Nerd Fonts folder {folder} is not in release {release.tag}"
+    problem = inputs.license_problem(inputs.facts.get(folder))
+    if problem is not None:
+        return None, f"Nerd Fonts folder {folder}: {problem}"
+    record = nerd.get(folder)
+    patched = dict(record.attrs).get("patched_name") if record is not None else None
+    label = NERD_LABEL.format(patched if isinstance(patched, str) and patched else folder)
+    link = Link(nerd_folder_url(release.tag, folder), label)
+    return NerdBuild("nerd_fonts", link, (f"{NERD_NS}:{folder}",)), None
+
+
+def nerd_builds(
+    u: Universe,
+    grouped: Mapping[str, Iterable[UniverseRecord]],
+    links: Mapping[str, Links],
+    inputs: NerdInputs,
+) -> tuple[dict[str, NerdBuild], dict[str, str]]:
+    """The Nerd Font build of every family in ``links`` that has one (module doc), and the
+    families with some sign of a Nerd build but no link, with the reason."""
+    rows_by_family: dict[str, list[AliasRow]] = defaultdict(list)
+    for row in inputs.rows:
+        if row.family_id:
+            rows_by_family[row.family_id].append(row)
+    index = _row_index(inputs.rows)
+
+    def is_build(key: SourceKey) -> bool:
+        return any(r.relation == "build" for r in index.get((key.ns, match_key(key.key)), ()))
+
+    fonts_json = [
+        key.key
+        for key, recs in inputs.records.items()
+        if key.ns == NERD_NS and any(r.source == NERD_SOURCE for r in recs)
+    ]
+    folders = nerd_folders(u, inputs.rows, fonts_json)
+    builds: dict[str, NerdBuild] = {}
+    unlinked: dict[str, str] = {}
+    for fid in sorted(links):
+        fam = u.families[fid]
+        rows = rows_by_family.get(fid, [])
+        own = own_repositories(links[fid], grouped.get(fid, ()), is_build)
+        build = maker_build(fam, rows, inputs.records, own)
+        why = None
+        if build is None and folders.get(fid):
+            build, why = nerd_fonts_build(fam, folders[fid], inputs)
+        if build is not None:
+            builds[fid] = build
+            continue
+        signs = sorted({f"{r.ns}:{r.alias}" for r in rows if _is_nerd_row(r)})
+        if why is not None:
+            unlinked[fid] = why
+        elif signs:
+            unlinked[fid] = (
+                "neither a Nerd Fonts folder nor a build of the maker's own; shown only by "
+                + ", ".join(signs)
+            )
+    return builds, unlinked
 
 
 # --- overrides and gate K -----------------------------------------------------------------------
@@ -1013,17 +1435,19 @@ class CheckRow:
         )
 
 
-def to_check(row: CheckRow, *, archived: bool = False) -> LinkCheck:
+def to_check(row: CheckRow, *, archived: bool = False, nerd: bool = False) -> LinkCheck:
     """The verdict on a recorded answer: policy problems of the link and of where it
     redirects, and the error when there was no answer. ``archived``: the link is an archived
-    override's (``Link.archived``), so it and its redirect may be Wayback Machine captures."""
-    problems = policy_problems(row.url, archived=archived)
+    override's (``Link.archived``), so it and its redirect may be Wayback Machine captures.
+    ``nerd``: the link is a Nerd Font build's (``Links.nerd``), so it and its redirect may be a
+    Nerd Fonts build folder (``policy_problems``)."""
+    problems = policy_problems(row.url, archived=archived, nerd=nerd)
     if row.error:
         problems.append(f"no answer: {row.error}")
     if row.final_url != row.url:
         problems += [
             f"redirects to {row.final_url}, {p}"
-            for p in policy_problems(row.final_url, archived=archived)
+            for p in policy_problems(row.final_url, archived=archived, nerd=nerd)
         ]
     return LinkCheck(row.url, row.status, row.final_url, tuple(problems))
 
@@ -1120,24 +1544,21 @@ def record_checks(
 
 
 def _link_urls(links: Mapping[str, Links]) -> list[str]:
-    urls = {
-        link.url for ls in links.values() for link in (ls.primary, ls.designer) if link is not None
-    }
-    return sorted(urls)
+    return sorted({link.url for ls in links.values() for _, link in ls.by_role})
 
 
 def _archived_urls(links: Mapping[str, Links]) -> frozenset[str]:
     """The URLs linked as archived copies (``Link.archived``): approved overrides only."""
-    return frozenset(
-        link.url
-        for ls in links.values()
-        for link in (ls.primary, ls.designer)
-        if link is not None and link.archived
-    )
+    return frozenset(link.url for ls in links.values() for _, link in ls.by_role if link.archived)
+
+
+def _nerd_urls(links: Mapping[str, Links]) -> frozenset[str]:
+    """The URLs linked as Nerd Font builds' pages (``Links.nerd``)."""
+    return frozenset(ls.nerd.url for ls in links.values() if ls.nerd is not None)
 
 
 def check(links: Mapping[str, Links], ctx: StageContext) -> dict[str, LinkCheck]:
-    """HEAD-check every primary and designer link (through the store in replay).
+    """HEAD-check every primary, designer and Nerd link (through the store in replay).
 
     Returns a ``LinkCheck`` per URL. A live run reuses the 200 answers already
     recorded for the run date, re-checks the rest (everything with
@@ -1147,7 +1568,7 @@ def check(links: Mapping[str, Links], ctx: StageContext) -> dict[str, LinkCheck]
     "not checked".
     """
     urls = _link_urls(links)
-    archived = _archived_urls(links)
+    archived, nerd = _archived_urls(links), _nerd_urls(links)
     day = ctx.options.from_snapshots or ctx.run_date
     recorded = recorded_checks(ctx.store, day) if ctx.store is not None else {}
     if ctx.fetcher is None:
@@ -1155,10 +1576,10 @@ def check(links: Mapping[str, Links], ctx: StageContext) -> dict[str, LinkCheck]
         for url in urls:
             row = recorded.get(url)
             if row is None:
-                problems = (*policy_problems(url, archived=url in archived), NOT_CHECKED)
-                out[url] = LinkCheck(url, 0, url, tuple(problems))
+                known = policy_problems(url, archived=url in archived, nerd=url in nerd)
+                out[url] = LinkCheck(url, 0, url, (*known, NOT_CHECKED))
             else:
-                out[url] = to_check(row, archived=url in archived)
+                out[url] = to_check(row, archived=url in archived, nerd=url in nerd)
         return out
     todo = [
         url
@@ -1182,7 +1603,7 @@ def check(links: Mapping[str, Links], ctx: StageContext) -> dict[str, LinkCheck]
             "TFF_STORE is not set: link checks are not recorded, so a replay cannot repeat them"
         )
     rows = recorded | fresh
-    return {url: to_check(rows[url], archived=url in archived) for url in urls}
+    return {url: to_check(rows[url], archived=url in archived, nerd=url in nerd) for url in urls}
 
 
 # --- the stage ------------------------------------------------------------------------------------
@@ -1215,6 +1636,8 @@ def build_queue(
     links: Mapping[str, Links],
     checks: Mapping[str, LinkCheck],
     picks: OwnerPicks | None = None,
+    release: NerdRelease | None = None,
+    nerd_unlinked: Mapping[str, str] | None = None,
 ) -> dict[str, Any]:
     """``build/stage/queues/links.json``: what the owner or Claude must act on.
 
@@ -1227,14 +1650,17 @@ def build_queue(
       the undecided families the owner sent to research that no override entry
       names yet (Claude proposes one), and ``unusable``, answers that give no
       link (question id -> why);
-    - ``failed_checks``: links that failed the check, with the families using them.
+    - ``failed_checks``: links that failed the check, with the families using
+      them ("<id>:primary", "<id>:designer", "<id>:nerd");
+    - ``nerd``: the Nerd Fonts ``release`` the build folders are linked at (null
+      without one), and ``unlinked``: the families with some sign of a Nerd Font
+      build but no link, with why (``nerd_builds``).
     """
     picks = picks or OwnerPicks({}, {}, (), {})
     by_url: dict[str, list[str]] = defaultdict(list)
     for fid, ls in sorted(links.items()):
-        for role, link in (("primary", ls.primary), ("designer", ls.designer)):
-            if link is not None:
-                by_url[link.url].append(f"{fid}:{role}")
+        for role, link in ls.by_role:
+            by_url[link.url].append(f"{fid}:{role}")
     overrides = list(overrides)
     return {
         "undecided": {
@@ -1271,7 +1697,15 @@ def build_queue(
             for url, c in sorted(checks.items())
             if not c.ok
         },
+        "nerd": {
+            "release": None if release is None else release.tag,
+            "unlinked": dict(sorted((nerd_unlinked or {}).items())),
+        },
     }
+
+
+def _link_of(build: NerdBuild | None) -> Link | None:
+    return None if build is None else build.link
 
 
 def _unchecked(checks: Mapping[str, LinkCheck]) -> list[str]:
@@ -1286,16 +1720,24 @@ def run(ctx: StageContext) -> None:
 
     paths = ctx.paths
     u: Universe = stageio.load_stage(paths, "universe")
-    grouped = group_records(u, universe_records(paths.records))
+    recs = universe_records(paths.records)
+    grouped = group_records(u, recs)
     overrides = load_overrides(paths)
     answers = gate_answers(paths)
     choices = choices_of(answers)
     approved = approved_overrides(overrides, choices)
     picks = owner_picks(u.eligible(), answers, overrides)
     links, undecided = choose_all(u, grouped, {**picks.links, **approved})
+    nerd = load_nerd_inputs(paths, ctx.config, recs)
+    builds, nerd_unlinked = nerd_builds(u, grouped, links, nerd)
+    links = {
+        fid: dataclasses.replace(ls, nerd=_link_of(builds.get(fid))) for fid, ls in links.items()
+    }
     stageio.dump_stage(paths, "links", links)
     checks = check(_check_scope(paths, links, ctx.log), ctx)
-    queue = build_queue(u, undecided, overrides, choices, links, checks, picks)
+    queue = build_queue(
+        u, undecided, overrides, choices, links, checks, picks, nerd.release, nerd_unlinked
+    )
     jsonio.dump(queue, paths.queues / QUEUE_FILE)
 
     bases: dict[str, int] = defaultdict(int)
@@ -1306,6 +1748,17 @@ def run(ctx: StageContext) -> None:
         len(links),
         dict(sorted(bases.items())),
         len(undecided),
+    )
+    kinds: dict[str, int] = defaultdict(int)
+    for build in builds.values():
+        kinds[build.kind] += 1
+    ctx.log.info(
+        "links: %d Nerd Font build links %s at Nerd Fonts release %s; %d families with a "
+        "sign of a Nerd build but no link",
+        len(builds),
+        dict(sorted(kinds.items())),
+        nerd.release.tag if nerd.release is not None else "(none)",
+        len(nerd_unlinked),
     )
     ctx.log.info(
         "links: %d overrides approved, %d questions pending, %d owner picks; "
@@ -1339,7 +1792,7 @@ def cmd_check(ctx: StageContext) -> int:
     Checks the catalog's families (every family in ``links.json`` before the
     first membership run). A catalog family without links fails; so does any
     link the policy forbids and any primary that does not answer 200. A designer
-    link that does not answer 200 is only reported.
+    or Nerd link that does not answer 200 is only reported.
 
     It only reads: the answers recorded in the store for the run date (or the
     replayed one), never the network, and it writes nothing, so it cannot change
@@ -1362,12 +1815,14 @@ def cmd_check(ctx: StageContext) -> int:
         primary = results[ls.primary.url]
         if not primary.ok:
             failures.append(f"{fid}: primary {_verdict(primary)}")
-        if ls.designer is not None:
-            designer = results[ls.designer.url]
-            if policy_problems(ls.designer.url, archived=ls.designer.archived):
-                failures.append(f"{fid}: designer {_verdict(designer)}")
-            elif not designer.ok:
-                warnings.append(f"{fid}: designer {_verdict(designer)}")
+        for role, link in ls.by_role:
+            if role == "primary":
+                continue
+            found = results[link.url]
+            if policy_problems(link.url, archived=link.archived, nerd=role == "nerd"):
+                failures.append(f"{fid}: {role} {_verdict(found)}")
+            elif not found.ok:
+                warnings.append(f"{fid}: {role} {_verdict(found)}")
     for line in warnings:
         print(f"warning: {line}")
     for line in failures:

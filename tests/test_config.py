@@ -274,6 +274,11 @@ SITE_BREAKS = {
         "listed once",
     ),
     "http-url": (_set("sources", "google", "url", value="http://fonts.google.com"), "https"),
+    "nerd-legend-without-its-marker": (
+        _set("nerd", "legend", value="Nerd Font version available."),
+        "must start with '<marker>: <label>'",
+    ),
+    "nerd-marker-empty": (_set("nerd", "marker", value=" "), "must not be empty"),
 }
 
 

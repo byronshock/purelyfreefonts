@@ -2,12 +2,17 @@
   _row.html.j2: one font (site/CONTRACT.md, "A row"), included once per `row` of list.rows.
   Render moves whole li.font nodes and rewrites only the .rank text, so .rank holds text and
   nothing else. The specimen box keeps its height whether or not the mask has arrived, since
-  rows use content-visibility. Kept compact: 540 of these ship in the no-cache HTML.
+  rows use content-visibility. A font with a Nerd Font build gets the fixed-width marker
+  (span.nf-mark) right after its heading, in the heading's line (TASK-2, owner ruling of
+  2026-09-29). Kept compact: 540 of these ship in the no-cache HTML.
 -#}
 <li class="font{% if row.unranked %} is-unranked{% endif %}" id="font-{{ row.id }}" data-id="{{ row.id }}">
 <div class="font-row">
 <span class="rank">{{ row.label }}</span>
 <h3 class="font-name" id="font-{{ row.id }}-name">{{ row.family }}</h3>
+{% if row.nerd %}
+<span class="nf-mark" role="img" aria-label="{{ list.nerd.label }}">{{ list.nerd.marker }}</span>
+{% endif %}
 <div class="font-spec">
 {% if row.specimen %}
 <span class="spec" role="img" aria-label="{{ row.family }} sample" data-src="{{ row.specimen.url }}"></span>

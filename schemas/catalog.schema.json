@@ -517,6 +517,7 @@
             "additionalProperties": false,
             "required": [
               "designer",
+              "nerd",
               "primary"
             ],
             "properties": {
@@ -548,6 +549,30 @@
                     "type": "object",
                     "additionalProperties": false,
                     "required": [
+                      "url"
+                    ],
+                    "properties": {
+                      "url": {
+                        "$ref": "#/$defs/https_url"
+                      },
+                      "label": {
+                        "$ref": "#/$defs/text"
+                      }
+                    }
+                  }
+                ]
+              },
+              "nerd": {
+                "description": "The page of the font's Nerd Font build, or null (owner rulings of 2026-09-28 and 2026-09-29, TASK-2): the maker's own release page when the maker publishes one, else the build's folder in the Nerd Fonts repository at the current release tag. The label names the build.",
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "label",
                       "url"
                     ],
                     "properties": {

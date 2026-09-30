@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from tests.helpers import FIXTURES
+from tests.helpers import FIXTURES, ROOT
 
 from tff_catalog import fontfiles, jsonio
 from tff_catalog.fetch import FetchError, FetchResult
@@ -790,6 +790,93 @@ def test_a_size_fills_in_the_same_answer_but_never_another() -> None:
     assert log.reads[url] == FileRead(url, "a" * 64, size=7)
     log.add(FileRead(url, None, "timeout"))
     assert log.reads[url].size == 7
+
+
+# --- config/font-files.toml ---------------------------------------------------------------------
+
+PINNED = "https://raw.githubusercontent.com/o/r/0123456789abcdef0123456789abcdef01234567"
+RELEASE = "https://github.com/o/r/releases/download/v1.0/Fonts-1.0.zip"
+
+
+def font_files(tmp_path: Path, body: str) -> Path:
+    (tmp_path / fontfiles.FONT_FILES).write_text("schema = 1\n" + body, encoding="utf-8")
+    return tmp_path
+
+
+def entry(family: str = "a", *files: str, name: str = "A", reason: str = "r") -> str:
+    listed = ", ".join(f'"{u}"' for u in (files or (f"{PINNED}/A-Regular.ttf",)))
+    return (
+        f'[[family]]\nfamily = "{family}"\nname = "{name}"\nfiles = [{listed}]\n'
+        f'reason = "{reason}"\n'
+    )
+
+
+def test_load_font_files_gives_each_familys_files_in_order(tmp_path: Path) -> None:
+    member = fontfiles.member_url(RELEASE, "Fonts-1.0/ttf/B-Regular.ttf")
+    body = entry("b", member, f"{PINNED}/B-Italic.ttf") + entry("a")
+    got = fontfiles.load_font_files(font_files(tmp_path, body))
+    assert got == {
+        "a": (FontFileRef(f"{PINNED}/A-Regular.ttf"),),
+        "b": (FontFileRef(member), FontFileRef(f"{PINNED}/B-Italic.ttf")),
+    }
+    assert list(got) == ["a", "b"]
+
+
+def test_load_font_files_without_a_file(tmp_path: Path) -> None:
+    assert fontfiles.load_font_files(tmp_path) == {}
+
+
+@pytest.mark.parametrize(
+    ("body", "error"),
+    [
+        (entry() + 'note = "x"\n', "unknown key"),
+        ('[[family]]\nfamily = "a"\nname = "A"\nreason = "r"\n', "missing key"),
+        (entry("A b"), "is not a family id"),
+        (entry() + entry(), "listed twice"),
+        (entry(name=" "), r"\.name: empty"),
+        (entry(reason=""), r"\.reason: empty"),
+        ('[[family]]\nfamily = "a"\nname = "A"\nfiles = []\nreason = "r"\n', r"\.files: empty"),
+        (entry("a", "http://x.example/A.ttf"), "is not an https URL"),
+        (entry("a", RELEASE), "names no font file or zip member"),
+        (entry("a", f"{PINNED}/OFL.txt"), "names no font file or zip member"),
+        (entry("a", "https://x.example/fonts/A-Regular.ttf"), "is not pinned"),
+        (entry("a", "https://x.example/A.zip#A-Regular.ttf"), "is not pinned"),
+        (entry("a", f"{PINNED}/A.ttf", f"{PINNED}/A.ttf"), r"files\[1\]: .* is listed twice"),
+    ],
+    ids=["unknown-key", "no-files-key", "bad-id", "family-twice", "no-name", "no-reason",
+         "no-files", "http", "bare-archive", "not-a-font", "unpinned", "unpinned-archive",
+         "file-twice"],
+)  # fmt: skip
+def test_load_font_files_is_strict(tmp_path: Path, body: str, error: str) -> None:
+    from tff_catalog.config_model import ConfigError
+
+    with pytest.raises(ConfigError, match=error):
+        fontfiles.load_font_files(font_files(tmp_path, body))
+
+
+def test_load_font_files_checks_the_schema(tmp_path: Path) -> None:
+    from tff_catalog.config_model import ConfigError
+
+    (tmp_path / fontfiles.FONT_FILES).write_text("schema = 2\n" + entry(), encoding="utf-8")
+    with pytest.raises(ConfigError, match="schema 2, expected 1"):
+        fontfiles.load_font_files(tmp_path)
+
+
+def test_hand_files_come_first_and_only_once() -> None:
+    a, b, c = (FontFileRef(f"https://x.example/{n}.ttf") for n in "ABC")
+    assert fontfiles.with_hand_files([a, b], None) == [a, b]
+    assert fontfiles.with_hand_files([a, b], [c]) == [c, a, b]
+    assert fontfiles.with_hand_files([a, b], [replace(b, role="italic")]) == [
+        replace(b, role="italic"),
+        a,
+    ]
+
+
+def test_the_committed_font_files_table_loads() -> None:
+    """config/font-files.toml: strict, pinned, and every file a font file or zip member."""
+    got = fontfiles.load_font_files(ROOT / "config")
+    assert {"go", "liberation-sans", "liberation-serif"} <= set(got)
+    assert all(refs for refs in got.values())
 
 
 # --- real fonts (network) -----------------------------------------------------------------------

@@ -43,6 +43,16 @@ Contracts:
   ``size`` in bytes when the stage knows it (stage "verify" records it, because
   the file it read is the one the catalog publishes); rows written before that
   field have none, and read as ``size`` None.
+- **Files by hand.** ``config/font-files.toml`` (``load_font_files``) names
+  font files for families no source gives a readable one (a release shipped
+  only as a tar archive, a page, a plain-http host), found by research: commit-
+  or release-pinned URLs (``license_l3.is_pinned``) of a font file or a zip
+  member. Stages "latin" and "facts" read them before the sources' files, and
+  stage "verify" before the sources' but after ``config/license-texts.toml``'s.
+  The universe collectors turn only snapshots into records, and the one hand
+  list that becomes records, ``config/foundries.toml``, is the owner's foundry
+  list (ruling M12), read through its snapshot; so a hand file for the Latin
+  gate needs a table of its own.
 
 fontTools is imported inside functions, so importing this module stays cheap.
 """
@@ -950,3 +960,84 @@ def recorded_reads(store: Store, day: date, *, prefer: str | None = None) -> dic
             for read in rows:
                 log.add(read)
     return log.reads | {read.url: read for read in own}
+
+
+# --- config/font-files.toml: font files by hand -------------------------------------------------
+
+FONT_FILES = "font-files.toml"  # under config/
+FONT_FILES_SCHEMA = 1
+
+
+@dataclass(frozen=True, slots=True)
+class HandFiles:
+    """One ``[[family]]`` table of ``config/font-files.toml``."""
+
+    family: str  # family id (state/ids.json)
+    name: str  # display name, for people
+    files: tuple[str, ...]  # font files, best first
+    reason: str  # where the files come from, and why they are the family's
+
+
+@dataclass(frozen=True, slots=True)
+class HandFilesFile:
+    schema: int
+    family: tuple[HandFiles, ...] = ()
+
+
+def load_font_files(config_dir: Path) -> dict[str, tuple[FontFileRef, ...]]:
+    """``config/font-files.toml`` (module docstring) as {family id: its files, in order}.
+
+    No file means no hand files. Raises ``config_model.ConfigError`` for unknown or
+    missing keys, another schema, a bad family id, a family listed twice, an empty
+    name or reason, no files, a file listed twice, and a URL that is not https,
+    names no font file or zip member (``is_readable_url``) or is not pinned to a
+    commit or a release (``license_l3.is_pinned``). Whether each id is a family of
+    the run's universe is stage "latin"'s check.
+    """
+    from tff_catalog.config_model import ConfigError, from_mapping, load_toml
+    from tff_catalog.license_l3 import is_pinned
+    from tff_catalog.names import ID_PATTERN
+    from tff_catalog.records import FontFileRef
+
+    path = Path(config_dir) / FONT_FILES
+    if not path.is_file():
+        return {}
+    doc = from_mapping(HandFilesFile, load_toml(path), where=FONT_FILES)
+    if doc.schema != FONT_FILES_SCHEMA:
+        raise ConfigError(f"{FONT_FILES}: schema {doc.schema}, expected {FONT_FILES_SCHEMA}")
+    out: dict[str, tuple[FontFileRef, ...]] = {}
+    for i, fam in enumerate(doc.family):
+        where = f"{FONT_FILES}: family[{i}]"
+        if not ID_PATTERN.fullmatch(fam.family):
+            raise ConfigError(f"{where}.family: {fam.family!r} is not a family id")
+        if fam.family in out:
+            raise ConfigError(f"{where}.family: {fam.family!r} is listed twice")
+        for key in ("name", "reason"):
+            if not getattr(fam, key).strip():
+                raise ConfigError(f"{where}.{key}: empty")
+        if not fam.files:
+            raise ConfigError(f"{where}.files: empty")
+        for n, url in enumerate(fam.files):
+            at = f"{where}.files[{n}]"
+            if not url.startswith("https://") or any(c.isspace() for c in url):
+                raise ConfigError(f"{at}: {url!r} is not an https URL")
+            if not is_readable_url(url):
+                raise ConfigError(
+                    f"{at}: {url} names no font file or zip member (archive.zip#path/in/archive)"
+                )
+            member = split_member(url)
+            if not is_pinned(member[0] if member else url):
+                raise ConfigError(f"{at}: {url} is not pinned to a commit or a release")
+            if url in fam.files[:n]:
+                raise ConfigError(f"{at}: {url} is listed twice")
+        out[fam.family] = tuple(FontFileRef(url) for url in fam.files)
+    return dict(sorted(out.items()))
+
+
+def with_hand_files(
+    refs: Iterable[FontFileRef], hand: Sequence[FontFileRef] | None
+) -> list[FontFileRef]:
+    """``hand`` (a family's files from ``load_font_files``) first, then ``refs`` less those URLs."""
+    listed = list(hand or ())
+    urls = {r.url for r in listed}
+    return listed + [r for r in refs if r.url not in urls]
