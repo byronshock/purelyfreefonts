@@ -85,3 +85,8 @@ reason = "The owner's choice among three wordings Claude offered: the old line, 
 value = "owner_text"
 ruling = "The next release will let you inventory the free fonts you have and discover new ones."
 reason = "The owner's own wording, given in chat, for the privacy page's \"Coming next\" section, so that it agrees with every header's \"Coming next: free font inventory tools.\""
+
+[privacy_coming_next_how]
+value = "no_promise_how"
+ruling = "The privacy page's \"Coming next\" section no longer says how the inventory will work: the sentence \"That check will run in your browser.\" is removed."
+reason = "The owner, in chat: \"Let's not promise how it works.\""

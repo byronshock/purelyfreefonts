@@ -53,4 +53,4 @@ Our server also marks every page "no-transform", which tells Cloudflare not to c
 
 ## Coming next: your font list stays on your device
 
-The next release will let you inventory the free fonts you have and discover new ones. That check will run in your browser. Your list of fonts will never leave your device: it won't be sent to us, to Cloudflare or to anyone else.
+The next release will let you inventory the free fonts you have and discover new ones. Your list of fonts will never leave your device: it won't be sent to us, to Cloudflare or to anyone else.
