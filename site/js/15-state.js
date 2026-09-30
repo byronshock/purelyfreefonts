@@ -1,22 +1,26 @@
 // 15-state: the view the visitor asked for, kept in the URL after "#" (site/CONTRACT.md
 // section 9). The fragment never reaches the server and nothing is stored anywhere.
 //
-// The state is { rank, cat, lic[], spacing, var, nerd, hide[], redist, q, sort, font }. The hash
-// holds the keys in that order, with defaults left out, then every extension pair (a key
-// this page doesn't own, such as Milestone 3's os=linux) exactly as written, in its original
-// order. Discrete changes push a history entry; search typing replaces the current one after
-// 300 ms of quiet. popstate and hashchange apply the hash without pushing.
+// The state is { rank, cat, var, nerd, hide[], q, sort, font }. The hash holds the keys in
+// that order, with defaults left out, then every extension pair (a key this page doesn't own,
+// such as Milestone 3's os=linux) exactly as written, in its original order. Discrete changes
+// push a history entry; search typing replaces the current one after 300 ms of quiet.
+// popstate and hashchange apply the hash without pushing.
+//
+// Retired keys (owner rulings of 2026-09-30): spacing, lic and redist are read once and
+// dropped from the URL, so old links still open. spacing=monospaced becomes cat=monospace
+// when the link names no category; the rest match every listed font now. hide holds at most
+// one operating system, since the page offers them as one select.
 //
 // parse(), serialize(), coerce() and same() are pure, for tests/site/test_list.py.
 const State = (() => {
-  const KEYS = Object.freeze([
-    'rank', 'cat', 'lic', 'spacing', 'var', 'nerd', 'hide', 'redist', 'q', 'sort', 'font',
-  ]);
+  const KEYS = Object.freeze(['rank', 'cat', 'var', 'nerd', 'hide', 'q', 'sort', 'font']);
   const OWN = new Set(KEYS);
-  const LISTS = new Set(['lic', 'hide']);
+  const RETIRED = Object.freeze(['spacing', 'lic', 'redist']);
+  const LISTS = new Set(['hide']);
   const DEFAULT_RANK = 'overall';
-  const SPACINGS = Object.freeze(['proportional', 'monospaced']);
   const HIDES = Object.freeze(['limited', 'attr', 'windows', 'macos', 'linux', 'android']);
+  const OSES = Object.freeze(['windows', 'macos', 'linux', 'android']);
   const MAX_Q = 100;
   const TYPING_MS = 300;
   // Font ids, as the schema allows them.
@@ -25,12 +29,9 @@ const State = (() => {
   const DEFAULTS = Object.freeze({
     rank: DEFAULT_RANK,
     cat: '',
-    lic: Object.freeze([]),
-    spacing: '',
     var: false,
     nerd: false,
     hide: Object.freeze([]),
-    redist: false,
     q: '',
     sort: 'rank',
     font: '',
@@ -41,7 +42,6 @@ const State = (() => {
   const BASE_VOCAB = Object.freeze({
     ranks: Object.freeze([DEFAULT_RANK]),
     cats: Object.freeze(['sans-serif', 'serif', 'display', 'handwriting', 'monospace']),
-    lics: Object.freeze([]),
     ids: null,
   });
   let vocab = BASE_VOCAB;
@@ -75,6 +75,13 @@ const State = (() => {
 
   const isOn = (value) => value === true || value === 1 || value === '1';
 
+  // The hide list, with at most one operating system: the first, in HIDES order.
+  const pickHide = (items) => {
+    const picked = pickList(items, HIDES);
+    const os = picked.find((item) => OSES.includes(item));
+    return Object.freeze(picked.filter((item) => !OSES.includes(item) || item === os));
+  };
+
   // One key's value, validated: anything invalid falls back to the default.
   const coerceKey = (key, value, v = vocab) => {
     switch (key) {
@@ -87,16 +94,11 @@ const State = (() => {
         const cat = String(value ?? '');
         return v.cats.includes(cat) ? cat : '';
       }
-      case 'lic':
-        return pickList(asList(value), v.lics);
-      case 'spacing':
-        return SPACINGS.includes(value) ? value : '';
       case 'var':
       case 'nerd':
-      case 'redist':
         return isOn(value);
       case 'hide':
-        return pickList(asList(value), HIDES);
+        return pickHide(asList(value));
       case 'q':
         return typeof value === 'string' ? clip(value) : '';
       case 'sort':
@@ -137,18 +139,20 @@ const State = (() => {
   };
 
   // Parse a hash ("#a=1&b=2", "a=1" or "") into { state, ext }. `ext` holds the pairs whose
-  // key this page doesn't own, exactly as written. Own keys: the last one wins, and an
-  // undecodable or invalid value means the default.
+  // key this page doesn't own, exactly as written; a retired key is neither (see the top).
+  // Own keys: the last one wins, and an undecodable or invalid value means the default.
   const parse = (hash, v = vocab) => {
     const body = String(hash ?? '').replace(/^#/, '');
     const raw = {};
     const ext = [];
+    let spacing = null;
     for (const piece of body.split('&')) {
       if (piece === '') continue;
       const eq = piece.indexOf('=');
       const key = eq < 0 ? piece : piece.slice(0, eq);
       if (OWN.has(key)) raw[key] = eq < 0 ? '' : piece.slice(eq + 1);
-      else ext.push(piece);
+      else if (key === 'spacing') spacing = eq < 0 ? '' : decode(piece.slice(eq + 1), key);
+      else if (!RETIRED.includes(key)) ext.push(piece);
     }
     const partial = {};
     for (const [key, value] of Object.entries(raw)) {
@@ -156,6 +160,7 @@ const State = (() => {
       if (text === null) continue;
       partial[key] = LISTS.has(key) ? text.split(',') : text;
     }
+    if (spacing === 'monospaced' && !partial.cat) partial.cat = 'monospace';
     return { state: coerce(partial, DEFAULTS, v), ext };
   };
 
@@ -166,12 +171,9 @@ const State = (() => {
     const pairs = [];
     if (state.rank !== DEFAULT_RANK) pairs.push(`rank=${encode(state.rank)}`);
     if (state.cat) pairs.push(`cat=${encode(state.cat)}`);
-    if (state.lic.length) pairs.push(`lic=${state.lic.map(encode).join(',')}`);
-    if (state.spacing) pairs.push(`spacing=${encode(state.spacing)}`);
     if (state.var) pairs.push('var=1');
     if (state.nerd) pairs.push('nerd=1');
     if (state.hide.length) pairs.push(`hide=${state.hide.map(encode).join(',')}`);
-    if (state.redist) pairs.push('redist=1');
     if (state.q) pairs.push(`q=${encode(state.q)}`);
     if (state.sort !== 'rank') pairs.push(`sort=${encode(state.sort)}`);
     if (state.font) pairs.push(`font=${encode(state.font)}`);
@@ -180,11 +182,7 @@ const State = (() => {
   };
 
   // Every filter off; the rank, sort order and open details stay.
-  const cleared = (state) =>
-    coerce(
-      { cat: '', lic: [], spacing: '', var: false, nerd: false, hide: [], redist: false, q: '' },
-      state,
-    );
+  const cleared = (state) => coerce({ cat: '', var: false, nerd: false, hide: [], q: '' }, state);
 
   // True when no filter (search included) is on.
   const isClear = (state) => same(cleared(state), state);
@@ -248,7 +246,7 @@ const State = (() => {
   };
 
   // Learn what the hash may name from the list index (section 7): the available views, the
-  // categories, the license classes and the font ids. The current state is revalidated.
+  // categories and the font ids. The current state is revalidated.
   const configure = (index) => {
     const ranks = index.views
       .filter((view) => view.available && index.r && index.r[view.key])
@@ -256,7 +254,6 @@ const State = (() => {
     vocab = Object.freeze({
       ranks: Object.freeze(ranks.length ? ranks : [DEFAULT_RANK]),
       cats: Object.freeze([...index.cats]),
-      lics: Object.freeze([...index.lics]),
       ids: new Set(index.ids),
     });
     current = coerce(current, DEFAULTS);
@@ -313,7 +310,7 @@ const State = (() => {
   // A copy of the state, safe to change.
   const get = () => {
     adoptFont();
-    return { ...current, lic: [...current.lic], hide: [...current.hide] };
+    return { ...current, hide: [...current.hide] };
   };
 
   // Change some keys, validated like the hash. A discrete change pushes a history entry
@@ -348,9 +345,10 @@ const State = (() => {
 
   return Object.freeze({
     KEYS,
+    RETIRED,
     DEFAULTS,
     HIDES,
-    SPACINGS,
+    OSES,
     MAX_Q,
     parse,
     serialize,

@@ -80,7 +80,7 @@ BIT_MONOSPACE = 1
 BIT_VARIABLE = 2
 BIT_LIMITED = 4
 BIT_ATTRIBUTION = 8
-BIT_NO_REDIST = 16
+# 16 was "not redistributable" until Rule 3 of 2026-09-30 let in only redistributable fonts.
 BIT_SPECIMEN = 32
 BIT_TYPE_OWN = 64
 OS_BITS = {"windows": 128, "macos": 256, "linux": 512, "android": 1024}  # os "app": no bit
@@ -88,7 +88,7 @@ BIT_NEW = 2048
 BIT_PULLED = 4096
 BIT_NERD = 8192  # a Nerd Font build (links.nerd): the "NF" marker and filter (TASK-2)
 
-LIST_FORMAT = 1
+LIST_FORMAT = 2  # 2 (2026-09-30): site categories; no lics/lic columns
 DETAILS_FORMAT = 1
 TIER_UNRANKED = "-"
 TIER_OUTSIDE = "."
@@ -256,8 +256,6 @@ def list_index(doc: Mapping[str, Any], *, commit: str) -> dict[str, Any]:
     """
     fonts = server_order(doc)
     system_os = {s["id"]: s["os"] for s in doc["systems"]}
-    lics = [c["id"] for c in doc["license_classes"]]
-    lic_index = {lic: i for i, lic in enumerate(lics)}
     cat_index = {cat: i for i, cat in enumerate(CATEGORIES)}
     bands = [b["label"] for b in doc["bands"]]
     return {
@@ -267,9 +265,7 @@ def list_index(doc: Mapping[str, Any], *, commit: str) -> dict[str, Any]:
         "n": len(fonts),
         "ids": [f["id"] for f in fonts],
         "cats": list(CATEGORIES),
-        "cat": [cat_index[f["category"]] for f in fonts],
-        "lics": lics,
-        "lic": [lic_index[f["license"]["class"]] for f in fonts],
+        "cat": [cat_index[site_category(f)] for f in fonts],
         "bits": [font_bits(f, system_os) for f in fonts],
         "keys": [search_keys(f) for f in fonts],
         "by_name": sorted(range(len(fonts)), key=lambda i: name_order(fonts[i])),
@@ -331,6 +327,14 @@ def server_order(doc: Mapping[str, Any]) -> list[Mapping[str, Any]]:
     return [font for _, font in ranked] + sorted(unranked, key=name_order)
 
 
+def site_category(font: Mapping[str, Any]) -> str:
+    """The category the site files a font under: "monospace" for every monospaced font, else
+    the catalog's category (owner ruling of 2026-09-30, ``monospace_category``). So Category
+    "Monospace" lists the fonts the Coding rank orders, and the other categories list
+    proportional fonts only. The catalog's own ``category`` is unchanged."""
+    return "monospace" if font["is_monospace"] else font["category"]
+
+
 def name_order(font: Mapping[str, Any]) -> tuple[str, str]:
     """Sort key for "by name": Python ``str.casefold`` of the family, then the id."""
     return (font["family"].casefold(), font["id"])
@@ -353,8 +357,6 @@ def font_bits(font: Mapping[str, Any], system_os: Mapping[str, str]) -> int:
         bits |= BIT_LIMITED
     if font["license"]["attribution_required"]:
         bits |= BIT_ATTRIBUTION
-    if not font["license"]["redistributable"]:
-        bits |= BIT_NO_REDIST
     if has_specimen(font):
         bits |= BIT_SPECIMEN
     if font["preview_ok"] and font["font_file"] is not None:
@@ -467,6 +469,8 @@ def _font_errors(
     errors = []
     if font["license"]["class"] not in classes:
         errors.append(f"license.class {font['license']['class']!r} isn't in license_classes")
+    if not font["license"]["redistributable"]:
+        errors.append("license.redistributable is false: Rule 3 lists redistributable fonts only")
     errors += [
         f"preinstalled_on: unknown system {item['system']!r}"
         for item in font["preinstalled_on"]

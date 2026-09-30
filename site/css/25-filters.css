@@ -40,7 +40,8 @@
 }
 
 #f-q,
-#f-rank {
+#f-rank,
+#f-os {
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
@@ -131,17 +132,6 @@
   margin-bottom: var(--space-1);
 }
 
-/* "Show only" inside License: a quieter heading for the class checkboxes. */
-.filters-more .subgroup {
-  margin-bottom: var(--space-1);
-}
-
-.filters-more .subgroup > legend {
-  font-size: var(--fs-small);
-  font-weight: 400;
-  color: var(--c-muted);
-}
-
 /* One option per line. The whole line is the label, and the box itself is 24 x 24 (2.5.8). */
 .opt {
   display: flex;
@@ -162,12 +152,74 @@
   cursor: pointer;
 }
 
-.filters-more .hint {
-  margin: 0 0 var(--space-2);
-  padding-left: calc(var(--target-min) + var(--space-2));
-  max-width: var(--measure);
-  font-size: var(--fs-small);
-  color: var(--c-muted);
+/* Category: one wrapping row of pills (owner ruling of 2026-09-30, filters_layout). Each is
+   a native radio whose whole label is the target, 32px high (2.5.8); the checked pill is
+   filled, and the focus ring goes round the pill. */
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.pills .opt {
+  position: relative;
+  min-height: 2rem;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--c-border);
+  border-radius: 1rem;
+  background: var(--c-bg);
+}
+
+.pills .opt > input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.pills .opt:hover {
+  background: var(--c-surface);
+}
+
+.pills .opt:has(> input:checked) {
+  border-color: var(--c-accent);
+  background: var(--c-accent);
+  color: var(--c-accent-fg);
+}
+
+.pills .opt:has(> input:focus-visible) {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+@media (forced-colors: active) {
+  .pills .opt:has(> input:checked) {
+    forced-color-adjust: none;
+    border-color: Highlight;
+    background: Highlight;
+    color: HighlightText;
+  }
+}
+
+/* Without :has() a checked pill can't be drawn, so the radios show as they are. */
+@supports not selector(:has(a)) {
+  .pills .opt > input {
+    position: static;
+    width: var(--target-min);
+    height: var(--target-min);
+    opacity: 1;
+  }
+}
+
+/* "Hide fonts that come with": a label over one select, like the rank's. */
+.filters-select {
+  margin: 0 0 var(--space-4);
+}
+
+.filters-select > label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-weight: 600;
 }
 
 /* Below 60rem: #f-more is a panel under the bar, closed until #f-toggle opens it. */

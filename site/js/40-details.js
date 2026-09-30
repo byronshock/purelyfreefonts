@@ -24,9 +24,7 @@ const Details = (() => {
   const { el, append, clear, text, formatBytes } = Core;
 
   // The hash keys of site/CONTRACT.md section 9, in order; any other key is someone else's.
-  const HASH_KEYS = [
-    'rank', 'cat', 'lic', 'spacing', 'var', 'nerd', 'hide', 'redist', 'q', 'sort', 'font',
-  ];
+  const HASH_KEYS = ['rank', 'cat', 'var', 'nerd', 'hide', 'q', 'sort', 'font'];
   const ID = /^[a-z0-9-]+$/;
   // "Type your own text" loads only a hashed font file of this site.
   const FONT_URL = /^\/assets\/fonts\/[a-z0-9][a-z0-9._-]*$/;
@@ -34,7 +32,7 @@ const Details = (() => {
   const SURVEY_CAPTIONS = { desktop: 'Desktop sources', project: 'Project sources' };
   const MAX_TYPED = 200;
 
-  // Page wording (owner approval: Milestone 2 step 4).
+  // Page wording (owner approval: Milestone 2 step 4; the layout of 2026-09-30).
   const WORDS = Object.freeze({
     title: (family) => `Details for ${family}`,
     loading: 'Loading details…',
@@ -42,17 +40,17 @@ const Details = (() => {
     reload: 'Reload page',
     failed: 'Details didn’t load. Check your connection, then try again.',
     retry: 'Try again',
-    redistYes:
-      'Yes. You may pass the font files on, for example inside an app or on your own website.',
-    redistNo:
-      'No. You may use the font for anything, but not pass its files on: point people to ' +
-      'the official download instead.',
-    creditNo: 'Not required.',
+    official: 'Official',
+    designer: 'Designer',
+    creditNo: 'No credit needed.',
+    creditYes: 'Credit required',
+    latinBasic: 'Basic Latin only (limited accents)',
+    latinExtended: 'Accented letters',
+    evidence: 'All ranks and sources',
     gate: 'Held out of the top 100: only one group of sources has evidence for it.',
     sourcesNote: 'Each source links to its credit on the How we rank page.',
-    typeownLoad: (size) => `Load font (${size}) to type your own text`,
+    typeownLoad: (size) => `Type your own text (loads ${size})`,
     typeownLoading: 'Loading font…',
-    typeownNote: 'Loads the font’s unchanged file from this site.',
     typeownLabel: 'Your text',
     typeownFailed: 'The font file didn’t load. Try again.',
     reportIssue: 'Report a problem with this font on GitHub',
@@ -191,7 +189,7 @@ const Details = (() => {
     }
     recordFont(id, push);
     if (focus) focusHeading(row);
-    return fill(row);
+    return fill(row).then((ok) => (ok ? showRank(row).then(() => ok) : ok));
   };
 
   const hide = (row, { focus }) => {
@@ -348,62 +346,145 @@ const Details = (() => {
         ),
     );
 
-  const sections = (payload, font) => [
-    licenseSection(payload, font),
-    linksSection(payload, font),
-    ranksSection(payload, font),
-    sourcesSection(payload, font),
-    tagsSection(payload, font),
-    typeOwnSection(font),
-    reportSection(payload, font),
-  ].filter(Boolean);
+  // The panel (owner ruling of 2026-09-30, details_layout): essentials first, then the
+  // evidence folded behind a closed "All ranks and sources" disclosure, then the report line.
+  const sections = (payload, font) =>
+    [
+      typeOwnSection(font),
+      summarySection(payload, font),
+      evidenceSection(payload, font),
+      reportSection(payload, font),
+    ].filter(Boolean);
 
-  const licenseSection = (payload, font) => {
-    const lic = font.license;
-    const group = (payload.license_classes || []).find((c) => c.id === lic.class);
-    return section(
-      'license',
-      'License',
-      pairs([
-        ['License', link(lic.text_url, `${lic.name} (${lic.spdx})`, { class: 'details-lic-link' })],
-        group && ['Group', group.label],
-        ['Redistributable', lic.redistributable ? WORDS.redistYes : WORDS.redistNo],
-        ['Credit', lic.attribution_required ? `Required: ${lic.attribution}` : WORDS.creditNo],
-      ]),
+  // ---- the essentials
+
+  // One short list: Get it, License, Font, Comes with, Also known as, and the rank the
+  // selector shows (kept current by showRank).
+  const summarySection = (payload, font) =>
+    el(
+      'div',
+      { class: 'details-summary' },
+      pairs(
+        [
+          ['Get it', ...getIt(payload, font)],
+          ['License', ...licenseLine(font.license)],
+          ['Font', fontLine(font)],
+          comesWith(payload, font),
+          font.aliases.length > 0 && ['Also known as', aliasNames(font).join(', ')],
+          ['Rank', el('span', { class: 'details-rank-now' })],
+        ],
+        'details-essentials',
+      ),
     );
-  };
 
-  // A link's note (link.note: why an archived mirror is the official download, say) follows
-  // the pairs as plain text. A Nerd Font build's link (TASK-2) takes the "NF" marker as its
-  // term, and the legend follows as plain text.
-  const linksSection = (payload, font) => {
+  // The official, designer and Nerd Font build links, one per line, each naming where it
+  // goes (CONTRACT section 1). The Nerd link carries the "NF" marker; its legend is above
+  // the list. A link's note (why an archived mirror is the official download) follows it.
+  const getIt = (payload, font) => {
     const { primary, designer, nerd } = font.links;
     const words = nerd && payload.nerd;
-    return section(
-      'links',
-      'Get the font',
-      pairs([
-        ['Official download', link(primary.url, destination(primary))],
-        designer && ['Designer', link(designer.url, destination(designer))],
-        words && [nerdMark(words), link(nerd.url, nerdText(nerd), { class: 'details-nf-link' })],
-      ]),
+    const line = (...children) => el('li', {}, ...children);
+    return [
+      el(
+        'ul',
+        { class: 'details-links', role: 'list' },
+        line(`${WORDS.official}: `, link(primary.url, destination(primary))),
+        designer && line(`${WORDS.designer}: `, link(designer.url, destination(designer))),
+        words &&
+          line(
+            nerdMark(words),
+            ' ',
+            link(nerd.url, nerdText(nerd), { class: 'details-nf-link' }),
+          ),
+      ),
       primary.note && el('p', { class: 'details-link-note', text: primary.note }),
-      words && el('p', { class: 'details-nf-legend', text: words.legend }),
+    ];
+  };
+
+  const licenseLine = (lic) => [
+    link(lic.text_url, `${lic.name} (${lic.spdx})`, { class: 'details-lic-link' }),
+    '. ',
+    lic.attribution_required ? `${WORDS.creditYes}: ${lic.attribution}` : WORDS.creditNo,
+  ];
+
+  const fontLine = (font) => {
+    const { variable, static: fixed } = font.formats;
+    const formats = variable && fixed ? 'Variable and static' : variable ? 'Variable' : 'Static';
+    const latin = font.latin.coverage === 'basic' ? WORDS.latinBasic : WORDS.latinExtended;
+    return `${formats} · ${latin}`;
+  };
+
+  const systemName = (payload) => {
+    const systems = new Map((payload.systems || []).map((s) => [s.id, s.label]));
+    return (id) => systems.get(id) || id;
+  };
+
+  const comesWith = (payload, font) => {
+    if (!font.preinstalled_on.length) return false;
+    const name = systemName(payload);
+    return ['Comes with', font.preinstalled_on.map((p) => name(p.system)).join(', ')];
+  };
+
+  const aliasNames = (font) =>
+    font.aliases.map((a) => (a.relation === 'postscript' ? `${a.name} (PostScript name)` : a.name));
+
+  // The rank the selector shows: State's, else the page's default.
+  const shownRank = () => {
+    if (typeof State === 'object' && State && typeof State.get === 'function') {
+      return State.get().rank;
+    }
+    return 'overall';
+  };
+
+  // "Overall: #39, likely #29 to #53", plus the gate line when the rule holds the font back.
+  const rankNow = (payload, font, key) => {
+    const views = (payload.views || []).filter((v) => v.available && font.ranks[v.key]);
+    const view = views.find((v) => v.key === key) || views[0];
+    if (!view) return [];
+    const entry = font.ranks[view.key];
+    return [
+      `${view.label}: ${placeText(payload, entry, { tier: false })}`,
+      entry.gate_held && el('span', { class: 'details-gate', text: WORDS.gate }),
+    ];
+  };
+
+  // Write the shown rank into a filled panel; the rank selector may have changed since.
+  const showRank = (row) => {
+    const slot = partsOf(row).panel.querySelector('.details-rank-now');
+    if (!slot) return Promise.resolve();
+    return loadPayload().then(
+      (payload) => {
+        const font = payload.fonts[row.dataset.id];
+        if (font) append(clear(slot), ...rankNow(payload, font, shownRank()).filter(Boolean));
+      },
+      () => {},
     );
   };
+
+  // ---- the evidence, folded
 
   const range = ([low, high]) => (low === high ? `likely #${low}` : `likely #${low} to #${high}`);
 
   // "#1, tier A, likely #1 to #6"; "Band 101–250, tier C, …"; "Not ranked: <why>".
-  const placeText = (payload, entry) => {
+  const placeText = (payload, entry, { tier = true } = {}) => {
     if (entry.unranked) {
       return `Not ranked: ${(payload.why_labels || {})[entry.unranked] || entry.unranked}`;
     }
     const bits = [entry.rank ? `#${entry.rank}` : `Band ${entry.band}`];
-    if (entry.tier) bits.push(`tier ${entry.tier}`);
+    if (tier && entry.tier) bits.push(`tier ${entry.tier}`);
     if (entry.range) bits.push(range(entry.range));
     return bits.join(', ');
   };
+
+  const evidenceSection = (payload, font) =>
+    el(
+      'details',
+      { class: 'details-evidence' },
+      el('summary', { class: 'details-evidence-toggle', text: WORDS.evidence }),
+      ranksSection(payload, font),
+      pulledIn(payload, font),
+      sourcesSection(payload, font),
+    );
 
   const ranksSection = (payload, font) => {
     const tiers = new Set();
@@ -428,6 +509,15 @@ const Details = (() => {
       legend.length > 0 && pairs(legend, 'details-tiers'),
       el('p', { class: 'details-more' }, link(METHODOLOGY, 'How ranks, bands and tiers work')),
     );
+  };
+
+  // The Linux packages that install the font on their own (D8), which is why a Linux source
+  // may be left out of some ranks.
+  const pulledIn = (payload, font) => {
+    if (!font.pulled_in_by.length) return false;
+    const name = systemName(payload);
+    const text = font.pulled_in_by.map((p) => `${p.package} on ${name(p.system)}`).join('; ');
+    return pairs([['Pulled in by', text]], 'details-pulled');
   };
 
   const viewLabels = (payload, keys) =>
@@ -486,37 +576,7 @@ const Details = (() => {
     return section('sources', 'Sources', ...tables, note);
   };
 
-  const tagsSection = (payload, font) => {
-    const systems = new Map((payload.systems || []).map((s) => [s.id, s.label]));
-    const system = (id) => systems.get(id) || id;
-    const { variable, static: fixed } = font.formats;
-    const formats = variable && fixed ? 'Variable and static' : variable ? 'Variable' : 'Static';
-    const names = font.aliases.map((a) =>
-      a.relation === 'postscript' ? `${a.name} (PostScript name)` : a.name,
-    );
-    const latin =
-      font.latin.coverage === 'basic'
-        ? 'Basic Latin only (limited accents)'
-        : 'Extended (accented letters)';
-    return section(
-      'tags',
-      'Tags',
-      pairs([
-        font.preinstalled_on.length > 0 && [
-          'Comes with',
-          font.preinstalled_on.map((p) => system(p.system)).join(', '),
-        ],
-        font.pulled_in_by.length > 0 && [
-          'Pulled in by',
-          font.pulled_in_by.map((p) => `${p.package} on ${system(p.system)}`).join('; '),
-        ],
-        ['Formats', formats],
-        ['Spacing', font.is_monospace ? 'Monospaced' : 'Proportional'],
-        ['Latin coverage', latin],
-        names.length > 0 && ['Also known as', names.join(', ')],
-      ]),
-    );
-  };
+  // ---- "Type your own text", first
 
   const typeOwnSection = (font) => {
     const own = font.type_own;
@@ -528,8 +588,7 @@ const Details = (() => {
       dataset: { url: own.url },
       text: WORDS.typeownLoad(formatBytes(own.size)),
     });
-    const note = el('p', { class: 'typeown-note', text: WORDS.typeownNote });
-    return section('typeown', 'Type your own text', el('div', { class: 'typeown' }, note, button));
+    return el('div', { class: ['typeown', 'details-typeown'] }, button);
   };
 
   // Load the unchanged font file (only now, on request) and swap the button for an input.
@@ -634,6 +693,7 @@ const Details = (() => {
       delete panel.dataset.state;
       // The button is replaced either way, so put focus on what replaced it.
       fill(row).then((ok) => {
+        if (ok) showRank(row);
         if (panel.contains(document.activeElement)) return;
         const next = panel.querySelector(ok ? ':scope > .details-title' : '.details-retry');
         if (next) next.focus();
@@ -687,6 +747,8 @@ const Details = (() => {
     }
     if (id !== openId || !openRow || !openRow.isConnected) {
       open(id, { focus: Boolean(info && info.source === 'history') });
+    } else if (previous && state.rank !== previous.rank) {
+      showRank(openRow);
     }
   };
 

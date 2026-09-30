@@ -4,9 +4,13 @@
   'none'). Each control's name is its hash key and its value the key's value (CONTRACT
   section 9). The block ships with `hidden`; the script removes it, and 25-filters.css
   reserves its space so that doesn't move the list. Below 60rem everything but search and
-  rank sits behind #f-toggle, whose aria-expanded drives the disclosure. Spacing follows the
-  owner's site ruling of 2026-09-25 (data/reviews/site/2026-09-25.toml), and "Nerd Font
-  available" the one of 2026-09-29 (2026-09-29.toml, nerd_filter), described by the legend.
+  rank sits behind #f-toggle, whose aria-expanded drives the disclosure. The set follows the
+  owner's rulings of 2026-09-30 (data/reviews/site/2026-09-30.toml: monospace_category,
+  license_filter, filters_layout): Category's Monospace means every monospaced font, there is
+  no Spacing or license-group filter, "No credit required" shows only while some font needs
+  credit, and the operating systems are one select. "Nerd Font available" follows the ruling
+  of 2026-09-29 (nerd_filter), described by the legend. Sort sits in the list's header
+  (_list.html.j2).
 -#}
 <search id="filters" class="filters" aria-label="Filter fonts" hidden>
 <div class="filters-bar">
@@ -22,49 +26,34 @@
 <button type="button" id="f-toggle" class="filters-toggle" aria-expanded="false" aria-controls="f-more">Filters<span class="filters-count"></span></button>
 </div>
 <div id="f-more" class="filters-more">
-<fieldset id="f-cat">
+<fieldset id="f-cat" class="pills">
 <legend>Category</legend>
 <label class="opt"><input type="radio" id="f-cat-all" name="cat" value="" checked> Any</label>
 {% for cat in list.categories %}
 <label class="opt"><input type="radio" id="f-cat-{{ cat.value }}" name="cat" value="{{ cat.value }}"> {{ cat.label }}</label>
 {% endfor %}
 </fieldset>
-<fieldset id="f-spacing">
-<legend>Spacing</legend>
-<label class="opt"><input type="radio" id="f-spacing-any" name="spacing" value="" checked> Any</label>
-<label class="opt"><input type="radio" id="f-spacing-proportional" name="spacing" value="proportional"> Proportional</label>
-<label class="opt"><input type="radio" id="f-spacing-monospaced" name="spacing" value="monospaced"> Monospaced</label>
-</fieldset>
 <fieldset id="f-type">
-<legend>Type</legend>
-<label class="opt"><input type="checkbox" id="f-var" name="var" value="1"> Variable fonts only</label>
+<legend>Features</legend>
+<label class="opt"><input type="checkbox" id="f-var" name="var" value="1"> Variable</label>
 <label class="opt"><input type="checkbox" id="f-nerd" name="nerd" value="1" aria-describedby="nf-legend"> Nerd Font available</label>
-<label class="opt"><input type="checkbox" id="f-hide-limited" name="hide" value="limited" aria-describedby="f-hide-limited-help"> Hide limited accents</label>
-<p id="f-hide-limited-help" class="hint">Fonts that cover basic Latin only, without the accented letters of languages such as Polish or Czech.</p>
+<label class="opt"><input type="checkbox" id="f-hide-limited" name="hide" value="limited"> Accented letters</label>
 </fieldset>
+{% if list.credit_filter %}
 <fieldset id="f-license">
 <legend>License</legend>
-<fieldset class="subgroup">
-<legend>Show only</legend>
-{% for cls in list.license_classes %}
-<label class="opt"><input type="checkbox" id="f-lic-{{ cls.id }}" name="lic" value="{{ cls.id }}"> {{ cls.label }}</label>
-{% endfor %}
+<label class="opt"><input type="checkbox" id="f-hide-attr" name="hide" value="attr"> No credit required</label>
 </fieldset>
-<label class="opt"><input type="checkbox" id="f-hide-attr" name="hide" value="attr"> Hide attribution required</label>
-<label class="opt"><input type="checkbox" id="f-redist" name="redist" value="1" aria-describedby="f-redist-help"> Redistributable fonts only</label>
-<p id="f-redist-help" class="hint">Redistributing means passing the font files on, for example inside an app or on your own website. Every font here is free to use; this hides the ones whose license forbids passing the files on.</p>
-</fieldset>
-<fieldset id="f-system">
-<legend>Hide fonts that come with</legend>
+{% endif %}
+<div id="f-system" class="filters-select">
+<label for="f-os">Hide fonts that come with</label>
+<select id="f-os" name="hide">
+<option value="" selected>Nothing</option>
 {% for system in list.systems_os %}
-<label class="opt"><input type="checkbox" id="f-hide-{{ system.value }}" name="hide" value="{{ system.value }}"> {{ system.label }}</label>
+<option value="{{ system.value }}">{{ system.label }}</option>
 {% endfor %}
-</fieldset>
-<fieldset id="f-sort">
-<legend>Sort</legend>
-<label class="opt"><input type="radio" id="f-sort-rank" name="sort" value="rank" checked> By rank</label>
-<label class="opt"><input type="radio" id="f-sort-name" name="sort" value="name"> By name</label>
-</fieldset>
+</select>
+</div>
 <button type="button" id="f-clear">Clear filters</button>
 </div>
 </search>

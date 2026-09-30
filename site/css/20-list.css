@@ -127,10 +127,55 @@
   max-width: var(--measure);
 }
 
-.count {
+/* The count, with Sort beside it (owner ruling of 2026-09-30, filters_layout). #sort-by
+   ships `hidden` and keeps its space until the script shows it, so the list doesn't move. */
+.list-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: var(--space-4);
   margin: var(--space-1) 0 var(--space-3);
+}
+
+.count {
+  margin: 0;
   font-size: var(--fs-small);
   color: var(--c-muted);
+}
+
+.sort-by {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--fs-small);
+}
+
+.sort-by[hidden] {
+  display: flex;
+  visibility: hidden;
+}
+
+@media (scripting: none) {
+  .sort-by[hidden] {
+    display: none;
+  }
+}
+
+#f-sort {
+  min-height: 2rem;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-bg);
+  color: var(--c-fg);
+  font: inherit;
+}
+
+#f-sort:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
 }
 
 .no-results {
@@ -389,11 +434,6 @@ li.font.is-dim .spec-fallback {
   font-size: var(--fs-small);
   line-height: var(--lh-body);
   overflow-wrap: anywhere;
-}
-
-.badge[data-badge="noredist"] {
-  background: var(--c-warn-bg);
-  color: var(--c-warn-fg);
 }
 
 .download {

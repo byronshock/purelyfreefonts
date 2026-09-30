@@ -67,8 +67,8 @@ BASE_URL = "https://trulyfreefonts.com"
 # M2 step 8 sets this to the Stripe link in ops/DONATIONS.md, once its checks pass.
 TIP_URL: str | None = None
 # Page text for the list page and the fallback 404 page (owner approval: M2 step 7). Some
-# fonts here need attribution or can't be redistributed, so the text claims "any personal or
-# commercial use", as the list page's lead does, and never "no restrictions".
+# fonts here need attribution, so the text claims "any personal or commercial use", as the
+# list page's lead does, and never "no restrictions".
 HOME_PAGE = {
     "path": "/",
     "title": "Truly Free Fonts: the most popular fonts free for personal and commercial use",
@@ -84,15 +84,15 @@ NOT_FOUND_PAGE = {
     "description": "There is no page at this address on Truly Free Fonts.",
     "canonical": False,
 }
-# Row badges (site/CONTRACT.md section 3), in this order.
+# Row badges (site/CONTRACT.md section 3), in this order. Kept short (owner ruling of
+# 2026-09-30, filters_layout): the category already says "Monospace", every font is
+# redistributable (Rule 3), "Comes with" names operating systems and apps only, and "Pulled
+# in by" is in the details panel.
 BADGE_TEXT = {
     "variable": "Variable",
-    "monospace": "Monospace",
     "limited": "Limited accents",
-    "attribution": "Attribution required",
-    "noredist": "Not redistributable",
+    "attribution": "Credit required",
     "preinstalled": "Comes with {}",
-    "pulled": "Pulled in by {}",
     "new": "New",
 }
 UNRANKED_PREFIX = "Not ranked: "
@@ -366,7 +366,8 @@ def _list_context(
     return {
         "views": views,
         "categories": [{"value": k, "label": v} for k, v in data.CATEGORY_LABELS.items()],
-        "license_classes": [{"id": c["id"], "label": c["label"]} for c in doc["license_classes"]],
+        # "No credit required" shows only while some font needs credit (license_filter).
+        "credit_filter": any(f["license"]["attribution_required"] for f in doc["fonts"]),
         "systems_os": [{"value": k, "label": v} for k, v in data.OS_LABELS.items()],
         # The legend shows its leading marker as the rows do: "<marker>" + "<after_marker>".
         "nerd": {
@@ -383,7 +384,7 @@ def _list_context(
 
 
 def _rows(doc: Mapping[str, Any], specimens: Mapping[str, Specimen]) -> list[dict[str, Any]]:
-    systems = {s["id"]: (i, s["label"]) for i, s in enumerate(doc["systems"])}
+    systems = {s["id"]: (i, s["label"], s["os"]) for i, s in enumerate(doc["systems"])}
     ordered = data.server_order(doc)
     rows = []
     for font, label in zip(ordered, rank_labels(ordered), strict=True):
@@ -397,7 +398,7 @@ def _rows(doc: Mapping[str, Any], specimens: Mapping[str, Specimen]) -> list[dic
                 # The owner's site ruling of 2026-09-26 (list_layout): an unranked row puts
                 # its "Not ranked: <reason>" label on a line of its own (li.font.is-unranked).
                 "unranked": label.startswith(UNRANKED_PREFIX),
-                "category_label": data.CATEGORY_LABELS[font["category"]],
+                "category_label": data.CATEGORY_LABELS[data.site_category(font)],
                 "license_name": font["license"]["name"],
                 "badges": _badges(font, systems),
                 "specimen": None
@@ -413,22 +414,15 @@ def _rows(doc: Mapping[str, Any], specimens: Mapping[str, Specimen]) -> list[dic
 
 
 def _badges(
-    font: Mapping[str, Any], systems: Mapping[str, tuple[int, str]]
+    font: Mapping[str, Any], systems: Mapping[str, tuple[int, str, str]]
 ) -> list[dict[str, str]]:
     shown = {
         "variable": font["formats"]["variable"],
-        "monospace": font["is_monospace"],
         "limited": font["latin"]["coverage"] == "basic",
         "attribution": font["license"]["attribution_required"],
-        "noredist": not font["license"]["redistributable"],
         "new": "too_new" in font["flags"],
     }
-    pre = sorted({item["system"] for item in font["preinstalled_on"]}, key=lambda s: systems[s])
-    pulled = [f"{item['package']} on {systems[item['system']][1]}" for item in font["pulled_in_by"]]
-    details = {
-        "preinstalled": ", ".join(systems[s][1] for s in pre),
-        "pulled": "; ".join(dict.fromkeys(pulled)),
-    }
+    details = {"preinstalled": ", ".join(comes_with(font, systems))}
     badges = []
     for key, text in BADGE_TEXT.items():
         if key in details:
@@ -437,6 +431,20 @@ def _badges(
         elif shown[key]:
             badges.append({"key": key, "text": text})
     return badges
+
+
+def comes_with(font: Mapping[str, Any], systems: Mapping[str, tuple[int, str, str]]) -> list[str]:
+    """The row's "Comes with" names: each operating system that preinstalls the font once
+    (Windows, macOS, Linux, Android: every Linux distribution is "Linux"), then each app
+    (LibreOffice), in catalog order. The details panel lists every system."""
+    kinds = {systems[item["system"]][2] for item in font["preinstalled_on"]}
+    names = [label for os_id, label in data.OS_LABELS.items() if os_id in kinds]
+    others = sorted(
+        {item["system"] for item in font["preinstalled_on"]}
+        - {k for k, v in systems.items() if v[2] in data.OS_LABELS},
+        key=lambda s: systems[s][0],
+    )
+    return names + [systems[s][1] for s in others]
 
 
 def _copy_specimens(
