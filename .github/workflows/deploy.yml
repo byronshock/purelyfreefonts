@@ -167,12 +167,14 @@ jobs:
       # The performance budget runs in CI (site-perf, and site-real on a committed catalog);
       # here it would measure a synthetic site, not this build. The size budgets and the CSP
       # rules of this build are checked above by tff-site check.
+      # The accessibility grid's repeats (marked sample_only) run in CI's site-browser on the
+      # sample; here a lighter pass runs on the real rows (owner ruling of 2026-09-30).
       - name: Test the build in Chromium and Firefox
         env:
           TFF_CADDY: "1"
         run: |
-          uv run --locked pytest tests/site -m "not live" --ignore=tests/site/test_perf.py \
-            --browser chromium --browser firefox
+          uv run --locked pytest tests/site -m "not live and not sample_only" \
+            --ignore=tests/site/test_perf.py --browser chromium --browser firefox
       - name: Pack the manifest
         run: |
           uv run --locked tff-site pack "$TFF_SITE_DIR" --out /dev/null --only /dev/null \

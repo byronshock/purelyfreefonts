@@ -315,13 +315,19 @@ jobs:
   # the site built from it must pass what deploy.yml checks before it goes live, so a refresh
   # pull request that breaks the page, a budget or the tests fails here, not in the deploy.
   site-real:
-    name: site-real
+    name: site-real (${{ matrix.browser }})
     runs-on: ubuntu-24.04
     timeout-minutes: 45
+    # One job per browser, as in site-browser: the real catalog's 500 rows make each run long.
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox]
     defaults:
       run:
         shell: bash
     env:
+      BROWSER: ${{ matrix.browser }}
       DATA: build/catalog-site.json
       CADDY_VERSION: 2.11.4
       # sha256 of caddy_2.11.4_linux_amd64.tar.gz (checked against the release's sha512 list).
@@ -396,15 +402,17 @@ jobs:
         run: |
           caddy start --config ops/caddy/ci.Caddyfile --adapter caddyfile > "$RUNNER_TEMP/caddy.log" 2>&1
           curl -sSf -o /dev/null http://127.0.0.1:8080/version.txt
-      - name: Run the site tests on the real catalog, as deploy.yml does
+      # The accessibility grid's repeats (marked sample_only) run in site-browser on the sample;
+      # here a lighter pass runs on the real rows (owner ruling of 2026-09-30, AUTHORITY.md).
+      - name: Run the site tests on the real catalog in ${{ matrix.browser }}, as deploy.yml does
         if: steps.data.outputs.present == 'true'
         env:
           TFF_CADDY: "1"
         run: |
-          uv run --locked pytest tests/site -m "not live" --ignore=tests/site/test_perf.py \
-            --browser chromium --browser firefox
+          uv run --locked pytest tests/site -m "not live and not sample_only" \
+            --ignore=tests/site/test_perf.py --browser "$BROWSER"
       - name: Run the performance budget on the real catalog in Chromium
-        if: steps.data.outputs.present == 'true'
+        if: steps.data.outputs.present == 'true' && matrix.browser == 'chromium'
         env:
           TFF_CADDY: "1"
         run: TFF_PERF_SITE_DIR="$TFF_SITE_DIR" uv run --locked pytest tests/site/test_perf.py --browser chromium

@@ -5,6 +5,13 @@
   so ``-m "not browser"`` deselects them before any fixture runs, and this module imports no
   Playwright code at import time. Browsers come from pytest-playwright's ``--browser``;
   locally, ``TFF_CHROMIUM=/usr/bin/chromium`` swaps in a system Chromium.
+- **The real catalog** (site-real in CI and deploy.yml, ``TFF_SITE_DATA=build/catalog-site.json``)
+  runs with ``-m "not sample_only"``. A test marked ``sample_only`` runs on the sample catalog
+  only; one marked ``real_catalog(name=value, ...)`` runs every parameter on the sample but only
+  the named ones on the real catalog (the other parameters get ``sample_only`` at collection).
+  The accessibility grid is the main user: its repeats test the templates and CSS, which the
+  sample covers, and on the real catalog's 500 rows they ran past CI's 45-minute limit (owner
+  ruling of 2026-09-30, ``data/reviews/ci/2026-09-30.toml``).
 - ``site_data`` (session): ``TFF_SITE_DATA``, or the sample catalog.
 - ``site_dir`` (session): ``TFF_SITE_DIR`` if set (a site built elsewhere, as in CI), else a
   fresh ``tff-site build`` of ``site_data``. Font files are included when all of them are in
@@ -63,12 +70,20 @@ BROWSER_FIXTURES = frozenset(
 
 @pytest.hookimpl(tryfirst=True)
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
-    """Mark tests under tests/site that use a Playwright fixture with ``browser``."""
+    """Mark tests under tests/site that use a Playwright fixture with ``browser``, and the
+    parameters a ``real_catalog`` mark leaves out with ``sample_only``."""
     for item in items:
         if HERE not in Path(item.path).resolve().parents:
             continue
         if BROWSER_FIXTURES.intersection(getattr(item, "fixturenames", ())):
             item.add_marker(pytest.mark.browser)
+        keep = item.get_closest_marker("real_catalog")
+        if keep is not None:
+            params = getattr(getattr(item, "callspec", None), "params", {})
+            unknown = set(keep.kwargs) - set(params)
+            assert not unknown, f"{item.nodeid}: real_catalog names no parameter {unknown}"
+            if any(params[name] != value for name, value in keep.kwargs.items()):
+                item.add_marker(pytest.mark.sample_only)
 
 
 @pytest.fixture(scope="session")

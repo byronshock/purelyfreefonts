@@ -4,6 +4,12 @@ Runs in each engine given with ``--browser`` (CI: Chromium and Firefox) against 
 site of tests/site/conftest.py, through ``guarded_context``, so every test also ends with no
 page error and no CSP violation.
 
+On the real catalog (site-real and deploy.yml, ``-m "not sample_only"``) a lighter pass runs:
+axe on every page in both themes at 1280 x 900, axe with a details panel open, reflow at
+320 px and the planted-violation check. It catches what the real data brings (a long name, a
+duplicate id, a real specimen or panel). The rest of the grid runs on the sample only (owner
+ruling of 2026-09-30): it tests the templates and CSS, which are the same in every row.
+
 - **axe** (axe-core, bundled by axe-playwright-python and injected with ``page.evaluate``,
   which the CSP allows): tags ``wcag2a, wcag2aa, wcag21a, wcag21aa, wcag22aa``, zero
   violations, on ``/``, ``/methodology/``, ``/privacy/``, ``/about/`` and a missing page
@@ -344,11 +350,21 @@ SCROLL_TO_JS = """
 """
 
 
+# Every row rendered, or back to the stylesheet's content-visibility (CSSOM: the CSP allows it).
+RENDER_ROWS_JS = """
+(on) => {
+  for (const li of document.querySelectorAll('li.font')) li.style.contentVisibility = on ? 'visible' : '';
+}
+"""
+
+
 def unmeasured_contrast(page: Any, results: Any) -> list[str]:
     """Nodes whose contrast axe left unmeasured, measured again once each is on screen.
 
-    Rows far down the list skip rendering (``content-visibility: auto``), so axe reports
-    their text as "overlapped" and leaves it as needing review. Each one is scrolled to the
+    Rows far down the list skip rendering (``content-visibility: auto``), so axe would report
+    their text as "overlapped" and leave it as needing review. ``assert_axe_clean`` renders
+    every row for its run, which leaves none on the real catalog's 500 rows; checking them
+    here one at a time took a minute or two a page. Any node left over is scrolled to the
     middle of the screen and checked alone; it must then pass. Returns what still doesn't."""
     left: list[str] = []
     x, y = page.evaluate("[scrollX, scrollY]")
@@ -365,7 +381,11 @@ def unmeasured_contrast(page: Any, results: Any) -> list[str]:
 
 
 def assert_axe_clean(page: Any, where: str) -> None:
-    results = axe(page)
+    page.evaluate(RENDER_ROWS_JS, True)
+    try:
+        results = axe(page)
+    finally:
+        page.evaluate(RENDER_ROWS_JS, False)
     assert results.violations_count == 0, f"{where}\n{results.generate_report()}"
     passed = {rule["id"] for rule in results.response["passes"]}
     assert passed >= MUST_PASS, f"{where}: axe didn't run {sorted(MUST_PASS - passed)}"
@@ -526,6 +546,7 @@ def first_specimen_pixels(page: Any, timeout_s: float = 10.0) -> np.ndarray:
 # ------------------------------------------------------------------------------- axe
 
 
+@pytest.mark.real_catalog(viewport="1280")
 @pytest.mark.parametrize("viewport", VIEWPORTS)
 @pytest.mark.parametrize("scheme", SCHEMES)
 @pytest.mark.parametrize("name", PAGES)
@@ -537,6 +558,7 @@ def test_axe_every_page(guarded_context: Any, name: str, scheme: str, viewport: 
     guarded.assert_clean(page)
 
 
+@pytest.mark.real_catalog(state="details", viewport="1280")
 @pytest.mark.parametrize("viewport", VIEWPORTS)
 @pytest.mark.parametrize("scheme", SCHEMES)
 @pytest.mark.parametrize("state", ["filters", "filters-open", "details", "no-results"])
@@ -570,6 +592,7 @@ def test_axe_catches_a_planted_violation(guarded_context: Any) -> None:
     guarded.assert_clean(page)
 
 
+@pytest.mark.sample_only
 @pytest.mark.parametrize("scheme", SCHEMES)
 def test_axe_with_specimens(browser: Any, specimen_site: str, scheme: str) -> None:
     context, page = open_specimens(browser, specimen_site, color_scheme=scheme)
@@ -607,6 +630,7 @@ STRUCTURE_PAGES = {
 }
 
 
+@pytest.mark.sample_only
 @pytest.mark.parametrize("name", STRUCTURE_PAGES)
 def test_page_structure(guarded_context: Any, name: str) -> None:
     path, state = STRUCTURE_PAGES[name]
@@ -652,6 +676,7 @@ HELP_JS = """
 """
 
 
+@pytest.mark.sample_only
 def test_feedback_keeps_one_place_on_every_page(guarded_context: Any) -> None:
     found = {}
     for name, path in PAGES.items():
@@ -678,6 +703,7 @@ BACKGROUND_JS = """
 """
 
 
+@pytest.mark.sample_only
 @pytest.mark.parametrize("name", PAGES)
 def test_theme_follows_the_system(guarded_context: Any, name: str) -> None:
     seen = {}
@@ -699,6 +725,7 @@ def test_theme_follows_the_system(guarded_context: Any, name: str) -> None:
 # ------------------------------------------------------------------------ forced colours
 
 
+@pytest.mark.sample_only
 @pytest.mark.parametrize("scheme", SCHEMES)
 @pytest.mark.parametrize("name", PAGES)
 def test_forced_colors_axe(guarded_context: Any, name: str, scheme: str) -> None:
@@ -712,6 +739,7 @@ def test_forced_colors_axe(guarded_context: Any, name: str, scheme: str) -> None
     guarded.assert_clean(page)
 
 
+@pytest.mark.sample_only
 @pytest.mark.parametrize("mode", ["light", "dark", "forced-light", "forced-dark"])
 def test_specimens_are_visible(browser: Any, specimen_site: str, mode: str) -> None:
     kwargs: dict[str, Any] = {"color_scheme": mode.removeprefix("forced-")}
@@ -728,6 +756,7 @@ def test_specimens_are_visible(browser: Any, specimen_site: str, mode: str) -> N
         context.close()
 
 
+@pytest.mark.sample_only
 @pytest.mark.parametrize("scheme", SCHEMES)
 def test_forced_colors_focus_ring_is_visible(guarded_context: Any, scheme: str) -> None:
     guarded, page = open_page(guarded_context, "/", forced_colors="active", color_scheme=scheme)
@@ -770,6 +799,7 @@ def test_forced_colors_focus_ring_is_visible(guarded_context: Any, scheme: str) 
 # ------------------------------------------------------------------------ reduced motion
 
 
+@pytest.mark.sample_only
 def test_reduced_motion_stops_every_transition(guarded_context: Any) -> None:
     guarded, page = open_page(guarded_context, "/", reduced_motion="reduce", viewport=PHONE)
     assert page.evaluate("matchMedia('(prefers-reduced-motion: reduce)').matches")
@@ -786,6 +816,7 @@ def test_reduced_motion_stops_every_transition(guarded_context: Any) -> None:
 # ------------------------------------------------------------------------- reflow (1.4.10)
 
 
+@pytest.mark.real_catalog(width=320)
 @pytest.mark.parametrize("width", [320, 640])
 @pytest.mark.parametrize("name", PAGES)
 def test_reflow_pages(guarded_context: Any, name: str, width: int) -> None:
@@ -798,6 +829,7 @@ def test_reflow_pages(guarded_context: Any, name: str, width: int) -> None:
     guarded.assert_clean(page)
 
 
+@pytest.mark.sample_only
 @pytest.mark.parametrize("width", [320, 640])
 @pytest.mark.parametrize("state", ["filters-open", "details", "no-results"])
 def test_reflow_list_states(guarded_context: Any, state: str, width: int) -> None:
@@ -821,6 +853,7 @@ def _text_spacing_page(
     return open_page(guarded_context, path, viewport=viewport, bypass_csp=True)
 
 
+@pytest.mark.sample_only
 @pytest.mark.parametrize("viewport", VIEWPORTS)
 @pytest.mark.parametrize("name", PAGES)
 def test_text_spacing_pages(guarded_context: Any, name: str, viewport: str) -> None:
@@ -835,6 +868,7 @@ def test_text_spacing_pages(guarded_context: Any, name: str, viewport: str) -> N
     assert guarded.errors == []
 
 
+@pytest.mark.sample_only
 @pytest.mark.parametrize("viewport", VIEWPORTS)
 @pytest.mark.parametrize("state", ["filters-open", "details", "no-results"])
 def test_text_spacing_list_states(guarded_context: Any, state: str, viewport: str) -> None:
@@ -896,6 +930,7 @@ def _focus_problems(stops: list[dict[str, Any]]) -> list[str]:
     return problems
 
 
+@pytest.mark.sample_only
 @pytest.mark.parametrize("scheme", SCHEMES)
 @pytest.mark.parametrize("viewport", VIEWPORTS)
 @pytest.mark.parametrize("name", PAGES)
@@ -914,6 +949,7 @@ def test_focus_is_visible_and_not_obscured(
     guarded.assert_clean(page)
 
 
+@pytest.mark.sample_only
 def test_focus_in_an_open_panel_is_visible_and_not_obscured(guarded_context: Any) -> None:
     guarded, page = open_page(guarded_context, "/", viewport=PHONE)
     list_state(page, "details")
@@ -934,6 +970,7 @@ def _active(page: Any) -> str:
     )
 
 
+@pytest.mark.sample_only
 @pytest.mark.parametrize("name", PAGES)
 def test_skip_link_is_first_and_moves_focus_to_main(guarded_context: Any, name: str) -> None:
     guarded, page = open_page(guarded_context, PAGES[name])
@@ -947,6 +984,7 @@ def test_skip_link_is_first_and_moves_focus_to_main(guarded_context: Any, name: 
     guarded.assert_clean(page)
 
 
+@pytest.mark.sample_only
 def test_skip_link_keeps_the_view(guarded_context: Any) -> None:
     # "#main" is not a view: following the skip link must not reset the filters.
     guarded, page = open_page(guarded_context, f"/{FILTERS_HASH}", viewport=DESKTOP)
@@ -963,6 +1001,7 @@ def test_skip_link_keeps_the_view(guarded_context: Any) -> None:
     guarded.assert_clean(page)
 
 
+@pytest.mark.sample_only
 def test_phone_filters_button_works_by_keyboard(guarded_context: Any) -> None:
     guarded, page = open_page(guarded_context, f"/{FILTERS_HASH}", viewport=PHONE)
     toggle = page.locator("#f-toggle")
@@ -984,6 +1023,7 @@ def test_phone_filters_button_works_by_keyboard(guarded_context: Any) -> None:
     guarded.assert_clean(page)
 
 
+@pytest.mark.sample_only
 def test_arrow_keys_change_a_filter_and_keep_focus(guarded_context: Any) -> None:
     guarded, page = open_page(guarded_context, "/", viewport=DESKTOP)
     before = page.locator("#count").inner_text()
@@ -998,6 +1038,7 @@ def test_arrow_keys_change_a_filter_and_keep_focus(guarded_context: Any) -> None
     guarded.assert_clean(page)
 
 
+@pytest.mark.sample_only
 @pytest.mark.parametrize("key", ["Enter", "Space"])
 def test_details_open_by_keyboard_and_escape_returns_focus(guarded_context: Any, key: str) -> None:
     guarded, page = open_page(guarded_context, "/", viewport=PHONE)
@@ -1018,6 +1059,7 @@ def test_details_open_by_keyboard_and_escape_returns_focus(guarded_context: Any,
     guarded.assert_clean(page)
 
 
+@pytest.mark.sample_only
 def test_clear_filters_in_the_no_results_state_keeps_focus_in_the_page(
     guarded_context: Any,
 ) -> None:
@@ -1032,6 +1074,7 @@ def test_clear_filters_in_the_no_results_state_keeps_focus_in_the_page(
     guarded.assert_clean(page)
 
 
+@pytest.mark.sample_only
 def test_type_your_own_text_by_keyboard(guarded_context: Any) -> None:
     guarded, page = open_page(guarded_context, "/", viewport=PHONE)
     font_id = page.evaluate(

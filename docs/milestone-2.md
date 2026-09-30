@@ -119,6 +119,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - [ ] Each change announces the new count politely (4.1.3) and keeps focus. Everything works by keyboard, with a 3:1 focus outline that no sticky header hides (2.4.11).
 - [ ] Contrast in both themes: 4.5:1 for text, 3:1 for large text and controls (1.4.3, 1.4.11). Targets at least 24 × 24 CSS px (2.5.8); 200% zoom and text spacing don't break the layout (1.4.4, 1.4.12). Links name their destination, and the feedback link keeps one place on every page (3.2.6).
 - [ ] axe-core via Playwright on every page, in both themes, at phone and desktop widths, with filters on and a details panel open; in CI from here on.
+  - On the real catalog (CI's `site-real` and `deploy.yml`) a lighter pass runs: axe on every page in both themes at desktop width, with a details panel open, and reflow at 320 px. The full grid runs on the sample catalog (owner ruling of 2026-09-30, AUTHORITY.md).
 - [ ] Manual passes: keyboard only, and Orca with Firefox; VoiceOver on an iPhone or NVDA if a tester has one.
 
 **Done when:** axe reports 0 violations in CI, the manual passes leave no WCAG 2.2 AA failure open, and the results are in the pull request.

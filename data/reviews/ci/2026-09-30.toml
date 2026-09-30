@@ -1,0 +1,6 @@
+# Owner rulings of 2026-09-30 on CI, given in chat to Claude while fixing pull request #23's site-real job. Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md.
+
+[site_tests_real_catalog]
+value = "light_a11y_pass"
+ruling = "site-real and deploy.yml run the site tests on the committed catalog with a lighter accessibility pass: axe on every page in both themes at desktop width, axe with a details panel open, reflow at 320 px, and every test that depends on the data (list, details, specimens, privacy, serving). The rest of the accessibility grid (every width, filter state, forced colours, text spacing, focus and the keyboard paths) is marked sample_only and runs on the sample catalog in site-browser. Milestone 2 step 6's axe requirement is met by the sample run."
+reason = "The owner, in chat: \"Are we breaking any rules if we do (3)? Additional rows beyond the first 40 shouldn't affect accessibility that much, and if the first 40 render OK, they should, too.\" Claude found no rule requiring the grid on the real catalog, proposed keeping a light pass for problems only real data brings (a long name, a duplicate id, a real specimen or panel), and the owner answered \"Yes.\" On 500 rows the full suite ran past CI's 45-minute limit a third of the way through."
