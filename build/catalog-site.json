@@ -14614,9 +14614,7 @@
       "category": "display",
       "family": "Cabin Sketch",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_name_only"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "a6f989fcc910ca321e06cd6a20dbcab20f9e41bce084911432857cfe286355e7",
@@ -14654,7 +14652,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/cabin-sketch.svg",
-        "sha256": "522729964a0d65230505150c0a34b44b29f8575e0a008fa0997f4286289f4235"
+        "sha256": "c6f00eb0036ef2c30503ef6674b4d192b35f4e840177fc6b01af62c335c738c2"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -33619,9 +33617,7 @@
       "category": "display",
       "family": "Geist Pixel",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "dcde0e2ae59aad779e71ee3fa45ade3a7146c2498024fdbb79c8cb619e60a238",
@@ -33657,7 +33653,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/geist-pixel.svg",
+        "sha256": "942fd14935110b949e08ac9c9e423b5c6d0fb2f4f60baf4b390685a11dfa6ea5"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -38699,9 +38698,7 @@
       "category": "handwriting",
       "family": "Homemade Apple",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_name_only"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "dd1baaca3cde1b1f8415aed3b0aea6808655c9d9ca5a99c7282d9accc16c1a58",
@@ -38737,7 +38734,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/homemade-apple.svg",
-        "sha256": "4b3bfd26c0e22df3631ad17019a1033d6ab3cc848b51d61b9d2503c876a178ed"
+        "sha256": "f577ce931ef7397b901c8f52ddc681bd2281c189920c80ccbc47556366058c70"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -40702,9 +40699,7 @@
       "category": "serif",
       "family": "IM Fell English",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_name_only"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "fe9705bbde51af802719246d4608d08d37bde956ab99d9a590da996a5221a24c",
@@ -40742,7 +40737,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/im-fell-english.svg",
-        "sha256": "7e5d2eabe267ee7ebb17677320d9954a3beb1ae2587b29b0e5942d58e571900e"
+        "sha256": "518bc29edbf8bfe7f50976bd0ceee799f92daff66d00b623f5e01bd9f5293447"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -85446,9 +85441,7 @@
       "category": "display",
       "family": "Special Elite",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_name_only"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "a776fcb4ceb8bdf03e2967688ebdad42680de5b91a7e62c17e718ae212d14bc4",
@@ -85484,7 +85477,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/special-elite.svg",
-        "sha256": "007087d85168c62dd928e61b141aa7e898875cec9e5dcb2478879e657fdfeefe"
+        "sha256": "7fa0ea124b91b3cac0ecc68a6bbd7fe195ed684a83f17762a9ca56bf56589c65"
       },
       "preview_ok": true,
       "pulled_in_by": [],
@@ -87147,9 +87140,7 @@
       "category": "handwriting",
       "family": "Sunshiney",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_name_only"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "2f41cbc6263c033c18f1db7ae6523a89eb50cd5665b0b7635cc3a4c9c9a0fe4d",
@@ -87185,7 +87176,7 @@
       "preinstalled_on": [],
       "preview": {
         "path": "specimens/sunshiney.svg",
-        "sha256": "56c4de470782443b3dac1f51f283e3bec8eb14f856339aeded4627e39d7ac55e"
+        "sha256": "9d61b92439a1b8fb2366e29f3eaa23f7215fe0af83923bb83317371042cf78c6"
       },
       "preview_ok": true,
       "pulled_in_by": [],

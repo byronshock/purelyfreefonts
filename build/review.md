@@ -17,7 +17,7 @@
 | coding | 96 | – | – | – | 0 | 0 | 0 |
 | dev_apps | 398 | – | – | – | 0 | 0 | 0 |
 
-Flags: 443 (ruler_overlap 1, guard 86, crosscheck 324, disagreement 22, term 8, specimen 1, rank_gap 1).
+Flags: 442 (ruler_overlap 1, guard 86, crosscheck 324, disagreement 22, term 8, rank_gap 1).
 
 ## Entries
 
@@ -361,7 +361,7 @@ None.
 
 Catalog fonts that may be previewed but have no image.
 
-- Geist Pixel: over 30 KB even with the name only
+None.
 
 ## Numbering gaps
 
