@@ -14,7 +14,10 @@
 - ``guarded_context``: a factory for contexts that load ``guards.js`` before any page
   script, record every request, abort requests to any other origin and collect console
   messages and page errors. Routing turns off the HTTP cache, so performance tests use plain
-  contexts instead. A page it opens keeps the context's ``color_scheme`` (``keep_scheme``).
+  contexts instead (in Chromium: see ``browser``). A page it opens keeps the context's
+  ``color_scheme`` (``keep_scheme``).
+- ``browser`` (session): pytest-playwright's, except that in Firefox every new context gets
+  a pass-through route.
 - ``no_network``: fails any connection or name lookup that isn't the loopback interface.
 - ``fetch_unencoded(route)``: ``route.fetch()`` for a route handler that reads the body.
 """
@@ -114,6 +117,35 @@ def site_url(site_dir: Path) -> Iterator[str]:
 def browser_context_args(browser_context_args: dict, site_url: str) -> dict:
     """pytest-playwright's context arguments, with ``base_url`` set to the served site."""
     return {**browser_context_args, "base_url": site_url}
+
+
+def _pass_through(route: Any) -> None:
+    route.continue_()
+
+
+@pytest.fixture(scope="session")
+def browser(browser: Any, browser_name: str) -> Any:
+    """pytest-playwright's browser; in Firefox, each new context gets a pass-through route.
+
+    In a Firefox context without a route, ``page.goto`` sometimes never returns although the
+    page has loaded (``document.readyState`` is "complete"): 15 of 150 fresh-context loads
+    locally, and 25 page loads in one CI run. Waiting for the ready state instead hangs as
+    often. With a route it happened once in 150 locally, and never in 665 routed contexts
+    in CI. A context that adds its own route (``guarded_context``) handles every request
+    itself, so this one never runs there. Routing turns off the HTTP cache, which the
+    performance tests need, but they run in Chromium only.
+    """
+    if browser_name != "firefox":
+        return browser
+    new_context = browser.new_context
+
+    def routed(*args: Any, **kwargs: Any) -> Any:
+        context = new_context(*args, **kwargs)
+        context.route("**/*", _pass_through)
+        return context
+
+    browser.new_context = routed
+    return browser
 
 
 @pytest.fixture(scope="session")
