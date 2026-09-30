@@ -49,4 +49,4 @@ The same links are at the bottom of every page.
 
 ## Open data and code
 
-The method, the data and the code are all public [on GitHub]({{ repo_url }}). The ranking data is under CC BY-SA 4.0, and the code under the MIT License; [How we rank](/methodology/#licenses) has the details. The fonts are not ours: each keeps its own license.
+The method, the data and the code are all public [on GitHub]({{ repo_url }}). The ranking data is under CC BY-SA 4.0, and the code under the MIT License; [How we rank](/methodology/#licenses) has the details. The fonts are not ours: each keeps its own license. This site's text is set in [Arimo](https://github.com/googlefonts/arimo) by Steve Matteson, and its name in [League Gothic](https://www.theleagueofmoveabletype.com/league-gothic) by The League of Moveable Type, both under the SIL Open Font License 1.1.

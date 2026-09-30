@@ -116,6 +116,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 **Who:** Claude; the owner or a tester does one screen-reader pass. **Depends on:** 3, 4, 5.
 - [ ] A table-like list on wide screens and cards on phones, with no sideways scrolling at 320 CSS px (1.4.10); on phones, one "Filters" button that shows how many are on.
 - [ ] Light or dark follows the system (no switch, since nothing is stored); forced colors work; `prefers-reduced-motion` is respected.
+- [x] Interface font: Arimo, upright and italic, served from the site as Latin WOFF2 and preloaded, with `font-display: optional` and fallbacks that share its widths, so no text moves when it loads (owner ruling of 2026-09-30, AUTHORITY.md "Interface font"). Replaces the system font stack.
 - [ ] Landmarks, one `h1`, a skip link, and each font a list item with its own heading; native, labelled controls, with fieldset and legend for filter groups.
 - [ ] Each change announces the new count politely (4.1.3) and keeps focus. Everything works by keyboard, with a 3:1 focus outline that no sticky header hides (2.4.11).
 - [ ] Contrast in both themes: 4.5:1 for text, 3:1 for large text and controls (1.4.3, 1.4.11). Targets at least 24 × 24 CSS px (2.5.8); 200% zoom and text spacing don't break the layout (1.4.4, 1.4.12). Links name their destination, and the feedback link keeps one place on every page (3.2.6).

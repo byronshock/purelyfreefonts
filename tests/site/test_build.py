@@ -173,6 +173,7 @@ CSS = {
     "10-base.css": "body {\n  color: var(--c-fg);\n}\n",
 }
 STATIC = {name: f"static file {name}\n".encode() for name in build.STATIC_FILES}
+UI_FONTS = {name: f"font file {name}\n".encode() for name, _ in build.UI_FONTS}
 ABOUT = {
     "page": {"path": "/about/", "title": "About", "description": "What it is.", "canonical": True},
     "body": "Fonts & more <b>",
@@ -190,6 +191,9 @@ def mini_site(tmp_path_factory: pytest.TempPathFactory) -> Path:
     (root / "static").mkdir()
     for name, blob in STATIC.items():
         (root / "static" / name).write_bytes(blob)
+    (root / "static" / "fonts").mkdir()
+    for name, blob in UI_FONTS.items():
+        (root / "static" / "fonts" / name).write_bytes(blob)
     return root
 
 
@@ -387,6 +391,7 @@ def test_output_layout(tmp_path, catalog, mini_site):
         {"assets/app.js", "assets/style.css", "assets/list.json", "assets/details.json"}
         | {f"assets/specimens/{i}.svg" for i in SPECIMEN_IDS}
         | {f"assets/fonts/{i}.{exts[i]}" for i in with_files}
+        | {f"assets/ui/{name}" for name, _ in build.UI_FONTS}
     )
     for path in files:
         assert build.SAFE_PATH.fullmatch(path), path
@@ -436,6 +441,64 @@ def test_pages_reference_the_hashed_assets(tmp_path, catalog, mini_site):
     assert not [t for t, _ in page_404.tags if t == "script"]
 
 
+def ui_font_url(out: Path, name: str) -> str:
+    """The URL of the interface font file ``name`` in a built site."""
+    stem, ext = name.rsplit(".", 1)
+    (path,) = (out / "assets" / "ui").glob(f"{stem}.??????????.{ext}")
+    return "/" + path.relative_to(out).as_posix()
+
+
+def test_the_interface_font_is_copied_and_declared(tmp_path, catalog, mini_site):
+    """AUTHORITY.md, "Interface font": each file of site/static/fonts/ is served unchanged
+    from /assets/ui/ under its hash, and the stylesheet declares it."""
+    out = tmp_path / "site"
+    run_build(catalog, out, mini_site)
+    index = parse((out / "index.html").read_text(encoding="utf-8"))
+    css = asset(out, next(a["href"] for t, a in index.tags if a.get("rel") == "stylesheet"))
+    text = css.read_text()
+    for name, style in build.UI_FONTS:
+        url = ui_font_url(out, name)
+        assert asset(out, url).read_bytes() == UI_FONTS[name]
+        assert (
+            f'  font-style: {style};\n  font-weight: 400 700;\n  font-display: optional;\n  src: url("{url}")'
+            in text
+        )
+    assert text.count("@font-face") == len(build.UI_FONTS)
+
+
+def test_every_page_preloads_the_upright_interface_font(tmp_path, catalog, real_site):
+    """The real templates: one font preload per page, the upright, from the stylesheet's URL."""
+    out = tmp_path / "out"
+    run_build(catalog, out, real_site)
+    upright = ui_font_url(out, build.UI_FONTS[0][0])
+    pages = sorted(out.rglob("*.html"))
+    assert len(pages) > 3
+    for page in pages:
+        tags = parse(page.read_text(encoding="utf-8")).tags
+        fonts = [a for t, a in tags if t == "link" and a.get("as") == "font"]
+        assert fonts == [
+            {
+                "rel": "preload",
+                "href": upright,
+                "as": "font",
+                "type": "font/woff2",
+                "crossorigin": None,
+            }
+        ], page
+
+
+def test_a_missing_interface_font_fails_the_build(tmp_path, catalog, mini_site):
+    site = tmp_path / "site-src"
+    shutil.copytree(mini_site, site)
+    (site / "static" / "fonts" / build.UI_FONTS[1][0]).unlink()
+    with pytest.raises(build.BuildError) as caught:
+        run_build(catalog, tmp_path / "out", site)
+    assert caught.value.errors == [
+        f"{site / 'static' / 'fonts'}: missing {build.UI_FONTS[1][0]}"
+        " (site/static/_src/make_ui_font.py)"
+    ]
+
+
 def test_js_and_css_are_the_parts_in_filename_order(tmp_path, catalog, mini_site):
     out = tmp_path / "site"
     run_build(catalog, out, mini_site)
@@ -443,7 +506,10 @@ def test_js_and_css_are_the_parts_in_filename_order(tmp_path, catalog, mini_site
     js = asset(out, next(a["src"] for t, a in index.tags if t == "script")).read_text()
     css = asset(out, next(a["href"] for t, a in index.tags if a.get("rel") == "stylesheet"))
     assert js == "\n".join(textwrap.dedent(JS[n]).rstrip() + "\n" for n in sorted(JS))
-    assert css.read_text() == "\n".join(CSS[n] for n in sorted(CSS))
+    # The interface font's @font-face rules come first, then the parts.
+    faces = [(ui_font_url(out, name), style) for name, style in build.UI_FONTS]
+    head = assets.font_faces(build.UI_FONT_FAMILY, faces, build.UI_FONT_WEIGHTS)
+    assert css.read_text() == head + "\n".join(CSS[n] for n in sorted(CSS))
     assert js.rstrip().endswith("Main.start();")
 
 
@@ -1413,7 +1479,8 @@ def test_real_templates_render_the_list_contract(tmp_path, catalog, real_site):
     ol = next(a for t, a in tags if t == "ol" and a.get("id") == "list")
     index = load_json(out, ol["data-index"])
     details = load_json(out, ol["data-details"])
-    preload = next(a for t, a in tags if t == "link" and a.get("rel") == "preload")
+    preloads = [a for t, a in tags if t == "link" and a.get("rel") == "preload"]
+    preload = next(a for a in preloads if a.get("as") == "fetch")
     assert (preload["href"], preload["as"]) == (ol["data-index"], "fetch")
     assert "crossorigin" in preload
     assert ol["data-run-date"] == SAMPLE["run"]["date"]
