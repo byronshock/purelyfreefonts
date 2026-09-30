@@ -75,7 +75,10 @@ run() {
 	err=$(<"$tmp/stderr")
 }
 
-free_port() { echo $((20000 + RANDOM % 20000)); }
+# A local port for a forwarding check, below Linux's ephemeral range (32768 and up), where
+# the system hands out ports to other programs' servers and outgoing connections: on a busy
+# CI runner a port up there was once already taken, and the -L check failed on the bind.
+free_port() { echo $((20000 + RANDOM % 12000)); }
 # listening PORT SECONDS: wait until a background ssh listens on 127.0.0.1:PORT. A fixed
 # sleep raced a slow login on a loaded machine: the check then saw no tunnel at all.
 listening() {
