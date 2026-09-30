@@ -218,7 +218,7 @@
         "text_url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/inter/OFL.txt"
       },
       "preview_ok": true,
-      "preview": {"path": "specimens/sample-sans-01.svg", "sha256": "78ecc6e21dc56af37a8250a9fe007da8cec605e6a63247522052587708b0c852"},
+      "preview": {"path": "specimens/sample-sans-01.svg", "sha256": "c9c7de3ee8ff5c3091164dbd1916faa8162771eeb5566c08bd738f8f57f8592f"},
       "font_file": {
         "url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/inter/Inter%5Bopsz%2Cwght%5D.ttf",
         "sha256": "29160a80ff49ddcab2c97711247e08b1fab27a484a329ce8b813d820dc559031",
@@ -270,7 +270,7 @@
         "text_url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/jetbrainsmono/OFL.txt"
       },
       "preview_ok": true,
-      "preview": {"path": "specimens/sample-mono-02.svg", "sha256": "aca1b497359ed0f8793a46348f8607616d1efc50cfb5ca2d692d09dcedd974c2"},
+      "preview": {"path": "specimens/sample-mono-02.svg", "sha256": "1f4b7051eab0d2d06aad42c9ad3859f877dd6d06c87f0a651a6e8a30447248aa"},
       "font_file": {
         "url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/jetbrainsmono/JetBrainsMono%5Bwght%5D.ttf",
         "sha256": "48715a42ec242c21e9f02692891e147d022299a52e48d5e413e1a942193ffeda",
@@ -425,7 +425,7 @@
         "text_url": "https://raw.githubusercontent.com/adobe-fonts/source-sans/87b37a2daaed80fcb8e8ccb0085c4d72ddade12e/LICENSE.md"
       },
       "preview_ok": true,
-      "preview": {"path": "specimens/sample-sans-05.svg", "sha256": "dce570eb6ac963a07441e1815fde4702044f8113e517c987754d4782187ba919"},
+      "preview": {"path": "specimens/sample-sans-05.svg", "sha256": "fc3435ef341cf945ff7cdd3f0b35ffb3e4071e8591c65c7f32b80436b215984e"},
       "font_file": {
         "url": "https://raw.githubusercontent.com/adobe-fonts/source-sans/87b37a2daaed80fcb8e8ccb0085c4d72ddade12e/OTF/SourceSans3-Regular.otf",
         "sha256": "08df266400933d3178d081a45f94a08814c3e55b4b7dd2e0ff69cb1329f13ab6",
@@ -674,7 +674,7 @@
         "text_url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/orbitron/OFL.txt"
       },
       "preview_ok": true,
-      "preview": {"path": "specimens/sample-display-10.svg", "sha256": "34d61544f196aa708a95c7998090c4957e4aa6d9623dc7e11a1e5fe6bd432c9d"},
+      "preview": {"path": "specimens/sample-display-10.svg", "sha256": "24014badfe8b8640c2cd4d7e70ce34b0b95e35331f387b8fccfebeb72930b8d9"},
       "font_file": {
         "url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/orbitron/Orbitron%5Bwght%5D.ttf",
         "sha256": "f42db2dd16e642258e35782916eceb1dcdbea06fb958d77ad71dc5963587e8fd",
@@ -773,7 +773,7 @@
         "text_url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/lobster/OFL.txt"
       },
       "preview_ok": true,
-      "preview": {"path": "specimens/sample-script-12.svg", "sha256": "6951461bdfe0ecbc93f8c8998a8e2419f374df9d5d0bb0a0d71c9c163c6a135a"},
+      "preview": {"path": "specimens/sample-script-12.svg", "sha256": "ae3298c0969928c2fc4f10f8a98f10a0b5c8bd8a74b06b9b3993d7a9facde79b"},
       "font_file": {
         "url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/lobster/Lobster-Regular.ttf",
         "sha256": "d6568e697fd50cedc0be04d8aae4127fe95add607e7bff954ca88604be80c205",

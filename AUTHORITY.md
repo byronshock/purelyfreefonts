@@ -217,7 +217,7 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
   - **Held fonts.** The list sorts by score: a font the two-source rule holds back takes its score's place and carries a marker. The catalog's ranks and bands keep the rule. That was the owner's choice; Claude had recommended a note instead of a score.
   - **When.** `catalog-site.json` carries each rank's score from Milestone 1, before the step 20 freeze. The display is built in Milestone 2.
 - **Font names.** A row with a specimen shows the family name once, drawn in the font by the specimen's first line. The text name stays in the page for screen readers, search and find-in-page, and shows whenever the specimen isn't shown. The NF marker moves to the end of the row's title cell (the specimen, or the text name where there is none), still in a column. The owner chose to hide the text name; Claude had recommended dropping the name from the specimen. Recorded in `data/reviews/site/2026-09-29.toml` (`name_once`, `nerd_marker_spot_title`). *(2026-09-29)*
-- **Specimen sample line.** "Dolor dolorosus est.", a play on Lorem ipsum (the owner's wording), in place of the Polish and Czech line of 2026-09-26. Recorded in `data/reviews/site/2026-09-29.toml` (`specimen_sample_latin`). *(2026-09-29)*
+- **Specimen sample line.** "Dolorem ipsum quaerit nemo." (the owner's wording: Cicero's phrase behind Lorem ipsum, with descenders on both sides), in place of the Polish and Czech line of 2026-09-26 and of "Dolor dolorosus est.", chosen earlier the same day. "quaerit" is spelt without the æ ligature, which fonts with basic Latin only lack. Recorded in `data/reviews/site/2026-09-29.toml` (`specimen_sample_latin`). *(2026-09-29)*
 
 ## Infrastructure
 

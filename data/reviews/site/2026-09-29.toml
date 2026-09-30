@@ -92,9 +92,9 @@ ruling = "The privacy page's \"Coming next\" section no longer says how the inve
 reason = "The owner, in chat: \"Let's not promise how it works.\""
 
 [specimen_sample_latin]
-value = "Dolor dolorosus est."
-ruling = "The specimen sample line is \"Dolor dolorosus est.\", a play on Lorem ipsum, in place of 2026-09-26's \"Zażółć gęślą jaźń · Příliš žluťoučký kůň\" (specimen_sample). The basic-Latin fallback \"Sphinx of black quartz, judge my vow\" stays, for a font that lacks one of the sample's letters."
-reason = "The owner, in chat: \"the sampler seems to be in Czech, could we get some latin? I want a play on Lorum ipsum: Dolor dolorosus est.\""
+value = "Dolorem ipsum quaerit nemo."
+ruling = "The specimen sample line is \"Dolorem ipsum quaerit nemo.\" (Cicero's line behind Lorem ipsum), with descenders on both sides, in place of 2026-09-26's \"Zażółć gęślą jaźń · Příliš žluťoučký kůň\" (specimen_sample) and of \"Dolor dolorosus est.\", chosen earlier the same day. \"quaerit\" is spelt without the æ ligature, which fonts with basic Latin only lack. The basic-Latin fallback \"Sphinx of black quartz, judge my vow\" stays, for a font that lacks one of the sample's letters."
+reason = "The owner, in chat, later on 2026-09-29: the sample text \"MUST be 'Dolorem ipsum quaerit nemo.' This has descenders on both sides.\" Asked about a ligature, Claude noted that æ is not in basic-Latin-only fonts, which would fall back to the English line."
 
 [score_display]
 value = "blue_bars"

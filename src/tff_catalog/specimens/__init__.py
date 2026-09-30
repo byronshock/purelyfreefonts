@@ -13,7 +13,7 @@ NAME_SIZE_EM = 1.0  # line 1: the family name
 SAMPLE_SIZE_EM = 0.6  # line 2: the sample
 # The owner's site ruling of 2026-09-29 (specimen_sample_latin), recorded in data/reviews/site/.
 # Changing either line re-renders every specimen (the texts are in the cache key).
-SAMPLE = "Dolor dolorosus est."  # owner ruling 2026-09-29 (specimen_sample_latin)
+SAMPLE = "Dolorem ipsum quaerit nemo."  # owner ruling 2026-09-29 (specimen_sample_latin)
 BASIC_SAMPLE = "Sphinx of black quartz, judge my vow"  # fallback for basic-Latin fonts
 DEFAULT_WEIGHT = 400.0  # variable fonts: wght=400 if the axis allows it, else the default instance
 
