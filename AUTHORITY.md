@@ -176,7 +176,10 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
 - **M2-D5: previews.** SVG specimens are drawn at each refresh. A "Type your own text" box loads the unchanged font file only when clicked. Only redistributable fonts get previews. *(2026-09-25)*
 - **M2-D6: deploy.** GitHub Actions deploys each push to `main` as a restricted `deploy` user, and a laptop script is the fallback. *(2026-09-25)*
 - **M2-D7: test site.** `staging.trulyfreefonts.com` is used for usability round 1 and reused by Milestone 3. *(2026-09-25)*
+- **M2-D8: search engines during the soft launch.** Indexing is allowed; only announcements wait for Milestone 4. *(2026-09-25, the [later OK] default kept)*
 - **M2-D9: server logs.** See Infrastructure, visitor privacy on the server. *(2026-09-25)*
+- **M2-D10: feedback channels.** GitHub issue forms, plus an email link to the site's `admin@` address for people without GitHub. *(2026-09-25, the [later OK] default kept)*
+- **M2-D11: caching pages at Cloudflare.** HTML is not edge-cached, so deploys need no purge; hashed `/assets/` files are cached as immutable. *(2026-09-25, the [later OK] default kept)*
 - **M2-D12: blog.** *(2026-09-25; checklist in [Milestone 2 step 7b](docs/milestone-2.md#step-7b-blog))*
   - **System.** Posts are Markdown files in the repository, built by `tff-site` with the rest of the site. There is no separate blog engine.
   - **When.** It ships with the list release (Milestone 2).
@@ -220,7 +223,7 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
 - **Scores instead of numbers (Milestone 2).** The owner's idea, after a filtered list ran 1 to 25 and then showed bands. Recorded in `data/reviews/site/2026-09-29.toml` (`score_display`, `score_curve`, `score_held_fonts`, `score_field_timing`). *(2026-09-29)*
   - **Display.** The list shows each font's score, 0 to 100, as a blue bar where the rank number is now. Filters only hide rows: no renumbering, and no bands in the list. A font's details keep its rank and range. This replaces M2-D2 when it lands.
   - **Score.** 100·Φ(z), the normal curve of the engine's fused score for the rank (Claude's recommendation; the owner had suggested the logistic, which differs by about one point at most). It is relative standing among the fonts the sources track, not the chance that a given person chose the font.
-  - **Held fonts.** The list sorts by score: a font the two-source rule holds back takes its score's place and carries a marker. The catalog's ranks and bands keep the rule. That was the owner's choice; Claude had recommended a note instead of a score.
+  - **Held fonts.** The list sorts by score: a font the two-source rule holds back takes its score's place and carries a marker. The catalog's ranks and bands keep the rule. That was the owner's choice; Claude had recommended a note instead of a score. In Developers & apps, where every font rests on one kind of source, one note above the list replaces the row marker (`held_marker_dev_apps`, 2026-09-30).
   - **When.** `catalog-site.json` carries each rank's score from Milestone 1, before the step 20 freeze. The display is built in Milestone 2.
   - **Last month's score.** *(2026-09-30)* Each rank entry also carries `previous_score`, the font's score in the last published catalog, kept from month to month in `state/published_scores.json`, so the schema holds what Backlog TASK-4's green rising and red falling triangles need before the freeze; the triangles themselves wait. To bootstrap, and only then, last month's score is this month's: until a monthly refresh has been merged no scores are published, so `previous_score` equals `score` and no triangle can show. `tff-catalog validate` asserts it, in a run and on the committed files (the owner's words: "we can assert this to be the case"). Recorded in `data/reviews/site/2026-09-30.toml` (`score_previous_bootstrap`).
 - **Font names.** A row with a specimen shows the family name once, drawn in the font by the specimen's first line. The text name stays in the page for screen readers, search and find-in-page, and shows whenever the specimen isn't shown. The NF marker moves to the end of the row's title cell (the specimen, or the text name where there is none), still in a column. The owner chose to hide the text name; Claude had recommended dropping the name from the specimen. Recorded in `data/reviews/site/2026-09-29.toml` (`name_once`, `nerd_marker_spot_title`). *(2026-09-29)*
@@ -246,7 +249,7 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
   **Variable fonts** are labelled "Adjustable weight (variable font)" in the filter and "Adjustable weight" on the rows, because "Variable" alone reads as "proportional" (letters of varying width). This was Claude's recommendation, taken by the owner (`variable_label`).
 
   The monospace and license choices were the owner's, from Claude's recommended options. The rest was Claude's proposal in the plan the owner approved. Recorded in `data/reviews/site/2026-09-30.toml` (`monospace_category`, `license_filter`, `filters_layout`). *(2026-09-30)*
-- **Details panel (2026-09-30).** The owner found a font's opened details too busy, and chose essentials first with the evidence folded (Claude's recommended option). Recorded in `data/reviews/site/2026-09-30.toml` (`details_layout`). *(2026-09-30)*
+- **Details panel (2026-09-30).** The owner found a font's opened details too busy, and chose essentials first with the evidence folded (Claude's recommended option). Recorded in `data/reviews/site/2026-09-30.toml` (`details_layout`). The small "Ranks" and "Sources" headings inside the fold stay (`fold_headings`). *(2026-09-30)*
   - **Order.** First the "Type your own text" button, which still loads the font only when clicked. Then one short list:
     - **Get it:** the official, designer and Nerd Font build links;
     - **License:** the license, and whether credit is needed;
@@ -284,6 +287,7 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
   - `docs/roadmap.md`;
   - the milestone checklists `docs/milestone-1.md` to `docs/milestone-4.md`, and `docs/milestone-refresh.md` and `docs/milestone-more-fonts.md` *(2026-09-30)*;
   - `docs/owned-fonts.md`, the notes for Milestone 3;
+  - `docs/usability-test.md`, the usability test plan (Milestone 2 step 12) *(2026-09-30)*;
   - `PLAN-NERD-FONTS.md`, the working checklist for Backlog TASK-2. *(2026-09-28)*
 - **Monthly data refresh.** A scheduled GitHub Actions workflow runs the pipeline and opens a pull request with the new catalog and anything flagged for review. The owner reviews and merges it.
   - **Timing (2026-09-30).** The first live refresh and the monthly schedule wait until after Milestone 2's launch, and come before Milestone 3: [milestone-refresh.md](docs/milestone-refresh.md), which takes the rest of Milestone 1 step 19 and Milestone 2 step 16. Until then the site shows the 2026-09-26 catalog, which `state/` holds as the first published run (#31). Recorded in `data/reviews/ci/2026-09-30.toml` (`refresh_timing`).

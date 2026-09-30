@@ -69,3 +69,17 @@ reason = "The owner, in chat: \"Please let's save the 15b work for after the sit
 value = "previous_equals_current_until_a_refresh"
 ruling = "Before the catalog-site.json v1 freeze, each rank entry gains previous_score: the font's score in that rank in the last published catalog, kept from month to month in state/published_scores.json, or null if it had none there. To bootstrap, and only to bootstrap, last month's score is this month's: until a monthly refresh has been merged no scores are published, so previous_score equals score and no rising or falling triangle can be generated. tff-catalog validate asserts this, in a run and on the committed files. The triangles themselves (Backlog TASK-4) are deferred; the data they need is collected and has its place in the schema."
 reason = "The owner, in chat: \"Before we freeze: We must make sure there is a field for last month's score for TASK-4's triangles.\" Then: \"We don't have last month's score. To bootstrap, and only to bootstrap, we are going to assign 'last month' the same score as this month. This should prevent the generation of any red or green triangles. In fact, we can assert this to be the case and defer the work on the red and green triangles so long as we are collecting the data we'll need later and giving it a place to live in the schema.\""
+
+[held_marker_dev_apps]
+choice = "a"
+recommended = true
+value = "one_note_above_the_view"
+ruling = "In the score list, a font the two-source rule holds back carries a marker on its row (score_held_fonts), except in Developers & apps, where every font rests on one kind of source: that view shows one note above the list instead, and no row marker."
+reason = "Claude's Milestone 2 audit found every one of the 100 top Developers & apps entries in the 2026-09-26 run is gate_held (and 18 in Coding, 6 in most chosen, 4 in most installed), so a row marker there would mark every row. Of two options (one note above that view; a marker on every row), the owner took Claude's recommendation."
+
+[fold_headings]
+choice = "a"
+recommended = true
+value = "keep_inside_the_fold"
+ruling = "Inside the closed \"All ranks and sources\" disclosure, the small \"Ranks\" and \"Sources\" headings stay: they separate the two tables for screen readers and show only once the fold is open. The details_layout ruling's dropped section headings are the ones outside the fold."
+reason = "Claude's Milestone 2 audit noted that details_layout drops the section headings while these two remain inside the fold. Of two options (keep them there; drop them), the owner took Claude's recommendation."
