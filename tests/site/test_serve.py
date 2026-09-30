@@ -183,6 +183,23 @@ def test_pages_revalidate_carry_the_headers_and_are_never_compressed(preview):
     assert headers["Content-Type"] == "text/plain; charset=utf-8"
 
 
+def test_route_handlers_read_bodies_unencoded():
+    """The preview server never compresses (above), but CI's Caddy does (``encode zstd gzip``),
+    and Firefox accepts zstd there, which Playwright's fetch can't decode. A route handler that
+    reads a body through a plain ``route.fetch`` would pass here and in Chromium, and fail
+    only in Firefox CI, stalling the tests after it; handlers use ``conftest.fetch_unencoded``."""
+    here = Path(__file__).resolve().parent
+    call = "route" + ".fetch("  # split, so this line isn't a match
+    bare = [
+        f"{path.name}:{number}"
+        for path in sorted(here.glob("*.py"))
+        if path.name != "conftest.py"
+        for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1)
+        if call in line
+    ]
+    assert bare == []
+
+
 def test_hashed_assets_are_immutable(preview):
     address, _ = preview
     status, headers, _ = get(address, JS_PATH)

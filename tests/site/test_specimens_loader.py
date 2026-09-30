@@ -467,7 +467,9 @@ def test_a_source_outside_the_specimens_folder_is_never_loaded(guarded_context: 
     def rewrite(route: Any) -> None:
         # The list page with its first rows' data-src replaced; its headers (the CSP) as sent.
         response = fetch_unencoded(route)
-        route.fulfill(response=response, body=re.sub(r'data-src="[^"]*"', swap, response.text()))
+        headers = {k: v for k, v in response.headers.items() if k != "content-length"}
+        body = re.sub(r'data-src="[^"]*"', swap, response.text())
+        route.fulfill(response=response, headers=headers, body=body)
 
     page.route(lambda url: urlsplit(url).path == "/", rewrite)
     page.goto("/")

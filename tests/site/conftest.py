@@ -19,6 +19,7 @@
 - ``fetch_unencoded(route)``: ``route.fetch()`` for a route handler that reads the body.
 """
 
+import contextlib
 import os
 import re
 import socket
@@ -190,11 +191,20 @@ class Guarded:
 
     def _route(self, route: Any) -> None:
         url = route.request.url
-        if _origin(url) == self.origin:
-            route.continue_()
-        else:
+        allowed = _origin(url) == self.origin
+        if not allowed:
             self.blocked.append(url)
-            route.abort()
+        answer = route.continue_ if allowed else route.abort
+        try:
+            answer()
+        except Exception as exc:
+            # Playwright keeps an exception from a test's own route handler and raises it at
+            # the next call, which is often this one. Let through, it would leave this request
+            # unanswered and, at teardown, the context open with it, and in Firefox later
+            # pages stop loading. The error is recorded for assert_clean, and the request
+            # is answered: the saved error is gone once raised.
+            self.errors.append(f"a route handler raised: {exc!r}")
+            answer()
 
 
 def fetch_unencoded(route: Any) -> Any:
@@ -203,8 +213,10 @@ def fetch_unencoded(route: Any) -> Any:
     Firefox accepts zstd even over plain HTTP, and CI's Caddy (site.caddy's ``encode zstd
     gzip``) then sends it, but Playwright's fetch doesn't decode zstd: ``text()`` and
     ``json()`` raise, the route is never answered, and later pages time out. A route handler
-    that reads or rewrites the body fetches it this way; its response carries no
-    ``Content-Encoding``, so ``route.fulfill(response=...)`` with a new body stays correct.
+    that reads or rewrites the body fetches it this way. The response carries no
+    ``Content-Encoding``, but it keeps the file's ``Content-Length``, which
+    ``route.fulfill(response=...)`` passes on: a handler that fulfils with a new body leaves
+    that header out.
     """
     return route.fetch(headers={**route.request.headers, "accept-encoding": "identity"})
 
@@ -255,6 +267,10 @@ def guarded_context(browser: Any, site_url: str) -> Iterator[Callable[..., Guard
 
     yield make
     for context in made:
+        # Raise and so drop any error a route handler left behind (see Guarded._route):
+        # close() would raise it after marking the context closed, and leave it open.
+        with contextlib.suppress(Exception):
+            context.cookies()
         context.close()
 
 
