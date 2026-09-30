@@ -457,8 +457,10 @@ def test_filters_follow_the_site_rulings_of_2026_09_30():
     assert '<select id="f-os" name="hide">' in filters
     # sort_header (the same day): buttons over the list replace the Sort select
     assert '<div id="list-sort" class="list-sort" role="group"' in listing
-    assert 'id="f-sort"' not in listing and 'id="f-sort"' not in dom
-    assert 'id="sort-rank" data-sort="rank"' in dom and 'id="sort-name" data-sort="name"' in dom
+    assert 'id="f-sort"' not in listing
+    assert 'id="f-sort"' not in dom
+    assert 'id="sort-rank" data-sort="rank"' in dom
+    assert 'id="sort-name" data-sort="name"' in dom
     assert "sort_header" in RULINGS_0930
     for gone in ('id="f-mono"', 'id="f-text"', 'name="mono"', 'name="text"', "desktop: true"):
         assert gone not in CONTRACT, gone

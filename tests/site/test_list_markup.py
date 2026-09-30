@@ -360,8 +360,11 @@ def test_filter_controls_match_the_hash(dom, doc):
     assert (rank.attrs["data-asc"], rank.attrs["data-desc"]) == ("best first", "least used first")
     assert (name.attrs["data-asc"], name.attrs["data-desc"]) == ("A\u2013Z", "Z\u2013A")
     assert (name.attrs["data-asc-spoken"], name.attrs["data-desc-spoken"]) == ("A to Z", "Z to A")
-    assert rank.attrs["data-dir"] == "asc" and "data-dir" not in name.attrs
-    assert squash(rank.text) == "Sort by Rank best first best first; select to show least used first"
+    assert rank.attrs["data-dir"] == "asc"
+    assert "data-dir" not in name.attrs
+    assert (
+        squash(rank.text) == "Sort by Rank best first best first; select to show least used first"
+    )
     assert squash(name.text) == "Sort by Name"
     for button in buttons:
         assert button.find("span", class_="sort-arrow").attrs["aria-hidden"] == "true"
@@ -397,7 +400,7 @@ SITE_RULINGS_0930 = tomllib.loads(
     (ROOT / "data" / "reviews" / "site" / "2026-09-30.toml").read_text(encoding="utf-8")
 )
 # The note's sentence as the owner changed it on 2026-09-30 (front_page_lead_sharing).
-NOTE_0929 = "Some of these fonts ask you to credit the designer, or don't let you pass the font files on, and we mark those."  # noqa: E501
+NOTE_0929 = "Some of these fonts ask you to credit the designer, or don't let you pass the font files on, and we mark those."
 NOTE_0930 = "Some of these fonts ask you to credit the designer, and we mark those."
 
 
@@ -406,7 +409,8 @@ def test_the_front_page_note_is_the_owners(dom):
     why_not_listed): a frame for wide screens, and a folded one for phones."""
     ruling = SITE_RULINGS_0929["why_not_listed"]
     change = SITE_RULINGS_0930["front_page_lead_sharing"]["ruling"]
-    assert NOTE_0929 in ruling["text"] and NOTE_0930 in change
+    assert NOTE_0929 in ruling["text"]
+    assert NOTE_0930 in change
     text = ruling["text"].replace(NOTE_0929, NOTE_0930)
     main = dom.find("main")
     wide = main.find("div", class_="why-wide")

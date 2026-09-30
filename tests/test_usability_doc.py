@@ -99,7 +99,8 @@ def test_names_match_the_site(doc: str) -> None:
     for text in ("Hide fonts that come with", "Accented letters", ">Filters<"):
         assert text.strip("<>") in doc, text
         assert text in filters, text
-    assert "{{ cat.label }}" in filters and "*Monospace*" in doc  # a category label
+    assert "{{ cat.label }}" in filters  # a category label
+    assert "*Monospace*" in doc
     details = (ROOT / "site" / "js" / "40-details.js").read_text(encoding="utf-8")
     assert "All ranks and sources" in details
     assert "How we rank" in doc

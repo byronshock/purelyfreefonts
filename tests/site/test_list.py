@@ -460,7 +460,9 @@ def test_category_monospace_is_every_monospaced_font(
 ) -> None:
     """Owner ruling of 2026-09-30 (monospace_category), on every rank."""
     mono = {f["id"] for f in doc["fonts"] if f["is_monospace"]}
-    filed_elsewhere = {i for i in mono if next(f for f in doc["fonts"] if f["id"] == i)["category"] != "monospace"}  # noqa: E501
+    filed_elsewhere = {
+        i for i in mono if next(f for f in doc["fonts"] if f["id"] == i)["category"] != "monospace"
+    }
     if doc.get("synthetic"):
         assert filed_elsewhere, "the sample has a monospaced font the catalog files elsewhere"
     got = parts.run(

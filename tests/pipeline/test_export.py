@@ -1021,7 +1021,9 @@ def test_export_refuses_a_font_that_may_not_be_redistributed(tmp_path: Path) -> 
     now = verdicts()
     now["epsilon-hand"] = dataclasses.replace(now["epsilon-hand"], license=grant, preview_ok=False)
     stageio.dump_stage(ctx.paths, "licenses", now)
-    with pytest.raises(export.ExportError, match=r"epsilon-hand: .* not redistributable \(Rule 3\)"):
+    with pytest.raises(
+        export.ExportError, match=r"epsilon-hand: .* not redistributable \(Rule 3\)"
+    ):
         export.run(ctx)
 
 

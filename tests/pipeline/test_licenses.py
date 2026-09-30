@@ -533,7 +533,8 @@ def test_apply_license_rulings() -> None:
     # (b), free to use but not redistributable, excludes since Rule 3 of 2026-09-30.
     cfg = lic.apply_license_rulings(CFG, {qid: (_answer(qid, "b"), day)})
     c = lic.classify("Bitstream-Vera", cfg)
-    assert c.status == "excluded" and "Rule 3" in c.reason
+    assert c.status == "excluded"
+    assert "Rule 3" in c.reason
     assert "Bitstream-Vera" not in cfg.ruling
     cfg = lic.apply_license_rulings(CFG, {qid: (_answer(qid, "c"), day)})
     assert "owner ruling" in lic.classify("Bitstream-Vera", cfg).reason
@@ -543,7 +544,8 @@ def test_apply_license_rulings() -> None:
     cfg = lic.apply_license_rulings(CFG, {mit: (_answer(mit, "a", group="freeware"), day)})
     assert (cfg.allowed["MIT"].name, cfg.allowed["MIT"].group) == ("MIT License", "freeware")
     cfg = lic.apply_license_rulings(CFG, {mit: (_answer(mit, "b"), day)})
-    assert "MIT" in cfg.excluded and "MIT" not in cfg.allowed
+    assert "MIT" in cfg.excluded
+    assert "MIT" not in cfg.allowed
     with pytest.raises(lic.RulingError):
         lic.apply_license_rulings(CFG, {qid: (_answer(qid, "e"), day)})
     bad = _answer(qid, "a", attribution_required="yes")
@@ -797,7 +799,8 @@ def test_stage_applies_owner_rulings(stage) -> None:
     )
     lic.run(stage.ctx)
     c = _verdicts(stage.paths)["ember-grotesk"].license
-    assert c.status == "excluded" and "Rule 3" in c.reason  # (b) excludes since 2026-09-30
+    assert c.status == "excluded"  # (b) excludes since 2026-09-30
+    assert "Rule 3" in c.reason
 
 
 @pytest.mark.parametrize(

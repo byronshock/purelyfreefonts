@@ -730,7 +730,9 @@ def expected_panel(doc: dict[str, Any], font: dict[str, Any], rank: str = "overa
         links.append([f"{doc['nerd']['marker']} {data.nerd_link_text(nerd)}", nerd["url"]])
 
     credit = (
-        f"Credit required: {lic['attribution']}" if lic["attribution_required"] else "No credit needed."
+        f"Credit required: {lic['attribution']}"
+        if lic["attribution_required"]
+        else "No credit needed."
     )
     formats = font["formats"]
     if formats["variable"] and formats["static"]:
