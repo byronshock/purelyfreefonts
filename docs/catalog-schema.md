@@ -14,7 +14,7 @@ The files are canonical JSON: keys sorted, two-space indent, UTF-8. The same inp
 
 ## Versions and rank keys
 
-Each file carries a `schema_version`: `catalog.json` and `names.json` are at `0.1.0-draft`, `catalog-site.json` at `1.0.0-draft`. Milestone 1 step 20 freezes version 1.
+Each file carries a `schema_version`. `catalog-site.json` is at `1.0.0`: Milestone 1 step 20 froze version 1 on 2026-09-30, and a change to a v1 field now needs version 2 (owner ruling `site_fields_v1`). `catalog.json` and `names.json` are still drafts, at `0.1.0-draft`.
 
 The rank keys are versioned constants, the same in all three schemas and in the code (`export.RANK_KEYS`):
 
@@ -124,7 +124,7 @@ A source whose terms forbid showing ranks (`publish_rank = false` in `config/sit
 
 ## catalog-site.json
 
-The trimmed catalog the site is built from. The owner approves its field list in Milestone 2 step 2, and Milestone 1 step 20 freezes version 1 after that; until then the schema is a draft. `site/CONTRACT.md` describes how the site uses it.
+The trimmed catalog the site is built from. The owner approved its field list in Milestone 2 step 2 (on 2026-09-25, and the fields added since on 2026-09-30), and Milestone 1 step 20 froze version 1 on 2026-09-30. `site/CONTRACT.md` describes how the site uses it.
 
 Every piece of wording in it comes from `config/site.toml`: the view labels and their one-line descriptions, the tier meanings, the license classes, the Nerd Font marker and legend, and the source credits. System labels come from `config/preinstalled.toml` and, for package systems, from `site.toml`. Band labels come from `config/ranking.toml [display]`.
 

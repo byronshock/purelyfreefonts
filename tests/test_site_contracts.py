@@ -100,7 +100,7 @@ def _keyword_uses(node: Any, keyword: str, under_properties: bool = False):
 def test_sample_validates():
     assert data.schema_errors(SAMPLE) == []
     assert data.semantic_errors(SAMPLE) == []
-    assert data.validate(SAMPLE) == data.Validated(version="1.0.0-draft", fonts=40)
+    assert data.validate(SAMPLE) == data.Validated(version="1.0.0", fonts=40)
 
 
 def test_name_key_vectors_validate():
@@ -531,7 +531,7 @@ def test_pulled_in_by_reaches_the_details_panel():
 
 def test_validate_command_accepts_the_sample(capsys):
     assert main(["validate", str(SAMPLE_PATH)]) == 0
-    assert capsys.readouterr().out == "valid (1.0.0-draft), 40 fonts\n"
+    assert capsys.readouterr().out == "valid (1.0.0), 40 fonts\n"
 
 
 def test_validate_command_rejects_a_broken_file(tmp_path, capsys):

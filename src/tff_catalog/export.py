@@ -120,7 +120,7 @@ if TYPE_CHECKING:
 
 CATALOG_SCHEMA_VERSION = "0.1.0-draft"
 NAMES_SCHEMA_VERSION = "0.1.0-draft"
-SITE_SCHEMA_VERSION = "1.0.0-draft"  # catalog-site.schema.json's const
+SITE_SCHEMA_VERSION = "1.0.0"  # catalog-site.schema.json's const
 
 # Versioned schema constants (methodology §7): every published rank key. Renaming
 # or removing one is a new major schema version of all three files; adding one is
