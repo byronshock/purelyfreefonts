@@ -2,7 +2,7 @@
 
 Milestone 1 builds the ranked, license-checked catalog that the filterable list (Milestone 2) publishes. The method is in [ranking-methodology.md](ranking-methodology.md), and settled decisions are in [AUTHORITY.md](../AUTHORITY.md).
 
-**Where it stands (2026-09-30).** The catalog is built, reviewed by the owner and committed: 500 fonts, ranked and license-checked, and the site's data file is ready. One step is left: handing off to Milestone 2 (step 20). Three smaller items can be done any time. The monthly refresh's first live run and its schedule moved on 2026-09-30 to [milestone-refresh.md](milestone-refresh.md), after Milestone 2. Everything finished is under [Completed](#completed) at the bottom, with its evidence.
+**Where it stands (2026-09-30).** The catalog is built, reviewed by the owner and committed: 500 fonts, ranked and license-checked, and the site's data file is frozen at v1. Step 20, the handoff to Milestone 2, has all four items done and waits for the owner to accept it. Three smaller items can be done any time. The monthly refresh's first live run and its schedule moved on 2026-09-30 to [milestone-refresh.md](milestone-refresh.md), after Milestone 2. Everything finished is under [Completed](#completed) at the bottom, with its evidence.
 
 **How to read it.** *Who* says who does the work, *Needs* what must be finished first, and *Done when* what must be true to close a step. When an item is done and verified, tick it and move it to Completed.
 
@@ -13,14 +13,7 @@ Milestone 1 builds the ranked, license-checked catalog that the filterable list 
 ### Step 20: Hand off to Milestone 2
 **Who:** both. **Needs:** nothing more: step 19's live run and schedule moved after Milestone 2 (`refresh_timing`).
 
-- [ ] Freeze `catalog-site.json` v1: `schema_version` goes from `1.0.0-draft` to `1.0.0`, with the sample file and the schema doc. First, Milestone 2's step 2 approves the fields added since it approved the list on 2026-09-25, each from an owner ruling: the `nerd` group, the `app` system type, a link `note`, `score` and `previous_score`.
-- [ ] A handoff note lists what Milestone 2 must settle:
-  - the default rank order;
-  - numbering under filters, now scores in place of numbers (AUTHORITY.md, "Scores instead of numbers");
-  - the deploy path to the VPS;
-  - the methodology page.
-- [ ] A runbook lists the manual monthly tasks (methodology §10). None exists yet in `ops/` or `docs/`.
-- [ ] "Current step" in AUTHORITY.md moves to Milestone 2, and `docs/roadmap.md` shows the new status.
+All four items were done on 2026-09-30 and are under [Completed](#completed): `catalog-site.json` v1 is frozen at `1.0.0`, the handoff note is [milestone-1-handoff.md](milestone-1-handoff.md), the monthly runbook is [ops/MONTHLY.md](../ops/MONTHLY.md), and "Current step" in AUTHORITY.md is Milestone 2.
 
 **Done when:** the owner accepts the handoff.
 
@@ -387,5 +380,13 @@ The finished steps and items, as they were ticked, with their evidence. The crit
 ### Step 20: Handoff to Milestone 2
 **Who:** both. **Depends on:** 17, 19.
 - [x] Before the freeze, each rank entry carries `previous_score`, last month's published score, so the rising and falling markers of Backlog TASK-4 need no schema change later; until a monthly refresh is merged it equals `score` (owner ruling of 2026-09-30, `score_previous_bootstrap`). *(Both schemas; `export.py` and the state file `published_scores.json`; `validate`'s `previous_score` checks, in a run and with `--committed`; `tests/pipeline/test_export.py` and `test_validate.py`.)*
+- [x] Freeze `catalog-site.json` v1: `schema_version` goes from `1.0.0-draft` to `1.0.0`, with the sample file and the schema doc. First, Milestone 2's step 2 approves the fields added since it approved the list on 2026-09-25, each from an owner ruling: the `nerd` group, the `app` system type, a link `note`, `score` and `previous_score`. *(Done 2026-09-30. The owner approved the five fields (ruling `site_fields_v1`, `data/reviews/site/2026-09-30.toml`). `1.0.0` is in the schema's `$id` and const, `export.SITE_SCHEMA_VERSION`, `tff_site.data.SCHEMA_VERSION`, the sample and the tests, and `site/CONTRACT.md` and `docs/catalog-schema.md` say it is frozen; no field changed, and `catalog.json` and `names.json` stay at `0.1.0-draft`. Three offline replays at 2c4290a gave identical outputs, which differ from the old ones only in `schema_version` and `run.code_commit`; `validate`, `validate --committed` and `config --strict` pass, `links --check` passes all 500 families, and `tff-site validate` prints `valid (1.0.0), 500 fonts`.)*
+- [x] A handoff note lists what Milestone 2 must settle: *(Done 2026-09-30: [milestone-1-handoff.md](milestone-1-handoff.md). Each is settled: M2-D1 in AUTHORITY.md; "Scores instead of numbers" there; M2-D6, with [ops/deploy/README.md](../ops/deploy/README.md) and [ops/SERVER.md](../ops/SERVER.md); and `/methodology/`, built from [ranking-methodology.md](ranking-methodology.md) in Milestone 2 step 7.)*
+  - the default rank order;
+  - numbering under filters, now scores in place of numbers (AUTHORITY.md, "Scores instead of numbers");
+  - the deploy path to the VPS;
+  - the methodology page.
+- [x] A runbook lists the manual monthly tasks (methodology §10). *(Done 2026-09-30: [ops/MONTHLY.md](../ops/MONTHLY.md), each month's steps in order with the commands that exist today, the steps that wait for [milestone-refresh.md](milestone-refresh.md) marked, and §10's yearly, one-off and on-request tasks. Milestone 4 step 12 extends it.)*
+- [x] "Current step" in AUTHORITY.md moves to Milestone 2, and `docs/roadmap.md` shows the new status. *(Done 2026-09-30: Milestone 1 is handed off, pending the owner's acceptance, and Milestone 2 is in progress.)*
 
 </details>

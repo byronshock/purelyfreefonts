@@ -126,7 +126,7 @@ None of these exist yet (checked read-only on 2026-09-26). GitHub creates an unp
 
 ## Moving the live site into releases (one time)
 
-*Done on 2026-09-30, with the stub at 0e3d4cb (`stub.css`, #37). Steps 1–5 below are as run; step 6, Caddy phase B, waits for the launch.*
+*Done on 2026-09-30, with the stub at 0e3d4cb (`stub.css`, #37). Steps 1–5 below are as run; step 6, Caddy phase B, followed the same day (#39).*
 
 The stub in `public/` was a real directory. After the users exist and the stub's `<style>` has moved to `stub.css`:
 

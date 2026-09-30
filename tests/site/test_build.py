@@ -1177,7 +1177,7 @@ def test_a_file_that_isnt_json_fails(tmp_path, catalog, mini_site):
 @pytest.mark.parametrize(
     ("text", "problem"),
     [
-        ('{"schema_version": "1.0.0-draft", "schema_version": "1.0.0-draft"}', "repeated"),
+        ('{"schema_version": "1.0.0", "schema_version": "1.0.0"}', "repeated"),
         ('{"schema_version": NaN}', "NaN"),
         ('{"schema_version": -Infinity}', "Infinity"),
         ("\ufeff{}", "BOM"),

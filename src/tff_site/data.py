@@ -29,7 +29,7 @@ from tff_catalog.keys import search_key
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SCHEMA_PATH = REPO_ROOT / "schemas" / "catalog-site.schema.json"
-SCHEMA_VERSION = "1.0.0-draft"
+SCHEMA_VERSION = "1.0.0"
 
 # Versioned rank keys (methodology §7), in the rank selector's order.
 RANK_KEYS = (

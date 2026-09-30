@@ -1,18 +1,18 @@
 # Roadmap
 
-Status as of 2026-09-25. Settled decisions are in [AUTHORITY.md](../AUTHORITY.md); each checklist has the detail.
+Status as of 2026-09-30. Settled decisions are in [AUTHORITY.md](../AUTHORITY.md); each checklist has the detail.
 
 ## Milestone 1: catalog script and catalog.json
 - **Goal:** one script builds a ranked, license-checked catalog of about 500 truly free Latin font families. (Listing every other qualifying family A–Z, step 15b, moved after launch on 2026-09-30: see "More truly free fonts" below.)
-- **Status:** Step 0 done: the methodology was approved and merged on 2026-09-25 ([pull request #1](https://github.com/byronshock/trulyfreefonts/pull/1)), with every decision recorded in AUTHORITY.md. Next: Step 1, project setup.
+- **Status:** handed off to Milestone 2 on 2026-09-30 (step 20). The 2026-09-26 catalog of 500 fonts is built, reviewed by the owner and committed, and `catalog-site.json` v1 is frozen ([handoff note](milestone-1-handoff.md); monthly tasks in [ops/MONTHLY.md](../ops/MONTHLY.md)). Left: the owner's acceptance of the handoff, and three smaller items (steps 3, 5 and 13).
 - **Checklist:** [milestone-1.md](milestone-1.md)
 - **Depends on:** nothing.
 
 ## Milestone 2: the filterable list goes live (intermediate release)
 - **Goal:** the ranked, filterable list replaces the stub, with methodology, privacy and about pages and a tip link; usability testing starts. No owned-font comparison.
-- **Status:** Step 0 decisions answered and the checklist merged on 2026-09-25 ([pull request #2](https://github.com/byronshock/trulyfreefonts/pull/2)). Steps 1–12 can start on a sample catalog while Milestone 1 builds. Done early: the server log policy (M2-D9), Cloudflare's error logging off, and the live tip link ([ops/DONATIONS.md](../ops/DONATIONS.md) steps 1–10).
+- **Status:** in progress: the current step since Milestone 1's handoff on 2026-09-30. Step 0 decisions were answered and the checklist merged on 2026-09-25 ([pull request #2](https://github.com/byronshock/trulyfreefonts/pull/2)). Every item of steps 1–5, 7, 7b, 8 and 10 is ticked, steps 6, 9, 11 and 12 have one or two left, and the test site is up. Next: the rest of the deploy path (step 11), usability round 1 (step 13) and the soft launch (step 14).
 - **Checklist:** [milestone-2.md](milestone-2.md)
-- **Depends on:** Milestone 1. Its step 20 freezes `catalog-site.json` v1 after this milestone's step 2 approves the fields; the soft launch waits for that freeze.
+- **Depends on:** Milestone 1. Its step 20 froze `catalog-site.json` v1 on 2026-09-30, after this milestone's step 2 approved the fields.
 
 ## Monthly refresh goes live (after Milestone 2)
 - **Goal:** the monthly refresh runs live for the first time and its schedule goes on, so the catalog updates itself each month and the update reaches the live site.
