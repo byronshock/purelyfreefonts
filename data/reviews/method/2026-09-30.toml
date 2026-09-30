@@ -1,0 +1,8 @@
+# Owner rulings of 2026-09-30 on the method, given in chat to the lead session. Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md.
+
+[overall_retired]
+choice = "b"
+recommended = false
+value = "no_fused_overall_projects_rederived"
+ruling = "No fused score: the Overall rank (D12, desktop most chosen 50% plus project 50%) retires. The site no longer offers it, and the engine stops computing it. The other ranks stay selectable (Desktop most chosen and most installed, Coding, Developers & apps, Rising). The Project rank's score will be re-derived by the new scoring method as a single factor, in place of its fixed shares for websites (55%), code (30%) and apps (15%), at a refresh after the owner rules on that method. catalog-site.json v1 keeps the Overall entry in views with available false, so no v2 is needed."
+reason = "The owner, in chat: \"On the front page are going to rank using the Popularity in Projects, which as a single factor explains much of the variance in the data. It's also one of the most interesting views. So this is the score we will keep. We will still have the functionality to rank according to other criteria, but we will no longer have a fused score.\" Asked what goes, the owner chose \"Overall retires; Projects is re-derived\" over retiring Overall only, or no blend anywhere; asked when, \"Now, before the soft launch\" (Claude's recommendation)."

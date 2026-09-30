@@ -39,7 +39,8 @@ Answers to the Milestone 1, Step 0 decisions in [docs/ranking-methodology.md](do
 - **D4: Latin.** Google's strict metadata test, plus dual-script families the owner approves from a reviewed short list. *(2026-09-25)*
 - **D7: patched builds.** Nerd Font and CJK builds count in full toward the original family. *(2026-09-25)*
 - **D10: project rank.** It covers websites, code and apps: web 55%, code 30% (including ecosyste.ms dependent repositories), apps 15%. *(2026-09-25)*
-- **D12: overall rank.** Desktop (*most chosen*) 50% plus project 50%, usage only, with no designer picks. *(2026-09-25)*
+- **D12: overall rank.** Desktop (*most chosen*) 50% plus project 50%, usage only, with no designer picks. *(2026-09-25; **retired 2026-09-30**, below)*
+  - **No fused score (2026-09-30).** The Overall rank retires: the site no longer offers it and the engine stops computing it. The front page ranks by the Project rank, "Used in projects" (M2-D1, amended). The other ranks stay selectable. The Project score will be re-derived by the new scoring method as a single factor, in place of its fixed shares for websites (55%), code (30%) and apps (15%), at a refresh after the owner rules on that method. `catalog-site.json` v1 keeps Overall in `views` with `available: false`, so no v2. The owner's reason: popularity in projects "as a single factor explains much of the variance in the data" and is "one of the most interesting views". Recorded in `data/reviews/method/2026-09-30.toml` (`overall_retired`) and `data/reviews/site/2026-09-30.toml` (`default_rank_project`). *(2026-09-30)*
 - **D13: extra views.** Publish all four: Coding fonts, Developers & apps, By category and Rising (beta). *(2026-09-25)*
 - **D14: evidence gate.** A top-100 place needs evidence from at least 2 independent source groups, plus a mild pull of thin evidence toward the middle (κ 0.2). *(2026-09-25)*
 - **D15: snapshots.** Monthly data extracts live in a private GitHub data repository, reached with a deploy key or GitHub App. *(2026-09-25)*
@@ -169,7 +170,7 @@ Answers to the Milestone 1, Step 0 decisions in [docs/ranking-methodology.md](do
 
 Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull request #2](https://github.com/byronshock/trulyfreefonts/pull/2)).
 
-- **M2-D1: default rank.** The list opens on the **overall** rank. *(2026-09-25)*
+- **M2-D1: default rank.** The list opens on the **overall** rank. *(2026-09-25; amended 2026-09-30: it opens on **Used in projects**, the Project rank, since Overall retired, D12)*
 - **M2-D2: numbers under filters.** Each filtered list renumbers from 1. Fonts past the exact top 100 show their band instead of a number. *(2026-09-25; replaced in Milestone 2 by **Scores instead of numbers**, below, 2026-09-29)*
 - **M2-D3: page technology.** Plain HTML, CSS and one script, with no framework, built by a Python command in the same project as the catalog. *(2026-09-25)*
 - **M2-D4: filter layout.** Every filter sits in a sidebar on wide screens. On phones, everything but search and rank goes behind one "Filters" button. *(2026-09-25)*
