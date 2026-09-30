@@ -25,6 +25,14 @@ When ``TFF_CADDY=1`` and the perf site is the one Caddy serves (``TFF_SITE_DIR``
 serves it with compression; otherwise this module serves it gzip-compressed with the
 production headers (``tff-site serve`` never compresses, and the budgets assume
 compression).
+
+**A deployed site** (by hand, for step 10's done-when): ``test_deployed_*`` run the load and
+refilter budgets, with the same slowdown, against ``TFF_PERF_URL`` (an https URL), through
+whatever is in front of it (Cloudflare, on the test site). They are marked ``network`` and skip
+without ``TFF_PERF_URL``, which no CI job sets::
+
+    TFF_PERF_URL=https://staging.trulyfreefonts.com uv run --group browser pytest \\
+        tests/site/test_perf.py -k deployed --browser chromium -s
 """
 
 import gzip
@@ -52,6 +60,7 @@ CI_CADDY_URL = "http://127.0.0.1:8080"
 LARGE_FONTS = 540
 MIN_LARGE_FONTS = 500  # a site this module builds; an explicit one is measured at its own size
 PERF_SITE_ENV = "TFF_PERF_SITE_DIR"
+PERF_URL_ENV = "TFF_PERF_URL"
 RUNS = 5
 LCP_MAX_MS = 2500
 CLS_MAX = 0.1
@@ -388,20 +397,24 @@ def _load_verdict(loads: list[Load], size: str) -> tuple[dict[str, Any], list[st
     return summary, failures
 
 
-@pytest.mark.parametrize("size", VIEWPORTS)
-def test_load_meets_the_web_vitals_budget(
-    browser: Any, browser_name: str, large_url: str, large_rows: int, size: str
-) -> None:
-    _chromium(browser_name)
+def _assert_load_budget(browser: Any, url: str, rows: int, size: str) -> None:
     summary, failures = {}, ["not measured"]
     # Shared CI runners are noisy: a failing median gets one more set of runs (design-m2 §9).
     for _attempt in range(2):
-        loads = [measure_load(browser, large_url, VIEWPORTS[size], large_rows) for _ in range(RUNS)]
+        loads = [measure_load(browser, url, VIEWPORTS[size], rows) for _ in range(RUNS)]
         summary, failures = _load_verdict(loads, size)
         print(json.dumps(summary))
         if not failures:
             break
     assert failures == [], f"{failures}: {summary}"
+
+
+@pytest.mark.parametrize("size", VIEWPORTS)
+def test_load_meets_the_web_vitals_budget(
+    browser: Any, browser_name: str, large_url: str, large_rows: int, size: str
+) -> None:
+    _chromium(browser_name)
+    _assert_load_budget(browser, large_url, large_rows, size)
 
 
 def _refilter_steps(ranks: list[str]) -> list[tuple[str, str, str | None]]:
@@ -477,21 +490,25 @@ def _check_refilter_records(steps: list[tuple[str, str, str | None]], timings: l
     assert timings[-1]["hash"].startswith("#rank="), timings[-1]
 
 
-def test_rank_and_filter_changes_redraw_within_200_ms(
-    browser: Any, browser_name: str, large_url: str, large_rows: int
-) -> None:
-    _chromium(browser_name)
+def _assert_refilter_budget(browser: Any, url: str, rows: int) -> None:
     worst: dict[str, Any] = {}
     # The budget is on the slowest of 20 changes; on a noisy runner a slow one gets one more
     # full set (design-m2 §9).
     for _attempt in range(2):
-        steps, timings = _refilter_once(browser, large_url, large_rows)
+        steps, timings = _refilter_once(browser, url, rows)
         _check_refilter_records(steps, timings)
         worst = max(timings, key=lambda t: t["ms"])
         print(json.dumps({"refilter_ms": [round(t["ms"]) for t in timings], "worst": worst}))
         if worst["ms"] <= REFILTER_MAX_MS:
             break
     assert worst["ms"] <= REFILTER_MAX_MS, f"slowest change took {worst['ms']:.0f} ms: {worst}"
+
+
+def test_rank_and_filter_changes_redraw_within_200_ms(
+    browser: Any, browser_name: str, large_url: str, large_rows: int
+) -> None:
+    _chromium(browser_name)
+    _assert_refilter_budget(browser, large_url, large_rows)
 
 
 # A fixed piece of work; the fastest of three runs, so the JIT has warmed up.
@@ -600,6 +617,53 @@ def test_no_specimen_loads_far_below_the_screen(
     assert len(requested) < with_specimen, "every specimen loaded at once"
     far = [(i, round(d)) for i, d in below if d is None or d > FAR_BELOW_PX]
     assert far == [], f"specimens requested for rows far below the screen: {far[:10]}"
+
+
+# ------------------------------------------------------------ a deployed site (by hand)
+
+
+@pytest.fixture(scope="module")
+def deployed_url() -> str:
+    """``TFF_PERF_URL`` without a trailing slash; the deployed-site tests skip without it."""
+    url = os.environ.get(PERF_URL_ENV, "").rstrip("/")
+    if not url:
+        pytest.skip(f"{PERF_URL_ENV} is not set: no deployed site to measure")
+    if not url.startswith("https://"):
+        pytest.fail(f"{PERF_URL_ENV}={url} is not an https URL")
+    return url
+
+
+@pytest.fixture(scope="module")
+def deployed_rows(browser: Any, deployed_url: str) -> int:
+    """How many fonts the deployed list page's HTML lists."""
+    context = browser.new_context()
+    try:
+        html = context.request.get(f"{deployed_url}/").text()
+    finally:
+        context.close()
+    rows = len(ROW.findall(html))
+    if rows < MIN_LARGE_FONTS:  # the budgets are for the full catalog, not a small sample
+        pytest.fail(
+            f"{PERF_URL_ENV}={deployed_url} lists {rows} fonts, fewer than {MIN_LARGE_FONTS}"
+        )
+    return rows
+
+
+@pytest.mark.network
+@pytest.mark.parametrize("size", VIEWPORTS)
+def test_deployed_load_meets_the_web_vitals_budget(
+    browser: Any, browser_name: str, deployed_url: str, deployed_rows: int, size: str
+) -> None:
+    _chromium(browser_name)
+    _assert_load_budget(browser, deployed_url, deployed_rows, size)
+
+
+@pytest.mark.network
+def test_deployed_rank_and_filter_changes_redraw_within_200_ms(
+    browser: Any, browser_name: str, deployed_url: str, deployed_rows: int
+) -> None:
+    _chromium(browser_name)
+    _assert_refilter_budget(browser, deployed_url, deployed_rows)
 
 
 # ------------------------------------------------------------ the budgets (no browser)
