@@ -624,7 +624,7 @@ def test_page_structure(guarded_context: Any, name: str) -> None:
         # Each font: a list item in an ordered list, with its own heading.
         rows = page.evaluate(
             """() => [...document.querySelectorAll('#list > *')].map((li) =>
-                 [li.tagName, li.querySelectorAll(':scope > .font-row > h3.font-name').length])"""
+                 [li.tagName, li.querySelectorAll(':scope > .font-row > .font-title > h3.font-name').length])"""
         )
         assert all(row == ["LI", 1] for row in rows), rows
     guarded.assert_clean(page)

@@ -179,10 +179,12 @@ def test_each_row_has_its_parts(dom, doc):
         assert li.attrs["id"] == f"font-{font_id}"
         row = li.elements()[0]
         assert row.classes == ["font-row"]
-        # rank first, then the one heading: Render rewrites only the .rank text
-        assert [c.classes[0] for c in row.elements()[:2]] == ["rank", "font-name"]
+        # rank first, then the title: Render rewrites only the .rank text
+        assert [c.classes[0] for c in row.elements()[:2]] == ["rank", "font-title"]
         assert row.elements()[0].elements() == []
-        heading = row.find("h3")
+        title = row.elements()[1]
+        heading = title.elements()[0]
+        assert (heading.tag, heading.classes) == ("h3", ["font-name"])
         assert heading.attrs["id"] == f"font-{font_id}-name"
         assert squash(heading.text) == family
         assert len(li.find_all("h3")) == 1
@@ -193,15 +195,19 @@ def test_each_row_has_its_parts(dom, doc):
         assert len(marks) == (font["links"]["nerd"] is not None), font_id
         if marks:
             mark = marks[0]
-            assert row.elements()[2] is mark
+            assert title.elements()[1] is mark
             assert mark.attrs["role"] == "img"
             assert mark.attrs["aria-label"] == doc["nerd"]["label"]
             assert squash(mark.text) == doc["nerd"]["marker"]
 
-        spec = row.find("div", class_="font-spec")
+        # The specimen box closes the title; with a specimen the title is has-spec, so the
+        # heading lies over the drawn name (owner ruling of 2026-09-29, name_once).
+        spec = title.elements()[-1]
+        assert spec.classes == ["font-spec"]
         span = spec.find("span", class_="spec")
         fallback = spec.find("p", class_="spec-fallback")
         assert (span is None) != (fallback is None), font_id
+        assert title.classes == ["font-title"] + (["has-spec"] if span is not None else [])
         if span is not None:
             assert span.attrs["role"] == "img"
             assert span.attrs["aria-label"] == f"{family} sample"
@@ -591,20 +597,23 @@ def test_milestone_3_notes_follow_the_row_actions(browser, site_url, width):
 NF_LAYOUT = """() => {
   const out = [];
   for (const li of document.querySelectorAll('li.font')) {
-    const mark = li.querySelector(':scope > .font-row > .nf-mark');
+    const mark = li.querySelector(':scope > .font-row > .font-title > .nf-mark');
     if (!mark) continue;
     li.style.setProperty('content-visibility', 'visible');
     const name = li.querySelector('.font-name');
     const line = parseFloat(getComputedStyle(name).lineHeight);
     const n = name.getBoundingClientRect();
+    const t = mark.parentNode.getBoundingClientRect();
     const m = mark.getBoundingClientRect();
     const before = li.getBoundingClientRect().height;
+    const parent = mark.parentNode;
     const next = mark.nextSibling;
     mark.remove();
     const after = li.getBoundingClientRect().height;
-    li.querySelector('.font-row').insertBefore(mark, next);
+    parent.insertBefore(mark, next);
     out.push({ id: li.id, before, after, inLine: m.top >= n.top - 0.5 && m.bottom <= n.top + line + 0.5,
-               right: m.right <= n.right + 0.5, width: m.width });
+               atEnd: Math.abs(m.right - t.right) <= 0.5, clear: m.left >= n.right - 0.5,
+               right: m.right, width: m.width });
   }
   return out;
 }"""
@@ -612,18 +621,21 @@ NF_LAYOUT = """() => {
 
 @pytest.mark.parametrize("width", [320, 700, 1280])
 def test_the_nerd_marker_keeps_the_row_height(browser, site_url, width, doc):
-    """The fixed-width marker sits in the name's first line, at its end, and a row is as tall
-    with it as without it (CONTRACT section 4; rows use content-visibility)."""
+    """The fixed-width marker sits in the title's first line, at its end, clear of the name, in
+    one column down the list, and a row is as tall with it as without it (CONTRACT section 4,
+    owner ruling nerd_marker_spot_title of 2026-09-29; rows use content-visibility)."""
     context, page = open_page(browser, site_url, width)
     try:
         got = page.evaluate(NF_LAYOUT)
         assert len(got) == sum(f["links"]["nerd"] is not None for f in doc["fonts"])
         widths = {round(row["width"], 1) for row in got}
         assert len(widths) <= 1, widths  # fixed-width
+        assert len({round(row["right"]) for row in got}) <= 1, got  # one column
         for row in got:
             assert row["before"] == row["after"], row
             assert row["inLine"], row
-            assert row["right"], row
+            assert row["atEnd"], row
+            assert row["clear"], row
     finally:
         context.close()
 

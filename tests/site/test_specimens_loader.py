@@ -25,7 +25,10 @@ Checked here:
   the mask arrives;
 - the outlines are visible in light, dark and forced colours (pixels from a screenshot);
 - names ("<family> sample", with the name also in the row's heading), the fallback texts, and
-  the no-script images (``loading="lazy"``, the same box, inverted in dark mode).
+  the no-script images (``loading="lazy"``, the same box, inverted in dark mode);
+- the name shows once (owner ruling of 2026-09-29, name_once): a shown specimen draws it and
+  the heading, still there for screen readers, isn't painted; a specimen that hasn't arrived,
+  a missing one or none at all leaves the heading in view.
 """
 
 import hashlib
@@ -77,6 +80,18 @@ ROWS_JS = """() => Array.from(document.querySelectorAll('li.font')).flatMap((li)
     color: style.color,
     mask: style.maskImage || style.webkitMaskImage || '',
   }];
+})"""
+# Each row's heading: its opacity, and where it sits against the specimen box, if any.
+HEADINGS_JS = """() => Array.from(document.querySelectorAll('li.font')).map((li) => {
+  const title = li.querySelector('.font-title');
+  const heading = title.querySelector('h3.font-name');
+  const span = title.querySelector('span.spec');
+  const h = heading.getBoundingClientRect();
+  const b = (span || title).getBoundingClientRect();
+  return { id: li.dataset.id, state: span ? span.dataset.state || null : 'none',
+           drawn: title.classList.contains('is-drawn'), hasSpec: title.classList.contains('has-spec'),
+           opacity: getComputedStyle(heading).opacity, text: heading.textContent.trim(),
+           overBox: Math.abs(h.top - b.top) < 1 && h.left >= b.left - 0.5 };
 })"""
 SETTLE_JS = """() => new Promise((resolve) =>
   requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve, 60))))"""
@@ -499,14 +514,15 @@ def test_the_box_has_a_fixed_height_and_the_row_keeps_its_height(
     assert target["src"] in after["mask"]
 
 
-@pytest.mark.parametrize("failure", ["pending", "missing"])
-def test_a_specimen_that_has_not_arrived_leaves_the_box_empty(
-    guarded_context: Any, failure: str
+@pytest.mark.parametrize(("failure", "state"), [("pending", "loading"), ("missing", "failed")])
+def test_a_specimen_that_has_not_arrived_leaves_the_box_empty_and_the_name_in_view(
+    guarded_context: Any, failure: str, state: str
 ) -> None:
-    """The box is filled once its mask is set, but shows nothing until the mask image arrives.
+    """The mask is set only once its file has loaded, so the box shows nothing until then, and
+    the heading stays in view (owner ruling of 2026-09-29, name_once).
 
     A slow network holds a specimen back (``pending``); a tab left open across a deploy can
-    ask for one that is gone (``missing``). Neither may show a solid bar.
+    ask for one that is gone (``missing``). Neither may show a solid bar or lose the name.
     """
     guarded = guarded_context(viewport=WIDE)
     page = guarded.new_page()
@@ -517,16 +533,55 @@ def test_a_specimen_that_has_not_arrived_leaves_the_box_empty(
         page.route(f"**{SPEC_PREFIX}*", lambda route: route.fulfill(status=404, body="Not found"))
     try:
         page.goto("/", wait_until="domcontentloaded")  # "load" waits for the held images
-        page.wait_for_selector('span.spec[data-state="set"]', state="attached")
+        page.wait_for_selector(f'span.spec[data-state="{state}"]', state="attached")
         settle(page)
-        first = next(r for r in rows(page) if r["set"])
-        wait_for_requests(page, guarded, {first["src"]})
+        first = next(h for h in page.evaluate(HEADINGS_JS) if h["state"] == state)
+        src = row(page, first["id"])["src"]
+        wait_for_requests(page, guarded, {src})
         settle(page)
-        assert first["background"] == first["color"], "the box is filled, under its mask"
+        box = row(page, first["id"])
+        assert not box["set"]
+        assert not box["mask"].startswith("url")
+        assert box["background"] in {"transparent", "rgba(0, 0, 0, 0)"}, "the box is filled"
+        # The heading lies over the box: set it aside (CSSOM) to see the box alone.
+        heading = page.locator(f"#font-{first['id']} h3.font-name")
+        heading.evaluate("(h) => h.style.setProperty('visibility', 'hidden')")
         pixels = png_pixels(page.locator(f"#font-{first['id']} span.spec").screenshot())
+        heading.evaluate("(h) => h.style.removeProperty('visibility')")
         assert len(set(pixels)) == 1, "the box shows something before its specimen arrived"
+        assert not first["drawn"]
+        assert first["opacity"] == "1", "the name is hidden with no specimen to draw it"
+        assert page.locator(f"#font-{first['id']} h3.font-name").is_visible()
     finally:
         page.unroute_all(behavior="ignoreErrors")  # also lets the held requests go
+
+
+def test_a_shown_specimen_is_the_visible_name(
+    guarded_context: Any, loader_doc: dict[str, Any]
+) -> None:
+    """Once its specimen shows, a row's heading isn't painted but is still a heading; a row
+    without a specimen, or whose specimen hasn't loaded yet, shows its heading (owner ruling
+    of 2026-09-29, name_once). The heading lies over the specimen box's first line, the drawn
+    name, so hiding it moves nothing."""
+    guarded = guarded_context(viewport=WIDE)
+    page = open_list(guarded)
+    families = {f["id"]: f["family"] for f in loader_doc["fonts"]}
+    headings = page.evaluate(HEADINGS_JS)
+    drawn = [h for h in headings if h["state"] == "set"]
+    assert drawn, "no specimen has shown"
+    for h in headings:
+        assert h["text"] == families[h["id"]]
+        assert h["hasSpec"] == (h["state"] != "none"), h
+        if h["state"] == "set":
+            assert h["drawn"], h
+            assert h["opacity"] == "0", h
+        else:
+            assert not h["drawn"], h
+            assert h["opacity"] == "1", h
+        if h["hasSpec"]:
+            assert h["overBox"], h
+    family = families[drawn[0]["id"]]
+    assert page.get_by_role("heading", name=family, exact=True).count() == 1
 
 
 # --- what people see and hear ----------------------------------------------------------------
@@ -610,6 +665,8 @@ def test_fonts_without_a_specimen_show_the_fallback_text(
     for font in without:
         spec = page.locator(f"#font-{font['id']} .font-spec")
         assert spec.locator("span.spec, img").count() == 0
+        heading = page.locator(f"#font-{font['id']} h3.font-name")
+        assert heading.evaluate("(h) => getComputedStyle(h).opacity") == "1"
         # textContent: innerText is empty in a row content-visibility skips.
         text = " ".join((spec.locator("p.spec-fallback").text_content() or "").split())
         if font["preview_ok"]:
@@ -647,9 +704,19 @@ def test_without_javascript_the_no_script_images_show(
                    loaded: img.complete && img.naturalWidth > 0,
                    top: li.getBoundingClientRect().top,
                    filter: getComputedStyle(img).filter,
-                   spanShown: span !== null && getComputedStyle(span).display !== 'none' };
+                   spanShown: span !== null && getComputedStyle(span).display !== 'none',
+                   heading: getComputedStyle(li.querySelector('h3.font-name')).opacity };
         })"""
     )
+    # The image draws the name, so the heading isn't painted (name_once); a row without an
+    # image keeps its heading in view.
+    fallbacks = page.evaluate(
+        """() => Array.from(document.querySelectorAll('li.font'))
+          .filter((li) => !li.querySelector('.font-title.has-spec'))
+          .map((li) => getComputedStyle(li.querySelector('h3.font-name')).opacity)"""
+    )
+    assert fallbacks
+    assert set(fallbacks) == {"1"}
     families = {f["id"]: f["family"] for f in loader_doc["fonts"] if f["preview"]}
     assert {i["id"] for i in images} == set(families)
     for image in images:
@@ -659,6 +726,7 @@ def test_without_javascript_the_no_script_images_show(
         assert int(image["height"]) == 48
         assert image["filter"] == ("invert(1)" if scheme == "dark" else "none")
         assert not image["spanShown"], "the empty mask box shows without JavaScript"
+        assert image["heading"] == "0", "the name shows twice without JavaScript"
     first = images[0]
     assert first["top"] < viewport["height"]
     assert first["loaded"]

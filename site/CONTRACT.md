@@ -22,7 +22,7 @@ Contents:
 - **`catalog-site.json`**, draft schema `schemas/catalog-site.schema.json` (`schema_version` `1.0.0-draft`; Milestone 1 step 20 freezes v1). `tff_site.data.validate` runs the schema and then the cross-reference checks the schema can't express (`semantic_errors`). `tff-site validate FILE` prints `valid (1.0.0-draft), N fonts`.
   - **Stricter than JSON:** a key repeated in one object, `NaN` and `Infinity` make the file invalid (`tff_site.data.loads`), because the schema would check only one of the repeated values while the page showed another.
 - **Wording** in the catalog (view labels and measures lines, tiers, license classes, the Nerd Font marker and legend, source credits, system labels) comes from `config/site.toml`, the one home for the owner's wording rulings about the data; Milestone 1's export copies it, and a contract test keeps the sample equal to it. The page's own text (the list page's lead and its note "Why isn't my favorite free font here?", the filter labels, the tip link) lives in the templates, and where the owner ruled on it, a test holds it to the ruling in `data/reviews/site/`.
-- **Nerd Font builds** (owner rulings of 2026-09-28 and 2026-09-29, TASK-2). A font whose `links.nerd` is set has a Nerd Font build: the list shows the catalog's `nerd.marker` ("NF") beside its name, named `nerd.label` ("Nerd Font version available") for screen readers, the list and the details panel show `nerd.legend`, and the "Nerd Font available" filter keeps only these fonts. The sample gives one to `sample-mono-02` (a Nerd Fonts folder) and `sample-mono-13` (a maker's own build).
+- **Nerd Font builds** (owner rulings of 2026-09-28 and 2026-09-29, TASK-2). A font whose `links.nerd` is set has a Nerd Font build: the list shows the catalog's `nerd.marker` ("NF") at the end of the title's first line (section 4), named `nerd.label` ("Nerd Font version available") for screen readers, the list and the details panel show `nerd.legend`, and the "Nerd Font available" filter keeps only these fonts. The sample gives one to `sample-mono-02` (a Nerd Fonts folder) and `sample-mono-13` (a maker's own build).
   - `links.nerd` is null, so the font shows no marker, no Nerd link and no filter match, when the font has no build, when the build's link failed the link check recorded for the run's date (the font stays listed; the link is back once a check passes, and `review.md` flags it), or when the owner hides the build (`config/nerd-hidden.toml`, with the reason). The site never decides any of this itself: it shows what the data gives.
 - **Scores.** Each rank entry carries `score`, the engine's fused score on the shared z scale (a number for every ranked entry; a number or null for an unranked one, as in `catalog.json`). The site doesn't show it yet: from Milestone 2 the list shows 100·Φ(score) as a bar where the number is now (site rulings of 2026-09-29, `score_display`, `score_curve`, `score_held_fonts`). The sample's scores are synthetic, falling with `order`.
 - **The sample**, `tests/fixtures/catalog-site.sample.json`: 40 invented fonts (`"synthetic": true`, ids `sample-*`, families `Sample …`). Five of them point `font_file` at the real OFL files pinned in `tests/fixtures/specimen-fonts.toml`, so specimens and "Type your own text" run on real outlines: `sample-sans-01` (Inter), `sample-mono-02` (JetBrains Mono), `sample-sans-05` (Source Sans 3, CFF), `sample-display-10` (Orbitron, basic Latin only) and `sample-script-12` (Lobster).
@@ -223,16 +223,18 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 <li class="font" id="font-inter" data-id="inter">
   <div class="font-row">
     <span class="rank">1</span>                                  <!-- number, band, or "Not ranked: <reason>" -->
-    <h3 class="font-name" id="font-inter-name">Inter</h3>
-    <span class="nf-mark" role="img" aria-label="Nerd Font version available">NF</span>  <!-- only with links.nerd -->
-    <div class="font-spec">
-      <span class="spec" role="img" aria-label="Inter sample" data-src="/assets/specimens/inter.<h>.svg"></span>
-      <noscript><img class="spec-img" src="/assets/specimens/inter.<h>.svg" alt="Inter sample"
-        width="…" height="…" loading="lazy"></noscript>
-      <!-- or, with no specimen: -->
-      <p class="spec-fallback">No preview: this font's license doesn't let us host its files.
-        See it on <a href="…">GitHub: rsms/inter</a>.</p>        <!-- fallback "license" -->
-      <p class="spec-fallback">Preview not available yet.</p>    <!-- fallback "failed" -->
+    <div class="font-title has-spec">                            <!-- has-spec only with a specimen -->
+      <h3 class="font-name" id="font-inter-name">Inter</h3>
+      <span class="nf-mark" role="img" aria-label="Nerd Font version available">NF</span>  <!-- only with links.nerd -->
+      <div class="font-spec">
+        <span class="spec" role="img" aria-label="Inter sample" data-src="/assets/specimens/inter.<h>.svg"></span>
+        <noscript><img class="spec-img" src="/assets/specimens/inter.<h>.svg" alt="Inter sample"
+          width="…" height="…" loading="lazy"></noscript>
+        <!-- or, with no specimen: -->
+        <p class="spec-fallback">No preview: this font's license doesn't let us host its files.
+          See it on <a href="…">GitHub: rsms/inter</a>.</p>        <!-- fallback "license" -->
+        <p class="spec-fallback">Preview not available yet.</p>    <!-- fallback "failed" -->
+      </div>
     </div>
     <p class="font-meta"><span class="font-cat">Sans serif</span> <span class="font-lic">SIL Open Font License 1.1</span></p>
     <ul class="badges" aria-label="Tags"><li class="badge" data-badge="variable">Variable</li>…</ul>  <!-- omitted when empty -->
@@ -245,10 +247,11 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 ```
 
 - Font index `i` (section 7) is the `i`-th `li.font` in the server-rendered `#list`.
-- **The Nerd Font marker** (owner rulings of 2026-09-29, TASK-2): a font with a Nerd Font build (`links.nerd`) has `span.nf-mark[role=img]` right after its `h3`, on every rank: the catalog's `nerd.marker` as text, `nerd.label` as its accessible name. It sits in the name's grid cell, at its end, at a fixed width and no taller than the name's first line, in the width every row's name leaves free (`.font-name`'s end padding, marker or not), so no row's height depends on it. The heading's text stays the family name alone.
+- **The name, once** (owner ruling of 2026-09-29, `name_once`). `div.font-title` holds the heading, the marker and the specimen box. With a specimen (`has-spec`), the heading shares the box's cell and lies over its first line, which draws the family name in the font; once the specimen shows, the title is `is-drawn` and the heading isn't painted (`opacity: 0`), though screen readers, search and find-in-page still have it. Where the specimen doesn't show (no specimen, a file that fails to load, no CSS masks, no IntersectionObserver, the loader paused), the heading does. Without scripting the `<noscript>` image draws the name and the heading isn't painted. Hiding the heading moves nothing: it and the box share one cell.
+- **The Nerd Font marker** (owner rulings of 2026-09-29, TASK-2, `nerd_marker_spot_title`): a font with a Nerd Font build (`links.nerd`) has `span.nf-mark[role=img]` right after its `h3`, on every rank: the catalog's `nerd.marker` as text, `nerd.label` as its accessible name. It sits at the end of the title's first line, in the title's second column, which every row leaves free, marker or not, at a fixed width and no taller than that line, so the markers line up and no row's height depends on one. The heading's text stays the family name alone.
 - `span.spec[data-src]` is always `/assets/specimens/<id>.<h>.svg`. `Specimens` ignores any other value, so a `data-src` can never break out of the CSS `url("…")` it becomes.
 - `Render` moves rows in and out of `#list` (hidden rows are detached, not given `hidden`) and changes only `.rank` text. Rows carry `content-visibility: auto`, so they must not change height when their specimen arrives.
-- **States set by scripts:** `html[data-js]` once the script runs; `span.spec[data-state="set"]` once its mask is set; `li.font.is-dim` for a row a Milestone 3 filter dims; `li.font.is-unranked` for a row whose `.rank` reads "Not ranked: <reason>" (the server sets it too), which puts that label on a line of its own above the name (the owner's site ruling of 2026-09-26).
+- **States set by scripts:** `html[data-js]` once the script runs; `span.spec[data-state]`: `loading` while its file loads, then `set` once its mask is set (and its `div.font-title` gets `is-drawn`), or `failed` when the file can't be had; `li.font.is-dim` for a row a Milestone 3 filter dims; `li.font.is-unranked` for a row whose `.rank` reads "Not ranked: <reason>" (the server sets it too), which puts that label on a line of its own above the name (the owner's site ruling of 2026-09-26).
 - **The Milestone 3 slot** (section 10). For each filter whose `note` gives a row something to show, `Render` adds one `<div class="ext" data-filter="<filter id>">` at the end of `.font-row` (created on demand, removed when that filter no longer has a note for the row), built with `Core.el` only:
   - `span.ext-badge` for `badge`, `p.ext-note` for `text`;
   - one `a.ext-link` per link (`href` relative or `https://`, anything else dropped);
@@ -309,6 +312,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 - Focus: `outline: var(--focus-ring); outline-offset: var(--focus-offset);` on `:focus-visible`. No sticky header, so focus is never hidden (2.4.11).
 - Breakpoints (custom properties don't work in media queries, so these are fixed): narrow below `60rem` (filters behind the button), phone below `40rem` (specimen box 40 px).
 - Specimens: `.spec { mask-size: contain; mask-repeat: no-repeat; mask-position: left center; height: var(--spec-h); }` and `.spec[data-state="set"] { background-color: var(--c-spec); }`, so the box fills only once its mask is set (an unmasked fill is a solid bar); `.spec` is hidden under `(scripting: none)`, where the `<noscript>` image shows instead; under `forced-colors`, `forced-color-adjust: none` (the token becomes `CanvasText`). The noscript image gets `filter: invert(1)` in dark mode.
+- The name once: `.font-title.is-drawn > .font-name { opacity: 0; }` inside `@supports (mask-image: none)`, and `.font-title.has-spec > .font-name` likewise under `@media (scripting: none)` (section 4).
 - No `@import`, no `@font-face`, and no `url()` with a scheme or another host, a `data:` URL included: the page loads only its own files. The build's lint refuses them.
 - Rows: `li.font { content-visibility: auto; contain-intrinsic-size: auto var(--row-est-h); }`.
 

@@ -193,9 +193,10 @@
 }
 
 li.font {
-  /* Row heights measured on the sample (median of cards and 3-column rows about 200px;
-     4-column rows about 120px, set below), so the scrollbar barely moves as rows render. */
-  --row-est-h: 12.5rem;
+  /* Row heights measured on the real list of 2026-09-29, with the name shown once (median of
+     cards and 3-column rows about 170px; 4-column rows about 116px, set below), so the
+     scrollbar barely moves as rows render. */
+  --row-est-h: 11rem;
 
   content-visibility: auto;
   contain-intrinsic-size: auto var(--row-est-h);
@@ -212,14 +213,13 @@ li.font.is-dim .font-name {
   font-weight: 400;
 }
 
-/* Phones: a card. The rank sits beside the name ("Not ranked: ..." takes a line of its own,
+/* Phones: a card. The rank sits beside the title ("Not ranked: ..." takes a line of its own,
    below), then one thing per line, and download and details side by side last. */
 .font-row {
   display: grid;
   grid-template-columns: fit-content(40%) minmax(0, 1fr) auto;
   grid-template-areas:
-    "rank name name"
-    "spec spec spec"
+    "rank title title"
     "meta meta meta"
     "badges badges badges"
     "download download toggle";
@@ -237,22 +237,50 @@ li.font.is-dim .font-name {
   font-variant-numeric: tabular-nums;
 }
 
+/* The title: the heading, the Nerd Font marker and the specimen box (owner rulings of
+   2026-09-29, name_once and nerd_marker_spot_title). Its second column is the marker's width,
+   left free on every row, marker or not, so the markers line up and no row's height depends
+   on one. Where there is a specimen, the heading lies over the box's first line, the name
+   drawn in the font, and stops being painted once the specimen shows (below); without one,
+   the heading comes first and the fallback note under it. */
+.font-title {
+  grid-area: title;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) calc(2.25rem + var(--space-2));
+  align-items: start;
+  min-width: 0;
+}
+
 .font-name {
-  grid-area: name;
+  grid-column: 1;
+  grid-row: 1;
   margin: 0;
-  /* Every name leaves the Nerd Font marker's width free at its end (below), marker or not,
-     so no row's height depends on the marker. */
-  padding-inline-end: calc(2.25rem + var(--space-2));
   font-size: var(--fs-large);
   font-weight: 600;
   line-height: var(--lh-tight);
   overflow-wrap: anywhere;
 }
 
+/* The specimen is showing (45-specimens.js marks the title once the file has loaded and the
+   mask is set), so its first line is the name: the heading stays for screen readers, search
+   and find-in-page, but isn't painted. Only where masks work: elsewhere the heading shows. */
+@supports (mask-image: none) or (-webkit-mask-image: none) {
+  .font-title.is-drawn > .font-name {
+    opacity: 0;
+  }
+}
+
+/* Without scripting the <noscript> image draws the name; its alt text stands in if it fails. */
+@media (scripting: none) {
+  .font-title.has-spec > .font-name {
+    opacity: 0;
+  }
+}
+
 /* The Nerd Font marker (TASK-2, owner ruling of 2026-09-29): a fixed-width "NF" for a font
-   with a Nerd Font build, beside its name in the row, in its details and in the legend. In a
-   row it shares the name's cell, at its end, in the width every name leaves free, and is no
-   taller than the name's first line: rows keep their height. */
+   with a Nerd Font build, in its row, in its details and in the legend. In a row it sits at
+   the end of the title's first line, in the column every title leaves free, and is no taller
+   than that line: rows keep their height. */
 .nf-mark {
   display: inline-flex;
   align-items: center;
@@ -271,11 +299,11 @@ li.font.is-dim .font-name {
   white-space: nowrap;
 }
 
-.font-row > .nf-mark {
-  grid-area: name;
+.font-title > .nf-mark {
+  grid-column: 2;
+  grid-row: 1;
   justify-self: end;
-  align-self: start;
-  /* Centred on the name's first line: one line of --fs-large at --lh-tight. */
+  /* Centred on the first line: one line of --fs-large at --lh-tight. */
   margin-top: calc((var(--fs-large) * var(--lh-tight) - 1.375rem) / 2);
 }
 
@@ -287,10 +315,25 @@ li.font.is-dim .font-name {
 }
 
 .font-spec {
-  grid-area: spec;
+  grid-column: 1 / -1;
+  grid-row: 2;
   min-width: 0;
   min-height: var(--spec-h);
   margin-top: var(--space-2);
+}
+
+/* The heading and the specimen share one cell, so hiding the heading moves nothing. The
+   heading is painted above the box, whose empty span would otherwise cover it (nothing in the
+   box takes a click), so its text is on top while it shows. */
+.font-title.has-spec > .font-spec {
+  grid-column: 1;
+  grid-row: 1;
+  margin-top: 0;
+}
+
+.font-title.has-spec > .font-name {
+  position: relative;
+  z-index: 1;
 }
 
 /* The no-script image may be wider than a phone; scale it down, never crop or stretch it. */
@@ -449,18 +492,17 @@ li.font.is-dim .spec-fallback {
 
 /* An unranked row: "Not ranked: <reason>" gets a line of its own above the name, instead of
    wrapping down the narrow rank column (the owner's site ruling of 2026-09-26, list_layout).
-   That line (two on a phone) makes the row taller: about 230px on the sample, cards and
+   That line (two on a phone) makes the row taller: about 190px on the real list, cards and
    3-column rows alike. */
 li.font.is-unranked {
-  --row-est-h: 14rem;
+  --row-est-h: 12.25rem;
 }
 
 li.font.is-unranked .font-row {
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas:
     "rank rank"
-    "name name"
-    "spec spec"
+    "title title"
     "meta meta"
     "badges badges"
     "download toggle";
@@ -472,8 +514,7 @@ li.font.is-unranked .font-row {
   .font-row {
     grid-template-columns: 6rem minmax(0, 1fr) auto;
     grid-template-areas:
-      "rank name ."
-      "rank spec ."
+      "rank title ."
       "rank meta ."
       "rank badges ."
       "rank download toggle";
@@ -487,27 +528,27 @@ li.font.is-unranked .font-row {
     grid-template-columns: 6rem minmax(0, 1fr) auto;
     grid-template-areas:
       "rank rank rank"
-      ". name ."
-      ". spec ."
+      ". title ."
       ". meta ."
       ". badges ."
       ". download toggle";
   }
 }
 
-/* A wide list: the specimen gets its own column, level with the name and meta lines, and the
-   last line holds the tags, the download link and the details button. */
+/* A wide list: the title (the specimen, which draws the name) takes the wider second column,
+   level with the rank; the meta line, the tags and the download link stack in the third, and
+   the details button closes the last line. */
 @container font-list (min-width: 46rem) {
   li.font {
     --row-est-h: 7.5rem;
   }
 
   .font-row {
-    grid-template-columns: 6rem minmax(11rem, 1fr) minmax(0, 1.25fr) auto;
+    grid-template-columns: 6rem minmax(0, 1.25fr) minmax(11rem, 1fr) auto;
     grid-template-areas:
-      "rank name spec ."
-      "rank meta spec ."
-      "rank badges download toggle";
+      "rank title meta ."
+      "rank title badges ."
+      "rank title download toggle";
   }
 
   /* The label's own line adds one line to the row. */
@@ -516,16 +557,16 @@ li.font.is-unranked .font-row {
   }
 
   li.font.is-unranked .font-row {
-    grid-template-columns: 6rem minmax(11rem, 1fr) minmax(0, 1.25fr) auto;
+    grid-template-columns: 6rem minmax(0, 1.25fr) minmax(11rem, 1fr) auto;
     grid-template-areas:
       "rank rank rank rank"
-      ". name spec ."
-      ". meta spec ."
-      ". badges download toggle";
+      ". title meta ."
+      ". title badges ."
+      ". title download toggle";
   }
 
-  .font-spec {
-    align-self: center;
+  /* Beside the stack, the meta line starts level with the title's first line. */
+  .font-meta {
     margin-top: 0;
   }
 
