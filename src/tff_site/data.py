@@ -6,8 +6,9 @@ Validation has two layers, and ``tff-site validate`` and ``tff-site build`` run 
 - ``semantic_errors``: the cross-references a schema can't express: unique ids, every rank
   key in ``views``, bands that tile 101 upwards, ``rank == order`` inside the top 100, band
   labels that match ``order``, license classes, systems and sources that exist, one source
-  entry per source, ranks withheld for sources whose terms forbid them, and view universes
-  (every font in every available view; ``coding`` holds exactly the monospace fonts).
+  entry per source, ranks withheld for sources whose terms forbid them, view universes
+  (every font in every available view; ``coding`` holds exactly the monospace fonts), and
+  links a visitor follows that go to a page, never to a download (M1 step 14).
 
 The payloads (``list_index`` and ``details``) are the formats in ``site/CONTRACT.md``
 (sections 7 and 8). They are pure functions of the document, so the same catalog always gives
@@ -463,10 +464,29 @@ def _rank_errors(entry: Mapping[str, Any], bands: list[Mapping[str, Any]]) -> li
     return errors
 
 
+# Paths a link must not end in: a release archive or a font file downloads instead of opening
+# a page (M1 step 14). Plain-text license files (OFL.txt, LICENSE) are fine.
+DOWNLOAD_SUFFIXES = (
+    *(".zip", ".tar.gz", ".tgz", ".tar.xz", ".7z"),
+    *(".ttf", ".otf", ".ttc", ".woff", ".woff2"),
+)
+
+
+def _link_errors(font: Mapping[str, Any]) -> list[str]:
+    urls = {"license.text_url": font["license"]["text_url"]} | {
+        f"links.{key}": link["url"] for key, link in font["links"].items() if link
+    }
+    return [
+        f"{where}: {url} is a download, not a page (M1 step 14)"
+        for where, url in urls.items()
+        if urlsplit(url).path.lower().endswith(DOWNLOAD_SUFFIXES)
+    ]
+
+
 def _font_errors(
     font: Mapping[str, Any], classes: set[str], system_os: Mapping[str, str]
 ) -> list[str]:
-    errors = []
+    errors = _link_errors(font)
     if font["license"]["class"] not in classes:
         errors.append(f"license.class {font['license']['class']!r} isn't in license_classes")
     if not font["license"]["redistributable"]:

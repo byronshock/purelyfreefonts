@@ -1293,7 +1293,7 @@ def test_site_context_matches_the_contract():
             "email": "admin@trulyfreefonts.com",
             "mailto": "mailto:admin@trulyfreefonts.com?subject=trulyfreefonts.com",
         },
-        "tip_url": None,
+        "tip_url": "https://buy.stripe.com/dRm00beFeaJ307651Qf7i00",
         "blog": None,
     }
     assert (

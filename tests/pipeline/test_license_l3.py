@@ -1319,6 +1319,12 @@ def write_research(tmp_path: Path, body: str) -> Paths:
          "names no file in a zip archive"),
         ('[[family]]\nfamily = "a"\nname = "A"\nreason = "r"\nmentions = ["Nice"]\n',
          "is no license family"),
+        ('[[family]]\nfamily = "a"\nname = "A"\nreason = "r"\ntexts = ["https://x.example/A.zip#OFL.txt"]\n',
+         "page: missing"),
+        ('[[family]]\nfamily = "a"\nname = "A"\nreason = "r"\ntexts = ["https://x.example/A.zip#OFL.txt"]\n'
+         'page = "https://x.example/A.zip"\n', "is an archive, not a page"),
+        ('[[family]]\nfamily = "a"\nname = "A"\nreason = "r"\npage = "http://x.example/license"\n',
+         "is not an https URL"),
         ('[[text]]\nsha256 = "abc"\nlicenses = ["MIT"]\nurl = "https://x.example/L"\nreason = "r"\n',
          "is not a sha256"),
         (f'[[text]]\nsha256 = "{"a" * 64}"\nlicenses = ["MIT OR X"]\nurl = "https://x.example/L"\n'
@@ -1327,13 +1333,23 @@ def write_research(tmp_path: Path, body: str) -> Paths:
          'reason = "r"\n', "empty"),
     ],
     ids=["unknown-key", "bad-id", "twice", "http", "not-a-font", "bare-archive", "fragment",
-         "mention", "sha", "expression", "no-licenses"],
+         "mention", "archive-without-page", "archive-page", "http-page", "sha", "expression",
+         "no-licenses"],
 )  # fmt: skip
 def test_load_research_is_strict(tmp_path: Path, body: str, error: str) -> None:
     from tff_catalog.config_model import ConfigError
 
     with pytest.raises(ConfigError, match=error):
         license_l3.load_research(write_research(tmp_path, body))
+
+
+def test_a_text_inside_an_archive_comes_with_a_page(tmp_path: Path) -> None:
+    body = (
+        '[[family]]\nfamily = "a"\nname = "A"\nreason = "r"\n'
+        'texts = ["https://x.example/A.zip#A/OFL.txt"]\npage = "https://x.example/license"\n'
+    )
+    found = license_l3.load_research(write_research(tmp_path, body))
+    assert found.families["a"].page == "https://x.example/license"
 
 
 def test_load_research_without_a_file(tmp_path: Path) -> None:

@@ -342,11 +342,11 @@ def test_no_tip_link_until_the_build_sets_it():
     assert 'id="tip"' not in html
 
 
-def test_the_build_uses_the_live_stripe_link_or_none():
-    """When M2 step 8 sets the build's tip link, it is exactly the one in DONATIONS.md."""
+def test_the_build_uses_the_live_stripe_link():
+    """M2 step 8: the build's tip link is exactly the live one in DONATIONS.md."""
     assert TIP_URL.startswith("https://buy.stripe.com/")
     assert "test_" not in TIP_URL
-    assert build.site_context()["tip_url"] in (None, TIP_URL)
+    assert build.site_context()["tip_url"] == TIP_URL
 
 
 # ---------------------------------------------------------------------------- the CSS

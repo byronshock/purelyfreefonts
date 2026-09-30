@@ -98,7 +98,7 @@ Jinja2 with `autoescape=True`, `StrictUndefined`, `trim_blocks`, `lstrip_blocks`
 
 | Name | Fields |
 |---|---|
-| `site` | `name` ("Truly Free Fonts"), `base_url` ("https://trulyfreefonts.com"), `repo_url`, `feedback` {`issues_url`, `email`, `mailto`}, `tip_url` (the Stripe link from ops/DONATIONS.md, or none until M2 step 8), `blog` (none until a post is published; then {`url` "/blog/", `feed_url` "/blog/feed.xml"}, which adds the nav's Blog link and a `<link rel="alternate">` to the feed) |
+| `site` | `name` ("Truly Free Fonts"), `base_url` ("https://trulyfreefonts.com"), `repo_url`, `feedback` {`issues_url`, `email`, `mailto`}, `tip_url` (the live Stripe link from ops/DONATIONS.md, since M2 step 8; none leaves the tip link out), `blog` (none until a post is published; then {`url` "/blog/", `feed_url` "/blog/feed.xml"}, which adds the nav's Blog link and a `<link rel="alternate">` to the feed) |
 | `page` | `path` ("/", "/methodology/" …), `title`, `description`, `canonical` (false on the 404 page) |
 | `assets` | `css`, `js` and `font`, the upright interface font that `base.html.j2` preloads (hashed URLs) |
 | `build` | `commit`, `run_date` |

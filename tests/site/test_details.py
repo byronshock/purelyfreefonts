@@ -880,8 +880,9 @@ def test_owner_ten_fields_match_the_data(guarded_context, font_id):
     )
     font_file = FONTS[font_id]["font_file"]
     assert not any("/assets/fonts/" in h for h in hrefs)
-    if font_file:
-        assert font_file["url"] not in hrefs
+    if font_file:  # nor to the archive it comes in (the part before "#")
+        archive = font_file["url"].partition("#")[0]
+        assert not any(h.partition("#")[0] == archive for h in hrefs), hrefs
     guarded.assert_clean(page)
 
 

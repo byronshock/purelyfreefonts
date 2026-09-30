@@ -65,8 +65,9 @@ DEFAULT_OUT = REPO_ROOT / "build" / "site"
 
 SITE_NAME = "Truly Free Fonts"
 BASE_URL = "https://trulyfreefonts.com"
-# M2 step 8 sets this to the Stripe link in ops/DONATIONS.md, once its checks pass.
-TIP_URL: str | None = None
+# The live Stripe Payment Link in ops/DONATIONS.md's Facts table (M2 step 8). The link ships
+# with the list release (AUTHORITY.md, Funding); None leaves the footer link out.
+TIP_URL: str | None = "https://buy.stripe.com/dRm00beFeaJ307651Qf7i00"
 # Page text for the list page and the fallback 404 page (owner approval: M2 step 7). Some
 # fonts here need attribution, so the text claims "any personal or commercial use", as the
 # list page's lead does, and never "no restrictions".

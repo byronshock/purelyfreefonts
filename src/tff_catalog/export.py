@@ -541,18 +541,25 @@ def publish_rank(cfg: Config, source: str) -> bool:
 
 
 def license_name(spdx: str, cfg: Config) -> str:
-    """A readable name for an SPDX expression, from ``licenses.toml``; unknown ids stay as written."""
-    allowed = cfg.licenses.allowed
-    if spdx in allowed:
-        return allowed[spdx].name
+    """A readable name for an SPDX expression, from ``licenses.toml`` (the ``name`` of an
+    allowed or a ruled license); ids without one stay as written."""
+    lic = cfg.licenses
+
+    def named(spdx_id: str) -> str:
+        if spdx_id in lic.allowed:
+            return lic.allowed[spdx_id].name
+        ruled = lic.ruling.get(spdx_id)
+        return ruled.name if ruled is not None and ruled.name else spdx_id
+
+    if spdx in lic.allowed or spdx in lic.ruling:
+        return named(spdx)
     parts = re.split(r"\s+(AND|OR)\s+", spdx.strip())
     words = []
     for i, part in enumerate(parts):
         if i % 2:
             words.append("and" if part == "AND" else "or")
         else:
-            bare = part.strip("() ")
-            words.append(allowed[bare].name if bare in allowed else bare)
+            words.append(named(part.strip("() ")))
     return " ".join(words)
 
 
@@ -1181,10 +1188,38 @@ def systems(cfg: Config) -> list[dict[str, str]]:
     ]
 
 
+def license_pages(paths: Paths) -> dict[str, str]:
+    """``config/license-texts.toml``'s readable license pages, by family id."""
+    from tff_catalog.license_l3 import load_research
+
+    return {fid: fam.page for fid, fam in load_research(paths).families.items() if fam.page}
+
+
+def site_license_url(font: Mapping[str, Any], pages: Mapping[str, str]) -> str:
+    """The site's License link: where the license text was read, unless that is inside a
+    release archive, which a link would download (M1 step 14): then the family's page
+    in ``config/license-texts.toml``."""
+    from tff_catalog.license_l3 import archive_member
+
+    url = font["license"]["text_url"]
+    if url is None or archive_member(url) is None:
+        return url
+    if font["id"] not in pages:
+        raise ExportError(
+            f"{font['id']}: its license text is read inside a release archive ({url}); "
+            "give the family a page in config/license-texts.toml"
+        )
+    return pages[font["id"]]
+
+
 def site_font(
-    font: Mapping[str, Any], keep: frozenset[str], views: frozenset[str]
+    font: Mapping[str, Any],
+    keep: frozenset[str],
+    views: frozenset[str],
+    pages: Mapping[str, str] | None = None,
 ) -> dict[str, Any]:
-    """One catalog font, trimmed to the site's fields (catalog-site.schema.json)."""
+    """One catalog font, trimmed to the site's fields (catalog-site.schema.json).
+    ``pages``: readable license pages by family id (``license_pages``)."""
     lic = font["license"]
     preview_ok = font["preview_ok"]
     file = font["font_file"] if preview_ok else None
@@ -1217,9 +1252,9 @@ def site_font(
                 "redistributable",
                 "attribution_required",
                 "attribution",
-                "text_url",
             )
-        },
+        }
+        | {"text_url": site_license_url(font, pages or {})},
         "preview_ok": preview_ok,
         "preview": font["preview"] if preview_ok else None,
         "font_file": file,
@@ -1243,9 +1278,13 @@ def site_font(
 
 
 def site_document(
-    catalog: Mapping[str, Any], cfg: Config, views: tuple[str, ...]
+    catalog: Mapping[str, Any],
+    cfg: Config,
+    views: tuple[str, ...],
+    pages: Mapping[str, str] | None = None,
 ) -> dict[str, Any]:
-    """``catalog-site.json`` from a catalog document (``build_site`` without the context)."""
+    """``catalog-site.json`` from a catalog document (``build_site`` without the context).
+    ``pages``: readable license pages by family id (``license_pages``)."""
     site = cfg.site
     shown = [s for s in catalog["sources"] if s["data_date"] is not None]
     return {
@@ -1285,7 +1324,7 @@ def site_document(
         "license_classes": [{"id": c.id, "label": c.label} for c in site.license_classes],
         "nerd": {"marker": site.nerd.marker, "label": site.nerd.label, "legend": site.nerd.legend},
         "fonts": [
-            site_font(f, frozenset(s["id"] for s in shown), frozenset(views))
+            site_font(f, frozenset(s["id"] for s in shown), frozenset(views), pages)
             for f in catalog["fonts"]
         ],
     }
@@ -1293,7 +1332,12 @@ def site_document(
 
 def build_site(catalog: dict[str, Any], ctx: StageContext) -> dict[str, Any]:
     """The trimmed ``catalog-site.json`` document for the filterable list."""
-    return site_document(catalog, ctx.config, available_views(ctx.config, ctx.state, ctx.run_date))
+    return site_document(
+        catalog,
+        ctx.config,
+        available_views(ctx.config, ctx.state, ctx.run_date),
+        license_pages(ctx.paths),
+    )
 
 
 # --- names.json --------------------------------------------------------------------------------

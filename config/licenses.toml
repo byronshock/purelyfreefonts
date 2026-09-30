@@ -20,7 +20,8 @@
 #   licenses ask to keep with redistributed copies.
 # - excluded: never qualifies; `reason` names the rule.
 # - ruling: the owner decides at gate LIC (data/reviews/licenses/); until then
-#   every font that depends on it waits in the review queue.
+#   every font that depends on it waits in the review queue. `name` is how the
+#   site names the license once a ruling lets its fonts in (the id shows without one).
 #
 # **Anything not listed is excluded (D3).** L1 (config/license-aliases.toml)
 # maps every string a source writes onto the ids below; a string it cannot map
@@ -341,52 +342,68 @@ reason = "personal use only (Rule 1)"
 # --- owner ruling (gate LIC) --------------------------------------------------
 
 [ruling."Bitstream-Vera"]
+name = "Bitstream Vera Fonts License"
 question = "The Bitstream Vera Fonts license (DejaVu, Bitstream Vera, and the glyphs Hack and others derive from them) allows use, copying, changes under a new name and redistribution, but forbids selling the fonts on their own. Does it qualify, and may the fonts be redistributed?"
 
 [ruling."Bitstream-Charter"]
+name = "Bitstream Charter License"
 question = "The Bitstream Charter license allows use, copying, changes, sublicensing, sale and redistribution for any purpose, provided the notice stays intact. Does it qualify, and may the fonts be redistributed?"
 
 [ruling."Ubuntu-font-1.0"]
+name = "Ubuntu Font Licence 1.0"
 question = "The Ubuntu Font Licence 1.0 (Ubuntu, Ubuntu Mono, Ubuntu Sans) allows use, copying, embedding, changes and redistribution; changed versions must follow its naming rules. Does it qualify, and may the fonts be redistributed?"
 
 [ruling."WTFPL"]
+name = "WTFPL"
 question = "The WTFPL puts no conditions on anything. Does it qualify, and may the fonts be redistributed?"
 
 [ruling."LPPL-1.3c"]
+name = "LaTeX Project Public License 1.3c"
 question = "The LaTeX Project Public License 1.3c allows use and redistribution; changed versions must be renamed or clearly marked. Does it qualify, and may the fonts be redistributed?"
 
 [ruling."LicenseRef-GUST-Font-License"]
+name = "GUST Font License"
 question = "The GUST Font License (Latin Modern, TeX Gyre) is the LPPL with a request to rename changed fonts. Does it qualify, and may the fonts be redistributed?"
 
 [ruling."LicenseRef-Monofur"]
+name = "Monofur license"
 question = "Monofur's own freeware terms (Nerd Fonts id LicenseRef-Monofur). Do they allow all personal and commercial use, and may the fonts be redistributed?"
 
 [ruling."LicenseRef-VicFieger"]
+name = "Vic Fieger's freeware license"
 question = "Vic Fieger's own freeware terms (Nerd Fonts id LicenseRef-VicFieger, for Heavy Data). Do they allow all personal and commercial use, and may the fonts be redistributed?"
 
 [ruling."LicenseRef-PublicDomain"]
+name = "Public domain"
 question = "A public-domain dedication without a formal license text (Fontist LicenseRef-PublicDomain, Debian public-domain). Does it qualify, and may the fonts be redistributed?"
 
 [ruling."LicenseRef-Freeware"]
+name = "Freeware grant"
 question = "An informal freeware grant. D3: it qualifies only if it explicitly allows any use. Does this one, and may the fonts be redistributed?"
 
 [ruling."IPA"]
+name = "IPA Font License 1.0"
 question = "The IPA Font License 1.0 allows use, copying and redistribution; changed fonts must be renamed and shipped with their source. Does it qualify, and may the fonts be redistributed?"
 
 [ruling."Artistic-1.0"]
+name = "Artistic License 1.0"
 question = "The Artistic License 1.0 (Debian's 'Artistic') lets anyone use and redistribute the package, with conditions on changed versions that the owner asked Claude to research (ruling of 2026-09-26). Does it qualify, and may the fonts be redistributed?"
 
 [ruling."Arphic-1999"]
+name = "Arphic Public License"
 question = "The Arphic Public License is a copyleft license written for fonts, with no separate font exception. Does it qualify under D3, and may the fonts be redistributed?"
 
 # Three licenses first read on 2026-09-29, when config/license-aliases.toml learned the last
 # strings L1 could not read. None is ruled yet.
 
 [ruling."EPL-2.0"]
+name = "Eclipse Public License 2.0"
 question = "The Eclipse Public License 2.0 (Debian lists it as one of B612's three alternative licenses, with OFL-1.1 and BSD-3-Clause) allows use, changes and redistribution; changed files that are distributed must stay under the EPL with their source available, like the MPL-2.0 the owner allowed. Does it qualify, and may the fonts be redistributed?"
 
 [ruling."LicenseRef-AarhusUniversity-Passata"]
+name = "Aarhus University's Passata terms"
 question = "Aarhus University's AU Passata, AU Passata Light and AU Peto (Fontist's LicenseRef-AarhusUniversity-Passata), downloaded from the university's staff design manual (medarbejdere.au.dk): Fontist's only license text is the note 'Passata requires no licences.', and the fonts say 'Copyright (c) 2008 by 1508 A/S. All rights reserved.' No grant to the public is published. Does it qualify, and may the fonts be redistributed?"
 
 [ruling."LicenseRef-fontopo-free"]
+name = "fontopo's free-use terms"
 question = "fontopo's own terms (fontopo.com, Fontist's LicenseRef-fontopo-free, for fontopoSOLID and the site's other fonts outside its IPA and Apache ones): 'All fonts on this site can be downloaded and used for commercial purposes for free.' They say nothing about changing or redistributing the fonts. Do they qualify, and may the fonts be redistributed?"

@@ -1061,6 +1061,9 @@ class FamilyResearch:
     # and 14 may name besides its L2 expression; each must be a family of an allowed
     # license, so an allowance never lets a restricting or excluded license through.
     mentions: tuple[str, ...] = ()
+    # A page people can read the license on, for the site's License link when ``texts``
+    # reads the license inside a release archive (a link there would download it).
+    page: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -1102,7 +1105,8 @@ def load_research(paths: Paths) -> Research:
 
     Raises ``ConfigError`` for unknown or missing keys, a bad family id, a family
     or text listed twice, a URL that is not https, a text URL naming a zip archive
-    but no file in it, a font file URL that names no font, an unknown license
+    but no file in it, a text inside an archive with no ``page`` (or a ``page`` that
+    is an archive), a font file URL that names no font, an unknown license
     family in ``mentions``, a bad sha256 or an SPDX expression that does not parse.
     """
     from tff_catalog.config_model import ConfigError, from_mapping, load_toml
@@ -1136,6 +1140,15 @@ def load_research(paths: Paths) -> Research:
         for n, mention in enumerate(fam.mentions):
             if mention not in _MENTION_FAMILIES:
                 raise ConfigError(f"{where}.mentions[{n}]: {mention!r} is no license family")
+        if fam.page:
+            _check_url(fam.page, f"{where}.page")
+            if urlsplit(fam.page).path.lower().endswith(ARCHIVE_EXTENSIONS):
+                raise ConfigError(f"{where}.page: {fam.page} is an archive, not a page")
+        elif any(archive_member(url) for url in fam.texts):
+            raise ConfigError(
+                f"{where}.page: missing; its license text is inside a release archive, "
+                "so the site needs a page to link instead"
+            )
         families[fam.family] = fam
     texts: dict[str, ResearchedText] = {}
     for i, known in enumerate(doc.text):

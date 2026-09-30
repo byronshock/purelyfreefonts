@@ -137,7 +137,11 @@
    Each is a bordered button with a text label and an arrow: solid (up or down) with the
    order's words on the column in use, a double arrow on the other. #list-sort ships
    `hidden` and keeps its space until the script shows it, so the list doesn't move. From
-   40rem the Name button starts over the name column (6rem, as .font-row's rank column). */
+   40rem the Name button starts over the name column: li.font's inline padding plus
+   .font-row's 6rem rank column. The order's words take a second, smaller line inside the
+   button, so the Rank button fits over that column (owner ruling of 2026-09-30,
+   sort_two_lines); with wider text (text spacing, a bigger font) the column grows instead
+   of the buttons overlapping. */
 .list-sort {
   display: flex;
   flex-wrap: wrap;
@@ -158,17 +162,23 @@
 @media (min-width: 40rem) {
   .list-sort {
     display: grid;
-    grid-template-columns: minmax(6rem, max-content) minmax(0, 1fr);
+    grid-template-columns: minmax(calc(var(--space-2) + 6rem), max-content) minmax(0, 1fr);
     justify-items: start;
+    align-items: start;
   }
 }
 
 .sort-btn {
-  display: inline-flex;
+  display: inline-grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    "label arrow"
+    "dir dir";
+  justify-items: start;
   align-items: center;
-  gap: var(--space-1);
+  gap: 0 var(--space-1);
   min-height: var(--target-min);
-  padding: var(--space-1) var(--space-2);
+  padding: var(--space-1);
   border: 1px solid var(--c-border);
   border-radius: var(--radius);
   background: var(--c-bg);
@@ -189,13 +199,21 @@
 }
 
 .sort-label {
+  grid-area: label;
   font-weight: 600;
+}
+
+.sort-dir {
+  grid-area: dir;
+  font-size: var(--fs-small);
+  white-space: nowrap;
 }
 
 /* The arrows: two stacked triangles drawn with borders, the sortable-column icon. Both are
    grey on the column not in use; on the column in use the one for the current order is
    filled with the accent and the other is faint. */
 .sort-arrow {
+  grid-area: arrow;
   position: relative;
   flex: none;
   width: 0.9em;
