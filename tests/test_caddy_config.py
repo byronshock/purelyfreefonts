@@ -95,7 +95,8 @@ FROZEN_JOBS = {
     "test",
     "secrets",
     "site-build",
-    "site-real",
+    "site-real (chromium)",
+    "site-real (firefox)",
     "site-browser (chromium)",
     "site-browser (firefox)",
     "site-perf",
@@ -420,9 +421,18 @@ def test_the_real_catalog_job_runs_what_the_deploy_runs():
     jobs = workflow(CI_YML)["jobs"]
     real = "\n".join(s.get("run", "") for s in jobs["site-real"]["steps"])
     deploy = "\n".join(s.get("run", "") for _, s in steps(workflow(DEPLOY_YML)))
-    for needed in ("tff-site check", "--ignore=tests/site/test_perf.py", '-m "not live"'):
+    # The same tests: the accessibility grid's repeats run on the sample only (owner ruling of
+    # 2026-09-30); site-real takes one browser per job, the deploy both in turn.
+    for needed in (
+        "tff-site check",
+        "--ignore=tests/site/test_perf.py",
+        '-m "not live and not sample_only"',
+    ):
         assert needed in real, needed
         assert needed in deploy, needed
+    assert jobs["site-real"]["strategy"]["matrix"]["browser"] == ["chromium", "firefox"]
+    assert '--browser "$BROWSER"' in real
+    assert "--browser chromium --browser firefox" in deploy
     assert "tff-catalog validate --committed" in real
     assert "TFF_PERF_SITE_DIR=" in real
     assert jobs["site-real"]["env"]["DATA"] == "build/catalog-site.json"

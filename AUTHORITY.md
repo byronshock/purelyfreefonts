@@ -281,6 +281,10 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
   - `PLAN-NERD-FONTS.md`, the working checklist for Backlog TASK-2. *(2026-09-28)*
 - **Monthly data refresh.** A scheduled GitHub Actions workflow runs the pipeline and opens a pull request with the new catalog and anything flagged for review. The owner reviews and merges it.
   - **Off switch (2026-09-29).** Until Milestone 1 step 19 sets up the data store's key, the schedule does nothing. A scheduled run starts only once the repository variable `REFRESH_SCHEDULE` is "on", as production deploys wait for `PRODUCTION_DEPLOYS`; manual runs always work. So merging the workflow to `main` starts no failing monthly run. Recorded in `data/reviews/ci/2026-09-29.toml`.
+- **Site tests on the real catalog.** *(2026-09-30)* CI's `site-real` job and `deploy.yml` run the site tests on the committed catalog (500 rows) with a lighter accessibility pass:
+  - **On the real catalog:** axe on every page in both themes at desktop width, axe with a details panel open, reflow at 320 px, and every test that depends on the data (list, details, specimens, privacy, serving).
+  - **On the sample catalog only** (`site-browser`, marked `sample_only`): the rest of the accessibility grid, which covers every width, filter state, forced colours, text spacing, focus and the keyboard paths. It tests the templates and CSS, which are the same in every row, and on the real catalog it ran past CI's 45-minute limit.
+  - Milestone 2 step 6's axe requirement is met by the sample run. Recorded in `data/reviews/ci/2026-09-30.toml`.
 - **Backlog.** *(2026-09-25)*
   - **Tool.** [Backlog.md](https://github.com/MrLesk/Backlog.md) keeps its tasks in `backlog/`, committed to the public repository.
   - **What goes in it.** Only loose items: ideas, bugs and later work that no milestone checklist covers. The milestone checklists stay the plan, and decisions stay in this file, never in `backlog/decisions/`.
