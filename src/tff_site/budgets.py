@@ -7,10 +7,10 @@ Sizes are gzip level 9 (``gzip_size``), in decimal kilobytes:
 - the list index: at most ``LIST_INDEX_MAX``;
 - the details payload: at most ``DETAILS_MAX`` (loaded lazily; shard it if over). Every
   ``assets/details*.json`` file is held to it, so shards pass one by one;
-- specimens: at least half at most ``SPECIMEN_HALF_MAX``, none over ``SPECIMEN_MAX``,
-  all together under ``SPECIMENS_TOTAL_RAW_MAX`` uncompressed. The per-file cap is read on the
-  raw bytes, the stricter reading that ``tff_catalog.specimens.budget`` also uses, so a site
-  whose specimens passed the specimens stage passes here too.
+- specimens: at least half at most ``SPECIMEN_HALF_MAX``, none over ``SPECIMEN_MAX`` (the
+  owner's site ruling of 2026-09-30, specimen_max_size), all together under
+  ``SPECIMENS_TOTAL_RAW_MAX`` uncompressed. ``tff_catalog.specimens.budget`` measures the
+  same way, so a site whose specimens passed the specimens stage passes here too.
 
 The files come from the list page itself: ``<link rel="stylesheet" href>``,
 ``<script src>`` and ``#list``'s ``data-index`` and ``data-details`` (site/CONTRACT.md
@@ -38,7 +38,7 @@ PAGE_MAX = 100 * KB
 LIST_INDEX_MAX = 100 * KB
 DETAILS_MAX = 150 * KB
 SPECIMEN_HALF_MAX = 5 * KB
-SPECIMEN_MAX = 30 * KB
+SPECIMEN_MAX = 16 * KB
 SPECIMENS_TOTAL_RAW_MAX = 10_000 * KB
 
 LIST_PAGE = "index.html"
@@ -244,14 +244,15 @@ def _check_specimens(site: Path) -> list[Problem]:
     for path in paths:
         blob = path.read_bytes()
         total += len(blob)
-        if gzip_size(blob) <= SPECIMEN_HALF_MAX:
+        size = gzip_size(blob)
+        if size <= SPECIMEN_HALF_MAX:
             small += 1
-        if len(blob) > SPECIMEN_MAX:
+        if size > SPECIMEN_MAX:
             rel = path.relative_to(site).as_posix()
             problems.append(
                 Problem(
                     rel,
-                    f"specimen is {_kb(len(blob))}, over the {_kb(SPECIMEN_MAX)} cap "
+                    f"specimen is {_kb(size)} gzip -9, over the {_kb(SPECIMEN_MAX)} cap "
                     "(render the family name only)",
                 )
             )

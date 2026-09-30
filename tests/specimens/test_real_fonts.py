@@ -16,7 +16,7 @@ from tests.specimens import pinned, regen, svgpath
 
 from tff_catalog.specimens import (
     BASIC_SAMPLE,
-    MAX_FILE_BYTES,
+    MAX_FILE_GZIP_BYTES,
     SAMPLE,
     SMALL_GZIP_BYTES,
     budget,
@@ -66,7 +66,7 @@ def test_within_budget(pin_and_font: tuple[pinned.Pin, bytes]) -> None:
     pin, font = pin_and_font
     spec = render.render(font, pin.family, SAMPLE, BASIC_SAMPLE)
     assert spec is not None
-    assert len(spec.svg) <= MAX_FILE_BYTES
+    assert budget.gzip_size(spec.svg) <= MAX_FILE_GZIP_BYTES
     assert len(gzip.compress(spec.svg, 9, mtime=0)) <= SMALL_GZIP_BYTES
 
 

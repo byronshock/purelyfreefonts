@@ -1,4 +1,4 @@
-"""The specimen budget: half at or under 5 KB gzip -9, none over 30 KB, under 10 MB in all."""
+"""The specimen budget: half at or under 5 KB gzip -9, none over 16 KB gzip -9, under 10 MB in all."""
 
 import hashlib
 import logging
@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from tff_catalog.paths import Paths
-from tff_catalog.specimens import MAX_FILE_BYTES, MAX_TOTAL_BYTES, SMALL_GZIP_BYTES, budget
+from tff_catalog.specimens import MAX_FILE_GZIP_BYTES, MAX_TOTAL_BYTES, SMALL_GZIP_BYTES, budget
 from tff_catalog.stages import StageContext
 from tff_catalog.state import State
 
@@ -20,6 +20,14 @@ def small_svg() -> bytes:
 def incompressible(size: int, seed: int = 0) -> bytes:
     """``size`` pseudo-random bytes: gzip can't shrink them."""
     return hashlib.shake_256(seed.to_bytes(4, "big")).digest(size)
+
+
+def at_the_cap() -> bytes:
+    """The longest incompressible blob whose gzip -9 size is at most the cap."""
+    n = MAX_FILE_GZIP_BYTES - 100
+    while budget.gzip_size(incompressible(n + 1)) <= MAX_FILE_GZIP_BYTES:
+        n += 1
+    return incompressible(n)
 
 
 def write(directory: Path, name: str, data: bytes) -> None:
@@ -38,19 +46,23 @@ def test_measures_share_over_limit_and_total(tmp_path: Path) -> None:
     write(tmp_path, "a.svg", small_svg())
     write(tmp_path, "b.svg", small_svg())
     write(tmp_path, "c.svg", incompressible(SMALL_GZIP_BYTES + 200))
-    write(tmp_path, "d.svg", incompressible(MAX_FILE_BYTES + 1, seed=1))
-    write(tmp_path, "notes.txt", incompressible(MAX_FILE_BYTES * 2))  # not a specimen
+    write(tmp_path, "d.svg", incompressible(MAX_FILE_GZIP_BYTES + 1, seed=1))
+    write(tmp_path, "notes.txt", incompressible(MAX_FILE_GZIP_BYTES * 2))  # not a specimen
     report = budget.check(tmp_path)
     assert report.files == 4
     assert report.small_share == 0.5
     assert report.over_limit == ("d.svg",)
-    assert report.total_bytes == 2 * len(small_svg()) + SMALL_GZIP_BYTES + 200 + MAX_FILE_BYTES + 1
+    assert report.total_bytes == (
+        2 * len(small_svg()) + SMALL_GZIP_BYTES + 200 + MAX_FILE_GZIP_BYTES + 1
+    )
     assert not report.ok
 
 
 def test_exactly_at_the_limits_passes(tmp_path: Path) -> None:
     write(tmp_path, "a.svg", small_svg())
-    write(tmp_path, "b.svg", incompressible(MAX_FILE_BYTES))
+    blob = at_the_cap()
+    assert budget.gzip_size(blob) <= MAX_FILE_GZIP_BYTES < budget.gzip_size(blob + b"x")
+    write(tmp_path, "b.svg", blob)
     report = budget.check(tmp_path)
     assert (report.small_share, report.over_limit) == (0.5, ())
     assert report.ok
@@ -86,7 +98,7 @@ def test_cmd_check_exit_code_and_report(tmp_path: Path, capsys: pytest.CaptureFi
     write(ctx.paths.specimens, "a.svg", small_svg())
     assert budget.cmd_check(ctx) == 0
     assert capsys.readouterr().out.rstrip().endswith(": ok")
-    write(ctx.paths.specimens, "big.svg", incompressible(MAX_FILE_BYTES + 1))
+    write(ctx.paths.specimens, "big.svg", incompressible(MAX_FILE_GZIP_BYTES + 1))
     assert budget.cmd_check(ctx) == 1
     out = capsys.readouterr().out
     assert "FAILED" in out
@@ -98,5 +110,5 @@ def test_never_laxer_than_the_site_check() -> None:
     from tff_site import budgets as site
 
     assert SMALL_GZIP_BYTES <= site.SPECIMEN_HALF_MAX
-    assert MAX_FILE_BYTES <= site.SPECIMEN_MAX
+    assert MAX_FILE_GZIP_BYTES <= site.SPECIMEN_MAX
     assert MAX_TOTAL_BYTES <= site.SPECIMENS_TOTAL_RAW_MAX

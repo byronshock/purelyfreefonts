@@ -14,7 +14,8 @@ from tests.specimens import fontmaker
 from tff_catalog import jsonio, stageio
 from tff_catalog.fetch import Fetcher
 from tff_catalog.paths import Paths
-from tff_catalog.specimens import MAX_FILE_BYTES, RENDERER_VERSION, stage
+from tff_catalog.specimens import MAX_FILE_GZIP_BYTES, RENDERER_VERSION, stage
+from tff_catalog.specimens.budget import gzip_size
 from tff_catalog.specimens.stage import Preview
 from tff_catalog.stages import StageContext
 from tff_catalog.state import State
@@ -59,7 +60,7 @@ def fonts() -> dict[str, bytes]:
         "good": fontmaker.make_font(chars),
         "basic": fontmaker.make_font(fontmaker.basic_chars()),
         "greek": fontmaker.make_font("ΑΒΓΔαβγδ"),
-        "noisy": fontmaker.make_font(chars, noisy=320),  # over 30 KB with the sample line
+        "noisy": fontmaker.make_font(chars, noisy=480),  # over 16 KB gzipped with the sample
     }
 
 
@@ -211,7 +212,7 @@ def test_stage_renders_flags_and_records_previews(
     noisy = previews["noisy"]
     assert noisy.flags == ("specimen_name_only",)
     assert noisy.path == "specimens/noisy.svg"
-    assert len((ctx.paths.specimens / "noisy.svg").read_bytes()) <= MAX_FILE_BYTES
+    assert gzip_size((ctx.paths.specimens / "noisy.svg").read_bytes()) <= MAX_FILE_GZIP_BYTES
     assert sorted(p.name for p in ctx.paths.specimens.iterdir()) == [
         "basic.svg",
         "good.svg",
@@ -228,7 +229,7 @@ def test_the_noisy_font_really_is_over_budget_in_full(fonts: dict[str, bytes]) -
     name = render(fonts["noisy"], "Noisy", stage.SAMPLE, stage.BASIC_SAMPLE, name_only=True)
     assert full is not None
     assert name is not None
-    assert len(full.svg) > MAX_FILE_BYTES >= len(name.svg)
+    assert gzip_size(full.svg) > MAX_FILE_GZIP_BYTES >= gzip_size(name.svg)
 
 
 def test_a_name_only_specimen_still_over_budget_fails(tmp_path: Path) -> None:
@@ -236,7 +237,7 @@ def test_a_name_only_specimen_still_over_budget_fails(tmp_path: Path) -> None:
     font = fontmaker.make_font(chars, noisy=900)
     preview = stage.render_one("x", "Noisy Family With A Long Name", font, tmp_path)
     assert preview == Preview(
-        None, None, ("specimen_failed",), "over 30 KB even with the name only"
+        None, None, ("specimen_failed",), "over 16 KB gzipped even with the name only"
     )
     assert list(tmp_path.iterdir()) == []
 

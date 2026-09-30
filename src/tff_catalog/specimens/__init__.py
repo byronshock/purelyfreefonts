@@ -7,7 +7,7 @@ into ``~/.cache/tff/fonts/<sha256>``, checks the sha256, renders
 The SVGs are committed, because ``tff-site build`` makes no network requests.
 """
 
-RENDERER_VERSION = 1  # bump when output bytes change on purpose
+RENDERER_VERSION = 2  # bump when output bytes change on purpose (2: the 16 KB gzip cap)
 UNITS_PER_EM = 256  # integer coordinate grid
 NAME_SIZE_EM = 1.0  # line 1: the family name
 SAMPLE_SIZE_EM = 0.6  # line 2: the sample
@@ -18,10 +18,12 @@ BASIC_SAMPLE = "Sphinx of black quartz, judge my vow"  # fallback for basic-Lati
 DEFAULT_WEIGHT = 400.0  # variable fonts: wght=400 if the axis allows it, else the default instance
 
 # Budget (tff-catalog specimens --check), in decimal kilobytes as tff_site.budgets counts them,
-# so a set that passes here also passes `tff-site check`. The 30 KB cap and the total are raw
-# bytes, the stricter reading for SVG text, which always compresses.
+# so a set that passes here also passes `tff-site check`. The per-file cap is gzip -9, about
+# what a visitor downloads (the owner's site ruling of 2026-09-30, specimen_max_size); the total
+# is raw bytes. A size within a few bytes of the cap may differ between zlib builds, which only
+# matters when a specimen is drawn again.
 SMALL_GZIP_BYTES = 5_000  # at least half the files at or under this, gzip -9
-MAX_FILE_BYTES = 30_000  # larger files are re-rendered with the name only
+MAX_FILE_GZIP_BYTES = 16_000  # files larger gzipped are re-rendered with the name only
 MAX_TOTAL_BYTES = 10_000_000
 
 FLAGS = ("specimen_failed", "specimen_name_only", "specimen_hash_mismatch")

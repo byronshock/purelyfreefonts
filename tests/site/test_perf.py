@@ -702,9 +702,12 @@ def test_specimen_budget(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Non
     assert [p.path for p in problems] == ["assets/specimens"]
     assert "3 of 7" in problems[0].message
 
-    (folder / "big.0123456789.svg").write_bytes(b" " * 30_001)
+    # Over the cap gzipped (the owner's ruling of 2026-09-30); raw size alone never fails.
+    (folder / "big.0123456789.svg").write_bytes(_noise(budgets.SPECIMEN_MAX + 1, seed=9))
+    (folder / "raw.0123456789.svg").write_bytes(b" " * 60_000)
     paths = [p.path for p in budgets.check(site)]
     assert "assets/specimens/big.0123456789.svg" in paths
+    assert "assets/specimens/raw.0123456789.svg" not in paths
 
     monkeypatch.setattr(budgets, "SPECIMENS_TOTAL_RAW_MAX", 20_000)
     assert any("uncompressed" in p.message for p in budgets.check(site))
@@ -788,7 +791,7 @@ def test_specimen_limits_match_the_specimens_stage() -> None:
     from tff_catalog import specimens
 
     assert budgets.SPECIMEN_HALF_MAX == specimens.SMALL_GZIP_BYTES
-    assert budgets.SPECIMEN_MAX == specimens.MAX_FILE_BYTES
+    assert budgets.SPECIMEN_MAX == specimens.MAX_FILE_GZIP_BYTES
     assert budgets.SPECIMENS_TOTAL_RAW_MAX == specimens.MAX_TOTAL_BYTES
 
 

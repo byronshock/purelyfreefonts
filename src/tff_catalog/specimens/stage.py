@@ -18,7 +18,7 @@ Details:
   font) for "export-site", plus the SVGs. SVGs of fonts without a preview are
   removed, so ``build/specimens/`` holds exactly the current previews and
   their index.
-- A specimen over ``MAX_FILE_BYTES`` is drawn again with the name only. Any
+- A specimen over ``MAX_FILE_GZIP_BYTES`` gzipped is drawn again with the name only. Any
   name-only specimen (budget or glyph coverage) is flagged
   ``specimen_name_only``; a font with no usable specimen, no ``font_file``, or a
   file that can't be had right now is flagged ``specimen_failed``, and every
@@ -49,7 +49,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from tff_catalog import fontfiles, jsonio, stageio
-from tff_catalog.specimens import BASIC_SAMPLE, MAX_FILE_BYTES, RENDERER_VERSION, SAMPLE
+from tff_catalog.specimens import BASIC_SAMPLE, MAX_FILE_GZIP_BYTES, RENDERER_VERSION, SAMPLE
+from tff_catalog.specimens.budget import gzip_size
 
 if TYPE_CHECKING:
     from tff_catalog.fetch import Fetcher
@@ -152,12 +153,12 @@ def render_one(font_id: str, family: str, font: bytes, out_dir: Path) -> Preview
     from tff_catalog.specimens.render import render
 
     spec = render(font, family, SAMPLE, BASIC_SAMPLE)
-    if spec is not None and len(spec.svg) > MAX_FILE_BYTES and spec.line != "name":
+    if spec is not None and gzip_size(spec.svg) > MAX_FILE_GZIP_BYTES and spec.line != "name":
         spec = render(font, family, SAMPLE, BASIC_SAMPLE, name_only=True)
     if spec is None:
         return _failed("the font draws none of the sample texts, not even its name")
-    if len(spec.svg) > MAX_FILE_BYTES:
-        return _failed(f"over {MAX_FILE_BYTES // 1000} KB even with the name only")
+    if gzip_size(spec.svg) > MAX_FILE_GZIP_BYTES:
+        return _failed(f"over {MAX_FILE_GZIP_BYTES // 1000} KB gzipped even with the name only")
     target = out_dir / f"{font_id}.svg"
     if not target.is_file() or target.read_bytes() != spec.svg:
         _write_atomic(target, spec.svg)
