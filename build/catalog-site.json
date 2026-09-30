@@ -13079,7 +13079,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "Bitstream-Vera",
+        "name": "Bitstream Vera Fonts License",
         "redistributable": true,
         "spdx": "Bitstream-Vera",
         "text_url": "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/src/unpatched-fonts/BitstreamVeraSansMono/Bitstream%20Vera%20License.txt"
@@ -18661,10 +18661,10 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "Bitstream-Charter",
+        "name": "Bitstream Charter License",
         "redistributable": true,
         "spdx": "Bitstream-Charter",
-        "text_url": "https://practicaltypography.com/fonts/Charter%20210112.zip#Charter%20210112/Charter%20license.txt"
+        "text_url": "https://practicaltypography.com/charter.html"
       },
       "links": {
         "designer": null,
@@ -25021,7 +25021,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "Bitstream-Vera",
+        "name": "Bitstream Vera Fonts License",
         "redistributable": true,
         "spdx": "Bitstream-Vera",
         "text_url": "https://raw.githubusercontent.com/dejavu-fonts/dejavu-fonts/9b5d1b2ffeec20c7b46aa89c0223d783c02762cf/LICENSE"
@@ -25273,7 +25273,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "Bitstream-Vera",
+        "name": "Bitstream Vera Fonts License",
         "redistributable": true,
         "spdx": "Bitstream-Vera",
         "text_url": "https://raw.githubusercontent.com/dejavu-fonts/dejavu-fonts/9b5d1b2ffeec20c7b46aa89c0223d783c02762cf/LICENSE"
@@ -25519,7 +25519,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "Bitstream-Vera",
+        "name": "Bitstream Vera Fonts License",
         "redistributable": true,
         "spdx": "Bitstream-Vera",
         "text_url": "https://raw.githubusercontent.com/dejavu-fonts/dejavu-fonts/9b5d1b2ffeec20c7b46aa89c0223d783c02762cf/LICENSE"
@@ -33317,7 +33317,7 @@
         "name": "GNU GPL 3.0 or later with the font exception",
         "redistributable": true,
         "spdx": "GPL-3.0-or-later WITH Font-exception-2.0",
-        "text_url": "https://ftp.gnu.org/gnu/freefont/freefont-ttf-20120503.zip#freefont-20120503/README"
+        "text_url": "https://www.gnu.org/software/freefont/license.html"
       },
       "links": {
         "designer": null,
@@ -38113,7 +38113,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "Bitstream-Vera and MIT License",
+        "name": "Bitstream Vera Fonts License and MIT License",
         "redistributable": true,
         "spdx": "Bitstream-Vera AND MIT",
         "text_url": "https://raw.githubusercontent.com/source-foundry/Hack/a737c121cabb337fdfe655d8c7304729f351e30f/LICENSE.md"
@@ -39177,7 +39177,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "freeware",
-        "name": "LicenseRef-VicFieger",
+        "name": "Vic Fieger's freeware license",
         "redistributable": true,
         "spdx": "LicenseRef-VicFieger",
         "text_url": "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/src/unpatched-fonts/HeavyData/Vic%20Fieger%20License.txt"
@@ -49131,7 +49131,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "LicenseRef-GUST-Font-License",
+        "name": "GUST Font License",
         "redistributable": true,
         "spdx": "LicenseRef-GUST-Font-License",
         "text_url": "https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"
@@ -86103,7 +86103,7 @@
         "name": "SIL Open Font License 1.1",
         "redistributable": true,
         "spdx": "OFL-1.1",
-        "text_url": "https://software.sil.org/downloads/r/sophianubian/SophiaNubian-1.0.zip#SophiaNubian/OFL.txt"
+        "text_url": "https://openfontlicense.org/open-font-license-official-text/"
       },
       "links": {
         "designer": null,
@@ -91435,7 +91435,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "LicenseRef-GUST-Font-License",
+        "name": "GUST Font License",
         "redistributable": true,
         "spdx": "LicenseRef-GUST-Font-License",
         "text_url": "https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"
@@ -91629,7 +91629,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "LicenseRef-GUST-Font-License",
+        "name": "GUST Font License",
         "redistributable": true,
         "spdx": "LicenseRef-GUST-Font-License",
         "text_url": "https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"
@@ -91823,7 +91823,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "LicenseRef-GUST-Font-License",
+        "name": "GUST Font License",
         "redistributable": true,
         "spdx": "LicenseRef-GUST-Font-License",
         "text_url": "https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"
@@ -92017,7 +92017,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "LicenseRef-GUST-Font-License",
+        "name": "GUST Font License",
         "redistributable": true,
         "spdx": "LicenseRef-GUST-Font-License",
         "text_url": "https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"
@@ -92225,7 +92225,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "LicenseRef-GUST-Font-License",
+        "name": "GUST Font License",
         "redistributable": true,
         "spdx": "LicenseRef-GUST-Font-License",
         "text_url": "https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"
@@ -92424,7 +92424,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "LicenseRef-GUST-Font-License",
+        "name": "GUST Font License",
         "redistributable": true,
         "spdx": "LicenseRef-GUST-Font-License",
         "text_url": "https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"
@@ -92618,7 +92618,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "LicenseRef-GUST-Font-License",
+        "name": "GUST Font License",
         "redistributable": true,
         "spdx": "LicenseRef-GUST-Font-License",
         "text_url": "https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"
@@ -92812,7 +92812,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "LicenseRef-GUST-Font-License",
+        "name": "GUST Font License",
         "redistributable": true,
         "spdx": "LicenseRef-GUST-Font-License",
         "text_url": "https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"
@@ -93006,7 +93006,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "LicenseRef-GUST-Font-License",
+        "name": "GUST Font License",
         "redistributable": true,
         "spdx": "LicenseRef-GUST-Font-License",
         "text_url": "https://www.gust.org.pl/projects/e-foundry/licenses/GUST-FONT-LICENSE.txt"
@@ -94031,7 +94031,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "Ubuntu-font-1.0",
+        "name": "Ubuntu Font Licence 1.0",
         "redistributable": true,
         "spdx": "Ubuntu-font-1.0",
         "text_url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ufl/ubuntu/UFL.txt"
@@ -94233,7 +94233,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "Ubuntu-font-1.0",
+        "name": "Ubuntu Font Licence 1.0",
         "redistributable": true,
         "spdx": "Ubuntu-font-1.0",
         "text_url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ufl/ubuntucondensed/UFL.txt"
@@ -94450,7 +94450,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "Ubuntu-font-1.0",
+        "name": "Ubuntu Font Licence 1.0",
         "redistributable": true,
         "spdx": "Ubuntu-font-1.0",
         "text_url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ufl/ubuntumono/UFL.txt"
@@ -94691,7 +94691,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "Ubuntu-font-1.0",
+        "name": "Ubuntu Font Licence 1.0",
         "redistributable": true,
         "spdx": "Ubuntu-font-1.0",
         "text_url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ufl/ubuntusans/LICENCE.txt"
@@ -94895,7 +94895,7 @@
         "attribution": null,
         "attribution_required": false,
         "class": "open-font",
-        "name": "Ubuntu-font-1.0",
+        "name": "Ubuntu Font Licence 1.0",
         "redistributable": true,
         "spdx": "Ubuntu-font-1.0",
         "text_url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ufl/ubuntusansmono/LICENCE.txt"
