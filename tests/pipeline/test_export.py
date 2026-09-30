@@ -1014,6 +1014,42 @@ def test_license_block(built) -> None:
     assert doc["gamma-serif"]["font_file"] is None  # the L3 check read no file
 
 
+def test_ruled_licenses_have_readable_names() -> None:
+    cfg = load_config(Paths.for_root(ROOT))
+    assert export.license_name("Ubuntu-font-1.0", cfg) == "Ubuntu Font Licence 1.0"
+    assert export.license_name("LicenseRef-GUST-Font-License", cfg) == "GUST Font License"
+    assert export.license_name("Bitstream-Vera AND MIT", cfg) == (
+        "Bitstream Vera Fonts License and MIT License"
+    )
+    assert export.license_name("LicenseRef-Unknown", cfg) == "LicenseRef-Unknown"
+    # Every license a ruling can let in has a name, so no bare id reaches the site.
+    assert all(entry.name for entry in cfg.licenses.ruling.values())
+
+
+def test_a_license_read_inside_an_archive_links_its_page() -> None:
+    """M1 step 14: no link downloads a release archive, the License link included."""
+    archive = "https://example.com/Alpha-1.0.zip#Alpha-1.0/OFL.txt"
+    font = {"id": "alpha-sans", "license": {"text_url": archive}}
+    page = "https://example.com/alpha/license"
+    assert export.site_license_url(font, {"alpha-sans": page}) == page
+    plain = {"id": "beta-mono", "license": {"text_url": "https://example.com/OFL.txt"}}
+    assert export.site_license_url(plain, {}) == "https://example.com/OFL.txt"
+    with pytest.raises(export.ExportError, match=r"alpha-sans: .*config/license-texts.toml"):
+        export.site_license_url(font, {})
+
+
+def test_export_site_refuses_an_archive_license_link(tmp_path: Path) -> None:
+    ctx = make_build(tmp_path, previews=PREVIEWS)
+    results = l3_results()
+    results["alpha-sans"] = dataclasses.replace(
+        results["alpha-sans"], text_url="https://example.com/Alpha-1.0.zip#Alpha-1.0/OFL.txt"
+    )
+    stageio.dump_stage(ctx.paths, "l3", results)
+    export.run(ctx)
+    with pytest.raises(export.ExportError, match="alpha-sans: its license text is read inside"):
+        export.run_site(ctx)
+
+
 def test_export_refuses_a_font_that_may_not_be_redistributed(tmp_path: Path) -> None:
     # Rule 3 (owner ruling of 2026-09-30): stage "licenses" excludes such a font, so one
     # reaching export is a bug, not data to publish.

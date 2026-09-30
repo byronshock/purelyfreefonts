@@ -38,6 +38,7 @@ We check every license, but we can make mistakes. Before you rely on a font, rea
 - **Hiding the fonts you already have.** The next release compares the list with the fonts on your computer and hides the ones you have. The check runs in your browser, and your font list never leaves your device.
 - **A monthly refresh.** The counts and ranks are updated every month.
 - **Rising (beta).** A rank of fonts that are gaining users, once there are 3 months of data.
+- **Every other qualifying font, A–Z.** The list ranks about the 500 most-used fonts, because past that the counts are too thin to put fonts in a useful order. Every other font that passes the four rules will be listed after them, A–Z and without a rank.
 
 ## Report a problem or get in touch
 

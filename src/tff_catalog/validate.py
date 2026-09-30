@@ -327,7 +327,10 @@ def check_rerun(run: Run) -> Iterator[Failure]:
     rebuilt = {
         export.CATALOG_FILE: catalog,
         export.SITE_FILE: export.site_document(
-            catalog, run.cfg, export.available_views(run.cfg, ctx.state, day)
+            catalog,
+            run.cfg,
+            export.available_views(run.cfg, ctx.state, day),
+            export.license_pages(ctx.paths),
         ),
         export.NAMES_FILE: export.names_document(run.inputs, day),
     }

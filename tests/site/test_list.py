@@ -1274,6 +1274,30 @@ def test_an_unranked_label_takes_a_line_of_its_own(
     guarded.assert_clean(page)
 
 
+SORT_LAYOUT_JS = """() => {
+  const box = (el) => el.getBoundingClientRect();
+  const title = document.querySelector('li.font:not(.is-unranked) .font-title');
+  return {
+    rank: box(document.querySelector('#sort-rank')).right,
+    name: box(document.querySelector('#sort-name')).left,
+    title: box(title).left,
+  };
+}"""
+
+
+@pytest.mark.parametrize("width", [640, 1280])
+def test_the_name_button_sits_over_the_names(guarded_context: Any, width: int) -> None:
+    """Owner rulings of 2026-09-30 (sort_header, sort_two_lines): from 40rem the Name button
+    starts over the name column, and the Rank button fits beside it in either order."""
+    guarded, page = open_list(guarded_context, viewport={"width": width, "height": 800})
+    for _ in range(2):  # best first, then least used first (the longer words)
+        got = page.evaluate(SORT_LAYOUT_JS)
+        assert abs(got["name"] - got["title"]) <= 1, got
+        assert got["rank"] < got["name"], got
+        page.click("#sort-rank")
+    guarded.assert_clean(page)
+
+
 def test_phone_filters_button_counts_active_filters(guarded_context: Any) -> None:
     guarded, page = open_list(guarded_context, viewport={"width": 375, "height": 812})
     toggle = page.locator("#f-toggle")

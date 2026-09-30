@@ -523,6 +523,7 @@ class ExcludedLicense:
 @dataclass(frozen=True, slots=True)
 class RulingLicense:
     question: str  # what the owner must rule on; answers go in gate LIC (data/reviews/licenses/)
+    name: str = ""  # display name ("Ubuntu Font Licence 1.0"); without one, the id shows
 
 
 @dataclass(frozen=True, slots=True)

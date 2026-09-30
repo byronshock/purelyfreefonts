@@ -386,6 +386,14 @@ SEMANTIC_BREAKS = {
         lambda d: _font(d, "sample-sans-29").update(flags=[]),
         "too_new flag",
     ),
+    "license link into a release archive": (
+        _set(["fonts", 0, "license", "text_url"], "https://example.com/Font-1.0.zip#Font/OFL.txt"),
+        "license.text_url: https://example.com/Font-1.0.zip#Font/OFL.txt is a download",
+    ),
+    "download link to a font file": (
+        _set(["fonts", 0, "links", "primary"], {"url": "https://example.com/Font.woff2"}),
+        "links.primary: https://example.com/Font.woff2 is a download",
+    ),
 }
 
 

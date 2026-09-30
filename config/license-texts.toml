@@ -18,6 +18,9 @@
 #   mentions   license families (as license_l3.mentions names them: "Public-domain",
 #              "Apache", ...) that the family's notices and name IDs 13 and 14 may name
 #              besides its L2 license. Each must be the family of an allowed license.
+#   page       a page people can read the license on, required when `texts` reads it
+#              inside a release archive: the site's License link goes here instead,
+#              since a link into the archive would download it (M1 step 14).
 #
 # [[text]]: a license file that holds the listed licenses but matches no canonical
 # text in data/license-texts/, or matches one under a notice longer than the word
@@ -30,7 +33,8 @@
 #   url        where it was read
 #   reason     how it differs from the canonical texts
 #
-# Researched 2026-09-28; every URL below answered HTTP 200 that day.
+# Researched 2026-09-28; every URL below answered HTTP 200 that day (the pages, added
+# 2026-09-30, answered HTTP 200 on that day).
 
 schema = 1
 
@@ -208,6 +212,7 @@ reason = "The designer Andrey Makarov's own repository, moved from code.google.c
 family = "charter"
 name = "Charter"
 texts = ["https://practicaltypography.com/fonts/Charter%20210112.zip#Charter%20210112/Charter%20license.txt"]
+page = "https://practicaltypography.com/charter.html"
 reason = "Matthew Butterick's Charter release (practicaltypography.com, the one Homebrew installs). Its 'Charter license.txt' says it is a copy of the Charter fonts Bitstream contributed to the X Consortium, then gives Bitstream's original notice word for word, the Bitstream-Charter license: use, copy, modify, sublicense, sell and redistribute 'for any purpose and without restriction'."
 
 [[family]]
@@ -357,12 +362,14 @@ reason = "SIL's repository at tag v3.400, the release Fontist installs. Its OFL.
 family = "ezra-sil"
 name = "Ezra SIL"
 texts = ["https://software.sil.org/downloads/r/ezra/EzraSIL-2.51.zip#EzraSIL2.51/Licenses.txt"]
+page = "https://software.sil.org/ezra/"
 reason = "SIL's 2.51 release, the one Homebrew installs; SIL has no public repository for it. Its Licenses.txt puts the Hebrew layout intelligence (by Ralph Hancock and John Hudson) under the MIT License and the rest of the font under OFL-1.1 (text below). The sources gave only scripts.sil.org/OFL, a web page."
 
 [[family]]
 family = "sophia-nubian"
 name = "Sophia Nubian"
 texts = ["https://software.sil.org/downloads/r/sophianubian/SophiaNubian-1.0.zip#SophiaNubian/OFL.txt"]
+page = "https://openfontlicense.org/open-font-license-official-text/"
 reason = "SIL's 1.0 release, the one Fontist installs; SIL has no public repository for it. Its OFL.txt is OFL-1.1 with the Reserved Font Names SIL and Sophia. The sources gave only scripts.sil.org/OFL, a web page."
 
 [[family]]
@@ -375,6 +382,7 @@ reason = "SIL's repository at tag v2.000, the release Fontist installs. Its OFL.
 family = "conakry"
 name = "Conakry"
 texts = ["https://www.evertype.com/fonts/nko/ConakryFont.zip#ConakryFont/OFL.txt"]
+page = "https://openfontlicense.org/open-font-license-official-text/"
 reason = "Michael Everson's N'Ko font (Evertype, 2007; overall #570 with no license found). Its release zip, the one Homebrew installs, holds SIL's OFL-1.1 text (the template, with the copyright holder and Reserved Font Name left blank) and OFL-FAQ.txt, and the font's name ID 13 says 'Released under the Open Font License.' with name ID 14 pointing at scripts.sil.org/OFL. Used once the owner answers gate LIC on it (question LIC-conakry); until then L2 excludes it and nothing here is read."
 
 # --- families that came into scope with the batch-5 rulings (2026-09-28) ------------------------
@@ -415,6 +423,7 @@ reason = "SIL's repository at tag v7.000, the release Homebrew and Fontist insta
 family = "scheherazade"
 name = "Scheherazade"
 texts = ["https://software.sil.org/downloads/r/scheherazade/Scheherazade-2.100.zip#Scheherazade-2.100/OFL.txt"]
+page = "https://openfontlicense.org/open-font-license-official-text/"
 reason = "SIL's 2.100 release of the original Scheherazade, the one Homebrew installs; SIL's repository (silnrsi/font-scheherazade) tags only its successor's releases, Scheherazade New 2.900 on. The zip's OFL.txt is OFL-1.1. The sources gave no license text."
 
 [[family]]
@@ -461,6 +470,7 @@ reason = "No source states a license; the owner ruled it qualifies under MIT (LI
 family = "freefont"
 name = "FreeFont"
 texts = ["https://ftp.gnu.org/gnu/freefont/freefont-ttf-20120503.zip#freefont-20120503/README"]
+page = "https://www.gnu.org/software/freefont/license.html"
 reason = "The owner ruled it qualifies under GPL-3.0-or-later WITH Font-exception-2.0 (LIC-freefont). GNU FreeFont's 20120503 release, the one Homebrew and Fontist install, states its license in its README: the GNU GPL version 3 or any later version, with the FSF font exception word for word (text below). The release's COPYING is the GPL itself, in a form that matches no canonical text; Debian's copyright file says the same for the font files."
 
 [[family]]
