@@ -51,7 +51,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 **Who:** Claude; the owner runs the tools on their own machine. **Depends on:** 1; M3-D11 (accuracy targets); final D3 and D4.
 - [ ] Test lists, at least one per path: real output from the owner's CachyOS machine, a Windows 11 machine or VM, and a Mac; synthetic stock installs from Apple's and Microsoft's published font lists and Debian, Ubuntu and Fedora defaults; Milestone 3's known-answer list (renames, Nerd builds, siblings, variable builds, near-matches).
 - [ ] Run every list through the release candidate for every published rank, and compare paste with the button on the same machine (M3-D11's agreement target).
-- [ ] Spot check 25 random fonts (10 from the overall top 100, 10 from ranks 101–500, 5 listed only) plus every owner-ruled font: class, redistributable and attribution fields against the license link, and the download link reaching the official page.
+- [ ] Spot check 25 random fonts (10 from the overall top 100, 10 from ranks 101–500, and 5 listed only once [milestone-more-fonts.md](milestone-more-fonts.md) has listed them) plus every owner-ruled font: class, redistributable and attribution fields against the license link, and the download link reaching the official page.
 - [ ] `docs/release-checks.md` records the test lists, errors and fixes, never a real person's font list.
 
 **Done when:**

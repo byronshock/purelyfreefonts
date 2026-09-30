@@ -68,18 +68,16 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - [ ] The list sorts by score. A font the two-source rule holds back (`gate_held`) takes its score's place and carries a marker. Decide the marker for Developers & apps, where every font rests on one kind of source.
   - [ ] Details keep the rank, band and range; the methodology page's "Numbers and bands" section is rewritten for scores.
   - [ ] Browser tests: bars match scores, order by score, held-font markers, and no renumbering under filters.
-- [ ] After the ranked fonts, each list goes on with the listed-only fonts (M1 step 15b), A–Z under a heading such as "More truly free fonts", with no number or band. One line under the heading says why they have no rank (owner ruling `more_fonts` of 2026-09-29). Every filter applies to them, and search finds them by name and alias; Coding shows only the monospace ones, and Rising shows none. Sorting by name merges ranked and listed-only fonts into one A–Z list. Their data is fetched when a visitor reaches the heading, searches or changes a filter, so the first view never waits for it.
 - [ ] Filters, laid out per M2-D4, as the owner's rulings of 2026-09-30 set them (`monospace_category`, `license_filter`, `filters_layout`): category, as pills, where Monospace is every monospaced font (it replaces the Spacing filter, which had replaced D13's "Text only" and a monospace-only box); features: variable, **"Nerd Font available"** (TASK-2 ruling of 2026-09-29), and "Accented letters" (hides limited accents, D4); license: one "No credit required" box, shown only while some font needs credit (it replaces the license-class boxes and "Hide attribution required"); "Hide fonts that come with" as one select of Windows, macOS, Linux or Android. There is no "Redistributable fonts only" box: Rule 3 lists redistributable fonts only.
 - [ ] Search over names and aliases by `search_key` (NFKC, case-fold, drop spaces, hyphens and underscores, strip accents), so "Source Sans Pro" finds Source Sans 3. Its test vectors later move into M3 step 3's shared file.
 - [ ] Sort by rank (default) or name, either way round, with buttons over the rank and name columns (owner ruling of 2026-09-30, `sort_header`), a count ("Showing 48 of 540 fonts"), "Clear filters", and a no-results message naming filters to loosen.
 - [ ] The view lives in the URL after `#` (`#rank=project&cat=serif&hide=limited`): links reproduce it; links with the keys retired on 2026-09-30 (`spacing`, `lic`, `redist`) still open; Back works, nothing is stored, and that part never reaches the server.
 - [ ] Without JavaScript, the built default list shows, with a note that filters need it.
 - [ ] The front page's note "Why isn't my favorite free font here?", word for word, its address a mailto link (site rulings of 2026-09-29, `data/reviews/site/2026-09-29.toml`: `why_not_listed`, `why_not_listed_layout`): on wide screens a textbook-style frame floated right beside the lead and the privacy note, with the list starting below it so rows are never narrowed; on phones a full-width frame folded to its heading, opened with one tap. It works without JavaScript, moves nothing as the page loads, gives screen readers the text once, and works in both themes.
-- [ ] Browser tests: filtering, numbering, band order, alias search, restoring a view from its URL, and listed-only fonts after the ranked ones, found by search before their heading is reached.
+- [ ] Browser tests: filtering, numbering, band order, alias search and restoring a view from its URL. (The listed-only fonts after the ranked ones moved to [milestone-more-fonts.md](milestone-more-fonts.md) on 2026-09-30, `more_fonts_timing`.)
 
 **Done when:**
 - every rank and filter works on the sample and the latest real run, and the tests pass;
-- every view but Rising ends with its listed-only fonts, A–Z;
 - Category Monospace shows exactly the monospaced fonts, on every rank;
 - a copied URL opens the same view in a fresh browser.
 
@@ -177,9 +175,9 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 
 ### Step 10: Performance budget
 **Who:** Claude. **Depends on:** 3, 4, 5.
-- [ ] CI fails the build if the list page's HTML, CSS and JavaScript exceed 100 KB compressed, the catalog data exceeds 100 KB compressed (per-source data then moves to step 2's details file), or specimens break step 5's budget or load before their row nears the screen. The listed-only data (M1 step 15b) loads on demand, so it counts apart from the 100 KB, under a budget set once its size is measured.
+- [ ] CI fails the build if the list page's HTML, CSS and JavaScript exceed 100 KB compressed, the catalog data exceeds 100 KB compressed (per-source data then moves to step 2's details file), or specimens break step 5's budget or load before their row nears the screen.
 - [ ] The list page in Playwright, CPU slowed 4× on slow 4G: LCP ≤ 2.5 s, CLS ≤ 0.1, TBT ≤ 200 ms.
-- [ ] A filter or rank change redraws the full catalog, with the listed-only fonts once they are loaded, within 200 ms under the same slowdown.
+- [ ] A filter or rank change redraws the full catalog within 200 ms under the same slowdown.
 
 **Done when:** the budgets pass in CI, and the load-speed numbers pass through Cloudflare on the test site (or live, under M2-D7 (b)).
 

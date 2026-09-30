@@ -12,7 +12,7 @@ Fonts with little evidence are pulled toward the middle. No font reaches the top
 
 The desktop rank comes in two versions, and both list the same fonts. **Most installed** counts every install. **Most chosen** leaves out the installs that Linux systems make on their own (fonts that come preinstalled, or that another program brings in), so those fonts are ranked on the installs people made themselves. The overall rank uses *most chosen*, blended with the *Used in projects* rank. Past #100 we show bands, because the data can't separate those fonts precisely.
 
-The ranked catalog is about the 500 most-used fonts. Every other font that passes the license and Latin checks is listed too, after the ranked ones, A–Z and without a rank, because past about #500 the evidence is too thin to put fonts in a useful order (owner ruling of 2026-09-29).
+The ranked catalog is about the 500 most-used fonts. Every other font that passes the license and Latin checks will be listed too, after the ranked ones, A–Z and without a rank, because past about #500 the evidence is too thin to put fonts in a useful order (owner ruling of 2026-09-29). That list comes after the site's launch (owner ruling of 2026-09-30).
 
 **Principles:**
 
@@ -304,7 +304,7 @@ These never feed the overall rank. The owner chose all four (D13).
 - FOT is smoothed with an exponentially weighted moving average (λ 0.5) of its ruler-equated z. Each month the smoothed values are ranked again and mapped back onto the ruler, like any other source (owner ruling of 2026-09-26).
 - The catalog is the overall top 500 plus the top 100 of the project rank and of both desktop views (`desktop_chosen`, `desktop_installed`).
 - A font enters at rank 450 or better and leaves after 2 runs below 550.
-- Every other font that passes the gates is published as *listed only*: it has no rank, band or tier, and the site lists these fonts A–Z after the ranked ones. They take the same license (L3) and link checks as catalog fonts (owner ruling of 2026-09-29).
+- Every other font that passes the gates will be published as *listed only*, after the site's launch: it has no rank, band or tier, and the site lists these fonts A–Z after the ranked ones. They take the same license (L3) and link checks as catalog fonts (owner rulings of 2026-09-29 and 2026-09-30).
 - Top-100 membership has its own hysteresis: a font enters a top 100 at 90 or better and leaves after 2 runs worse than 110 (ruling M11).
 
 **Confidence.** A 5–95% rank range from 200 Dirichlet weight perturbations plus leave-one-source-out runs. Each draw re-weights a survey's sources with Dirichlet(20·w/W), across all its sources, so the project group shares vary too (owner ruling of 2026-09-26); the overall mix M_g is not perturbed. The leave-one-source-out run that drops Homebrew keeps Homebrew as the ruler, so only its term is removed and every other source keeps its scale (owner ruling of 2026-09-26).
@@ -378,7 +378,7 @@ They live in committed files under `state/` on the main branch.
 
 A trimmed `catalog-site.json` feeds the filterable list (Milestone 2), and `names.json`, the names and aliases of every eligible family, feeds the owned-font matching (Milestone 3).
 
-Listed-only fonts (§6) carry the identity, license, link and preview fields above, but no ranks and no per-source data. The site fetches them only when a visitor needs them (Milestone 1 step 15b).
+Listed-only fonts (§6), once they are published after launch, carry the identity, license, link and preview fields above, but no ranks and no per-source data. The site fetches them only when a visitor needs them ([milestone-more-fonts.md](milestone-more-fonts.md)).
 
 ## 8. Parameters (`config/ranking.toml`)
 
@@ -463,4 +463,4 @@ The monthly pull request asks the owner only to review what it flags: new aliase
   - CI runs inflate npm.
 - **The ruler.** Homebrew is the ruler, so it decides how popular each source's fonts count as a group. As a check, each run also ranks the fonts with Fontsource as the ruler.
 - **Not measured.** Print use is unmeasured, and the site itself will nudge installs.
-- **Listed on request.** A font that no directory carries is listed only once someone asks for it, so fonts whose makers or fans ask are more likely to be listed than equally good fonts nobody has mentioned. Being added on request never changes a rank.
+- **Listed on request.** Once fonts are added on request (after launch), a font that no directory carries is listed only once someone asks for it, so fonts whose makers or fans ask are more likely to be listed than equally good fonts nobody has mentioned. Being added on request never changes a rank.

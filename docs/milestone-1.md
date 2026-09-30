@@ -342,17 +342,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 **Done when:** the three files validate in CI and the hard checks pass on the real run. *(Still open: CI checks the committed files once they are in a pull request. Locally, `tests/pipeline/test_validate.py::test_committed_build_outputs_validate` and `tff-catalog validate --committed` pass, and validate's 10 hard checks pass on the real run.)*
 
 ### Step 15b: Every other qualifying font, and fonts added on request
-**Who:** Claude; the owner rules on the license and link queues and on each request. **Depends on:** 6b, 14, 15. Lands before step 20's freeze. Owner rulings `more_fonts` and `font_requests` of 2026-09-29 (`data/reviews/site/2026-09-29.toml`).
-- [ ] L3 for every font that passes the gates, not only overall rank 700 or better and the top 150s (step 6b): about 1,250 more families in the 2026-09-29 run, the 1,143 Google families among them in one automatic batch. A font that fails L3 goes to the owner's queue and isn't listed until it is ruled on.
-- [ ] Claude researches the Latin families excluded as "no license found" beyond the overall top 700 (47 in the 2026-09-29 run), as it did for the top 700 under the 2026-09-26 ruling, and asks the owner only about genuine conflicts.
-- [ ] Download links for listed-only fonts under step 14's policy: Google families take their specimen page, and the rest go to gate K like a catalog font (about 100 in the 2026-09-29 run). A listed-only font with no accepted link yet is held back, and `review.md` names it.
-- [ ] Specimens for the listed-only fonts that may have a preview (all of them in the 2026-09-29 run), under Milestone 2 step 5's rules. If they break step 5's 10 MB total, the owner chooses between a larger budget and name-only previews for listed-only fonts.
-- [ ] The export writes each listed-only font with the identity, license, link, alias, preview and `flags[]` fields of step 15's list, and no ranks, `order`, tiers or per-source data. It goes in a file of its own, for example `catalog-more.json`, that the site fetches only when a visitor needs it, so the list data keeps Milestone 2 step 10's budget. This is a contract change, so the schemas, `site/CONTRACT.md`, `docs/catalog-schema.md` and the sample (Milestone 2 step 2) change with it.
-- [ ] Validation: every font that passes the gates is either in the catalog or listed only, never both, and is missing from both only while it is held back; an ineligible font is never listed (§9).
-- [ ] `config/foundries.toml` takes families added on request: each one records the date it was added and that it came by request, never who asked, and `config_model.FoundriesConfig` and its tests learn the new keys.
-- [ ] `review.md`'s monthly diff lists fonts that joined or left the listed-only set, and families added on request.
-
-**Done when:** the listed-only data validates in CI, every font that passes the gates is either ranked, listed only or named as held back in `review.md`, and one family added on request goes from ruling to listed in a rebuild.
+*Moved on 2026-09-30.* The owner took this step out of the work of getting the site live (`more_fonts_timing`, AUTHORITY.md). Its items are now step 1 of [milestone-more-fonts.md](milestone-more-fonts.md), which comes after Milestone 2's launch.
 
 ### Step 16: First full run and owner review of the top lists
 **Who:** both. **Depends on:** 15.
@@ -398,7 +388,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 **Done when:** a manual dispatch opens a correct pull request, CI runs on it, and the owner merges it.
 
 ### Step 20: Handoff to Milestone 2
-**Who:** both. **Depends on:** 15b, 17, 19.
+**Who:** both. **Depends on:** 17, 19.
 - [ ] `catalog-site.json` v1 is frozen, with a sample file and the schema doc, but only after Milestone 2's step 2 has approved its fields. *(Not yet: `schema_version` is still `1.0.0-draft`. Milestone 2's step 2 approved the fields on 2026-09-25; since then the schema has gained the `nerd` group, the `app` system type and a link `note`, each from an owner ruling.)*
 - [ ] A handoff note lists what Milestone 2 must settle:
   - the default rank order;
