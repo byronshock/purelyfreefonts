@@ -64,7 +64,7 @@ Answers to the Milestone 1, Step 0 decisions in [docs/ranking-methodology.md](do
   - **M9 (the owner's choice, not the recommended default):** the project group shares stay fixed at web 55%, code 30%, apps 15%; within a group, the sources share its weight pro rata to their effective weights (after phase-in, overlap scaling, stale drops and switched-off sources).
   - **M10:** Developers & apps uses the project weights, rescaled: npm 0.15, ecosyste.ms 0.10, Expo 0.10, and Flutter 0.05 when it is on.
   - **M11:** the top-100 lists have hysteresis: a font enters at 90 or better and leaves after 2 runs worse than 110.
-  - **M12:** foundry families are a hand list in `config/foundries.toml`, seeded once by Claude from the foundry sites and reviewed by the owner with the step 2 config.
+  - **M12:** foundry families are a hand list in `config/foundries.toml`, seeded once by Claude from the foundry sites and reviewed by the owner with the step 2 config. *Amended on 2026-09-29:* families are also added to it on request (see "Every qualifying font is listed" under Site).
 
   *(2026-09-25)*
 - **Rulings after the first real run.** Given in chat on 2026-09-26 and recorded in `data/reviews/<gate>/2026-09-26.toml` (method, terms, config, latin, licenses, l3, aliases, unmatched, corrections, links, review, ci, site). Unless noted, the owner took Claude's recommendation.
@@ -171,6 +171,9 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
     - **Before launch:** Claude confirms every linked build's license check and hides the marker for any build that fails.
 
     Recorded in `data/reviews/site/2026-09-29.toml`.
+- **Every qualifying font is listed.** Recorded in `data/reviews/site/2026-09-29.toml` (`more_fonts`, `font_requests`). *(2026-09-29)*
+  - **The rest, A–Z (the owner's choice (b), Claude's recommendation).** Every font that passes the gates is listed, not only the catalog. The catalog keeps its ranks and bands. The other qualifying fonts (about 1,250 in the 2026-09-29 run) follow the ranked fonts in the same list, unranked and A–Z, under a heading such as "More truly free fonts". They show no rank, band or "501+", and they take the same filters, search, details, link policy and preview rules. The owned-font comparison takes owned fonts out of them too.
+  - **Fonts added on request (the owner's variant of option (c)).** Anyone, whether a foundry, a designer or a visitor, may ask for a missing font by email to admin@trulyfreefonts.com or with the "Missing font" form. Claude checks it against Rules 1–4, D3, D4 and the link policy, and the owner rules in chat. An accepted family joins `config/foundries.toml` (amending M12) and is listed from the next refresh: ranked if its evidence places it in the catalog, otherwise A–Z. Being added never counts as popularity, and the public files never say who asked.
 
 ## Infrastructure
 

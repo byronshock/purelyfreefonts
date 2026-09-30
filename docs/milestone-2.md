@@ -60,15 +60,17 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - [ ] A rank selector: Overall; Desktop *most chosen*; Desktop *most installed*; Used in projects (the Project rank, D10); and D13's views (Coding, Developers & apps, and Rising (beta) once it has 3 months of history). One line says what the rank measures; "By category" is the category filter on Overall.
 - [ ] Each row: rank or band, name, specimen or fallback text (step 5), category, license, badges (variable, monospace, limited accents, attribution required, not redistributable, preinstalled on …), the official download link, a fixed-width **"NF"** marker when the font has a Nerd Font build (so rows keep their height; TASK-2 rulings of 2026-09-28 and 2026-09-29), and a details button.
 - [ ] Numbers follow M2-D2: each filtered list counts from 1. Fonts past the rank's exact top 100 show their band ("101–250", "251–500") instead of a number, in `order`. Fonts unranked in the view come last, unnumbered, with a reason: in *most chosen*, "no evidence of deliberate installs" plus the `preinstalled_on` or `pulled_in_by` tag. Coding lists monospace fonts only.
+- [ ] After the ranked fonts, each list goes on with the listed-only fonts (M1 step 15b), A–Z under a heading such as "More truly free fonts", with no number or band. One line under the heading says why they have no rank (owner ruling `more_fonts` of 2026-09-29). Every filter applies to them, and search finds them by name and alias; Coding shows only the monospace ones, and Rising shows none. Sorting by name merges ranked and listed-only fonts into one A–Z list. Their data is fetched when a visitor reaches the heading, searches or changes a filter, so the first view never waits for it.
 - [ ] Filters, laid out per M2-D4: category; spacing: Any / Proportional / Monospaced (replaces D13's "Text only" and a monospace-only box); variable; hide limited accents (D4); license class (D3); hide attribution required; hide fonts that come with Windows, macOS, Linux or Android; **"Nerd Font available"** (TASK-2 ruling of 2026-09-29); **"Redistributable fonts only"** (Rule 3), off by default, with a line on what redistributing means.
 - [ ] Search over names and aliases by `search_key` (NFKC, case-fold, drop spaces, hyphens and underscores, strip accents), so "Source Sans Pro" finds Source Sans 3. Its test vectors later move into M3 step 3's shared file.
 - [ ] Sort by rank (default) or name, with a count ("Showing 48 of 540 fonts"), "Clear filters", and a no-results message naming filters to loosen.
 - [ ] The view lives in the URL after `#` (`#rank=project&cat=serif&redist=1`): links reproduce it, Back works, nothing is stored, and that part never reaches the server.
 - [ ] Without JavaScript, the built default list shows, with a note that filters need it.
-- [ ] Browser tests: filtering, numbering, band order, alias search, restoring a view from its URL.
+- [ ] Browser tests: filtering, numbering, band order, alias search, restoring a view from its URL, and listed-only fonts after the ranked ones, found by search before their heading is reached.
 
 **Done when:**
 - every rank and filter works on the sample and the latest real run, and the tests pass;
+- every view but Rising ends with its listed-only fonts, A–Z;
 - "Redistributable fonts only" hides exactly the fonts with `redistributable: false`;
 - a copied URL opens the same view in a fresh browser.
 
@@ -118,7 +120,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 **Who:** Claude writes; the owner approves. **Depends on:** 1; M2-D9; M1 steps 3 (terms ruling, data license) and 17 (public text); D1, D10, D12, D13, D17.
 - [ ] `/methodology`, generated at build time from `docs/ranking-methodology.md` so they can't drift: §1 in plain words; the two desktop views and why; reading ranks, bands and tiers; known biases (§11); source credits (what each measures, link, license); data (D17) and code licenses; run date, method version and stale sources; a link to the full text.
 - [ ] `/privacy`: no cookies, analytics, browser storage or requests to other sites; "Check for yourself" in the Network tab of Firefox, Chrome and Safari (only trulyfreefonts.com should appear); what the server and Cloudflare log, and for how long (M2-D9); a link to `ops/Caddyfile`; a promise that Milestone 3's check keeps your font list on your device.
-- [ ] `/about`: what the site is; Rules 1–4 in plain words, including why ITF-licensed fonts are out; what's next; how to report a problem or get in touch.
+- [ ] `/about`: what the site is; Rules 1–4 in plain words, including why ITF-licensed fonts are out; why a free font may be missing, and how anyone, foundries included, can ask for one (the owner's draft of 2026-09-29, "Why isn't my favorite free font here?"); why the most-used fonts are ranked and the rest listed A–Z; what's next; how to report a problem or get in touch.
 - [ ] Near the list, linked to `/privacy`: "No cookies, no tracking, and the page loads only its own files. Check the Network tab."
 
 **Done when:** the owner has approved the text, the pages pass step 6's checks, and the credits match M1 step 3's terms ruling.
@@ -163,9 +165,9 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 
 ### Step 10: Performance budget
 **Who:** Claude. **Depends on:** 3, 4, 5.
-- [ ] CI fails the build if the list page's HTML, CSS and JavaScript exceed 100 KB compressed, the catalog data exceeds 100 KB compressed (per-source data then moves to step 2's details file), or specimens break step 5's budget or load before their row nears the screen.
+- [ ] CI fails the build if the list page's HTML, CSS and JavaScript exceed 100 KB compressed, the catalog data exceeds 100 KB compressed (per-source data then moves to step 2's details file), or specimens break step 5's budget or load before their row nears the screen. The listed-only data (M1 step 15b) loads on demand, so it counts apart from the 100 KB, under a budget set once its size is measured.
 - [ ] The list page in Playwright, CPU slowed 4× on slow 4G: LCP ≤ 2.5 s, CLS ≤ 0.1, TBT ≤ 200 ms.
-- [ ] A filter or rank change redraws the full catalog within 200 ms under the same slowdown.
+- [ ] A filter or rank change redraws the full catalog, with the listed-only fonts once they are loaded, within 200 ms under the same slowdown.
 
 **Done when:** the budgets pass in CI, and the load-speed numbers pass through Cloudflare on the test site (or live, under M2-D7 (b)).
 
@@ -192,7 +194,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 ### Step 12: Feedback channels and the usability test plan
 **Who:** Claude drafts; the owner recruits and runs sessions. **Depends on:** 0 (M2-D10); runs alongside 3–11.
 - [ ] Per M2-D10, in one footer spot on every page:
-  - issue forms in `.github/ISSUE_TEMPLATE/`, each applying its own labels: `license.yml` ("Wrong license or link", prefilled by field id with the font's id and data date), `missing-font.yml`, `usability.yml` and `bug.yml` (M3 step 8 adds `wrong-match.yml`);
+  - issue forms in `.github/ISSUE_TEMPLATE/`, each applying its own labels: `license.yml` ("Wrong license or link", prefilled by field id with the font's id and data date), `missing-font.yml` (which says that every qualifying font is listed and that anyone, foundries included, may ask for a missing one: owner rulings of 2026-09-29), `usability.yml` and `bug.yml` (M3 step 8 adds `wrong-match.yml`);
   - `config.yml`: blank issues off, and a contact link for people without GitHub;
   - an email link to the site's `admin@` address, with a subject.
 - [ ] `research/` added to `.gitignore`, for raw session notes.

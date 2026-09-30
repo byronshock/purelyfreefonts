@@ -12,6 +12,8 @@ Fonts with little evidence are pulled toward the middle. No font reaches the top
 
 The desktop rank comes in two versions, and both list the same fonts. **Most installed** counts every install. **Most chosen** leaves out the installs that Linux systems make on their own (fonts that come preinstalled, or that another program brings in), so those fonts are ranked on the installs people made themselves. The overall rank uses *most chosen*, blended with the *Used in projects* rank. Past #100 we show bands, because the data can't separate those fonts precisely.
 
+The ranked catalog is about the 500 most-used fonts. Every other font that passes the license and Latin checks is listed too, after the ranked ones, A–Z and without a rank, because past about #500 the evidence is too thin to put fonts in a useful order (owner ruling of 2026-09-29).
+
 **Principles:**
 
 - Filter first, then rank: an ineligible font never takes a rank or shifts one.
@@ -41,7 +43,7 @@ The desktop rank comes in two versions, and both list the same fonts. **Most ins
 - the original fonts behind Nerd Fonts;
 - Homebrew's non-Google font casks;
 - Fontist's open-license formulas;
-- a hand list of foundry families in `config/foundries.toml` (League of Moveable Type, Velvetyne, Collletttivo, Open Foundry and others). It was seeded once from the foundry sites and approved by the owner (gate C); the sites are not scraped each month (ruling M12).
+- a hand list of foundry families in `config/foundries.toml` (League of Moveable Type, Velvetyne, Collletttivo, Open Foundry and others). It was seeded once from the foundry sites and approved by the owner (gate C); the sites are not scraped each month (ruling M12). Since 2026-09-29 a family also joins it when someone asks for it (a foundry, a designer or a visitor), it passes the gates and the owner accepts it (§10; owner ruling of 2026-09-29).
 
 Appearing in one of these lists never counts as popularity. After the gates, about 1,600 families are ranked.
 
@@ -300,7 +302,8 @@ These never feed the overall rank. The owner chose all four (D13).
 - Windows are 12 months long.
 - FOT is smoothed with an exponentially weighted moving average (λ 0.5) of its ruler-equated z. Each month the smoothed values are ranked again and mapped back onto the ruler, like any other source (owner ruling of 2026-09-26).
 - The catalog is the overall top 500 plus the top 100 of the project rank and of both desktop views (`desktop_chosen`, `desktop_installed`).
-- A font enters at rank 450 or better and leaves after 2 runs below 550. This also caps the monthly license review.
+- A font enters at rank 450 or better and leaves after 2 runs below 550.
+- Every other font that passes the gates is published as *listed only*: it has no rank, band or tier, and the site lists these fonts A–Z after the ranked ones. They take the same license (L3) and link checks as catalog fonts (owner ruling of 2026-09-29).
 - Top-100 membership has its own hysteresis: a font enters a top 100 at 90 or better and leaves after 2 runs worse than 110 (ruling M11).
 
 **Confidence.** A 5–95% rank range from 200 Dirichlet weight perturbations plus leave-one-source-out runs. Each draw re-weights a survey's sources with Dirichlet(20·w/W), across all its sources, so the project group shares vary too (owner ruling of 2026-09-26); the overall mix M_g is not perturbed. The leave-one-source-out run that drops Homebrew keeps Homebrew as the ruler, so only its term is removed and every other source keeps its scale (owner ruling of 2026-09-26).
@@ -373,6 +376,8 @@ They live in committed files under `state/` on the main branch.
 
 A trimmed `catalog-site.json` feeds the filterable list (Milestone 2), and `names.json`, the names and aliases of every eligible family, feeds the owned-font matching (Milestone 3).
 
+Listed-only fonts (§6) carry the identity, license, link and preview fields above, but no ranks and no per-source data. The site fetches them only when a visitor needs them (Milestone 1 step 15b).
+
 ## 8. Parameters (`config/ranking.toml`)
 
 Source weights and fixed floors are in the §5 tables.
@@ -401,7 +406,7 @@ Source weights and fixed floors are in the §5 tables.
 
 **Hard failures block the pull request:**
 
-- an ineligible font (ITF, icon, mainly CJK, unverified license) is ranked;
+- an ineligible font (ITF, icon, mainly CJK, unverified license) is ranked or listed;
 - a flagged license is missing from the review queue;
 - the schema check fails;
 - a rerun from the same snapshots gives different output;
@@ -442,6 +447,7 @@ The monthly pull request asks the owner only to review what it flags: new aliase
 
 - **Yearly:** switch the Almanac to the new edition (sheet id and tabs in config).
 - **Once:** ask the author of Fonts Over Time for an explicit data license (asked on 2026-09-25: [fcjr/fontsovertime#1](https://github.com/fcjr/fontsovertime/issues/1)).
+- **On request:** when someone asks for a missing font, by email to admin@trulyfreefonts.com or with the "Missing font" form, Claude checks it against the gates and the link policy, and the owner rules. An accepted family joins `config/foundries.toml` with the date it was added, never who asked, and is listed from the next refresh (owner ruling of 2026-09-29).
 
 ## 11. Known biases
 
@@ -455,3 +461,4 @@ The monthly pull request asks the owner only to review what it flags: new aliase
   - CI runs inflate npm.
 - **The ruler.** Homebrew is the ruler, so it decides how popular each source's fonts count as a group. As a check, each run also ranks the fonts with Fontsource as the ruler.
 - **Not measured.** Print use is unmeasured, and the site itself will nudge installs.
+- **Listed on request.** A font that no directory carries is listed only once someone asks for it, so fonts whose makers or fans ask are more likely to be listed than equally good fonts nobody has mentioned. Being added on request never changes a rank.
