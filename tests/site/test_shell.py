@@ -143,7 +143,11 @@ def render(path: str = "/privacy/", *, canonical: bool = True, tip_url: str | No
             "description": "A page description.",
             "canonical": canonical,
         },
-        "assets": {"css": "/assets/style.0123456789.css", "js": "/assets/app.0123456789.js"},
+        "assets": {
+            "css": "/assets/style.0123456789.css",
+            "js": "/assets/app.0123456789.js",
+            "font": "/assets/ui/arimo.0123456789.woff2",
+        },
         "build": {"commit": "0" * 40, "run_date": "2026-09-25"},
     }
     return env.get_template("child.html.j2").render(context)
@@ -391,7 +395,7 @@ def test_base_css_writes_no_colour_values():
     assert "data-theme" not in BASE_CSS.read_text(encoding="utf-8"), "no theme switch"
 
 
-def test_base_css_uses_the_system_font_and_the_user_font_size():
+def test_base_css_uses_the_interface_font_and_the_user_font_size():
     (html,) = [d for m, s, d in RULES if not m and s == "html"]
     assert html["font-family"] == "var(--font-ui)"
     assert html["font-size"] == "100%"
@@ -449,10 +453,12 @@ def png_header(blob: bytes) -> tuple[int, int, int]:
 
 def test_static_folder_holds_only_the_published_files():
     """The build copies every top-level file of site/static/, so nothing else lives there;
-    the generator and its sources sit in _src/, a folder the build doesn't copy."""
+    the generators and their sources sit in _src/, a folder the build doesn't copy, and the
+    interface font's files in fonts/, which the build serves from /assets/ui/."""
     top = {p.name for p in STATIC.iterdir() if p.is_file()}
     assert top == set(build.STATIC_FILES)
-    assert {p.name for p in STATIC.iterdir() if p.is_dir()} == {"_src"}
+    assert {p.name for p in STATIC.iterdir() if p.is_dir()} == {"_src", "fonts"}
+    assert {p.name for p in (STATIC / "fonts").iterdir()} == {n for n, _ in build.UI_FONTS}
     assert all(build.SAFE_PATH.fullmatch(name) for name in top)
 
 

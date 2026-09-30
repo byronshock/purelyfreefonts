@@ -9,7 +9,9 @@ named in ``JS_PARTS``. The lint refuses extra top-level declarations and stateme
 storage APIs, request APIs other than ``fetch`` (``OTHER_JS``), ``setAttribute('style'`` and
 absolute URLs in ``fetch``; a file outside ``JS_PARTS`` is refused.
 The CSS lint refuses files outside ``CSS_PARTS``, ``@import``, ``@font-face`` and ``url()``
-with a scheme or another host. Both report every problem at once (``AssetError``).
+with a scheme or another host. Both report every problem at once (``AssetError``). The
+interface font's ``@font-face`` rules come from ``font_faces``, which the build puts ahead of
+the parts, so no part declares a font.
 
 Every file under ``/assets/`` is named ``<stem>.<h>.<ext>``, where ``<h>`` is the first
 ``HASH_LEN`` hex digits of the sha256 of its bytes, so it can be cached as immutable.
@@ -94,7 +96,10 @@ _ABSOLUTE_FETCH = re.compile(r"fetch\(\s*['\"`](?:[a-z][a-z0-9+.-]*:|//)", re.IG
 _CSS_COMMENT = re.compile(r"/\*.*?\*/", re.DOTALL)
 _CSS_FORBIDDEN = (
     (re.compile(r"@import\b", re.IGNORECASE), "@import (the site ships one stylesheet)"),
-    (re.compile(r"@font-face\b", re.IGNORECASE), "@font-face (the interface uses system fonts)"),
+    (
+        re.compile(r"@font-face\b", re.IGNORECASE),
+        "@font-face (the build declares the interface font ahead of the parts)",
+    ),
     (
         re.compile(r"url\(\s*['\"]?\s*(?:[a-z][a-z0-9+.-]*:|//)", re.IGNORECASE),
         "url() with a scheme or another host (the page loads only its own files)",
@@ -192,6 +197,26 @@ def lint_css_part(filename: str, source: str) -> list[str]:
 def concat_js(parts_dir: Path) -> str:
     """Lint and concatenate ``parts_dir/*.js`` in filename order into one ES module."""
     return _concat(Path(parts_dir), "*.js", lint_js_part)
+
+
+def font_faces(family: str, faces: list[tuple[str, str]], weights: str) -> str:
+    """One ``@font-face`` rule per ``(url, font-style)`` in ``faces``, all in ``family``.
+
+    ``font-display: optional``: the browser uses the font only if it is there within about
+    100 ms of first use (the page preloads it, so it usually is) and never swaps it in later,
+    so no text moves. Otherwise that page view keeps the next font of ``--font-ui``, which
+    has the same widths, and the next page finds the font in the cache. (Kerning still
+    differs a little, so a swap could move a line break, and ``swap`` would shift text.)"""
+    return "".join(
+        "@font-face {\n"
+        f'  font-family: "{family}";\n'
+        f"  font-style: {style};\n"
+        f"  font-weight: {weights};\n"
+        "  font-display: optional;\n"
+        f'  src: url("{url}") format("woff2");\n'
+        "}\n\n"
+        for url, style in faces
+    )
 
 
 def concat_css(parts_dir: Path) -> str:

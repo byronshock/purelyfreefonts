@@ -4,3 +4,8 @@
 value = "16_KB_gzip"
 ruling = "A specimen may be up to 16 KB compressed (gzip -9, decimal kilobytes, about what a visitor downloads), in place of 30 KB uncompressed; a larger one is drawn with the family name only. The other specimen budgets stay: at least half at or under 5 KB gzip -9, all under 10 MB uncompressed."
 reason = "The owner, in chat: \"Why do we have a 30 KB threshold?\" Claude showed that the raw cap made six fonts name-only although each was 7 to 15 KB compressed (Geist Pixel: 215 KB raw, 7.1 KB gzip) and suggested a cap on compressed size of about 15 KB; the owner answered \"I am OK with files under 16 KB.\""
+
+[ui_font]
+value = "arimo_upright_and_italic"
+ruling = "Headings and body text are set in Arimo (Steve Matteson, SIL Open Font License 1.1), upright and italic, served from the site itself: a Latin subset of Arimo 1.341 from google/fonts at 23e54b51, as WOFF2 with the weight axis 400 to 700, about 23 KB upright and 26 KB italic. It replaces the system font stack. Every page preloads the upright; font-display is optional, so a late font is never swapped in, and Liberation Sans and Arial, which share Arimo's widths, stand in. Monospace text keeps the system monospace stack. The work waited for pull request #23 to merge."
+reason = "The owner, in chat, after comparing League Gothic pairings: \"We are going with Arimo for the headings and body text.\" Asked about timing and italics, the owner chose \"After #23 merges (Recommended)\" and \"Upright and italic (Recommended)\". After mockups of the site in Arimo, iA Writer Quattro and Open Sans: \"OK, I want to keep Arimo. I may regret it later.\""

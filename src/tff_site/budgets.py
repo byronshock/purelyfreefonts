@@ -10,11 +10,14 @@ Sizes are gzip level 9 (``gzip_size``), in decimal kilobytes:
 - specimens: at least half at most ``SPECIMEN_HALF_MAX``, none over ``SPECIMEN_MAX`` (the
   owner's site ruling of 2026-09-30, specimen_max_size), all together under
   ``SPECIMENS_TOTAL_RAW_MAX`` uncompressed. ``tff_catalog.specimens.budget`` measures the
-  same way, so a site whose specimens passed the specimens stage passes here too.
+  same way, so a site whose specimens passed the specimens stage passes here too;
+- the interface font: each ``assets/ui/*.woff2`` at most ``UI_FONT_MAX`` (AUTHORITY.md,
+  "Interface font"). WOFF2 is compressed already, so gzip -9 barely changes it.
 
 The files come from the list page itself: ``<link rel="stylesheet" href>``,
 ``<script src>`` and ``#list``'s ``data-index`` and ``data-details`` (site/CONTRACT.md
-sections 2 and 4). A reference that names no file in the site is a problem too.
+sections 2 and 4). A reference that names no file in the site is a problem too, and so is a
+``<link rel="preload" as="font">`` that does.
 
 The CSP lint fails on an inline ``<script>`` without ``src``, a ``<style>`` element, any
 ``style=`` or ``on*=`` attribute, a ``<form>``, and ``rel=prefetch``. Under the same policy
@@ -40,10 +43,12 @@ DETAILS_MAX = 150 * KB
 SPECIMEN_HALF_MAX = 5 * KB
 SPECIMEN_MAX = 16 * KB
 SPECIMENS_TOTAL_RAW_MAX = 10_000 * KB
+UI_FONT_MAX = 30 * KB
 
 LIST_PAGE = "index.html"
 SPECIMENS_DIR = "assets/specimens"
 DETAILS_GLOB = "assets/details*.json"
+UI_FONTS_GLOB = "assets/ui/*.woff2"
 
 # Attributes that make the browser fetch something as the page loads, by element. <a href>,
 # <link rel=canonical> and <meta content> are left out: nothing is fetched until a click.
@@ -126,6 +131,8 @@ def check(site_dir: Path) -> list[Problem]:
     for path in sorted(details):
         problems += _check_size(site, path, "details payload", DETAILS_MAX, hint=" (shard it)")
     problems += _check_specimens(site)
+    for path in sorted(site.glob(UI_FONTS_GLOB)):
+        problems += _check_size(site, path, "interface font", UI_FONT_MAX)
     for path in sorted(site.rglob("*.html")):
         rel = path.relative_to(site).as_posix()
         problems += lint_html(rel, path.read_text(encoding="utf-8", errors="replace"))
@@ -149,6 +156,7 @@ class _Refs:
 
     styles: list[str] = field(default_factory=list)
     scripts: list[str] = field(default_factory=list)
+    fonts: list[str] = field(default_factory=list)
     index: str | None = None
     details: str | None = None
 
@@ -164,6 +172,9 @@ class _RefParser(HTMLParser):
             self.refs.styles.append(a["href"])
         elif tag == "script" and a.get("src"):
             self.refs.scripts.append(a["src"])
+        elif tag == "link" and "preload" in _rel_tokens(a.get("rel", "")) and a.get("href"):
+            if a.get("as") == "font":
+                self.refs.fonts.append(a["href"])
         elif a.get("id") == "list":
             self.refs.index = a.get("data-index") or None
             self.refs.details = a.get("data-details") or None
@@ -201,6 +212,10 @@ def _check_page(site: Path, page: Path, refs: _Refs) -> list[Problem]:
                 problems.append(Problem(LIST_PAGE, f"{url}: referenced, but not in the site"))
                 continue
             parts[kind] += gzip_size(target.read_bytes())
+    for url in refs.fonts:
+        target = _local_file(site, url)
+        if target is None or not target.is_file():
+            problems.append(Problem(LIST_PAGE, f"{url}: preloaded, but not in the site"))
     total = sum(parts.values())
     if total > PAGE_MAX:
         split = ", ".join(f"{kind} {_kb(size)}" for kind, size in parts.items())
