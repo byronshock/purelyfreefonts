@@ -1,0 +1,20 @@
+# Owner rulings of 2026-09-29, gate L3 (license verification failures), given in chat after the data-fix run.
+# Ruled by the owner, Byron Shock; recorded by Claude from the lead's notes. Also in AUTHORITY.md. The printed
+# questions mark no option, so each answer records the option Claude recommended in chat as recommendation;
+# the owner took it.
+
+[L3-linux-libertine]
+choice = "b"
+recommended = true
+recommendation = "b"
+text_sha256 = "3fc6b39399fa6ca1311bb233a6be549bc0ab212f93dd791658f247fe1ac92f33"
+ruling = "Keep it: the license qualifies (owner ruling)"
+reason = "Claude's recommendation: the OFL-1.1 governs, as the owner ruled at gate LIC on 2026-09-29 (LIC-linux-libertine). Name IDs 13 ('GPL- General Public License AND OFL-Open Font License') and 14 (the GPL's and the OFL's pages) name the designer's dual grant: the GPL with the font exception, or the OFL (the 5.3.0 release's LICENCE.txt, GPL.txt and OFL-1.1.txt). The text, the release's OFL-1.1.txt, is the OFL-1.1, as with Cascadia's name ID 13."
+
+[L3-linux-biolinum]
+choice = "b"
+recommended = true
+recommendation = "b"
+text_sha256 = "3fc6b39399fa6ca1311bb233a6be549bc0ab212f93dd791658f247fe1ac92f33"
+ruling = "Keep it: the license qualifies (owner ruling)"
+reason = "Claude's recommendation: as for Linux Libertine, released with it: its name IDs 13 and 14 name the designer's dual grant, GPL with the font exception or OFL, and the OFL-1.1 governs (LIC-linux-biolinum)."

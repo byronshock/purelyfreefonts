@@ -1,6 +1,7 @@
 # Rulings of 2026-09-29, gate A. Owner ruling given in chat, ruled by the owner, Byron Shock, and recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml, chunk_fold); also in AUTHORITY.md.
 # The rows it adds or changes are hand rows in data/aliases.csv (reviewed_by owner:2026-09-29): fs-id chunk-five renames to chunk, and AUR ttf-chunk's package row moves from chunk-five to chunk.
 # The tables with by = "claude" are Claude's own rulings of 2026-09-29 under the owner's delegation of 2026-09-28 (A_U_queues), carrying out rulings the owner or Claude gave on 2026-09-28; their rows are hand rows in data/aliases.csv.
+# no_file_builds: the owner's answer to question 4 of 2026-09-29, given in chat later that day (the owner's choice: Claude had recommended folding them now); it changes no row. Also in AUTHORITY.md.
 
 [chunk_fold]
 value = "fold"
@@ -20,3 +21,8 @@ notes = ["brew-cask:font-hackgen -> hack (build): HackGen and HackGen Console (h
 title = "Homebrew's HackGen and Cica casks are builds of Hack"
 ruling = "Homebrew's four HackGen and Cica casks fold into Hack as builds (detail \"\", D7), with the name HackGen, through hand rows in data/aliases.csv (reviewed_by claude:2026-09-29); the four families they formed (HackGen, HackGenNerd, Cica and Cica without emoji, each out of the Latin gate as mainly CJK) leave the universe."
 reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues: rows the owner's earlier answers already decide), applying the owner's gate A ruling leftover_cica_hackgen (2026-09-28, batch 5, which made Arch's ttf-hackgen and ttf-cica builds of Hack): HackGen and Cica are Hack's Latin composited with Japanese glyphs, and the casks install those same fonts from the designers' releases."
+
+[no_file_builds]
+value = "after_pr"
+ruling = "The builds and umbrella casks among the families with no readable file (the Powerline and Nerd builds, four of them of Apple's and Microsoft's fonts; Red Hat; Awesome Terminal Fonts) and the 21 Iosevka variants (Iosevka Slab, SS01 to SS18, Iosevka Comfy and Aporetic) stay as they are until after the Milestone 1 pull request."
+reason = "Claude's recommendation was to fold them now (question 4 of 2026-09-29); the owner chose to wait. Folding the Iosevka variants would move about 400 alias rows, among them GitHub asset rows the owner accepted on 2026-09-26."

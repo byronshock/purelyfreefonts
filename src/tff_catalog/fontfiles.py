@@ -45,10 +45,14 @@ Contracts:
   field have none, and read as ``size`` None.
 - **Files by hand.** ``config/font-files.toml`` (``load_font_files``) names
   font files for families no source gives a readable one (a release shipped
-  only as a tar archive, a page, a plain-http host), found by research: commit-
-  or release-pinned URLs (``license_l3.is_pinned``) of a font file or a zip
-  member. Stages "latin" and "facts" read them before the sources' files, and
-  stage "verify" before the sources' but after ``config/license-texts.toml``'s.
+  only as a tar archive, a page, a plain-http host), found by research: a font
+  file or a zip member at a commit- or release-pinned URL
+  (``license_l3.is_pinned``), or at a URL no commit pins (a CTAN mirror)
+  pinned by the file's sha256 and size instead. Such a file is read by range,
+  and its size checked, like a Fontsource file; the site's font fetcher checks
+  its sha256 before serving it. Stages "latin" and "facts" read them before the
+  sources' files, and stage "verify" before the sources' but after
+  ``config/license-texts.toml``'s.
   The universe collectors turn only snapshots into records, and the one hand
   list that becomes records, ``config/foundries.toml``, is the owner's foundry
   list (ruling M12), read through its snapshot; so a hand file for the Latin
@@ -59,6 +63,7 @@ fontTools is imported inside functions, so importing this module stays cheap.
 
 import hashlib
 import io
+import re
 import struct
 import zipfile
 import zlib
@@ -969,12 +974,22 @@ FONT_FILES_SCHEMA = 1
 
 
 @dataclass(frozen=True, slots=True)
+class HandFile:
+    """A file of ``config/font-files.toml`` given as a table: its sha256 and size pin it,
+    so its URL need not name a commit or a release (a CTAN mirror)."""
+
+    url: str
+    sha256: str  # of the file's bytes, lower-case hex
+    size: int  # bytes
+
+
+@dataclass(frozen=True, slots=True)
 class HandFiles:
     """One ``[[family]]`` table of ``config/font-files.toml``."""
 
     family: str  # family id (state/ids.json)
     name: str  # display name, for people
-    files: tuple[str, ...]  # font files, best first
+    files: tuple[str | HandFile, ...]  # font files, best first: pinned URLs or HandFile tables
     reason: str  # where the files come from, and why they are the family's
 
 
@@ -987,12 +1002,15 @@ class HandFilesFile:
 def load_font_files(config_dir: Path) -> dict[str, tuple[FontFileRef, ...]]:
     """``config/font-files.toml`` (module docstring) as {family id: its files, in order}.
 
-    No file means no hand files. Raises ``config_model.ConfigError`` for unknown or
-    missing keys, another schema, a bad family id, a family listed twice, an empty
-    name or reason, no files, a file listed twice, and a URL that is not https,
-    names no font file or zip member (``is_readable_url``) or is not pinned to a
-    commit or a release (``license_l3.is_pinned``). Whether each id is a family of
-    the run's universe is stage "latin"'s check.
+    A file is a URL pinned to a commit or a release (``license_l3.is_pinned``), or a
+    table ``{url, sha256, size}`` whose hash and size pin it (``HandFile``); a table's
+    file gets its ``FontFileRef`` with that sha256 and size. No file means no hand
+    files. Raises ``config_model.ConfigError`` for unknown or missing keys, another
+    schema, a bad family id, a family listed twice, an empty name or reason, no files,
+    a file listed twice, a URL that is not https or names no font file or zip member
+    (``is_readable_url``), a plain URL no commit or release pins, and a table with a
+    bad sha256 or size. Whether each id is a family of the run's universe is stage
+    "latin"'s check.
     """
     from tff_catalog.config_model import ConfigError, from_mapping, load_toml
     from tff_catalog.license_l3 import is_pinned
@@ -1017,20 +1035,33 @@ def load_font_files(config_dir: Path) -> dict[str, tuple[FontFileRef, ...]]:
                 raise ConfigError(f"{where}.{key}: empty")
         if not fam.files:
             raise ConfigError(f"{where}.files: empty")
-        for n, url in enumerate(fam.files):
+        refs: list[FontFileRef] = []
+        for n, file in enumerate(fam.files):
             at = f"{where}.files[{n}]"
+            url = file.url if isinstance(file, HandFile) else file
             if not url.startswith("https://") or any(c.isspace() for c in url):
                 raise ConfigError(f"{at}: {url!r} is not an https URL")
             if not is_readable_url(url):
                 raise ConfigError(
                     f"{at}: {url} names no font file or zip member (archive.zip#path/in/archive)"
                 )
+            if any(r.url == url for r in refs):
+                raise ConfigError(f"{at}: {url} is listed twice")
+            if isinstance(file, HandFile):
+                if not re.fullmatch(r"[0-9a-f]{64}", file.sha256):
+                    raise ConfigError(f"{at}.sha256: {file.sha256!r} is not a sha256")
+                if not 0 < file.size <= MAX_MEMBER:
+                    raise ConfigError(f"{at}.size: {file.size} is not 1 to {MAX_MEMBER} bytes")
+                refs.append(FontFileRef(url, sha256=file.sha256, size=file.size))
+                continue
             member = split_member(url)
             if not is_pinned(member[0] if member else url):
-                raise ConfigError(f"{at}: {url} is not pinned to a commit or a release")
-            if url in fam.files[:n]:
-                raise ConfigError(f"{at}: {url} is listed twice")
-        out[fam.family] = tuple(FontFileRef(url) for url in fam.files)
+                raise ConfigError(
+                    f"{at}: {url} is not pinned to a commit or a release; give it as a table "
+                    "with the file's sha256 and size"
+                )
+            refs.append(FontFileRef(url))
+        out[fam.family] = tuple(refs)
     return dict(sorted(out.items()))
 
 

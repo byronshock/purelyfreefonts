@@ -932,6 +932,31 @@ def test_a_nerd_font_build_reaches_both_files(tmp_path: Path) -> None:
     validate(docs[export.SITE_FILE])
 
 
+def test_a_nerd_link_that_failed_its_check_is_left_out(tmp_path: Path) -> None:
+    # Owner ruling of 2026-09-29: a Nerd link that failed the check recorded for the run's
+    # date (Links.nerd_problem) is published as null, so the site shows no marker, link or
+    # filter match; the font stays, and the link is back once a check passes.
+    ctx = make_build(tmp_path)
+    folder = "https://github.com/ryanoasis/nerd-fonts/tree/v3.5.1/patched-fonts/BetaMono"
+    chosen = links()
+    chosen["beta-mono"] = dataclasses.replace(
+        chosen["beta-mono"],
+        nerd=Link(folder, "BetaMono Nerd Font"),
+        nerd_problem=f"{folder}: HTTP 404",
+    )
+    stageio.dump_stage(ctx.paths, "links", chosen)
+    docs = run_all(ctx)
+    for name in (export.CATALOG_FILE, export.SITE_FILE):
+        assert fonts(docs[name])["beta-mono"]["links"]["nerd"] is None, name
+    chosen["beta-mono"] = dataclasses.replace(chosen["beta-mono"], nerd_problem=None)
+    stageio.dump_stage(ctx.paths, "links", chosen)
+    docs = run_all(ctx)
+    assert fonts(docs[export.SITE_FILE])["beta-mono"]["links"]["nerd"] == {
+        "url": folder,
+        "label": "BetaMono Nerd Font",
+    }
+
+
 def test_a_member_without_stage_data_fails_the_export(tmp_path: Path) -> None:
     ctx = make_build(tmp_path)
     facts = stageio.load_stage(ctx.paths, "facts")

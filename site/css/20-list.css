@@ -17,6 +17,68 @@
   color: var(--c-muted);
 }
 
+/* "Why isn't my favorite free font here?", the owner's note (site rulings of 2026-09-29).
+   Wide screens: a frame floated right, beside the lead and the privacy note, which wrap
+   around it; the list starts below it (.layout clears it), so rows are never narrowed.
+   Phones (40rem and below): the same text in a <details> under the intro, folded to its
+   heading. Exactly one of the two is displayed, so screen readers get the text once; both
+   are in the HTML and neither needs a script, so nothing moves as the page loads. */
+.why {
+  border: 1px solid var(--c-divider);
+  border-radius: var(--radius);
+  background-color: var(--c-surface);
+  color: var(--c-fg);
+  font-size: var(--fs-small);
+}
+
+.why p {
+  margin: 0;
+  max-width: var(--measure);
+}
+
+.why-wide {
+  float: right;
+  width: min(34rem, 45%);
+  margin: 0 0 var(--space-4) var(--space-5);
+  padding: var(--space-3) var(--space-4);
+}
+
+.why-wide h2 {
+  margin: 0 0 var(--space-2);
+  font-size: var(--fs-base);
+}
+
+.why-fold {
+  display: none;
+}
+
+.layout {
+  clear: both;
+}
+
+@media (max-width: 40rem) {
+  .why-wide {
+    display: none;
+  }
+
+  .why-fold {
+    display: block;
+    margin: 0 0 var(--space-5);
+  }
+
+  .why-fold summary {
+    display: list-item;
+    min-height: var(--target-min);
+    padding: var(--space-2) var(--space-3);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .why-fold p {
+    padding: 0 var(--space-3) var(--space-3);
+  }
+}
+
 /* Filters above the list below 60rem; a sidebar beside it from 60rem (M2-D4). */
 .layout {
   display: grid;

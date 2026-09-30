@@ -66,3 +66,16 @@ tagmukay = "sans-serif"
 tex-gyre-adventor = "sans-serif"
 tex-gyre-heros = "sans-serif"
 tex-gyre-heros-cn = "sans-serif"
+
+# --- Owner ruling of 2026-09-29, gate LIC (data/reviews/licenses/2026-09-29.toml, LIC-et-book):
+# ET Book qualifies under MIT, as a serif. Its only source, Homebrew's cask, gives no category,
+# and its font's OS/2 table gives no serif style or IBM class, so it fell back to the sans-serif
+# default. ET Book follows Bembo, and was digitised for Edward Tufte's books.
+et-book = "serif"
+
+# --- Owner ruling of 2026-09-29, gate R (data/reviews/review/2026-09-29.toml, freefont_category;
+# the owner's choice, not Claude's recommendation): FreeFont stays monospace, as FreeMono.ttf, the
+# first file its sources list, makes it. FreeFont is one family of three faces (FreeSerif, FreeSans
+# and FreeMono) and no source gives it a category; this entry keeps it monospace whatever file the
+# stage reads first.
+freefont = "monospace"

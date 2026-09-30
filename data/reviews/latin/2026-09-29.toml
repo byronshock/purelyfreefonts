@@ -1,0 +1,14 @@
+# Owner rulings of 2026-09-29, gate L, given in chat after the data-fix run (m1/wave1 f708e5a). Ruled by the owner,
+# Byron Shock; recorded by Claude from the lead's notes. Also in AUTHORITY.md. The owner took Claude's recommendation
+# each time: question 3 (Open Sans Hebrew) and question 5 (the files of the no-file families) of 2026-09-29.
+
+[open_sans_hebrew]
+exclude = ["open-sans-hebrew", "open-sans-hebrew-condensed"]
+value = "exclude"
+ruling = "Open Sans Hebrew and Open Sans Hebrew Condensed stay out: they are Hebrew versions of Open Sans with basic Latin only, which the L2 rule keeps out as script companions when Google lists such a family."
+reason = "Claude's recommendation (question 3 of 2026-09-29), taken by the owner: both pass the glyph test with basic Latin only (Latin share 0.68 and 0.69, with Hebrew), from Google Fonts Early Access (google/fonts apache/opensanshebrew and opensanshebrewcondensed, which Homebrew's casks install), and no source states their license."
+
+[no_file_files]
+value = "ctan_now_tar_later"
+ruling = "Linux Libertine and Linux Biolinum take CTAN's copies of the designer's 5.3.0 files, pinned by sha256 (config/font-files.toml, which now takes such a file as a table with its sha256 and size). Computer Modern (CMU), New Computer Modern, Spleen and Scientifica, whose official files come only in tar archives, wait until the pipeline reads tar archives, after the Milestone 1 pull request."
+reason = "Claude's recommendation (question 5 of 2026-09-29), taken by the owner: the designer publishes Linux Libertine 5.3.0 only as tar archives on SourceForge; CTAN's fonts/libertine/opentype/ serves LinLibertine_R.otf and LinBiolinum_R.otf byte for byte as in that release, from mirrors that no commit pins."

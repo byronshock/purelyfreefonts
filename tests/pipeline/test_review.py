@@ -1269,6 +1269,36 @@ def test_specimen_failures_and_numbering_gaps_are_flagged(tmp_path: Path) -> Non
     ]
 
 
+def test_a_nerd_link_that_failed_its_check_is_flagged() -> None:
+    """Owner ruling of 2026-09-29: export leaves out a Nerd link that failed the run's check,
+    and review.md says so for catalog fonts; the font stays."""
+    from tff_catalog.links import Link, Links
+
+    folder = "https://github.com/ryanoasis/nerd-fonts/tree/v3.5.1/patched-fonts/Hack"
+    chosen = {
+        "hack": Links(
+            Link("https://hack.example/"),
+            None,
+            "two_sources",
+            nerd=Link(folder, "Hack Nerd Font"),
+            nerd_problem=f"{folder}: HTTP 404",
+        ),
+        "fine": Links(Link("https://fine.example/"), None, "two_sources"),
+        "outside": Links(
+            Link("https://out.example/"), None, "two_sources", nerd_problem="x: HTTP 500"
+        ),
+    }
+    member = MemberState(member=True, entered=date(2026, 10, 3), runs_outside=0)
+    membership = Membership(catalog={"hack": member, "fine": member}, top100={})
+    flags = review.nerd_link_flags(chosen, membership, {"hack": "Hack"})
+    assert [(f.kind, f.message, f.family_id) for f in flags] == [
+        ("nerd_link", f"Hack: {folder}: HTTP 404", "hack")
+    ]
+    text = review.render_review({}, {"overall": {"hack": 1}}, flags)
+    assert "## Nerd Font links left out" in text
+    assert f"- Hack: {folder}: HTTP 404" in text
+
+
 def test_review_md_lists_only_cross_check_moves_of_three_places_or_more() -> None:
     now = {"overall": {"a": 2, "b": 3, "c": 40}}
     flags = [

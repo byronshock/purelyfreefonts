@@ -15,6 +15,10 @@
 # the designer's page when that page is gone (Heavy Data). K-monofur-page is asked separately: the
 # capture approved in chat, 20220910011242, turned out to be a registrar's parking page, so its
 # override proposes the last capture of the designer's page, of 2020-02-06, instead.
+# K-go-page and K-liberation-serif: the owner's answer to question 6 of 2026-09-29, given in chat
+# later that day, once Go and Liberation Serif had font files (config/font-files.toml). K-et-book,
+# K-linux-libertine and K-linux-biolinum: the printed picks for the families the owner let in that
+# day. The owner took Claude's recommendation each time.
 
 [K-adwaita-sans]
 choice = "a"
@@ -189,3 +193,37 @@ choice = "a"
 recommended = true
 ruling = "Approve the override"
 reason = "Claude's recommendation, taken by the owner in chat (K_heros_cn): GUST's TeX Gyre Heros page, https://www.gust.org.pl/projects/e-foundry/tex-gyre/heros, offers regular, italic, bold and bold italic and their condensed counterparts; it replaces the printed pick of K-tex-gyre-heros-cn."
+
+[K-go-page]
+choice = "a"
+recommended = true
+ruling = "Approve the override"
+reason = "Claude's recommendation (question 6 of 2026-09-29), taken by the owner: Go links the Go project's post on its fonts, https://go.dev/blog/go-fonts, as Go Mono does (K-go-mono-page); the printed pick, the README file of the fonts' folder on go.googlesource.com, is no page about the fonts."
+
+[K-liberation-serif]
+choice = "a"
+recommended = true
+url = "https://github.com/liberationfonts/liberation-fonts/releases"
+ruling = "https://github.com/liberationfonts/liberation-fonts/releases (from fontist)"
+reason = "Claude's recommendation (question 6 of 2026-09-29), taken by the owner: the Liberation fonts' releases page, as Liberation Mono and Liberation Sans link; the only candidate."
+
+[K-et-book]
+choice = "a"
+recommended = true
+url = "https://edwardtufte.github.io/et-book/"
+ruling = "https://edwardtufte.github.io/et-book/ (from homebrew_casks)"
+reason = "Claude's recommendation (the gate K picks of 2026-09-29, taken by the owner): ET Book's own page on Edward Tufte's site, with the fonts and their license; the only candidate."
+
+[K-linux-libertine]
+choice = "a"
+recommended = true
+url = "https://libertine-fonts.org/"
+ruling = "https://libertine-fonts.org/ (from homebrew_casks)"
+reason = "Claude's recommendation (the gate K picks of 2026-09-29, taken by the owner): the Libertine Open Fonts Project's own site, which links the releases on SourceForge; the only candidate."
+
+[K-linux-biolinum]
+choice = "a"
+recommended = true
+url = "https://libertine-fonts.org/"
+ruling = "https://libertine-fonts.org/ (from homebrew_casks)"
+reason = "Claude's recommendation (the gate K picks of 2026-09-29, taken by the owner): as for Linux Libertine, released with it, the Libertine Open Fonts Project's site; the only candidate."

@@ -50,7 +50,8 @@
 <a class="skip-link" href="#main">Skip to main content</a>
 <header class="site-header">
 {% block header %}
-<a class="site-name" href="/"><img class="site-mark" src="/favicon.svg" alt="" width="32" height="32">{{ site.name }}</a>
+{# The wordmark (owner ruling of 2026-09-29, AUTHORITY.md "Headline font"): 8275 x 1862, drawn 48 px tall. #}
+<a class="site-name" href="/"><img class="site-name-mark" src="/wordmark.svg" alt="{{ site.name }}" width="213" height="48"></a>
 <nav class="site-nav" aria-label="Site">
 <ul>
 {# The Blog link appears once a post is published (M2 step 7b: site.blog). #}
@@ -61,7 +62,7 @@
 </ul>
 </nav>
 {# Milestone 2 step 14: the page says it is an early version and what comes next. Milestone 3 removes it. #}
-<p class="site-status">Early version. Coming next: hiding the fonts you already have.</p>
+<p class="site-status">Early version. Coming next: free font inventory tools.</p>
 {% endblock %}
 </header>
 <main id="main" tabindex="-1">

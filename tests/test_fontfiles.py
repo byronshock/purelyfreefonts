@@ -803,12 +803,24 @@ def font_files(tmp_path: Path, body: str) -> Path:
     return tmp_path
 
 
+MIRROR = "https://mirror.example/ctan/fonts/a/opentype"  # pinned by no commit or release
+SHA = "a" * 64
+
+
 def entry(family: str = "a", *files: str, name: str = "A", reason: str = "r") -> str:
-    listed = ", ".join(f'"{u}"' for u in (files or (f"{PINNED}/A-Regular.ttf",)))
+    """A ``[[family]]`` table; a file starting with "{" is written as a TOML inline table."""
+    listed = ", ".join(
+        u if u.startswith("{") else f'"{u}"' for u in (files or (f"{PINNED}/A-Regular.ttf",))
+    )
     return (
         f'[[family]]\nfamily = "{family}"\nname = "{name}"\nfiles = [{listed}]\n'
         f'reason = "{reason}"\n'
     )
+
+
+def by_hash(url: str = f"{MIRROR}/A-Regular.otf", sha256: str = SHA, size: object = 1000) -> str:
+    """A file given as a table, pinned by its sha256 and size."""
+    return f'{{url = "{url}", sha256 = "{sha256}", size = {size}}}'
 
 
 def test_load_font_files_gives_each_familys_files_in_order(tmp_path: Path) -> None:
@@ -820,6 +832,36 @@ def test_load_font_files_gives_each_familys_files_in_order(tmp_path: Path) -> No
         "b": (FontFileRef(member), FontFileRef(f"{PINNED}/B-Italic.ttf")),
     }
     assert list(got) == ["a", "b"]
+
+
+def test_a_file_no_commit_pins_may_be_pinned_by_its_sha256_and_size(tmp_path: Path) -> None:
+    body = entry("a", by_hash(), by_hash(f"{PINNED}/A.otf", "b" * 64, 7), f"{PINNED}/A.ttf")
+    got = fontfiles.load_font_files(font_files(tmp_path, body))
+    assert got == {
+        "a": (
+            FontFileRef(f"{MIRROR}/A-Regular.otf", sha256=SHA, size=1000),
+            FontFileRef(f"{PINNED}/A.otf", sha256="b" * 64, size=7),  # a pinned URL may, too
+            FontFileRef(f"{PINNED}/A.ttf"),
+        )
+    }
+
+
+def test_a_file_pinned_by_its_hash_is_read_by_range_and_its_size_checked(tmp_path: Path) -> None:
+    data = big_font(family="Hash Pinned")
+    url = f"{MIRROR}/HashPinned-Regular.otf"
+    sha = hashlib.sha256(data).hexdigest()
+    ok = fontfiles.load_font_files(font_files(tmp_path, entry("a", by_hash(url, sha, len(data)))))
+    server = FakeServer({url: data})
+    assert facts_for(ok["a"][0], server, FontFileCache(tmp_path / "a.jsonl")).sha256 == sha
+    assert server.calls
+    assert all(start is not None for _, start, _ in server.calls)  # read by range
+    # The mirror now serves another file: it is refused, not filed under the table's sha256.
+    body = entry("a", by_hash(url, sha, len(data) + 1))
+    stale = fontfiles.load_font_files(font_files(tmp_path, body))
+    cache = FontFileCache(tmp_path / "b.jsonl")
+    with pytest.raises(FontFileError, match="not the expected"):
+        facts_for(stale["a"][0], FakeServer({url: data}), cache)
+    assert cache.get(sha256=sha) is None
 
 
 def test_load_font_files_without_a_file(tmp_path: Path) -> None:
@@ -842,10 +884,22 @@ def test_load_font_files_without_a_file(tmp_path: Path) -> None:
         (entry("a", "https://x.example/fonts/A-Regular.ttf"), "is not pinned"),
         (entry("a", "https://x.example/A.zip#A-Regular.ttf"), "is not pinned"),
         (entry("a", f"{PINNED}/A.ttf", f"{PINNED}/A.ttf"), r"files\[1\]: .* is listed twice"),
+        (entry("a", by_hash(), f"{MIRROR}/A-Regular.otf"), r"files\[1\]: .* is listed twice"),
+        (entry("a", "{" + f'url = "{MIRROR}/A.otf", sha256 = "{SHA}"' + "}"), "size: missing key"),
+        (entry("a", "{" + f'url = "{MIRROR}/A.otf", size = 9, x = 1' + "}"), "unknown key"),
+        (entry("a", by_hash("http://x.example/A.otf")), "is not an https URL"),
+        (entry("a", by_hash(f"{MIRROR}/OFL.txt")), "names no font file or zip member"),
+        (entry("a", by_hash(sha256="A" * 64)), r"files\[0\]\.sha256: .* is not a sha256"),
+        (entry("a", by_hash(sha256="a" * 63)), "is not a sha256"),
+        (entry("a", by_hash(size=0)), r"files\[0\]\.size: 0 is not 1 to"),
+        (entry("a", by_hash(size=fontfiles.MAX_MEMBER + 1)), "is not 1 to"),
+        (entry("a", by_hash(size='"9"')), "expected an integer"),
     ],
     ids=["unknown-key", "no-files-key", "bad-id", "family-twice", "no-name", "no-reason",
          "no-files", "http", "bare-archive", "not-a-font", "unpinned", "unpinned-archive",
-         "file-twice"],
+         "file-twice", "table-twice", "table-no-size", "table-unknown-key", "table-http",
+         "table-not-a-font", "table-upper-sha", "table-short-sha", "table-empty",
+         "table-too-big", "table-size-text"],
 )  # fmt: skip
 def test_load_font_files_is_strict(tmp_path: Path, body: str, error: str) -> None:
     from tff_catalog.config_model import ConfigError
@@ -877,6 +931,13 @@ def test_the_committed_font_files_table_loads() -> None:
     got = fontfiles.load_font_files(ROOT / "config")
     assert {"go", "liberation-sans", "liberation-serif"} <= set(got)
     assert all(refs for refs in got.values())
+    # CTAN's copies of Linux Libertine and Biolinum 5.3.0, pinned by hash (owner ruling of
+    # 2026-09-29): two mirrors each, serving the same bytes.
+    for fid in ("linux-libertine", "linux-biolinum"):
+        refs = got[fid]
+        assert len(refs) == 2
+        assert len({(r.sha256, r.size) for r in refs}) == 1
+        assert all(r.sha256 and r.size for r in refs)
 
 
 # --- real fonts (network) -----------------------------------------------------------------------

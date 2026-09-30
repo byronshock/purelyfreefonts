@@ -97,7 +97,7 @@ BADGE_TEXT = {
 }
 UNRANKED_PREFIX = "Not ranked: "
 # Copied from site/static/ to the site root (site/CONTRACT.md section 2).
-STATIC_FILES = ("apple-touch-icon.png", "favicon.ico", "favicon.svg", "share.png")
+STATIC_FILES = ("apple-touch-icon.png", "favicon.ico", "favicon.svg", "share.png", "wordmark.svg")
 # The deploy receiver accepts only these paths (site/CONTRACT.md section 2).
 SAFE_PATH = re.compile(r"^([a-z0-9][a-z0-9._-]*/)*[a-z0-9][a-z0-9._-]*$")
 COMMIT_PATTERN = re.compile(r"^[0-9a-f]{40}(-dirty)?$")

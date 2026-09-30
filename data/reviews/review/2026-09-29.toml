@@ -1,4 +1,5 @@
 # Owner rulings of 2026-09-29, gate R (Milestone 1 step 16), review round 1. Given in chat in four batches after the real-store rebuild (m1/wave1 e34d824), ruled by the owner, Byron Shock, and recorded by Claude from the lead's notes (design/rulings-2026-09-26.toml, [gates_2026-09-29_R1_b1] and after). The owner took Claude's recommendation each time. Also in AUTHORITY.md.
+# freefont_category: the owner's answer of later that day on FreeFont's category, given in chat after the data-fix run (the owner's choice: Claude had recommended a proportional serif). Also in AUTHORITY.md.
 
 [R1]
 choice = "b"
@@ -31,3 +32,8 @@ choice = "a"
 recommended = false
 ruling = "Approve"
 reason = "Claude's recommendation, taken by the owner in chat after the round 1 changes were rebuilt on the real store (f57bf7b): Hack is #5 in coding and most chosen and #53 overall (tier C, desktop evidence only); Geist Mono, Liberation Mono, Commit Mono and Zed Mono enter most chosen, six fonts enter coding, and the 22 owner categories apply. The owner judged the changes right and approved the lists."
+
+[freefont_category]
+value = "monospace"
+ruling = "FreeFont stays monospace: its category and spacing are those of FreeMono, the first file its sources list, so it ranks in the Coding view. config/category-overrides.toml lists it (freefont = \"monospace\") so that a change in the sources' file order cannot flip it."
+reason = "The owner's choice (c), not Claude's recommendation: Claude had recommended a proportional serif, read from FreeSerif.ttf, FreeFont's largest face (config/font-files.toml). FreeFont is one family of three faces, FreeSerif, FreeSans and FreeMono (the owner's ruling A_structure of 2026-09-26), and no source gives it a category."

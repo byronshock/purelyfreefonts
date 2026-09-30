@@ -74,6 +74,9 @@ values:
   ``review.what_if_factors``, with its effect on every rank key it can move
   (``what_if``). It reranks about 50 times (``surveys.views`` takes about
   0.2 s at 2,000 families).
+- ``nerd_link``: catalog fonts whose Nerd Font build link failed the run's link
+  check (``links.Links.nerd_problem``), which stage "export" leaves out until it
+  passes again (owner ruling of 2026-09-29); the font stays listed.
 - ``info``: lines at the top: the runs compared, summary statistics and any
   check that could not run (for example without ``TFF_STORE``).
 
@@ -166,6 +169,11 @@ KINDS: dict[str, tuple[str, str]] = {
         "Numbering gaps",
         "Exact ranks whose font is not in the catalog. The site numbers rows by position, "
         "so rows after a gap show numbers that differ from their rank.",
+    ),
+    "nerd_link": (
+        "Nerd Font links left out",
+        "Catalog fonts whose Nerd Font build link failed this run's link check. The font "
+        "stays listed, with no NF marker or Nerd link until the link passes again.",
     ),
     "what_if": ("What if", "Each ranking.toml weight halved and doubled."),
 }
@@ -1488,6 +1496,7 @@ def analyse(ctx: StageContext) -> Analysis:
     flags += what_if_flags(rows, names, cfg.display.exact_top)
     flags += specimen_flags(_optional(ctx, "previews") or {}, names)
     flags += rank_gap_flags(ctx.paths.build / "catalog.json")
+    flags += nerd_link_flags(_optional(ctx, "links") or {}, _optional(ctx, "membership"), names)
 
     notes += _unlinked_notes(ctx, names)
     no_license = _no_license(ctx, notes)
@@ -1564,6 +1573,20 @@ def specimen_flags(previews: Mapping[str, Any], names: Mapping[str, str]) -> lis
             why = p.reason or ", ".join(p.flags) or "no image"
             out.append(Flag("specimen", f"{_name(names, fid)}: {why}", family_id=fid))
     return out
+
+
+def nerd_link_flags(
+    links: Mapping[str, Any], membership: Any, names: Mapping[str, str]
+) -> list[Flag]:
+    """``nerd_link``: one flag per catalog font whose Nerd Font build link failed this run's
+    check (``links.Links.nerd_problem``), which stage "export" therefore leaves out (owner
+    ruling of 2026-09-29). Without membership, every family with one."""
+    members = frozenset(membership.members()) if membership is not None else None
+    return [
+        Flag("nerd_link", f"{_name(names, fid)}: {ls.nerd_problem}", family_id=fid)
+        for fid, ls in sorted(links.items())
+        if ls.nerd_problem is not None and (members is None or fid in members)
+    ]
 
 
 def rank_holes(catalog: Mapping[str, Any]) -> dict[str, list[int]]:

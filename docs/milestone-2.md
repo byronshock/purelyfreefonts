@@ -66,6 +66,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - [ ] Sort by rank (default) or name, with a count ("Showing 48 of 540 fonts"), "Clear filters", and a no-results message naming filters to loosen.
 - [ ] The view lives in the URL after `#` (`#rank=project&cat=serif&redist=1`): links reproduce it, Back works, nothing is stored, and that part never reaches the server.
 - [ ] Without JavaScript, the built default list shows, with a note that filters need it.
+- [ ] The front page's note "Why isn't my favorite free font here?", word for word, its address a mailto link (site rulings of 2026-09-29, `data/reviews/site/2026-09-29.toml`: `why_not_listed`, `why_not_listed_layout`): on wide screens a textbook-style frame floated right beside the lead and the privacy note, with the list starting below it so rows are never narrowed; on phones a full-width frame folded to its heading, opened with one tap. It works without JavaScript, moves nothing as the page loads, gives screen readers the text once, and works in both themes.
 - [ ] Browser tests: filtering, numbering, band order, alias search, restoring a view from its URL, and listed-only fonts after the ranked ones, found by search before their heading is reached.
 
 **Done when:**
@@ -120,7 +121,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 **Who:** Claude writes; the owner approves. **Depends on:** 1; M2-D9; M1 steps 3 (terms ruling, data license) and 17 (public text); D1, D10, D12, D13, D17.
 - [ ] `/methodology`, generated at build time from `docs/ranking-methodology.md` so they can't drift: §1 in plain words; the two desktop views and why; reading ranks, bands and tiers; known biases (§11); source credits (what each measures, link, license); data (D17) and code licenses; run date, method version and stale sources; a link to the full text.
 - [ ] `/privacy`: no cookies, analytics, browser storage or requests to other sites; "Check for yourself" in the Network tab of Firefox, Chrome and Safari (only trulyfreefonts.com should appear); what the server and Cloudflare log, and for how long (M2-D9); a link to `ops/Caddyfile`; a promise that Milestone 3's check keeps your font list on your device.
-- [ ] `/about`: what the site is; Rules 1–4 in plain words, including why ITF-licensed fonts are out; why a free font may be missing, and how anyone, foundries included, can ask for one (the owner's draft of 2026-09-29, "Why isn't my favorite free font here?"); why the most-used fonts are ranked and the rest listed A–Z; what's next; how to report a problem or get in touch.
+- [ ] `/about`: what the site is; Rules 1–4 in plain words, including why ITF-licensed fonts are out; why the most-used fonts are ranked and the rest listed A–Z; what's next; how to report a problem or get in touch. Why a free font may be missing, and how anyone, foundries included, can ask for one, is the front page's note "Why isn't my favorite free font here?" (step 3; site rulings of 2026-09-29, `why_not_listed`), not part of `/about`.
 - [ ] Near the list, linked to `/privacy`: "No cookies, no tracking, and the page loads only its own files. Check the Network tab."
 
 **Done when:** the owner has approved the text, the pages pass step 6's checks, and the credits match M1 step 3's terms ruling.

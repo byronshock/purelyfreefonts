@@ -372,3 +372,19 @@ name = "TeX Gyre Heros Cn"
 question = "K-tex-gyre-heros-cn-page"
 primary = "https://www.gust.org.pl/projects/e-foundry/tex-gyre/heros"
 reason = "GUST's TeX Gyre Heros page, which offers the condensed faces (\"regular, italic, bold and bold italic and their condensed counterparts\"), just as each sister TeX Gyre family links its own page. The printed pick, gust.org.pl/projects/e-foundry/tex-gyre/, is the page for the whole collection."
+
+# --- Ruled by the owner later on 2026-09-29 (data/reviews/links/2026-09-29.toml) ----------------
+# Go joined the catalog once config/font-files.toml gave it a font file. Its printed candidate is a
+# file in the Go repository, not a page, so its own question K-go records "none of these is it" and
+# this override decides, as K-go-mono-page did for Go Mono. The URL answered HTTP 200 on 2026-09-29.
+
+# --- K-go-page -----------------------------------------------------------------------------------
+
+[[override]]
+family = "go"
+name = "Go"
+question = "K-go-page"
+primary = "https://go.dev/blog/go-fonts"
+primary_label = "The Go Blog: Go fonts"
+primary_note = "The Go project's announcement of its fonts, by Nigel Tao, Chuck Bigelow and Rob Pike. The TrueType files are in the Go image repository (go.googlesource.com/image), in font/gofont/ttfs, under the Go project's BSD-style license."
+reason = "As for Go Mono (K-go-mono-page): the Go fonts have no download page of their own, and the Go project's post of 16 November 2016 is the official page, which describes Go and Go Mono, states the license and says where the TTF files are. The printed pick, go.googlesource.com/image/+/master/font/gofont/ttfs/README, is the README file of the fonts' folder."

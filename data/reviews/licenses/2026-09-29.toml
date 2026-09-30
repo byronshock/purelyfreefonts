@@ -1,0 +1,143 @@
+# Owner rulings of 2026-09-29, gate LIC, given in chat after the data-fix run (m1/wave1 f708e5a). Ruled by the owner,
+# Byron Shock; recorded by Claude from the lead's notes. Also in AUTHORITY.md. The owner took Claude's recommendation
+# each time. Question 1: the 11 disagreements that reading the last 8 license strings raised (8 TeX Gyre families,
+# IBM 3270, B612 and B612 Mono) and the two new Fontist licenses (AU Passata, fontopo). Question 2: FreeFont.
+# Question 3: ET Book (its category is in config/category-overrides.toml). Question 5: Linux Libertine and Linux
+# Biolinum, whose files are CTAN's copies (config/font-files.toml; gate L). Where the queue printed another
+# recommendation than the one Claude gave in chat, the answer records Claude's letter as recommendation.
+
+[LIC-tex-gyre-adventor]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "LicenseRef-GUST-Font-License"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (question 1 of 2026-09-29), taken by the owner: the TeX Gyre fonts are under the GUST Font License, as the owner ruled for TeX Gyre Heros on 2026-09-26. Fontist's LPPL-1.3c is the license the GUST Font License grants by reference; Arch's LicenseRef-GUST-Font-1.0, which L1 now reads, names the GUST Font License itself."
+
+[LIC-tex-gyre-bonum]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "LicenseRef-GUST-Font-License"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (question 1 of 2026-09-29), taken by the owner: the TeX Gyre fonts are under the GUST Font License, as the owner ruled for TeX Gyre Heros on 2026-09-26. Fontist's LPPL-1.3c is the license the GUST Font License grants by reference; Arch's LicenseRef-GUST-Font-1.0, which L1 now reads, names the GUST Font License itself."
+
+[LIC-tex-gyre-chorus]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "LicenseRef-GUST-Font-License"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (question 1 of 2026-09-29), taken by the owner: the TeX Gyre fonts are under the GUST Font License, as the owner ruled for TeX Gyre Heros on 2026-09-26. Fontist's LPPL-1.3c is the license the GUST Font License grants by reference; Arch's LicenseRef-GUST-Font-1.0, which L1 now reads, names the GUST Font License itself."
+
+[LIC-tex-gyre-cursor]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "LicenseRef-GUST-Font-License"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (question 1 of 2026-09-29), taken by the owner: the TeX Gyre fonts are under the GUST Font License, as the owner ruled for TeX Gyre Heros on 2026-09-26. Fontist's LPPL-1.3c is the license the GUST Font License grants by reference; Arch's LicenseRef-GUST-Font-1.0, which L1 now reads, names the GUST Font License itself."
+
+[LIC-tex-gyre-heros-cn]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "LicenseRef-GUST-Font-License"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (question 1 of 2026-09-29), taken by the owner: the TeX Gyre fonts are under the GUST Font License, as the owner ruled for TeX Gyre Heros on 2026-09-26. Fontist's LPPL-1.3c is the license the GUST Font License grants by reference; Arch's LicenseRef-GUST-Font-1.0, which L1 now reads, names the GUST Font License itself."
+
+[LIC-tex-gyre-pagella]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "LicenseRef-GUST-Font-License"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (question 1 of 2026-09-29), taken by the owner: the TeX Gyre fonts are under the GUST Font License, as the owner ruled for TeX Gyre Heros on 2026-09-26. Fontist's LPPL-1.3c is the license the GUST Font License grants by reference; Arch's LicenseRef-GUST-Font-1.0, which L1 now reads, names the GUST Font License itself."
+
+[LIC-tex-gyre-schola]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "LicenseRef-GUST-Font-License"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (question 1 of 2026-09-29), taken by the owner: the TeX Gyre fonts are under the GUST Font License, as the owner ruled for TeX Gyre Heros on 2026-09-26. Fontist's LPPL-1.3c is the license the GUST Font License grants by reference; Arch's LicenseRef-GUST-Font-1.0, which L1 now reads, names the GUST Font License itself."
+
+[LIC-tex-gyre-termes]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "LicenseRef-GUST-Font-License"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (question 1 of 2026-09-29), taken by the owner: the TeX Gyre fonts are under the GUST Font License, as the owner ruled for TeX Gyre Heros on 2026-09-26. Fontist's LPPL-1.3c is the license the GUST Font License grants by reference; Arch's LicenseRef-GUST-Font-1.0, which L1 now reads, names the GUST Font License itself."
+
+[LIC-ibm-3270]
+choice = "a"
+recommended = true
+group = "permissive"
+spdx = "BSD-3-Clause"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (question 1 of 2026-09-29), taken by the owner: BSD-3-Clause, as Nerd Fonts and the designer's repository (rbanffy/3270font, LICENSE.txt) say. Debian's 'BSD3|SIL' adds the OFL-1.1, which its copyright file grants for the FontForge source only ('The Fontforge SFD font description file is optionally licensed under the SIL Open Font License v1.1')."
+
+[LIC-b612]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (question 1 of 2026-09-29), taken by the owner: OFL-1.1, as Google Fonts and Fontsource say. Debian's copyright file offers OFL-1.1, EPL-2.0 or BSD-3-Clause, the three licenses of the Airbus and Polarsys release; the OFL-1.1 branch governs here."
+
+[LIC-b612-mono]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (question 1 of 2026-09-29), taken by the owner: OFL-1.1, as Google Fonts and Fontsource say. Debian's copyright file offers OFL-1.1, EPL-2.0 or BSD-3-Clause, the three licenses of the Airbus and Polarsys release; the OFL-1.1 branch governs here."
+
+[LIC-spdx-licenseref-aarhusuniversity-passata]
+choice = "c"
+recommended = true
+recommendation = "c"
+ruling = "Excluded"
+reason = "Claude's recommendation (question 1 of 2026-09-29), taken by the owner: no grant to the public is published. Aarhus University offers AU Passata, AU Passata Light and AU Peto to its staff in its design manual; Fontist's only license text is the note 'Passata requires no licences.', and the fonts say 'Copyright (c) 2008 by 1508 A/S. All rights reserved.'"
+
+[LIC-spdx-licenseref-fontopo-free]
+choice = "b"
+recommended = true
+group = "freeware"
+recommendation = "b"
+ruling = "Qualifies but not redistributable"
+reason = "Claude's recommendation (question 1 of 2026-09-29), taken by the owner: fontopo's terms (fontopo.com/?page_id=55) allow any use, commercial included: 'All fonts on this site can be downloaded and used for commercial purposes for free.' They say nothing about changing or redistributing the fonts, so the fonts are not redistributable (Rule 3)."
+
+[LIC-freefont]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "GPL-3.0-or-later WITH Font-exception-2.0"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (question 2 of 2026-09-29), taken by the owner: GNU FreeFont's font files are under the GNU GPL version 3 or any later version with the FSF font exception, which its README (release 20120503), the fonts' name ID 13 and gnu.org/software/freefont/license.html state word for word; Debian's copyright file gives the font files 'GPL-3+ with Special Font Exception'. Fontist and Arch give the plain GPL, and Debian gives it for the source files, which kept FreeFont excluded (D3) before this ruling."
+
+[LIC-et-book]
+choice = "a"
+recommended = true
+category = "serif"
+group = "permissive"
+spdx = "MIT"
+ruling = "Qualifies and redistributable, under the MIT License; its category is serif"
+reason = "Claude's recommendation (question 3 of 2026-09-29), taken by the owner: no source states a license (no_license_families, 2026-09-26), and Edward Tufte's repository (github.com/edwardtufte/et-book, LICENSE at 24d3a3b) has the MIT License, copyright 2015 Dmitry Krasny, Bonnie Scranton and Edward Tufte. Its category, serif (config/category-overrides.toml): ET Book follows Bembo, and neither its source nor its font tables give one."
+
+[LIC-linux-libertine]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (question 5 of 2026-09-29), taken by the owner: OFL-1.1. The designer releases Linux Libertine under the GPL with the font exception and, additionally, the OFL (the 5.3.0 release's LICENCE.txt and OFL-1.1.txt); Debian's copyright file says 'GPL-2+ with font exception or OFL-1.1', and Arch lists GPL and OFL. Its files are CTAN's copies of the 5.3.0 release (config/font-files.toml)."
+
+[LIC-linux-biolinum]
+choice = "a"
+recommended = true
+group = "open-font"
+spdx = "OFL-1.1"
+ruling = "Qualifies and redistributable"
+reason = "Claude's recommendation (question 5 of 2026-09-29), taken by the owner: OFL-1.1. The designer releases Linux Biolinum under the GPL with the font exception and, additionally, the OFL (the 5.3.0 release's LICENCE.txt and OFL-1.1.txt); Debian's copyright file says 'GPL-2+ with font exception or OFL-1.1', and Arch lists GPL and OFL. Its files are CTAN's copies of the 5.3.0 release (config/font-files.toml)."

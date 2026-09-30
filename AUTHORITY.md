@@ -128,7 +128,7 @@ Answers to the Milestone 1, Step 0 decisions in [docs/ranking-methodology.md](do
 
   *(2026-09-29)*
 - **Final method (Milestone 1 step 17).** The method the owner approved at gate R round 2 is final. The entries above hold each decision; this one says where the final state lives.
-  - **Method:** the code implements method version 2026-09-29 (`METHOD_VERSION` in `src/tff_catalog/__init__.py`, which each catalog records as `run.method_version`), with every ruling above up to gate R round 2. The owner's ruling of 2026-09-29 moved it on from 2026-09-25 with the Nerd Font build link (`links.nerd`, TASK-2), which changes the published fields, not the ranks. Its public text is [docs/ranking-methodology.md](docs/ranking-methodology.md), published on 2026-09-29.
+  - **Method:** the code implements method version 2026-09-29 (`METHOD_VERSION` in `src/tff_catalog/__init__.py`, which each catalog records as `run.method_version`), with every ruling above up to gate R round 2. The owner's ruling of 2026-09-29 moved it on from 2026-09-25 to cover that day's changes: M5 as amended (Nerd Fonts its own independence group), the owner's category overrides, archived-link overrides, and the Nerd Font build link (`links.nerd`, TASK-2). Its public text is [docs/ranking-methodology.md](docs/ranking-methodology.md), published on 2026-09-29.
   - **Weights:** every weight and parameter is in `config/ranking.toml`, as the approved run used it (`run.ranking_toml_sha256` `c22345a4…` in `build/catalog.json`). The headline values:
     - overall: desktop (*most chosen*) 50% and project 50% (D12);
     - desktop: Homebrew 1.0, Arch 0.75, GitHub 0.5, Nerd Fonts 0.3, Debian 0.25 (D9);
@@ -137,6 +137,31 @@ Answers to the Milestone 1, Step 0 decisions in [docs/ranking-methodology.md](do
     - Developers & apps: Fontsource npm 0.15, ecosyste.ms 0.10, Expo 0.10, and Flutter 0.05 once it is on (M10).
   - **Licenses:** Rules 1, 3 and 4, and D3. `config/licenses.toml` lists the licenses that qualify, by filter group, and those excluded; a license it doesn't list is excluded. The owner's rulings on particular licenses and fonts are in `data/reviews/licenses/` (gate LIC) and `data/reviews/l3/` (gate L3).
   - **Latin:** D4 with the owner's allowlist rulings (gate L, 2026-09-26 and 2026-09-28): Google's strict metadata test, plus the dual-script families of `data/reviews/latin/`; every other font takes the glyph test, with the thresholds in `config/ranking.toml [latin]`.
+
+  *(2026-09-29)*
+- **Rulings of 2026-09-29, data fixes.** Given in chat in two batches after the data-fix runs, and recorded in `data/reviews/<gate>/2026-09-29.toml`. The owner took Claude's recommendation each time, except where noted.
+  - **Licenses (gate LIC):** reading the last 8 license strings raised 11 disagreements, which qualify and are redistributable:
+    - the eight TeX Gyre families, under the GUST Font License, as for TeX Gyre Heros;
+    - IBM 3270, under BSD-3-Clause;
+    - B612 and B612 Mono, under OFL-1.1.
+
+    AU Passata's terms are excluded (no public grant; "All rights reserved"). fontopo's terms qualify, but its fonts are not redistributable.
+  - **FreeFont (gate LIC):** qualifies and is redistributable under GPL-3.0-or-later with the font exception; its release's README is its L3 text. It stays monospace, as FreeMono's file makes it (coding #31), which `config/category-overrides.toml` pins. That was the owner's choice; Claude had recommended FreeSerif, as a serif.
+  - **ET Book and Open Sans Hebrew (gates LIC, L):** ET Book qualifies and is redistributable under MIT, with the category serif. Open Sans Hebrew and Open Sans Hebrew Condensed stay out, as basic-Latin Hebrew versions of Open Sans.
+  - **Families with no readable file (gates L, LIC, L3, A):**
+    - Linux Libertine and Linux Biolinum take CTAN's byte-identical copies of the 5.3.0 files, pinned by sha256 (`config/font-files.toml`), under OFL-1.1. Their name tables name the designer's dual grant (GPL with the font exception, or OFL), so they pass L3 by ruling: OFL-1.1 governs, as with Cascadia.
+    - Computer Modern, New Computer Modern, Spleen and Scientifica wait until the pipeline reads tar archives, after the Milestone 1 pull request.
+    - So do the builds and umbrella casks among these families, and the 21 Iosevka variants. That was the owner's choice; Claude had recommended folding them now.
+  - **Links (gate K):**
+    - Go: `https://go.dev/blog/go-fonts`, as for Go Mono;
+    - Liberation Serif: `https://github.com/liberationfonts/liberation-fonts/releases`, as for Liberation Mono and Sans;
+    - ET Book: `https://edwardtufte.github.io/et-book/`;
+    - Linux Libertine and Linux Biolinum: `https://libertine-fonts.org/`.
+  - **New Linux cases (gate X):** all 8 are left out of *most chosen*:
+    - FreeFont, pulled in by vlc-plugin-skins2;
+    - Go, by texlive-fonts-extra;
+    - Linux Libertine and Biolinum, by libreoffice;
+    - Liberation Sans and Serif, preinstalled on CachyOS and Ubuntu.
 
   *(2026-09-29)*
 
@@ -171,12 +196,21 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
     - **Before launch:** Claude confirms every linked build's license check and hides the marker for any build that fails.
 
     Recorded in `data/reviews/site/2026-09-29.toml`.
+  - *The owner's answers after the build, 2026-09-29:*
+    - **README-only folders:** a Nerd Fonts folder that holds only a README stays linked.
+    - **Hide switch:** the owner can hide a build's marker and link, with a reason, in `config/nerd-hidden.toml`. That was the owner's choice; Claude had recommended adding the switch only when a check fails.
+    - **Broken link:** a Nerd link that fails its check is not shown (no marker, link or filter match) until it passes again. The font stays listed, and review.md flags it. This was the owner's own answer; Claude had recommended a warning only.
+    - **Marker:** it stays at the end of the name's cell, in a column.
 - **Every qualifying font is listed.** Recorded in `data/reviews/site/2026-09-29.toml` (`more_fonts`, `font_requests`). *(2026-09-29)*
   - **The rest, A–Z (the owner's choice (b), Claude's recommendation).** Every font that passes the gates is listed, not only the catalog. The catalog keeps its ranks and bands. The other qualifying fonts (about 1,250 in the 2026-09-29 run) follow the ranked fonts in the same list, unranked and A–Z, under a heading such as "More truly free fonts". They show no rank, band or "501+", and they take the same filters, search, details, link policy and preview rules. The owned-font comparison takes owned fonts out of them too.
   - **Fonts added on request (the owner's variant of option (c)).** Anyone, whether a foundry, a designer or a visitor, may ask for a missing font by email to admin@trulyfreefonts.com or with the "Missing font" form. Claude checks it against Rules 1–4, D3, D4 and the link policy, and the owner rules in chat. An accepted family joins `config/foundries.toml` (amending M12) and is listed from the next refresh: ranked if its evidence places it in the catalog, otherwise A–Z. Being added never counts as popularity, and the public files never say who asked.
 - **Headline font.** The site's headline is set in **League Gothic** (The League of Moveable Type, OFL 1.1). *(2026-09-29)*
   - **Wordmark.** The headline is an SVG wordmark reading "Truly Free Fonts" in mixed case, with the letters drawn as outlines, scaled to be the site's headline. The file is `site/static/wordmark.svg`, drawn by `site/static/_src/make_wordmark.py`. *(2026-09-29)*
   - **Colour.** Black on white in both light and dark mode: the header stays white when the rest of the page is dark. *(2026-09-29)*
+  - **Header.** The wordmark replaces the site name and the favicon mark in the header. It is about 48 px tall on wide screens and 32 px on phones. The header is white in both themes, and its links and text keep their light-theme colours. *(2026-09-29)*
+- **Front-page note.** The front page carries "Why isn't my favorite free font here?" with the owner's text word for word (Claude's draft, accepted), the address a mailto link. On wide screens it is a textbook-style frame floated right beside the lead and privacy note, with the list starting below it. The owner kept this after seeing screenshots, and accepts the blank area it leaves below the short intro; Claude had suggested a wider frame. On phones it is a full-width frame folded to its heading, opened with one tap. Recorded in `data/reviews/site/2026-09-29.toml` (`why_not_listed`, `why_not_listed_layout`, `why_not_listed_gap`). *(2026-09-29)*
+- **Front-page lead.** The owner's wording: "Every font here is free for any personal or commercial use, although sharing the files may be restricted. They are ranked by how many people install them and use them in their work." The page's meta description stays as it was. *(2026-09-29)*
+- **Early-version line.** Every page's header says "Early version. Coming next: free font inventory tools." (the owner's wording) until Milestone 3 removes it. *(2026-09-29)*
 
 ## Infrastructure
 

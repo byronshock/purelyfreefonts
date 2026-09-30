@@ -11,7 +11,8 @@ belongs to a discovered collector and loads into its ``Settings``, and every
 enabled engine source reads a discovered ranking collector. It is separate
 because it imports every collector module; CI runs it once the collectors exist.
 ``--strict`` also runs ``check_category_ids``: every family of
-``category-overrides.toml`` is in the id registry, when there is one.
+``category-overrides.toml`` and of ``nerd-hidden.toml`` is in the id registry, when
+there is one.
 
 ``config_hash(cfg)`` is the sha256 of the canonical JSON of the effective
 config, so two runs with the same values give the same hash whatever the
@@ -31,6 +32,7 @@ from tff_catalog import jsonio
 from tff_catalog.config_model import (
     CATEGORY_OVERRIDES_FILE,
     CONFIG_FILES,
+    NERD_HIDDEN_FILE,
     RANK_KEYS,
     SCHEMA_VERSION,
     CategoryOverridesConfig,
@@ -38,6 +40,7 @@ from tff_catalog.config_model import (
     ConfigError,
     FoundriesConfig,
     LicensesConfig,
+    NerdHiddenConfig,
     PreinstalledConfig,
     RankingConfig,
     SiteConfig,
@@ -73,6 +76,7 @@ def load_config(paths: Paths) -> Config:
     check_abstain_scope(cfg)
     check_site(cfg)
     check_category_overrides(cfg.category_overrides)
+    check_nerd_hidden(cfg.nerd_hidden)
     return cfg
 
 
@@ -269,22 +273,39 @@ def check_category_overrides(c: CategoryOverridesConfig) -> None:
             _fail(where, f"{category!r} is not one of {', '.join(CATEGORIES)}")
 
 
+def check_nerd_hidden(c: NerdHiddenConfig) -> None:
+    """Each key is a family id, and each value the reason its Nerd Font build is hidden."""
+    from tff_catalog.names import ID_PATTERN
+
+    for fid, reason in c.families.items():
+        where = f"{NERD_HIDDEN_FILE}: families.{fid}"
+        if not ID_PATTERN.fullmatch(fid):
+            _fail(where, f"{fid!r} is not a family id")
+        if not reason.strip():
+            _fail(where, "give the reason the build is hidden")
+
+
 def check_category_ids(cfg: Config, paths: Paths) -> None:
-    """``--strict``: every family of ``category-overrides.toml`` is in the id registry
-    (``state/ids.json``, or the one the latest run proposed in ``build/state/``).
+    """``--strict``: every family of ``category-overrides.toml`` and ``nerd-hidden.toml``
+    is in the id registry (``state/ids.json``, or the one the latest run proposed in
+    ``build/state/``).
 
     Without a registry (a clone before the first merged refresh) there is nothing to
-    check against; stage "facts" still fails on any id its universe lacks.
+    check against; stages "facts" and "links" still fail on any id their universe lacks.
     """
     from tff_catalog.state import read_part
 
     known = read_part(paths, "ids")
-    unknown = sorted(set(cfg.category_overrides.families) - set(known)) if known else []
-    if unknown:
-        _fail(
-            f"{CATEGORY_OVERRIDES_FILE}: families",
-            f"not in the id registry (state/ids.json): {', '.join(unknown)}",
-        )
+    for filename, families in (
+        (CATEGORY_OVERRIDES_FILE, cfg.category_overrides.families),
+        (NERD_HIDDEN_FILE, cfg.nerd_hidden.families),
+    ):
+        unknown = sorted(set(families) - set(known)) if known else []
+        if unknown:
+            _fail(
+                f"{filename}: families",
+                f"not in the id registry (state/ids.json): {', '.join(unknown)}",
+            )
 
 
 def check_licenses(lic: LicensesConfig) -> None:

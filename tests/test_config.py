@@ -354,15 +354,22 @@ CATEGORIES_22 = {
 }
 
 
+# Later rulings of 2026-09-29: ET Book is a serif (gate LIC, LIC-et-book, which let it in), and
+# FreeFont stays monospace, as FreeMono's file makes it (gate R, freefont_category).
+LATER_CATEGORIES = {"et-book": "serif", "freefont": "monospace"}
+
+
 def test_category_overrides_hold_the_owner_ruling_of_2026_09_29() -> None:
     """categories_22 in data/reviews/review/2026-09-29.toml: every one of the 22 fonts is
-    listed, the nine the owner kept on sans-serif included."""
+    listed, the nine the owner kept on sans-serif included; and the later rulings."""
     families = load_config(Paths.for_root(ROOT)).category_overrides.families
     by_category: dict[str, set[str]] = {}
     for fid, category in families.items():
-        by_category.setdefault(category, set()).add(fid)
+        if fid not in LATER_CATEGORIES:
+            by_category.setdefault(category, set()).add(fid)
     assert by_category == CATEGORIES_22
-    assert len(families) == 22
+    assert len(families) == 22 + len(LATER_CATEGORIES)
+    assert {f: families.get(f) for f in LATER_CATEGORIES} == LATER_CATEGORIES
 
 
 CATEGORY_BREAKS = {
@@ -403,6 +410,45 @@ def test_strict_check_needs_every_overridden_family_in_the_id_registry(cfg: Conf
     state_ids.write_text(json.dumps(ids), encoding="utf-8")
     with pytest.raises(ConfigError, match=r"not in the id registry \(state/ids\.json\): tagmukay"):
         check_category_ids(loaded, cfg.paths)
+
+
+NERD_HIDDEN_BREAKS = {
+    "no-reason": (_set("families", "hack", value="  "), "families.hack: give the reason"),
+    "not-a-string": (_set("families", "hack", value=True), "expected a string"),
+    "not-an-id": (_set("families", "Hack", value="Icons failed"), "'Hack' is not a family id"),
+    "no-table": (_drop("families"), "families: missing key"),
+    "schema": (_set("schema", value=2), "schema 2, expected 1"),
+}
+
+
+@pytest.mark.parametrize("case", sorted(NERD_HIDDEN_BREAKS))
+def test_hidden_nerd_builds_load_strictly(cfg: ConfigCopy, case: str) -> None:
+    """config/nerd-hidden.toml (owner ruling of 2026-09-29): family id -> a required reason."""
+    edit, message = NERD_HIDDEN_BREAKS[case]
+    cfg.change("nerd-hidden.toml", _set("families", "hack", value="Its icon sets failed."))
+    cfg.change("nerd-hidden.toml", edit)
+    with pytest.raises(ConfigError, match=rf"nerd-hidden\.toml.*{re.escape(message)}"):
+        cfg.load()
+
+
+def test_hidden_nerd_builds_count_toward_the_config_hash(cfg: ConfigCopy) -> None:
+    base = cfg.load()
+    assert base.nerd_hidden.families == {}  # nothing hidden yet
+    cfg.change("nerd-hidden.toml", _set("families", "hack", value="Its icon sets failed."))
+    changed = cfg.load()
+    assert changed.nerd_hidden.families == {"hack": "Its icon sets failed."}
+    assert config_hash(changed) != config_hash(base)
+    assert ranking_hash(changed) == ranking_hash(base)
+    # --strict: the id must be in the registry, as for category-overrides.toml.
+    ids = {fid: {"family": fid} for fid in changed.category_overrides.families}
+    state_ids = cfg.root / "state" / "ids.json"
+    state_ids.parent.mkdir()
+    state_ids.write_text(json.dumps(ids), encoding="utf-8")
+    with pytest.raises(ConfigError, match=r"nerd-hidden\.toml: families: not in the id registry"):
+        check_category_ids(changed, cfg.paths)
+    ids["hack"] = {"family": "Hack"}
+    state_ids.write_text(json.dumps(ids), encoding="utf-8")
+    check_category_ids(changed, cfg.paths)
 
 
 def test_bad_toml_fails(cfg: ConfigCopy) -> None:

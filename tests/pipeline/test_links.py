@@ -27,6 +27,7 @@ from tff_catalog.config_model import (
     ConfigError,
     ExcludedLicense,
     LicensesConfig,
+    NerdHiddenConfig,
 )
 from tff_catalog.fetch import Fetcher
 from tff_catalog.links import Link, Links, NoAcceptedLink, Target
@@ -623,6 +624,8 @@ def test_committed_overrides_cover_the_gate_k_families() -> None:
         "K-monofur-page",
         # Ruled later on 2026-09-29, after the next rebuild: TeX Gyre Heros Cn's family page.
         "K-tex-gyre-heros-cn-page",
+        # Ruled later on 2026-09-29, once Go had a font file: Go's page, as for Go Mono.
+        "K-go-page",
     }
     # Every one is approved in data/reviews/links/ (Monofur's capture on the owner's second
     # answer: the 2022 capture approved first turned out to be a parking page).
@@ -1034,10 +1037,18 @@ def context(
     *,
     options: RunOptions | None = None,
     state: State | None = None,
+    hidden: dict[str, str] | None = None,
 ) -> StageContext:
+    # The stage reads only the Nerd Font parts of the config: the hidden builds, and the
+    # licenses and license aliases a Nerd Fonts folder's base license is checked with.
+    config = SimpleNamespace(
+        nerd_hidden=NerdHiddenConfig(schema=1, families=hidden or {}),
+        licenses=NERD_LICENSES,
+        license_aliases=SimpleNamespace(aliases=NERD_LICENSE_ALIASES),
+    )
     return StageContext(
         paths=paths,
-        config=cast(Config, None),  # the stage reads no config
+        config=cast(Config, config),
         state=state or State(),
         run_date=DAY,
         store=Store(paths.store) if paths.store is not None else None,
@@ -1835,11 +1846,10 @@ def write_nerd_world(paths: Paths) -> None:
     )
 
 
-def nerd_context(paths: Paths, fetcher: Fetcher | None, **options: object) -> StageContext:
-    """A stage context with the licenses and license aliases the Nerd test reads."""
-    aliases = SimpleNamespace(aliases=NERD_LICENSE_ALIASES)
-    config = cast(Config, SimpleNamespace(licenses=NERD_LICENSES, license_aliases=aliases))
-    return replace(context(paths, fetcher, options=RunOptions(**options)), config=config)  # type: ignore[arg-type]
+def nerd_context(
+    paths: Paths, fetcher: Fetcher | None, hidden: dict[str, str] | None = None, **options: object
+) -> StageContext:
+    return context(paths, fetcher, options=RunOptions(**options), hidden=hidden)  # type: ignore[arg-type]
 
 
 def test_the_stage_writes_checks_and_reports_the_nerd_link(
@@ -1869,14 +1879,45 @@ def test_the_stage_writes_checks_and_reports_the_nerd_link(
     links.run(nerd_context(paths, None, from_snapshots=DAY))
     assert stageio.stage_path(paths, "links").read_bytes() == first
 
-    # A Nerd link that stops answering is reported, like a designer link, not failed.
+    assert chosen["source-code-pro"].nerd_problem is None
+
+    # A Nerd link that stops answering keeps its place in the stage file with the check's
+    # verdict, which export turns into no link (owner ruling of 2026-09-29), and `links
+    # --check` reports it, like a designer link, without failing.
     broken = Web({**pages, folder: (404, None)})
     links.run(nerd_context(paths, broken.fetcher(), refetch=True))
+    chosen = stageio.load_stage(paths, "links")
+    assert chosen["source-code-pro"].nerd == Link(folder, "SauceCodePro Nerd Font")
+    assert chosen["source-code-pro"].nerd_problem == f"{folder}: HTTP 404"
     queue = jsonio.load(paths.queues / links.QUEUE_FILE)
     assert queue["failed_checks"][folder]["used_by"] == ["source-code-pro:nerd"]
     assert links.cmd_check(nerd_context(paths, None)) == 0
     out = capsys.readouterr().out
     assert f"warning: source-code-pro: nerd {folder}: HTTP 404" in out
+
+    # Once it passes again (a same-day rerun asks again every answer that was not 200), the
+    # verdict clears and the link is back.
+    links.run(nerd_context(paths, Web(pages).fetcher()))
+    assert stageio.load_stage(paths, "links")["source-code-pro"].nerd_problem is None
+    assert jsonio.load(paths.queues / links.QUEUE_FILE)["failed_checks"] == {}
+
+
+def test_the_owner_can_hide_a_nerd_font_build(paths: Paths) -> None:
+    """config/nerd-hidden.toml (owner ruling of 2026-09-29): a listed family gets no Nerd
+    link, and the queue says why; an id no family of the universe has fails the stage."""
+    write_nerd_world(paths)
+    pages = {"https://ok.example/": (200, None), "https://ok.example/plain/": (200, None)}
+    reason = "Its patched icon sets failed the launch check."
+    web = Web(pages)
+    links.run(nerd_context(paths, web.fetcher(), hidden={"source-code-pro": reason}))
+    assert stageio.load_stage(paths, "links")["source-code-pro"].nerd is None
+    assert not any("nerd-fonts" in url for _, url in web.requests)  # nothing to check
+    queue = jsonio.load(paths.queues / links.QUEUE_FILE)
+    assert queue["nerd"]["unlinked"] == {
+        "source-code-pro": f"hidden by config/nerd-hidden.toml: {reason}"
+    }
+    with pytest.raises(ConfigError, match=r"nerd-hidden.toml: families sauce-code-pro: no family"):
+        links.run(nerd_context(paths, web.fetcher(), hidden={"sauce-code-pro": reason}))
 
 
 def test_links_check_fails_a_nerd_link_the_policy_forbids(

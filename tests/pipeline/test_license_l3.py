@@ -1349,6 +1349,7 @@ UNPINNED_UPSTREAMS = (
     "https://software.sil.org/downloads/r/ezra/EzraSIL-2.51.zip#",
     "https://software.sil.org/downloads/r/scheherazade/Scheherazade-2.100.zip#",
     "https://software.sil.org/downloads/r/sophianubian/SophiaNubian-1.0.zip#",
+    "https://ftp.gnu.org/gnu/freefont/freefont-ttf-20120503.zip#",
 )
 
 
@@ -1365,7 +1366,10 @@ def test_the_real_research_file_loads_and_allows_only_allowed_licenses() -> None
     pairs = license_l3.allowed_pairs(allowed)
     for entry in found.texts.values():
         for spdx in entry.licenses:
-            assert license_l3.leaf_allowed(license_l3._Leaf(spdx), pairs), spdx
+            # Allowed alone, or (FreeFont's README: the GPL with the font exception) only with
+            # an exception, whose canonical text L3 then finds in the text itself (satisfied).
+            base = license_l3._allow_id(spdx)
+            assert any(allowed_id == base for allowed_id, _ in pairs), spdx
     for fam in found.families.values():
         for url in fam.texts:
             assert license_l3.is_pinned(url) or url.startswith(UNPINNED_UPSTREAMS), url

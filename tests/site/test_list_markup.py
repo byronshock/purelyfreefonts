@@ -11,12 +11,15 @@ pytest-playwright's ``browser``.
 
 import json
 import re
+import tomllib
 from html.parser import HTMLParser
 from pathlib import Path
 
 import pytest
 
 from tff_site import build, data
+
+ROOT = Path(__file__).resolve().parents[2]
 
 VOID = frozenset(
     {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source"}
@@ -126,7 +129,7 @@ def doc(site_data: Path) -> dict:
 def test_page_outline_and_list_semantics(dom):
     assert len(dom.find_all("h1")) == 1
     h2s = dom.find_all("h2")
-    assert [h.attrs.get("id") for h in h2s] == ["results-h"]
+    assert [h.attrs.get("id") for h in h2s] == ["why-h", "results-h"]  # the note's, the list's
     results = dom.find("section", id="results")
     assert results.attrs["aria-labelledby"] == "results-h"
     ol = dom.find("ol", id="list")
@@ -368,6 +371,33 @@ def test_the_nerd_legend_is_the_owners(dom, doc):
     ]
 
 
+SITE_RULINGS_0929 = tomllib.loads(
+    (ROOT / "data" / "reviews" / "site" / "2026-09-29.toml").read_text(encoding="utf-8")
+)
+
+
+def test_the_front_page_note_is_the_owners(dom):
+    """The owner's note, word for word, in both of its copies (site rulings of 2026-09-29,
+    why_not_listed): a frame for wide screens, and a folded one for phones."""
+    ruling = SITE_RULINGS_0929["why_not_listed"]
+    main = dom.find("main")
+    wide = main.find("div", class_="why-wide")
+    fold = main.find("details", class_="why-fold")
+    assert wide.classes == ["why", "why-wide"]
+    assert fold.classes == ["why", "why-fold"]
+    assert "open" not in fold.attrs  # folded until the visitor opens it
+    assert squash(wide.find("h2").text) == ruling["heading"]
+    assert squash(fold.find("summary").text) == ruling["heading"]
+    for copy in (wide, fold):
+        assert squash(copy.find("p").text) == ruling["text"]
+        (link,) = copy.find("p").find_all("a")
+        assert link.attrs["href"] == "mailto:admin@trulyfreefonts.com"
+        assert squash(link.text) == "admin@trulyfreefonts.com"
+    # The wide frame floats beside the lead and the privacy note, so it comes before them.
+    kids = [n.attrs.get("class") or n.tag for n in main.elements()]
+    assert kids[:6] == ["h1", "why why-wide", "lead", "privacy-note", "why why-fold", "layout"]
+
+
 def test_count_and_no_results(dom, doc):
     n = len(doc["fonts"])
     assert squash(dom.find(id="count").text) == f"Showing {n} of {n} fonts"
@@ -594,6 +624,75 @@ def test_the_nerd_marker_keeps_the_row_height(browser, site_url, width, doc):
             assert row["before"] == row["after"], row
             assert row["inLine"], row
             assert row["right"], row
+    finally:
+        context.close()
+
+
+WHY_LAYOUT = """() => {
+  // A block's box runs under a float; its lines are what wrap, so "right" is its text's.
+  const box = (s) => { const e = document.querySelector(s); const r = e.getBoundingClientRect();
+    const range = document.createRange(); range.selectNodeContents(e);
+    const lines = [...range.getClientRects()].filter((q) => q.width > 0);
+    return { top: r.top + scrollY, bottom: r.bottom + scrollY, left: r.left, right: r.right,
+             width: r.width, display: getComputedStyle(e).display,
+             textRight: lines.length ? Math.max(...lines.map((q) => q.right)) : r.right }; };
+  const main = document.querySelector('main');
+  const pad = parseFloat(getComputedStyle(main).paddingRight);
+  return { wide: box('.why-wide'), fold: box('.why-fold'), lead: box('.lead'),
+           note: box('.privacy-note'), layout: box('.layout'), results: box('#results'),
+           mainRight: main.getBoundingClientRect().right - pad,
+           mainLeft: main.getBoundingClientRect().left + parseFloat(getComputedStyle(main).paddingLeft),
+           open: document.querySelector('.why-fold').open,
+           said: (document.body.innerText.match(/Why isn't my favorite free font here\\?/g) || []).length,
+           text: (document.body.innerText.match(/Not every font that's free to download/g) || []).length };
+}"""
+
+
+@pytest.mark.parametrize("scheme", ["light", "dark"])
+def test_the_note_is_a_frame_beside_the_intro_on_wide_screens(browser, site_url, scheme):
+    """Site ruling of 2026-09-29 (why_not_listed_layout): floated right beside the lead and
+    the privacy note, which wrap around it; the list starts below it, full width."""
+    context, page = open_page(browser, site_url, 1280, color_scheme=scheme)
+    try:
+        got = page.evaluate(WHY_LAYOUT)
+        wide, lead, note, layout = got["wide"], got["lead"], got["note"], got["layout"]
+        assert got["fold"]["display"] == "none"
+        assert abs(wide["right"] - got["mainRight"]) < 1, got  # at the right edge
+        assert wide["top"] <= lead["top"] + 1, got  # level with the lead
+        assert lead["textRight"] <= wide["left"], got  # the lead wraps beside it
+        assert note["textRight"] <= wide["left"], got  # so does the privacy note
+        assert layout["top"] >= wide["bottom"], got  # the list starts below the frame
+        assert abs(layout["left"] - got["mainLeft"]) < 1, got
+        assert abs(layout["right"] - got["mainRight"]) < 1, got  # rows keep their full width
+        assert (got["said"], got["text"]) == (1, 1), got  # read once
+    finally:
+        context.close()
+
+
+@pytest.mark.parametrize("javascript", [True, False], ids=["js", "no-js"])
+def test_the_note_is_folded_on_phones(browser, site_url, javascript):
+    """Site ruling of 2026-09-29: on a phone only the heading shows, full width; one tap opens
+    the text, with or without JavaScript, and nothing else moves."""
+    context = browser.new_context(
+        viewport={"width": 375, "height": 812}, java_script_enabled=javascript
+    )
+    try:
+        page = context.new_page()
+        page.goto(site_url + "/")
+        got = page.evaluate(WHY_LAYOUT)
+        assert got["wide"]["display"] == "none"
+        assert got["fold"]["display"] == "block"
+        assert not got["open"]
+        assert abs(got["fold"]["left"] - got["mainLeft"]) < 1, got
+        assert abs(got["fold"]["right"] - got["mainRight"]) < 1, got  # full width
+        assert (got["said"], got["text"]) == (1, 0), got  # the heading only, once
+        before = got["layout"]["top"] - got["fold"]["bottom"]
+        page.click(".why-fold summary")
+        opened = page.evaluate(WHY_LAYOUT)
+        assert opened["open"]
+        assert (opened["said"], opened["text"]) == (1, 1), opened
+        assert opened["layout"]["top"] - opened["fold"]["bottom"] == pytest.approx(before, abs=1)
+        assert page.evaluate(SCROLL_WIDTH) <= 375
     finally:
         context.close()
 

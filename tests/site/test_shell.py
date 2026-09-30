@@ -260,8 +260,17 @@ def test_body_is_skip_link_header_main_footer():
     assert nav.attrs.get("class") == "site-nav"
     name = header.find("a", class_="site-name")
     assert name.attrs["href"] == "/"
-    assert name.text.strip() == "Truly Free Fonts"
-    assert name.find("img").attrs["alt"] == ""  # decorative: the link has its text
+    # The wordmark alone, which names the link (owner ruling of 2026-09-29); the favicon is
+    # the browser's icon only.
+    assert name.text.strip() == ""
+    (mark,) = name.find_all("img")
+    assert mark.attrs["class"] == "site-name-mark"
+    assert mark.attrs["src"] == "/wordmark.svg"
+    assert mark.attrs["alt"] == "Truly Free Fonts"
+    width, height = int(mark.attrs["width"]), int(mark.attrs["height"])
+    assert height == 48
+    assert abs(width / height - 8275 / 1862) < 0.01  # the wordmark's viewBox ratio
+    assert not [i for i in header.find_all("img") if "favicon" in i.attrs.get("src", "")]
 
 
 @pytest.mark.parametrize("path", [*NAV, "/404.html"])
@@ -273,14 +282,19 @@ def test_nav_marks_only_the_current_page(path):
 
 
 def test_early_version_line_is_in_the_header_of_every_page():
-    """Milestone 2 step 14: the page says it is an early version and that hiding the fonts
-    you have is coming. Milestone 3 removes it."""
+    """Milestone 2 step 14: the page says it is an early version and what comes next, in the
+    owner's wording of 2026-09-29 (data/reviews/site/2026-09-29.toml, site_status_line), on
+    every page's header. Milestone 3 removes it."""
     for path in [*NAV, "/404.html"]:
         header = dom(render(path)).find("header")
         (status,) = [p for p in header.find_all("p") if p.attrs.get("class") == "site-status"]
-        text = " ".join(status.text.split()).lower()
-        assert "early version" in text, text
-        assert "hiding the fonts you" in text, text
+        text = " ".join(status.text.split())
+        assert text == "Early version. Coming next: free font inventory tools.", text
+    # Every page, the blog's included, extends base.html.j2 and none replaces its header,
+    # so pages added later keep the line too.
+    for template in TEMPLATES.glob("*.j2"):
+        if template.name != "base.html.j2":
+            assert "block header" not in template.read_text(encoding="utf-8"), template.name
 
 
 def test_one_feedback_spot_first_in_the_footer_the_same_on_every_page():
@@ -487,6 +501,52 @@ def test_favicon_svg_is_inert_outlines():
             assert "url(" not in value, (name, value)
 
 
+def test_wordmark_svg_is_inert_outlines():
+    """The header's wordmark (AUTHORITY.md, "Headline font"): one black path in the 8275 x
+    1862 viewBox, no script, style, link, text or foreign content, so it renders the same
+    under the CSP, in any browser, with no font."""
+    source = (STATIC / "wordmark.svg").read_text(encoding="utf-8")
+    assert len(source.encode()) < 8192
+    root = ET.fromstring(source)
+    ns = "{http://www.w3.org/2000/svg}"
+    assert root.tag == f"{ns}svg"
+    assert root.attrib["viewBox"] == "0 0 8275 1862"
+    for el in root.iter():
+        assert el.tag in {f"{ns}svg", f"{ns}title", f"{ns}path"}, el.tag
+        for name, value in el.attrib.items():
+            assert not name.lower().startswith("on"), name
+            assert "href" not in name, name
+            assert name != "style", name
+            assert "url(" not in value, (name, value)
+    assert [p.attrib["fill"] for p in root.iter(f"{ns}path")] == ["#000000"]
+
+
+@pytest.mark.parametrize(("width", "want"), [(1280, 48), (375, 32)])
+def test_the_wordmark_is_48_px_tall_wide_and_32_on_phones(browser, site_url, width, want):
+    """Owner ruling of 2026-09-29: about 48 px tall on wide screens and 32 px on phones, in
+    the header, which is white in both themes."""
+    for scheme in ("light", "dark"):
+        context = browser.new_context(
+            base_url=site_url, viewport={"width": width, "height": 800}, color_scheme=scheme
+        )
+        try:
+            page = context.new_page()
+            page.goto("/missing")
+            box = page.evaluate(
+                """() => { const i = document.querySelector('.site-name-mark');
+                  const r = i.getBoundingClientRect();
+                  return [r.width, r.height, i.naturalWidth > 0,
+                          getComputedStyle(document.querySelector('.site-header'))
+                            .backgroundColor]; }"""
+            )
+            assert abs(box[1] - want) < 1, (scheme, box)
+            assert abs(box[0] / box[1] - 8275 / 1862) < 0.02, (scheme, box)
+            assert box[2], "the wordmark did not load"
+            assert box[3] == "rgb(255, 255, 255)", (scheme, box)
+        finally:
+            context.close()
+
+
 def _generator() -> Any:
     spec = importlib.util.spec_from_file_location("make_static", GENERATOR)
     module = importlib.util.module_from_spec(spec)
@@ -677,9 +737,11 @@ def test_shell_images_load_under_the_csp(guarded_context):
     page = guarded.new_page()
     page.goto("/missing")
     assert page.evaluate(
-        "() => { const i = document.querySelector('.site-mark'); return i.complete && i.naturalWidth; }"
+        "() => { const i = document.querySelector('.site-name-mark');"
+        " return i.complete && i.naturalWidth; }"
     )
     kinds = {
+        "/wordmark.svg": "image/svg+xml",
         "/favicon.svg": "image/svg+xml",
         "/favicon.ico": "image/",
         "/apple-touch-icon.png": "image/png",

@@ -69,6 +69,9 @@ How the per-font fields are made (``docs/catalog-schema.md`` says it for readers
   ``publish_rank`` is false shows no rank, z or value.
 - **Sources listed** are the enabled engine sources, less any the parse stage
   dropped (no snapshot inside the stale window).
+- **The Nerd Font link** (``links.nerd``) is stage "links"' choice, except that a link
+  that failed the check recorded for the run's date (``Links.nerd_problem``) is left
+  out, null, until a later check passes (owner ruling of 2026-09-29); the font stays.
 """
 
 import bisect
@@ -886,7 +889,9 @@ class CatalogBuilder:
             "links": {
                 "primary": link(links.primary),
                 "designer": link(links.designer) if links.designer else None,
-                "nerd": link(links.nerd) if links.nerd else None,
+                # A Nerd link that failed this run's check is left out until it passes
+                # again (owner ruling of 2026-09-29): no marker, link or filter match.
+                "nerd": link(links.nerd) if links.nerd and not links.nerd_problem else None,
             },
             "first_seen": fam.first_seen.isoformat(),
             "flags": self.flags(fid, tags, ranks),

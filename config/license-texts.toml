@@ -449,6 +449,32 @@ name = "Liberation Serif"
 texts = ["https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/src/unpatched-fonts/LiberationMono/LICENSE"]
 reason = "As for Liberation Sans: the 2.1.5 release's LICENSE, OFL-1.1, byte for byte in the Nerd Fonts folder config/font-files.toml takes the font file from."
 
+# --- families the owner let in on 2026-09-29 (gate LIC, data/reviews/licenses/2026-09-29.toml) --
+
+[[family]]
+family = "et-book"
+name = "ET Book"
+texts = ["https://raw.githubusercontent.com/edwardtufte/et-book/24d3a3bbfc880095d3df2b9e9d60d05819138e89/LICENSE"]
+reason = "No source states a license; the owner ruled it qualifies under MIT (LIC-et-book). Edward Tufte's repository, at the commit config/font-files.toml takes the font file from, has the MIT License (copyright 2015 Dmitry Krasny, Bonnie Scranton and Edward Tufte)."
+
+[[family]]
+family = "freefont"
+name = "FreeFont"
+texts = ["https://ftp.gnu.org/gnu/freefont/freefont-ttf-20120503.zip#freefont-20120503/README"]
+reason = "The owner ruled it qualifies under GPL-3.0-or-later WITH Font-exception-2.0 (LIC-freefont). GNU FreeFont's 20120503 release, the one Homebrew and Fontist install, states its license in its README: the GNU GPL version 3 or any later version, with the FSF font exception word for word (text below). The release's COPYING is the GPL itself, in a form that matches no canonical text; Debian's copyright file says the same for the font files."
+
+[[family]]
+family = "linux-libertine"
+name = "Linux Libertine"
+texts = ["https://salsa.debian.org/fonts-team/fonts-linuxlibertine/-/raw/eb98444a1daaff492ea7cac4e92f5f83bc22913c/OFL-1.1.txt"]
+reason = "The owner ruled the disagreement between Debian (GPL-2.0-or-later with the font exception, or OFL-1.1) and Arch (GPL and OFL) as OFL-1.1 (LIC-linux-libertine). The designer's 5.3.0 release ships its OFL-1.1.txt only in a tar archive; Debian's fonts-linuxlibertine repository keeps the release on its upstream branch, and this OFL-1.1.txt is byte for byte the release's."
+
+[[family]]
+family = "linux-biolinum"
+name = "Linux Biolinum"
+texts = ["https://salsa.debian.org/fonts-team/fonts-linuxlibertine/-/raw/eb98444a1daaff492ea7cac4e92f5f83bc22913c/OFL-1.1.txt"]
+reason = "As for Linux Libertine, released with it: OFL-1.1 by the owner's ruling (LIC-linux-biolinum), the 5.3.0 release's OFL-1.1.txt, byte for byte on Debian's upstream branch."
+
 # --- researched texts --------------------------------------------------------------------------
 
 [[text]]
@@ -546,3 +572,9 @@ sha256 = "573b0ac124968d3ec5d797ae96a1567b9acb8be6a04e5d2c03034f520b141c2a"
 licenses = ["MIT", "OFL-1.1"]
 url = "https://raw.githubusercontent.com/larsenwork/monoid/fbd7a47a905b50b8f9e156eb91aaf6b1010ee42d/Readme.md"
 reason = "The Monoid repository's Readme.md at tag 0.61: installation notes, credits and a change log, then its Licenses section: 'Monoid is dual licensed with MIT and OFL licenses. Pick one:) Monoisome is OFL license.', the MIT License and the OFL-1.1, each word for word. Read whole, it restricts nothing and names no other license."
+
+[[text]]
+sha256 = "d7375e3982a2e0afc471f8900c46ac6ea41b1112de1f5cdb9ca5c820adf25a33"
+licenses = ["GPL-3.0-or-later"]
+url = "https://ftp.gnu.org/gnu/freefont/freefont-ttf-20120503.zip#freefont-20120503/README"
+reason = "GNU FreeFont's README (release 20120503): a description of the fonts and their file formats, and its 'Licensing' section, which grants the GNU GPL 'either version 3 of the License, or (at your option) any later version' and adds the FSF font exception word for word ('As a special exception, if you create a document which uses this font ...'). L3 finds the exception by its canonical text; the GPL grant is a notice, not the GPL's own text. Read whole, it restricts nothing and names no other license."

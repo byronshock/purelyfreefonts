@@ -14,9 +14,12 @@
 # [[family]]: one per family.
 #   family   family id (state/ids.json), listed once
 #   name     display name, for people
-#   files    font files, best first: https URLs of a font file, or
+#   files    font files, best first. Each is an https URL of a font file, or
 #            archive.zip#path/in/archive for one inside a zip archive, pinned to a
-#            commit or a release (license_l3.is_pinned)
+#            commit or a release (license_l3.is_pinned); or, where no commit or release
+#            pins the URL (a CTAN mirror), a table {url, sha256, size} that pins the file
+#            by its sha256 and size in bytes: it is read by range and its size checked,
+#            and the site checks its sha256 before serving it.
 #   reason   where the file comes from, and why it is the family's official file
 #
 # Researched by Claude on 2026-09-29; every URL below answered HTTP 200 that day, and the
@@ -83,3 +86,28 @@ family = "liga-comic-mono"
 name = "Liga Comic Mono"
 files = ["https://raw.githubusercontent.com/wayou/comic-mono-font/b38be28f75acece142a1f2c9afcaa629269ac201/LigaComicMono.ttf"]
 reason = "The maintainer's repository (github.com/wayou/comic-mono-font), whose default branch Homebrew's font-liga-comic-mono downloads as a tar archive, at its commit of 2026-07-20."
+
+# Owner ruling of 2026-09-29 (gate LIC, data/reviews/licenses/2026-09-29.toml): take CTAN's
+# copies of Linux Libertine and Linux Biolinum, pinned by sha256. The designer's 5.3.0 release
+# (SourceForge, linuxlibertine/5.3.0/LinLibertineOTF_5.3.0_2012_07_02.tgz, which Homebrew's casks
+# download) ships only as a tar archive, and neither the designer nor a repository serves the
+# files one by one. CTAN's fonts/libertine/opentype/ holds the same 5.3.0 files, byte for byte.
+# Two CTAN mirrors each, in case one is down.
+
+[[family]]
+family = "linux-libertine"
+name = "Linux Libertine"
+files = [
+  {url = "https://mirrors.mit.edu/CTAN/fonts/libertine/opentype/LinLibertine_R.otf", sha256 = "6332761e4fc08e30bce6f47e4a08e7d5332abe000ab6ca06c8e86bd88f456114", size = 528064},
+  {url = "https://ftp.fau.de/ctan/fonts/libertine/opentype/LinLibertine_R.otf", sha256 = "6332761e4fc08e30bce6f47e4a08e7d5332abe000ab6ca06c8e86bd88f456114", size = 528064},
+]
+reason = "CTAN's LinLibertine_R.otf (Linux Libertine O, Version 5.3.0), byte for byte the file of the designer's 5.3.0 release (LinLibertineOTF_5.3.0_2012_07_02.tgz on SourceForge), which only a tar archive holds."
+
+[[family]]
+family = "linux-biolinum"
+name = "Linux Biolinum"
+files = [
+  {url = "https://mirrors.mit.edu/CTAN/fonts/libertine/opentype/LinBiolinum_R.otf", sha256 = "a3440f6d67878de395c8b34074bfb611e6e0721d60eeb0608acba43522ccbfd1", size = 418076},
+  {url = "https://ftp.fau.de/ctan/fonts/libertine/opentype/LinBiolinum_R.otf", sha256 = "a3440f6d67878de395c8b34074bfb611e6e0721d60eeb0608acba43522ccbfd1", size = 418076},
+]
+reason = "CTAN's LinBiolinum_R.otf (Linux Biolinum O, Version 1.1.8), byte for byte the file of the designer's Libertine 5.3.0 release (LinLibertineOTF_5.3.0_2012_07_02.tgz on SourceForge), which only a tar archive holds."

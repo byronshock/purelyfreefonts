@@ -21,8 +21,9 @@ Contents:
 
 - **`catalog-site.json`**, draft schema `schemas/catalog-site.schema.json` (`schema_version` `1.0.0-draft`; Milestone 1 step 20 freezes v1). `tff_site.data.validate` runs the schema and then the cross-reference checks the schema can't express (`semantic_errors`). `tff-site validate FILE` prints `valid (1.0.0-draft), N fonts`.
   - **Stricter than JSON:** a key repeated in one object, `NaN` and `Infinity` make the file invalid (`tff_site.data.loads`), because the schema would check only one of the repeated values while the page showed another.
-- **Wording** in the catalog (view labels and measures lines, tiers, license classes, the Nerd Font marker and legend, source credits, system labels) comes from `config/site.toml`, the one home for the owner's wording rulings; Milestone 1's export copies it, and a contract test keeps the sample equal to it.
+- **Wording** in the catalog (view labels and measures lines, tiers, license classes, the Nerd Font marker and legend, source credits, system labels) comes from `config/site.toml`, the one home for the owner's wording rulings about the data; Milestone 1's export copies it, and a contract test keeps the sample equal to it. The page's own text (the list page's lead and its note "Why isn't my favorite free font here?", the filter labels, the tip link) lives in the templates, and where the owner ruled on it, a test holds it to the ruling in `data/reviews/site/`.
 - **Nerd Font builds** (owner rulings of 2026-09-28 and 2026-09-29, TASK-2). A font whose `links.nerd` is set has a Nerd Font build: the list shows the catalog's `nerd.marker` ("NF") beside its name, named `nerd.label` ("Nerd Font version available") for screen readers, the list and the details panel show `nerd.legend`, and the "Nerd Font available" filter keeps only these fonts. The sample gives one to `sample-mono-02` (a Nerd Fonts folder) and `sample-mono-13` (a maker's own build).
+  - `links.nerd` is null, so the font shows no marker, no Nerd link and no filter match, when the font has no build, when the build's link failed the link check recorded for the run's date (the font stays listed; the link is back once a check passes, and `review.md` flags it), or when the owner hides the build (`config/nerd-hidden.toml`, with the reason). The site never decides any of this itself: it shows what the data gives.
 - **The sample**, `tests/fixtures/catalog-site.sample.json`: 40 invented fonts (`"synthetic": true`, ids `sample-*`, families `Sample …`). Five of them point `font_file` at the real OFL files pinned in `tests/fixtures/specimen-fonts.toml`, so specimens and "Type your own text" run on real outlines: `sample-sans-01` (Inter), `sample-mono-02` (JetBrains Mono), `sample-sans-05` (Source Sans 3, CFF), `sample-display-10` (Orbitron, basic Latin only) and `sample-script-12` (Lobster).
 - **Specimens.** `preview.path` is `specimens/<id>.svg`, relative to the directory holding the data file: `build/specimens/` for real data, `tests/fixtures/specimens/` for the sample. The build copies each one after checking its sha256. A specimen may not contain `<script`, `<foreignObject`, an `on…=` handler, or an `href` other than `#…` (a link inside the file); the build refuses it.
   - **Placeholder:** a `preview.sha256` of 64 zeros means "not rendered yet". The build treats it as no preview ("Preview not available yet") instead of failing. In the sample, the five fonts with real font files carry the hashes of their committed specimens, `tests/fixtures/specimens/*.svg`, and the contract test requires the two to match (a changed sample line means regenerating both with `tests.specimens.regen`); the other fonts keep the placeholder.
@@ -49,7 +50,7 @@ Contents:
 | `404.html` | served with status 404 by Caddy's `handle_errors` | `no-cache, no-transform` |
 | `robots.txt`, `sitemap.xml` | per M2-D8 | `no-cache, no-transform` |
 | `version.txt` | `commit=`, `run_date=`, `method_version=`, `catalog_sha256=` (the sha256 of the `catalog-site.json` file's bytes), `schema=catalog-site/1`, one per line; never a build time | `no-cache, no-transform` |
-| `favicon.ico`, `favicon.svg`, `apple-touch-icon.png`, `share.png` | copied from `site/static/` (these four files only; `site/static/_src/` holds their generator and sources and is never published) | `no-cache, no-transform` |
+| `favicon.ico`, `favicon.svg`, `apple-touch-icon.png`, `share.png`, `wordmark.svg` | copied from `site/static/` (these five files only; `site/static/_src/` holds their generators and sources and is never published). `wordmark.svg` is the header's wordmark, "Truly Free Fonts" in League Gothic drawn as outlines (AUTHORITY.md, "Headline font") | `no-cache, no-transform` |
 | `assets/app.<h>.js` | the one script: `site/js/*.js` concatenated (section 5) | `public, max-age=31536000, immutable` |
 | `assets/style.<h>.css` | the one stylesheet: `site/css/*.css` concatenated (section 6) | immutable |
 | `assets/list.<h>.json` | the list index (section 7) | immutable |
@@ -85,7 +86,7 @@ Jinja2 with `autoescape=True`, `StrictUndefined`, `trim_blocks`, `lstrip_blocks`
 | `description` | the meta description; also `og:description` | `page.description` |
 | `scripts` | the script tag, in `<head>` (modules are deferred) | the one module; a page without JS overrides it with nothing |
 | `head` | extra `<head>` tags, such as the list index `<link rel="preload">` | empty |
-| `header` | inside `<header class="site-header">`: site name and the `Site` navigation | site name and nav |
+| `header` | inside `<header class="site-header">`: the wordmark, linked home, and the `Site` navigation | wordmark and nav |
 | `main` | inside `<main id="main" tabindex="-1">`: the page's one `<h1>` and content | empty |
 | `footer` | inside `<footer class="site-footer">`: everything below | feedback, tip, source link |
 | `feedback` | inside `<div class="feedback" id="feedback">`: the one feedback spot, the same on every page | issue forms and email |
@@ -133,8 +134,18 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 ```html
 <main id="main" tabindex="-1">
   <h1>…</h1>
+  <div class="why why-wide">                          <!-- the owner's note; wide screens only -->
+    <h2 id="why-h">Why isn't my favorite free font here?</h2>
+    <p>Not every font that's free to download … email
+      <a href="mailto:admin@trulyfreefonts.com">admin@trulyfreefonts.com</a> and ask us to consider it.</p>
+  </div>
+  <p class="lead">…</p>
   <p class="privacy-note">No cookies, no tracking, and the page loads only its own files.
     <a href="/privacy/">Check the Network tab</a>.</p>
+  <details class="why why-fold">                       <!-- the same note; phones only -->
+    <summary>Why isn't my favorite free font here?</summary>
+    <p>…the same text…</p>
+  </details>
   <div class="layout">
     <search id="filters" class="filters" aria-label="Filter fonts" hidden>  <!-- the script removes hidden -->
       <div class="filters-bar">                                       <!-- always visible: search and rank -->
@@ -198,6 +209,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 </main>
 ```
 
+- **The front page's note** (site rulings of 2026-09-29, `data/reviews/site/2026-09-29.toml`: `why_not_listed`, `why_not_listed_layout`): "Why isn't my favorite free font here?" and the owner's text, word for word, in `index.html.j2`, the address a `mailto:` link to `site.feedback.email`. It is in the HTML twice and the stylesheet displays one, so neither needs a script and nothing moves as the page loads: `div.why-wide` from `40rem` up, a frame floated right beside the lead and the privacy note, which wrap around it, while `.layout` clears it, so the list starts below the frame and rows are never narrowed; `details.why-fold` at `40rem` and below, full width under the intro, folded to its `summary`. The other copy is `display: none`, so screen readers get the text once.
 - The controls' `name` attributes are the hash keys (section 9); `value` is the key's value. Filters live in `<search>` and `<fieldset>`/`<legend>` groups, never in a `<form>`.
 - `#filters` carries `hidden` in the HTML; the script removes it. Showing it must not move the list (reserve its space in CSS), because the layout-shift budget is 0.1.
 - Narrow screens are below `60rem`: `#f-more` is hidden until `#f-toggle` expands it, and `#f-toggle`'s text includes the number of active filters. From `60rem` up, `#f-more` is always shown in the sidebar and `#f-toggle` is hidden.
@@ -246,7 +258,9 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 
 ### Shared classes
 
-`visually-hidden` (hidden from sight, read by screen readers), `skip-link`, `site-header`, `site-name`, `site-nav`, `site-footer`, `feedback`, `tip`, `footer-meta`.
+`visually-hidden` (hidden from sight, read by screen readers), `skip-link`, `site-header`, `site-name`, `site-name-mark`, `site-nav`, `site-footer`, `feedback`, `tip`, `footer-meta`.
+
+**The header** (owner ruling of 2026-09-29): `a.site-name[href="/"]` holds only `img.site-name-mark[src="/wordmark.svg"]`, whose `alt` is the site's name ("Truly Free Fonts"), with `width` and `height` in the wordmark's 8275:1862 ratio (213 x 48). It is about 48 px tall on wide screens and 32 px on phones (below `40rem`). The favicon is the browser's icon only, not in the header. The header is white in both themes, behind the black wordmark: it takes the `--c-header-*` tokens, whose dark values are the light ones, so its links and text keep their light-theme colours and its focus ring 3:1 on white. Under forced colours it takes the system colours, and the wordmark keeps a white plate (`--c-wordmark-bg`).
 
 ## 5. JS parts
 
@@ -343,6 +357,12 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 | `--c-warn-bg` | "Not redistributable" badge background |
 | `--c-warn-fg` | "Not redistributable" badge text |
 | `--c-spec` | specimen fill: `currentColor`, `CanvasText` under forced colours |
+| `--c-header-bg` | the header's background: white in both themes |
+| `--c-header-fg` | the header's text (the light `--c-fg`, in both themes) |
+| `--c-header-muted` | the header's secondary text (the light `--c-muted`) |
+| `--c-header-link` | the header's links (the light `--c-link`) |
+| `--c-header-focus` | the focus outline inside the header (the light `--c-focus`) |
+| `--c-wordmark-bg` | the plate behind the black wordmark: white, under forced colours too |
 
 ## 7. List index JSON
 

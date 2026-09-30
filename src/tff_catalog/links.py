@@ -118,6 +118,16 @@ and nerdfonts.com stands. A family with some sign of a Nerd build but no link
 (a distribution's package of a third party's patch, say) is listed with the
 reason in the queue's ``nerd.unlinked``.
 
+The owner's switch (owner ruling of 2026-09-29): a family listed in
+``config/nerd-hidden.toml`` (``Config.nerd_hidden``: family id -> reason) gets no
+Nerd link whatever build it has, and the queue lists it with the reason; an id
+that names no family of the universe fails the stage (``hidden_nerd_builds``).
+And a Nerd link that fails the check recorded for the run's date is kept in the
+stage file with ``Links.nerd_problem``, the check's verdict: stage "export" then
+publishes no ``links.nerd`` for the family (no marker, link or filter match on the
+site), and ``review.md`` flags it; the font stays listed, and the link is back as
+soon as a later check passes (owner ruling of 2026-09-29).
+
 **The check** (``check``) HEADs every primary, designer and Nerd link of the
 catalog's families (all chosen links when there is no membership yet), one
 worker per host at the fetcher's per-host pace, and falls back to one GET when
@@ -155,7 +165,7 @@ from typing import TYPE_CHECKING, Any, Literal
 from urllib.parse import parse_qsl, quote, quote_plus, urlsplit, urlunsplit
 
 from tff_catalog import jsonio, stageio
-from tff_catalog.config_model import ConfigError, from_mapping, load_toml
+from tff_catalog.config_model import NERD_HIDDEN_FILE, ConfigError, from_mapping, load_toml
 from tff_catalog.fetch import FetchError, HostNotAllowed
 from tff_catalog.keys import match_key
 from tff_catalog.names import ID_PATTERN
@@ -382,6 +392,10 @@ class Links:
     # The page of the family's Nerd Font build, labelled with the build's name, or None
     # (``nerd_builds``). ``choose`` leaves it None; stage "links" adds it.
     nerd: Link | None = None
+    # Why ``nerd`` failed the link check recorded for the run's date, or None (it passed,
+    # or the family is outside the check's scope). Stage "export" publishes no Nerd link
+    # while this is set (owner ruling of 2026-09-29); ``review.md`` flags it.
+    nerd_problem: str | None = None
 
     @property
     def by_role(self) -> tuple[tuple[str, Link], ...]:
@@ -1093,9 +1107,12 @@ def nerd_builds(
     grouped: Mapping[str, Iterable[UniverseRecord]],
     links: Mapping[str, Links],
     inputs: NerdInputs,
+    hidden: Mapping[str, str] | None = None,
 ) -> tuple[dict[str, NerdBuild], dict[str, str]]:
     """The Nerd Font build of every family in ``links`` that has one (module doc), and the
-    families with some sign of a Nerd build but no link, with the reason."""
+    families with some sign of a Nerd build but no link, with the reason. A family in
+    ``hidden`` (``hidden_nerd_builds``: family id -> the owner's reason) gets no build."""
+    hidden = hidden or {}
     rows_by_family: dict[str, list[AliasRow]] = defaultdict(list)
     for row in inputs.rows:
         if row.family_id:
@@ -1114,6 +1131,9 @@ def nerd_builds(
     builds: dict[str, NerdBuild] = {}
     unlinked: dict[str, str] = {}
     for fid in sorted(links):
+        if fid in hidden:
+            unlinked[fid] = f"hidden by config/{NERD_HIDDEN_FILE}: {hidden[fid]}"
+            continue
         fam = u.families[fid]
         rows = rows_by_family.get(fid, [])
         own = own_repositories(links[fid], grouped.get(fid, ()), is_build)
@@ -1133,6 +1153,35 @@ def nerd_builds(
                 + ", ".join(signs)
             )
     return builds, unlinked
+
+
+def hidden_nerd_builds(config: Config, u: Universe) -> dict[str, str]:
+    """The families whose Nerd Font build the owner hides (``config/nerd-hidden.toml``), with
+    the reason. Raises ``ConfigError`` for an id that names no family of the universe: a
+    typo, or a family renamed or merged away since the ruling."""
+    families = dict(config.nerd_hidden.families)
+    unknown = sorted(set(families) - set(u.families))
+    if unknown:
+        raise ConfigError(
+            f"{NERD_HIDDEN_FILE}: families {', '.join(unknown)}: no family of this run's "
+            "universe has that id (a typo, or a family renamed or merged away); fix or "
+            "remove the entry"
+        )
+    return families
+
+
+def with_nerd_checks(
+    links: Mapping[str, Links], checks: Mapping[str, LinkCheck]
+) -> dict[str, Links]:
+    """``links`` with each checked Nerd link's verdict: ``Links.nerd_problem`` is why the link
+    failed the check (``_verdict``), or None when it passed or was not checked (a family
+    outside the check's scope)."""
+    out = {}
+    for fid, ls in links.items():
+        found = checks.get(ls.nerd.url) if ls.nerd is not None else None
+        problem = _verdict(found) if found is not None and not found.ok else None
+        out[fid] = dataclasses.replace(ls, nerd_problem=problem)
+    return out
 
 
 # --- overrides and gate K -----------------------------------------------------------------------
@@ -1729,12 +1778,14 @@ def run(ctx: StageContext) -> None:
     picks = owner_picks(u.eligible(), answers, overrides)
     links, undecided = choose_all(u, grouped, {**picks.links, **approved})
     nerd = load_nerd_inputs(paths, ctx.config, recs)
-    builds, nerd_unlinked = nerd_builds(u, grouped, links, nerd)
+    hidden = hidden_nerd_builds(ctx.config, u)
+    builds, nerd_unlinked = nerd_builds(u, grouped, links, nerd, hidden)
     links = {
         fid: dataclasses.replace(ls, nerd=_link_of(builds.get(fid))) for fid, ls in links.items()
     }
-    stageio.dump_stage(paths, "links", links)
     checks = check(_check_scope(paths, links, ctx.log), ctx)
+    links = with_nerd_checks(links, checks)
+    stageio.dump_stage(paths, "links", links)
     queue = build_queue(
         u, undecided, overrides, choices, links, checks, picks, nerd.release, nerd_unlinked
     )
@@ -1754,12 +1805,21 @@ def run(ctx: StageContext) -> None:
         kinds[build.kind] += 1
     ctx.log.info(
         "links: %d Nerd Font build links %s at Nerd Fonts release %s; %d families with a "
-        "sign of a Nerd build but no link",
+        "sign of a Nerd build but no link (%d hidden by the owner)",
         len(builds),
         dict(sorted(kinds.items())),
         nerd.release.tag if nerd.release is not None else "(none)",
         len(nerd_unlinked),
+        len(set(hidden) & set(links)),
     )
+    failed = sorted(fid for fid, ls in links.items() if ls.nerd_problem is not None)
+    if failed:
+        ctx.log.warning(
+            "links: %d Nerd Font build links failed their check, so export leaves them out "
+            "until they pass again: %s",
+            len(failed),
+            ", ".join(failed),
+        )
     ctx.log.info(
         "links: %d overrides approved, %d questions pending, %d owner picks; "
         "%d of %d checked links failed",

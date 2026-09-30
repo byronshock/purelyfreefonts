@@ -733,6 +733,11 @@ def test_forced_colors_focus_ring_is_visible(guarded_context: Any, scheme: str) 
     guarded, page = open_page(guarded_context, "/", forced_colors="active", color_scheme=scheme)
     row = page.locator("#list > li.font").first
     toggle = row.locator(".details-toggle")
+    # On wide screens the list starts below the front page's note (site ruling of 2026-09-29),
+    # so the first row may start below the fold: bring it into view first, so focusing it
+    # later scrolls nothing and both screenshots show the same place.
+    toggle.scroll_into_view_if_needed()
+    page.evaluate(FRAMES_JS)
     box = toggle.bounding_box()
     assert box is not None
     pad = 8

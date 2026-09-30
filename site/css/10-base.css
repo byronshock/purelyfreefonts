@@ -185,8 +185,10 @@ input[type="radio"] {
   transform: none;
 }
 
-/* ---- Header: site name, the Site navigation and the early-version line. It wraps rather
-   than scrolls, down to 320 px and at 400% zoom. */
+/* ---- Header: the wordmark, the Site navigation and the early-version line. It wraps rather
+   than scrolls, down to 320 px and at 400% zoom. It is white in both themes, behind the
+   black wordmark (owner ruling of 2026-09-29), so it takes the --c-header-* tokens, whose
+   dark values are the light ones; its focus ring too, so the ring keeps 3:1 on white. */
 
 .site-header {
   display: flex;
@@ -196,32 +198,34 @@ input[type="radio"] {
   gap: var(--space-2) var(--space-5);
   padding-block: var(--space-3);
   border-block-end: 1px solid var(--c-divider);
+  background-color: var(--c-header-bg);
+  color: var(--c-header-fg);
+}
+
+.site-header :focus-visible {
+  outline-color: var(--c-header-focus);
 }
 
 .site-name {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
   min-height: var(--target-min);
-  font-size: var(--fs-large);
-  font-weight: 700;
-  line-height: var(--lh-tight);
   text-decoration: none;
 }
 
-.site-name,
-.site-name:visited {
-  color: var(--c-fg);
+/* The wordmark (site/static/wordmark.svg, viewBox 8275 x 1862): about 48 px tall on wide
+   screens and 32 px on phones; the width follows. */
+.site-name-mark {
+  display: block;
+  width: auto;
+  height: 3rem;
+  max-width: 100%;
 }
 
-.site-name:hover {
-  text-decoration: underline;
-}
-
-.site-mark {
-  flex: none;
-  width: 1.6em;
-  height: 1.6em;
+@media (max-width: 40rem) {
+  .site-name-mark {
+    height: 2rem;
+  }
 }
 
 .site-nav ul {
@@ -243,7 +247,7 @@ input[type="radio"] {
 
 .site-nav a,
 .site-nav a:visited {
-  color: var(--c-link);
+  color: var(--c-header-link);
 }
 
 .site-nav a:hover {
@@ -252,7 +256,7 @@ input[type="radio"] {
 
 /* The current page: bold and underlined, not colour alone. */
 .site-nav a[aria-current="page"] {
-  color: var(--c-fg);
+  color: var(--c-header-fg);
   font-weight: 700;
   text-decoration: underline;
   text-decoration-thickness: max(2px, 0.125em);
@@ -262,7 +266,7 @@ input[type="radio"] {
 .site-status {
   flex: 1 1 100%;
   margin: 0;
-  color: var(--c-muted);
+  color: var(--c-header-muted);
   font-size: var(--fs-small);
 }
 
@@ -321,6 +325,12 @@ main {
   .site-header,
   .site-footer {
     border-color: var(--c-border);
+  }
+
+  /* The wordmark is black ink on nothing: under a dark palette it keeps a white plate. */
+  .site-name-mark {
+    forced-color-adjust: none;
+    background-color: var(--c-wordmark-bg);
   }
 }
 

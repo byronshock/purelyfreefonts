@@ -677,6 +677,26 @@ class CategoryOverridesConfig:
     families: dict[str, str]  # family id (state/ids.json) -> category
 
 
+# --- config/nerd-hidden.toml ----------------------------------------------------
+
+NERD_HIDDEN_FILE = "nerd-hidden.toml"
+
+
+@dataclass(frozen=True, slots=True)
+class NerdHiddenConfig:
+    """Families whose Nerd Font build the owner hides (owner ruling of 2026-09-29, TASK-2).
+
+    Stage "links" gives a listed family no ``links.nerd``, so the site shows no NF
+    marker, link or filter match for it, whatever build it has.
+    ``config.check_nerd_hidden`` checks that each key is a family id and each reason is
+    given; ``--strict`` checks the ids against the registry, and stage "links" fails on an
+    id its universe lacks.
+    """
+
+    schema: int
+    families: dict[str, str]  # family id (state/ids.json) -> why its build is hidden
+
+
 # --- everything ---------------------------------------------------------------
 
 
@@ -684,12 +704,17 @@ def _no_category_overrides() -> CategoryOverridesConfig:
     return CategoryOverridesConfig(schema=SCHEMA_VERSION, families={})
 
 
+def _no_nerd_hidden() -> NerdHiddenConfig:
+    return NerdHiddenConfig(schema=SCHEMA_VERSION, families={})
+
+
 @dataclass(frozen=True, slots=True)
 class Config:
     """The effective configuration of one run; ``config.config_hash`` hashes it.
 
-    ``load_config`` fills every field from its file. ``category_overrides`` has a
-    default (no overrides) only so that a test can build a ``Config`` without it.
+    ``load_config`` fills every field from its file. ``category_overrides`` and
+    ``nerd_hidden`` have defaults (none) only so that a test can build a ``Config``
+    without them.
     """
 
     ranking: RankingConfig
@@ -702,6 +727,7 @@ class Config:
     category_overrides: CategoryOverridesConfig = dataclasses.field(
         default_factory=_no_category_overrides
     )
+    nerd_hidden: NerdHiddenConfig = dataclasses.field(default_factory=_no_nerd_hidden)
 
 
 # File name -> (Config field, dataclass).
@@ -713,4 +739,5 @@ CONFIG_FILES: dict[str, tuple[str, type]] = {
     "foundries.toml": ("foundries", FoundriesConfig),
     "site.toml": ("site", SiteConfig),
     CATEGORY_OVERRIDES_FILE: ("category_overrides", CategoryOverridesConfig),
+    NERD_HIDDEN_FILE: ("nerd_hidden", NerdHiddenConfig),
 }

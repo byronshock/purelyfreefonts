@@ -1,0 +1,52 @@
+# Owner rulings of 2026-09-29, gate X (new preinstalled and dependency cases), given in chat after the data-fix run,
+# which gave Go, Liberation Sans and Serif, FreeFont, Linux Libertine and Linux Biolinum their rankings. Ruled by
+# the owner, Byron Shock; recorded by Claude from the lead's notes. Also in AUTHORITY.md. The owner accepted all 8
+# cases together as recommended.
+
+[dep-debian-freefont]
+choice = "a"
+recommended = true
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner for all 8 new cases together: vlc-plugin-skins2 pulls FreeFont in (73% of its Debian installs, over M8's 50%), so Debian abstains for it in most chosen."
+
+[dep-debian-go]
+choice = "a"
+recommended = true
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner for all 8 new cases together: texlive-fonts-extra pulls Go in (100% of its Debian installs, over M8's 50%), so Debian abstains for it in most chosen."
+
+[dep-debian-linux-libertine]
+choice = "a"
+recommended = true
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner for all 8 new cases together: libreoffice pulls Linux Libertine in (70% of its Debian installs, over M8's 50%), so Debian abstains for it in most chosen."
+
+[dep-debian-linux-biolinum]
+choice = "a"
+recommended = true
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner for all 8 new cases together: libreoffice pulls Linux Biolinum in (70% of its Debian installs, over M8's 50%), so Debian abstains for it in most chosen."
+
+[pre-arch-liberation-sans]
+choice = "a"
+recommended = true
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner for all 8 new cases together: CachyOS preinstalls Liberation Sans (config/preinstalled.toml), so Arch abstains for it in most chosen."
+
+[pre-arch-liberation-serif]
+choice = "a"
+recommended = true
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner for all 8 new cases together: CachyOS preinstalls Liberation Serif (config/preinstalled.toml), so Arch abstains for it in most chosen."
+
+[pre-debian-liberation-sans]
+choice = "a"
+recommended = true
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner for all 8 new cases together: Ubuntu preinstalls Liberation Sans (config/preinstalled.toml), so Debian abstains for it in most chosen."
+
+[pre-debian-liberation-serif]
+choice = "a"
+recommended = true
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner for all 8 new cases together: Ubuntu preinstalls Liberation Serif (config/preinstalled.toml), so Debian abstains for it in most chosen."

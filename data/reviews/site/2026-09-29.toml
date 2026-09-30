@@ -34,3 +34,49 @@ reason = "The owner's choice (b) of four options, and Claude's recommendation. I
 [font_requests]
 ruling = "The candidate universe also grows on request. Anyone, whether a foundry, a designer or a visitor, may ask for a font to be added: by email to admin@trulyfreefonts.com or with the site's \"Missing font\" issue form. Claude checks the font against the gates (Rules 1-4 and D3 for the license, D4 for Latin, a text font) and finds its official link under gate K, and the owner rules in chat. An accepted family goes into config/foundries.toml, which is no longer seeded only once (this amends M12), and is listed from the next refresh: ranked if its evidence places it in the catalog, otherwise in the A-Z list. Being added never counts as popularity. The public files record when a family was added on request, never who asked."
 reason = "The owner's own variant of option (c), which Claude had offered as option (b) plus more directories: the owner prefers to add foundries as they ask. It reaches fonts that no directory lists, without the terms review a new directory would need, and it matches the owner's page text, which invites anyone to ask by email."
+
+[why_not_listed]
+heading = "Why isn't my favorite free font here?"
+text = "Not every font that's free to download is free to use in every way, and not every license fits this project. Some fonts are free only for personal projects or as a trial, or only if you never change or embed them. Others come with terms that can reach into the documents or products you make with them. This list includes only fonts whose licenses let anyone use them in any project, personal or commercial, with no limits on how they're used. Examples include the SIL Open Font License, Apache, MIT and public-domain dedications. Some of these fonts ask you to credit the designer, or don't let you pass the font files on, and we mark those. We read each font's own license text rather than trusting a label. Any font with a qualifying license is eligible to be listed. If you think one belongs here, email admin@trulyfreefonts.com and ask us to consider it."
+ruling = "The front page carries a note headed \"Why isn't my favorite free font here?\" with this text, word for word; admin@trulyfreefonts.com is a mailto link. It lives on the front page, not on /about (site/templates/index.html.j2)."
+reason = "The owner's choice: the owner accepted the text as Claude drafted it."
+
+[why_not_listed_layout]
+value = "frame_right_on_wide_screens_folded_on_phones"
+ruling = "On wide screens the note is a textbook-style frame floated right beside the intro: the lead and the privacy note wrap around it, and the list (filters and rows) starts below it, so rows are never narrowed and keep their height. On phones it is a full-width frame showing only its heading, folded; one tap opens the text. It works without JavaScript, causes no layout shift, gives screen readers the text once, needs no inline style or script, and works in light and dark themes."
+reason = "The owner's choice."
+
+[nerd_readme_folders]
+value = "link_folder"
+ruling = "A Nerd Fonts folder that holds only a README (the fonts ship in the release) is still the build's page and stays linked: 13 families, such as 0xProto, Geist Mono and Commit Mono."
+reason = "Claude's recommendation, taken by the owner: the README names the build and links its download."
+
+[nerd_hide_switch]
+value = "add_now"
+ruling = "The owner can hide a build's NF marker and link, with a required reason, in config/nerd-hidden.toml (a family id per entry); it starts empty."
+reason = "The owner's choice; Claude had recommended adding the switch only when a check fails."
+
+[nerd_broken_link]
+value = "font_stays_link_hidden"
+ruling = "A Nerd link that fails its check is not shown: no marker, link or filter match, until it passes again. The font stays listed, and review.md flags it."
+reason = "The owner's own answer: \"The font stays listed but the NF link is not shown.\" Claude had recommended a warning only."
+
+[nerd_marker_spot]
+value = "end_of_name_cell"
+ruling = "The NF marker sits at the end of the name's cell. Every name reserves its width, so the markers line up in a column and no row changes height."
+reason = "Claude's recommendation, taken by the owner."
+
+[why_not_listed_gap]
+value = "keep_as_built"
+ruling = "On wide screens the frame stays as built: a narrow, right-floated frame beside the short intro, with the blank area below the intro accepted."
+reason = "The owner's choice after seeing the screenshots; Claude had recommended a wider, shorter frame."
+
+[front_page_lead]
+value = "owner_text"
+ruling = "Every font here is free for any personal or commercial use, although sharing the files may be restricted. They are ranked by how many people install them and use them in their work."
+reason = "The owner's own wording, given in chat: the front page's lead now says that some fonts may be used freely but not passed on (Rule 3)."
+
+[site_status_line]
+value = "inventory_tools"
+ruling = "Early version. Coming next: free font inventory tools."
+reason = "The owner's choice among three wordings Claude offered: the old line, \"hiding the fonts you already have\", read as if it hid the visitor's own fonts rather than leaving them out of the list."
