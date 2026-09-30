@@ -69,13 +69,8 @@ trulyfreefonts.com {
 	import origin_tls
 	# A root-owned symlink to prod/current once the site deploys as releases (ops/deploy/).
 	root * /srv/trulyfreefonts/public
-	# Header phase A (design-m2 §4): no CSP yet, because it would block the live stub's inline
-	# <style>. Phase B, once the stub is a release with its style in stub.css: delete this line.
-	# It must stay above the import: deferred header changes run last-written first, so only
-	# a removal written before tff_security's block runs after it. (The removal doesn't reach
-	# the 404 route, which re-applies every header; the stub has no 404.html, so its 404s stay
-	# bare, with no body and no security headers, as they are today.)
-	header -Content-Security-Policy
+	# Header phase B (design-m2 §4, since 2026-09-30): the full CSP of site.caddy, now that the
+	# stub is a release with its style in stub.css.
 	import tff_site
 	import privacy_log
 }

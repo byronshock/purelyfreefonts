@@ -1,7 +1,7 @@
 """ops/Caddyfile, ops/caddy/ci.Caddyfile and the site workflows (Milestone 2 steps 1, 9, 11).
 
 - **Always:** text checks of the refactored Caddyfile (the two-file deploy line, the shared
-  ``site.caddy``, the privacy log on both sites, staging's ``noindex``, header phase A) and of
+  ``site.caddy``, the privacy log on both sites, staging's ``noindex``, header phase A or B) and of
   ``ci.Caddyfile``; the workflows' frozen job names, pinned actions and Caddy pin; dependabot.
 - **With Caddy** (``TFF_CADDY_BIN``, else ``caddy`` on ``PATH``) **and openssl**: ``caddy
   validate`` of ops/Caddyfile beside site.caddy, with stand-ins for the server's files; the
