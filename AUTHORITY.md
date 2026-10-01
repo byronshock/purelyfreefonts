@@ -186,6 +186,15 @@ Answers to the Milestone 1, Step 0 decisions in [docs/ranking-methodology.md](do
 
   *(2026-09-30)*
 
+- **Rulings of 2026-10-01.** Recorded in `data/reviews/aliases/2026-10-01.toml`.
+  - **Expo packages with no successor (gate A, `expo_no_successor_unlisted`, Claude's recommendation):** the Expo packages of Amatica SC, Droid Sans and Droid Serif get ineligible rows ("unlisted"). No catalog source lists those fonts, and none has a successor of the same design. In the same file, under the delegation of 2026-09-28, Claude:
+    - sent the Expo packages of 20 other retired Google names to the successors the owner's rulings chose;
+    - made the Material icon and emoji packages, Expo's directory package and the Baloo v1 script versions ineligible;
+    - gave the DSEG packages bundle rows from their file lists;
+    - left the Expo packages of seven delisted families unmapped, since Expo's frame is Google's live list.
+
+  *(2026-10-01)*
+
 ## Site (Milestone 2)
 
 Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull request #2](https://github.com/byronshock/trulyfreefonts/pull/2)).
