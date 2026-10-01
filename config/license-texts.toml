@@ -55,12 +55,6 @@ files = ["https://raw.githubusercontent.com/quoteunquoteapps/CourierPrimeSans/57
 reason = "The only text the sources gave was the OFL's web page (scripts.sil.org/OFL). The foundry's own repository has the OFL-1.1 text and the font files."
 
 [[family]]
-family = "gentium"
-name = "Gentium"
-texts = ["https://raw.githubusercontent.com/silnrsi/font-gentium/4ca818136aface2214706a3ca95551af40786df4/OFL.txt"]
-reason = "The only text the sources gave was openfontlicense.org, a web page. SIL's repository has the OFL-1.1 text."
-
-[[family]]
 family = "juliamono"
 name = "JuliaMono"
 texts = ["https://raw.githubusercontent.com/cormullion/juliamono/0dfc749503778730d6af79183a17fcde668ae626/LICENSE"]
@@ -400,12 +394,6 @@ reason = "Monoisome ships in the Monoid repository, which has no license file: i
 # --- families just outside the scope (overall 800-1000, extra ranks 150-300) ------------------
 # Found by a wider verify run on 2026-09-28, researched so that a small rank move does not
 # bring them in failing.
-
-[[family]]
-family = "charis"
-name = "Charis"
-texts = ["https://raw.githubusercontent.com/silnrsi/font-charis/5382abf45c42bc51d338ac8e9c30d080bc46831a/OFL.txt"]
-reason = "SIL's repository at tag v7.000, the release Homebrew and Fontist install. Its OFL.txt is OFL-1.1. The sources gave only openfontlicense.org, a web page."
 
 [[family]]
 family = "doulos-sil"

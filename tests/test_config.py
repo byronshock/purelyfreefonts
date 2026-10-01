@@ -358,8 +358,9 @@ CATEGORIES_22 = {
 # FreeFont stays monospace, as FreeMono's file makes it (gate R, freefont_category).
 LATER_CATEGORIES = {"et-book": "serif", "freefont": "monospace"}
 # Families of the 22 that later rulings took out of the universe: SN Pro Font Family folds into
-# SN Pro (gate A, sn_pro_fold, 2026-09-30), whose category is Google's.
-FOLDED = {"sn-pro-font-family"}
+# SN Pro (gate A, sn_pro_fold, 2026-09-30) and Gentium into Gentium Plus (sil_selawik_folds,
+# 2026-09-30), whose categories are Google's.
+FOLDED = {"sn-pro-font-family", "gentium"}
 
 
 def test_category_overrides_hold_the_owner_ruling_of_2026_09_29() -> None:
