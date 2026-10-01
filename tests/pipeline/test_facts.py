@@ -637,6 +637,37 @@ def test_candidates_take_a_static_regular_named_by_style_alone() -> None:
     ]
 
 
+def test_candidates_put_the_records_named_like_the_family_first() -> None:
+    # Hack's records include its build Cica (folded, D7): the family's own release comes
+    # first, although Cica's archive is newer.
+    recs = [
+        rec(
+            "homebrew_casks",
+            "font-cica",
+            "Cica",
+            files=(
+                ref(
+                    "https://github.com/miiton/Cica/releases/download/v5.0.3/Cica.zip#Cica-Regular.ttf"
+                ),
+            ),
+        ),
+        rec(
+            "homebrew_casks",
+            "font-hack",
+            "Hack",
+            files=(
+                ref(
+                    "https://github.com/source-foundry/Hack/releases/download/v3.003/Hack.zip#ttf/Hack-Regular.ttf"
+                ),
+            ),
+        ),
+    ]
+    first = [r.url.rsplit("#", 1)[1] for r in candidates(recs, family="Hack")]
+    assert first == ["ttf/Hack-Regular.ttf", "Cica-Regular.ttf"]
+    # Without the family's name, the newer release comes first, as before.
+    assert candidates(recs)[0].url.endswith("#Cica-Regular.ttf")
+
+
 def test_settled_by_metadata() -> None:
     gf = rec("google_metadata", "X", "X", category="Serif")
     assert settled_by_metadata([gf])  # variable alone never sends us to the files

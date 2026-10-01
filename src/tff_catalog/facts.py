@@ -292,15 +292,17 @@ def family_facts(
     font_facts: Mapping[str, FontFacts],
     owner_category: Category | None = None,
     hand_files: Sequence[FontFileRef] = (),
+    family: str | None = None,
 ) -> Facts:
     """The facts of one family from its records and the facts of its files (by sha256).
 
     ``owner_category``, the family's entry in ``config/category-overrides.toml``,
     wins over every other basis, as basis "owner". ``hand_files``, its files in
-    ``config/font-files.toml``, come before the records' files.
+    ``config/font-files.toml``, come before the records' files. ``family`` is its
+    display name: files of records named like it come first (``candidates``).
     """
     ordered = sorted(recs, key=_record_order)
-    files = _files(ordered, font_facts, hand_files)
+    files = _files(ordered, font_facts, hand_files, family)
     mono = _monospace(ordered, files)
     if owner_category is not None:
         category, category_basis = owner_category, OWNER
@@ -324,10 +326,11 @@ def _files(
     recs: list[UniverseRecord],
     font_facts: Mapping[str, FontFacts],
     hand_files: Sequence[FontFileRef] = (),
+    family: str | None = None,
 ) -> list[tuple[FontFileRef, FontFacts | None]]:
     """Each distinct file of the family with its facts when known, best candidates first."""
     seen: dict[str, tuple[FontFileRef, FontFacts | None]] = {}
-    for ref in candidates(recs, readable_only=False, hand_files=hand_files):
+    for ref in candidates(recs, readable_only=False, hand_files=hand_files, family=family):
         if ref.url not in seen:
             seen[ref.url] = (ref, font_facts.get(ref.sha256) if ref.sha256 else None)
     return list(seen.values())
@@ -370,7 +373,7 @@ def derive_facts(
     owner = owner or {}
     hand = hand or {}
     return {
-        fid: family_facts(rs, font_facts, owner.get(fid), hand.get(fid, ()))
+        fid: family_facts(rs, font_facts, owner.get(fid), hand.get(fid, ()), u.families[fid].family)
         for fid, rs in group_records(u, recs).items()
     }
 
@@ -432,20 +435,28 @@ def candidates(
     *,
     readable_only: bool = True,
     hand_files: Sequence[FontFileRef] = (),
+    family: str | None = None,
 ) -> list[FontFileRef]:
     """The family's font files, best first: its ``hand_files`` (``config/font-files.toml``),
-    then the records' by known sha256, Regular, Google/Fontsource, the file's own name
+    then the records' files: those of records named like ``family`` (the family's display
+    name) before the rest, as stage "verify" orders a source's records (so Hack's own
+    release comes before its build Cica's; a record's status is left out, since Homebrew
+    delists casks whose releases stay good), then by known sha256, Regular,
+    Google/Fontsource, the file's own name
     (``fontfiles.file_name_rank``, as stage "verify" orders a source's files: how much of
     its record's family name it carries, named Regular, the newest release), then url.
 
     ``readable_only`` keeps only font files and zip members (not archives or pages).
     """
+    own = match_key(family) if family is not None else None
     refs: dict[str, tuple[tuple[Any, ...], FontFileRef]] = {}
     for r in recs:
+        named_otherwise = own is not None and match_key(r.family) != own
         for ref in r.files:
             if readable_only and not fontfiles.is_readable_url(ref.url):
                 continue
             order = (
+                named_otherwise,
                 ref.sha256 is None,
                 _ROLE_ORDER.get(ref.role, len(_ROLE_ORDER)),
                 _source_rank(r.source),
@@ -527,16 +538,20 @@ def resolve_files(
     grouped: Mapping[str, list[UniverseRecord]],
     resolver: _Resolver,
     hand: Mapping[str, Sequence[FontFileRef]] | None = None,
+    names: Mapping[str, str] | None = None,
 ) -> dict[str, FontFacts]:
     """Read one file for each family the metadata leaves open, trying the family's files
-    in ``hand`` (``config/font-files.toml``) first; url -> facts."""
+    in ``hand`` (``config/font-files.toml``) first, then those of its records named like
+    it (``names``: display names by id); url -> facts."""
     found: dict[str, FontFacts] = {}
     hand = hand or {}
+    names = names or {}
     for fid in sorted(grouped):
         recs = grouped[fid]
         if settled_by_metadata(recs):
             continue
-        for ref in candidates(recs, hand_files=hand.get(fid, ()))[:MAX_TRIES]:
+        refs = candidates(recs, hand_files=hand.get(fid, ()), family=names.get(fid))
+        for ref in refs[:MAX_TRIES]:
             ff = found.get(ref.url) or resolver.facts(ref)
             if ff is not None:
                 found[ref.url] = ff
@@ -584,7 +599,8 @@ def run(ctx: StageContext) -> None:
         recorded = fontfiles.recorded_reads(ctx.store, replay_day or ctx.run_date, prefer=STAGE)
     resolver = _Resolver(cache, ctx.fetcher, recorded, ctx.log)
     hand = fontfiles.load_font_files(ctx.paths.config)  # stage "latin" checked the ids
-    by_url = resolve_files(grouped, resolver, hand)
+    names = {fid: u.families[fid].family for fid in grouped}
+    by_url = resolve_files(grouped, resolver, hand, names)
     cache.flush()
     if ctx.fetcher is not None and ctx.store is not None and resolver.reads.reads:
         try:
@@ -604,6 +620,7 @@ def run(ctx: StageContext) -> None:
             font_facts,
             owner.get(fid),
             hashed(hand.get(fid, ()), by_url),
+            names[fid],
         )
         for fid, recs in grouped.items()
     }
