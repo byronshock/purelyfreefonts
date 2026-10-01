@@ -55,7 +55,13 @@ Contracts:
   (``apply_research``), then for font files those ``config/font-files.toml``
   lists for a family no source gives a readable one (``apply_font_files``),
   pinned URLs, then the source order ``SOURCE_ORDER`` (the google/fonts
-  folder first, as methodology §2 allows), then the URL.
+  folder first, as methodology §2 allows); within a source, records named
+  like the family before the others and live ones before the rest (google/fonts
+  keeps a renamed family's old folder, such as ``ofl/ekmukta`` beside
+  ``ofl/mukta``: only the family's own is what Google serves), as stage
+  "latin" orders them; then for font files the role, and of one role a file
+  named Regular first (Homebrew's casks give every upright weight in an
+  archive the role "regular"); then the URL.
 - **A family passes (level "L3")** when a fetched text matches licenses that
   satisfy its L2 expression (``build/stage/licenses.json``; every matched id
   must be allowed in ``licenses.toml`` with gate LIC's license rulings applied,
@@ -122,9 +128,10 @@ from dataclasses import dataclass, field, replace
 from datetime import date, timedelta
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal, Protocol
-from urllib.parse import urlsplit
+from urllib.parse import unquote, urlsplit
 
 from tff_catalog import jsonio, stageio
+from tff_catalog.keys import match_key
 from tff_catalog.records import FontFileRef, LicenseFact, SourceKey, UniverseRecord, from_json
 from tff_catalog.reviews import Question
 
@@ -171,6 +178,8 @@ SOURCE_ORDER = (
 )
 _FILE_ROLES = ("regular", "variable", "other", "italic")
 _FILE_FORMATS = (".ttf", ".otf", ".woff2", ".woff")
+# The words of a file name, camel case split: "SNPro-Regular.otf" is SN, Pro, Regular, otf.
+_NAME_WORDS = re.compile(r"[A-Z]+(?=[A-Z][a-z])|[A-Z]?[a-z]+|[A-Z]+|\d+")
 
 Level = Literal["L3", "failed", "ruling"]
 Reason = Literal["changed", "failed", "research"]
@@ -955,10 +964,24 @@ def _source_rank(source: str) -> tuple[int, str]:
     return (SOURCE_ORDER.index(source) if source in SOURCE_ORDER else len(SOURCE_ORDER), source)
 
 
-def _file_rank(ref: FontFileRef, source: str) -> tuple[Any, ...]:
+def _named_regular(url: str) -> bool:
+    """Whether the file's name (an archive member's own) has the word Regular."""
+    name = unquote(url.rsplit("#", 1)[-1].rsplit("/", 1)[-1])
+    return any(w.casefold() == "regular" for w in _NAME_WORDS.findall(name))
+
+
+def _file_rank(ref: FontFileRef, source: str, other: tuple[bool, bool]) -> tuple[Any, ...]:
     path = urlsplit(ref.url).path.lower()
     fmt = next((i for i, ext in enumerate(_FILE_FORMATS) if path.endswith(ext)), len(_FILE_FORMATS))
-    return (not is_pinned(ref.url), _source_rank(source), _FILE_ROLES.index(ref.role), fmt, ref.url)
+    return (
+        not is_pinned(ref.url),
+        _source_rank(source),
+        *other,
+        _FILE_ROLES.index(ref.role),
+        not _named_regular(ref.url),
+        fmt,
+        ref.url,
+    )
 
 
 def _is_font_file(url: str) -> bool:
@@ -989,14 +1012,31 @@ def gather(
     """Each family's candidate license texts and font files, best first (module docstring).
 
     With ``universe``, a record of a several-families key (``Family.shared``) is its
-    family's, and that key's license facts are every sharing family's.
+    family's, and that key's license facts are every sharing family's; and a record
+    named otherwise than its family (a license fact takes its key's record's name)
+    comes after the family's own ones of its source.
     """
+    records = list(records)
     texts: dict[str, dict[str, tuple[tuple[Any, ...], TextRef]]] = {}
     files: dict[str, dict[str, tuple[tuple[Any, ...], FontFileRef]]] = {}
+    named = {(r.source, r.key): r for r in records if isinstance(r, UniverseRecord)}
 
-    def add_text(fid: str, url: str, sha: str | None, source: str, kind: int) -> None:
+    def other(fid: str, rec: UniverseRecord | LicenseFact) -> tuple[bool, bool]:
+        """(named otherwise than the family, not live) of the record, or its key's record."""
+        r = rec if isinstance(rec, UniverseRecord) else named.get((rec.source, rec.key))
+        if r is None:
+            return (False, False)
+        fam = universe.families.get(fid) if universe is not None else None
+        return (
+            fam is not None and match_key(r.family) != match_key(fam.family),
+            r.status != "live",
+        )
+
+    def add_text(
+        fid: str, url: str, sha: str | None, source: str, kind: int, off: tuple[bool, bool]
+    ) -> None:
         url = fetchable_url(url)
-        rank = (not is_pinned(url), _source_rank(source), kind, sha is None, url)
+        rank = (not is_pinned(url), _source_rank(source), *off, kind, sha is None, url)
         old = texts.setdefault(fid, {}).get(url)
         if old is None or rank < old[0]:
             texts[fid][url] = (rank, TextRef(url, sha, source))
@@ -1012,16 +1052,17 @@ def gather(
 
     for rec in records:
         for fid in owners(rec):
+            off = other(fid, rec)
             if isinstance(rec, LicenseFact):
                 if rec.text_url:
-                    add_text(fid, rec.text_url, rec.text_sha256, rec.source, 0)
+                    add_text(fid, rec.text_url, rec.text_sha256, rec.source, 0, off)
                 continue
             for role, url in rec.urls:
                 if role == "license":
-                    add_text(fid, url, None, rec.source, 1)
+                    add_text(fid, url, None, rec.source, 1, off)
             for ref in rec.files:
                 if _is_font_file(ref.url):
-                    rank = _file_rank(ref, rec.source)
+                    rank = _file_rank(ref, rec.source, off)
                     old = files.setdefault(fid, {}).get(ref.url)
                     if old is None or rank < old[0]:
                         files[fid][ref.url] = (rank, ref)

@@ -615,6 +615,114 @@ def test_gather_orders_evidence_best_first() -> None:
     ]
 
 
+def test_gather_puts_the_familys_own_google_folder_before_an_old_one() -> None:
+    # google/fonts keeps a renamed family's old folder: ofl/ekmukta ("Ek Mukta") beside
+    # ofl/mukta, and ofl/montserratsubrayada (static) beside ofl/montserratunderline
+    # (variable only). The family's own folder comes first, whatever the URL or role.
+    def folder(name: str, family: str, file: FontFileRef, status: str = "live") -> list[Record]:
+        key = fam_key(name)
+        return [
+            UniverseRecord(
+                source="google_repo", key=key, family=family, files=(file,), status=status
+            ),
+            LicenseFact(
+                source="google_repo", key=key, raw="OFL", text_url=f"{REPO}/ofl/{name}/OFL.txt"
+            ),
+        ]
+
+    records = [
+        *folder("ekmukta", "Ek Mukta", FontFileRef(f"{REPO}/ofl/ekmukta/EkMukta-Regular.ttf")),
+        *folder("mukta", "Mukta", FontFileRef(f"{REPO}/ofl/mukta/Mukta-Regular.ttf")),
+        *folder(
+            "montserratsubrayada",
+            "Montserrat Subrayada",
+            FontFileRef(f"{REPO}/ofl/montserratsubrayada/MontserratSubrayada-Regular.ttf"),
+        ),
+        *folder(
+            "montserratunderline",
+            "Montserrat Underline",
+            FontFileRef(
+                f"{REPO}/ofl/montserratunderline/MontserratUnderline%5Bwght%5D.ttf", role="variable"
+            ),
+        ),
+        *folder(
+            "notosansnko_todelist",
+            "Noto Sans N Ko",
+            FontFileRef(f"{REPO}/ofl/notosansnko_todelist/NotoSansNKo-Regular.ttf"),
+            "deprecated",
+        ),
+        *folder("znotosansnko", "Noto Sans NKo", FontFileRef(f"{REPO}/ofl/znotosansnko/A.ttf")),
+    ]
+    names = {
+        "mukta": ("Mukta", ("ekmukta", "mukta")),
+        "montserrat-underline": (
+            "Montserrat Underline",
+            ("montserratsubrayada", "montserratunderline"),
+        ),
+        "noto-sans-nko": ("Noto Sans NKo", ("notosansnko_todelist", "znotosansnko")),
+    }
+    universe = Universe(
+        families={
+            fid: Family(fid, name, tuple(fam_key(k) for k in keys), ("google_repo",), DAY, name)
+            for fid, (name, keys) in names.items()
+        },
+        unmapped=(),
+    )
+    evidence = license_l3.gather(records, license_l3.key_index(universe), universe)
+    first = {fid: (ev.files[0].url, ev.texts[0].url) for fid, ev in evidence.items()}
+    assert first == {
+        "mukta": (f"{REPO}/ofl/mukta/Mukta-Regular.ttf", f"{REPO}/ofl/mukta/OFL.txt"),
+        "montserrat-underline": (
+            f"{REPO}/ofl/montserratunderline/MontserratUnderline%5Bwght%5D.ttf",
+            f"{REPO}/ofl/montserratunderline/OFL.txt",
+        ),
+        "noto-sans-nko": (f"{REPO}/ofl/znotosansnko/A.ttf", f"{REPO}/ofl/znotosansnko/OFL.txt"),
+    }
+    # Keys alone (no universe): no names to compare, so the URL decides as before.
+    alone = license_l3.gather(records, license_l3.key_index(universe))
+    assert alone["mukta"].files[0].url == f"{REPO}/ofl/ekmukta/EkMukta-Regular.ttf"
+
+
+def test_gather_puts_a_file_named_regular_first_among_one_role() -> None:
+    # Homebrew gives every upright weight in an archive the role "regular".
+    key = fam_key("font-sn-pro", "brew-cask")
+    zip_url = "https://github.com/supernotes/sn-pro/releases/download/1.5.0/SN-Pro.zip"
+    members = ("SNPro-Black.otf", "SNPro-Bold.otf", "SNPro-Regular.otf", "SNPro-BlackItalic.otf")
+    rec = UniverseRecord(
+        source="homebrew_casks",
+        key=key,
+        family="SN Pro",
+        files=tuple(
+            FontFileRef(f"{zip_url}#SNPro/{m}", role="italic" if "Italic" in m else "regular")
+            for m in members
+        ),
+    )
+    ev = license_l3.gather([rec], {key: "sn-pro"})["sn-pro"]
+    assert [f.url.rsplit("/", 1)[1] for f in ev.files] == [
+        "SNPro-Regular.otf",
+        "SNPro-Black.otf",
+        "SNPro-Bold.otf",
+        "SNPro-BlackItalic.otf",
+    ]
+
+
+@pytest.mark.parametrize(
+    ("url", "regular"),
+    [
+        ("https://x.example/a.zip#Charter%20210112/Charter/Charter%20Regular.otf", True),
+        ("https://x.example/a.zip#psudoFont_Liga_Mono_-_Regular.ttf", True),
+        ("https://x.example/a.zip#zed-sans-regular.ttf", True),
+        ("https://x.example/AboriginalSans.zip#AboriginalSansREGULAR.ttf", True),
+        ("https://x.example/fonts/RobotoRegular.ttf", True),
+        ("https://x.example/fonts/Irregular-Bold.ttf", False),
+        ("https://x.example/fonts/Inter%5Bopsz,wght%5D.ttf", False),
+        ("https://x.example/Regular/Inter-Bold.ttf", False),  # a folder's name is not the file's
+    ],
+)
+def test_named_regular(url: str, regular: bool) -> None:
+    assert license_l3._named_regular(url) is regular
+
+
 def place(order: int) -> Placement:
     return Placement(order=order, rank=order if order <= 100 else None, band=None, gate_held=False)
 
