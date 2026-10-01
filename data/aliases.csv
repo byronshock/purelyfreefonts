@@ -625,7 +625,13 @@ be-vietnam,fs-id,be-vietnam-pro,rename,,fontsource_legacy,2026-09-28,owner:2026-
 otf-bebas-neue-git,arch-pkg,bebas-neue,package,,distro,2026-09-28,claude:2026-09-28
 fonts-bebas-neue,deb-pkg,bebas-neue,package,,distro,2026-09-28,claude:2026-09-28
 fonts-bebas-neue,deb-src,bebas-neue,package,,distro,2026-09-28,claude:2026-09-28
-@expo-google-fonts/big-shoulders-display,npm,big-shoulders-display,package,,hand,2026-09-28,claude:2026-09-28
+Big Shoulders Display,font-name,big-shoulders,build,opsz,hand,2026-09-30,owner:2026-09-30
+Big Shoulders Text,font-name,big-shoulders,build,opsz,hand,2026-09-30,owner:2026-09-30
+@expo-google-fonts/big-shoulders-display,npm,big-shoulders,package,,hand,2026-09-28,owner:2026-09-30
+Big Shoulders Inline Display,font-name,big-shoulders-inline,build,opsz,hand,2026-09-30,owner:2026-09-30
+Big Shoulders Inline Text,font-name,big-shoulders-inline,build,opsz,hand,2026-09-30,owner:2026-09-30
+Big Shoulders Stencil Display,font-name,big-shoulders-stencil,build,opsz,hand,2026-09-30,owner:2026-09-30
+Big Shoulders Stencil Text,font-name,big-shoulders-stencil,build,opsz,hand,2026-09-30,owner:2026-09-30
 ttf-bigblueterminal-nerd,arch-pkg,bigblue-terminal,build,nerd,distro,2026-09-28,claude:2026-09-28
 BigBlueTerm,font-name,bigblue-terminal,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
 BigBlueTerm Nerd Font,font-name,bigblue-terminal,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
@@ -1093,7 +1099,8 @@ ttf-fanwood,arch-pkg,fanwood-text,bundle,2,hand,2026-09-28,claude:2026-09-28
 fonts-fanwood,deb-pkg,fanwood-text,bundle,2,hand,2026-09-28,claude:2026-09-28
 ttf-fanwood,deb-pkg,fanwood-text,bundle,2,hand,2026-09-28,claude:2026-09-28
 fonts-fanwood,deb-src,fanwood-text,bundle,2,hand,2026-09-28,claude:2026-09-28
-Finlandica,gf-family,finlandica-headline,related,split,gf_history,2026-09-26,owner:2026-09-26
+@expo-google-fonts/finlandica,npm,finlandica-headline,package,,hand,2026-09-30,owner:2026-09-30
+Finlandica,gf-family,finlandica-headline,rename,split,gf_history,2026-09-30,owner:2026-09-30
 Finlandica,gf-family,finlandica-text,related,split,gf_history,2026-09-26,owner:2026-09-26
 nerd-fonts-fira-code,arch-pkg,fira-code,build,nerd,distro,2026-09-28,claude:2026-09-28
 ttf-firacode-nerd,arch-pkg,fira-code,build,nerd,distro+oldlib,2026-09-26,owner:2026-09-26
@@ -2839,6 +2846,7 @@ fonts-urw-base35,deb-pkg,nimbus-sans-narrow,bundle,11,hand,2026-09-28,claude:202
 gsfonts,deb-pkg,nimbus-sans-narrow,bundle,11,hand,2026-09-28,claude:2026-09-28
 gsfonts-x11,deb-pkg,nimbus-sans-narrow,bundle,11,hand,2026-09-28,claude:2026-09-28
 fonts-urw-base35,deb-src,nimbus-sans-narrow,bundle,11,hand,2026-09-28,claude:2026-09-28
+Nosifer Caps,font-name,nosifer,rename,,hand,2026-09-30,owner:2026-09-30
 fonts-noto-color-emoji,deb-pkg,noto-color-emoji,distinct,rejected,distro,2026-09-28,claude:2026-09-28
 ttf-noto-sans-vf,arch-pkg,noto-sans,build,variable,distro,2026-09-28,claude:2026-09-28
 Noto Sans Condensed,font-name,noto-sans,build,static,name_tables,2026-09-26,owner:2026-09-26
@@ -3139,6 +3147,7 @@ fonts-routed-gothic,deb-src,routed-gothic,package,,distro,2026-09-28,claude:2026
 ttf-rubik-vf,arch-pkg,rubik,build,variable,distro+oldlib,2026-09-28,claude:2026-09-28
 ttf-rubik,arch-pkg,rubik,package,,distro,2026-09-28,claude:2026-09-28
 fonts-rubik,deb-pkg,rubik,package,,distro,2026-09-28,owner:2026-09-28
+Rubik One,font-name,rubik,rename,,hand,2026-09-30,owner:2026-09-30
 Saira Stencil One,gf-family,saira-stencil,rename,,gf_history,2026-09-26,owner:2026-09-26
 fonts-sil-shimenkan,deb-src,salaowu,bundle,35,hand,2026-09-28,claude:2026-09-28
 fonts-sil-shimenkan,deb-src,salaowu-book,bundle,35,hand,2026-09-28,claude:2026-09-28
@@ -3147,6 +3156,7 @@ fonts-sil-shimenkan,deb-src,salaowu-light,bundle,35,hand,2026-09-28,claude:2026-
 nerd-fonts-sf-mono,arch-pkg,san-francisco-mono,build,nerd,distro,2026-09-28,claude:2026-09-28
 otf-san-francisco-mono,arch-pkg,san-francisco-mono,package,,distro,2026-09-28,claude:2026-09-28
 otf-san-francisco-pro,arch-pkg,san-francisco-pro,package,,distro,2026-09-28,claude:2026-09-28
+Sansita One,font-name,sansita,rename,,hand,2026-09-30,owner:2026-09-30
 ttf-sarasa-gothic,arch-pkg,sarasa-gothic,package,,distro+oldlib,2026-09-28,claude:2026-09-28
 fonts-sawarabi-gothic,deb-pkg,sawarabi-gothic,package,,distro,2026-09-28,claude:2026-09-28
 ttf-sawarabi-gothic,deb-pkg,sawarabi-gothic,package,,distro,2026-09-28,claude:2026-09-28
@@ -3154,14 +3164,16 @@ fonts-sawarabi-gothic,deb-src,sawarabi-gothic,package,,distro,2026-09-28,claude:
 fonts-sawarabi-mincho,deb-pkg,sawarabi-mincho,package,,distro,2026-09-28,claude:2026-09-28
 ttf-sawarabi-mincho,deb-pkg,sawarabi-mincho,package,,distro,2026-09-28,claude:2026-09-28
 fonts-sawarabi-mincho,deb-src,sawarabi-mincho,package,,distro,2026-09-28,claude:2026-09-28
-fonts-sil-scheherazade,deb-pkg,scheherazade,package,,distro,2026-09-28,claude:2026-09-28
-ttf-sil-scheherazade,deb-pkg,scheherazade,package,,distro,2026-09-28,claude:2026-09-28
-fonts-sil-scheherazade,deb-src,scheherazade,package,,distro,2026-09-28,claude:2026-09-28
-@fontsource/scheherazade,npm,scheherazade,package,,fontsource_legacy,2026-09-28,claude:2026-09-28
-scheherazade,fs-id,scheherazade,rename,,fontsource_legacy,2026-09-28,claude:2026-09-28
 scheherazade-new-font,arch-pkg,scheherazade-new,package,,distro,2026-09-28,claude:2026-09-28
 ttf-scheherazade-new,arch-pkg,scheherazade-new,package,,distro,2026-09-28,claude:2026-09-28
 ttf-sil-scheherazade,arch-pkg,scheherazade-new,package,,distro,2026-09-28,claude:2026-09-28
+fonts-sil-scheherazade,deb-pkg,scheherazade-new,package,,distro,2026-09-28,owner:2026-09-30
+ttf-sil-scheherazade,deb-pkg,scheherazade-new,package,,distro,2026-09-28,owner:2026-09-30
+fonts-sil-scheherazade,deb-src,scheherazade-new,package,,distro,2026-09-28,owner:2026-09-30
+@expo-google-fonts/scheherazade,npm,scheherazade-new,package,,hand,2026-09-30,owner:2026-09-30
+@fontsource/scheherazade,npm,scheherazade-new,package,,fontsource_legacy,2026-09-28,owner:2026-09-30
+Scheherazade,font-name,scheherazade-new,rename,,hand,2026-09-30,owner:2026-09-30
+scheherazade,fs-id,scheherazade-new,rename,,fontsource_legacy,2026-09-28,owner:2026-09-30
 ttf-scientifica,arch-pkg,scientifica,package,,distro,2026-09-28,claude:2026-09-28
 oppiliappan/scientifica/scientifica.tar,gh-asset,scientifica,package,,github_repos,2026-09-26,owner:2026-09-26
 oppiliappan/scientifica/scientifica.tar.gz,gh-asset,scientifica,package,,github_repos,2026-09-26,owner:2026-09-26
@@ -3201,6 +3213,7 @@ otf-sora,arch-pkg,sora,package,,distro,2026-09-28,claude:2026-09-28
 fonts-sora,deb-pkg,sora,package,,distro,2026-09-28,claude:2026-09-28
 fonts-sora,deb-src,sora,package,,distro,2026-09-28,claude:2026-09-28
 ttf-sorts-mill-goudy,arch-pkg,sorts-mill-goudy,package,,distro,2026-09-28,claude:2026-09-28
+OFL Sorts Mill Goudy TT,font-name,sorts-mill-goudy,rename,,hand,2026-09-30,owner:2026-09-30
 nerd-fonts-source-code-pro,arch-pkg,source-code-pro,build,nerd,distro,2026-09-28,claude:2026-09-28
 ttf-sourcecodepro-nerd,arch-pkg,source-code-pro,build,nerd,distro+oldlib,2026-09-28,claude:2026-09-28
 SauceCodePro,font-name,source-code-pro,build,nerd,nerd,2026-09-26,auto:nerd_unpatched
@@ -3473,6 +3486,7 @@ ttf-work-sans-variable,arch-pkg,work-sans,build,variable,distro,2026-09-28,claud
 ttf-work-sans,arch-pkg,work-sans,package,,distro,2026-09-28,claude:2026-09-28
 otf-xkcd-font,arch-pkg,xkcd,package,,distro,2026-09-28,claude:2026-09-28
 ttf-xkcd-script-font,arch-pkg,xkcd-script,package,,distro,2026-09-28,claude:2026-09-28
+Yaldevi Colombo,font-name,yaldevi,rename,,hand,2026-09-30,owner:2026-09-30
 fonts-yanone-kaffeesatz,deb-pkg,yanone-kaffeesatz,package,,distro,2026-09-28,claude:2026-09-28
 ttf-yanone-kaffeesatz,deb-pkg,yanone-kaffeesatz,package,,distro,2026-09-28,claude:2026-09-28
 fonts-yanone-kaffeesatz,deb-src,yanone-kaffeesatz,package,,distro,2026-09-28,claude:2026-09-28

@@ -6,3 +6,9 @@ choice = "a"
 recommended = true
 ruling = "Yes: leave it out of most chosen"
 reason = "Claude's recommendation, taken by the owner, as for dep-arch-doulos-sil (2026-09-28): Arch's praat depends on ttf-charis, SIL's 7.000 package that replaced ttf-charis-sil, and brings in about two thirds of its installs (67% over the year; 189 of 257 in August 2026)."
+
+[dep-debian-scheherazade-new]
+choice = "a"
+recommended = true
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner, as for dep-debian-scheherazade (2026-09-28), which the Scheherazade fold (duplicates_batch_3) carries over: Debian's libreoffice-l10n-ar recommends fonts-sil-scheherazade and brings in 60% of its installs."

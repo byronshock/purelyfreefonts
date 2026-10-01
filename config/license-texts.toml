@@ -402,13 +402,6 @@ texts = ["https://raw.githubusercontent.com/silnrsi/font-doulos/ff34c7cc08754c07
 reason = "SIL's repository at tag v7.000, the release Homebrew and Fontist install. Its OFL.txt is OFL-1.1. The sources gave only openfontlicense.org and scripts.sil.org/OFL, web pages."
 
 [[family]]
-family = "scheherazade"
-name = "Scheherazade"
-texts = ["https://software.sil.org/downloads/r/scheherazade/Scheherazade-2.100.zip#Scheherazade-2.100/OFL.txt"]
-page = "https://openfontlicense.org/open-font-license-official-text/"
-reason = "SIL's 2.100 release of the original Scheherazade, the one Homebrew installs; SIL's repository (silnrsi/font-scheherazade) tags only its successor's releases, Scheherazade New 2.900 on. The zip's OFL.txt is OFL-1.1. The sources gave no license text."
-
-[[family]]
 family = "eb-garamond-12-all-sc"
 name = "EB Garamond 12 All SC"
 texts = ["https://raw.githubusercontent.com/georgd/EB-Garamond/50b6aa76f32e7455479c1e21630d08cceffdf02e/COPYING"]

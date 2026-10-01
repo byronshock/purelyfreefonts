@@ -170,6 +170,19 @@ Answers to the Milestone 1, Step 0 decisions in [docs/ranking-methodology.md](do
   - **SIL renames and Selawik (gate A, `sil_selawik_folds`, given in chat with the lead session):** four more duplicates fold, as SN Pro did, and the catalog takes them at the first live refresh. SIL renamed Charis SIL to Charis, Gentium Plus to Gentium and Gentium Book Plus to Gentium Book; Homebrew's, Fontist's and Arch's packages of the new names, and Debian's 2003 Gentium, count toward Charis SIL, Gentium Plus and Gentium Book Plus. Fontist's Selawik counts toward Microsoft Selawik, which keeps its id, link and license ruling and is shown as Selawik, the font's own name. The family Gentium leaves the catalog, with its gate K link, category override and L3 research entry. In a replay of 2026-09-26 with the folds: Gentium Plus moves from 300 to 285 and enters the most-installed top 100 at #89; Gentium Book Plus joins the catalog at 337; Charis SIL drops from 265 to 329 (next item); there are still 499 fonts.
   - **Their names (`sil_rename_names`):** Charis SIL, Gentium Plus and Gentium Book Plus keep their ids and Google's names, since Google Fonts still lists them so (methodology §2: Google's family is the unit, and a rename keeps the id). SIL's new names are also-known-as names. The ruling relayed by the lead had said "into the current upstream name"; Claude flagged that the rules pick Google's names, and the owner took them.
   - **Charis SIL and praat (gate X, `dep-arch-charis-sil`, ruled ahead of the refresh):** Arch's praat depends on `ttf-charis`, SIL's 7.000 package, and brings in about two thirds of its installs, so Arch is left out of *most chosen* for Charis SIL, as for Doulos SIL (2026-09-28).
+  - **More duplicates (gate A, `duplicates_batch_3`, given in chat with the lead session, after verified evidence):** seven retired or split names fold into their live successor, and the catalog takes them at the first live refresh (`sn_pro_fold_timing`):
+    - Scheherazade into Scheherazade New, with its Debian, Fontsource, npm and Expo packages;
+    - OFL Sorts Mill Goudy TT into Sorts Mill Goudy;
+    - Rubik One into Rubik;
+    - Big Shoulders Display and Text into Big Shoulders, as optical-size builds, so the catalog entry moves from `big-shoulders-display` to `big-shoulders`;
+    - Yaldevi Colombo into Yaldevi;
+    - Sansita One into Sansita;
+    - Finlandica into Finlandica Headline, as its old name. This revises the 2026-09-26 answer that Finlandica is related to its split families; Finlandica Text stays related.
+
+    In a replay of 2026-09-26 at main with the rows, there are still 499 fonts. Big Shoulders replaces Big Shoulders Display at overall 250 (it was 360). Scheherazade New moves from 249 to 246 and gains a LibreOffice tag. Finlandica Headline moves from 471 to 488. The other top-100 changes are moves of a place or two.
+  - **Checked folds (`duplicates_batch_3_checked`):** of the four the owner ruled "fold after a replay check", Big Shoulders Inline Display and Text fold into Big Shoulders Inline, Big Shoulders Stencil Display and Text into Big Shoulders Stencil, and Nosifer Caps into Nosifer. Creepster Caps stays a family of its own (the owner's answer to Claude after the check): its google/fonts folder is Apache-2.0 while Creepster is OFL-1.1, and folded, Creepster's license became "Apache-2.0 AND OFL-1.1".
+  - **Small-caps companions (`sc_companions_keep_separate`, a class ruling):** small-caps companions that Google no longer lists (the six Big Shoulders SC families, Fragment Mono SC, Alumni Sans Collegiate One SC and the like) stay families of their own and aren't raised as duplicates again.
+  - **Scheherazade New and LibreOffice (gate X, `dep-debian-scheherazade-new`, ruled ahead of the refresh):** Debian is left out of *most chosen* for Scheherazade New, as it was for the old Scheherazade (2026-09-28): libreoffice-l10n-ar brings in 60% of the package's installs.
 
   *(2026-09-30)*
 
