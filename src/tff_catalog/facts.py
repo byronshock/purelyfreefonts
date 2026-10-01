@@ -435,8 +435,8 @@ def candidates(
 ) -> list[FontFileRef]:
     """The family's font files, best first: its ``hand_files`` (``config/font-files.toml``),
     then the records' by known sha256, Regular, Google/Fontsource, the file's own name
-    (``fontfiles.file_name_rank``, as stage "verify" orders a source's files: named like
-    its record's family, named Regular, the newest release), then url.
+    (``fontfiles.file_name_rank``, as stage "verify" orders a source's files: how much of
+    its record's family name it carries, named Regular, the newest release), then url.
 
     ``readable_only`` keeps only font files and zip members (not archives or pages).
     """

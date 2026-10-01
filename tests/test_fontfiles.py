@@ -1019,22 +1019,27 @@ ZIP = "https://x.example/releases/download/v3.6/a.zip"
 
 
 @pytest.mark.parametrize(
-    ("url", "family", "like"),
+    ("url", "family", "grade"),
     [
-        (f"{ZIP}#sudo/SudoVariable.ttf", "Sudo", True),
-        (f"{ZIP}#sudo/SudoUIVariable.ttf", "Sudo", False),
-        (f"{ZIP}#SNPro/SNPro-BlackItalic.otf", "SN Pro", True),
-        (f"{ZIP}#psudoFont_Liga_Mono_-_Regular.ttf", "psudoFont Liga Mono", True),
-        (f"{ZIP}#Recursive_VF_1.085.ttf", "Recursive", True),  # version digits
-        (f"{ZIP}#RecursiveMonoCslSt-Regular.otf", "Recursive", False),
-        (f"{ZIP}#TimesNewerRoman-Bold.otf", "Times Newer Roman", True),
-        (f"{ZIP}#heavy_data.ttf", "Heavy Data", True),
-        ("https://x.example/ofl/inter/Inter%5Bopsz,wght%5D.ttf", "Inter", True),
-        (f"{ZIP}#selawk.ttf", "Selawik", False),
+        (f"{ZIP}#sudo/SudoVariable.ttf", "Sudo", 0),
+        (f"{ZIP}#sudo/SudoUIVariable.ttf", "Sudo", 2),
+        (f"{ZIP}#SNPro/SNPro-BlackItalic.otf", "SN Pro", 0),
+        (f"{ZIP}#psudoFont_Liga_Mono_-_Regular.ttf", "psudoFont Liga Mono", 0),
+        (f"{ZIP}#dist/otf/Regular.otf", "Annotation Mono", 0),  # style words only
+        (f"{ZIP}#Recursive_VF_1.085.ttf", "Recursive", 0),  # version digits
+        (f"{ZIP}#Recursive_VF_1.085.ttf", "Recursive Desktop", 1),  # part of the name
+        (f"{ZIP}#RecursiveMonoCslSt-Regular.otf", "Recursive Desktop", 2),
+        (f"{ZIP}#GentiumBook-Regular.ttf", "Gentium Book", 0),
+        (f"{ZIP}#Gentium-Regular.ttf", "Gentium Book", 1),
+        (f"{ZIP}#TimesNewerRoman-Bold.otf", "Times Newer Roman", 0),
+        (f"{ZIP}#heavy_data.ttf", "Heavy Data", 0),
+        (f"{ZIP}#FiraCode-Retina.ttf", "Fira Code", 0),
+        ("https://x.example/ofl/inter/Inter%5Bopsz,wght%5D.ttf", "Inter", 0),
+        (f"{ZIP}#selawk.ttf", "Selawik", 2),
     ],
 )
-def test_named_like(url: str, family: str, like: bool) -> None:
-    assert fontfiles.named_like(url, family) is like
+def test_name_grade(url: str, family: str, grade: int) -> None:
+    assert fontfiles.name_grade(url, family) == grade
 
 
 @pytest.mark.parametrize(
@@ -1061,6 +1066,8 @@ def test_regular_grade(url: str, family: str, grade: int) -> None:
     [
         ("https://software.sil.org/downloads/r/awami/AwamiNastaliq-3.400.zip#A-Regular.ttf", (3, 400)),
         (f"{ZIP}#sudo/Sudo-1.2.ttf", (3, 6)),  # a member's name is not the release's
+        ("https://x.example/releases/download/v.2.2.0/a.zip#A-Regular.ttf", (2, 2, 0)),
+        ("https://x.example/releases/download/v1.10/a.zip#A-Regular.ttf", (1, 10)),
         ("https://raw.githubusercontent.com/google/fonts/23e54b51ddff/ofl/mukta/Mukta-Regular.ttf", None),
     ],
 )  # fmt: skip
@@ -1075,10 +1082,12 @@ def test_file_name_rank_orders_name_then_regular_then_newest() -> None:
         "https://x.example/Foo-1.0.zip#Foo-Regular.ttf",
         "https://x.example/Foo-2.0.zip#Foo-Bold.ttf",
         "https://x.example/Foo-2.0.zip#Foo-Book.ttf",
+        "https://x.example/Foo-2.0.zip#otf/Regular.otf",
     ]
     ranked = sorted(urls, key=lambda u: fontfiles.file_name_rank(u, "Foo"))
     assert [u.removeprefix("https://x.example/") for u in ranked] == [
         "Foo-2.0.zip#Foo-Regular.ttf",
+        "Foo-2.0.zip#otf/Regular.otf",
         "Foo-1.0.zip#Foo-Regular.ttf",
         "Foo-2.0.zip#Foo-Book.ttf",
         "Foo-2.0.zip#Foo-Bold.ttf",

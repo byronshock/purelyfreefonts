@@ -723,6 +723,24 @@ def test_gather_puts_the_file_named_like_the_family_first() -> None:
     assert [f.url.rsplit("/", 1)[1] for f in ev.files] == ["SudoVariable.ttf", "SudoUIVariable.ttf"]
 
 
+def test_gather_reads_an_archive_members_own_format() -> None:
+    # The archive's URL ends in .zip for every member: the member's own extension decides,
+    # so the .ttf comes before the .otf that sorts first by URL.
+    key = fam_key("font-foo", "brew-cask")
+    zip_url = "https://github.com/o/foo/releases/download/v1.0/Foo.zip"
+    rec = UniverseRecord(
+        source="homebrew_casks",
+        key=key,
+        family="Foo",
+        files=(
+            FontFileRef(f"{zip_url}#Foo-Regular.otf"),
+            FontFileRef(f"{zip_url}#Foo-Regular.ttf"),
+        ),
+    )
+    ev = license_l3.gather([rec], {key: "foo"})["foo"]
+    assert [f.url.rsplit("#", 1)[1] for f in ev.files] == ["Foo-Regular.ttf", "Foo-Regular.otf"]
+
+
 def test_gather_puts_the_newest_release_first_and_reads_a_members_format() -> None:
     # Fontist has two Awami Nastaliq formulas, 2.000 and 3.400, and marks every member of
     # the newer one "regular"; its archive also holds .woff copies.

@@ -617,6 +617,26 @@ def test_candidates_put_the_file_named_like_the_family_first() -> None:
     ]
 
 
+def test_candidates_take_a_static_regular_named_by_style_alone() -> None:
+    # Annotation Mono's archive names its statics by style alone (dist/otf/Regular.otf):
+    # the folder names the family, so the Regular comes before the variable file.
+    zip_url = "https://github.com/o/annotation-mono/releases/download/v0.4/AnnotationMono_v0.4.zip"
+    members = ("dist/otf/Black.otf", "dist/otf/Regular.otf", "dist/variable/AnnotationMono-VF.ttf")
+    recs = [
+        rec(
+            "homebrew_casks",
+            "font-annotation-mono",
+            "Annotation Mono",
+            files=tuple(ref(f"{zip_url}#{m}") for m in members),
+        )
+    ]
+    assert [r.url.split("#")[1] for r in candidates(recs)] == [
+        "dist/otf/Regular.otf",
+        "dist/otf/Black.otf",
+        "dist/variable/AnnotationMono-VF.ttf",
+    ]
+
+
 def test_settled_by_metadata() -> None:
     gf = rec("google_metadata", "X", "X", category="Serif")
     assert settled_by_metadata([gf])  # variable alone never sends us to the files

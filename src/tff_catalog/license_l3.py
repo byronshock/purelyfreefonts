@@ -60,8 +60,8 @@ Contracts:
   keeps a renamed family's old folder, such as ``ofl/ekmukta`` beside
   ``ofl/mukta``: only the family's own is what Google serves), as stage
   "latin" orders them; then for font files the role, then the file's own name
-  (``fontfiles.file_name_rank``: named like its record's family before the
-  rest, so Sudo's "SudoVariable.ttf" comes before "SudoUIVariable.ttf"; then
+  (``fontfiles.file_name_rank``: how much of its record's family name it
+  carries, so Sudo's "SudoVariable.ttf" comes before "SudoUIVariable.ttf"; then
   a file named Regular, since Homebrew's casks and Fontist give every upright
   weight in an archive the role "regular"; then the newest release, so
   Fontist's Awami Nastaliq 3.400 comes before 2.000), then the format (an
