@@ -405,8 +405,16 @@ def test_font_link_with_another_rank_lands_on_the_moved_row(guarded_context):
     )
     assert place == 1  # second, by its Coding score
     assert page.locator(f"#font-{font_id} .rank").text_content().startswith("Score ")
+    # The row is scrolled to the top and its focused heading is in view. A row above it that
+    # the default view never drew is sized by --row-est-h until drawn (content-visibility),
+    # so the landing may be off by that estimate's error: here sample-mono-02, drawn only
+    # once Coding puts it first (4.8 px in Firefox), so allow 24 px.
     top = page.evaluate(f"document.getElementById('font-{font_id}').getBoundingClientRect().top")
-    assert -1 <= top < 800
+    heading = page.evaluate(
+        f"document.getElementById('details-{font_id}-h').getBoundingClientRect().top"
+    )
+    assert -24 <= top < 800
+    assert 0 <= heading < 800
     guarded.assert_clean(page)
 
 
