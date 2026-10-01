@@ -731,10 +731,11 @@ fonts-cascadia-code,deb-src,cascadia-mono,bundle,2,hand,2026-09-28,claude:2026-0
 microsoft/cascadia-code/CascadiaCode.zip,gh-asset,cascadia-mono,bundle,,github_repos,2026-09-26,owner:2026-09-26
 microsoft/cascadia-code/CascadiaMono.ttf,gh-asset,cascadia-mono,package,,github_repos,2026-09-26,owner:2026-09-26
 ttf-century-schoolbook,arch-pkg,century-schoolbook,package,,distro,2026-09-28,claude:2026-09-28
-charis-font,arch-pkg,charis,package,,distro,2026-09-28,claude:2026-09-28
-ttf-charis,arch-pkg,charis,package,,distro,2026-09-28,claude:2026-09-28
+charis-font,arch-pkg,charis-sil,package,,distro,2026-09-28,owner:2026-09-30
+ttf-charis,arch-pkg,charis-sil,package,,distro,2026-09-28,owner:2026-09-30
 ttf-charis-sil,arch-pkg,charis-sil,package,,distro,2026-09-28,claude:2026-09-28
 fonts-sil-charis,deb-pkg,charis-sil,package,,hand,2026-09-28,claude:2026-09-28
+Charis,font-name,charis-sil,rename,,hand,2026-09-30,owner:2026-09-30
 fonts-cherrybomb,deb-pkg,cherry-bomb-one,package,,distro,2026-09-28,claude:2026-09-28
 fonts-cherrybomb,deb-src,cherry-bomb-one,package,,distro,2026-09-28,claude:2026-09-28
 fonts-chomsky,deb-pkg,chomsky,package,,distro,2026-09-28,claude:2026-09-28
@@ -1178,15 +1179,10 @@ ttf-gelasio-variable,arch-pkg,gelasio,build,variable,distro,2026-09-28,claude:20
 ttf-gelasio,arch-pkg,gelasio,package,,distro,2026-09-28,claude:2026-09-28
 fonts-gemunu-libre,deb-pkg,gemunu-libre,package,,distro,2026-09-28,claude:2026-09-28
 fonts-gemunu-libre,deb-src,gemunu-libre,package,,distro,2026-09-28,claude:2026-09-28
-fonts-sil-gentium,deb-pkg,gentium,package,,distro,2026-09-28,claude:2026-09-28
-ttf-gentium,deb-pkg,gentium,package,,distro,2026-09-28,claude:2026-09-28
-fonts-sil-gentium,deb-src,gentium,package,,distro,2026-09-28,claude:2026-09-28
 ttf-gentium-basic,arch-pkg,gentium-basic,bundle,2,hand,2026-09-28,claude:2026-09-28
 fonts-sil-gentium-basic,deb-pkg,gentium-basic,bundle,2,hand,2026-09-28,claude:2026-09-28
 @fontsource/gentium-basic,npm,gentium-basic,package,,fontsource_legacy,2026-09-28,claude:2026-09-28
 gentium-basic,fs-id,gentium-basic,rename,,fontsource_legacy,2026-09-28,claude:2026-09-28
-gentium-book-font,arch-pkg,gentium-book,package,,distro,2026-09-28,claude:2026-09-28
-ttf-gentium-book,arch-pkg,gentium-book,package,,distro,2026-09-28,claude:2026-09-28
 ttf-gentium-basic,arch-pkg,gentium-book-basic,bundle,2,hand,2026-09-28,claude:2026-09-28
 fonts-sil-gentium-basic,deb-pkg,gentium-book-basic,bundle,2,hand,2026-09-28,claude:2026-09-28
 gentium-plus-font,arch-pkg,gentium-book-plus,bundle,2,hand,2026-09-28,claude:2026-09-28
@@ -1194,6 +1190,9 @@ fonts-sil-gentiumplus,deb-pkg,gentium-book-plus,bundle,2,hand,2026-09-28,claude:
 fonts-sil-gentiumplus,deb-src,gentium-book-plus,bundle,2,hand,2026-09-28,claude:2026-09-28
 gentium-book-basic,fs-id,gentium-book-plus,distinct,rejected,fontsource_legacy,2026-09-28,owner:2026-09-28
 @fontsource/gentium-book-basic,npm,gentium-book-plus,distinct,rejected,fontsource_legacy,2026-09-28,owner:2026-09-28
+gentium-book-font,arch-pkg,gentium-book-plus,package,,distro,2026-09-28,owner:2026-09-30
+ttf-gentium-book,arch-pkg,gentium-book-plus,package,,distro,2026-09-28,owner:2026-09-30
+Gentium Book,font-name,gentium-book-plus,rename,,hand,2026-09-30,owner:2026-09-30
 gentiumplusbook,gf-dir,gentium-book-plus,rename,,gf_history,2026-09-26,auto:gf_history_rename
 Gentium Plus Book,gf-family,gentium-book-plus,rename,,gf_history,2026-09-26,auto:gf_history_rename
 fonts-sil-gentiumplus-compact,deb-pkg,gentium-plus,build,,hand,2026-09-28,claude:2026-09-28
@@ -1201,6 +1200,10 @@ gentium-plus-font,arch-pkg,gentium-plus,bundle,2,hand,2026-09-28,claude:2026-09-
 fonts-sil-gentiumplus,deb-pkg,gentium-plus,bundle,2,hand,2026-09-28,claude:2026-09-28
 fonts-sil-gentiumplus,deb-src,gentium-plus,bundle,2,hand,2026-09-28,claude:2026-09-28
 ttf-gentium-plus,arch-pkg,gentium-plus,package,,distro+oldlib,2026-09-28,claude:2026-09-28
+fonts-sil-gentium,deb-pkg,gentium-plus,package,,distro,2026-09-28,owner:2026-09-30
+ttf-gentium,deb-pkg,gentium-plus,package,,distro,2026-09-28,owner:2026-09-30
+fonts-sil-gentium,deb-src,gentium-plus,package,,distro,2026-09-28,owner:2026-09-30
+Gentium,font-name,gentium-plus,rename,,hand,2026-09-30,owner:2026-09-30
 fonts-gfs-didot,deb-pkg,gfs-didot,package,,distro,2026-09-28,claude:2026-09-28
 ttf-gfs-didot,deb-pkg,gfs-didot,package,,distro,2026-09-28,claude:2026-09-28
 fonts-gfs-didot,deb-src,gfs-didot,package,,distro,2026-09-28,claude:2026-09-28
@@ -2573,6 +2576,7 @@ MesloLG NFP,font-name,meslo-lg,build,nfp,nerd,2026-09-26,auto:nerd_unpatched
 MesloLGS NF,font-name,meslo-lg,build,nf,hand,2026-09-26,owner:2026-09-26
 otf-metropolis,arch-pkg,metropolis,package,,distro,2026-09-28,claude:2026-09-28
 otf-miama,arch-pkg,miama,package,,distro,2026-09-28,claude:2026-09-28
+Selawik,font-name,microsoft-selawik,rename,display,hand,2026-09-30,owner:2026-09-30
 fonts-sil-mingzat,deb-pkg,mingzat,package,,distro,2026-09-28,claude:2026-09-28
 fonts-sil-mingzat,deb-src,mingzat,package,,distro,2026-09-28,claude:2026-09-28
 ttf-miracode,arch-pkg,miracode,package,,distro,2026-09-28,claude:2026-09-28

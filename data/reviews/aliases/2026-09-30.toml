@@ -1,5 +1,6 @@
-# Owner ruling of 2026-09-30, gate A, given in chat. Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md.
-# The row it adds is a hand row in data/aliases.csv (reviewed_by owner:2026-09-30): Homebrew's font-sn-pro counts toward SN Pro (package).
+# Owner rulings of 2026-09-30, gate A, given in chat. Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md.
+# The rows they add or move are hand rows in data/aliases.csv (reviewed_by owner:2026-09-30): Homebrew's font-sn-pro counts toward SN Pro (package);
+# the SIL renames and Selawik fold as sil_selawik_folds says. sil_selawik_folds was given in chat with the lead session, the others in chat with Claude.
 
 [sn_pro_fold]
 value = "fold"
@@ -10,3 +11,13 @@ reason = "Claude's recommendation, taken by the owner. The cask installs Superno
 value = "first_live_refresh"
 ruling = "The SN Pro fold (sn_pro_fold) goes to main as the ruling, the alias row and the config only. build/ keeps the published 2026-09-26 catalog, SN Pro Font Family included, until the first live refresh (docs/milestone-refresh.md step 1) builds the fold in."
 reason = "The owner's choice; Claude had recommended treating a replay of the only merged run's own date as the bootstrap, so the rebuilt catalog could go in now. The fold's rebuild moves 2026-09-26 scores (SN Pro 0.18 to 0.38, small shifts elsewhere), and since #31 put that run's scores in state/, a replay sets each moved previous_score to the published score, which validate --committed's bootstrap check (score_previous_bootstrap) refuses. Until the first live refresh, any rebuild of build/ from main picks up the fold and meets the same check."
+
+[sil_selawik_folds]
+value = "fold"
+ruling = "Four more duplicates fold, as sn_pro_fold did: Charis (Homebrew font-charis, Fontist sil/charis_7.000, Arch ttf-charis and charis-font) into Charis SIL; Gentium (Homebrew font-gentium, Fontist sil/gentium_7.000, and Debian's fonts-sil-gentium and ttf-gentium, the 2003 Gentium 1.02) into Gentium Plus; Gentium Book (Homebrew font-gentium-book, Arch ttf-gentium-book and gentium-book-font) into Gentium Book Plus; and Selawik (Fontist selawik) into Microsoft Selawik, shown as Selawik. Hand rows in data/aliases.csv (reviewed_by owner:2026-09-30): the font-name renames Charis, Gentium and Gentium Book, the font-name display rename Selawik, and the package rows moved to the survivors. The family Gentium leaves the catalog, and its own rulings lapse: its gate K link to software.sil.org/gentium/, its category override (categories_22) and its L3 research entry; Charis's L3 research entry goes too. Microsoft Selawik keeps its id, its gate K link and its license ruling. As for SN Pro (sn_pro_fold_timing), the catalog takes the folds at the first live refresh."
+reason = "The owner's ruling in chat with the lead session on 2026-09-30, \"Fold all five (Recommended)\", SN Pro being the fifth. SIL's FONTLOGs say \"Charis SIL is now Charis\" (silnrsi/font-charis v7.000), \"Gentium Plus is now Gentium\" and \"Gentium Book Plus is now Gentium Book\" (silnrsi/font-gentium); Fontist's selawik and Homebrew's font-selawik download the same github.com/microsoft/Selawik 1.01 release, whose font names itself Selawik. Survivors follow methodology section 2: Google's family is the unit, and a rename keeps the id (so Microsoft Selawik keeps its id, approved link and history, and only its display name changes). A replay of the 2026-09-26 snapshots with the rows: 499 fonts; Gentium leaves and Gentium Book Plus joins (overall 337); Gentium Plus 300 to 285, and #89 in most installed; Charis SIL 265 to 329, because Arch abstains in most chosen for praat (dep-arch-charis-sil); Selawik 266 to 265; elsewhere in the top 100s, moves of a place or so."
+
+[sil_rename_names]
+value = "google_names"
+ruling = "Charis SIL, Gentium Plus and Gentium Book Plus keep their ids and Google's names, as Google Fonts lists them; SIL's new names (Charis, Gentium, Gentium Book) are also-known-as names that count toward them."
+reason = "Claude's recommendation, taken by the owner: methodology section 2 makes Google's family the unit, the primary link is Google's page under that name, and Google's files call themselves that. The ruling relayed by the lead had said \"into the current upstream name\"; Claude flagged that the rules pick Google's names."

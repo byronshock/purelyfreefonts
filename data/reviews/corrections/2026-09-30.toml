@@ -1,0 +1,8 @@
+# Owner ruling of 2026-09-30, gate X, given in chat ahead of the first live refresh. Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md.
+# dep-arch-charis-sil arises when the catalog takes the Charis fold (sil_selawik_folds, gate A, 2026-09-30); a replay of the 2026-09-26 snapshots with the fold raised it.
+
+[dep-arch-charis-sil]
+choice = "a"
+recommended = true
+ruling = "Yes: leave it out of most chosen"
+reason = "Claude's recommendation, taken by the owner, as for dep-arch-doulos-sil (2026-09-28): Arch's praat depends on ttf-charis, SIL's 7.000 package that replaced ttf-charis-sil, and brings in about two thirds of its installs (67% over the year; 189 of 257 in August 2026)."

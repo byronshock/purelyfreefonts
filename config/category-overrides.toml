@@ -39,7 +39,6 @@ schema = 1
 # Bonum Bookman).
 charter = "serif"
 fanwood = "serif"
-gentium = "serif"
 junicode = "serif"
 latin-modern = "serif"
 tex-gyre-bonum = "serif"
