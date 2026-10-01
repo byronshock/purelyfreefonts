@@ -9,8 +9,8 @@ checked out at the tip. The older ``METADATA.pb`` and ``to_delist.txt`` versions
 it reads (about 100) are fetched in three batched requests, not one request per
 blob as git would on demand. Everything read is a public name fact. The
 ``googlefontdirectory-hg`` mirror is never read, and nothing is paired by a name
-prefix or by similarity: every candidate comes from one of two explicit
-statements in the repository.
+prefix or by similarity, beyond rule 3 below: every candidate comes from an
+explicit statement in the repository.
 
 **Evidence.**
 
@@ -31,6 +31,17 @@ statements in the repository.
    specimen link, or family names joined by "and" or commas, with remarks in
    parentheses dropped; every name must be a family at the tip, or the
    statement is skipped (a pull-request link, say, names no family).
+3. *Named successors.* A block whose comments say neither may name its
+   successors one per comment line instead, as the Big Shoulders block does
+   ("# New versions:", "# Big Shoulders Stencil <pull request>", "# Big
+   Shoulders <pull request>", ..., "# To delist:", then the entries). Every
+   comment line that, links and remarks dropped, is exactly a family name at
+   the tip names a successor; and each entry pairs with the named successor
+   whose name starts its own, word by word, the longest such (Big Shoulders
+   Stencil Display with Big Shoulders Stencil, not Big Shoulders). An entry no
+   named successor starts, or two of one length, pairs with none. This is the
+   one place a name's words pair two families, and only names the block
+   itself gives, so its renames are never auto-accepted.
 
 **Chains.** Renames chain (Alpha to Alpha Sans to Alpha Pro). An old folder or
 name starts from its latest rename and follows each successor's next rename, in
@@ -564,6 +575,54 @@ def parse_delist(text: str) -> list[Statement]:
     return out
 
 
+def named_blocks(text: str) -> list[Statement]:
+    """The blocks of one ``to_delist.txt`` version whose comments state no successor
+    (``_successor_phrase``), each with every comment's text, links and remarks dropped,
+    as a possible successor (``Ref`` "text"; module docstring, rule 3). Entries with a
+    successor of their own (a trailing comment) are ``parse_delist``'s."""
+    out = []
+    for comments, lines in _blocks(text):
+        if any(_successor_phrase(line) for line in comments):
+            continue
+        entries = []
+        for line in lines:
+            body, _, note = line.partition("#")
+            ref = _entry(body.strip())
+            if ref is not None and _successor_phrase(note) is None:
+                entries.append(ref)
+        names = []
+        for line in comments:
+            text_ = _URL.sub(" ", _PARENS.sub(" ", line.lstrip("#"))).strip().rstrip(".;:")
+            if text_ := " ".join(text_.split()):
+                names.append(Ref("text", text_))
+        if entries and names:
+            out.append(Statement(tuple(entries), tuple(dict.fromkeys(names))))
+    return out
+
+
+def pair_named(names: Sequence[Ref], olds: Sequence[str | None], tip: Tip) -> list[str | None]:
+    """For each old family name, the tip folder of the successor it pairs with (module
+    docstring, rule 3): the longest of ``names`` that is a family at the tip and starts
+    the old name word by word; None when none does, or two of one length do."""
+    successors: dict[str, list[str]] = {}
+    for ref in names:
+        slug = tip.folder_named(ref.value)
+        name = tip.folders[slug].name if slug is not None else None
+        if slug is not None and name:
+            successors[slug] = name.casefold().split()
+    out: list[str | None] = []
+    for old in olds:
+        words = (old or "").casefold().split()
+        fits = sorted(
+            ((len(w), slug) for slug, w in successors.items() if words[: len(w)] == w),
+            reverse=True,
+        )
+        fits = [(n, slug) for n, slug in fits if n < len(words)]
+        tied = len(fits) > 1 and fits[0][0] == fits[1][0]
+        out.append(fits[0][1] if fits and not tied else None)
+    return out
+
+
 def resolve_successors(refs: Sequence[Ref], tip: Tip) -> tuple[str, ...] | None:
     """The tip folders a statement's successors name, or None when any is not at the tip."""
     out: list[str] = []
@@ -646,16 +705,22 @@ def delist_findings(
     ]
     blobs.prefetch(blob for _, blob in versions)
     stated: list[tuple[Commit, Statement, tuple[str, ...]]] = []
+    named: list[tuple[Commit, Statement]] = []
     skipped = 0
     for commit, blob in versions:
-        for st in parse_delist(blobs.data(blob).decode("utf-8", "replace")):
+        text = blobs.data(blob).decode("utf-8", "replace")
+        for st in parse_delist(text):
             succ = resolve_successors(st.new, tip)
             if succ is None or (len(succ) > 1 and len(st.old) > 1):
                 skipped += 1
             else:
                 stated.append((commit, st, succ))
+        named += [(commit, st) for st in named_blocks(text)]
     blobs.prefetch(
-        b for c, st, _ in stated for ref in st.old for b in _listed_blobs(ref, c, tip, blobs, gone)
+        b
+        for c, st in [(c, st) for c, st, _ in stated] + named
+        for ref in st.old
+        for b in _listed_blobs(ref, c, tip, blobs, gone)
     )
     steps: list[Step] = []
     splits: dict[tuple[str, str], AliasCandidate] = {}
@@ -669,17 +734,37 @@ def delist_findings(
             cand = _split(olds[0], tip.folders[new], url)
             if cand is not None:
                 splits.setdefault((match_key(cand.alias.key), cand.target.key), cand)
+    for commit, st in named:
+        olds = [_old_family(ref, commit, tip, blobs, gone) for ref in st.old]
+        paired: dict[str, list[OldFamily]] = defaultdict(list)
+        for old, succ_ in zip(
+            olds, pair_named(st.new, [o.meta.name for o in olds], tip), strict=True
+        ):
+            if succ_ is not None:
+                paired[succ_].append(old)
+        for succ_, group in sorted(paired.items()):
+            steps += _delist_steps(
+                group, succ_, tip, commit.when, delist_url(commit.sha), paired=True
+            )
     return DelistFindings(steps, sorted(splits.values()), skipped)
 
 
 def _delist_steps(
-    olds: Sequence[OldFamily], succ: str, tip: Tip, when: tuple[int, str], url: str
+    olds: Sequence[OldFamily],
+    succ: str,
+    tip: Tip,
+    when: tuple[int, str],
+    url: str,
+    *,
+    paired: bool = False,
 ) -> list[Step]:
+    """The rename steps of a delist statement; ``paired`` (rule 3: paired by the names'
+    words) steps are never corroborated, so their renames are never auto-accepted."""
     new = tip.folders[succ]
     merged = len(olds) > 1
     out = []
     for old in olds:
-        ok = shares_designer(old.meta, new)
+        ok = shares_designer(old.meta, new) and not paired
         if old.folder is not None and old.folder != succ:
             out.append(Step(when, "dir", old.folder, succ, url, ok, merged))
         name = old.meta.name

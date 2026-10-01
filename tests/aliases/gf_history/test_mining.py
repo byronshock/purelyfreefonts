@@ -95,6 +95,22 @@ DELIST_2 = (
     "ofl/omega # listed after its folder was deleted\r\n"
 )
 
+# Rule 3: successors named one per comment line (google/fonts' Big Shoulders block).
+DELIST_3 = """\
+# Nu fonts need to be de-listed after the new variable version reached the API
+# New versions:
+# Nu Stencil https://github.com/google/fonts/pull/5
+# Nu https://github.com/google/fonts/pull/6
+# To delist:
+https://fonts.google.com/specimen/Nu+Display
+https://fonts.google.com/specimen/Nu+Text
+https://fonts.google.com/specimen/Nu+Stencil+Display
+https://fonts.google.com/specimen/Xi+Display
+
+# still in dev
+ofl/upsilon
+"""
+
 
 @dataclass(frozen=True)
 class Fonts:
@@ -208,6 +224,19 @@ def fonts(tmp_path_factory: pytest.TempPathFactory) -> Fonts:
     commit("there", "2020-12-01")
     mv("ofl/signew", "ofl/sig", "Sigma", "Si Sun")
     commit("back", "2021-01-01")
+    write(
+        work,
+        {
+            "to_delist.txt": DELIST_3,
+            "ofl/nu/METADATA.pb": meta("Nu", "Ny Nox"),
+            "ofl/nustencil/METADATA.pb": meta("Nu Stencil", "Ny Nox"),
+            "ofl/nudisplay/METADATA.pb": meta("Nu Display", "Ny Nox"),
+            "ofl/nutext/METADATA.pb": meta("Nu Text", "Ny Nox"),
+            "ofl/nustencildisplay/METADATA.pb": meta("Nu Stencil Display", "Ny Nox"),
+            "ofl/xidisplay/METADATA.pb": meta("Xi Display", "Xa Xu"),
+        },
+    )
+    commit("delist-3", "2021-02-01")
 
     bare = base / "fonts.git"
     git("clone", "-q", "--bare", str(work), str(bare), cwd=base)
@@ -253,6 +282,10 @@ EXPECTED = {
     ("gf-family", "Mu", "gf-family", "Mu Display", "related", "split", False),
     ("gf-family", "Tau One", "gf-family", "Tau", "rename", "merged", False),
     ("gf-family", "Tau Two", "gf-family", "Tau", "rename", "merged", False),
+    # successors named one per comment line, paired by the names' words: never auto
+    ("gf-family", "Nu Display", "gf-family", "Nu", "rename", "merged", False),
+    ("gf-family", "Nu Text", "gf-family", "Nu", "rename", "merged", False),
+    ("gf-family", "Nu Stencil Display", "gf-family", "Nu Stencil", "rename", "", False),
     # renamed and back: only the intermediate name and folder point anywhere
     ("gf-dir", "signew", "gf-dir", "sig", "rename", "", True),
     ("gf-family", "Sigma New", "gf-family", "Sigma", "rename", "", True),
