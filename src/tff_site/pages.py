@@ -19,7 +19,8 @@ The page supplies its own headings, so the document's headings may change (M1 st
 "(draft for the public page)") without moving an anchor. Relative links in the extract point
 to the file on GitHub. Everything else on the page comes from the catalog: the views, bands,
 tiers, source credits (one ``#source-<id>`` anchor per source, which the details panel links
-to), data license, run date, method version and stale sources.
+to), data license, run date, method version and stale sources. A retired view
+(``data.RETIRED_VIEWS``) is left out of the ranks it lists.
 
 ``/privacy/`` and ``/about/`` are ``site/content/<name>.md``: YAML front matter with exactly
 ``title`` (the page's ``<h1>``) and ``description``, then Markdown that starts its headings at
@@ -220,8 +221,11 @@ def methodology_context(doc: Mapping[str, Any], source: Path | None = None) -> d
             "full_text_url": METHODOLOGY_URL,
             "run_date": doc["run"]["date"],
             "method_version": doc["run"]["method_version"],
+            # A retired view is left out; one not available yet says "Not shown yet."
             "views": [
-                {k: v[k] for k in ("key", "label", "measures", "available")} for v in doc["views"]
+                {k: v[k] for k in ("key", "label", "measures", "available")}
+                for v in doc["views"]
+                if v["key"] not in data.RETIRED_VIEWS
             ],
             "bands": [band["label"] for band in doc["bands"]],
             "tiers": [{"tier": t, "text": doc["tiers"][t]} for t in sorted(doc["tiers"])],

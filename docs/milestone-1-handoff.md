@@ -17,7 +17,7 @@ Each question is settled. What is left is building or checking, in Milestone 2's
 
 | Question | Answer | Where |
 |---|---|---|
-| Default rank order | The list opens on the **overall** rank. | AUTHORITY.md, M2-D1 (2026-09-25) |
+| Default rank order | The list opens on the **overall** rank. *Amended 2026-09-30: on **Used in projects**, since Overall retired (D12).* | AUTHORITY.md, M2-D1 (2026-09-25; amended 2026-09-30) |
 | Numbering under filters | No numbering. Each row shows its score, 0 to 100, as a bar; filters only hide rows; a font's details keep its rank and range. This replaced M2-D2's renumbering. | AUTHORITY.md, "Scores instead of numbers" (2026-09-29), with the held-font marker rulings of 2026-09-30; built in Milestone 2 step 3 |
 | Deploy path to the VPS | Each deploy uploads a release to `/srv/trulyfreefonts/prod/releases/<commit>/` and switches to it in one step. GitHub Actions deploys each push to `main` as a restricted `deploy` user; `ops/deploy.sh` is the laptop fallback. | AUTHORITY.md, M2-D6; [ops/deploy/README.md](../ops/deploy/README.md); [ops/SERVER.md](../ops/SERVER.md) ("Deploy the site"). Left in Milestone 2 step 11: server stage B and the GitHub environments and secrets. Production deploys wait for Caddy header phase B. |
 | Methodology page | `/methodology/` is generated at build time from [ranking-methodology.md](ranking-methodology.md), so the two can't drift. | Milestone 2 step 7; `src/tff_site/pages.py` |

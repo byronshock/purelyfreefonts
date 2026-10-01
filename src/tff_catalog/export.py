@@ -16,9 +16,10 @@ Raw source values appear only where ``ranking.toml`` ``publish_raw`` allows.
 Output is canonical (``jsonio.dump``), so the same inputs give the same bytes.
 
 Every piece of site wording comes from ``config/site.toml`` (``cfg.site``),
-never from code or the sample: ``data_license``, ``views`` (``available`` is
-computed: Rising needs ``ranks.rising.min_history_months`` of history),
-``tiers``, ``license_classes``, the Nerd Font marker's wording (``nerd``:
+never from code or the sample: ``data_license``, ``views`` (in the rank selector's
+order, the default first; ``available`` is computed: Rising needs
+``ranks.rising.min_history_months`` of history, and a retired view, ``retired``, is
+never available), ``tiers``, ``license_classes``, the Nerd Font marker's wording (``nerd``:
 ``marker``, ``label`` and ``legend``), the source credits (``sources[].name``,
 ``measures``, ``url``, ``license``, ``publish_rank``; ``group`` and ``survey``
 come from ``ranking.toml``) and the labels of package systems. Preinstalled
@@ -41,6 +42,10 @@ How the per-font fields are made (``docs/catalog-schema.md`` says it for readers
   top keep their order and band.
 - **Views.** A font has an entry for every published rank key
   (``available_views``), except that ``coding`` holds monospace fonts only. A
+  retired view (Overall, owner ruling of 2026-09-30, overall_retired) is still
+  published in both files, since both schemas require ``ranks.overall`` (v1 of
+  ``catalog-site.json`` is frozen), but ``catalog-site.json`` lists it with
+  ``available`` false, so the site never offers it. A
   font with a placement is ranked; one without is unranked, with the reason
   stage "rank" gives (``surveys.unranked``: ``no_deliberate_evidence``,
   ``too_new`` or ``no_evidence``). Rising, which that skips, is ``too_new``
@@ -419,7 +424,8 @@ def available_views(cfg: Config, state: State, run_date: date) -> tuple[str, ...
     """The rank keys published this run, in the rank selector's order (``site.toml`` views).
 
     Every key except Rising, which needs ``min_history_months`` months of merged
-    runs (design-m1 gap G14: from the third merged refresh).
+    runs (design-m1 gap G14: from the third merged refresh). A retired view is among
+    them: its rank entries stay, and ``site_document`` marks it unavailable.
     """
     rising = history_months(state, run_date) >= cfg.ranking.ranks.rising.min_history_months
     return tuple(v.key for v in cfg.site.views if v.key != "rising" or rising)
@@ -1284,9 +1290,12 @@ def site_document(
     pages: Mapping[str, str] | None = None,
 ) -> dict[str, Any]:
     """``catalog-site.json`` from a catalog document (``build_site`` without the context).
-    ``pages``: readable license pages by family id (``license_pages``)."""
+    ``views``: the rank keys published this run (``available_views``); a retired one keeps
+    its rank entries but is listed with ``available`` false (owner ruling of 2026-09-30,
+    overall_retired). ``pages``: readable license pages by family id (``license_pages``)."""
     site = cfg.site
     shown = [s for s in catalog["sources"] if s["data_date"] is not None]
+    offered = frozenset(v.key for v in site.views if v.key in views and not v.retired)
     return {
         "schema_version": SITE_SCHEMA_VERSION,
         "run": {
@@ -1297,7 +1306,7 @@ def site_document(
         },
         "data_license": data_license(cfg),
         "views": [
-            {"key": v.key, "label": v.label, "measures": v.measures, "available": v.key in views}
+            {"key": v.key, "label": v.label, "measures": v.measures, "available": v.key in offered}
             for v in site.views
         ],
         "bands": [

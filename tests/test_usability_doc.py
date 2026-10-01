@@ -89,8 +89,9 @@ def test_owner_rulings_are_applied(doc: str) -> None:
 
 def test_names_match_the_site(doc: str) -> None:
     views = site_views()
-    for key in ("overall", "desktop_chosen", "desktop_installed", "coding"):
+    for key in ("project", "desktop_chosen", "desktop_installed", "coding"):
         assert views[key] in doc, key
+    assert views["overall"] not in doc  # retired on 2026-09-30 (overall_retired)
     for label in re.findall(r"\*(Desktop: [^*]+|[A-Z][a-z]+ fonts)\*", doc):
         assert label in views.values(), label
 

@@ -610,12 +610,13 @@ def test_a_missing_context_field_fails_the_build(tmp_path, catalog, mini_site):
 
 
 def expected_labels(doc: dict) -> list[str]:
-    """The unfiltered Overall view's rank cells as text, written out independently: each
-    ranked font's score, 100·Φ(z) rounded, as screen readers hear it (owner rulings of
-    2026-09-29 and 2026-09-30: score_display, score_curve, held_marker_style)."""
+    """The unfiltered default view's rank cells (Used in projects) as text, written out
+    independently: each ranked font's score, 100·Φ(z) rounded, as screen readers hear it
+    (owner rulings of 2026-09-29 and 2026-09-30: score_display, score_curve,
+    held_marker_style)."""
     labels = []
     for font in data.server_order(doc):
-        entry = font["ranks"]["overall"]
+        entry = font["ranks"]["project"]
         if entry["unranked"]:
             labels.append("Not ranked: " + data.UNRANKED_LABELS[entry["unranked"]])
             continue
@@ -625,7 +626,8 @@ def expected_labels(doc: dict) -> list[str]:
     return labels
 
 
-def test_index_is_server_rendered_in_overall_order(tmp_path, catalog, mini_site):
+def test_index_is_server_rendered_in_the_default_order(tmp_path, catalog, mini_site):
+    """Used in projects (M2-D1, amended 2026-09-30: default_rank_project)."""
     out = tmp_path / "site"
     run_build(catalog, out, mini_site)
     page = parse((out / "index.html").read_text(encoding="utf-8"))
@@ -633,12 +635,13 @@ def test_index_is_server_rendered_in_overall_order(tmp_path, catalog, mini_site)
     index = load_json(out, next(a["data-index"] for t, a in page.tags if t == "ol"))
     assert rows == index["ids"]
     assert len(rows) == 40
-    overall = {f["id"]: f["ranks"]["overall"] for f in SAMPLE["fonts"]}
-    ranked = [i for i in rows if overall[i]["order"] is not None]
+    project = {f["id"]: f["ranks"]["project"] for f in SAMPLE["fonts"]}
+    ranked = [i for i in rows if project[i]["order"] is not None]
     # By score, best first: a font the two-source rule holds back takes its score's place.
-    assert ranked == sorted(ranked, key=lambda i: (-overall[i]["score"], overall[i]["order"]))
+    assert ranked == sorted(ranked, key=lambda i: (-project[i]["score"], project[i]["order"]))
     # The sample's held sample-mono-23 (order 101) scores above fonts in the top 100.
-    assert ranked != sorted(ranked, key=lambda i: overall[i]["order"])
+    assert project["sample-mono-23"]["gate_held"]
+    assert ranked != sorted(ranked, key=lambda i: project[i]["order"])
     assert rows[: len(ranked)] == ranked
     unranked = [f for f in SAMPLE["fonts"] if f["id"] in rows[len(ranked) :]]
     assert rows[len(ranked) :] == [
@@ -647,7 +650,8 @@ def test_index_is_server_rendered_in_overall_order(tmp_path, catalog, mini_site)
     assert page.ranks == expected_labels(SAMPLE)
     assert not set(BANDS) & set(page.ranks)  # no bands, and no numbers, in the list
     assert any(label.endswith(", from one kind of source") for label in page.ranks)
-    assert page.ranks[-1] == "Not ranked: no evidence of deliberate installs"
+    # The unranked fonts close the list, A to Z (no font lacks deliberate installs in projects).
+    assert page.ranks[-1] == "Not ranked: no evidence in this rank"
 
 
 def test_rows_carry_specimens_and_fallbacks(tmp_path, catalog, mini_site):
@@ -1315,9 +1319,10 @@ def test_unsupported_page_paths_fail(tmp_path, catalog, mini_site, monkeypatch, 
         run_build(catalog, tmp_path / "out", mini_site)
 
 
-def test_the_first_view_must_be_overall(tmp_path, catalog, mini_site):
+def test_the_first_view_must_be_used_in_projects(tmp_path, catalog, mini_site):
     doc = data.load(catalog[0])
-    doc["views"].insert(0, doc["views"].pop(3))
+    assert doc["views"][0]["key"] == "project"
+    doc["views"].insert(0, doc["views"].pop(3))  # Coding fonts first
     catalog[0].write_bytes(jsonio.pretty_bytes(doc))
     with pytest.raises(build.BuildError, match="M2-D1"):
         run_build(catalog, tmp_path / "site", mini_site)
@@ -1556,7 +1561,8 @@ def test_real_templates_render_the_list_contract(tmp_path, catalog, real_site):
             current.append(a["value"])
     options = selects["f-rank"]
     assert options == [v["key"] for v in SAMPLE["views"] if v["available"]]
-    assert options[0] == "overall"
+    assert options[0] == "project"
+    assert "overall" not in options  # retired (owner ruling of 2026-09-30, overall_retired)
     assert selects["f-os"] == ["", "windows", "macos", "linux", "android"]
     assert "f-sort" not in selects  # sorting is buttons over the list (sort_header)
     sorts = [a for t, a in tags if t == "button" and a.get("data-sort")]

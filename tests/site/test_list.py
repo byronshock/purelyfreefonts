@@ -95,7 +95,7 @@ def oracle(doc: dict[str, Any], state: dict[str, Any]) -> tuple[list[str], list[
     font outside Developers & apps (owner rulings score_display, score_held_fonts,
     held_marker_style and held_marker_dev_apps), or "Not ranked: <reason>".
     """
-    rank = state.get("rank", "overall")
+    rank = state.get("rank", data.DEFAULT_VIEW)
     universe = [f for f in data.server_order(doc) if rank in f["ranks"]]
     ranked = sorted(
         (f for f in universe if f["ranks"][rank]["order"] is not None),
@@ -288,11 +288,14 @@ HASH_CASES = [
     # (hash as found, canonical hash)
     ("", ""),
     ("#", ""),
+    ("#rank=project", ""),  # the default, Used in projects (M2-D1, amended 2026-09-30)
+    ("#rank=desktop_chosen", "#rank=desktop_chosen"),
+    # Overall retired (owner ruling of 2026-09-30): an old link opens the default view.
     ("#rank=overall", ""),
-    ("#rank=project", "#rank=project"),
-    ("#rank=rising", ""),  # Rising is not available yet: Overall
+    ("#rank=overall&cat=serif&var=1", "#cat=serif&var=1"),
+    ("#rank=rising", ""),  # Rising is not available yet: the default
     ("#rank=bogus&cat=serif", "#cat=serif"),
-    ("#cat=serif&rank=project", "#rank=project&cat=serif"),
+    ("#cat=serif&rank=desktop_chosen", "#rank=desktop_chosen&cat=serif"),
     ("#cat=", ""),
     ("#cat=Serif", ""),
     ("#hide=windows,limited,windows", "#hide=limited,windows"),
@@ -326,10 +329,11 @@ HASH_CASES = [
     ("#font=nope", ""),
     ("#font=Bad%20Id", ""),
     ("#os=linux", "#os=linux"),
-    ("#os=linux&rank=project", "#rank=project&os=linux"),
-    ("#x=1&rank=project&y&x=2&rank=coding", "#rank=coding&x=1&y&x=2"),
-    ("#Rank=project", "#Rank=project"),  # keys are case-sensitive: someone else's
-    ("#&&rank=project&", "#rank=project"),
+    ("#os=linux&rank=desktop_chosen", "#rank=desktop_chosen&os=linux"),
+    ("#os=linux&rank=overall", "#os=linux"),
+    ("#x=1&rank=desktop_chosen&y&x=2&rank=coding", "#rank=coding&x=1&y&x=2"),
+    ("#Rank=desktop_chosen", "#Rank=desktop_chosen"),  # keys are case-sensitive: someone else's
+    ("#&&rank=desktop_chosen&", "#rank=desktop_chosen"),
     ("#m3=a%2Fb%20c&var=1", "#var=1&m3=a%2Fb%20c"),  # extension values stay as written
 ]
 
@@ -340,8 +344,9 @@ def test_hash_parse_and_serialise(parts: Parts, index: dict[str, Any]) -> None:
     cases.append([f"#font={font}", f"#font={font}"])
     cases.append(
         [
-            f"#font={font}&redist=1&hide=windows,limited&spacing=proportional&cat=serif&rank=project",
-            f"#rank=project&cat=serif&hide=limited,windows&font={font}",
+            f"#font={font}&redist=1&hide=windows,limited&spacing=proportional&cat=serif"
+            "&rank=desktop_chosen",
+            f"#rank=desktop_chosen&cat=serif&hide=limited,windows&font={font}",
         ]
     )
     got = parts.run(
@@ -369,7 +374,7 @@ def test_setstate_partials_are_validated_like_the_hash(parts: Parts, index: dict
         " P.State.isClear(c({ sort: 'name', rank: 'coding' })), P.State.isClear(c({ q: 'a' })),"
         " P.State.cleared(c({ rank: 'coding', sort: 'name', var: true, q: 'x', font: arg,"
         " nerd: true })), c({ nerd: '1' }).nerd, c({ nerd: 'yes' }).nerd,"
-        " P.State.isClear(c({ nerd: true })) ];",
+        " P.State.isClear(c({ nerd: true })), c({ rank: 'overall' }).rank ];",
         index["ids"][0],
     )
     assert got[:10] == [
@@ -379,21 +384,23 @@ def test_setstate_partials_are_validated_like_the_hash(parts: Parts, index: dict
         ["limited", "android"],
         ["attr", "windows"],
         "",
-        "overall",
-        "coding" if "coding" in index["r"] else "overall",
+        "project",  # Rising is not available yet: the default, Used in projects
+        "coding" if "coding" in index["r"] else "project",
         "name",
         None,
     ]
     assert got[10:12] == [True, False]
     cleared = got[12]
     assert (cleared["rank"], cleared["sort"], cleared["font"]) == (
-        "coding" if "coding" in index["r"] else "overall",
+        "coding" if "coding" in index["r"] else "project",
         "name",
         index["ids"][0],
     )
     assert (cleared["var"], cleared["q"], cleared["cat"], cleared["hide"]) == (False, "", "", [])
     assert cleared["nerd"] is False
-    assert got[13:] == [True, False, False]  # "1" is on, "yes" is not; the Nerd filter is a filter
+    # "1" is on, "yes" is not; the Nerd filter is a filter
+    assert got[13:16] == [True, False, False]
+    assert got[16] == "project"  # the retired Overall (owner ruling of 2026-09-30): the default
 
 
 # --------------------------------------------------------------------- pure: View.compute
@@ -553,12 +560,14 @@ def test_external_filters_hide_or_dim_and_never_change_a_score(
     )
     first = oracle(sample, {})
     label = dict(zip(first[0], first[1], strict=True))
-    kept = [(i, label[i]) for i in ("sample-sans-01", "sample-mono-02", "sample-serif-04")]
+    # The default view (Used in projects) opens on sample-sans-01, sample-sans-03, ...
+    assert first[0][:2] == ["sample-sans-01", "sample-sans-03"]
+    kept = [(i, label[i]) for i in ("sample-sans-01", "sample-serif-04", "sample-sans-05")]
     assert [tuple(r[:2]) for r in got["keep"]][:3] == kept  # scores, whatever is hidden
     assert [tuple(r[:2]) for r in got["renumber"]][:3] == kept  # affectsNumbering: the same
     assert got["dim"][0] == ["sample-sans-01", label["sample-sans-01"], True, None]
     assert [r[2] for r in got["dim"][1:]] == [False] * 4
-    assert got["hideWins"][0][0] == "sample-mono-02"
+    assert got["hideWins"][0][0] == "sample-sans-03"
     assert got["notes"][0][3] == [
         {"filter": "a", "note": {"text": "hello"}},
         {"filter": "b", "note": {"badge": "B", "text": "x"}},
@@ -783,7 +792,7 @@ def test_rank_selector_scores_every_view(
         assert scores_descend(labels), rank
         assert page.text_content("#count") == count_line(len(ids), total)
         assert page.text_content("#f-rank-measures") == measures[rank]
-        assert hash_of(page) == ("" if rank == "overall" else f"#rank={rank}")
+        assert hash_of(page) == ("" if rank == data.DEFAULT_VIEW else f"#rank={rank}")
         assert status(page).rstrip("\u00a0") == count_line(len(ids), total)
     assert entries(page) == len(views)
     guarded.assert_clean(page)
@@ -795,7 +804,7 @@ HIDES = ("limited", "attr", *OSES)
 def hash_for(state: dict[str, Any]) -> str:
     """The canonical hash of a partial state (CONTRACT section 9), as State writes it."""
     pairs = []
-    if state.get("rank", "overall") != "overall":
+    if state.get("rank", data.DEFAULT_VIEW) != data.DEFAULT_VIEW:
         pairs.append(f"rank={state['rank']}")
     if state.get("cat"):
         pairs.append(f"cat={state['cat']}")
@@ -869,7 +878,7 @@ def test_nerd_font_available_keeps_exactly_the_fonts_with_a_nerd_build(
         universe, _, _ = oracle(doc, {"rank": rank})
         assert {row[0] for row in rows(page)} == nerd & set(universe), rank
         assert rows(page) == expected_rows(doc, {"rank": rank, "nerd": True})
-    page.select_option("#f-rank", "overall")
+    page.select_option("#f-rank", data.DEFAULT_VIEW)
     if not any(not f["is_monospace"] for f in doc["fonts"] if f["id"] in nerd):
         page.check("#f-cat-serif")  # every Nerd build here is monospace
         assert rows(page) == []
@@ -904,7 +913,7 @@ def test_alias_search_while_typing(guarded_context: Any, sample: dict[str, Any])
 def test_url_roundtrip_opens_the_same_view_in_a_fresh_browser(
     guarded_context: Any, doc: dict[str, Any], views: list[str]
 ) -> None:
-    rank = "project" if "project" in views else views[-1]
+    rank = "desktop_chosen" if "desktop_chosen" in views else views[-1]
     guarded, page = open_list(guarded_context)
     page.select_option("#f-rank", rank)
     page.check("#f-cat-sans-serif")
@@ -951,22 +960,22 @@ def test_url_roundtrip_opens_the_same_view_in_a_fresh_browser(
 def test_extension_keys_survive_load_a_filter_change_and_back(
     guarded_context: Any, doc: dict[str, Any], views: list[str]
 ) -> None:
-    if "project" not in views:
-        pytest.skip("no Used in projects view in this data")
-    guarded, page = open_list(guarded_context, "#rank=project&os=linux")
-    initial = expected_rows(doc, {"rank": "project"})
-    assert hash_of(page) == "#rank=project&os=linux"
-    assert page.input_value("#f-rank") == "project"
+    if "coding" not in views:
+        pytest.skip("no Coding fonts view in this data")
+    guarded, page = open_list(guarded_context, "#rank=coding&os=linux")
+    initial = expected_rows(doc, {"rank": "coding"})
+    assert hash_of(page) == "#rank=coding&os=linux"
+    assert page.input_value("#f-rank") == "coding"
     assert rows(page) == initial
     page.check("#f-var")
-    assert hash_of(page) == "#rank=project&var=1&os=linux"
-    assert rows(page) == expected_rows(doc, {"rank": "project", "var": True})
+    assert hash_of(page) == "#rank=coding&var=1&os=linux"
+    assert rows(page) == expected_rows(doc, {"rank": "coding", "var": True})
     page.go_back()
-    page.wait_for_function("() => location.hash === '#rank=project&os=linux'")
+    page.wait_for_function("() => location.hash === '#rank=coding&os=linux'")
     page.wait_for_function("() => !document.getElementById('f-var').checked")
     assert rows(page) == initial
     page.go_forward()
-    page.wait_for_function("() => location.hash === '#rank=project&var=1&os=linux'")
+    page.wait_for_function("() => location.hash === '#rank=coding&var=1&os=linux'")
     assert page.is_checked("#f-var")
     guarded.assert_clean(page)
 
@@ -987,7 +996,7 @@ def test_a_messy_hash_is_rewritten_without_a_new_history_entry(
 ) -> None:
     rank = "coding" if "coding" in views else views[-1]
     guarded, page = open_list(
-        guarded_context, f"#os=linux&cat=bogus&x=a%2Fb&rank=project&rank={rank}"
+        guarded_context, f"#os=linux&cat=bogus&x=a%2Fb&rank=desktop_chosen&rank={rank}"
     )
     assert hash_of(page) == f"#rank={rank}&os=linux&x=a%2Fb"
     assert entries(page) == 0
@@ -1004,7 +1013,7 @@ def test_back_and_forward_replay_discrete_changes(
     assert entries(page) == 2
     page.go_back()
     page.wait_for_function("() => location.hash === '#cat=serif'")
-    page.wait_for_function("() => document.getElementById('f-rank').value === 'overall'")
+    page.wait_for_function("() => document.getElementById('f-rank').value === 'project'")
     assert rows(page) == expected_rows(doc, {"cat": "serif"})
     ids, _, total = oracle(doc, {"cat": "serif"})
     assert status(page).rstrip("\u00a0") == count_line(len(ids), total)
@@ -1244,8 +1253,8 @@ def test_an_unranked_label_takes_a_line_of_its_own(
     on a line of its own above the name instead of down the narrow rank column, and the row
     estimates (``--row-est-h``) stay close to the measured heights.
 
-    The sample's default view has unranked rows; the real catalog's Overall ranks every font,
-    so the first view that has some is opened instead."""
+    The sample's default view has unranked rows; the real catalog's may rank every font, so
+    the first view that has some is opened."""
     view = next(
         v["key"]
         for v in doc["views"]
@@ -1389,7 +1398,7 @@ def test_focus_stays_put_while_the_list_changes(
     guarded_context: Any, sample: dict[str, Any]
 ) -> None:
     guarded, page = open_list(guarded_context)
-    link = "#font-sample-serif-09 .download"
+    link = "#font-sample-sans-11 .download"  # after non-variable fonts in the default view
     page.focus(link)
     position = page.evaluate(
         "() => [...document.querySelectorAll('#list > li')].indexOf(document.activeElement.closest('li'))"
@@ -1398,7 +1407,7 @@ def test_focus_stays_put_while_the_list_changes(
     moved = page.evaluate(
         "() => [...document.querySelectorAll('#list > li')].indexOf(document.activeElement.closest('li'))"
     )
-    assert page.evaluate("document.activeElement.closest('li').id") == "font-sample-serif-09"
+    assert page.evaluate("document.activeElement.closest('li').id") == "font-sample-sans-11"
     assert page.evaluate("document.activeElement.className") == "download"
     assert moved != position  # the row did move
     # Arrow keys in a radio group change the filter and keep focus in the group.
@@ -1473,7 +1482,8 @@ def test_milestone_3_notes_actions_and_scores(guarded_context: Any, sample: dict
     page.evaluate(
         "tff.list.addFilter('v', { classify: (id) => (id === 'sample-sans-01' ? 'hide' : 'show'), affectsNumbering: true })"
     )
-    assert rows(page)[0] == ("sample-mono-02", labels["sample-mono-02"])
+    # The default view opens on sans-01, sans-03, serif-04, sans-05; t, u and v hide the first 3.
+    assert rows(page)[0] == ("sample-sans-05", labels["sample-sans-05"])
     page.evaluate("['t', 'u', 'v'].forEach((id) => tff.list.removeFilter(id))")
     assert rows(page) == expected_rows(sample, {})
     assert page.locator(".ext").count() == 0
@@ -1542,7 +1552,9 @@ def test_large_catalog_is_deterministic_valid_and_complete(tmp_path: Path) -> No
         ranked = sum(1 for e in entries if e["order"] is not None)
         assert tops == list(range(1, min(100, ranked) + 1)), view
         assert any(e["unranked"] for e in entries), view
-    assert {f["ranks"]["overall"]["band"] for f in fonts} >= {b["label"] for b in doc_a["bands"]}
+    default = {f["ranks"][data.DEFAULT_VIEW]["band"] for f in fonts}
+    assert default >= {b["label"] for b in doc_a["bands"]}
+    assert all("overall" in f["ranks"] for f in fonts)  # retired, but v1 requires the entry
     assert {f["id"] for f in fonts if "coding" in f["ranks"]} == {
         f["id"] for f in fonts if f["is_monospace"]
     }

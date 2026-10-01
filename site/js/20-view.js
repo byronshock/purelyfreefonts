@@ -27,7 +27,7 @@ const View = (() => {
   });
   const OUTSIDE = '.';
   const UNRANKED = '-';
-  const DEFAULT_RANK = 'overall';
+  const DEFAULT_RANK = 'project'; // Used in projects (M2-D1, amended 2026-09-30)
   const NOT_RANKED = 'Not ranked';
 
   const report = (error) => {

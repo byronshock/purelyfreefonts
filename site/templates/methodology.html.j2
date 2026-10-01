@@ -58,6 +58,8 @@
 <h2 id="reading-ranks">Reading the ranks</h2>
 <h3 id="ranks">The ranks</h3>
 <p>Choose a rank at the top of the list. Each one answers a different question:</p>
+{# method.views leaves out a retired view (Overall, 2026-09-30); "Not shown yet." marks one that
+   isn't available yet, such as Rising. #}
 <dl class="terms">
 {% for view in method.views %}
 <dt>{{ view.label }}</dt>

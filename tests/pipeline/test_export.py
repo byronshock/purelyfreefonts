@@ -669,10 +669,11 @@ def test_linux_abstentions_are_listed_per_view(built) -> None:
     _, docs = built
     doc = fonts(docs[export.CATALOG_FILE])
     beta, kappa = doc["beta-mono"], doc["kappa-sans"]
-    assert beta["sources"]["arch"]["abstains_in"] == ["overall", "desktop_chosen", "coding"]
-    assert beta["sources"]["debian"]["abstains_in"] == ["overall", "desktop_chosen"]
+    # In the rank selector's order (site.toml views), the retired Overall last.
+    assert beta["sources"]["arch"]["abstains_in"] == ["desktop_chosen", "coding", "overall"]
+    assert beta["sources"]["debian"]["abstains_in"] == ["desktop_chosen", "overall"]
     assert beta["sources"]["arch"]["weight_used"] is None
-    assert kappa["sources"]["arch"]["abstains_in"] == ["overall", "desktop_chosen"]
+    assert kappa["sources"]["arch"]["abstains_in"] == ["desktop_chosen", "overall"]
     assert kappa["sources"]["arch"]["rank_in_source"] == 1  # still ranked in its own source
     assert kappa["ranks"]["desktop_chosen"]["unranked"] == "no_deliberate_evidence"
     assert kappa["ranks"]["desktop_installed"]["rank"] == 2
@@ -729,8 +730,8 @@ def test_rising_appears_with_three_months_of_history(tmp_path: Path) -> None:
     assert views["rising"] is True
     # Rising abstains like every rank but most installed (D8).
     beta, kappa = doc["beta-mono"]["sources"], doc["kappa-sans"]["sources"]
-    assert beta["arch"]["abstains_in"] == ["overall", "desktop_chosen", "coding", "rising"]
-    assert kappa["arch"]["abstains_in"] == ["overall", "desktop_chosen", "rising"]
+    assert beta["arch"]["abstains_in"] == ["desktop_chosen", "coding", "rising", "overall"]
+    assert kappa["arch"]["abstains_in"] == ["desktop_chosen", "rising", "overall"]
     from tff_site.data import validate
 
     validate(docs[export.SITE_FILE])
@@ -1198,6 +1199,25 @@ def test_site_wording_comes_from_site_toml(built) -> None:
         "label": cfg.nerd.label,
         "legend": cfg.nerd.legend,
     }
+
+
+def test_the_site_opens_on_projects_and_never_offers_overall(built) -> None:
+    """Owner rulings of 2026-09-30 (default_rank_project, overall_retired): Used in projects
+    comes first, and Overall is listed with available false. v1's schema still requires each
+    font's ranks.overall, and the engine still computes it, so both files keep the entries."""
+    _, docs = built
+    site = docs[export.SITE_FILE]
+    views = {v["key"]: v["available"] for v in site["views"]}
+    assert site["views"][0]["key"] == "project"
+    assert site["views"][0]["available"] is True
+    assert views["overall"] is False
+    assert [k for k, available in views.items() if not available] == ["rising", "overall"]
+    catalog = fonts(docs[export.CATALOG_FILE])
+    for fid, font in fonts(site).items():
+        assert font["ranks"]["overall"]["order"] == catalog[fid]["ranks"]["overall"]["order"]
+    from tff_site.data import validate
+
+    validate(site)
 
 
 def test_site_keeps_only_the_site_fields(built) -> None:

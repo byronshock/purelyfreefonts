@@ -264,6 +264,19 @@ def test_wrong_value_fails(cfg: ConfigCopy, case: str) -> None:
 SITE_BREAKS = {
     "provisional-license": (_set("data_license", "provisional", value=True), "final"),
     "view-missing": (lambda d: d["views"].pop(), "every rank key once"),
+    # The list opens on the first view (M2-D1): never a retired one, nor Rising.
+    "retired-view-first": (
+        lambda d: d["views"].insert(0, d["views"].pop(-1)),
+        "the first view is the default (M2-D1): not 'overall'",
+    ),
+    "rising-first": (
+        lambda d: d["views"].insert(0, d["views"].pop(-2)),
+        "the first view is the default (M2-D1): not 'rising'",
+    ),
+    "retired-not-a-bool": (
+        lambda d: d["views"][-1].update(retired="yes"),
+        "views[6].retired: expected true or false",
+    ),
     "credit-for-unknown-source": (
         lambda d: d["sources"].update(chocolatey=d["sources"]["homebrew"]),
         "sources.chocolatey: not an engine source",
@@ -288,6 +301,19 @@ def test_site_toml_cross_checks(cfg: ConfigCopy, case: str) -> None:
     cfg.change("site.toml", edit)
     with pytest.raises(ConfigError, match=re.escape(message)):
         cfg.load()
+
+
+def test_views_follow_the_rulings_of_2026_09_30() -> None:
+    """default_rank_project and overall_retired: the list opens on Used in projects, and
+    Overall stays listed (catalog-site.json v1 names every rank key) but retired."""
+    reviews = ROOT / "data" / "reviews"
+    site = tomllib.loads((reviews / "site" / "2026-09-30.toml").read_text(encoding="utf-8"))
+    method = tomllib.loads((reviews / "method" / "2026-09-30.toml").read_text(encoding="utf-8"))
+    assert site["default_rank_project"]["value"] == "used_in_projects"
+    assert method["overall_retired"]["value"] == "no_fused_overall_projects_rederived"
+    views = load_config(Paths.for_root(ROOT)).site.views
+    assert (views[0].key, views[0].label) == ("project", "Used in projects")
+    assert [v.key for v in views if v.retired] == ["overall"]
 
 
 def test_project_group_shares_follow_ruling_m9() -> None:

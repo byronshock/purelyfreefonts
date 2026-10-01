@@ -41,7 +41,7 @@ A round is done when:
 **Before each round** (the owner, with Claude):
 
 - Check that the site under test shows the current data, and note its `version.txt` run date in the round's notes.
-- Choose task 6's two fonts from the current Overall rank: both well known, close together in the top 30, preferably with different tiers. Use the same pair all round.
+- Choose task 6's two fonts from the current *Used in projects* rank, the one the list opens on: both well known, close together in the top 30, preferably with different tiers. Use the same pair all round.
 - Round 1 only: run the trial session and fix the script. File a test issue through each form, check that it gets its label (step 12), then close it.
 - Create `research/usability/round-N/`, with one notes file per session from the [template](#notes-template).
 
@@ -99,7 +99,7 @@ Each task has what to **say**, when it's **done** (for the notes, not read aloud
 
 - **Say:** "Switch the list to the fonts people installed on purpose. Then switch it to the fonts on the most computers. Why did the list change?"
 - **Done:** they choose *Desktop: most chosen*, then *Desktop: most installed*, and explain in their own words that *most chosen* leaves out the installs that Linux systems make on their own. A bonus: they spot a font marked "no evidence of deliberate installs" and its "Comes with" tag, or the "Pulled in by" line under its details' "All ranks and sources".
-- **Watch for:** whether they read the line under the rank selector; whether "most chosen" and "most installed" make sense; confusion with *Overall*.
+- **Watch for:** whether they read the line under the rank selector; whether "most chosen" and "most installed" make sense; confusion with *Used in projects*, the rank the list opens on.
 
 ### 6. Why does one font rank above another?
 

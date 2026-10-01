@@ -12,13 +12,18 @@
 // when the link names no category; the rest match every listed font now. hide holds at most
 // one operating system, since the page offers them as one select.
 //
+// The default rank is Used in projects, 'project' (M2-D1, amended by the owner's ruling of
+// 2026-09-30, default_rank_project), so its address carries no rank pair. The retired
+// Overall rank, 'overall', is not an available view, so an old #rank=overall link opens the
+// default view and the rewritten URL drops the pair, as any rank the page doesn't offer.
+//
 // parse(), serialize(), coerce() and same() are pure, for tests/site/test_list.py.
 const State = (() => {
   const KEYS = Object.freeze(['rank', 'cat', 'var', 'nerd', 'hide', 'q', 'sort', 'font']);
   const OWN = new Set(KEYS);
   const RETIRED = Object.freeze(['spacing', 'lic', 'redist']);
   const LISTS = new Set(['hide']);
-  const DEFAULT_RANK = 'overall';
+  const DEFAULT_RANK = 'project';
   const HIDES = Object.freeze(['limited', 'attr', 'windows', 'macos', 'linux', 'android']);
   const OSES = Object.freeze(['windows', 'macos', 'linux', 'android']);
   // The sort orders (owner ruling of 2026-09-30, sort_header): by rank, best first (the

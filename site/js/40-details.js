@@ -428,15 +428,16 @@ const Details = (() => {
   const aliasNames = (font) =>
     font.aliases.map((a) => (a.relation === 'postscript' ? `${a.name} (PostScript name)` : a.name));
 
-  // The rank the selector shows: State's, else the page's default.
+  // The rank the selector shows: State's, else the page's default, Used in projects.
   const shownRank = () => {
     if (typeof State === 'object' && State && typeof State.get === 'function') {
       return State.get().rank;
     }
-    return 'overall';
+    return 'project';
   };
 
-  // "Overall: #39, likely #29 to #53", plus the gate line when the rule holds the font back.
+  // "Used in projects: #39, likely #29 to #53", plus the gate line when the rule holds the
+  // font back.
   const rankNow = (payload, font, key) => {
     const views = (payload.views || []).filter((v) => v.available && font.ranks[v.key]);
     const view = views.find((v) => v.key === key) || views[0];
@@ -520,8 +521,13 @@ const Details = (() => {
     return pairs([['Pulled in by', text]], 'details-pulled');
   };
 
+  // The labels of the views in `keys` that the page offers: an unavailable one, such as the
+  // retired Overall (owner ruling of 2026-09-30), is never named.
   const viewLabels = (payload, keys) =>
-    keys.map((key) => ((payload.views || []).find((v) => v.key === key) || { label: key }).label);
+    keys
+      .map((key) => (payload.views || []).find((v) => v.key === key))
+      .filter((view) => view && view.available)
+      .map((view) => view.label);
 
   // "#2"; "below the floor"; "observed; rank not published"; plus abstentions and staleness.
   const sourceText = (payload, source, entry) => {
@@ -534,9 +540,8 @@ const Details = (() => {
       if (!source.publish_rank) out = `${label}; rank not published`;
       else if (entry.rank_in_source) out = `#${entry.rank_in_source}`;
     }
-    if (entry.abstains_in && entry.abstains_in.length) {
-      out += `; left out of ${viewLabels(payload, entry.abstains_in).join(' and ')}`;
-    }
+    const leftOut = viewLabels(payload, entry.abstains_in || []);
+    if (leftOut.length) out += `; left out of ${leftOut.join(' and ')}`;
     if (source.stale) out += ` (stale: data from ${source.data_date})`;
     return out;
   };

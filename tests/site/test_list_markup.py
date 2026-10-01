@@ -158,7 +158,7 @@ def test_no_inline_code_and_no_form(html):
     assert not re.search(r"<[^>]+\son[a-z]+\s*=", html)
 
 
-def test_rows_are_in_server_order_with_overall_labels(dom, doc):
+def test_rows_are_in_server_order_with_default_view_labels(dom, doc):
     ordered = data.server_order(doc)
     rows = dom.find("ol", id="list").elements()
     assert [li.attrs["data-id"] for li in rows] == [f["id"] for f in ordered]
@@ -167,7 +167,7 @@ def test_rows_are_in_server_order_with_overall_labels(dom, doc):
     labels = [squash(li.find(class_="rank").text) for li in rows]
     assert any(re.fullmatch(r"Score \d{1,3} of 100", label) for label in labels)
     assert any(label.startswith("Not ranked: ") for label in labels) or not any(
-        f["ranks"]["overall"]["order"] is None for f in doc["fonts"]
+        f["ranks"][data.DEFAULT_VIEW]["order"] is None for f in doc["fonts"]
     )
 
 
@@ -181,7 +181,7 @@ def test_the_held_legend_shows_when_the_server_list_has_a_held_font(dom, doc):
     held = [
         f
         for f in doc["fonts"]
-        if (e := f["ranks"]["overall"])["order"] is not None and e["gate_held"]
+        if (e := f["ranks"][data.DEFAULT_VIEW])["order"] is not None and e["gate_held"]
     ]
     assert ("hidden" not in legend.attrs) == bool(held)
     assert "hidden" in dom.find("p", id="view-note").attrs
@@ -342,9 +342,10 @@ def test_filter_controls_match_the_hash(dom, doc):
         (v["key"], v["label"]) for v in views
     ]
     assert "selected" in options[0].attrs
-    assert views[0]["key"] == "overall"
-    project = [v for v in views if v["key"] == "project"]
-    assert not project or project[0]["label"] == "Used in projects"  # site ruling 2026-09-25
+    # The list opens on Used in projects (M2-D1, amended 2026-09-30: default_rank_project;
+    # its label is the site ruling of 2026-09-25), and never offers the retired Overall.
+    assert (views[0]["key"], views[0]["label"]) == ("project", "Used in projects")
+    assert not data.RETIRED_VIEWS & {o.attrs["value"] for o in options}
     assert squash(search.find(id="f-rank-measures").text) == views[0]["measures"]
 
     q = search.find("input", id="f-q")
@@ -435,6 +436,12 @@ SITE_RULINGS_0930 = tomllib.loads(
 # The note's sentence as the owner changed it on 2026-09-30 (front_page_lead_sharing).
 NOTE_0929 = "Some of these fonts ask you to credit the designer, or don't let you pass the font files on, and we mark those."
 NOTE_0930 = "Some of these fonts ask you to credit the designer, and we mark those."
+# The lead's ranking sentence, owner-approved on 2026-09-30 (front_page_lead_sharing), stopped
+# being true when the list moved to Used in projects the same day (default_rank_project). Its
+# replacement is Claude's proposal and waits for the owner's OK; the rest of the lead is the
+# owner's wording, word for word.
+RANKING_0930 = "They are ranked by how many people install them and use them in their work."
+RANKING_PROPOSED = "They are ranked by how widely they are used in websites, code and apps."
 
 
 def test_the_front_page_note_is_the_owners(dom):
@@ -461,8 +468,11 @@ def test_the_front_page_note_is_the_owners(dom):
     # The wide frame floats beside the lead and the privacy note, so it comes before them.
     kids = [n.attrs.get("class") or n.tag for n in main.elements()]
     assert kids[:6] == ["h1", "why why-wide", "lead", "privacy-note", "why why-fold", "layout"]
-    # The lead, in the owner's wording of 2026-09-30.
-    assert f'"{squash(main.find("p", class_="lead").text)}"' in change
+    # The lead, in the owner's wording of 2026-09-30 but for its ranking sentence (above).
+    lead = squash(main.find("p", class_="lead").text)
+    assert lead.endswith(f" {RANKING_PROPOSED}")
+    assert RANKING_0930 in change
+    assert f'"{lead.replace(RANKING_PROPOSED, RANKING_0930)}"' in change
 
 
 def test_count_and_no_results(dom, doc):

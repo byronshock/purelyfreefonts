@@ -4,11 +4,12 @@ Validation has two layers, and ``tff-site validate`` and ``tff-site build`` run 
 
 - ``schema_errors``: JSON Schema 2020-12, ``schemas/catalog-site.schema.json``.
 - ``semantic_errors``: the cross-references a schema can't express: unique ids, every rank
-  key in ``views``, bands that tile 101 upwards, ``rank == order`` inside the top 100, band
-  labels that match ``order``, license classes, systems and sources that exist, one source
-  entry per source, ranks withheld for sources whose terms forbid them, view universes
-  (every font in every available view; ``coding`` holds exactly the monospace fonts), and
-  links a visitor follows that go to a page, never to a download (M1 step 14).
+  key in ``views`` and no retired one available (``RETIRED_VIEWS``), bands that tile 101
+  upwards, ``rank == order`` inside the top 100, band labels that match ``order``, license
+  classes, systems and sources that exist, one source entry per source, ranks withheld for
+  sources whose terms forbid them, view universes (every font in every available view;
+  ``coding`` holds exactly the monospace fonts), and links a visitor follows that go to a
+  page, never to a download (M1 step 14).
 
 The payloads (``list_index`` and ``details``) are the formats in ``site/CONTRACT.md``
 (sections 7 and 8). They are pure functions of the document, so the same catalog always gives
@@ -31,7 +32,8 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 SCHEMA_PATH = REPO_ROOT / "schemas" / "catalog-site.schema.json"
 SCHEMA_VERSION = "1.0.0"
 
-# Versioned rank keys (methodology §7), in the rank selector's order.
+# Versioned rank keys (methodology §7), in the schema's order. The rank selector follows the
+# catalog's ``views``, the default first.
 RANK_KEYS = (
     "overall",
     "desktop_chosen",
@@ -74,8 +76,13 @@ SPECIMEN_FLAGS = frozenset({"specimen_failed", "specimen_name_only", "specimen_h
 # Written by the sample until the specimens are rendered: the build treats it as no preview.
 PLACEHOLDER_SHA256 = "0" * 64
 
-# The rank the list page shows first and server-renders (M2-D1).
-DEFAULT_VIEW = "overall"
+# The rank the list page shows first and server-renders: Used in projects (M2-D1, amended by
+# the owner's ruling of 2026-09-30, default_rank_project).
+DEFAULT_VIEW = "project"
+# Views the owner retired. catalog-site.json v1 still lists them, with available false (its
+# schema needs every rank key, and each font's ranks.overall), and no page offers or names
+# them. Overall retired on 2026-09-30 (owner ruling overall_retired, AUTHORITY.md D12).
+RETIRED_VIEWS = frozenset({"overall"})
 # Categories in schema order (the list index's ``cats``), with their page labels.
 CATEGORY_LABELS = {
     "sans-serif": "Sans serif",
@@ -178,6 +185,7 @@ def semantic_errors(doc: Mapping[str, Any]) -> list[str]:
     errors += [f"views: {k!r} listed twice" for k in _dupes(view_keys)]
     errors += [f"views: rank key {k!r} missing" for k in RANK_KEYS if k not in view_keys]
     available = [v["key"] for v in views if v["available"]]
+    errors += [f"views: {k!r} is retired but available" for k in available if k in RETIRED_VIEWS]
     errors += _band_errors(doc["bands"])
     band_labels = {b["label"] for b in doc["bands"]}
 
@@ -260,8 +268,9 @@ def band_of(order: int, bands: list[Mapping[str, Any]]) -> str | None:
 def list_index(doc: Mapping[str, Any], *, commit: str) -> dict[str, Any]:
     """Return the list-index payload (``/assets/list.<h>.json``; format in site/CONTRACT.md).
 
-    Font index ``i`` is the ``i``-th server-rendered row: Overall by score (``score_order``),
-    then fonts unranked in Overall by Python ``str.casefold`` of the family, then id.
+    Font index ``i`` is the ``i``-th server-rendered row: the default view (``DEFAULT_VIEW``,
+    Used in projects) by score (``score_order``), then fonts unranked there by Python
+    ``str.casefold`` of the family, then id.
 
     Bit 32 (a specimen) is set for a ``preview`` whose sha256 is not the placeholder, and bit
     64 ("Type your own text") for a ``font_file``: a build without font files passes a

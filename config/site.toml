@@ -14,11 +14,14 @@ spdx = "CC-BY-SA-4.0"
 provisional = false             # gate T5 (a), owner ruling 2026-09-25: the license is final
 url = "https://creativecommons.org/licenses/by-sa/4.0/"
 
-# The rank selector, in order; the first is the default (M2-D1). Every rank key once.
+# The rank selector, in order; the first is the default (M2-D1, amended 2026-09-30: Used in
+# projects). Every rank key once, since catalog-site.json v1 lists them all. A retired view
+# (retired = true) keeps its entry but is published with available false, so the site never
+# offers it: Overall, since the owner's ruling of 2026-09-30 (overall_retired, D12).
 [[views]]
-key = "overall"
-label = "Overall"
-measures = "Desktop installs people chose and use in sites, code and apps, half each."
+key = "project"
+label = "Used in projects"      # site ruling 2026-09-25 (data/reviews/site/2026-09-25.toml)
+measures = "Use in websites (55%), code (30%) and apps (15%)."  # gate M9 (b): fixed group shares
 
 [[views]]
 key = "desktop_chosen"
@@ -29,11 +32,6 @@ measures = "Fonts people install on purpose. Fonts that Linux systems install on
 key = "desktop_installed"
 label = "Desktop: most installed"
 measures = "Fonts on the most computers, counting every install."
-
-[[views]]
-key = "project"
-label = "Used in projects"      # site ruling 2026-09-25 (data/reviews/site/2026-09-25.toml)
-measures = "Use in websites (55%), code (30%) and apps (15%)."  # gate M9 (b): fixed group shares
 
 [[views]]
 key = "coding"
@@ -53,6 +51,12 @@ measures = "What builders choose: npm packages, projects that depend on them, an
 key = "rising"
 label = "Rising (beta)"
 measures = "Fonts gaining share over the last 3 months."
+
+[[views]]
+key = "overall"
+label = "Overall"
+measures = "Desktop installs people chose and use in sites, code and apps, half each."
+retired = true                  # owner rulings of 2026-09-30: overall_retired, default_rank_project
 
 [tiers]                         # methodology §6
 A = "Firm: evidence from at least 2 kinds of source, and the rank is unlikely to move far."

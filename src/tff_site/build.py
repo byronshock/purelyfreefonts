@@ -384,7 +384,10 @@ def _list_context(
         {k: v[k] for k in ("key", "label", "measures")} for v in doc["views"] if v["available"]
     ]
     if not views or views[0]["key"] != data.DEFAULT_VIEW:
-        raise BuildError([f"the first available view must be {data.DEFAULT_VIEW!r} (M2-D1)"])
+        # The list opens on Used in projects (M2-D1, amended 2026-09-30: default_rank_project).
+        raise BuildError(
+            [f"the first available view must be {data.DEFAULT_VIEW!r} (M2-D1, amended 2026-09-30)"]
+        )
     nerd = doc["nerd"]
     rows = _rows(doc, specimens)
     return {

@@ -1,6 +1,7 @@
 {#-
-  index.html.j2: the list page (Milestone 2 step 3). Server-rendered in Overall order, so the
-  page works without JavaScript; the script then filters and reorders these rows. Context:
+  index.html.j2: the list page (Milestone 2 step 3). Server-rendered in the default rank's
+  order, Used in projects (M2-D1, amended 2026-09-30), so the page works without JavaScript;
+  the script then filters and reorders these rows. Context:
   site/CONTRACT.md, "Templates" (every page's context plus `list`). The list itself, filters
   included, is in _list.html.j2 so a later /check/ page can include it unchanged.
 
@@ -23,7 +24,7 @@
 <h2 id="why-h">{{ why_heading() }}</h2>
 <p>{{ why_text() }}</p>
 </div>
-<p class="lead">Every font here is free for any personal or commercial use, and you may share the files. They are ranked by how many people install them and use them in their work.</p>
+<p class="lead">Every font here is free for any personal or commercial use, and you may share the files. They are ranked by how widely they are used in websites, code and apps.</p>
 <p class="privacy-note">No cookies, no tracking, and the page loads only its own files. <a href="/privacy/">Check the Network tab</a>.</p>
 <details class="why why-fold">
 <summary>{{ why_heading() }}</summary>

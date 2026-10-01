@@ -321,6 +321,14 @@ def test_methodology_context_comes_from_the_catalog():
     listed = [s["id"] for survey in method["surveys"] for s in survey["sources"]]
     assert sorted(listed) == sorted(s["id"] for s in doc["sources"])
     assert method["bands"] == [b["label"] for b in doc["bands"]]
+    assert [v["key"] for v in method["views"]] == [
+        "project",
+        "desktop_chosen",
+        "desktop_installed",
+        "coding",
+        "dev_apps",
+        "rising",
+    ]  # the catalog's order, less the retired Overall
     assert [t["tier"] for t in method["tiers"]] == ["A", "B", "C"]
     assert method["data_license"]["name"] == "CC BY-SA 4.0"
     assert all(s["measures"].endswith(".") for s in listed_sources(method))
@@ -612,9 +620,18 @@ def test_methodology_shows_the_run_and_the_credits(site_dir, built, site_data):
     html = read(site_dir, "methodology/index.html")
     text = built["methodology/index.html"].plain
     assert f"Data from {doc['run']['date']}. Method version {doc['run']['method_version']}." in text
+    ranks = re.search(r'id="ranks">(.*?)</dl>', html, re.S)
+    assert ranks
+    ranks_text = parse(ranks[1]).plain
     for view in doc["views"]:
-        assert view["label"] in text
-        assert view["measures"] in text
+        # A retired view (Overall, 2026-09-30) is left out; one not available yet is listed
+        # as "Not shown yet."
+        retired = view["key"] in data.RETIRED_VIEWS
+        assert (view["measures"] in text) != retired, view["key"]
+        assert (view["label"] in ranks_text) != retired, view["key"]
+        pending = f"{view['measures']} Not shown yet."
+        assert (pending in ranks_text) == (not retired and not view["available"]), view["key"]
+    assert "Overall" not in ranks_text
     for band in doc["bands"]:
         assert band["label"] in text
     for tier, meaning in doc["tiers"].items():

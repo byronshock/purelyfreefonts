@@ -20,7 +20,7 @@ The rank keys are versioned constants, the same in all three schemas and in the 
 
 | Key | Rank | Feeds overall |
 |---|---|---|
-| `overall` | Overall: desktop *most chosen* and *Used in projects*, half each | – |
+| `overall` | Overall: desktop *most chosen* and *Used in projects*, half each; retired on 2026-09-30, so the site no longer offers it (owner ruling `overall_retired`) | – |
 | `desktop_chosen` | Desktop: most chosen | yes |
 | `desktop_installed` | Desktop: most installed | no |
 | `project` | Used in projects | yes |
@@ -132,7 +132,7 @@ Every piece of wording in it comes from `config/site.toml`: the view labels and 
 
 - `schema_version`, and `run`: date, method version, `ranking_toml_sha256` and generator.
 - `data_license`, as in `catalog.json`.
-- `views[]`: every rank key once, in the order of the rank selector, each with its `label`, `measures` line and `available` (false hides it; Rising stays hidden until it has 3 months of history).
+- `views[]`: every rank key once, in the order of the rank selector, the default first (*Used in projects* since 2026-09-30, M2-D1 amended), each with its `label`, `measures` line and `available` (false hides it; Rising stays hidden until it has 3 months of history, and Overall, retired on 2026-09-30, always is: v1 keeps its key here and each font's `ranks.overall`, which the schema requires, but the site never shows them).
 - `bands[]`: `101–250`, `251–500` and `501+` (open-ended).
 - `tiers`: what A, B and C mean.
 - `sources[]`: the source credits (name, what it measures, URL, license or terms), its `group` and `survey`, `data_date`, `stale`, and `publish_rank` (whether the page may show each font's rank in it).

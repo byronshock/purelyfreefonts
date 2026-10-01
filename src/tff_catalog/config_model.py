@@ -607,6 +607,10 @@ class ViewText:
     key: str  # a RANK_KEYS entry
     label: str
     measures: str  # one line under the rank selector
+    # A view the owner retired: still listed, since catalog-site.json v1 names every rank
+    # key, but published with available false, so the site never offers it (Overall, owner
+    # ruling of 2026-09-30, overall_retired). ``config.check_site`` keeps it off the default.
+    retired: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -651,7 +655,7 @@ class SiteConfig:
 
     schema: int
     data_license: DataLicense
-    views: tuple[ViewText, ...]  # rank selector order; every RANK_KEYS entry once
+    views: tuple[ViewText, ...]  # rank selector order, default first; every RANK_KEYS entry once
     tiers: TierTexts
     license_classes: tuple[LicenseClassText, ...]  # filter order
     nerd: NerdText

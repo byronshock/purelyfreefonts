@@ -15,8 +15,8 @@
   source ranks each have a test.
 - **The owner's ten** (``-k owner_ten``): every field of ten fonts' panels against the site
   data. The ten are ``TFF_OWNER_TEN`` (comma-separated ids) if set, else Claude's pick: the
-  top 5 overall and 5 edge cases (attribution required, not redistributable, held by the
-  gate, preinstalled, pulled in by a package). Run it on real data with
+  top 5 in the default rank (Used in projects) and 5 edge cases (attribution required, a
+  Nerd Font build, held by the gate, preinstalled, pulled in by a package). Run it on real data with
   ``TFF_SITE_DATA=build/catalog-site.json TFF_OWNER_TEN=a,b,…``.
 - **linkcheck** (no network): a mock transport checks rate limiting per host, redirects,
   failures and the CLI; one ``network`` test checks a real font's links.
@@ -61,7 +61,8 @@ def _load_doc(path: Path) -> dict[str, Any]:
 
 
 def owner_ten(doc: dict[str, Any]) -> list[str]:
-    """``TFF_OWNER_TEN``, or the top 5 overall plus the first font of each edge case."""
+    """``TFF_OWNER_TEN``, or the top 5 in the default rank plus the first font of each edge
+    case."""
     given = os.environ.get("TFF_OWNER_TEN", "")
     if given.strip():
         return [i.strip() for i in given.split(",") if i.strip()]
@@ -340,11 +341,11 @@ def test_toggle_opens_one_panel_at_a_time_and_back_follows(guarded_context):
 def test_opening_keeps_other_hash_pairs(guarded_context):
     _sample_only()
     guarded = guarded_context()
-    page = _open_page(guarded, "/#rank=project&os=linux")
-    _wait_for(page, "location.hash.startsWith('#rank=project')")
+    page = _open_page(guarded, "/#rank=desktop_chosen&os=linux")
+    _wait_for(page, "location.hash.startsWith('#rank=desktop_chosen')")
     _toggle(page, "sample-sans-01").click()
     _wait_ready(page, "sample-sans-01")
-    assert _hash(page) == "#rank=project&font=sample-sans-01&os=linux"
+    assert _hash(page) == "#rank=desktop_chosen&font=sample-sans-01&os=linux"
     guarded.assert_clean(page)
 
 
@@ -390,7 +391,7 @@ def test_font_link_on_load_opens_and_focuses_the_heading(guarded_context):
 def test_font_link_with_another_rank_lands_on_the_moved_row(guarded_context):
     _sample_only()
     guarded = guarded_context(viewport={"width": 1280, "height": 800})
-    font_id = "sample-mono-07"  # 7th overall, 2nd in Coding: the row moves on load
+    font_id = "sample-mono-07"  # 18th in Used in projects, 2nd in Coding: the row moves on load
     page = _open_page(guarded, f"/#rank=coding&font={font_id}")
     _wait_for(page, "globalThis.tff !== undefined")
     _wait_ready(page, font_id)
@@ -711,15 +712,19 @@ def _source_text(doc: dict[str, Any], source: dict[str, Any], entry: dict[str, A
             out = f"#{entry['rank_in_source']}"
         elif not source["publish_rank"]:
             out = f"{label}; rank not published"
-    if entry["abstains_in"]:
-        views = {v["key"]: v["label"] for v in doc["views"]}
-        out += "; left out of " + " and ".join(views[k] for k in entry["abstains_in"])
+    # Only the ranks the page offers are named: never the retired Overall (2026-09-30).
+    views = {v["key"]: v["label"] for v in doc["views"] if v["available"]}
+    left_out = [views[k] for k in entry["abstains_in"] if k in views]
+    if left_out:
+        out += "; left out of " + " and ".join(left_out)
     if source["stale"]:
         out += f" (stale: data from {source['data_date']})"
     return out
 
 
-def expected_panel(doc: dict[str, Any], font: dict[str, Any], rank: str = "overall") -> dict:
+def expected_panel(
+    doc: dict[str, Any], font: dict[str, Any], rank: str = data.DEFAULT_VIEW
+) -> dict:
     """What the panel of ``font`` must show, from the site data (the Python reference), with
     ``rank`` chosen in the selector. The layout is the owner's of 2026-09-30 (details_layout):
     the essentials, then every rank and source folded in "All ranks and sources"."""

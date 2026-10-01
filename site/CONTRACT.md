@@ -46,7 +46,7 @@ Contents:
 
 | Path | Contents | Cache-Control (from `ops/caddy/site.caddy`) |
 |---|---|---|
-| `index.html` | the list, server-rendered in Overall order | `no-cache, no-transform` |
+| `index.html` | the list, server-rendered in the default rank's order, Used in projects (section 7) | `no-cache, no-transform` |
 | `methodology/index.html`, `privacy/index.html`, `about/index.html` | the content pages | `no-cache, no-transform` |
 | `404.html` | served with status 404 by Caddy's `handle_errors` | `no-cache, no-transform` |
 | `robots.txt`, `sitemap.xml` | per M2-D8 | `no-cache, no-transform` |
@@ -108,14 +108,14 @@ Jinja2 with `autoescape=True`, `StrictUndefined`, `trim_blocks`, `lstrip_blocks`
 
 | Field | Contents |
 |---|---|
-| `views` | the available views, `{key, label, measures}`, in catalog order; the first is the default (Overall, M2-D1) |
+| `views` | the available views, `{key, label, measures}`, in catalog order; the first is the default, Used in projects (`project`: M2-D1, amended 2026-09-30, `default_rank_project`), and the build fails if it isn't. The retired Overall rank has `available: false`, so it is never offered |
 | `categories` | `{value, label}`: `sans-serif` Sans serif, `serif` Serif, `display` Display, `handwriting` Handwriting, `monospace` Monospace |
 | `credit_filter` | true when some font needs credit (`attribution_required`): only then is "No credit required" shown (owner ruling of 2026-09-30, `license_filter`) |
 | `systems_os` | `{value, label}`: `windows` Windows, `macos` macOS, `linux` Linux, `android` Android |
 | `nerd` | the catalog's `nerd` wording, `{marker, label, legend}`, plus `after_marker`: the legend less its leading marker, so the legend shows its marker as the rows do |
 | `total` | number of fonts |
 | `index_url`, `details_url` | hashed URLs of the two payloads |
-| `rows` | one per font, in server order (section 7): `id`, `family`, `label` (the Overall rank label), `category_label` (of the site category, `tff_site.data.site_category`: Monospace for every monospaced font), `license_name`, `badges` [{`key`, `text`}], `specimen` {`url`, `width`, `height`} or none (`width` and `height` are the no-script `<img>`'s display size: 48 px high, the `--spec-h` box, and as wide as the SVG's aspect ratio makes it), `fallback` (none, `"license"` or `"failed"`), `download` {`url`, `label`}, `nerd` (true for a font with a Nerd Font build, `links.nerd`) |
+| `rows` | one per font, in server order (section 7): `id`, `family`, `label` (the rank label in the default rank, Used in projects), `category_label` (of the site category, `tff_site.data.site_category`: Monospace for every monospaced font), `license_name`, `badges` [{`key`, `text`}], `specimen` {`url`, `width`, `height`} or none (`width` and `height` are the no-script `<img>`'s display size: 48 px high, the `--spec-h` box, and as wide as the SVG's aspect ratio makes it), `fallback` (none, `"license"` or `"failed"`), `download` {`url`, `label`}, `nerd` (true for a font with a Nerd Font build, `links.nerd`) |
 
 Badge keys, in this order: `variable` ("Adjustable weight", owner ruling of 2026-09-30, `variable_label`), `limited` ("Limited accents"), `attribution` ("Credit required"), `preinstalled` ("Comes with Windows, Linux, LibreOffice": each operating system once, every Linux distribution being "Linux", then apps; `tff_site.build.comes_with`), `new` ("New"). Kept short (owner ruling of 2026-09-30, `filters_layout`): there is no "Monospace" badge (the category says it) or "Not redistributable" one (Rule 3), and "Pulled in by" is in the details panel. `preinstalled` is the tag that explains "Not ranked: no evidence of deliberate installs" in *most chosen* (Milestone 2 step 3); the details panel names the packages.
 
@@ -180,7 +180,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
         <button type="button" id="f-clear">Clear filters</button>
       </div>
     </search>
-    <noscript><p class="noscript-note">Filters and search need JavaScript. Below is the full list by overall rank.</p></noscript>
+    <noscript><p class="noscript-note">Filters and search need JavaScript. Below is the full list, ranked by use in projects.</p></noscript>
     <section id="results" class="results" aria-labelledby="results-h">
       <h2 id="results-h">Fonts</h2>
       <p id="ext-summary" class="ext-summary" hidden></p>             <!-- Milestone 3: tff.list.setSummary -->
@@ -267,7 +267,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 - **Details panel** (owned by `Details`; only these hooks are frozen): the panel's first child is `<h4 class="details-title" id="details-<id>-h" tabindex="-1">`, which receives focus when the panel opens from a `#font=` link, and it has a `button.details-close`. Esc or the close button returns focus to the row's `.details-toggle`. Its body, in order (owner ruling of 2026-09-30, `details_layout`):
   1. "Type your own text": `button.typeown-load` ("Type your own text (loads 312 KB)"), then `input.typeown-input`;
   2. `div.details-summary`, one `dl.details-essentials`: Get it (`ul.details-links`: "Official: …", "Designer: …", and for a Nerd Font build the marker `span.nf-mark[role=img]`, as in the row, and the link `a.details-nf-link`, text by section 1's Nerd rule; the legend is `#nf-legend`, above the list), License (`a.details-lic-link`, then "No credit needed." or "Credit required: …"), Font (formats and Latin coverage), Comes with, Also known as, and Rank (`span.details-rank-now`: the rank the selector shows, kept current);
-  3. `details.details-evidence`, closed, its `summary` "All ranks and sources": every rank with tier and range, the tier legend, "Pulled in by", and the per-source tables (`table.details-src-table[data-survey]`);
+  3. `details.details-evidence`, closed, its `summary` "All ranks and sources": every available rank with tier and range, the tier legend, "Pulled in by", and the per-source tables (`table.details-src-table[data-survey]`), where a Linux source "left out of" some ranks names the available ones only;
   4. `p.details-report`.
 
 ### Shared classes
@@ -384,7 +384,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 
 `/assets/list.<h>.json`, built by `tff_site.data.list_index`, preloaded by `<link rel="preload" as="fetch" crossorigin href>` in the list page's `head` block and fetched from `#list[data-index]`. Columnar: every per-font array has `n` entries, indexed by font index.
 
-**Font index** `i` is the server-rendered order: fonts ranked in Overall by score, best first, ties by `order` (`tff_site.data.score_order`), then fonts unranked in Overall by Python `str.casefold()` of the family, then by id.
+**Font index** `i` is the server-rendered order: fonts ranked in the default rank, Used in projects (`tff_site.data.DEFAULT_VIEW`, `project`), by score, best first, ties by `order` (`tff_site.data.score_order`), then fonts unranked there by Python `str.casefold()` of the family, then by id.
 
 | Key | Type | Contents |
 |---|---|---|
@@ -448,7 +448,7 @@ key   = "rank" / "cat" / "var" / "nerd" / "hide" / "q" / "sort" / "font"
 
 | Key | Value | Default (omitted) |
 |---|---|---|
-| `rank` | a view key with `available: true` | `overall` |
+| `rank` | a view key with `available: true` | `project` (Used in projects) |
 | `cat` | `sans-serif`, `serif`, `display`, `handwriting` or `monospace` (every monospaced font) | any category |
 | `var` | `1`: variable fonts only | off |
 | `nerd` | `1`: "Nerd Font available", fonts with a Nerd Font build only | off |
@@ -460,11 +460,11 @@ key   = "rank" / "cat" / "var" / "nerd" / "hide" / "q" / "sort" / "font"
 - **Writing:** keys in the table's order, defaults left out; the default view is the empty hash, restored with `history.replaceState(null, '', location.pathname + location.search)`. Discrete changes use `pushState`; search typing uses `replaceState`, debounced 300 ms.
 - **Reading:** split on `&`, then each pair at its first `=`; a key seen twice keeps the last value; for the keys in the table, undecodable and invalid values fall back to the default. If the canonical form differs from `location.hash`, it is rewritten with `replaceState`. `popstate` and `hashchange` apply the hash without pushing.
 - **Retired keys** (owner rulings of 2026-09-30): `spacing`, `lic` and `redist` are read and dropped, so old links still open and the rewritten hash no longer has them. `spacing=monospaced` becomes `cat=monospace` when the hash has no `cat`; `spacing=proportional`, `lic` and `redist` add nothing (every listed font is redistributable). Milestone 3 must not use these names as extension keys.
-- **Extension keys.** A key not in the table and not retired belongs to someone else, for example Milestone 3's system tabs (`os=linux`). `State` never interprets or drops one: when it reads, canonicalises or writes the hash, it keeps every extension pair exactly as written (key and raw value), in its original order, after its own keys. When it writes, it takes the extension pairs from `location.hash` as they stand at that moment, so a change Milestone 3 made meanwhile survives. The default view with extension keys is `#` plus those pairs. `State`'s tests must show that `#rank=project&os=linux` survives the first load, a filter change and Back.
+- **Extension keys.** A key not in the table and not retired belongs to someone else, for example Milestone 3's system tabs (`os=linux`). `State` never interprets or drops one: when it reads, canonicalises or writes the hash, it keeps every extension pair exactly as written (key and raw value), in its original order, after its own keys. When it writes, it takes the extension pairs from `location.hash` as they stand at that moment, so a change Milestone 3 made meanwhile survives. The default view with extension keys is `#` plus those pairs. `State`'s tests must show that `#rank=coding&os=linux` survives the first load, a filter change and Back.
 - **In-page anchors.** `State` runs only on pages with `#list`. A hash of one token with no `=` or `&` that names an element in the document (the skip link's `#main`, `#font-<id>`) is not a view: `State` leaves `location.hash` alone for it, and its next write drops the anchor. A single token that names no element is read as a hash like any other.
 - **`font`.** A font the current view hides stays in the hash; its panel opens when a later view shows it.
-- `rank=rising` while Rising has `available: false` means `overall`.
-- Example: `#rank=project&cat=serif&hide=limited,windows&font=inter`.
+- `rank=rising` while Rising has `available: false` means the default, `project`. So does `rank=overall`: Overall retired on 2026-09-30 (owner ruling `overall_retired`) and has `available: false`, so an old link opens the default view and the rewritten hash drops the pair, as it drops a retired key.
+- Example: `#rank=desktop_chosen&cat=serif&hide=limited,windows&font=inter`.
 
 ## 10. Milestone 3 hook (`globalThis.tff`)
 

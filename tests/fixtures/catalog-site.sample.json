@@ -9,7 +9,7 @@
   },
   "data_license": {"spdx": "CC-BY-SA-4.0", "provisional": false, "url": "https://creativecommons.org/licenses/by-sa/4.0/"},
   "views": [
-    {"key": "overall", "label": "Overall", "measures": "Desktop installs people chose and use in sites, code and apps, half each.", "available": true},
+    {"key": "project", "label": "Used in projects", "measures": "Use in websites (55%), code (30%) and apps (15%).", "available": true},
     {
       "key": "desktop_chosen",
       "label": "Desktop: most chosen",
@@ -17,7 +17,6 @@
       "available": true
     },
     {"key": "desktop_installed", "label": "Desktop: most installed", "measures": "Fonts on the most computers, counting every install.", "available": true},
-    {"key": "project", "label": "Used in projects", "measures": "Use in websites (55%), code (30%) and apps (15%).", "available": true},
     {"key": "coding", "label": "Coding fonts", "measures": "Monospace fonts, ranked by developers' installs and downloads.", "available": true},
     {
       "key": "dev_apps",
@@ -25,7 +24,8 @@
       "measures": "What builders choose: npm packages, projects that depend on them, and app frameworks. All its sources come from npm, one kind of evidence, so no font gets an exact rank yet.",
       "available": true
     },
-    {"key": "rising", "label": "Rising (beta)", "measures": "Fonts gaining share over the last 3 months.", "available": false}
+    {"key": "rising", "label": "Rising (beta)", "measures": "Fonts gaining share over the last 3 months.", "available": false},
+    {"key": "overall", "label": "Overall", "measures": "Desktop installs people chose and use in sites, code and apps, half each.", "available": false}
   ],
   "bands": [{"label": "101–250", "from": 101, "to": 250}, {"label": "251–500", "from": 251, "to": 500}, {"label": "501+", "from": 501, "to": null}],
   "tiers": {
@@ -1325,7 +1325,7 @@
         "overall": {"rank": null, "band": "101–250", "order": 101, "tier": "C", "range": [51, 222], "score": 1.75, "previous_score": 1.75, "gate_held": true, "unranked": null},
         "desktop_chosen": {"rank": null, "band": "101–250", "order": 101, "tier": "C", "range": [51, 222], "score": 0.895095, "previous_score": 0.895095, "gate_held": true, "unranked": null},
         "desktop_installed": {"rank": null, "band": "101–250", "order": 101, "tier": "C", "range": [51, 222], "score": 0.895095, "previous_score": 0.895095, "gate_held": true, "unranked": null},
-        "project": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "previous_score": null, "gate_held": false, "unranked": "no_evidence"},
+        "project": {"rank": null, "band": "101–250", "order": 101, "tier": "C", "range": [51, 222], "score": 1.75, "previous_score": 1.75, "gate_held": true, "unranked": null},
         "coding": {"rank": null, "band": "101–250", "order": 101, "tier": "C", "range": [51, 222], "score": 1.75, "previous_score": 1.75, "gate_held": true, "unranked": null},
         "dev_apps": {"rank": null, "band": null, "order": null, "tier": null, "range": null, "score": null, "previous_score": null, "gate_held": false, "unranked": "no_evidence"}
       },
@@ -1337,7 +1337,7 @@
         "nerd": {"state": "not_covered", "rank_in_source": null, "reason": "outside_frame", "abstains_in": []},
         "fot": {"state": "censored", "rank_in_source": null, "reason": "below_floor", "abstains_in": []},
         "almanac": {"state": "not_covered", "rank_in_source": null, "reason": "outside_frame", "abstains_in": []},
-        "google": {"state": "not_covered", "rank_in_source": null, "reason": "outside_frame", "abstains_in": []},
+        "google": {"state": "observed", "rank_in_source": 9, "reason": null, "abstains_in": []},
         "npm_fontsource": {"state": "not_covered", "rank_in_source": null, "reason": "no_package", "abstains_in": []},
         "ecosystems": {"state": "not_covered", "rank_in_source": null, "reason": "no_package", "abstains_in": []},
         "jsdelivr": {"state": "not_covered", "rank_in_source": null, "reason": "no_package", "abstains_in": []},

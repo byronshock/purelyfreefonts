@@ -53,7 +53,7 @@ from urllib.parse import unquote, urlsplit
 import numpy as np
 import pytest
 
-from tff_site import budgets, cli
+from tff_site import budgets, cli, data
 
 FAKE_COMMIT = "0" * 40
 CI_CADDY_URL = "http://127.0.0.1:8080"
@@ -419,10 +419,12 @@ def test_load_meets_the_web_vitals_budget(
 
 def _refilter_steps(ranks: list[str]) -> list[tuple[str, str, str | None]]:
     """20 changes: every rank in turn, then each filter group, then a rank again. Each one
-    changes the view, so each must redraw."""
-    others = [r for r in ranks if r != "overall"]
+    changes the view, so each must redraw. The page opens on the default rank
+    (``data.DEFAULT_VIEW``, Used in projects), so it comes last in the first round."""
+    default = data.DEFAULT_VIEW
+    others = [r for r in ranks if r != default]
     steps: list[tuple[str, str, str | None]] = [("select", "#f-rank", r) for r in others]
-    steps.append(("select", "#f-rank", "overall"))
+    steps.append(("select", "#f-rank", default))
     steps += [
         ("check", "#f-cat-serif", None),
         ("check", "#f-cat-sans-serif", None),
@@ -440,7 +442,7 @@ def _refilter_steps(ranks: list[str]) -> list[tuple[str, str, str | None]]:
     ]
     k = 0
     while len(steps) < REFILTER_STEPS:
-        steps.append(("select", "#f-rank", others[k % len(others)] if others else "overall"))
+        steps.append(("select", "#f-rank", others[k % len(others)] if others else default))
         k += 1
     return steps[:REFILTER_STEPS]
 

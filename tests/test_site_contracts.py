@@ -157,10 +157,15 @@ def test_sample_covers_the_step_2_cases():
     assert {e["band"] for e in entries} - {None} == {b["label"] for b in SAMPLE["bands"]}
     assert {100, 101, 250, 251, 500} <= {e["order"] for e in entries}
     assert {e["tier"] for e in entries} - {None} == {"A", "B", "C"}
-    # every unranked reason; a font unranked even in Overall; gate held; too new
+    # every unranked reason; a font unranked even in the default view; gate held; too new
     assert {e["unranked"] for e in entries} - {None} == set(data.UNRANKED_LABELS)
-    assert any(f["ranks"]["overall"]["unranked"] for f in fonts_)
+    default = [f["ranks"][data.DEFAULT_VIEW] for f in fonts_]
+    assert any(e["unranked"] for e in default)
     assert any(e["gate_held"] for e in entries)
+    # the default view has a font the two-source rule holds back whose score outranks fonts
+    # in the top 100, so the list's score order differs from the catalog's order
+    top = [e["score"] for e in default if e["rank"] is not None]
+    assert any(e["gate_held"] and e["score"] > min(top) for e in default)
     assert any("too_new" in f["flags"] for f in fonts_)
     # licenses: every font redistributable (Rule 3 of 2026-09-30), attribution required,
     # every class used
@@ -205,6 +210,12 @@ def test_sample_covers_the_step_2_cases():
     views = {v["key"]: v for v in SAMPLE["views"]}
     assert views["rising"]["available"] is False
     assert not any("rising" in f["ranks"] for f in fonts_)
+    # the default view comes first; the retired Overall is listed but never available, and
+    # every font keeps its entry, which v1's schema requires (owner rulings of 2026-09-30)
+    assert SAMPLE["views"][0]["key"] == data.DEFAULT_VIEW
+    assert views["overall"]["available"] is False
+    assert {"overall"} == data.RETIRED_VIEWS
+    assert all("overall" in f["ranks"] for f in fonts_)
     # Nerd Font builds (TASK-2): a monospace font or two with one, of both kinds, null elsewhere
     nerd = {f["id"]: f["links"]["nerd"] for f in fonts_ if f["links"]["nerd"] is not None}
     assert 1 <= len(nerd) < len(fonts_)
@@ -407,7 +418,11 @@ SEMANTIC_BREAKS = {
     ),
     "gap between bands": (_set(["bands", 1, "from"], 260), "doesn't follow"),
     "closed last band": (_set(["bands", 2, "to"], 900), "open-ended"),
-    "view missing": (lambda d: d["views"].pop(), "'rising' missing"),
+    "view missing": (lambda d: d["views"].pop(), "'overall' missing"),
+    "retired view offered": (
+        lambda d: next(v for v in d["views"] if v["key"] == "overall").update(available=True),
+        "'overall' is retired but available",
+    ),
     "failed specimen with a preview": (
         lambda d: d["fonts"][0]["flags"].append("specimen_failed"),
         "failed specimen",
@@ -449,9 +464,12 @@ def test_sample_wording_matches_config_site_toml():
     site = tomllib.loads((config / "site.toml").read_text(encoding="utf-8"))
     display = tomllib.loads((config / "ranking.toml").read_text(encoding="utf-8"))["display"]
     assert SAMPLE["data_license"] == site["data_license"]
-    assert [{k: v[k] for k in ("key", "label", "measures")} for v in SAMPLE["views"]] == site[
-        "views"
+    assert [{k: v[k] for k in ("key", "label", "measures")} for v in SAMPLE["views"]] == [
+        {k: v[k] for k in ("key", "label", "measures")} for v in site["views"]
     ]
+    retired = {v["key"] for v in site["views"] if v.get("retired")}
+    assert retired == data.RETIRED_VIEWS
+    assert not any(v["available"] for v in SAMPLE["views"] if v["key"] in retired)
     assert SAMPLE["tiers"] == site["tiers"]
     assert SAMPLE["license_classes"] == site["license_classes"]
     assert SAMPLE["nerd"] == site["nerd"]
