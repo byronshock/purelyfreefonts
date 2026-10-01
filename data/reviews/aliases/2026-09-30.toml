@@ -21,3 +21,25 @@ reason = "The owner's ruling in chat with the lead session on 2026-09-30, \"Fold
 value = "google_names"
 ruling = "Charis SIL, Gentium Plus and Gentium Book Plus keep their ids and Google's names, as Google Fonts lists them; SIL's new names (Charis, Gentium, Gentium Book) are also-known-as names that count toward them."
 reason = "Claude's recommendation, taken by the owner: methodology section 2 makes Google's family the unit, the primary link is Google's page under that name, and Google's files call themselves that. The ruling relayed by the lead had said \"into the current upstream name\"; Claude flagged that the rules pick Google's names."
+
+[duplicates_batch_3]
+value = "fold_all_seven"
+ruling = "Seven retired or split names fold into their live successor, as the earlier folds of 2026-09-30 did, and the catalog takes them at the first live refresh (sn_pro_fold_timing): Scheherazade into Scheherazade New (with Debian's fonts-sil-scheherazade and ttf-sil-scheherazade, Fontsource's scheherazade and its npm and Expo packages); OFL Sorts Mill Goudy TT into Sorts Mill Goudy; Rubik One into Rubik; Big Shoulders Display and Big Shoulders Text into Big Shoulders as optical-size builds (opsz), so the catalog entry moves from big-shoulders-display to big-shoulders, with the Expo package of the old one; Yaldevi Colombo into Yaldevi; Sansita One into Sansita; and Finlandica into Finlandica Headline (A-8f8a1dea58, with Finlandica's Expo package; Finlandica Text stays related). Hand rows in data/aliases.csv (reviewed_by owner:2026-09-30). Scheherazade's L3 research entry goes; big-shoulders-display's automatic link and specimen lapse, and so does Claude's U-b9de6781828e, which sent the Expo key there."
+reason = "The owner's ruling in chat with the lead session on 2026-09-30, \"Fold all seven (Recommended)\", after verified evidence: SIL's FONTLOG and Google's TRIVIA.md (Scheherazade); one upstream commit and cmap (OFL Sorts Mill Goudy TT); Google's description of Rubik One as Rubik's first Black; Big Shoulders' README and google/fonts to_delist.txt (Display and Text are the static opsz splits of the variable family); the designers' FONTLOGs (Yaldevi Colombo, Sansita One); and the shipped cut (Finlandica). Survivors follow methodology section 2: Google's live family is the unit, and the published id stays where both ids were minted in the same run, as for SN Pro (#43)."
+
+[A-8f8a1dea58]
+choice = "a"
+recommended = true
+relation = "rename"
+ruling = "Accept, corrected: Finlandica is Finlandica Headline's old name (relation rename), not a related split family"
+reason = "The owner's ruling duplicates_batch_3 (2026-09-30), which revises the A_sources answer of 2026-09-26 for Finlandica Headline: every package under the old name ships the 2022 compressed cut that Finlandica Headline carries on. Finlandica Text's row (A-69ae9edccf) stays related."
+
+[sc_companions_keep_separate]
+value = "keep_separate"
+ruling = "Small-caps companions that Google no longer lists (the six Big Shoulders SC families, Fragment Mono SC, Alumni Sans Collegiate One SC and the like) stay families of their own; they are not folded into their parent, and are not raised as duplicates again."
+reason = "The owner's ruling in chat with the lead session on 2026-09-30, \"Keep separate (Recommended)\", as a class ruling. Methodology section 2 folds only reviewed small-caps companions; live SC families such as Amatic SC stay separate by the unit rule anyway."
+
+[duplicates_batch_3_checked]
+value = "fold_three_keep_creepster_caps"
+ruling = "Of the four folds ruled \"after a replay check\", three fold: Big Shoulders Inline Display and Big Shoulders Inline Text into Big Shoulders Inline, and Big Shoulders Stencil Display and Big Shoulders Stencil Text into Big Shoulders Stencil, as optical-size builds (opsz); and Nosifer Caps into Nosifer (rename). Creepster Caps stays a family of its own. Hand rows in data/aliases.csv (reviewed_by owner:2026-09-30); the catalog takes them at the first live refresh (sn_pro_fold_timing)."
+reason = "The owner's ruling in chat with the lead session, \"Fold after a replay check (Recommended)\", and, for Creepster Caps, the owner's answer in chat with Claude after the check (Claude's recommendation). A replay of 2026-09-26 at main with the rows: the three folds hold (Big Shoulders Inline and Stencil and Nosifer stay outside the catalog, at stage orders 985, 878 and 999). Creepster Caps is in google/fonts' apache folder (Apache-2.0) while Creepster is OFL-1.1: folded, Creepster's license became \"Apache-2.0 AND OFL-1.1\", and it left the catalog in the replay (failed L3, the Apache text not being in the frozen snapshot). A live run would have published a combined license that misdescribes Creepster."
