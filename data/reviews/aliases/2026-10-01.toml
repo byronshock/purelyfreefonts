@@ -1,0 +1,43 @@
+# Rulings of 2026-10-01, gate A: npm packages whose downloads reached no family (follow-up (d) of 2026-09-30, from the lead's verifiers).
+# The tables with by = "claude" are Claude's own rulings under the owner's delegation of 2026-09-28 (A_U_queues), applying rules the owner has ruled; their rows in data/aliases.csv have reviewed_by claude:2026-10-01.
+# expo_no_successor_unlisted is the owner's ruling, given in chat with Claude (Claude's recommendation); its rows have reviewed_by owner:2026-10-01. Also in AUTHORITY.md.
+
+[claude-expo-retired-names]
+by = "claude"
+notes = ["@expo-google-fonts/42dot-sans -> asta-sans", "@expo-google-fonts/andada -> andada-pro", "@expo-google-fonts/andika-new-basic -> andika", "@expo-google-fonts/arima-madurai -> arima", "@expo-google-fonts/be-vietnam -> be-vietnam-pro", "@expo-google-fonts/kdam-thmor -> kdam-thmor-pro", "@expo-google-fonts/spartan -> league-spartan", "@expo-google-fonts/merienda-one -> merienda", "@expo-google-fonts/muli -> mulish", "@expo-google-fonts/montserrat-subrayada -> montserrat-underline", "@expo-google-fonts/saira-stencil-one -> saira-stencil", "@expo-google-fonts/coda-caption -> coda", "@expo-google-fonts/bbh-sans-bartle -> bbh-bartle", "@expo-google-fonts/bbh-sans-bogle -> bbh-bogle", "@expo-google-fonts/bbh-sans-hegarty -> bbh-hegarty", "@expo-google-fonts/big-shoulders-text -> big-shoulders", "@expo-google-fonts/big-shoulders-inline-display -> big-shoulders-inline", "@expo-google-fonts/big-shoulders-inline-text -> big-shoulders-inline", "@expo-google-fonts/big-shoulders-stencil-display -> big-shoulders-stencil", "@expo-google-fonts/big-shoulders-stencil-text -> big-shoulders-stencil"]
+title = "Expo packages of retired Google names count toward their successors"
+ruling = "The 20 Expo packages of retired Google names get package rows to the family their name already folds into (data/aliases.csv's rename and build rows), as @expo-google-fonts/fredoka-one has to Fredoka."
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues: rows the approved gate A rules already decide), applying the owner's rulings that retired Google names map to their successors (2026-09-26 and 2026-09-28) and the folds of 2026-09-30. Expo packages derive only from the live Google names, so an old name's package reached no family. A replay of 2026-09-26 with all of this file's rows changes no exact rank and no band; two fonts move a place in the overall and Developers & apps orders."
+
+[claude-npm-icon-packages]
+by = "claude"
+notes = ["@expo-google-fonts/material-icons, -outlined, -round, -sharp, -two-tone and material-symbols-sharp; @fontsource/material-icons-round, -sharp, -two-tone, material-symbols and material-symbols-sharp; @fontsource-variable/material-symbols-sharp: icon", "@expo-google-fonts/noto-color-emoji-compat: icon (emoji, as fonts-noto-color-emoji)", "@expo-google-fonts/font-directory: not_font (Expo's directory of its font packages)"]
+title = "Icon, emoji and directory packages are ineligible"
+ruling = "Ineligible rows: the 12 Material icon and symbol packages and Expo's Noto Color Emoji package (icon), and @expo-google-fonts/font-directory (not_font)."
+reason = "Claude, under the owner's delegation of 2026-09-28 (keys of ineligible families as ineligible rows): Material Icons and Symbols are icon fonts (gate A, 2026-09-26), emoji fonts are rowed as icon (fonts-noto-color-emoji), and font-directory names no typeface (pkg_rules, 2026-09-28)."
+
+[claude-expo-baloo-v1]
+by = "claude"
+notes = ["@expo-google-fonts/baloo-bhai, baloo-bhaijaan, baloo-bhaina, baloo-chettan, baloo-da, baloo-paaji, baloo-tamma, baloo-tammudu, baloo-thambi"]
+title = "Expo packages of the Baloo v1 script versions are non-Latin"
+ruling = "Ineligible rows (non_latin) for the nine Expo packages of the retired Baloo v1 script versions."
+reason = "Claude, under the owner's delegation of 2026-09-28: each is a font for another script, whose successor (Baloo Bhai 2 and the others) the owner keeps out as a script companion (gate L, 2026-09-26 and 2026-09-28)."
+
+[claude-dseg-bundles]
+by = "claude"
+notes = ["@fontsource/dseg7 4.5.4: dseg7-classic, -classic-mini, -modern, -modern-mini, -segg-chan, -segg-chan-mini (bundle 6)", "@fontsource/dseg14 4.5.3: dseg14-classic, -classic-mini, -modern, -modern-mini (bundle 4)", "deb-pkg fonts-dseg: the ten above and dseg-weather (bundle 11; https://packages.debian.org/sid/all/fonts-dseg/filelist)"]
+title = "The DSEG packages are bundles of the DSEG families"
+ruling = "Bundle rows from the packages' file lists: the legacy @fontsource/dseg7 and dseg14 packages and Debian's fonts-dseg credit each DSEG family they ship."
+reason = "Claude, under the owner's delegation of 2026-09-28 and the owner's ruling multi_family_packages (a package that ships several families gets bundle rows from its real file list). The DSEG families fail the Latin gate (segment glyphs), so no rank moves; the rows say where the counts go."
+
+[claude-expo-delisted-unmapped]
+by = "claude"
+notes = ["@expo-google-fonts/baloo, droid-sans-mono, gentium-basic, gentium-book-basic, kantumruy, noto-serif-nyiakeng-puachue-hmong, otomanopee-one"]
+title = "Expo packages of delisted families stay unmapped"
+ruling = "No rows: the seven Expo packages of families Google has delisted stay unmapped."
+reason = "Claude: Expo's frame is Google's live list, so a delisted family is outside it and Expo is left out of its score. A row would make Expo count the family as covered with its legacy package's few downloads, a penalty: in a replay of 2026-09-26, Droid Sans Mono went from overall 33 to 49 (project 273 to 356) on 14 downloads a month."
+
+[expo_no_successor_unlisted]
+value = "unlisted"
+ruling = "@expo-google-fonts/amatica-sc, droid-sans and droid-serif get ineligible rows (unlisted): no catalog source lists Amatica SC, Droid Sans or Droid Serif, and none has a successor of the same design."
+reason = "The owner's ruling in chat with Claude (Claude's recommendation). Amatica SC was Google's Hebrew-extended Amatic SC, retired; Droid Sans and Droid Serif were retired from Google Fonts (Open Sans and Noto are different designs). Their counts stay out, as before, and later sweeps no longer flag them."
