@@ -97,6 +97,23 @@ RANGE_GAP = 256 * 1024
 WHOLE_FILE_SHARE = 0.5  # fetch the rest of the file when the ranges would cover this much
 MAX_TABLES = 1024
 FONT_EXTENSIONS = (".ttf", ".otf", ".woff", ".woff2", ".ttc", ".otc")
+# The words of a file name, camel case split: "SNPro-Regular.otf" is SN, Pro, Regular, otf.
+NAME_WORDS = re.compile(r"[A-Z]+(?=[A-Z][a-z])|[A-Z]?[a-z]+|[A-Z]+|\d+")
+# Words a file name adds to its family's name for a style ("SudoVariable", "Gentium-BoldItalic").
+STYLE_WORDS = frozenset(
+    {
+        "regular", "roman", "normal", "book", "upright", "italic", "oblique", "variable", "var", "vf",
+        "hairline", "thin", "light", "retina", "medium", "bold", "black", "heavy",
+        "extra", "ultra", "semi", "demi",
+        "extralight", "ultralight", "semibold", "demibold", "extrabold", "ultrabold",
+    }
+)  # fmt: skip
+# How near a style word is to the Regular: "C059-Roman.otf" is URW's Regular, and Book or
+# Normal is a family's Regular or a weight lighter than it ("SNPro-Book.otf").
+REGULAR_WORDS = {"regular": 0, "roman": 0, "book": 1, "normal": 1}
+# A release's version in a URL: 3.400 in ".../AwamiNastaliq-3.400.zip", 3.6 in ".../v3.6/sudo.zip",
+# 2.2.0 in ".../v.2.2.0/...". Its parts compare as integers (1.10 after 1.9).
+_VERSION = re.compile(r"(?<![\d.])(?:v\.?)?(\d+(?:\.\d+)+)(?!\d|\.\d)")
 
 Format = Literal["ttf", "otf", "woff", "woff2"]
 FORMATS = frozenset(get_args(Format))
@@ -231,6 +248,86 @@ def split_member(url: str) -> tuple[str, str] | None:
     if not path.endswith(ZIP_EXTENSIONS) or not member.lower().endswith(FONT_EXTENSIONS):
         return None
     return archive, member
+
+
+def file_name(url: str) -> str:
+    """The file's own name: an archive member's, else the URL path's last part, unquoted."""
+    from urllib.parse import unquote, urlsplit
+
+    member = split_member(url)
+    path = member[1] if member else unquote(urlsplit(url).path)
+    return path.rsplit("/", 1)[-1]
+
+
+def _name_words(url: str) -> list[str]:
+    """The words of the file's name, without its extension and any ``[axes]``."""
+    name = file_name(url)
+    if name.lower().endswith(FONT_EXTENSIONS):
+        name = name.rsplit(".", 1)[0]
+    return NAME_WORDS.findall(re.sub(r"\[[^\]]*\]", " ", name))
+
+
+def _is_style(word: str) -> bool:
+    return word.isdigit() or word.casefold() in STYLE_WORDS
+
+
+def _name_match(url: str, family: str) -> tuple[int, list[str]]:
+    """How much of ``family``'s name the file's name carries, and the words after it.
+
+    0: the family's whole name plus style words and version digits ("SudoVariable.ttf"
+    for Sudo), or style words alone ("dist/otf/Regular.otf": its folder names the family);
+    1: a leading part of the family's name plus style words ("Recursive_VF_1.085.ttf" for
+    Recursive Desktop); 2: neither ("SudoUIVariable.ttf"). The words are those after the
+    longest part of the family's name the file's name starts with, else all of them.
+    """
+    from tff_catalog.keys import match_key
+
+    words = _name_words(url)
+    if words and all(_is_style(w) for w in words):
+        return 0, words
+    names = family.split()
+    grades = {match_key(" ".join(names[:j])): 1 for j in range(1, len(names))}
+    grades[match_key(family)] = 0
+    grade, rest = 2, words
+    for n in range(1, len(words) + 1):
+        found = grades.get(match_key("".join(words[:n])))
+        if found is None:
+            continue
+        rest = words[n:]
+        if found < grade and all(_is_style(w) for w in rest):
+            grade = found
+    return grade, rest
+
+
+def name_grade(url: str, family: str) -> int:
+    """0, 1 or 2: how much of ``family``'s name the file's name carries (``_name_match``)."""
+    return _name_match(url, family)[0]
+
+
+def regular_grade(url: str, family: str) -> int:
+    """0 for a file named Regular (or Roman), 1 for one named Book or Normal, else 2; only
+    the words after the family's name count ("TimesNewerRoman-Bold.otf" is 2)."""
+    words = _name_match(url, family)[1]
+    return min((REGULAR_WORDS.get(w.casefold(), 2) for w in words), default=2)
+
+
+def release_version(url: str) -> tuple[int, ...] | None:
+    """The last version number in the URL outside an archive member, else None."""
+    from urllib.parse import unquote, urlsplit
+
+    found = _VERSION.findall(unquote(urlsplit(url.partition("#")[0]).path))
+    return tuple(int(part) for part in found[-1].split(".")) if found else None
+
+
+def file_name_rank(url: str, family: str) -> tuple[int, int, tuple[int, ...]]:
+    """How well a file's own name suits it as its family's file, best lowest: how much of
+    ``family``'s name (its record's) it carries (``name_grade``), then named Regular
+    (``regular_grade``), then the newest release first."""
+    version = release_version(url)
+    newest_first = (0, *(-part for part in (*version, 0, 0, 0, 0)[:4])) if version else (1,)
+    grade, words = _name_match(url, family)
+    regular = min((REGULAR_WORDS.get(w.casefold(), 2) for w in words), default=2)
+    return (grade, regular, newest_first)
 
 
 def is_readable_url(url: str) -> bool:

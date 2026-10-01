@@ -597,6 +597,46 @@ def test_candidates_prefer_hashed_regular_files_and_skip_archives() -> None:
     ]
 
 
+def test_candidates_put_the_file_named_like_the_family_first() -> None:
+    # Sudo's monospace fact comes from its file: SudoVariable.ttf is fixed pitch, its
+    # companion SudoUIVariable.ttf is not, and both are upright "regular" members.
+    zip_url = "https://github.com/jenskutilek/sudo-font/releases/download/v3.6/sudo.zip"
+    recs = [
+        rec(
+            "homebrew_casks",
+            "font-sudo",
+            "Sudo",
+            files=tuple(
+                ref(f"{zip_url}#sudo/{m}") for m in ("SudoUIVariable.ttf", "SudoVariable.ttf")
+            ),
+        )
+    ]
+    assert [r.url.rsplit("/", 1)[1] for r in candidates(recs)] == [
+        "SudoVariable.ttf",
+        "SudoUIVariable.ttf",
+    ]
+
+
+def test_candidates_take_a_static_regular_named_by_style_alone() -> None:
+    # Annotation Mono's archive names its statics by style alone (dist/otf/Regular.otf):
+    # the folder names the family, so the Regular comes before the variable file.
+    zip_url = "https://github.com/o/annotation-mono/releases/download/v0.4/AnnotationMono_v0.4.zip"
+    members = ("dist/otf/Black.otf", "dist/otf/Regular.otf", "dist/variable/AnnotationMono-VF.ttf")
+    recs = [
+        rec(
+            "homebrew_casks",
+            "font-annotation-mono",
+            "Annotation Mono",
+            files=tuple(ref(f"{zip_url}#{m}") for m in members),
+        )
+    ]
+    assert [r.url.split("#")[1] for r in candidates(recs)] == [
+        "dist/otf/Regular.otf",
+        "dist/otf/Black.otf",
+        "dist/variable/AnnotationMono-VF.ttf",
+    ]
+
+
 def test_settled_by_metadata() -> None:
     gf = rec("google_metadata", "X", "X", category="Serif")
     assert settled_by_metadata([gf])  # variable alone never sends us to the files

@@ -59,9 +59,13 @@ Contracts:
   like the family before the others and live ones before the rest (google/fonts
   keeps a renamed family's old folder, such as ``ofl/ekmukta`` beside
   ``ofl/mukta``: only the family's own is what Google serves), as stage
-  "latin" orders them; then for font files the role, and of one role a file
-  named Regular first (Homebrew's casks give every upright weight in an
-  archive the role "regular"); then the URL.
+  "latin" orders them; then for font files the role, then the file's own name
+  (``fontfiles.file_name_rank``: how much of its record's family name it
+  carries, so Sudo's "SudoVariable.ttf" comes before "SudoUIVariable.ttf"; then
+  a file named Regular, since Homebrew's casks and Fontist give every upright
+  weight in an archive the role "regular"; then the newest release, so
+  Fontist's Awami Nastaliq 3.400 comes before 2.000), then the format (an
+  archive member's own), then the URL.
 - **A family passes (level "L3")** when a fetched text matches licenses that
   satisfy its L2 expression (``build/stage/licenses.json``; every matched id
   must be allowed in ``licenses.toml`` with gate LIC's license rulings applied,
@@ -128,7 +132,7 @@ from dataclasses import dataclass, field, replace
 from datetime import date, timedelta
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal, Protocol
-from urllib.parse import unquote, urlsplit
+from urllib.parse import urlsplit
 
 from tff_catalog import jsonio, stageio
 from tff_catalog.keys import match_key
@@ -178,8 +182,6 @@ SOURCE_ORDER = (
 )
 _FILE_ROLES = ("regular", "variable", "other", "italic")
 _FILE_FORMATS = (".ttf", ".otf", ".woff2", ".woff")
-# The words of a file name, camel case split: "SNPro-Regular.otf" is SN, Pro, Regular, otf.
-_NAME_WORDS = re.compile(r"[A-Z]+(?=[A-Z][a-z])|[A-Z]?[a-z]+|[A-Z]+|\d+")
 
 Level = Literal["L3", "failed", "ruling"]
 Reason = Literal["changed", "failed", "research"]
@@ -964,21 +966,17 @@ def _source_rank(source: str) -> tuple[int, str]:
     return (SOURCE_ORDER.index(source) if source in SOURCE_ORDER else len(SOURCE_ORDER), source)
 
 
-def _named_regular(url: str) -> bool:
-    """Whether the file's name (an archive member's own) has the word Regular."""
-    name = unquote(url.rsplit("#", 1)[-1].rsplit("/", 1)[-1])
-    return any(w.casefold() == "regular" for w in _NAME_WORDS.findall(name))
+def _file_rank(ref: FontFileRef, rec: UniverseRecord, other: tuple[bool, bool]) -> tuple[Any, ...]:
+    from tff_catalog.fontfiles import file_name, file_name_rank
 
-
-def _file_rank(ref: FontFileRef, source: str, other: tuple[bool, bool]) -> tuple[Any, ...]:
-    path = urlsplit(ref.url).path.lower()
-    fmt = next((i for i, ext in enumerate(_FILE_FORMATS) if path.endswith(ext)), len(_FILE_FORMATS))
+    name = file_name(ref.url).lower()  # an archive member's own name, not the archive's
+    fmt = next((i for i, ext in enumerate(_FILE_FORMATS) if name.endswith(ext)), len(_FILE_FORMATS))
     return (
         not is_pinned(ref.url),
-        _source_rank(source),
+        _source_rank(rec.source),
         *other,
         _FILE_ROLES.index(ref.role),
-        not _named_regular(ref.url),
+        *file_name_rank(ref.url, rec.family),
         fmt,
         ref.url,
     )
@@ -1062,7 +1060,7 @@ def gather(
                     add_text(fid, url, None, rec.source, 1, off)
             for ref in rec.files:
                 if _is_font_file(ref.url):
-                    rank = _file_rank(ref, rec.source, off)
+                    rank = _file_rank(ref, rec, off)
                     old = files.setdefault(fid, {}).get(ref.url)
                     if old is None or rank < old[0]:
                         files[fid][ref.url] = (rank, ref)

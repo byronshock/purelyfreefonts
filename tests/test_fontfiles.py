@@ -1011,3 +1011,85 @@ def test_a_font_in_a_real_release_zip_is_read_by_range(tmp_path: Path) -> None:
     assert ff.family_name == "Hack"
     assert ff.is_fixed_pitch is True
     assert 0x20AC in ff.codepoints()
+
+
+# --- a file's own name (fontfiles.file_name_rank) --------------------------------------------
+
+ZIP = "https://x.example/releases/download/v3.6/a.zip"
+
+
+@pytest.mark.parametrize(
+    ("url", "family", "grade"),
+    [
+        (f"{ZIP}#sudo/SudoVariable.ttf", "Sudo", 0),
+        (f"{ZIP}#sudo/SudoUIVariable.ttf", "Sudo", 2),
+        (f"{ZIP}#SNPro/SNPro-BlackItalic.otf", "SN Pro", 0),
+        (f"{ZIP}#psudoFont_Liga_Mono_-_Regular.ttf", "psudoFont Liga Mono", 0),
+        (f"{ZIP}#dist/otf/Regular.otf", "Annotation Mono", 0),  # style words only
+        (f"{ZIP}#Recursive_VF_1.085.ttf", "Recursive", 0),  # version digits
+        (f"{ZIP}#Recursive_VF_1.085.ttf", "Recursive Desktop", 1),  # part of the name
+        (f"{ZIP}#RecursiveMonoCslSt-Regular.otf", "Recursive Desktop", 2),
+        (f"{ZIP}#GentiumBook-Regular.ttf", "Gentium Book", 0),
+        (f"{ZIP}#Gentium-Regular.ttf", "Gentium Book", 1),
+        (f"{ZIP}#TimesNewerRoman-Bold.otf", "Times Newer Roman", 0),
+        (f"{ZIP}#heavy_data.ttf", "Heavy Data", 0),
+        (f"{ZIP}#FiraCode-Retina.ttf", "Fira Code", 0),
+        ("https://x.example/ofl/inter/Inter%5Bopsz,wght%5D.ttf", "Inter", 0),
+        (f"{ZIP}#selawk.ttf", "Selawik", 2),
+    ],
+)
+def test_name_grade(url: str, family: str, grade: int) -> None:
+    assert fontfiles.name_grade(url, family) == grade
+
+
+@pytest.mark.parametrize(
+    ("url", "family", "grade"),
+    [
+        (f"{ZIP}#Charter%20210112/Charter/Charter%20Regular.otf", "Charter", 0),
+        (f"{ZIP}#zed-sans-regular.ttf", "Zed Sans", 0),
+        (f"{ZIP}#AboriginalSansREGULAR.ttf", "Aboriginal Sans", 0),
+        ("https://x.example/fonts/RobotoRegular.ttf", "Roboto", 0),
+        (f"{ZIP}#C059-Roman.otf", "C059", 0),
+        (f"{ZIP}#MiriamMonoCLM-Book.ttf", "Miriam Mono CLM", 1),
+        (f"{ZIP}#SourceHanSans-Normal.ttc", "Source Han Sans", 1),
+        (f"{ZIP}#TimesNewerRoman-Bold.otf", "Times Newer Roman", 2),  # the family's Roman
+        ("https://x.example/fonts/Irregular-Bold.ttf", "Irregular", 2),
+        ("https://x.example/Regular/Inter-Bold.ttf", "Inter", 2),  # a folder is not the file
+    ],
+)
+def test_regular_grade(url: str, family: str, grade: int) -> None:
+    assert fontfiles.regular_grade(url, family) == grade
+
+
+@pytest.mark.parametrize(
+    ("url", "version"),
+    [
+        ("https://software.sil.org/downloads/r/awami/AwamiNastaliq-3.400.zip#A-Regular.ttf", (3, 400)),
+        (f"{ZIP}#sudo/Sudo-1.2.ttf", (3, 6)),  # a member's name is not the release's
+        ("https://x.example/releases/download/v.2.2.0/a.zip#A-Regular.ttf", (2, 2, 0)),
+        ("https://x.example/releases/download/v1.10/a.zip#A-Regular.ttf", (1, 10)),
+        ("https://raw.githubusercontent.com/google/fonts/23e54b51ddff/ofl/mukta/Mukta-Regular.ttf", None),
+    ],
+)  # fmt: skip
+def test_release_version(url: str, version: tuple[int, ...] | None) -> None:
+    assert fontfiles.release_version(url) == version
+
+
+def test_file_name_rank_orders_name_then_regular_then_newest() -> None:
+    urls = [
+        "https://x.example/Foo-2.0.zip#Foo-Regular.ttf",
+        "https://x.example/Foo-2.0.zip#FooUI-Regular.ttf",
+        "https://x.example/Foo-1.0.zip#Foo-Regular.ttf",
+        "https://x.example/Foo-2.0.zip#Foo-Bold.ttf",
+        "https://x.example/Foo-2.0.zip#Foo-Book.ttf",
+        "https://x.example/Foo-2.0.zip#otf/Regular.otf",
+    ]
+    ranked = sorted(urls, key=lambda u: fontfiles.file_name_rank(u, "Foo"))
+    assert [u.removeprefix("https://x.example/") for u in ranked] == [
+        "Foo-2.0.zip#Foo-Regular.ttf",
+        "Foo-2.0.zip#otf/Regular.otf",
+        "Foo-1.0.zip#Foo-Regular.ttf",
+        "Foo-2.0.zip#Foo-Book.ttf",
+        "Foo-2.0.zip#Foo-Bold.ttf",
+        "Foo-2.0.zip#FooUI-Regular.ttf",
+    ]
