@@ -1847,9 +1847,9 @@
         },
         "arch": {
           "abstains_in": [
-            "overall",
             "desktop_chosen",
-            "coding"
+            "coding",
+            "overall"
           ],
           "rank_in_source": 5,
           "reason": null,
@@ -2097,8 +2097,8 @@
         },
         "arch": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 5,
           "reason": null,
@@ -2109,8 +2109,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 70,
           "reason": null,
@@ -2613,8 +2613,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 80,
           "reason": null,
@@ -6764,8 +6764,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 72,
           "reason": null,
@@ -7011,8 +7011,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 26,
           "reason": null,
@@ -9712,8 +9712,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 50,
           "reason": null,
@@ -12564,8 +12564,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 103,
           "reason": null,
@@ -15858,9 +15858,9 @@
         },
         "arch": {
           "abstains_in": [
-            "overall",
             "desktop_chosen",
-            "coding"
+            "coding",
+            "overall"
           ],
           "rank_in_source": 22,
           "reason": null,
@@ -17956,8 +17956,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 57,
           "reason": null,
@@ -18907,8 +18907,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 18,
           "reason": null,
@@ -19385,8 +19385,8 @@
         },
         "arch": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 1,
           "reason": null,
@@ -19397,8 +19397,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 7,
           "reason": null,
@@ -20113,8 +20113,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 17,
           "reason": null,
@@ -22326,8 +22326,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 44,
           "reason": null,
@@ -23954,8 +23954,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 48,
           "reason": null,
@@ -24201,8 +24201,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 37,
           "reason": null,
@@ -24448,8 +24448,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 42,
           "reason": null,
@@ -27310,8 +27310,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 90,
           "reason": null,
@@ -27562,8 +27562,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 90,
           "reason": null,
@@ -27810,8 +27810,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 90,
           "reason": null,
@@ -28098,8 +28098,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 50,
           "reason": null,
@@ -30241,8 +30241,8 @@
         },
         "arch": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 14,
           "reason": null,
@@ -30253,8 +30253,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 4,
           "reason": null,
@@ -30558,9 +30558,9 @@
         },
         "arch": {
           "abstains_in": [
-            "overall",
             "desktop_chosen",
-            "coding"
+            "coding",
+            "overall"
           ],
           "rank_in_source": 14,
           "reason": null,
@@ -30571,8 +30571,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 3,
           "reason": null,
@@ -30821,8 +30821,8 @@
         },
         "arch": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 14,
           "reason": null,
@@ -30833,8 +30833,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 4,
           "reason": null,
@@ -33289,8 +33289,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 55,
           "reason": null,
@@ -40200,8 +40200,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 11,
           "reason": null,
@@ -42118,8 +42118,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 19,
           "reason": null,
@@ -42358,8 +42358,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 43,
           "reason": null,
@@ -43281,8 +43281,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 60,
           "reason": null,
@@ -43563,8 +43563,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 60,
           "reason": null,
@@ -45965,9 +45965,9 @@
         },
         "arch": {
           "abstains_in": [
-            "overall",
             "desktop_chosen",
-            "coding"
+            "coding",
+            "overall"
           ],
           "rank_in_source": 2,
           "reason": null,
@@ -45978,8 +45978,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 12,
           "reason": null,
@@ -49238,8 +49238,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 79,
           "reason": null,
@@ -52529,8 +52529,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 45,
           "reason": null,
@@ -57408,8 +57408,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": null,
           "reason": "below_floor",
@@ -59271,8 +59271,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 20,
           "reason": null,
@@ -59518,8 +59518,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 8,
           "reason": null,
@@ -60244,8 +60244,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 77,
           "reason": null,
@@ -62212,9 +62212,9 @@
         },
         "arch": {
           "abstains_in": [
-            "overall",
             "desktop_chosen",
-            "coding"
+            "coding",
+            "overall"
           ],
           "rank_in_source": 7,
           "reason": null,
@@ -62225,8 +62225,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 9,
           "reason": null,
@@ -62471,8 +62471,8 @@
         },
         "arch": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 7,
           "reason": null,
@@ -62483,8 +62483,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 6,
           "reason": null,
@@ -62728,8 +62728,8 @@
         },
         "arch": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 7,
           "reason": null,
@@ -62740,8 +62740,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 9,
           "reason": null,
@@ -65633,8 +65633,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 24,
           "reason": null,
@@ -65869,8 +65869,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 24,
           "reason": null,
@@ -66344,8 +66344,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 40,
           "reason": null,
@@ -66587,8 +66587,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 41,
           "reason": null,
@@ -73170,8 +73170,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 108,
           "reason": null,
@@ -73961,8 +73961,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 84,
           "reason": null,
@@ -77066,8 +77066,8 @@
         },
         "arch": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 10,
           "reason": null,
@@ -77078,8 +77078,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 13,
           "reason": null,
@@ -77331,8 +77331,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 13,
           "reason": null,
@@ -77628,9 +77628,9 @@
         },
         "arch": {
           "abstains_in": [
-            "overall",
             "desktop_chosen",
-            "coding"
+            "coding",
+            "overall"
           ],
           "rank_in_source": 10,
           "reason": null,
@@ -77641,8 +77641,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 1,
           "reason": null,
@@ -77934,8 +77934,8 @@
         },
         "arch": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 10,
           "reason": null,
@@ -77946,8 +77946,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 13,
           "reason": null,
@@ -78201,8 +78201,8 @@
         },
         "arch": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 10,
           "reason": null,
@@ -78213,8 +78213,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 13,
           "reason": null,
@@ -79854,8 +79854,8 @@
         },
         "arch": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 17,
           "reason": null,
@@ -79866,8 +79866,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 21,
           "reason": null,
@@ -88346,8 +88346,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 62,
           "reason": null,
@@ -88598,8 +88598,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 62,
           "reason": null,
@@ -88847,8 +88847,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 62,
           "reason": null,
@@ -89096,8 +89096,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 62,
           "reason": null,
@@ -89349,8 +89349,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 62,
           "reason": null,
@@ -89598,8 +89598,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 62,
           "reason": null,
@@ -90771,8 +90771,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 2,
           "reason": null,
@@ -95026,8 +95026,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 46,
           "reason": null,
@@ -95272,8 +95272,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 46,
           "reason": null,
@@ -96277,8 +96277,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 36,
           "reason": null,
@@ -107542,8 +107542,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 53,
           "reason": null,
@@ -110579,8 +110579,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 27,
           "reason": null,
@@ -110812,8 +110812,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 27,
           "reason": null,
@@ -111045,8 +111045,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 27,
           "reason": null,
@@ -111293,8 +111293,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 27,
           "reason": null,
@@ -111526,8 +111526,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 27,
           "reason": null,
@@ -111764,8 +111764,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 27,
           "reason": null,
@@ -111996,8 +111996,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 27,
           "reason": null,
@@ -112229,8 +112229,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 27,
           "reason": null,
@@ -112462,8 +112462,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 27,
           "reason": null,
@@ -112735,8 +112735,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 50,
           "reason": null,
@@ -113699,8 +113699,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 85,
           "reason": null,
@@ -114218,8 +114218,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 85,
           "reason": null,
@@ -114490,8 +114490,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 85,
           "reason": null,
@@ -114747,8 +114747,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 85,
           "reason": null,
@@ -116596,8 +116596,8 @@
         },
         "debian": {
           "abstains_in": [
-            "overall",
-            "desktop_chosen"
+            "desktop_chosen",
+            "overall"
           ],
           "rank_in_source": 105,
           "reason": null,
@@ -120478,8 +120478,8 @@
     }
   ],
   "run": {
-    "code_commit": "2c4290a10b88842c3a068e0c08b8e8ae37b9d376",
-    "config_sha256": "918896eb0be81d834889325ba8382e8efdd3d5e0137258c8d12d377980893079",
+    "code_commit": "673e5bb8fd8579c56a7e0059c645f758c306087d",
+    "config_sha256": "ddd4cbcffd5e07ddf9cc5040f0f3aa2c8db128337dfc2e8c2da1c28b3bb0577f",
     "date": "2026-09-26",
     "generator": "tff-catalog 0.1.0",
     "method_version": "2026-09-29",
