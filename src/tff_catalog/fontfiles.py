@@ -97,6 +97,22 @@ RANGE_GAP = 256 * 1024
 WHOLE_FILE_SHARE = 0.5  # fetch the rest of the file when the ranges would cover this much
 MAX_TABLES = 1024
 FONT_EXTENSIONS = (".ttf", ".otf", ".woff", ".woff2", ".ttc", ".otc")
+# The words of a file name, camel case split: "SNPro-Regular.otf" is SN, Pro, Regular, otf.
+NAME_WORDS = re.compile(r"[A-Z]+(?=[A-Z][a-z])|[A-Z]?[a-z]+|[A-Z]+|\d+")
+# Words a file name adds to its family's name for a style ("SudoVariable", "Gentium-BoldItalic").
+STYLE_WORDS = frozenset(
+    {
+        "regular", "roman", "normal", "book", "upright", "italic", "oblique", "variable", "var", "vf",
+        "hairline", "thin", "light", "medium", "bold", "black", "heavy",
+        "extra", "ultra", "semi", "demi",
+        "extralight", "ultralight", "semibold", "demibold", "extrabold", "ultrabold",
+    }
+)  # fmt: skip
+# How near a style word is to the Regular: "C059-Roman.otf" is URW's Regular, and Book or
+# Normal is a family's Regular or a weight lighter than it ("SNPro-Book.otf").
+REGULAR_WORDS = {"regular": 0, "roman": 0, "book": 1, "normal": 1}
+# A release's version in a URL: 3.400 in ".../AwamiNastaliq-3.400.zip", 3.6 in ".../v3.6/sudo.zip".
+_VERSION = re.compile(r"(?<![\d.])v?(\d+(?:\.\d+)+)(?!\d|\.\d)")
 
 Format = Literal["ttf", "otf", "woff", "woff2"]
 FORMATS = frozenset(get_args(Format))
@@ -231,6 +247,67 @@ def split_member(url: str) -> tuple[str, str] | None:
     if not path.endswith(ZIP_EXTENSIONS) or not member.lower().endswith(FONT_EXTENSIONS):
         return None
     return archive, member
+
+
+def file_name(url: str) -> str:
+    """The file's own name: an archive member's, else the URL path's last part, unquoted."""
+    from urllib.parse import unquote, urlsplit
+
+    member = split_member(url)
+    path = member[1] if member else unquote(urlsplit(url).path)
+    return path.rsplit("/", 1)[-1]
+
+
+def _name_words(url: str) -> list[str]:
+    """The words of the file's name, without its extension and any ``[axes]``."""
+    name = file_name(url)
+    if name.lower().endswith(FONT_EXTENSIONS):
+        name = name.rsplit(".", 1)[0]
+    return NAME_WORDS.findall(re.sub(r"\[[^\]]*\]", " ", name))
+
+
+def _style_words(url: str, family: str) -> list[str] | None:
+    """The words of the file's name after ``family``'s (its version digits included), when
+    the name starts with the family's; else None."""
+    from tff_catalog.keys import match_key
+
+    words, want = _name_words(url), match_key(family)
+    for n in range(1, len(words) + 1):
+        if match_key("".join(words[:n])) == want:
+            return words[n:]
+    return None
+
+
+def named_like(url: str, family: str) -> bool:
+    """Whether the file's name is ``family`` plus style words and version digits only:
+    "SudoVariable.ttf" is named like Sudo, "SudoUIVariable.ttf" is not."""
+    rest = _style_words(url, family)
+    return rest is not None and all(w.isdigit() or w.casefold() in STYLE_WORDS for w in rest)
+
+
+def regular_grade(url: str, family: str) -> int:
+    """0 for a file named Regular (or Roman), 1 for one named Book or Normal, else 2; only
+    the words after the family's name count ("TimesNewerRoman-Bold.otf" is 2)."""
+    rest = _style_words(url, family)
+    words = _name_words(url) if rest is None else rest
+    return min((REGULAR_WORDS.get(w.casefold(), 2) for w in words), default=2)
+
+
+def release_version(url: str) -> tuple[int, ...] | None:
+    """The last version number in the URL outside an archive member, else None."""
+    from urllib.parse import unquote, urlsplit
+
+    found = _VERSION.findall(unquote(urlsplit(url.partition("#")[0]).path))
+    return tuple(int(part) for part in found[-1].split(".")) if found else None
+
+
+def file_name_rank(url: str, family: str) -> tuple[bool, int, tuple[int, ...]]:
+    """How well a file's own name suits it as its family's file, best lowest: named like
+    ``family`` (its record's name), then named Regular (``regular_grade``), then the
+    newest release first."""
+    version = release_version(url)
+    newest_first = (0, *(-part for part in (*version, 0, 0, 0, 0)[:4])) if version else (1,)
+    return (not named_like(url, family), regular_grade(url, family), newest_first)
 
 
 def is_readable_url(url: str) -> bool:

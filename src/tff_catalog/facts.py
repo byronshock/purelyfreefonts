@@ -434,11 +434,13 @@ def candidates(
     hand_files: Sequence[FontFileRef] = (),
 ) -> list[FontFileRef]:
     """The family's font files, best first: its ``hand_files`` (``config/font-files.toml``),
-    then the records' by known sha256, Regular, Google/Fontsource, then url.
+    then the records' by known sha256, Regular, Google/Fontsource, the file's own name
+    (``fontfiles.file_name_rank``, as stage "verify" orders a source's files: named like
+    its record's family, named Regular, the newest release), then url.
 
     ``readable_only`` keeps only font files and zip members (not archives or pages).
     """
-    refs: dict[str, tuple[tuple[bool, int, int, str], FontFileRef]] = {}
+    refs: dict[str, tuple[tuple[Any, ...], FontFileRef]] = {}
     for r in recs:
         for ref in r.files:
             if readable_only and not fontfiles.is_readable_url(ref.url):
@@ -447,6 +449,7 @@ def candidates(
                 ref.sha256 is None,
                 _ROLE_ORDER.get(ref.role, len(_ROLE_ORDER)),
                 _source_rank(r.source),
+                *fontfiles.file_name_rank(ref.url, r.family),
                 ref.url,
             )
             if ref.url not in refs or order < refs[ref.url][0]:

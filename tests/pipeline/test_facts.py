@@ -597,6 +597,26 @@ def test_candidates_prefer_hashed_regular_files_and_skip_archives() -> None:
     ]
 
 
+def test_candidates_put_the_file_named_like_the_family_first() -> None:
+    # Sudo's monospace fact comes from its file: SudoVariable.ttf is fixed pitch, its
+    # companion SudoUIVariable.ttf is not, and both are upright "regular" members.
+    zip_url = "https://github.com/jenskutilek/sudo-font/releases/download/v3.6/sudo.zip"
+    recs = [
+        rec(
+            "homebrew_casks",
+            "font-sudo",
+            "Sudo",
+            files=tuple(
+                ref(f"{zip_url}#sudo/{m}") for m in ("SudoUIVariable.ttf", "SudoVariable.ttf")
+            ),
+        )
+    ]
+    assert [r.url.rsplit("/", 1)[1] for r in candidates(recs)] == [
+        "SudoVariable.ttf",
+        "SudoUIVariable.ttf",
+    ]
+
+
 def test_settled_by_metadata() -> None:
     gf = rec("google_metadata", "X", "X", category="Serif")
     assert settled_by_metadata([gf])  # variable alone never sends us to the files

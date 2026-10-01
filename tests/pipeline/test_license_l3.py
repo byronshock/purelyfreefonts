@@ -706,21 +706,55 @@ def test_gather_puts_a_file_named_regular_first_among_one_role() -> None:
     ]
 
 
-@pytest.mark.parametrize(
-    ("url", "regular"),
-    [
-        ("https://x.example/a.zip#Charter%20210112/Charter/Charter%20Regular.otf", True),
-        ("https://x.example/a.zip#psudoFont_Liga_Mono_-_Regular.ttf", True),
-        ("https://x.example/a.zip#zed-sans-regular.ttf", True),
-        ("https://x.example/AboriginalSans.zip#AboriginalSansREGULAR.ttf", True),
-        ("https://x.example/fonts/RobotoRegular.ttf", True),
-        ("https://x.example/fonts/Irregular-Bold.ttf", False),
-        ("https://x.example/fonts/Inter%5Bopsz,wght%5D.ttf", False),
-        ("https://x.example/Regular/Inter-Bold.ttf", False),  # a folder's name is not the file's
-    ],
-)
-def test_named_regular(url: str, regular: bool) -> None:
-    assert license_l3._named_regular(url) is regular
+def test_gather_puts_the_file_named_like_the_family_first() -> None:
+    # Sudo's release has the coding font and its UI companion, both "Variable": the one
+    # named like the family is Sudo.
+    key = fam_key("font-sudo", "brew-cask")
+    zip_url = "https://github.com/jenskutilek/sudo-font/releases/download/v3.6/sudo.zip"
+    rec = UniverseRecord(
+        source="homebrew_casks",
+        key=key,
+        family="Sudo",
+        files=tuple(
+            FontFileRef(f"{zip_url}#sudo/{m}") for m in ("SudoUIVariable.ttf", "SudoVariable.ttf")
+        ),
+    )
+    ev = license_l3.gather([rec], {key: "sudo"})["sudo"]
+    assert [f.url.rsplit("/", 1)[1] for f in ev.files] == ["SudoVariable.ttf", "SudoUIVariable.ttf"]
+
+
+def test_gather_puts_the_newest_release_first_and_reads_a_members_format() -> None:
+    # Fontist has two Awami Nastaliq formulas, 2.000 and 3.400, and marks every member of
+    # the newer one "regular"; its archive also holds .woff copies.
+    base = "https://software.sil.org/downloads/r/awami/AwamiNastaliq"
+    old, new = (
+        fam_key("sil/awami_nastaliq", "fontist-formula"),
+        fam_key("sil/awami_nastaliq_3.400", "fontist-formula"),
+    )
+    records: list[Record] = [
+        UniverseRecord(
+            source="fontist",
+            key=old,
+            family="Awami Nastaliq",
+            files=(FontFileRef(f"{base}-2.000.zip#AwamiNastaliq-Regular.ttf"),),
+        ),
+        UniverseRecord(
+            source="fontist",
+            key=new,
+            family="Awami Nastaliq",
+            files=tuple(
+                FontFileRef(f"{base}-3.400.zip#AwamiNastaliq-{m}")
+                for m in ("ExtraBold.ttf", "Regular.woff", "Regular.ttf")
+            ),
+        ),
+    ]
+    ev = license_l3.gather(records, {old: "awami-nastaliq", new: "awami-nastaliq"})
+    assert [f.url.removeprefix(base) for f in ev["awami-nastaliq"].files] == [
+        "-3.400.zip#AwamiNastaliq-Regular.ttf",
+        "-3.400.zip#AwamiNastaliq-Regular.woff",
+        "-2.000.zip#AwamiNastaliq-Regular.ttf",
+        "-3.400.zip#AwamiNastaliq-ExtraBold.ttf",
+    ]
 
 
 def place(order: int) -> Placement:
