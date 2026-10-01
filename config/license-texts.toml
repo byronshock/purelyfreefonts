@@ -271,12 +271,6 @@ texts = ["https://raw.githubusercontent.com/psudo-dev/psudofont-liga-mono/b8ce15
 reason = "The designer's repository at tag v.2.2.0, the release Homebrew installs. Its LICENSE is OFL-1.1."
 
 [[family]]
-family = "sn-pro-font-family"
-name = "SN Pro Font Family"
-texts = ["https://raw.githubusercontent.com/supernotes/sn-pro/4d2c82d3910fd9cc270f60eca679ffdbc0176a2a/OFL.txt"]
-reason = "Supernotes' repository at tag 1.5.0, the release Homebrew installs. Its OFL.txt is OFL-1.1 (SN Pro is drawn from Nunito, also OFL-1.1)."
-
-[[family]]
 family = "sudo"
 name = "Sudo"
 texts = ["https://raw.githubusercontent.com/jenskutilek/sudo-font/37ea6abbd2d4273552717d45687063852b0a6fcd/OFL.txt"]
