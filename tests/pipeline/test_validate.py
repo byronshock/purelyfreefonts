@@ -126,6 +126,26 @@ def test_a_check_that_breaks_fails_and_the_others_still_run(
     assert [str(f) for f in failures] == ["broken: could not run: ZeroDivisionError: oops"]
 
 
+# --- alias targets ----------------------------------------------------------------------------
+
+
+def test_an_alias_row_naming_a_family_that_has_gone_fails(ctx: StageContext) -> None:
+    # A fold that leaves a package row on the folded family's id (the Expo row of Big
+    # Shoulders Display, 2026-09-30) would send the key to the unmatched list.
+    with ctx.paths.aliases_csv.open("a", encoding="utf-8") as fh:
+        fh.write(
+            "@expo-google-fonts/gone,npm,gone-display,package,,hand,2026-09-30,owner:2026-09-30\n"
+        )
+        fh.write(
+            "font-gone,brew-cask,gone-display,distinct,rejected,hand,2026-09-30,owner:2026-09-30\n"
+        )
+    found = checks(ctx)["alias_target"]
+    assert [f.message for f in found] == [
+        "data/aliases.csv row npm:@expo-google-fonts/gone (package) names gone-display, "
+        "which is no family this run: its counts would go unmatched"
+    ]
+
+
 # --- schemas ----------------------------------------------------------------------------------
 
 
