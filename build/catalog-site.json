@@ -62079,9 +62079,9 @@
       "flags": [],
       "font_file": {
         "format": "ttf",
-        "sha256": "d14f40a588b232cac9fb3063c707df93fc10e8d265694fc99fcfafcc8ab7b3b4",
-        "size": 432280,
-        "url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/ekmukta/EkMukta-Regular.ttf"
+        "sha256": "2958e4af564507df2a856164df6f9978dacb03f999a4f34a0c269dc8a4de9688",
+        "size": 432248,
+        "url": "https://raw.githubusercontent.com/google/fonts/23e54b51ddffbc7713c583748e3bd86f62b1fa4a/ofl/mukta/Mukta-Regular.ttf"
       },
       "formats": {
         "static": true,
