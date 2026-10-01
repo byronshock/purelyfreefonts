@@ -164,6 +164,10 @@ Answers to the Milestone 1, Step 0 decisions in [docs/ranking-methodology.md](do
     - Liberation Sans and Serif, preinstalled on CachyOS and Ubuntu.
 
   *(2026-09-29)*
+- **Rulings of 2026-09-30.** Given in chat and recorded in `data/reviews/aliases/2026-09-30.toml`. The owner took Claude's recommendation.
+  - **SN Pro (gate A, `sn_pro_fold`):** Homebrew's `font-sn-pro`, whose cask title is "SN Pro Font Family", counts toward SN Pro as a package row, as `font-geist` counts toward Geist (`duplicates`, 2026-09-28). The cask installs Supernotes' own SN Pro release, whose fonts are named "SN Pro"; only the cask's title made a second family. SN Pro Font Family leaves the catalog, and its own rulings lapse: its gate K link to Supernotes' page (2026-09-29), its category override (gate R round 1) and its L3 research entry.
+
+  *(2026-09-30)*
 
 ## Site (Milestone 2)
 

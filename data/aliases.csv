@@ -3184,6 +3184,7 @@ Sligoil Micro,font-name,sligoil,build,opsz,name_tables,2026-09-28,claude:2026-09
 ttf-smiley-sans-bin,arch-pkg,smiley-sans,package,,distro,2026-09-28,claude:2026-09-28
 fonts-smiley-sans,deb-pkg,smiley-sans,package,,distro,2026-09-28,claude:2026-09-28
 fonts-smiley-sans,deb-src,smiley-sans,package,,distro,2026-09-28,claude:2026-09-28
+font-sn-pro,brew-cask,sn-pro,package,,hand,2026-09-30,owner:2026-09-30
 ttf-sniglet,arch-pkg,sniglet,package,,distro,2026-09-28,claude:2026-09-28
 ttf-sofia-sans,arch-pkg,sofia-sans,bundle,4,hand,2026-09-28,claude:2026-09-28
 ttf-sofia-sans,arch-pkg,sofia-sans-condensed,bundle,4,hand,2026-09-28,claude:2026-09-28

@@ -357,18 +357,22 @@ CATEGORIES_22 = {
 # Later rulings of 2026-09-29: ET Book is a serif (gate LIC, LIC-et-book, which let it in), and
 # FreeFont stays monospace, as FreeMono's file makes it (gate R, freefont_category).
 LATER_CATEGORIES = {"et-book": "serif", "freefont": "monospace"}
+# Families of the 22 that later rulings took out of the universe: SN Pro Font Family folds into
+# SN Pro (gate A, sn_pro_fold, 2026-09-30), whose category is Google's.
+FOLDED = {"sn-pro-font-family"}
 
 
 def test_category_overrides_hold_the_owner_ruling_of_2026_09_29() -> None:
     """categories_22 in data/reviews/review/2026-09-29.toml: every one of the 22 fonts is
-    listed, the nine the owner kept on sans-serif included; and the later rulings."""
+    listed, the nine the owner kept on sans-serif included, less those folded since; and the
+    later rulings."""
     families = load_config(Paths.for_root(ROOT)).category_overrides.families
     by_category: dict[str, set[str]] = {}
     for fid, category in families.items():
         if fid not in LATER_CATEGORIES:
             by_category.setdefault(category, set()).add(fid)
-    assert by_category == CATEGORIES_22
-    assert len(families) == 22 + len(LATER_CATEGORIES)
+    assert by_category == {c: ids - FOLDED for c, ids in CATEGORIES_22.items()}
+    assert len(families) == 22 - len(FOLDED) + len(LATER_CATEGORIES)
     assert {f: families.get(f) for f in LATER_CATEGORIES} == LATER_CATEGORIES
 
 
