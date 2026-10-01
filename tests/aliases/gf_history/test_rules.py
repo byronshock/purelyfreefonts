@@ -18,6 +18,8 @@ from tff_catalog.aliases.miners.gf_history import (
     Tip,
     collapse,
     commit_url,
+    named_blocks,
+    pair_named,
     parse_delist,
     parse_log,
     read_meta,
@@ -208,6 +210,67 @@ def test_a_comment_covers_only_the_entries_under_it() -> None:
     assert parse_delist(text) == [
         Statement((Ref("dir", "ofl/a"),), (Ref("text", "Alpha"),)),
         Statement((Ref("dir", "ofl/b"),), (Ref("text", "Beta"),)),
+    ]
+
+
+BIG_SHOULDERS = """\
+# will be replaced by Gamma
+ofl/gammaold
+
+# Big Shoulders fonts need to be de-listed after the new variable version reached the API
+# New versions:
+# Big Shoulders Stencil https://github.com/google/fonts/pull/9029
+# Big Shoulders https://github.com/google/fonts/pull/9027
+# To delist:
+https://fonts.google.com/specimen/Big+Shoulders+Display
+https://fonts.google.com/specimen/Big+Shoulders+Stencil+Display
+ofl/upsilon # replaced by ofl/upsilonnew
+"""
+
+
+def test_named_blocks_list_every_comment_as_a_possible_successor() -> None:
+    # google/fonts to_delist.txt at 6b16fda1, shortened: the block names its successors
+    # one per comment line. A block that states its successor, and an entry with its own
+    # trailing statement, are parse_delist's.
+    assert named_blocks(BIG_SHOULDERS) == [
+        Statement(
+            (Ref("name", "Big Shoulders Display"), Ref("name", "Big Shoulders Stencil Display")),
+            (
+                Ref(
+                    "text",
+                    "Big Shoulders fonts need to be de-listed after the new variable version reached the API",
+                ),
+                Ref("text", "New versions"),
+                Ref("text", "Big Shoulders Stencil"),
+                Ref("text", "Big Shoulders"),
+                Ref("text", "To delist"),
+            ),
+        )
+    ]
+
+
+def test_pair_named_takes_the_longest_named_family_that_starts_the_old_name() -> None:
+    tip = Tip(
+        {
+            "bigshoulders": Meta("Big Shoulders"),
+            "bigshouldersstencil": Meta("Big Shoulders Stencil"),
+            "bigshouldersinline": Meta("Big Shoulders Inline"),
+        }
+    )
+    names = (
+        Ref("text", "New versions"),  # no family: ignored
+        Ref("text", "Big Shoulders Stencil"),
+        Ref("text", "Big Shoulders"),
+    )
+    olds = ["Big Shoulders Display", "Big Shoulders Stencil Display", "Big Shoulders Inline Text",
+            "Big Shoulders", "Xi Display", None]  # fmt: skip
+    assert pair_named(names, olds, tip) == [
+        "bigshoulders",
+        "bigshouldersstencil",
+        "bigshoulders",  # Big Shoulders Inline is a family, but the block doesn't name it
+        None,  # the successor itself
+        None,  # no named successor starts it
+        None,
     ]
 
 
