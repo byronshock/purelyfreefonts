@@ -104,3 +104,17 @@ recommended = true
 value = "approve_all_five"
 ruling = "Milestone 2 step 2 approves the catalog-site.json fields added since the list was approved on 2026-09-25, for the v1 freeze (Milestone 1 step 20): the nerd group (top-level nerd wording and links.nerd), the app system type (systems[].os \"app\"), a link's note, and each rank entry's score and previous_score. After the freeze a change to any of them needs v2."
 reason = "Shown each field's schema and a real example from the 2026-09-26 catalog, the owner approved all five, Claude's recommendation."
+
+[default_rank_project]
+choice = "a"
+recommended = true
+value = "used_in_projects"
+ruling = "The list opens on the Project rank, \"Used in projects\" (key project), in place of Overall (M2-D1 of 2026-09-25). It is the first rank in the selector, the server-rendered list, the no-script list and the default the page address leaves out. Before the soft launch."
+reason = "The owner's decision of 2026-09-30 to rank the front page by popularity in projects and retire the fused Overall score (method ruling overall_retired)."
+
+[no_tiers_or_ranges]
+choice = "a"
+recommended = true
+value = "tiers_and_ranges_everywhere"
+ruling = "The site shows no tiers and no likely ranges: every rank shows just its place (\"#12\", or its band past 100). The tier letters, the Firm/Fair/Rough legend, the \"likely #8 to #17\" ranges and the methodology page's tier section go, and the site's details data drops them. catalog-site.json v1 keeps its tier and range fields, unshown (q19_ranges_tiers_stand_in, 2026-10-01)."
+reason = "The owner, in chat: \"Tiers are something you came up with, not me. What do we actually use the tiers for?\" and, of the folded details: \"Yuck. Can we take these details out? The site is heavy as it is.\" Asked how much should go, the owner chose \"Tiers and ranges, everywhere\" (Claude's recommendation) over tiers only or the whole per-rank list, then froze the work \"until the methodology is sound\"."

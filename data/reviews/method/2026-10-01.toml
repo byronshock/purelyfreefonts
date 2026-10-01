@@ -1,0 +1,222 @@
+# Owner rulings of 2026-10-01 on the scoring method: the answers to the scoring plan's questions
+# (revision 3, section 9, asked by the lead in eight batches, and Q30 from revision 4). Ruled by the
+# owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md. The owner's words were the option labels,
+# or "accept all" for a batch. The plan stays private: it quotes estimates made from Google Fonts and
+# Fonts Over Time data (T2, T4). None of these is in the code yet; the port lands them.
+
+[q1_model_views]
+choice = "b"
+recommended = true
+value = "project_and_dev_apps_now_desktop_later"
+ruling = "The Project and Developers & apps ranks move to the measurement model: one latent popularity per font, each source a count term with its own noise, bulk baseline, window and exposure, fitted by marginal maximum likelihood, the score being the posterior mean. For them it replaces the ruler and equating (D5), the floors and censored terms, the hand weights, D14's kappa, the confidence draws and the reciprocal-rank cross-check (D1). Desktop, Coding and Rising stay on the engine until desktop's model is designed (q21, q22); meanwhile the desktop rulings that need no model land in the engine (h3_young_casks_not_scaled, b8a, debian_frame and de1, de3, a2, g1-g3), and the rest wait for the desktop model."
+reason = "Claude's recommendation, over every view now with desktop as one factor (which makes most chosen Homebrew's order) or keeping the engine with only the floors repaired. On the 2026-09-26 data the model's Project order agrees with today's at Spearman 0.977 and keeps 91 of the top 100."
+
+[q12_overall_stand_in]
+choice = "a"
+recommended = true
+value = "ranks_overall_repeats_project"
+ruling = "In catalog-site.json v1, each font's ranks.overall repeats its Project entry, so no v2 is needed. This corrects overall_retired (2026-09-30)."
+reason = "Claude's recommendation."
+
+[q13_catalog_membership]
+choice = "a"
+recommended = true
+value = "project_top_500_plus_top_100s"
+ruling = "Without Overall, the catalog is the Project rank's top 500 plus each rank's top 100, and the license research (L3, gate LIC's no-license research) reaches the Project top 700 in place of the overall top 700."
+reason = "Claude's recommendation."
+
+[q4_fot_two_terms]
+choice = "a"
+recommended = true
+value = "startups_and_other_homepages"
+ruling = "Fonts Over Time enters as two terms, startups and the other homepages, which retires D11's startup cap."
+reason = "Claude's recommendation; the owner accepted the batch's recommendations together."
+
+[q5_group_shares_retired]
+choice = "a"
+recommended = true
+value = "retired"
+ruling = "The project group shares (D10 and M9: web 55%, code 30%, apps 15%) and M10's Developers & apps weights retire: each term weighs what its fitted noise says."
+reason = "Claude's recommendation; the owner accepted the batch's recommendations together."
+
+[q6_fot_now]
+choice = "a"
+recommended = true
+value = "include_at_fitted_weight"
+ruling = "Fonts Over Time is included now, at its fitted weight, though only one weekly snapshot exists. This amends D11's phase-in weight and T4's wording \"at the phase-in weight of 0.10\"."
+reason = "Claude's recommendation; the owner accepted the batch's recommendations together."
+
+[q7_age_scaled_bulk_web]
+choice = "a"
+recommended = true
+value = "age_scaled_bulk"
+ruling = "Google views, npm and Expo get an age-scaled bulk: a package's expected bulk is the baseline times the share of a year since it first appeared, at most one; its own counts are never scaled. This extends H4 and A3."
+reason = "Claude's recommendation; the owner accepted the batch's recommendations together."
+
+[q8_a3_group_only]
+choice = "a"
+recommended = true
+value = "nerd_fonts_group_only"
+ruling = "A3 applies to the nerd-fonts group packages only; other Nerd builds get a baseline of their own, not age-scaled. Lands with the desktop model."
+reason = "Claude's recommendation; the owner accepted the batch's recommendations together."
+
+[q10_pulled_in_tag]
+choice = "a"
+recommended = true
+value = "tag_at_half_mostly_pulled_in"
+ruling = "Under the dependency offset (de5), a font is tagged as pulled in when the offset takes at least half of a Linux source's installs, with the reason reworded \"mostly pulled in\". This amends D8's tag rule and the unranked reason no_deliberate_evidence. Lands with the desktop model."
+reason = "Claude's recommendation; the owner accepted the batch's recommendations together."
+
+[q28_offset_subtracted]
+choice = "a"
+recommended = true
+value = "y_minus_d_floored_at_zero"
+ruling = "The dependency offset is subtracted: the term counts max(0, y - d), where d is the top dependent's installs. This amends de5's value (d inside the mean). Lands with the desktop model."
+reason = "Claude's recommendation; the owner accepted the batch's recommendations together."
+
+[q24_almanac_merged_parent]
+choice = "a"
+recommended = true
+value = "interval_0_to_y"
+ruling = "A Web Almanac family whose count merges a parent's counts as the interval [0, y], an upper bound only, in place of parent_merge_factor 0.5 (\"weight halved\")."
+reason = "Claude's recommendation; the owner accepted the batch's recommendations together."
+
+[q17_t4_wording]
+choice = "a"
+recommended = true
+value = "combined_score_is_not_fot_value"
+ruling = "A model score that combines several sources is not a Fonts Over Time value, so publishing it keeps T4. T4's wording is amended to say so."
+reason = "Claude's recommendation."
+
+[q16_weight_used]
+choice = "b"
+recommended = true
+value = "information_share_google_fot_null"
+ruling = "In the model views, a source entry's weight_used is the term's share of the font's posterior expected information, published for every source except Google and Fonts Over Time, whose shares are null."
+reason = "Claude's recommendation."
+
+[q18a_state_observed]
+choice = "b"
+recommended = false
+value = "every_term_observed"
+ruling = "In the model views every term's source_entry.state is \"observed\", the intervals included (the Almanac below its list), with reason null. Desktop sources on the engine keep today's states until desktop moves, so \"censored\" stays in the schema's values."
+reason = "The owner's choice, not Claude's recommendation, which was (a): \"censored\" means an interval, with a new reason such as below_list."
+
+[q18b_z]
+choice = "a"
+recommended = true
+value = "per_term_posterior_mean"
+ruling = "In the model views a source entry's z is the posterior mean of eta from that term alone; Fonts Over Time keeps its rank-based z (T4). Desktop sources on the engine keep the equated z until desktop moves."
+reason = "Claude's recommendation."
+
+[q9_theta_cadence]
+choice = "a"
+recommended = true
+value = "hold_for_a_year"
+ruling = "The model's parameters are held for a year and re-estimated early when the drift flag fires, a source changes, or the year is up. This amends h2's and a1's \"estimated each run\"."
+reason = "Claude's recommendation, over re-estimating monthly: a monthly refit moves scores by sampling noise alone (typically 0.15 at most on the latent scale), which the rising and falling triangles would show as real."
+
+[q20_previous_score_at_switch]
+choice = "a"
+recommended = true
+value = "bootstrap_per_method_version"
+ruling = "A rank's first run under a new method bootstraps like the first run ever: previous_score equals score, so no triangle shows that month. It is keyed on the rank's method_version in run_history. This amends score_previous_bootstrap's \"only then\"."
+reason = "Claude's recommendation."
+
+[q19_ranges_tiers_stand_in]
+choice = "a"
+recommended = true
+value = "deterministic_quantile_ranks"
+ruling = "In the model views a font's likely range is its rank at its own posterior 5% and 95% quantiles among everyone else's posterior means, and its tier follows from the range as today. No random draws. The fields stay in v1 and stay hidden on the site (no_tiers_or_ranges, 2026-09-30)."
+reason = "Claude's recommendation, over 200 or 1,000 posterior draws, or dropping the fields (which needs a v2)."
+
+[q11_display_linear]
+choice = "b"
+recommended = false
+value = "linear_between_fixed_latent_ends"
+ruling = "The shown score is linear between fixed ends on the latent scale: max(1, ceil(100 * clip((eta - lo) / (hi - lo), 0, 1))), in place of 100 * Phi(z) (score_curve, 2026-09-29). The bar stays. The ends are q30_display_ends."
+reason = "The owner's choice, not Claude's recommendation, which was (a): keep 100 * Phi of the new score, which under the model reads as the font's estimated percentile among the tracked fonts. The third option was linear between the tracked fonts' empirical quantiles."
+
+[q30_display_ends]
+choice = "b"
+recommended = true
+value = "lo_0_hi_3"
+ruling = "The linear display's ends are 0 and 3 on the latent scale: 1 is the average tracked font and 100 is three standard deviations above it. The shown score is max(1, ceil(100 * clip(eta / 3, 0, 1))). The ends are site constants held with the model's parameters, so the schema doesn't change. Needed by the first live refresh."
+reason = "Claude's recommendation. Over the Project top 500 on 2026-09-26: no font at 1, 5 at 100, median 33, the top 100's median 70. The other ends offered were 0.25 to 3.25 (median 24), 0.5 to 3.5 (60 fonts at 1, median 16) and the 500th font to the top font (26 at 1, median 17; those ends move with each re-estimate)."
+
+[q14_two_groups]
+choice = "a"
+recommended = true
+value = "two_groups_above_bulk"
+ruling = "The two-group rule stays: a top-100 place needs evidence from two independence groups, where a group gives evidence when one of its terms sits above what bulk alone predicts (for a term with no bulk, a positive count or a listing). This amends D14's meaning of evidence for the model views. Developers & apps can't meet it, so held_marker_dev_apps stays."
+reason = "Claude's recommendation."
+
+[q15_views_meanwhile]
+choice = "a"
+recommended = true
+value = "dev_apps_moves_coding_rising_stay"
+ruling = "Developers & apps moves with Project, as a model of npm, ecosyste.ms and Expo. Coding and Rising stay on today's engine, with GitHub and Nerd Fonts off, until desktop moves. Two methods run side by side meanwhile, each rank on one."
+reason = "Claude's recommendation, over keeping all three on the engine or hiding them. The model agrees with today's Developers & apps at Spearman 0.944 and keeps 96 of its top 100."
+
+[q2_guard_retired]
+choice = "a"
+recommended = true
+value = "retire_keep_pit_flag"
+ruling = "In the model views the outlier guard's down-weighting retires (M1). A term whose leave-one-term-out probability integral transform is below 0.001 or above 0.999 is flagged for review: a font whose sources conflict."
+reason = "Claude's recommendation."
+
+[q3_coverage_mar]
+choice = "a"
+recommended = true
+value = "missing_at_random"
+ruling = "A source that doesn't carry a font says nothing about it (coverage as missing at random), as D1 says."
+reason = "Claude's recommendation: modelling coverage would count \"not packaged\" against a font, which D1 rules out."
+
+[q21_desktop_two_factors]
+choice = "b"
+recommended = true
+value = "two_correlated_factors_weighted"
+ruling = "When desktop moves, it has two correlated factors, macOS-and-developer (Homebrew) and Linux (Arch, Debian), in one view whose score weighs them. The owner sets the weight then (for example, platform shares or equal), in place of D9's source weights."
+reason = "Claude's recommendation, over one factor (most chosen becomes Homebrew's order) or two separate views."
+
+[q22_nerd_factor_later]
+choice = "a"
+recommended = true
+value = "wait_for_nerd_data"
+ruling = "The Nerd channel waits for Nerd Fonts' own data (g3_github_revisit); then a Nerd factor shared by the Nerd terms is added, which Coding weights."
+reason = "Claude's recommendation."
+
+[q23_google_own_traffic]
+choice = "a"
+recommended = true
+value = "leave_to_noise"
+ruling = "Google's own products' traffic (Google Sans, Arimo) is left to the model's noise, while it ranks as it does: Google Sans ranks #71 on Project under the model."
+reason = "Claude's recommendation."
+
+[q25_residual_dependence]
+choice = "a"
+recommended = true
+value = "disclose_and_accept"
+ruling = "The residual dependence between Google views and jsDelivr, ecosyste.ms and Expo, and between the two Fonts Over Time terms, is disclosed in the methodology and accepted. Dropping jsDelivr moves the order by Spearman 0.9902 (98 of the top 100 shared)."
+reason = "Claude's recommendation."
+
+[q26_project_frames]
+choice = "a"
+recommended = true
+value = "check_during_port_flutter_off"
+ruling = "The project sources' frames are checked during the port, by its parity test, and Flutter stays off until it has its own pass."
+reason = "Claude's recommendation; the owner accepted the batch's recommendations together."
+
+[q27_cjk_credit]
+choice = "a"
+recommended = true
+value = "keep_d7"
+ruling = "D7 stays for CJK builds: they count in full toward the original family."
+reason = "Claude's recommendation; the owner accepted the batch's recommendations together."
+
+[q29_jsdelivr_zero]
+choice = "a"
+recommended = true
+value = "zero_hits_not_covered"
+ruling = "A jsDelivr family with no hits is not covered: it has no jsDelivr term until jsDelivr's statistics show hits. Every package collects a bulk of hits, so zero means its statistics haven't started; all 12 zeros on 2026-09-26 were families first published in July or August 2026."
+reason = "Claude's recommendation; the owner accepted the batch's recommendations together."
