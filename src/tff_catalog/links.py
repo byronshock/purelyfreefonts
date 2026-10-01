@@ -737,10 +737,17 @@ def _live_google(recs: Iterable[UniverseRecord]) -> list[UniverseRecord]:
     return live if any(r.source == LIVE_LIST for r in live) else []
 
 
-def _specimen(live: list[UniverseRecord]) -> str:
-    """The specimen page: one a record gives, else built from the Google family name."""
+def _named_otherwise(r: UniverseRecord, family: str) -> bool:
+    """Whether the record names another family than ``family`` (an old Google folder's
+    name, such as "Finlandica" in Finlandica Headline): its links come after the family's own."""
+    return match_key(r.family) != match_key(family)
+
+
+def _specimen(live: list[UniverseRecord], family: str) -> str:
+    """The specimen page: one a record gives (the family's own records first), else built
+    from the Google family name."""
     given = sorted(
-        url
+        (_named_otherwise(r, family), url)
         for r in live
         for role, url in r.urls
         if role == "specimen"
@@ -750,14 +757,23 @@ def _specimen(live: list[UniverseRecord]) -> str:
         and u.path.startswith("/specimen/")
     )
     if given:
-        return given[0]
+        return given[0][1]
     named = sorted(r.key.key for r in live if r.key.ns == "gf-family")
     return specimen_url(named[0] if named else live[0].family)
 
 
-def _google_designer(live: list[UniverseRecord]) -> Link | None:
+def _google_designer(live: list[UniverseRecord], family: str) -> Link | None:
+    """The designer link of a live Google family: the first resolvable link of the first
+    role in ``DESIGNER_ROLES``, the family's own records' before those of records named
+    otherwise (a retired folder's repository), then by URL."""
     for wanted in DESIGNER_ROLES:
-        for url in sorted({url for r in live for role, url in r.urls if role == wanted}):
+        found = {
+            (_named_otherwise(r, family), url)
+            for r in live
+            for role, url in r.urls
+            if role == wanted
+        }
+        for _, url in sorted(found):
             target = resolve(url)
             if isinstance(target, Target):
                 return Link(target.root)
@@ -778,7 +794,9 @@ def choose(fam: Family, recs: Iterable[UniverseRecord], overrides: Mapping[str, 
     recs = list(recs)
     live = _live_google(recs)
     if live:
-        return Links(Link(_specimen(live)), _google_designer(live), "google_specimen")
+        return Links(
+            Link(_specimen(live, fam.family)), _google_designer(live, fam.family), "google_specimen"
+        )
     found, rejected = candidates(recs)
     agreed = [c for c in found if _accepted(c)]
     if not agreed:

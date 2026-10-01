@@ -419,6 +419,30 @@ def test_google_designer_is_the_repository_root_without_a_minisite() -> None:
     assert got.basis == "google_specimen"
 
 
+def test_google_links_come_from_the_familys_own_records_first() -> None:
+    # Finlandica folded into Finlandica Headline (2026-09-30): the old folder's repository
+    # sorts first, but the family's own folder gives the designer link.
+    recs = [
+        rec("google_metadata", "Finlandica Headline"),
+        rec(
+            "google_repo",
+            "Finlandica",
+            ("repository", "https://github.com/HelsinkiTypeStudio/Finlandica"),
+            key="ofl/finlandica",
+        ),
+        rec(
+            "google_repo",
+            "Finlandica Headline",
+            ("repository", "https://github.com/HelsinkiTypeStudio/FinlandicaHeadline"),
+            key="ofl/finlandicaheadline",
+        ),
+    ]
+    family = fam("finlandica-headline", "Finlandica Headline", recs)
+    got = links.choose(family, recs, {})
+    assert got.designer == Link("https://github.com/HelsinkiTypeStudio/FinlandicaHeadline")
+    assert got.primary == Link("https://fonts.google.com/specimen/Finlandica+Headline")
+
+
 def test_a_repo_folder_the_live_list_lacks_has_no_specimen_page() -> None:
     """design-m1 C12: only Google's live list makes a Google family."""
     home = ("homepage", "https://example.org/split/")
