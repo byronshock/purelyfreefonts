@@ -33,6 +33,12 @@ How each check reads the run (``CHECKS``, in order; ``docs/catalog-schema.md``):
   names are in the universe (a synthetic run has none of them); no mapped
   count passes a "distinct" row (``aliases.Blocks``); and no committed id
   changes its ``minted_from`` or loses its name to a new id.
+- ``alias_target``: every ``data/aliases.csv`` row that sends a key or a name to a
+  family (a ``universe.FOLD_RELATIONS`` row, or a bundle row) names a family of the
+  run's universe, dropped ones included. A row whose family has gone (folded into
+  another one, say) would send its key to the unmatched list and drop its counts
+  without a word, so a fold must retarget its rows. A "distinct" row whose family has
+  gone blocks nothing and is no failure.
 - ``higher_count_lower_rank``: among fonts with the same terms (sources and
   weight factors) in a view and no guard event, one whose every value is at
   least another's, and one higher, never scores lower. A font whose Fonts Over
@@ -360,6 +366,20 @@ def check_known_answers(run: Run) -> Iterator[Failure]:
     yield from _ids_kept(run)
 
 
+def check_alias_targets(run: Run) -> Iterator[Failure]:
+    """Every alias row that sends a key or a name to a family names one of the universe's."""
+    from tff_catalog.universe import FOLD_RELATIONS
+
+    families = run.inputs.universe.families
+    for row in run.inputs.aliases:
+        if row.relation in FOLD_RELATIONS | {"bundle"} and row.family_id not in families:
+            yield Failure(
+                "alias_target",
+                f"data/aliases.csv row {row.ns}:{row.alias} ({row.relation}) names "
+                f"{row.family_id}, which is no family this run: its counts would go unmatched",
+            )
+
+
 def check_monotone(run: Run) -> Iterator[Failure]:
     """A font with every value at least another's, and one higher, never scores lower.
 
@@ -600,6 +620,7 @@ CHECKS: tuple[tuple[str, Check], ...] = (
     ("license_queue", check_license_queue),
     ("rerun_differs", check_rerun),
     ("known_answer", check_known_answers),
+    ("alias_target", check_alias_targets),
     ("higher_count_lower_rank", check_monotone),
     ("desktop_views_differ", check_desktop_views),
     ("abstention_leak", check_abstention_leak),
