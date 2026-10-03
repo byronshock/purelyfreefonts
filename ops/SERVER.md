@@ -147,7 +147,7 @@ Each also gets items 20 and 21's dashboard checks.
   - [x] Claude: applied the settings above and read them back.
   - [x] Claude: added no-mail records to each: a null MX `0 .`, `v=spf1 -all`, and DMARC `p=reject`.
   - [x] Claude: added an edge 301 to `concat("https://purelyfreefonts.com", http.request.uri.path)`, keeping the query string. The .org ruleset is `056a456d0bf84307914493feb3b1048e` (rule `f8ff396e1e684e16ae1591a50778e09b`), and the .net ruleset is `493bc727bf354fdea2f2ea6d24d4bf9c` (rule `c027aacbeeee4c568e061eda8a4cd071`). Both stay inactive until the placeholders exist.
-  - [ ] Byron: on both zones, the bot settings and Web Analytics checks of item 28.
+  - [x] Byron: on both zones, the bot settings and Web Analytics checks of item 28. *(2026-10-02: Web Analytics RUM disabled; Bot Fight Mode, AI Labyrinth and Bot Preference Sync off.)*
   - [ ] Claude, at cutover: the proxied placeholders for `@` and `www`, then the outside check.
 - [ ] 31. **Cutover** (`docs/milestone-2.md` step 13b): Caddy serves purelyfreefonts.com, and `www.purelyfreefonts.com`, trulyfreefonts.com, .org, .net and their `www.` hosts 301 to `https://purelyfreefonts.com{uri}`. `staging.trulyfreefonts.com` 301s to `https://staging.purelyfreefonts.com{uri}`.
 
