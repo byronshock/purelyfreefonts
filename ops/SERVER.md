@@ -10,7 +10,7 @@ How the Contabo VPS and the Cloudflare zones are set up: three from 2026-09-25, 
 | IPv4 / IPv6 | in `ops/SERVER.local.md` (not in git) |
 | SSH | `ssh tff` (user `byron`, key `~/.ssh/id_ed25519`, passwordless sudo) |
 | Site root | `/srv/trulyfreefonts/public`, a root-owned symlink to `prod/current`, which points to one release in `prod/releases/<commit>/` (since 2026-09-30; layout in [ops/deploy/README.md](deploy/README.md)) |
-| Test site | `staging.trulyfreefonts.com` (proxied DNS; `X-Robots-Tag: noindex, nofollow`), served from `/srv/trulyfreefonts/staging/current` |
+| Test site | `staging.purelyfreefonts.com` since 2026-10-02 (`staging.trulyfreefonts.com` 301s to it; proxied DNS; `X-Robots-Tag: noindex, nofollow`), served from `/srv/trulyfreefonts/staging/current` |
 | Deploy users | `deploy` and `deploy-staging` (stage A of [ops/deploy/README.md](deploy/README.md), 2026-09-30); they run only `/usr/local/sbin/tff-receive` |
 | Web server config | [ops/Caddyfile](Caddyfile) → `/etc/caddy/Caddyfile`, which imports [ops/caddy/site.caddy](caddy/site.caddy) → `/etc/caddy/site.caddy` (the site's headers) and other sites' snippets from `/etc/caddy/sites/*.caddy` |
 | Access log | `/var/log/caddy/access.log`: IPs masked to /16 (IPv4) and /32 (IPv6), IP headers and port dropped; from item 25, also `Referer` and `User-Agent` (owner ruling of 2026-09-26), `Cookie` and the location headers finer than the country; 14 days kept by logrotate ([ops/logrotate-caddy](logrotate-caddy) → `/etc/logrotate.d/caddy-trulyfreefonts`) |
@@ -25,7 +25,7 @@ How the Contabo VPS and the Cloudflare zones are set up: three from 2026-09-25, 
 - the test site: `ops/deploy.sh staging` (builds HEAD in a temporary worktree, runs the site tests, uploads, switches, then the live test);
 - production: `ops/deploy.sh production --commit <sha on origin/main>` (it refuses until Caddy header phase B);
 - **rollback**, one command: `ops/deploy.sh rollback production` (or `staging`; add `--hold` to stop the next deploy, then `ops/deploy.sh unhold production`);
-- what is live: `ops/deploy.sh status production`, or `curl -s https://trulyfreefonts.com/version.txt`.
+- what is live: `ops/deploy.sh status production`, or `curl -s https://purelyfreefonts.com/version.txt`.
 
 Details, the release layout and the Actions deploys are in [ops/deploy/README.md](deploy/README.md).
 
@@ -115,7 +115,7 @@ The owner's rulings of 2026-10-02 (AUTHORITY.md, **Name and domain**): the site 
 - minimum TLS 1.2.
 
 Each also gets items 20 and 21's dashboard checks.
-- [ ] 28. **truelyfreefonts.com**, a misspelling a staging tester typed. Cloudflare redirects it at the edge, with no origin.
+- [x] 28. **truelyfreefonts.com**, a misspelling a staging tester typed. Cloudflare redirects it at the edge, with no origin.
   - [x] Byron: registered it, and added it to the token's zone resources, with **Zone · Single Redirect · Edit** for the redirect rules.
   - [x] Claude: applied the settings above and read them back.
   - [x] Claude: set up the edge redirect:
@@ -127,8 +127,8 @@ Each also gets items 20 and 21's dashboard checks.
     - Bot Fight Mode, AI Labyrinth and Bot Preference Sync are off.
     - The AI bot policies (Search, Agent, Training) are left at Allow.
   - [x] Claude: checked from the US, resolving through 1.1.1.1, on 2026-10-02. Twenty requests over http and https, with and without `www`, each gave one 301 to the same path and query. None carried `set-cookie`, `nel`, `report-to` or a CSP report header, and no body carried a script. `/robots.txt` 301s too.
-  - [ ] At cutover: change the target to `https://purelyfreefonts.com`.
-- [ ] 29. **purelyfreefonts.com**, the new canonical domain.
+  - [x] At cutover: change the target to `https://purelyfreefonts.com`. *(2026-10-02: the rule is now `dea2dd47a6fe41c7a72da9d806f92d31` in the same ruleset, and sends a 301 to `concat("https://purelyfreefonts.com", http.request.uri.path)`.)*
+- [x] 29. **purelyfreefonts.com**, the new canonical domain.
   - [x] Byron: registered it, added it to the token, turned on Email Routing for admin@ → Gmail (a test message arrived), and turned the bot settings off.
   - [x] Claude: applied the settings above and read them back. The universal edge certificate is active.
   - [x] Claude: added the `/assets/` cache rule as item 23 (ruleset `076d416701d74949b8b3b28f29fc7c37`, rule `d41e3b772ff941068d98620a32db3e88`) and DMARC `p=reject`.
@@ -139,28 +139,28 @@ Each also gets items 20 and 21's dashboard checks.
     - the key matches the certificate, and Caddy can read it.
 
     The old certificate stays, for the redirects.
-  - [ ] Claude: proxied A and AAAA records for `@`, `www` and `staging`, pointing at the origin (never DNS-only).
-  - [ ] Claude: the Caddy blocks for `purelyfreefonts.com` and `staging.purelyfreefonts.com` (snippet `origin_tls_purely`), installed with the Caddyfile's deploy line.
-  - [ ] Byron: Web Analytics RUM disabled, once the zone is proxied.
-- [ ] 30. **purelyfreefonts.org and purelyfreefonts.net**, redirected at the edge like item 28.
+  - [x] Claude: proxied A and AAAA records for `@`, `www` and `staging`, pointing at the origin (never DNS-only). *(2026-10-02: copied from trulyfreefonts.com's own records; all three answer through Cloudflare.)*
+  - [x] Claude: the Caddy blocks for `purelyfreefonts.com` and `staging.purelyfreefonts.com` (snippet `origin_tls_purely`), installed with the Caddyfile's deploy line. *(2026-10-02, from #53's branch, after CI's caddy job passed. The old hosts behave as before.)*
+  - [x] Byron: Web Analytics RUM disabled, once the zone is proxied. *(2026-10-02)*
+- [x] 30. **purelyfreefonts.org and purelyfreefonts.net**, redirected at the edge like item 28.
   - [x] Byron: registered both and added them to the token.
   - [x] Claude: applied the settings above and read them back.
   - [x] Claude: added no-mail records to each: a null MX `0 .`, `v=spf1 -all`, and DMARC `p=reject`.
   - [x] Claude: added an edge 301 to `concat("https://purelyfreefonts.com", http.request.uri.path)`, keeping the query string. The .org ruleset is `056a456d0bf84307914493feb3b1048e` (rule `f8ff396e1e684e16ae1591a50778e09b`), and the .net ruleset is `493bc727bf354fdea2f2ea6d24d4bf9c` (rule `c027aacbeeee4c568e061eda8a4cd071`). Both stay inactive until the placeholders exist.
   - [x] Byron: on both zones, the bot settings and Web Analytics checks of item 28. *(2026-10-02: Web Analytics RUM disabled; Bot Fight Mode, AI Labyrinth and Bot Preference Sync off.)*
-  - [ ] Claude, at cutover: the proxied placeholders for `@` and `www`, then the outside check.
-- [ ] 31. **Cutover** (`docs/milestone-2.md` step 13b): Caddy serves purelyfreefonts.com, and `www.purelyfreefonts.com`, trulyfreefonts.com, .org, .net and their `www.` hosts 301 to `https://purelyfreefonts.com{uri}`. `staging.trulyfreefonts.com` 301s to `https://staging.purelyfreefonts.com{uri}`.
+  - [x] Claude, at cutover: the proxied placeholders for `@` and `www`, then the outside check. *(2026-10-02)*
+- [x] 31. **Cutover** (`docs/milestone-2.md` step 13b): Caddy serves purelyfreefonts.com, and `www.purelyfreefonts.com`, trulyfreefonts.com, .org, .net and their `www.` hosts 301 to `https://purelyfreefonts.com{uri}`. `staging.trulyfreefonts.com` 301s to `https://staging.purelyfreefonts.com{uri}`. *(2026-10-02: installed from #53's 465b470 after CI's caddy job passed. A renamed stub (release 723f835) serves production on both domains. `tests/live --check-redirects` passes on both new hosts: every old name over https takes one 301 to the same path and query, and over http ends there.)*
 
 ## Verification
 - `ssh tff sudo -n true` works; `ssh root@<IP>` and `ssh -o PubkeyAuthentication=no tff` are refused.
 - `ssh tff 'sudo ufw status verbose; systemctl is-active caddy fail2ban unattended-upgrades'` is all active.
-- `dig +short trulyfreefonts.com` returns Cloudflare IPs.
-- `curl -sI https://trulyfreefonts.com` → 200, `server: cloudflare`. `www.`, `.org` and `.net` URLs → 301 to the same path on `https://trulyfreefonts.com`.
+- `dig +short purelyfreefonts.com` returns Cloudflare IPs.
+- `curl -sI https://purelyfreefonts.com` → 200, `server: cloudflare`. Every old name → one 301 to the same path and query on `https://purelyfreefonts.com` (`staging.trulyfreefonts.com` → `https://staging.purelyfreefonts.com`): `uv run --group browser pytest tests/live/test_redirects.py --base-url https://purelyfreefonts.com --check-redirects`, and again with `--base-url https://staging.purelyfreefonts.com`.
 - SSL mode is `strict` on all 3 zones.
-- `curl -s https://trulyfreefonts.com/robots.txt | diff - public/robots.txt` prints nothing: no Cloudflare text.
-- `curl -sI https://trulyfreefonts.com` has no `nel` or `report-to` header.
-- `ops/cf.sh GET /zones/<id>/rulesets/phases/http_request_cache_settings/entrypoint` on the `.com` zone shows the one `/assets/` rule, enabled. `curl -sI https://trulyfreefonts.com/` shows `cf-cache-status: DYNAMIC` (HTML is never edge-cached); once the site is live, a second request for a hashed `/assets/` file shows `cf-cache-status: HIT`.
+- `curl -s https://purelyfreefonts.com/robots.txt | diff - public/robots.txt` prints nothing: no Cloudflare text.
+- `curl -sI https://purelyfreefonts.com` has no `nel` or `report-to` header.
+- `ops/cf.sh GET /zones/<id>/rulesets/phases/http_request_cache_settings/entrypoint` on the purelyfreefonts.com zone (and the old `.com` zone) shows the one `/assets/` rule, enabled. `curl -sI https://purelyfreefonts.com/` shows `cf-cache-status: DYNAMIC` (HTML is never edge-cached); once the site is live, a second request for a hashed `/assets/` file shows `cf-cache-status: HIT`.
 - On each zone, `ops/cf.sh GET /zones/<id>/settings/<name>` gives `email_obfuscation` off, `rocket_loader` off, `always_online` off and `browser_cache_ttl` 0.
-- Injection checks must send a browser's `Accept: text/html` header. Plain `curl` sends `Accept: */*`, and Cloudflare injects nothing into that response, so it misses the beacon. `curl -s -H 'Accept: text/html' https://trulyfreefonts.com/ | grep -c -E 'cloudflareinsights|data-cf-beacon|/cdn-cgi/'` gives 0, and the same request with `-D - -o /dev/null` shows no `set-cookie`. First confirm that `curl -s https://trulyfreefonts.com/cdn-cgi/trace` shows `loc=US`: the default Web Analytics setting skips visitors in the EU, EEA, UK and Switzerland, so a clean result from there proves nothing.
+- Injection checks must send a browser's `Accept: text/html` header. Plain `curl` sends `Accept: */*`, and Cloudflare injects nothing into that response, so it misses the beacon. `curl -s -H 'Accept: text/html' https://purelyfreefonts.com/ | grep -c -E 'cloudflareinsights|data-cf-beacon|/cdn-cgi/'` gives 0, and the same request with `-D - -o /dev/null` shows no `set-cookie`. First confirm that `curl -s https://purelyfreefonts.com/cdn-cgi/trace` shows `loc=US`: the default Web Analytics setting skips visitors in the EU, EEA, UK and Switzerland, so a clean result from there proves nothing.
 - `ssh tff 'sudo tail -1 /var/log/caddy/access.log'` shows a masked `client_ip` (ending `.0.0` or `::`), no `remote_port`, and no `Cf-Connecting-Ip` or `X-Forwarded-For` header; once item 25 is deployed, also no `Referer`, `User-Agent` or `Cookie` header, and no Cloudflare location header but `Cf-Ipcountry`. `sudo logrotate --debug /etc/logrotate.d/caddy-trulyfreefonts` reports no errors.
-- **truelyfreefonts.com** (item 28): resolve through 1.1.1.1 and pin curl to it, since a local resolver may still cache the name as missing. Then `curl -s -D - -o /dev/null -H 'Accept: text/html' 'https://truelyfreefonts.com/a/b?c=1'` gives `301` and `location: https://trulyfreefonts.com/a/b?c=1` (`https://purelyfreefonts.com/…` after cutover), with no `set-cookie`, `nel` or `report-to`. Check the same for `www.` and over `http://`.
+- **truelyfreefonts.com** (item 28): resolve through 1.1.1.1 and pin curl to it, since a local resolver may still cache the name as missing. Then `curl -s -D - -o /dev/null -H 'Accept: text/html' 'https://truelyfreefonts.com/a/b?c=1'` gives `301` and `location: https://purelyfreefonts.com/a/b?c=1`, with no `set-cookie`, `nel` or `report-to`. Check the same for `www.` and over `http://`.

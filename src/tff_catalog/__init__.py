@@ -1,4 +1,4 @@
-"""tff_catalog: the pipeline that builds the ranked catalog of truly free Latin fonts."""
+"""tff_catalog: the pipeline that builds the ranked catalog of purely free Latin fonts."""
 
 __version__ = "0.1.0"
 

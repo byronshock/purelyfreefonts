@@ -141,7 +141,7 @@ def sha(data: bytes) -> str:
 
 def test_user_agent_names_the_project_not_a_person() -> None:
     assert (
-        f"trulyfreefonts-catalog/{__version__} (+https://github.com/byronshock/trulyfreefonts)"
+        f"purelyfreefonts-catalog/{__version__} (+https://github.com/byronshock/purelyfreefonts)"
     ) == USER_AGENT
     assert "@" not in USER_AGENT
 

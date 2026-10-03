@@ -458,16 +458,19 @@ jobs:
           echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
           echo "TFF_CADDY_BIN=$RUNNER_TEMP/bin/caddy" >> "$GITHUB_ENV"
       # The same check as the deploy line at the top of ops/Caddyfile, with stand-ins for the
-      # server's files: a self-signed origin certificate and a Cloudflare ranges snippet.
+      # server's files: a self-signed certificate in place of both origin certificates
+      # (origin.pem and purely.pem) and a Cloudflare ranges snippet.
       - name: Validate ops/Caddyfile with ops/caddy/site.caddy, as on the server
         if: steps.tests.outputs.present == 'true'
         run: |
           openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -nodes -days 2 \
-            -subj /CN=trulyfreefonts.com \
-            -addext 'subjectAltName=DNS:trulyfreefonts.com,DNS:*.trulyfreefonts.com' \
+            -subj /CN=purelyfreefonts.com \
+            -addext 'subjectAltName=DNS:purelyfreefonts.com,DNS:*.purelyfreefonts.com,DNS:trulyfreefonts.com,DNS:*.trulyfreefonts.com' \
             -keyout "$RUNNER_TEMP/origin.key" -out "$RUNNER_TEMP/origin.pem" 2> /dev/null
           sudo install -d -m 755 /etc/caddy/certs
           sudo install -m 644 "$RUNNER_TEMP/origin.pem" "$RUNNER_TEMP/origin.key" /etc/caddy/certs/
+          sudo install -m 644 "$RUNNER_TEMP/origin.pem" /etc/caddy/certs/purely.pem
+          sudo install -m 644 "$RUNNER_TEMP/origin.key" /etc/caddy/certs/purely.key
           echo 'trusted_proxies static 173.245.48.0/20 2400:cb00::/32' \
             | sudo tee /etc/caddy/cloudflare-ips.caddy > /dev/null
           sudo install -d -m 755 -o "$(id -u)" /var/log/caddy

@@ -20,7 +20,7 @@ What this license covers
   beside a NOTICE or LICENSE file (such as the Apache-2.0 glyph sets in
   data/glyphsets/).
 - The blog: the text and images of the posts in site/content/blog/, published
-  at https://trulyfreefonts.com/blog/ (decision M2-D12 in AUTHORITY.md).
+  at https://purelyfreefonts.com/blog/ (decision M2-D12 in AUTHORITY.md).
 
 It does not cover:
 
@@ -48,7 +48,7 @@ Under these terms:
 
 - Attribution: give appropriate credit, provide a link to the license, and
   indicate if changes were made. Suggested credit: "Catalog data from
-  trulyfreefonts.com (https://github.com/byronshock/trulyfreefonts),
+  purelyfreefonts.com (https://github.com/byronshock/purelyfreefonts),
   CC BY-SA 4.0".
 - ShareAlike: if you remix, transform or build upon the material, you must
   distribute your contributions under the same license as the original.

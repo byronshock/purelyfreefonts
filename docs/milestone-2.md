@@ -1,6 +1,6 @@
 # Milestone 2 checklist: the filterable list goes live
 
-Milestone 2 replaces the stub on trulyfreefonts.com with Milestone 1's ranked, filterable list, plus methodology, privacy and about pages and a tip link, and starts usability testing. Comparing the list with a visitor's own fonts waits for Milestone 3. Settled decisions go in [AUTHORITY.md](../AUTHORITY.md).
+Milestone 2 replaces the stub on purelyfreefonts.com with Milestone 1's ranked, filterable list, plus methodology, privacy and about pages and a tip link, and starts usability testing. Comparing the list with a visitor's own fonts waits for Milestone 3. Settled decisions go in [AUTHORITY.md](../AUTHORITY.md).
 
 **How to read each step:**
 
@@ -12,7 +12,7 @@ Milestone 2 replaces the stub on trulyfreefonts.com with Milestone 1's ranked, f
 Tick each item as soon as it is done and verified. If an item is only partly done, leave it unticked and note what's left.
 
 **Milestone 2 is done when:**
-- trulyfreefonts.com serves the filterable list from the latest merged `catalog-site.json`, and the stub is gone;
+- purelyfreefonts.com serves the filterable list from the latest merged `catalog-site.json`, and the stub is gone;
 - every font shows its linked license, official download link, ranks with tiers, per-source ranks and tags;
 - every listed font is redistributable, as Rule 3 says since 2026-09-30, and no font needs a filter for it;
 - the methodology, privacy and about pages are live, the blog builds and deploys with the site (M2-D12), and the tip link passes the checks in [ops/DONATIONS.md](../ops/DONATIONS.md);
@@ -168,7 +168,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - [x] Network Error Logging off on all three zones, and the access log per M2-D9 (done 2026-09-25; [ops/SERVER.md](../ops/SERVER.md) section F; the later log rulings, of 2026-09-26 and 2026-09-28, deploy with SERVER.md item 25). The live test below and step 14's SERVER.md checks re-verify them.
 - [x] A Playwright test (Chromium, Firefox) loads every page, applies filters, opens details and scrolls every specimen into view, failing on any request to another site, cookie, browser-storage write or CSP violation. It runs in CI and after each deploy on the live site, where it also checks headers (CSP present; no `set-cookie`, `nel` or `report-to`) and that the HTML has no `/cdn-cgi/` path. If M3-D13 (browser storage) stores anything, Milestone 3 turns the storage check into a key allowlist.
 
-**Done when:** the test passes through Cloudflare on the test site (or live, under M2-D7 (b)), and the Network tab in Firefox and Chrome shows only trulyfreefonts.com.
+**Done when:** the test passes through Cloudflare on the test site (or live, under M2-D7 (b)), and the Network tab in Firefox and Chrome shows only purelyfreefonts.com.
 
 **Parallel:** the Cloudflare items can run alongside everything else.
 
@@ -192,7 +192,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - GitHub environments `production` (`main` only) and `staging` holding the key, pinned host key and server address as secrets;
   - a workflow on each push to `main`, or dispatched with a commit to roll back: build → tests → upload → switch → live test, with actions pinned by SHA, `contents: read`, one deploy at a time, and an issue on failure;
   - tests that the key can't open a shell, read other files or write outside `releases/`.
-- [ ] Under M2-D7 (a), `staging.trulyfreefonts.com`: a proxied DNS record (the origin certificate covers it); a Caddy block rooted at `/srv/trulyfreefonts/staging/current` (not `staging/`, which also holds `history.log` and the release manifests) with the same headers plus `X-Robots-Tag: noindex`; deployed from the `staging` branch by a key that writes only there. *(Up since 2026-09-30: proxied DNS, the Caddy block live with `noindex`, and a first deploy from the laptop, f6e84b3, whose live test passed through Cloudflare. Left: the `staging` branch, environment and key for Actions deploys, after stage B.)*
+- [ ] Under M2-D7 (a), `staging.purelyfreefonts.com` (`staging.trulyfreefonts.com` until the rename of 2026-10-02, step 13b; the old host then 301s to it): a proxied DNS record (the origin certificate covers it); a Caddy block rooted at `/srv/trulyfreefonts/staging/current` (not `staging/`, which also holds `history.log` and the release manifests) with the same headers plus `X-Robots-Tag: noindex`; deployed from the `staging` branch by a key that writes only there. *(Up on the old host since 2026-09-30: proxied DNS, the Caddy block live with `noindex`, and a first deploy from the laptop, f6e84b3, whose live test passed through Cloudflare. Left: the new host (step 13b), and the `staging` branch, environment and key for Actions deploys, after stage B.)*
 - [x] Caddyfile changes still use the checked line at the top of that file, never Actions.
 - [x] [ops/SERVER.md](../ops/SERVER.md) gets a deploy, rollback and test-site runbook in place of the rsync line. *(2026-09-30.)*
 
@@ -233,35 +233,35 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 
 ### Step 13b: Rename to Purely Free Fonts
 **Who:** Claude, guiding the owner; the owner does the dashboard, registrar, GitHub, Stripe and Ko-fi steps. **Depends on:** the owner's rulings of 2026-10-02 (AUTHORITY.md, **Name and domain**). The method hold and the soft-launch hold stand, so production keeps serving the stub, renamed, and the catalog isn't rebuilt.
-- [ ] **New zones** (`ops/SERVER.md` section K): purelyfreefonts.com, .org and .net, set up like the other zones.
+- [x] **New zones** (`ops/SERVER.md` section K): purelyfreefonts.com, .org and .net, set up like the other zones.
   - [x] The owner registers the three domains, adds them to the API token, turns on Email Routing for admin@purelyfreefonts.com and sets the new zone's bot settings. *(2026-10-02)*
   - [x] Claude applies the zone settings and reads them back. Also: the `/assets/` cache rule and DMARC on .com; the no-mail records and the edge 301 rules on .org and .net (inactive until cutover); and the Origin CA certificate for purelyfreefonts.com and `*.purelyfreefonts.com`, installed on the server. *(2026-10-02)*
-- [ ] **GitHub:**
+- [x] **GitHub:**
   - [x] The owner renames the repository `byronshock/purelyfreefonts`. *(2026-10-02)*
   - [x] Claude updates its description. *(2026-10-02)*
-  - [ ] The homepage is set at cutover.
+  - [x] The homepage is set at cutover. *(2026-10-02: https://purelyfreefonts.com)*
 - [ ] **The new name in the code,** on a branch deployed only to the test site:
-  - [ ] the site's name, address, contact address and mail subject (each constant has two copies; change both);
-  - [ ] the page text: titles, descriptions and the heading "The most popular purely free fonts"; the 404, about and privacy pages; the methodology credit line; the blog and feed titles; `robots.txt`;
-  - [ ] the wordmark, redrawn in League Gothic (header `<img>` 229×48), and the share card, redrawn;
-  - [ ] `site/CONTRACT.md`;
-  - [ ] the issue forms, `LICENSE-DATA`, the README, `pyproject.toml` and the glyph-set notice;
-  - [ ] the current docs and the runbooks' public URLs;
-  - [ ] the user agents and the repository references, including the refresh watchdog's;
-  - [ ] the deploy URLs in `ops/deploy.sh` and `deploy.yml`, and CI's stand-in certificate;
-  - [ ] Caddy: site blocks for purelyfreefonts.com and `staging.purelyfreefonts.com`, with the new certificate;
-  - [ ] the tests, plus a live check that every old host 301s in one hop;
-  - [ ] one line in `CLAUDE.md`;
+  - [x] the site's name, address, contact address and mail subject (each constant has two copies; change both);
+  - [x] the page text: titles, descriptions and the heading "The most popular purely free fonts"; the 404, about and privacy pages; the methodology credit line; the blog and feed titles; `robots.txt`;
+  - [x] the wordmark, redrawn in League Gothic (header `<img>` 229×48), and the share card, redrawn;
+  - [x] `site/CONTRACT.md`;
+  - [x] the issue forms, `LICENSE-DATA`, the README, `pyproject.toml` and the glyph-set notice;
+  - [x] the current docs and the runbooks' public URLs; *(`ops/SERVER.md`'s at the cutover)*
+  - [x] the user agents and the repository references, including the refresh watchdog's;
+  - [x] the deploy URLs in `ops/deploy.sh` and `deploy.yml`, and CI's stand-in certificate;
+  - [x] Caddy: site blocks for purelyfreefonts.com and `staging.purelyfreefonts.com`, with the new certificate;
+  - [x] the tests, plus a live check that every old host 301s in one hop: `tests/live/test_redirects.py`, run with `--check-redirects` from the cutover on (before it, the old hosts still serve the site);
+  - [x] one line in `CLAUDE.md`;
   - [ ] with the owner's OK, the backlog's project name and TASK-3, through the CLI.
-- [ ] **The test site on the new host:**
-  - [ ] Claude: the DNS records, the Caddy install, the deploy, and step 9's live test on `staging.purelyfreefonts.com`;
-  - [ ] the owner checks Web Analytics on the new zone and reviews the test site.
+- [x] **The test site on the new host:**
+  - [x] Claude: the DNS records, the Caddy install, the deploy, and step 9's live test on `staging.purelyfreefonts.com`; *(2026-10-02: `ops/deploy.sh staging` deployed 79c2685, and the live test passed: 11 passed, with the 2 redirect checks waiting for the cutover. The deploy's own site-test run hit the known Firefox load-timeout flake, so it was rerun with `--fast` after all 10 CI checks had passed on that commit.)*
+  - [x] the owner checks Web Analytics on the new zone and reviews the test site. *(2026-10-02: RUM disabled; "Go ahead with the cutover.")*
 - [ ] **Cutover:**
-  - [ ] Caddy: purelyfreefonts.com serves the renamed stub, and every old host 301s to the new one;
-  - [ ] the misspelled domain's edge rule points at the new domain;
-  - [ ] the .org and .net placeholder records go in;
+  - [x] Caddy: purelyfreefonts.com serves the renamed stub, and every old host 301s to the new one; *(2026-10-02)*
+  - [x] the misspelled domain's edge rule points at the new domain;
+  - [x] the .org and .net placeholder records go in;
   - [ ] the branch is merged;
-  - [ ] Claude checks every old host from outside.
+  - [x] Claude checks every old host from outside. *(2026-10-02: `tests/live --check-redirects` passes on purelyfreefonts.com and staging.purelyfreefonts.com, from the US.)*
 - [ ] **The owner, at cutover:**
   - [ ] Stripe: public business name, website, statement descriptor, support email and the payment page text;
   - [ ] Ko-fi closed;
@@ -330,7 +330,7 @@ Defaults are in bold. A **[Step 0]** decision is answered before building starts
 | **M2-D4 (decided 2026-09-25): filter layout** (round 1 may change it) | **Every filter in a sidebar** on wide screens; on phones, all but search and rank behind one "Filters" button. (The other option kept only search, rank, category and "Redistributable fonts only" visible.) The filter set itself was cut down on 2026-09-30 (step 3). |
 | **M2-D5 (decided 2026-09-25): font previews.** Under D3, only `preview_ok` (redistributable) fonts get one, and no trimmed or converted font file is served. | **SVG specimens drawn at each refresh (step 5), plus "Type your own text"**, which loads the unchanged upstream file on request after showing its size. Other fonts get fallback text and their official link. (Other options were specimens only, or loading font files as rows scroll in.) |
 | **M2-D6 (decided 2026-09-25): deploy path**, also for Milestones 3 and 4, revisited at Milestone 4's two-month review | **GitHub Actions deploys each push to `main`** as a restricted `deploy` user (step 11); merged refreshes go live with no further step, and `ops/deploy.sh` from the laptop is the fallback. |
-| **M2-D7 (decided 2026-09-25): a test site before launch** | **`staging.trulyfreefonts.com`** (step 11): round 1 runs there and Milestone 3 reuses it. |
+| **M2-D7 (decided 2026-09-25): a test site before launch** | **`staging.trulyfreefonts.com`** (step 11): round 1 runs there and Milestone 3 reuses it. *Amended 2026-10-02:* the test site moves to `staging.purelyfreefonts.com`, and the old host 301s to it (AUTHORITY.md, **Name and domain**; step 13b). |
 | **M2-D8 [later OK]: search engines during the soft launch** | **(a) Indexing allowed**; only announcements wait for Milestone 4; (b) `noindex` until Milestone 4. |
 | **M2-D9 (decided 2026-09-25): server logs.** Recorded in AUTHORITY.md (Infrastructure) and [ops/SERVER.md](../ops/SERVER.md) section F. Binding on later milestones: M4 step 3 checks the log against it, and any count Milestone 4 takes from the log runs within 14 days. | Caddy masks visitor IPs to /16 (IPv4) and /32 (IPv6) and drops the port and the `Cf-Connecting-Ip` and `X-Forwarded-For` headers; Caddy's rolling is off, and logrotate keeps 14 days, rotated daily (`ops/Caddyfile`, `ops/logrotate-caddy`). Usage totals come from Cloudflare. *Owner ruling of 2026-09-26 (`log_fields`):* the log also drops `Referer` and `User-Agent`; the same Caddyfile change drops `Cookie` and the location headers finer than the country (owner ruling of 2026-09-28, `log_extra_headers`). Deployed with SERVER.md item 25. |
 | **M2-D10 [later OK]: feedback channels** | **(a) GitHub issue forms plus an email link to the site's `admin@` address** for people without GitHub (expect some spam); (b) issues only; (c) email only. |

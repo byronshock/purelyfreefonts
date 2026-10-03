@@ -1,6 +1,6 @@
-# More truly free fonts checklist (after launch)
+# More purely free fonts checklist (after launch)
 
-This milestone lists every other font that passes the gates, A–Z and without a rank, after the ranked fonts, and adds fonts on request (owner rulings `more_fonts` and `font_requests` of 2026-09-29). On 2026-09-30 the owner moved it out of the work of getting the site live (`more_fonts_timing`, [AUTHORITY.md](../AUTHORITY.md)): it comes after Milestone 2's launch, as a milestone of its own, before or after Milestone 3's owned-font tools. The owner chooses which when Milestone 2 is done. Its items were Milestone 1 step 15b and the listed-only items of Milestone 2 steps 3 and 10; the wording is theirs, with only the step numbers updated.
+This milestone lists every other font that passes the gates, A–Z and without a rank, after the ranked fonts, and adds fonts on request (owner rulings `more_fonts` and `font_requests` of 2026-09-29). On 2026-09-30 the owner moved it out of the work of getting the site live (`more_fonts_timing`, [AUTHORITY.md](../AUTHORITY.md)): it comes after Milestone 2's launch, as a milestone of its own, before or after Milestone 3's owned-font tools. The owner chooses which when Milestone 2 is done. Its items were Milestone 1 step 15b and the listed-only items of Milestone 2 steps 3 and 10; the wording is theirs, with only the step numbers updated and, since 2026-10-02, "purely free" for "truly free" (owner ruling `public_phrase`).
 
 **How to read each step:**
 
@@ -32,7 +32,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 
 ### Step 2: The listed-only fonts on the site
 **Who:** Claude. **Depends on:** 1.
-- [ ] After the ranked fonts, each list goes on with the listed-only fonts, A–Z under a heading such as "More truly free fonts", with no number or band. One line under the heading says why they have no rank (owner ruling `more_fonts` of 2026-09-29). Every filter applies to them, and search finds them by name and alias; Coding shows only the monospace ones, and Rising shows none. Sorting by name merges ranked and listed-only fonts into one A–Z list. Their data is fetched when a visitor reaches the heading, searches or changes a filter, so the first view never waits for it.
+- [ ] After the ranked fonts, each list goes on with the listed-only fonts, A–Z under a heading such as "More purely free fonts", with no number or band. One line under the heading says why they have no rank (owner ruling `more_fonts` of 2026-09-29). Every filter applies to them, and search finds them by name and alias; Coding shows only the monospace ones, and Rising shows none. Sorting by name merges ranked and listed-only fonts into one A–Z list. Their data is fetched when a visitor reaches the heading, searches or changes a filter, so the first view never waits for it.
 - [ ] Browser tests: listed-only fonts after the ranked ones, found by search before their heading is reached.
 - [ ] The listed-only data loads on demand, so it counts apart from M2 step 10's 100 KB, under a budget set once its size is measured.
 - [ ] A filter or rank change redraws the full catalog with the listed-only fonts, once they are loaded, within 200 ms under M2 step 10's slowdown.

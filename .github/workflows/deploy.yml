@@ -1,10 +1,10 @@
 name: Deploy
 
-# Build, test and deploy trulyfreefonts.com (Milestone 2 step 11; design-m2 §5; how the
+# Build, test and deploy purelyfreefonts.com (Milestone 2 step 11; design-m2 §5; how the
 # server side works is in ops/deploy/README.md).
 #
-# - A push to main deploys to production (trulyfreefonts.com); a push to staging deploys to
-#   the test site (staging.trulyfreefonts.com). The GitHub environments "production" (main
+# - A push to main deploys to production (purelyfreefonts.com); a push to staging deploys to
+#   the test site (staging.purelyfreefonts.com). The GitHub environments "production" (main
 #   only) and "staging" (staging only) hold the secrets DEPLOY_SSH_KEY, DEPLOY_KNOWN_HOSTS
 #   and DEPLOY_HOST, and the variables DEPLOY_USER and SITE_URL.
 # - Roll back in one command: gh workflow run deploy.yml --ref main -f action=rollback
@@ -212,8 +212,8 @@ jobs:
           url=$SITE_URL
           if [ -z "$url" ]; then
             case $ENVIRONMENT in
-            production) url=https://trulyfreefonts.com ;;
-            *) url=https://staging.trulyfreefonts.com ;;
+            production) url=https://purelyfreefonts.com ;;
+            *) url=https://staging.purelyfreefonts.com ;;
             esac
           fi
           echo "site_url=$url" >> "$GITHUB_OUTPUT"

@@ -44,6 +44,6 @@ These steps wait for release 1 in [AUTHORITY.md](../AUTHORITY.md#releases). The 
 - [ ] 14. Tips are personal income. Keep Stripe's yearly export for your tax return.
 
 ## Verification
-- `curl -s https://trulyfreefonts.com/ | grep -o 'https://buy.stripe.com/[^"]*'` prints the link.
+- `curl -s https://purelyfreefonts.com/ | grep -o 'https://buy.stripe.com/[^"]*'` prints the link.
 - Clicking the link on the live site opens Stripe's payment page with $5 filled in.
 - The Stripe Dashboard shows the account activated, payouts on, and two-step authentication on.

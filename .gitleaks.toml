@@ -2,7 +2,7 @@
 # It extends gitleaks' built-in rules. Add an allowlist
 # entry only for a reviewed false positive, with a comment saying why.
 
-title = "trulyfreefonts"
+title = "purelyfreefonts"
 
 [extend]
 useDefault = true

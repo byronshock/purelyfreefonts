@@ -56,7 +56,7 @@ def test_only_known_files() -> None:
 
 
 def test_the_address_is_the_sites() -> None:
-    assert EMAIL == "admin@trulyfreefonts.com"
+    assert EMAIL == "admin@purelyfreefonts.com"
 
 
 @pytest.mark.parametrize(("name", "label"), FORMS.items())
@@ -149,6 +149,6 @@ def test_chooser_has_blank_issues_off_and_an_email_contact() -> None:
     url = urlsplit(link["url"])
     assert url.scheme == "https"  # a mailto: link never shows
     # The site's one feedback spot, div#feedback on every page (site/CONTRACT.md section 3).
-    assert url.netloc == "trulyfreefonts.com"
+    assert url.netloc == "purelyfreefonts.com"
     assert url.fragment == "feedback"
     assert EMAIL in link["about"]

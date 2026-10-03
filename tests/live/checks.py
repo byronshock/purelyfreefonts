@@ -38,7 +38,7 @@ import httpx
 
 from tff_site.serve import CaddyHeaders
 
-USER_AGENT = "trulyfreefonts-live-test/1 (+https://github.com/byronshock/trulyfreefonts)"
+USER_AGENT = "purelyfreefonts-live-test/1 (+https://github.com/byronshock/purelyfreefonts)"
 ACCEPT_HTML = "text/html"
 NOT_FOUND_PATH = "/no-such-page-privacy-check/"
 IMMUTABLE_PREFIX = "/assets/"

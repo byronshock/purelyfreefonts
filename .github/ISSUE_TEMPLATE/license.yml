@@ -3,14 +3,14 @@
 # (site/CONTRACT.md, section 8). GitHub prefills a field whose id matches a
 # query parameter, so the ids font_id and data_date must not change.
 name: Wrong license or link
-description: A font's license, license link or download link is wrong, or the font isn't truly free.
+description: A font's license, license link or download link is wrong, or the font isn't purely free.
 title: "Wrong license or link: "
 labels: ["license"]
 body:
   - type: markdown
     attributes:
       value: |
-        **Reports are public:** anyone can read them, so please leave out anything private. No GitHub account? Email admin@trulyfreefonts.com instead.
+        **Reports are public:** anyone can read them, so please leave out anything private. No GitHub account? Email admin@purelyfreefonts.com instead.
 
         A font is listed only if its license lets anyone use it in any personal or commercial project, with no limits on use. We check each report against the license text.
   - type: input
@@ -34,7 +34,7 @@ body:
         - The license is wrong
         - The license link is broken or goes to the wrong text
         - The download link is broken or isn't the official source
-        - The font isn't truly free (its license limits how it can be used)
+        - The font isn't purely free (its license limits how it can be used)
         - What to credit is wrong or missing
         - Something else
     validations:

@@ -128,7 +128,7 @@ def _cmd_linkcheck(ns: argparse.Namespace) -> int:
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="tff-site",
-        description="Builds trulyfreefonts.com from the catalog.",
+        description="Builds purelyfreefonts.com from the catalog.",
     )
     parser.add_argument("--version", action="version", version=f"tff-site {__version__}")
     sub = parser.add_subparsers(dest="command", metavar="<command>", title="commands")

@@ -1,6 +1,6 @@
 # Site contract (Milestone 2)
 
-This file freezes the interfaces between the parts of trulyfreefonts.com, so that several people or agents can build them at once. Each part may change freely inside itself, but a change to anything named here is a contract change: agree it with the lead engineer first, then update this file, the schema and the tests in the same pull request.
+This file freezes the interfaces between the parts of purelyfreefonts.com, so that several people or agents can build them at once. Each part may change freely inside itself, but a change to anything named here is a contract change: agree it with the lead engineer first, then update this file, the schema and the tests in the same pull request.
 
 `tests/test_site_contracts.py` checks the parts of this file that a machine can check: the JS parts table, the CSS tokens, the template blocks and the sample catalog.
 
@@ -51,7 +51,7 @@ Contents:
 | `404.html` | served with status 404 by Caddy's `handle_errors` | `no-cache, no-transform` |
 | `robots.txt`, `sitemap.xml` | per M2-D8 | `no-cache, no-transform` |
 | `version.txt` | `commit=`, `run_date=`, `method_version=`, `catalog_sha256=` (the sha256 of the `catalog-site.json` file's bytes), `schema=catalog-site/1`, one per line; never a build time | `no-cache, no-transform` |
-| `favicon.ico`, `favicon.svg`, `apple-touch-icon.png`, `share.png`, `wordmark.svg` | copied from `site/static/` (these five files only; `site/static/_src/` holds their generators and sources and is never published). `wordmark.svg` is the header's wordmark, "Truly Free Fonts" in League Gothic drawn as outlines (AUTHORITY.md, "Headline font") | `no-cache, no-transform` |
+| `favicon.ico`, `favicon.svg`, `apple-touch-icon.png`, `share.png`, `wordmark.svg` | copied from `site/static/` (these five files only; `site/static/_src/` holds their generators and sources and is never published). `wordmark.svg` is the header's wordmark, "Purely Free Fonts" in League Gothic drawn as outlines (AUTHORITY.md, "Headline font") | `no-cache, no-transform` |
 | `assets/app.<h>.js` | the one script: `site/js/*.js` concatenated (section 5) | `public, max-age=31536000, immutable` |
 | `assets/style.<h>.css` | the one stylesheet: `site/css/*.css` concatenated (section 6) | immutable |
 | `assets/list.<h>.json` | the list index (section 7) | immutable |
@@ -98,7 +98,7 @@ Jinja2 with `autoescape=True`, `StrictUndefined`, `trim_blocks`, `lstrip_blocks`
 
 | Name | Fields |
 |---|---|
-| `site` | `name` ("Truly Free Fonts"), `base_url` ("https://trulyfreefonts.com"), `repo_url`, `feedback` {`issues_url`, `email`, `mailto`}, `tip_url` (the live Stripe link from ops/DONATIONS.md, since M2 step 8; none leaves the tip link out), `blog` (none until a post is published; then {`url` "/blog/", `feed_url` "/blog/feed.xml"}, which adds the nav's Blog link and a `<link rel="alternate">` to the feed) |
+| `site` | `name` ("Purely Free Fonts"), `base_url` ("https://purelyfreefonts.com"), `repo_url`, `feedback` {`issues_url`, `email`, `mailto`}, `tip_url` (the live Stripe link from ops/DONATIONS.md, since M2 step 8; none leaves the tip link out), `blog` (none until a post is published; then {`url` "/blog/", `feed_url` "/blog/feed.xml"}, which adds the nav's Blog link and a `<link rel="alternate">` to the feed) |
 | `page` | `path` ("/", "/methodology/" …), `title`, `description`, `canonical` (false on the 404 page) |
 | `assets` | `css`, `js` and `font`, the upright interface font that `base.html.j2` preloads (hashed URLs) |
 | `build` | `commit`, `run_date` |
@@ -139,7 +139,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
   <div class="why why-wide">                          <!-- the owner's note; wide screens only -->
     <h2 id="why-h">Why isn't my favorite free font here?</h2>
     <p>Not every font that's free to download … email
-      <a href="mailto:admin@trulyfreefonts.com">admin@trulyfreefonts.com</a> and ask us to consider it.</p>
+      <a href="mailto:admin@purelyfreefonts.com">admin@purelyfreefonts.com</a> and ask us to consider it.</p>
   </div>
   <p class="lead">…</p>
   <p class="privacy-note">No cookies, no tracking, and the page loads only its own files.
@@ -212,7 +212,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 </main>
 ```
 
-- **The front page's note** (site rulings of 2026-09-29, `data/reviews/site/2026-09-29.toml`: `why_not_listed`, `why_not_listed_layout`): "Why isn't my favorite free font here?" and the owner's text, word for word, in `index.html.j2`, the address a `mailto:` link to `site.feedback.email`. It is in the HTML twice and the stylesheet displays one, so neither needs a script and nothing moves as the page loads: `div.why-wide` from `40rem` up, a frame floated right beside the lead and the privacy note, which wrap around it, while `.layout` clears it, so the list starts below the frame and rows are never narrowed; `details.why-fold` at `40rem` and below, full width under the intro, folded to its `summary`. The other copy is `display: none`, so screen readers get the text once.
+- **The front page's note** (site rulings of 2026-09-29, `data/reviews/site/2026-09-29.toml`: `why_not_listed`, `why_not_listed_layout`): "Why isn't my favorite free font here?" and the owner's text, word for word, in `index.html.j2`, the address a `mailto:` link to `site.feedback.email`, which is admin@purelyfreefonts.com since the site ruling of 2026-10-02 (`contact_address`). It is in the HTML twice and the stylesheet displays one, so neither needs a script and nothing moves as the page loads: `div.why-wide` from `40rem` up, a frame floated right beside the lead and the privacy note, which wrap around it, while `.layout` clears it, so the list starts below the frame and rows are never narrowed; `details.why-fold` at `40rem` and below, full width under the intro, folded to its `summary`. The other copy is `display: none`, so screen readers get the text once.
 - The controls' `name` attributes are the hash keys (section 9); `value` is the key's value. Filters live in `<search>` and `<fieldset>`/`<legend>` groups, never in a `<form>`.
 - `#filters` and `#list-sort` carry `hidden` in the HTML; the script removes it. Showing them must not move the list (reserve their space in CSS), because the layout-shift budget is 0.1.
 - Narrow screens are below `60rem`: `#f-more` is hidden until `#f-toggle` expands it, and `#f-toggle`'s text includes the number of active filters. From `60rem` up, `#f-more` is always shown in the sidebar and `#f-toggle` is hidden.
@@ -274,7 +274,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 
 `visually-hidden` (hidden from sight, read by screen readers), `skip-link`, `site-header`, `site-name`, `site-name-mark`, `site-nav`, `site-footer`, `feedback`, `tip`, `footer-meta`.
 
-**The header** (owner ruling of 2026-09-29): `a.site-name[href="/"]` holds only `img.site-name-mark[src="/wordmark.svg"]`, whose `alt` is the site's name ("Truly Free Fonts"), with `width` and `height` in the wordmark's 8275:1862 ratio (213 x 48). It is about 48 px tall on wide screens and 32 px on phones (below `40rem`). The favicon is the browser's icon only, not in the header. The header is white in both themes, behind the black wordmark: it takes the `--c-header-*` tokens, whose dark values are the light ones, so its links and text keep their light-theme colours and its focus ring 3:1 on white. Under forced colours it takes the system colours, and the wordmark keeps a white plate (`--c-wordmark-bg`).
+**The header** (owner ruling of 2026-09-29): `a.site-name[href="/"]` holds only `img.site-name-mark[src="/wordmark.svg"]`, whose `alt` is the site's name ("Purely Free Fonts"), with `width` and `height` in the wordmark's 8897:1862 ratio (229 x 48). It is about 48 px tall on wide screens and 32 px on phones (below `40rem`). The favicon is the browser's icon only, not in the header. The header is white in both themes, behind the black wordmark: it takes the `--c-header-*` tokens, whose dark values are the light ones, so its links and text keep their light-theme colours and its focus ring 3:1 on white. Under forced colours it takes the system colours, and the wordmark keeps a white plate (`--c-wordmark-bg`).
 
 ## 5. JS parts
 
@@ -430,7 +430,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 | `views`, `bands`, `tiers`, `sources`, `systems`, `license_classes`, `nerd` | as in the catalog |
 | `state_labels` | `{observed, censored, not_covered, too_new}` → label (`censored` → "below the floor") |
 | `why_labels` | `{no_deliberate_evidence, no_evidence, too_new}` → label |
-| `report` | `{issue_url, email}`: `https://github.com/byronshock/trulyfreefonts/issues/new?template=license.yml`, to which `Details` appends `&font_id=<id>&data_date=<run_date>`, and the fallback address for a `mailto:` link |
+| `report` | `{issue_url, email}`: `https://github.com/byronshock/purelyfreefonts/issues/new?template=license.yml`, to which `Details` appends `&font_id=<id>&data_date=<run_date>`, and the fallback address for a `mailto:` link |
 | `fonts` | `{<id>: font}`: the catalog's font object without `preview` and `font_file`, plus `type_own`: `{url, size}` (the hashed `/assets/fonts/…` URL and its size in bytes) or `null` |
 
 Each source links to its credit at `/methodology/#source-<id>`.

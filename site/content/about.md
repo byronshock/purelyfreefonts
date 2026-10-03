@@ -1,11 +1,11 @@
 ---
 title: About
 description: >-
-  What Truly Free Fonts is, which fonts it lists and why, what comes next, and how to report
+  What Purely Free Fonts is, which fonts it lists and why, what comes next, and how to report
   a problem or get in touch.
 ---
 
-Truly Free Fonts is a ranked list of the most popular fonts whose licenses let you use them in any personal or commercial project. Each month we collect public counts of how often free fonts are installed on computers and used in websites, code and apps, and rank the fonts from those counts. [How we rank](/methodology/) explains the method and credits every source.
+Purely Free Fonts is a ranked list of the most popular fonts whose licenses let you use them in any personal or commercial project. Each month we collect public counts of how often free fonts are installed on computers and used in websites, code and apps, and rank the fonts from those counts. [How we rank](/methodology/) explains the method and credits every source.
 
 Every font links to its official download page. The list is free to use, with no ads and [no tracking](/privacy/).
 

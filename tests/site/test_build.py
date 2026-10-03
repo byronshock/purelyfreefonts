@@ -886,8 +886,8 @@ def test_details_format(tmp_path, catalog, mini_site):
     assert payload["state_labels"]["censored"] == "below the floor"
     assert payload["why_labels"] == data.UNRANKED_LABELS
     assert payload["report"] == {
-        "issue_url": "https://github.com/byronshock/trulyfreefonts/issues/new?template=license.yml",
-        "email": "admin@trulyfreefonts.com",
+        "issue_url": "https://github.com/byronshock/purelyfreefonts/issues/new?template=license.yml",
+        "email": "admin@purelyfreefonts.com",
     }
     assert set(payload["fonts"]) == {f["id"] for f in doc["fonts"]}
     for font in doc["fonts"]:
@@ -1299,12 +1299,12 @@ def test_content_pages_follow_their_paths(tmp_path, catalog, mini_site, monkeypa
     sitemap = (out / "sitemap.xml").read_text()
     locs = re.findall(r"<loc>([^<]+)</loc>", sitemap)
     assert locs == [
-        "https://trulyfreefonts.com/",
-        "https://trulyfreefonts.com/about/",
-        "https://trulyfreefonts.com/privacy/",
+        "https://purelyfreefonts.com/",
+        "https://purelyfreefonts.com/about/",
+        "https://purelyfreefonts.com/privacy/",
     ]
     assert (out / "robots.txt").read_text() == (
-        "User-agent: *\nAllow: /\nSitemap: https://trulyfreefonts.com/sitemap.xml\n"
+        "User-agent: *\nAllow: /\nSitemap: https://purelyfreefonts.com/sitemap.xml\n"
     )
 
 
@@ -1339,13 +1339,13 @@ def test_the_command_line_builds(tmp_path, catalog, mini_site, monkeypatch, caps
 
 def test_site_context_matches_the_contract():
     assert build.site_context() == {
-        "name": "Truly Free Fonts",
-        "base_url": "https://trulyfreefonts.com",
-        "repo_url": "https://github.com/byronshock/trulyfreefonts",
+        "name": "Purely Free Fonts",
+        "base_url": "https://purelyfreefonts.com",
+        "repo_url": "https://github.com/byronshock/purelyfreefonts",
         "feedback": {
-            "issues_url": "https://github.com/byronshock/trulyfreefonts/issues/new/choose",
-            "email": "admin@trulyfreefonts.com",
-            "mailto": "mailto:admin@trulyfreefonts.com?subject=trulyfreefonts.com",
+            "issues_url": "https://github.com/byronshock/purelyfreefonts/issues/new/choose",
+            "email": "admin@purelyfreefonts.com",
+            "mailto": "mailto:admin@purelyfreefonts.com?subject=purelyfreefonts.com",
         },
         "tip_url": "https://buy.stripe.com/dRm00beFeaJ307651Qf7i00",
         "blog": None,

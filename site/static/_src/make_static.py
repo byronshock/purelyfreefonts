@@ -56,8 +56,8 @@ MARK_TEXT = "Aa"
 MARK_FONT = ("inter", {"wght": 800, "opsz": 32})
 
 # share.png wording. Page text: the owner approves it with the site's other wording.
-SHARE_DOMAIN = "trulyfreefonts.com"
-SHARE_TITLE = "Truly Free Fonts"
+SHARE_DOMAIN = "purelyfreefonts.com"
+SHARE_TITLE = "Purely Free Fonts"
 SHARE_LINES = (
     "The most popular fonts whose licenses allow",
     "all personal and commercial use.",

@@ -1,4 +1,4 @@
-"""Draw the site's wordmark, "Truly Free Fonts" in League Gothic, as outlines.
+"""Draw the site's wordmark, "Purely Free Fonts" in League Gothic, as outlines.
 
 Run from the repository root, then commit what it writes:
 
@@ -31,7 +31,7 @@ from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
 
-TEXT = "Truly Free Fonts"
+TEXT = "Purely Free Fonts"
 FILL = "#000000"
 FONT_SHA256 = "3b0e998c9a0034222394ffecdd383e6948259ad037b95555b139a217629ce1d0"
 AXES = {"wdth": 100.0}  # the default instance, as in the sample the owner chose from

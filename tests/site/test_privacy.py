@@ -1024,7 +1024,7 @@ def test_the_live_checks_catch_what_they_are_for() -> None:
     )
     sitemap = (
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
-        "<url><loc>https://trulyfreefonts.com/</loc></url></urlset>"
+        "<url><loc>https://purelyfreefonts.com/</loc></url></urlset>"
     )
     version = "commit=" + "1" * 40 + "\nrun_date=2026-09-25\n"
 

@@ -5,25 +5,25 @@ description: >-
   sites. How to check, and what the server and Cloudflare log.
 ---
 
-Truly Free Fonts doesn't track you. The pages set no cookies, run no analytics, store nothing in your browser and load nothing from any other site.
+Purely Free Fonts doesn't track you. The pages set no cookies, run no analytics, store nothing in your browser and load nothing from any other site.
 
 ## What the pages do and don't do
 
 - **No cookies.** Neither we nor Cloudflare, which delivers the site, set one.
 - **No analytics or tracking.** No script, ours or anyone else's, counts or follows visitors.
 - **Nothing stored in your browser.** The site uses no local storage, session storage, IndexedDB, cache storage or service worker. Your filters live in the page address, after the `#`, and browsers never send that part to any server.
-- **Nothing loaded from other sites.** Every file the pages use comes from trulyfreefonts.com, including the site's own font, the font previews and the fonts for "Type your own text". Links to other sites, such as download pages, GitHub or the tip page, load nothing until you click them.
+- **Nothing loaded from other sites.** Every file the pages use comes from purelyfreefonts.com, including the site's own font, the font previews and the fonts for "Type your own text". Links to other sites, such as download pages, GitHub or the tip page, load nothing until you click them.
 - **Enforced by your browser.** Our server sends a Content Security Policy that tells your browser to block any script, style, image, font or connection from another site, even if something tried to add one.
 
 ## Check for yourself
 
-Open your browser's developer tools on any page here, choose the **Network** tab and reload the page. Every request listed should go to trulyfreefonts.com. (Your browser extensions may add requests of their own; they don't come from this site.) Then try the filters, open a font's details and scroll through the list: still only trulyfreefonts.com.
+Open your browser's developer tools on any page here, choose the **Network** tab and reload the page. Every request listed should go to purelyfreefonts.com. (Your browser extensions may add requests of their own; they don't come from this site.) Then try the filters, open a font's details and scroll through the list: still only purelyfreefonts.com.
 
 - **Firefox:** press Ctrl+Shift+E (Cmd+Option+E on a Mac). Or open the menu, choose More tools, then Web Developer Tools, then the Network tab.
 - **Chrome and Edge:** press Ctrl+Shift+I (Cmd+Option+I on a Mac). Or open the menu, choose More tools, then Developer tools, then the Network tab.
 - **Safari:** first turn on Settings, Advanced, "Show features for web developers". Then choose Develop, Show Web Inspector (Cmd+Option+I), then the Network tab.
 
-To see that nothing is stored, open the **Storage** tab (Firefox and Safari) or the **Application** tab (Chrome and Edge). Cookies, local storage and session storage should all be empty for trulyfreefonts.com.
+To see that nothing is stored, open the **Storage** tab (Firefox and Safari) or the **Application** tab (Chrome and Edge). Cookies, local storage and session storage should all be empty for purelyfreefonts.com.
 
 ## What our server logs
 

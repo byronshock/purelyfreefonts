@@ -59,7 +59,7 @@ DESKTOP_VIEWS_HEADING = "Desktop: two views"
 CONFIDENCE_LEAD = "**Confidence.**"
 
 # build.SITE_NAME; build imports this module, so it can't be imported from there.
-SITE_NAME = "Truly Free Fonts"
+SITE_NAME = "Purely Free Fonts"
 # A content page's <title> is its <h1>, an en dash and the site name.
 TITLE_SEPARATOR = " \N{EN DASH} "
 BLOB_URL = f"{data.REPO_URL}/blob/main"
@@ -69,7 +69,7 @@ METHODOLOGY_PAGE = {
     "path": "/methodology/",
     "heading": "How we rank",
     "description": (
-        "How Truly Free Fonts ranks fonts: the method in plain words, how to read ranks, "
+        "How Purely Free Fonts ranks fonts: the method in plain words, how to read ranks, "
         "bands and tiers, known biases, and credits for every data source."
     ),
 }
@@ -77,7 +77,7 @@ METHODOLOGY_PAGE = {
 NOT_FOUND_PAGE = {
     "path": "/404.html",
     "heading": "Page not found",
-    "description": "There is no page at this address on Truly Free Fonts.",
+    "description": "There is no page at this address on Purely Free Fonts.",
 }
 # URL path -> Markdown file in CONTENT_DIR.
 CONTENT_PAGES = {"/about/": "about.md", "/privacy/": "privacy.md"}
@@ -358,7 +358,7 @@ def content_links() -> dict[str, str]:
         "issues_url": f"{data.REPO_URL}/issues/new/choose",
         "report_url": data.REPORT_ISSUE_URL,
         "email": data.FEEDBACK_EMAIL,
-        "mailto": f"mailto:{data.FEEDBACK_EMAIL}?subject=trulyfreefonts.com",
+        "mailto": f"mailto:{data.FEEDBACK_EMAIL}?subject=purelyfreefonts.com",
         "methodology_url": METHODOLOGY_URL,
         "caddyfile_url": f"{BLOB_URL}/ops/Caddyfile",
         "site_caddy_url": f"{BLOB_URL}/ops/caddy/site.caddy",

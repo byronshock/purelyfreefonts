@@ -10,7 +10,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        **Reports are public:** anyone can read them, so please leave out anything private. No GitHub account? Email admin@trulyfreefonts.com instead.
+        **Reports are public:** anyone can read them, so please leave out anything private. No GitHub account? Email admin@purelyfreefonts.com instead.
 
         Please search the list first, including the font's old names: "Source Sans Pro" finds Source Sans 3. A font is listed only if:
 

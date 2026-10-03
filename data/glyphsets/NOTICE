@@ -17,7 +17,7 @@ Copyright the googlefonts/glyphsets authors. Licensed under the Apache License,
 Version 2.0; a copy is in LICENSE next to this file (the upstream LICENSE,
 unmodified). The upstream repository has no NOTICE file.
 
-They are used by tff_catalog.latin, the Latin gate of the trulyfreefonts
+They are used by tff_catalog.latin, the Latin gate of the purelyfreefonts
 catalog (docs/milestone-1.md, step 5). To update them, fetch both files at a
 new commit, then update this notice and GLYPHSET_COMMIT and GLYPHSET_SHA256 in
 src/tff_catalog/latin.py.

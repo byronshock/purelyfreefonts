@@ -9,7 +9,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        **Reports are public:** anyone can read them, so please leave out anything private. No GitHub account? Email admin@trulyfreefonts.com instead.
+        **Reports are public:** anyone can read them, so please leave out anything private. No GitHub account? Email admin@purelyfreefonts.com instead.
 
         Tell us in your own words; there are no wrong answers. If something is plainly broken, "Something's broken" is the better form.
   - type: textarea
@@ -30,7 +30,7 @@ body:
     attributes:
       label: Page address
       description: Copy it from the address bar. It includes your filters, so we see what you saw.
-      placeholder: https://trulyfreefonts.com/
+      placeholder: https://purelyfreefonts.com/
   - type: dropdown
     id: device
     attributes:
@@ -43,7 +43,7 @@ body:
     id: setup
     attributes:
       label: Browser and assistive technology (optional)
-      description: For example, Firefox on Windows; Safari on an iPhone with VoiceOver; keyboard only; or zoomed to 200%. Reports are public, so leave this out if you'd rather not say it here; you can email admin@trulyfreefonts.com instead.
+      description: For example, Firefox on Windows; Safari on an iPhone with VoiceOver; keyboard only; or zoomed to 200%. Reports are public, so leave this out if you'd rather not say it here; you can email admin@purelyfreefonts.com instead.
   - type: dropdown
     id: severity
     attributes:

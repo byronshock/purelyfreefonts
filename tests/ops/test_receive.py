@@ -1265,8 +1265,8 @@ LIVE_CURL = """#!/bin/sh
 # curl ... URL: answers version.txt from the test's receiver root, so the switch shows.
 for last; do :; done
 case "$last" in
-  https://staging.trulyfreefonts.com/version.txt) cat "$TFF_TEST_ROOT/staging/current/version.txt" ;;
-  https://trulyfreefonts.com/version.txt) cat "$TFF_TEST_ROOT/prod/current/version.txt" ;;
+  https://staging.purelyfreefonts.com/version.txt) cat "$TFF_TEST_ROOT/staging/current/version.txt" ;;
+  https://purelyfreefonts.com/version.txt) cat "$TFF_TEST_ROOT/prod/current/version.txt" ;;
   *) exit 7 ;;
 esac
 """
@@ -1361,7 +1361,7 @@ def test_deploy_sh_builds_in_a_temporary_worktree(rx: Receiver, tmp_path: Path) 
     )
     assert "--ignore=tests/site/test_perf.py --browser chromium --browser firefox" in lines[4]
     assert steps[-1] == (
-        "run --group browser pytest tests/live -q --base-url https://staging.trulyfreefonts.com"
+        "run --group browser pytest tests/live -q --base-url https://staging.purelyfreefonts.com"
         f" --expect-commit {off_main} --browser chromium --browser firefox"
     )
     assert git("worktree", "list", "--porcelain").count("worktree ") == 1, "worktree left"
@@ -1388,7 +1388,7 @@ def test_deploy_sh_builds_in_a_temporary_worktree(rx: Receiver, tmp_path: Path) 
     # Header phase A (no CSP on production) refuses a build deploy to production.
     git("switch", "-q", "-c", "phase-a", on_main)
     (repo / "ops" / "Caddyfile").write_text(
-        "trulyfreefonts.com {\n\theader -Content-Security-Policy\n}\n"
+        "purelyfreefonts.com {\n\theader -Content-Security-Policy\n}\n"
     )
     git("add", "-A")
     git("commit", "-q", "-m", "phase a")

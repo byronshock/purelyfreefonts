@@ -107,7 +107,7 @@ The finished steps and items, as they were ticked, with their evidence. The crit
 ### Step 3: Collector framework, snapshots, run state and source terms
 **Who:** Claude; the owner rules on the terms table and posts the Fonts Over Time request. **Depends on:** 1 and D15.
 - [x] A shared fetcher: *(`fetch.Fetcher`: this User-Agent, retries with seeded exponential backoff that honour `Retry-After`, one request a second per host, and conditional GETs from the last manifest; `tests/test_fetch.py`.)*
-  - User-Agent `trulyfreefonts-catalog/<version> (+https://github.com/byronshock/trulyfreefonts)`, never a personal email;
+  - User-Agent `trulyfreefonts-catalog/<version> (+https://github.com/byronshock/trulyfreefonts)`, never a personal email; *(renamed with the site on 2026-10-02: `purelyfreefonts-catalog/<version> (+https://github.com/byronshock/purelyfreefonts)`)*
   - retries with backoff;
   - per-host rate limits;
   - conditional GETs.

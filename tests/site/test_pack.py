@@ -254,7 +254,7 @@ class Upstream:
     def __call__(self, request: httpx.Request) -> httpx.Response:
         url = str(request.url)
         self.requests.append(url)
-        assert request.headers["user-agent"].startswith("trulyfreefonts-site/")
+        assert request.headers["user-agent"].startswith("purelyfreefonts-site/")
         queue = self.routes.get(url)
         if not queue:
             return httpx.Response(404)

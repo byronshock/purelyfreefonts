@@ -190,11 +190,11 @@ def test_share_tags_point_at_our_own_domain():
     doc = dom(render("/about/"))
     assert meta(doc, "og:title") == "A page title"
     assert meta(doc, "og:description") == "A page description."
-    assert meta(doc, "og:url") == "https://trulyfreefonts.com/about/"
-    assert meta(doc, "og:image") == "https://trulyfreefonts.com/share.png"
+    assert meta(doc, "og:url") == "https://purelyfreefonts.com/about/"
+    assert meta(doc, "og:image") == "https://purelyfreefonts.com/share.png"
     assert (meta(doc, "og:image:width"), meta(doc, "og:image:height")) == ("1200", "630")
     assert meta(doc, "og:image:type") == "image/png"
-    assert meta(doc, "og:image:alt").startswith("Truly Free Fonts")
+    assert meta(doc, "og:image:alt").startswith("Purely Free Fonts")
     assert meta(doc, "twitter:card") == "summary_large_image"
 
 
@@ -270,10 +270,10 @@ def test_body_is_skip_link_header_main_footer():
     (mark,) = name.find_all("img")
     assert mark.attrs["class"] == "site-name-mark"
     assert mark.attrs["src"] == "/wordmark.svg"
-    assert mark.attrs["alt"] == "Truly Free Fonts"
+    assert mark.attrs["alt"] == "Purely Free Fonts"
     width, height = int(mark.attrs["width"]), int(mark.attrs["height"])
     assert height == 48
-    assert abs(width / height - 8275 / 1862) < 0.01  # the wordmark's viewBox ratio
+    assert abs(width / height - 8897 / 1862) < 0.01  # the wordmark's viewBox ratio
     assert not [i for i in header.find_all("img") if "favicon" in i.attrs.get("src", "")]
 
 
@@ -316,8 +316,10 @@ def test_one_feedback_spot_first_in_the_footer_the_same_on_every_page():
         spots.add((tuple(hrefs), footer.children[0].text))
     ((hrefs, _),) = spots
     assert hrefs == (context["issues_url"], context["mailto"])
-    assert context["issues_url"] == "https://github.com/byronshock/trulyfreefonts/issues/new/choose"
-    assert re.fullmatch(r"mailto:admin@trulyfreefonts\.com\?subject=[^&\s]+", context["mailto"])
+    assert (
+        context["issues_url"] == "https://github.com/byronshock/purelyfreefonts/issues/new/choose"
+    )
+    assert re.fullmatch(r"mailto:admin@purelyfreefonts\.com\?subject=[^&\s]+", context["mailto"])
 
 
 def test_tip_link_is_one_plain_link_called_a_tip():
@@ -508,7 +510,7 @@ def test_favicon_svg_is_inert_outlines():
 
 
 def test_wordmark_svg_is_inert_outlines():
-    """The header's wordmark (AUTHORITY.md, "Headline font"): one black path in the 8275 x
+    """The header's wordmark (AUTHORITY.md, "Headline font"): one black path in the 8897 x
     1862 viewBox, no script, style, link, text or foreign content, so it renders the same
     under the CSP, in any browser, with no font."""
     source = (STATIC / "wordmark.svg").read_text(encoding="utf-8")
@@ -516,7 +518,7 @@ def test_wordmark_svg_is_inert_outlines():
     root = ET.fromstring(source)
     ns = "{http://www.w3.org/2000/svg}"
     assert root.tag == f"{ns}svg"
-    assert root.attrib["viewBox"] == "0 0 8275 1862"
+    assert root.attrib["viewBox"] == "0 0 8897 1862"
     for el in root.iter():
         assert el.tag in {f"{ns}svg", f"{ns}title", f"{ns}path"}, el.tag
         for name, value in el.attrib.items():
@@ -546,7 +548,7 @@ def test_the_wordmark_is_48_px_tall_wide_and_32_on_phones(browser, site_url, wid
                             .backgroundColor]; }"""
             )
             assert abs(box[1] - want) < 1, (scheme, box)
-            assert abs(box[0] / box[1] - 8275 / 1862) < 0.02, (scheme, box)
+            assert abs(box[0] / box[1] - 8897 / 1862) < 0.02, (scheme, box)
             assert box[2], "the wordmark did not load"
             assert box[3] == "rgb(255, 255, 255)", (scheme, box)
         finally:

@@ -7,7 +7,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        **Reports are public:** anyone can read them, so please leave out anything private. No GitHub account? Email admin@trulyfreefonts.com instead.
+        **Reports are public:** anyone can read them, so please leave out anything private. No GitHub account? Email admin@purelyfreefonts.com instead.
 
         A wrong license or download link has its own form, "Wrong license or link".
   - type: input
@@ -15,7 +15,7 @@ body:
     attributes:
       label: Page address
       description: Copy it from the address bar. It includes your filters.
-      placeholder: https://trulyfreefonts.com/
+      placeholder: https://purelyfreefonts.com/
     validations:
       required: true
   - type: textarea
@@ -47,7 +47,7 @@ body:
     id: version
     attributes:
       label: Site version
-      description: Optional. Open https://trulyfreefonts.com/version.txt and paste its commit= and run_date= lines.
+      description: Optional. Open https://purelyfreefonts.com/version.txt and paste its commit= and run_date= lines.
       render: text
   - type: textarea
     id: console

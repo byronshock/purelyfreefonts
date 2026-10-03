@@ -3,7 +3,7 @@
 Status as of 2026-09-30. Settled decisions are in [AUTHORITY.md](../AUTHORITY.md); each checklist has the detail.
 
 ## Milestone 1: catalog script and catalog.json
-- **Goal:** one script builds a ranked, license-checked catalog of about 500 truly free Latin font families. (Listing every other qualifying family A–Z, step 15b, moved after launch on 2026-09-30: see "More truly free fonts" below.)
+- **Goal:** one script builds a ranked, license-checked catalog of about 500 purely free Latin font families. (Listing every other qualifying family A–Z, step 15b, moved after launch on 2026-09-30: see "More purely free fonts" below.)
 - **Status:** handed off to Milestone 2 on 2026-09-30 (step 20). The 2026-09-26 catalog of 500 fonts is built, reviewed by the owner and committed, and `catalog-site.json` v1 is frozen ([handoff note](milestone-1-handoff.md); monthly tasks in [ops/MONTHLY.md](../ops/MONTHLY.md)). Left: the owner's acceptance of the handoff, and three smaller items (steps 3, 5 and 13).
 - **Checklist:** [milestone-1.md](milestone-1.md)
 - **Depends on:** nothing.
@@ -20,7 +20,7 @@ Status as of 2026-09-30. Settled decisions are in [AUTHORITY.md](../AUTHORITY.md
 - **Checklist:** [milestone-refresh.md](milestone-refresh.md)
 - **Depends on:** Milestone 2's live site and deploy path. Comes before Milestone 3.
 
-## More truly free fonts (after launch)
+## More purely free fonts (after launch)
 - **Goal:** every other font that passes the gates is listed A–Z without a rank, after the ranked fonts, and fonts can be added on request (owner rulings of 2026-09-29).
 - **Status:** moved out of Milestone 1 on 2026-09-30 (`more_fonts_timing`): not needed to go live. It comes after Milestone 2's launch, before or after Milestone 3; the owner chooses when Milestone 2 is done.
 - **Checklist:** [milestone-more-fonts.md](milestone-more-fonts.md)

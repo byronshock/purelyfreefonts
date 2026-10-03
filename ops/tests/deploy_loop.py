@@ -1,6 +1,6 @@
 """Probe a site during a deploy: every file must load, and no page may mix two releases.
 
-    uv run python ops/tests/deploy_loop.py https://staging.trulyfreefonts.com \\
+    uv run python ops/tests/deploy_loop.py https://staging.purelyfreefonts.com \\
         --interval 0.1 --duration 120
 
 Milestone 2 step 11's "Done when": run this while a deploy (or a rollback) happens; it must
@@ -46,7 +46,7 @@ from urllib.parse import urljoin, urlsplit
 import httpx
 
 HASHED_RE = re.compile(r"\.([0-9a-f]{10})\.[a-z0-9]+$")
-USER_AGENT = "trulyfreefonts-deploy-loop/1 (+https://github.com/byronshock/trulyfreefonts)"
+USER_AGENT = "purelyfreefonts-deploy-loop/1 (+https://github.com/byronshock/purelyfreefonts)"
 MAX_SAMPLES = 20
 
 
@@ -222,7 +222,7 @@ class Loop:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    parser.add_argument("url", help="site base URL, e.g. https://staging.trulyfreefonts.com")
+    parser.add_argument("url", help="site base URL, e.g. https://staging.purelyfreefonts.com")
     parser.add_argument("--interval", type=float, default=0.1, help="seconds between probes")
     parser.add_argument("--duration", type=float, default=120.0, help="seconds to run")
     parser.add_argument("--extras", type=int, default=4, help="images and icons per probe")

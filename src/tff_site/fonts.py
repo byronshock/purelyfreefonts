@@ -46,7 +46,7 @@ import httpx
 from tff_catalog import __version__
 
 DEFAULT_CACHE = Path.home() / ".cache" / "tff" / "fonts"
-USER_AGENT = f"trulyfreefonts-site/{__version__} (+https://github.com/byronshock/trulyfreefonts)"
+USER_AGENT = f"purelyfreefonts-site/{__version__} (+https://github.com/byronshock/purelyfreefonts)"
 ATTEMPTS = 3
 RETRY_DELAY = 2.0  # seconds, times the attempt number
 MAX_REDIRECTS = 5

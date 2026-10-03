@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ops/deploy.sh: deploy trulyfreefonts.com from the laptop. The normal path is the GitHub
+# ops/deploy.sh: deploy purelyfreefonts.com from the laptop. The normal path is the GitHub
 # Actions workflow (.github/workflows/deploy.yml); this is its fallback (M2-D6).
 #
 #   ops/deploy.sh production|staging [--commit SHA] [--fast] [--any-commit]
@@ -48,8 +48,8 @@ env_user() {
 
 site_url() {
 	case $1 in
-	production) echo https://trulyfreefonts.com ;;
-	staging) echo https://staging.trulyfreefonts.com ;;
+	production) echo https://purelyfreefonts.com ;;
+	staging) echo https://staging.purelyfreefonts.com ;;
 	*) usage ;;
 	esac
 }

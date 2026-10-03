@@ -31,7 +31,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - M4-D2 channels;
   - M4-D3 posting in person;
   - M4-D4 what "usage is low" means, set before any numbers exist;
-  - M4-D5 a report that a listed font isn't truly free.
+  - M4-D5 a report that a listed font isn't purely free.
 - [ ] The owner changes any **[later OK]** default they disagree with: M4-D6 issue replies, M4-D7 the monthly section.
 - [ ] Claude records each answer in AUTHORITY.md with its date, and adds `docs/milestone-4.md`, `docs/release-checks.md` (step 2), `ops/MONTHLY.md` (step 12) and, if M4-D4 publishes usage, `docs/usage.md` to "Tracked docs".
 - [ ] The owner merges the pull request.
@@ -117,7 +117,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - [ ] The page shows the data date, and adds "this month's update is late" past 45 days (checked in the browser).
 - [ ] M3 step 4's messages for unreadable input work on the live site and show the right command.
 
-**Done when:** `curl -sI https://trulyfreefonts.com/no-such-page` returns 404 with the custom page, and a browser test shows each failure message.
+**Done when:** `curl -sI https://purelyfreefonts.com/no-such-page` returns 404 with the custom page, and a browser test shows each failure message.
 
 ### Step 7: "Report a wrong match or license"
 **Who:** Claude; the owner files the test reports and adds the saved replies. **Depends on:** 1; M4-D5; M2-D10 (feedback channels).
@@ -202,7 +202,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - `preinstalled.toml` each spring and autumn;
   - tokens and keys (the refresh's access, [ops/SERVER.md](../ops/SERVER.md) section J; M2-D6's deploy key) renewed before expiry;
   - the snapshot store's size (D15);
-  - domain auto-renewal, payment cards and Debian 13 support;
+  - auto-renewal of all seven domains (purelyfreefonts.com, .org and .net; trulyfreefonts.com, .org and .net; truelyfreefonts.com; see **Domains** in AUTHORITY.md), payment cards and Debian 13 support;
   - Stripe's yearly export ([ops/DONATIONS.md](../ops/DONATIONS.md) step 14).
 - [ ] "When something breaks": site down, run [ops/SERVER.md](../ops/SERVER.md)'s verification, then the Contabo panel; bad deploy, M2 step 11's one-command rollback; a broken source goes stale and drops out after 2 months; a license complaint follows M4-D5.
 - [ ] Target: under an hour of the owner's time a month.
@@ -250,6 +250,6 @@ Defaults are in bold. A **[Step 0]** decision is answered before building starts
 | **M4-D2 [Step 0]: channels** | **Default: Show HN, r/typography, r/linux, pull requests to `brabadu/awesome-fonts` and `Jolg42/awesome-typography`, and tips to three newsletters** from Typewolf, Fonts In Use, Pimp my Type, Typography Weekly, The League of Moveable Type, Web Tools Weekly and Frontend Focus. Optional, off by default: r/webdev (Showoff Saturday only), r/opensource, the owner's Mastodon or Bluesky, Lobsters (by invitation), Product Hunt (a day of the owner's time). |
 | **M4-D3 [Step 0]: posting in person.** In every option, the owner picks the maker's name for the site and posts: real name or handle. | **(a) The owner posts from their own accounts as the maker** and answers comments for the first 6 hours; Claude drafts replies on request; (b) the owner posts, then answers once or twice a day; (c) a quiet launch: newsletter tips and awesome-list pull requests only, no Show HN or Reddit. |
 | **M4-D4 [Step 0]: what "usage is low" means**, set before any numbers exist and measured over the second full month after the first launch post. The numbers are guesses to adjust. They live in `ops/USAGE.local.md` from M2 step 16, **private by default**; the option is to also publish monthly totals in `docs/usage.md`. | **(a) Low if at least 3 of 4 hold:** under 3,000 loads of the ranked list (about 100 a day); under 300 comparisons started; under 3 issues, pull requests or emails from people other than the owner; under 25 new GitHub stars. If M3-D7 doesn't load the match file on demand, comparisons aren't counted, and 2 of the other 3 must hold; (b) one number: under 3,000 loads of the ranked list; (c) no thresholds: the owner judges. |
-| **M4-D5 [Step 0]: a report that a listed font isn't truly free** | **(a) Once the report looks credible, hide the font** by owner ruling and hotfix deploy until its license is rechecked, erring on the safe side; (b) keep it listed with a "license under review" badge; (c) deal with it in the next monthly refresh. |
+| **M4-D5 [Step 0]: a report that a listed font isn't purely free** | **(a) Once the report looks credible, hide the font** by owner ruling and hotfix deploy until its license is rechecked, erring on the safe side; (b) keep it listed with a "license under review" badge; (c) deal with it in the next monthly refresh. |
 | **M4-D6 [later OK]: replies to issues** | **(a) Claude drafts, and the owner posts every reply**; (b) Claude may post from the owner's `gh` login, but only step 7's "fixed, shipping with the next update", "duplicate" and "more information needed" replies, and only after the owner approves each one; every other reply stays with (a). |
 | **M4-D7 [later OK]: the monthly section** | If D13 keeps Rising: **(a) the section, plus a dated archive page each month and an Atom feed**; (b) the section only. If D13 drops Rising: **(c) "Joined the catalog this month"**, from the monthly diff (the default in that case); (d) no section. |
