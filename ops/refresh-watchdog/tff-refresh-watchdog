@@ -39,7 +39,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-REPO = "byronshock/trulyfreefonts"
+REPO = "byronshock/purelyfreefonts"
 BRANCH = "refresh/monthly"
 WORKFLOW = "refresh.yml"
 REFRESH_MAX_DAYS = 35
@@ -49,7 +49,7 @@ ISSUE_TITLE = "Refresh watchdog: the monthly refresh needs attention"
 CREDENTIAL = "github-token"  # systemd LoadCredential= name
 NO_TOKEN = "none"  # the unit's SetCredential= fallback: no token configured
 API = "https://api.github.com"
-USER_AGENT = "trulyfreefonts-refresh-watchdog (+https://github.com/byronshock/trulyfreefonts)"
+USER_AGENT = "purelyfreefonts-refresh-watchdog (+https://github.com/byronshock/purelyfreefonts)"
 TIMEOUT = 30.0
 
 

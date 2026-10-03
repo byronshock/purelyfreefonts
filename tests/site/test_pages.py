@@ -27,7 +27,7 @@ from tff_site import assets, build, data, pages
 ROOT = Path(__file__).resolve().parents[2]
 SAMPLE = data.load(ROOT / "tests" / "fixtures" / "catalog-site.sample.json")
 COMMIT = "0" * 40
-SUFFIX = " \N{EN DASH} Truly Free Fonts"
+SUFFIX = " \N{EN DASH} Purely Free Fonts"
 
 # Page file -> (URL path, <h1>, the ids of its <h2> headings in order). Other pages, the
 # details panel and people's bookmarks link to these, so they must never move.
@@ -716,11 +716,11 @@ def test_not_found_page_uses_absolute_urls_only(built):
 
 def test_robots_txt_allows_indexing(site_dir):
     assert read(site_dir, "robots.txt") == (
-        "# Truly Free Fonts: every page may be crawled and indexed.\n"
+        "# Purely Free Fonts: every page may be crawled and indexed.\n"
         "User-agent: *\n"
         "Allow: /\n"
         "\n"
-        "Sitemap: https://trulyfreefonts.com/sitemap.xml\n"
+        "Sitemap: https://purelyfreefonts.com/sitemap.xml\n"
     )
 
 

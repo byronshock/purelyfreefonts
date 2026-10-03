@@ -62,10 +62,10 @@ It runs everything through Byron's login (`ssh tff sudo -n -u deploy /usr/local/
 Check a deploy is atomic: in a second terminal, while `ops/deploy.sh staging` runs,
 
 ```sh
-uv run python ops/tests/deploy_loop.py https://staging.trulyfreefonts.com --interval 0.1 --duration 120
+uv run python ops/tests/deploy_loop.py https://staging.purelyfreefonts.com --interval 0.1 --duration 120
 ```
 
-It must end with `errors=0 mixed=0`. Then `ops/deploy.sh rollback staging && curl -s https://staging.trulyfreefonts.com/version.txt` shows the previous commit.
+It must end with `errors=0 mixed=0`. Then `ops/deploy.sh rollback staging && curl -s https://staging.purelyfreefonts.com/version.txt` shows the previous commit.
 
 ## Setting up the server
 
@@ -111,7 +111,7 @@ shred -u "$SCRATCH/staging"
 None of these exist yet (checked read-only on 2026-09-26). GitHub creates an unprotected environment the first time a job names one, so create each environment with its branch rule before adding its secrets.
 
 1. **Environments.** `production`, deployments from `main` only; `staging`, deployments from `staging` only (Settings → Environments → Deployment branches and tags → Selected branches).
-2. **Environment secrets** (each environment its own): `DEPLOY_SSH_KEY`, `DEPLOY_KNOWN_HOSTS` and `DEPLOY_HOST`; **variables** `DEPLOY_USER` (`deploy` or `deploy-staging`) and, optionally, `SITE_URL`. `DEPLOY_HOST` is the origin's IP address, kept only as an environment secret (Actions masks it in logs). Never create a DNS name for it: an unproxied (grey-cloud) record would publish the origin IP, which lets anyone bypass Cloudflare (AUTHORITY.md, `ops/SERVER.local.md`).
+2. **Environment secrets** (each environment its own): `DEPLOY_SSH_KEY`, `DEPLOY_KNOWN_HOSTS` and `DEPLOY_HOST`; **variables** `DEPLOY_USER` (`deploy` or `deploy-staging`) and, optionally, `SITE_URL`, the address the live checks use (without it, `https://purelyfreefonts.com` for production and `https://staging.purelyfreefonts.com` for staging). `DEPLOY_HOST` is the origin's IP address, kept only as an environment secret (Actions masks it in logs). Never create a DNS name for it: an unproxied (grey-cloud) record would publish the origin IP, which lets anyone bypass Cloudflare (AUTHORITY.md, `ops/SERVER.local.md`).
 3. **Labels** the issue forms and the deploy report apply; GitHub silently drops a form label that doesn't exist (the list is `REPO_LABELS` in `tests/test_issue_forms.py`). *(Done by Claude with `gh` on 2026-09-30.)*
    ```sh
    gh label create license --description "License report (issue form)"

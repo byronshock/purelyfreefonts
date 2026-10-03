@@ -449,7 +449,7 @@ The monthly pull request asks the owner only to review what it flags: new aliase
 
 - **Yearly:** switch the Almanac to the new edition (sheet id and tabs in config).
 - **Once:** ask the author of Fonts Over Time for an explicit data license (asked on 2026-09-25: [fcjr/fontsovertime#1](https://github.com/fcjr/fontsovertime/issues/1)).
-- **On request:** when someone asks for a missing font, by email to admin@trulyfreefonts.com or with the "Missing font" form, Claude checks it against the gates and the link policy, and the owner rules. An accepted family joins `config/foundries.toml` with the date it was added, never who asked, and is listed from the next refresh (owner ruling of 2026-09-29).
+- **On request:** when someone asks for a missing font, by email to admin@purelyfreefonts.com or with the "Missing font" form, Claude checks it against the gates and the link policy, and the owner rules. An accepted family joins `config/foundries.toml` with the date it was added, never who asked, and is listed from the next refresh (owner ruling of 2026-09-29).
 
 ## 11. Known biases
 

@@ -1,10 +1,10 @@
-# trulyfreefonts
+# purelyfreefonts
 
-This project builds a ranked list of the most popular truly free Latin fonts and publishes it at [trulyfreefonts.com](https://trulyfreefonts.com). A font counts as truly free only if its license allows use in all personal and commercial projects, with no use restrictions. Display-only, personal-use-only, demo and non-commercial licenses don't qualify. The first release is the filterable list. A later release compares the list with the fonts a visitor already has and shows the ones they don't have.
+This project builds a ranked list of the most popular purely free Latin fonts and publishes it at [purelyfreefonts.com](https://purelyfreefonts.com). A font counts as purely free only if its license allows use in all personal and commercial projects, with no use restrictions. Display-only, personal-use-only, demo and non-commercial licenses don't qualify. The first release is the filterable list. A later release compares the list with the fonts a visitor already has and shows the ones they don't have.
 
 ## Status
 
-Milestone 1, the catalog pipeline, is in progress. Until the first release, trulyfreefonts.com shows a placeholder page.
+Milestone 1, the catalog pipeline, is in progress. Until the first release, purelyfreefonts.com shows a placeholder page.
 
 - Plan: [docs/roadmap.md](docs/roadmap.md) and the milestone checklists, starting with [docs/milestone-1.md](docs/milestone-1.md).
 - How fonts are ranked: [docs/ranking-methodology.md](docs/ranking-methodology.md).

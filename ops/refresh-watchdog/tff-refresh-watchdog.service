@@ -1,6 +1,6 @@
 [Unit]
 Description=Warn when the monthly catalog refresh looks stalled
-Documentation=https://github.com/byronshock/trulyfreefonts/blob/main/ops/refresh-watchdog/README.md
+Documentation=https://github.com/byronshock/purelyfreefonts/blob/main/ops/refresh-watchdog/README.md
 Wants=network-online.target
 After=network-online.target
 

@@ -31,7 +31,7 @@ refilter budgets, with the same slowdown, against ``TFF_PERF_URL`` (an https URL
 whatever is in front of it (Cloudflare, on the test site). They are marked ``network`` and skip
 without ``TFF_PERF_URL``, which no CI job sets::
 
-    TFF_PERF_URL=https://staging.trulyfreefonts.com uv run --group browser pytest \\
+    TFF_PERF_URL=https://staging.purelyfreefonts.com uv run --group browser pytest \\
         tests/site/test_perf.py -k deployed --browser chromium -s
 """
 
@@ -851,8 +851,8 @@ def test_lint_flags(html: str, words: str) -> None:
 
 def test_lint_accepts_what_the_site_uses() -> None:
     html = """<!doctype html><html lang="en"><head><meta charset="utf-8">
-<link rel="canonical" href="https://trulyfreefonts.com/">
-<meta property="og:image" content="https://trulyfreefonts.com/share.png">
+<link rel="canonical" href="https://purelyfreefonts.com/">
+<meta property="og:image" content="https://purelyfreefonts.com/share.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/style.0123456789.css">
 <script type="module" src="/assets/app.0123456789.js"></script>
@@ -879,7 +879,7 @@ def test_specimen_limits_match_the_specimens_stage() -> None:
 
 
 def test_gzip_size_is_deterministic() -> None:
-    blob = b"truly free fonts " * 100
+    blob = b"purely free fonts " * 100
     assert budgets.gzip_size(blob) == budgets.gzip_size(blob)
     assert budgets.gzip_size(blob) < len(blob)
     assert budgets.gzip_size(blob) == len(gzip.compress(blob, compresslevel=9, mtime=0))

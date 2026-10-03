@@ -2,16 +2,16 @@
 
 **Status:** draft of 2026-09-25, written for [Milestone 2](milestone-2.md) step 12. The owner approves the [consent script](#consent-script) and the [invitation](#invitation) before round 1 (step 13). Round 2 (step 15) reuses this plan, and [Milestone 3](milestone-3.md) step 11 adds the check's tasks. Raw notes stay in `research/`, which git ignores; only anonymized findings leave it, as GitHub issues and the [Results](#results) table.
 
-The test asks one question: can people find a truly free font that fits their need, trust what the list says about it, and understand why it ranks where it does?
+The test asks one question: can people find a purely free font that fits their need, trust what the list says about it, and understand why it ranks where it does?
 
 ## Rounds
 
 | Round | When | Site | Testers |
 |---|---|---|---|
-| Trial | before round 1 | `https://staging.trulyfreefonts.com` | 1 person, not counted; the script is fixed afterwards (step 13) |
-| 1 | before the soft launch (step 13) | `https://staging.trulyfreefonts.com`, with real data from M1 step 16 or later | 5 new people |
-| 2 | after the soft launch (step 15) | `https://trulyfreefonts.com` | 5 new people, more of them on phones and assistive technology |
-| 3 | only if round 2 found a blocker or more than 3 majors | `https://trulyfreefonts.com` | 3 people check the fixes |
+| Trial | before round 1 | `https://staging.purelyfreefonts.com` | 1 person, not counted; the script is fixed afterwards (step 13) |
+| 1 | before the soft launch (step 13) | `https://staging.purelyfreefonts.com`, with real data from M1 step 16 or later | 5 new people |
+| 2 | after the soft launch (step 15) | `https://purelyfreefonts.com` | 5 new people, more of them on phones and assistive technology |
+| 3 | only if round 2 found a blocker or more than 3 majors | `https://purelyfreefonts.com` | 3 people check the fixes |
 
 A round is done when:
 
@@ -51,7 +51,7 @@ A round is done when:
 
 *Draft for the owner's approval.* Read it aloud at the start, and note both answers: to the recording, and to taking part.
 
-> Thanks for helping. I'm building trulyfreefonts.com, a list of the most popular fonts that are free for any personal or commercial use. It isn't public yet, so please don't share the link for now.
+> Thanks for helping. I'm building purelyfreefonts.com, a list of the most popular fonts that are free for any personal or commercial use. It isn't public yet, so please don't share the link for now.
 >
 > We're testing the site, not you. If something is hard, that's the site's fault, and it's exactly what I need to find. There are no wrong answers.
 >
@@ -210,7 +210,7 @@ Claude files each finding with `gh issue create --label usability --title "[majo
 
 *Draft for the owner's approval.* Sent as a direct message.
 
-> Hi <name>, I'm building trulyfreefonts.com: a list of the most popular fonts that are free for any personal or commercial use, ranked from public download and usage data. Before anyone else sees it, I'd like to watch a few people use it and find out what's confusing.
+> Hi <name>, I'm building purelyfreefonts.com: a list of the most popular fonts that are free for any personal or commercial use, ranked from public download and usage data. Before anyone else sees it, I'd like to watch a few people use it and find out what's confusing.
 >
 > Could you give me about 30 minutes on a video call in the next two weeks? You'd use the site on your computer or phone and think aloud as you go. There's nothing to prepare or install, and you don't need to know anything about fonts. If a call doesn't suit you, I can email you the tasks instead.
 >
@@ -236,7 +236,7 @@ For someone who uses a screen reader, the keyboard only or zoom, add: "If you us
 
 For testers who can't join a call. Send the site's link and the tasks in one email:
 
-> Thanks for helping test trulyfreefonts.com: <link>. It isn't public yet, so please don't share the link.
+> Thanks for helping test purelyfreefonts.com: <link>. It isn't public yet, so please don't share the link.
 >
 > We're testing the site, not you. Please don't spend more than about 30 minutes; it's fine to skip a task or stop early. I'll use your answers under a code, not your name, in public reports on GitHub, leaving out anything personal. Your email stays private, and I delete it with my notes when this stage of the project is finished. By replying, you agree to that; if you'd rather not, just tell me and I won't use your answers.
 >

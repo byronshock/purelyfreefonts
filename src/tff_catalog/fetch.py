@@ -77,7 +77,9 @@ if TYPE_CHECKING:
     from tff_catalog.stages import StageContext
     from tff_catalog.store import FetchRecord, RawDir, Snapshot, Store
 
-USER_AGENT = f"trulyfreefonts-catalog/{__version__} (+https://github.com/byronshock/trulyfreefonts)"
+USER_AGENT = (
+    f"purelyfreefonts-catalog/{__version__} (+https://github.com/byronshock/purelyfreefonts)"
+)
 DEFAULT_MIN_INTERVAL = 1.0  # seconds between requests to one host
 # Hosts that need a slower pace than the default, unless a caller's min_interval says
 # otherwise. npm's download API answered about one request in five with a 429 (and no

@@ -63,8 +63,8 @@ SITE_DIR = REPO_ROOT / "site"
 DEFAULT_DATA = REPO_ROOT / "build" / "catalog-site.json"
 DEFAULT_OUT = REPO_ROOT / "build" / "site"
 
-SITE_NAME = "Truly Free Fonts"
-BASE_URL = "https://trulyfreefonts.com"
+SITE_NAME = "Purely Free Fonts"
+BASE_URL = "https://purelyfreefonts.com"
 # The live Stripe Payment Link in ops/DONATIONS.md's Facts table (M2 step 8). The link ships
 # with the list release (AUTHORITY.md, Funding); None leaves the footer link out.
 TIP_URL: str | None = "https://buy.stripe.com/dRm00beFeaJ307651Qf7i00"
@@ -73,9 +73,9 @@ TIP_URL: str | None = "https://buy.stripe.com/dRm00beFeaJ307651Qf7i00"
 # list page's lead does, and never "no restrictions".
 HOME_PAGE = {
     "path": "/",
-    "title": "Truly Free Fonts: the most popular fonts free for personal and commercial use",
+    "title": "Purely Free Fonts: the most popular fonts free for personal and commercial use",
     "description": (
-        "The most popular truly free fonts, ranked by how many people install and use them. "
+        "The most popular purely free fonts, ranked by how many people install and use them. "
         "Every font here is free for any personal or commercial use."
     ),
     "canonical": True,
@@ -83,7 +83,7 @@ HOME_PAGE = {
 NOT_FOUND_PAGE = {
     "path": "/404.html",
     "title": "Page not found",
-    "description": "There is no page at this address on Truly Free Fonts.",
+    "description": "There is no page at this address on Purely Free Fonts.",
     "canonical": False,
 }
 # Row badges (site/CONTRACT.md section 3), in this order. Kept short (owner ruling of
@@ -251,7 +251,7 @@ def site_context(*, blog_nav: Mapping[str, str] | None = None) -> dict[str, Any]
         "feedback": {
             "issues_url": f"{data.REPO_URL}/issues/new/choose",
             "email": data.FEEDBACK_EMAIL,
-            "mailto": f"mailto:{data.FEEDBACK_EMAIL}?subject=trulyfreefonts.com",
+            "mailto": f"mailto:{data.FEEDBACK_EMAIL}?subject=purelyfreefonts.com",
         },
         "tip_url": TIP_URL,
         "blog": None if blog_nav is None else dict(blog_nav),

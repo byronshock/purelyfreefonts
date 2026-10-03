@@ -107,8 +107,8 @@ TIER_UNRANKED = "-"
 TIER_OUTSIDE = "."
 
 # Where people report problems (M2-D10): the license issue form, and the email fallback.
-REPO_URL = "https://github.com/byronshock/trulyfreefonts"
-FEEDBACK_EMAIL = "admin@trulyfreefonts.com"
+REPO_URL = "https://github.com/byronshock/purelyfreefonts"
+FEEDBACK_EMAIL = "admin@purelyfreefonts.com"
 REPORT_ISSUE_URL = f"{REPO_URL}/issues/new?template=license.yml"
 
 

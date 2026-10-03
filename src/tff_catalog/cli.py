@@ -115,7 +115,7 @@ def build_parser() -> argparse.ArgumentParser:
     """The full argument parser; every subcommand sets ``func``."""
     parser = argparse.ArgumentParser(
         prog=PROG,
-        description="Builds the ranked catalog of truly free Latin fonts.",
+        description="Builds the ranked catalog of purely free Latin fonts.",
     )
     parser.add_argument("--version", action="version", version=f"{PROG} {__version__}")
     parser.add_argument("-v", "--verbose", action="count", default=0, help="log more (-vv: debug)")

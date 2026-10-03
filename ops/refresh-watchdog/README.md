@@ -34,7 +34,7 @@ ssh tff 'sudo install -o root -g root -m 755 /tmp/tff-refresh-watchdog /usr/loca
 
 Without a token the watchdog only writes to the journal. To have it open issues:
 
-1. Byron creates a fine-grained personal access token on GitHub: resource owner `byronshock`, repository access "Only select repositories" with `byronshock/trulyfreefonts`, and one permission, Issues: Read and write. Give it an expiry date and put a reminder in the calendar to renew it.
+1. Byron creates a fine-grained personal access token on GitHub: resource owner `byronshock`, repository access "Only select repositories" with `byronshock/purelyfreefonts`, and one permission, Issues: Read and write. Give it an expiry date and put a reminder in the calendar to renew it.
 2. Install it on the server without it touching the shell history:
    ```sh
    ssh tff 'sudo install -d -m 700 /etc/tff-refresh-watchdog &&
@@ -59,8 +59,8 @@ Exit codes: 0 all fine; 1 a warning; 2 a usage error; 3 GitHub could not be read
 
 ## When it warns
 
-- **Workflow disabled:** `gh workflow enable refresh.yml -R byronshock/trulyfreefonts`.
-- **No refresh pull request:** run it now with `gh workflow run refresh.yml -R byronshock/trulyfreefonts`, then look at the run. A failed run opens its own issue, "Monthly refresh failed".
+- **Workflow disabled:** `gh workflow enable refresh.yml -R byronshock/purelyfreefonts`.
+- **No refresh pull request:** run it now with `gh workflow run refresh.yml -R byronshock/purelyfreefonts`, then look at the run. A failed run opens its own issue, "Monthly refresh failed".
 - **No commit on main for 50 days:** merge the open refresh pull request, or push any other commit to `main`. A commit on `main` keeps the schedule alive.
 
 Close the watchdog issue once a refresh pull request has appeared. The watchdog opens a new one if the problem comes back.

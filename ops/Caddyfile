@@ -1,14 +1,20 @@
-# /etc/caddy/Caddyfile for trulyfreefonts. This copy in ops/ is the source of truth, together
+# /etc/caddy/Caddyfile for Purely Free Fonts. This copy in ops/ is the source of truth, together
 # with ops/caddy/site.caddy (the site's headers, shared with staging, CI and tff-site serve),
 # which it imports from its own directory. Deploy both with this line; it validates them as a
 # pair before installing either:
 # ssh tff 'install -d -m 755 /tmp/caddy-new' && scp ops/Caddyfile ops/caddy/site.caddy tff:/tmp/caddy-new/ && ssh tff 'sudo -u caddy caddy validate --config /tmp/caddy-new/Caddyfile --adapter caddyfile && sudo install -m 644 /tmp/caddy-new/site.caddy /etc/caddy/site.caddy && sudo install -m 644 /tmp/caddy-new/Caddyfile /etc/caddy/Caddyfile && sudo systemctl reload caddy'
 # (Validate as the caddy user: validating as root creates root-owned log files that Caddy then can't write.)
 #
-# Cloudflare proxies every hostname and terminates public TLS. Caddy uses the
-# Cloudflare Origin CA certificate (valid to 2041), so it never requests certificates itself;
-# for the staging block it must also name *.trulyfreefonts.com. CI validates this file (the
-# caddy job in .github/workflows/ci.yml).
+# Cloudflare proxies every hostname and terminates public TLS. Caddy uses two Cloudflare
+# Origin CA certificates (both valid to 2041), so it never requests certificates itself:
+# origin_tls for the trulyfreefonts names and origin_tls_purely for purelyfreefonts.com. Each
+# also names its domain's wildcard, for the staging and www blocks. CI validates this file
+# (the caddy job in .github/workflows/ci.yml).
+#
+# The rename to Purely Free Fonts (owner ruling of 2026-10-02; docs/milestone-2.md step 13b)
+# is in transition: purelyfreefonts.com and staging.purelyfreefonts.com serve the same sites as
+# trulyfreefonts.com and staging.trulyfreefonts.com, which keep working as before until the
+# cutover (ops/SERVER.md item 31) makes every old host a 301 to the new one.
 
 {
 	servers {
@@ -20,8 +26,14 @@
 
 import site.caddy
 
+# The certificate for trulyfreefonts.com, .org and .net and their wildcards (ops/SERVER.md item 12).
 (origin_tls) {
 	tls /etc/caddy/certs/origin.pem /etc/caddy/certs/origin.key
+}
+
+# The certificate for purelyfreefonts.com and *.purelyfreefonts.com (ops/SERVER.md item 29).
+(origin_tls_purely) {
+	tls /etc/caddy/certs/purely.pem /etc/caddy/certs/purely.key
 }
 
 # Visitor privacy: IP addresses are masked (IPv4 to /16, IPv6 to /32) and the
@@ -65,6 +77,32 @@ import site.caddy
 	}
 }
 
+# The canonical site. Until the cutover it serves the same files as trulyfreefonts.com below,
+# with its own certificate.
+purelyfreefonts.com {
+	import origin_tls_purely
+	root * /srv/trulyfreefonts/public
+	import tff_site
+	import privacy_log
+}
+
+# The test site at its new host (M2-D7, amended on 2026-10-02): the same release as
+# staging.trulyfreefonts.com below.
+staging.purelyfreefonts.com {
+	import origin_tls_purely
+	root * /srv/trulyfreefonts/staging/current
+	import tff_site
+	header X-Robots-Tag "noindex, nofollow"
+	import privacy_log
+}
+
+# www goes to the canonical site, keeping the path and query. It is not in the redirect block
+# at the end because that block's certificate, origin.pem, doesn't cover it.
+www.purelyfreefonts.com {
+	import origin_tls_purely
+	redir https://purelyfreefonts.com{uri} permanent
+}
+
 trulyfreefonts.com {
 	import origin_tls
 	# A root-owned symlink to prod/current once the site deploys as releases (ops/deploy/).
@@ -85,7 +123,8 @@ staging.trulyfreefonts.com {
 	import privacy_log
 }
 
-# Every other hostname goes to the canonical site, keeping the path and query.
+# The old domain's other hostnames go to trulyfreefonts.com, keeping the path and query. At
+# the cutover they and trulyfreefonts.com go to https://purelyfreefonts.com{uri} instead.
 www.trulyfreefonts.com, trulyfreefonts.org, www.trulyfreefonts.org, trulyfreefonts.net, www.trulyfreefonts.net {
 	import origin_tls
 	redir https://trulyfreefonts.com{uri} permanent

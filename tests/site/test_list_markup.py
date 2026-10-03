@@ -432,19 +432,31 @@ SITE_RULINGS_0929 = tomllib.loads(
 SITE_RULINGS_0930 = tomllib.loads(
     (ROOT / "data" / "reviews" / "site" / "2026-09-30.toml").read_text(encoding="utf-8")
 )
+SITE_RULINGS_1002 = tomllib.loads(
+    (ROOT / "data" / "reviews" / "site" / "2026-10-02.toml").read_text(encoding="utf-8")
+)
 # The note's sentence as the owner changed it on 2026-09-30 (front_page_lead_sharing).
 NOTE_0929 = "Some of these fonts ask you to credit the designer, or don't let you pass the font files on, and we mark those."
 NOTE_0930 = "Some of these fonts ask you to credit the designer, and we mark those."
+EMAIL_ADDRESS = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
 
 
 def test_the_front_page_note_is_the_owners(dom):
     """The owner's note, word for word, in both of its copies (site rulings of 2026-09-29,
-    why_not_listed): a frame for wide screens, and a folded one for phones."""
+    why_not_listed): a frame for wide screens, and a folded one for phones. Later rulings
+    change it: its sentence on credit and sharing (2026-09-30, front_page_lead_sharing) and
+    its address (2026-10-02, contact_address)."""
     ruling = SITE_RULINGS_0929["why_not_listed"]
     change = SITE_RULINGS_0930["front_page_lead_sharing"]["ruling"]
+    contact = SITE_RULINGS_1002["contact_address"]
     assert NOTE_0929 in ruling["text"]
     assert NOTE_0930 in change
-    text = ruling["text"].replace(NOTE_0929, NOTE_0930)
+    (old_address,) = set(EMAIL_ADDRESS.findall(ruling["text"]))
+    address = contact["value"]
+    assert old_address in contact["ruling"]  # the address the 2026-10-02 ruling replaces
+    assert address != old_address
+    assert address == data.FEEDBACK_EMAIL
+    text = ruling["text"].replace(NOTE_0929, NOTE_0930).replace(old_address, address)
     main = dom.find("main")
     wide = main.find("div", class_="why-wide")
     fold = main.find("details", class_="why-fold")
@@ -456,8 +468,8 @@ def test_the_front_page_note_is_the_owners(dom):
     for copy in (wide, fold):
         assert squash(copy.find("p").text) == text
         (link,) = copy.find("p").find_all("a")
-        assert link.attrs["href"] == "mailto:admin@trulyfreefonts.com"
-        assert squash(link.text) == "admin@trulyfreefonts.com"
+        assert link.attrs["href"] == f"mailto:{address}"
+        assert squash(link.text) == address
     # The wide frame floats beside the lead and the privacy note, so it comes before them.
     kids = [n.attrs.get("class") or n.tag for n in main.elements()]
     assert kids[:6] == ["h1", "why why-wide", "lead", "privacy-note", "why why-fold", "layout"]

@@ -33,7 +33,7 @@ from tff_site import data
 
 MAX_REDIRECTS = 10
 TIMEOUT_S = 20.0
-USER_AGENT = "tff-site-linkcheck/1 (+https://trulyfreefonts.com)"
+USER_AGENT = "tff-site-linkcheck/1 (+https://purelyfreefonts.com)"
 REDIRECTS = frozenset({301, 302, 303, 307, 308})
 FIELDS = ("license.text_url", "links.primary", "links.designer", "links.nerd")
 

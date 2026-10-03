@@ -53,7 +53,7 @@ from tff_site import assets, pages
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_DIR = REPO_ROOT / "site" / "content" / "blog"
-BASE_URL = "https://trulyfreefonts.com"  # build.BASE_URL; build imports this module
+BASE_URL = "https://purelyfreefonts.com"  # build.BASE_URL; build imports this module
 
 BLOG_PATH = "/blog/"
 FEED_PATH = "/blog/feed.xml"
@@ -68,11 +68,11 @@ IMAGE_TYPES = ("png", "svg")
 INDEX_PAGE = {
     "heading": "Blog",
     "description": (
-        "Notes from Truly Free Fonts: how the list is made, what changes, and why some "
+        "Notes from Purely Free Fonts: how the list is made, what changes, and why some "
         "popular fonts are left out."
     ),
 }
-FEED_TITLE = "Truly Free Fonts blog"
+FEED_TITLE = "Purely Free Fonts blog"
 # M2-D12: post text and images are under the catalog data's license.
 LICENSE = {
     "name": "CC BY-SA 4.0",

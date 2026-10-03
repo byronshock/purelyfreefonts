@@ -3,7 +3,7 @@
 They check a deployed site, after every deploy (``.github/workflows/deploy.yml`` and
 ``ops/deploy.sh``) and by hand::
 
-    uv run --group browser pytest tests/live --base-url https://staging.trulyfreefonts.com \\
+    uv run --group browser pytest tests/live --base-url https://staging.purelyfreefonts.com \\
         --expect-commit <sha40> --browser chromium --browser firefox
 
 - ``--base-url`` (pytest-base-url's option, or ours when the browser group isn't installed):
@@ -50,12 +50,18 @@ def pytest_addoption(parser: pytest.Parser) -> None:
             default=os.environ.get("PYTEST_BASE_URL"),
             help="base url for the application under test.",
         )
-    group = parser.getgroup("tff live", "trulyfreefonts live tests (tests/live)")
+    group = parser.getgroup("tff live", "purelyfreefonts live tests (tests/live)")
     group.addoption(
         "--expect-commit",
         metavar="SHA",
         default=None,
         help="the commit the live version.txt must name",
+    )
+    group.addoption(
+        "--check-redirects",
+        action="store_true",
+        default=False,
+        help="also check that every old address 301s to the site (from the rename's cutover on)",
     )
     group.addoption(
         "--built-site",

@@ -1,7 +1,7 @@
 [project]
 name = "tff-catalog"
 version = "0.1.0"
-description = "Ranked catalog of truly free Latin fonts, and the trulyfreefonts.com site"
+description = "Ranked catalog of purely free Latin fonts, and the purelyfreefonts.com site"
 readme = "README.md"
 authors = [{ name = "Byron Shock" }]
 requires-python = ">=3.14"
@@ -23,8 +23,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://trulyfreefonts.com"
-Repository = "https://github.com/byronshock/trulyfreefonts"
+Homepage = "https://purelyfreefonts.com"
+Repository = "https://github.com/byronshock/purelyfreefonts"
 
 [project.scripts]
 tff-catalog = "tff_catalog.cli:main"

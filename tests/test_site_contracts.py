@@ -817,13 +817,13 @@ def test_base_template_blocks_match_the_contract():
 
 CONTEXT = {
     "site": {
-        "name": "Truly Free Fonts",
-        "base_url": "https://trulyfreefonts.com",
-        "repo_url": "https://github.com/byronshock/trulyfreefonts",
+        "name": "Purely Free Fonts",
+        "base_url": "https://purelyfreefonts.com",
+        "repo_url": "https://github.com/byronshock/purelyfreefonts",
         "feedback": {
-            "issues_url": "https://github.com/byronshock/trulyfreefonts/issues/new/choose",
-            "email": "admin@trulyfreefonts.com",
-            "mailto": "mailto:admin@trulyfreefonts.com?subject=trulyfreefonts.com",
+            "issues_url": "https://github.com/byronshock/purelyfreefonts/issues/new/choose",
+            "email": "admin@purelyfreefonts.com",
+            "mailto": "mailto:admin@purelyfreefonts.com?subject=purelyfreefonts.com",
         },
         "tip_url": None,
         "blog": None,
@@ -874,7 +874,7 @@ def test_base_template_renders_the_shell():
     assert names.count("h1") == 1
     assert {"header", "nav", "main", "footer"} <= set(names)
     assert ("div", {"class": "feedback", "id": "feedback"}) in tags
-    assert ("link", {"rel": "canonical", "href": "https://trulyfreefonts.com/privacy/"}) in tags
+    assert ("link", {"rel": "canonical", "href": "https://purelyfreefonts.com/privacy/"}) in tags
     assert ("a", {"href": "/privacy/", "aria-current": "page"}) in tags
     assert "Privacy &lt;test&gt;" in html  # autoescaped
     assert 'id="tip"' not in html

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://trulyfreefonts.com/schemas/catalog-site/1.0.0",
   "title": "catalog-site.json",
-  "description": "The trimmed catalog that tff-site builds trulyfreefonts.com from (Milestone 2 design §1). Version 1, frozen by Milestone 1 step 20 on 2026-09-30: a change to a v1 field needs v2. Cross-references (unique ids, bands, classes, systems, sources, views) are checked by tff_site.data.semantic_errors, not here.",
+  "description": "The trimmed catalog that tff-site builds purelyfreefonts.com from (Milestone 2 design §1). Version 1, frozen by Milestone 1 step 20 on 2026-09-30: a change to a v1 field needs v2. Cross-references (unique ids, bands, classes, systems, sources, views) are checked by tff_site.data.semantic_errors, not here.",
   "type": "object",
   "additionalProperties": false,
   "required": [
