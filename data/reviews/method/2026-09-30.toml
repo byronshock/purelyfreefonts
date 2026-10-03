@@ -1,0 +1,153 @@
+# Owner rulings of 2026-09-30 on the scoring method, given in chat to the lead session and to the
+# scoring session, which reworks the method from data sources to views. Ruled by the owner, Byron
+# Shock; recorded by Claude. Also in AUTHORITY.md. None of these is in the code yet: the catalog runs
+# method version 2026-09-29 until the port lands them (the owner froze the methodology-tied work on
+# 2026-09-30 "until the methodology is sound"). Where a later ruling narrows one, the entry says so.
+
+[overall_retired]
+choice = "b"
+recommended = false
+value = "no_fused_overall_projects_rederived"
+ruling = "No fused score: the Overall rank (D12, desktop most chosen 50% plus project 50%) retires. The site no longer offers it, and the engine stops computing the fused score once the Project rank moves to the measurement model. The other ranks stay selectable (Desktop most chosen and most installed, Coding, Developers & apps, Rising). The Project rank's score is re-derived by the new scoring method as a single factor, in place of its fixed shares for websites (55%), code (30%) and apps (15%). catalog-site.json v1 keeps Overall in views with available false, and each font's ranks.overall repeats its Project entry as a stand-in (q12_overall_stand_in, 2026-10-01), so no v2 is needed."
+reason = "The owner, in chat: \"On the front page are going to rank using the Popularity in Projects, which as a single factor explains much of the variance in the data. It's also one of the most interesting views. So this is the score we will keep. We will still have the functionality to rank according to other criteria, but we will no longer have a fused score.\" Asked what goes, the owner chose \"Overall retires; Projects is re-derived\" over retiring Overall only, or no blend anywhere; asked when, \"Now, before the soft launch\" (Claude's recommendation). Corrected on 2026-10-01: the first record said the engine stops computing Overall and that no v2 is needed, but v1 requires ranks.overall on every font; the owner's answer to Q12 of the scoring plan makes it a stand-in."
+
+[debian_frame]
+choice = "a"
+recommended = true
+value = "not_shipped_is_not_covered"
+ruling = "Debian popcon covers a font only through a package in the release's main archive. A row for a third-party or removed package (popcon's \"(Not in sid)\") links no family, and a package that is only in sid is not covered either, since few Debian systems could have installed it. Such a font has no Debian term: not covered, rather than censored below the floor."
+reason = "The lead's investigation of why popcon barely loads on the desktop factor found that 52 of the 110 Debian terms in most chosen took their value from a package not in trixie main. The method already says no package means not covered, so the third-party half is a bug fix. Of three options (not covered, sid-only included; only third-party and removed packages; Debian stops scoring and keeps its tags), the owner took Claude's recommendation, under which popcon's loading rises from 0.05 to 0.38. Its effect is confirmed in de1_frame_effect."
+
+[p1_pass_order]
+choice = "a"
+recommended = true
+value = "homebrew_then_desktop_then_project_then_rules_views_display"
+ruling = "The source-by-source pass starts with Homebrew, then the other desktop sources (Arch, GitHub, Nerd Fonts, Debian), then the seven project sources, then the rules the sources share, the views and the display."
+reason = "Claude's recommendation: Homebrew is the ruler, so a fix there changes all the others. The other options were the project sources first (the front page ranks by Used in projects) and the shared rules first."
+
+[h1_homebrew_nerd_split]
+choice = "a"
+recommended = true
+value = "keep_credit_split_count"
+ruling = "Homebrew keeps the full Nerd credit (D7) but records its plain-cask and Nerd-cask installs separately, so the views can model the shared Nerd signal instead of counting it twice. nerd_credit stays 1.0."
+reason = "Claude's recommendation, over keeping one count or crediting Nerd builds through the Nerd Fonts source only (which would change D7). Nerd casks are 59% of font-cask installs; for the 56 observed fonts with a Nerd cask a median 88% of the Homebrew count comes from it; the Nerd Fonts source tracks Homebrew's Nerd casks at Spearman 0.88, against 0.71 for its plain casks."
+
+[h3_young_casks_not_scaled]
+value = "window_as_is"
+ruling = "Homebrew counts a cask's installs in the 365-day window as they are. A young cask is no longer scaled up to a yearly rate over the days it has existed (exposure add_date with a per-year rate retires for Homebrew); it needs the same evidence as any other cask."
+reason = "The owner's words, unprompted: \"Probably the thing most wrong was crediting new casks, such as Alien Block, with more installs in the last year than they've had. New casks will need the same evidence as existing casks, installs in the last year, so if they're only a week old they won't have much evidence.\" On 2026-09-26, 40 fonts were scaled up by 5% or more and 10 cleared the floor only because of it (Scoutie Sans: 21 installs, scored as 71 a year)."
+
+[b8a_no_scaling_any_source]
+choice = "a"
+recommended = true
+value = "all_sources"
+ruling = "No source turns a young font's count into a rate over its days available: Google views, npm, Expo, GitHub, Nerd Fonts and Arch also count only what happened in their window, as Homebrew does (H3). Sources with exposure none or data_date are unaffected. This amends the methodology's rate rule and GitHub's first-run rule (lifetime total over days listed)."
+reason = "Claude's recommendation, over Homebrew only for now, or not for the other sources: scaled-up rates from a few weeks of data are noisy and favour new fonts."
+
+[b8b_grace_kept]
+choice = "a"
+recommended = true
+value = "min_exposure_days_60"
+ruling = "The 60-day grace stays: a font under 60 days old on a channel gets no term there and a New badge; from day 60 it competes on its raw counts."
+reason = "Claude's recommendation, over dropping the grace: a launch-week font isn't marked unpopular on a few days' installs."
+
+[h4_young_cask_bulk_by_age]
+choice = "a"
+recommended = true
+value = "baseline_scaled_to_age"
+ruling = "In the count model, a young cask's expected bulk is the baseline times the share of the window since the cask appeared. Its own installs are never scaled."
+reason = "Claude's recommendation, over a full year's bulk for every cask: a young cask isn't credited with installs it hasn't had, nor marked down for bulk it couldn't have collected."
+
+[h2_homebrew_count_model]
+choice = "a"
+recommended = true
+value = "negbin_plain_and_nerd_estimated_bulk"
+ruling = "Homebrew's floor is replaced by a count model: plain casks and Nerd casks are two negative-binomial count terms, each with its own estimated bulk baseline, dispersion and curve, with no floor, no censoring and no subtraction. A count below the baseline is weak evidence of low popularity, so those fonts stay ranked and ordered by their counts. A bundle cask counts as half a cask (D2); a young cask's bulk follows H4. This replaces Homebrew's floor, censor_below and nerd_floor, and ruling M3. How often the baselines are estimated is q9_theta_cadence (2026-10-01)."
+reason = "The owner first kept the floor, then, after Claude's floor sampler: \"Obviously the way we have been doing the Homebrew floor is wrong. There are some great fonts with poor scores and some poor fonts with great scores.\" And: \"There is no threshold; they just get progressively worse.\" Asked whether the model subtracts the baseline, Claude answered that it never does. Asked \"Shall I adopt the count model for Homebrew's floor?\", the owner said \"Yes.\""
+
+[a1_arch_count_model]
+choice = "a"
+recommended = true
+value = "negbin_plain_and_nerd_estimated_bulk"
+ruling = "Arch's 0.3% floor and its hand-set Nerd group floor are replaced by the count model: plain and Nerd packages as two negative-binomial terms over the year, with estimated bulk baselines and no floor, censoring or scaling. A month pkgstats leaves out (below 16 systems) adds 0 to 15, so the count is an interval; a bundle package counts as half. This replaces Arch's censor_below, nerd_group_floor, counting and exposure settings, and ruling M4."
+reason = "Claude's recommendation, over keeping the floors: the 0.3% floor censored 101 fonts, the same kind of line the owner removed for Homebrew, and the young-package scaling mistook pkgstats' 16-system threshold for youth (40 fonts scaled more than 10%)."
+
+[a2_arch_pool_months]
+choice = "a"
+recommended = true
+value = "pool_system_months"
+ruling = "Arch counts every system-month once: the exposure is the sum of the monthly samples and the count sums the monthly counts, so a recent month, with a larger sample, carries more than an early one."
+reason = "Claude's recommendation, over equal weight per month: pooling is the most precise estimate if popularity is steady. Arch's sample grew from about 14,000 to about 33,000 systems a month."
+
+[a3_arch_nerd_bulk_by_age]
+choice = "a"
+recommended = true
+value = "nerd_group_packages_by_age"
+ruling = "A young Nerd package's expected bulk is scaled to its age, as H4 does for casks; its own count is never scaled. A plain package's bulk is not scaled. Narrowed on 2026-10-01 (q8_a3_group_only): this applies to packages in the nerd-fonts group only, and other Nerd builds get a baseline of their own, not scaled."
+reason = "Claude's recommendation, over full bulk for all: a group member always clears pkgstats' 16-system line, so its first listed month is its age. The lead's review found that this holds for the 71 group packages but not for AUR Nerd builds, hence the narrowing."
+
+[g1_github_deferred]
+value = "off_until_six_snapshots"
+ruling = "GitHub release downloads have no term in any rank (desktop most chosen and most installed, Coding) until they have been observed over several monthly snapshots (g3_github_revisit). The collector keeps snapshotting monthly (D15). github_counters stops counting toward the two-group rule meanwhile."
+reason = "The owner's words, unprompted, after the GitHub findings: \"We will defer acceding the github data until it has been observed for several months.\" GitHub reports lifetime counts per file and only one snapshot exists; the first-run rule annualizes each file, which B8a bans (Cal Sans: 127 downloads of recent files, scored 10,389 a year)."
+
+[g2_nerd_deferred]
+choice = "a"
+recommended = true
+value = "defer_nerd_too"
+ruling = "The deferral covers the Nerd Fonts source too (lifetime release downloads of the nerd-fonts repository): no term in any rank until the revisit."
+reason = "Claude's recommendation, over examining it now: it has the same scaling problem."
+
+[g3_github_revisit]
+choice = "a"
+recommended = true
+value = "after_6_snapshots"
+ruling = "GitHub and Nerd Fonts are revisited after 6 monthly snapshots. Rulings M5 and R1 are moot meanwhile."
+reason = "Claude's recommendation, over 12 snapshots or deciding later."
+
+[de1_frame_effect]
+choice = "a"
+recommended = true
+value = "accept_losing_adwaita_debian_term"
+ruling = "The Debian frame (debian_frame) is implemented as ruled: 434 removed or third-party packages and 48 sid-only packages are not covered. In most chosen, 44 censored fonts become not covered and 8 observed fonts lose their Debian term, Adwaita (sid-only) among them, until it reaches a release."
+reason = "Claude's proposal, asked as one of six numbered questions after the Debian survey. The owner's answer, in full: \"1, 2, 3 - yes; 4 - yes, half; 5 - yes; 6. yes\"."
+
+[de2_debian_count_model]
+choice = "a"
+recommended = true
+value = "negbin_one_term_no_floor"
+ruling = "Debian's floor of 100 is replaced by one negative-binomial count term: the installs of the font's largest shipped package out of the submissions, with an estimated bulk and no floor. popcon lists every package with no reporting threshold, so the counts are exact."
+reason = "Claude's proposal (DE2); the owner: \"yes\"."
+
+[de3_drop_vote]
+choice = "a"
+recommended = true
+value = "inst_only"
+ruling = "popcon's vote series is dropped; Debian uses inst only."
+reason = "Claude's proposal (DE3); the owner: \"yes\". For 96% of font installs popcon has no files to check, so vote doesn't measure font use."
+
+[de4_bundle_credit_half]
+choice = "b"
+recommended = false
+value = "bundle_credit_0.5"
+ruling = "D2's half credit for bundles stays, in every source: in the count models a bundle package counts as half a package with half its installs."
+reason = "Claude had proposed full credit (1.0) in every source, since a bundle install puts every member on the system; the owner answered \"yes, half\". This settles the bundle-credit question the owner deferred to the lead on 2026-09-30 (\"Please wait for the methodology to be updated in full\"), whose options were credit after the floor, full credit for Debian, or leaving it as is."
+
+[de5_dependency_offset]
+choice = "a"
+recommended = true
+value = "offset_top_dependent"
+ruling = "In most chosen and the views built on it, a Linux source no longer abstains for a font that other packages pull in: the term stays, and the top reverse dependency's installs (first alternative only, as M8) are a known offset, so only installs beyond what the dependents pull in count as chosen. Preinstalled fonts keep abstaining. Applies to Arch too. The 50% threshold no longer removes the term and the 35-50% review flag is moot. Its value was amended on 2026-10-01 (q28_offset_subtracted): the offset is subtracted from the count."
+reason = "Claude's proposal (DE5, B9); the owner: \"yes\". Only the top dependent is offset, so chosen installs are slightly overstated where several dependents pull a font in."
+
+[de6_debian_no_age]
+choice = "a"
+recommended = true
+value = "no_age_scaled_bulk"
+ruling = "Debian's bulk is not scaled to package age."
+reason = "Claude's proposal (DE6); the owner: \"yes\". popcon has no package ages, Debian's bulk is tiny, and the frame already excludes the newest packages."
+
+[pd1_project_measures]
+value = "claude_under_delegation"
+ruling = "Claude chooses the likelihood family for each project source, as one signal of a single factor: Fonts Over Time negative binomial with the sites crawled as exposure; the Web Almanac log-normal, a family below its list being the interval up to the smallest listed; ecosyste.ms negative binomial; Google views, npm, jsDelivr and Expo log-normal with an estimated bulk. Anything beyond the measure goes to the owner (the scoring plan's questions, 2026-10-01)."
+reason = "The owner's words: \"Please look at each of the seven data sources and decide what is the most compatible statistical measure for each. We will be aggregating as if they are all signals of a single factor.\""

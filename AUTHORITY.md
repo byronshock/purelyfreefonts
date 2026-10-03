@@ -28,7 +28,9 @@ Answers to the Milestone 1, Step 0 decisions in [docs/ranking-methodology.md](do
   - **most installed:** every install counts.
 
   Only **most chosen** feeds the overall rank. Affected fonts are tagged with the systems or packages that bring them in. *(2026-09-25)*
-- **D1: method.** Each source's order is mapped onto one shared scale. A source that doesn't carry a font is left out rather than counted as zero, and thin evidence is pulled toward the middle. Coverage-aware reciprocal-rank fusion runs monthly as a cross-check. *(2026-09-25)*
+
+  *Amended on 2026-09-30 and 2026-10-01, landing with the desktop model:* a font that packages pull in keeps its Linux term in **most chosen**, less the installs its top dependent brings in; preinstalled fonts still abstain, and Overall retires (see **The scoring method** below).
+- **D1: method.** Each source's order is mapped onto one shared scale. A source that doesn't carry a font is left out rather than counted as zero, and thin evidence is pulled toward the middle. Coverage-aware reciprocal-rank fusion runs monthly as a cross-check. *(2026-09-25; for the Project and Developers & apps ranks, replaced on 2026-10-01 by the measurement model, which keeps "left out rather than counted as zero"; see **The scoring method** below)*
 - **D3: license classes.**
   - CC-BY fonts qualify, with an "attribution required" badge.
   - Copyleft licenses without a font exception (CC-BY-SA, plain GPL/LGPL, AGPL) are excluded.
@@ -37,44 +39,44 @@ Answers to the Milestone 1, Step 0 decisions in [docs/ranking-methodology.md](do
 
   *(2026-09-25)*
 - **D4: Latin.** Google's strict metadata test, plus dual-script families the owner approves from a reviewed short list. *(2026-09-25)*
-- **D7: patched builds.** Nerd Font and CJK builds count in full toward the original family. *(2026-09-25)*
-- **D10: project rank.** It covers websites, code and apps: web 55%, code 30% (including ecosyste.ms dependent repositories), apps 15%. *(2026-09-25)*
-- **D12: overall rank.** Desktop (*most chosen*) 50% plus project 50%, usage only, with no designer picks. *(2026-09-25)*
+- **D7: patched builds.** Nerd Font and CJK builds count in full toward the original family. *(2026-09-25; confirmed on 2026-09-30 and 2026-10-01, with Homebrew's plain and Nerd casks counted apart; see **The scoring method** below)*
+- **D10: project rank.** It covers websites, code and apps: web 55%, code 30% (including ecosyste.ms dependent repositories), apps 15%. *(2026-09-25; the fixed shares retire on 2026-10-01, see **The scoring method** below)*
+- **D12: overall rank.** Desktop (*most chosen*) 50% plus project 50%, usage only, with no designer picks. *(2026-09-25; **retired on 2026-09-30**: no fused score, see **The scoring method** below)*
 - **D13: extra views.** Publish all four: Coding fonts, Developers & apps, By category and Rising (beta). *(2026-09-25)*
-- **D14: evidence gate.** A top-100 place needs evidence from at least 2 independent source groups, plus a mild pull of thin evidence toward the middle (κ 0.2). *(2026-09-25)*
+- **D14: evidence gate.** A top-100 place needs evidence from at least 2 independent source groups, plus a mild pull of thin evidence toward the middle (κ 0.2). *(2026-09-25; for the model ranks, κ gives way to the model's own pull and evidence means a term above its bulk, 2026-10-01, see **The scoring method** below)*
 - **D15: snapshots.** Monthly data extracts live in a private GitHub data repository, reached with a deploy key or GitHub App. *(2026-09-25)*
 - **D17: licenses.** The code is MIT. The catalog data is CC BY-SA 4.0, now final (ruling T5 below). *(2026-09-25)*
 - **Terms rulings (Milestone 1 step 3).** What the catalog may use and publish from each source. Recorded in `data/reviews/terms/2026-09-25.toml`; the full table goes in `docs/sources.md`.
   - **T1: open sources.** For Homebrew, pkgstats, Arch and Debian package data, popcon, npm, Fontsource and jsDelivr, GitHub counts, the Web Almanac (Apache-2.0), ecosyste.ms (CC BY-SA 4.0) and Nerd Fonts `fonts.json` (MIT), raw counts may be published. The public repo may hold small, trimmed real fixtures with credit notices.
   - **T2: Google.** `/metadata/fonts` and `/metadata/stats` are used. Only ranks and z scores are published, never view counts. Public fixtures are synthetic; real data stays in the private store.
   - **T3: Chocolatey** is dropped from v1, because its terms forbid scripted access and republishing. The methodology notes the thinner Windows coverage.
-  - **T4: Fonts Over Time** is used as D11's default says: at the phase-in weight of 0.10, with credit and a link back, ranks only (ranks and their rank-based z scores, never its raw values), and synthetic fixtures. Claude drafts the license request, and the owner posts it.
+  - **T4: Fonts Over Time** is used as D11's default says: at the phase-in weight of 0.10, with credit and a link back, ranks only (ranks and their rank-based z scores, never its raw values), and synthetic fixtures. Claude drafts the license request, and the owner posts it. *Amended on 2026-10-01* (see **The scoring method** below): Fonts Over Time enters the Project model now, at its fitted weight, as two terms; a model score that combines several sources is not a Fonts Over Time value, and its source entries show its rank-based z only.
   - **T5: data license.** CC BY-SA 4.0 is final.
 
   *(2026-09-25)*
 - **Method clarifications (M1–M12).** Recorded in `data/reviews/method/2026-09-25.toml` and in the methodology.
-  - **M1:** the outlier guard stays (gap 1.5 z, at least 3 terms, half weight). *Superseded on 2026-09-26:* the guard compares each term with the median of all the font's terms, and the worked example goes back to JetBrains Mono 2.48.
+  - **M1:** the outlier guard stays (gap 1.5 z, at least 3 terms, half weight). *Superseded on 2026-09-26:* the guard compares each term with the median of all the font's terms, and the worked example goes back to JetBrains Mono 2.48. *Retired for the model ranks on 2026-10-01*, which keep only a review flag (see **The scoring method** below).
   - **M2:** GitHub counts every release of a main-channel repo, as growth between snapshots, with no 24-month cap; Iosevka uses its latest 24 releases, through GraphQL.
-  - **M3:** Homebrew Nerd casks get their own floor each run, the 10th percentile of Nerd casks' 365-day installs (about 2,150 a year), subtracted before `nerd_credit`.
-  - **M4:** the Arch Nerd Fonts group floor is the 10th-percentile share of members in the group at least 6 months; newer members are not floored.
+  - **M3:** Homebrew Nerd casks get their own floor each run, the 10th percentile of Nerd casks' 365-day installs (about 2,150 a year), subtracted before `nerd_credit`. *Replaced on 2026-09-30* by Homebrew's count model, landing with the desktop model (see **The scoring method** below).
+  - **M4:** the Arch Nerd Fonts group floor is the 10th-percentile share of members in the group at least 6 months; newer members are not floored. *Replaced on 2026-09-30* by Arch's count model, landing with the desktop model (see **The scoring method** below).
   - **M5:** GitHub counters and Homebrew are one independence group for a font whose Homebrew cask downloads that repo's release asset. *Amended on 2026-09-29:* only GitHub release counts merge; Nerd Fonts is a group of its own (gate R round 1, below).
   - **M6:** the Almanac's pages tab is the term; its services tab only flags parent merges.
   - **M7:** ecosyste.ms counts `@fontsource` and `@fontsource-variable` packages only.
-  - **M8:** a Linux source abstains when the largest single dependent brings in at least 50% of installs; in `a | b` the first alternative is credited; 35–50% is flagged for review.
-  - **M9 (the owner's choice, not the recommended default):** the project group shares stay fixed at web 55%, code 30%, apps 15%; within a group, the sources share its weight pro rata to their effective weights (after phase-in, overlap scaling, stale drops and switched-off sources).
-  - **M10:** Developers & apps uses the project weights, rescaled: npm 0.15, ecosyste.ms 0.10, Expo 0.10, and Flutter 0.05 when it is on.
+  - **M8:** a Linux source abstains when the largest single dependent brings in at least 50% of installs; in `a | b` the first alternative is credited; 35–50% is flagged for review. *Replaced on 2026-09-30* for pulled-in fonts by an offset, landing with the desktop model (see **The scoring method** below).
+  - **M9 (the owner's choice, not the recommended default):** the project group shares stay fixed at web 55%, code 30%, apps 15%; within a group, the sources share its weight pro rata to their effective weights (after phase-in, overlap scaling, stale drops and switched-off sources). *Retired on 2026-10-01* (see **The scoring method** below).
+  - **M10:** Developers & apps uses the project weights, rescaled: npm 0.15, ecosyste.ms 0.10, Expo 0.10, and Flutter 0.05 when it is on. *Retired on 2026-10-01*: Developers & apps moves to the model with Project (see **The scoring method** below).
   - **M11:** the top-100 lists have hysteresis: a font enters at 90 or better and leaves after 2 runs worse than 110.
   - **M12:** foundry families are a hand list in `config/foundries.toml`, seeded once by Claude from the foundry sites and reviewed by the owner with the step 2 config. *Amended on 2026-09-29:* families are also added to it on request (see "Every qualifying font is listed" under Site).
 
   *(2026-09-25)*
 - **Rulings after the first real run.** Given in chat on 2026-09-26 and recorded in `data/reviews/<gate>/2026-09-26.toml` (method, terms, config, latin, licenses, l3, aliases, unmatched, corrections, links, review, ci, site). Unless noted, the owner took Claude's recommendation.
   - **Outlier guard (the owner's own option):** each term is compared with the median of all the font's terms; one more than 1.5 z from it gets half weight. The worked example is JetBrains Mono 2.48.
-  - **Method:** Developers & apps shows bands only while its sources share one independence group (until Flutter is on); Rising is tier C while in beta; the confidence draws keep re-weighting across all of a survey's sources (the owner's choice); release assets created after the baseline count in full; §9's monotonicity wording as written there.
+  - **Method:** Developers & apps shows bands only while its sources share one independence group (until Flutter is on); Rising is tier C while in beta; the confidence draws keep re-weighting across all of a survey's sources (the owner's choice; for the model ranks, replaced on 2026-10-01 by a deterministic range, see **The scoring method** below); release assets created after the baseline count in full; §9's monotonicity wording as written there.
   - **Terms:** Google's monthly shares for Rising are kept in the private data repository, never in the public `state/`; Rising uses them.
   - **Linux sources:** a preinstalled system silences only the Linux sources that count it (Arch-family systems pkgstats, Debian and Ubuntu popcon, desktops both); popcon and pkgstats count a family by its most-installed package.
   - **Config (gate C):** `preinstalled.toml` and `foundries.toml` are approved; LibreOffice is listed as an application (`os = "app"`); EndeavourOS takes its fonts from eos-base-group; Blackout is three families.
   - **Latin (gate L):** at most 2 GF_Latin_Kernel code points missing, a Latin share of at least 30%, "extended" with at most 3 GF_Latin_Core code points missing; Google families served only with the menu subset take the glyph test; Single Day is out. Of the dual-script Google families (D4's short list), those with full Latin Extended are included unless they are script companions (a script version of a family already listed, such as Noto Sans Arabic or Hind Siliguri); companions and basic-Latin-only families stay out. Claude applied the rule family by family in `data/reviews/latin/2026-09-26.toml`: 178 included, 206 companions and 59 basic-Latin-only families left out. The owner was shown 327 included and 116 left out; on 2026-09-28 the owner confirmed that the 149 companions between the two counts (134 Noto script families, 9 Baloo 2 script versions, IBM Plex Sans Arabic, Mukta Mahee, Malar and Vaani, Playpen Sans Arabic and Deva) stay out.
-  - **Licenses (gate LIC):** Bitstream Vera, Bitstream Charter, the Ubuntu Font Licence, the GUST Font License and IPA qualify (open-font group); WTFPL, LPPL 1.3c and public-domain dedications qualify (permissive); X11, BSL-1.0 and Artistic-2.0 qualify (permissive) and MPL-2.0 (open-font); GPL and LGPL with the font exception qualify; Lack is excluded until it publishes a license; Monofur, Vic Fieger, freeware grants, Arphic, Artistic-1.0 and Letters are researched; a family with no license is excluded, but Claude researches any that would reach the overall top 700. OpenDyslexic, Overpass, Roboto Mono, Tinos, TeX Gyre Heros, Cascadia Code, Cascadia Mono and Hack qualify and are redistributable (their disagreements are outdated labels); the four Salaowu families are researched.
+  - **Licenses (gate LIC):** Bitstream Vera, Bitstream Charter, the Ubuntu Font Licence, the GUST Font License and IPA qualify (open-font group); WTFPL, LPPL 1.3c and public-domain dedications qualify (permissive); X11, BSL-1.0 and Artistic-2.0 qualify (permissive) and MPL-2.0 (open-font); GPL and LGPL with the font exception qualify; Lack is excluded until it publishes a license; Monofur, Vic Fieger, freeware grants, Arphic, Artistic-1.0 and Letters are researched; a family with no license is excluded, but Claude researches any that would reach the overall top 700 (the Project top 700 once Overall retires, 2026-10-01). OpenDyslexic, Overpass, Roboto Mono, Tinos, TeX Gyre Heros, Cascadia Code, Cascadia Mono and Hack qualify and are redistributable (their disagreements are outdated labels); the four Salaowu families are researched.
   - **License checks (gate L3):** Claude researches all 32 fonts that failed the automatic check and asks the owner only about genuine conflicts.
   - **Aliases and unmatched keys (gates A, U):** Iosevka Term and Term Slab fold into Iosevka; build variants (Maple Mono CN and NF, Cascadia Mono NF and the other NF and PL builds by the build rule, Inter Variable) fold into their family, and so do Monocraft's Nerd builds and the width names a parent's own files carry; Monaspace, Libertinus, Noto, iA Writer and M+ are bundles (D2); the 53-repository GitHub list and its 914 plain rows are accepted; distro package rows wait until their contents are researched; Material Icons and Symbols are icon fonts; a short `build/universe.md` is committed.
   - **Links (gate K):** the four overrides (Adobe Source, IBM Plex, Inter, JetBrains Mono) are approved. A family on the approved foundry list may use that list's link with no second source; `http://` homepages are upgraded to `https://` and checked monthly; Inter Tight keeps its Google page; open-foundry.com counts as an aggregator.
@@ -128,7 +130,7 @@ Answers to the Milestone 1, Step 0 decisions in [docs/ranking-methodology.md](do
 
   *(2026-09-29)*
 - **Final method (Milestone 1 step 17).** The method the owner approved at gate R round 2 is final. The entries above hold each decision; this one says where the final state lives.
-  - **Method:** the code implements method version 2026-09-29 (`METHOD_VERSION` in `src/tff_catalog/__init__.py`, which each catalog records as `run.method_version`), with every ruling above up to gate R round 2. The owner's ruling of 2026-09-29 moved it on from 2026-09-25 to cover that day's changes: M5 as amended (Nerd Fonts its own independence group), the owner's category overrides, archived-link overrides, and the Nerd Font build link (`links.nerd`, TASK-2). Its public text is [docs/ranking-methodology.md](docs/ranking-methodology.md), published on 2026-09-29.
+  - **Method:** the code implements method version 2026-09-29 (`METHOD_VERSION` in `src/tff_catalog/__init__.py`, which each catalog records as `run.method_version`), with every ruling above up to gate R round 2. The owner's ruling of 2026-09-29 moved it on from 2026-09-25 to cover that day's changes: M5 as amended (Nerd Fonts its own independence group), the owner's category overrides, archived-link overrides, and the Nerd Font build link (`links.nerd`, TASK-2). Its public text is [docs/ranking-methodology.md](docs/ranking-methodology.md), published on 2026-09-29. The rulings of 2026-09-30 and 2026-10-01 on the scoring method (below) are not in it yet: they take a new method version, which the port brings.
   - **Weights:** every weight and parameter is in `config/ranking.toml`, as the approved run used it (`run.ranking_toml_sha256` `c22345a4…` in `build/catalog.json`). The headline values:
     - overall: desktop (*most chosen*) 50% and project 50% (D12);
     - desktop: Homebrew 1.0, Arch 0.75, GitHub 0.5, Nerd Fonts 0.3, Debian 0.25 (D9);
@@ -195,11 +197,74 @@ Answers to the Milestone 1, Step 0 decisions in [docs/ranking-methodology.md](do
 
   *(2026-10-01)*
 
+- **The scoring method, from data sources to views (2026-09-30 and 2026-10-01).** On 2026-09-30 the owner set the method's ad-hoc parts aside: "We are going to ditch the ad-hoc methodology in favor of something grounded in real math." A separate session reworked it source by source, starting from Homebrew (`p1_pass_order`), and the owner answered its plan's questions on 2026-10-01. Recorded in `data/reviews/method/2026-09-30.toml` and `data/reviews/method/2026-10-01.toml`. The plan itself stays private, because it quotes estimates made from Google Fonts and Fonts Over Time data (T2, T4). The owner took Claude's recommendation each time, except where noted.
+
+  **None of this is in the code yet.** The catalog runs method version 2026-09-29 until the port lands these rulings. On 2026-09-30 the owner froze the methodology-tied work "until the methodology is sound"; these records went in during the freeze because they change no code.
+  - **No fused score (`overall_retired`, 2026-09-30).** The Overall rank (D12) retires, and the front page ranks by the Project rank, "Used in projects" (M2-D1, amended). The owner's reason: popularity in projects "as a single factor explains much of the variance in the data" and is "one of the most interesting views". The other ranks stay selectable. In `catalog-site.json` v1, Overall stays in `views` with `available: false`, and each font's `ranks.overall` repeats its Project entry as a stand-in (`q12_overall_stand_in`), so no v2 is needed. The catalog becomes the Project top 500 plus each rank's top 100, and the license research reaches the Project top 700 (`q13_catalog_membership`).
+  - **The measurement model (`q1_model_views`).** It covers the Project and Developers & apps ranks (`q15_views_meanwhile`):
+    - Each font has one latent popularity.
+    - Each source is a count term with its own noise, its own window and exposure, and a bulk baseline that every package collects whatever its popularity.
+    - The model is fitted by maximum likelihood, and the score is the font's posterior mean.
+
+    For those ranks it replaces:
+    - the Homebrew ruler and the equating;
+    - the floors and the censored terms;
+    - the hand weights and group shares (D10, M9 and M10, `q5_group_shares_retired`);
+    - κ;
+    - the outlier guard's half weight (M1). A review flag stays, for a term that conflicts with the font's other terms (`q2_guard_retired`).
+    - the confidence draws. A likely range becomes the font's rank at its own posterior 5% and 95% quantiles (`q19_ranges_tiers_stand_in`).
+
+    Desktop, Coding and Rising stay on the engine until desktop's model is designed, with GitHub and Nerd Fonts off. On the 2026-09-26 data, the model's Project order agrees with today's at Spearman 0.977 and keeps 91 of the top 100.
+  - **Desktop sources (2026-09-30).** Rulings that need no model land in the engine with the port: Homebrew's window, no source scaling up a young font, Arch's pooled months, the Debian frame, the dropped vote, and the GitHub and Nerd Fonts deferral. The rest waits for the desktop model, and until then the engine keeps its desktop floors.
+    - **Homebrew.**
+      - A cask's installs count as they are, and a young cask is never scaled up to a year (`h3_young_casks_not_scaled`). The owner, unprompted: "New casks will need the same evidence as existing casks, installs in the last year."
+      - Plain and Nerd casks are counted apart, and D7's full credit stays (`h1_homebrew_nerd_split`).
+      - The floor gives way to a count model: two terms, each with an estimated bulk, and no floor, censoring or subtraction (`h2_homebrew_count_model`, replacing M3). The owner, after Claude's floor sampler: "Obviously the way we have been doing the Homebrew floor is wrong." A young cask's expected bulk is scaled to its age; its installs never are (`h4_young_cask_bulk_by_age`).
+    - **Every source.** No source turns a young font's count into a rate over its days available (`b8a_no_scaling_any_source`). The 60-day grace and the New badge stay (`b8b_grace_kept`).
+    - **Arch.**
+      - Arch gets the same count model, with months below pkgstats' 16-system line read as 0 to 15 (`a1_arch_count_model`, replacing M4).
+      - System-months are pooled (`a2_arch_pool_months`).
+      - A young package's bulk is scaled to its age, for packages in the `nerd-fonts` group only (`a3_arch_nerd_bulk_by_age`, `q8_a3_group_only`).
+    - **GitHub and Nerd Fonts.** Neither has a term in any rank until 6 monthly snapshots exist, then they are revisited (`g1_github_deferred`, `g2_nerd_deferred`, `g3_github_revisit`). The owner: "We will defer acceding the github data until it has been observed for several months." Rulings M5 and R1 are moot meanwhile.
+    - **Debian.**
+      - A font is covered only through a package in the release's main archive. A third-party, removed or sid-only package is not covered (`debian_frame`), so Adwaita loses its Debian term until it reaches a release (`de1_frame_effect`).
+      - One count term, with no floor (`de2_debian_count_model`).
+      - The vote series is dropped (`de3_drop_vote`).
+      - No age adjustment (`de6_debian_no_age`).
+    - **Bundles.** D2's half credit stays in every source. That was the owner's choice ("yes, half"); Claude had proposed full credit (`de4_bundle_credit_half`).
+    - **Pulled-in fonts.** In place of M8's abstention, a Linux term subtracts the installs its top dependent brings in: max(0, y − d) (`de5_dependency_offset`, `q28_offset_subtracted`). A font is tagged "mostly pulled in" when that takes half its installs or more (`q10_pulled_in_tag`).
+    - **Later.** Desktop gets two correlated factors, macOS-and-developer and Linux, in one view. The owner sets their weight when desktop moves, in place of D9's weights (`q21_desktop_two_factors`). A Nerd factor waits for Nerd Fonts' own data (`q22_nerd_factor_later`).
+  - **Project sources.**
+    - Claude chose each source's measure, under the owner's delegation: "decide what is the most compatible statistical measure for each" (`pd1_project_measures`).
+    - Fonts Over Time enters now, at its fitted weight, as two terms, startups and other homepages. This retires D11's cap and phase-in weight (`q4_fot_two_terms`, `q6_fot_now`; T4 amended).
+    - Google views, npm and Expo get an age-scaled bulk (`q7_age_scaled_bulk_web`).
+    - An Almanac count that merges a parent's counts is an upper bound only (`q24_almanac_merged_parent`).
+    - A jsDelivr family with no hits is not covered until its statistics show hits (`q29_jsdelivr_zero`).
+    - The port checks the frames, and Flutter stays off until it has its own pass (`q26_project_frames`).
+    - Google's own products' traffic is left to the noise (`q23_google_own_traffic`).
+    - The small overlap between the web sources is disclosed and accepted (`q25_residual_dependence`).
+  - **Rules.**
+    - D14's two-group rule stays: a group gives evidence when one of its terms sits above what bulk alone predicts (`q14_two_groups`). Developers & apps can't meet it, so its single note stays (`held_marker_dev_apps`).
+    - A source that doesn't carry a font says nothing about it (`q3_coverage_mar`).
+    - D7's full credit stays for CJK builds (`q27_cjk_credit`).
+    - The model's parameters are held for a year, and re-estimated early when a drift check fires or a source changes (`q9_theta_cadence`).
+  - **Published fields (v1 unchanged).**
+    - `weight_used` is each term's share of the font's information, and null for Google and Fonts Over Time (`q16_weight_used`).
+    - Every term's `state` reads "observed", interval terms included. That was the owner's choice; Claude had recommended "censored" for an interval (`q18a_state_observed`).
+    - A term's `z` is the popularity that term alone implies; Fonts Over Time keeps its rank-based z (`q18b_z`, `q17_t4_wording`).
+    - A rank's first run under a new method bootstraps `previous_score`, so no triangle shows that month (`q20_previous_score_at_switch`).
+  - **The shown score.** It is linear between 0 and 3 on the latent scale, so 1 is the average tracked font and 100 is three standard deviations above it: max(1, ⌈100 · clip(η̂ / 3, 0, 1)⌉). It replaces 100·Φ(z) (`score_curve`).
+    - The linear scale was the owner's choice, where Claude had recommended keeping 100·Φ (`q11_display_linear`). The ends were Claude's recommendation (`q30_display_ends`).
+    - Over the Project top 500 on 2026-09-26: no font at 1, 5 at 100, a median of 33, and a median of 70 in the top 100.
+    - It is needed by the first live refresh, and the ends are site constants, held with the model's parameters.
+
+  *(2026-09-30, 2026-10-01)*
+
 ## Site (Milestone 2)
 
 Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull request #2](https://github.com/byronshock/trulyfreefonts/pull/2)).
 
-- **M2-D1: default rank.** The list opens on the **overall** rank. *(2026-09-25)*
+- **M2-D1: default rank.** The list opens on the **overall** rank. *(2026-09-25; amended 2026-09-30: it opens on **Used in projects**, the Project rank, since Overall retired (D12). Recorded in `data/reviews/site/2026-09-30.toml` (`default_rank_project`); it lands with the site work the freeze holds)*
 - **M2-D2: numbers under filters.** Each filtered list renumbers from 1. Fonts past the exact top 100 show their band instead of a number. *(2026-09-25; replaced in Milestone 2 by **Scores instead of numbers**, below, 2026-09-29)*
 - **M2-D3: page technology.** Plain HTML, CSS and one script, with no framework, built by a Python command in the same project as the catalog. *(2026-09-25)*
 - **M2-D4: filter layout.** Every filter sits in a sidebar on wide screens. On phones, everything but search and rank goes behind one "Filters" button. *(2026-09-25)*
@@ -252,11 +317,11 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
   - *Changed on 2026-09-30*, after Rule 3 made every listed font redistributable: "Every font here is free for any personal or commercial use, and you may share the files. They are ranked by how many people install them and use them in their work." The front-page note "Why isn't my favorite free font here?" drops "or don't let you pass the font files on" and now reads "Some of these fonts ask you to credit the designer, and we mark those." Both were Claude's recommendation, taken by the owner. Recorded in `data/reviews/site/2026-09-30.toml` (`front_page_lead_sharing`).
 - **Early-version line.** Every page's header says "Early version. Coming next: free font inventory tools." (the owner's wording) until Milestone 3 removes it. *(2026-09-29)*
 - **Scores instead of numbers (Milestone 2).** The owner's idea, after a filtered list ran 1 to 25 and then showed bands. Recorded in `data/reviews/site/2026-09-29.toml` (`score_display`, `score_curve`, `score_held_fonts`, `score_field_timing`). *(2026-09-29)*
-  - **Display.** The list shows each font's score, 0 to 100, as a blue bar where the rank number is now. Filters only hide rows: no renumbering, and no bands in the list. A font's details keep its rank and range. This replaces M2-D2 when it lands.
-  - **Score.** 100·Φ(z), the normal curve of the engine's fused score for the rank (Claude's recommendation; the owner had suggested the logistic, which differs by about one point at most). It is relative standing among the fonts the sources track, not the chance that a given person chose the font.
+  - **Display.** The list shows each font's score, 0 to 100, as a blue bar where the rank number is now. Filters only hide rows: no renumbering, and no bands in the list. A font's details keep its rank and range (*the range goes on 2026-09-30*, **No tiers or likely ranges**, below). This replaces M2-D2 when it lands.
+  - **Score.** 100·Φ(z), the normal curve of the engine's fused score for the rank (Claude's recommendation; the owner had suggested the logistic, which differs by about one point at most). It is relative standing among the fonts the sources track, not the chance that a given person chose the font. *Replaced on 2026-10-01*, with the measurement model, by a linear score between fixed ends (`q11_display_linear`, `q30_display_ends`; see **The scoring method** under Ranking).
   - **Held fonts.** The list sorts by score: a font the two-source rule holds back takes its score's place and carries a marker. The catalog's ranks and bands keep the rule. That was the owner's choice; Claude had recommended a note instead of a score. In Developers & apps, where every font rests on one kind of source, one note above the list replaces the row marker (`held_marker_dev_apps`, 2026-09-30). The marker is a hollow bar, explained by one legend line above the list (`held_marker_style`, 2026-09-30, Claude's recommendation).
   - **When.** `catalog-site.json` carries each rank's score from Milestone 1, before the step 20 freeze. The display is built in Milestone 2.
-  - **Last month's score.** *(2026-09-30)* Each rank entry also carries `previous_score`, the font's score in the last published catalog, kept from month to month in `state/published_scores.json`, so the schema holds what Backlog TASK-4's green rising and red falling triangles need before the freeze; the triangles themselves wait. To bootstrap, and only then, last month's score is this month's: until a monthly refresh has been merged no scores are published, so `previous_score` equals `score` and no triangle can show. `tff-catalog validate` asserts it, in a run and on the committed files (the owner's words: "we can assert this to be the case"). Recorded in `data/reviews/site/2026-09-30.toml` (`score_previous_bootstrap`).
+  - **Last month's score.** *(2026-09-30)* Each rank entry also carries `previous_score`, the font's score in the last published catalog, kept from month to month in `state/published_scores.json`, so the schema holds what Backlog TASK-4's green rising and red falling triangles need before the freeze; the triangles themselves wait. To bootstrap, and only then, last month's score is this month's: until a monthly refresh has been merged no scores are published, so `previous_score` equals `score` and no triangle can show. `tff-catalog validate` asserts it, in a run and on the committed files (the owner's words: "we can assert this to be the case"). Recorded in `data/reviews/site/2026-09-30.toml` (`score_previous_bootstrap`). *Amended on 2026-10-01:* a rank's first run under a new method bootstraps the same way (`q20_previous_score_at_switch`).
 - **Font names.** A row with a specimen shows the family name once, drawn in the font by the specimen's first line. The text name stays in the page for screen readers, search and find-in-page, and shows whenever the specimen isn't shown. The NF marker moves to the end of the row's title cell (the specimen, or the text name where there is none), still in a column. The owner chose to hide the text name; Claude had recommended dropping the name from the specimen. Recorded in `data/reviews/site/2026-09-29.toml` (`name_once`, `nerd_marker_spot_title`). *(2026-09-29)*
 - **Specimen sample line.** "Dolorem ipsum quaerit nemo." (the owner's wording: Cicero's phrase behind Lorem ipsum, with descenders on both sides), in place of the Polish and Czech line of 2026-09-26 and of "Dolor dolorosus est.", chosen earlier the same day. "quaerit" is spelt without the æ ligature, which fonts with basic Latin only lack. Recorded in `data/reviews/site/2026-09-29.toml` (`specimen_sample_latin`). *(2026-09-29)*
 - **Specimen size cap.** A specimen may be up to 16 KB compressed (gzip -9), about what a visitor downloads, in place of 30 KB uncompressed; a larger one shows the family name only. The owner's answer after Claude showed that the raw cap made six fonts name-only although each was 7 to 15 KB compressed. Recorded in `data/reviews/site/2026-09-30.toml` (`specimen_max_size`). *(2026-09-30)*
@@ -287,11 +352,12 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
     - **Font:** formats and Latin coverage;
     - **Comes with:** the systems that preinstall it;
     - **Also known as:** other names;
-    - **Rank:** the rank chosen in the selector, with its likely range.
+    - **Rank:** the rank chosen in the selector, with its likely range (*the range goes*, **No tiers or likely ranges**, below).
 
     Last comes "Report a problem".
-  - **Folded.** A closed "All ranks and sources" disclosure holds every rank with tier and range, the tier legend, "Pulled in by" and the per-source tables.
+  - **Folded.** A closed "All ranks and sources" disclosure holds every rank with tier and range, the tier legend, "Pulled in by" and the per-source tables. (*The tiers, ranges and legend go*, **No tiers or likely ranges**, below.)
   - **Dropped:** the section headings, the license-group row, the Redistributable row, the Spacing row, and the Nerd Font legend repeated from above the list.
+- **No tiers or likely ranges (2026-09-30).** The site shows no tiers and no likely ranges. Every rank shows just its place ("#12", or its band past 100). Removed: the tier letters, the Firm/Fair/Rough legend, the "likely #8 to #17" ranges, the methodology page's tier section, and those fields in the site's details data. `catalog-site.json` v1 keeps its tier and range fields, unshown (`q19_ranges_tiers_stand_in`). The owner: "Tiers are something you came up with, not me." Of the folded details: "Yuck. Can we take these details out? The site is heavy as it is." The owner took Claude's recommended option, "Tiers and ranges, everywhere", over tiers only or the whole per-rank list, and then froze the work "until the methodology is sound", so it lands after the freeze. Recorded in `data/reviews/site/2026-09-30.toml` (`no_tiers_or_ranges`). *(2026-09-30)*
 
 ## Infrastructure
 
