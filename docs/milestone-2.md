@@ -231,8 +231,56 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 
 **Parallel:** Claude writes up each session while the next is scheduled.
 
+### Step 13b: Rename to Purely Free Fonts
+**Who:** Claude, guiding the owner; the owner does the dashboard, registrar, GitHub, Stripe and Ko-fi steps. **Depends on:** the owner's rulings of 2026-10-02 (AUTHORITY.md, **Name and domain**). The method hold and the soft-launch hold stand, so production keeps serving the stub, renamed, and the catalog isn't rebuilt.
+- [ ] **New zones** (`ops/SERVER.md` section K): purelyfreefonts.com, .org and .net, set up like the other zones.
+  - [x] The owner registers the three domains, adds them to the API token, turns on Email Routing for admin@purelyfreefonts.com and sets the new zone's bot settings. *(2026-10-02)*
+  - [x] Claude applies the zone settings and reads them back. Also: the `/assets/` cache rule and DMARC on .com; the no-mail records and the edge 301 rules on .org and .net (inactive until cutover); and the Origin CA certificate for purelyfreefonts.com and `*.purelyfreefonts.com`, installed on the server. *(2026-10-02)*
+- [ ] **GitHub:**
+  - [x] The owner renames the repository `byronshock/purelyfreefonts`. *(2026-10-02)*
+  - [x] Claude updates its description. *(2026-10-02)*
+  - [ ] The homepage is set at cutover.
+- [ ] **The new name in the code,** on a branch deployed only to the test site:
+  - [ ] the site's name, address, contact address and mail subject (each constant has two copies; change both);
+  - [ ] the page text: titles, descriptions and the heading "The most popular purely free fonts"; the 404, about and privacy pages; the methodology credit line; the blog and feed titles; `robots.txt`;
+  - [ ] the wordmark, redrawn in League Gothic (header `<img>` 229×48), and the share card, redrawn;
+  - [ ] `site/CONTRACT.md`;
+  - [ ] the issue forms, `LICENSE-DATA`, the README, `pyproject.toml` and the glyph-set notice;
+  - [ ] the current docs and the runbooks' public URLs;
+  - [ ] the user agents and the repository references, including the refresh watchdog's;
+  - [ ] the deploy URLs in `ops/deploy.sh` and `deploy.yml`, and CI's stand-in certificate;
+  - [ ] Caddy: site blocks for purelyfreefonts.com and `staging.purelyfreefonts.com`, with the new certificate;
+  - [ ] the tests, plus a live check that every old host 301s in one hop;
+  - [ ] one line in `CLAUDE.md`;
+  - [ ] with the owner's OK, the backlog's project name and TASK-3, through the CLI.
+- [ ] **The test site on the new host:**
+  - [ ] Claude: the DNS records, the Caddy install, the deploy, and step 9's live test on `staging.purelyfreefonts.com`;
+  - [ ] the owner checks Web Analytics on the new zone and reviews the test site.
+- [ ] **Cutover:**
+  - [ ] Caddy: purelyfreefonts.com serves the renamed stub, and every old host 301s to the new one;
+  - [ ] the misspelled domain's edge rule points at the new domain;
+  - [ ] the .org and .net placeholder records go in;
+  - [ ] the branch is merged;
+  - [ ] Claude checks every old host from outside.
+- [ ] **The owner, at cutover:**
+  - [ ] Stripe: public business name, website, statement descriptor, support email and the payment page text;
+  - [ ] Ko-fi closed;
+  - [ ] any mail filters updated.
+- [ ] **Drafts for the owner to post:** a comment on the Fonts Over Time license request (fcjr/fontsovertime#1), and a note to ecosyste.ms if the first one was sent.
+- [ ] **Records:**
+  - [ ] `ops/SERVER.md` section K and its Verification lines;
+  - [ ] `ops/DONATIONS.md`;
+  - [ ] Milestone 4's yearly check covering all seven domains;
+  - [ ] the private notes that name the old site: Claude's memory, walnutbutter-site, tff-stats, and the owner's typeface project.
+- [ ] **Later:** the wordmark in the owner's typeface, once it has its lowercase.
+
+**Done when:**
+- purelyfreefonts.com and `staging.purelyfreefonts.com` serve the renamed site and stub, and pass step 9's live test.
+- Every old address answers with one 301 to the same path and query on the new domain.
+- Mail to admin@purelyfreefonts.com and admin@trulyfreefonts.com both arrives.
+
 ### Step 14: Soft launch: the list replaces the stub
-**Who:** Claude deploys; the owner gives the go-ahead. **Depends on:** 6, 7b, 8, 9, 10, 11, 13; M2-D8; M1 step 20 (`catalog-site.json` v1, frozen on 2026-09-30 by a rebuild of the run merged in #31); Caddy header phase B live on production (`ops/deploy/README.md`, step 6 of the move into releases), since /privacy says the server sends a CSP and production deploys refuse to run before it. Launching without the tip link needs an owner ruling in AUTHORITY.md, whose Funding section ties the link to this release.
+**Who:** Claude deploys; the owner gives the go-ahead. **Depends on:** 6, 7b, 8, 9, 10, 11, 13, 13b; M2-D8; M1 step 20 (`catalog-site.json` v1, frozen on 2026-09-30 by a rebuild of the run merged in #31); Caddy header phase B live on production (`ops/deploy/README.md`, step 6 of the move into releases), since /privacy says the server sends a CSP and production deploys refuse to run before it. Launching without the tip link needs an owner ruling in AUTHORITY.md, whose Funding section ties the link to this release.
 - [ ] Final checks on the test site: all CI checks, step 9's live test, step 10's numbers, the tip link.
 - [ ] Confirm each linked Nerd build's license check ([docs/nerd-fonts-link.md](nerd-fonts-link.md)) and hide the marker for any failure (owner ruling of 2026-09-29, `data/reviews/site/2026-09-29.toml`, `nerd_icon_licenses`): the base font's license and the patched icon sets. Stage "links" already leaves out a Nerd Fonts folder whose base license doesn't qualify; the rest is this check.
 - [ ] The page says it is an early version and that free font inventory tools are coming (the owner's wording of 2026-09-29, on every page's header).

@@ -1,0 +1,69 @@
+# Owner rulings of 2026-10-02 on the site's name and domains, given in chat to the lead session. Ruled by
+# the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md (Name and domain). The name research
+# that informed them is Claude's, not legal advice.
+
+[typo_domain]
+choice = "a"
+recommended = true
+value = "edge_301_to_canonical"
+ruling = "truelyfreefonts.com, a misspelling a staging tester typed, which the owner registered on 2026-10-02, 301s every request at Cloudflare's edge (a Single Redirect, no origin) to the same path and query on the canonical site. Claude set it up over the API after the owner extended the token; the owner did the dashboard-only settings."
+reason = "The owner asked how to point the domain at the site. A DNS record alone can't redirect a browser, and the origin certificate doesn't cover the name, so Claude recommended Cloudflare's documented edge redirect over a Caddy redirect, which would need a new certificate; of who sets it up, the owner chose Claude, after a token edit."
+
+[typo_domain_mail]
+choice = "a"
+recommended = true
+value = "forward_admin_only"
+ruling = "Mail to admin@truelyfreefonts.com is forwarded by Cloudflare Email Routing to the owner's inbox, with no catch-all; the domain publishes DMARC p=reject."
+reason = "Claude's recommendation, over no-mail records as on .org and .net: a font request typed with the misspelling still arrives."
+
+[site_name]
+value = "purely_free_fonts"
+ruling = "The site is renamed Purely Free Fonts, at https://purelyfreefonts.com, the canonical URL. Every old address 301s to the same path and query on it: trulyfreefonts.com, .org and .net (with or without www), staging.trulyfreefonts.com (to the new test site), truelyfreefonts.com, and purelyfreefonts.org and .net. Internal names stay: the tff commands and packages, /srv/trulyfreefonts, the deploy users, the server's hostname, the token and the project folder."
+reason = "The owner, in chat: \"We weren't thinking when we ordered our domain name and chose the partial name of a foundry. I'd rather *not* get a cease-and-desist letter, so I just registered purelyfreefonts.com.\" The foundry is trulytype (trulytype LLC, Los Angeles). Claude's name check found no foundry, font shop or font trademark called Purely, and no other \"Purely Free Fonts\"; then the owner: \"You're going to have to guide me through this migration.\""
+
+[public_phrase]
+choice = "b"
+recommended = false
+value = "purely_free"
+ruling = "Public copy says \"purely free\" where it said \"truly free\": the front page's heading (\"The most popular purely free fonts\") and description, the 404 page, the license form, the README and headings to come, such as \"More purely free fonts\". Dated rulings and records keep their wording."
+reason = "The owner's choice, not Claude's recommendation. The options were (a) neutral wording such as \"free for any use\", which Claude recommended, (b) \"purely free\", and (c) keeping \"truly free\" as plain English."
+
+[wordmark_stand_in]
+choice = "a"
+recommended = true
+value = "league_gothic_until_owners_font"
+ruling = "The wordmark reads \"Purely Free Fonts\", drawn as outlines in League Gothic as before, until the owner's own typeface has its lowercase built; then it is drawn from that font, pinned by its file's sha256."
+reason = "Claude's recommendation, over holding the cutover for the owner's font, so the rename isn't held up. The owner: \"I plan on using my own font for the wordmark as much as I like the League Gothic story.\""
+
+[repo_rename]
+choice = "a"
+recommended = true
+value = "byronshock/purelyfreefonts"
+ruling = "The public repository is renamed byronshock/purelyfreefonts (done by the owner on 2026-10-02); GitHub redirects the old URLs, so the name byronshock/trulyfreefonts is never reused. The private data store keeps the name byronshock/trulyfreefonts-data."
+reason = "Claude's recommendation, over keeping both names: every page's footer links to the repository."
+
+[test_site_host]
+choice = "a"
+recommended = true
+value = "staging.purelyfreefonts.com"
+ruling = "The test site moves to staging.purelyfreefonts.com (amending M2-D7); staging.trulyfreefonts.com 301s to it."
+reason = "Claude's recommendation."
+
+[contact_address]
+value = "admin@purelyfreefonts.com"
+ruling = "The site's contact address is admin@purelyfreefonts.com, forwarded to the owner by Cloudflare Email Routing. admin@trulyfreefonts.com keeps forwarding for good, since rulings, issue forms and old pages carry it."
+reason = "Claude's plan, approved by the owner; it follows from the new domain."
+
+[kofi_closed]
+choice = "a"
+recommended = true
+value = "close"
+ruling = "The Ko-fi page ko-fi.com/trulyfreefonts, whose bio names the old site, is closed: tips go through the Stripe link only."
+reason = "Claude's recommendation, over renaming it, as ops/DONATIONS.md step 6 first suggested."
+
+[more_domains]
+choice = "a"
+recommended = true
+value = "purelyfreefonts_org_net"
+ruling = "purelyfreefonts.org and .net are registered too, as trulyfreefonts.org and .net were: each 301s at Cloudflare's edge to the canonical site and publishes no-mail records (null MX, SPF -all, DMARC p=reject)."
+reason = "Claude's recommendation."
