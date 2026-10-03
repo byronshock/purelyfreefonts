@@ -8,7 +8,7 @@ Compare the fonts a user already has installed with a ranked list of the most po
 
 ## Releases
 
-1. **Intermediate release: the filterable list.** trulyfreefonts.com first publishes the ranked list of truly free fonts, with filters, but **without** comparing against the fonts a visitor owns. It replaces the current stub. Its purpose is to test usability while the owned-font tools are built and tested. *(2026-09-25)*
+1. **Intermediate release: the filterable list.** trulyfreefonts.com first publishes the ranked list of truly free fonts, with filters, but **without** comparing against the fonts a visitor owns. It replaces the current stub. *(The site is renamed Purely Free Fonts, at purelyfreefonts.com, on 2026-10-02: see **Name and domain (2026-10-02)** under Site.)* Its purpose is to test usability while the owned-font tools are built and tested. *(2026-09-25)*
 2. **Full release: owned-font comparison.** Tools that take in a visitor's owned-font list and filter owned fonts out of the list. These ship only after the testing they need.
 
 ## Rules
@@ -270,7 +270,7 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
 - **M2-D4: filter layout.** Every filter sits in a sidebar on wide screens. On phones, everything but search and rank goes behind one "Filters" button. *(2026-09-25)*
 - **M2-D5: previews.** SVG specimens are drawn at each refresh. A "Type your own text" box loads the unchanged font file only when clicked. Only redistributable fonts get previews. *(2026-09-25)*
 - **M2-D6: deploy.** GitHub Actions deploys each push to `main` as a restricted `deploy` user, and a laptop script is the fallback. *(2026-09-25)*
-- **M2-D7: test site.** `staging.trulyfreefonts.com` is used for usability round 1 and reused by Milestone 3. *(2026-09-25)*
+- **M2-D7: test site.** `staging.trulyfreefonts.com` is used for usability round 1 and reused by Milestone 3. *(2026-09-25; amended 2026-10-02: the test site moves to `staging.purelyfreefonts.com`, and the old host 301s to it, see **Name and domain (2026-10-02)** under Site)*
 - **M2-D8: search engines during the soft launch.** Indexing is allowed; only announcements wait for Milestone 4. *(2026-09-25, the [later OK] default kept)*
 - **M2-D9: server logs.** See Infrastructure, visitor privacy on the server. *(2026-09-25)*
 - **M2-D10: feedback channels.** GitHub issue forms, plus an email link to the site's `admin@` address for people without GitHub. *(2026-09-25, the [later OK] default kept)*
@@ -303,8 +303,25 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
 - **Every qualifying font is listed.** Recorded in `data/reviews/site/2026-09-29.toml` (`more_fonts`, `font_requests`). *(2026-09-29)*
   - **The rest, A–Z (the owner's choice (b), Claude's recommendation).** Every font that passes the gates is listed, not only the catalog. The catalog keeps its ranks and bands. The other qualifying fonts (about 1,250 in the 2026-09-29 run) follow the ranked fonts in the same list, unranked and A–Z, under a heading such as "More truly free fonts". They show no rank, band or "501+", and they take the same filters, search, details, link policy and preview rules. The owned-font comparison takes owned fonts out of them too.
   - **Timing (2026-09-30).** Not part of getting the site live. The A–Z list and fonts added on request move out of Milestone 1 (step 15b) into a milestone of their own, [milestone-more-fonts.md](docs/milestone-more-fonts.md), after Milestone 2's launch and before or after Milestone 3's owned-font tools; the owner chooses which when Milestone 2 is done. Until then the site lists the ranked catalog only. Recorded in `data/reviews/site/2026-09-30.toml` (`more_fonts_timing`).
-  - **Fonts added on request (the owner's variant of option (c)).** Anyone, whether a foundry, a designer or a visitor, may ask for a missing font by email to admin@trulyfreefonts.com or with the "Missing font" form. Claude checks it against Rules 1–4, D3, D4 and the link policy, and the owner rules in chat. An accepted family joins `config/foundries.toml` (amending M12) and is listed from the next refresh: ranked if its evidence places it in the catalog, otherwise A–Z. Being added never counts as popularity, and the public files never say who asked.
-- **Headline font.** The site's headline is set in **League Gothic** (The League of Moveable Type, OFL 1.1). *(2026-09-29)*
+  - **Fonts added on request (the owner's variant of option (c)).** Anyone, whether a foundry, a designer or a visitor, may ask for a missing font by email to admin@trulyfreefonts.com (admin@purelyfreefonts.com from 2026-10-02; the old address keeps forwarding) or with the "Missing font" form. Claude checks it against Rules 1–4, D3, D4 and the link policy, and the owner rules in chat. An accepted family joins `config/foundries.toml` (amending M12) and is listed from the next refresh: ranked if its evidence places it in the catalog, otherwise A–Z. Being added never counts as popularity, and the public files never say who asked.
+- **Name and domain (2026-10-02).** The site is renamed **Purely Free Fonts**, at **https://purelyfreefonts.com**. "Truly" is part of the name of a working type foundry, trulytype LLC of Los Angeles. The owner: "I'd rather *not* get a cease-and-desist letter, so I just registered purelyfreefonts.com." Claude's name check found no foundry, font shop or font trademark called Purely, and no other "Purely Free Fonts"; it is research, not legal advice. Recorded in `data/reviews/site/2026-10-02.toml`; the steps are `docs/milestone-2.md` step 13b and `ops/SERVER.md` section K. The owner took Claude's recommendation each time, except where noted.
+  - **Addresses** (`site_name`): every old address 301s to the same path and query on the new domain (see **Domains** under Infrastructure).
+  - **Wording** (`public_phrase`, the owner's choice; Claude had recommended neutral wording such as "free for any use"): public copy says "purely free" where it said "truly free". That covers the front page's heading, "The most popular purely free fonts", and its description, the 404 page, the license form, the README and headings to come. Dated rulings and records keep their wording.
+  - **Wordmark** (`wordmark_stand_in`): it reads "Purely Free Fonts", drawn in League Gothic as before, until the owner's own typeface has its lowercase. Then it is drawn from that font, pinned by its file's sha256. The owner: "I plan on using my own font for the wordmark as much as I like the League Gothic story."
+  - **Repository** (`repo_rename`): renamed `byronshock/purelyfreefonts` by the owner. The private data store keeps its name.
+  - **Test site** (`test_site_host`): `staging.purelyfreefonts.com`, amending M2-D7.
+  - **Contact** (`contact_address`): admin@purelyfreefonts.com. admin@trulyfreefonts.com keeps forwarding for good, since rulings, issue forms and old pages carry it.
+  - **Ko-fi** (`kofi_closed`): the page ko-fi.com/trulyfreefonts is closed. Tips go through the Stripe link only.
+  - **Other domains** (`typo_domain`, `typo_domain_mail`, `more_domains`): truelyfreefonts.com, and purelyfreefonts.org and .net.
+  - **What stays:**
+    - the internal names: the `tff` commands, packages and environment variables, `/srv/trulyfreefonts`, the deploy users, the server's hostname, the Cloudflare token and the project folder;
+    - the frozen `catalog-site.json` v1 schema, whose `$id` is only an identifier;
+    - every dated ruling and record.
+
+    The catalog carries no site name or URL, so it isn't rebuilt.
+
+  *(2026-10-02)*
+- **Headline font.** The site's headline is set in **League Gothic** (The League of Moveable Type, OFL 1.1). *(2026-09-29; amended 2026-10-02: the wordmark reads "Purely Free Fonts", in League Gothic until the owner's own typeface has its lowercase, then in that font, see **Name and domain (2026-10-02)** under Site)*
   - **Wordmark.** The headline is an SVG wordmark reading "Truly Free Fonts" in mixed case, with the letters drawn as outlines, scaled to be the site's headline. The file is `site/static/wordmark.svg`, drawn by `site/static/_src/make_wordmark.py`. *(2026-09-29)*
   - **Colour.** Black on white in both light and dark mode: the header stays white when the rest of the page is dark. *(2026-09-29)*
   - **Header.** The wordmark replaces the site name and the favicon mark in the header. It is about 48 px tall on wide screens and 32 px on phones. The header is white in both themes, and its links and text keep their light-theme colours. *(2026-09-29)*
@@ -364,17 +381,24 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
 *(2026-09-25; setup checklist and runbook in [ops/SERVER.md](ops/SERVER.md))*
 
 - **Domains.** trulyfreefonts.com, .org and .net, registered and hosted on Cloudflare. The canonical URL is `https://trulyfreefonts.com`; `www.*`, `.org` and `.net` 301-redirect to it, keeping the path.
+  - *Amended on 2026-10-02* (see **Name and domain (2026-10-02)** under Site). The canonical URL becomes `https://purelyfreefonts.com` at the cutover in `docs/milestone-2.md` step 13b. These domains, all registered and hosted on Cloudflare, then 301 to it, keeping the path and query:
+    - trulyfreefonts.com, .org and .net, and their `www.` hosts (through Caddy, as now);
+    - `staging.trulyfreefonts.com`, to `staging.purelyfreefonts.com`;
+    - truelyfreefonts.com, a misspelling a staging tester typed (registered 2026-10-02), with an edge redirect at Cloudflare and no origin;
+    - purelyfreefonts.org and .net, the same way.
+
+    Mail to admin@ on purelyfreefonts.com, trulyfreefonts.com and truelyfreefonts.com is forwarded to the owner; the .org and .net domains take and send no mail. All seven domains stay registered for as long as their redirects matter.
 - **Hosting.** A Contabo VPS running Debian 13, served by Caddy, with the site root at `/srv/trulyfreefonts/public`.
 - **Cloudflare.** Proxied (orange cloud), SSL mode Full (strict), with a Cloudflare Origin CA certificate on the server.
 - **Access.** One admin user `byron`, key-only SSH, passwordless sudo, root login off. Local alias `ssh tff`. Claude manages the server over SSH and Cloudflare through an API token; its ssh/scp/rsync commands to `tff` are auto-allowed in this project.
 - **Secrets.** Kept out of the project: the Cloudflare token lives in `~/.config/trulyfreefonts/cloudflare.env`, and the root password (VNC emergency access only) lives in the owner's password manager.
-- **Visitor privacy on the server.** Cloudflare's Network Error Logging is off on all three zones. The access log masks visitor IPs to /16 (IPv4) and /32 (IPv6), drops the port and IP-carrying headers, and is kept for 14 days. *(2026-09-25)* It also drops Referer and User-Agent. *(2026-09-26)* It also drops Cookie and Cloudflare's location headers finer than the country. *(2026-09-28)*
+- **Visitor privacy on the server.** Cloudflare's Network Error Logging is off on all three zones (on all seven since 2026-10-02: the four new ones are in `ops/SERVER.md` section K). The access log masks visitor IPs to /16 (IPv4) and /32 (IPv6), drops the port and IP-carrying headers, and is kept for 14 days. *(2026-09-25)* It also drops Referer and User-Agent. *(2026-09-26)* It also drops Cookie and Cloudflare's location headers finer than the country. *(2026-09-28)*
 
 ## Repository and workflow
 
 *(2026-09-25)*
 
-- **Repository.** Public, at [github.com/byronshock/trulyfreefonts](https://github.com/byronshock/trulyfreefonts), default branch `main`. The methodology and rankings are open.
+- **Repository.** Public, at [github.com/byronshock/trulyfreefonts](https://github.com/byronshock/trulyfreefonts), default branch `main`. *Renamed on 2026-10-02* [github.com/byronshock/purelyfreefonts](https://github.com/byronshock/purelyfreefonts); GitHub redirects the old URLs, so the old name is never reused. The private data store keeps the name `byronshock/trulyfreefonts-data`. The methodology and rankings are open.
 - **Kept out of git.**
   - `PLAN.md`: private planning notes.
   - `ops/SERVER.local.md`: origin IPs, VNC console and zone IDs; publishing the origin IP would let anyone bypass Cloudflare.
