@@ -54,8 +54,8 @@ DEPLOY_LINE = (
 )
 PROD = "purelyfreefonts.com"
 STAGING = "staging.purelyfreefonts.com"
-# Until the cutover of the rename (owner ruling of 2026-10-02; docs/milestone-2.md step 13b),
-# the old hosts serve the same sites, with the old certificate.
+# Since the rename (owner ruling of 2026-10-02; docs/milestone-2.md step 13b), the old hosts
+# 301 to the new ones, with the old certificate.
 OLD_PROD = "trulyfreefonts.com"
 OLD_STAGING = "staging.trulyfreefonts.com"
 PROD_ROOT = "/srv/trulyfreefonts/public"
@@ -64,11 +64,10 @@ STAGING_ROOT = "/srv/trulyfreefonts/staging/current"
 SITES = [
     (PROD, PROD_ROOT, "origin_tls_purely"),
     (STAGING, STAGING_ROOT, "origin_tls_purely"),
-    (OLD_PROD, PROD_ROOT, "origin_tls"),
-    (OLD_STAGING, STAGING_ROOT, "origin_tls"),
 ]
-# The old domain's other hostnames, which still redirect to trulyfreefonts.com.
+# The old domain's production names, which redirect to purelyfreefonts.com.
 REDIRECTED = (
+    OLD_PROD,
     "www.trulyfreefonts.com",
     "trulyfreefonts.org",
     "www.trulyfreefonts.org",
@@ -77,7 +76,7 @@ REDIRECTED = (
 )
 WWW = "www.purelyfreefonts.com"
 # The names each certificate covers (ops/SERVER.md items 12 and 29).
-OLD_CERT_NAMES = ("trulyfreefonts.com", "*.trulyfreefonts.com", *REDIRECTED)
+OLD_CERT_NAMES = ("*.trulyfreefonts.com", *REDIRECTED)
 CERT_NAMES = ("purelyfreefonts.com", "*.purelyfreefonts.com")
 # Headers the access log drops (/privacy): every one that can carry the visitor's IP or
 # location beyond the country, including those Cloudflare adds only when a setting turns
@@ -332,24 +331,23 @@ def test_each_site_shares_the_headers_and_the_log(address, root, tls):
     assert len([line for line in lines if line.startswith("import origin_tls")]) == 1, address
 
 
-@pytest.mark.parametrize(("new", "old"), [(PROD, OLD_PROD), (STAGING, OLD_STAGING)])
-def test_the_new_hosts_serve_what_the_old_ones_serve(new, old):
-    # Until the cutover the two domains differ only in their certificates.
-    text = CADDYFILE.read_text(encoding="utf-8")
-    lines = code_lines(site_block(text, new))
-    assert [
-        "import origin_tls" if line == "import origin_tls_purely" else line for line in lines
-    ] == code_lines(site_block(text, old))
+@pytest.mark.parametrize(
+    ("address", "target"),
+    [(", ".join(REDIRECTED), f"https://{PROD}"), (OLD_STAGING, f"https://{STAGING}")],
+)
+def test_the_old_hosts_redirect_to_the_new_ones_with_the_old_certificate(address, target):
+    block = site_block(CADDYFILE.read_text(encoding="utf-8"), address)
+    assert code_lines(block) == ["import origin_tls", f"redir {target}{{uri}} permanent"]
 
 
-@pytest.mark.parametrize(("staging", "prod"), [(STAGING, PROD), (OLD_STAGING, OLD_PROD)])
+@pytest.mark.parametrize(("staging", "prod"), [(STAGING, PROD)])
 def test_staging_is_kept_out_of_search_engines_and_production_is_not(staging, prod):
     text = CADDYFILE.read_text(encoding="utf-8")
     assert 'header X-Robots-Tag "noindex, nofollow"' in code_lines(site_block(text, staging))
     assert not any("X-Robots-Tag" in line for line in code_lines(site_block(text, prod)))
 
 
-@pytest.mark.parametrize(("staging", "prod"), [(STAGING, PROD), (OLD_STAGING, OLD_PROD)])
+@pytest.mark.parametrize(("staging", "prod"), [(STAGING, PROD)])
 def test_production_drops_the_csp_only_in_phase_a_and_above_the_import(staging, prod):
     text = CADDYFILE.read_text(encoding="utf-8")
     lines = code_lines(site_block(text, prod))
@@ -360,15 +358,6 @@ def test_production_drops_the_csp_only_in_phase_a_and_above_the_import(staging, 
         # Deferred header changes apply last-written first: a removal below the import would
         # run before tff_security sets the header, and so remove nothing.
         assert lines.index("header -Content-Security-Policy") < lines.index("import tff_site")
-
-
-def test_the_old_domains_other_hostnames_still_redirect_as_before():
-    text = CADDYFILE.read_text(encoding="utf-8")
-    block = site_block(text, ", ".join(REDIRECTED))
-    assert code_lines(block) == [
-        "import origin_tls",
-        "redir https://trulyfreefonts.com{uri} permanent",
-    ]
 
 
 def test_www_redirects_to_the_new_domain_with_its_certificate():
@@ -384,7 +373,9 @@ def test_every_site_address_is_tested():
     # A host added to the Caddyfile must be added here too.
     text = CADDYFILE.read_text(encoding="utf-8")
     addresses = re.findall(r"^([a-z0-9][a-z0-9., -]*) \{$", text, re.MULTILINE)
-    assert sorted(addresses) == sorted([*(a for a, _, _ in SITES), WWW, ", ".join(REDIRECTED)])
+    assert sorted(addresses) == sorted(
+        [*(a for a, _, _ in SITES), WWW, ", ".join(REDIRECTED), OLD_STAGING]
+    )
 
 
 # ------------------------------------------------------------------------ ci.Caddyfile
@@ -597,7 +588,7 @@ def test_production_deploys_wait_for_header_phase_b(tmp_path):
             not any(
                 "header -Content-Security-Policy"
                 in code_lines(site_block(CADDYFILE.read_text(encoding="utf-8"), prod))
-                for prod in (PROD, OLD_PROD)
+                for prod in (PROD,)
             ),
         ),
         ("purelyfreefonts.com {\n\theader -Content-Security-Policy\n}\n", False),
@@ -832,7 +823,7 @@ def test_production_staging_and_redirects_serve_what_the_design_says(caddy_bin, 
     context.load_verify_locations(cafile=str(config.parent / "certs" / "purely.pem"))
     seen: dict[tuple[str, str], tuple[int, Any, bytes]] = {}
     with running_caddy(caddy_bin, config, caddy_env(tmp_path / "home"), [https_port]):
-        for name in (*(address for address, _, _ in SITES), "trulyfreefonts.net", WWW):
+        for name in (*(a for a, _, _ in SITES), OLD_PROD, "trulyfreefonts.net", OLD_STAGING, WWW):
             conn = _SNIConnection(name, https_port, context)
             for path in ("/", "/missing", JS_PATH, "/a/b?c=1"):
                 # (Caddy reads the first two itself; the plain-IP checks below cover them.)
@@ -857,22 +848,26 @@ def test_production_staging_and_redirects_serve_what_the_design_says(caddy_bin, 
         assert headers["Cache-Control"] == REVALIDATE
         assert headers["Content-Security-Policy"] == CSP  # the error route re-applies it
     # Staging: every header, and noindex on every response.
-    for staging in (STAGING, OLD_STAGING):
+    for staging in (STAGING,):
         for path in ("/", JS_PATH, "/missing"):
             headers = seen[staging, path][1]
             assert headers["Content-Security-Policy"] == CSP
             assert headers["X-Robots-Tag"] == "noindex, nofollow"
     # Production: no noindex; no CSP while the Caddyfile is in header phase A.
-    for prod in (PROD, OLD_PROD):
+    for prod in (PROD,):
         phase_a = "header -Content-Security-Policy" in code_lines(site_block(text, prod))
         for path in ("/", JS_PATH):
             headers = seen[prod, path][1]
             assert "X-Robots-Tag" not in headers
             assert headers.get("Content-Security-Policy") == (None if phase_a else CSP)
-    status, headers, _ = seen["trulyfreefonts.net", "/a/b?c=1"]
-    assert (status, headers["Location"]) == (301, "https://trulyfreefonts.com/a/b?c=1")
-    status, headers, _ = seen[WWW, "/a/b?c=1"]
-    assert (status, headers["Location"]) == (301, "https://purelyfreefonts.com/a/b?c=1")
+    for name, target in (
+        (OLD_PROD, PROD),
+        ("trulyfreefonts.net", PROD),
+        (WWW, PROD),
+        (OLD_STAGING, STAGING),
+    ):
+        status, headers, _ = seen[name, "/a/b?c=1"]
+        assert (status, headers["Location"]) == (301, f"https://{target}/a/b?c=1"), name
 
     log = (tmp_path / "log" / "access.log").read_text(encoding="utf-8")
     for name, _, _ in SITES:

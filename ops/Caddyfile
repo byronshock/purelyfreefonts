@@ -11,10 +11,9 @@
 # also names its domain's wildcard, for the staging and www blocks. CI validates this file
 # (the caddy job in .github/workflows/ci.yml).
 #
-# The rename to Purely Free Fonts (owner ruling of 2026-10-02; docs/milestone-2.md step 13b)
-# is in transition: purelyfreefonts.com and staging.purelyfreefonts.com serve the same sites as
-# trulyfreefonts.com and staging.trulyfreefonts.com, which keep working as before until the
-# cutover (ops/SERVER.md item 31) makes every old host a 301 to the new one.
+# Since the rename to Purely Free Fonts (owner ruling of 2026-10-02; docs/milestone-2.md step
+# 13b), every trulyfreefonts name 301s to the same path and query on purelyfreefonts.com
+# (ops/SERVER.md item 31).
 
 {
 	servers {
@@ -77,8 +76,8 @@ import site.caddy
 	}
 }
 
-# The canonical site. Until the cutover it serves the same files as trulyfreefonts.com below,
-# with its own certificate.
+# The canonical site. Its root is a root-owned symlink to prod/current (ops/deploy/). Header
+# phase B (design-m2 §4, since 2026-09-30): the full CSP of site.caddy.
 purelyfreefonts.com {
 	import origin_tls_purely
 	root * /srv/trulyfreefonts/public
@@ -86,8 +85,9 @@ purelyfreefonts.com {
 	import privacy_log
 }
 
-# The test site at its new host (M2-D7, amended on 2026-10-02): the same release as
-# staging.trulyfreefonts.com below.
+# The test site (M2-D7, amended on 2026-10-02): the same headers, kept out of search engines.
+# Deployed from the staging branch by the deploy-staging user, which can write only under
+# /srv/trulyfreefonts/staging.
 staging.purelyfreefonts.com {
 	import origin_tls_purely
 	root * /srv/trulyfreefonts/staging/current
@@ -96,38 +96,24 @@ staging.purelyfreefonts.com {
 	import privacy_log
 }
 
-# www goes to the canonical site, keeping the path and query. It is not in the redirect block
-# at the end because that block's certificate, origin.pem, doesn't cover it.
+# www goes to the canonical site, keeping the path and query. Its own block, because the old
+# domain's certificate, origin.pem, doesn't cover it.
 www.purelyfreefonts.com {
 	import origin_tls_purely
 	redir https://purelyfreefonts.com{uri} permanent
 }
 
-trulyfreefonts.com {
+# The old domain, with or without www, and .org and .net, go to the canonical site, keeping
+# the path and query.
+trulyfreefonts.com, www.trulyfreefonts.com, trulyfreefonts.org, www.trulyfreefonts.org, trulyfreefonts.net, www.trulyfreefonts.net {
 	import origin_tls
-	# A root-owned symlink to prod/current once the site deploys as releases (ops/deploy/).
-	root * /srv/trulyfreefonts/public
-	# Header phase B (design-m2 §4, since 2026-09-30): the full CSP of site.caddy, now that the
-	# stub is a release with its style in stub.css.
-	import tff_site
-	import privacy_log
+	redir https://purelyfreefonts.com{uri} permanent
 }
 
-# The test site: the same headers, kept out of search engines. Deployed from the staging
-# branch by the deploy-staging user, which can write only under /srv/trulyfreefonts/staging.
+# The old test site goes to the new one, keeping the path and query.
 staging.trulyfreefonts.com {
 	import origin_tls
-	root * /srv/trulyfreefonts/staging/current
-	import tff_site
-	header X-Robots-Tag "noindex, nofollow"
-	import privacy_log
-}
-
-# The old domain's other hostnames go to trulyfreefonts.com, keeping the path and query. At
-# the cutover they and trulyfreefonts.com go to https://purelyfreefonts.com{uri} instead.
-www.trulyfreefonts.com, trulyfreefonts.org, www.trulyfreefonts.org, trulyfreefonts.net, www.trulyfreefonts.net {
-	import origin_tls
-	redir https://trulyfreefonts.com{uri} permanent
+	redir https://staging.purelyfreefonts.com{uri} permanent
 }
 
 # Other sites on this server, each owned and deployed by its own repo:
