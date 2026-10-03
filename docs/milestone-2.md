@@ -233,35 +233,35 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 
 ### Step 13b: Rename to Purely Free Fonts
 **Who:** Claude, guiding the owner; the owner does the dashboard, registrar, GitHub, Stripe and Ko-fi steps. **Depends on:** the owner's rulings of 2026-10-02 (AUTHORITY.md, **Name and domain**). The method hold and the soft-launch hold stand, so production keeps serving the stub, renamed, and the catalog isn't rebuilt.
-- [ ] **New zones** (`ops/SERVER.md` section K): purelyfreefonts.com, .org and .net, set up like the other zones.
+- [x] **New zones** (`ops/SERVER.md` section K): purelyfreefonts.com, .org and .net, set up like the other zones.
   - [x] The owner registers the three domains, adds them to the API token, turns on Email Routing for admin@purelyfreefonts.com and sets the new zone's bot settings. *(2026-10-02)*
   - [x] Claude applies the zone settings and reads them back. Also: the `/assets/` cache rule and DMARC on .com; the no-mail records and the edge 301 rules on .org and .net (inactive until cutover); and the Origin CA certificate for purelyfreefonts.com and `*.purelyfreefonts.com`, installed on the server. *(2026-10-02)*
-- [ ] **GitHub:**
+- [x] **GitHub:**
   - [x] The owner renames the repository `byronshock/purelyfreefonts`. *(2026-10-02)*
   - [x] Claude updates its description. *(2026-10-02)*
-  - [ ] The homepage is set at cutover.
+  - [x] The homepage is set at cutover. *(2026-10-02: https://purelyfreefonts.com)*
 - [ ] **The new name in the code,** on a branch deployed only to the test site:
   - [x] the site's name, address, contact address and mail subject (each constant has two copies; change both);
   - [x] the page text: titles, descriptions and the heading "The most popular purely free fonts"; the 404, about and privacy pages; the methodology credit line; the blog and feed titles; `robots.txt`;
   - [x] the wordmark, redrawn in League Gothic (header `<img>` 229×48), and the share card, redrawn;
   - [x] `site/CONTRACT.md`;
   - [x] the issue forms, `LICENSE-DATA`, the README, `pyproject.toml` and the glyph-set notice;
-  - [ ] the current docs and the runbooks' public URLs; *(done except `ops/SERVER.md`, whose "what is live" line and Verification checks still use trulyfreefonts.com)*
+  - [x] the current docs and the runbooks' public URLs; *(`ops/SERVER.md`'s at the cutover)*
   - [x] the user agents and the repository references, including the refresh watchdog's;
   - [x] the deploy URLs in `ops/deploy.sh` and `deploy.yml`, and CI's stand-in certificate;
   - [x] Caddy: site blocks for purelyfreefonts.com and `staging.purelyfreefonts.com`, with the new certificate;
   - [x] the tests, plus a live check that every old host 301s in one hop: `tests/live/test_redirects.py`, run with `--check-redirects` from the cutover on (before it, the old hosts still serve the site);
   - [x] one line in `CLAUDE.md`;
   - [ ] with the owner's OK, the backlog's project name and TASK-3, through the CLI.
-- [ ] **The test site on the new host:**
+- [x] **The test site on the new host:**
   - [x] Claude: the DNS records, the Caddy install, the deploy, and step 9's live test on `staging.purelyfreefonts.com`; *(2026-10-02: `ops/deploy.sh staging` deployed 79c2685, and the live test passed: 11 passed, with the 2 redirect checks waiting for the cutover. The deploy's own site-test run hit the known Firefox load-timeout flake, so it was rerun with `--fast` after all 10 CI checks had passed on that commit.)*
-  - [ ] the owner checks Web Analytics on the new zone and reviews the test site.
+  - [x] the owner checks Web Analytics on the new zone and reviews the test site. *(2026-10-02: RUM disabled; "Go ahead with the cutover.")*
 - [ ] **Cutover:**
-  - [ ] Caddy: purelyfreefonts.com serves the renamed stub, and every old host 301s to the new one;
-  - [ ] the misspelled domain's edge rule points at the new domain;
-  - [ ] the .org and .net placeholder records go in;
+  - [x] Caddy: purelyfreefonts.com serves the renamed stub, and every old host 301s to the new one; *(2026-10-02)*
+  - [x] the misspelled domain's edge rule points at the new domain;
+  - [x] the .org and .net placeholder records go in;
   - [ ] the branch is merged;
-  - [ ] Claude checks every old host from outside.
+  - [x] Claude checks every old host from outside. *(2026-10-02: `tests/live --check-redirects` passes on purelyfreefonts.com and staging.purelyfreefonts.com, from the US.)*
 - [ ] **The owner, at cutover:**
   - [ ] Stripe: public business name, website, statement descriptor, support email and the payment page text;
   - [ ] Ko-fi closed;
