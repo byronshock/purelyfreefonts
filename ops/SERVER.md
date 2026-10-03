@@ -139,9 +139,9 @@ Each also gets items 20 and 21's dashboard checks.
     - the key matches the certificate, and Caddy can read it.
 
     The old certificate stays, for the redirects.
-  - [ ] Claude: proxied A and AAAA records for `@`, `www` and `staging`, pointing at the origin (never DNS-only).
-  - [ ] Claude: the Caddy blocks for `purelyfreefonts.com` and `staging.purelyfreefonts.com` (snippet `origin_tls_purely`), installed with the Caddyfile's deploy line.
-  - [ ] Byron: Web Analytics RUM disabled, once the zone is proxied.
+  - [x] Claude: proxied A and AAAA records for `@`, `www` and `staging`, pointing at the origin (never DNS-only). *(2026-10-02: copied from trulyfreefonts.com's own records; all three answer through Cloudflare.)*
+  - [x] Claude: the Caddy blocks for `purelyfreefonts.com` and `staging.purelyfreefonts.com` (snippet `origin_tls_purely`), installed with the Caddyfile's deploy line. *(2026-10-02, from #53's branch, after CI's caddy job passed. The old hosts behave as before.)*
+  - [x] Byron: Web Analytics RUM disabled, once the zone is proxied. *(2026-10-02)*
 - [ ] 30. **purelyfreefonts.org and purelyfreefonts.net**, redirected at the edge like item 28.
   - [x] Byron: registered both and added them to the token.
   - [x] Claude: applied the settings above and read them back.

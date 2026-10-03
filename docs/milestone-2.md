@@ -254,7 +254,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - [x] one line in `CLAUDE.md`;
   - [ ] with the owner's OK, the backlog's project name and TASK-3, through the CLI.
 - [ ] **The test site on the new host:**
-  - [ ] Claude: the DNS records, the Caddy install, the deploy, and step 9's live test on `staging.purelyfreefonts.com`;
+  - [x] Claude: the DNS records, the Caddy install, the deploy, and step 9's live test on `staging.purelyfreefonts.com`; *(2026-10-02: `ops/deploy.sh staging` deployed 79c2685, and the live test passed: 11 passed, with the 2 redirect checks waiting for the cutover. The deploy's own site-test run hit the known Firefox load-timeout flake, so it was rerun with `--fast` after all 10 CI checks had passed on that commit.)*
   - [ ] the owner checks Web Analytics on the new zone and reviews the test site.
 - [ ] **Cutover:**
   - [ ] Caddy: purelyfreefonts.com serves the renamed stub, and every old host 301s to the new one;
