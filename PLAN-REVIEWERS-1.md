@@ -48,7 +48,7 @@ The owner: "I agree with the reviewer's priorities." In the reviewer's words, th
    - Check the Heavy Data and Charter licenses.
 
    In this plan: Q3, Q4 and step 8.
-2. **Put the fonts first.** Show fonts sooner on the page, and make the previews bigger, with text visitors can switch. In this plan: step 5's first part, Q6 and step 7. The owner refined it on 2026-10-05: rows show the font's name larger, and the sample lines move into the details.
+2. **Put the fonts first.** Show fonts sooner on the page, and make the previews bigger, with text visitors can switch. In this plan: step 5's first part, Q6 and step 7. The owner refined it on 2026-10-05: rows show the font's name larger, and the sample lines move into the details. The larger names ship first, in step 7a, by trimming the committed specimens in the site build, with no redraw and no catalog change (`specimen_trim_served`).
 3. **Free up page weight before adding anything.** Stop shipping the list twice, and load the A–Z list only when needed, so there's room for both new features.
    - In this plan: Q10, Q12 and step 9. The owner kept every row in the HTML (Q12), so Brotli and the names-only specimens carry this priority.
    - The A–Z list loading on demand is already in [docs/milestone-more-fonts.md](docs/milestone-more-fonts.md).
@@ -63,13 +63,16 @@ Tick each item as soon as it is done and verified. Checklists nest: a parent is 
 
 **Order.** Each step is one worktree and pull request. Steps may be built side by side but land in this order:
 1. Step 1.
-2. **Priority 1:** step 8.
-3. **Priority 2:** step 5's first part, then step 7.
-4. **Priority 3:** step 9.
-5. **The rest:** steps 2, 3, 4, 6 and 10, then step 5's second part, which waits for step 2.
-6. Step 11.
+2. **Priority 2, the list** (`step7_list_first`, 2026-10-05): step 7a, then 7b and 7c. **With them, priority 1's parts that touch no template:** step 8a, the Heavy Data and Charter license checks.
+3. **Priority 1, the rest:** step 8b.
+4. **Priority 2, the rest:** step 5's first part.
+5. **Priority 3:** step 9.
+6. **The rest:** steps 2, 3, 4, 6 and 10, then step 5's second part, which waits for step 2. Step 7d goes in once the lead accepts a redraw, or at the latest at the first live refresh. Step 7e comes after the freeze.
+7. Step 11.
 
-Steps 4, 5, 8 and 9b change the templates, the no-JavaScript note or the front-page copy. They start from `origin/main` after the lead's parked `claude/projects-default` has merged, so the two don't conflict. That branch waits on the scoring-method freeze, and the owner chose on 2026-09-30 to keep these steps waiting with it.
+Steps 4, 5, 8b and 9b change the templates, the no-JavaScript note or the front-page copy. They start from `origin/main` after the lead's parked `claude/projects-default` has merged, so the two don't conflict. That branch waits on the scoring-method freeze, and the owner chose on 2026-09-30 to keep these steps waiting with it.
+
+Step 7's list parts don't wait for it: on 2026-10-05 the owner moved them ahead (`step7_list_first`). 7a changes no template. 7b and 7c touch `_list.html.j2` and `_row.html.j2`, which that branch also edits. Whichever lands second fixes `site/CONTRACT.md`'s `rows` line by hand, and re-measures the 24 px `--row-est-h` tolerance that branch adds to `test_details.py`. Branch step 7 from `origin/main` (`d66c60e` or later, which includes #55), not from this plan's branch.
 
 Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers see the changed site. Priority 3 lands before the A–Z list or the inventory check is added to the list page.
 
@@ -160,7 +163,7 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
   - **(a) Recommended:** rewrite the parts of `docs/ranking-methodology.md` that the site copies, so both read as public text. The page promises that the two always agree.
   - **(b)** remove the asides when the site is built.
 - [x] **Q9. Outside points not yet discussed.** Keep or change each:
-  **Answered 2026-10-05:** the sample line goes with Q6; "Designer's page" (`designer_label`); Download becomes the button (`download_button`); phone rows merge lines (`phone_rows_merged`); name matches first in search (`search_name_first`); a glyph strip in the details (`glyph_strip`, the owner's choice over "not now").
+  **Answered 2026-10-05:** the sample line goes with Q6; "Designer's page" (`designer_label`); Download becomes the button (`download_button`); phone rows merge lines (`phone_rows_merged`, amended the same day by `phone_rows_trim`: no category and license merge, since main already fits about five rows); name matches first in search (`search_name_first`); a glyph strip in the details (`glyph_strip`, the owner's choice over "not now").
   - The sample line reads as placeholder text (`specimen_sample_latin`). Q6's preset lines may answer this.
   - The details' "Designer" row shows a repository ("GitHub: rsms/inter"). `catalog-site.json` v1 has no designer names, so only the label can change, for example to "Designer's page".
   - "Download from …" should look like the main action.
@@ -260,36 +263,79 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
 
 **Done when:** after scrolling 5,000 px on a 1280 × 900 window, the filters are still on screen, and CI passes.
 
-### Step 7: Names-only specimens, the details' sample lines, the NF column and the row layout
-**Who:** Claude. **Depends on:** Q6 and Q9 (answered). This is priority 2.
-- [ ] **The list:**
-  - [ ] A row's specimen draws only the family's name, larger than today (`specimen_name_only_list`). The sample line leaves the list.
-  - [ ] The NF column takes space only in rows with a Nerd Font build, and `Render` ties the NF legend to the visible rows (`nf_legend_visible_rows`).
-  - [ ] "Download from …" gets the button style, and Details the quieter one (`download_button`).
-  - [ ] On phones the row merges lines: category and license with the tags, Download beside Details (`phone_rows_merged`).
-- [ ] **The details** (after the freeze, with the other details changes):
-  - [ ] "Hamburgefonstiv 0123", plus a line of code for monospace fonts (`details_sample_lines`), and a glyph strip (`glyph_strip`). All are loaded only when the details open, before "Type your own text".
-  - [ ] The designer link is labelled "Designer's page" (`designer_label`).
-- [ ] **The specimen files:**
-  - [ ] `tff-catalog specimens` draws them into `build/specimens/` (`SAMPLE` in `src/tff_catalog/specimens/__init__.py` is today's line). Changing them is a build/ change. The lead's conditions (2026-10-05), under the rules on rebuilds after #31:
-    - run `specimens --date 2026-09-26` on the frozen snapshots, never a refresh;
-    - `catalog.json` and `catalog-site.json` come out byte-identical, and `tff-catalog validate --committed` passes;
-    - compare the build/ hashes over two runs;
-    - tell the lead before committing the build/ outputs;
-    - the pull request merges with a merge commit, so `run.code_commit` stays reachable.
-  - [ ] Stay within M2 step 5's budgets: 16 KB compressed per file and 10 MB in total, now counting the details' sets.
-- [ ] `site/CONTRACT.md` and the specimen, accessibility and privacy tests cover the changes.
-- [ ] Re-run M2 step 10's load-speed numbers.
+### Step 7: Bigger specimens, the NF column, the row layout and the details' sample lines
+**Who:** Claude. **Depends on:** Q6, Q9 and the rulings of 2026-10-05 (`step7_list_first`, `specimen_trim_served`, `specimen_box_heights`, `phone_rows_trim`). This is priority 2. Five pull requests, 7a first.
 
-**Done when:** at 375 px a row's name is clearly larger than today and about five rows fit on a screen; the legend is hidden when no NF row shows; the details show the sample lines and glyph strip once the freeze lifts; and CI passes.
+The facts behind it come from a workflow of eight agents on 2026-10-05: five readers, a planner and two adversarial checkers, both of which re-drew all 500 specimens from the cached fonts.
+
+#### 7a: Names-only, larger specimens, trimmed by the site build
+- [ ] In `src/tff_site/build.py` `_copy_specimens`, after the sha256 check, trim each committed two-line SVG to its name line:
+  - [ ] Every file is one `<path>` that draws the name's contours first and the sample line's after (`render.py`). Cut the path where line 2 starts. The rule that matched all 500 files is the largest backward x jump. A rule based only on height cuts 15 files wrongly.
+  - [ ] Realign the name to its own ink's left edge. In 7 fonts the sample line set the left shift, so a plain cut leaves the name 2–22 grid units right: Cinzel Decorative, Gochi Hand, Homemade Apple, Indie Flower, Reenie Beanie, Shrikhand and Sunshiney.
+  - [ ] Set the viewBox to the name: two-line files are 492–560 units tall, and name-only ones 308–387.
+  - [ ] Trim only files whose sha256 is in a pinned list of the 500 verified files. Any other file passes through untouched. A wrong cut would otherwise ship a plausible but wrong image, not an error. Use the catalog's `specimen_name_only` flag, not a height rule, to recognise files that are already name-only.
+  - [ ] Record a one-time check against local renders of all 500 fonts in the pull request: the trimmed contours equal `render(name_only=True)`'s. CI checks the 5 pinned fixtures.
+- [ ] The box: `--spec-h` 64 px on wide screens (`site/css/00-tokens.css`), with `SPEC_BOX_PX` following it (`build.py:114`, today 48). The phone box stays 40 px until 7b. `35-specimens.css` (`mask-size: contain`, left center) stays as it is.
+- [ ] Re-measure the `--row-est-h` estimates in `site/css/20-list.css` for every layout, including the tablet table layout. At 700 × 800, rows grow from 172 to 188 px with a 64 px box.
+- [ ] Records and wording:
+  - [ ] `site/CONTRACT.md`: line 29 says the build trims, not just copies.
+  - [ ] The build docstring, and `docs/milestone-2.md` lines 100 and 102.
+  - [ ] The image's alt and aria-label "<family> sample" now describe the name only. Settle the wording, since it repeats the `<h3>`, and update `test_specimens_loader.py`.
+- [ ] Tests: replace the `svg()` helper in `tests/site/test_build.py` (lines 207–212), which writes a 492-unit file with one contour that the trim rule rejects; this changes every build test that uses the `catalog` fixture. Add a test over all 500 committed files and the 5 fixtures.
+- [ ] Re-run M2 step 10's load-speed numbers, the accessibility suites and the real-catalog site tests.
+- [ ] Ask the lead to redeploy staging once it merges. Merging to `main` alone doesn't update staging, and production deploys are off. The owner then checks the vertical alignment: the score and the NF mark line up with the first line, while the name is centred in its box.
+
+**Done when:**
+- at 1280 px the median drawn name is at least 1.5 times today's 25.0 px per em (expected about 53);
+- at 375 px it is at least 1.5 times today's 20.8 (expected about 32);
+- desktop rows don't grow, and phone rows grow by at most 8 px;
+- the specimens served total about 0.54 MB gzip, against 1.33 MB;
+- CI passes.
+
+Long names are limited by width and grow less: about 1 phone row in 10 grows under 5% (Cormorant Garamond, Libertinus Keyboard). Say so in the pull request.
+
+#### 7b: The NF column and legend, and the phone box
+- [ ] On phones, the NF column (`20-list.css`, `calc(2.25rem + var(--space-2))`) reserves its 44 px only in rows with an NF marker: `.font-title:not(:has(> .nf-mark))` gets one column. Browsers without `:has()` keep today's layout. 430 of 500 phone rows gain 44 px of specimen width.
+- [ ] The phone box becomes 48 px (`specimen_box_heights`), so the median phone name reaches about 39.9 px per em.
+- [ ] The NF legend (`#nf-legend`) shows only while some NF row is among the rows the filters leave, like the held legend: a `nerd_shown` flag, a server-side `hidden` attribute, and a toggle in `25-render.js` (`nf_legend_visible_rows`).
+- [ ] Rewrite `test_the_nerd_marker_keeps_the_row_height` for phones.
+
+**Done when:** the legend is hidden with Handwriting, Display and an empty search, and shown with the Nerd filter; phone rows still fit about five per 812 px screen; CI passes.
+
+#### 7c: Download as the button, and phone row margins
+- [ ] "Download from …" gets the button style, and Details the quieter one (`download_button`). In forced colours both keep a visible border.
+- [ ] On phones, trim a few pixels of row margin so about five rows still fit per screen with the larger names (`phone_rows_trim`). Category and license stay on their own line.
+
+**Done when:** at least five rows per 812 px phone screen once scrolled to the list, axe passes, and CI passes.
+
+#### 7d: The renderer draws names only, and `build/specimens` is redrawn
+- [ ] The code (`RENDERER_VERSION` 3; `render_one` draws the name only; `SAMPLE` leaves the cache key; intended name-only drawings aren't flagged `specimen_name_only`; the fixtures are regenerated) **lands in the same pull request as the redraw, never before it**. Otherwise every render-cache key misses, and the next replay redraws, or flags as failed, all 500.
+- [ ] The redraw needs the lead's OK. The lead's condition ("catalog.json and catalog-site.json come out byte-identical") can't hold for a redraw in place, since both catalogs store every specimen's sha256 and `tff-site build` refuses a mismatch. The options:
+  - the lead restates it as identical except the 500 `preview.sha256` values in each catalog and `run.code_commit`, with no flag changes, identical over two runs, and `validate --committed` passing;
+  - or the names-only files are drawn as a new set with their own manifest, which leaves both catalogs byte-identical;
+  - otherwise it waits for the first live refresh.
+- [ ] Run `tff-site build` on the redrawn outputs before committing: `validate --committed` has no specimen-hash check.
+- [ ] Once `build/specimens` is names-only, remove 7a's trim.
+
+#### 7e: The details' sample lines and glyph strip (after the freeze)
+- [ ] Separate SVG sets drawn by the specimens stage (`specimens/<id>.sample.svg` for "Hamburgefonstiv 0123", `<id>.code.svg` for the 97 monospace fonts, `<id>.glyphs.svg`), listed in their own manifest outside the frozen `catalog-site.json`, such as `build/specimens/sets.json` with path and sha256 for each. The site build checks the hashes, writes the files under hashed names and lists them in `details.json`. `_prune` and both budget checks learn the new files.
+- [ ] **Budget:** the glyph strip as ruled brings the specimens to 11.92 MB, over the 10 MB cap, with 8 files over 16 KB. Ask the owner before building: for example, a separate total for the details sets with the 16 KB cap kept, no strip for the heaviest fonts, a coarser grid, or a smaller strip.
+- [ ] The designer link reads "Designer's page" (`designer_label`).
+- [ ] The code line's text needs the owner's OK.
+
+**Done when:** the freeze has lifted, the details show the lines and the strip within the ruled budget, and CI passes.
 
 ### Step 8: Copy and data fixes
 **Who:** Claude; the owner rules on links. **Depends on:** Q3, Q4 and Q8 (answered). This is priority 1.
-- [ ] Apply the wording of Q3 and Q8. The front-page lead's new sentence (`front_page_lead_counts`) lands with the Project default. The note's "with no use restrictions" and Q8's asides don't wait.
-- [ ] "Comes with" names the systems, as settled for Q4.
+
+#### 8a: The license checks (alongside step 7, `step7_list_first`)
 - [ ] **Heavy Data:** re-read its license text (the file in the Nerd Fonts repository that its details link to) against Rules 1–3, and report to the owner. The ruling of 2026-09-28 stands unless the text says otherwise.
-- [ ] Fix How we rank's "Choose a rank at the top of the list": the select is in the sidebar on wide screens.
 - [ ] **Charter's license link** points to a web page (`practicaltypography.com/charter.html`), unlike every other font's license text. Find the license text in its download and propose a pinned URL for the owner's ruling (gate K and L3).
+
+#### 8b: The wording (after the lead's branch)
+- [ ] Apply the wording of Q3 and Q8. The front-page lead's new sentence (`front_page_lead_counts`) lands with the Project default. The note's "with no use restrictions" and Q8's asides don't wait for the scoring change, but they do touch the templates.
+- [ ] "Comes with" names the systems, as settled for Q4.
+- [ ] Fix How we rank's "Choose a rank at the top of the list": the select is in the sidebar on wide screens.
 
 **Done when:** CI passes, and `tff-catalog links --check` passes.
 
@@ -320,7 +366,7 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
   - the filters after scrolling;
   - the first screen on a phone;
   - Brotli through Cloudflare, and the first load's weight;
-  - the names-only specimens, and, after the freeze, the details' sample lines and glyph strip;
+  - the names-only specimens (the lead may redeploy right after 7a merges, so the owner sees them early), and, after the freeze, the details' sample lines and glyph strip;
   - the Tip Jar link and the phone nav;
   - "Comes with" on Open Sans;
   - the Charter link.

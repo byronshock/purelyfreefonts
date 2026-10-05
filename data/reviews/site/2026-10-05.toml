@@ -119,3 +119,31 @@ recommended = false
 value = "every_row_in_the_html"
 ruling = "The front page keeps every row in its HTML, as today; only Brotli and the names-only specimens lighten it. No /all/ page."
 reason = "The outside reviewer's \"stop shipping the list twice\"; Claude measured about 19 KB compressed saved by writing the top 100 rows and building the rest from data. Of (a) the top 100 plus a static /all/ page for visitors without JavaScript (the owner's own refinement, which Claude recommended), (b) the same with 50 rows and (c) keeping every row, the owner chose (c)."
+
+[step7_list_first]
+choice = "a"
+recommended = true
+value = "7a_7b_7c_first_with_step8_license_checks"
+ruling = "PLAN-REVIEWERS-1.md's step 7 list work (7a names-only larger specimens, 7b the NF column and legend, 7c Download as the button) lands right after pull request #56, ahead of step 8's template work and step 5's first part, which wait for the parked claude/projects-default branch. Step 8's parts that touch no template (re-reading Heavy Data's license, proposing a pinned URL for Charter's license) go alongside, so priority 1 keeps moving. This amends the order reviewer_priorities set (2026-09-30)."
+reason = "The owner asked to move bigger specimens up. A workflow of eight agents found step 7's list parts need nothing from the scoring freeze or the frozen branch (7b and 7c touch two templates that branch also edits, with an expected one-line conflict). Of (a) this, (b) only 7a first and (c) keeping the order, the owner took Claude's recommendation."
+
+[specimen_trim_served]
+choice = "a"
+recommended = true
+value = "site_build_trims_verified_files"
+ruling = "Until build/specimens is redrawn names-only, the site build serves each row's specimen as a copy trimmed to the name line from the committed two-line SVG, after its sha256 check. Only files whose sha256 is in a pinned list of the 500 verified files are trimmed, and the name is realigned to its own left edge; any other file passes through untouched. Nothing in build/ or the catalogs changes. While the details panel is frozen the site shows no sample lines; the trim is removed once the redraw lands."
+reason = "Both catalogs record each specimen's sha256, so a redraw in place can't meet the lead's byte-identical rebuild condition. Two independent checks re-drew all 500 specimens: the trimmed name matched a name-only redraw in all 500, 7 of them offset 2-22 grid units until realigned; specimens fall from 1.33 to 0.54 MB gzip. Of (a) trimming now, (b) a redraw into new files with their own manifest and (c) waiting for the first live refresh, the owner took Claude's recommendation."
+
+[specimen_box_heights]
+choice = "a"
+recommended = true
+value = "desktop_64_now_phones_48_with_7b"
+ruling = "The specimen box is 64 px tall on wide screens from 7a (SPEC_BOX_PX follows it), and 48 px on phones from 7b, when the NF column stops reserving 44 px on rows without a Nerd Font build."
+reason = "Measured on all 500 trimmed files with mask-size: contain: desktop names go from a median 25.0 to 53.2 px per em with rows unchanged; phone names from 20.8 to 32.3 with 7a and about 39.9 after 7b, with phone rows about 8 px taller. A taller phone box before 7b gains almost nothing (32.6 against 32.3). Of (a) this, (b) 56 px on desktop and (c) today's boxes, the owner took Claude's recommendation."
+
+[phone_rows_trim]
+choice = "a"
+recommended = true
+value = "download_button_and_margin_trims"
+ruling = "On phones, 7c makes Download the button and trims a few pixels of row margin to keep about five rows per screen with the larger names; category and license are not merged into the tag line. This amends phone_rows_merged (2026-10-05)."
+reason = "Main already shows about five rows per 812 px phone screen (164 px median; the outside reviewer's 285 px was measured on release f6e84b3), and with the license name on every row the merged line fits on one line in only 15 of 304 tagged rows. Of (a) this and (b) merging anyway, the owner took Claude's recommendation."
