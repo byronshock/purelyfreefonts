@@ -1,6 +1,6 @@
 # Plan: changes from the first reviews of the test site
 
-This is the working checklist for the changes that came out of the first reviews of `https://staging.trulyfreefonts.com` on 2026-09-30: release `f6e84b3`, catalog run 2026-09-26, method 2026-09-29. The site code on `main` has had no changes since, apart from the v1 schema freeze. Settled decisions are in [AUTHORITY.md](AUTHORITY.md). The build work joins [docs/milestone-2.md](docs/milestone-2.md) before usability round 1 (step 13), and the inventory items join [docs/milestone-3.md](docs/milestone-3.md).
+This is the working checklist for the changes that came out of the first reviews of the test site on 2026-09-30: release `f6e84b3`, catalog run 2026-09-26, method 2026-09-29. The site was then Truly Free Fonts, at `https://staging.trulyfreefonts.com`. Since 2026-10-02 it is **Purely Free Fonts**, and the test site is `https://staging.purelyfreefonts.com` (**Name and domain** in AUTHORITY.md). The findings were made on the old name and still apply. Settled decisions are in [AUTHORITY.md](AUTHORITY.md). The build work joins [docs/milestone-2.md](docs/milestone-2.md) before usability round 1 (step 13), and the inventory items join [docs/milestone-3.md](docs/milestone-3.md).
 
 Three reviews fed it. Each finding is marked with who raised it:
 
@@ -15,14 +15,27 @@ Three reviews fed it. Each finding is marked with who raised it:
 
 Every factual claim below was checked against the live site, the catalog or the repo before it was written here.
 
-**Status (2026-09-30):** plan written. The owner has agreed to the outside reviewer's three priorities, which set the order of work, but no ruling is recorded in AUTHORITY.md yet and nothing is built. Step 1 comes first.
+**Status (2026-10-05):** the owner has agreed to the outside reviewer's three priorities, which set the order of work. This pull request (#56) is step 1: the plan, its rulings and the owner's answers. Nothing is built.
 
-**Since the reviews** (owner decisions of 2026-09-30, recorded and built by the lead session on branch `claude/projects-default`):
-- The fused Overall rank retires.
-- The list opens on the Project rank, now labelled **"Projects: most used"** in place of "Used in projects". The other ranks stay selectable.
-- The records are `data/reviews/method/2026-09-30.toml` (`overall_retired`) and `data/reviews/site/2026-09-30.toml` (`default_rank_project`, which also holds the label), plus AUTHORITY.md's D12 and M2-D1.
+**Holds.** On 2026-10-02 the owner put the scoring-method port and the soft launch on hold: "We are on hold for now." Production serves a renamed stub. Step 1 goes ahead. Build steps that need the new scores or the new default view wait for the port: step 3, Q3's lead sentence, and the row order in Q12 and step 9b.
 
-This plan follows those decisions. Wherever it says "the default view", it means "Projects: most used".
+**Decided since the reviews:**
+- **The default view** (2026-09-30). The fused Overall rank retires (`overall_retired`, D12), and the list opens on the Project rank (`default_rank_project`, M2-D1). Those records still carry the old label, "Used in projects".
+  - The owner then named it **"Projects: most used"** in this plan's session. That label is recorded here, in step 1a, not elsewhere.
+  - The site switch exists only on the lead's parked branch `claude/projects-default`. It isn't on `main`.
+  - Wherever this plan says "the default view", it means "Projects: most used".
+- **The shown score** (2026-10-01). It is linear between fixed ends on the new method's latent scale: max(1, ⌈100·clip(η̂/3, 0, 1)⌉). This replaces 100·Φ(z) (`q11_display_linear`, `q30_display_ends`; **The scoring method** in AUTHORITY.md). It settles Q1, and it lands with the port.
+- **No tiers or likely ranges** (2026-09-30, `no_tiers_or_ranges`). Every rank shows just its place, and How we rank loses its tier section. This lands after the freeze.
+- **The rename** (2026-10-02):
+  - Public copy says "purely free" where it said "truly free".
+  - The contact address is admin@purelyfreefonts.com.
+  - Ko-fi is closed, so tips go through the Stripe link only (`kofi_closed`).
+- **The owner's wordmark** (2026-10-04, #55): "PURELY FREE FONTS" on its white plate, which agrees with step 1a's black-on-white header. The About page credits Arimo only (`about_font_credit`).
+
+**Who does what** (2026-10-05):
+- **This plan's session** asks the owner's questions once, as batched single-select questions, records the answers and builds steps 1–10. Each step gets its own worktree and `claude/<name>` branch.
+- **The owner** merges each pull request with "Create a merge commit".
+- **The lead session** redeploys the test site (step 11), and keeps this plan in step with the methodology work.
 
 ## Priorities
 
@@ -56,9 +69,9 @@ Tick each item as soon as it is done and verified. Checklists nest: a parent is 
 5. **The rest:** steps 2, 3, 4, 6 and 10, then step 5's second part, which waits for step 2.
 6. Step 11.
 
-Steps 4, 5, 8 and 9b change the templates, the no-JavaScript note or the front-page copy. They start from `origin/main` after the lead's `claude/projects-default` has merged, so the two don't conflict.
+Steps 4, 5, 8 and 9b change the templates, the no-JavaScript note or the front-page copy. They start from `origin/main` after the lead's parked `claude/projects-default` has merged, so the two don't conflict. That branch waits on the scoring-method freeze, and the owner chose on 2026-09-30 to keep these steps waiting with it.
 
-Priorities 1 and 2, and steps 3, 4 and 6, land before usability round 1, so testers see the changed site. Priority 3 lands before the A–Z list or the inventory check is added to the list page.
+Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers see the changed site. Priority 3 lands before the A–Z list or the inventory check is added to the list page.
 
 ---
 
@@ -70,7 +83,10 @@ Priorities 1 and 2, and steps 3, 4 and 6, land before usability round 1, so test
 - [ ] **"Why isn't my favorite free font here?" comes after the fonts,** on wide screens and phones. It becomes a short conversation with the reader and ends with the tip link. It also appears when a search finds nothing (step 5). This replaces `why_not_listed_layout` of 2026-09-29. (O; C items 3 and 5; R design 1)
 - [ ] **Funding, amended.** It now reads "A donation button on the site, and nothing more: no donation strategy or fundraising work." The amendment adds one short pitch, at the end of that note: the owner's idea to "sell the reader on buying me coffee". The Stripe Payment Link stays. Q7 settles the wording.
 - [ ] **"Popularity" replaces "Rank" over the score column.** (O note 2) Q2 settles the rest of the wording.
-- **The default view is "Projects: most used"**, and Overall retires. The owner chose the name in this plan's session, from four options Claude offered, after calling "Popularity (Projects)" "closer, still not there". It matches "Desktop: most chosen" and "Desktop: most installed", so the view name needn't repeat "Popularity". **The lead session records it**, with `default_rank_project`; this plan doesn't record it again.
+- [ ] **The default view is labelled "Projects: most used"** (2026-09-30), in place of "Used in projects" (**Project rank label**, 2026-09-25, and the label in `default_rank_project`).
+  - The owner chose it in this plan's session, from four options Claude offered: "Projects: most used", "Popular in projects", "Web, code & apps" and "Project Picks". Of "Popularity (Projects)", the owner had said: "closer, still not there".
+  - It matches "Desktop: most chosen" and "Desktop: most installed", so the view's name needn't repeat "Popularity".
+  - It lands with the site switch on the lead's parked branch.
 - [ ] **The outside reviewer's three priorities set the order of this work.** ("I agree with the reviewer's priorities.") Within them:
   - **The homepage's claims change to match the evidence** (priority 1). Q3 only confirms the exact sentences.
   - **"Comes with" names the systems** (priority 1, settling Q4). For example, Open Sans's row says "Comes with CachyOS, EndeavourOS", not "Comes with Linux". This amends the "Rows" part of **Filters (2026-09-30)**.
@@ -80,8 +96,11 @@ Priorities 1 and 2, and steps 3, 4 and 6, land before usability round 1, so test
 - [ ] **Tracked docs** gains `PLAN-REVIEWERS-1.md`.
 
 **1b. Questions for the owner,** asked in chat as grouped single-select questions, each with Claude's recommendation first:
-- [ ] **Q1. The score's scale.** (O note 4; C items 1–2; R design 3)
-  - **Today:** 100·Φ(z) (`score_curve`). The listed fonts in "Projects: most used", now the default, run from 33 to 100. The retired Overall ran from 53 to 99. How we rank says "a font scoring 90 stands above about 90% of them", which is wrong. The 500 listed fonts are the top of about 2,000 tracked families, so even the last should stand above about 75% of them, yet the retired Overall's last font showed 53, and fonts placed in "Projects: most used" go as low as 33.
+- [x] **Q1. The score's scale.** (O note 4; C items 1–2; R design 3) **Settled elsewhere, on 2026-10-01:** method answers Q11 (`q11_display_linear`) and Q30 (`q30_display_ends`) in `data/reviews/method/2026-10-01.toml`, and **The scoring method** in AUTHORITY.md.
+  - The shown score is linear between 0 and 3 on the new method's latent scale: max(1, ⌈100·clip(η̂/3, 0, 1)⌉). So 1 is the average tracked font, and 100 is three standard deviations above it.
+  - Option (a) below, each view's listed fonts spanning 1–100, conflicts with that ruling and is withdrawn.
+  - The rest of this entry is the record of the question as it was asked.
+  - **Then:** 100·Φ(z) (`score_curve`). The listed fonts in "Projects: most used", now the default, run from 33 to 100. The retired Overall ran from 53 to 99. How we rank says "a font scoring 90 stands above about 90% of them", which is wrong. The 500 listed fonts are the top of about 2,000 tracked families, so even the last should stand above about 75% of them, yet the retired Overall's last font showed 53, and fonts placed in "Projects: most used" go as low as 33.
   - **(a) Recommended, the owner's idea:** each view's listed fonts span 1–100. The least popular listed font gets 1, the most popular gets 100, and fonts in between are placed linearly on the engine's score, so the gaps between fonts stay.
   - **(b)** keep 100·Φ(z) and rewrite the sentence.
   - **(c)** the font's percentile by position. This loses the gaps.
@@ -96,7 +115,7 @@ Priorities 1 and 2, and steps 3, 4 and 6, land before usability round 1, so test
   - The lead's "They are ranked by how many people install them and use them in their work" changes.
     - **Recommended:** the lead session's proposal, which fits the new default view: "They are ranked by how widely they are used in websites, code and apps."
     - The reviewer's "They are ranked by public install and usage counts" no longer fits, because the default view counts no installs.
-    - The lead session is asking the owner about this sentence too. **Ask it once:** whichever session asks first records the answer, and the other takes it from there.
+    - The lead session left this question to this plan (2026-10-05), so it is asked once, here. The answer is recorded now; the sentence goes live with the default view, after the port.
   - The note's "with no limits on how they're used" becomes About's "with no use restrictions". The SIL Open Font License, used by 453 of the 500 fonts, does set conditions.
   - This replaces the wording of `front_page_lead_sharing`.
 - [x] **Q4. "Comes with Linux".** (R round 1) **Settled by priority 1** (step 1a): the row names the systems. Open Sans carries the tag only because CachyOS and EndeavourOS ship it.
@@ -124,7 +143,7 @@ Priorities 1 and 2, and steps 3, 4 and 6, land before usability round 1, so test
     - a line of code, for monospace fonts.
   - Claude drafts the options; the owner picks.
 - [ ] **Q7. The tip wording,** in the note and in the footer: keep "Leave a tip ($5 suggested)" (2026-09-26), or wording built on "coffee".
-- [ ] **Q8. How we rank's internal asides.** (C item 8) It has four "(owner ruling of …)" asides and the Dirichlet formula.
+- [ ] **Q8. How we rank's internal asides.** (C item 8) It has four "(owner ruling of …)" asides. The Dirichlet formula sits in the tier section, which goes under `no_tiers_or_ranges`, so Q8 is now about the asides only. The methodology session will probably rewrite `docs/ranking-methodology.md`, so check with it (or the lead) before building Q8, and keep the edits to the sentences the site shows.
   - **(a) Recommended:** rewrite the parts of `docs/ranking-methodology.md` that the site copies, so both read as public text. The page promises that the two always agree.
   - **(b)** remove the asides when the site is built.
 - [ ] **Q9. Outside points not yet discussed.** Keep or change each:
@@ -163,7 +182,9 @@ Priorities 1 and 2, and steps 3, 4 and 6, land before usability round 1, so test
     - **Growth:** when the A–Z list arrives (the more-fonts milestone), `/all/` grows by about 1,250 rows, to roughly 120 KB compressed. If that's too much, it can then split by letter.
   - **(b)** as (a), but with 50 rows on the front page. That saves a little more, and the full-list page stays.
   - **(c)** all rows stay in the front page's HTML, and only Brotli (Q10) lightens the page.
-- [ ] Record each ruling and answer in AUTHORITY.md under Site (Milestone 2), and in `data/reviews/site/<date>.toml` with `choice`, `recommended`, `value`, `ruling` and `reason`, as earlier site rulings are.
+- [ ] Record each ruling and answer:
+  - in an answers file for gate SITE, saved with `uv run tff-catalog rulings apply <file>` into `data/reviews/site/<date>.toml`, with `choice`, `recommended`, `value`, `ruling` and `reason`;
+  - and in an AUTHORITY.md entry under Site (Milestone 2), as earlier site rulings are.
 - [ ] Add milestone-2.md step 12b, "Changes from the first reviews", linking this plan, and make step 13 depend on it.
 
 **Done when:** every ruling and answer is in AUTHORITY.md and `data/reviews/`, and merged to `main` by pull request together with this file.
@@ -178,14 +199,15 @@ Priorities 1 and 2, and steps 3, 4 and 6, land before usability round 1, so test
 **Done when:** `tff-catalog validate` passes, and the hand check finds no misleading reason.
 
 ### Step 3: The score's scale and its explanation
-**Who:** Claude. **Depends on:** Q1.
-- [ ] `display_score` in `src/tff_site/data.py` maps each view's scores per Q1, from that view's listed fonts, with its tests.
-- [ ] Screen readers still hear "Score N of 100".
-- [ ] How we rank's "Scores" text (from `docs/ranking-methodology.md`) matches the new number. Also fix "Past #100 we show bands": bands now appear only in the details.
-- [ ] A note on TASK-4: its triangles compare `score` with `previous_score`.
-- [ ] Milestone 3 step 8's "Rank numbers stay as published" follows Q1 and Q2.
+**Who:** the scoring-method port, not this plan. **Depends on:** the port, which is on hold.
+- [ ] The port brings the new shown score (Q1, settled), and with it How we rank's text. It must remove these two:
+  - the wrong sentence, "a font scoring 90 stands above about 90% of them";
+  - "Past #100 we show bands".
 
-**Done when:** CI passes, each view on the real catalog spans the new range, and the page's text matches the number.
+  This plan builds nothing for step 3. Tick it when the port has merged and both sentences are gone.
+- [ ] Milestone 3 step 8's "Rank numbers stay as published" follows the port and Q2.
+
+**Done when:** the port has merged, and How we rank describes the score the list shows.
 
 ### Step 4: "Popularity" and the other words
 **Who:** Claude. **Depends on:** Q2.
@@ -264,8 +286,8 @@ Priorities 1 and 2, and steps 3, 4 and 6, land before usability round 1, so test
 **Done when:** milestone-3.md is merged with the new entries.
 
 ### Step 11: Redeploy the test site and check again
-**Who:** Claude; the owner looks. **Depends on:** steps 3–9.
-- [ ] `ops/deploy.sh staging`, then check that `version.txt` shows the new commit.
+**Who:** the lead redeploys; Claude checks; the owner looks. **Depends on:** steps 3–9.
+- [ ] Redeploy `https://staging.purelyfreefonts.com` (`ops/deploy.sh staging`, done by the lead), then check that `version.txt` shows the new commit.
 - [ ] Repeat the checks behind these findings:
   - the score range per view;
   - a search for Satoshi and Helvetica;
