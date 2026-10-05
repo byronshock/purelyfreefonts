@@ -229,6 +229,7 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
 ### Step 4: "Popularity" and the other words
 **Who:** Claude. **Depends on:** Q2.
 - [ ] Update the templates, the sort header's script, `site/CONTRACT.md` §3, the nav, the methodology page's title, and their tests.
+- [ ] The nav's new "How it works" changes its width. If step 4 lands before step 5, re-measure the header's single-row breakpoint as step 5 describes.
 - [ ] Check the sort button fits its 96 px column, including at 320 px reflow.
 - [ ] Update `docs/usability-test.md` to match: the "rank" wording in tasks 5 and 6, and "Choose task 6's two fonts from the current Overall rank", since Overall retires. Unless the lead's branch already does this.
 
@@ -240,7 +241,11 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
   - [ ] Move the note below the list, on wide screens and phones. The top of the front page becomes the headline, the lead, the privacy line, then the list.
   - [ ] When search is the only filter and finds nothing, say "No listed font matches '…'" and show the note. Other empty results keep today's text.
   - [ ] Rewrite the note as a conversation that ends with the tip pitch, asking the reader to leave a tip with no amount (`tip_jar`), under Funding as amended.
-  - [ ] Add the "Tip Jar" link at the end of the header nav, and remove the footer's tip link. Check the phone nav at 320 and 375 px: two lines or tighter spacing.
+  - [ ] Add the "Tip Jar" link at the end of the header nav, and remove the footer's tip link.
+  - [ ] **The header stays one row** (`wordmark_breakpoint`, 2026-10-04, in #55). The wordmark is 418 px wide from 760 px up, with the nav beside it, and 278 px below. The 760 px is today's nav, about 280 px: 16 + 418 + 24 + 280 + 16 = 754.
+    - "Tip Jar" and step 4's "How it works" widen the nav by roughly 80 px. Re-measure the widest single-row width, and move the breakpoint (`@media (max-width: 47.5rem)` in `site/css/10-base.css`) and its test (`tests/site/test_shell.py::test_the_wordmark_is_418_px_wide_from_760_px_and_278_below`) to match.
+    - On phones the nav has its own line under the wordmark. At 320 px it may no longer fit on one line. Before building, ask the owner how to keep it to one line: tighter spacing, a smaller nav text, or Privacy moving to the footer. A second line would go against `wordmark_breakpoint`.
+    - Check header height at 320 px and from 640 to 1280 px, in Chromium and Firefox, so a second row is caught.
   - [ ] Search lists name matches first, then fonts matched only through another name (`search_name_first`).
 - [ ] **Second part** (after step 2):
   - [ ] Reasons and alternatives, per Q5, from a file loaded on the first empty search, outside the 100 KB.
@@ -266,7 +271,12 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
   - [ ] "Hamburgefonstiv 0123", plus a line of code for monospace fonts (`details_sample_lines`), and a glyph strip (`glyph_strip`). All are loaded only when the details open, before "Type your own text".
   - [ ] The designer link is labelled "Designer's page" (`designer_label`).
 - [ ] **The specimen files:**
-  - [ ] `tff-catalog specimens` draws them into `build/specimens/` (`SAMPLE` in `src/tff_catalog/specimens/__init__.py` is today's line). Changing them is a build/ change under the rebuild protocol: specimens only, no scores. Agree it with the lead first, given the rules on rebuilds after #31.
+  - [ ] `tff-catalog specimens` draws them into `build/specimens/` (`SAMPLE` in `src/tff_catalog/specimens/__init__.py` is today's line). Changing them is a build/ change. The lead's conditions (2026-10-05), under the rules on rebuilds after #31:
+    - run `specimens --date 2026-09-26` on the frozen snapshots, never a refresh;
+    - `catalog.json` and `catalog-site.json` come out byte-identical, and `tff-catalog validate --committed` passes;
+    - compare the build/ hashes over two runs;
+    - tell the lead before committing the build/ outputs;
+    - the pull request merges with a merge commit, so `run.code_commit` stays reachable.
   - [ ] Stay within M2 step 5's budgets: 16 KB compressed per file and 10 MB in total, now counting the details' sets.
 - [ ] `site/CONTRACT.md` and the specimen, accessibility and privacy tests cover the changes.
 - [ ] Re-run M2 step 10's load-speed numbers.
