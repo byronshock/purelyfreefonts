@@ -264,14 +264,14 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - [x] Claude checks every old host from outside. *(2026-10-02: `tests/live --check-redirects` passes on purelyfreefonts.com and staging.purelyfreefonts.com, from the US.)*
 - [ ] **The owner, at cutover:**
   - [ ] Stripe: public business name, website, statement descriptor, support email and the payment page text;
-  - [ ] Ko-fi closed;
+  - [x] Ko-fi closed; *(2026-10-05)*
   - [ ] any mail filters updated.
 - [x] **Drafts for the owner to post:** a comment on the Fonts Over Time license request (fcjr/fontsovertime#1), and a note to ecosyste.ms if the first one was sent. *(Given to the owner on 2026-10-02 and 2026-10-04; the posting and sending are the owner's.)*
 - [ ] **Records:**
   - [x] `ops/SERVER.md` section K and its Verification lines; *(#52, #53)*
-  - [ ] `ops/DONATIONS.md`;
-  - [ ] Milestone 4's yearly check covering all seven domains;
-  - [ ] the private notes that name the old site: Claude's memory, walnutbutter-site, tff-stats, and the owner's typeface project.
+  - [x] `ops/DONATIONS.md`; *(section F lists the owner's Stripe steps)*
+  - [x] Milestone 4's yearly check covering all seven domains; *(#53)*
+  - [ ] the private notes that name the old site: Claude's memory, walnutbutter-site, tff-stats, and the owner's typeface project. *(Claude's memory is done; the other three remain.)*
 - [x] **Later:** the wordmark in the owner's typeface, once it has its lowercase. *(2026-10-04: the owner's own "PURELY FREE FONTS" plate instead, in capitals, owner rulings `wordmark_owners_svg` and `wordmark_size`.)*
 
 **Done when:**

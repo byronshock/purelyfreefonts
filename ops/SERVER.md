@@ -151,6 +151,8 @@ Each also gets items 20 and 21's dashboard checks.
   - [x] Claude, at cutover: the proxied placeholders for `@` and `www`, then the outside check. *(2026-10-02)*
 - [x] 31. **Cutover** (`docs/milestone-2.md` step 13b): Caddy serves purelyfreefonts.com, and `www.purelyfreefonts.com`, trulyfreefonts.com, .org, .net and their `www.` hosts 301 to `https://purelyfreefonts.com{uri}`. `staging.trulyfreefonts.com` 301s to `https://staging.purelyfreefonts.com{uri}`. *(2026-10-02: installed from #53's 465b470 after CI's caddy job passed. A renamed stub (release 723f835) serves production on both domains. `tests/live --check-redirects` passes on both new hosts: every old name over https takes one 301 to the same path and query, and over http ends there.)*
 
+- [x] 32. **A null MX on trulyfreefonts.org and .net** (`MX @ 0 .`, RFC 7505), finishing item 15's "no mail" records as section K's new zones have them: a sender gets an immediate bounce rather than retrying against the proxied addresses. *(2026-10-05; `dig MX trulyfreefonts.org` gives `0 .`.)*
+
 ## Verification
 - `ssh tff sudo -n true` works; `ssh root@<IP>` and `ssh -o PubkeyAuthentication=no tff` are refused.
 - `ssh tff 'sudo ufw status verbose; systemctl is-active caddy fail2ban unattended-upgrades'` is all active.
