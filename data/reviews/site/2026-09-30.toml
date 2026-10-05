@@ -118,3 +118,50 @@ recommended = true
 value = "tiers_and_ranges_everywhere"
 ruling = "The site shows no tiers and no likely ranges: every rank shows just its place (\"#12\", or its band past 100). The tier letters, the Firm/Fair/Rough legend, the \"likely #8 to #17\" ranges and the methodology page's tier section go, and the site's details data drops them. catalog-site.json v1 keeps its tier and range fields, unshown (q19_ranges_tiers_stand_in, 2026-10-01)."
 reason = "The owner, in chat: \"Tiers are something you came up with, not me. What do we actually use the tiers for?\" and, of the folded details: \"Yuck. Can we take these details out? The site is heavy as it is.\" Asked how much should go, the owner chose \"Tiers and ranges, everywhere\" (Claude's recommendation) over tiers only or the whole per-rank list, then froze the work \"until the methodology is sound\"."
+
+[filters_sticky]
+value = "sticky_sidebar_wide_screens"
+ruling = "On wide screens the filter sidebar stays in view while the list scrolls: position: sticky, so it never covers the footer, scrolling on its own when it is taller than the window. Phones keep the \"Filters\" button (M2-D4, which this extends)."
+reason = "The owner, in chat, on the first reviews of the test site (PLAN-REVIEWERS-1.md): \"Obviously we should have a fixed sidebar on large screens.\" Claude's critique had found that the filters scroll away on a list page about 61,000 px tall."
+
+[why_not_listed_after_list]
+value = "after_the_fonts"
+ruling = "The front-page note \"Why isn't my favorite free font here?\" comes after the fonts, on wide screens and phones, in place of the frame floated beside the lead (why_not_listed_layout, 2026-09-29). It becomes a short conversation with the reader that ends with the tip pitch, and it also appears when a search finds nothing."
+reason = "The owner, in chat: the frame \"needs to come after the fonts. But that could actually be an opportunity to pick up a dialogue with the reader and sell the reader on buying me coffee.\" Then, joining it with the search dead end (critique item 3): \"Yes, definitely this all rolls in to critique item (3). We can knock off several tasks at once.\" Claude's critique and the outside reviewer had both found the list starting low: on a phone, no font on the first screen."
+
+[funding_pitch]
+value = "one_pitch_in_the_note"
+ruling = "Funding is amended: besides the tip link, the site carries one short pitch, at the end of the note \"Why isn't my favorite free font here?\". It still points at the Stripe Payment Link only. The wording is site ruling tip_jar of 2026-10-05."
+reason = "The owner's idea, in chat: \"sell the reader on buying me coffee\", which goes beyond \"A donation button on the site, and nothing more\" (Funding, 2026-09-25)."
+
+[score_column_popularity]
+value = "Popularity"
+ruling = "The heading over the score column (the sort button over the score bars) says \"Popularity\" instead of \"Rank\". A font's details keep \"rank\" for its exact place."
+reason = "The owner, in chat: \"Instead of 'Rank' as the column header I'd like 'Popularity'. That's a long word and may not fit, but at least it conveys that we are no longer ranking things.\""
+
+[project_rank_label_most_used]
+choice = "a"
+recommended = true
+value = "Projects: most used"
+ruling = "On the site the Project rank (D10), the default view (default_rank_project), is labelled \"Projects: most used\", in place of \"Used in projects\" (Project rank label, 2026-09-25, and the label in default_rank_project). It lands with the site switch to the Project default."
+reason = "The owner, in chat: \"I want most chosen for projects, used in projects, project picks? I like 'Project Picks'\", then of \"Popularity (Projects)\": \"closer, still not there\". Claude offered (a) \"Projects: most used\", which matches \"Desktop: most chosen\" and \"Desktop: most installed\" so the view's name needn't repeat the \"Popularity\" heading, (b) \"Popular in projects\", (c) \"Web, code & apps\" and (d) \"Project Picks\"; the owner took (a), Claude's recommendation."
+
+[reviewer_priorities]
+value = "claims_fonts_first_page_weight"
+ruling = "The outside reviewer's three priorities set the order of the work from the first reviews: (1) match the homepage claims to the evidence; (2) put the fonts first; (3) free up page weight before adding anything to the list page (the A-Z list, the inventory check). PLAN-REVIEWERS-1.md orders its steps by them."
+reason = "The owner, in chat, after the outside reviewer (a Claude chat given no project context) named its three changes that matter most before launch: \"I agree with the reviewer's priorities.\""
+
+[comes_with_names_systems]
+value = "name_the_systems"
+ruling = "A row's \"Comes with\" badge names the systems that ship the font, such as \"Comes with CachyOS, EndeavourOS\", in place of a bare \"Comes with Linux\". This amends the Rows part of the filters ruling (filters_layout, 2026-09-30). How a long list shortens is settled in the pull request that builds it."
+reason = "The outside reviewer found Open Sans tagged \"Comes with Linux\" only because CachyOS and EndeavourOS ship it, where readers think of Ubuntu or Fedora; the owner agreed to its priorities, which name this."
+
+[nf_legend_visible_rows]
+value = "only_while_nf_rows_show"
+ruling = "The Nerd Font legend above the list shows only while a row with an NF marker is visible, and on phones the NF column takes space only in rows with a Nerd Font build."
+reason = "Claude's critique found the legend shown with Category Handwriting (41 fonts, none with a Nerd Font build), with Display (52, none) and with a search that finds nothing, and the phone NF column holding 52 px on every row. The owner: \"You picked up on something I wouldn't have. Thank you!\""
+
+[header_dark_mode_kept]
+value = "black_on_white"
+ruling = "The header stays black on white in dark mode, as the header colour ruling of 2026-09-29 says."
+reason = "The outside reviewer called the white header in dark mode a bug. The owner: \"I have no intention of doing so, black on white is the branding of typography.\""

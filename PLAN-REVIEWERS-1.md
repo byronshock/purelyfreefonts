@@ -15,7 +15,7 @@ Three reviews fed it. Each finding is marked with who raised it:
 
 Every factual claim below was checked against the live site, the catalog or the repo before it was written here.
 
-**Status (2026-10-05):** the owner has agreed to the outside reviewer's three priorities, which set the order of work. This pull request (#56) is step 1: the plan, its rulings and the owner's answers. Nothing is built.
+**Status (2026-10-05):** step 1 is recorded in this pull request (#56). The owner's rulings of 2026-09-30 and answers of 2026-10-05 are in `data/reviews/site/` and AUTHORITY.md (**First reviews of the test site**). Nothing is built.
 
 **Holds.** On 2026-10-02 the owner put the scoring-method port and the soft launch on hold: "We are on hold for now." Production serves a renamed stub. Step 1 goes ahead. Build steps that need the new scores or the new default view wait for the port: step 3, Q3's lead sentence, and the row order in Q12 and step 9b.
 
@@ -48,9 +48,9 @@ The owner: "I agree with the reviewer's priorities." In the reviewer's words, th
    - Check the Heavy Data and Charter licenses.
 
    In this plan: Q3, Q4 and step 8.
-2. **Put the fonts first.** Show fonts sooner on the page, and make the previews bigger, with text visitors can switch. In this plan: step 5's first part, Q6 and step 7.
+2. **Put the fonts first.** Show fonts sooner on the page, and make the previews bigger, with text visitors can switch. In this plan: step 5's first part, Q6 and step 7. The owner refined it on 2026-10-05: rows show the font's name larger, and the sample lines move into the details.
 3. **Free up page weight before adding anything.** Stop shipping the list twice, and load the A–Z list only when needed, so there's room for both new features.
-   - In this plan: Q10, Q12 and step 9.
+   - In this plan: Q10, Q12 and step 9. The owner kept every row in the HTML (Q12), so Brotli and the names-only specimens carry this priority.
    - The A–Z list loading on demand is already in [docs/milestone-more-fonts.md](docs/milestone-more-fonts.md).
    - "Before adding anything" means before the A–Z list (the more-fonts milestone) and before the inventory check joins the list page (Milestone 3's M3-D8, built in Milestone 4).
 
@@ -79,21 +79,21 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
 **Who:** the owner rules; Claude records. **Depends on:** nothing.
 
 **1a. Rulings the owner gave in chat on 2026-09-30, to record as they are:**
-- [ ] **Filters stay in view.** "Obviously we should have a fixed sidebar on large screens." On wide screens the filter sidebar stays in view while the list scrolls. Built with `position: sticky`, so it never covers the footer. This extends M2-D4. Phones keep the "Filters" button. (O; C item 6)
-- [ ] **"Why isn't my favorite free font here?" comes after the fonts,** on wide screens and phones. It becomes a short conversation with the reader and ends with the tip link. It also appears when a search finds nothing (step 5). This replaces `why_not_listed_layout` of 2026-09-29. (O; C items 3 and 5; R design 1)
-- [ ] **Funding, amended.** It now reads "A donation button on the site, and nothing more: no donation strategy or fundraising work." The amendment adds one short pitch, at the end of that note: the owner's idea to "sell the reader on buying me coffee". The Stripe Payment Link stays. Q7 settles the wording.
-- [ ] **"Popularity" replaces "Rank" over the score column.** (O note 2) Q2 settles the rest of the wording.
-- [ ] **The default view is labelled "Projects: most used"** (2026-09-30), in place of "Used in projects" (**Project rank label**, 2026-09-25, and the label in `default_rank_project`).
+- [x] **Filters stay in view.** "Obviously we should have a fixed sidebar on large screens." On wide screens the filter sidebar stays in view while the list scrolls. Built with `position: sticky`, so it never covers the footer. This extends M2-D4. Phones keep the "Filters" button. (O; C item 6)
+- [x] **"Why isn't my favorite free font here?" comes after the fonts,** on wide screens and phones. It becomes a short conversation with the reader and ends with the tip link. It also appears when a search finds nothing (step 5). This replaces `why_not_listed_layout` of 2026-09-29. (O; C items 3 and 5; R design 1)
+- [x] **Funding, amended.** It now reads "A donation button on the site, and nothing more: no donation strategy or fundraising work." The amendment adds one short pitch, at the end of that note: the owner's idea to "sell the reader on buying me coffee". The Stripe Payment Link stays. Q7 settled the wording on 2026-10-05: a "Tip Jar" nav link, and "leave a tip" with no amount.
+- [x] **"Popularity" replaces "Rank" over the score column.** (O note 2) Q2 settles the rest of the wording.
+- [x] **The default view is labelled "Projects: most used"** (2026-09-30), in place of "Used in projects" (**Project rank label**, 2026-09-25, and the label in `default_rank_project`).
   - The owner chose it in this plan's session, from four options Claude offered: "Projects: most used", "Popular in projects", "Web, code & apps" and "Project Picks". Of "Popularity (Projects)", the owner had said: "closer, still not there".
   - It matches "Desktop: most chosen" and "Desktop: most installed", so the view's name needn't repeat "Popularity".
   - It lands with the site switch on the lead's parked branch.
-- [ ] **The outside reviewer's three priorities set the order of this work.** ("I agree with the reviewer's priorities.") Within them:
+- [x] **The outside reviewer's three priorities set the order of this work.** ("I agree with the reviewer's priorities.") Within them:
   - **The homepage's claims change to match the evidence** (priority 1). Q3 only confirms the exact sentences.
   - **"Comes with" names the systems** (priority 1, settling Q4). For example, Open Sans's row says "Comes with CachyOS, EndeavourOS", not "Comes with Linux". This amends the "Rows" part of **Filters (2026-09-30)**.
   - **Bigger previews, with sample text visitors can switch** (priority 2, settling Q6 as (b)). Q6 only settles which sentences, and how many.
   - **The list page gets lighter before anything is added to it** (priority 3). The list's rows stop being shipped in full in the HTML (Q12 settles how). The A–Z list loads only when needed.
-- [ ] **The header stays black on white in dark mode.** The outside reviewer called it a bug. The owner: "black on white is the branding of typography." This confirms the header colour ruling of 2026-09-29.
-- [ ] **Tracked docs** gains `PLAN-REVIEWERS-1.md`.
+- [x] **The header stays black on white in dark mode.** The outside reviewer called it a bug. The owner: "black on white is the branding of typography." This confirms the header colour ruling of 2026-09-29.
+- [x] **Tracked docs** gains `PLAN-REVIEWERS-1.md`.
 
 **1b. Questions for the owner,** asked in chat as grouped single-select questions, each with Claude's recommendation first:
 - [x] **Q1. The score's scale.** (O note 4; C items 1–2; R design 3) **Settled elsewhere, on 2026-10-01:** method answers Q11 (`q11_display_linear`) and Q30 (`q30_display_ends`) in `data/reviews/method/2026-10-01.toml`, and **The scoring method** in AUTHORITY.md.
@@ -105,13 +105,15 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
   - **(b)** keep 100·Φ(z) and rewrite the sentence.
   - **(c)** the font's percentile by position. This loses the gaps.
   - **Either way:** it replaces `score_curve`, `catalog-site.json` v1 is untouched, and TASK-4's triangles compare the stored score, not the number shown.
-- [ ] **Q2. Words.** (O notes 2–3; C item 4) The default view's name is settled ("Projects: most used", step 1a), and so is "Popularity" over the scores. What's left:
+- [x] **Q2. Words.** (O notes 2–3; C item 4) The default view's name is settled ("Projects: most used", step 1a), and so is "Popularity" over the scores. What's left:
+  **Answered 2026-10-05:** the selector's label is "Measure" (`selector_label`); the sort words are "most popular first" and "least popular first" (`sort_words_popular`); the page is "How we measure popularity", with the nav link "How it works" (`method_page_name`). All as recommended.
   - The select's label: keep "Rank", or "Measured by", or "Popularity by". Its options read "Projects: most used", "Desktop: most chosen", and so on.
   - The sort button's order words: today "best first" and "least used first" (`sort_header`), or "most popular first" and "least popular first".
   - The page title: "How we measure popularity", or the owner's "How we evaluate popularity".
   - The nav link: the phone nav is already full at 375 px, so a short link such as "How it works".
   - Claude recommends keeping "rank" only in a font's details, for its exact place.
-- [ ] **Q3. Wording that claims too much.** (R round 1 and priority 1) The change is agreed. Only the sentences need confirming.
+- [x] **Q3. Wording that claims too much.** (R round 1 and priority 1) The change is agreed. Only the sentences need confirming.
+  **Answered 2026-10-05:** "They are ranked by public counts of use in websites, code and apps." (`front_page_lead_counts`, the owner's choice over the recommended sentence), landing with the Project default; and "with no use restrictions" in the note (`note_no_use_restrictions`).
   - The lead's "They are ranked by how many people install them and use them in their work" changes.
     - **Recommended:** the lead session's proposal, which fits the new default view: "They are ranked by how widely they are used in websites, code and apps."
     - The reviewer's "They are ranked by public install and usage counts" no longer fits, because the default view counts no installs.
@@ -120,14 +122,19 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
   - This replaces the wording of `front_page_lead_sharing`.
 - [x] **Q4. "Comes with Linux".** (R round 1) **Settled by priority 1** (step 1a): the row names the systems. Open Sans carries the tag only because CachyOS and EndeavourOS ship it.
   - **Left for step 8's pull request:** how a long list shortens (Claude proposes after two systems, with the rest in the details), and what "Hide fonts that come with: Linux" hides, which Claude proposes stays any Linux system.
-- [ ] **Q5. A search that finds nothing.** (C item 3; R design 4)
+- [x] **Q5. A search that finds nothing.** (C item 3; R design 4)
+  **Answered 2026-10-05:** (a), as recommended (`no_match_search`).
   - **(a) Recommended:**
     - **Now:** say "No listed font matches '…'", followed by the note.
     - **After step 2:** add each unlisted font's reason, plus free fonts with the same letter widths for well-known paid ones: Arial and Helvetica → Arimo, Liberation Sans, TeX Gyre Heros; Times → Tinos, Liberation Serif, TeX Gyre Termes; Courier → Cousine, Liberation Mono.
   - **(b)** as (a), plus look-alikes chosen by eye (such as Futura → Jost), each with a stated basis.
   - **(c)** the message only.
   - **The data:** the list of excluded names is about 35 KB compressed, so it loads only on demand, outside the 100 KB.
-- [ ] **Q6. Specimens and the NF column.** (O note 7; C items 7 and 9b; R design 2) **Settled as (b) by priority 2** (step 1a). What that means:
+- [x] **Q6. Specimens and the NF column.** (O note 7; C items 7 and 9b; R design 2) **Settled as (b) by priority 2** (step 1a). What that means:
+  **Answered 2026-10-05, changing the design:** "People come to see the fonts, and the font names set in sample fonts are already too small. Preset sample lines should only be visible once the dropdown has been hit."
+  - Rows show only the family's name, drawn larger (`specimen_name_only_list`). No sample-line control above the list.
+  - A font's details show "Hamburgefonstiv 0123", a line of code for monospace fonts (`details_sample_lines`) and a glyph strip (`glyph_strip`, the owner's choice; Claude had recommended "not now"). "Dolorem ipsum quaerit nemo." retires.
+  - The NF column and legend change as below (`nf_legend_visible_rows`). The record of the question follows.
   - **Phones:** the specimen gets its own line at full row width, about twice today's 40 px height.
   - **NF column:** it takes space only in rows with a Nerd Font build.
   - **NF legend:** it shows only while an NF row is visible. Today it shows even with Handwriting (41 fonts, none with an NF build), with Display (52, none) and with an empty search.
@@ -142,28 +149,38 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
     - "Hamburgefonstiv 0123" (the reviewer's suggestion);
     - a line of code, for monospace fonts.
   - Claude drafts the options; the owner picks.
-- [ ] **Q7. The tip wording,** in the note and in the footer: keep "Leave a tip ($5 suggested)" (2026-09-26), or wording built on "coffee".
-- [ ] **Q8. How we rank's internal asides.** (C item 8) It has four "(owner ruling of …)" asides. The Dirichlet formula sits in the tier section, which goes under `no_tiers_or_ranges`, so Q8 is now about the asides only. The methodology session will probably rewrite `docs/ranking-methodology.md`, so check with it (or the lead) before building Q8, and keep the edits to the sentences the site shows.
+- [x] **Q7. The tip wording,** in the note and in the footer: keep "Leave a tip ($5 suggested)" (2026-09-26), or wording built on "coffee".
+  **Answered 2026-10-05** (`tip_jar`):
+  - A "Tip Jar" link ends the header nav: Fonts, How it works, About, Privacy, Tip Jar.
+  - The note's pitch asks the reader to leave a tip, with no amount and no coffee wording; the Stripe page is prefilled with $5.
+  - The footer's tip link is removed.
+  - The phone nav then needs two lines or tighter spacing.
+- [x] **Q8. How we rank's internal asides.** (C item 8) It has four "(owner ruling of …)" asides. The Dirichlet formula sits in the tier section, which goes under `no_tiers_or_ranges`, so Q8 is now about the asides only. The methodology session will probably rewrite `docs/ranking-methodology.md`, so check with it (or the lead) before building Q8, and keep the edits to the sentences the site shows.
+  **Answered 2026-10-05:** (a), as recommended (`method_asides_rewrite`).
   - **(a) Recommended:** rewrite the parts of `docs/ranking-methodology.md` that the site copies, so both read as public text. The page promises that the two always agree.
   - **(b)** remove the asides when the site is built.
-- [ ] **Q9. Outside points not yet discussed.** Keep or change each:
+- [x] **Q9. Outside points not yet discussed.** Keep or change each:
+  **Answered 2026-10-05:** the sample line goes with Q6; "Designer's page" (`designer_label`); Download becomes the button (`download_button`); phone rows merge lines (`phone_rows_merged`); name matches first in search (`search_name_first`); a glyph strip in the details (`glyph_strip`, the owner's choice over "not now").
   - The sample line reads as placeholder text (`specimen_sample_latin`). Q6's preset lines may answer this.
   - The details' "Designer" row shows a repository ("GitHub: rsms/inter"). `catalog-site.json` v1 has no designer names, so only the label can change, for example to "Designer's page".
   - "Download from …" should look like the main action.
   - Phone rows could merge lines. About three fonts fit on a phone screen today.
   - A search for "mono" includes fonts matched only through a Nerd build's name (Ubuntu comes second), so exact name matches should come first.
   - A glyph strip in the details, before the 877 KB "Type your own text".
-- [ ] **Q10. Brotli.** (R round 3; serves priority 3) Serve pre-compressed Brotli files.
+- [x] **Q10. Brotli.** (R round 3; serves priority 3) Serve pre-compressed Brotli files.
+  **Answered 2026-10-05:** (a), as recommended: Brotli, with CI measuring the Brotli size (`brotli`).
   - **Saving:** measured on the live files, the HTML, CSS, JS and list data drop from 96.1 KB to 76.7 KB (−20%), with no markup change.
   - **Work:** a build change and a change to `ops/caddy/site.caddy`.
   - **(a) Recommended:** CI's budget then measures the Brotli size, which is what visitors download, so the saving counts as headroom.
   - **(b)** CI keeps measuring gzip, which is stricter but leaves no headroom on paper.
-- [ ] **Q11. Milestone 3 additions.** (R round 4)
+- [x] **Q11. Milestone 3 additions.** (R round 4)
+  **Answered 2026-10-05:** all three, as recommended (`inventory_additions`).
   - Present the "Hide fonts that come with" filter as the first step, needing no permission, before the check.
   - Add "Show only mine", to check the licenses of fonts you already use.
   - Add an explicit test that no font name ever enters the page address.
   - These become new Step 0 decisions in milestone-3.md.
-- [ ] **Q12. Stop shipping the list in full in the HTML.** (priority 3; R round 3)
+- [x] **Q12. Stop shipping the list in full in the HTML.** (priority 3; R round 3)
+  **Answered 2026-10-05:** (c), every row stays in the front page's HTML (`rows_all_in_html`, the owner's choice; Claude had recommended (a)). Step 9b is not built.
   - **What's actually doubled:** little. list.json holds filter and score data (ids, search keys, per-view scores, flags, categories), while the rows' HTML holds what is displayed. The weight is the HTML: all 500 rows, 639 KB raw, 48.9 KB compressed.
   - **Measured:** writing only the first 100 rows into the HTML takes it to 12.7 KB. Carrying rows 101–500 as data costs at most 17.1 KB (every text and link, before any trimming). That's a net saving of about 19 KB compressed on the first load, on top of Brotli.
   - **Cost:** a contract change. Today `Render` only reorders rows the server wrote, and without JavaScript the page shows the full list. The lead's `claude/projects-default` changes that list's order to the default view.
@@ -182,10 +199,10 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
     - **Growth:** when the A–Z list arrives (the more-fonts milestone), `/all/` grows by about 1,250 rows, to roughly 120 KB compressed. If that's too much, it can then split by letter.
   - **(b)** as (a), but with 50 rows on the front page. That saves a little more, and the full-list page stays.
   - **(c)** all rows stay in the front page's HTML, and only Brotli (Q10) lightens the page.
-- [ ] Record each ruling and answer:
+- [x] Record each ruling and answer:
   - in an answers file for gate SITE, saved with `uv run tff-catalog rulings apply <file>` into `data/reviews/site/<date>.toml`, with `choice`, `recommended`, `value`, `ruling` and `reason`;
   - and in an AUTHORITY.md entry under Site (Milestone 2), as earlier site rulings are.
-- [ ] Add milestone-2.md step 12b, "Changes from the first reviews", linking this plan, and make step 13 depend on it.
+- [x] Add milestone-2.md step 12b, "Changes from the first reviews", linking this plan, and make step 13 depend on it.
 
 **Done when:** every ruling and answer is in AUTHORITY.md and `data/reviews/`, and merged to `main` by pull request together with this file.
 
@@ -218,11 +235,13 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
 **Done when:** CI passes, and no visible "Rank" is left over the score column.
 
 ### Step 5: When a font isn't here
-**Who:** Claude; the owner approves the wording. **Depends on:** Q3, Q5, Q7; step 2 for the reasons.
+**Who:** Claude; the owner approves the wording. **Depends on:** Q5, Q7 and Q9 (answered); step 2 for the reasons.
 - [ ] **First part:**
   - [ ] Move the note below the list, on wide screens and phones. The top of the front page becomes the headline, the lead, the privacy line, then the list.
   - [ ] When search is the only filter and finds nothing, say "No listed font matches '…'" and show the note. Other empty results keep today's text.
-  - [ ] Rewrite the note as a conversation that ends with the tip link, in Q7's wording, under Funding as amended.
+  - [ ] Rewrite the note as a conversation that ends with the tip pitch, asking the reader to leave a tip with no amount (`tip_jar`), under Funding as amended.
+  - [ ] Add the "Tip Jar" link at the end of the header nav, and remove the footer's tip link. Check the phone nav at 320 and 375 px: two lines or tighter spacing.
+  - [ ] Search lists name matches first, then fonts matched only through another name (`search_name_first`).
 - [ ] **Second part** (after step 2):
   - [ ] Reasons and alternatives, per Q5, from a file loaded on the first empty search, outside the 100 KB.
   - [ ] M2's privacy test expects exactly that one fixed, same-origin request.
@@ -236,51 +255,48 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
 
 **Done when:** after scrolling 5,000 px on a 1280 × 900 window, the filters are still on screen, and CI passes.
 
-### Step 7: Bigger specimens, switchable sample text, and the NF column
-**Who:** Claude; the owner picks the sentences. **Depends on:** Q6. This is priority 2.
-- [ ] Specimen height (`--spec-h`), the phone row layout, and the NF column only where needed.
-- [ ] Tie the NF legend to the visible rows: `Render` updates it with the count.
-- [ ] **Preset sample lines:**
-  - [ ] The specimen step draws one set per sentence, within M2 step 5's budgets (16 KB compressed per file, 10 MB in total).
-  - [ ] A control above the list switches the sentence. Only the chosen set loads, still lazily.
-  - [ ] The choice goes in the address, like the filters. A shared link keeps it.
-- [ ] `site/CONTRACT.md` and the specimen tests cover the new sets.
+### Step 7: Names-only specimens, the details' sample lines, the NF column and the row layout
+**Who:** Claude. **Depends on:** Q6 and Q9 (answered). This is priority 2.
+- [ ] **The list:**
+  - [ ] A row's specimen draws only the family's name, larger than today (`specimen_name_only_list`). The sample line leaves the list.
+  - [ ] The NF column takes space only in rows with a Nerd Font build, and `Render` ties the NF legend to the visible rows (`nf_legend_visible_rows`).
+  - [ ] "Download from …" gets the button style, and Details the quieter one (`download_button`).
+  - [ ] On phones the row merges lines: category and license with the tags, Download beside Details (`phone_rows_merged`).
+- [ ] **The details** (after the freeze, with the other details changes):
+  - [ ] "Hamburgefonstiv 0123", plus a line of code for monospace fonts (`details_sample_lines`), and a glyph strip (`glyph_strip`). All are loaded only when the details open, before "Type your own text".
+  - [ ] The designer link is labelled "Designer's page" (`designer_label`).
+- [ ] **The specimen files:**
+  - [ ] `tff-catalog specimens` draws them into `build/specimens/` (`SAMPLE` in `src/tff_catalog/specimens/__init__.py` is today's line). Changing them is a build/ change under the rebuild protocol: specimens only, no scores. Agree it with the lead first, given the rules on rebuilds after #31.
+  - [ ] Stay within M2 step 5's budgets: 16 KB compressed per file and 10 MB in total, now counting the details' sets.
+- [ ] `site/CONTRACT.md` and the specimen, accessibility and privacy tests cover the changes.
 - [ ] Re-run M2 step 10's load-speed numbers.
 
-**Done when:** at 375 px the median specimen is about twice today's height; each preset line shows in every row that has a specimen; the legend is hidden when no NF row shows; and CI passes.
+**Done when:** at 375 px a row's name is clearly larger than today and about five rows fit on a screen; the legend is hidden when no NF row shows; the details show the sample lines and glyph strip once the freeze lifts; and CI passes.
 
 ### Step 8: Copy and data fixes
-**Who:** Claude; the owner rules on links. **Depends on:** Q3, Q8, Q9; Q4 as settled. This is priority 1.
-- [ ] Apply the wording of Q3 and Q8.
+**Who:** Claude; the owner rules on links. **Depends on:** Q3, Q4 and Q8 (answered). This is priority 1.
+- [ ] Apply the wording of Q3 and Q8. The front-page lead's new sentence (`front_page_lead_counts`) lands with the Project default. The note's "with no use restrictions" and Q8's asides don't wait.
 - [ ] "Comes with" names the systems, as settled for Q4.
 - [ ] **Heavy Data:** re-read its license text (the file in the Nerd Fonts repository that its details link to) against Rules 1–3, and report to the owner. The ruling of 2026-09-28 stands unless the text says otherwise.
 - [ ] Fix How we rank's "Choose a rank at the top of the list": the select is in the sidebar on wide screens.
-- [ ] Relabel the "Designer" row, if Q9 says so.
 - [ ] **Charter's license link** points to a web page (`practicaltypography.com/charter.html`), unlike every other font's license text. Find the license text in its download and propose a pinned URL for the owner's ruling (gate K and L3).
 
 **Done when:** CI passes, and `tff-catalog links --check` passes.
 
 ### Step 9: Page weight
-**Who:** Claude. **Depends on:** Q10, Q12. This is priority 3. Two pull requests, Brotli first.
+**Who:** Claude. **Depends on:** Q10 (answered). This is priority 3.
 - [ ] **9a. Brotli:**
   - [ ] The build writes `.br` files beside the HTML and hashed assets.
   - [ ] `ops/caddy/site.caddy` serves them (`file_server` with `precompressed br gzip`) and keeps `encode zstd gzip` for everything else. This goes through a reviewed pull request, and SERVER.md is updated.
   - [ ] Through Cloudflare, check that a browser gets `content-encoding: br`. Today it gets gzip, even when it offers `br` and `zstd`. If Cloudflare changes the encoding, record what it does.
-  - [ ] CI's budget measures what Q10 says.
-- [ ] **9b. Rows past the first ones built from data** (per Q12):
-  - [ ] The build writes Q12's number of rows into the front page, plus a compact data file for the rest. Trim the file by writing links from ids where the pattern allows, such as the Google Fonts specimen pages.
-  - [ ] The build also writes the full-list page (`/all/`, per Q12): every row, from the same row template, in the default view's order. It goes in `sitemap.xml`.
-  - [ ] `Render` builds the rows missing from the HTML once on load (none on `/all/`), then reorders as today. Focus, announcements and layout shift behave as before.
-  - [ ] Without JavaScript, the front page's note links to the full-list page: "Show all 500 fonts". The count follows the catalog.
-  - [ ] `site/CONTRACT.md` §2 (build output: the new page), §3 and §5, and their contract tests, change in the same pull request.
-  - [ ] Axe, the privacy test and the no-JavaScript test cover both pages. The budget check holds the front page to the 100 KB and gives `/all/` a cap of its own.
-  - [ ] `catalog-site.json` v1 doesn't change. This is display only, in `tff_site`.
+  - [ ] CI's page budget measures the Brotli size (`brotli`).
+- **9b. Not built:** the owner kept every row in the front page's HTML (Q12 (c), `rows_all_in_html`).
 
-**Done when:** `curl` shows Brotli from staging through Cloudflare; the first load, compressed as sent, is lighter than today's 96.1 KB by at least 15 KB after 9a (19.4 KB measured) and by at least 30 KB after 9b, unless Q12 is (c); and M2 step 10's load-speed numbers, including blocking time, still pass.
+**Done when:** `curl` shows Brotli from staging through Cloudflare; the first load, compressed as sent, is lighter than today's 96.1 KB by at least 15 KB after 9a (19.4 KB measured); and M2 step 10's load-speed numbers, including blocking time, still pass.
 
 ### Step 10: Milestone 3 additions
 **Who:** Claude writes; the owner answers them with Milestone 3's Step 0. **Depends on:** Q11.
-- [ ] Add to milestone-3.md's decisions the "comes with" first step and "Show only mine", plus the test that no font name enters the address.
+- [ ] Add to milestone-3.md's Step 0 decisions the "comes with" first step and "Show only mine", plus the test that no font name enters the address (`inventory_additions`).
 - [ ] Step 8's rank wording follows step 3.
 
 **Done when:** milestone-3.md is merged with the new entries.
@@ -289,13 +305,13 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
 **Who:** the lead redeploys; Claude checks; the owner looks. **Depends on:** steps 3–9.
 - [ ] Redeploy `https://staging.purelyfreefonts.com` (`ops/deploy.sh staging`, done by the lead), then check that `version.txt` shows the new commit.
 - [ ] Repeat the checks behind these findings:
-  - the score range per view;
   - a search for Satoshi and Helvetica;
   - the NF legend with Handwriting;
   - the filters after scrolling;
   - the first screen on a phone;
   - Brotli through Cloudflare, and the first load's weight;
-  - the preset sample lines;
+  - the names-only specimens, and, after the freeze, the details' sample lines and glyph strip;
+  - the Tip Jar link and the phone nav;
   - "Comes with" on Open Sans;
   - the Charter link.
 - [ ] Optional: ask a fresh outside reviewer, again with no context, to look over the changed site.

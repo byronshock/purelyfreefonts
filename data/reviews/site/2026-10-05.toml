@@ -1,0 +1,121 @@
+# Owner rulings of 2026-10-05 on the site: the answers to PLAN-REVIEWERS-1.md's questions (pull request #56),
+# asked in chat as batched single-select questions. Ruled by the owner, Byron Shock; recorded by Claude.
+# Also in AUTHORITY.md.
+
+[selector_label]
+choice = "a"
+recommended = true
+value = "Measure"
+ruling = "The label over the rank selector (\"Projects: most used\", \"Desktop: most chosen\" and so on) reads \"Measure\", in place of \"Rank\"."
+reason = "Of (a) \"Measure\", (b) \"Measured by\", (c) \"View\" and (d) keeping \"Rank\", the owner took Claude's recommendation: it pairs with the \"Popularity\" heading (score_column_popularity), and the line under the selector already explains each measure."
+
+[sort_words_popular]
+choice = "a"
+recommended = true
+value = "most popular first / least popular first"
+ruling = "The score column's sort button says \"most popular first\", or \"least popular first\" when reversed, on its second line, in place of \"best first\" and \"least used first\" (sort_header, 2026-09-30)."
+reason = "Of (a) these words, (b) keeping \"best first\" and \"least used first\" and (c) \"highest first\" and \"lowest first\", the owner took Claude's recommendation, which matches the \"Popularity\" heading."
+
+[method_page_name]
+choice = "a"
+recommended = true
+value = "How we measure popularity / How it works"
+ruling = "The methodology page is titled \"How we measure popularity\", and its nav link reads \"How it works\", in place of \"How we rank\"."
+reason = "The owner had suggested \"How we Evaluate Popularity\". Of (a) this title with the short nav link, (b) \"How we evaluate popularity\" with the short link, (c) the full title in the nav, which would wrap on phones, and (d) keeping \"How we rank\", the owner took Claude's recommendation."
+
+[front_page_lead_counts]
+choice = "b"
+recommended = false
+value = "They are ranked by public counts of use in websites, code and apps."
+ruling = "The front-page lead's second sentence reads \"They are ranked by public counts of use in websites, code and apps.\", in place of \"They are ranked by how many people install them and use them in their work.\" (front_page_lead_sharing, 2026-09-30). It lands with the Project default (default_rank_project), which counts no installs."
+reason = "The outside reviewer found the old sentence claimed more than the evidence (priority 1). Of (a) the lead session's \"They are ranked by how widely they are used in websites, code and apps.\", which Claude recommended, (b) this sentence and (c) the reviewer's \"They are ranked by public install and usage counts.\", the owner chose (b)."
+
+[note_no_use_restrictions]
+value = "with no use restrictions"
+ruling = "The front-page note says \"with no use restrictions\" (About's wording) where it said \"with no limits on how they're used\"."
+reason = "The outside reviewer: the SIL Open Font License, used by 453 of the 500 fonts, sets conditions (no selling the font on its own, reserved names), so \"no limits\" is too strong. Part of priority 1, which the owner agreed to; the question offered this wording with every lead sentence."
+
+[no_match_search]
+choice = "a"
+recommended = true
+value = "message_reasons_metric_twins"
+ruling = "When a search finds no listed font, the list says \"No listed font matches '...'\" and shows the note \"Why isn't my favorite free font here?\". Later, once names.json's reasons are cleaned up, it also gives why the font isn't listed and free fonts with the same letter widths for well-known paid ones (Arial and Helvetica: Arimo, Liberation Sans, TeX Gyre Heros; Times: Tinos, Liberation Serif, TeX Gyre Termes; Courier: Cousine, Liberation Mono), from a file loaded only on demand."
+reason = "Searching \"Satoshi\" or \"Helvetica\" said \"Loosen it, or clear the filters\" with no filter on (Claude's critique and the outside reviewer). Of (a) this, (b) this plus look-alikes chosen by eye and (c) the message only, the owner took Claude's recommendation."
+
+[specimen_name_only_list]
+value = "name_only_larger"
+ruling = "A row's specimen shows only the family's name, drawn in the font and larger than today. The sample lines move into a font's details (details_sample_lines)."
+reason = "The owner, asked which preset sample lines visitors should switch between: \"People come to see the fonts, and the font names set in sample fonts are already too small. Preset sample lines should only be visible once the dropdown has been hit.\" Asked which dropdown, the owner chose \"Names in list, samples in Details\" over a sample-line control above the list."
+
+[details_sample_lines]
+value = "Hamburgefonstiv 0123 + code for monospace"
+ruling = "A font's details show its sample lines, loaded only when the details open: \"Hamburgefonstiv 0123\" for every font with a specimen, and a line of code for monospace fonts. \"Dolorem ipsum quaerit nemo.\" retires (specimen_sample_latin, 2026-09-29). Within M2 step 5's specimen budgets."
+reason = "Of Claude's options (Dolorem plus the pangram \"Sphinx of black quartz, judge my vow.\" plus code, recommended; Dolorem plus Hamburgefonstiv plus code; the pangram plus code; drafts first), the owner wrote \"Hamburgefontsive + code\", then confirmed \"Hamburgefonstiv 0123\", with no Dolorem."
+
+[glyph_strip]
+choice = "b"
+recommended = false
+value = "glyph_strip_in_details"
+ruling = "A font's details also show a glyph strip (the alphabet and digits), as one more specimen set loaded only when the details open, before the \"Type your own text\" button."
+reason = "The outside reviewer's suggestion. Of (a) not now, which Claude recommended since the details' sample lines cover most of it, (b) add it and (c) never, the owner chose (b)."
+
+[tip_jar]
+value = "Tip Jar nav link; leave a tip, no amount"
+ruling = "A \"Tip Jar\" link to the Stripe Payment Link ends the header nav: Fonts, How it works, About, Privacy, Tip Jar. The pitch at the end of the note asks the reader to leave a tip, with no amount in the text and no coffee wording; the Stripe page is prefilled with the $5 suggestion. The footer's tip link, \"Leave a tip ($5 suggested)\" on every page (site ruling of 2026-09-26), is removed."
+reason = "Asked whether the coffee wording goes in the note, the footer or both, the owner: \"'Tip Jar' to the right of About, etc. 'Buy me a coffee' should be, 'leave a tip' with no suggested amount. That will be prefilled on the Stripe page.\" Then, of placing it right after About or at the end, the owner chose the end; of keeping the footer link as \"Leave a tip\" (Claude's recommendation) or removing it, the owner chose removing it. The phone nav then needs two lines or tighter spacing."
+
+[method_asides_rewrite]
+choice = "a"
+recommended = true
+value = "rewrite_in_the_doc"
+ruling = "How we rank's \"(owner ruling of ...)\" asides are rephrased as public text in the sentences of docs/ranking-methodology.md that the site shows, so the page and the doc keep agreeing, after checking with the methodology session, which may rewrite the doc."
+reason = "Claude's critique found four such asides in the public page. Of (a) rewriting in the doc and (b) stripping them when the site is built, the owner took Claude's recommendation."
+
+[designer_label]
+choice = "a"
+recommended = true
+value = "Designer's page"
+ruling = "A font's details label the designer link \"Designer's page\", in place of \"Designer\", which read as a person's name but shows a page or repository (\"GitHub: rsms/inter\"). catalog-site.json v1 has no designer names, so only the label changes. It lands with the details work after the freeze."
+reason = "The outside reviewer's finding. Of (a) \"Designer's page\", (b) \"Source\" and (c) keeping \"Designer\", the owner took Claude's recommendation."
+
+[download_button]
+choice = "a"
+recommended = true
+value = "download_is_the_button"
+ruling = "A row's \"Download from ...\" link gets the stronger, button-like style, and the Details button the quieter one."
+reason = "The outside reviewer: the main action looked like any link while Details looked like a button. Of (a) this and (b) keeping both as they are, the owner took Claude's recommendation."
+
+[phone_rows_merged]
+choice = "a"
+recommended = true
+value = "merge_lines"
+ruling = "On phones a row merges lines: category and license with the tags, and Download beside Details, so about five fonts fit on a screen instead of about three."
+reason = "The outside reviewer measured phone rows at about 285 px. Of (a) merging lines and (b) keeping them, with only the names-only specimen shortening the row, the owner took Claude's recommendation."
+
+[search_name_first]
+choice = "a"
+recommended = true
+value = "name_matches_first"
+ruling = "Search results list the fonts whose own name contains the search first, in score order, then the fonts matched only through another name (a Nerd build, an alias)."
+reason = "The outside reviewer found \"mono\" listing Ubuntu second, through \"Ubuntu Nerd Font Mono\". Of (a) name matches first and (b) plain score order, the owner took Claude's recommendation."
+
+[brotli]
+choice = "a"
+recommended = true
+value = "brotli_ci_measures_brotli"
+ruling = "The site serves pre-compressed Brotli files (written by the build, served by Caddy with gzip as the fallback), and CI's page budget measures the Brotli size, which is what visitors download."
+reason = "Measured on the live files, Brotli cuts the HTML, CSS, JS and list data from 96.1 KB to 76.7 KB (-20%) with no markup change (priority 3). Of (a) this, (b) Brotli with CI still measuring gzip and (c) no Brotli, the owner took Claude's recommendation."
+
+[inventory_additions]
+choice = "a"
+recommended = true
+value = "comes_with_first_show_only_mine_address_test"
+ruling = "Milestone 3 gains three Step 0 decisions: present \"Hide fonts that come with\" as the first, no-permission step before the check; a \"Show only mine\" option to check the licenses of fonts a visitor has; and a test that no font name ever enters the page address."
+reason = "The outside reviewer's inventory advice, round 4. Of (a) all three, (b) the first step and the address test, (c) the address test only and (d) none, the owner took Claude's recommendation."
+
+[rows_all_in_html]
+choice = "c"
+recommended = false
+value = "every_row_in_the_html"
+ruling = "The front page keeps every row in its HTML, as today; only Brotli and the names-only specimens lighten it. No /all/ page."
+reason = "The outside reviewer's \"stop shipping the list twice\"; Claude measured about 19 KB compressed saved by writing the top 100 rows and building the rest from data. Of (a) the top 100 plus a static /all/ page for visitors without JavaScript (the owner's own refinement, which Claude recommended), (b) the same with 50 rows and (c) keeping every row, the owner chose (c)."

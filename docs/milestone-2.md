@@ -218,8 +218,14 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 
 **Done when:** the owner has approved the script and invitation, a test issue through each form arrives with the right labels, and round 1's testers are booked. (GitHub drops a form's label silently when the repository lacks it: the owner creates the five labels first, as `ops/deploy/README.md`, GitHub settings, lists.)
 
+### Step 12b: Changes from the first reviews
+**Who:** Claude builds; the owner rules and merges. **Depends on:** the owner's rulings of 2026-09-30 and 2026-10-05 (AUTHORITY.md, **First reviews of the test site**).
+- [ ] The working checklist [PLAN-REVIEWERS-1.md](../PLAN-REVIEWERS-1.md) is done through its step 10. Steps that need the Project default or the new scores wait for the scoring-method port, and the details changes wait for the freeze. Its priorities 1 and 2 land before this step 13.
+
+**Done when:** PLAN-REVIEWERS-1.md's steps 1–10 are ticked, or each open one is ruled out of usability round 1 by the owner.
+
 ### Step 13: Usability round 1, before launch
-**Who:** the owner runs sessions; Claude writes up and fixes findings. **Depends on:** 3–7, 9, 11, 12; real data from M1 step 16 or later, even before the freeze.
+**Who:** the owner runs sessions; Claude writes up and fixes findings. **Depends on:** 3–7, 9, 11, 12, 12b; real data from M1 step 16 or later, even before the freeze.
 - [ ] A trial session checks the script; fix it.
 - [ ] 5 sessions on the test site (under M2-D7 (b), a laptop build shared on screen).
 - [ ] Claude turns notes into issues grouped by theme; the owner confirms severities.
