@@ -26,7 +26,7 @@ Byron needs a checking account to accept Stripe payments.
 - [x] 3. Turn on two-step authentication for the Stripe login.
 - [x] 4. Settings → Business → Public details: statement descriptor `TRULYFREEFONTS` (what tippers see on their card statement) and support email `admin@trulyfreefonts.com`.
 - [x] 5. Settings → Customer emails: turn on receipts for successful payments.
-- [x] 6. Close the Ko-fi account made earlier, or leave it idle; nothing will link to it.
+- [x] 6. Close the Ko-fi account made earlier, or leave it idle; nothing will link to it. *(Closed by Byron on 2026-10-05, owner ruling `kofi_closed`: ko-fi.com/trulyfreefonts now redirects to Ko-fi's not-found page.)*
 
 ### C. The link (Byron, by hand)
 - [x] 7. In a sandbox (test mode): Payment Links → New → **Customers choose what to pay**. Title "Buy me a coffee", one line on what the site is, preset $5, minimum $2 (a minimum makes the link less useful for testing stolen cards). Leave "Collect tax automatically" unticked. Stripe shows its own thank-you page after payment by default; a custom message is optional, under **After the payment** → Confirmation page (also editable later). Open the link (a sandbox link's URL contains `test_`), pay with test card `4242 4242 4242 4242` (any future date, any CVC), and check the payment shows up in the sandbox.
@@ -42,6 +42,16 @@ These steps wait for release 1 in [AUTHORITY.md](../AUTHORITY.md#releases). The 
 ### E. After launch (Byron)
 - [ ] 13. The first real tip shows up in Stripe → Payments, and the payout reaches the bank.
 - [ ] 14. Tips are personal income. Keep Stripe's yearly export for your tax return.
+
+### F. The rename to Purely Free Fonts (Byron, by hand)
+The owner's rulings of 2026-10-02 (AUTHORITY.md, **Name and domain**). Steps 2 and 4 above name the old site; these change them. The Payment Link's address stays the same, so the site needs no change.
+- [ ] 15. Settings → Business → Business details: website `https://purelyfreefonts.com`.
+- [ ] 16. Settings → Business → Public details:
+  - [ ] public business name **Purely Free Fonts** (Stripe's checkout page shows it in its title, header and Link line, where it now says "trulyfreefonts.com");
+  - [ ] statement descriptor `PURELYFREEFONTS`;
+  - [ ] support email `admin@purelyfreefonts.com`, which Email Routing forwards to Gmail (ops/SERVER.md item 29).
+- [ ] 17. Payment Links → the live link → Edit: the one line on what the site is, and the page after payment, name the new site.
+- [ ] 18. Claude checks the live checkout page shows the new name.
 
 ## Verification
 - `curl -s https://purelyfreefonts.com/ | grep -o 'https://buy.stripe.com/[^"]*'` prints the link.
