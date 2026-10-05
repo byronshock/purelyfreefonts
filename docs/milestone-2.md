@@ -240,7 +240,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - [x] The owner renames the repository `byronshock/purelyfreefonts`. *(2026-10-02)*
   - [x] Claude updates its description. *(2026-10-02)*
   - [x] The homepage is set at cutover. *(2026-10-02: https://purelyfreefonts.com)*
-- [ ] **The new name in the code,** on a branch deployed only to the test site:
+- [x] **The new name in the code,** on a branch deployed only to the test site:
   - [x] the site's name, address, contact address and mail subject (each constant has two copies; change both);
   - [x] the page text: titles, descriptions and the heading "The most popular purely free fonts"; the 404, about and privacy pages; the methodology credit line; the blog and feed titles; `robots.txt`;
   - [x] the wordmark, redrawn in League Gothic (header `<img>` 229×48), and the share card, redrawn;
@@ -252,27 +252,27 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - [x] Caddy: site blocks for purelyfreefonts.com and `staging.purelyfreefonts.com`, with the new certificate;
   - [x] the tests, plus a live check that every old host 301s in one hop: `tests/live/test_redirects.py`, run with `--check-redirects` from the cutover on (before it, the old hosts still serve the site);
   - [x] one line in `CLAUDE.md`;
-  - [ ] with the owner's OK, the backlog's project name and TASK-3, through the CLI.
+  - [x] with the owner's OK, the backlog's project name and TASK-3, through the CLI. *(#54)*
 - [x] **The test site on the new host:**
   - [x] Claude: the DNS records, the Caddy install, the deploy, and step 9's live test on `staging.purelyfreefonts.com`; *(2026-10-02: `ops/deploy.sh staging` deployed 79c2685, and the live test passed: 11 passed, with the 2 redirect checks waiting for the cutover. The deploy's own site-test run hit the known Firefox load-timeout flake, so it was rerun with `--fast` after all 10 CI checks had passed on that commit.)*
   - [x] the owner checks Web Analytics on the new zone and reviews the test site. *(2026-10-02: RUM disabled; "Go ahead with the cutover.")*
-- [ ] **Cutover:**
+- [x] **Cutover:**
   - [x] Caddy: purelyfreefonts.com serves the renamed stub, and every old host 301s to the new one; *(2026-10-02)*
   - [x] the misspelled domain's edge rule points at the new domain;
   - [x] the .org and .net placeholder records go in;
-  - [ ] the branch is merged;
+  - [x] the branch is merged; *(#53, 5a51979)*
   - [x] Claude checks every old host from outside. *(2026-10-02: `tests/live --check-redirects` passes on purelyfreefonts.com and staging.purelyfreefonts.com, from the US.)*
 - [ ] **The owner, at cutover:**
   - [ ] Stripe: public business name, website, statement descriptor, support email and the payment page text;
   - [ ] Ko-fi closed;
   - [ ] any mail filters updated.
-- [ ] **Drafts for the owner to post:** a comment on the Fonts Over Time license request (fcjr/fontsovertime#1), and a note to ecosyste.ms if the first one was sent.
+- [x] **Drafts for the owner to post:** a comment on the Fonts Over Time license request (fcjr/fontsovertime#1), and a note to ecosyste.ms if the first one was sent. *(Given to the owner on 2026-10-02 and 2026-10-04; the posting and sending are the owner's.)*
 - [ ] **Records:**
-  - [ ] `ops/SERVER.md` section K and its Verification lines;
+  - [x] `ops/SERVER.md` section K and its Verification lines; *(#52, #53)*
   - [ ] `ops/DONATIONS.md`;
   - [ ] Milestone 4's yearly check covering all seven domains;
   - [ ] the private notes that name the old site: Claude's memory, walnutbutter-site, tff-stats, and the owner's typeface project.
-- [ ] **Later:** the wordmark in the owner's typeface, once it has its lowercase.
+- [x] **Later:** the wordmark in the owner's typeface, once it has its lowercase. *(2026-10-04: the owner's own "PURELY FREE FONTS" plate instead, in capitals, owner rulings `wordmark_owners_svg` and `wordmark_size`.)*
 
 **Done when:**
 - purelyfreefonts.com and `staging.purelyfreefonts.com` serve the renamed site and stub, and pass step 9's live test.

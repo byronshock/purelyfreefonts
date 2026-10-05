@@ -51,7 +51,7 @@ Contents:
 | `404.html` | served with status 404 by Caddy's `handle_errors` | `no-cache, no-transform` |
 | `robots.txt`, `sitemap.xml` | per M2-D8 | `no-cache, no-transform` |
 | `version.txt` | `commit=`, `run_date=`, `method_version=`, `catalog_sha256=` (the sha256 of the `catalog-site.json` file's bytes), `schema=catalog-site/1`, one per line; never a build time | `no-cache, no-transform` |
-| `favicon.ico`, `favicon.svg`, `apple-touch-icon.png`, `share.png`, `wordmark.svg` | copied from `site/static/` (these five files only; `site/static/_src/` holds their generators and sources and is never published). `wordmark.svg` is the header's wordmark, "Purely Free Fonts" in League Gothic drawn as outlines (AUTHORITY.md, "Headline font") | `no-cache, no-transform` |
+| `favicon.ico`, `favicon.svg`, `apple-touch-icon.png`, `share.png`, `wordmark.svg` | copied from `site/static/` (these five files only; `site/static/_src/` holds their generators and sources and is never published). `wordmark.svg` is the header's wordmark, the owner's "PURELY FREE FONTS" plate (black outlines on a white rectangle), copied byte for byte by `_src/make_wordmark.py`, which checks its pinned sha256 (AUTHORITY.md, "Headline font") | `no-cache, no-transform` |
 | `assets/app.<h>.js` | the one script: `site/js/*.js` concatenated (section 5) | `public, max-age=31536000, immutable` |
 | `assets/style.<h>.css` | the one stylesheet: `site/css/*.css` concatenated (section 6) | immutable |
 | `assets/list.<h>.json` | the list index (section 7) | immutable |
@@ -274,7 +274,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 
 `visually-hidden` (hidden from sight, read by screen readers), `skip-link`, `site-header`, `site-name`, `site-name-mark`, `site-nav`, `site-footer`, `feedback`, `tip`, `footer-meta`.
 
-**The header** (owner ruling of 2026-09-29): `a.site-name[href="/"]` holds only `img.site-name-mark[src="/wordmark.svg"]`, whose `alt` is the site's name ("Purely Free Fonts"), with `width` and `height` in the wordmark's 8897:1862 ratio (229 x 48). It is about 48 px tall on wide screens and 32 px on phones (below `40rem`). The favicon is the browser's icon only, not in the header. The header is white in both themes, behind the black wordmark: it takes the `--c-header-*` tokens, whose dark values are the light ones, so its links and text keep their light-theme colours and its focus ring 3:1 on white. Under forced colours it takes the system colours, and the wordmark keeps a white plate (`--c-wordmark-bg`).
+**The header** (owner rulings of 2026-09-29 and 2026-10-04): `a.site-name[href="/"]` holds only `img.site-name-mark[src="/wordmark.svg"]`, whose `alt` is the site's name ("Purely Free Fonts"), with `width` and `height` in the wordmark's 10000:1100 ratio (418 x 46). The wordmark is the owner's "PURELY FREE FONTS", black on its own white plate, copied as it is. It is 418 px wide from `47.5rem` (760 px) up, where the navigation fits beside it on one row, and 278 px below that, so its capitals stand about 38 and 25 px tall. The favicon is the browser's icon only, not in the header. The header is white in both themes, behind the black wordmark: it takes the `--c-header-*` tokens, whose dark values are the light ones, so its links and text keep their light-theme colours and its focus ring 3:1 on white. Under forced colours it takes the system colours, and the wordmark keeps a white plate (`--c-wordmark-bg`).
 
 ## 5. JS parts
 
@@ -378,7 +378,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 | `--c-header-muted` | the header's secondary text (the light `--c-muted`) |
 | `--c-header-link` | the header's links (the light `--c-link`) |
 | `--c-header-focus` | the focus outline inside the header (the light `--c-focus`) |
-| `--c-wordmark-bg` | the plate behind the black wordmark: white, under forced colours too |
+| `--c-wordmark-bg` | the plate behind the wordmark image: white, under forced colours too (the SVG also draws its own) |
 
 ## 7. List index JSON
 

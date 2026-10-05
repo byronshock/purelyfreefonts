@@ -1,0 +1,28 @@
+# Owner rulings of 2026-10-04 on the wordmark, given in chat to the lead session. Ruled by the owner, Byron
+# Shock; recorded by Claude. Also in AUTHORITY.md (Headline font).
+
+[wordmark_owners_svg]
+value = "prb@7d7f130:wordmark/purely-free-fonts.svg sha256:f6771a470eafda489655edc1161f0a0f69fb923819e5d3e4a1e53c828c1f07d3"
+ruling = "The wordmark is the owner's own drawing, \"PURELY FREE FONTS\" in capitals from his typeface Purely Constructed (byronshock/prb at 7d7f130, wordmark/purely-free-fonts.svg), used as it is: black outlines on its white rectangle, in a 10000 x 1100 viewBox, pinned by sha256 in site/static/_src/make_wordmark.py. It replaces the League Gothic stand-in (wordmark_stand_in, 2026-10-02) and the mixed case of 2026-09-29. A new version is a new ruling."
+reason = "The owner: \"Please use this SVG for our new wordmark.\" Claude had proposed cropping the plate to the letters and dropping its white rectangle, since the header is white; the owner: \"I want to keep the white background rectangle. It is part of the branding: Typography started out as black on white.\""
+
+[wordmark_size]
+choice = "a"
+recommended = true
+value = "caps_38_and_25_px"
+ruling = "The wordmark keeps the old one's capital height: 418 px wide on wide screens and 278 px on phones, so its capitals stand about 38 and 25 px tall. It is sized by width, so it scales down evenly on narrower screens."
+reason = "Claude's recommendation, after screenshots of the header at three sizes on a desktop and a phone, over the old width (capitals 21 and 14 px, too thin) or a size in between."
+
+[wordmark_breakpoint]
+choice = "a"
+recommended = true
+value = "278_px_below_760_px"
+ruling = "The wordmark is 278 px wide below 760 px and 418 px from there up, where the Site navigation fits beside it, so the header keeps one row at every width."
+reason = "Claude's recommendation, after a check found that the 418 px wordmark pushed the navigation onto a second row between 641 and 753 px; the other option was to accept the wrap."
+
+[about_font_credit]
+choice = "b"
+recommended = false
+value = "arimo_only"
+ruling = "The About page credits only the text font: \"This site's text is set in Arimo by Steve Matteson, under the SIL Open Font License 1.1.\" The League Gothic credit goes, and the wordmark is not credited there."
+reason = "The owner's choice, not Claude's recommendation, which was to add \"Its name is drawn in Purely Constructed, a typeface by the site's owner, Byron Shock.\""
