@@ -213,18 +213,21 @@ input[type="radio"] {
   text-decoration: none;
 }
 
-/* The wordmark (site/static/wordmark.svg, viewBox 8897 x 1862): about 48 px tall on wide
-   screens and 32 px on phones; the width follows. */
+/* The wordmark (site/static/wordmark.svg, the owner's 10000 x 1100 white plate with the letters
+   900 tall): 418 px wide where the Site navigation fits beside it on one row (760 px and up),
+   278 px below that, so the capitals stand about 38 and 25 px tall (owner rulings of
+   2026-10-04). Sized by width, the height following, so it scales down evenly where even 278 px
+   won't fit. */
 .site-name-mark {
   display: block;
-  width: auto;
-  height: 3rem;
+  width: 26.125rem;
+  height: auto;
   max-width: 100%;
 }
 
-@media (max-width: 40rem) {
+@media (max-width: 47.5rem) {
   .site-name-mark {
-    height: 2rem;
+    width: 17.375rem;
   }
 }
 
@@ -327,7 +330,8 @@ main {
     border-color: var(--c-border);
   }
 
-  /* The wordmark is black ink on nothing: under a dark palette it keeps a white plate. */
+  /* The wordmark carries its own white plate; this keeps the img white too under a dark
+     palette, as a fallback while it loads. */
   .site-name-mark {
     forced-color-adjust: none;
     background-color: var(--c-wordmark-bg);
