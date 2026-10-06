@@ -63,7 +63,9 @@ Tick each item as soon as it is done and verified. Checklists nest: a parent is 
 
 **Order.** Each step is one worktree and pull request. Steps may be built side by side but land in this order:
 1. Step 1.
-2. **Priority 2, the list** (`step7_list_first`, 2026-10-05): step 7a, then 7b and 7c. **With them, priority 1's parts that touch no template:** step 8a, the Heavy Data and Charter license checks.
+2. **Priority 2, the list** (`step7_list_first`, 2026-10-05): step 7a, then 7b and 7c.
+   - **Then the test site is redeployed** (the lead), and a few of the owner's friends look at it informally.
+   - **Step 8a,** the Heavy Data and Charter license checks, comes after that. The owner (2026-10-05): "After that we are going to stage as I'm not too worried about the license checks with a few close friends giving their input."
 3. **Priority 1, the rest:** step 8b.
 4. **Priority 2, the rest:** step 5's first part.
 5. **Priority 3:** step 9.
