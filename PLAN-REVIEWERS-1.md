@@ -68,7 +68,7 @@ Tick each item as soon as it is done and verified. Checklists nest: a parent is 
 4. **Priority 2, the rest:** step 5's first part.
 5. **Priority 3:** step 9.
 6. **The rest:** steps 2, 3, 4, 6 and 10, then step 5's second part, which waits for step 2. Step 7d goes in once the lead accepts a redraw, or at the latest at the first live refresh. Step 7e comes after the freeze.
-7. Step 11.
+7. Step 11, the second review round, after the unfrozen steps (the owner, 2026-10-05). Then usability round 1 with human reviewers (M2 step 13).
 
 Steps 4, 5, 8b and 9b change the templates, the no-JavaScript note or the front-page copy. They start from `origin/main` after the lead's parked `claude/projects-default` has merged, so the two don't conflict. That branch waits on the scoring-method freeze, and the owner chose on 2026-09-30 to keep these steps waiting with it.
 
@@ -357,8 +357,17 @@ Long names are limited by width and grow less: about 1 phone row in 10 grows und
 
 **Done when:** milestone-3.md is merged with the new entries.
 
-### Step 11: Redeploy the test site and check again
-**Who:** the lead redeploys; Claude checks; the owner looks. **Depends on:** steps 3–9.
+### Step 11: Redeploy the test site, and the second review round
+**Who:** the lead redeploys; Claude checks; the owner, Claude and a fresh outside reviewer review. **Depends on:** the steps the freeze doesn't hold (the owner's choice of 2026-10-05):
+- 7a, 7b and 7c;
+- 8a;
+- 6;
+- 9a;
+- 10;
+- 2, if the lead accepts its rebuild.
+
+The frozen steps (3, 4, 5, 7d, 7e and 8b) get a smaller check when they land.
+
 - [ ] Redeploy `https://staging.purelyfreefonts.com` (`ops/deploy.sh staging`, done by the lead), then check that `version.txt` shows the new commit.
 - [ ] Repeat the checks behind these findings:
   - a search for Satoshi and Helvetica;
@@ -370,9 +379,17 @@ Long names are limited by width and grow less: about 1 phone row in 10 grows und
   - the Tip Jar link and the phone nav;
   - "Comes with" on Open Sans;
   - the Charter link.
-- [ ] Optional: ask a fresh outside reviewer, again with no context, to look over the changed site.
+- [ ] **The second review round**, like the first:
+  - the owner's impressions;
+  - Claude's critique, which comes from inside the team;
+  - a fresh outside reviewer, again a chat with no project context.
 
-**Done when:** every check passes on the test site, and the owner has looked.
+  Findings go into a new plan, `PLAN-REVIEWERS-2.md`, in the same form as this one.
+- [ ] Then human reviewers try the site in earnest: usability round 1 (M2 step 13), per `docs/usability-test.md`.
+  - Its consent script and invitation need the owner's approval first (M2 step 12).
+  - Under M2 step 12b, steps of this plan still open by then are each ruled out of the round, or the round waits for them. That's the owner's call when the time comes.
+
+**Done when:** every check passes on the test site, and the second review round is done and written up.
 
 ---
 
