@@ -269,22 +269,22 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
 The facts behind it come from a workflow of eight agents on 2026-10-05: five readers, a planner and two adversarial checkers, both of which re-drew all 500 specimens from the cached fonts.
 
 #### 7a: Names-only, larger specimens, trimmed by the site build
-**Built in #58** (branch `claude/specimens-names-only`, draft, merges after this plan's pull request). Tick these items when it merges.
-- [ ] In `src/tff_site/build.py` `_copy_specimens`, after the sha256 check, trim each committed two-line SVG to its name line:
-  - [ ] Every file is one `<path>` that draws the name's contours first and the sample line's after (`render.py`). Cut the path where line 2 starts. The rule that matched all 500 files is the largest backward x jump. A rule based only on height cuts 15 files wrongly.
-  - [ ] Realign the name to its own ink's left edge. In 7 fonts the sample line set the left shift, so a plain cut leaves the name 2–22 grid units right: Cinzel Decorative, Gochi Hand, Homemade Apple, Indie Flower, Reenie Beanie, Shrikhand and Sunshiney.
-  - [ ] Set the viewBox to the name: two-line files are 492–560 units tall, and name-only ones 308–387.
-  - [ ] Trim only files whose sha256 is in a pinned list of the 500 verified files. Any other file passes through untouched. A wrong cut would otherwise ship a plausible but wrong image, not an error. Use the catalog's `specimen_name_only` flag, not a height rule, to recognise files that are already name-only.
-  - [ ] Record a one-time check against local renders of all 500 fonts in the pull request: the trimmed contours equal `render(name_only=True)`'s. CI checks the 5 pinned fixtures.
-- [ ] The box: `--spec-h` 64 px on wide screens (`site/css/00-tokens.css`), with `SPEC_BOX_PX` following it (`build.py:114`, today 48). The phone box stays 40 px until 7b. `35-specimens.css` (`mask-size: contain`, left center) stays as it is.
-- [ ] Re-measure the `--row-est-h` estimates in `site/css/20-list.css` for every layout, including the tablet table layout. At 700 × 800, rows grow from 172 to 188 px with a 64 px box.
-- [ ] Records and wording:
-  - [ ] `site/CONTRACT.md`: line 29 says the build trims, not just copies.
-  - [ ] The build docstring, and `docs/milestone-2.md` lines 100 and 102.
-  - [ ] The image's alt and aria-label "<family> sample" now describe the name only. Settle the wording, since it repeats the `<h3>`, and update `test_specimens_loader.py`.
-- [ ] Tests: replace the `svg()` helper in `tests/site/test_build.py` (lines 207–212), which writes a 492-unit file with one contour that the trim rule rejects; this changes every build test that uses the `catalog` fixture. Add a test over all 500 committed files and the 5 fixtures.
-- [ ] Re-run M2 step 10's load-speed numbers, the accessibility suites and the real-catalog site tests.
-- [ ] Ask the lead to redeploy staging once it merges. Merging to `main` alone doesn't update staging, and production deploys are off. The owner then checks the vertical alignment: the score and the NF mark line up with the first line, while the name is centred in its box.
+**Merged in #58** (2b984b0, 2026-10-06). The open items moved to 7b by the owner's rulings of 2026-10-05.
+- [x] In `src/tff_site/build.py` `_copy_specimens`, after the sha256 check, trim each committed two-line SVG to its name line:
+  - [x] Every file is one `<path>` that draws the name's contours first and the sample line's after (`render.py`). Cut the path where line 2 starts. The rule that matched all 500 files is the largest backward x jump. A rule based only on height cuts 15 files wrongly.
+  - [x] Realign the name to its own ink's left edge. In 7 fonts the sample line set the left shift, so a plain cut leaves the name 2–22 grid units right: Cinzel Decorative, Gochi Hand, Homemade Apple, Indie Flower, Reenie Beanie, Shrikhand and Sunshiney.
+  - [x] Set the viewBox to the name: two-line files are 492–560 units tall, and name-only ones 308–387.
+  - [x] Trim only files whose sha256 is in a pinned list of the 500 verified files. Any other file passes through untouched. A wrong cut would otherwise ship a plausible but wrong image, not an error. Use the catalog's `specimen_name_only` flag, not a height rule, to recognise files that are already name-only. *(Built: 505 pins in `src/tff_site/trim.sha256`, the 500 committed specimens and the sample's 5; the realignment is a per-file table, exact against the font redraws.)*
+  - [x] Record a one-time check against local renders of all 500 fonts in the pull request: the trimmed contours equal `render(name_only=True)`'s. CI checks the 5 pinned fixtures.
+- [x] The box: `--spec-h` 64 px on wide screens (`site/css/00-tokens.css`), with `SPEC_BOX_PX` following it (`build.py:114`, today 48). The phone box stays 40 px until 7b. `35-specimens.css` (`mask-size: contain`, left center) stays as it is.
+- [x] Re-measure the `--row-est-h` estimates in `site/css/20-list.css` for every layout, including the tablet table layout. At 700 × 800, rows grow from 172 to 188 px with a 64 px box.
+- [ ] Records and wording *(open only for the label, which 7b builds)*:
+  - [x] `site/CONTRACT.md`: line 29 says the build trims, not just copies.
+  - [x] The build docstring, and `docs/milestone-2.md` lines 100 and 102.
+  - [ ] The image's alt and aria-label "<family> sample" now describe the name only. Settle the wording, since it repeats the `<h3>`, and update `test_specimens_loader.py`. *(Settled 2026-10-05: decorative, `specimen_label_hidden`; built in 7b.)*
+- [x] Tests: replace the `svg()` helper in `tests/site/test_build.py` (lines 207–212), which writes a 492-unit file with one contour that the trim rule rejects; this changes every build test that uses the `catalog` fixture. Add a test over all 500 committed files and the 5 fixtures.
+- [x] Re-run M2 step 10's load-speed numbers, the accessibility suites and the real-catalog site tests.
+- [ ] Ask the lead to redeploy staging once it merges. Merging to `main` alone doesn't update staging, and production deploys are off. The owner then checks the vertical alignment: the score and the NF mark line up with the first line, while the name is centred in its box. *(Superseded 2026-10-05: the owner ruled `nerd_tag` and `score_centred` from a local build, and the lead redeploys staging once 7b has merged.)*
 
 **Done when:**
 - at 1280 px the median drawn name is at least 1.5 times today's 25.0 px per em (expected about 53);
