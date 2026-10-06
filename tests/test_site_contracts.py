@@ -511,11 +511,16 @@ def test_filters_follow_the_site_rulings_of_2026_09_30():
 NERD_RULINGS = tomllib.loads(
     (ROOT / "data" / "reviews" / "site" / "2026-09-29.toml").read_text(encoding="utf-8")
 )
+# The tag's words, as the owner ruled them on 2026-10-05 (nerd_tag, recorded with the plan's
+# rulings in data/reviews/site/2026-10-05.toml).
+NERD_TAG = "Nerd Font available"
 
 
-def test_the_nerd_marker_follows_the_site_rulings():
-    """The owner's rulings of 2026-09-29 (TASK-2): the "NF" marker, the legend word for word,
-    and a "Nerd Font available" filter, in the config, the template and the contract."""
+def test_the_nerd_font_tag_follows_the_site_rulings():
+    """The owner's rulings of 2026-09-29 (TASK-2): the "NF" marker's wording and the legend,
+    word for word, in the config (the catalog keeps them), and a "Nerd Font available" filter.
+    Since 2026-10-05 (nerd_tag) the rows have the tag "Nerd Font available" instead of the
+    marker, and there is no legend: the template and the contract follow."""
     site = tomllib.loads((ROOT / "config" / "site.toml").read_text(encoding="utf-8"))["nerd"]
     assert site["legend"] == NERD_RULINGS["nerd_legend"]["ruling"]
     assert site["marker"] == "NF"
@@ -523,13 +528,16 @@ def test_the_nerd_marker_follows_the_site_rulings():
     assert site["label"] in site["legend"]
     label = re.search(r'"([^"]+)" option', NERD_RULINGS["nerd_filter"]["ruling"]).group(1)
     filters = (TEMPLATES / "_filters.html.j2").read_text(encoding="utf-8")
-    assert f'id="f-nerd" name="nerd" value="1" aria-describedby="nf-legend"> {label}</label>' in (
-        filters
-    )
+    assert f'id="f-nerd" name="nerd" value="1"> {label}</label>' in filters
+    assert f'`nerd` ("{NERD_TAG}"' in section(CONTRACT, "3. Templates")
     dom = section(CONTRACT, "4. DOM")
-    assert 'id="f-nerd" name="nerd"' in dom
-    assert 'id="nf-legend"' in dom
-    assert '<span class="nf-mark" role="img"' in dom
+    assert 'id="f-nerd" name="nerd" value="1">' in dom
+    assert 'li.badge[data-badge="nerd"]' in dom
+    assert 'id="nf-legend"' not in dom
+    assert '<span class="nf-mark"' not in dom
+    templates = "".join(t.read_text(encoding="utf-8") for t in sorted(TEMPLATES.glob("*.j2")))
+    assert "nf-legend" not in templates
+    assert "nf-mark" not in templates
     assert "8192 a Nerd Font build" in section(CONTRACT, "7. List index JSON")
 
 

@@ -32,8 +32,8 @@
   --sidebar-width: 17rem;
   --target-min: 24px;
   /* The specimen box: 64px, drawing the name at about 53px per em (the owner's site ruling
-     of 2026-10-05, specimen_box_heights); 40px on phones, below. tff_site.build.SPEC_BOX_PX
-     follows it. */
+     of 2026-10-05, specimen_box_heights); 48px on phones, below, about 40px per em.
+     tff_site.build.SPEC_BOX_PX follows the 64px box. */
   --spec-h: 64px;
   --row-est-h: 88px;
 
@@ -129,7 +129,7 @@
 
 @media (max-width: 40rem) {
   :root {
-    --spec-h: 40px;
+    --spec-h: 48px;
   }
 }
 

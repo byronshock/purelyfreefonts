@@ -856,11 +856,18 @@ def test_retired_keys_in_old_links_open_the_nearest_view(
 def test_nerd_font_available_keeps_exactly_the_fonts_with_a_nerd_build(
     guarded_context: Any, doc: dict[str, Any], views: list[str]
 ) -> None:
-    """The owner's site ruling of 2026-09-29 (nerd_filter), on every rank."""
+    """The owner's site ruling of 2026-09-29 (nerd_filter), on every rank: the rows it keeps
+    are the ones tagged "Nerd Font available" (nerd_tag, 2026-10-05, which removed the
+    legend that described the filter)."""
     guarded, page = open_list(guarded_context)
     nerd = {f["id"] for f in doc["fonts"] if f["links"]["nerd"] is not None}
     assert nerd, "the sample needs a font with a Nerd Font build"
-    assert page.get_attribute("#f-nerd", "aria-describedby") == "nf-legend"
+    assert page.get_attribute("#f-nerd", "aria-describedby") is None
+    tagged = page.evaluate(
+        "() => Array.from(document.querySelectorAll('#list li.badge[data-badge=\"nerd\"]'),"
+        " (tag) => tag.closest('li.font').dataset.id)"
+    )
+    assert sorted(tagged) == sorted(nerd)
     page.check("#f-nerd")
     assert hash_of(page) == "#nerd=1"
     assert page.text_content("#f-toggle .filters-count") == "\u00a0(1)"

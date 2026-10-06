@@ -897,8 +897,9 @@ NERD_FONTS = [f["id"] for f in DOC["fonts"] if f["links"]["nerd"]]
 @pytest.mark.parametrize("font_id", NERD_FONTS)
 def test_a_nerd_font_builds_link_and_legend(guarded_context, font_id):
     """The panel lists the Nerd Font build's page after the official and designer links, the
-    marker first (owner rulings of 2026-09-29). The legend is the one above the list, not
-    repeated in the panel (owner ruling of 2026-09-30, details_layout)."""
+    marker first (owner rulings of 2026-09-29). There is no legend, in the panel (owner ruling
+    of 2026-09-30, details_layout) or above the list (2026-10-05, nerd_tag); its caution joins
+    the panel with step 7e (nerd_caution_in_details)."""
     guarded = guarded_context()
     page = _open_page(guarded, f"/#font={font_id}")
     _wait_ready(page, font_id)

@@ -4,11 +4,11 @@
   scripts find everything through them. Font index i is the i-th li.font below. Needs `list`
   and `build` from the context; a later /check/ page includes this file unchanged.
   role="list" looks redundant, but Safari drops list semantics from lists styled with
-  list-style: none, and step 6 wants each font announced as a list item. #nf-legend is the
-  owner's legend for the rows' "NF" marker (config/site.toml [nerd]). #list-sort, the sort
-  buttons over the rank and name columns, ships hidden like #filters and is shown by the
-  script (owner ruling of 2026-09-30, sort_header). The buttons carry their own words for
-  each order; the script redraws them (30-filters-ui.js).
+  list-style: none, and step 6 wants each font announced as a list item. There is no Nerd
+  Font legend: a row's "Nerd Font available" tag says it (owner's site ruling of 2026-10-05,
+  nerd_tag). #list-sort, the sort buttons over the rank and name columns, ships hidden like
+  #filters and is shown by the script (owner ruling of 2026-09-30, sort_header). The buttons
+  carry their own words for each order; the script redraws them (30-filters-ui.js).
 -#}
 <div class="layout">
 {% include "_filters.html.j2" %}
@@ -17,7 +17,6 @@
 <h2 id="results-h">Fonts</h2>
 <p id="ext-summary" class="ext-summary" hidden></p>
 <p id="count" class="count">Showing {{ list.total }} of {{ list.total }} {{ "font" if list.total == 1 else "fonts" }}</p>
-<p id="nf-legend" class="nf-legend"><span class="nf-mark">{{ list.nerd.marker }}</span>{{ list.nerd.after_marker }}</p>
 <p id="held-legend" class="held-legend is-held"{% if not list.held_shown %} hidden{% endif %}><i class="bar b60"></i> {{ list.held_legend }}</p>
 <p id="view-note" class="view-note" hidden></p>
 <div id="status" class="visually-hidden" role="status"></div>

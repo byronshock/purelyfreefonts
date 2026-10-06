@@ -341,10 +341,10 @@
 
 li.font {
   /* Median row heights on the real list, measured on 2026-10-05 with the 64px specimen box
-     (40px on phones): cards about 164px; 3-column and 4-column rows, set below, about 188px
-     and 116px. Rows without a tag line are shorter, so until every row has rendered the page
-     runs a few per cent too long (5-9% on the real list). */
-  --row-est-h: 10.25rem;
+     (48px on phones, since step 7b): cards about 172px; 3-column and 4-column rows, set
+     below, about 188px and 116px. Rows without a tag line are shorter, so until every row has
+     rendered the page runs a few per cent too long (5-8% on the real list). */
+  --row-est-h: 10.75rem;
 
   content-visibility: auto;
   contain-intrinsic-size: auto var(--row-est-h);
@@ -380,7 +380,7 @@ li.font.is-dim .font-name {
   grid-area: rank;
   font-size: var(--fs-base);
   font-weight: 700;
-  /* One line of the heading, so a number sits level with the title's first line. */
+  /* One line of the heading, so without a specimen a number sits level with its first line. */
   line-height: calc(var(--fs-large) * var(--lh-tight));
   font-variant-numeric: tabular-nums;
 }
@@ -389,13 +389,23 @@ li.font.is-dim .font-name {
    score_display): the number, right-aligned, then the bar, which ends at the edge of the rank
    cell (6rem, 96px, on every screen) so the bars line up. The bar is an empty i.bar, its fill
    ::before. A font the two-source rule holds back has a hollow bar (owner ruling of
-   2026-09-30, held_marker_style), explained by #held-legend. */
+   2026-09-30, held_marker_style), explained by #held-legend. Both are centred on the specimen
+   box (the owner's site ruling of 2026-10-05, score_centred): the cell is as tall as the box,
+   which starts level with it, at the top of the title, in every layout. */
 li.font:not(.is-unranked) .font-row > .rank {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: var(--space-2);
   width: 6rem;
+  min-height: var(--spec-h);
+}
+
+/* A row without a specimen keeps its score level with the heading's first line: the cell is
+   one line of the heading tall (above). Browsers without :has() centre it on a box-high cell
+   instead, a little below the name. */
+li.font:not(.is-unranked) .font-row:has(> .font-title:not(.has-spec)) > .rank {
+  min-height: 0;
 }
 
 .bar {
@@ -863,17 +873,16 @@ li.font:not(.is-unranked) .font-row > .rank {
   width: 100%;
 }
 
-/* The title: the heading, the Nerd Font marker and the specimen box (owner rulings of
-   2026-09-29, name_once and nerd_marker_spot_title). Its second column is the marker's width,
-   left free on every row, marker or not, so the markers line up and no row's height depends
-   on one. Where there is a specimen, the heading shares the box's cell at its top, the box
-   draws the name in the font, centred in its height (since step 7a the name alone, so it
-   sits lower than the heading), and the heading stops being painted once the specimen shows
-   (below); without one, the heading comes first and the fallback note under it. */
+/* The title: the heading and the specimen box, which takes the title's full width (owner
+   rulings of 2026-09-29, name_once, and of 2026-10-05, nerd_tag: the Nerd Font marker became
+   a tag). Where there is a specimen, the heading shares the box's cell, centred on the box,
+   which draws the name in the font, centred in its height (35-specimens.css); the heading
+   stops being painted once the specimen shows (below). Without one, the heading comes first
+   and the fallback note under it. */
 .font-title {
   grid-area: title;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) calc(2.25rem + var(--space-2));
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
   min-width: 0;
 }
@@ -889,60 +898,25 @@ li.font:not(.is-unranked) .font-row > .rank {
 }
 
 /* The specimen is showing (45-specimens.js marks the title once the file has loaded and the
-   mask is set), so its first line is the name: the heading stays for screen readers, search
-   and find-in-page, but isn't painted. Only where masks work: elsewhere the heading shows. */
+   mask is set), so it draws the name: the heading stays for screen readers, search and
+   find-in-page, but isn't painted. Only where masks work: elsewhere the heading shows. */
 @supports (mask-image: none) or (-webkit-mask-image: none) {
   .font-title.is-drawn > .font-name {
     opacity: 0;
   }
 }
 
-/* Without scripting the <noscript> image draws the name; its alt text stands in if it fails. */
+/* Without scripting the <noscript> image draws the name. Its alt is empty, since the heading
+   names the font (specimen_label_hidden), so an image that fails to load leaves the name to
+   screen readers there. */
 @media (scripting: none) {
   .font-title.has-spec > .font-name {
     opacity: 0;
   }
 }
 
-/* The Nerd Font marker (TASK-2, owner ruling of 2026-09-29): a fixed-width "NF" for a font
-   with a Nerd Font build, in its row, in its details and in the legend. In a row it sits at
-   the end of the title's first line, in the column every title leaves free, and is no taller
-   than that line: rows keep their height. */
-.nf-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  width: 2.25rem;
-  height: 1.375rem;
-  border: 1px solid var(--c-border);
-  border-radius: var(--radius);
-  background: var(--c-badge-bg);
-  color: var(--c-badge-fg);
-  font-size: var(--fs-small);
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-}
-
-.font-title > .nf-mark {
-  grid-column: 2;
-  grid-row: 1;
-  justify-self: end;
-  /* Centred on the first line: one line of --fs-large at --lh-tight. */
-  margin-top: calc((var(--fs-large) * var(--lh-tight) - 1.375rem) / 2);
-}
-
-.nf-legend {
-  margin: 0 0 var(--space-3);
-  max-width: var(--measure);
-  font-size: var(--fs-small);
-  color: var(--c-muted);
-}
-
 .font-spec {
-  grid-column: 1 / -1;
+  grid-column: 1;
   grid-row: 2;
   min-width: 0;
   min-height: var(--spec-h);
@@ -950,10 +924,12 @@ li.font:not(.is-unranked) .font-row > .rank {
 }
 
 /* The heading and the specimen share one cell, so hiding the heading moves nothing. The
-   heading is painted above the box, whose empty span would otherwise cover it (nothing in the
-   box takes a click), so its text is on top while it shows. */
+   heading is centred on the box, so it lies over the drawn name and find-in-page highlights it
+   there (the owner's site ruling of 2026-10-05, score_centred); a heading that wraps taller
+   than the box fills the cell from the box's top, where the score stays centred. It is
+   painted above the box, whose empty span would otherwise cover it (nothing in the box takes
+   a click), so its text is on top while it shows. */
 .font-title.has-spec > .font-spec {
-  grid-column: 1;
   grid-row: 1;
   margin-top: 0;
 }
@@ -961,6 +937,7 @@ li.font:not(.is-unranked) .font-row > .rank {
 .font-title.has-spec > .font-name {
   position: relative;
   z-index: 1;
+  align-self: center;
 }
 
 /* The no-script image may be wider than a phone; scale it down, never crop or stretch it. */
@@ -1114,11 +1091,11 @@ li.font.is-dim .spec-fallback {
 
 /* An unranked row: "Not ranked: <reason>" gets a line of its own above the name, instead of
    wrapping down the narrow rank column (the owner's site ruling of 2026-09-26, list_layout).
-   That line makes the row taller by about 24px on the real list: cards about 188px, 3-column
-   rows about 212px (set below). A longer label takes two lines on a phone (about 244px in the
+   That line makes the row taller by about 24px on the real list: cards about 196px, 3-column
+   rows about 212px (set below). A longer label takes two lines on a phone (about 252px in the
    sample), so the cards' estimate sits a little above the real list's. */
 li.font.is-unranked {
-  --row-est-h: 12.5rem;
+  --row-est-h: 13rem;
 }
 
 li.font.is-unranked .font-row {
@@ -1196,7 +1173,7 @@ li.font.is-unranked .font-row {
       ". title download toggle";
   }
 
-  /* Beside the stack, the meta line starts level with the title's first line. */
+  /* Beside the stack, the meta line starts level with the top of the title. */
   .font-meta {
     margin-top: 0;
   }

@@ -20,15 +20,18 @@ Checked here:
 - ``tff.list.specimens.pause()`` stops new requests, and ``resume()`` loads only the rows still
   near the screen (M3-D10); rows that Render detaches and moves still load when near;
 - a ``data-src`` outside ``/assets/specimens/`` is never loaded, even on a row on screen;
-- the box is 64 px high (40 px on phones), unfilled until its mask is set, empty (never a solid
+- the box is 64 px high (48 px on phones), unfilled until its mask is set, empty (never a solid
   bar) while its specimen downloads or if it never arrives, and the row keeps its height when
   the mask arrives;
 - the outlines are visible in light, dark and forced colours (pixels from a screenshot);
-- names ("<family> sample", with the name also in the row's heading), the fallback texts, and
-  the no-script images (``loading="lazy"``, the same box, inverted in dark mode);
+- names: the specimen is decorative for screen readers (``aria-hidden``, an empty ``alt``;
+  owner's site ruling of 2026-10-05, specimen_label_hidden), and the row's heading names the
+  font; the fallback texts, and the no-script images (``loading="lazy"``, the same box,
+  inverted in dark mode);
 - the name shows once (owner ruling of 2026-09-29, name_once): a shown specimen draws it and
   the heading, still there for screen readers, isn't painted; a specimen that hasn't arrived,
-  a missing one or none at all leaves the heading in view.
+  a missing one or none at all leaves the heading in view. The heading is centred on the box,
+  over the drawn name (score_centred, 2026-10-05).
 """
 
 import hashlib
@@ -82,7 +85,8 @@ ROWS_JS = """() => Array.from(document.querySelectorAll('li.font')).flatMap((li)
     mask: style.maskImage || style.webkitMaskImage || '',
   }];
 })"""
-# Each row's heading: its opacity, and where it sits against the specimen box, if any.
+# Each row's heading: its opacity, and whether it is centred on the specimen box, if any (a
+# heading that wraps taller than the box starts at its top instead).
 HEADINGS_JS = """() => Array.from(document.querySelectorAll('li.font')).map((li) => {
   const title = li.querySelector('.font-title');
   const heading = title.querySelector('h3.font-name');
@@ -92,7 +96,9 @@ HEADINGS_JS = """() => Array.from(document.querySelectorAll('li.font')).map((li)
   return { id: li.dataset.id, state: span ? span.dataset.state || null : 'none',
            drawn: title.classList.contains('is-drawn'), hasSpec: title.classList.contains('has-spec'),
            opacity: getComputedStyle(heading).opacity, text: heading.textContent.trim(),
-           overBox: Math.abs(h.top - b.top) < 1 && h.left >= b.left - 0.5 };
+           overBox: (h.height <= b.height + 0.5
+                     ? Math.abs(h.top + h.height / 2 - (b.top + b.height / 2)) < 1
+                     : Math.abs(h.top - b.top) < 1) && Math.abs(h.left - b.left) < 0.5 };
 })"""
 SETTLE_JS = """() => new Promise((resolve) =>
   requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve, 60))))"""
@@ -493,7 +499,7 @@ def test_a_source_outside_the_specimens_folder_is_never_loaded(guarded_context: 
 # --- the box ---------------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize(("viewport", "box"), [(WIDE, 64), (PHONE, 40)], ids=["wide", "phone"])
+@pytest.mark.parametrize(("viewport", "box"), [(WIDE, 64), (PHONE, 48)], ids=["wide", "phone"])
 def test_the_box_has_a_fixed_height_and_the_row_keeps_its_height(
     guarded_context: Any, viewport: dict[str, int], box: int
 ) -> None:
@@ -567,8 +573,8 @@ def test_a_shown_specimen_is_the_visible_name(
 ) -> None:
     """Once its specimen shows, a row's heading isn't painted but is still a heading; a row
     without a specimen, or whose specimen hasn't loaded yet, shows its heading (owner ruling
-    of 2026-09-29, name_once). The heading lies over the specimen box's first line, the drawn
-    name, so hiding it moves nothing."""
+    of 2026-09-29, name_once). The heading is centred on the specimen box, over the drawn name
+    (score_centred, 2026-10-05), and shares its cell, so hiding it moves nothing."""
     guarded = guarded_context(viewport=WIDE)
     page = open_list(guarded)
     families = {f["id"]: f["family"] for f in loader_doc["fonts"]}
@@ -629,29 +635,37 @@ def test_specimens_are_visible_in_every_theme(
     guarded.assert_clean(page)
 
 
-def test_each_specimen_is_an_image_named_after_its_font(
+def test_each_specimen_is_hidden_from_screen_readers(
     guarded_context: Any, loader_doc: dict[str, Any]
 ) -> None:
+    """The owner's site ruling of 2026-10-05 (specimen_label_hidden): the specimen shows only
+    the name, which the heading beside it already says, so it is decorative, with no role or
+    name, before and after the loader sets its mask; the heading names the font."""
     guarded = guarded_context(viewport=WIDE)
     page = open_list(guarded)
     found = page.evaluate(
         """() => Array.from(document.querySelectorAll('li.font')).flatMap((li) => {
           const span = li.querySelector('span.spec');
           if (!span) return [];
-          return [{ id: li.dataset.id, role: span.getAttribute('role'),
+          return [{ id: li.dataset.id, state: span.dataset.state || null,
+                    hidden: span.getAttribute('aria-hidden'), role: span.getAttribute('role'),
                     label: span.getAttribute('aria-label'),
                     heading: li.querySelector('h3.font-name').textContent.trim() }];
         })"""
     )
     families = {f["id"]: f["family"] for f in loader_doc["fonts"] if f["preview"]}
     assert {item["id"] for item in found} == set(families)
+    assert any(item["state"] == "set" for item in found), "no mask was set"
     for item in found:
         family = families[item["id"]]
-        assert item["role"] == "img"
-        assert item["label"] == f"{family} sample"
-        assert item["heading"] == family, "the name is also in text"
+        assert item["hidden"] == "true", item
+        assert item["role"] is None, item
+        assert item["label"] is None, item
+        assert item["heading"] == family, "the heading names the font"
+    assert page.locator("#list [role=img]").count() == 0
     family = families[found[0]["id"]]
-    assert page.get_by_role("img", name=f"{family} sample", exact=True).count() == 1
+    assert page.get_by_role("heading", name=family, exact=True).count() == 1
+    assert page.get_by_role("img", name=family).count() == 0
 
 
 def test_fonts_without_a_specimen_show_the_fallback_text(
@@ -694,7 +708,7 @@ def test_without_javascript_the_no_script_images_show(
     far below the screen is fetched too. Nothing here asserts that it isn't.
     """
     # A 375 x 812 phone (iPhone X class): the first row sits below the lead, the no-script
-    # note, the count and the Nerd Font legend (TASK-2), which takes two lines at this width.
+    # note and the count.
     viewport = {"width": 375, "height": 812}
     guarded = guarded_context(java_script_enabled=False, viewport=viewport, color_scheme=scheme)
     page = goto(guarded, scheme)
@@ -728,7 +742,7 @@ def test_without_javascript_the_no_script_images_show(
     assert {i["id"] for i in images} == set(families)
     for image in images:
         assert image["loading"] == "lazy"
-        assert image["alt"] == f"{families[image['id']]} sample"
+        assert image["alt"] == ""  # decorative: the heading names the font
         assert int(image["width"]) > 0
         assert int(image["height"]) == 64
         assert image["filter"] == ("invert(1)" if scheme == "dark" else "none")
@@ -737,7 +751,7 @@ def test_without_javascript_the_no_script_images_show(
     first = images[0]
     assert first["top"] < viewport["height"]
     assert first["loaded"]
-    assert first["shown"] == 40  # the phone box
+    assert first["shown"] == 48  # the phone box
     # guards.js can't run without JavaScript; the rest of assert_clean still applies.
     assert guarded.blocked == []
     assert guarded.csp_messages() == []

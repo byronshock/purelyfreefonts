@@ -859,7 +859,7 @@ def test_lint_accepts_what_the_site_uses() -> None:
 <link rel="preload" href="/assets/list.0123456789.json" as="fetch" crossorigin>
 </head><body><a class="skip-link" href="#main">Skip</a>
 <search id="filters" hidden><input id="f-q" name="q" type="search"></search>
-<noscript><img class="spec-img" src="/assets/specimens/a.0123456789.svg" alt="A sample"
+<noscript><img class="spec-img" src="/assets/specimens/a.0123456789.svg" alt=""
   width="10" height="10" loading="lazy"></noscript>
 <a href="https://github.com/rsms/inter">GitHub: rsms/inter</a>
 <a href="mailto:x@example.com">Email</a>

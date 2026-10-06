@@ -9,8 +9,8 @@
   license_filter, filters_layout): Category's Monospace means every monospaced font, there is
   no Spacing or license-group filter, "No credit required" shows only while some font needs
   credit, and the operating systems are one select. "Nerd Font available" follows the ruling
-  of 2026-09-29 (nerd_filter), described by the legend. Sort sits in the list's header
-  (_list.html.j2).
+  of 2026-09-29 (nerd_filter); the rows it keeps carry the tag of the same name (nerd_tag,
+  2026-10-05). Sort sits in the list's header (_list.html.j2).
 -#}
 <search id="filters" class="filters" aria-label="Filter fonts" hidden>
 <div class="filters-bar">
@@ -36,7 +36,7 @@
 <fieldset id="f-type">
 <legend>Features</legend>
 <label class="opt"><input type="checkbox" id="f-var" name="var" value="1"> Adjustable weight (variable font)</label>
-<label class="opt"><input type="checkbox" id="f-nerd" name="nerd" value="1" aria-describedby="nf-legend"> Nerd Font available</label>
+<label class="opt"><input type="checkbox" id="f-nerd" name="nerd" value="1"> Nerd Font available</label>
 <label class="opt"><input type="checkbox" id="f-hide-limited" name="hide" value="limited"> Accented letters</label>
 </fieldset>
 {% if list.credit_filter %}
