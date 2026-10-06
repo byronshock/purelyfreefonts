@@ -86,7 +86,8 @@ label = "Other free-use grants"
 # 2026-10-05 (nerd_tag, data/reviews/site/2026-10-05.toml) a row shows a "Nerd Font
 # available" tag instead and the site shows no legend, and since details_nerd_box_dropped
 # (the same day) the details panel's Nerd Font build link has no marker before it: the
-# site shows none of the three. The wording stays, as catalog-site.json v1 carries it.
+# page shows none of the three, and only screen readers hear the label, before that link.
+# The wording stays, as catalog-site.json v1 carries it.
 [nerd]
 marker = "NF"
 label = "Nerd Font version available"

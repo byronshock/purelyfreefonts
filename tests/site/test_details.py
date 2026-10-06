@@ -730,9 +730,11 @@ def expected_panel(doc: dict[str, Any], font: dict[str, Any], rank: str = "overa
     links = [[f"Official: {data.destination_name(primary)}", primary["url"]]]
     if designer:
         links.append([f"Designer: {data.destination_name(designer)}", designer["url"]])
-    nerd = font["links"]["nerd"]  # the link alone: no "NF" box (details_nerd_box_dropped)
+    # No "NF" box before the Nerd link (details_nerd_box_dropped): only its name, read to
+    # screen readers, then the link.
+    nerd = font["links"]["nerd"]
     if nerd:
-        links.append([data.nerd_link_text(nerd), nerd["url"]])
+        links.append([f"{doc['nerd']['label']}: {data.nerd_link_text(nerd)}", nerd["url"]])
 
     credit = (
         f"Credit required: {lic['attribution']}"
@@ -897,11 +899,13 @@ NERD_FONTS = [f["id"] for f in DOC["fonts"] if f["links"]["nerd"]]
 @pytest.mark.parametrize("font_id", NERD_FONTS)
 def test_a_nerd_font_builds_link_and_legend(guarded_context, font_id):
     """The panel lists the Nerd Font build's page after the official and designer links
-    (owner rulings of 2026-09-29), the link alone: its own text names the build, with no
-    fixed-width "NF" box before it (the owner's site ruling of 2026-10-05,
-    details_nerd_box_dropped). There is no legend, in the panel (owner ruling of 2026-09-30,
-    details_layout) or above the list (2026-10-05, nerd_tag); its caution joins the panel
-    with step 7e (nerd_caution_in_details)."""
+    (owner rulings of 2026-09-29), its own text naming the build, with no fixed-width "NF"
+    box before it (the owner's site ruling of 2026-10-05, details_nerd_box_dropped). Screen
+    readers still hear the box's name before the link, so the line says "Nerd Font" for a
+    maker's build named "<family> NF" ("Cascadia Code NF", like sample-mono-13). There is
+    no legend, in the panel (owner ruling of 2026-09-30, details_layout) or above the list
+    (2026-10-05, nerd_tag); its caution joins the panel with step 7e
+    (nerd_caution_in_details)."""
     guarded = guarded_context()
     page = _open_page(guarded, f"/#font={font_id}")
     _wait_ready(page, font_id)
@@ -912,7 +916,10 @@ def test_a_nerd_font_builds_link_and_legend(guarded_context, font_id):
     line = page.locator(f"#details-{font_id} .details-links li").filter(
         has=page.locator("a.details-nf-link")
     )
-    assert line.locator(":scope > *").count() == 1  # the link and nothing else
+    assert line.locator(":scope > *").count() == 2  # the hidden name, then the link
+    name = line.locator(":scope > span.visually-hidden")
+    assert name.text_content() == f"{DOC['nerd']['label']}: "
+    assert "Nerd Font" in line.text_content()
     link = line.locator("a.details-nf-link")
     assert link.get_attribute("href") == nerd["url"]
     assert link.text_content() == data.nerd_link_text(nerd)

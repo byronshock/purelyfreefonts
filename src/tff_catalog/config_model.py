@@ -642,12 +642,13 @@ class NerdText:
 
     Since the owner's site rulings of 2026-10-05 a row shows a "Nerd Font available" tag
     instead (nerd_tag), and the details panel's Nerd Font build link names the build with no
-    marker before it (details_nerd_box_dropped): the site shows none of the three.
-    catalog-site.json v1 still carries them.
+    marker before it (details_nerd_box_dropped): the page shows none of the three, and only
+    screen readers hear the label, before that link. catalog-site.json v1 still carries
+    them.
     """
 
     marker: str  # the marker, no longer shown: "NF"
-    label: str  # the marker's accessible name: "Nerd Font version available"
+    label: str  # read to screen readers before the Nerd link: "Nerd Font version available"
     legend: str  # the legend, no longer shown: "<marker>: <label> (...)."
 
 

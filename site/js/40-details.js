@@ -362,7 +362,7 @@ const Details = (() => {
       { class: 'details-summary' },
       pairs(
         [
-          ['Get it', ...getIt(font)],
+          ['Get it', ...getIt(payload, font)],
           ['License', ...licenseLine(font.license)],
           ['Font', fontLine(font)],
           comesWith(payload, font),
@@ -377,9 +377,12 @@ const Details = (() => {
   // goes (CONTRACT section 1). The Nerd link's own text names the build, with no "NF" box
   // before it (owner's site ruling of 2026-10-05, details_nerd_box_dropped) and no legend
   // (the caution about the icons' licenses joins the panel later, nerd_caution_in_details).
-  // A link's note (why an archived mirror is the official download) follows it.
-  const getIt = (font) => {
+  // Screen readers still hear the box's name, payload.nerd's label, before the link: a
+  // maker's own build can be named "<family> NF" ("Cascadia Code NF"), which says "Nerd
+  // Font" nowhere. A link's note (why an archived mirror is the official download) follows.
+  const getIt = (payload, font) => {
     const { primary, designer, nerd } = font.links;
+    const words = nerd && payload.nerd;
     const line = (...children) => el('li', {}, ...children);
     return [
       el(
@@ -387,7 +390,11 @@ const Details = (() => {
         { class: 'details-links', role: 'list' },
         line(`${WORDS.official}: `, link(primary.url, destination(primary))),
         designer && line(`${WORDS.designer}: `, link(designer.url, destination(designer))),
-        nerd && line(link(nerd.url, nerdText(nerd), { class: 'details-nf-link' })),
+        nerd &&
+          line(
+            words && el('span', { class: 'visually-hidden', text: `${words.label}: ` }),
+            link(nerd.url, nerdText(nerd), { class: 'details-nf-link' }),
+          ),
       ),
       primary.note && el('p', { class: 'details-link-note', text: primary.note }),
     ];

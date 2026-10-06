@@ -747,7 +747,8 @@ ACTIONS_LOOK = """() => {
   };
   const tokens = { accent: probe('background-color', '--c-accent'),
                    accentFg: probe('color', '--c-accent-fg'), fg: probe('color', '--c-fg'),
-                   divider: probe('border-top-color', '--c-divider') };
+                   border: probe('border-top-color', '--c-border'),
+                   link: probe('color', '--c-link') };
   const look = (el) => {
     const s = getComputedStyle(el);
     const r = el.getBoundingClientRect();
@@ -770,7 +771,8 @@ ACTIONS_LOOK = """() => {
 def test_download_is_the_button_and_details_the_quieter_one(browser, site_url, width, scheme):
     """The owner's site ruling of 2026-10-05 (download_button): a row's "Download from ..."
     link has the strong, button-like look, filled with the accent, and stays a link; the
-    Details button is the quieter one, a faint outline with no fill. On one line the two are
+    Details button is the quieter one, an outline with no fill, its border a control's
+    (--c-border, 3:1 on the page: 1.4.11 and docs/milestone-2.md). On one line the two are
     the same height and level, each at least 24px square (2.5.8); a long destination wraps
     inside the download button. Phone cards, table rows and wide rows; the forced-colours
     look is checked in test_a11y.py."""
@@ -778,7 +780,7 @@ def test_download_is_the_button_and_details_the_quieter_one(browser, site_url, w
     try:
         got = page.evaluate(ACTIONS_LOOK)
         tokens = got["tokens"]
-        assert tokens["accent"] != tokens["divider"]
+        assert tokens["accent"] != tokens["border"]
         for row in got["rows"]:
             download, toggle = row["download"], row["toggle"]
             assert download["tag"] == "A", row
@@ -788,7 +790,7 @@ def test_download_is_the_button_and_details_the_quieter_one(browser, site_url, w
             assert download["underline"] == "none", row
             assert toggle["tag"] == "BUTTON", row
             assert toggle["bg"] in {"rgba(0, 0, 0, 0)", "transparent"}, row
-            assert toggle["border"] == tokens["divider"], row
+            assert toggle["border"] == tokens["border"], row
             assert toggle["color"] == tokens["fg"], row
             for action in (download, toggle):
                 assert action["borderStyle"] == "solid", row
@@ -800,6 +802,24 @@ def test_download_is_the_button_and_details_the_quieter_one(browser, site_url, w
                 assert abs(download["top"] - toggle["top"]) <= 0.5, row
             else:  # wrapped: taller than Details, never shorter
                 assert download["height"] > toggle["height"], row
+    finally:
+        context.close()
+
+
+@pytest.mark.parametrize("scheme", ["light", "dark"])
+def test_the_download_prints_as_a_link(browser, site_url, scheme):
+    """Browsers drop backgrounds when printing, which would leave the Download button's text
+    in the accent's text colour (white in the light theme) on the paper: in print it is an
+    underlined link in the link colour (download_button)."""
+    context, page = open_page(browser, site_url, 1280, color_scheme=scheme)
+    try:
+        page.emulate_media(media="print")
+        got = page.evaluate(ACTIONS_LOOK)
+        for row in got["rows"]:
+            download = row["download"]
+            assert download["bg"] in {"rgba(0, 0, 0, 0)", "transparent"}, row
+            assert download["color"] == got["tokens"]["link"], row
+            assert download["underline"] == "underline", row
     finally:
         context.close()
 
