@@ -269,6 +269,7 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
 The facts behind it come from a workflow of eight agents on 2026-10-05: five readers, a planner and two adversarial checkers, both of which re-drew all 500 specimens from the cached fonts.
 
 #### 7a: Names-only, larger specimens, trimmed by the site build
+**Built in #58** (branch `claude/specimens-names-only`, draft, merges after this plan's pull request). Tick these items when it merges.
 - [ ] In `src/tff_site/build.py` `_copy_specimens`, after the sha256 check, trim each committed two-line SVG to its name line:
   - [ ] Every file is one `<path>` that draws the name's contours first and the sample line's after (`render.py`). Cut the path where line 2 starts. The rule that matched all 500 files is the largest backward x jump. A rule based only on height cuts 15 files wrongly.
   - [ ] Realign the name to its own ink's left edge. In 7 fonts the sample line set the left shift, so a plain cut leaves the name 2–22 grid units right: Cinzel Decorative, Gochi Hand, Homemade Apple, Indie Flower, Reenie Beanie, Shrikhand and Sunshiney.

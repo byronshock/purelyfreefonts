@@ -398,7 +398,7 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
     - the details label the designer link "Designer's page" (`designer_label`).
   - **Specimens** (priority 2):
     - a row's specimen shows only the family's name, larger (`specimen_name_only_list`, the owner's call: "People come to see the fonts, and the font names set in sample fonts are already too small");
-    - until `build/specimens` is redrawn names-only, the site build serves a copy trimmed to the name line from each committed, sha256-checked file, for the 500 verified files only, with nothing in `build/` or the catalogs changing (`specimen_trim_served`). While the details panel is frozen, the site shows no sample lines;
+    - until `build/specimens` is redrawn names-only, the site build serves a copy trimmed to the name line from each committed, sha256-checked file, for the pinned files only (the 500 committed specimens and the sample's 5, each cut checked against its font's names-only drawing), with nothing in `build/` or the catalogs changing (`specimen_trim_served`; built in #58). While the details panel is frozen, the site shows no sample lines;
     - the specimen box is 64 px tall on wide screens, and 48 px on phones once the NF column stops reserving space on rows without a Nerd Font build (`specimen_box_heights`);
     - the details show "Hamburgefonstiv 0123", a line of code for monospace fonts (`details_sample_lines`, the owner's choice of lines) and a glyph strip (`glyph_strip`, the owner's choice; Claude had recommended "not now"). All load only when the details open;
     - the NF legend shows only while an NF row is visible, and on phones the NF column takes space only where it's needed (`nf_legend_visible_rows`).
