@@ -42,7 +42,7 @@ A row's ``specimen`` ``width`` and ``height`` are the size the no-script ``<img>
 ``SPEC_BOX_PX`` high (``--spec-h`` on wide screens), with the served SVG's aspect ratio. A font
 with a Nerd Font build (``links.nerd``) gets the "Nerd Font available" tag among its badges
 (the owner's site ruling of 2026-10-05, ``nerd_tag``); the catalog's ``nerd`` wording reaches
-only the details panel.
+only the details payload, and no page shows it (``details_nerd_box_dropped``, the same day).
 
 The output is written to a sibling staging directory and swapped in at the end, so a failed
 build leaves the previous site as it was. Only a directory that holds a previous build (a

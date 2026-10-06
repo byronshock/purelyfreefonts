@@ -26,8 +26,9 @@ ruling of 2026-09-30): it tests the templates and CSS, which are the same in eve
 - **Themes:** light or dark follows the system on every page.
 - **Forced colours** (design-m2 §6 asks for Chromium; Playwright emulates them in Firefox
   too, where the palette is always the light one): axe on every page, and pixel checks
-  that a specimen's outlines and a focus ring are visible. The sample catalog has no
-  rendered specimens yet, so specimen checks use a small site built from
+  that a specimen's outlines and a focus ring are visible, and that a row's Download and
+  Details buttons keep a border and show their text (in the normal themes too). The sample
+  catalog has no rendered specimens yet, so specimen checks use a small site built from
   ``tests/fixtures/make_large_catalog.py`` when the served site has none.
 - **Reduced motion** (both engines): no transition or animation runs, and axe passes.
 - **Reflow** (1.4.10): no sideways scrolling at 320 px, nor at 640 px (1280 px at 200%).
@@ -812,6 +813,61 @@ def test_forced_colors_focus_ring_is_visible(guarded_context: Any, scheme: str) 
         f"focus ring on the details button changes {changed} pixels by "
         f"{MIN_FORCED_RING_CHANGE}:1; a ring around it needs at least {perimeter:.0f}"
     )
+    guarded.assert_clean(page)
+
+
+# A row's two actions: each one's border (style, width, colour), the box of its visible
+# text's first line (its first text node, before the visually hidden words), and the page's
+# background.
+ACTIONS_JS = """() => {
+  const row = document.querySelector('#list > li.font');
+  return {
+    page: getComputedStyle(document.body).backgroundColor,
+    actions: ['.download', '.details-toggle'].map((sel) => {
+      const el = row.querySelector(sel);
+      const s = getComputedStyle(el);
+      const range = document.createRange();
+      range.selectNodeContents(el.firstChild);
+      const line = range.getClientRects()[0];
+      return { sel, style: s.borderTopStyle, width: parseFloat(s.borderTopWidth),
+               colour: s.borderTopColor,
+               text: { x: line.left, y: line.top, width: line.width, height: line.height } };
+    }),
+  };
+}"""
+
+
+@pytest.mark.sample_only
+@pytest.mark.parametrize("mode", ["light", "dark", "forced-light", "forced-dark"])
+def test_row_actions_keep_their_text_and_border(guarded_context: Any, mode: str) -> None:
+    """The owner's site ruling of 2026-10-05 (download_button): the Download button is filled
+    with the accent and Details is a faint outline. In forced colours both keep a border
+    clearly apart from the page, and in every theme each one's text shows: its line's box
+    has ink against its background. In forced colours Chromium paints a backplate in the
+    page's colour behind text, which hid text in the accent's text colour (the box there was
+    one blank colour)."""
+    kwargs: dict[str, Any] = {"color_scheme": mode.removeprefix("forced-"), "viewport": PHONE}
+    if mode.startswith("forced"):
+        kwargs["forced_colors"] = "active"
+    guarded, page = open_page(guarded_context, "/", **kwargs)
+    row = page.locator("#list > li.font").first
+    row.scroll_into_view_if_needed()
+    page.evaluate(FRAMES_JS)
+    got = page.evaluate(ACTIONS_JS)
+    if mode.startswith("forced"):
+        back = parse_rgb(got["page"])
+        assert back is not None, got
+        assert back[3] == 1, got
+        for action in got["actions"]:
+            colour = parse_rgb(action["colour"])
+            assert action["style"] == "solid", action
+            assert action["width"] >= 1, action
+            assert colour is not None, action
+            assert contrast(colour[:3], back[:3]) >= 3, (action, got)
+    for action in got["actions"]:
+        pixels = png_pixels(page.screenshot(clip=action["text"], animations="disabled"))
+        share = ink_share(pixels)
+        assert share > 0.05, f"{mode}: {action['sel']} shows almost no text ({share:.2%} ink)"
     guarded.assert_clean(page)
 
 

@@ -268,6 +268,9 @@ def test_each_row_has_its_parts(dom, doc):
         assert family in download.text  # a unique name for each row's link (2.4.4)
 
         toggle = row.find("button", class_="details-toggle")
+        # The row ends with its two actions, the download link first, so the keyboard
+        # reaches them in that order (download_button changes only their look).
+        assert row.elements()[-2:] == [download, toggle]
         assert toggle.attrs["type"] == "button"
         assert toggle.attrs["aria-expanded"] == "false"
         assert toggle.attrs["aria-controls"] == f"details-{font_id}"
@@ -727,6 +730,76 @@ def test_the_score_and_the_heading_are_centred_on_the_specimen(browser, site_url
         for r in rows:
             if not r["hasBox"] and not r["unranked"]:
                 assert abs(r["rankTop"] - r["headTop"]) <= 0.5, r
+    finally:
+        context.close()
+
+
+# Each row's two actions, laid out in full: their boxes and computed look, and the token
+# values they should take, read through a probe (CSSOM, which the CSP allows).
+ACTIONS_LOOK = """() => {
+  const probe = (prop, token) => {
+    const el = document.createElement('span');
+    el.style.setProperty(prop, `var(${token})`);
+    document.body.append(el);
+    const value = getComputedStyle(el).getPropertyValue(prop);
+    el.remove();
+    return value;
+  };
+  const tokens = { accent: probe('background-color', '--c-accent'),
+                   accentFg: probe('color', '--c-accent-fg'), fg: probe('color', '--c-fg'),
+                   divider: probe('border-top-color', '--c-divider') };
+  const look = (el) => {
+    const s = getComputedStyle(el);
+    const r = el.getBoundingClientRect();
+    return { tag: el.tagName, top: r.top, height: r.height, width: r.width,
+             bg: s.backgroundColor, color: s.color, border: s.borderTopColor,
+             borderWidth: parseFloat(s.borderTopWidth), borderStyle: s.borderTopStyle,
+             weight: parseInt(s.fontWeight, 10), underline: s.textDecorationLine };
+  };
+  const rows = Array.from(document.querySelectorAll('li.font'), (li) => {
+    li.style.setProperty('content-visibility', 'visible');
+    return { id: li.id, download: look(li.querySelector('.download')),
+             toggle: look(li.querySelector('.details-toggle')) };
+  });
+  return { tokens, rows };
+}"""
+
+
+@pytest.mark.parametrize("width", [375, 700, 1280])
+@pytest.mark.parametrize("scheme", ["light", "dark"])
+def test_download_is_the_button_and_details_the_quieter_one(browser, site_url, width, scheme):
+    """The owner's site ruling of 2026-10-05 (download_button): a row's "Download from ..."
+    link has the strong, button-like look, filled with the accent, and stays a link; the
+    Details button is the quieter one, a faint outline with no fill. On one line the two are
+    the same height and level, each at least 24px square (2.5.8); a long destination wraps
+    inside the download button. Phone cards, table rows and wide rows; the forced-colours
+    look is checked in test_a11y.py."""
+    context, page = open_page(browser, site_url, width, color_scheme=scheme)
+    try:
+        got = page.evaluate(ACTIONS_LOOK)
+        tokens = got["tokens"]
+        assert tokens["accent"] != tokens["divider"]
+        for row in got["rows"]:
+            download, toggle = row["download"], row["toggle"]
+            assert download["tag"] == "A", row
+            assert download["bg"] == download["border"] == tokens["accent"], row
+            assert download["color"] == tokens["accentFg"], row
+            assert download["weight"] >= 600, row
+            assert download["underline"] == "none", row
+            assert toggle["tag"] == "BUTTON", row
+            assert toggle["bg"] in {"rgba(0, 0, 0, 0)", "transparent"}, row
+            assert toggle["border"] == tokens["divider"], row
+            assert toggle["color"] == tokens["fg"], row
+            for action in (download, toggle):
+                assert action["borderStyle"] == "solid", row
+                assert action["borderWidth"] >= 1, row
+                assert action["width"] >= 24, row
+                assert action["height"] >= 24, row
+            if download["height"] < toggle["height"] + 10:  # the download on one line
+                assert abs(download["height"] - toggle["height"]) <= 0.5, row
+                assert abs(download["top"] - toggle["top"]) <= 0.5, row
+            else:  # wrapped: taller than Details, never shorter
+                assert download["height"] > toggle["height"], row
     finally:
         context.close()
 

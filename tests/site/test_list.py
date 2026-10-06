@@ -1285,6 +1285,59 @@ def test_an_unranked_label_takes_a_line_of_its_own(
     guarded.assert_clean(page)
 
 
+# The ranked rows of the default view laid out in full, in order: each one's height, and the
+# first one's vertical padding, its actions' gap above them, and its type and box sizes.
+ROW_SPACING_JS = """() => {
+  const lis = Array.from(document.querySelectorAll('#list > li.font:not(.is-unranked)'));
+  lis.forEach((li) => { li.style.contentVisibility = 'visible'; });
+  const first = lis[0];
+  const style = (sel) => getComputedStyle(first.querySelector(sel));
+  const out = {
+    heights: lis.map((li) => li.getBoundingClientRect().height),
+    padding: [parseFloat(style('.font-row').paddingTop),
+              parseFloat(style('.font-row').paddingBottom)],
+    gaps: [parseFloat(style('.download').marginTop),
+           parseFloat(style('.details-toggle').marginTop)],
+    sizes: [style('.font-name').fontSize, style('.download').fontSize,
+            style('.details-toggle').fontSize, style('.font-meta').fontSize],
+    box: first.querySelector('.font-spec').getBoundingClientRect().height,
+  };
+  lis.forEach((li) => { li.style.contentVisibility = ''; });
+  return out;
+}"""
+
+
+@pytest.mark.parametrize(
+    "viewport",
+    [{"width": 375, "height": 812}, {"width": 700, "height": 800}, {"width": 1280, "height": 720}],
+    ids=["phone", "table", "wide"],
+)
+def test_phone_cards_fit_about_five_to_a_screen(
+    guarded_context: Any, doc: dict[str, Any], viewport: dict[str, int]
+) -> None:
+    """The owner's site ruling of 2026-10-05 (phone_rows_trim): on phones a card's margins
+    are a few pixels tighter, so about five fit on an 812px screen with the larger names;
+    category and license keep their own line, and the type, the specimen box and the buttons
+    keep their sizes. From 40rem (the table rows and the wide rows) the margins are as before.
+
+    On the real catalog at least five ranked rows fit on the screen once the list is scrolled
+    to its first row, and the median row is at most a fifth of the screen. The sample's rows
+    carry more tags, so it checks the spacing only."""
+    guarded, page = open_list(guarded_context, viewport=viewport)
+    got = page.evaluate(ROW_SPACING_JS)
+    phone = viewport["width"] < 640
+    spacing = 8 if phone else 12  # --space-2 on phones, --space-3 from 40rem
+    assert got["padding"] == [spacing, spacing], got["padding"]
+    assert got["gaps"] == [spacing, spacing], got["gaps"]
+    assert got["sizes"] == ["20px", "14px", "16px", "14px"], got["sizes"]
+    assert got["box"] == (48 if phone else 64)
+    if phone and not doc.get("synthetic"):
+        heights = got["heights"]
+        assert sum(heights[:5]) <= viewport["height"], heights[:5]
+        assert median(heights) <= viewport["height"] / 5, median(heights)
+    guarded.assert_clean(page)
+
+
 BARS_JS = """() => Array.from(document.querySelectorAll('#list > li.font'), (li) => {
   const cell = li.querySelector('.rank');
   const bar = cell.querySelector('.bar');
