@@ -280,13 +280,13 @@ The facts behind it come from a workflow of eight agents on 2026-10-05: five rea
   - [x] Record a one-time check against local renders of all 500 fonts in the pull request: the trimmed contours equal `render(name_only=True)`'s. CI checks the 5 pinned fixtures.
 - [x] The box: `--spec-h` 64 px on wide screens (`site/css/00-tokens.css`), with `SPEC_BOX_PX` following it (`build.py:114`, today 48). The phone box stays 40 px until 7b. `35-specimens.css` (`mask-size: contain`, left center) stays as it is.
 - [x] Re-measure the `--row-est-h` estimates in `site/css/20-list.css` for every layout, including the tablet table layout. At 700 × 800, rows grow from 172 to 188 px with a 64 px box.
-- [ ] Records and wording *(open only for the label, which 7b builds)*:
+- [x] Records and wording:
   - [x] `site/CONTRACT.md`: line 29 says the build trims, not just copies.
   - [x] The build docstring, and `docs/milestone-2.md` lines 100 and 102.
-  - [ ] The image's alt and aria-label "<family> sample" now describe the name only. Settle the wording, since it repeats the `<h3>`, and update `test_specimens_loader.py`. *(Settled 2026-10-05: decorative, `specimen_label_hidden`; built in 7b.)*
+  - [x] The image's alt and aria-label "<family> sample" now describe the name only. Settle the wording, since it repeats the `<h3>`, and update `test_specimens_loader.py`. *(Settled 2026-10-05: decorative, `specimen_label_hidden`; built in #60.)*
 - [x] Tests: replace the `svg()` helper in `tests/site/test_build.py` (lines 207–212), which writes a 492-unit file with one contour that the trim rule rejects; this changes every build test that uses the `catalog` fixture. Add a test over all 500 committed files and the 5 fixtures.
 - [x] Re-run M2 step 10's load-speed numbers, the accessibility suites and the real-catalog site tests.
-- [ ] Ask the lead to redeploy staging once it merges. Merging to `main` alone doesn't update staging, and production deploys are off. The owner then checks the vertical alignment: the score and the NF mark line up with the first line, while the name is centred in its box. *(Superseded 2026-10-05: the owner ruled `nerd_tag` and `score_centred` from a local build, and the lead redeploys staging once 7b has merged.)*
+- [x] Ask the lead to redeploy staging once it merges. Merging to `main` alone doesn't update staging, and production deploys are off. The owner then checks the vertical alignment: the score and the NF mark line up with the first line, while the name is centred in its box. *(Superseded 2026-10-05: the owner ruled `nerd_tag` and `score_centred` from a local build. The lead deployed staging with 7a–7c on 2026-10-06, main 7738636, with the live test passing.)*
 
 **Done when:**
 - at 1280 px the median drawn name is at least 1.5 times today's 25.0 px per em (expected about 53);
@@ -316,12 +316,13 @@ Long names are limited by width and grow less: about 1 phone row in 10 grows und
 - CI passes.
 
 #### 7c: Download as the button, and phone row margins
-- [ ] "Download from …" gets the button style, and Details the quieter one (`download_button`). In forced colours both keep a visible border.
-- [ ] On phones, trim a few pixels of row margin so about five rows still fit per screen with the larger names (`phone_rows_trim`). Category and license stay on their own line.
+**Merged in #61** (7738636, 2026-10-06) and deployed to staging the same day.
+- [x] "Download from …" gets the button style, and Details the quieter one (`download_button`). In forced colours both keep a visible border.
+- [x] On phones, trim a few pixels of row margin so about five rows still fit per screen with the larger names (`phone_rows_trim`). Category and license stay on their own line.
   Measure it against the Coding view and the Nerd filter too: with the longer "Nerd Font available" tag (7b, #60), their first rows average about 181 px on phones.
-- [ ] The details panel drops the "NF" box before the Nerd Font build link (`details_nerd_box_dropped`).
+- [x] The details panel drops the "NF" box before the Nerd Font build link (`details_nerd_box_dropped`).
 
-**Done when:** at least five rows per 812 px phone screen once scrolled to the list, axe passes, and CI passes.
+**Done when:** at least five rows per 812 px phone screen once scrolled to the list, axe passes, and CI passes. *(Met in #61 in the default view, from 352 px wide: 160.2 px median cards. The Coding view and the Nerd filter fit four, as the owner accepted, `phone_rows_four_in_coding`.)*
 
 #### 7d: The renderer draws names only, and `build/specimens` is redrawn
 - [ ] The code (`RENDERER_VERSION` 3; `render_one` draws the name only; `SAMPLE` leaves the cache key; intended name-only drawings aren't flagged `specimen_name_only`; the fixtures are regenerated) **lands in the same pull request as the redraw, never before it**. Otherwise every render-cache key misses, and the next replay redraws, or flags as failed, all 500.
