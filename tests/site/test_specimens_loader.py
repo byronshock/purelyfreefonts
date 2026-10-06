@@ -653,7 +653,11 @@ def test_a_selection_of_the_hidden_heading_shows_over_the_drawn_name(
     selected = png_pixels(span.screenshot())
     page.evaluate("() => getSelection().removeAllRanges()")
     after = png_pixels(span.screenshot())
-    assert not changed(before, after), f"the box changed: {changed(before, after)} pixels"
+    # Once the selection is gone, the box looks as it did: a CI runner repaints a few edge
+    # pixels differently (10 of about 25,000 seen), so up to 0.1% may differ, against the
+    # more than 1% a selection changes.
+    stray = changed(before, after)
+    assert stray <= 0.001 * len(before), f"the box changed: {stray} of {len(before)} pixels"
     shown = changed(before, selected)
     assert shown > 0.01 * len(before), f"the selection changed {shown} of {len(before)} pixels"
     guarded.assert_clean(page)
