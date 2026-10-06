@@ -342,7 +342,8 @@
 li.font {
   /* Median row heights on the real list, measured on 2026-10-05 with the 64px specimen box
      (40px on phones): cards about 164px; 3-column and 4-column rows, set below, about 188px
-     and 116px. So the scrollbar barely moves as rows render. */
+     and 116px. Rows without a tag line are shorter, so until every row has rendered the page
+     runs a few per cent too long (5-9% on the real list). */
   --row-est-h: 10.25rem;
 
   content-visibility: auto;
@@ -379,7 +380,7 @@ li.font.is-dim .font-name {
   grid-area: rank;
   font-size: var(--fs-base);
   font-weight: 700;
-  /* One line of the name, so a number sits level with it. */
+  /* One line of the heading, so a number sits level with the title's first line. */
   line-height: calc(var(--fs-large) * var(--lh-tight));
   font-variant-numeric: tabular-nums;
 }
@@ -865,9 +866,10 @@ li.font:not(.is-unranked) .font-row > .rank {
 /* The title: the heading, the Nerd Font marker and the specimen box (owner rulings of
    2026-09-29, name_once and nerd_marker_spot_title). Its second column is the marker's width,
    left free on every row, marker or not, so the markers line up and no row's height depends
-   on one. Where there is a specimen, the heading lies over the box's first line, the name
-   drawn in the font, and stops being painted once the specimen shows (below); without one,
-   the heading comes first and the fallback note under it. */
+   on one. Where there is a specimen, the heading shares the box's cell at its top, the box
+   draws the name in the font, centred in its height (since step 7a the name alone, so it
+   sits lower than the heading), and the heading stops being painted once the specimen shows
+   (below); without one, the heading comes first and the fallback note under it. */
 .font-title {
   grid-area: title;
   display: grid;

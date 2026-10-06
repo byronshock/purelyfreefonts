@@ -10,16 +10,20 @@ name's contours, then the sample line's. ``name_only`` cuts the path where the s
 starts, at the largest backward jump in x between two contours' start points: the sample line
 starts again near x = 0 after the name has run right. (A rule on height alone cuts 15 of the
 500 files wrongly.) The renderer shifts the whole drawing right when ink reaches left of
-x = 0; where the sample line set that shift, the name moves back to its own ink's left edge.
-The view box becomes the name's: as wide as its ink (the file doesn't record the name's
-advance), and ``NAME_BOX`` units tall below the top margin the file had, grown as the renderer
-grows it to hold ink below that.
+x = 0. In 7 of the committed files the sample line's ink set that shift, so the name moves back
+to its own left edge, where a names-only drawing puts it, by the file's ``SHIFTS`` entry: the
+file can't say how far. The view box becomes the name's: as wide as its ink (the file doesn't
+record the name's advance), and ``NAME_BOX`` units tall below the top margin the file had,
+grown as the renderer grows it to hold ink below that.
 
-Only files whose sha256 ``PINS_FILE`` lists are trimmed: the 500 committed two-line specimens,
-each checked once against ``render(name_only=True)`` from its font. Any other file is served as
-it is, since a wrong cut would ship a plausible but wrong image, not an error. ``PINS_FILE``
-is ``sha256sum``'s output in ``build/`` (``sha256sum specimens/*.svg``); add a file to it only
-after checking its cut the same way.
+Only files whose sha256 ``PINS_FILE`` lists are trimmed: the 500 committed two-line specimens
+and the sample's 5 (``tests/fixtures/specimens``), each of whose cuts equals the path
+``render(name_only=True)`` draws from its font. Any other file is served as it is, since a
+wrong cut would ship a plausible but wrong image, not an error. ``PINS_FILE`` is
+``sha256sum``'s output at the repository root (``LC_ALL=C sha256sum build/specimens/*.svg
+tests/fixtures/specimens/*.svg``; ``LC_ALL=C`` sorts the globs as the tests do). Add a file to
+it only once its cut matches its font's names-only drawing (tests/site/test_trim.py checks
+every pinned file whose font is in the font cache).
 """
 
 import functools
@@ -33,8 +37,20 @@ PINS_FILE = Path(__file__).with_name("trim.sha256")
 # as 308), and the two lines together 1.92 em (491.52, framed as 492).
 NAME_BOX = 308
 TWO_LINE_BOX = 492
+# By a pinned file's sha256: how far render.py shifted its drawing right for the sample line's
+# sake beyond what the name alone needs, in grid units. Found by drawing each font names-only;
+# every other pinned file has none.
+SHIFTS = {
+    "b94654680a6c743b2644f73320fcbcc5bc80d2b0206fe55aee613eae1513c4d2": 15,  # cinzel-decorative
+    "22d9ecfc3100f69109050e035cd20878ff2a6c37f0d3128524f0a3839d49c7ba": 8,  # gochi-hand
+    "f577ce931ef7397b901c8f52ddc681bd2281c189920c80ccbc47556366058c70": 17,  # homemade-apple
+    "7eecc6b1b5373d1dc82db9b35813ff626b200b88a8b25aa6e9561b1616b2446b": 3,  # indie-flower
+    "eb38b70ab629b933ea98ae1f614e7f8905535ab174c5a9fc86ac5b773977c0d9": 22,  # reenie-beanie
+    "8f49f833e07c230f902c4dc14c11af71d42257781964ee750f63f1db24ff16ad": 2,  # shrikhand
+    "9d61b92439a1b8fb2366e29f3eaa23f7215fe0af83923bb83317371042cf78c6": 11,  # sunshiney
+}
 
-_PIN = re.compile(r"([0-9a-f]{64})  specimens/[a-z0-9-]+\.svg")
+_PIN = re.compile(r"([0-9a-f]{64})  (build|tests/fixtures)/specimens/[a-z0-9-]+\.svg")
 # The renderer's output exactly: fixed attributes, one path of relative commands and integers.
 _SVG = re.compile(
     rb'<svg xmlns="http://www\.w3\.org/2000/svg" width="(\d+)" height="(\d+)" '
@@ -66,15 +82,17 @@ def pinned() -> frozenset[str]:
     for number, line in enumerate(PINS_FILE.read_text(encoding="ascii").splitlines(), 1):
         match = _PIN.fullmatch(line)
         if match is None:
-            raise ValueError(f"{PINS_FILE.name} line {number}: not '<sha256>  specimens/<id>.svg'")
+            raise ValueError(f"{PINS_FILE.name} line {number}: not '<sha256>  <dir>/<id>.svg'")
         pins.add(match[1])
     return frozenset(pins)
 
 
-def name_only(svg: bytes) -> bytes:
-    """The two-line specimen ``svg`` cut down to its name line (see the module docstring).
+def name_only(svg: bytes, shift: int = 0) -> bytes:
+    """The two-line specimen ``svg`` cut down to its name line, moved ``shift`` units left
+    (its ``SHIFTS`` entry; see the module docstring).
 
-    Raises ValueError for a file the renderer didn't write, or one with no second line.
+    Raises ValueError for a file the renderer didn't write, one with no second line, or a
+    shift that would move ink left of x = 0.
     """
     match = _SVG.fullmatch(svg)
     if match is None:
@@ -85,13 +103,9 @@ def name_only(svg: bytes) -> bytes:
     if not jumps or min(jumps) >= 0:
         raise ValueError("no second line to cut off")
     cut = jumps.index(min(jumps)) + 1
-    name, sample = contours[:cut], contours[cut:]
-    left = min(c.left for c in name)
-    # The sample line's ink starts at x = 0 and the name's right of it: the renderer moved
-    # both lines right for the sample line's sake (or the sample line just touches x = 0).
-    # The file doesn't say how far, so the name's ink goes to x = 0. In 6 of the 500 pinned
-    # files that is 2 to 13 units left of where render(name_only=True) puts it.
-    shift = left if min(c.left for c in sample) == 0 < left else 0
+    name = contours[:cut]
+    if not 0 <= shift <= min(c.left for c in name):
+        raise ValueError(f"a shift of {shift} units would move the name's ink left of x = 0")
     # The file is TWO_LINE_BOX tall below its top margin, unless ink reaches its bottom edge;
     # then the margin can't be read and is taken as none, which gives the renderer's height
     # in every pinned file.

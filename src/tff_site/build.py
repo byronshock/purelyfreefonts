@@ -35,8 +35,8 @@ else there (``_src/``, drafts) never ships.
 Specimens (the owner's site rulings of 2026-10-05, ``specimen_name_only_list`` and
 ``specimen_trim_served``): a row shows only the family's name. Until ``build/specimens`` is
 redrawn names-only, a two-line specimen whose sha256 is pinned in ``trim.PINS_FILE`` is served
-cut down to its name line (``trim.name_only``), unless the catalog flags the font
-``specimen_name_only``; any other file is served as it is.
+cut down to its name line (``trim.name_only``, moved left by its ``trim.SHIFTS`` entry), unless
+the catalog flags the font ``specimen_name_only``; any other file is served as it is.
 
 A row's ``specimen`` ``width`` and ``height`` are the size the no-script ``<img>`` shows at:
 ``SPEC_BOX_PX`` high (``--spec-h``), with the served SVG's aspect ratio. A row's ``nerd`` is
@@ -507,7 +507,7 @@ def _copy_specimens(
             continue
         try:
             if digest in trim.pinned() and "specimen_name_only" not in font["flags"]:
-                blob = trim.name_only(blob)
+                blob = trim.name_only(blob, trim.SHIFTS.get(digest, 0))
             width, height = svg_size(blob)
         except ValueError as exc:
             errors.append(f"{where}: {exc}")

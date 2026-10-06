@@ -207,7 +207,7 @@ def fake_pages(monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest) 
 
 def svg(font_id: str) -> bytes:
     """A stand-in specimen. ``trim.PINS_FILE`` doesn't list it, so the build serves it as it
-    is (step 7a trims only the committed specimens)."""
+    is (step 7a trims only the pinned specimens; the trim couldn't read it anyway)."""
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="2800" height="492" viewBox="0 0 2800 492">'
         f'<path d="M0 0h{len(font_id)}v10z"/><!-- {font_id} --></svg>\n'
@@ -1090,25 +1090,42 @@ def test_a_specimen_with_a_script_fails(tmp_path, catalog, mini_site):
         run_build(catalog, tmp_path / "site", mini_site)
 
 
-def test_a_pinned_specimen_is_served_cut_to_its_name(tmp_path, catalog, mini_site):
+def test_only_a_pinned_specimen_is_served_cut_to_its_name(tmp_path, catalog, mini_site):
     """PLAN-REVIEWERS-1.md step 7a (the owner's site ruling of 2026-10-05,
     specimen_trim_served): a committed specimen whose sha256 ``trim.PINS_FILE`` lists is served
-    cut down to its name line, and its no-script image takes the cut file's aspect ratio. The
-    same file is served as it is for a font flagged ``specimen_name_only``."""
-    real = (ROOT / "build" / "specimens" / "inter.svg").read_bytes()
+    cut down to its name line, moved left by its ``trim.SHIFTS`` entry, and its no-script image
+    takes the cut file's aspect ratio. The same file is served as it is for a font flagged
+    ``specimen_name_only``, and so is a file the trim could cut whose sha256 isn't pinned."""
+    real = (ROOT / "build" / "specimens" / "reenie-beanie.svg").read_bytes()
     sha = hashlib.sha256(real).hexdigest()
     assert sha in trim.pinned()
-    for font_id in ("sample-sans-01", "sample-mono-02"):
-        (catalog[0].parent / "specimens" / f"{font_id}.svg").write_bytes(real)
-        edit_catalog(catalog[0], font_id, preview__sha256=sha)
-    edit_catalog(catalog[0], "sample-mono-02", flags=["specimen_name_only"])
+    assert trim.SHIFTS[sha] > 0
+    # one coordinate changed: still of the renderer's form, but never checked against a font
+    other = re.sub(rb'd="m(\d+)', lambda m: b'd="m%d' % (int(m[1]) + 1), real, count=1)
+    assert other != real
+    assert hashlib.sha256(other).hexdigest() not in trim.pinned()
+    assert trim.name_only(other) != other
+    for font_id, blob in (
+        ("sample-sans-01", real),
+        ("sample-display-25", real),
+        ("sample-mono-02", other),
+    ):
+        (catalog[0].parent / "specimens" / f"{font_id}.svg").write_bytes(blob)
+        edit_catalog(catalog[0], font_id, preview__sha256=hashlib.sha256(blob).hexdigest())
+    edit_catalog(catalog[0], "sample-display-25", flags=["specimen_name_only"])
+    edit_catalog(catalog[0], "sample-mono-02", flags=[])
     out = tmp_path / "site"
     run_build(catalog, out, mini_site)
     page = parse((out / "index.html").read_text(encoding="utf-8"))
     imgs = {Path(a["src"]).name.split(".")[0]: a for t, a in page.tags if t == "img"}
-    cut = trim.name_only(real)
+    cut = trim.name_only(real, trim.SHIFTS[sha])
     assert len(cut) < len(real)
-    for font_id, served in (("sample-sans-01", cut), ("sample-mono-02", real)):
+    assert cut != trim.name_only(real)
+    for font_id, served in (
+        ("sample-sans-01", cut),
+        ("sample-display-25", real),
+        ("sample-mono-02", other),
+    ):
         img = imgs[font_id]
         assert asset(out, img["src"]).read_bytes() == served, font_id
         width, height = build.svg_size(served)
