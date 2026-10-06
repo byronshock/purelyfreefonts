@@ -343,7 +343,10 @@ li.font {
   /* Median row heights on the real list, measured on 2026-10-05 with the 64px specimen box
      (48px on phones, since step 7b): cards about 172px; 3-column and 4-column rows, set
      below, about 188px and 116px. Rows without a tag line are shorter, so until every row has
-     rendered the page runs a few per cent too long (5-8% on the real list). */
+     rendered the page runs a few per cent too long (5-8% on the real list). The tag "Nerd
+     Font available" (nerd_tag) wraps the tag line onto a second line on 11 popular coding
+     fonts, so the Coding view and the Nerd Font filter run taller: their first ten rows
+     average about 181px as cards and 122px in 4 columns. */
   --row-est-h: 10.75rem;
 
   content-visibility: auto;
@@ -899,10 +902,14 @@ li.font:not(.is-unranked) .font-row:has(> .font-title:not(.has-spec)) > .rank {
 
 /* The specimen is showing (45-specimens.js marks the title once the file has loaded and the
    mask is set), so it draws the name: the heading stays for screen readers, search and
-   find-in-page, but isn't painted. Only where masks work: elsewhere the heading shows. */
+   find-in-page, but its text isn't painted. Transparent text, not opacity, so a selection or
+   a find-in-page match still paints its highlight over the drawn name (opacity would hide
+   that too); forced colours would repaint the text, so they keep it transparent. Only where
+   masks work: elsewhere the heading shows. */
 @supports (mask-image: none) or (-webkit-mask-image: none) {
   .font-title.is-drawn > .font-name {
-    opacity: 0;
+    color: transparent;
+    forced-color-adjust: none;
   }
 }
 
@@ -911,7 +918,8 @@ li.font:not(.is-unranked) .font-row:has(> .font-title:not(.has-spec)) > .rank {
    screen readers there. */
 @media (scripting: none) {
   .font-title.has-spec > .font-name {
-    opacity: 0;
+    color: transparent;
+    forced-color-adjust: none;
   }
 }
 

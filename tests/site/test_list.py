@@ -1209,7 +1209,7 @@ def test_the_live_region_is_polite_coalesced_and_never_repeats_silently(
 
 
 # Every listed row laid out in full (content-visibility off, so no row keeps its estimate):
-# its height, the estimate its CSS gives, and where its rank label and name sit.
+# its height, the estimate its CSS gives, and where its rank label, name and specimen box sit.
 LAYOUT_JS = """() => {
   const lis = Array.from(document.querySelectorAll('#list > li.font'));
   lis.forEach((li) => { li.style.contentVisibility = 'visible'; });  // CSSOM: CSP allows it
@@ -1218,14 +1218,16 @@ LAYOUT_JS = """() => {
     const rank = li.querySelector('.rank');
     const r = rank.getBoundingClientRect();
     const n = li.querySelector('.font-name').getBoundingClientRect();
+    const span = li.querySelector('.font-title span.spec');
+    const s = span && span.getBoundingClientRect();
     const est = getComputedStyle(li).getPropertyValue('--row-est-h').trim();
     return {
       label: rank.textContent,
       unranked: li.classList.contains('is-unranked'),
       height: li.getBoundingClientRect().height,
       estimate: est.endsWith('rem') ? parseFloat(est) * rem : parseFloat(est),
-      rankTop: r.top, rankBottom: r.bottom, rankHeight: r.height,
-      nameTop: n.top,
+      rankTop: r.top, rankBottom: r.bottom, rankHeight: r.height, rankMid: r.top + r.height / 2,
+      nameTop: n.top, boxMid: s ? s.top + s.height / 2 : null,
       lineHeight: parseFloat(getComputedStyle(rank).lineHeight) || 1.5 * rem,
     };
   });
@@ -1269,8 +1271,11 @@ def test_an_unranked_label_takes_a_line_of_its_own(
     assert not any(r["unranked"] for r in ranked)
     for r in unranked:
         assert r["rankBottom"] <= r["nameTop"] + 1, r["label"]  # a line of its own, above
-    for r in ranked:
-        assert abs(r["rankTop"] - r["nameTop"]) < r["lineHeight"], r["label"]  # beside the name
+    for r in ranked:  # beside the name: centred on its specimen (score_centred), or level
+        if r["boxMid"] is None:
+            assert abs(r["rankTop"] - r["nameTop"]) <= 1, r["label"]
+        else:
+            assert abs(r["rankMid"] - r["boxMid"]) <= 1, r["label"]
     if viewport["width"] >= 700:  # the label fits on one line once the row is table-like
         assert all(r["rankHeight"] < 1.6 * r["lineHeight"] for r in unranked)
     for group in (ranked, unranked):

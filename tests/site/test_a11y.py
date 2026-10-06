@@ -16,7 +16,10 @@ ruling of 2026-09-30): it tests the templates and CSS, which are the same in eve
   (the 404), in light and dark, at 375 x 812 and 1280 x 900. The list page is also checked with
   filters on, with the phone filters open (375 only), with a details panel open and in the
   no-results state. Text whose contrast axe leaves unmeasured (rows far down the list skip
-  rendering) is measured again once scrolled into view, and must pass.
+  rendering) is measured again once scrolled into view, and must pass. The one exception is
+  the heading of a row whose specimen shows: its text is transparent (name_once), which axe
+  can only call a 1:1 contrast, and WCAG 1.4.3 sets no contrast for text that is visible to
+  no one; test_specimens_loader.py checks that it paints nothing over the specimen.
 - **Structure:** axe's landmark, heading and skip-link rules (outside the WCAG tags), and each
   font a list item with its own heading.
 - **Consistent help** (3.2.6): the feedback spot has the same place and links on every page.
@@ -350,6 +353,17 @@ SCROLL_TO_JS = """
 """
 
 
+# Whether a node is the unpainted heading of a row whose specimen shows: transparent text over
+# the drawn name (owner rulings name_once and score_centred, site/CONTRACT.md section 4).
+UNPAINTED_HEADING_JS = """
+(selector) => {
+  const el = document.querySelector(selector);
+  return Boolean(el && el.matches('.font-title.is-drawn > h3.font-name')
+    && /^rgba\\(\\d+, \\d+, \\d+, 0\\)$/.test(getComputedStyle(el).color));
+}
+"""
+
+
 # Every row rendered, or back to the stylesheet's content-visibility (CSSOM: the CSP allows it).
 RENDER_ROWS_JS = """
 (on) => {
@@ -365,7 +379,10 @@ def unmeasured_contrast(page: Any, results: Any) -> list[str]:
     their text as "overlapped" and leave it as needing review. ``assert_axe_clean`` renders
     every row for its run, which leaves none on the real catalog's 500 rows; checking them
     here one at a time took a minute or two a page. Any node left over is scrolled to the
-    middle of the screen and checked alone; it must then pass. Returns what still doesn't."""
+    middle of the screen and checked alone; it must then pass. Returns what still doesn't.
+
+    A row's heading that the specimen hides has transparent text, which axe can only call a
+    1:1 contrast: WCAG 1.4.3 sets no contrast for text visible to no one, so it is skipped."""
     left: list[str] = []
     x, y = page.evaluate("[scrollX, scrollY]")
     for item in results.response["incomplete"]:
@@ -373,6 +390,8 @@ def unmeasured_contrast(page: Any, results: Any) -> list[str]:
             continue
         for node in item["nodes"]:
             target = node["target"]
+            if len(target) == 1 and page.evaluate(UNPAINTED_HEADING_JS, target[0]):
+                continue
             if len(target) == 1 and page.evaluate(SCROLL_TO_JS, target[0]):
                 page.evaluate(FRAMES_JS)
             left += page.evaluate(RERUN_JS, [target, "color-contrast"])

@@ -638,11 +638,16 @@ class SourceCredit:
 
 @dataclass(frozen=True, slots=True)
 class NerdText:
-    """The Nerd Font marker's wording (owner ruling of 2026-09-29, TASK-2)."""
+    """The Nerd Font marker's wording (owner ruling of 2026-09-29, TASK-2).
 
-    marker: str  # the text beside a font's name: "NF"
+    Since the owner's site ruling of 2026-10-05 (nerd_tag) a row shows a "Nerd Font
+    available" tag instead: the site shows the marker only in the details panel and no
+    legend. catalog-site.json v1 still carries all three.
+    """
+
+    marker: str  # the marker beside a font's Nerd Font build link: "NF"
     label: str  # the marker's accessible name: "Nerd Font version available"
-    legend: str  # the site's legend: "<marker>: <label> (...)."
+    legend: str  # the legend, no longer shown: "<marker>: <label> (...)."
 
 
 @dataclass(frozen=True, slots=True)

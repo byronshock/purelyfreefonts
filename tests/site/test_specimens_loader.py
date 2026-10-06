@@ -31,7 +31,9 @@ Checked here:
 - the name shows once (owner ruling of 2026-09-29, name_once): a shown specimen draws it and
   the heading, still there for screen readers, isn't painted; a specimen that hasn't arrived,
   a missing one or none at all leaves the heading in view. The heading is centred on the box,
-  over the drawn name (score_centred, 2026-10-05).
+  over the drawn name (score_centred, 2026-10-05), and its text is transparent, so it paints
+  nothing there, in forced colours too, while a selection of it (standing in for a
+  find-in-page match) shows its highlight over the drawn name.
 """
 
 import hashlib
@@ -85,8 +87,8 @@ ROWS_JS = """() => Array.from(document.querySelectorAll('li.font')).flatMap((li)
     mask: style.maskImage || style.webkitMaskImage || '',
   }];
 })"""
-# Each row's heading: its opacity, and whether it is centred on the specimen box, if any (a
-# heading that wraps taller than the box starts at its top instead).
+# Each row's heading: what paints it (see ``painted``), and whether it is centred on the
+# specimen box, if any (a heading that wraps taller than the box starts at its top instead).
 HEADINGS_JS = """() => Array.from(document.querySelectorAll('li.font')).map((li) => {
   const title = li.querySelector('.font-title');
   const heading = title.querySelector('h3.font-name');
@@ -95,11 +97,13 @@ HEADINGS_JS = """() => Array.from(document.querySelectorAll('li.font')).map((li)
   const b = (span || title).getBoundingClientRect();
   return { id: li.dataset.id, state: span ? span.dataset.state || null : 'none',
            drawn: title.classList.contains('is-drawn'), hasSpec: title.classList.contains('has-spec'),
-           opacity: getComputedStyle(heading).opacity, text: heading.textContent.trim(),
+           paint: [getComputedStyle(heading).opacity, getComputedStyle(heading).color],
+           text: heading.textContent.trim(),
            overBox: (h.height <= b.height + 0.5
                      ? Math.abs(h.top + h.height / 2 - (b.top + b.height / 2)) < 1
                      : Math.abs(h.top - b.top) < 1) && Math.abs(h.left - b.left) < 0.5 };
 })"""
+PAINT_JS = "(e) => [getComputedStyle(e).opacity, getComputedStyle(e).color]"
 SETTLE_JS = """() => new Promise((resolve) =>
   requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve, 60))))"""
 SCROLL_JS = "(id) => document.getElementById('font-' + id).scrollIntoView({block: 'center'})"
@@ -275,6 +279,22 @@ def png_pixels(blob: bytes) -> list[tuple[int, int, int]]:
     return pixels
 
 
+def painted(opacity: str, color: str) -> bool:
+    """Whether text with this computed opacity and colour is painted: a shown specimen hides
+    the heading with transparent text, never opacity (name_once; see the CSS)."""
+    return opacity != "0" and not re.fullmatch(r"rgba\(\d+, \d+, \d+, 0\)|transparent", color)
+
+
+def changed(one: list[tuple[int, int, int]], two: list[tuple[int, int, int]]) -> int:
+    """How many pixels of two screenshots of one box differ by more than 16 levels in some
+    channel; the outlines' antialiasing can shift by a level or two between paints."""
+    return sum(
+        1
+        for p, q in zip(one, two, strict=True)
+        if max(abs(a - b) for a, b in zip(p, q, strict=True)) > 16
+    )
+
+
 def luminance(rgb: tuple[int, int, int]) -> float:
     def channel(v: int) -> float:
         s = v / 255
@@ -304,6 +324,21 @@ def ink(pixels: list[tuple[int, int, int]]) -> tuple[tuple[int, int, int], float
     cut = max(1, distance(darkest) // 2)
     share = sum(1 for p in pixels if distance(p) >= cut) / len(pixels)
     return darkest, contrast(darkest, background), share
+
+
+def outlines(page: Any, span: Any) -> list[tuple[int, int, int]]:
+    """The specimen box's pixels once its outlines have been painted and two screenshots in a
+    row agree (up to 5 s after its mask is set), or as they are by then."""
+    deadline = time.monotonic() + 5
+    last: list[tuple[int, int, int]] = []
+    while True:
+        pixels = png_pixels(span.screenshot())
+        if ink(pixels)[2] > 0.01 and last and not changed(last, pixels):
+            return pixels
+        if time.monotonic() > deadline:
+            return pixels
+        last = pixels
+        page.wait_for_timeout(100)
 
 
 # --- loading ---------------------------------------------------------------------------------
@@ -562,7 +597,7 @@ def test_a_specimen_that_has_not_arrived_leaves_the_box_empty_and_the_name_in_vi
         heading.evaluate("(h) => h.style.removeProperty('visibility')")
         assert len(set(pixels)) == 1, "the box shows something before its specimen arrived"
         assert not first["drawn"]
-        assert first["opacity"] == "1", "the name is hidden with no specimen to draw it"
+        assert painted(*first["paint"]), "the name is hidden with no specimen to draw it"
         assert page.locator(f"#font-{first['id']} h3.font-name").is_visible()
     finally:
         page.unroute_all(behavior="ignoreErrors")  # also lets the held requests go
@@ -586,14 +621,42 @@ def test_a_shown_specimen_is_the_visible_name(
         assert h["hasSpec"] == (h["state"] != "none"), h
         if h["state"] == "set":
             assert h["drawn"], h
-            assert h["opacity"] == "0", h
+            assert h["paint"][0] == "1", h  # transparent text, not opacity: see below
+            assert not painted(*h["paint"]), h
         else:
             assert not h["drawn"], h
-            assert h["opacity"] == "1", h
+            assert painted(*h["paint"]), h
         if h["hasSpec"]:
             assert h["overBox"], h
     family = families[drawn[0]["id"]]
     assert page.get_by_role("heading", name=family, exact=True).count() == 1
+
+
+@pytest.mark.parametrize("viewport", [WIDE, PHONE], ids=["wide", "phone"])
+def test_a_selection_of_the_hidden_heading_shows_over_the_drawn_name(
+    guarded_context: Any, viewport: dict[str, int]
+) -> None:
+    """The hidden heading lies over the drawn name so that find-in-page highlights it there
+    (owner's site ruling of 2026-10-05, score_centred). Its text is transparent rather than
+    at opacity 0, which would hide the highlight with the text. The browser's find bar can't
+    be driven from a test; a selection of the heading's text, painted the same way, stands
+    in: it must change the pixels over the box, and nothing else may."""
+    guarded = guarded_context(viewport=viewport)
+    page = open_list(guarded)
+    first = next(h for h in page.evaluate(HEADINGS_JS) if h["drawn"])
+    assert first["overBox"], first
+    span = page.locator(f"#font-{first['id']} span.spec")
+    heading = page.locator(f"#font-{first['id']} h3.font-name")
+    before = outlines(page, span)
+    heading.evaluate("(h) => getSelection().selectAllChildren(h)")
+    assert page.evaluate("() => getSelection().toString().trim()") == first["text"]
+    selected = png_pixels(span.screenshot())
+    page.evaluate("() => getSelection().removeAllRanges()")
+    after = png_pixels(span.screenshot())
+    assert not changed(before, after), f"the box changed: {changed(before, after)} pixels"
+    shown = changed(before, selected)
+    assert shown > 0.01 * len(before), f"the selection changed {shown} of {len(before)} pixels"
+    guarded.assert_clean(page)
 
 
 # --- what people see and hear ----------------------------------------------------------------
@@ -614,15 +677,17 @@ def test_specimens_are_visible_in_every_theme(
     first = next(r for r in rows(page) if r["set"])
     wait_for_requests(page, guarded, {first["src"]})
     span = page.locator(f"#font-{first['id']} span.spec")
-
-    deadline = time.monotonic() + 5
-    while True:
-        colour, ratio, share = ink(png_pixels(span.screenshot()))
-        if share > 0.01 or time.monotonic() > deadline:
-            break
-        page.wait_for_timeout(100)
+    shown = outlines(page, span)
+    colour, ratio, share = ink(shown)
     assert share > 0.01, "no outlines in the specimen box"
     assert ratio >= 4.5, f"outlines {colour} have contrast {ratio:.2f} with the background"
+    # The hidden heading lies over the drawn name and must add nothing to it; forced colours
+    # would repaint its transparent text but for forced-color-adjust: none.
+    heading = page.locator(f"#font-{first['id']} h3.font-name")
+    heading.evaluate("(h) => h.style.setProperty('visibility', 'hidden')")
+    alone = png_pixels(span.screenshot())
+    heading.evaluate("(h) => h.style.removeProperty('visibility')")
+    assert not changed(shown, alone), "the hidden heading is painted over the drawn name"
     if forced == "active":
         style = page.evaluate(
             "() => { const s = getComputedStyle(document.querySelector('span.spec'));"
@@ -686,7 +751,7 @@ def test_fonts_without_a_specimen_show_the_fallback_text(
         spec = page.locator(f"#font-{font['id']} .font-spec")
         assert spec.locator("span.spec, img").count() == 0
         heading = page.locator(f"#font-{font['id']} h3.font-name")
-        assert heading.evaluate("(h) => getComputedStyle(h).opacity") == "1"
+        assert painted(*heading.evaluate(PAINT_JS))
         # textContent: innerText is empty in a row content-visibility skips.
         text = " ".join((spec.locator("p.spec-fallback").text_content() or "").split())
         if font["preview_ok"]:
@@ -725,7 +790,8 @@ def test_without_javascript_the_no_script_images_show(
                    top: li.getBoundingClientRect().top,
                    filter: getComputedStyle(img).filter,
                    spanShown: span !== null && getComputedStyle(span).display !== 'none',
-                   heading: getComputedStyle(li.querySelector('h3.font-name')).opacity };
+                   heading: [getComputedStyle(li.querySelector('h3.font-name')).opacity,
+                             getComputedStyle(li.querySelector('h3.font-name')).color] };
         })"""
     )
     # The image draws the name, so the heading isn't painted (name_once); a row without an
@@ -733,12 +799,13 @@ def test_without_javascript_the_no_script_images_show(
     fallbacks = page.evaluate(
         """() => Array.from(document.querySelectorAll('li.font'))
           .filter((li) => !li.querySelector('.font-title.has-spec'))
-          .map((li) => getComputedStyle(li.querySelector('h3.font-name')).opacity)"""
+          .map((li) => [getComputedStyle(li.querySelector('h3.font-name')).opacity,
+                        getComputedStyle(li.querySelector('h3.font-name')).color])"""
     )
     families = {f["id"]: f["family"] for f in loader_doc["fonts"] if f["preview"]}
     # The sample has rows without an image; in the real catalog every font has one.
     assert len(fallbacks) == len(loader_doc["fonts"]) - len(families)
-    assert set(fallbacks) <= {"1"}
+    assert all(painted(*paint) for paint in fallbacks)
     assert {i["id"] for i in images} == set(families)
     for image in images:
         assert image["loading"] == "lazy"
@@ -747,7 +814,7 @@ def test_without_javascript_the_no_script_images_show(
         assert int(image["height"]) == 64
         assert image["filter"] == ("invert(1)" if scheme == "dark" else "none")
         assert not image["spanShown"], "the empty mask box shows without JavaScript"
-        assert image["heading"] == "0", "the name shows twice without JavaScript"
+        assert not painted(*image["heading"]), "the name shows twice without JavaScript"
     first = images[0]
     assert first["top"] < viewport["height"]
     assert first["loaded"]
