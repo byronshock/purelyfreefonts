@@ -289,8 +289,8 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
   - *Amended on 2026-09-29* (the owner's Nerd Font marker; Claude took TASK-2 over from Qwen). The field stays a nullable `links.nerd` in both schemas, before the freeze, and the placement stays the row and the details panel on every view. What changes:
     - **Which builds:** the Nerd Fonts project's builds and the makers' own NF builds (such as Maple Mono NF, Cascadia Code NF and Rec Mono).
     - **Target:** the build's own page instead of the one shared releases page. That is its folder in the Nerd Fonts repository at the current release tag, or the maker's release page for a maker-built one. The label names the build, such as "SauceCodePro Nerd Font".
-    - **Marker:** a fixed-width **"NF"** beside the font's name. The Nerd Fonts logo may replace it once the maintainers agree (Backlog TASK-3).
-    - **Legend:** "NF: Nerd Font version available (adds developer icons, which have their own licenses)."
+    - **Marker:** a fixed-width **"NF"** beside the font's name. The Nerd Fonts logo may replace it once the maintainers agree (Backlog TASK-3). *Replaced on 2026-10-05:* a tag, "Nerd Font available", among the row's tags (`nerd_tag`; **First reviews of the test site**, below).
+    - **Legend:** "NF: Nerd Font version available (adds developer icons, which have their own licenses)." *Replaced on 2026-10-05:* no legend; the caution moves into each font's details, beside the Nerd Font build link, after the freeze (`nerd_caution_in_details`).
     - **Filter:** a new "Nerd Font available" filter.
     - **Before launch:** Claude confirms every linked build's license check and hides the marker for any build that fails.
 
@@ -299,7 +299,7 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
     - **README-only folders:** a Nerd Fonts folder that holds only a README stays linked.
     - **Hide switch:** the owner can hide a build's marker and link, with a reason, in `config/nerd-hidden.toml`. That was the owner's choice; Claude had recommended adding the switch only when a check fails.
     - **Broken link:** a Nerd link that fails its check is not shown (no marker, link or filter match) until it passes again. The font stays listed, and review.md flags it. This was the owner's own answer; Claude had recommended a warning only.
-    - **Marker:** it stays at the end of the name's cell, in a column. *Moved later that day* to the end of the row's title cell, since the text name is hidden where a specimen shows (**Font names**, below).
+    - **Marker:** it stays at the end of the name's cell, in a column. *Moved later that day* to the end of the row's title cell, since the text name is hidden where a specimen shows (**Font names**, below). *Replaced on 2026-10-05* by the tag (`nerd_tag`).
 - **Every qualifying font is listed.** Recorded in `data/reviews/site/2026-09-29.toml` (`more_fonts`, `font_requests`). *(2026-09-29)*
   - **The rest, A–Z (the owner's choice (b), Claude's recommendation).** Every font that passes the gates is listed, not only the catalog. The catalog keeps its ranks and bands. The other qualifying fonts (about 1,250 in the 2026-09-29 run) follow the ranked fonts in the same list, unranked and A–Z, under a heading such as "More truly free fonts". They show no rank, band or "501+", and they take the same filters, search, details, link policy and preview rules. The owned-font comparison takes owned fonts out of them too.
   - **Timing (2026-09-30).** Not part of getting the site live. The A–Z list and fonts added on request move out of Milestone 1 (step 15b) into a milestone of their own, [milestone-more-fonts.md](docs/milestone-more-fonts.md), after Milestone 2's launch and before or after Milestone 3's owned-font tools; the owner chooses which when Milestone 2 is done. Until then the site lists the ranked catalog only. Recorded in `data/reviews/site/2026-09-30.toml` (`more_fonts_timing`).
@@ -401,7 +401,11 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
     - until `build/specimens` is redrawn names-only, the site build serves a copy trimmed to the name line from each committed, sha256-checked file, for the pinned files only (the 500 committed specimens and the sample's 5, each cut checked against its font's names-only drawing), with nothing in `build/` or the catalogs changing (`specimen_trim_served`; built in #58). While the details panel is frozen, the site shows no sample lines;
     - the specimen box is 64 px tall on wide screens, and 48 px on phones once the NF column stops reserving space on rows without a Nerd Font build (`specimen_box_heights`);
     - the details show "Hamburgefonstiv 0123", a line of code for monospace fonts (`details_sample_lines`, the owner's choice of lines) and a glyph strip (`glyph_strip`, the owner's choice; Claude had recommended "not now"). All load only when the details open;
-    - the NF legend shows only while an NF row is visible, and on phones the NF column takes space only where it's needed (`nf_legend_visible_rows`).
+    - the NF legend shows only while an NF row is visible, and on phones the NF column takes space only where it's needed (`nf_legend_visible_rows`). *Replaced the same day* (`nerd_tag`, the owner: "Make NF a tag like Adjustable weight, 'Nerd Font available'. Get as much space as possible for the name. Then center the score."):
+      - the NF mark becomes a "Nerd Font available" tag, the NF column and the legend go, and the name gets the title cell's full width;
+      - the score is centred on the specimen, with the hidden name over the drawn one (`score_centred`);
+      - the caution about the icons' licenses moves into the details, after the freeze (`nerd_caution_in_details`, the owner's choice; Claude had recommended a legend line);
+      - the specimen image is decorative for screen readers, since the heading names the font (`specimen_label_hidden`).
   - **Search:**
     - when a search finds no listed font, the list says "No listed font matches '…'" and shows the note; later, once names.json's reasons are cleaned up, it also gives the reason and free fonts with the same letter widths (`no_match_search`);
     - fonts whose own name matches come first (`search_name_first`).

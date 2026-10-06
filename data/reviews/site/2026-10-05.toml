@@ -147,3 +147,27 @@ recommended = true
 value = "download_button_and_margin_trims"
 ruling = "On phones, 7c makes Download the button and trims a few pixels of row margin to keep about five rows per screen with the larger names; category and license are not merged into the tag line. This amends phone_rows_merged (2026-10-05)."
 reason = "Main already shows about five rows per 812 px phone screen (164 px median; the outside reviewer's 285 px was measured on release f6e84b3), and with the license name on every row the merged line fits on one line in only 15 of 304 tagged rows. Of (a) this and (b) merging anyway, the owner took Claude's recommendation."
+
+[nerd_tag]
+value = "Nerd Font available"
+ruling = "The Nerd Font marker, a fixed-width \"NF\" at the end of a row's title cell, becomes a tag among the row's tags, reading \"Nerd Font available\", like \"Adjustable weight\". The NF column goes, so the specimen gets the title cell's full width on every row, and the legend above the list goes. The \"Nerd Font available\" filter and the Nerd Font build link stay. This replaces the marker and legend of the Nerd Fonts build link ruling as amended on 2026-09-29 (nerd_marker_spot_title), and nf_legend_visible_rows."
+reason = "Asked how the score and the NF mark should line up with the larger names of step 7a, the owner: \"Make NF a tag like Adjustable weight, 'Nerd Font available'. Get as much space as possible for the name. Then center the score.\" Claude had offered centring the score and the NF mark on the specimen box, keeping the layout, or deciding on staging."
+
+[score_centred]
+value = "score_centred_on_the_specimen"
+ruling = "A row's score and its bar are centred vertically on the specimen box, and the hidden text name (name_once) lies over the drawn name, so find-in-page highlights it there."
+reason = "The owner's answer above: \"Then center the score.\" With step 7a's 64 px box the drawn name sits about 20 px below a score aligned to a 24 px first line."
+
+[nerd_caution_in_details]
+choice = "b"
+recommended = false
+value = "caution_beside_the_nerd_link"
+ruling = "The caution that a Nerd Font version adds developer icons, which have their own licenses, moves into each font's details, beside the Nerd Font build link. It lands with the details work after the freeze; until then the list shows no caution."
+reason = "With NF a tag, the legend that carried the caution (Nerd Fonts build link ruling, 2026-09-29) goes. Of (a) one legend line under the count while some listed font has the tag, which Claude recommended, (b) the details and (c) dropping it, the owner chose (b)."
+
+[specimen_label_hidden]
+choice = "a"
+recommended = true
+value = "decorative_for_screen_readers"
+ruling = "A row's specimen image is decorative for screen readers (no accessible name: aria-hidden on the masked box, an empty alt on the no-script image), since it now shows only the name and the heading beside it already says it. Replaces the \"<family> sample\" label."
+reason = "Of (a) hiding it, (b) \"<family>, in its own typeface\", which screen readers would hear after the heading, and (c) keeping \"<family> sample\", the owner took Claude's recommendation."

@@ -295,13 +295,23 @@ The facts behind it come from a workflow of eight agents on 2026-10-05: five rea
 
 Long names are limited by width and grow less: about 1 phone row in 10 grows under 5% (Cormorant Garamond, Libertinus Keyboard). Say so in the pull request.
 
-#### 7b: The NF column and legend, and the phone box
-- [ ] On phones, the NF column (`20-list.css`, `calc(2.25rem + var(--space-2))`) reserves its 44 px only in rows with an NF marker: `.font-title:not(:has(> .nf-mark))` gets one column. Browsers without `:has()` keep today's layout. 430 of 500 phone rows gain 44 px of specimen width.
-- [ ] The phone box becomes 48 px (`specimen_box_heights`), so the median phone name reaches about 39.9 px per em.
-- [ ] The NF legend (`#nf-legend`) shows only while some NF row is among the rows the filters leave, like the held legend: a `nerd_shown` flag, a server-side `hidden` attribute, and a toggle in `25-render.js` (`nf_legend_visible_rows`).
-- [ ] Rewrite `test_the_nerd_marker_keeps_the_row_height` for phones.
+#### 7b: The row's title: NF as a tag, the full-width name, the centred score
+**Depends on:** 7a; the owner's rulings `nerd_tag`, `score_centred` and `specimen_label_hidden` (2026-10-05), which replace `nf_legend_visible_rows`. Stacked on #58's branch, so the two merge together before staging is redeployed.
+- [ ] The fixed-width "NF" marker at the end of the title cell becomes a tag among the row's tags, "Nerd Font available", like "Adjustable weight" (`nerd_tag`). The NF column in `20-list.css` goes, so the specimen gets the title cell's full width on every row and at every width. The "Nerd Font available" filter stays.
+- [ ] The NF legend above the list goes. Its caution about the icons' licenses moves into the details with 7e (`nerd_caution_in_details`).
+- [ ] The phone box becomes 48 px (`specimen_box_heights`).
+- [ ] The score and its bar are centred vertically on the specimen box, and the hidden `<h3>` (`name_once`) lies over the drawn name, so find-in-page highlights it there (`score_centred`).
+- [ ] The specimen is decorative for screen readers: `aria-hidden` on the masked box and an empty `alt` on the no-script `<img>`, in place of "<family> sample" (`specimen_label_hidden`). The heading names the font. Update `test_specimens_loader.py`.
+- [ ] `_row.html.j2`'s comment (lines 5–8) describes the new geometry.
+- [ ] `site/CONTRACT.md`: the rows, the Nerd Font marker (now a tag), the legend and `name_once`. Plus the tests that pinned the marker, the legend and the row height (`test_the_nerd_marker_keeps_the_row_height`), and the accessibility grid.
+- [ ] Re-measure `--row-est-h`, and the header's single-row width if the nav is touched; it isn't expected to be.
 
-**Done when:** the legend is hidden with Handwriting, Display and an empty search, and shown with the Nerd filter; phone rows still fit about five per 812 px screen; CI passes.
+**Done when:**
+- at 375 px the median drawn name is at least 1.8 times today's 20.8 px per em (about 39.9 expected);
+- the score's centre is within 2 px of the specimen box's centre;
+- no NF legend shows, and the tag shows on the 70 rows with a Nerd Font build;
+- phone rows still fit about five per 812 px screen;
+- CI passes.
 
 #### 7c: Download as the button, and phone row margins
 - [ ] "Download from …" gets the button style, and Details the quieter one (`download_button`). In forced colours both keep a visible border.
@@ -322,6 +332,7 @@ Long names are limited by width and grow less: about 1 phone row in 10 grows und
 - [ ] Separate SVG sets drawn by the specimens stage (`specimens/<id>.sample.svg` for "Hamburgefonstiv 0123", `<id>.code.svg` for the 97 monospace fonts, `<id>.glyphs.svg`), listed in their own manifest outside the frozen `catalog-site.json`, such as `build/specimens/sets.json` with path and sha256 for each. The site build checks the hashes, writes the files under hashed names and lists them in `details.json`. `_prune` and both budget checks learn the new files.
 - [ ] **Budget:** the glyph strip as ruled brings the specimens to 11.92 MB, over the 10 MB cap, with 8 files over 16 KB. Ask the owner before building: for example, a separate total for the details sets with the 16 KB cap kept, no strip for the heaviest fonts, a coarser grid, or a smaller strip.
 - [ ] The designer link reads "Designer's page" (`designer_label`).
+- [ ] Beside the Nerd Font build link: the caution that it adds developer icons, which have their own licenses (`nerd_caution_in_details`).
 - [ ] The code line's text needs the owner's OK.
 
 **Done when:** the freeze has lifted, the details show the lines and the strip within the ruled budget, and CI passes.
