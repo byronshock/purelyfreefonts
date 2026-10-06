@@ -110,8 +110,8 @@ INDEX = """\
 <span class="rank">{{ row.label }}</span>
 <h3 class="font-name">{{ row.family }}</h3>
 {% if row.specimen %}
-<span class="spec" role="img" aria-label="{{ row.family }} sample" data-src="{{ row.specimen.url }}"></span>
-<noscript><img class="spec-img" src="{{ row.specimen.url }}" alt="{{ row.family }} sample"
+<span class="spec" aria-hidden="true" data-src="{{ row.specimen.url }}"></span>
+<noscript><img class="spec-img" src="{{ row.specimen.url }}" alt=""
  width="{{ row.specimen.width }}" height="{{ row.specimen.height }}" loading="lazy"></noscript>
 {% elif row.fallback == "license" %}
 <p class="spec-fallback" data-fallback="license">No preview. See it on
@@ -673,10 +673,10 @@ def test_rows_carry_specimens_and_fallbacks(tmp_path, catalog, mini_site):
 
 
 def test_the_no_script_box_is_the_css_box():
-    """``SPEC_BOX_PX`` is ``--spec-h`` on wide screens (the owner's site ruling of 2026-10-05,
-    specimen_box_heights); phones keep their 40 px box until step 7b."""
+    """``SPEC_BOX_PX`` is ``--spec-h`` on wide screens, and phones have a 48 px box (the
+    owner's site ruling of 2026-10-05, specimen_box_heights, the phones' part with step 7b)."""
     css = (ROOT / "site" / "css" / "00-tokens.css").read_text(encoding="utf-8")
-    assert re.findall(r"--spec-h:\s*(\d+)px;", css) == [str(build.SPEC_BOX_PX), "40"]
+    assert re.findall(r"--spec-h:\s*(\d+)px;", css) == [str(build.SPEC_BOX_PX), "48"]
 
 
 def test_row_badges_and_download_names():
@@ -688,6 +688,15 @@ def test_row_badges_and_download_names():
     assert not any(k == "pulled" for b in badges.values() for k, _ in b)
     assert ("new", "New") in badges["sample-sans-29"]
     assert ("attribution", "Credit required") in badges["sample-hand-16"]
+    # The owner's site ruling of 2026-10-05 (nerd_tag): a Nerd Font build is a tag, after
+    # "Adjustable weight", on exactly the fonts with one.
+    nerd = {f["id"] for f in SAMPLE["fonts"] if f["links"]["nerd"] is not None}
+    assert nerd == {i for i, b in badges.items() if ("nerd", "Nerd Font available") in b}
+    assert badges["sample-mono-02"][:2] == [
+        ("variable", "Adjustable weight"),
+        ("nerd", "Nerd Font available"),
+    ]
+    assert not any("nerd" in row for row in rows.values())  # the tag says it
     assert not any(k in ("monospace", "noredist") for b in badges.values() for k, _ in b)
     keys = [k for b in badges.values() for k, _ in b]
     for key in keys:
@@ -1617,12 +1626,15 @@ def test_real_templates_render_the_list_contract(tmp_path, catalog, real_site):
         ("sort-rank", "true"),
         ("sort-name", "false"),
     ]
-    # specimens: the script's span and the no-script image name the same hashed file
-    spans = {a["aria-label"]: a["data-src"] for t, a in tags if a.get("class") == "spec"}
+    # specimens: the script's span and the no-script image name the same hashed file, and
+    # both are decorative, since the heading names the font (specimen_label_hidden)
+    spans = [a for t, a in tags if a.get("class") == "spec"]
     imgs = [a for t, a in tags if t == "img" and a.get("class") == "spec-img"]
     assert len(spans) == len(imgs) == len(SPECIMEN_IDS)
+    assert [a["data-src"] for a in spans] == [a["src"] for a in imgs]
+    assert all(a.get("aria-hidden") == "true" and "role" not in a for a in spans)
     for img in imgs:
-        assert spans[img["alt"]] == img["src"]
+        assert img["alt"] == ""
         assert (img["width"], img["height"]) == ("364", "64")
         assert asset(out, img["src"]).is_file()
     # "Type your own text": every font file the details payload names is served

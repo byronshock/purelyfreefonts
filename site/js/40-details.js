@@ -321,7 +321,8 @@ const Details = (() => {
   // tff_site.data.nerd_link_text gives it: "SauceCodePro Nerd Font (GitHub: ryanoasis/…)".
   const nerdText = (target) => `${target.label} (${place(target.url)})`;
 
-  // The "NF" marker (owner ruling of 2026-09-29), named as in the rows: payload.nerd.
+  // The "NF" marker (owner ruling of 2026-09-29), worded by payload.nerd. Only the panel
+  // shows it: the rows have a "Nerd Font available" tag (owner's site ruling of 2026-10-05).
   const nerdMark = (words) =>
     el('span', { class: 'nf-mark', role: 'img', 'aria-label': words.label, text: words.marker });
 
@@ -378,8 +379,9 @@ const Details = (() => {
     );
 
   // The official, designer and Nerd Font build links, one per line, each naming where it
-  // goes (CONTRACT section 1). The Nerd link carries the "NF" marker; its legend is above
-  // the list. A link's note (why an archived mirror is the official download) follows it.
+  // goes (CONTRACT section 1). The Nerd link carries the "NF" marker, with no legend (the
+  // caution about the icons' licenses joins the panel later, nerd_caution_in_details). A
+  // link's note (why an archived mirror is the official download) follows it.
   const getIt = (payload, font) => {
     const { primary, designer, nerd } = font.links;
     const words = nerd && payload.nerd;

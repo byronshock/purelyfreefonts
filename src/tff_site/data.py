@@ -99,7 +99,7 @@ BIT_TYPE_OWN = 64
 OS_BITS = {"windows": 128, "macos": 256, "linux": 512, "android": 1024}  # os "app": no bit
 BIT_NEW = 2048
 BIT_PULLED = 4096
-BIT_NERD = 8192  # a Nerd Font build (links.nerd): the "NF" marker and filter (TASK-2)
+BIT_NERD = 8192  # a Nerd Font build (links.nerd): the "Nerd Font available" filter (TASK-2)
 
 LIST_FORMAT = 3  # 3 (2026-09-30): scores (s, held, note), order by score; 2: site categories
 DETAILS_FORMAT = 1

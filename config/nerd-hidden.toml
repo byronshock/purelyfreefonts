@@ -2,11 +2,11 @@
 #
 # Stage "links" links a family's Nerd Font build (links.nerd): the maker's own NF build, or
 # the Nerd Fonts project's folder when its base license qualifies (src/tff_catalog/links.py).
-# A family listed here gets no links.nerd at all, so the site shows no "NF" marker, no Nerd
-# link and no "Nerd Font available" match for it, whatever build it has. This is the owner's
-# switch for a build that fails a check the pipeline can't make, such as the pre-launch
-# check of its patched icon sets' licenses (docs/milestone-2.md step 14,
-# docs/nerd-fonts-link.md).
+# A family listed here gets no links.nerd at all, so the site shows no "Nerd Font available"
+# tag, no "NF" marker or Nerd link in its details and no filter match for it, whatever
+# build it has. This is the owner's switch for a build that fails a check the pipeline
+# can't make, such as the pre-launch check of its patched icon sets' licenses
+# (docs/milestone-2.md step 14, docs/nerd-fonts-link.md).
 #
 # Entries (loaded strictly with the rest of config/; `tff-catalog config` prints them and
 # they count toward the config hash):

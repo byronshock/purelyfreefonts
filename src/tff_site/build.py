@@ -39,10 +39,10 @@ cut down to its name line (``trim.name_only``, moved left by its ``trim.SHIFTS``
 the catalog flags the font ``specimen_name_only``; any other file is served as it is.
 
 A row's ``specimen`` ``width`` and ``height`` are the size the no-script ``<img>`` shows at:
-``SPEC_BOX_PX`` high (``--spec-h``), with the served SVG's aspect ratio. A row's ``nerd`` is
-true for a font with a Nerd Font build (``links.nerd``), which shows the catalog's ``nerd``
-marker beside its name; the list context's ``nerd`` carries that wording for the rows and the
-legend.
+``SPEC_BOX_PX`` high (``--spec-h`` on wide screens), with the served SVG's aspect ratio. A font
+with a Nerd Font build (``links.nerd``) gets the "Nerd Font available" tag among its badges
+(the owner's site ruling of 2026-10-05, ``nerd_tag``); the catalog's ``nerd`` wording reaches
+only the details panel.
 
 The output is written to a sibling staging directory and swapped in at the end, so a failed
 build leaves the previous site as it was. Only a directory that holds a previous build (a
@@ -100,6 +100,7 @@ NOT_FOUND_PAGE = {
 # in by" is in the details panel.
 BADGE_TEXT = {
     "variable": "Adjustable weight",  # owner ruling of 2026-09-30, variable_label
+    "nerd": "Nerd Font available",  # owner's site ruling of 2026-10-05, nerd_tag
     "limited": "Limited accents",
     "attribution": "Credit required",
     "preinstalled": "Comes with {}",
@@ -393,7 +394,6 @@ def _list_context(
     ]
     if not views or views[0]["key"] != data.DEFAULT_VIEW:
         raise BuildError([f"the first available view must be {data.DEFAULT_VIEW!r} (M2-D1)"])
-    nerd = doc["nerd"]
     rows = _rows(doc, specimens)
     return {
         "views": views,
@@ -401,13 +401,6 @@ def _list_context(
         # "No credit required" shows only while some font needs credit (license_filter).
         "credit_filter": any(f["license"]["attribution_required"] for f in doc["fonts"]),
         "systems_os": [{"value": k, "label": v} for k, v in data.OS_LABELS.items()],
-        # The legend shows its leading marker as the rows do: "<marker>" + "<after_marker>".
-        "nerd": {
-            "marker": nerd["marker"],
-            "label": nerd["label"],
-            "legend": nerd["legend"],
-            "after_marker": nerd["legend"].removeprefix(nerd["marker"]),
-        },
         "total": len(doc["fonts"]),
         # The hollow bar's legend, shown by the script while the view has held fonts.
         "held_legend": data.HELD_LEGEND,
@@ -444,8 +437,6 @@ def _rows(doc: Mapping[str, Any], specimens: Mapping[str, Specimen]) -> list[dic
                 else {"url": spec.url, "width": spec.width, "height": spec.height},
                 "fallback": None if spec else ("failed" if font["preview_ok"] else "license"),
                 "download": {"url": primary["url"], "label": data.destination_name(primary)},
-                # A Nerd Font build (TASK-2): the "NF" marker beside the name.
-                "nerd": font["links"]["nerd"] is not None,
             }
         )
     return rows
@@ -456,6 +447,7 @@ def _badges(
 ) -> list[dict[str, str]]:
     shown = {
         "variable": font["formats"]["variable"],
+        "nerd": font["links"]["nerd"] is not None,
         "limited": font["latin"]["coverage"] == "basic",
         "attribution": font["license"]["attribution_required"],
         "new": "too_new" in font["flags"],

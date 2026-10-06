@@ -2,13 +2,15 @@
   _row.html.j2: one font (site/CONTRACT.md, "A row"), included once per `row` of list.rows.
   Render moves whole li.font nodes and redraws only the .rank cell: a ranked font's score and
   its bar (hollow for a held font; owner rulings score_display and held_marker_style), or
-  "Not ranked: <reason>". Its text is what screen readers hear: "Score 83 of 100". The specimen box keeps its height whether or not the mask has arrived, since
-  rows use content-visibility. The title cell holds the heading, the Nerd Font marker and the
-  specimen: where there is a specimen, the heading lies over its first line, the drawn name,
-  and is hidden once the specimen shows (owner rulings of 2026-09-29, name_once and
-  nerd_marker_spot_title). A font with a Nerd Font build gets the fixed-width marker
-  (span.nf-mark) at the end of the title's first line. Kept compact: 540 of these ship in the
-  no-cache HTML.
+  "Not ranked: <reason>". Its text is what screen readers hear: "Score 83 of 100". The title
+  cell holds the heading and the specimen box, which takes the cell's full width (owner's site
+  rulings of 2026-10-05, nerd_tag and score_centred). Where there is a specimen, the heading
+  is centred on the box, over the name the box draws, and is hidden once the specimen shows
+  (name_once); the score and its bar are centred on the box too. The specimen is hidden from
+  screen readers, since the heading names the font (specimen_label_hidden). The box keeps its
+  height whether or not the mask has arrived, since rows use content-visibility. A font with a
+  Nerd Font build has the "Nerd Font available" tag among its badges. Kept compact: 540 of
+  these ship in the no-cache HTML.
 -#}
 <li class="font{% if row.unranked %} is-unranked{% endif %}" id="font-{{ row.id }}" data-id="{{ row.id }}">
 <div class="font-row">
@@ -19,13 +21,10 @@
 {% endif %}
 <div class="font-title{% if row.specimen %} has-spec{% endif %}">
 <h3 class="font-name" id="font-{{ row.id }}-name">{{ row.family }}</h3>
-{% if row.nerd %}
-<span class="nf-mark" role="img" aria-label="{{ list.nerd.label }}">{{ list.nerd.marker }}</span>
-{% endif %}
 <div class="font-spec">
 {% if row.specimen %}
-<span class="spec" role="img" aria-label="{{ row.family }} sample" data-src="{{ row.specimen.url }}"></span>
-<noscript><img class="spec-img" src="{{ row.specimen.url }}" alt="{{ row.family }} sample" width="{{ row.specimen.width }}" height="{{ row.specimen.height }}" loading="lazy"></noscript>
+<span class="spec" aria-hidden="true" data-src="{{ row.specimen.url }}"></span>
+<noscript><img class="spec-img" src="{{ row.specimen.url }}" alt="" width="{{ row.specimen.width }}" height="{{ row.specimen.height }}" loading="lazy"></noscript>
 {% elif row.fallback == "license" %}
 <p class="spec-fallback">No preview: this font's license doesn't let us host its files. See it on <a href="{{ row.download.url }}">{{ row.download.label }}</a>.</p>
 {% else %}

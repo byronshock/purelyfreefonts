@@ -124,8 +124,8 @@ Nerd link whatever build it has, and the queue lists it with the reason; an id
 that names no family of the universe fails the stage (``hidden_nerd_builds``).
 And a Nerd link that fails the check recorded for the run's date is kept in the
 stage file with ``Links.nerd_problem``, the check's verdict: stage "export" then
-publishes no ``links.nerd`` for the family (no marker, link or filter match on the
-site), and ``review.md`` flags it; the font stays listed, and the link is back as
+publishes no ``links.nerd`` for the family (no tag, marker, link or filter match on
+the site), and ``review.md`` flags it; the font stays listed, and the link is back as
 soon as a later check passes (owner ruling of 2026-09-29).
 
 **The check** (``check``) HEADs every primary, designer and Nerd link of the

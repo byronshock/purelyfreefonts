@@ -222,31 +222,27 @@ def test_each_row_has_its_parts(dom, doc):
         assert squash(heading.text) == family
         assert len(li.find_all("h3")) == 1
 
-        # The Nerd Font marker, right after the heading, only for a font with a Nerd Font build
-        # (owner ruling of 2026-09-29): its text is the marker, its name says what it means.
-        marks = row.find_all("span", class_="nf-mark")
-        assert len(marks) == (font["links"]["nerd"] is not None), font_id
-        if marks:
-            mark = marks[0]
-            assert title.elements()[1] is mark
-            assert mark.attrs["role"] == "img"
-            assert mark.attrs["aria-label"] == doc["nerd"]["label"]
-            assert squash(mark.text) == doc["nerd"]["marker"]
+        # The title is the heading and the specimen box, nothing else: the Nerd Font marker
+        # became a tag (the owner's site ruling of 2026-10-05, nerd_tag), so no row has one.
+        assert row.find_all("span", class_="nf-mark") == []
+        spec = title.elements()[1]
+        assert len(title.elements()) == 2
 
-        # The specimen box closes the title; with a specimen the title is has-spec, so the
-        # heading lies over the drawn name (owner ruling of 2026-09-29, name_once).
-        spec = title.elements()[-1]
+        # With a specimen the title is has-spec, so the heading lies over the drawn name
+        # (owner ruling of 2026-09-29, name_once). The specimen is decorative for screen
+        # readers, since the heading names the font (2026-10-05, specimen_label_hidden).
         assert spec.classes == ["font-spec"]
         span = spec.find("span", class_="spec")
         fallback = spec.find("p", class_="spec-fallback")
         assert (span is None) != (fallback is None), font_id
         assert title.classes == ["font-title"] + (["has-spec"] if span is not None else [])
         if span is not None:
-            assert span.attrs["role"] == "img"
-            assert span.attrs["aria-label"] == f"{family} sample"
+            assert span.attrs["aria-hidden"] == "true"
+            assert "role" not in span.attrs
+            assert "aria-label" not in span.attrs
             img = spec.find("noscript").find("img")
             assert img.attrs["src"] == span.attrs["data-src"]
-            assert img.attrs["alt"] == f"{family} sample"
+            assert img.attrs["alt"] == ""
             assert img.attrs["loading"] == "lazy"
             assert int(img.attrs["width"]) > 0
             assert int(img.attrs["height"]) > 0
@@ -290,7 +286,9 @@ def test_badges_follow_the_contract_order(dom, doc):
     for li in dom.find("ol", id="list").elements():
         badges = li.find("ul", class_="badges")
         font = fonts[li.attrs["data-id"]]
+        nerd = font["links"]["nerd"] is not None
         if badges is None:
+            assert not nerd, "a Nerd Font build always has its tag"
             continue
         assert badges.attrs.get("role") == "list"
         assert badges.attrs["aria-label"] == "Tags"
@@ -300,6 +298,12 @@ def test_badges_follow_the_contract_order(dom, doc):
         seen.update(keys)
         assert ("variable" in keys) == font["formats"]["variable"]
         assert ("attribution" in keys) == font["license"]["attribution_required"]
+        # The owner's site ruling of 2026-10-05 (nerd_tag): a tag like "Adjustable weight".
+        assert ("nerd" in keys) == nerd
+        if nerd:
+            tag = badges.find("li", data_badge="nerd")
+            assert squash(tag.text) == "Nerd Font available"
+            assert tag.classes == ["badge"]
     if doc.get("synthetic"):
         assert seen == set(BADGE_ORDER), set(BADGE_ORDER) - seen
 
@@ -376,7 +380,7 @@ def test_filter_controls_match_the_hash(dom, doc):
     assert radios(search, "nerd") == [("f-nerd", "1", False, "Nerd Font available")]
     nerd = search.find("input", id="f-nerd")
     assert nerd.parent.parent.attrs["id"] == "f-type"  # beside "Adjustable weight"
-    assert nerd.attrs["aria-describedby"] == "nf-legend"
+    assert "aria-describedby" not in nerd.attrs  # no legend to point to (nerd_tag)
     assert not any("checked" in i.attrs for i in search.find_all("input", type="checkbox"))
     # Sort: buttons over the list's columns, outside the filters, hidden until the script
     # shows them (owner ruling of 2026-09-30, sort_header).
@@ -408,20 +412,27 @@ def test_filter_controls_match_the_hash(dom, doc):
     assert search.find("button", id="f-clear") is not None
 
 
-def test_the_nerd_legend_is_the_owners(dom, doc):
-    """The legend under the count, word for word (owner ruling of 2026-09-29, nerd_legend),
-    its leading marker shown as the rows show it."""
-    legend = dom.find("p", id="nf-legend")
-    assert legend.attrs["class"] == "nf-legend"
-    assert squash(legend.text) == doc["nerd"]["legend"]
-    mark = legend.elements()[0]
-    assert (mark.tag, mark.classes, squash(mark.text)) == ("span", ["nf-mark"], "NF")
+def test_the_nerd_font_tag_replaces_the_marker_and_legend(dom, doc):
+    """The owner's site ruling of 2026-10-05 (nerd_tag): a font with a Nerd Font build has the
+    tag "Nerd Font available", like "Adjustable weight"; the "NF" marker and the legend above
+    the list (nerd_legend, 2026-09-29) are gone, though the catalog keeps their wording."""
+    assert build.BADGE_TEXT["nerd"] == "Nerd Font available"
+    assert dom.find(id="nf-legend") is None
+    assert dom.find_all(class_="nf-mark") == []
+    assert doc["nerd"]["legend"] not in squash(dom.text)
+    tagged = {
+        li.attrs["data-id"]
+        for li in dom.find("ol", id="list").elements()
+        if li.find("li", class_="badge", data_badge="nerd") is not None
+    }
+    assert tagged == {f["id"] for f in doc["fonts"] if f["links"]["nerd"] is not None}
+    assert tagged, "the data has a font with a Nerd Font build"
     results = dom.find("section", id="results").elements()
     assert [n.attrs.get("id") for n in results[:4]] == [
         "results-h",
         "ext-summary",
         "count",
-        "nf-legend",
+        "held-legend",
     ]
     assert results[-2].attrs["id"] == "list-sort"  # the sort buttons sit right over the list
 
@@ -668,48 +679,54 @@ def test_milestone_3_notes_follow_the_row_actions(browser, site_url, width):
         context.close()
 
 
-NF_LAYOUT = """() => {
-  const out = [];
-  for (const li of document.querySelectorAll('li.font')) {
-    const mark = li.querySelector(':scope > .font-row > .font-title > .nf-mark');
-    if (!mark) continue;
-    li.style.setProperty('content-visibility', 'visible');
-    const name = li.querySelector('.font-name');
-    const line = parseFloat(getComputedStyle(name).lineHeight);
-    const n = name.getBoundingClientRect();
-    const t = mark.parentNode.getBoundingClientRect();
-    const m = mark.getBoundingClientRect();
-    const before = li.getBoundingClientRect().height;
-    const parent = mark.parentNode;
-    const next = mark.nextSibling;
-    mark.remove();
-    const after = li.getBoundingClientRect().height;
-    parent.insertBefore(mark, next);
-    out.push({ id: li.id, before, after, inLine: m.top >= n.top - 0.5 && m.bottom <= n.top + line + 0.5,
-               atEnd: Math.abs(m.right - t.right) <= 0.5, clear: m.left >= n.right - 0.5,
-               right: m.right, width: m.width });
-  }
-  return out;
-}"""
+# Each row's title, laid out in full: the specimen box, the heading and the score cell.
+TITLE_LAYOUT = """() => Array.from(document.querySelectorAll('li.font'), (li) => {
+  li.style.setProperty('content-visibility', 'visible');
+  const mid = (r) => r.top + r.height / 2;
+  const title = li.querySelector('.font-title').getBoundingClientRect();
+  const span = li.querySelector('.font-title span.spec');
+  const box = span && span.getBoundingClientRect();
+  const h = li.querySelector('.font-title > h3.font-name').getBoundingClientRect();
+  const rank = li.querySelector('.font-row > .rank');
+  const r = rank.getBoundingClientRect();
+  const bar = rank.querySelector('.bar');
+  return { id: li.id, unranked: li.classList.contains('is-unranked'), hasBox: Boolean(box),
+           titleLeft: title.left, titleWidth: title.width,
+           boxLeft: box && box.left, boxWidth: box && box.width, boxHeight: box && box.height,
+           boxMid: box && mid(box), headTop: h.top, headHeight: h.height, headMid: mid(h),
+           rankTop: r.top, rankMid: mid(r), barMid: bar && mid(bar.getBoundingClientRect()) };
+})"""
 
 
-@pytest.mark.parametrize("width", [320, 700, 1280])
-def test_the_nerd_marker_keeps_the_row_height(browser, site_url, width, doc):
-    """The fixed-width marker sits in the title's first line, at its end, clear of the name, in
-    one column down the list, and a row is as tall with it as without it (CONTRACT section 4,
-    owner ruling nerd_marker_spot_title of 2026-09-29; rows use content-visibility)."""
+@pytest.mark.parametrize("width", [320, 375, 700, 1280])
+def test_the_score_and_the_heading_are_centred_on_the_specimen(browser, site_url, width):
+    """The owner's site rulings of 2026-10-05: the specimen box takes the title's full width,
+    with no column kept for a marker (nerd_tag); a ranked row's score and bar are centred
+    vertically on the box, and the heading, hidden once the specimen shows (name_once), is
+    centred on it too, over the drawn name, so find-in-page highlights it there
+    (score_centred). Phone cards (320, 375), the table rows from 40rem (700) and the wide rows
+    (1280). A heading that wraps taller than the box starts at the box's top; a row without a
+    specimen keeps its score level with its heading."""
     context, page = open_page(browser, site_url, width)
     try:
-        got = page.evaluate(NF_LAYOUT)
-        assert len(got) == sum(f["links"]["nerd"] is not None for f in doc["fonts"])
-        widths = {round(row["width"], 1) for row in got}
-        assert len(widths) <= 1, widths  # fixed-width
-        assert len({round(row["right"]) for row in got}) <= 1, got  # one column
-        for row in got:
-            assert row["before"] == row["after"], row
-            assert row["inLine"], row
-            assert row["atEnd"], row
-            assert row["clear"], row
+        rows = page.evaluate(TITLE_LAYOUT)
+        boxed = [r for r in rows if r["hasBox"]]
+        assert boxed, "no row has a specimen"
+        box_px = 48 if width < 640 else 64  # --spec-h (specimen_box_heights)
+        for r in boxed:
+            assert r["boxHeight"] == box_px, r
+            assert abs(r["boxLeft"] - r["titleLeft"]) <= 0.5, r
+            assert abs(r["boxWidth"] - r["titleWidth"]) <= 0.5, r  # the title's full width
+            if r["headHeight"] <= r["boxHeight"] + 0.5:
+                assert abs(r["headMid"] - r["boxMid"]) <= 1, r
+            else:
+                assert abs(r["headTop"] - (r["boxMid"] - box_px / 2)) <= 1, r
+            if not r["unranked"]:
+                assert abs(r["rankMid"] - r["boxMid"]) <= 1, r
+                assert abs(r["barMid"] - r["boxMid"]) <= 1, r
+        for r in rows:
+            if not r["hasBox"] and not r["unranked"]:
+                assert abs(r["rankTop"] - r["headTop"]) <= 0.5, r
     finally:
         context.close()
 
