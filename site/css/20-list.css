@@ -340,10 +340,10 @@
 }
 
 li.font {
-  /* Row heights measured on the real list of 2026-09-29, with the name shown once (median of
-     cards and 3-column rows about 170px; 4-column rows about 116px, set below), so the
-     scrollbar barely moves as rows render. */
-  --row-est-h: 11rem;
+  /* Median row heights on the real list, measured on 2026-10-05 with the 64px specimen box
+     (40px on phones): cards about 164px; 3-column and 4-column rows, set below, about 188px
+     and 116px. So the scrollbar barely moves as rows render. */
+  --row-est-h: 10.25rem;
 
   content-visibility: auto;
   contain-intrinsic-size: auto var(--row-est-h);
@@ -1112,10 +1112,11 @@ li.font.is-dim .spec-fallback {
 
 /* An unranked row: "Not ranked: <reason>" gets a line of its own above the name, instead of
    wrapping down the narrow rank column (the owner's site ruling of 2026-09-26, list_layout).
-   That line (two on a phone) makes the row taller: about 190px on the real list, cards and
-   3-column rows alike. */
+   That line makes the row taller by about 24px on the real list: cards about 188px, 3-column
+   rows about 212px (set below). A longer label takes two lines on a phone (about 244px in the
+   sample), so the cards' estimate sits a little above the real list's. */
 li.font.is-unranked {
-  --row-est-h: 12.25rem;
+  --row-est-h: 12.5rem;
 }
 
 li.font.is-unranked .font-row {
@@ -1131,6 +1132,14 @@ li.font.is-unranked .font-row {
 /* From 40rem: table-like rows. The rank has its own column; download and details close the
    row, so a download link that wraps never pushes the name block apart. */
 @media (min-width: 40rem) {
+  li.font {
+    --row-est-h: 11.75rem;
+  }
+
+  li.font.is-unranked {
+    --row-est-h: 13.25rem;
+  }
+
   .font-row {
     grid-template-columns: 6rem minmax(0, 1fr) auto;
     grid-template-areas:
@@ -1160,7 +1169,7 @@ li.font.is-unranked .font-row {
    the details button closes the last line. */
 @container font-list (min-width: 46rem) {
   li.font {
-    --row-est-h: 7.5rem;
+    --row-est-h: 7.25rem;
   }
 
   .font-row {
@@ -1171,9 +1180,9 @@ li.font.is-unranked .font-row {
       "rank title download toggle";
   }
 
-  /* The label's own line adds one line to the row. */
+  /* The label's own line adds one line to the row: about 140px. */
   li.font.is-unranked {
-    --row-est-h: 9rem;
+    --row-est-h: 8.75rem;
   }
 
   li.font.is-unranked .font-row {

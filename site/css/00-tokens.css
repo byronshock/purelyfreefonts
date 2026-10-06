@@ -31,7 +31,10 @@
   --measure: 70ch;
   --sidebar-width: 17rem;
   --target-min: 24px;
-  --spec-h: 48px;
+  /* The specimen box: 64px, drawing the name at about 53px per em (the owner's site ruling
+     of 2026-10-05, specimen_box_heights); 40px on phones, below. tff_site.build.SPEC_BOX_PX
+     follows it. */
+  --spec-h: 64px;
   --row-est-h: 88px;
 
   /* Focus: a 3px outline 2px outside the element, never hidden by a sticky header. */
