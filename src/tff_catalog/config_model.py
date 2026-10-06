@@ -640,13 +640,15 @@ class SourceCredit:
 class NerdText:
     """The Nerd Font marker's wording (owner ruling of 2026-09-29, TASK-2).
 
-    Since the owner's site ruling of 2026-10-05 (nerd_tag) a row shows a "Nerd Font
-    available" tag instead: the site shows the marker only in the details panel and no
-    legend. catalog-site.json v1 still carries all three.
+    Since the owner's site rulings of 2026-10-05 a row shows a "Nerd Font available" tag
+    instead (nerd_tag), and the details panel's Nerd Font build link names the build with no
+    marker before it (details_nerd_box_dropped): the page shows none of the three, and only
+    screen readers hear the label, before that link. catalog-site.json v1 still carries
+    them.
     """
 
-    marker: str  # the marker beside a font's Nerd Font build link: "NF"
-    label: str  # the marker's accessible name: "Nerd Font version available"
+    marker: str  # the marker, no longer shown: "NF"
+    label: str  # read to screen readers before the Nerd link: "Nerd Font version available"
     legend: str  # the legend, no longer shown: "<marker>: <label> (...)."
 
 
@@ -692,8 +694,8 @@ NERD_HIDDEN_FILE = "nerd-hidden.toml"
 class NerdHiddenConfig:
     """Families whose Nerd Font build the owner hides (owner ruling of 2026-09-29, TASK-2).
 
-    Stage "links" gives a listed family no ``links.nerd``, so the site shows no NF
-    marker, link or filter match for it, whatever build it has.
+    Stage "links" gives a listed family no ``links.nerd``, so the site shows no tag,
+    link or filter match for it, whatever build it has.
     ``config.check_nerd_hidden`` checks that each key is a family id and each reason is
     given; ``--strict`` checks the ids against the registry, and stage "links" fails on an
     id its universe lacks.

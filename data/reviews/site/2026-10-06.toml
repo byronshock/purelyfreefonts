@@ -1,0 +1,16 @@
+# Owner rulings of 2026-10-06 on the site, from the review of PLAN-REVIEWERS-1.md's step 7c, asked in chat as
+# single-select questions. Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md.
+
+[details_nerd_lead_in]
+choice = "a"
+recommended = true
+value = "Nerd Font:"
+ruling = "In a font's details, the Nerd Font build link has a visible lead-in, \"Nerd Font:\", like the \"Official:\" row, so the line says what it is even where the maker names the build \"<Family> NF\"."
+reason = "With the NF box gone (details_nerd_box_dropped), 9 of the 70 Nerd builds (Cascadia Code NF, Cascadia Mono NF, Ioskeley Mono, Maple Mono NF and the five Monaspace fonts) showed no visible 'Nerd Font' wording; step 7c's review found it. Of (a) a visible lead-in and (b) the link alone with a lead-in for screen readers only, the owner took Claude's recommendation."
+
+[phone_rows_four_in_coding]
+choice = "a"
+recommended = true
+value = "five_in_the_default_view_four_in_coding_and_nerd"
+ruling = "On phones, five rows per 812 px screen holds in the default view from 352 px wide; in the Coding view and with the Nerd Font filter four fit, where the longer \"Nerd Font available\" tag wraps more often. Type and the 48 px specimen box are not shrunk to get five there."
+reason = "Step 7c's spacing trims (phone_rows_trim) give a 160.2 px median card from 352 px wide; the Coding view's first five take 865 px and the Nerd filter's 840 px at 375 px. Of (a) accepting four there, (b) a shorter tag on phones and (c) a 44 px phone box, the owner took Claude's recommendation."

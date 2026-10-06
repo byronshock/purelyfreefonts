@@ -519,8 +519,10 @@ NERD_TAG = "Nerd Font available"
 def test_the_nerd_font_tag_follows_the_site_rulings():
     """The owner's rulings of 2026-09-29 (TASK-2): the "NF" marker's wording and the legend,
     word for word, in the config (the catalog keeps them), and a "Nerd Font available" filter.
-    Since 2026-10-05 (nerd_tag) the rows have the tag "Nerd Font available" instead of the
-    marker, and there is no legend: the template and the contract follow."""
+    Since 2026-10-05 the rows have the tag "Nerd Font available" instead of the marker, there
+    is no legend (nerd_tag), and the details panel drops the "NF" box before the Nerd Font
+    build's link (details_nerd_box_dropped): the templates, the panel's code and the contract
+    follow, so no page shows the marker."""
     site = tomllib.loads((ROOT / "config" / "site.toml").read_text(encoding="utf-8"))["nerd"]
     assert site["legend"] == NERD_RULINGS["nerd_legend"]["ruling"]
     assert site["marker"] == "NF"
@@ -535,9 +537,14 @@ def test_the_nerd_font_tag_follows_the_site_rulings():
     assert 'li.badge[data-badge="nerd"]' in dom
     assert 'id="nf-legend"' not in dom
     assert '<span class="nf-mark"' not in dom
+    assert "span.nf-mark" not in dom
+    assert "`details_nerd_box_dropped`" in dom
     templates = "".join(t.read_text(encoding="utf-8") for t in sorted(TEMPLATES.glob("*.j2")))
     assert "nf-legend" not in templates
     assert "nf-mark" not in templates
+    parts = [*sorted(JS_DIR.glob("*.js")), *sorted((ROOT / "site" / "css").glob("*.css"))]
+    for part in parts:
+        assert "nf-mark" not in part.read_text(encoding="utf-8"), part.name
     assert "8192 a Nerd Font build" in section(CONTRACT, "7. List index JSON")
 
 
@@ -766,6 +773,9 @@ CONTRAST_PAIRS = (
     + [(ui, bg, 3.0) for ui in ("--c-border", "--c-focus") for bg in TEXT_ON]
     + [
         ("--c-accent-fg", "--c-accent", 4.5),
+        # A row's Download button is filled with the accent (download_button): its shape
+        # stands 3:1 from the page (1.4.11).
+        ("--c-accent", "--c-bg", 3.0),
         ("--c-badge-fg", "--c-badge-bg", 4.5),
         ("--c-warn-fg", "--c-warn-bg", 4.5),
     ]

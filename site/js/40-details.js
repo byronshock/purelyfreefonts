@@ -42,6 +42,7 @@ const Details = (() => {
     retry: 'Try again',
     official: 'Official',
     designer: 'Designer',
+    nerd: 'Nerd Font',
     creditNo: 'No credit needed.',
     creditYes: 'Credit required',
     latinBasic: 'Basic Latin only (limited accents)',
@@ -321,11 +322,6 @@ const Details = (() => {
   // tff_site.data.nerd_link_text gives it: "SauceCodePro Nerd Font (GitHub: ryanoasis/…)".
   const nerdText = (target) => `${target.label} (${place(target.url)})`;
 
-  // The "NF" marker (owner ruling of 2026-09-29), worded by payload.nerd. Only the panel
-  // shows it: the rows have a "Nerd Font available" tag (owner's site ruling of 2026-10-05).
-  const nerdMark = (words) =>
-    el('span', { class: 'nf-mark', role: 'img', 'aria-label': words.label, text: words.marker });
-
   const section = (name, title, ...children) =>
     el(
       'section',
@@ -367,7 +363,7 @@ const Details = (() => {
       { class: 'details-summary' },
       pairs(
         [
-          ['Get it', ...getIt(payload, font)],
+          ['Get it', ...getIt(font)],
           ['License', ...licenseLine(font.license)],
           ['Font', fontLine(font)],
           comesWith(payload, font),
@@ -379,12 +375,14 @@ const Details = (() => {
     );
 
   // The official, designer and Nerd Font build links, one per line, each naming where it
-  // goes (CONTRACT section 1). The Nerd link carries the "NF" marker, with no legend (the
-  // caution about the icons' licenses joins the panel later, nerd_caution_in_details). A
-  // link's note (why an archived mirror is the official download) follows it.
-  const getIt = (payload, font) => {
+  // goes (CONTRACT section 1). The Nerd link's own text names the build, with no "NF" box
+  // before it (owner's site ruling of 2026-10-05, details_nerd_box_dropped) and no legend
+  // (the caution about the icons' licenses joins the panel later, nerd_caution_in_details).
+  // Like "Official:", the line leads with "Nerd Font:" (2026-10-06, details_nerd_lead_in):
+  // a maker's own build can be named "<family> NF" ("Cascadia Code NF"), which says "Nerd
+  // Font" nowhere. A link's note (why an archived mirror is the official download) follows.
+  const getIt = (font) => {
     const { primary, designer, nerd } = font.links;
-    const words = nerd && payload.nerd;
     const line = (...children) => el('li', {}, ...children);
     return [
       el(
@@ -392,12 +390,8 @@ const Details = (() => {
         { class: 'details-links', role: 'list' },
         line(`${WORDS.official}: `, link(primary.url, destination(primary))),
         designer && line(`${WORDS.designer}: `, link(designer.url, destination(designer))),
-        words &&
-          line(
-            nerdMark(words),
-            ' ',
-            link(nerd.url, nerdText(nerd), { class: 'details-nf-link' }),
-          ),
+        nerd &&
+          line(`${WORDS.nerd}: `, link(nerd.url, nerdText(nerd), { class: 'details-nf-link' })),
       ),
       primary.note && el('p', { class: 'details-link-note', text: primary.note }),
     ];

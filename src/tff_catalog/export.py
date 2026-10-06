@@ -907,7 +907,7 @@ class CatalogBuilder:
                 "primary": link(links.primary),
                 "designer": link(links.designer) if links.designer else None,
                 # A Nerd link that failed this run's check is left out until it passes
-                # again (owner ruling of 2026-09-29): no tag, marker, link or filter match.
+                # again (owner ruling of 2026-09-29): no tag, link or filter match.
                 "nerd": link(links.nerd) if links.nerd and not links.nerd_problem else None,
             },
             "first_seen": fam.first_seen.isoformat(),

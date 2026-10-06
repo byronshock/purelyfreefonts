@@ -84,8 +84,10 @@ label = "Other free-use grants"
 # accessible name; `legend` is the site's legend, word for word as the owner chose it. The
 # legend starts with "<marker>: <label>" (checked). Since the owner's site ruling of
 # 2026-10-05 (nerd_tag, data/reviews/site/2026-10-05.toml) a row shows a "Nerd Font
-# available" tag instead and the site shows no legend: only the details panel uses the
-# marker and its label. The wording stays, as catalog-site.json v1 carries it.
+# available" tag instead and the site shows no legend, and since details_nerd_box_dropped
+# (the same day) the details panel's Nerd Font build link has no marker before it: the
+# page shows none of the three, and only screen readers hear the label, before that link.
+# The wording stays, as catalog-site.json v1 carries it.
 [nerd]
 marker = "NF"
 label = "Nerd Font version available"

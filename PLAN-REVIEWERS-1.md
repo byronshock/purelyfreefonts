@@ -63,7 +63,9 @@ Tick each item as soon as it is done and verified. Checklists nest: a parent is 
 
 **Order.** Each step is one worktree and pull request. Steps may be built side by side but land in this order:
 1. Step 1.
-2. **Priority 2, the list** (`step7_list_first`, 2026-10-05): step 7a, then 7b and 7c. **With them, priority 1's parts that touch no template:** step 8a, the Heavy Data and Charter license checks.
+2. **Priority 2, the list** (`step7_list_first`, 2026-10-05): step 7a, then 7b and 7c.
+   - **Then the test site is redeployed** (the lead), and a few of the owner's friends look at it informally.
+   - **Step 8a,** the Heavy Data and Charter license checks, comes after that. The owner (2026-10-05): "After that we are going to stage as I'm not too worried about the license checks with a few close friends giving their input."
 3. **Priority 1, the rest:** step 8b.
 4. **Priority 2, the rest:** step 5's first part.
 5. **Priority 3:** step 9.
@@ -296,17 +298,17 @@ The facts behind it come from a workflow of eight agents on 2026-10-05: five rea
 Long names are limited by width and grow less: about 1 phone row in 10 grows under 5% (Cormorant Garamond, Libertinus Keyboard). Say so in the pull request.
 
 #### 7b: The row's title: NF as a tag, the full-width name, the centred score
-**Depends on:** 7a; the owner's rulings `nerd_tag`, `score_centred` and `specimen_label_hidden` (2026-10-05), which replace `nf_legend_visible_rows`. Stacked on #58's branch, so the two merge together before staging is redeployed.
-- [ ] The fixed-width "NF" marker at the end of the title cell becomes a tag among the row's tags, "Nerd Font available", like "Adjustable weight" (`nerd_tag`). The NF column in `20-list.css` goes, so the specimen gets the title cell's full width on every row and at every width. The "Nerd Font available" filter stays.
-- [ ] The NF legend above the list goes. Its caution about the icons' licenses moves into the details with 7e (`nerd_caution_in_details`).
-- [ ] The phone box becomes 48 px (`specimen_box_heights`).
-- [ ] The score and its bar are centred vertically on the specimen box, and the hidden `<h3>` (`name_once`) lies over the drawn name, so find-in-page highlights it there (`score_centred`).
-- [ ] The specimen is decorative for screen readers: `aria-hidden` on the masked box and an empty `alt` on the no-script `<img>`, in place of "<family> sample" (`specimen_label_hidden`). The heading names the font. Update `test_specimens_loader.py`.
-- [ ] `_row.html.j2`'s comment (lines 5–8) describes the new geometry.
-- [ ] `site/CONTRACT.md`: the rows, the Nerd Font marker (now a tag), the legend and `name_once`. Plus the tests that pinned the marker, the legend and the row height (`test_the_nerd_marker_keeps_the_row_height`), and the accessibility grid.
-- [ ] Re-measure `--row-est-h`, and the header's single-row width if the nav is touched; it isn't expected to be.
+**Depends on:** 7a; the owner's rulings `nerd_tag`, `score_centred` and `specimen_label_hidden` (2026-10-05), which replace `nf_legend_visible_rows`. Stacked on #58's branch, so the two merge together before staging is redeployed. **Merged in #60** (15072d7, 2026-10-06), with all 10 CI checks passing.
+- [x] The fixed-width "NF" marker at the end of the title cell becomes a tag among the row's tags, "Nerd Font available", like "Adjustable weight" (`nerd_tag`). The NF column in `20-list.css` goes, so the specimen gets the title cell's full width on every row and at every width. The "Nerd Font available" filter stays.
+- [x] The NF legend above the list goes. Its caution about the icons' licenses moves into the details with 7e (`nerd_caution_in_details`).
+- [x] The phone box becomes 48 px (`specimen_box_heights`).
+- [x] The score and its bar are centred vertically on the specimen box, and the hidden `<h3>` (`name_once`) lies over the drawn name, so find-in-page highlights it there (`score_centred`).
+- [x] The specimen is decorative for screen readers: `aria-hidden` on the masked box and an empty `alt` on the no-script `<img>`, in place of "<family> sample" (`specimen_label_hidden`). The heading names the font. Update `test_specimens_loader.py`.
+- [x] `_row.html.j2`'s comment (lines 5–8) describes the new geometry.
+- [x] `site/CONTRACT.md`: the rows, the Nerd Font marker (now a tag), the legend and `name_once`. Plus the tests that pinned the marker, the legend and the row height (`test_the_nerd_marker_keeps_the_row_height`), and the accessibility grid.
+- [x] Re-measure `--row-est-h`, and the header's single-row width if the nav is touched; it isn't expected to be.
 
-**Done when:**
+**Done when** (met in #60: 39.9 px per em at 375 px, the score centred within 0.00 px, the tag on exactly 70 rows, no legend; phone rows 4.72 per screen, which 7c trims back):
 - at 375 px the median drawn name is at least 1.8 times today's 20.8 px per em (about 39.9 expected);
 - the score's centre is within 2 px of the specimen box's centre;
 - no NF legend shows, and the tag shows on the 70 rows with a Nerd Font build;
@@ -316,6 +318,8 @@ Long names are limited by width and grow less: about 1 phone row in 10 grows und
 #### 7c: Download as the button, and phone row margins
 - [ ] "Download from …" gets the button style, and Details the quieter one (`download_button`). In forced colours both keep a visible border.
 - [ ] On phones, trim a few pixels of row margin so about five rows still fit per screen with the larger names (`phone_rows_trim`). Category and license stay on their own line.
+  Measure it against the Coding view and the Nerd filter too: with the longer "Nerd Font available" tag (7b, #60), their first rows average about 181 px on phones.
+- [ ] The details panel drops the "NF" box before the Nerd Font build link (`details_nerd_box_dropped`).
 
 **Done when:** at least five rows per 812 px phone screen once scrolled to the list, axe passes, and CI passes.
 

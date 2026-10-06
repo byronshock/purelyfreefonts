@@ -173,7 +173,8 @@ KINDS: dict[str, tuple[str, str]] = {
     "nerd_link": (
         "Nerd Font links left out",
         "Catalog fonts whose Nerd Font build link failed this run's link check. The font "
-        "stays listed, with no NF marker or Nerd link until the link passes again.",
+        "stays listed, with no Nerd Font tag, link or filter match until the link passes "
+        "again.",
     ),
     "what_if": ("What if", "Each ranking.toml weight halved and doubled."),
 }

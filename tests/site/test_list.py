@@ -1285,6 +1285,73 @@ def test_an_unranked_label_takes_a_line_of_its_own(
     guarded.assert_clean(page)
 
 
+# The ranked rows of the default view laid out in full, in order: each one's height, and the
+# first one's vertical padding, its actions' gap above them and side padding, and its type,
+# button and box sizes.
+ROW_SPACING_JS = """() => {
+  const lis = Array.from(document.querySelectorAll('#list > li.font:not(.is-unranked)'));
+  lis.forEach((li) => { li.style.contentVisibility = 'visible'; });
+  const first = lis[0];
+  const style = (sel) => getComputedStyle(first.querySelector(sel));
+  const out = {
+    heights: lis.map((li) => li.getBoundingClientRect().height),
+    padding: [parseFloat(style('.font-row').paddingTop),
+              parseFloat(style('.font-row').paddingBottom)],
+    gaps: [parseFloat(style('.download').marginTop),
+           parseFloat(style('.details-toggle').marginTop)],
+    sides: ['.download', '.details-toggle'].flatMap((sel) =>
+      [parseFloat(style(sel).paddingLeft), parseFloat(style(sel).paddingRight)]),
+    sizes: [style('.font-name').fontSize, style('.download').fontSize,
+            style('.details-toggle').fontSize, style('.font-meta').fontSize],
+    buttons: [parseFloat(style('.download').minHeight),
+              parseFloat(style('.details-toggle').paddingTop)],
+    box: first.querySelector('.font-spec').getBoundingClientRect().height,
+  };
+  lis.forEach((li) => { li.style.contentVisibility = ''; });
+  return out;
+}"""
+
+
+@pytest.mark.parametrize(
+    "viewport",
+    [
+        {"width": 360, "height": 812},
+        {"width": 375, "height": 812},
+        {"width": 700, "height": 800},
+        {"width": 1280, "height": 720},
+    ],
+    ids=["phone-360", "phone-375", "table", "wide"],
+)
+def test_phone_cards_fit_about_five_to_a_screen(
+    guarded_context: Any, doc: dict[str, Any], viewport: dict[str, int]
+) -> None:
+    """The owner's site ruling of 2026-10-05 (phone_rows_trim): on phones a card's margins
+    and its buttons' sides are a few pixels tighter, so about five fit on a phone's screen
+    with the larger names; category and license keep their own line, and the type, the
+    specimen box and the buttons' heights keep their sizes. From 40rem (the table rows and
+    the wide rows) the margins are as before. 360px is the commonest Android width: with the
+    sides of the table rows, "Download from Google Fonts" took two lines there.
+
+    On the real catalog the median ranked row is at most a fifth of an 812px screen. (Which
+    fonts lead the list, and so whether its first five fit, changes with each refresh; on the
+    2026-09-26 data they take 772px.) The sample's rows carry more tags, so it checks the
+    spacing only."""
+    guarded, page = open_list(guarded_context, viewport=viewport)
+    got = page.evaluate(ROW_SPACING_JS)
+    phone = viewport["width"] < 640
+    spacing = 8 if phone else 12  # --space-2 on phones, --space-3 from 40rem
+    assert got["padding"] == [spacing, spacing], got["padding"]
+    assert got["gaps"] == [spacing, spacing], got["gaps"]
+    assert got["sides"] == [spacing] * 4, got["sides"]
+    assert got["sizes"] == ["20px", "14px", "16px", "14px"], got["sizes"]
+    assert got["buttons"] == pytest.approx([29.2, 4]), got["buttons"]
+    assert got["box"] == (48 if phone else 64)
+    if phone and not doc.get("synthetic"):
+        heights = got["heights"]
+        assert median(heights) <= viewport["height"] / 5, median(heights)
+    guarded.assert_clean(page)
+
+
 BARS_JS = """() => Array.from(document.querySelectorAll('#list > li.font'), (li) => {
   const cell = li.querySelector('.rank');
   const bar = cell.querySelector('.bar');

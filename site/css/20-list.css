@@ -341,13 +341,18 @@
 
 li.font {
   /* Median row heights on the real list, measured on 2026-10-05 with the 64px specimen box
-     (48px on phones, since step 7b): cards about 172px; 3-column and 4-column rows, set
-     below, about 188px and 116px. Rows without a tag line are shorter, so until every row has
-     rendered the page runs a few per cent too long (5-8% on the real list). The tag "Nerd
-     Font available" (nerd_tag) wraps the tag line onto a second line on 11 popular coding
-     fonts, so the Coding view and the Nerd Font filter run taller: their first ten rows
-     average about 181px as cards and 122px in 4 columns. */
-  --row-est-h: 10.75rem;
+     (48px on phones, since step 7b) and the phone cards' tighter margins (step 7c): cards
+     about 160px from 360px wide (175px below about 352px, where "Download from Google Fonts"
+     takes two lines); 3-column and 4-column rows, set below, about 188px and 116px (131px
+     where the 4-column rows' third column is narrow, as at 800 and 1100px, since most
+     downloads take two lines there). Rows without a tag line are shorter, so until every row
+     has rendered the page runs a few per cent too long (5-8% on the real list). The tag
+     "Nerd Font available" (nerd_tag) wraps the tag line onto a second line on 11 popular
+     coding fonts, and a long destination wraps the download button onto two lines (70 of
+     500 cards at 375px, 39 of 500 rows in 4 columns at 1280px), so the Coding view and the
+     Nerd Font filter run taller: their first ten rows average about 170px as cards and
+     125px in 4 columns. */
+  --row-est-h: 10rem;
 
   content-visibility: auto;
   contain-intrinsic-size: auto var(--row-est-h);
@@ -365,7 +370,11 @@ li.font.is-dim .font-name {
 }
 
 /* Phones: a card. The rank sits beside the title ("Not ranked: ..." takes a line of its own,
-   below), then one thing per line, and download and details side by side last. */
+   below), then one thing per line, and download and details side by side last. Its margins,
+   and its buttons' sides, are a little tighter than the table rows' (from 40rem, below), so
+   about five cards fit on a phone's screen with the larger names, from 360px wide (the
+   owner's site ruling of 2026-10-05, phone_rows_trim); the type, the specimen box and the
+   buttons' heights keep their sizes. */
 .font-row {
   display: grid;
   grid-template-columns: fit-content(40%) minmax(0, 1fr) auto;
@@ -376,7 +385,7 @@ li.font.is-dim .font-name {
     "download download toggle";
   column-gap: var(--space-3);
   align-items: start;
-  padding: var(--space-3) 0;
+  padding: var(--space-2) 0;
 }
 
 .font-row > .rank {
@@ -1003,21 +1012,40 @@ li.font.is-dim .spec-fallback {
   overflow-wrap: anywhere;
 }
 
+/* A row's two actions (the owner's site ruling of 2026-10-05, download_button): "Download
+   from ..." is the main one, so it has the strong, button-like look, filled with the accent,
+   though it stays a link; Details is the quieter button, an outline with no fill. Both are
+   more than 24px square (2.5.8). On phones their sides are --space-2, --space-3 from 40rem:
+   with --space-3, "Download from Google Fonts" took two lines on a 360px phone, so its
+   cards grew instead of shrinking (phone_rows_trim). */
 .download {
   grid-area: download;
   justify-self: start;
   align-self: center;
   display: inline-flex;
   align-items: center;
-  min-height: var(--target-min);
-  margin-top: var(--space-3);
-  color: var(--c-link);
+  /* As tall as the Details button beside it: one line of its text, its padding and its
+     border. A long destination wraps inside the button. */
+  min-height: calc(var(--fs-base) * var(--lh-tight) + 2 * var(--space-1) + 2px);
+  margin-top: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--c-accent);
+  border-radius: var(--radius);
+  background: var(--c-accent);
+  color: var(--c-accent-fg);
   font-size: var(--fs-small);
+  font-weight: 600;
+  line-height: var(--lh-tight);
+  text-decoration: none;
   overflow-wrap: anywhere;
 }
 
 .download:visited {
-  color: var(--c-link-visited);
+  color: var(--c-accent-fg);
+}
+
+.download:hover {
+  text-decoration: underline;
 }
 
 .details-toggle {
@@ -1026,7 +1054,9 @@ li.font.is-dim .spec-fallback {
   align-self: center;
   display: inline-flex;
   align-items: center;
-  margin-top: var(--space-3);
+  margin-top: var(--space-2);
+  padding-inline: var(--space-2);
+  background: none;
   white-space: nowrap;
 }
 
@@ -1090,20 +1120,48 @@ li.font.is-dim .spec-fallback {
   color: var(--c-link);
 }
 
+/* Forced colours: a tag's fill is the page's colour there, so the tags get a border. The
+   download keeps a full-strength border, as Details has, and takes the link colours on the
+   page's background instead of the accent's fill: Chromium paints a backplate in the page's
+   colour behind text, which hid text in --c-accent-fg. */
 @media (forced-colors: active) {
   .badge,
   .ext-badge {
     border: 1px solid var(--c-border);
   }
+
+  .download {
+    border-color: var(--c-border);
+    background: var(--c-bg);
+    color: var(--c-link);
+  }
+
+  .download:visited {
+    color: var(--c-link-visited);
+  }
+}
+
+/* Print: browsers drop backgrounds, which would leave the download's text in --c-accent-fg
+   on the paper, so it prints as the link it is. */
+@media print {
+  .download {
+    background: none;
+    color: var(--c-link);
+    text-decoration: underline;
+  }
+
+  .download:visited {
+    color: var(--c-link-visited);
+  }
 }
 
 /* An unranked row: "Not ranked: <reason>" gets a line of its own above the name, instead of
    wrapping down the narrow rank column (the owner's site ruling of 2026-09-26, list_layout).
-   That line makes the row taller by about 24px on the real list: cards about 196px, 3-column
-   rows about 212px (set below). A longer label takes two lines on a phone (about 252px in the
+   That line makes the row taller by about 24px on the real list: cards about 184px, 3-column
+   rows about 212px (set below). A longer label takes two lines on a phone (about 240px in the
    sample), so the cards' estimate sits a little above the real list's. */
 li.font.is-unranked {
-  --row-est-h: 13rem;
+  --row-est-h: 12.25rem;
 }
 
 li.font.is-unranked .font-row {
@@ -1134,6 +1192,13 @@ li.font.is-unranked .font-row {
       "rank meta ."
       "rank badges ."
       "rank download toggle";
+    padding: var(--space-3) 0;
+  }
+
+  .download,
+  .details-toggle {
+    margin-top: var(--space-3);
+    padding-inline: var(--space-3);
   }
 
   .font-row > .ext {
