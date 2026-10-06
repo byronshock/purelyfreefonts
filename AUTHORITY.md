@@ -406,6 +406,7 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
       - the score is centred on the specimen, with the hidden name over the drawn one (`score_centred`);
       - the caution about the icons' licenses moves into the details, after the freeze (`nerd_caution_in_details`, the owner's choice; Claude had recommended a legend line);
       - the specimen image is decorative for screen readers, since the heading names the font (`specimen_label_hidden`).
+      - the details panel drops its "NF" box before the Nerd Font build link, whose text names the build (`details_nerd_box_dropped`); a find-in-page match shows the hidden heading's text over the drawn name while active (`find_highlight_accepted`).
   - **Search:**
     - when a search finds no listed font, the list says "No listed font matches '…'" and shows the note; later, once names.json's reasons are cleaned up, it also gives the reason and free fonts with the same letter widths (`no_match_search`);
     - fonts whose own name matches come first (`search_name_first`).

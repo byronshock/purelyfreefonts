@@ -171,3 +171,17 @@ recommended = true
 value = "decorative_for_screen_readers"
 ruling = "A row's specimen image is decorative for screen readers (no accessible name: aria-hidden on the masked box, an empty alt on the no-script image), since it now shows only the name and the heading beside it already says it. Replaces the \"<family> sample\" label."
 reason = "Of (a) hiding it, (b) \"<family>, in its own typeface\", which screen readers would hear after the heading, and (c) keeping \"<family> sample\", the owner took Claude's recommendation."
+
+[details_nerd_box_dropped]
+choice = "a"
+recommended = true
+value = "drop_the_details_nf_box"
+ruling = "A font's details panel drops the fixed-width \"NF\" box before its Nerd Font build link; the link's own text names the build (for example \"SauceCodePro Nerd Font\"). Built in plan step 7c."
+reason = "After nerd_tag removed the row marker and its legend, nothing on the site explained the box any more (step 7b's review, PR #60). Of (a) dropping it and (b) keeping it until the details work, the owner took Claude's recommendation."
+
+[find_highlight_accepted]
+choice = "a"
+recommended = true
+value = "heading_text_shows_with_the_highlight"
+ruling = "A find-in-page match or a selection of a row's name paints the hidden heading's text, in the interface font, over the drawn name while it is active. Browsers can't paint the highlight without the text."
+reason = "score_centred asks that find-in-page highlight the name over the drawn one; step 7b paints the heading in transparent text so the highlight shows (PR #60). Of (a) accepting it and (b) judging it on staging first, the owner took Claude's recommendation."

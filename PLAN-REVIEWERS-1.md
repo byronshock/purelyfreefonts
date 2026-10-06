@@ -316,6 +316,8 @@ Long names are limited by width and grow less: about 1 phone row in 10 grows und
 #### 7c: Download as the button, and phone row margins
 - [ ] "Download from …" gets the button style, and Details the quieter one (`download_button`). In forced colours both keep a visible border.
 - [ ] On phones, trim a few pixels of row margin so about five rows still fit per screen with the larger names (`phone_rows_trim`). Category and license stay on their own line.
+  Measure it against the Coding view and the Nerd filter too: with the longer "Nerd Font available" tag (7b, #60), their first rows average about 181 px on phones.
+- [ ] The details panel drops the "NF" box before the Nerd Font build link (`details_nerd_box_dropped`).
 
 **Done when:** at least five rows per 812 px phone screen once scrolled to the list, axe passes, and CI passes.
 
