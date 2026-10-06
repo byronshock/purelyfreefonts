@@ -4,12 +4,13 @@ The build is offline and deterministic: it makes no network request (tests run i
 socket guard), reads no clock, and two builds of the same inputs are byte-identical.
 
 Steps: validate the data (``tff_site.data``); concatenate and hash the JS and CSS parts
-(``tff_site.assets``); write the list-index and details JSON; copy each ``preview`` SVG from
-``specimens/`` next to the data file to ``/assets/specimens/<id>.<h>.svg``, checking its
-sha256; copy each ``font_file`` from the font cache to ``/assets/fonts/<id>.<h>.<ext>``, and the
-interface font (``UI_FONTS``, from ``site/static/fonts/``) to ``/assets/ui/<stem>.<h>.woff2``;
-render the templates (``site/templates``, Jinja2 with autoescape and StrictUndefined) and the
-pages (``tff_site.pages``); write ``robots.txt``, ``sitemap.xml``, the static files and
+(``tff_site.assets``); write the list-index and details JSON; serve each ``preview`` SVG from
+``specimens/`` next to the data file as ``/assets/specimens/<id>.<h>.svg``, checking its
+sha256 and trimming it to the family's name (below); copy each ``font_file`` from the font
+cache to ``/assets/fonts/<id>.<h>.<ext>``, and the interface font (``UI_FONTS``, from
+``site/static/fonts/``) to ``/assets/ui/<stem>.<h>.woff2``; render the templates
+(``site/templates``, Jinja2 with autoescape and StrictUndefined) and the pages
+(``tff_site.pages``); write ``robots.txt``, ``sitemap.xml``, the static files and
 ``version.txt``. Output layout: site/CONTRACT.md, "Build output".
 
 Pages. The list page ``/`` is ``index.html.j2``, rendered here with the ``list`` context of
@@ -31,10 +32,17 @@ published (with ``drafts``, drafts count); ``site.blog`` then turns on the Blog 
 Static files: exactly ``STATIC_FILES`` are copied from ``site/static/`` (section 2); anything
 else there (``_src/``, drafts) never ships.
 
+Specimens (the owner's site rulings of 2026-10-05, ``specimen_name_only_list`` and
+``specimen_trim_served``): a row shows only the family's name. Until ``build/specimens`` is
+redrawn names-only, a two-line specimen whose sha256 is pinned in ``trim.PINS_FILE`` is served
+cut down to its name line (``trim.name_only``, moved left by its ``trim.SHIFTS`` entry), unless
+the catalog flags the font ``specimen_name_only``; any other file is served as it is.
+
 A row's ``specimen`` ``width`` and ``height`` are the size the no-script ``<img>`` shows at:
-``SPEC_BOX_PX`` high (``--spec-h``), with the SVG's aspect ratio. A row's ``nerd`` is true
-for a font with a Nerd Font build (``links.nerd``), which shows the catalog's ``nerd`` marker
-beside its name; the list context's ``nerd`` carries that wording for the rows and the legend.
+``SPEC_BOX_PX`` high (``--spec-h``), with the served SVG's aspect ratio. A row's ``nerd`` is
+true for a font with a Nerd Font build (``links.nerd``), which shows the catalog's ``nerd``
+marker beside its name; the list context's ``nerd`` carries that wording for the rows and the
+legend.
 
 The output is written to a sibling staging directory and swapped in at the end, so a failed
 build leaves the previous site as it was. Only a directory that holds a previous build (a
@@ -53,7 +61,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from tff_catalog import jsonio
-from tff_site import assets, blog, data, fonts, pages
+from tff_site import assets, blog, data, fonts, pages, trim
 
 if TYPE_CHECKING:
     import jinja2
@@ -111,7 +119,7 @@ SAFE_PATH = re.compile(r"^([a-z0-9][a-z0-9._-]*/)*[a-z0-9][a-z0-9._-]*$")
 COMMIT_PATTERN = re.compile(r"^[0-9a-f]{40}(-dirty)?$")
 MAX_SVG_PX = 100_000  # a sanity bound on a specimen's size; also refuses inf and nan
 # The specimen box height, --spec-h in site/css/00-tokens.css (site/CONTRACT.md section 6).
-SPEC_BOX_PX = 48
+SPEC_BOX_PX = 64
 VERSION_FILE = "version.txt"
 
 _SVG_ROOT = re.compile(rb"<svg\b([^>]*)>", re.IGNORECASE)
@@ -143,7 +151,7 @@ class BuildResult:
 
 @dataclass(frozen=True, slots=True)
 class Specimen:
-    """A copied specimen: its hashed URL and its no-script ``<img>`` size in CSS pixels."""
+    """A served specimen: its hashed URL and its no-script ``<img>`` size in CSS pixels."""
 
     url: str
     width: int
@@ -498,6 +506,8 @@ def _copy_specimens(
             errors.append(f"{where}: sha256 is {digest}, the catalog says {preview['sha256']}")
             continue
         try:
+            if digest in trim.pinned() and "specimen_name_only" not in font["flags"]:
+                blob = trim.name_only(blob, trim.SHIFTS.get(digest, 0))
             width, height = svg_size(blob)
         except ValueError as exc:
             errors.append(f"{where}: {exc}")

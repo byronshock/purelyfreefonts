@@ -28,7 +28,7 @@ import pytest
 
 from tff_catalog import jsonio
 from tff_catalog.keys import search_key
-from tff_site import assets, build, data, fonts, pages
+from tff_site import assets, build, data, fonts, pages, trim
 from tff_site.cli import main
 
 HERE = Path(__file__).resolve().parent
@@ -206,6 +206,8 @@ def fake_pages(monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest) 
 
 
 def svg(font_id: str) -> bytes:
+    """A stand-in specimen. ``trim.PINS_FILE`` doesn't list it, so the build serves it as it
+    is (step 7a trims only the pinned specimens; the trim couldn't read it anyway)."""
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="2800" height="492" viewBox="0 0 2800 492">'
         f'<path d="M0 0h{len(font_id)}v10z"/><!-- {font_id} --></svg>\n'
@@ -659,13 +661,22 @@ def test_rows_carry_specimens_and_fallbacks(tmp_path, catalog, mini_site):
     assert len(specs) == len(imgs) == len(SPECIMEN_IDS)
     for img in imgs:
         assert img["src"] in specs
-        # the no-script image shows at the 48 px box height, keeping the SVG's aspect ratio
-        assert (img["width"], img["height"]) == ("273", "48")
-        assert asset(out, img["src"]).read_bytes().startswith(b"<svg")
+        # the no-script image shows at the 64 px box height, keeping the SVG's aspect ratio
+        assert (img["width"], img["height"]) == ("364", "64")
+        # a stand-in isn't pinned, so it is served byte for byte
+        font_id = Path(img["src"]).name.split(".")[0]
+        assert asset(out, img["src"]).read_bytes() == svg(font_id)
     fallbacks = [a["data-fallback"] for t, a in page.tags if a.get("class") == "spec-fallback"]
     assert fallbacks.count("license") == sum(not f["preview_ok"] for f in SAMPLE["fonts"])
     assert len(fallbacks) == 40 - len(SPECIMEN_IDS)
     assert set(fallbacks) == {"license", "failed"}
+
+
+def test_the_no_script_box_is_the_css_box():
+    """``SPEC_BOX_PX`` is ``--spec-h`` on wide screens (the owner's site ruling of 2026-10-05,
+    specimen_box_heights); phones keep their 40 px box until step 7b."""
+    css = (ROOT / "site" / "css" / "00-tokens.css").read_text(encoding="utf-8")
+    assert re.findall(r"--spec-h:\s*(\d+)px;", css) == [str(build.SPEC_BOX_PX), "40"]
 
 
 def test_row_badges_and_download_names():
@@ -1077,6 +1088,48 @@ def test_a_specimen_with_a_script_fails(tmp_path, catalog, mini_site):
     edit_catalog(catalog[0], "sample-mono-02", preview__sha256=hashlib.sha256(blob).hexdigest())
     with pytest.raises(build.BuildError, match="script"):
         run_build(catalog, tmp_path / "site", mini_site)
+
+
+def test_only_a_pinned_specimen_is_served_cut_to_its_name(tmp_path, catalog, mini_site):
+    """PLAN-REVIEWERS-1.md step 7a (the owner's site ruling of 2026-10-05,
+    specimen_trim_served): a committed specimen whose sha256 ``trim.PINS_FILE`` lists is served
+    cut down to its name line, moved left by its ``trim.SHIFTS`` entry, and its no-script image
+    takes the cut file's aspect ratio. The same file is served as it is for a font flagged
+    ``specimen_name_only``, and so is a file the trim could cut whose sha256 isn't pinned."""
+    real = (ROOT / "build" / "specimens" / "reenie-beanie.svg").read_bytes()
+    sha = hashlib.sha256(real).hexdigest()
+    assert sha in trim.pinned()
+    assert trim.SHIFTS[sha] > 0
+    # one coordinate changed: still of the renderer's form, but never checked against a font
+    other = re.sub(rb'd="m(\d+)', lambda m: b'd="m%d' % (int(m[1]) + 1), real, count=1)
+    assert other != real
+    assert hashlib.sha256(other).hexdigest() not in trim.pinned()
+    assert trim.name_only(other) != other
+    for font_id, blob in (
+        ("sample-sans-01", real),
+        ("sample-display-25", real),
+        ("sample-mono-02", other),
+    ):
+        (catalog[0].parent / "specimens" / f"{font_id}.svg").write_bytes(blob)
+        edit_catalog(catalog[0], font_id, preview__sha256=hashlib.sha256(blob).hexdigest())
+    edit_catalog(catalog[0], "sample-display-25", flags=["specimen_name_only"])
+    edit_catalog(catalog[0], "sample-mono-02", flags=[])
+    out = tmp_path / "site"
+    run_build(catalog, out, mini_site)
+    page = parse((out / "index.html").read_text(encoding="utf-8"))
+    imgs = {Path(a["src"]).name.split(".")[0]: a for t, a in page.tags if t == "img"}
+    cut = trim.name_only(real, trim.SHIFTS[sha])
+    assert len(cut) < len(real)
+    assert cut != trim.name_only(real)
+    for font_id, served in (
+        ("sample-sans-01", cut),
+        ("sample-display-25", real),
+        ("sample-mono-02", other),
+    ):
+        img = imgs[font_id]
+        assert asset(out, img["src"]).read_bytes() == served, font_id
+        width, height = build.svg_size(served)
+        assert (img["width"], img["height"]) == (str(round(width * 64 / height)), "64")
 
 
 def test_a_font_from_a_release_archive_is_served_like_any_other(tmp_path, catalog, mini_site):
@@ -1570,7 +1623,7 @@ def test_real_templates_render_the_list_contract(tmp_path, catalog, real_site):
     assert len(spans) == len(imgs) == len(SPECIMEN_IDS)
     for img in imgs:
         assert spans[img["alt"]] == img["src"]
-        assert (img["width"], img["height"]) == ("273", "48")
+        assert (img["width"], img["height"]) == ("364", "64")
         assert asset(out, img["src"]).is_file()
     # "Type your own text": every font file the details payload names is served
     with_files = [f for f in details["fonts"].values() if f["type_own"]]

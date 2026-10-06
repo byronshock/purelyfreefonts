@@ -20,7 +20,7 @@ Checked here:
 - ``tff.list.specimens.pause()`` stops new requests, and ``resume()`` loads only the rows still
   near the screen (M3-D10); rows that Render detaches and moves still load when near;
 - a ``data-src`` outside ``/assets/specimens/`` is never loaded, even on a row on screen;
-- the box is 48 px high (40 px on phones), unfilled until its mask is set, empty (never a solid
+- the box is 64 px high (40 px on phones), unfilled until its mask is set, empty (never a solid
   bar) while its specimen downloads or if it never arrives, and the row keeps its height when
   the mask arrives;
 - the outlines are visible in light, dark and forced colours (pixels from a screenshot);
@@ -493,7 +493,7 @@ def test_a_source_outside_the_specimens_folder_is_never_loaded(guarded_context: 
 # --- the box ---------------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize(("viewport", "box"), [(WIDE, 48), (PHONE, 40)], ids=["wide", "phone"])
+@pytest.mark.parametrize(("viewport", "box"), [(WIDE, 64), (PHONE, 40)], ids=["wide", "phone"])
 def test_the_box_has_a_fixed_height_and_the_row_keeps_its_height(
     guarded_context: Any, viewport: dict[str, int], box: int
 ) -> None:
@@ -730,7 +730,7 @@ def test_without_javascript_the_no_script_images_show(
         assert image["loading"] == "lazy"
         assert image["alt"] == f"{families[image['id']]} sample"
         assert int(image["width"]) > 0
-        assert int(image["height"]) == 48
+        assert int(image["height"]) == 64
         assert image["filter"] == ("invert(1)" if scheme == "dark" else "none")
         assert not image["spanShown"], "the empty mask box shows without JavaScript"
         assert image["heading"] == "0", "the name shows twice without JavaScript"
