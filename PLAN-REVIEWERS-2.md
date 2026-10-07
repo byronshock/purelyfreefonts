@@ -62,6 +62,7 @@ Each font row is 161 px tall.
 - **The front page stops after the lead** (2026-10-07). The owner, to the lead session: "<- WE COULD STOP HERE".
   - The note "Why isn't my favorite free font here?" moves to the About page (`why_not_listed_to_about`).
   - The privacy line goes into the footer on every page (`privacy_line_in_footer`).
+- **Lapis lazuli** (`lapis_lazuli_blue`): the site's blue becomes `#26619C`, with `#8CB6E3` in dark mode.
 - **"Popularity" now** (`step4_wording_now`): PLAN-REVIEWERS-1.md step 4's wording is built with this work, with "most popular" and "least popular" (`sort_words_most_least`) and the shorter view names "Overall", "Chosen (desktop)", "Installed (desktop)", "Projects", "Coding" and "Developers & apps" (`view_labels_short`).
 
 **Pending:** the friends' findings, and the second round's outside critique.
@@ -108,6 +109,7 @@ Each font row is 161 px tall.
   - the methodology page titled "How we measure popularity", with the nav link "How it works" (`method_page_name`).
 
   Also `docs/usability-test.md`'s wording. Re-measure the header's single-row breakpoint for the wider nav, and move the `47.5rem` rule and its test to match (PLAN-REVIEWERS-1.md step 5's note on `wordmark_breakpoint`). Tick PLAN-REVIEWERS-1.md step 4 when it lands.
+- [ ] **Lapis lazuli** (`lapis_lazuli_blue`): `#26619C` replaces `#0a56c2` for `--c-link`, `--c-focus`, `--c-accent`, `--c-header-link` and `--c-header-focus` in light mode and in the white header. In dark mode `#8CB6E3` replaces `#8ab4f8` for `--c-link`, `--c-focus` and `--c-accent`. Check contrast in both themes and forced colours.
 - [ ] Ask the lead to redeploy staging.
 
 **Done when:**

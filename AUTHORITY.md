@@ -439,6 +439,7 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
   - **"Popularity" now** (`step4_wording_now`, 2026-10-07): the first plan's step 4 wording is built with the mobile first screen. The owner: "I'd like the first column to be labeled 'Popularity', not 'Rank'."
     - The sort words become "most popular" and "least popular" (`sort_words_most_least`), so the button keeps two lines on wide screens.
     - The view names become "Overall", "Chosen (desktop)", "Installed (desktop)", "Projects", "Coding" and "Developers & apps" (`view_labels_short`), replacing "Projects: most used" and the old names. They're set in `config/site.toml`, and until the first live refresh the site build shows config's names over the catalog's copies.
+  - **Lapis lazuli** (`lapis_lazuli_blue`, 2026-10-07): the site's blue becomes lapis lazuli. That's `#26619C` for links, the focus ring, the score bars, the Download button and the header's links, and a lighter lapis tint, `#8CB6E3`, in dark mode. The owner: "Can we change the blue on the site to Lapis Lazuli?"
 
   *(2026-10-06 and 2026-10-07)*
 - **Domains.** trulyfreefonts.com, .org and .net, registered and hosted on Cloudflare. The canonical URL is `https://trulyfreefonts.com`; `www.*`, `.org` and `.net` 301-redirect to it, keeping the path.
