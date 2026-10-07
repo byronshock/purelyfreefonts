@@ -647,6 +647,7 @@ def test_a_selection_of_the_hidden_heading_shows_over_the_drawn_name(
     assert first["overBox"], first
     span = page.locator(f"#font-{first['id']} span.spec")
     heading = page.locator(f"#font-{first['id']} h3.font-name")
+    span.evaluate("(s) => s.scrollIntoView({ block: 'center' })")
     before = outlines(page, span)
     heading.evaluate("(h) => getSelection().selectAllChildren(h)")
     assert page.evaluate("() => getSelection().toString().trim()") == first["text"]
@@ -681,6 +682,9 @@ def test_specimens_are_visible_in_every_theme(
     first = next(r for r in rows(page) if r["set"])
     wait_for_requests(page, guarded, {first["src"]})
     span = page.locator(f"#font-{first['id']} span.spec")
+    # Centred first: a box flush with the window's edge makes each screenshot scroll it a
+    # little and repaint a few edge pixels, which this exact comparison would count.
+    span.evaluate("(s) => s.scrollIntoView({ block: 'center' })")
     shown = outlines(page, span)
     colour, ratio, share = ink(shown)
     assert share > 0.01, "no outlines in the specimen box"
