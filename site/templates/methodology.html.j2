@@ -10,10 +10,11 @@
   Page text is a draft for the owner's approval (M2 step 7). Styles: site/css/40-pages.css.
 -#}
 {% extends "base.html.j2" %}
-{# The Project rank's label is "Used in projects" (site ruling 2026-09-25). #}
-{% set survey_titles = {"desktop": "Desktop installs", "project": "Used in projects: websites, code and apps"} %}
+{# The views' names here are config/site.toml's, as the rank select shows them: "Projects" and
+   "Installed (desktop)" (the owner's site ruling of 2026-10-07, view_labels_short). #}
+{% set survey_titles = {"desktop": "Desktop installs", "project": "Projects: websites, code and apps"} %}
 {% set unranked_meaning = {
-  "no_deliberate_evidence": "The font's only evidence in this rank is installs that Linux systems made on their own, and every rank except Desktop: most installed leaves those out. The font keeps a tag naming those systems or packages, and its place in Desktop: most installed.",
+  "no_deliberate_evidence": "The font's only evidence in this rank is installs that Linux systems made on their own, and every rank except Installed (desktop) leaves those out. The font keeps a tag naming those systems or packages, and its place in Installed (desktop).",
   "no_evidence": "None of this rank's sources counted the font.",
   "too_new": "The font has been on this rank's sources for less than 60 days.",
 } %}
@@ -88,7 +89,7 @@
 <li><strong>{{ item.label | capitalize }}</strong>: {{ state_meaning[item.key] }}</li>
 {% endfor %}
 </ul>
-<p>A Linux source can also be "left out of" some ranks: it counted the font, but Linux systems install that font on their own, and only Desktop: most installed counts such installs.</p>
+<p>A Linux source can also be "left out of" some ranks: it counted the font, but Linux systems install that font on their own, and only Installed (desktop) counts such installs.</p>
 </section>
 
 <section class="page-section">

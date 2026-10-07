@@ -44,17 +44,19 @@
 
   --duration: 150ms;
 
-  /* Colours, light. */
+  /* Colours, light. The blue is lapis lazuli, #26619c (the owner's site ruling of 2026-10-07,
+     lapis_lazuli_blue): links, the focus ring, the score bars, the Download button and the
+     header's links, 6.4:1 on white. Visited links keep their purple. */
   --c-bg: #ffffff;
   --c-surface: #f4f5f7;
   --c-fg: #1b1d21;
   --c-muted: #50555c;
   --c-border: #737880;
   --c-divider: #d5d8dd;
-  --c-link: #0a56c2;
+  --c-link: #26619c;
   --c-link-visited: #6a3ab2;
-  --c-focus: #0a56c2;
-  --c-accent: #0a56c2;
+  --c-focus: #26619c;
+  --c-accent: #26619c;
   --c-accent-fg: #ffffff;
   --c-badge-bg: #e9ecf0;
   --c-badge-fg: #1b1d21;
@@ -67,11 +69,13 @@
   --c-header-bg: #ffffff;
   --c-header-fg: #1b1d21;
   --c-header-muted: #50555c;
-  --c-header-link: #0a56c2;
-  --c-header-focus: #0a56c2;
+  --c-header-link: #26619c;
+  --c-header-focus: #26619c;
   --c-wordmark-bg: #ffffff;
 }
 
+/* Dark: a lighter lapis tint, #8cb6e3 (8.4:1 on --c-bg), since true lapis is about 2.8:1 there
+   (lapis_lazuli_blue). */
 @media (prefers-color-scheme: dark) {
   :root {
     --c-bg: #16181c;
@@ -80,10 +84,10 @@
     --c-muted: #aab0b8;
     --c-border: #8a9099;
     --c-divider: #33373e;
-    --c-link: #8ab4f8;
+    --c-link: #8cb6e3;
     --c-link-visited: #c5a3f5;
-    --c-focus: #8ab4f8;
-    --c-accent: #8ab4f8;
+    --c-focus: #8cb6e3;
+    --c-accent: #8cb6e3;
     --c-accent-fg: #16181c;
     --c-badge-bg: #2b2f36;
     --c-badge-fg: #e9eaec;
@@ -93,8 +97,8 @@
     --c-header-bg: #ffffff;
     --c-header-fg: #1b1d21;
     --c-header-muted: #50555c;
-    --c-header-link: #0a56c2;
-    --c-header-focus: #0a56c2;
+    --c-header-link: #26619c;
+    --c-header-focus: #26619c;
     --c-wordmark-bg: #ffffff;
   }
 }

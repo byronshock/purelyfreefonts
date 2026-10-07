@@ -18,7 +18,7 @@ from pathlib import Path
 
 import pytest
 
-from tff_site import build, data
+from tff_site import build, data, views
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -121,7 +121,9 @@ def dom(html: str) -> Node:
 
 @pytest.fixture(scope="module")
 def doc(site_data: Path) -> dict:
-    return json.loads(Path(site_data).read_text(encoding="utf-8"))
+    """The catalog as the site shows it: the views' wording from config/site.toml
+    (view_labels_short, tff_site.views)."""
+    return views.apply(json.loads(Path(site_data).read_text(encoding="utf-8")), views.load())
 
 
 # ------------------------------------------------------------------------- static markup
@@ -345,20 +347,24 @@ def radios(search: Node, name: str) -> list[tuple[str, str, bool, str]]:
 def test_filter_controls_match_the_hash(dom, doc):
     """CONTRACT section 9: each control's name is its hash key and its value the key's value."""
     search = dom.find("search", id="filters")
-    views = [v for v in doc["views"] if v["available"]]
+    shown = [v for v in doc["views"] if v["available"]]
     select = search.find("select", id="f-rank")
     assert select.attrs["name"] == "rank"
     assert select.attrs["aria-describedby"] == "f-rank-measures"
     options = select.find_all("option")
     assert [(o.attrs["value"], squash(o.text)) for o in options] == [
-        (v["key"], v["label"]) for v in views
+        (v["key"], v["label"]) for v in shown
     ]
     assert "selected" in options[0].attrs
-    assert views[0]["key"] == "overall"
-    project = [v for v in views if v["key"] == "project"]
-    assert not project or project[0]["label"] == "Used in projects"  # site ruling 2026-09-25
+    assert shown[0]["key"] == "overall"
+    # config/site.toml's names, whatever the catalog's copies say (view_labels_short).
+    assert [squash(o.text) for o in options] == [
+        views.load()[o.attrs["value"]]["label"] for o in options
+    ]
+    project = [v for v in shown if v["key"] == "project"]
+    assert not project or project[0]["label"] == "Projects"  # site ruling 2026-10-07
     measures = search.find(id="f-rank-measures")
-    assert squash(measures.text) == views[0]["measures"]
+    assert squash(measures.text) == shown[0]["measures"]
     # The select's label (selector_label, 2026-10-05). On phones the labels and the measures
     # line are hidden from sight but stay the names and the description
     # (mobile_first_screen_two_fonts, 2026-10-06), and the search box shows its label inside.
@@ -415,19 +421,19 @@ def test_filter_controls_match_the_hash(dom, doc):
         ("sort-rank", "rank", "true"),
         ("sort-name", "name", "false"),
     ]
-    # "Popularity" over the scores, and its orders' words (owner's site rulings of 2026-09-30
-    # and 2026-10-05, score_column_popularity and sort_words_popular).
+    # "Popularity" over the scores, and its orders' words, without "first" (owner's site
+    # rulings of 2026-09-30 and 2026-10-07, score_column_popularity and sort_words_most_least).
     rank, name = buttons
-    orders = ("most popular first", "least popular first")
+    orders = ("most popular", "least popular")
     assert (rank.attrs["data-asc"], rank.attrs["data-desc"]) == orders
     assert (rank.attrs["data-asc-spoken"], rank.attrs["data-desc-spoken"]) == orders
-    assert rank.attrs["title"] == "Show least popular first instead"
+    assert rank.attrs["title"] == "Show least popular instead"
     assert (name.attrs["data-asc"], name.attrs["data-desc"]) == ("A\u2013Z", "Z\u2013A")
     assert (name.attrs["data-asc-spoken"], name.attrs["data-desc-spoken"]) == ("A to Z", "Z to A")
     assert rank.attrs["data-dir"] == "asc"
     assert "data-dir" not in name.attrs
     assert squash(rank.text) == (
-        "Sort by Popularity most popular first most popular first; select to show least popular first"
+        "Sort by Popularity most popular most popular; select to show least popular"
     )
     assert squash(name.text) == "Sort by Name"
     for button in buttons:
@@ -893,6 +899,10 @@ def test_fonts_fill_a_phones_first_screen(browser, site_url, width, height):
         context.close()
 
 
+# From this width the count fits beside the sort buttons (on two lines up to about 390 px).
+COUNT_BESIDE_FROM = 337
+
+
 @pytest.mark.parametrize("width", [320, 330, 344, 360, 375, 390])
 @pytest.mark.parametrize("hash_", ["", "#cat=serif&var=1"], ids=["plain", "filtered"])
 def test_phone_controls_and_count_share_their_rows(browser, site_url, width, hash_):
@@ -900,7 +910,8 @@ def test_phone_controls_and_count_share_their_rows(browser, site_url, width, has
     that wrap in two, but never run off the screen; each is a target of at least 24 px. The
     button is as wide as its longest text, so the row is the same whatever the count of
     filters on. The count sits in the sort row after the sort buttons, its first line level
-    with their labels, or, where it can't keep about 7.5em beside them, on the next line."""
+    with their labels, or, where it can't keep about 7.5em beside them (below 337 px, with
+    "most popular" in the Popularity button, sort_words_most_least), on the next line."""
     context, page = first_screen(browser, site_url, width, 800, hash_)
     try:
         got = page.evaluate(FIRST_SCREEN)
@@ -923,7 +934,7 @@ def test_phone_controls_and_count_share_their_rows(browser, site_url, width, has
             assert c["right"] <= width, c
         assert got["placeholder"] == "1"  # the search box's label shows inside it
         sort, count = got["sort"], got["count"]
-        if width >= 360:
+        if width >= COUNT_BESIDE_FROM:
             assert count["left"] >= sort["right"], got
             assert count["right"] <= width - 16 + 0.5, got
             label = got["labels"][0]

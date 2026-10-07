@@ -106,9 +106,9 @@ html[data-list-pending="settling"] .site-footer {
    results wrap as a flex row in which everything else takes a line of its own, so the legend
    and the notes stay above the sort row; the order moves only what is seen, and the count
    isn't focusable. Beside the two-line sort button the count may take two lines; where even
-   that leaves it less than about 7.5em (below about 360px) it takes the next line. Its first
-   line is level with the buttons' labels, so a count that changes length (a filter from the
-   address, on load) never moves it. */
+   that leaves it less than about 7.5em (below 337px, with "most popular" in the sort button)
+   it takes the next line. Its first line is level with the buttons' labels, so a count that
+   changes length (a filter from the address, on load) never moves it. */
 @media not all and (min-width: 40rem) {
   .results {
     display: flex;
@@ -155,8 +155,10 @@ html[data-list-pending="settling"] .site-footer {
    40rem the Name button starts over the name column: li.font's inline padding plus
    .font-row's 6rem rank column. The order's words take a second, smaller line inside the
    button, so the Popularity button fits over that column (owner ruling of 2026-09-30,
-   sort_two_lines; its words wrap there, below); with wider text (text spacing, a bigger
-   font) the column grows instead of the buttons overlapping. */
+   sort_two_lines): "most popular" and "least popular" (sort_words_most_least, 2026-10-07)
+   are no wider than its label and arrow. With wider text (text spacing, a bigger font) the
+   column grows instead of the buttons overlapping. In either order one button has a second
+   line, so the row keeps one height and sorting never moves the list. */
 .list-sort {
   display: flex;
   flex-wrap: wrap;
@@ -174,16 +176,12 @@ html[data-list-pending="settling"] .site-footer {
   }
 }
 
-/* From 40rem the row keeps the height of the Popularity button with its words on two lines
-   (below): its border and padding, the arrow's 1.3em line and two small lines. Sorted by
-   name that button has no words, and the list would move up. */
 @media (min-width: 40rem) {
   .list-sort {
     display: grid;
     grid-template-columns: minmax(calc(var(--space-2) + 6rem), max-content) minmax(0, 1fr);
     justify-items: start;
     align-items: start;
-    min-height: calc(2px + 2 * var(--space-1) + 1.3rem + 2 * var(--fs-small) * var(--lh-tight));
   }
 }
 
@@ -226,19 +224,6 @@ html[data-list-pending="settling"] .site-footer {
   grid-area: dir;
   font-size: var(--fs-small);
   white-space: nowrap;
-}
-
-/* "most popular first" (sort_words_popular) is wider than the rank column, so from 40rem the
-   order's words add nothing to the button's width (contain) and wrap within the line its
-   label and arrow make, and Name still starts over the names. On phones the sort buttons
-   have no column to fit, so the words keep one line. */
-@media (min-width: 40rem) {
-  .sort-dir {
-    contain: inline-size;
-    justify-self: stretch;
-    text-align: start;
-    white-space: normal;
-  }
 }
 
 /* The arrows: two stacked triangles drawn with borders, the sortable-column icon. Both are

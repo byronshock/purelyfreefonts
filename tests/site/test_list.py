@@ -32,6 +32,7 @@ from tests.fixtures import make_large_catalog
 
 from tff_catalog.keys import search_key
 from tff_site import data
+from tff_site import views as site_views
 
 ROOT = Path(__file__).resolve().parents[2]
 JS_DIR = ROOT / "site" / "js"
@@ -176,7 +177,9 @@ def count_line(shown: int, total: int) -> str:
 
 @pytest.fixture(scope="module")
 def doc(site_data: Path) -> dict[str, Any]:
-    return data.load(site_data)
+    """The catalog as the site shows it: the views' wording from config/site.toml
+    (view_labels_short, tff_site.views)."""
+    return site_views.apply(data.load(site_data), site_views.load())
 
 
 @pytest.fixture(scope="module")
@@ -983,7 +986,7 @@ def test_extension_keys_survive_load_a_filter_change_and_back(
     guarded_context: Any, doc: dict[str, Any], views: list[str]
 ) -> None:
     if "project" not in views:
-        pytest.skip("no Used in projects view in this data")
+        pytest.skip("no Projects view in this data")
     guarded, page = open_list(guarded_context, "#rank=project&os=linux")
     initial = expected_rows(doc, {"rank": "project"})
     assert hash_of(page) == "#rank=project&os=linux"
@@ -1435,12 +1438,21 @@ def test_score_bars_match_the_scores_and_held_fonts_are_hollow(
 SORT_LAYOUT_JS = """() => {
   const box = (el) => el.getBoundingClientRect();
   const title = document.querySelector('li.font:not(.is-unranked) .font-title');
+  const pressed = document.querySelector('.sort-btn[aria-pressed="true"]');
+  const other = document.querySelector('.sort-btn[aria-pressed="false"]');
+  const words = pressed.querySelector('.sort-dir');
   return {
     rank: box(document.querySelector('#sort-rank')).right,
     name: box(document.querySelector('#sort-name')).left,
     title: box(title).left,
     row: box(document.querySelector('#list-sort')).height,
     list: box(document.querySelector('#list')).top,
+    words: words.textContent,
+    hover: pressed.title,
+    wordsHigh: box(words).height,
+    smallLine: parseFloat(getComputedStyle(words).lineHeight),
+    pressedHigh: box(pressed).height,
+    otherHigh: box(other).height,
   };
 }"""
 
@@ -1448,20 +1460,35 @@ SORT_LAYOUT_JS = """() => {
 @pytest.mark.parametrize("width", [640, 1280])
 def test_the_name_button_sits_over_the_names(guarded_context: Any, width: int) -> None:
     """Owner rulings of 2026-09-30 (sort_header, sort_two_lines): from 40rem the Name button
-    starts over the name column, and the Popularity button fits beside it in every order:
-    "most popular first" and "least popular first" (sort_words_popular, 2026-10-05) are wider
-    than the rank column, so they wrap under the label. The sort row keeps one height in
-    every order, so changing it never moves the list."""
+    starts over the name column, and the Popularity button fits beside it in every order,
+    two lines high: "most popular" and "least popular" (sort_words_most_least, 2026-10-07)
+    take one line under the label. The sort row is the two-line button's height in every
+    order, so changing it never moves the list."""
     guarded, page = open_list(guarded_context, viewport={"width": width, "height": 800})
     seen = []
-    # Most popular first, least popular first, then A to Z and Z to A.
+    # Most popular, least popular, then A to Z and Z to A.
     for button in ("#sort-rank", "#sort-name", "#sort-name", None):
         got = page.evaluate(SORT_LAYOUT_JS)
         assert abs(got["name"] - got["title"]) <= 1, got
         assert got["rank"] < got["name"], got
+        # The order's words are one line: the button in use is two lines, the other one.
+        assert got["wordsHigh"] <= got["smallLine"] + 0.5, got
+        assert got["otherHigh"] < got["pressedHigh"] == pytest.approx(got["row"], abs=0.5), got
         seen.append(got)
         if button:
             page.click(button)
+    assert [g["words"] for g in seen] == [
+        "most popular most popular; select to show least popular",
+        "least popular least popular; select to show most popular",
+        "A\u2013Z A to Z; select to show Z to A",
+        "Z\u2013A Z to A; select to show A to Z",
+    ]
+    assert [g["hover"] for g in seen] == [
+        "Show least popular instead",
+        "Show most popular instead",
+        "Show Z to A instead",
+        "Show A to Z instead",
+    ]
     assert max(g["row"] for g in seen) - min(g["row"] for g in seen) <= 0.5, seen
     assert max(g["list"] for g in seen) - min(g["list"] for g in seen) <= 0.5, seen
     guarded.assert_clean(page)

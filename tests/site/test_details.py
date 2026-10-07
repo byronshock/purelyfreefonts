@@ -38,6 +38,7 @@ import pytest
 from tests.site.conftest import fetch_unencoded
 
 from tff_site import assets, cli, data, linkcheck
+from tff_site import views as site_views
 
 ROOT = Path(__file__).resolve().parents[2]
 JS_PART = ROOT / "site" / "js" / "40-details.js"
@@ -57,7 +58,9 @@ AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]
 
 
 def _load_doc(path: Path) -> dict[str, Any]:
-    return data.load(path)
+    """The catalog as the site shows it: the views' wording from config/site.toml
+    (view_labels_short, tff_site.views)."""
+    return site_views.apply(data.load(path), site_views.load())
 
 
 def owner_ten(doc: dict[str, Any]) -> list[str]:

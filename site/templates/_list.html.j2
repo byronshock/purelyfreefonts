@@ -9,9 +9,9 @@
   nerd_tag). #list-sort, the sort buttons over the rank and name columns, ships hidden like
   #filters and is shown by the script (owner ruling of 2026-09-30, sort_header). The buttons
   carry their own words for each order; the script redraws them (30-filters-ui.js). The score
-  column's button says "Popularity", its orders "most popular first" and "least popular
-  first" (owner's site rulings of 2026-09-30 and 2026-10-05, score_column_popularity and
-  sort_words_popular). On phones the "Fonts" heading is hidden from sight, though screen
+  column's button says "Popularity", its orders "most popular" and "least popular" (owner's
+  site rulings of 2026-09-30 and 2026-10-07, score_column_popularity and
+  sort_words_most_least), which fit on the button's second line. On phones the "Fonts" heading is hidden from sight, though screen
   readers and headings navigation keep it, and the count sits in the sort row
   (mobile_first_screen_two_fonts, 2026-10-06; 20-list.css).
 -#}
@@ -30,7 +30,7 @@
 <button type="button" id="no-results-clear">Clear filters</button>
 </div>
 <div id="list-sort" class="list-sort" role="group" aria-label="Sort the list" hidden>
-<button type="button" class="sort-btn" id="sort-rank" data-sort="rank" data-asc="most popular first" data-desc="least popular first" data-asc-spoken="most popular first" data-desc-spoken="least popular first" aria-pressed="true" data-dir="asc" title="Show least popular first instead"><span class="visually-hidden">Sort by </span><span class="sort-label">Popularity</span> <span class="sort-arrow" aria-hidden="true"></span> <span class="sort-dir"><span aria-hidden="true">most popular first</span><span class="visually-hidden"> most popular first; select to show least popular first</span></span></button>
+<button type="button" class="sort-btn" id="sort-rank" data-sort="rank" data-asc="most popular" data-desc="least popular" data-asc-spoken="most popular" data-desc-spoken="least popular" aria-pressed="true" data-dir="asc" title="Show least popular instead"><span class="visually-hidden">Sort by </span><span class="sort-label">Popularity</span> <span class="sort-arrow" aria-hidden="true"></span> <span class="sort-dir"><span aria-hidden="true">most popular</span><span class="visually-hidden"> most popular; select to show least popular</span></span></button>
 <button type="button" class="sort-btn" id="sort-name" data-sort="name" data-asc="A&#x2013;Z" data-desc="Z&#x2013;A" data-asc-spoken="A to Z" data-desc-spoken="Z to A" aria-pressed="false" title="Sort by name"><span class="visually-hidden">Sort by </span><span class="sort-label">Name</span> <span class="sort-arrow" aria-hidden="true"></span> <span class="sort-dir"></span></button>
 </div>
 <ol id="list" class="font-list" role="list" data-index="{{ list.index_url }}" data-details="{{ list.details_url }}" data-run-date="{{ build.run_date }}">

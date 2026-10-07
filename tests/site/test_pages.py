@@ -23,7 +23,7 @@ from urllib.parse import urlsplit
 
 import pytest
 
-from tff_site import assets, build, data, pages
+from tff_site import assets, build, data, pages, views
 
 ROOT = Path(__file__).resolve().parents[2]
 SAMPLE = data.load(ROOT / "tests" / "fixtures" / "catalog-site.sample.json")
@@ -610,7 +610,7 @@ def test_methodology_shows_the_document(built):
 
 
 def test_methodology_shows_the_run_and_the_credits(site_dir, built, site_data):
-    doc = data.load(site_data)
+    doc = views.apply(data.load(site_data), views.load())  # config's view wording
     html = read(site_dir, "methodology/index.html")
     text = built["methodology/index.html"].plain
     assert f"Data from {doc['run']['date']}. Method version {doc['run']['method_version']}." in text

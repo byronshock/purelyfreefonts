@@ -91,7 +91,10 @@ def test_names_match_the_site(doc: str) -> None:
     views = site_views()
     for key in ("overall", "desktop_chosen", "desktop_installed", "coding"):
         assert views[key] in doc, key
-    for label in re.findall(r"\*(Desktop: [^*]+|[A-Z][a-z]+ fonts)\*", doc):
+    # View names of the kinds used before the owner's site ruling of 2026-10-07
+    # (view_labels_short) and after it: any the doc sets in italics must be the site's.
+    named = r"\*(Desktop: [^*]+|[A-Z][a-z]+ fonts|[A-Z][a-z]+ \(desktop\))\*"
+    for label in re.findall(named, doc):
         assert label in views.values(), label
 
     templates = ROOT / "site" / "templates"
