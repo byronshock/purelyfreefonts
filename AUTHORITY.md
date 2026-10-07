@@ -437,6 +437,8 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
     - The note "Why isn't my favorite free font here?" moves to the About page, where it becomes the conversation that ends with the tip pitch. The empty-search message links to it (`why_not_listed_to_about`). This replaces the placement of `why_not_listed_after_list` and `why_not_listed_layout`.
     - The privacy line moves into the footer, on every page, linking to the Privacy page (`privacy_line_in_footer`).
   - **"Popularity" now** (`step4_wording_now`, 2026-10-07): the first plan's step 4 wording is built with the mobile first screen. The owner: "I'd like the first column to be labeled 'Popularity', not 'Rank'."
+    - The sort words become "most popular" and "least popular" (`sort_words_most_least`), so the button keeps two lines on wide screens.
+    - The view names become "Overall", "Chosen (desktop)", "Installed (desktop)", "Projects", "Coding" and "Developers & apps" (`view_labels_short`), replacing "Projects: most used" and the old names. They're set in `config/site.toml`, and until the first live refresh the site build shows config's names over the catalog's copies.
 
   *(2026-10-06 and 2026-10-07)*
 - **Domains.** trulyfreefonts.com, .org and .net, registered and hosted on Cloudflare. The canonical URL is `https://trulyfreefonts.com`; `www.*`, `.org` and `.net` 301-redirect to it, keeping the path.

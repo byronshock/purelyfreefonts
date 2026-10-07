@@ -62,7 +62,7 @@ Each font row is 161 px tall.
 - **The front page stops after the lead** (2026-10-07). The owner, to the lead session: "<- WE COULD STOP HERE".
   - The note "Why isn't my favorite free font here?" moves to the About page (`why_not_listed_to_about`).
   - The privacy line goes into the footer on every page (`privacy_line_in_footer`).
-- **"Popularity" now** (`step4_wording_now`): PLAN-REVIEWERS-1.md step 4's wording is built with this work.
+- **"Popularity" now** (`step4_wording_now`): PLAN-REVIEWERS-1.md step 4's wording is built with this work, with "most popular" and "least popular" (`sort_words_most_least`) and the shorter view names "Overall", "Chosen (desktop)", "Installed (desktop)", "Projects", "Coding" and "Developers & apps" (`view_labels_short`).
 
 **Pending:** the friends' findings, and the second round's outside critique.
 
@@ -103,7 +103,8 @@ Each font row is 161 px tall.
 - [ ] **The first plan's step 4 wording, built with this** (`step4_wording_now`):
   - "Popularity" over the scores (`score_column_popularity`);
   - "Measure" on the selector (`selector_label`);
-  - "most popular first" and "least popular first" (`sort_words_popular`);
+  - "most popular" and "least popular" (`sort_words_most_least`, amending `sort_words_popular`);
+  - the view names "Overall", "Chosen (desktop)", "Installed (desktop)", "Projects", "Coding" and "Developers & apps" (`view_labels_short`): set in `config/site.toml`, with the site build showing config's labels and measures over the catalog's copies. The build fails if config and the catalog name different views. A test says the override is a no-op once the first live refresh's catalog carries the same wording. `site/CONTRACT.md` §1 says why the page and the catalog differ until then.
   - the methodology page titled "How we measure popularity", with the nav link "How it works" (`method_page_name`).
 
   Also `docs/usability-test.md`'s wording. Re-measure the header's single-row breakpoint for the wider nav, and move the `47.5rem` rule and its test to match (PLAN-REVIEWERS-1.md step 5's note on `wordmark_breakpoint`). Tick PLAN-REVIEWERS-1.md step 4 when it lands.

@@ -21,3 +21,17 @@ recommended = true
 value = "build_step_4_with_the_mobile_first_screen"
 ruling = "PLAN-REVIEWERS-1.md step 4's wording (score_column_popularity, selector_label, sort_words_popular, method_page_name) is built now, with the mobile first screen and ahead of the parked Project-default branch; the nav's wider \"How it works\" re-measures the header's one-row breakpoint (wordmark_breakpoint)."
 reason = "The owner, to the lead session: \"I'd like the first column to be labeled 'Popularity', not 'Rank'. I think this is in our to-dos already, but I thought we had mostly gotten rid of references to 'Rank'.\" Of (a) building it now and (b) later, the owner took Claude's recommendation."
+
+[sort_words_most_least]
+choice = "a"
+recommended = true
+value = "most popular / least popular"
+ruling = "The score column's sort button says \"most popular\", or \"least popular\" when reversed, on its second line, in place of \"most popular first\" and \"least popular first\" (sort_words_popular, 2026-10-05), so the button keeps two lines on wide screens."
+reason = "\"most popular first\" (about 110 px) didn't fit the rank column's 94 px from 40rem, so the button wrapped to three lines (PLAN-REVIEWERS-2.md step 2's review). Of (a) dropping \"first\", (b) widening the column by about 14 px and (c) accepting three lines, the owner took Claude's recommendation."
+
+[view_labels_short]
+choice = "a"
+recommended = true
+value = "Overall / Chosen (desktop) / Installed (desktop) / Projects / Coding / Developers & apps"
+ruling = "The rank selector's view names are \"Overall\", \"Chosen (desktop)\", \"Installed (desktop)\", \"Projects\", \"Coding\" and \"Developers & apps\", in place of \"Desktop: most chosen\", \"Desktop: most installed\", \"Used in projects\" (and the ruled \"Projects: most used\", project_rank_label_most_used), \"Coding fonts\" and \"Developers & apps\" unchanged. On phones the closed select shows about 87 px of text at 375 px, so the longer names read \"Chosen (d…\", \"Installed…\" and \"Developers…\": cut, but always told apart. They are set in config/site.toml, the one home for the wording; until the first live refresh carries them into the catalog, the site build shows config's names over the catalog's copies."
+reason = "On phones the closed select cut \"Desktop: most chosen\" and \"Desktop: most installed\" alike to \"Desktop: m…\" (PLAN-REVIEWERS-2.md step 2's review). The owner chose shorter names everywhere over a select on its own line or leaving it; then, of (a) this set, (b) \"Chosen\", \"Installed\", \"Dev & apps\" (all whole on phones, no \"desktop\") and (c) \"Desktop: chosen\", \"Desktop: installed\" (still cut to \"Desktop: …\"), took Claude's recommendation. The lead session chose the site-build override over a catalog rebuild, which would move scores before the first live refresh."
