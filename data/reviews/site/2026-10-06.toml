@@ -42,3 +42,22 @@ recommended = false
 value = "hidden_on_phones"
 ruling = "On phones the header shows no early-version line; wider screens keep \"Early version. Coming next: free font inventory tools.\" This amends the early-version line ruling of 2026-09-29 for phones."
 reason = "Part of the mobile first screen (mobile_first_screen_two_fonts). Of (a) \"Early version.\", which Claude recommended, (b) \"Early version: inventory tools coming\" and (c) hiding it on phones, the owner chose (c)."
+
+[wordmark_schoolbook_light]
+value = "drawing of purely-free-fonts-schoolbook-light-mixed.svg, source sha256 46254277025d01a5ee9cd86893054517441c06ce115796f0b9a5fb6f67959efe"
+ruling = "The wordmark is the owner's new drawing, \"Purely Free Fonts\" in mixed case, light (his file purely-free-fonts-schoolbook-light-mixed.svg), on its white plate in a 9717 x 1400 viewBox. It replaces the capitals of 2026-10-04 (wordmark_owners_svg). The source is kept as site/static/_src/wordmark-source.svg, pinned by sha256."
+reason = "The owner: \"I have a new wordmark SVG. I want to use this instead of the existing wordmark.\""
+
+[wordmark_drawing_only]
+choice = "a"
+recommended = true
+value = "strip_editor_data"
+ruling = "The site serves the drawing only: the view box, title, white plate and letter paths exactly as drawn, without Inkscape's editor settings, metadata and element ids (make_wordmark.py writes it from the pinned source)."
+reason = "Claude's recommendation, over serving Inkscape's file byte for byte: the drawing is unchanged and the file smaller."
+
+[wordmark_size_mixed]
+choice = "a"
+recommended = true
+value = "caps_38_and_25_px"
+ruling = "The new wordmark keeps the capital height of about 38 px on wide screens and 25 px on phones: 410 x 59 px from 760 px up and 270 x 39 px below, so the header grows about 13 px taller; wordmark_breakpoint's 760 px stays."
+reason = "Claude's recommendation, over keeping the 46 px plate (capitals about 30 px, thinner light strokes)."
