@@ -249,8 +249,9 @@ def test_methodology_parts_from_the_document():
     assert list(parts) == ["plain_words", "desktop_views", "confidence", "biases"]
     assert parts["plain_words"].startswith("Each month we collect public counts")
     assert not any(line.startswith(">") for line in parts["plain_words"].splitlines())
-    assert "**Most chosen**" in parts["desktop_views"]
-    assert "**Most installed**" in parts["desktop_views"]
+    # The document names the two desktop views as the rank select does (view_labels_short).
+    assert "**Chosen (desktop)**" in parts["desktop_views"]
+    assert "**Installed (desktop)**" in parts["desktop_views"]
     assert not any(line.startswith("|") for line in parts["desktop_views"].splitlines())
     assert parts["confidence"].startswith("**Confidence.**")
     assert "Tier C" in parts["confidence"]
