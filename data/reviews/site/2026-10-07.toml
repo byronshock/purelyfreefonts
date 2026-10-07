@@ -1,0 +1,51 @@
+# Owner rulings of 2026-10-07 on the site, for PLAN-REVIEWERS-2.md, asked in chat as single-select questions.
+# Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md.
+
+[why_not_listed_to_about]
+choice = "a"
+recommended = true
+value = "note_on_the_about_page"
+ruling = "The note \"Why isn't my favorite free font here?\" moves from the front page to the About page, and the front page stops after the lead. Its rewrite as a conversation that ends with the tip pitch happens there, and the empty-search message on the front page links to it. This replaces the placement in why_not_listed_after_list (2026-09-30, after the fonts) and why_not_listed_layout (2026-09-29)."
+reason = "The owner had told the lead session, of the front page: \"They are ranked by how many people install them and use them in their work. <- WE COULD STOP HERE\", with the note marked \"-> move to About or Method\". Asked to reconcile that with mobile_first_screen_two_fonts (below the list), the owner chose (a) the About page, Claude's recommendation, over (b) the methodology page and (c) below the list."
+
+[privacy_line_in_footer]
+choice = "a"
+recommended = true
+value = "footer_on_every_page"
+ruling = "The privacy line \"No cookies, no tracking, and the page loads only its own files. Check the Network tab.\" moves from under the front page's lead into the footer, on every page, linking to the Privacy page."
+reason = "With the front page stopping after the lead (why_not_listed_to_about), of (a) the footer on every page, (b) the Privacy page only, (c) the About page and (d) below the list, the owner took Claude's recommendation."
+
+[step4_wording_now]
+choice = "a"
+recommended = true
+value = "build_step_4_with_the_mobile_first_screen"
+ruling = "PLAN-REVIEWERS-1.md step 4's wording (score_column_popularity, selector_label, sort_words_popular, method_page_name) is built now, with the mobile first screen and ahead of the parked Project-default branch; the nav's wider \"How it works\" re-measures the header's one-row breakpoint (wordmark_breakpoint)."
+reason = "The owner, to the lead session: \"I'd like the first column to be labeled 'Popularity', not 'Rank'. I think this is in our to-dos already, but I thought we had mostly gotten rid of references to 'Rank'.\" Of (a) building it now and (b) later, the owner took Claude's recommendation."
+
+[sort_words_most_least]
+choice = "a"
+recommended = true
+value = "most popular / least popular"
+ruling = "The score column's sort button says \"most popular\", or \"least popular\" when reversed, on its second line, in place of \"most popular first\" and \"least popular first\" (sort_words_popular, 2026-10-05), so the button keeps two lines on wide screens."
+reason = "\"most popular first\" (about 110 px) didn't fit the rank column's 94 px from 40rem, so the button wrapped to three lines (PLAN-REVIEWERS-2.md step 2's review). Of (a) dropping \"first\", (b) widening the column by about 14 px and (c) accepting three lines, the owner took Claude's recommendation."
+
+[view_labels_short]
+choice = "a"
+recommended = true
+value = "Overall / Chosen (desktop) / Installed (desktop) / Projects / Coding / Developers & apps"
+ruling = "The rank selector's view names are \"Overall\", \"Chosen (desktop)\", \"Installed (desktop)\", \"Projects\", \"Coding\" and \"Developers & apps\", in place of \"Desktop: most chosen\", \"Desktop: most installed\", \"Used in projects\" (and the ruled \"Projects: most used\", project_rank_label_most_used), \"Coding fonts\" and \"Developers & apps\" unchanged. On phones the closed select shows about 87 px of text at 375 px, so the longer names read \"Chosen (d…\", \"Installed…\" and \"Developers…\": cut, but always told apart. They are set in config/site.toml, the one home for the wording; until the first live refresh carries them into the catalog, the site build shows config's names over the catalog's copies."
+reason = "On phones the closed select cut \"Desktop: most chosen\" and \"Desktop: most installed\" alike to \"Desktop: m…\" (PLAN-REVIEWERS-2.md step 2's review). The owner chose shorter names everywhere over a select on its own line or leaving it; then, of (a) this set, (b) \"Chosen\", \"Installed\", \"Dev & apps\" (all whole on phones, no \"desktop\") and (c) \"Desktop: chosen\", \"Desktop: installed\" (still cut to \"Desktop: …\"), took Claude's recommendation. The lead session chose the site-build override over a catalog rebuild, which would move scores before the first live refresh."
+
+[lapis_lazuli_blue]
+choice = "a"
+recommended = true
+value = "26619C_light_8CB6E3_dark"
+ruling = "The site's blue becomes lapis lazuli: #26619C for links, the focus ring, the score bars, the Download button and the header's links in light mode and in the white header (6.4:1 on white); in dark mode a lighter lapis tint, #8CB6E3 (8.4:1 on the dark background), since true lapis there is only about 2.8:1. It replaces #0a56c2 and #8ab4f8 in site/css/00-tokens.css (--c-link, --c-focus, --c-accent, --c-header-link, --c-header-focus). Visited links keep their purple."
+reason = "The owner: \"Can we change the blue on the site to Lapis Lazuli?\" Of (a) all the blues with a dark-mode tint, (b) only the score bars and the Download button and (c) a deeper, more ultramarine lapis (#1F4E8C), the owner took Claude's recommendation, after a side-by-side of the current blue and lapis on white and on the dark background."
+
+[icons_lapis]
+choice = "a"
+recommended = true
+value = "favicon_touch_icon_share_image_in_lapis"
+ruling = "The favicon (favicon.svg and favicon.ico), the phone home-screen icon (apple-touch-icon.png) and the share image (share.png) are drawn in lapis lazuli, #26619c, like the site's CSS (lapis_lazuli_blue): site/static/_src/make_static.py's ACCENT follows --c-accent, and the images are regenerated."
+reason = "lapis_lazuli_blue named the CSS tokens; these three images still drew #0a56c2. Of (a) regenerating them in lapis and (b) keeping the old blue, the owner took Claude's recommendation. White on lapis is 6.4:1."
