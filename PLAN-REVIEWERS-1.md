@@ -243,7 +243,7 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
 ### Step 5: When a font isn't here
 **Who:** Claude; the owner approves the wording. **Depends on:** Q5, Q7 and Q9 (answered); step 2 for the reasons.
 - [ ] **First part:**
-  - [ ] Move the note below the list, on wide screens and phones. The top of the front page becomes the headline, the lead, the privacy line, then the list.
+  - [ ] Move the note below the list, on wide screens and phones. The top of the front page becomes the headline, the lead, the privacy line, then the list. *(Moved to [PLAN-REVIEWERS-2.md](PLAN-REVIEWERS-2.md) step 2 on 2026-10-06: the mobile first screen, built now, with the privacy line going below the list too.)*
   - [ ] When search is the only filter and finds nothing, say "No listed font matches '…'" and show the note. Other empty results keep today's text.
   - [ ] Rewrite the note as a conversation that ends with the tip pitch, asking the reader to leave a tip with no amount (`tip_jar`), under Funding as amended.
   - [ ] Add the "Tip Jar" link at the end of the header nav, and remove the footer's tip link.
@@ -374,6 +374,8 @@ Long names are limited by width and grow less: about 1 phone row in 10 grows und
 **Done when:** milestone-3.md is merged with the new entries.
 
 ### Step 11: Redeploy the test site, and the second review round
+**Started early:** on 2026-10-06 the owner began the second round on staging with 7a–7c (main `7738636`), before steps 6, 9a and 10 landed. Its findings go into [PLAN-REVIEWERS-2.md](PLAN-REVIEWERS-2.md).
+
 **Who:** the lead redeploys; Claude checks; the owner, Claude and a fresh outside reviewer review. **Depends on:** the steps the freeze doesn't hold (the owner's choice of 2026-10-05):
 - 7a, 7b and 7c;
 - 8a;

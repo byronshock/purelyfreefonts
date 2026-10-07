@@ -427,6 +427,14 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
 
 *(2026-09-25; setup checklist and runbook in [ops/SERVER.md](ops/SERVER.md))*
 
+- **Second round of reviews (2026-10-06).** The round began on staging with main `7738636`, after the first plan's steps 7a–7c. The working checklist is [PLAN-REVIEWERS-2.md](PLAN-REVIEWERS-2.md) (`reviewers_round_2_plan`). Recorded in `data/reviews/site/2026-10-06.toml`.
+  - **The mobile first screen** (`mobile_first_screen_two_fonts`). The owner: "There is entirely too much text on the first page and not enough of what people came for, the fonts." At 375 × 812 the first font started at 867 px, below the first screen.
+    - The ruling: two fonts fully on a 375 × 812 first screen.
+    - The way there: the note and the privacy line below the list; on phones, no Rank description, the count in the sort row, a smaller H1 and a shorter lead, a shorter early-version line, and search, Rank and Filters on one compact row.
+    - The heading and the lead stay on the page. The owner took Claude's recommendation over three fonts with no intro on phones, or one font with moves only.
+  - **Built now** (`mobile_first_screen_now`): ahead of the parked Project-default branch, including the first plan's move of the note below the list. This amends, for this work, the owner's choice of 2026-09-30 to keep template steps waiting for that branch.
+
+  *(2026-10-06)*
 - **Domains.** trulyfreefonts.com, .org and .net, registered and hosted on Cloudflare. The canonical URL is `https://trulyfreefonts.com`; `www.*`, `.org` and `.net` 301-redirect to it, keeping the path.
   - *Amended on 2026-10-02* (see **Name and domain (2026-10-02)** under Site). The canonical URL becomes `https://purelyfreefonts.com` at the cutover in `docs/milestone-2.md` step 13b. These domains, all registered and hosted on Cloudflare, then 301 to it, keeping the path and query:
     - trulyfreefonts.com, .org and .net, and their `www.` hosts (through Caddy, as now);
@@ -458,6 +466,7 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
   - `docs/usability-test.md`, the usability test plan (Milestone 2 step 12) *(2026-09-30)*;
   - `PLAN-NERD-FONTS.md`, the working checklist for Backlog TASK-2. *(2026-09-28)*
   - `PLAN-REVIEWERS-1.md`, the working checklist for the changes from the first reviews of the test site. *(2026-10-05)*
+  - `PLAN-REVIEWERS-2.md`, the working checklist for the second round of reviews. *(2026-10-06)*
   - `docs/milestone-1-handoff.md`, Milestone 1's handoff note, and `ops/MONTHLY.md`, the monthly runbook. *(2026-09-30)*
 - **Monthly data refresh.** A scheduled GitHub Actions workflow runs the pipeline and opens a pull request with the new catalog and anything flagged for review. The owner reviews and merges it.
   - **Timing (2026-09-30).** The first live refresh and the monthly schedule wait until after Milestone 2's launch, and come before Milestone 3: [milestone-refresh.md](docs/milestone-refresh.md), which takes the rest of Milestone 1 step 19 and Milestone 2 step 16. Until then the site shows the 2026-09-26 catalog, which `state/` holds as the first published run (#31). Recorded in `data/reviews/ci/2026-09-30.toml` (`refresh_timing`).
