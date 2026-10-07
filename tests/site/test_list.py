@@ -396,6 +396,30 @@ def test_setstate_partials_are_validated_like_the_hash(parts: Parts, index: dict
     assert got[13:] == [True, False, False]  # "1" is on, "yes" is not; the Nerd filter is a filter
 
 
+def test_a_hash_that_may_change_the_list_is_told_apart(parts: Parts, index: dict[str, Any]) -> None:
+    """State.changesList, read as the page loads (90-main.js keeps the results out of sight
+    until the first render when it is true): any pair but the font's, a Milestone 3 pair or a
+    retired key included; not an empty hash, an in-page anchor or a font alone."""
+    font = index["ids"][0]
+    cases = {
+        "": False,
+        "#": False,
+        "#&&": False,
+        "#main": False,  # the skip link's target
+        f"#font={font}": False,
+        "#font": False,
+        "#q=a": True,
+        "#rank=coding": True,
+        "#sort=name": True,
+        "#cat=serif&var=1": True,
+        f"#font={font}&nerd=1": True,
+        "#os=linux": True,
+        "#spacing=monospaced": True,
+    }
+    got = parts.run("return arg.map((hash) => P.State.changesList(hash));", list(cases))
+    assert dict(zip(cases, got, strict=True)) == cases
+
+
 # --------------------------------------------------------------------- pure: View.compute
 
 
@@ -1415,6 +1439,8 @@ SORT_LAYOUT_JS = """() => {
     rank: box(document.querySelector('#sort-rank')).right,
     name: box(document.querySelector('#sort-name')).left,
     title: box(title).left,
+    row: box(document.querySelector('#list-sort')).height,
+    list: box(document.querySelector('#list')).top,
   };
 }"""
 
@@ -1422,15 +1448,22 @@ SORT_LAYOUT_JS = """() => {
 @pytest.mark.parametrize("width", [640, 1280])
 def test_the_name_button_sits_over_the_names(guarded_context: Any, width: int) -> None:
     """Owner rulings of 2026-09-30 (sort_header, sort_two_lines): from 40rem the Name button
-    starts over the name column, and the Popularity button fits beside it in either order:
+    starts over the name column, and the Popularity button fits beside it in every order:
     "most popular first" and "least popular first" (sort_words_popular, 2026-10-05) are wider
-    than the rank column, so they wrap under the label."""
+    than the rank column, so they wrap under the label. The sort row keeps one height in
+    every order, so changing it never moves the list."""
     guarded, page = open_list(guarded_context, viewport={"width": width, "height": 800})
-    for _ in range(2):  # most popular first, then least popular first
+    seen = []
+    # Most popular first, least popular first, then A to Z and Z to A.
+    for button in ("#sort-rank", "#sort-name", "#sort-name", None):
         got = page.evaluate(SORT_LAYOUT_JS)
         assert abs(got["name"] - got["title"]) <= 1, got
         assert got["rank"] < got["name"], got
-        page.click("#sort-rank")
+        seen.append(got)
+        if button:
+            page.click(button)
+    assert max(g["row"] for g in seen) - min(g["row"] for g in seen) <= 0.5, seen
+    assert max(g["list"] for g in seen) - min(g["list"] for g in seen) <= 0.5, seen
     guarded.assert_clean(page)
 
 
@@ -1567,6 +1600,52 @@ def test_milestone_3_notes_actions_and_scores(guarded_context: Any, sample: dict
     guarded.assert_clean(page)
 
 
+PENDING_OVER = "() => !document.documentElement.hasAttribute('data-list-pending')"
+# Whether html[data-list-pending] was ever set, from before the page's own script.
+PENDING_SEEN = """
+(() => {
+  window.__tffPending = false;
+  new MutationObserver(() => {
+    if (document.documentElement && document.documentElement.hasAttribute('data-list-pending')) {
+      window.__tffPending = true;
+    }
+  }).observe(document, { attributes: true, subtree: true, attributeFilter: ['data-list-pending'] });
+})();
+"""
+SHOWN_JS = """() => ['#results', 'footer.site-footer'].map((s) => {
+  const style = getComputedStyle(document.querySelector(s));
+  return style.display !== 'none' && style.visibility === 'visible';
+})"""
+
+
+class HeldIndex:
+    """The list index's requests in ``page``, held until ``release()`` lets them through."""
+
+    def __init__(self, page: Any) -> None:
+        self.page, self.routes, self.released = page, [], False
+        # A plain function: Playwright tags each handler with an attribute (Guarded.attach).
+        page.route("**/assets/list.*.json", lambda route: self._route(route))
+
+    def _route(self, route: Any) -> None:
+        if self.released:
+            route.fallback()
+        else:
+            self.routes.append(route)
+
+    def wait(self) -> None:
+        """Wait until the page has asked for the index."""
+        for _ in range(100):
+            if self.routes:
+                return
+            self.page.wait_for_timeout(50)
+        pytest.fail("the list index was never requested")
+
+    def release(self) -> None:
+        self.released = True
+        for route in self.routes:
+            route.fallback()
+
+
 @pytest.mark.parametrize(
     ("failure", "note"),
     [
@@ -1593,6 +1672,9 @@ def test_a_missing_index_leaves_the_server_list_with_a_note(
     page.goto("/#cat=serif")
     page.wait_for_selector("#load-note")
     assert page.text_content("#load-note") == note
+    # The link's filter had kept the results and the footer out of sight; they show again.
+    page.wait_for_function(PENDING_OVER)
+    assert page.evaluate(SHOWN_JS) == [True, True]
     # The note sits with the list, above the count, and is not a second live region.
     assert page.evaluate(
         "document.getElementById('load-note').nextElementSibling.id === 'count'"
@@ -1604,6 +1686,59 @@ def test_a_missing_index_leaves_the_server_list_with_a_note(
     assert guarded.errors, "the failure still reaches the console"
     if failure == "404":
         assert any("The list was updated" in error for error in guarded.errors)
+
+
+def test_a_link_with_filters_shows_the_list_once_they_apply(
+    guarded_context: Any, doc: dict[str, Any]
+) -> None:
+    """While the list index is on its way, a link with filters in it keeps the results and the
+    footer out of sight (html[data-list-pending]), so the server's list never shows only to
+    change; once the index is in, the first render shows the filtered list, and then the rest
+    of the page."""
+    guarded = guarded_context()
+    page = guarded.new_page()
+    held = HeldIndex(page)
+    page.goto("/#cat=serif", wait_until="domcontentloaded")
+    held.wait()
+    assert page.evaluate("document.documentElement.getAttribute('data-list-pending')") == ""
+    assert page.evaluate(SHOWN_JS) == [False, False]
+    held.release()
+    page.wait_for_function(PENDING_OVER)
+    assert page.evaluate(SHOWN_JS) == [True, True]
+    assert rows(page) == expected_rows(doc, {"cat": "serif"})
+    guarded.assert_clean(page)
+
+
+def test_a_slow_index_lets_the_server_list_show(guarded_context: Any, doc: dict[str, Any]) -> None:
+    """After 3 seconds without the list index, a link's filters no longer keep the results out
+    of sight: the server's list shows, and the filters apply when the index comes."""
+    guarded = guarded_context()
+    page = guarded.new_page()
+    held = HeldIndex(page)
+    page.goto("/#cat=serif", wait_until="domcontentloaded")
+    held.wait()
+    page.wait_for_function(PENDING_OVER, timeout=6000)
+    assert page.evaluate(SHOWN_JS) == [True, True]
+    assert rows(page) == expected_rows(doc, {})
+    held.release()
+    page.wait_for_function("() => !document.getElementById('filters').hidden")
+    assert rows(page) == expected_rows(doc, {"cat": "serif"})
+    guarded.assert_clean(page)
+
+
+@pytest.mark.parametrize("hash_", ["", "#font={font}", "#main"], ids=["plain", "font", "anchor"])
+def test_a_link_without_filters_never_hides_the_list(
+    guarded_context: Any, index: dict[str, Any], hash_: str
+) -> None:
+    """No hash, a font alone or an in-page anchor asks for the server's list as it is: the
+    results stay in sight from the first paint."""
+    guarded = guarded_context()
+    guarded.context.add_init_script(RECORDER + PENDING_SEEN)
+    page = guarded.new_page()
+    page.goto("/" + hash_.format(font=index["ids"][0]))
+    page.wait_for_function("() => window.__tffReady >= 1")
+    assert page.evaluate("window.__tffPending") is False
+    guarded.assert_clean(page)
 
 
 # ----------------------------------------------------------- the large catalog generator

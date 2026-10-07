@@ -115,8 +115,10 @@
   transform: rotate(-135deg);
 }
 
-/* The search box's placeholder repeats its label, for phones, where the label is hidden from
-   sight (below); from 40rem the label shows above the box, so the placeholder doesn't. */
+/* The search box's placeholder, "Search", stands in for its label on phones, where the label
+   is hidden from sight (below); from 40rem the label shows above the box, so the placeholder
+   doesn't. It is shorter than the label, "Search fonts", so it shows whole in the narrow box
+   beside the select. */
 #f-q::placeholder {
   color: var(--c-muted);
   opacity: 1;
@@ -131,12 +133,13 @@
 /* Phones (below 40rem): search, the rank select and the Filters button share one row, so two
    fonts fit on a 375 x 812 first screen (owner's site ruling of 2026-10-06,
    mobile_first_screen_two_fonts). The labels and the line under the select are hidden from
-   sight (visually-hidden-phone) but stay the controls' names and description. Search and the
-   select split the room left by the button, each at least 6rem wide, so the row still fits
-   from 360px when the button counts the filters that are on ("Filters (3)"), and a filter in
-   the address never wraps it on load; below that the button wraps onto a second line, and
-   nothing scrolls sideways. A long view label is cut short inside the closed select, and the
-   open list shows it whole. */
+   sight (visually-hidden-phone) but stay the controls' names and description. The button is
+   as wide as its longest text, "Filters (6)", so counting the filters that are on never
+   changes the room left. Search and the select split that room two to three, each at least
+   5.5rem wide, which shows the search box's placeholder whole and leaves the view labels
+   what room there is. The row fits from 336px; below that the button takes a second line,
+   whatever the count, and nothing scrolls sideways. A long view label is cut short inside
+   the closed select, and the open list shows it whole. */
 @media not all and (min-width: 40rem) {
   .filters-bar {
     display: flex;
@@ -147,12 +150,18 @@
 
   #f-q,
   #f-rank {
-    flex: 1 1 0;
-    min-width: 6rem;
+    flex: 2 1 0;
+    min-width: 5.5rem;
     margin: 0;
   }
 
+  #f-rank {
+    flex-grow: 3;
+  }
+
   .filters-toggle {
+    justify-content: center;
+    min-width: 7em;
     margin: 0;
   }
 }

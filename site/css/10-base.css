@@ -237,7 +237,8 @@ input[type="radio"] {
    2026-10-04 and 2026-10-06). Sized by width, the height following, so it scales down evenly where even 270 px
    won't fit. The breakpoint is the widest one-row header, the gutters, the wordmark, the gap
    and the nav: 16 + 410 + 24 + 281 + 16 = 747 px, with "How it works" bold on its own page
-   (measured on 2026-10-07); tests/site/test_shell.py re-measures it. */
+   (measured on 2026-10-07); tests/site/test_shell.py re-measures it. That is without the Blog
+   link: the first published post makes the nav about 329 px, and the breakpoint about 795. */
 .site-name-mark {
   display: block;
   width: 25.625rem;

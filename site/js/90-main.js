@@ -3,11 +3,19 @@
 // waits for it.
 //
 // Order on the list page: mark html[data-js]; start the specimen loader and Details; attach
-// the delegated listeners on #list; fetch the list index (preloaded by the page); then, in an
-// idle callback, map the rows, read the hash, render the first view without announcing it,
-// show the filters, and start Ext, which publishes globalThis.tff and dispatches
-// 'tff:list-ready' (Main dispatches it instead if Ext didn't, so it always fires once). If
-// the index doesn't load, the server's list stays as it is, with a note above the count.
+// the delegated listeners on #list; if the hash asks for another list than the server's, mark
+// html[data-list-pending]; fetch the list index (preloaded by the page); then, in an idle
+// callback, map the rows, read the hash, render the first view without announcing it, show
+// the filters, and once data-list-pending is gone start Ext, which publishes globalThis.tff
+// and dispatches 'tff:list-ready' (Main dispatches it instead if Ext didn't, so it always
+// fires once). If the index doesn't load, the server's list stays as it is, with a note
+// above the count.
+//
+// While data-list-pending is set the results and the footer aren't displayed (20-list.css),
+// so a link with a view or filters in it never paints the server's list only to change it,
+// which would move the rows into place and the footer up the screen (layout shift; on phones
+// the list starts on the first screen). They show anyway after PENDING_MAX_MS, or as soon as
+// the index fails to load.
 //
 // Ext's side (50-ext.js): Ext.filters() lists Milestone 3's filters for View.compute, and
 // Ext.start(host) runs once. host = { refresh(), onChange(fn), ready, getState(),
@@ -21,6 +29,7 @@ const Main = (() => {
     stale: 'The list was updated. Reload the page to use filters and search.',
     failed: 'Filters and search didn’t load. Check your connection, then reload the page.',
   });
+  const PENDING_MAX_MS = 3000;
 
   let started = false;
   let index = null;
@@ -36,10 +45,24 @@ const Main = (() => {
     if (typeof reportError === 'function') reportError(error);
   };
 
+  // Show the results and the footer again (see the top), resolving once they are in sight.
+  // They are laid out first but kept invisible for two frames ("settling"), so the rows that
+  // come on the screen are drawn at their own heights, not the estimate content-visibility
+  // gives them until then.
+  let shown = Promise.resolve();
+  const reveal = () => {
+    const root = document.documentElement;
+    if (root.getAttribute('data-list-pending') !== '') return shown;
+    root.setAttribute('data-list-pending', 'settling');
+    shown = Core.painted().then(() => root.removeAttribute('data-list-pending'));
+    return shown;
+  };
+
   // The list index didn't load, or doesn't match the rows: the server's list stays, the
   // filters stay hidden, and a note above the count says why. It comes with the page, so
   // it is not announced.
   const showLoadNote = (error) => {
+    reveal();
     const count = document.getElementById('count');
     if (!count || document.getElementById('load-note')) return;
     const text = error instanceof Data.Stale ? WORDS.stale : WORDS.failed;
@@ -221,7 +244,9 @@ const Main = (() => {
     FiltersUI.show();
     State.subscribe(onState);
     markReady();
-    publish();
+    // 'tff:list-ready' waits until the results are in sight: an invisible row can't take
+    // focus, and Details focuses a #font= link's heading then.
+    reveal().then(publish);
   };
 
   const start = () => {
@@ -235,6 +260,10 @@ const Main = (() => {
     Core.on(list, 'click', 'button.ext-action', onAction);
     const clear = document.getElementById('no-results-clear');
     if (clear) clear.addEventListener('click', clearFilters);
+    if (State.changesList(location.hash)) {
+      document.documentElement.setAttribute('data-list-pending', '');
+      setTimeout(reveal, PENDING_MAX_MS);
+    }
     Data.loadIndex().then(
       (loaded) => {
         index = loaded;

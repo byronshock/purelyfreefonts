@@ -11,6 +11,7 @@ pytest-playwright's ``browser``.
 
 import json
 import re
+import time
 import tomllib
 from html.parser import HTMLParser
 from pathlib import Path
@@ -370,7 +371,10 @@ def test_filter_controls_match_the_hash(dom, doc):
 
     q = search.find("input", id="f-q")
     assert (q.attrs["name"], q.attrs["type"], q.attrs["maxlength"]) == ("q", "search", "100")
-    assert q.attrs["placeholder"] == squash(q_label.text)
+    # The placeholder, shorter than the label so it shows whole beside the select, starts the
+    # accessible name (2.5.3, label in name).
+    assert q.attrs["placeholder"] == "Search"
+    assert squash(q_label.text).startswith(q.attrs["placeholder"])
 
     assert radios(search, "cat") == [("f-cat-all", "", True, "Any")] + [
         (f"f-cat-{k}", k, False, v) for k, v in data.CATEGORY_LABELS.items()
@@ -825,6 +829,11 @@ def test_the_download_prints_as_a_link(browser, site_url, scheme):
 
 
 FRAMES = "() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))"
+# The script has shown the filters, and the results are in sight (html[data-list-pending]).
+SETTLED = (
+    "() => !document.getElementById('filters').hidden"
+    " && !document.documentElement.hasAttribute('data-list-pending')"
+)
 # The top of the list page, laid out: where the first rows start, the parts above them, and
 # which parts are hidden from sight (the visually-hidden clip) on this screen.
 FIRST_SCREEN = """() => {
@@ -852,12 +861,13 @@ FIRST_SCREEN = """() => {
 FIRST_SCREENS = {(375, 812): 2, (390, 844): 2, (360, 740): 1, (320, 568): 0}
 
 
-def first_screen(browser, site_url, width, height):
-    """A fresh context, and the list page in it once the script has shown the filters."""
+def first_screen(browser, site_url, width, height, hash_=""):
+    """A fresh context, and the list page in it once the script has shown the filters and the
+    results (a link with filters in it keeps them out of sight until then)."""
     context = browser.new_context(viewport={"width": width, "height": height})
     page = context.new_page()
-    page.goto(site_url + "/")
-    page.wait_for_function("() => !document.getElementById('filters').hidden")
+    page.goto(site_url + "/" + hash_)
+    page.wait_for_function(SETTLED)
     return context, page
 
 
@@ -883,18 +893,29 @@ def test_fonts_fill_a_phones_first_screen(browser, site_url, width, height):
         context.close()
 
 
-@pytest.mark.parametrize("width", [320, 360, 375, 390])
-def test_phone_controls_and_count_share_their_rows(browser, site_url, width):
-    """Search, the Measure select and the Filters button share one row, which may wrap in two
-    at 320 px but never runs off the screen; each is a target of at least 24 px. The count
-    sits in the sort row after the sort buttons, its first line level with their labels, or,
-    where it can't keep about 7.5em beside them, on the next line."""
-    context, page = first_screen(browser, site_url, width, 800)
+@pytest.mark.parametrize("width", [320, 330, 344, 360, 375, 390])
+@pytest.mark.parametrize("hash_", ["", "#cat=serif&var=1"], ids=["plain", "filtered"])
+def test_phone_controls_and_count_share_their_rows(browser, site_url, width, hash_):
+    """Search, the Measure select and the Filters button share one row from 336 px, and below
+    that wrap in two, but never run off the screen; each is a target of at least 24 px. The
+    button is as wide as its longest text, so the row is the same whatever the count of
+    filters on. The count sits in the sort row after the sort buttons, its first line level
+    with their labels, or, where it can't keep about 7.5em beside them, on the next line."""
+    context, page = first_screen(browser, site_url, width, 800, hash_)
     try:
         got = page.evaluate(FIRST_SCREEN)
         controls = got["controls"]
         lines = {round(c["top"]) for c in controls}
-        assert len(lines) == (1 if width >= 360 else 2), controls
+        assert len(lines) == (1 if width >= 336 else 2), controls
+        if hash_:
+            assert page.text_content("#f-toggle") == "Filters\u00a0(2)"
+            plain, _ = first_screen(browser, site_url, width, 800)
+            try:
+                same = plain.pages[0].evaluate(FIRST_SCREEN)["controls"]
+            finally:
+                plain.close()
+            for box, plain_box in zip(controls, same, strict=True):
+                assert all(abs(box[k] - plain_box[k]) <= 0.5 for k in box), (box, plain_box)
         for c in controls:
             assert c["width"] >= 24, c
             assert c["height"] >= 24, c
@@ -954,8 +975,8 @@ def test_wider_screens_keep_their_layout(browser, site_url, width):
 
 
 # Layout shifts the page makes by itself (no recent input), from the first paint, each with
-# the moved nodes that are above the results: not in #results (the count, the legends, the
-# sort row and the rows) nor in the footer below them.
+# the moved nodes and those of them above the results: not in #results (the count, the
+# legends, the sort row and the rows) nor in the footer below them.
 SHIFTS_JS = """
 (() => {
   window.__shifts = [];
@@ -971,8 +992,7 @@ SHIFTS_JS = """
   }).observe({ type: 'layout-shift', buffered: true });
 })();
 """
-# The tops of the boxes above the results (the Filters button may widen as it counts the
-# filters that are on, so its row's lefts may move), and the count's place in the sort row.
+# The tops of the boxes above the results, and the count's place in the sort row.
 ABOVE_JS = """() => {
   const box = (s) => document.querySelector(s).getBoundingClientRect();
   const above = ['h1', '.lead', '#f-q', '#f-rank', '#f-toggle', '#results'].map((s) =>
@@ -988,33 +1008,57 @@ REFILTER_JS = """() => {
   rank.dispatchEvent(new Event('change', { bubbles: true }));
   document.getElementById('f-cat-serif').click();
 }"""
+# How long the list index is held back, so the page paints before the script's first render,
+# as on a slow connection.
+INDEX_DELAY_S = 0.3
 
 
-@pytest.mark.parametrize(("width", "height"), [(375, 812), (360, 740), (320, 568)])
-@pytest.mark.parametrize("hash_", ["", "#cat=serif&var=1"], ids=["plain", "filtered"])
+@pytest.mark.parametrize(
+    ("width", "height"),
+    [(375, 812), (360, 740), (344, 740), (330, 740), (320, 568), (768, 1024), (1280, 900)],
+)
+@pytest.mark.parametrize("link", ["plain", "filtered", "one font", "none found"])
 def test_the_phone_first_screen_does_not_shift(
-    browser, browser_name, site_url, width, height, hash_
+    browser, browser_name, site_url, dom, width, height, link
 ):
-    """Layout shift 0 on a phone's load: the controls and the sort buttons ship hidden but
-    keep their space, and the server's count is the script's. A link with filters in it
-    moves nothing above the results either: the Filters button counts them before it shows,
-    without wrapping its row. On a refilter nothing above the results moves, and the count,
-    whose length changes, keeps its place in the sort row; inside the results the rows, and
-    the legend that comes or goes with the view, change as on every screen, and the footer
-    follows them."""
+    """Layout shift 0 on a phone's load (and a tablet's and a desktop's), adding up every
+    shift, with the list index held back so the page paints first: the controls and the sort buttons ship hidden but keep their
+    space, and the server's count is the script's. A link with a view or filters in it keeps
+    the results and the footer out of sight until the first render (data-list-pending), so
+    nothing moves: not the rows, with filters on or with the last font of the list searched
+    for, whose row ends up first; not the footer, which comes up the screen when few rows are
+    left; and not the count, when the no-results message comes above the sort row. On a
+    phone's refilter nothing above the results moves, and the count, whose length changes,
+    keeps its place in the sort row; inside the results the rows, and the legend that comes
+    or goes with the view, change as on every screen, and the footer follows them."""
     if browser_name != "chromium":
         pytest.skip("the Layout Instability API is Chromium's")
+    last = squash([h for h in dom.find_all("h3") if "font-name" in h.classes][-1].text)
+    hash_ = {
+        "plain": "",
+        "filtered": "#cat=serif&var=1",
+        "one font": "#q=" + last.replace(" ", "%20"),
+        "none found": "#q=zzzzzz",
+    }[link]
+
+    def held(route):
+        time.sleep(INDEX_DELAY_S)
+        route.continue_()
+
     context = browser.new_context(viewport={"width": width, "height": height})
     try:
         context.add_init_script(SHIFTS_JS)
+        context.route("**/assets/list.*.json", held)
         page = context.new_page()
         page.goto(site_url + "/" + hash_)
-        page.wait_for_function("() => !document.getElementById('filters').hidden")
+        page.wait_for_function(SETTLED)
         page.evaluate(FRAMES)
         shifts = page.evaluate("window.__shifts")
-        assert [s for s in shifts if s["above"]] == []
-        if not hash_:
-            assert shifts == []
+        assert sum(s["v"] for s in shifts) < 0.001, shifts
+        if link == "one font":
+            assert page.evaluate(FIRST_SCREEN)["rows"][0]["top"] < height
+        if width >= 640:
+            return  # wider screens show the measures line, and the count above the sort row
         before = page.evaluate(ABOVE_JS)
         page.evaluate(REFILTER_JS)
         page.wait_for_function("() => location.hash.includes('rank=')")

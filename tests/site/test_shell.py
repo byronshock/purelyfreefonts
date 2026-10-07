@@ -638,7 +638,9 @@ def test_the_header_keeps_one_row_at_every_width(browser, site_url, path):
     40rem and isn't shown on phones (early_line_hidden_on_phones, 2026-10-06). Every 4 px from
     320 to 1280 px, so a second row is caught: the header has one height per layout. And the
     widest one-row header, 16 + 410 + 24 + the nav + 16, fits the breakpoint: a longer nav
-    ("How it works", 2026-10-05, or a "Tip Jar") moves the 47.5rem rule and this test."""
+    ("How it works", 2026-10-05, or a "Tip Jar") moves the 47.5rem rule and this test. So does
+    the Blog link, which every build gets once a post is published (about 795 px); a draft
+    that only staging shows (--drafts) isn't measured here."""
     context = browser.new_context(base_url=site_url, viewport={"width": 1280, "height": 800})
     try:
         page = context.new_page()

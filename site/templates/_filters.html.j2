@@ -7,8 +7,8 @@
   rank sits behind #f-toggle, whose aria-expanded drives the disclosure. On phones (below
   40rem) search, the rank select and #f-toggle share one row: their labels and the line under
   the select are hidden from sight but stay the controls' names and description, and the
-  search box shows its label as a placeholder (owner's site ruling of 2026-10-06,
-  mobile_first_screen_two_fonts). The select's label is "Measure" (selector_label,
+  search box shows "Search", the start of its label, as a placeholder (owner's site ruling of
+  2026-10-06, mobile_first_screen_two_fonts). The select's label is "Measure" (selector_label,
   2026-10-05). The set follows the
   owner's rulings of 2026-09-30 (data/reviews/site/2026-09-30.toml: monospace_category,
   license_filter, filters_layout): Category's Monospace means every monospaced font, there is
@@ -20,7 +20,7 @@
 <search id="filters" class="filters" aria-label="Filter fonts" hidden>
 <div class="filters-bar">
 <label for="f-q" class="visually-hidden-phone">Search fonts</label>
-<input id="f-q" name="q" type="search" maxlength="100" autocomplete="off" spellcheck="false" placeholder="Search fonts">
+<input id="f-q" name="q" type="search" maxlength="100" autocomplete="off" spellcheck="false" placeholder="Search">
 <label for="f-rank" class="visually-hidden-phone">Measure</label>
 <select id="f-rank" name="rank" aria-describedby="f-rank-measures">
 {% for view in list.views %}
