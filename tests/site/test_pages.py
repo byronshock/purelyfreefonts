@@ -647,6 +647,41 @@ def test_methodology_shows_the_run_and_the_credits(site_dir, built, site_data):
     assert html.count(f'href="{pages.METHODOLOGY_URL}"') >= 2
 
 
+# The views' names before the owner's site ruling of 2026-10-07 (view_labels_short).
+OLD_VIEW_LABELS = (
+    "Desktop: most chosen",
+    "Desktop: most installed",
+    "Used in projects",
+    "Projects: most used",
+    "Coding fonts",
+)
+
+
+def test_methodology_names_views_by_key(built):
+    """view_labels_short (2026-10-07): the template's own sentences that name a view take the
+    name from ``method.view_labels``, config/site.toml's, by key. The template spells no
+    view's name, so a rename in config can't leave the page naming a view the rank select no
+    longer shows."""
+    template = ROOT / "site" / "templates" / "methodology.html.j2"
+    source = template.read_text(encoding="utf-8")
+    wording = views.load()
+    for label in (*(w["label"] for w in wording.values()), *OLD_VIEW_LABELS):
+        assert label not in source, label
+    method = pages.methodology_context(SAMPLE)["method"]
+    assert method["view_labels"] == {v["key"]: v["label"] for v in SAMPLE["views"]}
+    labels = {key: w["label"] for key, w in wording.items()}
+    text = built["methodology/index.html"].plain
+    installed = labels["desktop_installed"]
+    for sentence in (
+        f"every rank except {installed} leaves those out",
+        f"and its place in {installed}.",
+        f"and only {installed} counts such installs.",
+        f"In {labels['dev_apps']} every score rests on one kind of source",
+        f"{labels['project']}: websites, code and apps",
+    ):
+        assert sentence in text, sentence
+
+
 def test_the_sample_has_a_stale_source():
     """The stale-source line is covered by the sample, not only by a synthetic copy."""
     assert any(s["stale"] for s in SAMPLE["sources"])

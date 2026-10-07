@@ -10,11 +10,13 @@
   Page text is a draft for the owner's approval (M2 step 7). Styles: site/css/40-pages.css.
 -#}
 {% extends "base.html.j2" %}
-{# The views' names here are config/site.toml's, as the rank select shows them: "Projects" and
-   "Installed (desktop)" (the owner's site ruling of 2026-10-07, view_labels_short). #}
-{% set survey_titles = {"desktop": "Desktop installs", "project": "Projects: websites, code and apps"} %}
+{# A view is named by its key, never by a copy of its name: method.view_labels holds the names
+   the rank select shows, config/site.toml's (the owner's site ruling of 2026-10-07,
+   view_labels_short; site/CONTRACT.md section 1). A key the catalog lacks fails the build. #}
+{% set installed = method.view_labels.desktop_installed %}
+{% set survey_titles = {"desktop": "Desktop installs", "project": method.view_labels.project ~ ": websites, code and apps"} %}
 {% set unranked_meaning = {
-  "no_deliberate_evidence": "The font's only evidence in this rank is installs that Linux systems made on their own, and every rank except Installed (desktop) leaves those out. The font keeps a tag naming those systems or packages, and its place in Installed (desktop).",
+  "no_deliberate_evidence": "The font's only evidence in this rank is installs that Linux systems made on their own, and every rank except " ~ installed ~ " leaves those out. The font keeps a tag naming those systems or packages, and its place in " ~ installed ~ ".",
   "no_evidence": "None of this rank's sources counted the font.",
   "too_new": "The font has been on this rank's sources for less than 60 days.",
 } %}
@@ -70,7 +72,7 @@
 <h3 id="scores">Scores</h3>
 <p>Each ranked font shows a score from 0 to 100, and a blue bar that long. The score is the font's standing among all the fonts the sources track: a font scoring 90 stands above about 90% of them. It is not the chance that a given person chose the font.</p>
 <p>The list is in score order. Filters only hide fonts, so a font's score is the same whatever else is shown.</p>
-<p>A hollow bar marks a score that rests on one kind of source. The two-source rule keeps such a font out of the numbered top 100, and its score may move more from month to month. In Developers & apps every score rests on one kind of source, so a note above the list says so once instead.</p>
+<p>A hollow bar marks a score that rests on one kind of source. The two-source rule keeps such a font out of the numbered top 100, and its score may move more from month to month. In {{ method.view_labels.dev_apps }} every score rests on one kind of source, so a note above the list says so once instead.</p>
 <p>A font's details keep its exact place in the top 100 of each rank. Past 100 the data can't tell fonts apart precisely, so the details give a band instead: {% for band in method.bands %}{{ band }}{{ ", " if not loop.last }}{% endfor %}.</p>
 
 <h3 id="not-ranked">Fonts that aren't ranked</h3>
@@ -89,7 +91,7 @@
 <li><strong>{{ item.label | capitalize }}</strong>: {{ state_meaning[item.key] }}</li>
 {% endfor %}
 </ul>
-<p>A Linux source can also be "left out of" some ranks: it counted the font, but Linux systems install that font on their own, and only Installed (desktop) counts such installs.</p>
+<p>A Linux source can also be "left out of" some ranks: it counted the font, but Linux systems install that font on their own, and only {{ installed }} counts such installs.</p>
 </section>
 
 <section class="page-section">

@@ -203,6 +203,12 @@ input[type="radio"] {
   transform: none;
 }
 
+/* It shows over the header, white in both themes, so its ring takes the header's focus colour,
+   which keeps 3:1 on white; the dark theme's --c-focus is about 2.1:1 there. */
+.skip-link:focus-visible {
+  outline-color: var(--c-header-focus);
+}
+
 /* ---- Header: the wordmark, the Site navigation and the early-version line. It wraps rather
    than scrolls, down to 320 px and at 400% zoom. It is white in both themes, behind the
    black wordmark (owner ruling of 2026-09-29), so it takes the --c-header-* tokens, whose

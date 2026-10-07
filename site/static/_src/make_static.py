@@ -9,7 +9,8 @@ Run from anywhere, then commit what it writes:
   filled by the specimen tests or ``tff-site fetch-fonts``). So the images don't depend on the
   fonts installed on this computer, and the SVGs need no font and no ``<style>``.
 - The SVGs use presentation attributes only, so ``favicon.svg`` also renders under the site's
-  CSP. The colours are the light theme's tokens in ``site/css/00-tokens.css``.
+  CSP. The colours are the light theme's tokens in ``site/css/00-tokens.css``, except the
+  accent: the images keep the blue of before 2026-10-07 (``ACCENT``, below).
 - Playwright's Chromium turns the SVGs into PNGs. ``favicon.ico`` holds 16, 32 and 48 px PNGs.
 - Outputs: ``site/static/{favicon.svg,favicon.ico,apple-touch-icon.png,share.png}``, plus the
   SVG sources of the two PNGs next to this script, for review. The build copies only the four
@@ -38,8 +39,11 @@ ROOT = HERE.parents[2]
 PINNED = ROOT / "tests" / "fixtures" / "specimen-fonts.toml"
 FONT_CACHE = Path.home() / ".cache" / "tff" / "fonts"
 
-# Light-theme tokens (site/css/00-tokens.css).
-ACCENT = "#0a56c2"  # --c-accent
+# Light-theme tokens (site/css/00-tokens.css), except ACCENT: the owner's site ruling of
+# 2026-10-07 (lapis_lazuli_blue) made --c-accent lapis, #26619c, and names the CSS tokens only,
+# so the images drawn here keep the earlier blue until the owner rules on them. To follow the
+# token, set ACCENT = "#26619c" and run this script again.
+ACCENT = "#0a56c2"  # the --c-accent of before 2026-10-07
 ACCENT_FG = "#ffffff"  # --c-accent-fg
 BG = "#ffffff"  # --c-bg
 FG = "#1b1d21"  # --c-fg

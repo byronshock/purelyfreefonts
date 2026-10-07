@@ -470,6 +470,13 @@ def test_skip_link_is_off_screen_until_focused():
     assert shown == {"transform": "none"}
 
 
+def test_skip_link_ring_takes_the_header_focus_colour():
+    """The skip link shows over the header, white in both themes, so its ring is the header's
+    focus colour (3:1 on white), not the dark theme's --c-focus (about 2.1:1 there)."""
+    (ring,) = [d for m, s, d in RULES if not m and s == ".skip-link:focus-visible"]
+    assert ring == {"outline-color": "var(--c-header-focus)"}
+
+
 # ------------------------------------------------------------------------- the static files
 
 

@@ -135,7 +135,17 @@ FOCUS_JS = """
   }
   const cs = getComputedStyle(el);
   let bg = 'rgba(0, 0, 0, 0)';
-  for (let node = el.parentElement; node; node = node.parentElement) {
+  // The ring is drawn over what is behind it: the parent's background, except for an element
+  // placed absolutely (the skip link, over the header), whose ring is over whatever is under
+  // its left edge, just outside the element.
+  let start = el.parentElement;
+  if (cs.position === 'absolute' && r.width > 1 && r.height > 1) {
+    const x = r.left - (parseFloat(cs.outlineOffset) || 0) - (parseFloat(cs.outlineWidth) || 0) / 2;
+    const under = document.elementsFromPoint(x, r.top + r.height / 2)
+      .find((n) => n !== el && !el.contains(n));
+    if (under) start = under;
+  }
+  for (let node = start; node; node = node.parentElement) {
     const c = getComputedStyle(node).backgroundColor;
     if (!/^rgba\\(.*,\\s*0\\)$/.test(c) && c !== 'transparent') { bg = c; break; }
   }
