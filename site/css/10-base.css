@@ -213,21 +213,21 @@ input[type="radio"] {
   text-decoration: none;
 }
 
-/* The wordmark (site/static/wordmark.svg, the owner's 10000 x 1100 white plate with the letters
-   900 tall): 418 px wide where the Site navigation fits beside it on one row (760 px and up),
-   278 px below that, so the capitals stand about 38 and 25 px tall (owner rulings of
-   2026-10-04). Sized by width, the height following, so it scales down evenly where even 278 px
+/* The wordmark (site/static/wordmark.svg, the owner's 9717 x 1400 white plate, its capitals
+   900 tall): 410 px wide where the Site navigation fits beside it on one row (760 px and up),
+   270 px below that, so the capitals stand about 38 and 25 px tall (owner rulings of
+   2026-10-04 and 2026-10-06). Sized by width, the height following, so it scales down evenly where even 270 px
    won't fit. */
 .site-name-mark {
   display: block;
-  width: 26.125rem;
+  width: 25.625rem;
   height: auto;
   max-width: 100%;
 }
 
 @media (max-width: 47.5rem) {
   .site-name-mark {
-    width: 17.375rem;
+    width: 16.875rem;
   }
 }
 
