@@ -19,7 +19,11 @@ The page supplies its own headings, so the document's headings may change (M1 st
 "(draft for the public page)") without moving an anchor. Relative links in the extract point
 to the file on GitHub. Everything else on the page comes from the catalog: the views, bands,
 tiers, source credits (one ``#source-<id>`` anchor per source, which the details panel links
-to), data license, run date, method version and stale sources.
+to), data license, run date, method version and stale sources. The views' labels and measures
+lines are ``config/site.toml``'s, which ``tff_site.build`` puts over the catalog's copies
+before this module sees the document (``tff_site.views``); ``method.view_labels`` maps each
+view's key to its label, so the template's own sentences name a view by key, never by a copy
+of its name. The extract keeps the document's own words.
 
 ``/privacy/`` and ``/about/`` are ``site/content/<name>.md``: YAML front matter with exactly
 ``title`` (the page's ``<h1>``) and ``description``, then Markdown that starts its headings at
@@ -67,7 +71,8 @@ METHODOLOGY_URL = f"{BLOB_URL}/docs/ranking-methodology.md"
 
 METHODOLOGY_PAGE = {
     "path": "/methodology/",
-    "heading": "How we rank",
+    # The owner's site ruling of 2026-10-05 (method_page_name); the nav link says "How it works".
+    "heading": "How we measure popularity",
     "description": (
         "How Purely Free Fonts ranks fonts: the method in plain words, how to read ranks, "
         "bands and tiers, known biases, and credits for every data source."
@@ -94,6 +99,8 @@ TEMPLATE_IDS = frozenset(
         "tip",
         # privacy.html.j2
         "tips",
+        # about.html.j2
+        "why-not-listed",
         # methodology.html.j2
         "toc-h",
         "in-plain-words",
@@ -223,6 +230,7 @@ def methodology_context(doc: Mapping[str, Any], source: Path | None = None) -> d
             "views": [
                 {k: v[k] for k in ("key", "label", "measures", "available")} for v in doc["views"]
             ],
+            "view_labels": {v["key"]: v["label"] for v in doc["views"]},
             "bands": [band["label"] for band in doc["bands"]],
             "tiers": [{"tier": t, "text": doc["tiers"][t]} for t in sorted(doc["tiers"])],
             "unranked": [{"key": k, "label": v} for k, v in data.UNRANKED_LABELS.items()],

@@ -4,7 +4,12 @@
   'none'). Each control's name is its hash key and its value the key's value (CONTRACT
   section 9). The block ships with `hidden`; the script removes it, and 25-filters.css
   reserves its space so that doesn't move the list. Below 60rem everything but search and
-  rank sits behind #f-toggle, whose aria-expanded drives the disclosure. The set follows the
+  rank sits behind #f-toggle, whose aria-expanded drives the disclosure. On phones (below
+  40rem) search, the rank select and #f-toggle share one row: their labels and the line under
+  the select are hidden from sight but stay the controls' names and description, and the
+  search box shows "Search", the start of its label, as a placeholder (owner's site ruling of
+  2026-10-06, mobile_first_screen_two_fonts). The select's label is "Measure" (selector_label,
+  2026-10-05). The set follows the
   owner's rulings of 2026-09-30 (data/reviews/site/2026-09-30.toml: monospace_category,
   license_filter, filters_layout): Category's Monospace means every monospaced font, there is
   no Spacing or license-group filter, "No credit required" shows only while some font needs
@@ -14,15 +19,15 @@
 -#}
 <search id="filters" class="filters" aria-label="Filter fonts" hidden>
 <div class="filters-bar">
-<label for="f-q">Search fonts</label>
-<input id="f-q" name="q" type="search" maxlength="100" autocomplete="off" spellcheck="false">
-<label for="f-rank">Rank</label>
+<label for="f-q" class="visually-hidden-phone">Search fonts</label>
+<input id="f-q" name="q" type="search" maxlength="100" autocomplete="off" spellcheck="false" placeholder="Search">
+<label for="f-rank" class="visually-hidden-phone">Measure</label>
 <select id="f-rank" name="rank" aria-describedby="f-rank-measures">
 {% for view in list.views %}
 <option value="{{ view.key }}"{% if loop.first %} selected{% endif %}>{{ view.label }}</option>
 {% endfor %}
 </select>
-<p id="f-rank-measures" class="measures">{{ list.views[0].measures }}</p>
+<p id="f-rank-measures" class="measures visually-hidden-phone">{{ list.views[0].measures }}</p>
 <button type="button" id="f-toggle" class="filters-toggle" aria-expanded="false" aria-controls="f-more">Filters<span class="filters-count"></span></button>
 </div>
 <div id="f-more" class="filters-more">

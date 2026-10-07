@@ -49,7 +49,7 @@ const Details = (() => {
     latinExtended: 'Accented letters',
     evidence: 'All ranks and sources',
     gate: 'Held out of the numbered top 100: its score rests on one kind of source.',
-    sourcesNote: 'Each source links to its credit on the How we rank page.',
+    sourcesNote: 'Each source links to its credit on the How we measure popularity page.',
     typeownLoad: (size) => `Type your own text (loads ${size})`,
     typeownLoading: 'Loading font…',
     typeownLabel: 'Your text',

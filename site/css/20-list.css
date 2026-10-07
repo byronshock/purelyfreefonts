@@ -5,78 +5,11 @@
    clips painting to each li's padding box, so every focusable thing in a row keeps at least
    the focus ring's width (3px + 2px offset) of padding around it. */
 
+/* The page stops after the lead (owner's site rulings of 2026-10-07): the note "Why isn't my
+   favorite free font here?" is on the About page, and the privacy line in the footer. */
 .lead {
-  margin: 0 0 var(--space-2);
-  max-width: var(--measure);
-}
-
-.privacy-note {
   margin: 0 0 var(--space-5);
   max-width: var(--measure);
-  font-size: var(--fs-small);
-  color: var(--c-muted);
-}
-
-/* "Why isn't my favorite free font here?", the owner's note (site rulings of 2026-09-29).
-   Wide screens: a frame floated right, beside the lead and the privacy note, which wrap
-   around it; the list starts below it (.layout clears it), so rows are never narrowed.
-   Phones (40rem and below): the same text in a <details> under the intro, folded to its
-   heading. Exactly one of the two is displayed, so screen readers get the text once; both
-   are in the HTML and neither needs a script, so nothing moves as the page loads. */
-.why {
-  border: 1px solid var(--c-divider);
-  border-radius: var(--radius);
-  background-color: var(--c-surface);
-  color: var(--c-fg);
-  font-size: var(--fs-small);
-}
-
-.why p {
-  margin: 0;
-  max-width: var(--measure);
-}
-
-.why-wide {
-  float: right;
-  width: min(34rem, 45%);
-  margin: 0 0 var(--space-4) var(--space-5);
-  padding: var(--space-3) var(--space-4);
-}
-
-.why-wide h2 {
-  margin: 0 0 var(--space-2);
-  font-size: var(--fs-base);
-}
-
-.why-fold {
-  display: none;
-}
-
-.layout {
-  clear: both;
-}
-
-@media (max-width: 40rem) {
-  .why-wide {
-    display: none;
-  }
-
-  .why-fold {
-    display: block;
-    margin: 0 0 var(--space-5);
-  }
-
-  .why-fold summary {
-    display: list-item;
-    min-height: var(--target-min);
-    padding: var(--space-2) var(--space-3);
-    font-weight: 700;
-    cursor: pointer;
-  }
-
-  .why-fold p {
-    padding: 0 var(--space-3) var(--space-3);
-  }
 }
 
 /* Filters above the list below 60rem; a sidebar beside it from 60rem (M2-D4). */
@@ -84,6 +17,26 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-5);
+}
+
+/* Phones (below 40rem): two fonts on a 375 x 812 first screen (owner's site ruling of
+   2026-10-06, mobile_first_screen_two_fonts). The heading is smaller, the lead shows its
+   first sentence (index.html.j2 hides the second from sight only), and the gaps are tighter.
+   The filter controls share one row (25-filters.css). */
+@media not all and (min-width: 40rem) {
+  .list-title {
+    margin-bottom: var(--space-2);
+    font-size: var(--fs-xl);
+    text-wrap: balance;
+  }
+
+  .lead {
+    margin-bottom: var(--space-4);
+  }
+
+  .layout {
+    gap: var(--space-4);
+  }
 }
 
 /* min-width rather than range syntax, so Safari before 16.4 gets the wide layouts too. */
@@ -116,6 +69,21 @@
   min-width: 0;
 }
 
+/* A link with a view or filters in it: until the script's first render shows what it asks
+   for, the results and the footer below them aren't displayed (90-main.js sets
+   html[data-list-pending]), so the server's list is never painted only to change, and nothing
+   moves as the page loads. They stay invisible for two more frames ("settling"), while the
+   rows on the screen grow from their estimated height to their own. */
+html[data-list-pending=""] .results,
+html[data-list-pending=""] .site-footer {
+  display: none;
+}
+
+html[data-list-pending="settling"] .results,
+html[data-list-pending="settling"] .site-footer {
+  visibility: hidden;
+}
+
 .results > h2 {
   margin: 0;
   font-size: var(--fs-xl);
@@ -133,15 +101,64 @@
   color: var(--c-muted);
 }
 
+/* Phones: the "Fonts" heading is hidden from sight (_list.html.j2), and the count sits in the
+   sort row, after the sort buttons, at the row's end (mobile_first_screen_two_fonts). The
+   results wrap as a flex row in which everything else takes a line of its own, so the legend
+   and the notes stay above the sort row; the order moves only what is seen, and the count
+   isn't focusable. Beside the two-line sort button the count may take two lines; where even
+   that leaves it less than about 7.5em (below 337px, with "most popular" in the sort button)
+   it takes the next line. Its first line is level with the buttons' labels, so a count that
+   changes length (a filter from the address, on load) never moves it. */
+@media not all and (min-width: 40rem) {
+  .results {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    column-gap: var(--space-3);
+  }
+
+  .results > * {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .results > .list-sort {
+    order: 1;
+    flex: 0 1 auto;
+  }
+
+  .results > .count {
+    order: 2;
+    flex: 1 1 0;
+    min-width: 7.5em;
+    margin: var(--space-1) 0 var(--space-2);
+    text-align: end;
+    text-wrap: balance;
+  }
+
+  .results > .font-list {
+    order: 3;
+  }
+}
+
+/* Without scripting the sort buttons aren't shown, so the count starts its line. */
+@media (scripting: none) {
+  .results > .count {
+    text-align: start;
+  }
+}
+
 /* The sort buttons over the rank and name columns (owner ruling of 2026-09-30, sort_header).
    Each is a bordered button with a text label and an arrow: solid (up or down) with the
    order's words on the column in use, a double arrow on the other. #list-sort ships
    `hidden` and keeps its space until the script shows it, so the list doesn't move. From
    40rem the Name button starts over the name column: li.font's inline padding plus
    .font-row's 6rem rank column. The order's words take a second, smaller line inside the
-   button, so the Rank button fits over that column (owner ruling of 2026-09-30,
-   sort_two_lines); with wider text (text spacing, a bigger font) the column grows instead
-   of the buttons overlapping. */
+   button, so the Popularity button fits over that column (owner ruling of 2026-09-30,
+   sort_two_lines): "most popular" and "least popular" (sort_words_most_least, 2026-10-07)
+   are no wider than its label and arrow. With wider text (text spacing, a bigger font) the
+   column grows instead of the buttons overlapping. In either order one button has a second
+   line, so the row keeps one height and sorting never moves the list. */
 .list-sort {
   display: flex;
   flex-wrap: wrap;

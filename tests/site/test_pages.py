@@ -13,6 +13,7 @@
 import copy
 import itertools
 import re
+import tomllib
 import xml.etree.ElementTree as ET
 from collections import Counter
 from html.parser import HTMLParser
@@ -22,7 +23,7 @@ from urllib.parse import urlsplit
 
 import pytest
 
-from tff_site import assets, build, data, pages
+from tff_site import assets, build, data, pages, views
 
 ROOT = Path(__file__).resolve().parents[2]
 SAMPLE = data.load(ROOT / "tests" / "fixtures" / "catalog-site.sample.json")
@@ -34,7 +35,7 @@ SUFFIX = " \N{EN DASH} Purely Free Fonts"
 PAGES = {
     "methodology/index.html": (
         "/methodology/",
-        "How we rank",
+        "How we measure popularity",  # method_page_name (2026-10-05)
         [
             "toc-h",
             "in-plain-words",
@@ -66,6 +67,7 @@ PAGES = {
             "whats-next",
             "report-a-problem-or-get-in-touch",
             "open-data-and-code",
+            "why-not-listed",  # the note from the front page (why_not_listed_to_about)
         ],
     ),
     "404.html": ("/404.html", "Page not found", []),
@@ -247,8 +249,9 @@ def test_methodology_parts_from_the_document():
     assert list(parts) == ["plain_words", "desktop_views", "confidence", "biases"]
     assert parts["plain_words"].startswith("Each month we collect public counts")
     assert not any(line.startswith(">") for line in parts["plain_words"].splitlines())
-    assert "**Most chosen**" in parts["desktop_views"]
-    assert "**Most installed**" in parts["desktop_views"]
+    # The document names the two desktop views as the rank select does (view_labels_short).
+    assert "**Chosen (desktop)**" in parts["desktop_views"]
+    assert "**Installed (desktop)**" in parts["desktop_views"]
     assert not any(line.startswith("|") for line in parts["desktop_views"].splitlines())
     assert parts["confidence"].startswith("**Confidence.**")
     assert "Tier C" in parts["confidence"]
@@ -608,7 +611,7 @@ def test_methodology_shows_the_document(built):
 
 
 def test_methodology_shows_the_run_and_the_credits(site_dir, built, site_data):
-    doc = data.load(site_data)
+    doc = views.apply(data.load(site_data), views.load())  # config's view wording
     html = read(site_dir, "methodology/index.html")
     text = built["methodology/index.html"].plain
     assert f"Data from {doc['run']['date']}. Method version {doc['run']['method_version']}." in text
@@ -643,6 +646,41 @@ def test_methodology_shows_the_run_and_the_credits(site_dir, built, site_data):
     assert f'<a href="{doc["data_license"]["url"]}">CC BY-SA 4.0</a>' in licenses[1]
     assert f'href="{data.REPO_URL}/blob/main/LICENSE">MIT License</a>' in licenses[1]
     assert html.count(f'href="{pages.METHODOLOGY_URL}"') >= 2
+
+
+# The views' names before the owner's site ruling of 2026-10-07 (view_labels_short).
+OLD_VIEW_LABELS = (
+    "Desktop: most chosen",
+    "Desktop: most installed",
+    "Used in projects",
+    "Projects: most used",
+    "Coding fonts",
+)
+
+
+def test_methodology_names_views_by_key(built):
+    """view_labels_short (2026-10-07): the template's own sentences that name a view take the
+    name from ``method.view_labels``, config/site.toml's, by key. The template spells no
+    view's name, so a rename in config can't leave the page naming a view the rank select no
+    longer shows."""
+    template = ROOT / "site" / "templates" / "methodology.html.j2"
+    source = template.read_text(encoding="utf-8")
+    wording = views.load()
+    for label in (*(w["label"] for w in wording.values()), *OLD_VIEW_LABELS):
+        assert label not in source, label
+    method = pages.methodology_context(SAMPLE)["method"]
+    assert method["view_labels"] == {v["key"]: v["label"] for v in SAMPLE["views"]}
+    labels = {key: w["label"] for key, w in wording.items()}
+    text = built["methodology/index.html"].plain
+    installed = labels["desktop_installed"]
+    for sentence in (
+        f"every rank except {installed} leaves those out",
+        f"and its place in {installed}.",
+        f"and only {installed} counts such installs.",
+        f"In {labels['dev_apps']} every score rests on one kind of source",
+        f"{labels['project']}: websites, code and apps",
+    ):
+        assert sentence in text, sentence
 
 
 def test_the_sample_has_a_stale_source():
@@ -700,6 +738,46 @@ def test_about_page_states_the_rules(built):
         "Report a problem with this font",
     ):
         assert phrase in text, phrase
+
+
+SITE_RULINGS = {
+    day: tomllib.loads((ROOT / "data" / "reviews" / "site" / f"{day}.toml").read_text("utf-8"))
+    for day in ("2026-09-29", "2026-09-30", "2026-10-02")
+}
+# The note's sentence on credit and sharing, before and after 2026-09-30 (front_page_lead_sharing).
+NOTE_0929 = "Some of these fonts ask you to credit the designer, or don't let you pass the font files on, and we mark those."
+NOTE_0930 = "Some of these fonts ask you to credit the designer, and we mark those."
+EMAIL_ADDRESS = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
+
+
+def test_the_about_page_closes_with_the_owners_note(site_dir, built):
+    """ "Why isn't my favorite free font here?", the owner's note, word for word (site rulings of
+    2026-09-29, why_not_listed), as later rulings changed it: its sentence on credit and sharing
+    (2026-09-30, front_page_lead_sharing) and its address (2026-10-02, contact_address). It
+    moved from the front page to the end of the About page as it stood (2026-10-07,
+    why_not_listed_to_about), at the stable anchor #why-not-listed, which the front page's
+    empty-search message is to link to."""
+    ruling = SITE_RULINGS["2026-09-29"]["why_not_listed"]
+    change = SITE_RULINGS["2026-09-30"]["front_page_lead_sharing"]["ruling"]
+    contact = SITE_RULINGS["2026-10-02"]["contact_address"]
+    assert NOTE_0929 in ruling["text"]
+    assert NOTE_0930 in change
+    (old_address,) = set(EMAIL_ADDRESS.findall(ruling["text"]))
+    address = contact["value"]
+    assert old_address in contact["ruling"]  # the address the 2026-10-02 ruling replaces
+    assert address == data.FEEDBACK_EMAIL != old_address
+    text = ruling["text"].replace(NOTE_0929, NOTE_0930).replace(old_address, address)
+    page = built["about/index.html"]
+    assert page.headings[-1] == (2, "why-not-listed", ruling["heading"])
+    html = read(site_dir, "about/index.html")
+    note = re.search(r'<h2 id="why-not-listed">[^<]*</h2>\n<p>(.*?)</p>\n</article>', html, re.S)
+    assert note, "the note is the page's last part"
+    assert parse(note[1]).plain == text
+    assert re.findall(r'<a href="([^"]+)">', note[1]) == [f"mailto:{address}"]
+    # The front page no longer carries it, on any screen.
+    front = read(site_dir, "index.html")
+    assert ruling["heading"].replace("'", "&#39;") not in front
+    assert ruling["heading"] not in front
 
 
 def test_not_found_page_uses_absolute_urls_only(built):

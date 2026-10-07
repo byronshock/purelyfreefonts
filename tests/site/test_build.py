@@ -20,6 +20,7 @@ import statistics
 import subprocess
 import sys
 import textwrap
+from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
@@ -28,7 +29,7 @@ import pytest
 
 from tff_catalog import jsonio
 from tff_catalog.keys import search_key
-from tff_site import assets, build, data, fonts, pages, trim
+from tff_site import assets, build, data, fonts, pages, trim, views
 from tff_site.cli import main
 
 HERE = Path(__file__).resolve().parent
@@ -1383,6 +1384,87 @@ def test_the_first_view_must_be_overall(tmp_path, catalog, mini_site):
     catalog[0].write_bytes(jsonio.pretty_bytes(doc))
     with pytest.raises(build.BuildError, match="M2-D1"):
         run_build(catalog, tmp_path / "site", mini_site)
+
+
+OLD_WORDING = {  # the catalog's labels before the owner's site ruling of 2026-10-07
+    "desktop_chosen": "Desktop: most chosen",
+    "desktop_installed": "Desktop: most installed",
+    "project": "Used in projects",
+    "coding": "Coding fonts",
+}
+
+
+def test_the_page_shows_config_s_view_wording(tmp_path, catalog, mini_site):
+    """view_labels_short (2026-10-07): until the first live refresh carries the new names into
+    the catalog, the build shows config/site.toml's labels and measures lines, by key, in the
+    rank select, the list index and the details payload. The catalog keeps its own copies,
+    order and ``available``, and version.txt still hashes the file as read."""
+    doc = data.load(catalog[0])
+    for view in doc["views"]:
+        if view["key"] in OLD_WORDING:
+            view["label"] = OLD_WORDING[view["key"]]
+        view["measures"] = f"The catalog's line for {view['key']}."
+    catalog[0].write_bytes(jsonio.pretty_bytes(doc))
+    blob = catalog[0].read_bytes()
+    out = tmp_path / "site"
+    run_build(catalog, out, mini_site)
+    wording = views.load()
+    shown = [{**v, **wording[v["key"]]} for v in doc["views"]]
+    available = [v for v in shown if v["available"]]
+    html = (out / "index.html").read_text(encoding="utf-8")
+    options = re.findall(r'<option value="([^"]+)" data-measures="([^"]*)">([^<]*)</option>', html)
+    assert [tuple(map(unescape, o)) for o in options] == [
+        (v["key"], v["measures"], v["label"]) for v in available
+    ]
+    assert [o[2] for o in options[1:5]] == [
+        "Chosen (desktop)",
+        "Installed (desktop)",
+        "Projects",
+        "Coding",
+    ]
+    page = parse(html)
+    ol = next(a for t, a in page.tags if t == "ol")
+    assert load_json(out, ol["data-index"])["views"] == shown
+    assert load_json(out, ol["data-details"])["views"] == shown
+    assert catalog[0].read_bytes() == blob  # the catalog file is left as it was
+    assert data.load(catalog[0])["views"] == doc["views"]
+    version = dict(line.split("=", 1) for line in (out / "version.txt").read_text().splitlines())
+    assert version["catalog_sha256"] == hashlib.sha256(blob).hexdigest()
+
+
+@pytest.mark.parametrize(
+    ("edit", "message"),
+    [
+        (
+            '[[views]]\nkey = "trending"\nlabel = "Trending"\nmeasures = "New."\n',
+            "config/site.toml names the view 'trending', which the catalog lacks",
+        ),
+        (None, "the catalog has the view 'rising', which config/site.toml doesn't name"),
+    ],
+)
+def test_the_build_fails_when_config_and_the_catalog_name_other_views(
+    tmp_path, catalog, mini_site, edit, message
+):
+    """The keys must match exactly: a view in config that the catalog lacks, or the other way
+    round, stops the build (view_labels_short)."""
+    text = views.CONFIG_PATH.read_text(encoding="utf-8")
+    if edit is None:
+        start = text.index('[[views]]\nkey = "rising"')
+        end = text.index("\n[", start + 1)
+        text = text[:start] + text[end + 1 :]
+    else:
+        text = text.replace("[tiers]", f"{edit}\n[tiers]", 1)
+    config = tmp_path / "site.toml"
+    config.write_text(text, encoding="utf-8")
+    with pytest.raises(build.BuildError) as caught:
+        run_build(catalog, tmp_path / "site", mini_site, site_config=config)
+    assert caught.value.errors == [message]
+    assert not (tmp_path / "site").exists()
+
+
+def test_the_build_names_a_missing_config(tmp_path, catalog, mini_site):
+    with pytest.raises(build.BuildError, match=r"nowhere\.toml"):
+        run_build(catalog, tmp_path / "site", mini_site, site_config=tmp_path / "nowhere.toml")
 
 
 def test_the_command_line_builds(tmp_path, catalog, mini_site, monkeypatch, capsys):

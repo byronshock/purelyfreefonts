@@ -3,7 +3,10 @@
 The build is offline and deterministic: it makes no network request (tests run it under a
 socket guard), reads no clock, and two builds of the same inputs are byte-identical.
 
-Steps: validate the data (``tff_site.data``); concatenate and hash the JS and CSS parts
+Steps: validate the data (``tff_site.data``); take the views' labels and measures lines from
+``config/site.toml`` (``tff_site.views``, the owner's site ruling of 2026-10-07,
+``view_labels_short``: until the first live refresh carries that wording into the catalog, the
+page shows config's); concatenate and hash the JS and CSS parts
 (``tff_site.assets``); write the list-index and details JSON; serve each ``preview`` SVG from
 ``specimens/`` next to the data file as ``/assets/specimens/<id>.<h>.svg``, checking its
 sha256 and trimming it to the family's name (below); copy each ``font_file`` from the font
@@ -62,7 +65,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from tff_catalog import jsonio
-from tff_site import assets, blog, data, fonts, pages, trim
+from tff_site import assets, blog, data, fonts, pages, trim, views
 
 if TYPE_CHECKING:
     import jinja2
@@ -171,6 +174,7 @@ def build(
     site_dir: Path = SITE_DIR,
     drafts: bool = False,
     blog_dir: Path | None = None,
+    site_config: Path = views.CONFIG_PATH,
 ) -> BuildResult:
     """Build the site into ``out_dir``, replacing its contents.
 
@@ -180,10 +184,16 @@ def build(
     A missing or mismatching specimen or font file is an error, except a preview whose sha256
     is ``data.PLACEHOLDER_SHA256``, which is built as "Preview not available yet".
     Blog posts come from ``blog_dir`` (default ``site_dir/content/blog``); ``drafts``
-    publishes posts marked ``draft: true`` too (the staging deploy).
+    publishes posts marked ``draft: true`` too (the staging deploy). The views' labels and
+    measures lines come from ``site_config`` (``tff_site.views``); a view it names that the
+    catalog lacks, or the other way round, is an error.
     """
     data_path, out_dir, site_dir, fonts_dir = map(Path, (data_path, out_dir, site_dir, fonts_dir))
     doc, catalog_sha256 = _load_valid(data_path)
+    try:
+        doc = views.apply(doc, views.load(site_config))
+    except views.ConfigError as exc:
+        raise BuildError(exc.errors) from exc
     posts = blog.load(
         site_dir / "content" / "blog" if blog_dir is None else blog_dir, drafts=drafts
     )

@@ -21,7 +21,9 @@ Contents:
 
 - **`catalog-site.json`**, schema `schemas/catalog-site.schema.json` (`schema_version` `1.0.0`, frozen by Milestone 1 step 20 on 2026-09-30; a change to a v1 field needs v2, owner ruling `site_fields_v1`). `tff_site.data.validate` runs the schema and then the cross-reference checks the schema can't express (`semantic_errors`). `tff-site validate FILE` prints `valid (1.0.0), N fonts`.
   - **Stricter than JSON:** a key repeated in one object, `NaN` and `Infinity` make the file invalid (`tff_site.data.loads`), because the schema would check only one of the repeated values while the page showed another.
-- **Wording** in the catalog (view labels and measures lines, tiers, license classes, the Nerd Font marker and legend, source credits, system labels) comes from `config/site.toml`, the one home for the owner's wording rulings about the data; Milestone 1's export copies it, and a contract test keeps the sample equal to it. The page's own text (the list page's lead and its note "Why isn't my favorite free font here?", the filter labels, the tip link) lives in the templates, and where the owner ruled on it, a test holds it to the ruling in `data/reviews/site/`.
+- **Wording** in the catalog (view labels and measures lines, tiers, license classes, the Nerd Font marker and legend, source credits, system labels) comes from `config/site.toml`, the one home for the owner's wording rulings about the data; Milestone 1's export copies it, and a contract test keeps the sample equal to it.
+  - **The views' names, read at build time** (the owner's site ruling of 2026-10-07, `view_labels_short`): the views are "Overall", "Chosen (desktop)", "Installed (desktop)", "Projects", "Coding" and "Developers & apps" (Rising unchanged and unavailable). Only a monthly refresh writes the catalog, and rebuilding the committed one before the first live refresh would move its scores (`tff-catalog validate --committed` fails), so the committed `build/catalog-site.json` still carries the old names ("Desktop: most chosen", "Used in projects", …). Until that refresh copies the new ones, `tff_site.views` reads `config/site.toml`'s `[[views]]` with `tomllib` (no `tff_catalog` import) and the build shows config's `label` and `measures` for each view, by key, wherever the site's own code or templates name a view: the rank select and its measures line, the list index, the details payload, and on the methodology page the list of ranks and the template's own sentences that name one (`method.view_labels`, by key, so no template spells a view's name). The prose the methodology page takes from `docs/ranking-methodology.md` (§1 and §5) is not overridden: it keeps the document's own words ("most chosen", "most installed", "Used in projects") until that document is edited. Which views there are, their order and `available` stay the catalog's, and the catalog file is left as it is, the record of what was published (`version.txt` hashes it as read). So until the refresh the page and the catalog differ in those two fields only. The keys must match: a view that config names and the catalog lacks, or the other way round, fails the build. `tests/site/test_views.py` checks that the committed catalog differs from config only in labels and measures lines, so once the refresh carries config's wording the override changes nothing. `views.CONFIG_PATH` is `config/site.toml` in the checkout the build runs from (CI's site jobs and `ops/deploy.sh` build in one); `build(site_config=…)` takes another file.
+  - The page's own text (the list page's lead, the filter and sort labels, the About page's note "Why isn't my favorite free font here?", the footer's privacy line and tip link) lives in the templates, and where the owner ruled on it, a test holds it to the ruling in `data/reviews/site/`.
 - **Nerd Font builds** (owner rulings of 2026-09-28 and 2026-09-29, TASK-2, and the site rulings of 2026-10-05, `nerd_tag` and `details_nerd_box_dropped`). A font whose `links.nerd` is set has a Nerd Font build: its row has the tag "Nerd Font available" (badge `nerd`, section 3), the details panel lists the build's link, whose own text gives the build's name (section 4), and the "Nerd Font available" filter keeps only these fonts. The page shows none of the catalog's `nerd` wording, which stays in the data (frozen in v1) and in the details payload: no `nerd.marker` ("NF"), since the details panel dropped the fixed-width "NF" box before the link, and no `nerd.legend`, whose caution about the icons' licenses moves into the details panel with PLAN-REVIEWERS-1.md step 7e (`nerd_caution_in_details`). Like "Official:", the line leads with a visible "Nerd Font:" (site ruling of 2026-10-06, `details_nerd_lead_in`): a maker's own build can be named "<family> NF" ("Cascadia Code NF", 9 of the 70 on the real list), which says "Nerd Font" nowhere. The sample gives one to `sample-mono-02` (a Nerd Fonts folder) and `sample-mono-13` (a maker's own build).
   - `links.nerd` is null, so the font shows no tag, no Nerd link and no filter match, when the font has no build, when the build's link failed the link check recorded for the run's date (the font stays listed; the link is back once a check passes, and `review.md` flags it), or when the owner hides the build (`config/nerd-hidden.toml`, with the reason). The site never decides any of this itself: it shows what the data gives.
 - **Scores.** Each rank entry carries `score`, the engine's fused score on the shared z scale (a number for every ranked entry; a number or null for an unranked one, as in `catalog.json`). The site doesn't show it yet: from Milestone 2 the list shows 100·Φ(score) as a bar where the number is now (site rulings of 2026-09-29, `score_display`, `score_curve`, `score_held_fonts`). The sample's scores are synthetic, falling with `order`. Each rank entry also carries `previous_score`, the font's score in the last published catalog, or null if it had none; the site doesn't use it yet (Backlog TASK-4's rising and falling markers wait). Until a monthly refresh has been merged it equals `score`, so nothing can show as moved (owner ruling of 2026-09-30, `score_previous_bootstrap`); the sample's equal their scores.
@@ -90,7 +92,7 @@ Jinja2 with `autoescape=True`, `StrictUndefined`, `trim_blocks`, `lstrip_blocks`
 | `head` | extra `<head>` tags, such as the list index `<link rel="preload">` | empty |
 | `header` | inside `<header class="site-header">`: the wordmark, linked home, and the `Site` navigation | wordmark and nav |
 | `main` | inside `<main id="main" tabindex="-1">`: the page's one `<h1>` and content | empty |
-| `footer` | inside `<footer class="site-footer">`: everything below | feedback, tip, source link |
+| `footer` | inside `<footer class="site-footer">`: everything below | feedback, tip, privacy line, data date and source link |
 | `feedback` | inside `<div class="feedback" id="feedback">`: the one feedback spot, the same on every page | issue forms and email |
 | `tip_link` | the tip link, shown only when `site.tip_url` is set | `<p class="tip" id="tip">` |
 
@@ -108,7 +110,7 @@ Jinja2 with `autoescape=True`, `StrictUndefined`, `trim_blocks`, `lstrip_blocks`
 
 | Field | Contents |
 |---|---|
-| `views` | the available views, `{key, label, measures}`, in catalog order; the first is the default (Overall, M2-D1) |
+| `views` | the available views, `{key, label, measures}`, in catalog order, with `label` and `measures` from `config/site.toml` (section 1); the first is the default (Overall, M2-D1) |
 | `categories` | `{value, label}`: `sans-serif` Sans serif, `serif` Serif, `display` Display, `handwriting` Handwriting, `monospace` Monospace |
 | `credit_filter` | true when some font needs credit (`attribution_required`): only then is "No credit required" shown (owner ruling of 2026-09-30, `license_filter`) |
 | `systems_os` | `{value, label}`: `windows` Windows, `macos` macOS, `linux` Linux, `android` Android |
@@ -134,27 +136,18 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 
 ```html
 <main id="main" tabindex="-1">
-  <h1>…</h1>
-  <div class="why why-wide">                          <!-- the owner's note; wide screens only -->
-    <h2 id="why-h">Why isn't my favorite free font here?</h2>
-    <p>Not every font that's free to download … email
-      <a href="mailto:admin@purelyfreefonts.com">admin@purelyfreefonts.com</a> and ask us to consider it.</p>
-  </div>
-  <p class="lead">…</p>
-  <p class="privacy-note">No cookies, no tracking, and the page loads only its own files.
-    <a href="/privacy/">Check the Network tab</a>.</p>
-  <details class="why why-fold">                       <!-- the same note; phones only -->
-    <summary>Why isn't my favorite free font here?</summary>
-    <p>…the same text…</p>
-  </details>
+  <h1 class="list-title">…</h1>
+  <p class="lead">Every font here is free for any personal or commercial use, and you may share the files.
+    <span class="visually-hidden-phone">They are ranked by …</span></p>   <!-- phones: the first sentence only -->
   <div class="layout">
     <search id="filters" class="filters" aria-label="Filter fonts" hidden>  <!-- the script removes hidden -->
       <div class="filters-bar">                                       <!-- always visible: search and rank -->
-        <label for="f-q">Search fonts</label>
-        <input id="f-q" name="q" type="search" maxlength="100" autocomplete="off" spellcheck="false">
-        <label for="f-rank">Rank</label>
+        <label for="f-q" class="visually-hidden-phone">Search fonts</label>
+        <input id="f-q" name="q" type="search" maxlength="100" autocomplete="off" spellcheck="false"
+          placeholder="Search">                                        <!-- the placeholder shows on phones only -->
+        <label for="f-rank" class="visually-hidden-phone">Measure</label>
         <select id="f-rank" name="rank" aria-describedby="f-rank-measures">…one option per available view…</select>
-        <p id="f-rank-measures" class="measures">…the view's measures line…</p>
+        <p id="f-rank-measures" class="measures visually-hidden-phone">…the view's measures line…</p>
         <button type="button" id="f-toggle" class="filters-toggle" aria-expanded="false" aria-controls="f-more">
           Filters<span class="filters-count"> (3)</span></button>             <!-- narrow screens only -->
       </div>
@@ -181,11 +174,11 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
     </search>
     <noscript><p class="noscript-note">Filters and search need JavaScript. Below is the full list by overall rank.</p></noscript>
     <section id="results" class="results" aria-labelledby="results-h">
-      <h2 id="results-h">Fonts</h2>
+      <h2 id="results-h" class="visually-hidden-phone">Fonts</h2>
       <p id="ext-summary" class="ext-summary" hidden></p>             <!-- Milestone 3: tff.list.setSummary -->
       <!-- Main inserts <p id="load-note" class="noscript-note"> here, before #count, when the
            list index fails to load or doesn't match the rows; the server's list stays. -->
-      <p id="count" class="count">Showing 540 of 540 fonts</p>
+      <p id="count" class="count">Showing 540 of 540 fonts</p>           <!-- phones: in the sort row -->
       <p id="held-legend" class="held-legend is-held" hidden>…a hollow bar… Hollow bar: this score
         rests on one kind of source, so it may move more.</p>          <!-- shown while a held row is -->
       <p id="view-note" class="view-note" hidden></p>                 <!-- the view's note (list index r.<key>.note) -->
@@ -195,9 +188,9 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
         <button type="button" id="no-results-clear">Clear filters</button>
       </div>
       <div id="list-sort" class="list-sort" role="group" aria-label="Sort the list" hidden>  <!-- shown by the script -->
-        <button type="button" class="sort-btn" id="sort-rank" data-sort="rank" data-asc="best first"
-          data-desc="least used first" data-asc-spoken="…" data-desc-spoken="…" aria-pressed="true"
-          data-dir="asc"><span class="visually-hidden">Sort by </span><span class="sort-label">Rank</span>
+        <button type="button" class="sort-btn" id="sort-rank" data-sort="rank" data-asc="most popular"
+          data-desc="least popular" data-asc-spoken="…" data-desc-spoken="…" aria-pressed="true"
+          data-dir="asc"><span class="visually-hidden">Sort by </span><span class="sort-label">Popularity</span>
           <span class="sort-arrow" aria-hidden="true"></span><span class="sort-dir">…</span></button>
         <button type="button" class="sort-btn" id="sort-name" data-sort="name" data-asc="A–Z" data-desc="Z–A"
           data-asc-spoken="A to Z" data-desc-spoken="Z to A" aria-pressed="false">…Name…</button>
@@ -209,12 +202,15 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 </main>
 ```
 
-- **The front page's note** (site rulings of 2026-09-29, `data/reviews/site/2026-09-29.toml`: `why_not_listed`, `why_not_listed_layout`): "Why isn't my favorite free font here?" and the owner's text, word for word, in `index.html.j2`, the address a `mailto:` link to `site.feedback.email`, which is admin@purelyfreefonts.com since the site ruling of 2026-10-02 (`contact_address`). It is in the HTML twice and the stylesheet displays one, so neither needs a script and nothing moves as the page loads: `div.why-wide` from `40rem` up, a frame floated right beside the lead and the privacy note, which wrap around it, while `.layout` clears it, so the list starts below the frame and rows are never narrowed; `details.why-fold` at `40rem` and below, full width under the intro, folded to its `summary`. The other copy is `display: none`, so screen readers get the text once.
+- **The page stops after the lead** (owner's site rulings of 2026-10-07, `why_not_listed_to_about` and `privacy_line_in_footer`): `main` holds the `h1`, `p.lead` and `div.layout`, nothing else, on every screen. The note "Why isn't my favorite free font here?" is on the About page (below), and the privacy line is in every page's footer ("Shared classes").
+- **Phones** (below `40rem`; the owner's site rulings of 2026-10-06, `mobile_first_screen_two_fonts` and `early_line_hidden_on_phones`): two fonts fit on a 375 x 812 first screen. Top to bottom: the header without its early-version line; a smaller `h1` (`--fs-xl`); the lead's first sentence, its second in `span.visually-hidden-phone`, so screen readers keep it; **the controls row**, `#f-q`, `#f-rank` and `#f-toggle` on one line, their labels and `#f-rank-measures` hidden from sight by `visually-hidden-phone` (the labels stay the controls' accessible names and `#f-rank-measures` the select's description), the search box showing "Search" as a placeholder (the start of its name, "Search fonts", short enough to show whole), every target at least 24 px, `#f-toggle` as wide as its longest text ("Filters (6)", `7em`) so the count of filters on never changes the row, search and the select sharing the rest two to three (each at least `5.5rem`), the line on one row from 336 px and in two below that, whatever the count, never scrolling sideways, and M2-D4 unchanged, with everything else behind `#f-toggle`; then the results, whose `#results-h` is hidden from sight but stays for screen readers and headings navigation, and **the sort row**, `#list-sort` with `#count` after it at the row's end (`order`; on its own line where it can't keep about 7.5em beside the buttons, below 337 px since the Popularity button's words became "most popular", and on two lines beside them up to about 390 px), its first line level with the buttons' labels, so a count that changes length moves nothing. `#held-legend`, `#view-note` and `#no-results` stay above the sort row. From `40rem` up the page is as before: visible labels, the measures line, the "Fonts" heading with the count under it, then the sort buttons ("Sorting", below).
 - The controls' `name` attributes are the hash keys (section 9); `value` is the key's value. Filters live in `<search>` and `<fieldset>`/`<legend>` groups, never in a `<form>`.
 - `#filters` and `#list-sort` carry `hidden` in the HTML; the script removes it. Showing them must not move the list (reserve their space in CSS), because the layout-shift budget is 0.1.
+- **A link with a view or filters in it** (`State.changesList`: any hash pair but `font`'s, an extension's included) would have the first render change the server's list after it is painted: on phones, where the list starts on the first screen, rows and the footer would move (layout shift up to about 0.55 on 2026-10-07). So, as the script starts, Main sets `html[data-list-pending=""]`, under which `#results` and `.site-footer` aren't displayed; after the first render it sets `data-list-pending="settling"`, under which they are laid out but invisible for two frames, while the rows on the screen grow from their `contain-intrinsic-size` estimate to their own height; then it removes the attribute, and only then does `tff:list-ready` fire (section 10), since an invisible row can't take focus, which a `#font=` link's heading needs. They show anyway if the list index fails to load, and after 3 seconds without it (the late render then moves the list). No hash, an in-page anchor or a font alone never sets it. Layout shift on load is 0 on every screen for such links, with the index held back so the page paints first; `#font=` links still shift when Details opens the panel and scrolls to it, as before.
 - Narrow screens are below `60rem`: `#f-more` is hidden until `#f-toggle` expands it, and `#f-toggle`'s text includes the number of active filters. From `60rem` up, `#f-more` is always shown in the sidebar and `#f-toggle` is hidden.
 - **The filter set** (owner rulings of 2026-09-30, `data/reviews/site/2026-09-30.toml`: `monospace_category`, `license_filter`, `filters_layout`). Category's **Monospace** is every monospaced font, the list Coding orders, and the other categories hold proportional fonts only: the list index's `cat` is the site category (section 7). There is no Spacing filter (it replaced "Text only" and "Monospace only" on 2026-09-25) and no license-group or "Redistributable fonts only" filter (Rule 3). `#f-hide-attr`, "No credit required", is rendered only while some font needs credit. `#f-os` offers one operating system at a time; its value joins `hide` with the checked boxes.
-- **Sorting** (owner ruling of 2026-09-30, `sort_header`): `#list-sort`, over the list, outside `#filters`, holds one `button.sort-btn[data-sort]` per column, Rank and Name. `aria-pressed="true"` and `data-dir` (`asc` or `desc`) mark the column in use: the CSS fills that one of its two stacked arrows (`.sort-arrow`), and `.sort-dir` holds the order's words, from the button's `data-asc`/`data-desc` (shown) and `data-asc-spoken`/`data-desc-spoken` (for screen readers, with what a click does). A click on the button in use reverses its order; a click on the other sorts by it, `asc`. The announcement after a sort change adds "Sorted by <label>, <spoken words>" to the count line.
+- **Sorting** (owner ruling of 2026-09-30, `sort_header`): `#list-sort`, over the list, outside `#filters`, holds one `button.sort-btn[data-sort]` per column, Popularity (the score column's heading, `score_column_popularity`, 2026-09-30; its orders "most popular" and "least popular", `sort_words_most_least`, 2026-10-07, which amended `sort_words_popular`'s "most popular first" and "least popular first" of 2026-10-05) and Name. `aria-pressed="true"` and `data-dir` (`asc` or `desc`) mark the column in use: the CSS fills that one of its two stacked arrows (`.sort-arrow`), and `.sort-dir` holds the order's words, from the button's `data-asc`/`data-desc` (shown) and `data-asc-spoken`/`data-desc-spoken` (for screen readers, with what a click does). A click on the button in use reverses its order; a click on the other sorts by it, `asc`. The spoken words are the shown ones, so the button's title is "Show least popular instead" and the announcement after a sort change adds "Sorted by <label>, <spoken words>" to the count line ("Sorted by popularity, least popular"). The order's words take one line, the button's second (`sort_two_lines`): from `40rem` "most popular" and "least popular" (about 83 px) are no wider than the Popularity label and its arrow (about 94 px), so the button fits over the 6rem rank column and Name starts over the names. In either order one button has two lines and the other one, so `#list-sort` is one height whichever column sorts, and sorting never moves the list.
+- **Words** (owner's site rulings of 2026-10-05, `selector_label` and `method_page_name`): the rank select's label is "Measure", the methodology page is "How we measure popularity", and the nav links to it as "How it works". A font's details keep "Rank" for its exact place (`score_column_popularity`).
 - `#f-nerd` ("Nerd Font available", owner's site ruling of 2026-09-29, `data/reviews/site/2026-09-29.toml`, `nerd_filter`) keeps only the fonts with a Nerd Font build, on every rank: the rows tagged "Nerd Font available". There is no legend above the list: the owner's site ruling of 2026-10-05 (`nerd_tag`) replaced `#nf-legend` and the rows' "NF" marker with the tag.
 
 ### A row
@@ -256,7 +252,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 - **The row's actions** (owner's site ruling of 2026-10-05, `download_button`): `a.download` is the main one and has the strong, button-like look, filled with `--c-accent`, though it stays a link that navigates; `button.details-toggle` is the quieter one, a `--c-border` outline with no fill. They close the row in that order, so the keyboard reaches the download first, both with the focus ring; on one line the two are the same height, and a long destination wraps inside the download button. Under forced colours both keep a `--c-border` border and the download takes the link colours on `--c-bg` (Chromium paints a backplate in the page's colour behind text there, which hides text in `--c-accent-fg`); in print, where browsers drop backgrounds, it is an underlined link.
 - **Phone cards** (owner's site ruling of 2026-10-05, `phone_rows_trim`, which amended `phone_rows_merged`): below `40rem` a card's vertical padding, the gap above its actions and the actions' side padding are `--space-2`, `--space-3` from `40rem`, so about five cards fit on a phone's screen with the larger names from 360 px wide (median 160 px on the real list, against 812 / 5 = 162.4). Below about 352 px "Download from Google Fonts" takes two lines and the median card is 175 px: four to a screen. Category and license keep their own line, and the type, the specimen box and the buttons' heights keep their sizes.
 - `Render` moves rows in and out of `#list` (hidden rows are detached, not given `hidden`) and changes only the `.rank` cell, drawn as the server draws it. Rows carry `content-visibility: auto`, so they must not change height when their specimen arrives.
-- **States set by scripts:** `html[data-js]` once the script runs; `span.spec[data-state]`: `loading` while its file loads, then `set` once its mask is set (and its `div.font-title` gets `is-drawn`), or `failed` when the file can't be had; `li.font.is-dim` for a row a Milestone 3 filter dims; `li.font.is-unranked` for a row whose `.rank` reads "Not ranked: <reason>" (the server sets it too), which puts that label on a line of its own above the name (the owner's site ruling of 2026-09-26).
+- **States set by scripts:** `html[data-js]` once the script runs; `html[data-list-pending]` (`""`, then `"settling"`) on the list page while a link's view or filters wait for the first render ("The list page"); `span.spec[data-state]`: `loading` while its file loads, then `set` once its mask is set (and its `div.font-title` gets `is-drawn`), or `failed` when the file can't be had; `li.font.is-dim` for a row a Milestone 3 filter dims; `li.font.is-unranked` for a row whose `.rank` reads "Not ranked: <reason>" (the server sets it too), which puts that label on a line of its own above the name (the owner's site ruling of 2026-09-26).
 - **The Milestone 3 slot** (section 10). For each filter whose `note` gives a row something to show, `Render` adds one `<div class="ext" data-filter="<filter id>">` at the end of `.font-row` (created on demand, removed when that filter no longer has a note for the row), built with `Core.el` only:
   - `span.ext-badge` for `badge`, `p.ext-note` for `text`;
   - one `a.ext-link` per link (`href` relative or `https://`, anything else dropped);
@@ -269,11 +265,17 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
   3. `details.details-evidence`, closed, its `summary` "All ranks and sources": every rank with tier and range, the tier legend, "Pulled in by", and the per-source tables (`table.details-src-table[data-survey]`);
   4. `p.details-report`.
 
+### The About page
+
+**The note "Why isn't my favorite free font here?"** (site rulings of 2026-09-29, `data/reviews/site/2026-09-29.toml`: `why_not_listed`; moved from the front page on 2026-10-07, `why_not_listed_to_about`): the owner's text, word for word, closes `/about/` as `<h2 id="why-not-listed">` and one `<p>`, written by `about.html.j2` after the page's Markdown, so its anchor, `/about/#why-not-listed`, stays put whatever `about.md`'s headings say (`tff_site.pages.TEMPLATE_IDS` keeps the id from them). The address is a `mailto:` link to `site.feedback.email`, admin@purelyfreefonts.com since the site ruling of 2026-10-02 (`contact_address`). PLAN-REVIEWERS-1.md step 5 rewrites it there and links the front page's empty-search message to the anchor.
+
 ### Shared classes
 
-`visually-hidden` (hidden from sight, read by screen readers), `skip-link`, `site-header`, `site-name`, `site-name-mark`, `site-nav`, `site-footer`, `feedback`, `tip`, `footer-meta`.
+`visually-hidden` (hidden from sight, read by screen readers), `visually-hidden-phone` (the same below `40rem` only, and shown as it is from `40rem` up: the list page's filter labels, measures line, "Fonts" heading and the lead's second sentence), `skip-link`, `site-header`, `site-name`, `site-name-mark`, `site-nav`, `site-footer`, `feedback`, `tip`, `footer-privacy`, `footer-meta`.
 
-**The header** (owner rulings of 2026-09-29, 2026-10-04 and 2026-10-06): `a.site-name[href="/"]` holds only `img.site-name-mark[src="/wordmark.svg"]`, whose `alt` is the site's name ("Purely Free Fonts"), with `width` and `height` in the wordmark's 9717:1400 ratio (410 x 59). The wordmark is the owner's "Purely Free Fonts", in mixed case, black on its own white plate: his drawing, with only the editor's data left out. It is 410 px wide from `47.5rem` (760 px) up, where the navigation fits beside it on one row, and 270 px below that, so its capitals stand about 38 and 25 px tall. The favicon is the browser's icon only, not in the header. The header is white in both themes, behind the black wordmark: it takes the `--c-header-*` tokens, whose dark values are the light ones, so its links and text keep their light-theme colours and its focus ring 3:1 on white. Under forced colours it takes the system colours, and the wordmark keeps a white plate (`--c-wordmark-bg`).
+**The header** (owner rulings of 2026-09-29, 2026-10-04 and 2026-10-06): `a.site-name[href="/"]` holds only `img.site-name-mark[src="/wordmark.svg"]`, whose `alt` is the site's name ("Purely Free Fonts"), with `width` and `height` in the wordmark's 9717:1400 ratio (410 x 59). The wordmark is the owner's "Purely Free Fonts", in mixed case, black on its own white plate: his drawing, with only the editor's data left out. It is 410 px wide from `47.5rem` (760 px) up, where the navigation fits beside it on one row, and 270 px below that, so its capitals stand about 38 and 25 px tall. The breakpoint is the widest one-row header: 16 + 410 + 24 + the nav + 16 px, 747 px with the nav at its widest, 281 px with "How it works" bold on its own page (measured on 2026-10-07; `test_shell.py` re-measures it and checks every width from 320 to 1280 px for a second row). That holds without the Blog link: once a post is published (`site.blog`) the nav is about 329 px, the one-row header needs about 795 px and the phone nav wraps below about 360 px, so the first post moves the breakpoint (the test fails on such a build until it does; a draft shown only on staging isn't measured). Below about 610 px the nav takes its own line under the wordmark, still one line at 320 px. `p.site-status`, the early-version line, takes a line of its own from `40rem` up and isn't shown on phones (`early_line_hidden_on_phones`, 2026-10-06). The favicon is the browser's icon only, not in the header. The header is white in both themes, behind the black wordmark: it takes the `--c-header-*` tokens, whose dark values are the light ones, so its links and text keep their light-theme colours and its focus ring 3:1 on white. Under forced colours it takes the system colours, and the wordmark keeps a white plate (`--c-wordmark-bg`).
+
+**The footer**: `div#feedback` first (M2-D10, 3.2.6), then `p.tip` (when `site.tip_url` is set), `p.footer-privacy`, the privacy line on every page ("No cookies, no tracking, and the page loads only its own files. Check the Network tab.", its link to `/privacy/#check-for-yourself`, where the Privacy page explains the check; owner's site ruling of 2026-10-07, `privacy_line_in_footer`), and `p.footer-meta`, the data date and the source link.
 
 ## 5. JS parts
 
@@ -300,7 +302,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 | `40-details.js` | `Details` | A4 | written | `open(id, {focus})`, `close()`, the panel built with `Core.el`, "Type your own text" (`FontFace` + CSSOM `style.fontFamily`). Owns `.details-toggle` clicks. Before `tff:list-ready` it writes the hash's `font` pair itself, keeping every other pair as written. After it, it records `font` through `State.set` and follows `State.subscribe`, having subscribed after `Main` |
 | `45-specimens.js` | `Specimens` | A6 | written | IntersectionObserver on `li.font` (`rootMargin: '600px 0px'`) setting `mask-image`; `start()`, `pause()`, `resume()`, `paused` |
 | `50-ext.js` | `Ext` | A12 | written | builds `globalThis.tff` (section 10) and dispatches `tff:list-ready`; keeps the external filters, read by `View.compute` through `Ext.filters()`; `Ext.start(host)` takes `Main`'s `{ refresh, onChange, ready }` |
-| `90-main.js` | `Main` | A3 | written | `start()`: sets `html[data-js]`, wires the parts, event delegation on `#list` (including `button.ext-action`, section 10), indexing in idle callbacks |
+| `90-main.js` | `Main` | A3 | written | `start()`: sets `html[data-js]` (and `html[data-list-pending]` for a link with a view or filters, until the first render), wires the parts, event delegation on `#list` (including `button.ext-action`, section 10), indexing in idle callbacks |
 
 **`View.compute(state, index, filters)`** is pure and unit-tested through `page.evaluate`:
 
@@ -319,7 +321,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 
 - Colours come only from the tokens; no other part writes a colour value.
 - Focus: `outline: var(--focus-ring); outline-offset: var(--focus-offset);` on `:focus-visible`. No sticky header, so focus is never hidden (2.4.11).
-- Breakpoints (custom properties don't work in media queries, so these are fixed): narrow below `60rem` (filters behind the button), phone below `40rem` (specimen box 48 px).
+- Breakpoints (custom properties don't work in media queries, so these are fixed): narrow below `60rem` (filters behind the button), phone below `40rem` (specimen box 48 px, the compact first screen and `visually-hidden-phone`), and the header's wordmark 270 px below `47.5rem`. The first screen's phone rules are written `not all and (min-width: 40rem)`, so that they and the `(min-width: 40rem)` rules never both apply at exactly 640 px.
 - Specimens: `.spec { mask-size: contain; mask-repeat: no-repeat; mask-position: left center; height: var(--spec-h); }` and `.spec[data-state="set"] { background-color: var(--c-spec); }`, so the box fills only once its mask is set (an unmasked fill is a solid bar); `.spec` is hidden under `(scripting: none)`, where the `<noscript>` image shows instead; under `forced-colors`, `forced-color-adjust: none` (the token becomes `CanvasText`). The noscript image gets `filter: invert(1)` in dark mode.
 - The name once: `.font-title.is-drawn > .font-name { color: transparent; forced-color-adjust: none; }` inside `@supports (mask-image: none)`, and `.font-title.has-spec > .font-name` likewise under `@media (scripting: none)` (section 4); never `opacity`, which hides a selection's or a find-in-page match's highlight too, and `forced-color-adjust: none` keeps forced colours from painting the text over the drawn name. That heading is `align-self: center` over the box, and a ranked row's `.rank` has `min-height: var(--spec-h)` unless its title lacks `has-spec` (`:has()`), so the score is centred on the box (`score_centred`).
 - No `@import`, no `@font-face`, and no `url()` with a scheme or another host, a `data:` URL included: the page loads only its own files. The build's lint refuses them.
@@ -376,8 +378,10 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 | `--c-header-fg` | the header's text (the light `--c-fg`, in both themes) |
 | `--c-header-muted` | the header's secondary text (the light `--c-muted`) |
 | `--c-header-link` | the header's links (the light `--c-link`) |
-| `--c-header-focus` | the focus outline inside the header (the light `--c-focus`) |
+| `--c-header-focus` | the focus outline inside the header, and the skip link's, which shows over it (the light `--c-focus`) |
 | `--c-wordmark-bg` | the plate behind the wordmark image: white, under forced colours too (the SVG also draws its own) |
+
+**The blue** is lapis lazuli (the owner's site ruling of 2026-10-07, `lapis_lazuli_blue`): `#26619c` for `--c-link`, `--c-focus` and `--c-accent` in light mode and for `--c-header-link` and `--c-header-focus` in both themes (6.4:1 on white, 5.4:1 on `--c-badge-bg`), and a lighter tint, `#8cb6e3`, for `--c-link`, `--c-focus` and `--c-accent` in dark mode (8.4:1 on the dark `--c-bg`, where true lapis is about 2.8:1). `--c-link-visited` keeps its purple, and forced colours keep the system colours. The favicon, the touch icon and the share image (`site/static/`, drawn by `site/static/_src/make_static.py`) still use the old blue, `#0a56c2`: the ruling names the tokens only, and the images wait for the owner.
 
 ## 7. List index JSON
 
@@ -397,7 +401,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 | `bits` | int[n] | flags, below |
 | `keys` | string[n] | `search_key` of the family, then of each alias in catalog order, joined by `\|` |
 | `by_name` | int[n] | font indexes sorted by Python `str.casefold()` of the family, then id |
-| `views` | object[] | the catalog's `views`, unchanged |
+| `views` | object[] | the catalog's `views`, with each view's `label` and `measures` from `config/site.toml` (section 1, `view_labels_short`) |
 | `bands` | string[] | band labels, in order |
 | `why_labels` | string[] | unranked-reason labels, in the order `no_deliberate_evidence`, `no_evidence`, `too_new` |
 | `score_words` | object | the words around a score for screen readers: `before` ("Score "), `after` (" of 100"), `held` (", from one kind of source") |
@@ -426,7 +430,8 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 |---|---|
 | `v` | `1` |
 | `run_date` | `run.date` |
-| `views`, `bands`, `tiers`, `sources`, `systems`, `license_classes`, `nerd` | as in the catalog |
+| `views` | the catalog's `views`, with each view's `label` and `measures` from `config/site.toml` (section 1, `view_labels_short`) |
+| `bands`, `tiers`, `sources`, `systems`, `license_classes`, `nerd` | as in the catalog |
 | `state_labels` | `{observed, censored, not_covered, too_new}` → label (`censored` → "below the floor") |
 | `why_labels` | `{no_deliberate_evidence, no_evidence, too_new}` → label |
 | `report` | `{issue_url, email}`: `https://github.com/byronshock/purelyfreefonts/issues/new?template=license.yml`, to which `Details` appends `&font_id=<id>&data_date=<run_date>`, and the fallback address for a `mailto:` link |
@@ -453,7 +458,7 @@ key   = "rank" / "cat" / "var" / "nerd" / "hide" / "q" / "sort" / "font"
 | `nerd` | `1`: "Nerd Font available", fonts with a Nerd Font build only | off |
 | `hide` | any of `limited` (shown as "Accented letters"), `attr` ("No credit required"), and at most one of `windows`, `macos`, `linux`, `android`, in this order; a second system is dropped | nothing hidden |
 | `q` | search text, at most 100 characters | empty |
-| `sort` | `rank-desc` (the whole rank order reversed, unranked fonts first), `name` (A–Z) or `name-desc` (Z–A) | `rank` (best first) |
+| `sort` | `rank-desc` (the whole rank order reversed, unranked fonts first), `name` (A–Z) or `name-desc` (Z–A) | `rank` (most popular first) |
 | `font` | a font id: its details panel is open | none |
 
 - **Writing:** keys in the table's order, defaults left out; the default view is the empty hash, restored with `history.replaceState(null, '', location.pathname + location.search)`. Discrete changes use `pushState`; search typing uses `replaceState`, debounced 300 ms.

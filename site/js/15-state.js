@@ -21,8 +21,8 @@ const State = (() => {
   const DEFAULT_RANK = 'overall';
   const HIDES = Object.freeze(['limited', 'attr', 'windows', 'macos', 'linux', 'android']);
   const OSES = Object.freeze(['windows', 'macos', 'linux', 'android']);
-  // The sort orders (owner ruling of 2026-09-30, sort_header): by rank, best first (the
-  // default) or reversed, and by name, A to Z or reversed.
+  // The sort orders (owner ruling of 2026-09-30, sort_header): by rank, most popular first
+  // (the default) or reversed, and by name, A to Z or reversed.
   const SORTS = Object.freeze(['rank', 'rank-desc', 'name', 'name-desc']);
   const MAX_Q = 100;
   const TYPING_MS = 300;
@@ -204,6 +204,17 @@ const State = (() => {
     }
   };
 
+  // True when a hash, read as the page loads (before configure), may ask for another list
+  // than the server's: any pair but the font's, an extension's included, since Milestone 3's
+  // filters apply on the first render too. No hash, an in-page anchor or a font alone leave
+  // the list as it is.
+  const changesList = (hash) =>
+    !isAnchor(hash) &&
+    hash
+      .replace(/^#/, '')
+      .split('&')
+      .some((piece) => piece !== '' && piece.split('=')[0] !== 'font');
+
   // The extension pairs in the URL right now, so a change Milestone 3 made meanwhile stays.
   const extNow = () => {
     const hash = location.hash;
@@ -360,6 +371,7 @@ const State = (() => {
     same,
     cleared,
     isClear,
+    changesList,
     configure,
     load,
     get,
