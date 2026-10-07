@@ -273,8 +273,8 @@ def test_body_is_skip_link_header_main_footer():
     assert mark.attrs["src"] == "/wordmark.svg"
     assert mark.attrs["alt"] == "Purely Free Fonts"
     width, height = int(mark.attrs["width"]), int(mark.attrs["height"])
-    assert (width, height) == (418, 46)
-    assert abs(width / height - 10000 / 1100) < 0.01  # the wordmark's viewBox ratio
+    assert (width, height) == (410, 59)
+    assert abs(width / height - 9717 / 1400) < 0.01  # the wordmark's viewBox ratio
     assert not [i for i in header.find_all("img") if "favicon" in i.attrs.get("src", "")]
 
 
@@ -511,20 +511,20 @@ def test_favicon_svg_is_inert_outlines():
 
 
 def test_wordmark_svg_is_the_owners_inert_outlines():
-    """The header's wordmark (AUTHORITY.md, "Headline font", owner rulings of 2026-10-04): the
-    owner's file, byte for byte (the sha256 that site/static/_src/make_wordmark.py pins), black
-    outlines on a white rectangle in the 10000 x 1100 viewBox, with no script, style, link, text
+    """The header's wordmark (AUTHORITY.md, "Headline font", owner rulings of 2026-10-06): the
+    owner's drawing as site/static/_src/make_wordmark.py writes it from his pinned source, black
+    outlines on a white rectangle in the 9717 x 1400 viewBox, with no script, style, link, text
     or foreign content, so it renders the same under the CSP, in any browser, with no font."""
     data = (STATIC / "wordmark.svg").read_bytes()
     assert hashlib.sha256(data).hexdigest() == (
-        "f6771a470eafda489655edc1161f0a0f69fb923819e5d3e4a1e53c828c1f07d3"
+        "721ec7c24a84d9b98309c741c41422515c47fd85fab61903653fb5752d7554fb"
     )
     source = data.decode("utf-8")
     assert len(data) < 8192
     root = ET.fromstring(source)
     ns = "{http://www.w3.org/2000/svg}"
     assert root.tag == f"{ns}svg"
-    assert root.attrib["viewBox"] == "0 0 10000 1100"
+    assert root.attrib["viewBox"] == "0 0 9717 1400"
     assert [r.attrib["fill"] for r in root.iter(f"{ns}rect")] == ["#ffffff"]
     assert [g.attrib["fill"] for g in root.iter(f"{ns}g")] == ["#000000"]
     assert not [p for p in root.iter(f"{ns}path") if "fill" in p.attrib]
@@ -537,11 +537,24 @@ def test_wordmark_svg_is_the_owners_inert_outlines():
             assert "url(" not in value, (name, value)
 
 
-@pytest.mark.parametrize(("width", "want"), [(1280, 418), (768, 418), (700, 278), (375, 278)])
-def test_the_wordmark_is_418_px_wide_from_760_px_and_278_below(browser, site_url, width, want):
-    """Owner rulings of 2026-10-04: 418 px wide where the navigation fits beside it (760 px and
-    up) and 278 px below that (capitals about 38 and 25 px tall), in the header, which is white
-    in both themes."""
+def test_wordmark_svg_is_the_pinned_source_without_the_editors_data():
+    """make_wordmark.py's output from the owner's pinned source (owner ruling of 2026-10-06):
+    the same view box, title, plate and letter paths, with Inkscape's data left out."""
+    spec = importlib.util.spec_from_file_location(
+        "make_wordmark", STATIC / "_src" / "make_wordmark.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    source = module.SOURCE.read_bytes()
+    assert hashlib.sha256(source).hexdigest() == module.SOURCE_SHA256
+    assert (STATIC / "wordmark.svg").read_text(encoding="utf-8") == module.drawing_only(source)
+
+
+@pytest.mark.parametrize(("width", "want"), [(1280, 410), (768, 410), (700, 270), (375, 270)])
+def test_the_wordmark_is_410_px_wide_from_760_px_and_270_below(browser, site_url, width, want):
+    """Owner rulings of 2026-10-04 and 2026-10-06: 410 px wide where the navigation fits beside
+    it (760 px and up) and 270 px below that (capitals about 38 and 25 px tall), in the header,
+    which is white in both themes."""
     for scheme in ("light", "dark"):
         context = browser.new_context(
             base_url=site_url, viewport={"width": width, "height": 800}, color_scheme=scheme
@@ -557,7 +570,7 @@ def test_the_wordmark_is_418_px_wide_from_760_px_and_278_below(browser, site_url
                             .backgroundColor]; }"""
             )
             assert abs(box[0] - want) < 1, (scheme, box)
-            assert abs(box[0] / box[1] - 10000 / 1100) < 0.02, (scheme, box)
+            assert abs(box[0] / box[1] - 9717 / 1400) < 0.02, (scheme, box)
             assert box[2], "the wordmark did not load"
             assert box[3] == "rgb(255, 255, 255)", (scheme, box)
         finally:
