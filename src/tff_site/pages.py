@@ -67,7 +67,8 @@ METHODOLOGY_URL = f"{BLOB_URL}/docs/ranking-methodology.md"
 
 METHODOLOGY_PAGE = {
     "path": "/methodology/",
-    "heading": "How we rank",
+    # The owner's site ruling of 2026-10-05 (method_page_name); the nav link says "How it works".
+    "heading": "How we measure popularity",
     "description": (
         "How Purely Free Fonts ranks fonts: the method in plain words, how to read ranks, "
         "bands and tiers, known biases, and credits for every data source."
@@ -94,6 +95,8 @@ TEMPLATE_IDS = frozenset(
         "tip",
         # privacy.html.j2
         "tips",
+        # about.html.j2
+        "why-not-listed",
         # methodology.html.j2
         "toc-h",
         "in-plain-words",

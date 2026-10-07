@@ -1,7 +1,8 @@
 /* 25-filters: the filter block (M2-D4; site/CONTRACT.md "The list page"). Below 60rem, search
    and rank stay visible and the rest (#f-more) opens from #f-toggle; the disclosure follows
-   the toggle's aria-expanded, so the script only has to flip that attribute. From 60rem the
-   block is a sidebar with everything shown and no toggle. Colours come only from the tokens. */
+   the toggle's aria-expanded, so the script only has to flip that attribute. Below 40rem the
+   three share one row. From 60rem the block is a sidebar with everything shown and no toggle.
+   Colours come only from the tokens. */
 
 /* <search> is new; older browsers treat it as an unknown inline element. */
 .filters {
@@ -112,6 +113,48 @@
 .filters-toggle[aria-expanded="true"]::after {
   margin-top: 0.25em;
   transform: rotate(-135deg);
+}
+
+/* The search box's placeholder repeats its label, for phones, where the label is hidden from
+   sight (below); from 40rem the label shows above the box, so the placeholder doesn't. */
+#f-q::placeholder {
+  color: var(--c-muted);
+  opacity: 1;
+}
+
+@media (min-width: 40rem) {
+  #f-q::placeholder {
+    opacity: 0;
+  }
+}
+
+/* Phones (below 40rem): search, the rank select and the Filters button share one row, so two
+   fonts fit on a 375 x 812 first screen (owner's site ruling of 2026-10-06,
+   mobile_first_screen_two_fonts). The labels and the line under the select are hidden from
+   sight (visually-hidden-phone) but stay the controls' names and description. Search and the
+   select split the room left by the button, each at least 6rem wide, so the row still fits
+   from 360px when the button counts the filters that are on ("Filters (3)"), and a filter in
+   the address never wraps it on load; below that the button wraps onto a second line, and
+   nothing scrolls sideways. A long view label is cut short inside the closed select, and the
+   open list shows it whole. */
+@media not all and (min-width: 40rem) {
+  .filters-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  #f-q,
+  #f-rank {
+    flex: 1 1 0;
+    min-width: 6rem;
+    margin: 0;
+  }
+
+  .filters-toggle {
+    margin: 0;
+  }
 }
 
 .filters :focus-visible {

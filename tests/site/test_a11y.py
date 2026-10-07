@@ -157,13 +157,21 @@ FOCUS_JS = """
 
 FRAMES_JS = "() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))"
 
+# Hidden from sight like .visually-hidden, on phones only (below 40rem; 10-base.css).
+PHONE_HIDDEN_JS = """
+  const phoneHidden = (el) => Boolean(el.closest('.visually-hidden-phone'))
+    && !matchMedia('(min-width: 40rem)').matches;
+"""
 # Elements wider than the viewport, or sticking out of it, that aren't inside a scrollable
 # box (1.4.10 allows those for tables) or hidden on purpose.
-OVERFLOW_JS = """
-() => {
+OVERFLOW_JS = (
+    """
+() => {"""
+    + PHONE_HIDDEN_JS
+    + """
   const width = document.documentElement.clientWidth;
   const out = [];
-  const skip = (el) => el.closest('.visually-hidden, [hidden], noscript');
+  const skip = (el) => el.closest('.visually-hidden, [hidden], noscript') || phoneHidden(el);
   const scroller = (el) => {
     for (let n = el.parentElement; n && n !== document.body; n = n.parentElement) {
       const o = getComputedStyle(n).overflowX;
@@ -185,15 +193,19 @@ OVERFLOW_JS = """
   return { scrollWidth: document.documentElement.scrollWidth, width, out: out.slice(0, 20) };
 }
 """
+)
 
 # Boxes that hide overflowing text (overflow hidden or clip, or an ellipsis), and boxes whose
 # text runs out of their own fixed size.
-CLIPPED_JS = """
-() => {
+CLIPPED_JS = (
+    """
+() => {"""
+    + PHONE_HIDDEN_JS
+    + """
   const out = [];
   const hasText = (el) => [...el.childNodes].some((n) => n.nodeType === 3 && n.data.trim());
   for (const el of document.body.querySelectorAll('*')) {
-    if (el.closest('.visually-hidden, [hidden], noscript, .spec')) continue;
+    if (el.closest('.visually-hidden, [hidden], noscript, .spec') || phoneHidden(el)) continue;
     const cs = getComputedStyle(el);
     if (cs.display === 'none' || cs.visibility === 'hidden') continue;
     const r = el.getBoundingClientRect();
@@ -212,6 +224,7 @@ CLIPPED_JS = """
   return out.slice(0, 20);
 }
 """
+)
 
 # Running transitions and animations longer than a blink.
 MOTION_JS = """

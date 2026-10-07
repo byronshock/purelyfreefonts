@@ -103,8 +103,17 @@ def test_names_match_the_site(doc: str) -> None:
     assert "*Monospace*" in doc
     details = (ROOT / "site" / "js" / "40-details.js").read_text(encoding="utf-8")
     assert "All ranks and sources" in details
-    assert "How we rank" in doc
-    assert "How we rank" in (templates / "base.html.j2").read_text(encoding="utf-8")
+    # The selector's label, the nav link and the page it opens (owner's site rulings of
+    # 2026-10-05, selector_label and method_page_name).
+    assert "*Measure* selector" in doc
+    assert '<label for="f-rank" class="visually-hidden-phone">Measure</label>' in filters
+    assert "*How it works*" in doc
+    assert '("/methodology/", "How it works")' in (templates / "base.html.j2").read_text(
+        encoding="utf-8"
+    )
+    assert '"How we measure popularity"' in doc
+    pages = (ROOT / "src" / "tff_site" / "pages.py").read_text(encoding="utf-8")
+    assert '"heading": "How we measure popularity"' in pages
 
     build = (ROOT / "src" / "tff_site" / "build.py").read_text(encoding="utf-8")
     for badge in ("Limited accents", "Comes with"):

@@ -166,6 +166,24 @@ input[type="radio"] {
   border: 0 !important;
 }
 
+/* Hidden from sight on phones only (below 40rem), still read by screen readers: what a phone's
+   first screen leaves out of the list page so that two fonts fit on it (owner's site ruling of
+   2026-10-06, mobile_first_screen_two_fonts), such as the filter labels and the "Fonts"
+   heading. From 40rem it shows as it is. */
+@media not all and (min-width: 40rem) {
+  .visually-hidden-phone {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    margin: -1px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    clip-path: inset(50%) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+}
+
 /* Off-screen until focused; then it sits on top, over the header, fully visible at once (no
    transition, so it is never half-hidden while focused). */
 .skip-link {
@@ -217,7 +235,9 @@ input[type="radio"] {
    900 tall): 410 px wide where the Site navigation fits beside it on one row (760 px and up),
    270 px below that, so the capitals stand about 38 and 25 px tall (owner rulings of
    2026-10-04 and 2026-10-06). Sized by width, the height following, so it scales down evenly where even 270 px
-   won't fit. */
+   won't fit. The breakpoint is the widest one-row header, the gutters, the wordmark, the gap
+   and the nav: 16 + 410 + 24 + 281 + 16 = 747 px, with "How it works" bold on its own page
+   (measured on 2026-10-07); tests/site/test_shell.py re-measures it. */
 .site-name-mark {
   display: block;
   width: 25.625rem;
@@ -225,7 +245,7 @@ input[type="radio"] {
   max-width: 100%;
 }
 
-@media (max-width: 47.5rem) {
+@media not all and (min-width: 47.5rem) {
   .site-name-mark {
     width: 16.875rem;
   }
@@ -273,6 +293,14 @@ input[type="radio"] {
   font-size: var(--fs-small);
 }
 
+/* Phones show no early-version line (owner's site ruling of 2026-10-06,
+   early_line_hidden_on_phones), so the fonts start sooner. */
+@media not all and (min-width: 40rem) {
+  .site-status {
+    display: none;
+  }
+}
+
 /* ---- Main */
 
 main {
@@ -280,7 +308,8 @@ main {
 }
 
 /* ---- Footer: the feedback spot first, in the same place on every page (3.2.6), then the
-   tip link and the data date. */
+   tip link, the privacy line (owner's site ruling of 2026-10-07, privacy_line_in_footer) and
+   the data date. */
 
 .site-footer {
   display: flex;
@@ -303,6 +332,7 @@ main {
   max-width: 100%;
 }
 
+.footer-privacy,
 .footer-meta {
   color: var(--c-muted);
   font-size: var(--fs-small);

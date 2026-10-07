@@ -99,12 +99,12 @@ Each task has what to **say**, when it's **done** (for the notes, not read aloud
 
 - **Say:** "Switch the list to the fonts people installed on purpose. Then switch it to the fonts on the most computers. Why did the list change?"
 - **Done:** they choose *Desktop: most chosen*, then *Desktop: most installed*, and explain in their own words that *most chosen* leaves out the installs that Linux systems make on their own. A bonus: they spot a font marked "no evidence of deliberate installs" and its "Comes with" tag, or the "Pulled in by" line under its details' "All ranks and sources".
-- **Watch for:** whether they read the line under the rank selector; whether "most chosen" and "most installed" make sense; confusion with *Overall*.
+- **Watch for:** whether they read the line under the *Measure* selector (phones leave it out); whether "most chosen" and "most installed" make sense; confusion with *Overall*.
 
 ### 6. Why does one font rank above another?
 
 - **Say:** "Why does <font A> rank above <font B>? How sure is the site about that?" Use the round's chosen pair.
-- **Done:** they open both fonts' details and "All ranks and sources", point to the per-source ranks, and read the tier (Firm, Fair or Rough) or the range, saying in their own words how sure the site is. Opening *How we rank* counts too.
+- **Done:** they open both fonts' details and "All ranks and sources", point to the per-source ranks, and read the tier (Firm, Fair or Rough) or the range, saying in their own words how sure the site is. Opening *How it works*, the page "How we measure popularity", counts too.
 - **Watch for:** jargon: tier, band, range, "below the floor", "not covered"; whether they follow a source to its credit on the methodology page; whether they trust the rank, and why.
 
 ### 7. A handwriting font's download page, on a phone
@@ -116,7 +116,7 @@ Each task has what to **say**, when it's **done** (for the notes, not read aloud
 ### 8. Send this view to a friend
 
 - **Say:** "Send the list exactly as you see it now to a friend. For now, send it to me in the chat."
-- **Done:** they send the page address (from the address bar or the browser's share menu), and the owner opens it in a new window and sees the same rank, filters and search.
+- **Done:** they send the page address (from the address bar or the browser's share menu), and the owner opens it in a new window and sees the same measure, filters and search.
 - **Watch for:** looking for a "Share" button; doubting that the address keeps the filters; finding the full address on a phone.
 
 ### 9. Questions

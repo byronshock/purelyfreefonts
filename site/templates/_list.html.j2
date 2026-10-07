@@ -8,13 +8,18 @@
   Font legend: a row's "Nerd Font available" tag says it (owner's site ruling of 2026-10-05,
   nerd_tag). #list-sort, the sort buttons over the rank and name columns, ships hidden like
   #filters and is shown by the script (owner ruling of 2026-09-30, sort_header). The buttons
-  carry their own words for each order; the script redraws them (30-filters-ui.js).
+  carry their own words for each order; the script redraws them (30-filters-ui.js). The score
+  column's button says "Popularity", its orders "most popular first" and "least popular
+  first" (owner's site rulings of 2026-09-30 and 2026-10-05, score_column_popularity and
+  sort_words_popular). On phones the "Fonts" heading is hidden from sight, though screen
+  readers and headings navigation keep it, and the count sits in the sort row
+  (mobile_first_screen_two_fonts, 2026-10-06; 20-list.css).
 -#}
 <div class="layout">
 {% include "_filters.html.j2" %}
 <noscript><p class="noscript-note">Filters and search need JavaScript. Below is the full list by overall rank.</p></noscript>
 <section id="results" class="results" aria-labelledby="results-h">
-<h2 id="results-h">Fonts</h2>
+<h2 id="results-h" class="visually-hidden-phone">Fonts</h2>
 <p id="ext-summary" class="ext-summary" hidden></p>
 <p id="count" class="count">Showing {{ list.total }} of {{ list.total }} {{ "font" if list.total == 1 else "fonts" }}</p>
 <p id="held-legend" class="held-legend is-held"{% if not list.held_shown %} hidden{% endif %}><i class="bar b60"></i> {{ list.held_legend }}</p>
@@ -25,7 +30,7 @@
 <button type="button" id="no-results-clear">Clear filters</button>
 </div>
 <div id="list-sort" class="list-sort" role="group" aria-label="Sort the list" hidden>
-<button type="button" class="sort-btn" id="sort-rank" data-sort="rank" data-asc="best first" data-desc="least used first" data-asc-spoken="best first" data-desc-spoken="least used first" aria-pressed="true" data-dir="asc" title="Show least used first instead"><span class="visually-hidden">Sort by </span><span class="sort-label">Rank</span> <span class="sort-arrow" aria-hidden="true"></span> <span class="sort-dir"><span aria-hidden="true">best first</span><span class="visually-hidden"> best first; select to show least used first</span></span></button>
+<button type="button" class="sort-btn" id="sort-rank" data-sort="rank" data-asc="most popular first" data-desc="least popular first" data-asc-spoken="most popular first" data-desc-spoken="least popular first" aria-pressed="true" data-dir="asc" title="Show least popular first instead"><span class="visually-hidden">Sort by </span><span class="sort-label">Popularity</span> <span class="sort-arrow" aria-hidden="true"></span> <span class="sort-dir"><span aria-hidden="true">most popular first</span><span class="visually-hidden"> most popular first; select to show least popular first</span></span></button>
 <button type="button" class="sort-btn" id="sort-name" data-sort="name" data-asc="A&#x2013;Z" data-desc="Z&#x2013;A" data-asc-spoken="A to Z" data-desc-spoken="Z to A" aria-pressed="false" title="Sort by name"><span class="visually-hidden">Sort by </span><span class="sort-label">Name</span> <span class="sort-arrow" aria-hidden="true"></span> <span class="sort-dir"></span></button>
 </div>
 <ol id="list" class="font-list" role="list" data-index="{{ list.index_url }}" data-details="{{ list.details_url }}" data-run-date="{{ build.run_date }}">

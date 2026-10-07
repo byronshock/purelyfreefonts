@@ -1422,9 +1422,11 @@ SORT_LAYOUT_JS = """() => {
 @pytest.mark.parametrize("width", [640, 1280])
 def test_the_name_button_sits_over_the_names(guarded_context: Any, width: int) -> None:
     """Owner rulings of 2026-09-30 (sort_header, sort_two_lines): from 40rem the Name button
-    starts over the name column, and the Rank button fits beside it in either order."""
+    starts over the name column, and the Popularity button fits beside it in either order:
+    "most popular first" and "least popular first" (sort_words_popular, 2026-10-05) are wider
+    than the rank column, so they wrap under the label."""
     guarded, page = open_list(guarded_context, viewport={"width": width, "height": 800})
-    for _ in range(2):  # best first, then least used first (the longer words)
+    for _ in range(2):  # most popular first, then least popular first
         got = page.evaluate(SORT_LAYOUT_JS)
         assert abs(got["name"] - got["title"]) <= 1, got
         assert got["rank"] < got["name"], got

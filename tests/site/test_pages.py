@@ -13,6 +13,7 @@
 import copy
 import itertools
 import re
+import tomllib
 import xml.etree.ElementTree as ET
 from collections import Counter
 from html.parser import HTMLParser
@@ -34,7 +35,7 @@ SUFFIX = " \N{EN DASH} Purely Free Fonts"
 PAGES = {
     "methodology/index.html": (
         "/methodology/",
-        "How we rank",
+        "How we measure popularity",  # method_page_name (2026-10-05)
         [
             "toc-h",
             "in-plain-words",
@@ -66,6 +67,7 @@ PAGES = {
             "whats-next",
             "report-a-problem-or-get-in-touch",
             "open-data-and-code",
+            "why-not-listed",  # the note from the front page (why_not_listed_to_about)
         ],
     ),
     "404.html": ("/404.html", "Page not found", []),
@@ -700,6 +702,46 @@ def test_about_page_states_the_rules(built):
         "Report a problem with this font",
     ):
         assert phrase in text, phrase
+
+
+SITE_RULINGS = {
+    day: tomllib.loads((ROOT / "data" / "reviews" / "site" / f"{day}.toml").read_text("utf-8"))
+    for day in ("2026-09-29", "2026-09-30", "2026-10-02")
+}
+# The note's sentence on credit and sharing, before and after 2026-09-30 (front_page_lead_sharing).
+NOTE_0929 = "Some of these fonts ask you to credit the designer, or don't let you pass the font files on, and we mark those."
+NOTE_0930 = "Some of these fonts ask you to credit the designer, and we mark those."
+EMAIL_ADDRESS = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
+
+
+def test_the_about_page_closes_with_the_owners_note(site_dir, built):
+    """ "Why isn't my favorite free font here?", the owner's note, word for word (site rulings of
+    2026-09-29, why_not_listed), as later rulings changed it: its sentence on credit and sharing
+    (2026-09-30, front_page_lead_sharing) and its address (2026-10-02, contact_address). It
+    moved from the front page to the end of the About page as it stood (2026-10-07,
+    why_not_listed_to_about), at the stable anchor #why-not-listed, which the front page's
+    empty-search message is to link to."""
+    ruling = SITE_RULINGS["2026-09-29"]["why_not_listed"]
+    change = SITE_RULINGS["2026-09-30"]["front_page_lead_sharing"]["ruling"]
+    contact = SITE_RULINGS["2026-10-02"]["contact_address"]
+    assert NOTE_0929 in ruling["text"]
+    assert NOTE_0930 in change
+    (old_address,) = set(EMAIL_ADDRESS.findall(ruling["text"]))
+    address = contact["value"]
+    assert old_address in contact["ruling"]  # the address the 2026-10-02 ruling replaces
+    assert address == data.FEEDBACK_EMAIL != old_address
+    text = ruling["text"].replace(NOTE_0929, NOTE_0930).replace(old_address, address)
+    page = built["about/index.html"]
+    assert page.headings[-1] == (2, "why-not-listed", ruling["heading"])
+    html = read(site_dir, "about/index.html")
+    note = re.search(r'<h2 id="why-not-listed">[^<]*</h2>\n<p>(.*?)</p>\n</article>', html, re.S)
+    assert note, "the note is the page's last part"
+    assert parse(note[1]).plain == text
+    assert re.findall(r'<a href="([^"]+)">', note[1]) == [f"mailto:{address}"]
+    # The front page no longer carries it, on any screen.
+    front = read(site_dir, "index.html")
+    assert ruling["heading"].replace("'", "&#39;") not in front
+    assert ruling["heading"] not in front
 
 
 def test_not_found_page_uses_absolute_urls_only(built):

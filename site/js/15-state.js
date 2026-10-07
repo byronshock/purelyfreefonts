@@ -21,8 +21,8 @@ const State = (() => {
   const DEFAULT_RANK = 'overall';
   const HIDES = Object.freeze(['limited', 'attr', 'windows', 'macos', 'linux', 'android']);
   const OSES = Object.freeze(['windows', 'macos', 'linux', 'android']);
-  // The sort orders (owner ruling of 2026-09-30, sort_header): by rank, best first (the
-  // default) or reversed, and by name, A to Z or reversed.
+  // The sort orders (owner ruling of 2026-09-30, sort_header): by rank, most popular first
+  // (the default) or reversed, and by name, A to Z or reversed.
   const SORTS = Object.freeze(['rank', 'rank-desc', 'name', 'name-desc']);
   const MAX_Q = 100;
   const TYPING_MS = 300;
