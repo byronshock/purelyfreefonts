@@ -42,3 +42,10 @@ recommended = true
 value = "26619C_light_8CB6E3_dark"
 ruling = "The site's blue becomes lapis lazuli: #26619C for links, the focus ring, the score bars, the Download button and the header's links in light mode and in the white header (6.4:1 on white); in dark mode a lighter lapis tint, #8CB6E3 (8.4:1 on the dark background), since true lapis there is only about 2.8:1. It replaces #0a56c2 and #8ab4f8 in site/css/00-tokens.css (--c-link, --c-focus, --c-accent, --c-header-link, --c-header-focus). Visited links keep their purple."
 reason = "The owner: \"Can we change the blue on the site to Lapis Lazuli?\" Of (a) all the blues with a dark-mode tint, (b) only the score bars and the Download button and (c) a deeper, more ultramarine lapis (#1F4E8C), the owner took Claude's recommendation, after a side-by-side of the current blue and lapis on white and on the dark background."
+
+[icons_lapis]
+choice = "a"
+recommended = true
+value = "favicon_touch_icon_share_image_in_lapis"
+ruling = "The favicon (favicon.svg and favicon.ico), the phone home-screen icon (apple-touch-icon.png) and the share image (share.png) are drawn in lapis lazuli, #26619c, like the site's CSS (lapis_lazuli_blue): site/static/_src/make_static.py's ACCENT follows --c-accent, and the images are regenerated."
+reason = "lapis_lazuli_blue named the CSS tokens; these three images still drew #0a56c2. Of (a) regenerating them in lapis and (b) keeping the old blue, the owner took Claude's recommendation. White on lapis is 6.4:1."

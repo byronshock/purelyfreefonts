@@ -109,7 +109,7 @@ Each font row is 161 px tall.
   - the methodology page titled "How we measure popularity", with the nav link "How it works" (`method_page_name`).
 
   Also `docs/usability-test.md`'s wording. Re-measure the header's single-row breakpoint for the wider nav, and move the `47.5rem` rule and its test to match (PLAN-REVIEWERS-1.md step 5's note on `wordmark_breakpoint`). Tick PLAN-REVIEWERS-1.md step 4 when it lands.
-- [ ] **Lapis lazuli** (`lapis_lazuli_blue`): `#26619C` replaces `#0a56c2` for `--c-link`, `--c-focus`, `--c-accent`, `--c-header-link` and `--c-header-focus` in light mode and in the white header. In dark mode `#8CB6E3` replaces `#8ab4f8` for `--c-link`, `--c-focus` and `--c-accent`. Check contrast in both themes and forced colours.
+- [ ] **Lapis lazuli** (`lapis_lazuli_blue`): `#26619C` replaces `#0a56c2` for `--c-link`, `--c-focus`, `--c-accent`, `--c-header-link` and `--c-header-focus` in light mode and in the white header. In dark mode `#8CB6E3` replaces `#8ab4f8` for `--c-link`, `--c-focus` and `--c-accent`. Check contrast in both themes and forced colours. The favicon, touch icon and share image are regenerated in lapis with `site/static/_src/make_static.py` (`icons_lapis`).
 - [ ] Ask the lead to redeploy staging.
 
 **Done when:**
