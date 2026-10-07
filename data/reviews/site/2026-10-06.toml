@@ -19,8 +19,8 @@ reason = "Step 7c's spacing trims (phone_rows_trim) give a 160.2 px median card 
 choice = "a"
 recommended = true
 value = "two_fonts_on_a_375x812_first_screen"
-ruling = "On a 375x812 phone, the first two font rows are fully visible on the front page before any scrolling. The way there: the note \"Why isn't my favorite free font here?\" and the privacy line move below the list; the Rank selector's description is left out on phones; the \"Fonts\" heading and the count join the sort row; the H1 is smaller and the lead shorter on phones; the header's early-version line is shortened on phones; and search, Rank and Filters share one compact row. The heading and the lead stay on the page."
-reason = "The owner's first impression of the mobile site on staging (2026-10-06), at the start of the second round of testing: \"There is entirely too much text on the first page and not enough of what people came for, the fonts.\" Measured on staging (7738636): at 375x812 the first font row starts at 867 px, below the first screen, under about 250 words. Claude's prototype on the live page: moving and dropping text alone reaches 667 px (no whole font), compacting the intro and controls about 440 px (two fonts), and also hiding the H1 and lead on phones about 290 px (three). Of (a) two fonts with a compact intro, (b) three with no intro on phones and (c) one with moves only, the owner took Claude's recommendation."
+ruling = "On a 375x812 phone, the first two font rows are fully visible on the front page before any scrolling. The way there: the front page stops after the lead (the note \"Why isn't my favorite free font here?\" moves to the About page and the privacy line to the footer, why_not_listed_to_about and privacy_line_in_footer of 2026-10-07); on phones the Rank selector's description is left out, the \"Fonts\" heading and the count join the sort row, the H1 is smaller and the lead shorter, the header's early-version line is hidden (early_line_hidden_on_phones), and search, Rank and Filters share one compact row. The heading and the lead stay on the page."
+reason = "The owner's first impression of the mobile site on staging (2026-10-06), at the start of the second round of testing: \"There is entirely too much text on the first page and not enough of what people came for, the fonts.\" Measured on staging (7738636): at 375x812 the first font row starts at 867 px, below the first screen, under about 250 words. Claude's prototype on the live page: moving and dropping text alone reaches 667 px (no whole font), compacting the intro and controls about 440 px (two fonts), and also hiding the H1 and lead on phones about 290 px (three). Of (a) two fonts with a compact intro, (b) three with no intro on phones and (c) one with moves only, the owner took Claude's recommendation. The placement of the note and the privacy line was revised on 2026-10-07."
 
 [mobile_first_screen_now]
 choice = "a"
@@ -35,3 +35,10 @@ recommended = true
 value = "PLAN-REVIEWERS-2.md"
 ruling = "The second round's findings go into a new working checklist, PLAN-REVIEWERS-2.md, in the same form as PLAN-REVIEWERS-1.md, which links to it."
 reason = "PLAN-REVIEWERS-1.md step 11 named this file. Of (a) a new plan and (b) a section in the first, the owner took Claude's recommendation."
+
+[early_line_hidden_on_phones]
+choice = "c"
+recommended = false
+value = "hidden_on_phones"
+ruling = "On phones the header shows no early-version line; wider screens keep \"Early version. Coming next: free font inventory tools.\" This amends the early-version line ruling of 2026-09-29 for phones."
+reason = "Part of the mobile first screen (mobile_first_screen_two_fonts). Of (a) \"Early version.\", which Claude recommended, (b) \"Early version: inventory tools coming\" and (c) hiding it on phones, the owner chose (c)."

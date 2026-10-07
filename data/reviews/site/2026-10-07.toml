@@ -1,0 +1,23 @@
+# Owner rulings of 2026-10-07 on the site, for PLAN-REVIEWERS-2.md, asked in chat as single-select questions.
+# Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md.
+
+[why_not_listed_to_about]
+choice = "a"
+recommended = true
+value = "note_on_the_about_page"
+ruling = "The note \"Why isn't my favorite free font here?\" moves from the front page to the About page, and the front page stops after the lead. Its rewrite as a conversation that ends with the tip pitch happens there, and the empty-search message on the front page links to it. This replaces the placement in why_not_listed_after_list (2026-09-30, after the fonts) and why_not_listed_layout (2026-09-29)."
+reason = "The owner had told the lead session, of the front page: \"They are ranked by how many people install them and use them in their work. <- WE COULD STOP HERE\", with the note marked \"-> move to About or Method\". Asked to reconcile that with mobile_first_screen_two_fonts (below the list), the owner chose (a) the About page, Claude's recommendation, over (b) the methodology page and (c) below the list."
+
+[privacy_line_in_footer]
+choice = "a"
+recommended = true
+value = "footer_on_every_page"
+ruling = "The privacy line \"No cookies, no tracking, and the page loads only its own files. Check the Network tab.\" moves from under the front page's lead into the footer, on every page, linking to the Privacy page."
+reason = "With the front page stopping after the lead (why_not_listed_to_about), of (a) the footer on every page, (b) the Privacy page only, (c) the About page and (d) below the list, the owner took Claude's recommendation."
+
+[step4_wording_now]
+choice = "a"
+recommended = true
+value = "build_step_4_with_the_mobile_first_screen"
+ruling = "PLAN-REVIEWERS-1.md step 4's wording (score_column_popularity, selector_label, sort_words_popular, method_page_name) is built now, with the mobile first screen and ahead of the parked Project-default branch; the nav's wider \"How it works\" re-measures the header's one-row breakpoint (wordmark_breakpoint)."
+reason = "The owner, to the lead session: \"I'd like the first column to be labeled 'Popularity', not 'Rank'. I think this is in our to-dos already, but I thought we had mostly gotten rid of references to 'Rank'.\" Of (a) building it now and (b) later, the owner took Claude's recommendation."

@@ -232,6 +232,7 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
 **Done when:** the port has merged, and How we rank describes the score the list shows.
 
 ### Step 4: "Popularity" and the other words
+**Built with [PLAN-REVIEWERS-2.md](PLAN-REVIEWERS-2.md) step 2** (`step4_wording_now`, 2026-10-07), ahead of the parked branch.
 **Who:** Claude. **Depends on:** Q2.
 - [ ] Update the templates, the sort header's script, `site/CONTRACT.md` §3, the nav, the methodology page's title, and their tests.
 - [ ] The nav's new "How it works" changes its width. If step 4 lands before step 5, re-measure the header's single-row breakpoint as step 5 describes.
@@ -243,7 +244,7 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
 ### Step 5: When a font isn't here
 **Who:** Claude; the owner approves the wording. **Depends on:** Q5, Q7 and Q9 (answered); step 2 for the reasons.
 - [ ] **First part:**
-  - [ ] Move the note below the list, on wide screens and phones. The top of the front page becomes the headline, the lead, the privacy line, then the list. *(Moved to [PLAN-REVIEWERS-2.md](PLAN-REVIEWERS-2.md) step 2 on 2026-10-06: the mobile first screen, built now, with the privacy line going below the list too.)*
+  - [ ] Move the note below the list, on wide screens and phones. The top of the front page becomes the headline, the lead, the privacy line, then the list. *(Replaced on 2026-10-07: the note moves to the About page and the privacy line to the footer, in [PLAN-REVIEWERS-2.md](PLAN-REVIEWERS-2.md) step 2, `why_not_listed_to_about`; the rewrite below happens on the About page, and the empty-search message links there.)*
   - [ ] When search is the only filter and finds nothing, say "No listed font matches '…'" and show the note. Other empty results keep today's text.
   - [ ] Rewrite the note as a conversation that ends with the tip pitch, asking the reader to leave a tip with no amount (`tip_jar`), under Funding as amended.
   - [ ] Add the "Tip Jar" link at the end of the header nav, and remove the footer's tip link.
