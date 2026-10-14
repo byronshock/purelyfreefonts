@@ -1,0 +1,21 @@
+# Owner rulings of 2026-10-14 on the wordmark, given in chat to the lead session. Ruled by the owner, Byron
+# Shock; recorded by Claude. Also in AUTHORITY.md (Headline font).
+
+[wordmark_book_plate]
+value = "pointforms build/wordmarks/purely-free-fonts-plate.svg sha256:2e3a7fd7fcbcfb892a4e20f0f4baf793e3c5323a995b8ea37d862aeac8119743"
+ruling = "The wordmark is the owner's new drawing, \"Purely Free Fonts\" in the Book of his typeface Purely Constructed: near-black (#111111) letters on a white plate that fills its 9809 x 1250 viewBox (his file purely-free-fonts-plate.svg, from his typeface project pointforms). It replaces the light mixed-case drawing of 2026-10-06 (wordmark_schoolbook_light) and fulfils wordmark_stand_in (2026-10-02): the wordmark is now drawn from the owner's own typeface, lowercase included. The file carries no editor data, so the site serves it byte for byte as site/static/wordmark.svg, pinned by sha256 in tests/site/test_shell.py; make_wordmark.py and the vendored Inkscape source go, since wordmark_drawing_only has nothing left to strip."
+reason = "The owner, in turn: \"We have a new wordmark for Purely Free Fonts\" (a heavier drawing, sha256 8bc3ff78bec2c2e6ca3790e2a5418521b5ddd6babc5fce4830fa269491c8e846); then \"The \"s\" in that wordmark is wonky. Please use the Book instead.\" (the Book without a plate, sha256 1caa37472e2e3eac79a9d3445dd103acbda3b9ee1ab78f59ddc7f16b396f97f5); then, having kept the plate (wordmark_plate_kept): \"I had the pointforms worker make a wordmark with a white plate. Please use the wordmark with the white plate.\""
+
+[wordmark_plate_kept]
+choice = "a"
+recommended = true
+value = "white_plate"
+ruling = "The new wordmark keeps a white plate behind its letters, as the owner's two earlier ones did. It is drawn into his file (wordmark_book_plate)."
+reason = "Asked because his first new file had none. Of (a) keeping the plate and (b) serving the drawing transparent, which looks the same on the white header, the owner took Claude's recommendation. Of the plate he said on 2026-10-04: \"It is part of the branding: Typography started out as black on white.\""
+
+[wordmark_size_book]
+choice = "b"
+recommended = false
+value = "caps_38_and_24_5_px"
+ruling = "The new wordmark keeps the capital height of about 38 px on wide screens: 463 x 59 px from 816 px up. Below that it is 300 px wide (300 x 38, capitals about 24.5 px), shrinking to fit the narrowest phones (288 px at 320). The header keeps one row (wordmark_breakpoint): the breakpoint moves from 760 to 816 px (51rem), since the widest one-row header is now 16 + 463 + 24 + 281 + 16 = 800 px. On phones it is 300 px rather than 306 (capitals 25 px), which would push the navigation under the wordmark between 640 and 643 px."
+reason = "Of (a) the same width (410 x 52 and 270 x 34, the lowercase as tall as before and the 760 px breakpoint kept) and (b) the same capital height, the owner chose (b), over Claude's recommendation. For the Book: \"I imagine we will want the same cap height adjustment.\""

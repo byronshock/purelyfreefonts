@@ -273,8 +273,8 @@ def test_body_is_skip_link_header_main_footer():
     assert mark.attrs["src"] == "/wordmark.svg"
     assert mark.attrs["alt"] == "Purely Free Fonts"
     width, height = int(mark.attrs["width"]), int(mark.attrs["height"])
-    assert (width, height) == (410, 59)
-    assert abs(width / height - 9717 / 1400) < 0.01  # the wordmark's viewBox ratio
+    assert (width, height) == (463, 59)
+    assert abs(width / height - 9809 / 1250) < 0.01  # the wordmark's viewBox ratio
     assert not [i for i in header.find_all("img") if "favicon" in i.attrs.get("src", "")]
 
 
@@ -545,25 +545,28 @@ def test_favicon_svg_is_inert_outlines():
 
 
 def test_wordmark_svg_is_the_owners_inert_outlines():
-    """The header's wordmark (AUTHORITY.md, "Headline font", owner rulings of 2026-10-06): the
-    owner's drawing as site/static/_src/make_wordmark.py writes it from his pinned source, black
-    outlines on a white rectangle in the 9717 x 1400 viewBox, with no script, style, link, text
-    or foreign content, so it renders the same under the CSP, in any browser, with no font."""
+    """The header's wordmark (AUTHORITY.md, "Headline font", owner rulings of 2026-10-14): the
+    owner's file purely-free-fonts-plate.svg byte for byte, pinned by sha256, "Purely Free
+    Fonts" in the Book of his typeface: near-black outlines on a white plate that fills the
+    9809 x 1250 viewBox, with no script, style, link, text or foreign content, so it renders the
+    same under the CSP, in any browser, with no font. A new version is a new owner ruling."""
     data = (STATIC / "wordmark.svg").read_bytes()
     assert hashlib.sha256(data).hexdigest() == (
-        "721ec7c24a84d9b98309c741c41422515c47fd85fab61903653fb5752d7554fb"
+        "2e3a7fd7fcbcfb892a4e20f0f4baf793e3c5323a995b8ea37d862aeac8119743"
     )
     source = data.decode("utf-8")
     assert len(data) < 8192
     root = ET.fromstring(source)
     ns = "{http://www.w3.org/2000/svg}"
     assert root.tag == f"{ns}svg"
-    assert root.attrib["viewBox"] == "0 0 9717 1400"
-    assert [r.attrib["fill"] for r in root.iter(f"{ns}rect")] == ["#ffffff"]
-    assert [g.attrib["fill"] for g in root.iter(f"{ns}g")] == ["#000000"]
-    assert not [p for p in root.iter(f"{ns}path") if "fill" in p.attrib]
+    assert root.attrib["viewBox"] == "0 0 9809 1250"
+    assert [el.tag for el in root] == [f"{ns}title", f"{ns}rect", f"{ns}path"]
+    assert root.find(f"{ns}title").text == "Purely Free Fonts"
+    plate = root.find(f"{ns}rect").attrib
+    assert plate == {"x": "0", "y": "0", "width": "9809", "height": "1250", "fill": "#ffffff"}
+    assert [p.attrib["fill"] for p in root.iter(f"{ns}path")] == ["#111111"]
     for el in root.iter():
-        assert el.tag in {f"{ns}svg", f"{ns}title", f"{ns}rect", f"{ns}g", f"{ns}path"}, el.tag
+        assert el.tag in {f"{ns}svg", f"{ns}title", f"{ns}rect", f"{ns}path"}, el.tag
         for name, value in el.attrib.items():
             assert not name.lower().startswith("on"), name
             assert "href" not in name, name
@@ -571,27 +574,15 @@ def test_wordmark_svg_is_the_owners_inert_outlines():
             assert "url(" not in value, (name, value)
 
 
-def test_wordmark_svg_is_the_pinned_source_without_the_editors_data():
-    """make_wordmark.py's output from the owner's pinned source (owner ruling of 2026-10-06):
-    the same view box, title, plate and letter paths, with Inkscape's data left out."""
-    spec = importlib.util.spec_from_file_location(
-        "make_wordmark", STATIC / "_src" / "make_wordmark.py"
-    )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    source = module.SOURCE.read_bytes()
-    assert hashlib.sha256(source).hexdigest() == module.SOURCE_SHA256
-    assert (STATIC / "wordmark.svg").read_text(encoding="utf-8") == module.drawing_only(source)
-
-
 @pytest.mark.parametrize(
-    ("width", "want"), [(1280, 410), (768, 410), (760, 410), (759, 270), (700, 270), (375, 270)]
+    ("width", "want"),
+    [(1280, 463), (816, 463), (815, 300), (700, 300), (375, 300), (320, 288)],
 )
-def test_the_wordmark_is_410_px_wide_from_760_px_and_270_below(browser, site_url, width, want):
-    """Owner rulings of 2026-10-04 and 2026-10-06: 410 px wide where the navigation fits beside
-    it (760 px and up) and 270 px below that (capitals about 38 and 25 px tall), in the header,
-    which is white in both themes. test_the_header_keeps_one_row_at_every_width re-measures the
-    760."""
+def test_the_wordmark_is_463_px_wide_from_816_px_and_300_below(browser, site_url, width, want):
+    """Owner rulings of 2026-10-14: 463 px wide where the navigation fits beside it (816 px and
+    up) and 300 px below that (capitals about 38 and 24.5 px tall), shrinking to fit the
+    narrowest phones (288 px at 320), in the header, which is white in both themes.
+    test_the_header_keeps_one_row_at_every_width re-measures the 816."""
     for scheme in ("light", "dark"):
         context = browser.new_context(
             base_url=site_url, viewport={"width": width, "height": 800}, color_scheme=scheme
@@ -607,7 +598,7 @@ def test_the_wordmark_is_410_px_wide_from_760_px_and_270_below(browser, site_url
                             .backgroundColor]; }"""
             )
             assert abs(box[0] - want) < 1, (scheme, box)
-            assert abs(box[0] / box[1] - 9717 / 1400) < 0.02, (scheme, box)
+            assert abs(box[0] / box[1] - 9809 / 1250) < 0.02, (scheme, box)
             assert box[2], "the wordmark did not load"
             assert box[3] == "rgb(255, 255, 255)", (scheme, box)
         finally:
@@ -631,23 +622,26 @@ HEADER_JS = """() => {
            scrollWidth: document.documentElement.scrollWidth };
 }"""
 # The one-row header's parts (10-base.css): the side gutters, the gap between the wordmark and
-# the nav, the wide wordmark, and the breakpoint (47.5rem) from which the two share a row.
-GUTTER, GAP, WIDE_MARK, BREAKPOINT, PHONE = 16, 24, 410, 760, 640
+# the nav, the wide and narrow wordmarks, the breakpoint (51rem) from which the wide one and the
+# nav share a row, and the phone breakpoint (40rem), from which the narrow one and the nav do.
+GUTTER, GAP, WIDE_MARK, NARROW_MARK, BREAKPOINT, PHONE = 16, 24, 463, 300, 816, 640
 WIDTHS = sorted({*range(320, 1281, 4), PHONE - 1, PHONE, BREAKPOINT - 1, BREAKPOINT})
 
 
 @pytest.mark.parametrize("path", [*NAV, "/missing"])
 def test_the_header_keeps_one_row_at_every_width(browser, site_url, path):
-    """#55's one-row rule (owner ruling of 2026-10-04, wordmark_breakpoint), on each page, whose
-    own nav link is bold. From 760 px the 410 px wordmark and the nav share one row; below it
-    the 270 px one does, down to about 610 px, where the nav takes its own line under the
-    wordmark, still one line at 320 px. The early-version line takes one line of its own from
-    40rem and isn't shown on phones (early_line_hidden_on_phones, 2026-10-06). Every 4 px from
-    320 to 1280 px, so a second row is caught: the header has one height per layout. And the
-    widest one-row header, 16 + 410 + 24 + the nav + 16, fits the breakpoint: a longer nav
-    ("How it works", 2026-10-05, or a "Tip Jar") moves the 47.5rem rule and this test. So does
-    the Blog link, which every build gets once a post is published (about 795 px); a draft
-    that only staging shows (--drafts) isn't measured here."""
+    """#55's one-row rule (owner ruling of 2026-10-04, wordmark_breakpoint, kept for the Book
+    wordmark on 2026-10-14), on each page, whose own nav link is bold. From 816 px the 463 px
+    wordmark and the nav share one row; below it the 300 px one does, down to about 637 px,
+    where the nav takes its own line under the wordmark, still one line at 320 px, where the
+    wordmark shrinks to fit. The early-version line takes one line of its own from 40rem and
+    isn't shown on phones (early_line_hidden_on_phones, 2026-10-06). Every 4 px from 320 to
+    1280 px, so a second row is caught: the header has one height per layout. And the widest
+    one-row headers, 16 + 463 + 24 + the nav + 16 and 16 + 300 + 24 + the nav + 16, fit the
+    breakpoint and the phone one: a longer nav ("How it works", 2026-10-05, or a "Tip Jar")
+    moves the 51rem rule and this test. So does the Blog link, which every build gets once a
+    post is published (about 850 px); a draft that only staging shows (--drafts) isn't
+    measured here."""
     context = browser.new_context(base_url=site_url, viewport={"width": 1280, "height": 800})
     try:
         page = context.new_page()
@@ -655,7 +649,14 @@ def test_the_header_keeps_one_row_at_every_width(browser, site_url, path):
         nav = page.evaluate(HEADER_JS)["nav"]
         need = GUTTER + WIDE_MARK + GAP + nav + GUTTER
         assert need <= BREAKPOINT, f"the one-row header needs {need:.1f} px: move the breakpoint"
-        heights: dict[str, set[float]] = {"wide": set(), "middle": set(), "phone": set()}
+        need = GUTTER + NARROW_MARK + GAP + nav + GUTTER
+        assert need <= PHONE, f"the narrow one-row header needs {need:.1f} px: narrow its mark"
+        heights: dict[str, set[float]] = {
+            "wide": set(),
+            "middle": set(),
+            "phone": set(),
+            "shrunk": set(),  # phones too narrow for the 300 px wordmark, which shrinks
+        }
         for width in WIDTHS:
             page.set_viewport_size({"width": width, "height": 800})
             got = page.evaluate(HEADER_JS)
@@ -665,13 +666,16 @@ def test_the_header_keeps_one_row_at_every_width(browser, site_url, path):
             if width >= BREAKPOINT:
                 layout, mark = "wide", WIDE_MARK
             else:
-                layout, mark = ("middle" if width >= PHONE else "phone"), 270
+                layout = "middle" if width >= PHONE else "phone"
+                mark = min(NARROW_MARK, width - 2 * GUTTER)
             assert abs(got["mark"] - mark) < 1, where
             assert got["beside"] or layout == "phone", where
             assert got["status"] == (0 if layout == "phone" else 1), where
-            heights[layout].add(got["height"])
+            heights["shrunk" if mark < NARROW_MARK else layout].add(got["height"])
         assert [len(heights["wide"]), len(heights["middle"])] == [1, 1], heights
         assert len(heights["phone"]) <= 2, heights  # the nav beside the wordmark, or under it
+        # Where the wordmark shrinks, the header only gets shorter: no second row.
+        assert max(heights["shrunk"]) <= max(heights["phone"]), heights
     finally:
         context.close()
 
