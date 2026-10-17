@@ -237,24 +237,26 @@ input[type="radio"] {
   text-decoration: none;
 }
 
-/* The wordmark (site/static/wordmark.svg, the owner's 9717 x 1400 white plate, its capitals
-   900 tall): 410 px wide where the Site navigation fits beside it on one row (760 px and up),
-   270 px below that, so the capitals stand about 38 and 25 px tall (owner rulings of
-   2026-10-04 and 2026-10-06). Sized by width, the height following, so it scales down evenly where even 270 px
-   won't fit. The breakpoint is the widest one-row header, the gutters, the wordmark, the gap
-   and the nav: 16 + 410 + 24 + 281 + 16 = 747 px, with "How it works" bold on its own page
-   (measured on 2026-10-07); tests/site/test_shell.py re-measures it. That is without the Blog
-   link: the first published post makes the nav about 329 px, and the breakpoint about 795. */
+/* The wordmark (site/static/wordmark.svg, the owner's 9809 x 1250 white plate, its capitals
+   800 tall): 463 px wide where the Site navigation fits beside it on one row (816 px and up),
+   so the capitals stand about 38 px tall, and 300 px below that, about 24.5 px (owner rulings
+   of 2026-10-14). Sized by width, the height following, so it scales down evenly where even
+   300 px won't fit (288 px at 320). The breakpoint is the widest one-row header, the gutters,
+   the wordmark, the gap and the nav: 16 + 463 + 24 + 281 + 16 = 800 px, with "How it works"
+   bold on its own page (measured on 2026-10-14); tests/site/test_shell.py re-measures it.
+   Below it the 300 px wordmark keeps the nav beside it down to 637 px, under the 640 px
+   phone breakpoint; 306 px, for capitals of 25, would not. That is without the Blog link:
+   the first published post makes the nav about 329 px, and the breakpoint about 850. */
 .site-name-mark {
   display: block;
-  width: 25.625rem;
+  width: 28.9375rem;
   height: auto;
   max-width: 100%;
 }
 
-@media not all and (min-width: 47.5rem) {
+@media not all and (min-width: 51rem) {
   .site-name-mark {
-    width: 16.875rem;
+    width: 18.75rem;
   }
 }
 
