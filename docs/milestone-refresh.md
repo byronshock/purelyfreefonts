@@ -9,6 +9,17 @@ This milestone runs the monthly refresh live for the first time and switches its
 - the schedule is on, and the watchdog is installed;
 - a refresh has reached the live site with no step beyond the merge (or one command under M2-D6 (a)), and the post-deploy test has passed.
 
+**Collect and hold (owner rulings of 2026-10-16).** While Milestone 2's launch and the scoring-method port are on hold, a live run is dispatched each month and its pull request is kept as an unmerged draft (`refresh_collect_and_hold`). Such a run tests most of step 1 below, but step 1's items stay unticked until a merged run; what a held run verifies is noted here.
+
+- [ ] **The 2026-10-17 run** (run [38999881962](https://github.com/byronshock/purelyfreefonts/actions/runs/38999881962), dispatched by Claude from `main` at 7f8f798):
+  - [ ] `refresh`, `store` and `publish` succeed, and `report` is skipped;
+  - [ ] the data store has the 2026-10-17 snapshots, one folder per source, and the run manifest `_runs/2026-10-17.json`;
+  - [ ] the public log holds no per-font Google Fonts or Fonts Over Time value (T2, T4);
+  - [ ] its "Monthly refresh 2026-10-17" pull request is a draft, held unmerged, with only `build/`, `state/` and `data/` alias files changed;
+  - [ ] its held CI run is approved and the results noted (`test` is expected to fail in `tests/site/test_trim.py`, the next item of step 1).
+- [ ] **The method-independent review** of the 2026-10-17 run (`refresh_gate_review_now`): a local replay matches the run's `build/`; gates A, U, LIC, L3, X, L and K and `links --check` asked in batches; the rulings in a pull request to `main`. Step 1's checks that need no merge (the collectors on GitHub's runners, the file picks, the folds, Geo's L3) noted against step 1.
+- [ ] **The store key** moves into the `refresh` environment (step 1's first item) after the 2026-10-17 run and before the schedule goes on (`store_key_environment_timing`).
+
 ---
 
 ### Step 1: The first live refresh, and the schedule on
