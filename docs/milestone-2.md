@@ -277,7 +277,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
   - [x] `ops/SERVER.md` section K and its Verification lines; *(#52, #53)*
   - [x] `ops/DONATIONS.md`; *(section F lists the owner's Stripe steps)*
   - [x] Milestone 4's yearly check covering all seven domains; *(#53)*
-  - [ ] the private notes that name the old site: Claude's memory, walnutbutter-site, tff-stats, and the owner's typeface project. *(Claude's memory is done; the other three remain.)*
+  - [ ] the private notes that name the old site: Claude's memory, walnutbutter-site, tff-stats, and the owner's typeface project. *(Claude's memory is done, and walnutbutter-site on 2026-10-11, byronshock/walnutbutter-site@f69d3e6; tff-stats and the owner's typeface project remain.)*
 - [x] **Later:** the wordmark in the owner's typeface, once it has its lowercase. *(2026-10-04: the owner's own "PURELY FREE FONTS" plate instead, in capitals, owner rulings `wordmark_owners_svg` and `wordmark_size`.)*
 
 **Done when:**
