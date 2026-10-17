@@ -12,13 +12,13 @@
     {"key": "overall", "label": "Overall", "measures": "Desktop installs people chose and use in sites, code and apps, half each.", "available": true},
     {
       "key": "desktop_chosen",
-      "label": "Desktop: most chosen",
+      "label": "Chosen (desktop)",
       "measures": "Fonts people install on purpose. Fonts that Linux systems install on their own are ranked on their other sources.",
       "available": true
     },
-    {"key": "desktop_installed", "label": "Desktop: most installed", "measures": "Fonts on the most computers, counting every install.", "available": true},
-    {"key": "project", "label": "Used in projects", "measures": "Use in websites (55%), code (30%) and apps (15%).", "available": true},
-    {"key": "coding", "label": "Coding fonts", "measures": "Monospace fonts, ranked by developers' installs and downloads.", "available": true},
+    {"key": "desktop_installed", "label": "Installed (desktop)", "measures": "Fonts on the most computers, counting every install.", "available": true},
+    {"key": "project", "label": "Projects", "measures": "Use in websites (55%), code (30%) and apps (15%).", "available": true},
+    {"key": "coding", "label": "Coding", "measures": "Monospace fonts, ranked by developers' installs and downloads.", "available": true},
     {
       "key": "dev_apps",
       "label": "Developers & apps",

@@ -5,7 +5,7 @@ description: >-
   a problem or get in touch.
 ---
 
-Purely Free Fonts is a ranked list of the most popular fonts whose licenses let you use them in any personal or commercial project. Each month we collect public counts of how often free fonts are installed on computers and used in websites, code and apps, and rank the fonts from those counts. [How we rank](/methodology/) explains the method and credits every source.
+Purely Free Fonts is a ranked list of the most popular fonts whose licenses let you use them in any personal or commercial project. Each month we collect public counts of how often free fonts are installed on computers and used in websites, code and apps, and rank the fonts from those counts. [How we measure popularity](/methodology/) explains the method and credits every source.
 
 Every font links to its official download page. The list is free to use, with no ads and [no tracking](/privacy/).
 
@@ -50,4 +50,4 @@ The same links are at the bottom of every page.
 
 ## Open data and code
 
-The method, the data and the code are all public [on GitHub]({{ repo_url }}). The ranking data is under CC BY-SA 4.0, and the code under the MIT License; [How we rank](/methodology/#licenses) has the details. The fonts are not ours: each keeps its own license. This site's text is set in [Arimo](https://github.com/googlefonts/arimo) by Steve Matteson, under the SIL Open Font License 1.1.
+The method, the data and the code are all public [on GitHub]({{ repo_url }}). The ranking data is under CC BY-SA 4.0, and the code under the MIT License; [How we measure popularity](/methodology/#licenses) has the details. The fonts are not ours: each keeps its own license. This site's text is set in [Arimo](https://github.com/googlefonts/arimo) by Steve Matteson, under the SIL Open Font License 1.1.

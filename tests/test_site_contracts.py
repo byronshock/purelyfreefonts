@@ -438,11 +438,6 @@ def test_semantic_checks_reject(mutate, message):
     assert any(message in e for e in errors), errors
 
 
-SITE_RULINGS = tomllib.loads(
-    (ROOT / "data" / "reviews" / "site" / "2026-09-25.toml").read_text(encoding="utf-8")
-)
-
-
 def test_sample_wording_matches_config_site_toml():
     """export-site copies its wording from config/site.toml; the sample must match it."""
     config = ROOT / "config"
@@ -468,9 +463,20 @@ def test_sample_wording_matches_config_site_toml():
     assert [b["label"] for b in SAMPLE["bands"]] == bands
 
 
-def test_project_rank_label_follows_the_site_ruling():
-    views = {v["key"]: v for v in SAMPLE["views"]}
-    assert views["project"]["label"] == SITE_RULINGS["project_rank_label"]["value"]
+def test_view_labels_follow_the_site_ruling():
+    """The owner's site ruling of 2026-10-07 (view_labels_short) renamed the views, the
+    Project rank's "Used in projects" (project_rank_label, 2026-09-25) among them. Rising
+    keeps its name and stays unavailable."""
+    labels = {v["key"]: v["label"] for v in SAMPLE["views"]}
+    assert labels == {
+        "overall": "Overall",
+        "desktop_chosen": "Chosen (desktop)",
+        "desktop_installed": "Installed (desktop)",
+        "project": "Projects",
+        "coding": "Coding",
+        "dev_apps": "Developers & apps",
+        "rising": "Rising (beta)",
+    }
 
 
 RULINGS_0930 = tomllib.loads(
