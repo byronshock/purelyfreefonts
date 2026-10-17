@@ -707,6 +707,16 @@ def test_workflow_triggers_and_settings() -> None:
     for store in stores:
         assert store["with"]["repository"] == "byronshock/trulyfreefonts-data"
         assert store["with"]["ssh-key"] == "${{ secrets.DATA_STORE_KEY }}"
+    # The key is a secret of the environment "refresh", which only main may use
+    # (store_key_environment_timing): exactly the two jobs that read it name it.
+    named = {name for name, job in jobs.items() if job.get("environment") == "refresh"}
+    readers = {name for name, job in jobs.items() if "DATA_STORE_KEY" in str(job)}
+    assert named == readers == {"refresh", "store"}
+    others = sorted(p.name for p in WORKFLOWS.glob("*.yml") if p.name != "refresh.yml")
+    assert others  # ci.yml and deploy.yml
+    assert not [
+        n for n in others if "DATA_STORE_KEY" in (WORKFLOWS / n).read_text(encoding="utf-8")
+    ]
     (clone,) = [s for s in jobs["refresh"]["steps"] if s.get("with", {}).get("path") == "_store"]
     assert clone["with"]["persist-credentials"] is False  # the key is not kept while parsing
     assert jobs["refresh"]["env"]["TFF_STORE"] == "${{ github.workspace }}/_store"

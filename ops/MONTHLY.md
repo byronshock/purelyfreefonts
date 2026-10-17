@@ -21,6 +21,7 @@ export TFF_STORE=~/Documents/code/trulyfreefonts-data TFF_STORE_PUSH=0
      gh run watch <run id> --repo byronshock/purelyfreefonts
      ```
    - To run a month again from the snapshots already in the store, with no fetching, add `-f from_snapshots=<YYYY-MM-DD>`.
+   - Dispatch only with `--ref main`: the data store's key is a secret of the environment `refresh`, which refuses every other branch ([SERVER.md](SERVER.md) item 27a).
 2. **If it fails (Claude).** The `report` job opens the issue "Monthly refresh failed", or comments on it (written; its first real run is in milestone-refresh.md step 1). Read the failed steps with `gh run view <run id> --repo byronshock/purelyfreefonts --log-failed`, fix the cause in a pull request, and once it is merged, run again with `from_snapshots` set to the failed run's date. The snapshots are in the store if the store check passed.
 3. **Let CI run on the refresh pull request (Claude).** The run opens or updates "Monthly refresh <date>" on the branch `refresh/monthly` and starts `ci.yml` there. GitHub holds the pull request's own CI run ("action_required"), and branch protection waits for it. Approve it, then check:
    ```sh
