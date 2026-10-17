@@ -12,12 +12,13 @@ This milestone runs the monthly refresh live for the first time and switches its
 **Collect and hold (owner rulings of 2026-10-16).** While Milestone 2's launch and the scoring-method port are on hold, a live run is dispatched each month and its pull request is kept as an unmerged draft (`refresh_collect_and_hold`). Such a run tests most of step 1 below, but step 1's items stay unticked until a merged run; what a held run verifies is noted here.
 
 - [ ] **The 2026-10-17 run** (run [38999881962](https://github.com/byronshock/purelyfreefonts/actions/runs/38999881962), dispatched by Claude from `main` at 7f8f798):
-  - [ ] `refresh`, `store` and `publish` succeed, and `report` is skipped;
-  - [ ] the data store has the 2026-10-17 snapshots, one folder per source, and the run manifest `_runs/2026-10-17.json`;
-  - [ ] the public log holds no per-font Google Fonts or Fonts Over Time value (T2, T4);
-  - [ ] its "Monthly refresh 2026-10-17" pull request is a draft, held unmerged, with only `build/`, `state/` and `data/` alias files changed;
+  - [x] `refresh`, `store` and `publish` succeed, and `report` is skipped; *(the `refresh` job took 4 h 58 min of its 5 h 45 min limit: see the next run's item below)*
+  - [x] the data store has the 2026-10-17 snapshots, one folder per source, and the run manifest `_runs/2026-10-17.json`; *(store commit 972b246: 23 folders, the 20 sources and the 3 pseudo-sources; the manifest has no failures and nothing stale)*
+  - [x] the public log holds no per-font Google Fonts or Fonts Over Time value (T2, T4); *(only totals: family counts and bytes, Fonts Over Time's weekly rows and counted sites, and mapping counts)*
+  - [x] its "Monthly refresh 2026-10-17" pull request is a draft, held unmerged, with only `build/`, `state/` and `data/` alias files changed; *([#70](https://github.com/byronshock/purelyfreefonts/pull/70): 46 files, 9 under `state/`, 7 in `data/alias-seeds`, the rest in `build/`)*
   - [ ] its held CI run is approved and the results noted (`test` is expected to fail in `tests/site/test_trim.py`, the next item of step 1).
 - [ ] **The method-independent review** of the 2026-10-17 run (`refresh_gate_review_now`): a local replay matches the run's `build/`; gates A, U, LIC, L3, X, L and K and `links --check` asked in batches; the rulings in a pull request to `main`. Step 1's checks that need no merge (the collectors on GitHub's runners, the file picks, the folds, Geo's L3) noted against step 1.
+- [ ] **Before the next run, npm's pace on GitHub's runners.** npm's download API answered HTTP 429 about 4,000 times, so its fetch took 3 h 56 min instead of the planned 1.5–2 hours, and the `refresh` job came within 47 minutes of its `timeout-minutes: 345`. A second pass recovered the two packages left out, so the snapshot is complete (4,711 packages, 0 failed). Pace the requests to what npm allows, or honour its `Retry-After`, or raise the limit, before the next month's run.
 - [ ] **The store key** moves into the `refresh` environment (step 1's first item) after the 2026-10-17 run and before the schedule goes on (`store_key_environment_timing`).
 
 ---
