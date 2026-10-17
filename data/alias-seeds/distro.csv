@@ -1,6 +1,5 @@
 alias,ns,target_ns,target,relation,detail,source,evidence,auto
 3270-fonts,arch-pkg,brew-cask,font-3270,package,,distro,name 3270,false
-adwaita-fonts,arch-pkg,brew-cask,font-adwaita,package,,distro,name adwaita; upstream gitlab.gnome.org/gnome/adwaita-fonts,false
 atkinson-hyperlegible-font,arch-pkg,gf-family,Atkinson Hyperlegible,package,,distro,provided by otf-atkinson-hyperlegible; provided by ttf-atkinson-hyperlegible,false
 atkinson-hyperlegible-fonts,arch-pkg,gf-family,Atkinson Hyperlegible,package,,distro,replaced by otf-atkinson-hyperlegible,false
 awesome-terminal-fonts,arch-pkg,brew-cask,font-awesome-terminal-fonts,package,,distro,url github.com/gabrielelana/awesome-terminal-fonts,false
@@ -14,8 +13,9 @@ crimson-pro-font,arch-pkg,gf-family,Crimson Pro,package,,distro,provided by ttf-
 doulos-sil-font,arch-pkg,brew-cask,font-doulos-sil,package,,distro,provided by ttf-doulos-sil,false
 ebgaramond-otf,arch-pkg,gf-family,EB Garamond,package,,distro,name ebgaramond,false
 gentium-book-font,arch-pkg,brew-cask,font-gentium-book,package,,distro,provided by ttf-gentium-book,false
-gentium-plus-font,arch-pkg,gf-family,Gentium Plus,package,,distro,name gentium-plus,false
-gnu-free-fonts,arch-pkg,brew-cask,font-freefont,package,,distro,replaces ttf-freefont; upstream gnu.org/software/freefont,false
+gentium-font,arch-pkg,gf-family,Gentium Plus,package,,distro,provided by ttf-gentium,false
+gentium-plus-font,arch-pkg,gf-family,Gentium Plus,package,,distro,provided by ttf-gentium-plus; replaced by ttf-gentium,false
+gnu-free-fonts,arch-pkg,brew-cask,font-freefont,package,,distro,replaces ttf-freefont; url gnu.org/software/freefont,false
 gohu-ttf,arch-pkg,brew-cask,font-gohufont-nerd-font,package,,distro,name gohu,false
 inter-font,arch-pkg,gf-family,Inter,package,,distro,name inter; url github.com/rsms/inter,false
 junicode-font,arch-pkg,foundry-family,Junicode,package,,distro,provided by otf-junicode; provided by ttf-junicode,false
@@ -34,7 +34,6 @@ nerd-fonts-anonymous-pro,arch-pkg,nerd-folder,AnonymousPro,build,nerd,distro,rep
 nerd-fonts-arimo,arch-pkg,nerd-folder,Arimo,build,nerd,distro,replaced by ttf-arimo-nerd,false
 nerd-fonts-cascadia-code,arch-pkg,nerd-folder,CascadiaCode,build,nerd,distro,replaced by ttf-cascadia-code-nerd,false
 nerd-fonts-cozette-ttf,arch-pkg,brew-cask,font-cozette,build,nerd,distro,name cozette,false
-nerd-fonts-dejavu-complete,arch-pkg,brew-cask,font-dejavu,build,nerd,distro,replaced by ttf-dejavu-nerd,false
 nerd-fonts-droid-sans-mono,arch-pkg,nerd-folder,DroidSansMono,build,nerd,distro,replaced by otf-droid-nerd,false
 nerd-fonts-fantasque-sans-mono,arch-pkg,nerd-folder,FantasqueSansMono,build,nerd,distro,replaced by ttf-fantasque-nerd,false
 nerd-fonts-fira-code,arch-pkg,nerd-folder,FiraCode,build,nerd,distro,replaced by ttf-firacode-nerd,false
@@ -54,6 +53,7 @@ nerd-fonts-meslo,arch-pkg,nerd-folder,Meslo,build,nerd,distro,replaced by ttf-me
 nerd-fonts-monofur,arch-pkg,nerd-folder,Monofur,build,nerd,distro,replaced by ttf-monofur-nerd,false
 nerd-fonts-monoid,arch-pkg,nerd-folder,Monoid,build,nerd,distro,replaced by ttf-monoid-nerd,false
 nerd-fonts-mononoki,arch-pkg,nerd-folder,Mononoki,build,nerd,distro,replaced by ttf-mononoki-nerd,false
+nerd-fonts-noto-sans-mono,arch-pkg,gf-family,Noto Sans Mono,build,nerd,distro,name noto-sans-mono,false
 nerd-fonts-overpass,arch-pkg,nerd-folder,Overpass,build,nerd,distro,replaced by otf-overpass-nerd,false
 nerd-fonts-profont,arch-pkg,nerd-folder,ProFont,build,nerd,distro,replaced by ttf-profont-nerd,false
 nerd-fonts-roboto-mono,arch-pkg,nerd-folder,RobotoMono,build,nerd,distro,replaced by ttf-roboto-mono-nerd,false
@@ -77,7 +77,7 @@ otf-bitter,arch-pkg,gf-family,Bitter,package,,distro,name bitter,false
 otf-bravura,arch-pkg,fs-id,bravura,package,,distro,name bravura,false
 otf-cascadia-code,arch-pkg,gf-family,Cascadia Code,package,,distro,name cascadia-code; upstream github.com/microsoft/cascadia-code,false
 otf-cascadia-code-nerd,arch-pkg,nerd-folder,CascadiaCode,build,nerd,distro,replaced by ttf-cascadia-code-nerd,false
-otf-clarity-city,arch-pkg,brew-cask,font-clarity-city,package,,distro,name clarity-city,false
+otf-clarity-city,arch-pkg,gf-family,Clarity City,package,,distro,name clarity-city,false
 otf-code-new-roman,arch-pkg,brew-cask,font-code-new-roman-nerd-font,package,,distro,name code-new-roman,false
 otf-codenewroman-nerd,arch-pkg,nerd-folder,CodeNewRoman,build,nerd,distro,name codenewroman,false
 otf-commit-mono,arch-pkg,fs-id,commit-mono,package,,distro,name commit-mono,false
@@ -100,8 +100,8 @@ otf-fira-go,arch-pkg,fs-id,firago,package,,distro,name fira-go,false
 otf-fira-mono,arch-pkg,gf-family,Fira Mono,package,,distro,name fira-mono; upstream github.com/mozilla/fira,false
 otf-fira-sans,arch-pkg,gf-family,Fira Sans,package,,distro,name fira-sans; upstream github.com/mozilla/fira,false
 otf-firamono-nerd,arch-pkg,nerd-folder,FiraMono,build,nerd,distro,name firamono; replaces nerd-fonts-fira-mono,false
-otf-font-awesome,arch-pkg,brew-cask,font-fontawesome,package,,distro,name font-awesome; url fontawesome.com,false
 otf-fragment-mono,arch-pkg,gf-family,Fragment Mono,package,,distro,name fragment-mono,false
+otf-geist,arch-pkg,gf-family,Geist,package,,distro,name geist,false
 otf-geist-mono-nerd,arch-pkg,nerd-folder,GeistMono,build,nerd,distro,name geist-mono,false
 otf-hasklig,arch-pkg,brew-cask,font-hasklig,package,,distro,name hasklig,false
 otf-hasklig-nerd,arch-pkg,nerd-folder,Hasklig,build,nerd,distro,name hasklig; replaces nerd-fonts-hasklig,false
@@ -134,23 +134,26 @@ otf-plangothic,arch-pkg,brew-cask,font-plangothic,package,,distro,name plangothi
 otf-raleway,arch-pkg,gf-family,Raleway,package,,distro,name raleway,false
 otf-san-francisco-mono,arch-pkg,brew-cask,font-sf-mono,package,,distro,name san-francisco-mono,false
 otf-san-francisco-pro,arch-pkg,brew-cask,font-sf-pro,package,,distro,name san-francisco-pro,false
+otf-shantell-sans,arch-pkg,gf-family,Shantell Sans,package,,distro,name shantell-sans,false
+otf-sn-pro,arch-pkg,gf-family,SN Pro,package,,distro,name sn-pro,false
 otf-sora,arch-pkg,gf-family,Sora,package,,distro,name sora,false
 otf-source-han-code-jp,arch-pkg,brew-cask,font-source-han-code-jp,package,,distro,name source-han-code-jp,false
 otf-space-grotesk,arch-pkg,gf-family,Space Grotesk,package,,distro,name space-grotesk,false
-otf-stix,arch-pkg,brew-cask,font-stix,package,,distro,name stix,false
 otf-unifont,arch-pkg,fs-id,unifont,package,,distro,name unifont,false
 otf-vollkorn,arch-pkg,gf-family,Vollkorn,package,,distro,name vollkorn,false
 otf-xkcd-font,arch-pkg,brew-cask,font-xkcd,package,,distro,name xkcd,false
 otf-zilla-slab,arch-pkg,gf-family,Zilla Slab,package,,distro,name zilla-slab,false
 parastoo-fonts,arch-pkg,gf-family,Parastoo,package,,distro,name parastoo,false
 pcf-unifont,arch-pkg,fs-id,unifont,package,,distro,name unifont,false
-powerline-fonts,arch-pkg,brew-cask,font-powerline-symbols,package,,distro,url github.com/powerline/powerline,false
 profont-otb,arch-pkg,brew-cask,font-profont-nerd-font,package,,distro,name profont,false
 redhat-fonts,arch-pkg,brew-cask,font-redhat,package,,distro,name redhat,false
 routed-gothic-fonts,arch-pkg,brew-cask,font-routed-gothic,package,,distro,name routed-gothic,false
 scheherazade-new-font,arch-pkg,gf-family,Scheherazade New,package,,distro,provided by ttf-scheherazade-new,false
 spleen-font,arch-pkg,brew-cask,font-spleen,package,,distro,name spleen,false
 tamzen-font,arch-pkg,brew-cask,font-tamzen,package,,distro,name tamzen,false
+terminus-font,arch-pkg,brew-cask,font-terminess-ttf-nerd-font,package,,distro,name terminus; replaces terminus-font-otb; upstream terminus-font.sourceforge.net,false
+terminus-font-otb,arch-pkg,brew-cask,font-terminess-ttf-nerd-font,package,,distro,replaced by terminus-font,false
+terminus-font-ttf,arch-pkg,brew-cask,font-terminess-ttf-nerd-font,package,,distro,name terminus,false
 ttc-iosevka,arch-pkg,fs-id,iosevka,package,,distro,name iosevka; upstream typeof.net/iosevka,false
 ttc-iosevka-aile,arch-pkg,fs-id,iosevka-aile,package,,distro,name iosevka-aile; upstream typeof.net/iosevka,false
 ttc-iosevka-curly,arch-pkg,fs-id,iosevka-curly,package,,distro,name iosevka-curly; upstream typeof.net/iosevka,false
@@ -193,7 +196,6 @@ ttf-anonymous-pro,arch-pkg,gf-family,Anonymous Pro,package,,distro,name anonymou
 ttf-anonymouspro-nerd,arch-pkg,nerd-folder,AnonymousPro,build,nerd,distro,name anonymouspro; replaces nerd-fonts-anonymous-pro,false
 ttf-antonio,arch-pkg,gf-family,Antonio,package,,distro,name antonio,false
 ttf-aporetic,arch-pkg,brew-cask,font-aporetic,package,,distro,name aporetic,false
-ttf-aptos,arch-pkg,font-name,Aptos,package,,distro,name aptos,false
 ttf-architects-daughter,arch-pkg,gf-family,Architects Daughter,package,,distro,name architects-daughter,false
 ttf-arimo-nerd,arch-pkg,nerd-folder,Arimo,build,nerd,distro,name arimo; replaces nerd-fonts-arimo,false
 ttf-asap-variable,arch-pkg,gf-family,Asap,build,variable,distro,name asap,false
@@ -206,7 +208,6 @@ ttf-b612-git,arch-pkg,gf-family,B612,package,,distro,name b612,false
 ttf-bangers,arch-pkg,gf-family,Bangers,package,,distro,name bangers,false
 ttf-barlow,arch-pkg,gf-family,Barlow,package,,distro,name barlow,false
 ttf-bigblueterminal-nerd,arch-pkg,nerd-folder,BigBlueTerminal,build,nerd,distro,name bigblueterminal,false
-ttf-bitstream-vera,arch-pkg,brew-cask,font-bitstream-vera,package,,distro,name bitstream-vera; upstream www-old.gnome.org/fonts,false
 ttf-blackout,arch-pkg,brew-cask,font-blackout,package,,distro,name blackout,false
 ttf-brill,arch-pkg,brew-cask,font-brill,package,,distro,name brill,false
 ttf-cairo,arch-pkg,gf-family,Cairo,package,,distro,name cairo,false
@@ -217,6 +218,7 @@ ttf-carlito,arch-pkg,gf-family,Carlito,package,,distro,name carlito; url fonts.g
 ttf-cascadia-code,arch-pkg,gf-family,Cascadia Code,package,,distro,name cascadia-code; upstream github.com/microsoft/cascadia-code,false
 ttf-cascadia-code-nerd,arch-pkg,nerd-folder,CascadiaCode,build,nerd,distro,name cascadia-code; replaces nerd-fonts-cascadia-code; replaces otf-cascadia-code-nerd,false
 ttf-cascadia-mono-nerd,arch-pkg,nerd-folder,CascadiaMono,build,nerd,distro,name cascadia-mono,false
+ttf-century-gothic,arch-pkg,font-name,Century Gothic,package,,distro,name century-gothic,false
 ttf-century-schoolbook,arch-pkg,font-name,Century Schoolbook,package,,distro,name century-schoolbook,false
 ttf-charis,arch-pkg,brew-cask,font-charis,package,,distro,name charis; upstream software.sil.org/charis,false
 ttf-charis-sil,arch-pkg,gf-family,Charis SIL,package,,distro,name charis-sil,false
@@ -237,9 +239,6 @@ ttf-crimson-pro-variable,arch-pkg,gf-family,Crimson Pro,build,variable,distro,na
 ttf-cutive-mono,arch-pkg,gf-family,Cutive Mono,package,,distro,name cutive-mono,false
 ttf-d2coding-nerd,arch-pkg,nerd-folder,D2Coding,build,nerd,distro,name d2coding,false
 ttf-daddytime-mono-nerd,arch-pkg,nerd-folder,DaddyTimeMono,build,nerd,distro,name daddytime-mono,false
-ttf-dejavu,arch-pkg,brew-cask,font-dejavu,package,,distro,name dejavu; upstream dejavu-fonts.github.io,false
-ttf-dejavu-nerd,arch-pkg,brew-cask,font-dejavu,build,nerd,distro,name dejavu,false
-ttf-delugia-code,arch-pkg,brew-cask,font-delugia-book,package,,distro,name delugia-code,false
 ttf-devicons,arch-pkg,brew-cask,font-devicons,package,,distro,name devicons,false
 ttf-dm-mono-git,arch-pkg,gf-family,DM Mono,package,,distro,name dm-mono,false
 ttf-dmcasansserif,arch-pkg,font-name,DMCA Sans Serif,package,,distro,name dmcasansserif,false
@@ -259,12 +258,14 @@ ttf-fira-mono,arch-pkg,gf-family,Fira Mono,package,,distro,name fira-mono; upstr
 ttf-fira-sans,arch-pkg,gf-family,Fira Sans,package,,distro,name fira-sans; upstream github.com/mozilla/fira,false
 ttf-firacode,arch-pkg,gf-family,Fira Code,package,,distro,name firacode,false
 ttf-firacode-nerd,arch-pkg,nerd-folder,FiraCode,build,nerd,distro,name firacode; replaces nerd-fonts-fira-code,false
-ttf-font-awesome,arch-pkg,brew-cask,font-fontawesome,package,,distro,name font-awesome; provided by woff2-font-awesome; replaced by woff2-font-awesome,false
 ttf-fragment-mono,arch-pkg,gf-family,Fragment Mono,package,,distro,name fragment-mono,false
 ttf-freefont,arch-pkg,brew-cask,font-freefont,package,,distro,replaced by gnu-free-fonts,false
 ttf-gabarito-git,arch-pkg,gf-family,Gabarito,package,,distro,name gabarito,false
+ttf-geist,arch-pkg,gf-family,Geist,package,,distro,name geist,false
+ttf-geist-variable,arch-pkg,gf-family,Geist,build,variable,distro,name geist,false
 ttf-gelasio,arch-pkg,gf-family,Gelasio,package,,distro,name gelasio,false
 ttf-gelasio-variable,arch-pkg,gf-family,Gelasio,build,variable,distro,name gelasio,false
+ttf-gentium,arch-pkg,gf-family,Gentium Plus,package,,distro,name gentium; replaces gentium-plus-font; upstream software.sil.org/gentium,false
 ttf-gentium-basic,arch-pkg,brew-cask,font-gentium-basic,package,,distro,name gentium-basic,false
 ttf-gentium-book,arch-pkg,brew-cask,font-gentium-book,package,,distro,name gentium-book; upstream software.sil.org/gentium,false
 ttf-gentium-plus,arch-pkg,gf-family,Gentium Plus,package,,distro,name gentium-plus; upstream software.sil.org/gentium,false
@@ -275,7 +276,7 @@ ttf-google-sans-code-nf,arch-pkg,nerd-folder,GoogleSansCode,build,nf,distro,name
 ttf-google-sans-code-vf,arch-pkg,gf-family,Google Sans Code,build,variable,distro,name google-sans-code,false
 ttf-googlesanscode-nerd,arch-pkg,nerd-folder,GoogleSansCode,build,nerd,distro,name googlesanscode,false
 ttf-goudy-bookletter-1911,arch-pkg,gf-family,Goudy Bookletter 1911,package,,distro,name goudy-bookletter-1911,false
-ttf-hack,arch-pkg,brew-cask,font-hack,package,,distro,name hack; url sourcefoundry.org/hack,false
+ttf-hack,arch-pkg,brew-cask,font-cica,package,,distro,name hack; url sourcefoundry.org/hack,false
 ttf-hack-nerd,arch-pkg,nerd-folder,Hack,build,nerd,distro,name hack; replaces nerd-fonts-hack,false
 ttf-hackgen,arch-pkg,brew-cask,font-hackgen,package,,distro,name hackgen,false
 ttf-harmonyos-sans,arch-pkg,brew-cask,font-harmonyos-sans,package,,distro,name harmonyos-sans,false
@@ -295,6 +296,7 @@ ttf-iosevka,arch-pkg,fs-id,iosevka,package,,distro,name iosevka,false
 ttf-iosevka-nerd,arch-pkg,nerd-folder,Iosevka,build,nerd,distro,name iosevka; replaces nerd-fonts-iosevka,false
 ttf-iosevkaterm-nerd,arch-pkg,nerd-folder,IosevkaTerm,build,nerd,distro,name iosevkaterm,false
 ttf-iosevkatermslab-nerd,arch-pkg,nerd-folder,IosevkaTermSlab,build,nerd,distro,name iosevkatermslab,false
+ttf-ioskeley-mono,arch-pkg,brew-cask,font-ioskeley-mono,package,,distro,name ioskeley-mono,false
 ttf-ipaex,arch-pkg,brew-cask,font-ipaexfont,package,,distro,replaced by otf-ipaexfont,false
 ttf-jetbrains-mono,arch-pkg,gf-family,JetBrains Mono,package,,distro,name jetbrains-mono; url jetbrains.com/lp/mono,false
 ttf-jetbrains-mono-git,arch-pkg,gf-family,JetBrains Mono,package,,distro,name jetbrains-mono,false
@@ -317,7 +319,6 @@ ttf-league-mono,arch-pkg,fs-id,league-mono,package,,distro,name league-mono,fals
 ttf-league-mono-variable,arch-pkg,fs-id,league-mono,build,variable,distro,name league-mono,false
 ttf-league-spartan,arch-pkg,gf-family,League Spartan,package,,distro,name league-spartan,false
 ttf-lekton-nerd,arch-pkg,nerd-folder,Lekton,build,nerd,distro,name lekton,false
-ttf-liberation,arch-pkg,brew-cask,font-liberation,package,,distro,name liberation; upstream github.com/liberationfonts/liberation-fonts,false
 ttf-liberation-mono-nerd,arch-pkg,nerd-folder,LiberationMono,build,nerd,distro,name liberation-mono; replaces nerd-fonts-liberation-mono,false
 ttf-librebaskerville,arch-pkg,gf-family,Libre Baskerville,package,,distro,name librebaskerville,false
 ttf-lilex,arch-pkg,gf-family,Lilex,package,,distro,name lilex,false
@@ -335,6 +336,7 @@ ttf-lxgw-wenkai-gb,arch-pkg,brew-cask,font-lxgw-wenkai-gb,package,,distro,name l
 ttf-lxgw-wenkai-mono,arch-pkg,font-name,LXGW WenKai Mono,package,,distro,name lxgw-wenkai-mono,false
 ttf-lxgw-wenkai-tc,arch-pkg,gf-family,LXGW WenKai TC,package,,distro,name lxgw-wenkai-tc,false
 ttf-manrope,arch-pkg,gf-family,Manrope,package,,distro,name manrope,false
+ttf-maple-mono-nf,arch-pkg,fs-id,maple-mono,build,nf,distro,name maple-mono,false
 ttf-maplemono,arch-pkg,fs-id,maple-mono,package,,distro,name maplemono,false
 ttf-maplemono-cn,arch-pkg,fs-id,maple-mono,build,cjk,distro,name maplemono,false
 ttf-maplemono-nf,arch-pkg,fs-id,maple-mono,build,nf,distro,name maplemono,false
@@ -347,10 +349,9 @@ ttf-merriweather-sans-variable,arch-pkg,gf-family,Merriweather Sans,build,variab
 ttf-meslo-nerd,arch-pkg,nerd-folder,Meslo,build,nerd,distro,name meslo; replaces nerd-fonts-meslo,false
 ttf-miracode,arch-pkg,brew-cask,font-miracode,package,,distro,name miracode,false
 ttf-mona-sans,arch-pkg,gf-family,Mona Sans,package,,distro,name mona-sans; url github.com/github/mona-sans,false
-ttf-monaspace-frozen,arch-pkg,brew-cask,font-monaspace-frozen,package,,distro,name monaspace-frozen; upstream github.com/githubnext/monaspace,false
 ttf-monocraft-git,arch-pkg,brew-cask,font-monocraft,package,,distro,name monocraft,false
 ttf-monocraft-nerd,arch-pkg,brew-cask,font-monocraft,build,nerd,distro,name monocraft,false
-ttf-monofur,arch-pkg,brew-cask,font-monofur-nerd-font,package,,distro,name monofur; upstream dafont.com/monofur.font,false
+ttf-monofur,arch-pkg,brew-cask,font-monofur-for-powerline,package,,distro,name monofur; upstream dafont.com/monofur.font,false
 ttf-monofur-nerd,arch-pkg,nerd-folder,Monofur,build,nerd,distro,name monofur; replaces nerd-fonts-monofur,false
 ttf-monoid,arch-pkg,brew-cask,font-monoid,package,,distro,name monoid; upstream larsenwork.com/monoid,false
 ttf-monoid-nerd,arch-pkg,nerd-folder,Monoid,build,nerd,distro,name monoid; replaces nerd-fonts-monoid,false
@@ -362,6 +363,7 @@ ttf-nanumgothic_coding,arch-pkg,gf-family,Nanum Gothic Coding,package,,distro,na
 ttf-nanumsquareneo,arch-pkg,brew-cask,font-nanum-square-neo,package,,distro,name nanumsquareneo,false
 ttf-nerd-fonts-victor-mono,arch-pkg,nerd-folder,VictorMono,build,nerd,distro,replaced by ttf-victor-mono-nerd,false
 ttf-noto-sans-cjk-vf,arch-pkg,brew-cask,font-noto-sans-cjk,build,variable,distro,name noto-sans-cjk,false
+ttf-noto-sans-mono-vf,arch-pkg,gf-family,Noto Sans Mono,build,variable,distro,name noto-sans-mono,false
 ttf-noto-sans-vf,arch-pkg,gf-family,Noto Sans,build,variable,distro,name noto-sans,false
 ttf-nunito,arch-pkg,gf-family,Nunito,package,,distro,name nunito; url github.com/googlefonts/nunito,false
 ttf-opendyslexic,arch-pkg,fs-id,opendyslexic,package,,distro,name opendyslexic,false
@@ -378,6 +380,7 @@ ttf-plangothic,arch-pkg,brew-cask,font-plangothic,package,,distro,name plangothi
 ttf-poppins,arch-pkg,gf-family,Poppins,package,,distro,name poppins,false
 ttf-prociono,arch-pkg,gf-family,Prociono,package,,distro,name prociono,false
 ttf-profont-nerd,arch-pkg,nerd-folder,ProFont,build,nerd,distro,name profont; replaces nerd-fonts-profont,false
+ttf-proggy-clean,arch-pkg,brew-cask,font-proggy-clean-tt-nerd-font,package,,distro,name proggy-clean,false
 ttf-proggyclean-nerd,arch-pkg,nerd-folder,ProggyClean,build,nerd,distro,name proggyclean,false
 ttf-pt-astra-sans,arch-pkg,brew-cask,font-pt-astra-sans,package,,distro,name pt-astra-sans,false
 ttf-pt-astra-serif,arch-pkg,brew-cask,font-pt-astra-serif,package,,distro,name pt-astra-serif,false
@@ -402,9 +405,10 @@ ttf-roboto-slab,arch-pkg,gf-family,Roboto Slab,package,,distro,name roboto-slab,
 ttf-rubik,arch-pkg,gf-family,Rubik,package,,distro,name rubik,false
 ttf-rubik-vf,arch-pkg,gf-family,Rubik,build,variable,distro,name rubik,false
 ttf-sarasa-gothic,arch-pkg,brew-cask,font-sarasa-gothic,package,,distro,name sarasa-gothic; url github.com/be5invis/sarasa-gothic,false
-ttf-scheherazade-new,arch-pkg,gf-family,Scheherazade New,package,,distro,name scheherazade-new; upstream software.sil.org/scheherazade,false
+ttf-scheherazade-new,arch-pkg,gf-family,Scheherazade New,package,,distro,name scheherazade-new; url software.sil.org/scheherazade,false
 ttf-scientifica,arch-pkg,brew-cask,font-scientifica,package,,distro,name scientifica,false
 ttf-segoe-ui-variable,arch-pkg,fontist-formula,segoe_ui,build,variable,distro,name segoe-ui,false
+ttf-selawik,arch-pkg,brew-cask,font-selawik,package,,distro,name selawik,false
 ttf-shantell-sans-variable,arch-pkg,gf-family,Shantell Sans,build,variable,distro,name shantell-sans,false
 ttf-sharetech-mono-nerd,arch-pkg,nerd-folder,ShareTechMono,build,nerd,distro,name sharetech-mono,false
 ttf-signika,arch-pkg,gf-family,Signika,package,,distro,name signika,false
@@ -420,7 +424,6 @@ ttf-sourcesanspro,arch-pkg,fs-id,source-sans-pro,package,,distro,name sourcesans
 ttf-space-mono-nerd,arch-pkg,nerd-folder,SpaceMono,build,nerd,distro,name space-mono,false
 ttf-spacemono,arch-pkg,gf-family,Space Mono,package,,distro,name spacemono,false
 ttf-spectral,arch-pkg,gf-family,Spectral,package,,distro,name spectral,false
-ttf-stix-variable,arch-pkg,brew-cask,font-stix,build,variable,distro,name stix,false
 ttf-sudo,arch-pkg,brew-cask,font-sudo,package,,distro,name sudo,false
 ttf-suse,arch-pkg,gf-family,SUSE,package,,distro,name suse,false
 ttf-tahoma,arch-pkg,fontist-formula,tahoma,package,,distro,name tahoma,false
@@ -450,13 +453,11 @@ woff-fira-code,arch-pkg,gf-family,Fira Code,package,,distro,name fira-code; url 
 woff-intel-one-mono,arch-pkg,gf-family,Intel One Mono,package,,distro,name intel-one-mono; url github.com/intel/intel-one-mono,false
 woff2-cascadia-code,arch-pkg,gf-family,Cascadia Code,package,,distro,name cascadia-code; upstream github.com/microsoft/cascadia-code,false
 woff2-fira-code,arch-pkg,gf-family,Fira Code,package,,distro,name fira-code; url github.com/tonsky/firacode,false
-woff2-font-awesome,arch-pkg,brew-cask,font-fontawesome,package,,distro,name font-awesome; replaces ttf-font-awesome; url fontawesome.com,false
 woff2-intel-one-mono,arch-pkg,gf-family,Intel One Mono,package,,distro,name intel-one-mono; url github.com/intel/intel-one-mono,false
 fonts-0xproto,deb-pkg,brew-cask,font-0xproto,package,,distro,name 0xproto,false
 fonts-3270,deb-pkg,brew-cask,font-3270,package,,distro,name 3270; url github.com/rbanffy/3270font,false
 fonts-aclonica,deb-pkg,gf-family,Aclonica,package,,distro,name aclonica,false
 fonts-adobe-sourcesans3,deb-pkg,gf-family,Source Sans 3,package,,distro,url github.com/adobe-fonts/source-sans,false
-fonts-adwaita,deb-pkg,brew-cask,font-adwaita,package,,distro,name adwaita,false
 fonts-adwaita-sans,deb-pkg,fs-id,adwaita-sans,package,,distro,name adwaita-sans,false
 fonts-agave,deb-pkg,brew-cask,font-agave,package,,distro,name agave; upstream-name agave; url b.agaric.net/page/agave,false
 fonts-albert-sans,deb-pkg,gf-family,Albert Sans,package,,distro,name albert-sans,false
@@ -496,9 +497,7 @@ fonts-courier-prime,deb-pkg,gf-family,Courier Prime,package,,distro,name courier
 fonts-crimsontext,deb-pkg,gf-family,Crimson Text,package,,distro,name crimsontext,false
 fonts-crosextra-carlito,deb-pkg,gf-family,Carlito,package,,distro,url github.com/googlefonts/carlito,false
 fonts-dancingscript,deb-pkg,gf-family,Dancing Script,package,,distro,name dancingscript; upstream-name dancing-script; upstream impallari.com/dancing,false
-fonts-dejavu,deb-pkg,brew-cask,font-dejavu,package,,distro,name dejavu; upstream dejavu-fonts.github.io,false
 fonts-dejavu-mono,deb-pkg,fs-id,dejavu-mono,package,,distro,name dejavu-mono; upstream dejavu-fonts.github.io,false
-fonts-dejavu-web,deb-pkg,brew-cask,font-dejavu,package,,distro,name dejavu; upstream dejavu-fonts.github.io,false
 fonts-dosis,deb-pkg,gf-family,Dosis,package,,distro,name dosis; upstream-name dosis; upstream impallari.com/dosis,false
 fonts-dotgothic16,deb-pkg,gf-family,DotGothic16,package,,distro,name dotgothic16; upstream-name DotGothic16; url github.com/fontworks-fonts/dotgothic16,false
 fonts-dzongkha,deb-pkg,gf-family,Jomolhari,package,,distro,upstream-name Jomolhari,false
@@ -512,20 +511,17 @@ fonts-fantasque-sans,deb-pkg,brew-cask,font-fantasque-sans-mono,package,,distro,
 fonts-fanwood,deb-pkg,foundry-family,Fanwood,package,,distro,name fanwood; upstream crudfactory.com/font/show/fanwood,false
 fonts-firacode,deb-pkg,gf-family,Fira Code,package,,distro,name firacode; upstream-name FiraCode; url github.com/tonsky/firacode,false
 fonts-firasans,deb-pkg,gf-family,Fira Sans,package,,distro,name firasans,false
-fonts-font-awesome,deb-pkg,brew-cask,font-fontawesome,package,,distro,name font-awesome; upstream fontawesome.io,false
-fonts-franklin-gothic-book,deb-pkg,font-name,Franklin Gothic Book,package,,distro,name franklin-gothic-book,false
 fonts-freefont-otf,deb-pkg,brew-cask,font-freefont,package,,distro,name freefont; upstream savannah.gnu.org/projects/freefont,false
 fonts-freefont-ttf,deb-pkg,brew-cask,font-freefont,package,,distro,name freefont; upstream savannah.gnu.org/projects/freefont,false
 fonts-gemunu-libre,deb-pkg,gf-family,Gemunu Libre,package,,distro,name gemunu-libre; upstream mooniak.com/gemunu-libre-font/tests,false
 fonts-gfs-didot,deb-pkg,gf-family,GFS Didot,package,,distro,name gfs-didot; upstream greekfontsociety.gr,false
 fonts-gfs-neohellenic,deb-pkg,gf-family,GFS Neohellenic,package,,distro,name gfs-neohellenic; upstream greekfontsociety.gr,false
 fonts-go,deb-pkg,brew-cask,font-go,package,,distro,name go; upstream blog.golang.org/go-fonts,false
-fonts-goudybookletter,deb-pkg,gf-family,Goudy Bookletter 1911,package,,distro,upstream-name Goudy Bookletter 1911; upstream crudfactory.com/font/show/gb1911,false
-fonts-hack,deb-pkg,brew-cask,font-hack,package,,distro,name hack; url sourcefoundry.org/hack,false
+fonts-hack,deb-pkg,brew-cask,font-cica,package,,distro,name hack; url sourcefoundry.org/hack,false
 fonts-hack-nerd,deb-pkg,nerd-folder,Hack,build,nerd,distro,name hack,false
-fonts-hack-otf,deb-pkg,brew-cask,font-hack,package,,distro,name hack; transitional to fonts-hack; url sourcefoundry.org/hack,false
-fonts-hack-ttf,deb-pkg,brew-cask,font-hack,package,,distro,name hack; transitional to fonts-hack; url sourcefoundry.org/hack,false
-fonts-hack-web,deb-pkg,brew-cask,font-hack,package,,distro,name hack; transitional to fonts-hack; url sourcefoundry.org/hack,false
+fonts-hack-otf,deb-pkg,brew-cask,font-cica,package,,distro,name hack; transitional to fonts-hack; url sourcefoundry.org/hack,false
+fonts-hack-ttf,deb-pkg,brew-cask,font-cica,package,,distro,name hack; transitional to fonts-hack; url sourcefoundry.org/hack,false
+fonts-hack-web,deb-pkg,brew-cask,font-cica,package,,distro,name hack; transitional to fonts-hack; url sourcefoundry.org/hack,false
 fonts-harmonyos-sans,deb-pkg,brew-cask,font-harmonyos-sans,package,,distro,name harmonyos-sans,false
 fonts-harmonyos-sans-cn,deb-pkg,brew-cask,font-harmonyos-sans,build,cjk,distro,name harmonyos-sans,false
 fonts-hermit,deb-pkg,brew-cask,font-hermit,package,,distro,name hermit; upstream github.com/swordfish90/cool-retro-term,false
@@ -552,7 +548,6 @@ fonts-karmilla,deb-pkg,fs-id,karmilla,package,,distro,name karmilla; url github.
 fonts-kaushanscript,deb-pkg,gf-family,Kaushan Script,package,,distro,name kaushanscript; upstream-name kaushan-script; upstream impallari.com/kaushan,false
 fonts-klee,deb-pkg,gf-family,Klee One,package,,distro,url github.com/fontworks-fonts/klee,false
 fonts-kode-mono,deb-pkg,gf-family,Kode Mono,package,,distro,name kode-mono; upstream-name kode-mono; url kodemono.com,false
-fonts-kreon,deb-pkg,gf-family,Kreon,package,,distro,name kreon,false
 fonts-kristi,deb-pkg,gf-family,Kristi,package,,distro,name kristi; upstream-name Kristi; upstream google.com/fonts/specimen/kristi,false
 fonts-lato,deb-pkg,gf-family,Lato,package,,distro,name lato; upstream-name lato; url latofonts.com,false
 fonts-le-murmure,deb-pkg,foundry-family,Le Murmure,package,,distro,name le-murmure; url gitlab.com/velvetyne/murmure,false
@@ -561,8 +556,6 @@ fonts-league-spartan,deb-pkg,gf-family,League Spartan,package,,distro,name leagu
 fonts-leckerli-one,deb-pkg,gf-family,Leckerli One,package,,distro,name leckerli-one; upstream-name Leckerli One; upstream google.com/fonts/specimen/leckerli+one,false
 fonts-lemonada,deb-pkg,gf-family,Lemonada,package,,distro,name lemonada; url github.com/gue3bara/lemonada,false
 fonts-lexend,deb-pkg,gf-family,Lexend,package,,distro,name lexend,false
-fonts-liberation,deb-pkg,brew-cask,font-liberation,package,,distro,name liberation,false
-fonts-liberation2,deb-pkg,brew-cask,font-liberation,package,,distro,transitional to fonts-liberation,false
 fonts-libre-baskerville,deb-pkg,gf-family,Libre Baskerville,package,,distro,name libre-baskerville,false
 fonts-librefranklin,deb-pkg,gf-family,Libre Franklin,package,,distro,name librefranklin,false
 fonts-lindenhill,deb-pkg,gf-family,Linden Hill,package,,distro,name lindenhill; upstream crudfactory.com/font/show/lindenhill,false
@@ -581,7 +574,7 @@ fonts-meera-inimai,deb-pkg,gf-family,Meera Inimai,package,,distro,name meera-ini
 fonts-merriweather,deb-pkg,gf-family,Merriweather,package,,distro,name merriweather,false
 fonts-mona-sans,deb-pkg,gf-family,Mona Sans,package,,distro,name mona-sans,false
 fonts-monocraft,deb-pkg,brew-cask,font-monocraft,package,,distro,name monocraft,false
-fonts-monofur,deb-pkg,brew-cask,font-monofur-nerd-font,package,,distro,name monofur,false
+fonts-monofur,deb-pkg,brew-cask,font-monofur-for-powerline,package,,distro,name monofur,false
 fonts-monoid,deb-pkg,brew-cask,font-monoid,package,,distro,name monoid; upstream larsenwork.com/monoid,false
 fonts-mononoki,deb-pkg,fs-id,mononoki,package,,distro,name mononoki; upstream-name mononoki; url madmalik.github.io/mononoki,false
 fonts-montserrat,deb-pkg,gf-family,Montserrat,package,,distro,name montserrat; upstream-name Montserrat; upstream github.com/julietaula/montserrat,false
@@ -590,6 +583,7 @@ fonts-naver-d2coding,deb-pkg,brew-cask,font-d2coding,package,,distro,upstream-na
 fonts-noto-color-emoji,deb-pkg,gf-family,Noto Color Emoji,package,,distro,name noto-color-emoji,false
 fonts-noto-emoji,deb-pkg,gf-family,Noto Emoji,package,,distro,name noto-emoji,false
 fonts-noto-mono,deb-pkg,fs-id,noto-mono,package,,distro,name noto-mono,false
+fonts-notosansjp,deb-pkg,gf-family,Noto Sans JP,package,,distro,name notosansjp,false
 fonts-nunito,deb-pkg,gf-family,Nunito,package,,distro,name nunito,false
 fonts-nunito-sans,deb-pkg,gf-family,Nunito Sans,package,,distro,name nunito-sans,false
 fonts-ocr-b,deb-pkg,font-name,OCRB,package,,distro,name ocr-b; upstream tsukurimashou.org/ocr.php.en,false
@@ -601,7 +595,6 @@ fonts-oxanium,deb-pkg,gf-family,Oxanium,package,,distro,name oxanium,false
 fonts-oxygen,deb-pkg,gf-family,Oxygen,package,,distro,name oxygen,false
 fonts-play,deb-pkg,gf-family,Play,package,,distro,name play; upstream-name Play,false
 fonts-poppins,deb-pkg,gf-family,Poppins,package,,distro,name poppins,false
-fonts-powerline,deb-pkg,brew-cask,font-powerline-symbols,package,,distro,url github.com/powerline/powerline,false
 fonts-pretendard,deb-pkg,fs-id,pretendard,package,,distro,name pretendard; upstream-name Pretendard; upstream github.com/orioncactus/pretendard,false
 fonts-prociono,deb-pkg,gf-family,Prociono,package,,distro,name prociono; upstream crudfactory.com/font/show/prociono,false
 fonts-quattrocento,deb-pkg,gf-family,Quattrocento,package,,distro,name quattrocento; upstream-name quattrocento; upstream impallari.com/quattrocento,false
@@ -612,8 +605,6 @@ fonts-ricty-diminished,deb-pkg,brew-cask,font-ricty-diminished,package,,distro,n
 fonts-roboto,deb-pkg,gf-family,Roboto,package,,distro,name roboto; upstream github.com/google/roboto,false
 fonts-roboto-mono,deb-pkg,gf-family,Roboto Mono,package,,distro,name roboto-mono,false
 fonts-roboto-slab,deb-pkg,gf-family,Roboto Slab,package,,distro,name roboto-slab; upstream-name Roboto Slab; url fonts.google.com/specimen/roboto slab,false
-fonts-robotomono,deb-pkg,gf-family,Roboto Mono,package,,distro,name robotomono,false
-fonts-robotoslab,deb-pkg,gf-family,Roboto Slab,package,,distro,name robotoslab,false
 fonts-rocknroll,deb-pkg,gf-family,RocknRoll One,package,,distro,url github.com/fontworks-fonts/rocknroll,false
 fonts-routed-gothic,deb-pkg,brew-cask,font-routed-gothic,package,,distro,name routed-gothic; upstream-name Routed Gothic; url webonastick.com/fonts/routed-gothic,false
 fonts-rubik,deb-pkg,gf-family,Rubik,package,,distro,name rubik,false
@@ -632,46 +623,41 @@ fonts-sil-lateef,deb-pkg,gf-family,Lateef,package,,distro,upstream-name Lateef; 
 fonts-sil-mingzat,deb-pkg,gf-family,Mingzat,package,,distro,upstream-name Mingzat; upstream software.sil.org/mingzat,false
 fonts-sil-nuosusil,deb-pkg,gf-family,Nuosu SIL,package,,distro,upstream-name Nuosu SIL; upstream software.sil.org/nuosu,false
 fonts-sil-padauk,deb-pkg,gf-family,Padauk,package,,distro,upstream-name Padauk; upstream software.sil.org/padauk,false
-fonts-sil-scheherazade,deb-pkg,brew-cask,font-scheherazade,package,,distro,upstream-name Scheherazade; upstream software.sil.org/scheherazade,false
+fonts-sil-scheherazade,deb-pkg,brew-cask,font-scheherazade,package,,distro,upstream-name Scheherazade; url software.sil.org/scheherazade,false
 fonts-sil-sophia-nubian,deb-pkg,fontist-formula,sil/sophia_nubian,package,,distro,upstream-name Sophia Nubian; upstream software.sil.org/sophianubian,false
 fonts-sil-tagmukay,deb-pkg,fontist-formula,sil/tagmukay,package,,distro,upstream-name Tagmukay; upstream software.sil.org/tagmukay,false
 fonts-sil-taiheritagepro,deb-pkg,gf-family,Tai Heritage Pro,package,,distro,upstream-name Tai Heritage Pro; upstream software.sil.org/taiheritage,false
 fonts-sixtyfour,deb-pkg,gf-family,Sixtyfour,package,,distro,name sixtyfour; upstream github.com/jenskutilek/homecomputer-fonts,false
 fonts-smiley-sans,deb-pkg,brew-cask,font-smiley-sans,package,,distro,name smiley-sans; upstream-name smiley-sans; url atelier-anchor.com/typefaces/smiley-sans,false
+fonts-sn-pro,deb-pkg,gf-family,SN Pro,package,,distro,name sn-pro; upstream-name SN Pro; url supernotes.app/open-source/sn-pro,false
 fonts-sora,deb-pkg,gf-family,Sora,package,,distro,name sora; upstream-name sora; upstream sora.org,false
 fonts-source-code-pro,deb-pkg,gf-family,Source Code Pro,package,,distro,name source-code-pro,false
-fonts-source-han-sans-sc,deb-pkg,font-name,Source Han Sans SC,package,,distro,name source-han-sans-sc,false
 fonts-source-sans-pro,deb-pkg,fs-id,source-sans-pro,package,,distro,name source-sans-pro,false
 fonts-source-serif-pro,deb-pkg,fs-id,source-serif-pro,package,,distro,name source-serif-pro,false
 fonts-sourcesanspro,deb-pkg,fs-id,source-sans-pro,package,,distro,name sourcesanspro,false
 fonts-spacemono,deb-pkg,gf-family,Space Mono,package,,distro,name spacemono,false
 fonts-spleen,deb-pkg,brew-cask,font-spleen,package,,distro,name spleen; url github.com/fcambus/spleen,false
 fonts-stick,deb-pkg,gf-family,Stick,package,,distro,name stick; upstream-name stick; url github.com/fontworks-fonts/stick,false
-fonts-stix,deb-pkg,brew-cask,font-stix,package,,distro,name stix; upstream-name stix; upstream stixfonts.org,false
 fonts-sudo,deb-pkg,brew-cask,font-sudo,package,,distro,name sudo,false
+fonts-terminus,deb-pkg,brew-cask,font-terminess-ttf-nerd-font,package,,distro,name terminus; upstream github.com/swordfish90/cool-retro-term,false
+fonts-terminus-otb,deb-pkg,brew-cask,font-terminess-ttf-nerd-font,package,,distro,name terminus,false
 fonts-the-neue-black,deb-pkg,foundry-family,The Neue Black,package,,distro,name the-neue-black,false
 fonts-train,deb-pkg,gf-family,Train One,package,,distro,url github.com/fontworks-fonts/train,false
 fonts-tt2020,deb-pkg,brew-cask,font-tt2020,package,,distro,name tt2020; upstream-name tt2020; url github.com/ctrlcctrlv/tt2020,false
 fonts-tuffy,deb-pkg,gf-family,Tuffy,package,,distro,name tuffy; upstream-name Tuffy; upstream tulrich.com/fonts,false
 fonts-ubuntu,deb-pkg,gf-family,Ubuntu,package,,distro,name ubuntu,false
 fonts-unifont,deb-pkg,fs-id,unifont,package,,distro,name unifont; upstream unifoundry.com/unifont,false
-fonts-urw-base35,deb-pkg,brew-cask,font-urw-base35,package,,distro,name urw-base35; upstream github.com/artifexsoftware/urw-base35-fonts,false
 fonts-vazirmatn,deb-pkg,gf-family,Vazirmatn,package,,distro,name vazirmatn; upstream rastikerdar.github.io/vazirmatn,false
 fonts-vazirmatn-variable,deb-pkg,gf-family,Vazirmatn,build,variable,distro,name vazirmatn; upstream rastikerdar.github.io/vazirmatn,false
 fonts-vollkorn,deb-pkg,gf-family,Vollkorn,package,,distro,name vollkorn; url vollkorn-typeface.com,false
 fonts-yanone-kaffeesatz,deb-pkg,gf-family,Yanone Kaffeesatz,package,,distro,name yanone-kaffeesatz; upstream-name Yanone Kaffeesatz; upstream yanone.de/fonts/kaffeesatz,false
 fonts-yusei-magic,deb-pkg,gf-family,Yusei Magic,package,,distro,name yusei-magic; upstream tanukifont.com,false
-gsfonts,deb-pkg,brew-cask,font-urw-base35,package,,distro,transitional to fonts-urw-base35,false
-gsfonts-x11,deb-pkg,brew-cask,font-urw-base35,package,,distro,transitional to fonts-urw-base35,false
 lmodern,deb-pkg,brew-cask,font-latin-modern,package,,distro,url gust.org.pl/projects/e-foundry/latin-modern,false
 otf-freefont,deb-pkg,brew-cask,font-freefont,package,,distro,name freefont,false
 otf-ipaexfont,deb-pkg,brew-cask,font-ipaexfont,package,,distro,name ipaexfont,false
 otf-ipafont,deb-pkg,brew-cask,font-ipafont,package,,distro,name ipafont,false
-otf-stix,deb-pkg,brew-cask,font-stix,package,,distro,name stix; provided by fonts-stix,false
 ttf-anonymous-pro,deb-pkg,gf-family,Anonymous Pro,package,,distro,name anonymous-pro,false
-ttf-bitstream-vera,deb-pkg,brew-cask,font-bitstream-vera,package,,distro,name bitstream-vera,false
 ttf-comfortaa,deb-pkg,gf-family,Comfortaa,package,,distro,name comfortaa,false
-ttf-dejavu,deb-pkg,brew-cask,font-dejavu,package,,distro,name dejavu,false
 ttf-fanwood,deb-pkg,foundry-family,Fanwood,package,,distro,name fanwood,false
 ttf-freefont,deb-pkg,brew-cask,font-freefont,package,,distro,name freefont,false
 ttf-gentium,deb-pkg,brew-cask,font-gentium,package,,distro,name gentium,false
@@ -682,7 +668,6 @@ ttf-ipafont,deb-pkg,brew-cask,font-ipafont,package,,distro,name ipafont,false
 ttf-junicode,deb-pkg,foundry-family,Junicode,package,,distro,name junicode,false
 ttf-jura,deb-pkg,gf-family,Jura,package,,distro,name jura,false
 ttf-kanjistrokeorders,deb-pkg,brew-cask,font-kanjistrokeorders,package,,distro,name kanjistrokeorders,false
-ttf-liberation,deb-pkg,brew-cask,font-liberation,package,,distro,name liberation,false
 ttf-lindenhill,deb-pkg,gf-family,Linden Hill,package,,distro,name lindenhill,false
 ttf-linux-libertine,deb-pkg,brew-cask,font-linux-libertine,package,,distro,name linux-libertine,false
 ttf-oxygen-font-family,deb-pkg,gf-family,Oxygen,package,,distro,name oxygen,false
@@ -697,6 +682,7 @@ ttf-unifont,deb-pkg,fs-id,unifont,package,,distro,name unifont,false
 ttf-yanone-kaffeesatz,deb-pkg,gf-family,Yanone Kaffeesatz,package,,distro,name yanone-kaffeesatz,false
 unifont,deb-pkg,fs-id,unifont,package,,distro,name unifont; upstream unifoundry.com/unifont,false
 xfonts-spleen,deb-pkg,brew-cask,font-spleen,package,,distro,name spleen,false
+xfonts-terminus,deb-pkg,brew-cask,font-terminess-ttf-nerd-font,package,,distro,name terminus,false
 xfonts-unifont,deb-pkg,fs-id,unifont,package,,distro,name unifont; upstream unifoundry.com/unifont,false
 3270font,deb-src,brew-cask,font-3270,package,,distro,binary fonts-3270; url github.com/rbanffy/3270font,false
 cardo,deb-src,gf-family,Cardo,package,,distro,binary fonts-cardo; name cardo; url scholarsfonts.net/cardofnt.html,false
@@ -705,7 +691,6 @@ comic-neue,deb-src,gf-family,Comic Neue,package,,distro,binary fonts-comic-neue;
 fonts-0xproto,deb-src,brew-cask,font-0xproto,package,,distro,name 0xproto; url github.com/0xtype/0xproto,false
 fonts-aclonica,deb-src,gf-family,Aclonica,package,,distro,name aclonica; upstream-name Aclonica; url github.com/librefonts/aclonica,false
 fonts-adobe-sourcesans3,deb-src,gf-family,Source Sans 3,package,,distro,binary fonts-adobe-sourcesans3; url github.com/adobe-fonts/source-sans,false
-fonts-adwaita,deb-src,brew-cask,font-adwaita,package,,distro,name adwaita; upstream gitlab.gnome.org/gnome/adwaita-fonts,false
 fonts-agave,deb-src,brew-cask,font-agave,package,,distro,binary fonts-agave; name agave; upstream-name agave; url b.agaric.net/page/agave,false
 fonts-albert-sans,deb-src,gf-family,Albert Sans,package,,distro,name albert-sans; upstream-name Albert-Sans; url github.com/usted/albert-sans,false
 fonts-allerta,deb-src,gf-family,Allerta,package,,distro,binary fonts-allerta; name allerta; upstream pixelspread.com/allerta,false
@@ -720,12 +705,12 @@ fonts-cantarell,deb-src,gf-family,Cantarell,package,,distro,binary fonts-cantare
 fonts-cascadia-code,deb-src,gf-family,Cascadia Code,package,,distro,binary fonts-cascadia-code; name cascadia-code; upstream github.com/microsoft/cascadia-code,false
 fonts-cherrybomb,deb-src,gf-family,Cherry Bomb One,package,,distro,binary fonts-cherrybomb; url github.com/satsuyako/cherrybomb,false
 fonts-chomsky,deb-src,brew-cask,font-chomsky,package,,distro,binary fonts-chomsky; name chomsky; upstream-name chomsky; url github.com/ctrlcctrlv/chomsky,false
-fonts-comfortaa,deb-src,gf-family,Comfortaa,package,,distro,binary fonts-comfortaa; name comfortaa; upstream aajohan.deviantart.com/art/comfortaa-font-105395949,false
+fonts-codicons,deb-src,brew-cask,font-codicon,package,,distro,url github.com/microsoft/vscode-codicons,false
+fonts-comfortaa,deb-src,gf-family,Comfortaa,package,,distro,binary fonts-comfortaa; name comfortaa; url fonts.google.com/specimen/comfortaa,false
 fonts-compagnon,deb-src,foundry-family,Compagnon,package,,distro,binary fonts-compagnon; name compagnon; url gitlab.com/velvetyne/compagnon,false
 fonts-courier-prime,deb-src,gf-family,Courier Prime,package,,distro,binary fonts-courier-prime; name courier-prime; url github.com/quoteunquoteapps/courierprime,false
 fonts-crosextra-carlito,deb-src,gf-family,Carlito,package,,distro,binary fonts-crosextra-carlito; url github.com/googlefonts/carlito,false
 fonts-dancingscript,deb-src,gf-family,Dancing Script,package,,distro,binary fonts-dancingscript; name dancingscript; upstream impallari.com/dancing; upstream-name dancing-script,false
-fonts-dejavu,deb-src,brew-cask,font-dejavu,package,,distro,name dejavu; upstream dejavu-fonts.github.io,false
 fonts-dosis,deb-src,gf-family,Dosis,package,,distro,binary fonts-dosis; name dosis; upstream impallari.com/dosis; upstream-name dosis,false
 fonts-dotgothic16,deb-src,gf-family,DotGothic16,package,,distro,binary fonts-dotgothic16; name dotgothic16; upstream-name DotGothic16; url github.com/fontworks-fonts/dotgothic16,false
 fonts-dzongkha,deb-src,gf-family,Jomolhari,package,,distro,binary fonts-dzongkha; upstream-name Jomolhari,false
@@ -735,17 +720,14 @@ fonts-elstob,deb-src,brew-cask,font-elstobd,package,,distro,binary fonts-elstob;
 fonts-esteban,deb-src,gf-family,Esteban,package,,distro,name esteban; upstream-name Esteban; url github.com/googlefonts/esteban,false
 fonts-evertype-conakry,deb-src,brew-cask,font-conakry,package,,distro,binary fonts-evertype-conakry; url evertype.com/fonts/nko,false
 fonts-fantasque-sans,deb-src,brew-cask,font-fantasque-sans-mono,package,,distro,binary fonts-fantasque-sans; upstream github.com/belluzj/fantasque-sans; upstream-name Fantasque Sans Mono,false
-fonts-fanwood,deb-src,foundry-family,Fanwood,package,,distro,binary fonts-fanwood; name fanwood; upstream crudfactory.com; upstream crudfactory.com/font/show/fanwood,false
+fonts-fanwood,deb-src,foundry-family,Fanwood,package,,distro,binary fonts-fanwood; name fanwood; upstream crudfactory.com/font/show/fanwood,false
 fonts-firacode,deb-src,gf-family,Fira Code,package,,distro,binary fonts-firacode; name firacode; upstream-name FiraCode; url github.com/tonsky/firacode,false
-fonts-font-awesome,deb-src,brew-cask,font-fontawesome,package,,distro,binary fonts-font-awesome; name font-awesome; upstream fontawesome.io,false
-fonts-font-awesome-legacy,deb-src,brew-cask,font-fontawesome,package,,distro,upstream-name FontAwesome; upstream github.com/fortawesome/font-awesome,false
-fonts-freefont,deb-src,brew-cask,font-freefont,package,,distro,binary fonts-freefont-otf; binary fonts-freefont-ttf; name freefont; upstream savannah.gnu.org/projects/freefont,false
+fonts-freefont,deb-src,brew-cask,font-freefont,package,,distro,binary fonts-freefont-otf; binary fonts-freefont-ttf; name freefont; upstream savannah.gnu.org/projects/freefont; upstream-name GNU FreeFont,false
 fonts-gemunu-libre,deb-src,gf-family,Gemunu Libre,package,,distro,binary fonts-gemunu-libre; name gemunu-libre; url github.com/mooniak/gemunu-libre-font,false
 fonts-gfs-didot,deb-src,gf-family,GFS Didot,package,,distro,binary fonts-gfs-didot; name gfs-didot; upstream greekfontsociety.gr,false
 fonts-gfs-neohellenic,deb-src,gf-family,GFS Neohellenic,package,,distro,binary fonts-gfs-neohellenic; name gfs-neohellenic; upstream greekfontsociety.gr,false
 fonts-go,deb-src,brew-cask,font-go,package,,distro,binary fonts-go; name go; upstream blog.golang.org/go-fonts,false
-fonts-goudybookletter,deb-src,gf-family,Goudy Bookletter 1911,package,,distro,binary fonts-goudybookletter; upstream crudfactory.com/font/show/gb1911; upstream-name Goudy Bookletter 1911,false
-fonts-hack,deb-src,brew-cask,font-hack,package,,distro,binary fonts-hack; binary fonts-hack-otf; binary fonts-hack-ttf; binary fonts-hack-web; name hack; url sourcefoundry.org/hack,false
+fonts-hack,deb-src,brew-cask,font-cica,package,,distro,binary fonts-hack; binary fonts-hack-otf; binary fonts-hack-ttf; binary fonts-hack-web; name hack; url sourcefoundry.org/hack,false
 fonts-hosny-amiri,deb-src,gf-family,Amiri,package,,distro,binary fonts-hosny-amiri; upstream amirifont.org; upstream-name Amiri,false
 fonts-humor-sans,deb-src,brew-cask,font-humor-sans,package,,distro,binary fonts-humor-sans; name humor-sans; upstream antiyawn.com/uploads/humorsans.html,false
 fonts-inconsolata,deb-src,gf-family,Inconsolata,package,,distro,binary fonts-inconsolata; name inconsolata; upstream-name Inconsolata; url github.com/googlefonts/inconsolata,false
@@ -772,7 +754,6 @@ fonts-league-mono,deb-src,fs-id,league-mono,package,,distro,binary fonts-league-
 fonts-league-spartan,deb-src,gf-family,League Spartan,package,,distro,binary fonts-league-spartan; name league-spartan; upstream-name league-spartan; url github.com/theleagueof/league-spartan,false
 fonts-leckerli-one,deb-src,gf-family,Leckerli One,package,,distro,binary fonts-leckerli-one; name leckerli-one; upstream google.com/fonts/specimen/leckerli+one; upstream-name Leckerli One,false
 fonts-lemonada,deb-src,gf-family,Lemonada,package,,distro,binary fonts-lemonada; name lemonada; url github.com/gue3bara/lemonada,false
-fonts-liberation,deb-src,brew-cask,font-liberation,package,,distro,binary fonts-liberation; binary fonts-liberation2; name liberation,false
 fonts-lindenhill,deb-src,gf-family,Linden Hill,package,,distro,binary fonts-lindenhill; name lindenhill; upstream crudfactory.com/font/show/lindenhill,false
 fonts-linuxlibertine,deb-src,brew-cask,font-linux-libertine,package,,distro,binary fonts-linuxlibertine; name linuxlibertine; upstream linuxlibertine.sourceforge.net; upstream-name Linux Libertine,false
 fonts-lobstertwo,deb-src,gf-family,Lobster Two,package,,distro,name lobstertwo; url fonts.google.com/specimen/lobster two,false
@@ -782,23 +763,23 @@ fonts-lxgw-wenkai,deb-src,fs-id,lxgw-wenkai,package,,distro,binary fonts-lxgw-we
 fonts-manrope,deb-src,gf-family,Manrope,package,,distro,binary fonts-manrope; name manrope; upstream gent.media/manrope; upstream-name manrope,false
 fonts-materialdesignicons-webfont,deb-src,brew-cask,font-material-design-icons-webfont,package,,distro,binary fonts-materialdesignicons-webfont; name materialdesignicons-webfont; upstream github.com/templarian/materialdesign-webfont,false
 fonts-meera-inimai,deb-src,gf-family,Meera Inimai,package,,distro,binary fonts-meera-inimai; name meera-inimai; upstream gitlab.com/smc/meera-inimai; upstream-name meera-inimai,false
-fonts-monocraft,deb-src,brew-cask,font-monocraft,package,,distro,name monocraft; upstream-name Monocraft; upstream github.com/idreesinc/monocraft,false
-fonts-monofur,deb-src,brew-cask,font-monofur-nerd-font,package,,distro,binary fonts-monofur; name monofur,false
+fonts-monocraft,deb-src,brew-cask,font-monocraft,package,,distro,name monocraft; upstream-name Monocraft; url github.com/idreesinc/monocraft,false
+fonts-monofur,deb-src,brew-cask,font-monofur-for-powerline,package,,distro,binary fonts-monofur; name monofur,false
 fonts-monoid,deb-src,brew-cask,font-monoid,package,,distro,name monoid; upstream-name Monoid; upstream larsenwork.com/monoid,false
-fonts-mononoki,deb-src,fs-id,mononoki,package,,distro,binary fonts-mononoki; name mononoki; upstream-name mononoki; url madmalik.github.io/mononoki,false
+fonts-mononoki,deb-src,fs-id,mononoki,package,,distro,binary fonts-mononoki; name mononoki; upstream-name mononoki; url github.com/madmalik/mononoki; url madmalik.github.io/mononoki,false
 fonts-montserrat,deb-src,gf-family,Montserrat,package,,distro,binary fonts-montserrat; name montserrat; upstream github.com/julietaula/montserrat; upstream-name Montserrat,false
 fonts-national-park,deb-src,gf-family,National Park,package,,distro,binary fonts-national-park; name national-park; url nationalparktypeface.com,false
 fonts-naver-d2coding,deb-src,brew-cask,font-d2coding,package,,distro,binary fonts-naver-d2coding; upstream-name D2Coding; url github.com/naver/d2codingfont,false
 fonts-noto-color-emoji,deb-src,gf-family,Noto Color Emoji,package,,distro,binary fonts-noto-color-emoji; name noto-color-emoji,false
 fonts-nunito,deb-src,gf-family,Nunito,package,,distro,name nunito; upstream-name nunito; url github.com/googlefonts/nunito,false
 fonts-ocr-b,deb-src,font-name,OCRB,package,,distro,binary fonts-ocr-b; name ocr-b; upstream tsukurimashou.org/ocr.php.en,false
-fonts-open-sans,deb-src,gf-family,Open Sans,package,,distro,binary fonts-open-sans; name open-sans; upstream opensans.com; upstream-name Open Sans,false
+fonts-open-sans,deb-src,gf-family,Open Sans,package,,distro,binary fonts-open-sans; name open-sans; upstream-name Open Sans; url fonts.google.com/specimen/open sans; url github.com/googlefonts/opensans,false
 fonts-opendyslexic,deb-src,fs-id,opendyslexic,package,,distro,binary fonts-opendyslexic; name opendyslexic; upstream dyslexicfonts.com; upstream-name OpenDyslexic,false
 fonts-oradano-mincho-gsrr,deb-src,fontist-formula,oradano_mincho_gsrr,package,,distro,binary fonts-oradano-mincho-gsrr; name oradano-mincho-gsrr; upstream-name Oradano Mincho GSRR; url asahi-net.or.jp/~sd5a-ucd/freefonts/oradano-mincho,false
 fonts-overpass,deb-src,gf-family,Overpass,package,,distro,name overpass; upstream-name Overpass; upstream overpassfont.org,false
 fonts-play,deb-src,gf-family,Play,package,,distro,binary fonts-play; name play; upstream-name Play,false
 fonts-pretendard,deb-src,fs-id,pretendard,package,,distro,binary fonts-pretendard; name pretendard; upstream github.com/orioncactus/pretendard; upstream-name Pretendard,false
-fonts-prociono,deb-src,gf-family,Prociono,package,,distro,binary fonts-prociono; name prociono; upstream crudfactory.com; upstream crudfactory.com/font/show/prociono,false
+fonts-prociono,deb-src,gf-family,Prociono,package,,distro,binary fonts-prociono; name prociono; upstream crudfactory.com/font/show/prociono,false
 fonts-quattrocento,deb-src,gf-family,Quattrocento,package,,distro,binary fonts-quattrocento; name quattrocento; upstream-name quattrocento; url fonts.google.com/specimen/quattrocento,false
 fonts-quicksand,deb-src,gf-family,Quicksand,package,,distro,binary fonts-quicksand; name quicksand; url fonts.google.com/specimen/quicksand,false
 fonts-rampart,deb-src,gf-family,Rampart One,package,,distro,binary fonts-rampart; url github.com/fontworks-fonts/rampart,false
@@ -823,26 +804,25 @@ fonts-sil-lateef,deb-src,gf-family,Lateef,package,,distro,binary fonts-sil-latee
 fonts-sil-mingzat,deb-src,gf-family,Mingzat,package,,distro,binary fonts-sil-mingzat; upstream software.sil.org/mingzat; upstream-name Mingzat,false
 fonts-sil-nuosusil,deb-src,gf-family,Nuosu SIL,package,,distro,binary fonts-sil-nuosusil; upstream software.sil.org/nuosu; upstream-name Nuosu SIL,false
 fonts-sil-padauk,deb-src,gf-family,Padauk,package,,distro,binary fonts-sil-padauk; upstream software.sil.org/padauk; upstream-name Padauk,false
-fonts-sil-scheherazade,deb-src,brew-cask,font-scheherazade,package,,distro,binary fonts-sil-scheherazade; upstream software.sil.org/scheherazade; upstream-name Scheherazade,false
+fonts-sil-scheherazade,deb-src,brew-cask,font-scheherazade,package,,distro,binary fonts-sil-scheherazade; upstream-name Scheherazade; url software.sil.org/scheherazade,false
 fonts-sil-shimenkan,deb-src,font-name,Shimenkan,package,,distro,upstream-name Shimenkan; upstream software.sil.org/shimenkan,false
 fonts-sil-sophia-nubian,deb-src,fontist-formula,sil/sophia_nubian,package,,distro,binary fonts-sil-sophia-nubian; upstream software.sil.org/sophianubian; upstream-name Sophia Nubian,false
 fonts-sil-tagmukay,deb-src,fontist-formula,sil/tagmukay,package,,distro,binary fonts-sil-tagmukay; upstream software.sil.org/tagmukay; upstream-name Tagmukay,false
 fonts-sil-taiheritagepro,deb-src,gf-family,Tai Heritage Pro,package,,distro,binary fonts-sil-taiheritagepro; upstream software.sil.org/taiheritage; upstream-name Tai Heritage Pro,false
 fonts-smiley-sans,deb-src,brew-cask,font-smiley-sans,package,,distro,binary fonts-smiley-sans; name smiley-sans; upstream-name smiley-sans; url atelier-anchor.com/typefaces/smiley-sans,false
+fonts-sn-pro,deb-src,gf-family,SN Pro,package,,distro,binary fonts-sn-pro; name sn-pro; upstream-name SN Pro; url github.com/supernotes/sn-pro; url supernotes.app/open-source/sn-pro,false
 fonts-sora,deb-src,gf-family,Sora,package,,distro,binary fonts-sora; name sora; upstream-name sora; url github.com/sora-xor/sora-font,false
 fonts-spleen,deb-src,brew-cask,font-spleen,package,,distro,binary fonts-spleen; name spleen; url github.com/fcambus/spleen,false
 fonts-stick,deb-src,gf-family,Stick,package,,distro,binary fonts-stick; name stick; upstream-name stick; url github.com/fontworks-fonts/stick,false
-fonts-stix,deb-src,brew-cask,font-stix,package,,distro,binary fonts-stix; name stix; upstream github.com/stipub/stixfonts; upstream stixfonts.org; upstream-name stix,false
 fonts-the-neue-black,deb-src,foundry-family,The Neue Black,package,,distro,name the-neue-black; upstream-name The Neue Black; url github.com/theleagueof/the-neue-black,false
 fonts-train,deb-src,gf-family,Train One,package,,distro,binary fonts-train; url github.com/fontworks-fonts/train,false
 fonts-tt2020,deb-src,brew-cask,font-tt2020,package,,distro,binary fonts-tt2020; name tt2020; upstream-name tt2020; url github.com/ctrlcctrlv/tt2020,false
 fonts-tuffy,deb-src,gf-family,Tuffy,package,,distro,binary fonts-tuffy; name tuffy; upstream tulrich.com/fonts; upstream-name Tuffy,false
-fonts-urw-base35,deb-src,brew-cask,font-urw-base35,package,,distro,binary fonts-urw-base35; binary gsfonts; binary gsfonts-x11; name urw-base35; upstream github.com/artifexsoftware/urw-base35-fonts,false
 fonts-vazirmatn,deb-src,gf-family,Vazirmatn,package,,distro,binary fonts-vazirmatn; binary fonts-vazirmatn-variable; name vazirmatn; upstream-name vazirmatn; url github.com/rastikerdar/vazirmatn,false
 fonts-vollkorn,deb-src,gf-family,Vollkorn,package,,distro,binary fonts-vollkorn; name vollkorn; url vollkorn-typeface.com,false
 fonts-yanone-kaffeesatz,deb-src,gf-family,Yanone Kaffeesatz,package,,distro,binary fonts-yanone-kaffeesatz; name yanone-kaffeesatz; upstream yanone.de/fonts/kaffeesatz; upstream-name Yanone Kaffeesatz,false
 fonts-yusei-magic,deb-src,gf-family,Yusei Magic,package,,distro,binary fonts-yusei-magic; name yusei-magic; url github.com/tanukifont/yuseimagic,false
 lmodern,deb-src,brew-cask,font-latin-modern,package,,distro,binary fonts-lmodern; binary lmodern; url gust.org.pl/projects/e-foundry/latin-modern,false
 oxanium,deb-src,gf-family,Oxanium,package,,distro,name oxanium; upstream-name Oxanium; url github.com/sevmeyer/oxanium,false
-ttf-bitstream-vera,deb-src,brew-cask,font-bitstream-vera,package,,distro,binary ttf-bitstream-vera; name bitstream-vera,false
 unifont,deb-src,fs-id,unifont,package,,distro,name unifont; upstream unifoundry.com/unifont,false
+xfonts-terminus,deb-src,brew-cask,font-terminess-ttf-nerd-font,package,,distro,name terminus; upstream terminus-font.sourceforge.net,false

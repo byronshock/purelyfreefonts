@@ -719,6 +719,7 @@
   "annotation-mono": {
     "catalog": "2026-09-26",
     "sources": {
+      "arch": "2026-09-01",
       "homebrew": "2025-09-25",
       "nerd": "2026-08-01"
     }
@@ -798,7 +799,7 @@
     }
   },
   "anuphan": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2023-02-22",
       "homebrew": "2025-09-25",
@@ -1381,6 +1382,7 @@
   "barlow": {
     "catalog": "2026-09-26",
     "sources": {
+      "arch": "2025-11-01",
       "google": "2017-10-26",
       "homebrew": "2025-09-25",
       "npm_expo": "2025-04-03",
@@ -1390,6 +1392,7 @@
   "barlow-condensed": {
     "catalog": "2026-09-26",
     "sources": {
+      "arch": "2025-11-01",
       "google": "2017-10-26",
       "homebrew": "2025-09-25",
       "npm_expo": "2025-04-03",
@@ -1399,6 +1402,7 @@
   "barlow-semi-condensed": {
     "catalog": "2026-09-26",
     "sources": {
+      "arch": "2025-11-01",
       "google": "2017-10-26",
       "homebrew": "2025-09-25",
       "npm_expo": "2025-04-03",
@@ -1464,7 +1468,7 @@
     "sources": {
       "google": "2025-12-08",
       "homebrew": "2025-09-25",
-      "npm_expo": "2025-12-14",
+      "npm_expo": "2025-10-07",
       "npm_fontsource": "2025-10-12"
     }
   },
@@ -1473,7 +1477,7 @@
     "sources": {
       "google": "2025-12-08",
       "homebrew": "2025-09-25",
-      "npm_expo": "2025-12-14",
+      "npm_expo": "2025-10-07",
       "npm_fontsource": "2025-10-12"
     }
   },
@@ -1482,7 +1486,7 @@
     "sources": {
       "google": "2025-12-08",
       "homebrew": "2025-09-25",
-      "npm_expo": "2025-12-14",
+      "npm_expo": "2025-10-07",
       "npm_fontsource": "2025-10-12"
     }
   },
@@ -1692,7 +1696,7 @@
     }
   },
   "big-shoulders": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2025-02-05",
       "homebrew": "2025-09-25",
@@ -2916,7 +2920,10 @@
     "catalog": null,
     "sources": {
       "arch": "2026-03-01",
-      "homebrew": "2026-09-06"
+      "google": "2026-09-28",
+      "homebrew": "2026-09-06",
+      "npm_expo": "2026-10-07",
+      "npm_fontsource": "2026-10-11"
     }
   },
   "clear-sans": {
@@ -4194,6 +4201,7 @@
   "et-book": {
     "catalog": "2026-09-26",
     "sources": {
+      "arch": "2026-05-01",
       "homebrew": "2025-09-25"
     }
   },
@@ -4454,9 +4462,9 @@
     "catalog": "2026-09-26",
     "sources": {
       "google": "2026-05-12",
-      "homebrew": "2026-05-03",
-      "npm_expo": "2026-05-15",
-      "npm_fontsource": "2026-05-17"
+      "homebrew": "2025-10-16",
+      "npm_expo": "2025-04-22",
+      "npm_fontsource": "2025-04-21"
     }
   },
   "finlandica-text": {
@@ -4754,7 +4762,7 @@
     }
   },
   "fustat": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2024-06-04",
       "homebrew": "2025-09-25",
@@ -5527,7 +5535,7 @@
   "hedvig-letters-serif": {
     "catalog": null,
     "sources": {
-      "google": "2023-11-20",
+      "google": "2023-10-24",
       "homebrew": "2025-09-25",
       "npm_expo": "2025-04-03",
       "npm_fontsource": "2025-04-03"
@@ -6134,7 +6142,10 @@
   "isometra": {
     "catalog": null,
     "sources": {
-      "homebrew": "2026-09-06"
+      "google": "2026-09-28",
+      "homebrew": "2026-09-06",
+      "npm_expo": "2026-10-07",
+      "npm_fontsource": "2026-10-11"
     }
   },
   "istok-web": {
@@ -6147,7 +6158,7 @@
     }
   },
   "italiana": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2012-03-14",
       "homebrew": "2025-09-25",
@@ -6832,7 +6843,10 @@
   "kripa": {
     "catalog": null,
     "sources": {
-      "homebrew": "2026-09-06"
+      "google": "2026-09-28",
+      "homebrew": "2026-09-06",
+      "npm_expo": "2026-10-07",
+      "npm_fontsource": "2026-10-11"
     }
   },
   "kristi": {
@@ -7252,7 +7266,7 @@
     }
   },
   "libre-bodoni": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2022-04-13",
       "homebrew": "2025-09-25",
@@ -7263,7 +7277,9 @@
   "libre-caslon-condensed": {
     "catalog": null,
     "sources": {
+      "google": "2026-09-28",
       "homebrew": "2026-09-06",
+      "npm_expo": "2026-10-07",
       "npm_fontsource": "2025-04-03"
     }
   },
@@ -7691,6 +7707,7 @@
   "manjari": {
     "catalog": null,
     "sources": {
+      "arch": "2025-12-01",
       "google": "2018-11-21",
       "homebrew": "2025-09-25",
       "npm_expo": "2025-04-03",
@@ -9689,7 +9706,7 @@
     }
   },
   "patua-one": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-12-19",
       "homebrew": "2025-09-25",
@@ -11501,6 +11518,48 @@
       "npm_fontsource": "2025-04-04"
     }
   },
+  "redaction": {
+    "catalog": "2026-10-17",
+    "sources": {
+      "npm_fontsource": "2025-04-22"
+    }
+  },
+  "redaction-10": {
+    "catalog": null,
+    "sources": {
+      "npm_fontsource": "2025-04-21"
+    }
+  },
+  "redaction-100": {
+    "catalog": null,
+    "sources": {
+      "npm_fontsource": "2025-04-21"
+    }
+  },
+  "redaction-20": {
+    "catalog": null,
+    "sources": {
+      "npm_fontsource": "2025-04-21"
+    }
+  },
+  "redaction-35": {
+    "catalog": null,
+    "sources": {
+      "npm_fontsource": "2025-04-21"
+    }
+  },
+  "redaction-50": {
+    "catalog": null,
+    "sources": {
+      "npm_fontsource": "2025-04-22"
+    }
+  },
+  "redaction-70": {
+    "catalog": null,
+    "sources": {
+      "npm_fontsource": "2025-04-22"
+    }
+  },
   "reddit-mono": {
     "catalog": "2026-09-26",
     "sources": {
@@ -11538,7 +11597,7 @@
     }
   },
   "reem-kufi": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2016-05-31",
       "homebrew": "2025-09-25",
@@ -12209,7 +12268,7 @@
     "sources": {
       "google": "2026-04-02",
       "homebrew": "2025-09-25",
-      "npm_expo": "2026-04-07",
+      "npm_expo": "2025-04-24",
       "npm_fontsource": "2025-04-03"
     }
   },
@@ -12812,6 +12871,7 @@
     "catalog": "2026-09-26",
     "sources": {
       "google": "2026-01-27",
+      "homebrew": "2025-10-16",
       "npm_expo": "2026-02-03",
       "npm_fontsource": "2025-04-03"
     }
@@ -12889,7 +12949,7 @@
     }
   },
   "sofia-sans-extra-condensed": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "arch": "2026-08-01",
       "google": "2022-11-16",
@@ -14556,6 +14616,12 @@
       "npm_fontsource": "2025-04-04"
     }
   },
+  "xmind": {
+    "catalog": null,
+    "sources": {
+      "homebrew": "2026-09-27"
+    }
+  },
   "yaldevi": {
     "catalog": null,
     "sources": {
@@ -14635,7 +14701,7 @@
     }
   },
   "yrsa": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "arch": "2026-08-01",
       "google": "2016-06-15",

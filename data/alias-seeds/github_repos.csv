@@ -775,9 +775,6 @@ oppiliappan/scientifica/scientifica.tar.gz,gh-asset,font-name,Scientifica,packag
 psb1558/Junicode-font/Junicode.zip,gh-asset,font-name,Junicode,package,,github_repos,https://github.com/psb1558/Junicode-font/releases,false
 rbanffy/3270font/3270_fonts.zip,gh-asset,font-name,IBM 3270,package,,github_repos,https://github.com/rbanffy/3270font/releases,false
 rektdeckard/departure-mono/DepartureMono.zip,gh-asset,font-name,Departure Mono,package,,github_repos,https://github.com/rektdeckard/departure-mono/releases,false
-romeovs/creep/creep.bdf,gh-asset,font-name,Creep,package,,github_repos,https://github.com/romeovs/creep/releases,false
-romeovs/creep/creep.dfont,gh-asset,font-name,Creep,package,,github_repos,https://github.com/romeovs/creep/releases,false
-romeovs/creep/creepRegular.dfont,gh-asset,font-name,Creep,package,,github_repos,https://github.com/romeovs/creep/releases,false
 rsms/inter/Inter-UI.zip,gh-asset,font-name,Inter,package,,github_repos,https://github.com/rsms/inter/releases,false
 rsms/inter/Inter.zip,gh-asset,font-name,Inter,package,,github_repos,https://github.com/rsms/inter/releases,false
 source-foundry/Hack/Hack-otf.tar.gz,gh-asset,font-name,Hack,package,,github_repos,https://github.com/source-foundry/Hack/releases,false
@@ -805,6 +802,7 @@ subframe7536/maple-font/Maple.Mono.NF.ttf,gh-asset,font-name,Maple Mono,build,nf
 subframe7536/maple-font/Maple.Mono.otf.zip,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
 subframe7536/maple-font/Maple.Mono.ttf,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
 subframe7536/maple-font/Maple.Mono.ttf.zip,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleHand.zip,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
 subframe7536/maple-font/MapleMono-CN-unhinted.zip,gh-asset,font-name,Maple Mono,build,cjk,github_repos,https://github.com/subframe7536/maple-font/releases,false
 subframe7536/maple-font/MapleMono-CN.zip,gh-asset,font-name,Maple Mono,build,cjk,github_repos,https://github.com/subframe7536/maple-font/releases,false
 subframe7536/maple-font/MapleMono-NF-CN-unhinted.zip,gh-asset,font-name,Maple Mono,build,nf,github_repos,https://github.com/subframe7536/maple-font/releases,false
@@ -851,6 +849,8 @@ subframe7536/maple-font/MapleMonoNormalNL-TTF-AutoHint.zip,gh-asset,font-name,Ma
 subframe7536/maple-font/MapleMonoNormalNL-TTF.zip,gh-asset,font-name,Maple Mono,build,nl,github_repos,https://github.com/subframe7536/maple-font/releases,false
 subframe7536/maple-font/MapleMonoNormalNL-Variable.zip,gh-asset,font-name,Maple Mono,build,nl,github_repos,https://github.com/subframe7536/maple-font/releases,false
 subframe7536/maple-font/MapleMonoNormalNL-Woff2.zip,gh-asset,font-name,Maple Mono,build,nl,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/MapleUI.zip,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
+subframe7536/maple-font/mactype-subframe7536.ini,gh-asset,font-name,Maple Mono,package,,github_repos,https://github.com/subframe7536/maple-font/releases,false
 the-moonwitch/Cozette/CozetteCrossedSevenVector.dfont,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
 the-moonwitch/Cozette/CozetteCrossedSevenVector.otf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false
 the-moonwitch/Cozette/CozetteCrossedSevenVector.ttf,gh-asset,font-name,Cozette,package,,github_repos,https://github.com/the-moonwitch/Cozette/releases,false

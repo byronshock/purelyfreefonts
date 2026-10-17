@@ -1,13 +1,13 @@
 alias,ns,target_ns,target,relation,detail,source,evidence,auto
-3270,font-name,nerd-folder,3270,postscript,,name_tables,https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/src/unpatched-fonts/3270/3270-Regular.ttf,false
+3270,font-name,nerd-folder,3270,postscript,,name_tables,https://raw.githubusercontent.com/ryanoasis/nerd-fonts/92a27e07169ff364c058699760c08c47baa67eb7/src/unpatched-fonts/3270/3270-Regular.ttf,false
 Aptos Display,font-name,font-name,Aptos,build,opsz,name_tables,https://download.microsoft.com/download/8/6/0/860a94fa-7feb-44ef-ac79-c072d9113d69/Microsoft%20Aptos%20Fonts.zip#Aptos-Display-Bold-Italic.ttf,false
 Argentum Sans VF,font-name,fs-id,argentum-sans,build,variable,name_tables,https://raw.githubusercontent.com/fontsource/font-files/0a4ca74c3548ab47d03eb7e9af398b41a86a31ac/sources/argentum-sans/files/ArgentumSans-VF.ttf,false
 Borges Square Pixel,font-name,foundry-family,Borges,build,static,name_tables,https://raw.githubusercontent.com/collletttivo/borges/f0c85182388603998ab55f84f9bc8cd8e8719383/fonts/Borges-SquarePixelRegular.ttf,false
-D2Coding ligature,font-name,nerd-folder,D2Coding,build,,name_tables,https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/src/unpatched-fonts/D2Coding/D2Coding-Ver1.3.2-20180524-ligature.ttf,false
+D2Coding ligature,font-name,nerd-folder,D2Coding,build,,name_tables,https://raw.githubusercontent.com/ryanoasis/nerd-fonts/92a27e07169ff364c058699760c08c47baa67eb7/src/unpatched-fonts/D2Coding/D2Coding-Ver1.3.2-20180524-ligature.ttf,false
 DMCAsansserifv1000dev1i,font-name,font-name,DMCA Sans Serif 10.0 dev1,postscript,,name_tables,https://typedesign.replit.app/DMCAsansserifv1000dev2_.zip#DMCAsansserifv1000dev2i-bold.ttf,false
 DejaVu Sans Condensed,font-name,font-name,DejaVu Sans,build,static,name_tables,https://github.com/dejavu-fonts/dejavu-fonts/releases/download/version_2_37/dejavu-fonts-ttf-2.37.zip#DejaVuSansCondensed-Bold.ttf,false
 DejaVu Serif Condensed,font-name,font-name,DejaVu Serif,build,static,name_tables,https://github.com/dejavu-fonts/dejavu-fonts/releases/download/version_2_37/dejavu-fonts-ttf-2.37.zip#DejaVuSerifCondensed-Bold.ttf,false
-Droid Sans Mono for Powerline,font-name,nerd-folder,DroidSansMono,build,powerline,name_tables,https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/src/unpatched-fonts/DroidSansMono/Droid%20Sans%20Mono%20for%20Powerline.otf,false
+Droid Sans Mono for Powerline,font-name,nerd-folder,DroidSansMono,build,powerline,name_tables,https://raw.githubusercontent.com/ryanoasis/nerd-fonts/92a27e07169ff364c058699760c08c47baa67eb7/src/unpatched-fonts/DroidSansMono/Droid%20Sans%20Mono%20for%20Powerline.otf,false
 EB Garamond 08,font-name,font-name,EB Garamond,build,static,name_tables,https://bitbucket.org/georgd/eb-garamond/downloads/EBGaramond-0.016.zip#EBGaramond08-Italic.otf,false
 EB Garamond 12,font-name,font-name,EB Garamond,build,static,name_tables,https://bitbucket.org/georgd/eb-garamond/downloads/EBGaramond-0.016.zip#EBGaramond12-Italic.otf,false
 EB Garamond SC 08,font-name,font-name,EB Garamond SC,build,static,name_tables,https://bitbucket.org/georgd/eb-garamond/downloads/EBGaramond-0.016.zip#EBGaramondSC08-Regular.otf,false
@@ -26,7 +26,7 @@ LogoSCLongZhuTi,font-name,font-name,LongZhuTi,postscript,,name_tables,https://gi
 Martian Mono Cn,font-name,font-name,Martian Mono,build,static,name_tables,https://github.com/evilmartians/mono/releases/download/v1.0.0/martian-mono-1.0.0-otf.zip#MartianMono-CnBd.otf,false
 Martian Mono Nr,font-name,font-name,Martian Mono,build,static,name_tables,https://github.com/evilmartians/mono/releases/download/v1.0.0/martian-mono-1.0.0-otf.zip#MartianMono-NrBd.otf,false
 Martian Mono Std,font-name,font-name,Martian Mono,build,static,name_tables,https://github.com/evilmartians/mono/releases/download/v1.0.0/martian-mono-1.0.0-otf.zip#MartianMono-StdBd.otf,false
-Martian Mono Std,font-name,nerd-folder,MartianMono,build,static,name_tables,https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/src/unpatched-fonts/MartianMono/Std/MartianMono-Regular.ttf,false
+Martian Mono Std,font-name,nerd-folder,MartianMono,build,static,name_tables,https://raw.githubusercontent.com/ryanoasis/nerd-fonts/92a27e07169ff364c058699760c08c47baa67eb7/src/unpatched-fonts/MartianMono/Std/MartianMono-Regular.ttf,false
 Martian Mono sWd,font-name,font-name,Martian Mono,build,static,name_tables,https://github.com/evilmartians/mono/releases/download/v1.0.0/martian-mono-1.0.0-otf.zip#MartianMono-sWdBd.otf,false
 Monaspace Argon Var,font-name,fs-id,monaspace-argon,build,variable,name_tables,https://raw.githubusercontent.com/fontsource/font-files/0a4ca74c3548ab47d03eb7e9af398b41a86a31ac/sources/monaspace-argon/files/Monaspace%20Argon%20Var.ttf,false
 Monaspace Krypton Var,font-name,fs-id,monaspace-krypton,build,variable,name_tables,https://raw.githubusercontent.com/fontsource/font-files/0a4ca74c3548ab47d03eb7e9af398b41a86a31ac/sources/monaspace-krypton/files/Monaspace%20Krypton%20Var.ttf,false
@@ -49,4 +49,4 @@ Pretendard Variable,font-name,fs-id,pretendard,build,variable,name_tables,https:
 Sligoil Micro,font-name,foundry-family,Sligoil,build,opsz,name_tables,https://gitlab.com/velvetyne/sligoil/-/raw/d6d999088dff79d3fab81c5661e52f2caa2c479d/fonts/ttf/Sligoil-Micro.ttf,false
 TeXGyreHerosCondensed,font-name,font-name,TeX Gyre Heros Cn,postscript,,name_tables,https://distfiles.gentoo.org/distfiles/1c/tg2_501otf.zip#texgyreheroscn-bold.otf,false
 Uncut Sans Variable,font-name,fs-id,uncut-sans,build,variable,name_tables,https://raw.githubusercontent.com/fontsource/font-files/0a4ca74c3548ab47d03eb7e9af398b41a86a31ac/sources/uncut-sans/files/UncutSans-Variable.ttf,false
-monofur for Powerline,font-name,nerd-folder,Monofur,build,powerline,name_tables,https://raw.githubusercontent.com/ryanoasis/nerd-fonts/64a084f95480ee5efb62132c01cd142ab6147655/src/unpatched-fonts/Monofur/Monofur%20for%20Powerline.ttf,false
+monofur for Powerline,font-name,nerd-folder,Monofur,build,powerline,name_tables,https://raw.githubusercontent.com/ryanoasis/nerd-fonts/92a27e07169ff364c058699760c08c47baa67eb7/src/unpatched-fonts/Monofur/Monofur%20for%20Powerline.ttf,false

@@ -180,6 +180,11 @@
       "member": true,
       "runs_outside": 0
     },
+    "anuphan": {
+      "entered": "2026-10-17",
+      "member": true,
+      "runs_outside": 0
+    },
     "architects-daughter": {
       "entered": "2026-09-26",
       "member": true,
@@ -325,10 +330,15 @@
       "member": true,
       "runs_outside": 0
     },
-    "big-shoulders-display": {
-      "entered": "2026-09-26",
+    "big-shoulders": {
+      "entered": "2026-10-17",
       "member": true,
       "runs_outside": 0
+    },
+    "big-shoulders-display": {
+      "entered": "2026-09-26",
+      "member": false,
+      "runs_outside": 1
     },
     "bitstream-vera-sans-mono": {
       "entered": "2026-09-26",
@@ -373,7 +383,7 @@
     "caacupe-one": {
       "entered": "2026-09-26",
       "member": true,
-      "runs_outside": 0
+      "runs_outside": 1
     },
     "cabin": {
       "entered": "2026-09-26",
@@ -850,6 +860,11 @@
       "member": true,
       "runs_outside": 0
     },
+    "fustat": {
+      "entered": "2026-10-17",
+      "member": true,
+      "runs_outside": 0
+    },
     "gabarito": {
       "entered": "2026-09-26",
       "member": true,
@@ -877,8 +892,8 @@
     },
     "gentium": {
       "entered": "2026-09-26",
-      "member": true,
-      "runs_outside": 0
+      "member": false,
+      "runs_outside": 1
     },
     "gentium-plus": {
       "entered": "2026-09-26",
@@ -903,7 +918,7 @@
     "go": {
       "entered": "2026-09-26",
       "member": true,
-      "runs_outside": 0
+      "runs_outside": 1
     },
     "go-mono": {
       "entered": "2026-09-26",
@@ -1135,6 +1150,11 @@
       "member": true,
       "runs_outside": 0
     },
+    "italiana": {
+      "entered": "2026-10-17",
+      "member": true,
+      "runs_outside": 0
+    },
     "itim": {
       "entered": "2026-09-26",
       "member": true,
@@ -1330,10 +1350,15 @@
       "member": true,
       "runs_outside": 0
     },
+    "libre-bodoni": {
+      "entered": "2026-10-17",
+      "member": true,
+      "runs_outside": 0
+    },
     "libre-caslon-display": {
       "entered": "2026-09-26",
       "member": true,
-      "runs_outside": 0
+      "runs_outside": 1
     },
     "libre-caslon-text": {
       "entered": "2026-09-26",
@@ -1735,6 +1760,11 @@
       "member": true,
       "runs_outside": 0
     },
+    "patua-one": {
+      "entered": "2026-10-17",
+      "member": true,
+      "runs_outside": 0
+    },
     "permanent-marker": {
       "entered": "2026-09-26",
       "member": true,
@@ -1935,6 +1965,11 @@
       "member": true,
       "runs_outside": 0
     },
+    "redaction": {
+      "entered": "2026-10-17",
+      "member": true,
+      "runs_outside": 0
+    },
     "reddit-mono": {
       "entered": "2026-09-26",
       "member": true,
@@ -1942,6 +1977,11 @@
     },
     "reddit-sans": {
       "entered": "2026-09-26",
+      "member": true,
+      "runs_outside": 0
+    },
+    "reem-kufi": {
+      "entered": "2026-10-17",
       "member": true,
       "runs_outside": 0
     },
@@ -2068,7 +2108,7 @@
     "scoutie-sans": {
       "entered": "2026-09-26",
       "member": true,
-      "runs_outside": 0
+      "runs_outside": 1
     },
     "secular-one": {
       "entered": "2026-09-26",
@@ -2132,8 +2172,8 @@
     },
     "sn-pro-font-family": {
       "entered": "2026-09-26",
-      "member": true,
-      "runs_outside": 0
+      "member": false,
+      "runs_outside": 1
     },
     "sniglet": {
       "entered": "2026-09-26",
@@ -2147,6 +2187,11 @@
     },
     "sofia-sans-condensed": {
       "entered": "2026-09-26",
+      "member": true,
+      "runs_outside": 0
+    },
+    "sofia-sans-extra-condensed": {
+      "entered": "2026-10-17",
       "member": true,
       "runs_outside": 0
     },
@@ -2480,6 +2525,11 @@
       "member": true,
       "runs_outside": 0
     },
+    "yrsa": {
+      "entered": "2026-10-17",
+      "member": true,
+      "runs_outside": 0
+    },
     "zalando-sans": {
       "entered": "2026-09-26",
       "member": true,
@@ -2505,6 +2555,11 @@
     "coding": {
       "0xproto": {
         "entered": "2026-09-26",
+        "member": true,
+        "runs_outside": 0
+      },
+      "adwaita-mono": {
+        "entered": "2026-10-17",
         "member": true,
         "runs_outside": 0
       },
@@ -2566,7 +2621,7 @@
       "courier-prime-sans": {
         "entered": "2026-09-26",
         "member": true,
-        "runs_outside": 0
+        "runs_outside": 1
       },
       "cousine": {
         "entered": "2026-09-26",
@@ -3293,7 +3348,7 @@
       "overpass": {
         "entered": "2026-09-26",
         "member": true,
-        "runs_outside": 0
+        "runs_outside": 1
       },
       "poppins": {
         "entered": "2026-09-26",
@@ -3469,6 +3524,11 @@
       },
       "cascadia-mono": {
         "entered": "2026-09-26",
+        "member": true,
+        "runs_outside": 0
+      },
+      "commit-mono": {
+        "entered": "2026-10-17",
         "member": true,
         "runs_outside": 0
       },

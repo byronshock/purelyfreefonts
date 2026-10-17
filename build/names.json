@@ -953,7 +953,7 @@
       "distinct_from": [],
       "family": "Anuphan",
       "id": "anuphan",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -1865,16 +1865,19 @@
       "distinct_from": [],
       "family": "Big Shoulders",
       "id": "big-shoulders",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Big Shoulders Display",
-      "id": "big-shoulders-display",
       "in_catalog": true,
-      "names": [],
+      "names": [
+        {
+          "detail": "opsz",
+          "name": "Big Shoulders Display",
+          "relation": "build"
+        },
+        {
+          "detail": "opsz",
+          "name": "Big Shoulders Text",
+          "relation": "build"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -1890,29 +1893,24 @@
       "family": "Big Shoulders Inline",
       "id": "big-shoulders-inline",
       "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Big Shoulders Inline Display",
-      "id": "big-shoulders-inline-display",
-      "in_catalog": false,
-      "names": [],
+      "names": [
+        {
+          "detail": "opsz",
+          "name": "Big Shoulders Inline Display",
+          "relation": "build"
+        },
+        {
+          "detail": "opsz",
+          "name": "Big Shoulders Inline Text",
+          "relation": "build"
+        }
+      ],
       "superfamily_id": null
     },
     {
       "distinct_from": [],
       "family": "Big Shoulders Inline Display SC",
       "id": "big-shoulders-inline-display-sc",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Big Shoulders Inline Text",
-      "id": "big-shoulders-inline-text",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -1930,15 +1928,18 @@
       "family": "Big Shoulders Stencil",
       "id": "big-shoulders-stencil",
       "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Big Shoulders Stencil Display",
-      "id": "big-shoulders-stencil-display",
-      "in_catalog": false,
-      "names": [],
+      "names": [
+        {
+          "detail": "opsz",
+          "name": "Big Shoulders Stencil Display",
+          "relation": "build"
+        },
+        {
+          "detail": "opsz",
+          "name": "Big Shoulders Stencil Text",
+          "relation": "build"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -1951,24 +1952,8 @@
     },
     {
       "distinct_from": [],
-      "family": "Big Shoulders Stencil Text",
-      "id": "big-shoulders-stencil-text",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
       "family": "Big Shoulders Stencil Text SC",
       "id": "big-shoulders-stencil-text-sc",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Big Shoulders Text",
-      "id": "big-shoulders-text",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -2978,18 +2963,15 @@
     },
     {
       "distinct_from": [],
-      "family": "Charis",
-      "id": "charis",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
       "family": "Charis SIL",
       "id": "charis-sil",
       "in_catalog": true,
-      "names": [],
+      "names": [
+        {
+          "name": "Charis",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -4951,21 +4933,13 @@
     },
     {
       "distinct_from": [],
-      "family": "Finlandica",
-      "id": "finlandica",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
       "family": "Finlandica Headline",
       "id": "finlandica-headline",
       "in_catalog": true,
       "names": [
         {
           "name": "Finlandica",
-          "relation": "related"
+          "relation": "rename"
         }
       ],
       "superfamily_id": null
@@ -5099,6 +5073,14 @@
       "family": "FiraGO",
       "id": "firago",
       "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Firjar",
+      "id": "firjar",
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -5347,7 +5329,7 @@
       "distinct_from": [],
       "family": "Fustat",
       "id": "fustat",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -5526,22 +5508,6 @@
       "superfamily_id": null
     },
     {
-      "distinct_from": [],
-      "family": "Gentium",
-      "id": "gentium",
-      "in_catalog": true,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Gentium Book",
-      "id": "gentium-book",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
       "distinct_from": [
         "gentium-book-plus"
       ],
@@ -5560,6 +5526,10 @@
       "in_catalog": false,
       "names": [
         {
+          "name": "Gentium Book",
+          "relation": "rename"
+        },
+        {
           "name": "Gentium Plus Book",
           "relation": "rename"
         }
@@ -5571,7 +5541,12 @@
       "family": "Gentium Plus",
       "id": "gentium-plus",
       "in_catalog": true,
-      "names": [],
+      "names": [
+        {
+          "name": "Gentium",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -7389,7 +7364,7 @@
       "distinct_from": [],
       "family": "Italiana",
       "id": "italiana",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -8561,7 +8536,7 @@
       "distinct_from": [],
       "family": "Libre Bodoni",
       "id": "libre-bodoni",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -9524,10 +9499,15 @@
     },
     {
       "distinct_from": [],
-      "family": "Microsoft Selawik",
+      "family": "Selawik",
       "id": "microsoft-selawik",
       "in_catalog": true,
-      "names": [],
+      "names": [
+        {
+          "name": "Microsoft Selawik",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -10584,15 +10564,12 @@
       "family": "Nosifer",
       "id": "nosifer",
       "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Nosifer Caps",
-      "id": "nosifer-caps",
-      "in_catalog": false,
-      "names": [],
+      "names": [
+        {
+          "name": "Nosifer Caps",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -11012,14 +10989,6 @@
       "distinct_from": [],
       "family": "Offside",
       "id": "offside",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "OFL Sorts Mill Goudy TT",
-      "id": "ofl-sorts-mill-goudy-tt",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -11524,7 +11493,7 @@
       "distinct_from": [],
       "family": "Patua One",
       "id": "patua-one",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -13236,6 +13205,66 @@
       "superfamily_id": null
     },
     {
+      "distinct_from": [
+        "redaction-70"
+      ],
+      "family": "Redaction",
+      "id": "redaction",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Redaction 10",
+      "id": "redaction-10",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Redaction 100",
+      "id": "redaction-100",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Redaction 20",
+      "id": "redaction-20",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Redaction 35",
+      "id": "redaction-35",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Redaction 50",
+      "id": "redaction-50",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [
+        "redaction"
+      ],
+      "family": "Redaction 70",
+      "id": "redaction-70",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
       "distinct_from": [],
       "family": "Reddit Mono",
       "id": "reddit-mono",
@@ -13271,7 +13300,7 @@
       "distinct_from": [],
       "family": "Reem Kufi",
       "id": "reem-kufi",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -13576,7 +13605,12 @@
       "family": "Rubik",
       "id": "rubik",
       "in_catalog": true,
-      "names": [],
+      "names": [
+        {
+          "name": "Rubik One",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -13735,14 +13769,6 @@
       "distinct_from": [],
       "family": "Rubik Moonrocks",
       "id": "rubik-moonrocks",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Rubik One",
-      "id": "rubik-one",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -14021,15 +14047,12 @@
       "family": "Sansita",
       "id": "sansita",
       "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Sansita One",
-      "id": "sansita-one",
-      "in_catalog": false,
-      "names": [],
+      "names": [
+        {
+          "name": "Sansita One",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -14106,18 +14129,15 @@
     },
     {
       "distinct_from": [],
-      "family": "Scheherazade",
-      "id": "scheherazade",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
       "family": "Scheherazade New",
       "id": "scheherazade-new",
       "in_catalog": true,
-      "names": [],
+      "names": [
+        {
+          "name": "Scheherazade",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -14212,14 +14232,6 @@
       "distinct_from": [],
       "family": "Sekuya",
       "id": "sekuya",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Selawik",
-      "id": "selawik",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -14620,14 +14632,6 @@
     },
     {
       "distinct_from": [],
-      "family": "SN Pro Font Family",
-      "id": "sn-pro-font-family",
-      "in_catalog": true,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
       "family": "Sneaky Times",
       "id": "sneaky-times",
       "in_catalog": false,
@@ -14694,7 +14698,7 @@
       "distinct_from": [],
       "family": "Sofia Sans Extra Condensed",
       "id": "sofia-sans-extra-condensed",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -14767,7 +14771,12 @@
       "family": "Sorts Mill Goudy",
       "id": "sorts-mill-goudy",
       "in_catalog": true,
-      "names": [],
+      "names": [
+        {
+          "name": "OFL Sorts Mill Goudy TT",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -16562,15 +16571,12 @@
       "family": "Yaldevi",
       "id": "yaldevi",
       "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Yaldevi Colombo",
-      "id": "yaldevi-colombo",
-      "in_catalog": false,
-      "names": [],
+      "names": [
+        {
+          "name": "Yaldevi Colombo",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -16633,7 +16639,7 @@
       "distinct_from": [],
       "family": "Yrsa",
       "id": "yrsa",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -17428,7 +17434,7 @@
     },
     {
       "name": "BLOKK Neue",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "BM",
@@ -19595,6 +19601,10 @@
       "reason": "latin"
     },
     {
+      "name": "Ioskeley Mono Term Nerd Font",
+      "reason": "license"
+    },
+    {
       "name": "Iowan Old Style",
       "reason": "system"
     },
@@ -20027,6 +20037,10 @@
       "reason": "latin"
     },
     {
+      "name": "Lexica Ultralegible",
+      "reason": "latin"
+    },
+    {
       "name": "Libertinus Math",
       "reason": "icon"
     },
@@ -20456,6 +20470,10 @@
     },
     {
       "name": "MiaoUnicode",
+      "reason": "license"
+    },
+    {
+      "name": "Microsoft Aptos font family",
       "reason": "license"
     },
     {
@@ -22355,34 +22373,6 @@
       "reason": "icon"
     },
     {
-      "name": "Redaction",
-      "reason": "latin"
-    },
-    {
-      "name": "Redaction 10",
-      "reason": "latin"
-    },
-    {
-      "name": "Redaction 100",
-      "reason": "latin"
-    },
-    {
-      "name": "Redaction 20",
-      "reason": "latin"
-    },
-    {
-      "name": "Redaction 35",
-      "reason": "latin"
-    },
-    {
-      "name": "Redaction 50",
-      "reason": "latin"
-    },
-    {
-      "name": "Redaction 70",
-      "reason": "latin"
-    },
-    {
       "name": "Red Hat",
       "reason": "latin"
     },
@@ -23532,7 +23522,7 @@
     }
   ],
   "run": {
-    "date": "2026-09-26",
+    "date": "2026-10-17",
     "method_version": "2026-09-29"
   },
   "schema_version": "0.1.0-draft"

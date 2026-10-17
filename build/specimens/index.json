@@ -251,6 +251,13 @@
     "reason": null,
     "sha256": "a0d67ebfaad14c77ea7de6ac5a6d38ea1f905141904906f230cf377eae183df1"
   },
+  "anuphan": {
+    "flags": [],
+    "key": "14a95bb74a47a7bbbca2bbbe7ba6242ea0549e13e533053371c8f42fe78b0630",
+    "path": "specimens/anuphan.svg",
+    "reason": null,
+    "sha256": "8becbca9bac2857d6598cb410d62f59eeec9170bbf7651a4a5ce47a5282bb4f9"
+  },
   "architects-daughter": {
     "flags": [],
     "key": "70ede3e19ec8122326cbe3be405fcd1ff6e668d4f915bbc241b221465568fedf",
@@ -351,10 +358,10 @@
   },
   "awami-nastaliq": {
     "flags": [],
-    "key": "9f63a51866ffaa97388fc544d29b6e33e06d05515e1c48b3ba621a1ff84e9388",
+    "key": "ddc53785129997716bb3bad0ce7db476f99f466f847b8382d0f1a848ea5c10c9",
     "path": "specimens/awami-nastaliq.svg",
     "reason": null,
-    "sha256": "4cd1918f5ea6cd3549ff069c288a035f41679dc4a6934a9d40b295f13f85ac6a"
+    "sha256": "93b18231df744635b9cea14f923d45c3385ce4eb4c5718d53d5f97635cfda054"
   },
   "azeret-mono": {
     "flags": [],
@@ -454,12 +461,12 @@
     "reason": null,
     "sha256": "1743e371b4fe3c33459b54d109575bdd0326796f40d44ebfdf1dc12811fb6c54"
   },
-  "big-shoulders-display": {
+  "big-shoulders": {
     "flags": [],
-    "key": "ef46f80e7a372cba224e4309da0f870764c3d9b0fe88f4bdaa11050f7ff04454",
-    "path": "specimens/big-shoulders-display.svg",
+    "key": "c1b10c1dd3c94d79f9540e0c5331421cde9b69b222ae5ba4fc91310191f55b0b",
+    "path": "specimens/big-shoulders.svg",
     "reason": null,
-    "sha256": "504493d6ae8cc4458da013820ba03c0b103fd4dcde9125f243b859f831069ee6"
+    "sha256": "9301641997591b5061016ab5a2fbde9ee2344c064e5a98d674696414503975ea"
   },
   "bitstream-vera-sans-mono": {
     "flags": [],
@@ -659,10 +666,10 @@
   },
   "charter": {
     "flags": [],
-    "key": "639dd200301bd2a6b50d307263eb9285215b1e510def5d4512f4ab8be393f502",
+    "key": "3b93a055d5662b32e3d5b2ec873eddd2b7c2c40cc729116f1db50d7a9411e3b9",
     "path": "specimens/charter.svg",
     "reason": null,
-    "sha256": "4707a68364e7463ec204f718d3010b9151752af804ce2a509794ef1ec7ae5b8c"
+    "sha256": "6cd4b41869b313ff59bc6c9ccbdfe8d36a5bb9ad8ab8efcfe5151be9a3fd9844"
   },
   "chewy": {
     "flags": [],
@@ -1189,6 +1196,13 @@
     "reason": null,
     "sha256": "084d822e293d3c2f72db27113641c3b1386ba629944195ad984fbda805bf418e"
   },
+  "fustat": {
+    "flags": [],
+    "key": "8b32cbac6f4dc64a49b6d2f1153abc601de95c5fb0b48f59daa4ff6d861c1863",
+    "path": "specimens/fustat.svg",
+    "reason": null,
+    "sha256": "184112027490c050cde809722fe4cee2d3b937e43c01d948e208538bacad2a27"
+  },
   "gabarito": {
     "flags": [],
     "key": "bcf1f3284794ef0b83a0cdada8beefc4c8f14a81614d8bbfcfe86c235f39cf86",
@@ -1223,13 +1237,6 @@
     "path": "specimens/gelasio.svg",
     "reason": null,
     "sha256": "9bba8c6e2b9dad34a5ca209fa55cb96dad7720628352f510e946bb22ea9c2cf3"
-  },
-  "gentium": {
-    "flags": [],
-    "key": "dcd8441d6831f217bc0a87fba5087e7fd319aa8806e6ff96605b51962e2c8b30",
-    "path": "specimens/gentium.svg",
-    "reason": null,
-    "sha256": "784d60355b59865f7b6334b24005573fa5e6eb5682f6f35c54dd2f68d4ecbb56"
   },
   "gentium-plus": {
     "flags": [],
@@ -1303,7 +1310,7 @@
   },
   "google-sans-flex": {
     "flags": [],
-    "key": "c2bb2d1ffe7946be50ddeafcbb26619775a37aa59d18de3f933779153b711f46",
+    "key": "26512504578321753f78a879b452698124a93f81b51092e4959b8d5e6e237ed7",
     "path": "specimens/google-sans-flex.svg",
     "reason": null,
     "sha256": "c783f4e8ab16c996a313e26f37a855cc9962dd75010398f649864b8a2790a662"
@@ -1583,10 +1590,17 @@
   },
   "ioskeley-mono": {
     "flags": [],
-    "key": "e05c8e446ea3ea9d558abe10c248ac84a8373f74a667b11a0b3268edb85417a8",
+    "key": "e8e47ca92e57e4ccdcd132607997f1c789d64e879f1eeb60285823a197ce8f52",
     "path": "specimens/ioskeley-mono.svg",
     "reason": null,
-    "sha256": "f5d4546405a816e67da3fab3f5904ac463c4adcd108a3d36beaf389dad56efc9"
+    "sha256": "f30533da4abacce4ed79a0c63eb721d4da3bc3713e4aeabf5ba7f684359b4ea6"
+  },
+  "italiana": {
+    "flags": [],
+    "key": "9780cf58b16897e648cc08e04a1ecc9435607bc7d8f048db555c9ca185e66576",
+    "path": "specimens/italiana.svg",
+    "reason": null,
+    "sha256": "38b50852a74a2d8cf38ae2d235c36f408da36afee8868296c16e3fab8c7d69f2"
   },
   "itim": {
     "flags": [],
@@ -1688,10 +1702,10 @@
   },
   "kode-mono": {
     "flags": [],
-    "key": "4d0f70077fc27d8bf216663cfc701a8281baaf3d17114ac801c92cb8612e973b",
+    "key": "46abecc6a0ca9b51af482ab0a0ed258904f5eb1e6c811aa736e6734eb61dea17",
     "path": "specimens/kode-mono.svg",
     "reason": null,
-    "sha256": "44c644e62009db77fb15bc637db88fa9ec9782566540ad7f783748184abcdd25"
+    "sha256": "3f9ddeca5ba80d1379d1ec06366473eedffb97f5fbd509fb06f47b91953b4083"
   },
   "kumbh-sans": {
     "flags": [],
@@ -1860,6 +1874,13 @@
     "path": "specimens/libre-baskerville.svg",
     "reason": null,
     "sha256": "0313acf897330f9438944ec8eac5bff276692e6239bce839812b01d9b95dae90"
+  },
+  "libre-bodoni": {
+    "flags": [],
+    "key": "eae33e7c83f5672ae0b56b286c011b962220681ee9219eba458a80162b6570b2",
+    "path": "specimens/libre-bodoni.svg",
+    "reason": null,
+    "sha256": "f8d118b2f88ac2bf9f19750050ae58e2958ad14f7ed728cce34e26678e9cb392"
   },
   "libre-caslon-display": {
     "flags": [],
@@ -2038,10 +2059,10 @@
   },
   "microsoft-selawik": {
     "flags": [],
-    "key": "f42ff288ac63fb5738485be1ae8b9e27490db2ff9f3a8c0f187b02b4a043876d",
+    "key": "ebb92724907150d252616456e519f279ae41b3c9fc3b0f87bba2b9b991297602",
     "path": "specimens/microsoft-selawik.svg",
     "reason": null,
-    "sha256": "1f464740bf555134b3db343b10b4476e90ed9b6dbf4450cbd4657eeee3f00434"
+    "sha256": "46d1873944ae5b8f5c14534e46a5a8262f5410eeb49a62a80ee73aa85d7d9eba"
   },
   "miracode": {
     "flags": [],
@@ -2428,6 +2449,13 @@
     "reason": null,
     "sha256": "e5edfb85d58a08fea647d4b5581f98058bc81ef2a8443c7783e71e3e84381c40"
   },
+  "patua-one": {
+    "flags": [],
+    "key": "a6766e3187ff2b6eb641b17aa876049f7e041435367b76fc82fcaa2b5050798b",
+    "path": "specimens/patua-one.svg",
+    "reason": null,
+    "sha256": "9b6f8c809c6832b2645686bc407c2084db76850a966f6d4bc1ae571e21f7afd5"
+  },
   "permanent-marker": {
     "flags": [],
     "key": "7668699c5892f51668ee98796fa38e744df2884c9df8c48ffb71b220f7a97431",
@@ -2521,10 +2549,10 @@
   },
   "pretendard-std": {
     "flags": [],
-    "key": "f820d0301892c8301379d6e7b2d027babf2df909d93f3ca3e24e8acf0ac8244a",
+    "key": "83c2db37877b59e512226a440a8ffa8e4a1c34ee7e7e271b300fa3e33d6e4868",
     "path": "specimens/pretendard-std.svg",
     "reason": null,
-    "sha256": "047784b11c012a4935c60a496cd0f9035dea0a82879b468aade933ca97401aa9"
+    "sha256": "3d3eb66376aee701a7f20f2488ef10fff7f8367ad1fbc07f1d8bccb1d00da48e"
   },
   "profont": {
     "flags": [],
@@ -2542,10 +2570,10 @@
   },
   "psudofont-liga-mono": {
     "flags": [],
-    "key": "fb6ecd02f9e0bc449a4bca79fab1e569da04aa4bbf4c9c748d3dcb793f8953bd",
+    "key": "ac0675edf1d9c6a3de8b270b35687e0a83238331791e4299024e6f66f09c4cb2",
     "path": "specimens/psudofont-liga-mono.svg",
     "reason": null,
-    "sha256": "02048dfbc5fb6db44e5c9d3af75b35a2396fa5f89eccc464536312bbc2db7cf0"
+    "sha256": "34e02df5d071fbd1fd2378d93d7429a1c4cb541d9333e288891fc3678861f5ff"
   },
   "pt-mono": {
     "flags": [],
@@ -2722,6 +2750,13 @@
     "reason": null,
     "sha256": "d4c11511ebf62756d6aed7439e6deffd4631da821602a6c2a9af2b53c174c7b6"
   },
+  "reem-kufi": {
+    "flags": [],
+    "key": "dcc1e9bf712c579f09af597e046c3365d12214a927ece194d9dfb999acc5a7e4",
+    "path": "specimens/reem-kufi.svg",
+    "reason": null,
+    "sha256": "f1066f64d8a2dd633c3aa53c6b03c8e63fbdc98c00ee5e611d9bb7602a44d72e"
+  },
   "reenie-beanie": {
     "flags": [],
     "key": "36f37527fc1105a120c6c0c10df32a913b5454c08ec0e1df5b06962a5893672b",
@@ -2892,10 +2927,10 @@
   },
   "scoutie-sans": {
     "flags": [],
-    "key": "0cae6295de1c5dd67cce500723990e16fe67375e491440d84a708bf44f9bbb28",
+    "key": "b5595925ff30677dad0939254d996b715665e0e1b3f241b0a3f327b7ae4aa189",
     "path": "specimens/scoutie-sans.svg",
     "reason": null,
-    "sha256": "bf483f5ae4f86b5652b01911787f96cb0f71a8d7747625bed58e4724d2ff0224"
+    "sha256": "a692fcfd25807b06f78fa17cb654d92c222a1e67057d69278fc10b8dfd79b495"
   },
   "secular-one": {
     "flags": [],
@@ -2981,13 +3016,6 @@
     "reason": null,
     "sha256": "361a40f001ccab1603b4b606f92d884373a474dd2e884c341361cd9e54a9260c"
   },
-  "sn-pro-font-family": {
-    "flags": [],
-    "key": "5092e14979af8b5399a9fbcd46b9f96fa449f6c3e8b2514a17b05a0bb0adf0e3",
-    "path": "specimens/sn-pro-font-family.svg",
-    "reason": null,
-    "sha256": "f69a7401e7af94ce1ccfe52983fcaa3f02ca2edb78c5c783986d48f774da78db"
-  },
   "sniglet": {
     "flags": [],
     "key": "5824ff76eeda1740c52243b8cc60ea7c95cceaecc74eefb7083ac350a284d107",
@@ -3008,6 +3036,13 @@
     "path": "specimens/sofia-sans-condensed.svg",
     "reason": null,
     "sha256": "85a507c208edec53fb983cf6002ca45a3b0fcd05eb4c9e851c62dfe26200ce33"
+  },
+  "sofia-sans-extra-condensed": {
+    "flags": [],
+    "key": "6d050936478b0f4a50f44c24b530cb7a658c895ac8b8b32e29ee12c80972eb1d",
+    "path": "specimens/sofia-sans-extra-condensed.svg",
+    "reason": null,
+    "sha256": "7be849b5347911368c783b7b014973d11bde8df387f5f76cfa1a5544fe7da821"
   },
   "sometype-mono": {
     "flags": [],
@@ -3130,10 +3165,10 @@
   },
   "sudo": {
     "flags": [],
-    "key": "0f48211aa9ca2ddbd70e996b1836ecf20333e0ef2e4c9b07ea0aa3f13f54e7e3",
+    "key": "d72588cd70d4a13306f74b4591d59c96f9668d7e13a7975570ee9e83e5070a3e",
     "path": "specimens/sudo.svg",
     "reason": null,
-    "sha256": "f068a3dabfa981d139f85b372b00d544eb6d6d589a3ee3b68a66950371b86171"
+    "sha256": "60919deca9d52c6b04b66f56b5b48ff5751b23824c7f4654be3083ce138e2850"
   },
   "sunshiney": {
     "flags": [],
@@ -3471,6 +3506,13 @@
     "reason": null,
     "sha256": "a7a37525cb22fccaa0c4cd8176a9f83089521f6354496cab23f07e8bd0d5c6be"
   },
+  "yrsa": {
+    "flags": [],
+    "key": "2f52b15701e7cf1eeb23a3e03d2dac25e9216f6d3746468db0b15a0b33a87f80",
+    "path": "specimens/yrsa.svg",
+    "reason": null,
+    "sha256": "daf6a0cc44312b2187272168dca11e02ed406d9e33948a37d2aa7be82740929c"
+  },
   "zalando-sans": {
     "flags": [],
     "key": "90902754cc7441986580078dee1715ef39bbecbf23cd14276018556008004103",
@@ -3487,10 +3529,10 @@
   },
   "zed-sans": {
     "flags": [],
-    "key": "827c0e98144e8db6bf7c26dbdf72a6afc082e4bcc242a2e8c1a8b5c3d0d65511",
+    "key": "8ac159e28d087696eb3aee611646e232b4b0969543a52623cccf084cff0c7544",
     "path": "specimens/zed-sans.svg",
     "reason": null,
-    "sha256": "38e8f605320cc4d44e49d708a45d29401305f5cb42e8cb2cddd935c4465ef46b"
+    "sha256": "a919c77dfede4ce275fcd060b76bd3aab628b3fb3c591a4ec1602727b44f6d36"
   },
   "zilla-slab": {
     "flags": [],
