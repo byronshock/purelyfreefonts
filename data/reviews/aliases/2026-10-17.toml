@@ -1,0 +1,152 @@
+# Owner rulings, gate A: the alias queue of the 2026-10-17 run (held unmerged, refresh_collect_and_hold).
+# Ruled by the owner in chat on 2026-10-17 as one question ("My corrected list (Recommended)"); recorded with `tff-catalog rulings apply`.
+# The three groups were answered member by member: each held a Maple release file the queue would have counted as Maple Mono.
+# Each ruling: choice = the option picked; recommended = whether it was the recommended option; ruling = what it means; reason = why, and whose words those are.
+
+[A-1151ccd7e2]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: the AUR package installs only Shantell Sans's static OTFs (its variable twin is already a build row)."
+
+[A-16bff46ac0]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: the files are Microsoft's 2015 Selawik, which sil_selawik_folds credits to Microsoft Selawik; the WinJS symbol font beside them is an icon font, so it stays a package, not a bundle of 2."
+
+[A-18887b84ed]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: the AUR package installs Supernotes' SN Pro, the release the sn_pro_fold already counts."
+
+[A-1dfd89904a]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: nerd-fonts-noto-sans-mono patches only Noto Sans Mono with Nerd Fonts: a Nerd build."
+
+[A-2b0b319a83]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: it installs Ioskeley Mono with its Term and no-ligature builds, which already count toward Ioskeley Mono."
+
+[A-301ae5053c]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: SIL renamed Gentium Plus to Gentium in 2022, and Arch's ttf-gentium is that font (7.000); sil_selawik_folds counts the renamed packages under Google's name."
+
+[A-40b4449fb1]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: gentium-font is only a name ttf-gentium provides; the row stops it returning to the queue, as its twin gentium-book-font's did."
+
+[A-4e6233f911]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: it installs Geist's static TTFs only (Geist Mono is packaged separately)."
+
+[A-541b07d6f7]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: the OpenType files of the same Geist; two packages of one family each count, as for Crimson Pro's otf and ttf packages."
+
+[A-8f0c43730c]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: it holds only Noto Sans Mono's variable font: a variable build."
+
+[A-b3acbd02fa]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: it installs only Geist's variable font: a variable build."
+
+[A-f001cb82dd]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: Arch's old split of Terminus's OpenType-bitmap files, since merged into terminus-font: the original font, a package like terminus-font."
+
+[A-c9a4ed70ad]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: Debian's fonts-sn-pro packages Supernotes' SN Pro, Google's SN Pro family."
+
+[A-e1677db06c]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: the Debian source package of fonts-sn-pro; the row lets Debian's license data back SN Pro's."
+
+[A-e37e4dfaab]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: a third-party package named as Google's folder for Noto Sans JP, mapped by name as the owner's rule for such packages says (one install)."
+
+[A-fa502abd79]
+choice = "a"
+recommended = true
+ruling = "Accept: add the alias row"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: the Debian source package of Terminus, whose X11 binaries already count toward Terminus."
+
+[A-2018d55f04]
+choice = "a"
+recommended = true
+relation = "build"
+ruling = "Accept, corrected: a build of Terminus, not a package"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: terminus-font-ttf is a third party's TrueType conversion of the Terminus bitmap font, which the owner ruled on 2026-09-28 counts toward Terminus as a build."
+
+[A-439d63835f]
+choice = "a"
+recommended = true
+detail = "proprietary"
+relation = "ineligible"
+ruling = "Accept, corrected: ineligible row (proprietary)"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: Century Gothic is a commercial Monotype font; the deleted AUR script fetched it from a download site with no license. Packages of proprietary fonts get an ineligible row, as Consolas and Comic Sans did."
+
+[A-8719d13f49]
+choice = "a"
+recommended = true
+detail = "4"
+relation = "bundle"
+ruling = "Accept, corrected: a bundle of 4 (ProggyClean, ProggySmall, ProggySquare, ProggyTiny)"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: despite its name the package installs four Proggy designs from ProggyOriginal v1.1.7; the multi_family_packages ruling makes a multi-family package a bundle, as for ttf-amiri and font-bitstream-vera."
+
+[A-27c7cd4bab]
+choice = "a"
+recommended = true
+detail = "icon"
+relation = "ineligible"
+ruling = "Accept, corrected: ineligible row (icon)"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: Codicons is VS Code's icon font; packages of icon fonts get an ineligible icon row, as Material Design Icons' Debian source package did."
+
+[A-4ff621c865]
+choice = "b"
+recommended = true
+recommendation = "b"
+ruling = "Reject: the alias never maps to that family"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: MapleUI.zip holds Maple UI, a separate proportional UI typeface built from Google Sans and Hanyi Zhengyuan (\"No longer recommended\" in its release notes). The queue's (a) came from the github_repos miner's default: its skip rule for other Maple families (Maple\\.(?:UI|hand)\\..*) misses the files' 2026-10-11 names. Their downloads count toward nothing."
+
+[A-92fa95dbb1]
+choice = "b"
+recommended = true
+recommendation = "b"
+ruling = "Reject: the alias never maps to that family"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: MapleHand.zip holds Maple Hand, a separate handwriting typeface built from Klee Pro, Hanyi Tang Meiren and a Founder font. The queue's (a) came from the github_repos miner's default: its skip rule for other Maple families (Maple\\.(?:UI|hand)\\..*) misses the files' 2026-10-11 names. Their downloads count toward nothing."
+
+[A-5f8ee01316]
+choice = "b"
+recommended = true
+recommendation = "b"
+ruling = "Reject: the alias never maps to that family"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"My corrected list (Recommended)\"), on Claude's verified research: mactype-subframe7536.ini is a settings profile for MacType, a Windows font-rendering tool, and holds no typeface. The queue's (a) came from the github_repos miner's default: its skip rule for other Maple families (Maple\\.(?:UI|hand)\\..*) misses the files' 2026-10-11 names. Their downloads count toward nothing."
