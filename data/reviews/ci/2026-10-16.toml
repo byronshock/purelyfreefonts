@@ -1,0 +1,23 @@
+# Owner rulings of 2026-10-16 on the monthly refresh, asked in chat by the lead session as single-select questions.
+# Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md (Monthly data refresh).
+
+[refresh_collect_and_hold]
+choice = "a"
+recommended = true
+value = "live_run_pull_request_held_unmerged"
+ruling = "Monthly collection goes on while Milestone 2's launch and the scoring-method port are on hold. Each month Claude dispatches the refresh live on GitHub from main; its snapshots go into the private data store, and its \"Monthly refresh <date>\" pull request is kept as an unmerged draft, so main, the site and the published scores don't change. refresh_timing stands for the first merged refresh, which still comes after Milestone 2's launch. When the port lands, a held date is replayed with from_snapshots and reviewed under the new method. The first such run is 2026-10-17 (UTC)."
+reason = "The owner: \"It is the middle of the month and time to collect our monthly data. This will be the first new data after the September freeze.\" Of (a) collect and hold, (b) run and merge now, which amends refresh_timing and publishes scores from the method the port replaces, and (c) wait for the launch, which loses October's snapshots and delays g3_github_revisit's six snapshots, the owner took Claude's recommendation."
+
+[refresh_gate_review_now]
+choice = "a"
+recommended = true
+value = "method_independent_gates_now"
+ruling = "After a held run, Claude reviews the questions that don't depend on the scoring method (gates A, U, LIC, L3, X, L and K, and the link check) and asks the owner in batches; their rulings go to main, ready for the replay. Score changes are reviewed after the port, on the replay under the new method."
+reason = "Of (a) these now and (b) everything after the port, the owner took Claude's recommendation."
+
+[store_key_environment_timing]
+choice = "a"
+recommended = true
+value = "after_the_first_held_run"
+ruling = "DATA_STORE_KEY moves from a repository secret into the main-only environment \"refresh\" (docs/milestone-refresh.md step 1) after the 2026-10-17 run and before the schedule goes on, so the first live run uses the setup that worked on 2026-09-30. The owner creates the environment and moves the secret, with the commands from Claude."
+reason = "Of (a) after this run and (b) before it, which closes the exposure first but adds an untested piece to the first live run, the owner took Claude's recommendation."

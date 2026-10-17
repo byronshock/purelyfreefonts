@@ -2,7 +2,7 @@
 
 What the owner and Claude do by hand each month, in order. It starts from [methodology §10](../docs/ranking-methodology.md#10-manual-work-beyond-monthly-review) and uses only commands that exist on 2026-09-30 (Milestone 1 step 20). Milestone 4 step 12 extends it.
 
-**Where it stands.** No live refresh has run yet, and the schedule is off. The first live refresh, the schedule and the watchdog come after Milestone 2, in [docs/milestone-refresh.md](../docs/milestone-refresh.md) (`refresh_timing`). Until then the site shows the 2026-09-26 catalog that `state/` holds, and only [Other manual tasks](#other-manual-tasks) come up. A step marked **(after milestone-refresh.md)** doesn't exist until the step of that milestone named with it.
+**Where it stands.** No live refresh has been merged yet, and the schedule is off. Since 2026-10-16 (`refresh_collect_and_hold`) each month's live run is dispatched by hand and its pull request kept as an unmerged draft until Milestone 2's launch and the scoring-method port; the first was 2026-10-17. Its steps are steps 1 to 6 below, without the merge, and the review covers only the questions that don't depend on the method ([milestone-refresh.md](../docs/milestone-refresh.md), "Collect and hold"). The first merged refresh, the schedule and the watchdog come after Milestone 2, in [docs/milestone-refresh.md](../docs/milestone-refresh.md) (`refresh_timing`). Until then the site shows the 2026-09-26 catalog that `state/` holds. A step marked **(after milestone-refresh.md)** doesn't exist until the step of that milestone named with it.
 
 Local commands run from the project root, with the private snapshot store:
 
