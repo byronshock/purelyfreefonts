@@ -1,0 +1,10 @@
+# Owner rulings, gate K: link overrides of the 2026-10-17 run (held unmerged, refresh_collect_and_hold).
+# Ruled by the owner in chat on 2026-10-17 ("Qualifies, GitHub link (Recommended)"); recorded with `tff-catalog rulings apply`.
+# When Claude's researched recommendation differs from the printed (rec), the answer records that option's letter as recommendation; each pick names its url.
+
+[K-redaction]
+choice = "b"
+recommended = true
+recommendation = "b"
+ruling = "https://github.com/jeremymickel/Redaction/releases (from google_repo)"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"Qualifies, GitHub link (Recommended)\"), on Claude's verified research, over the queue's mechanical (a): the designer's GitHub releases page (MCKL) offers the current 1.004 fonts, the files Google Fonts is adding and the catalog checked, under the plain OFL with no click-through; redaction.us is the art project's site and serves an older May 2020 build (\"Version 2.001\") behind an \"Agree\" step."

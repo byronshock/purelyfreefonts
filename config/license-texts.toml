@@ -460,6 +460,14 @@ name = "Linux Biolinum"
 texts = ["https://salsa.debian.org/fonts-team/fonts-linuxlibertine/-/raw/eb98444a1daaff492ea7cac4e92f5f83bc22913c/OFL-1.1.txt"]
 reason = "As for Linux Libertine, released with it: OFL-1.1 by the owner's ruling (LIC-linux-biolinum), the 5.3.0 release's OFL-1.1.txt, byte for byte on Debian's upstream branch."
 
+# --- families the owner let in on 2026-10-17 (gate LIC, data/reviews/licenses/2026-10-17.toml) --
+
+[[family]]
+family = "luciole"
+name = "Luciole"
+texts = ["https://raw.githubusercontent.com/creativecommons/cc-legal-tools-data/a0dac18d1a773b4cdb7d8dd5d9bf4efab7901030/docs/licenses/by/4.0/legalcode.txt"]
+reason = "No source states a license; the owner ruled it qualifies under CC BY 4.0, attribution required (LIC-luciole). luciole-vision.com and the fonts' name IDs 13 and 14 (Luciole 2.001, in the Homebrew cask's zip) name Creative Commons Attribution 4.0 International, and no source gave a text; Creative Commons' plain-text legal code, pinned at a commit of its cc-legal-tools-data repository and byte for byte the file creativecommons.org serves, matches the canonical CC-BY-4.0 text (checked 2026-10-17)."
+
 # --- researched texts --------------------------------------------------------------------------
 
 [[text]]

@@ -1,0 +1,60 @@
+# Owner rulings, gate LIC: the license queue of the 2026-10-17 run (held unmerged, refresh_collect_and_hold), and Luciole (no_license_families).
+# Ruled by the owner in chat on 2026-10-17 as two questions ("Qualifies, GitHub link (Recommended)" for the Redaction families; "Both qualify (Recommended)" for Ezra SIL and Luciole); recorded with `tff-catalog rulings apply`.
+# Each ruling: choice = the option picked; recommended = whether it was the recommended option; ruling = what it means; reason = why, and whose words those are.
+
+[LIC-ezra-sil]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"Both qualify (Recommended)\"), on Claude's verified research: SIL licenses Ezra SIL's Hebrew layout code (VOLT sources) under MIT and the rest of the font under OFL-1.1 (software.sil.org/ezra, Licenses.txt); Debian's new machine-readable copyright file says the same (Files: VOLT/* Expat, Files: * OFL-1.1). Both allow every use and redistribution, and the listed license stays OFL-1.1, as for LIC-hack."
+
+[LIC-redaction]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"Qualifies, GitHub link (Recommended)\"), on Claude's verified research: redaction.us's \"Agree\" step shows only the OFL 1.1 and a line that the fonts are also under LGPL 2.1, an alternative, as for Overpass; neither the 2020 license text nor the designer's 2026 OFL.txt (github.com/jeremymickel/Redaction) declares a Reserved Font Name. The seven families share one license file."
+
+[LIC-redaction-10]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"Qualifies, GitHub link (Recommended)\"), on Claude's verified research: redaction.us's \"Agree\" step shows only the OFL 1.1 and a line that the fonts are also under LGPL 2.1, an alternative, as for Overpass; neither the 2020 license text nor the designer's 2026 OFL.txt (github.com/jeremymickel/Redaction) declares a Reserved Font Name. The seven families share one license file."
+
+[LIC-redaction-20]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"Qualifies, GitHub link (Recommended)\"), on Claude's verified research: redaction.us's \"Agree\" step shows only the OFL 1.1 and a line that the fonts are also under LGPL 2.1, an alternative, as for Overpass; neither the 2020 license text nor the designer's 2026 OFL.txt (github.com/jeremymickel/Redaction) declares a Reserved Font Name. The seven families share one license file."
+
+[LIC-redaction-35]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"Qualifies, GitHub link (Recommended)\"), on Claude's verified research: redaction.us's \"Agree\" step shows only the OFL 1.1 and a line that the fonts are also under LGPL 2.1, an alternative, as for Overpass; neither the 2020 license text nor the designer's 2026 OFL.txt (github.com/jeremymickel/Redaction) declares a Reserved Font Name. The seven families share one license file."
+
+[LIC-redaction-50]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"Qualifies, GitHub link (Recommended)\"), on Claude's verified research: redaction.us's \"Agree\" step shows only the OFL 1.1 and a line that the fonts are also under LGPL 2.1, an alternative, as for Overpass; neither the 2020 license text nor the designer's 2026 OFL.txt (github.com/jeremymickel/Redaction) declares a Reserved Font Name. The seven families share one license file."
+
+[LIC-redaction-70]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"Qualifies, GitHub link (Recommended)\"), on Claude's verified research: redaction.us's \"Agree\" step shows only the OFL 1.1 and a line that the fonts are also under LGPL 2.1, an alternative, as for Overpass; neither the 2020 license text nor the designer's 2026 OFL.txt (github.com/jeremymickel/Redaction) declares a Reserved Font Name. The seven families share one license file."
+
+[LIC-redaction-100]
+choice = "a"
+recommended = true
+ruling = "Qualifies and redistributable"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"Qualifies, GitHub link (Recommended)\"), on Claude's verified research: redaction.us's \"Agree\" step shows only the OFL 1.1 and a line that the fonts are also under LGPL 2.1, an alternative, as for Overpass; neither the 2020 license text nor the designer's 2026 OFL.txt (github.com/jeremymickel/Redaction) declares a Reserved Font Name. The seven families share one license file."
+
+[LIC-luciole]
+choice = "a"
+recommended = true
+attribution_required = true
+group = "attribution"
+spdx = "CC-BY-4.0"
+ruling = "Qualifies and redistributable, under CC BY 4.0, attribution required"
+reason = "The owner's ruling in chat with the lead session on 2026-10-17 (\"Both qualify (Recommended)\"), on Claude's verified research (no_license_families: no source states a license, and Luciole would place about overall 261): luciole-vision.com releases it under Creative Commons Attribution 4.0, and the fonts' name IDs 13 and 14 (Luciole 2.001 in the Homebrew cask's zip, read by this run's facts) state CC BY 4.0 International. CC BY qualifies with the credit-required badge (D3). Its text is in config/license-texts.toml for gate L3."
