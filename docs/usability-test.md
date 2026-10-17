@@ -74,7 +74,7 @@ Each task has what to **say**, when it's **done** (for the notes, not read aloud
 ### 1. A coding font for an app
 
 - **Say:** "You're building an app and need a popular coding font, one where every letter takes the same width. You'll put the font file inside the app. Find one you're allowed to do that with."
-- **Done:** they pick a monospace font (from the *Coding fonts* rank, or with Category: *Monospace*), and say why they think they may ship it: the front page's "you may share the files", or the license in its details. Since 2026-09-30 every listed font may be redistributed (Rule 3).
+- **Done:** they pick a monospace font (from the *Coding* rank, or with Category: *Monospace*), and say why they think they may ship it: the front page's "you may share the files", or the license in its details. Since 2026-09-30 every listed font may be redistributed (Rule 3).
 - **Watch for:** the route they take (the Coding rank, category Monospace, or search); whether they connect "put the font file inside the app" with sharing the files; whether they notice that every font here may be shipped, or go looking for a filter.
 
 ### 2. A body-text serif with Polish accents
@@ -95,16 +95,16 @@ Each task has what to **say**, when it's **done** (for the notes, not read aloud
 - **Done:** they choose their system under "Hide fonts that come with" (Windows, macOS, Linux or Android).
 - **Watch for:** whether they expect the site to know which fonts they have (Milestone 3's check), and the words they use for it; whether "come with" is clear. An iPhone has no option of its own: note what the tester does, as a finding, not a failure.
 
-### 5. Most chosen and most installed
+### 5. Chosen and installed
 
 - **Say:** "Switch the list to the fonts people installed on purpose. Then switch it to the fonts on the most computers. Why did the list change?"
-- **Done:** they choose *Desktop: most chosen*, then *Desktop: most installed*, and explain in their own words that *most chosen* leaves out the installs that Linux systems make on their own. A bonus: they spot a font marked "no evidence of deliberate installs" and its "Comes with" tag, or the "Pulled in by" line under its details' "All ranks and sources".
-- **Watch for:** whether they read the line under the rank selector; whether "most chosen" and "most installed" make sense; confusion with *Overall*.
+- **Done:** they choose *Chosen (desktop)*, then *Installed (desktop)*, and explain in their own words that *Chosen* leaves out the installs that Linux systems make on their own. A bonus: they spot a font marked "no evidence of deliberate installs" and its "Comes with" tag, or the "Pulled in by" line under its details' "All ranks and sources".
+- **Watch for:** whether they read the line under the *Measure* selector (phones leave it out); whether "Chosen" and "Installed" make sense, and whether "(desktop)" says enough (on phones the closed selector shows only "Chosen (d…" and "Installed…"); confusion with *Overall*.
 
 ### 6. Why does one font rank above another?
 
 - **Say:** "Why does <font A> rank above <font B>? How sure is the site about that?" Use the round's chosen pair.
-- **Done:** they open both fonts' details and "All ranks and sources", point to the per-source ranks, and read the tier (Firm, Fair or Rough) or the range, saying in their own words how sure the site is. Opening *How we rank* counts too.
+- **Done:** they open both fonts' details and "All ranks and sources", point to the per-source ranks, and read the tier (Firm, Fair or Rough) or the range, saying in their own words how sure the site is. Opening *How it works*, the page "How we measure popularity", counts too.
 - **Watch for:** jargon: tier, band, range, "below the floor", "not covered"; whether they follow a source to its credit on the methodology page; whether they trust the rank, and why.
 
 ### 7. A handwriting font's download page, on a phone
@@ -116,7 +116,7 @@ Each task has what to **say**, when it's **done** (for the notes, not read aloud
 ### 8. Send this view to a friend
 
 - **Say:** "Send the list exactly as you see it now to a friend. For now, send it to me in the chat."
-- **Done:** they send the page address (from the address bar or the browser's share menu), and the owner opens it in a new window and sees the same rank, filters and search.
+- **Done:** they send the page address (from the address bar or the browser's share menu), and the owner opens it in a new window and sees the same measure, filters and search.
 - **Watch for:** looking for a "Share" button; doubting that the address keeps the filters; finding the full address on a phone.
 
 ### 9. Questions
@@ -167,7 +167,7 @@ One file per session, `research/usability/round-N/P3.md`:
 | 2. Body-text serif, accents | | | |
 | 3. Inter | | | |
 | 4. Hide own fonts | | | |
-| 5. Most chosen, most installed | | | |
+| 5. Chosen, installed | | | |
 | 6. Why A above B | | | |
 | 7. Handwriting, phone | | | |
 | 8. Send the view | | | |

@@ -4,30 +4,18 @@
   site/CONTRACT.md, "Templates" (every page's context plus `list`). The list itself, filters
   included, is in _list.html.j2 so a later /check/ page can include it unchanged.
 
-  "Why isn't my favorite free font here?" is the owner's front-page note, word for word
-  (site rulings of 2026-09-29, data/reviews/site/2026-09-29.toml: why_not_listed and
-  why_not_listed_layout). It comes twice and 20-list.css displays one: div.why-wide, a frame
-  floated right beside the lead and the privacy note on wide screens, which the list starts
-  below; details.why-fold under the intro on phones, folded to its heading. The other one is
-  display: none, so screen readers get the text once, and neither needs a script.
+  The page stops after the lead (owner's site rulings of 2026-10-07): the note "Why isn't my
+  favorite free font here?" is on the About page (why_not_listed_to_about), and the privacy
+  line is in every page's footer (privacy_line_in_footer). On phones the heading is smaller
+  and the lead shows its first sentence only; the second stays in the page for screen readers
+  (mobile_first_screen_two_fonts, 2026-10-06; 20-list.css).
 -#}
 {% extends "base.html.j2" %}
 {% block head %}
 <link rel="preload" href="{{ list.index_url }}" as="fetch" crossorigin>
 {% endblock %}
 {% block main %}
-{% macro why_heading() %}Why isn't my favorite free font here?{% endmacro %}
-{% macro why_text() %}Not every font that's free to download is free to use in every way, and not every license fits this project. Some fonts are free only for personal projects or as a trial, or only if you never change or embed them. Others come with terms that can reach into the documents or products you make with them. This list includes only fonts whose licenses let anyone use them in any project, personal or commercial, with no limits on how they're used. Examples include the SIL Open Font License, Apache, MIT and public-domain dedications. Some of these fonts ask you to credit the designer, and we mark those. We read each font's own license text rather than trusting a label. Any font with a qualifying license is eligible to be listed. If you think one belongs here, email <a href="mailto:{{ site.feedback.email }}">{{ site.feedback.email }}</a> and ask us to consider it.{% endmacro %}
-<h1>The most popular purely free fonts</h1>
-<div class="why why-wide">
-<h2 id="why-h">{{ why_heading() }}</h2>
-<p>{{ why_text() }}</p>
-</div>
-<p class="lead">Every font here is free for any personal or commercial use, and you may share the files. They are ranked by how many people install them and use them in their work.</p>
-<p class="privacy-note">No cookies, no tracking, and the page loads only its own files. <a href="/privacy/">Check the Network tab</a>.</p>
-<details class="why why-fold">
-<summary>{{ why_heading() }}</summary>
-<p>{{ why_text() }}</p>
-</details>
+<h1 class="list-title">The most popular purely free fonts</h1>
+<p class="lead">Every font here is free for any personal or commercial use, and you may share the files. <span class="visually-hidden-phone">They are ranked by how many people install them and use them in their work.</span></p>
 {% include "_list.html.j2" %}
 {% endblock %}

@@ -693,7 +693,7 @@ def test_every_page_links_the_blog_and_its_feed(site_dir):
         assert [a["href"] for a in feeds] == ["/blog/feed.xml"], path
 
 
-def test_the_nav_puts_blog_after_how_we_rank(built):
+def test_the_nav_puts_blog_after_how_it_works(built):
     page = built["index"]
     hrefs = [a["href"] for a in page.attrs("a") if a.get("href", "").startswith("/")]
     start = hrefs.index("/methodology/")

@@ -302,6 +302,33 @@ def test_early_version_line_is_in_the_header_of_every_page():
             assert "block header" not in template.read_text(encoding="utf-8"), template.name
 
 
+PRIVACY_LINE = (
+    "No cookies, no tracking, and the page loads only its own files. Check the Network tab."
+)
+
+
+@pytest.mark.parametrize("tip_url", [None, TIP_URL])
+def test_the_privacy_line_is_in_every_pages_footer(tip_url):
+    """The owner's site ruling of 2026-10-07 (privacy_line_in_footer): the line that stood
+    under the front page's lead is one short line in the footer of every page, after the
+    feedback spot and the tip link and before the data date, and its link leads to where the
+    Privacy page explains the check."""
+    for path in [*NAV, "/404.html"]:
+        footer = dom(render(path, tip_url=tip_url)).find("footer")
+        classes = [n.attrs.get("class") for n in footer.children]
+        assert classes == [
+            "feedback",
+            *(["tip"] if tip_url else []),
+            "footer-privacy",
+            "footer-meta",
+        ]
+        line = footer.find("p", class_="footer-privacy")
+        assert " ".join(line.text.split()) == PRIVACY_LINE
+        (link,) = line.find_all("a")
+        assert link.attrs == {"href": "/privacy/#check-for-yourself"}
+        assert link.text == "Check the Network tab"
+
+
 def test_one_feedback_spot_first_in_the_footer_the_same_on_every_page():
     """M2-D10 and WCAG 3.2.6: GitHub issue forms and an email link with a subject, in one
     place on every page."""
@@ -443,6 +470,13 @@ def test_skip_link_is_off_screen_until_focused():
     assert shown == {"transform": "none"}
 
 
+def test_skip_link_ring_takes_the_header_focus_colour():
+    """The skip link shows over the header, white in both themes, so its ring is the header's
+    focus colour (3:1 on white), not the dark theme's --c-focus (about 2.1:1 there)."""
+    (ring,) = [d for m, s, d in RULES if not m and s == ".skip-link:focus-visible"]
+    assert ring == {"outline-color": "var(--c-header-focus)"}
+
+
 # ------------------------------------------------------------------------- the static files
 
 
@@ -550,11 +584,14 @@ def test_wordmark_svg_is_the_pinned_source_without_the_editors_data():
     assert (STATIC / "wordmark.svg").read_text(encoding="utf-8") == module.drawing_only(source)
 
 
-@pytest.mark.parametrize(("width", "want"), [(1280, 410), (768, 410), (700, 270), (375, 270)])
+@pytest.mark.parametrize(
+    ("width", "want"), [(1280, 410), (768, 410), (760, 410), (759, 270), (700, 270), (375, 270)]
+)
 def test_the_wordmark_is_410_px_wide_from_760_px_and_270_below(browser, site_url, width, want):
     """Owner rulings of 2026-10-04 and 2026-10-06: 410 px wide where the navigation fits beside
     it (760 px and up) and 270 px below that (capitals about 38 and 25 px tall), in the header,
-    which is white in both themes."""
+    which is white in both themes. test_the_header_keeps_one_row_at_every_width re-measures the
+    760."""
     for scheme in ("light", "dark"):
         context = browser.new_context(
             base_url=site_url, viewport={"width": width, "height": 800}, color_scheme=scheme
@@ -575,6 +612,68 @@ def test_the_wordmark_is_410_px_wide_from_760_px_and_270_below(browser, site_url
             assert box[3] == "rgb(255, 255, 255)", (scheme, box)
         finally:
             context.close()
+
+
+# The header, laid out: the wordmark's width, the nav's width and lines, whether the nav sits
+# beside the wordmark, and the lines of the early-version line (0 when it isn't shown).
+HEADER_JS = """() => {
+  const box = (e) => e.getBoundingClientRect();
+  const mid = (b) => (b.top + b.bottom) / 2;
+  const mark = box(document.querySelector('.site-name-mark'));
+  const links = [...document.querySelectorAll('.site-nav li')].map(box);
+  const status = document.querySelector('.site-status');
+  const lines = (e) => new Set([...e.getClientRects()].map((r) => Math.round(r.top))).size;
+  return { height: Math.round(box(document.querySelector('.site-header')).height * 10) / 10,
+           mark: mark.width, nav: links[links.length - 1].right - links[0].left,
+           navLines: new Set(links.map((b) => Math.round(b.top))).size,
+           beside: Math.abs(mid(links[0]) - mid(mark)) < 8,
+           status: getComputedStyle(status).display === 'none' ? 0 : lines(status),
+           scrollWidth: document.documentElement.scrollWidth };
+}"""
+# The one-row header's parts (10-base.css): the side gutters, the gap between the wordmark and
+# the nav, the wide wordmark, and the breakpoint (47.5rem) from which the two share a row.
+GUTTER, GAP, WIDE_MARK, BREAKPOINT, PHONE = 16, 24, 410, 760, 640
+WIDTHS = sorted({*range(320, 1281, 4), PHONE - 1, PHONE, BREAKPOINT - 1, BREAKPOINT})
+
+
+@pytest.mark.parametrize("path", [*NAV, "/missing"])
+def test_the_header_keeps_one_row_at_every_width(browser, site_url, path):
+    """#55's one-row rule (owner ruling of 2026-10-04, wordmark_breakpoint), on each page, whose
+    own nav link is bold. From 760 px the 410 px wordmark and the nav share one row; below it
+    the 270 px one does, down to about 610 px, where the nav takes its own line under the
+    wordmark, still one line at 320 px. The early-version line takes one line of its own from
+    40rem and isn't shown on phones (early_line_hidden_on_phones, 2026-10-06). Every 4 px from
+    320 to 1280 px, so a second row is caught: the header has one height per layout. And the
+    widest one-row header, 16 + 410 + 24 + the nav + 16, fits the breakpoint: a longer nav
+    ("How it works", 2026-10-05, or a "Tip Jar") moves the 47.5rem rule and this test. So does
+    the Blog link, which every build gets once a post is published (about 795 px); a draft
+    that only staging shows (--drafts) isn't measured here."""
+    context = browser.new_context(base_url=site_url, viewport={"width": 1280, "height": 800})
+    try:
+        page = context.new_page()
+        page.goto(path)
+        nav = page.evaluate(HEADER_JS)["nav"]
+        need = GUTTER + WIDE_MARK + GAP + nav + GUTTER
+        assert need <= BREAKPOINT, f"the one-row header needs {need:.1f} px: move the breakpoint"
+        heights: dict[str, set[float]] = {"wide": set(), "middle": set(), "phone": set()}
+        for width in WIDTHS:
+            page.set_viewport_size({"width": width, "height": 800})
+            got = page.evaluate(HEADER_JS)
+            where = (width, got)
+            assert got["navLines"] == 1, where
+            assert got["scrollWidth"] <= width, where
+            if width >= BREAKPOINT:
+                layout, mark = "wide", WIDE_MARK
+            else:
+                layout, mark = ("middle" if width >= PHONE else "phone"), 270
+            assert abs(got["mark"] - mark) < 1, where
+            assert got["beside"] or layout == "phone", where
+            assert got["status"] == (0 if layout == "phone" else 1), where
+            heights[layout].add(got["height"])
+        assert [len(heights["wide"]), len(heights["middle"])] == [1, 1], heights
+        assert len(heights["phone"]) <= 2, heights  # the nav beside the wordmark, or under it
+    finally:
+        context.close()
 
 
 def _generator() -> Any:
@@ -713,7 +812,7 @@ def test_shell_tab_stops_show_the_ring_and_are_never_covered(guarded_context, si
     assert "footer" in where, where
     assert [s["text"] for s in seen if s["where"] == "header"][1:] == [
         "Fonts",
-        "How we rank",
+        "How it works",
         *blog,
         "About",
         "Privacy",

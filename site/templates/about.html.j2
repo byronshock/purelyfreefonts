@@ -2,6 +2,12 @@
   about.html.j2: /about/ (Milestone 2 step 7). The text is site/content/about.md, rendered
   by tff_site.pages (raw HTML off). Context: every page's, plus `heading` and `content`. No
   script: the page needs none. Styles: site/css/40-pages.css.
+
+  The page closes with "Why isn't my favorite free font here?", the owner's note word for word
+  (site rulings of 2026-09-29, why_not_listed), which moved here from the front page on
+  2026-10-07 (why_not_listed_to_about). It lives in this template rather than about.md for its
+  stable anchor, #why-not-listed, which the front page's empty-search message is to link to,
+  and its mailto link to site.feedback.email.
 -#}
 {% extends "base.html.j2" %}
 {% block scripts %}{% endblock %}
@@ -9,5 +15,7 @@
 <article class="page page-prose">
 <h1>{{ heading }}</h1>
 {{ content }}
+<h2 id="why-not-listed">Why isn't my favorite free font here?</h2>
+<p>Not every font that's free to download is free to use in every way, and not every license fits this project. Some fonts are free only for personal projects or as a trial, or only if you never change or embed them. Others come with terms that can reach into the documents or products you make with them. This list includes only fonts whose licenses let anyone use them in any project, personal or commercial, with no limits on how they're used. Examples include the SIL Open Font License, Apache, MIT and public-domain dedications. Some of these fonts ask you to credit the designer, and we mark those. We read each font's own license text rather than trusting a label. Any font with a qualifying license is eligible to be listed. If you think one belongs here, email <a href="mailto:{{ site.feedback.email }}">{{ site.feedback.email }}</a> and ask us to consider it.</p>
 </article>
 {% endblock %}

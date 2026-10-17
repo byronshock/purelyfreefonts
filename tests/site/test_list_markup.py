@@ -11,13 +11,14 @@ pytest-playwright's ``browser``.
 
 import json
 import re
+import time
 import tomllib
 from html.parser import HTMLParser
 from pathlib import Path
 
 import pytest
 
-from tff_site import build, data
+from tff_site import build, data, views
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -120,7 +121,9 @@ def dom(html: str) -> Node:
 
 @pytest.fixture(scope="module")
 def doc(site_data: Path) -> dict:
-    return json.loads(Path(site_data).read_text(encoding="utf-8"))
+    """The catalog as the site shows it: the views' wording from config/site.toml
+    (view_labels_short, tff_site.views)."""
+    return views.apply(json.loads(Path(site_data).read_text(encoding="utf-8")), views.load())
 
 
 # ------------------------------------------------------------------------- static markup
@@ -129,7 +132,11 @@ def doc(site_data: Path) -> dict:
 def test_page_outline_and_list_semantics(dom):
     assert len(dom.find_all("h1")) == 1
     h2s = dom.find_all("h2")
-    assert [h.attrs.get("id") for h in h2s] == ["why-h", "results-h"]  # the note's, the list's
+    # The list's heading only: the note is on the About page (why_not_listed_to_about). On
+    # phones it is hidden from sight, but screen readers and headings navigation keep it.
+    assert [h.attrs.get("id") for h in h2s] == ["results-h"]
+    assert h2s[0].classes == ["visually-hidden-phone"]
+    assert squash(h2s[0].text) == "Fonts"
     results = dom.find("section", id="results")
     assert results.attrs["aria-labelledby"] == "results-h"
     ol = dom.find("ol", id="list")
@@ -340,22 +347,40 @@ def radios(search: Node, name: str) -> list[tuple[str, str, bool, str]]:
 def test_filter_controls_match_the_hash(dom, doc):
     """CONTRACT section 9: each control's name is its hash key and its value the key's value."""
     search = dom.find("search", id="filters")
-    views = [v for v in doc["views"] if v["available"]]
+    shown = [v for v in doc["views"] if v["available"]]
     select = search.find("select", id="f-rank")
     assert select.attrs["name"] == "rank"
     assert select.attrs["aria-describedby"] == "f-rank-measures"
     options = select.find_all("option")
     assert [(o.attrs["value"], squash(o.text)) for o in options] == [
-        (v["key"], v["label"]) for v in views
+        (v["key"], v["label"]) for v in shown
     ]
     assert "selected" in options[0].attrs
-    assert views[0]["key"] == "overall"
-    project = [v for v in views if v["key"] == "project"]
-    assert not project or project[0]["label"] == "Used in projects"  # site ruling 2026-09-25
-    assert squash(search.find(id="f-rank-measures").text) == views[0]["measures"]
+    assert shown[0]["key"] == "overall"
+    # config/site.toml's names, whatever the catalog's copies say (view_labels_short).
+    assert [squash(o.text) for o in options] == [
+        views.load()[o.attrs["value"]]["label"] for o in options
+    ]
+    project = [v for v in shown if v["key"] == "project"]
+    assert not project or project[0]["label"] == "Projects"  # site ruling 2026-10-07
+    measures = search.find(id="f-rank-measures")
+    assert squash(measures.text) == shown[0]["measures"]
+    # The select's label (selector_label, 2026-10-05). On phones the labels and the measures
+    # line are hidden from sight but stay the names and the description
+    # (mobile_first_screen_two_fonts, 2026-10-06), and the search box shows its label inside.
+    rank_label = dom.find("label", for_="f-rank")
+    assert squash(rank_label.text) == "Measure"
+    q_label = dom.find("label", for_="f-q")
+    assert squash(q_label.text) == "Search fonts"
+    for hidden in (rank_label, q_label, measures):
+        assert "visually-hidden-phone" in hidden.classes, hidden.attrs
 
     q = search.find("input", id="f-q")
     assert (q.attrs["name"], q.attrs["type"], q.attrs["maxlength"]) == ("q", "search", "100")
+    # The placeholder, shorter than the label so it shows whole beside the select, starts the
+    # accessible name (2.5.3, label in name).
+    assert q.attrs["placeholder"] == "Search"
+    assert squash(q_label.text).startswith(q.attrs["placeholder"])
 
     assert radios(search, "cat") == [("f-cat-all", "", True, "Any")] + [
         (f"f-cat-{k}", k, False, v) for k, v in data.CATEGORY_LABELS.items()
@@ -396,14 +421,19 @@ def test_filter_controls_match_the_hash(dom, doc):
         ("sort-rank", "rank", "true"),
         ("sort-name", "name", "false"),
     ]
+    # "Popularity" over the scores, and its orders' words, without "first" (owner's site
+    # rulings of 2026-09-30 and 2026-10-07, score_column_popularity and sort_words_most_least).
     rank, name = buttons
-    assert (rank.attrs["data-asc"], rank.attrs["data-desc"]) == ("best first", "least used first")
+    orders = ("most popular", "least popular")
+    assert (rank.attrs["data-asc"], rank.attrs["data-desc"]) == orders
+    assert (rank.attrs["data-asc-spoken"], rank.attrs["data-desc-spoken"]) == orders
+    assert rank.attrs["title"] == "Show least popular instead"
     assert (name.attrs["data-asc"], name.attrs["data-desc"]) == ("A\u2013Z", "Z\u2013A")
     assert (name.attrs["data-asc-spoken"], name.attrs["data-desc-spoken"]) == ("A to Z", "Z to A")
     assert rank.attrs["data-dir"] == "asc"
     assert "data-dir" not in name.attrs
-    assert (
-        squash(rank.text) == "Sort by Rank best first best first; select to show least used first"
+    assert squash(rank.text) == (
+        "Sort by Popularity most popular most popular; select to show least popular"
     )
     assert squash(name.text) == "Sort by Name"
     for button in buttons:
@@ -440,55 +470,35 @@ def test_the_nerd_font_tag_replaces_the_marker_and_legend(dom, doc):
     assert results[-2].attrs["id"] == "list-sort"  # the sort buttons sit right over the list
 
 
-SITE_RULINGS_0929 = tomllib.loads(
-    (ROOT / "data" / "reviews" / "site" / "2026-09-29.toml").read_text(encoding="utf-8")
-)
 SITE_RULINGS_0930 = tomllib.loads(
     (ROOT / "data" / "reviews" / "site" / "2026-09-30.toml").read_text(encoding="utf-8")
 )
-SITE_RULINGS_1002 = tomllib.loads(
-    (ROOT / "data" / "reviews" / "site" / "2026-10-02.toml").read_text(encoding="utf-8")
-)
-# The note's sentence as the owner changed it on 2026-09-30 (front_page_lead_sharing).
-NOTE_0929 = "Some of these fonts ask you to credit the designer, or don't let you pass the font files on, and we mark those."
-NOTE_0930 = "Some of these fonts ask you to credit the designer, and we mark those."
-EMAIL_ADDRESS = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
 
 
-def test_the_front_page_note_is_the_owners(dom):
-    """The owner's note, word for word, in both of its copies (site rulings of 2026-09-29,
-    why_not_listed): a frame for wide screens, and a folded one for phones. Later rulings
-    change it: its sentence on credit and sharing (2026-09-30, front_page_lead_sharing) and
-    its address (2026-10-02, contact_address)."""
-    ruling = SITE_RULINGS_0929["why_not_listed"]
-    change = SITE_RULINGS_0930["front_page_lead_sharing"]["ruling"]
-    contact = SITE_RULINGS_1002["contact_address"]
-    assert NOTE_0929 in ruling["text"]
-    assert NOTE_0930 in change
-    (old_address,) = set(EMAIL_ADDRESS.findall(ruling["text"]))
-    address = contact["value"]
-    assert old_address in contact["ruling"]  # the address the 2026-10-02 ruling replaces
-    assert address != old_address
-    assert address == data.FEEDBACK_EMAIL
-    text = ruling["text"].replace(NOTE_0929, NOTE_0930).replace(old_address, address)
+def test_the_front_page_stops_after_the_lead(dom):
+    """The owner's site rulings of 2026-10-07: the heading, the lead and then the list, on
+    every screen. The note "Why isn't my favorite free font here?" moved to the About page
+    (why_not_listed_to_about; test_pages.py) and the privacy line to every page's footer
+    (privacy_line_in_footer; test_shell.py). On phones the lead shows its first sentence,
+    and the second is hidden from sight only (mobile_first_screen_two_fonts)."""
     main = dom.find("main")
-    wide = main.find("div", class_="why-wide")
-    fold = main.find("details", class_="why-fold")
-    assert wide.classes == ["why", "why-wide"]
-    assert fold.classes == ["why", "why-fold"]
-    assert "open" not in fold.attrs  # folded until the visitor opens it
-    assert squash(wide.find("h2").text) == ruling["heading"]
-    assert squash(fold.find("summary").text) == ruling["heading"]
-    for copy in (wide, fold):
-        assert squash(copy.find("p").text) == text
-        (link,) = copy.find("p").find_all("a")
-        assert link.attrs["href"] == f"mailto:{address}"
-        assert squash(link.text) == address
-    # The wide frame floats beside the lead and the privacy note, so it comes before them.
-    kids = [n.attrs.get("class") or n.tag for n in main.elements()]
-    assert kids[:6] == ["h1", "why why-wide", "lead", "privacy-note", "why why-fold", "layout"]
-    # The lead, in the owner's wording of 2026-09-30.
-    assert f'"{squash(main.find("p", class_="lead").text)}"' in change
+    kids = [" ".join(n.classes) or n.tag for n in main.elements()]
+    assert kids == ["list-title", "lead", "layout"]
+    assert squash(main.find("h1").text) == "The most popular purely free fonts"
+    for gone in ("why", "why-wide", "why-fold", "privacy-note"):
+        assert dom.find(class_=gone) is None, gone
+    assert "Why isn't my favorite free font here?" not in squash(main.text)
+    assert "Check the Network tab" not in squash(main.text)
+    # The lead, in the owner's wording of 2026-09-30 (front_page_lead_sharing).
+    lead = main.find("p", class_="lead")
+    change = SITE_RULINGS_0930["front_page_lead_sharing"]["ruling"]
+    assert f'"{squash(lead.text)}"' in change
+    (rest,) = lead.elements()
+    assert (rest.tag, rest.classes) == ("span", ["visually-hidden-phone"])
+    first = squash(lead.children[0])
+    assert first.endswith("."), first
+    assert first.count(".") == 1, first
+    assert squash(lead.text) == f"{first} {squash(rest.text)}"
 
 
 def test_count_and_no_results(dom, doc):
@@ -824,71 +834,248 @@ def test_the_download_prints_as_a_link(browser, site_url, scheme):
         context.close()
 
 
-WHY_LAYOUT = """() => {
-  // A block's box runs under a float; its lines are what wrap, so "right" is its text's.
-  const box = (s) => { const e = document.querySelector(s); const r = e.getBoundingClientRect();
-    const range = document.createRange(); range.selectNodeContents(e);
-    const lines = [...range.getClientRects()].filter((q) => q.width > 0);
-    return { top: r.top + scrollY, bottom: r.bottom + scrollY, left: r.left, right: r.right,
-             width: r.width, display: getComputedStyle(e).display,
-             textRight: lines.length ? Math.max(...lines.map((q) => q.right)) : r.right }; };
-  const main = document.querySelector('main');
-  const pad = parseFloat(getComputedStyle(main).paddingRight);
-  return { wide: box('.why-wide'), fold: box('.why-fold'), lead: box('.lead'),
-           note: box('.privacy-note'), layout: box('.layout'), results: box('#results'),
-           mainRight: main.getBoundingClientRect().right - pad,
-           mainLeft: main.getBoundingClientRect().left + parseFloat(getComputedStyle(main).paddingLeft),
-           open: document.querySelector('.why-fold').open,
-           said: (document.body.innerText.match(/Why isn't my favorite free font here\\?/g) || []).length,
-           text: (document.body.innerText.match(/Not every font that's free to download/g) || []).length };
+FRAMES = "() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))"
+# The script has shown the filters, and the results are in sight (html[data-list-pending]).
+SETTLED = (
+    "() => !document.getElementById('filters').hidden"
+    " && !document.documentElement.hasAttribute('data-list-pending')"
+)
+# The top of the list page, laid out: where the first rows start, the parts above them, and
+# which parts are hidden from sight (the visually-hidden clip) on this screen.
+FIRST_SCREEN = """() => {
+  const box = (el) => { const r = el.getBoundingClientRect();
+    return { top: r.top, bottom: r.bottom, left: r.left, right: r.right, width: r.width,
+             height: r.height }; };
+  const q = (s) => document.querySelector(s);
+  const unseen = (el) => getComputedStyle(el).clipPath === 'inset(50%)';
+  const hide = ['label[for="f-q"]', 'label[for="f-rank"]', '#f-rank-measures', '#results-h',
+                '.lead > span'];
+  return { vh: innerHeight, scrollWidth: document.documentElement.scrollWidth,
+           rows: [...document.querySelectorAll('#list > li.font')].slice(0, 3).map(box),
+           controls: ['#f-q', '#f-rank', '#f-toggle'].map((s) => box(q(s))),
+           labels: ['#sort-rank .sort-label', '#sort-name .sort-label'].map((s) => box(q(s))),
+           sort: box(q('#list-sort')), count: box(q('#count')),
+           heading: box(q('#results-h')), lead: box(q('.lead')),
+           hidden: Object.fromEntries(hide.map((s) => [s, unseen(q(s))])),
+           status: getComputedStyle(q('.site-status')).display,
+           h1: parseFloat(getComputedStyle(q('h1')).fontSize),
+           placeholder: getComputedStyle(q('#f-q'), '::placeholder').opacity };
 }"""
+# Whole font rows on the first screen, on load (owner's site ruling of 2026-10-06,
+# mobile_first_screen_two_fonts): two at 375 x 812 and 390 x 844, one at 360 x 740, and at
+# 320 x 568 the first row starts on the screen.
+FIRST_SCREENS = {(375, 812): 2, (390, 844): 2, (360, 740): 1, (320, 568): 0}
 
 
-@pytest.mark.parametrize("scheme", ["light", "dark"])
-def test_the_note_is_a_frame_beside_the_intro_on_wide_screens(browser, site_url, scheme):
-    """Site ruling of 2026-09-29 (why_not_listed_layout): floated right beside the lead and
-    the privacy note, which wrap around it; the list starts below it, full width."""
-    context, page = open_page(browser, site_url, 1280, color_scheme=scheme)
+def first_screen(browser, site_url, width, height, hash_=""):
+    """A fresh context, and the list page in it once the script has shown the filters and the
+    results (a link with filters in it keeps them out of sight until then)."""
+    context = browser.new_context(viewport={"width": width, "height": height})
+    page = context.new_page()
+    page.goto(site_url + "/" + hash_)
+    page.wait_for_function(SETTLED)
+    return context, page
+
+
+@pytest.mark.parametrize(("width", "height"), FIRST_SCREENS)
+def test_fonts_fill_a_phones_first_screen(browser, site_url, width, height):
+    """The owner's site rulings of 2026-10-06 (mobile_first_screen_two_fonts,
+    early_line_hidden_on_phones): on a phone the header has no early-version line, the heading
+    is smaller, the lead shows its first sentence, search, Measure and Filters share one row
+    and the count sits in the sort row, so the fonts start high enough. The heading and the
+    lead stay on the page."""
+    context, page = first_screen(browser, site_url, width, height)
     try:
-        got = page.evaluate(WHY_LAYOUT)
-        wide, lead, note, layout = got["wide"], got["lead"], got["note"], got["layout"]
-        assert got["fold"]["display"] == "none"
-        assert abs(wide["right"] - got["mainRight"]) < 1, got  # at the right edge
-        assert wide["top"] <= lead["top"] + 1, got  # level with the lead
-        assert lead["textRight"] <= wide["left"], got  # the lead wraps beside it
-        assert note["textRight"] <= wide["left"], got  # so does the privacy note
-        assert layout["top"] >= wide["bottom"], got  # the list starts below the frame
-        assert abs(layout["left"] - got["mainLeft"]) < 1, got
-        assert abs(layout["right"] - got["mainRight"]) < 1, got  # rows keep their full width
-        assert (got["said"], got["text"]) == (1, 1), got  # read once
+        got = page.evaluate(FIRST_SCREEN)
+        whole = sum(row["bottom"] <= got["vh"] + 0.5 for row in got["rows"])
+        assert whole >= FIRST_SCREENS[(width, height)], got
+        assert got["rows"][0]["top"] < got["vh"], got
+        assert got["scrollWidth"] <= width
+        assert got["status"] == "none"
+        assert got["h1"] == 24  # --fs-xl, not --fs-2xl
+        assert all(got["hidden"].values()), got["hidden"]
+        assert got["lead"]["height"] > 0  # the lead's first sentence shows
     finally:
         context.close()
 
 
-@pytest.mark.parametrize("javascript", [True, False], ids=["js", "no-js"])
-def test_the_note_is_folded_on_phones(browser, site_url, javascript):
-    """Site ruling of 2026-09-29: on a phone only the heading shows, full width; one tap opens
-    the text, with or without JavaScript, and nothing else moves."""
-    context = browser.new_context(
-        viewport={"width": 375, "height": 812}, java_script_enabled=javascript
-    )
+# From this width the count fits beside the sort buttons (on two lines up to about 390 px).
+COUNT_BESIDE_FROM = 337
+
+
+@pytest.mark.parametrize("width", [320, 330, 344, 360, 375, 390])
+@pytest.mark.parametrize("hash_", ["", "#cat=serif&var=1"], ids=["plain", "filtered"])
+def test_phone_controls_and_count_share_their_rows(browser, site_url, width, hash_):
+    """Search, the Measure select and the Filters button share one row from 336 px, and below
+    that wrap in two, but never run off the screen; each is a target of at least 24 px. The
+    button is as wide as its longest text, so the row is the same whatever the count of
+    filters on. The count sits in the sort row after the sort buttons, its first line level
+    with their labels, or, where it can't keep about 7.5em beside them (below 337 px, with
+    "most popular" in the Popularity button, sort_words_most_least), on the next line."""
+    context, page = first_screen(browser, site_url, width, 800, hash_)
     try:
+        got = page.evaluate(FIRST_SCREEN)
+        controls = got["controls"]
+        lines = {round(c["top"]) for c in controls}
+        assert len(lines) == (1 if width >= 336 else 2), controls
+        if hash_:
+            assert page.text_content("#f-toggle") == "Filters\u00a0(2)"
+            plain, _ = first_screen(browser, site_url, width, 800)
+            try:
+                same = plain.pages[0].evaluate(FIRST_SCREEN)["controls"]
+            finally:
+                plain.close()
+            for box, plain_box in zip(controls, same, strict=True):
+                assert all(abs(box[k] - plain_box[k]) <= 0.5 for k in box), (box, plain_box)
+        for c in controls:
+            assert c["width"] >= 24, c
+            assert c["height"] >= 24, c
+            assert c["left"] >= 0, c
+            assert c["right"] <= width, c
+        assert got["placeholder"] == "1"  # the search box's label shows inside it
+        sort, count = got["sort"], got["count"]
+        if width >= COUNT_BESIDE_FROM:
+            assert count["left"] >= sort["right"], got
+            assert count["right"] <= width - 16 + 0.5, got
+            label = got["labels"][0]
+            assert abs(count["top"] - label["top"]) <= 4, got
+            assert count["bottom"] <= sort["bottom"] + 0.5, got
+        else:
+            assert count["top"] >= sort["bottom"] - 0.5, got
+        assert got["rows"][0]["top"] >= max(sort["bottom"], count["bottom"]), got
+    finally:
+        context.close()
+
+
+def test_phone_controls_keep_their_names_and_description(browser, site_url, doc):
+    """The visible labels became accessible names (mobile_first_screen_two_fonts): screen
+    readers still hear "Search fonts" and "Measure", the select's measures line as its
+    description, and the "Fonts" heading, which headings navigation finds."""
+    from playwright.sync_api import expect
+
+    context, page = first_screen(browser, site_url, 375, 812)
+    try:
+        expect(page.get_by_role("searchbox", name="Search fonts", exact=True)).to_have_count(1)
+        select = page.get_by_role("combobox", name="Measure", exact=True)
+        expect(select).to_have_count(1)
+        expect(select).to_have_accessible_description(doc["views"][0]["measures"])
+        expect(page.get_by_role("heading", name="Fonts", level=2, exact=True)).to_have_count(1)
+    finally:
+        context.close()
+
+
+@pytest.mark.parametrize("width", [640, 768, 1280])
+def test_wider_screens_keep_their_layout(browser, site_url, width):
+    """From 40rem nothing is hidden from sight: the labels above the controls, the measures
+    line, the "Fonts" heading with the count under it and the sort buttons below them, the
+    lead's two sentences and the early-version line; the search box shows no placeholder."""
+    context, page = first_screen(browser, site_url, width, 900)
+    try:
+        got = page.evaluate(FIRST_SCREEN)
+        assert not any(got["hidden"].values()), got["hidden"]
+        assert got["status"] == "block"
+        assert got["h1"] == 32  # --fs-2xl
+        assert got["placeholder"] == "0"
+        heading, count, sort = got["heading"], got["count"], got["sort"]
+        assert heading["bottom"] <= count["top"] + 0.5, got
+        assert count["bottom"] <= sort["top"] + 0.5, got
+        assert abs(count["left"] - heading["left"]) <= 0.5, got
+        assert got["scrollWidth"] <= width
+    finally:
+        context.close()
+
+
+# Layout shifts the page makes by itself (no recent input), from the first paint, each with
+# the moved nodes and those of them above the results: not in #results (the count, the
+# legends, the sort row and the rows) nor in the footer below them.
+SHIFTS_JS = """
+(() => {
+  window.__shifts = [];
+  const name = (n) => `${n.nodeName}#${n.id || ''}.${n.className || ''}`;
+  new PerformanceObserver((entries) => {
+    const below = [document.getElementById('results'), document.querySelector('footer')];
+    for (const e of entries.getEntries()) {
+      if (e.hadRecentInput) continue;
+      const nodes = (e.sources || []).map((s) => s.node).filter(Boolean);
+      window.__shifts.push({ v: e.value, nodes: nodes.map(name), above: nodes
+        .filter((n) => !below.some((b) => b && b.contains(n))).map(name) });
+    }
+  }).observe({ type: 'layout-shift', buffered: true });
+})();
+"""
+# The tops of the boxes above the results, and the count's place in the sort row.
+ABOVE_JS = """() => {
+  const box = (s) => document.querySelector(s).getBoundingClientRect();
+  const above = ['h1', '.lead', '#f-q', '#f-rank', '#f-toggle', '#results'].map((s) =>
+    [s, Math.round(box(s).top * 10) / 10]);
+  const sort = box('#list-sort'), count = box('#count');
+  return { above, count: [Math.round((count.top - sort.top) * 10) / 10,
+                          Math.round(count.right * 10) / 10] };
+}"""
+# A filter change made by script, so no input excuses a shift: the second view, then Serif.
+REFILTER_JS = """() => {
+  const rank = document.getElementById('f-rank');
+  rank.value = rank.options[1].value;
+  rank.dispatchEvent(new Event('change', { bubbles: true }));
+  document.getElementById('f-cat-serif').click();
+}"""
+# How long the list index is held back, so the page paints before the script's first render,
+# as on a slow connection.
+INDEX_DELAY_S = 0.3
+
+
+@pytest.mark.parametrize(
+    ("width", "height"),
+    [(375, 812), (360, 740), (344, 740), (330, 740), (320, 568), (768, 1024), (1280, 900)],
+)
+@pytest.mark.parametrize("link", ["plain", "filtered", "one font", "none found"])
+def test_the_phone_first_screen_does_not_shift(
+    browser, browser_name, site_url, dom, width, height, link
+):
+    """Layout shift 0 on a phone's load (and a tablet's and a desktop's), adding up every
+    shift, with the list index held back so the page paints first: the controls and the sort buttons ship hidden but keep their
+    space, and the server's count is the script's. A link with a view or filters in it keeps
+    the results and the footer out of sight until the first render (data-list-pending), so
+    nothing moves: not the rows, with filters on or with the last font of the list searched
+    for, whose row ends up first; not the footer, which comes up the screen when few rows are
+    left; and not the count, when the no-results message comes above the sort row. On a
+    phone's refilter nothing above the results moves, and the count, whose length changes,
+    keeps its place in the sort row; inside the results the rows, and the legend that comes
+    or goes with the view, change as on every screen, and the footer follows them."""
+    if browser_name != "chromium":
+        pytest.skip("the Layout Instability API is Chromium's")
+    last = squash([h for h in dom.find_all("h3") if "font-name" in h.classes][-1].text)
+    hash_ = {
+        "plain": "",
+        "filtered": "#cat=serif&var=1",
+        "one font": "#q=" + last.replace(" ", "%20"),
+        "none found": "#q=zzzzzz",
+    }[link]
+
+    def held(route):
+        time.sleep(INDEX_DELAY_S)
+        route.continue_()
+
+    context = browser.new_context(viewport={"width": width, "height": height})
+    try:
+        context.add_init_script(SHIFTS_JS)
+        context.route("**/assets/list.*.json", held)
         page = context.new_page()
-        page.goto(site_url + "/")
-        got = page.evaluate(WHY_LAYOUT)
-        assert got["wide"]["display"] == "none"
-        assert got["fold"]["display"] == "block"
-        assert not got["open"]
-        assert abs(got["fold"]["left"] - got["mainLeft"]) < 1, got
-        assert abs(got["fold"]["right"] - got["mainRight"]) < 1, got  # full width
-        assert (got["said"], got["text"]) == (1, 0), got  # the heading only, once
-        before = got["layout"]["top"] - got["fold"]["bottom"]
-        page.click(".why-fold summary")
-        opened = page.evaluate(WHY_LAYOUT)
-        assert opened["open"]
-        assert (opened["said"], opened["text"]) == (1, 1), opened
-        assert opened["layout"]["top"] - opened["fold"]["bottom"] == pytest.approx(before, abs=1)
-        assert page.evaluate(SCROLL_WIDTH) <= 375
+        page.goto(site_url + "/" + hash_)
+        page.wait_for_function(SETTLED)
+        page.evaluate(FRAMES)
+        shifts = page.evaluate("window.__shifts")
+        assert sum(s["v"] for s in shifts) < 0.001, shifts
+        if link == "one font":
+            assert page.evaluate(FIRST_SCREEN)["rows"][0]["top"] < height
+        if width >= 640:
+            return  # wider screens show the measures line, and the count above the sort row
+        before = page.evaluate(ABOVE_JS)
+        page.evaluate(REFILTER_JS)
+        page.wait_for_function("() => location.hash.includes('rank=')")
+        page.evaluate(FRAMES)
+        assert page.evaluate(ABOVE_JS) == before
+        assert [s for s in page.evaluate("window.__shifts") if s["above"]] == []
     finally:
         context.close()
 

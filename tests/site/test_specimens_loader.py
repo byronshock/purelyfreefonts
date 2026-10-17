@@ -690,12 +690,18 @@ def test_specimens_are_visible_in_every_theme(
     assert share > 0.01, "no outlines in the specimen box"
     assert ratio >= 4.5, f"outlines {colour} have contrast {ratio:.2f} with the background"
     # The hidden heading lies over the drawn name and must add nothing to it; forced colours
-    # would repaint its transparent text but for forced-color-adjust: none.
+    # would repaint its transparent text but for forced-color-adjust: none. A painted heading
+    # changes about 1,000 to 2,000 of the box's 25,000 pixels; hiding it repaints its box,
+    # which at a fractional position can move the outlines' antialiasing along that box's
+    # edge by a little more than changed() allows, in a few pixels (20 in Chromium's forced
+    # colours, with the list higher up the page since 2026-10-07), so 0.5% may differ.
     heading = page.locator(f"#font-{first['id']} h3.font-name")
     heading.evaluate("(h) => h.style.setProperty('visibility', 'hidden')")
     alone = png_pixels(span.screenshot())
     heading.evaluate("(h) => h.style.removeProperty('visibility')")
-    assert not changed(shown, alone), "the hidden heading is painted over the drawn name"
+    assert changed(shown, alone) <= len(shown) // 200, (
+        "the hidden heading is painted over the drawn name"
+    )
     if forced == "active":
         style = page.evaluate(
             "() => { const s = getComputedStyle(document.querySelector('span.spec'));"

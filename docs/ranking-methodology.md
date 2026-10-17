@@ -10,7 +10,7 @@ A font's score is the weighted average over the sources that could have seen it.
 
 Fonts with little evidence are pulled toward the middle. No font reaches the top 100 on one kind of evidence alone.
 
-The desktop rank comes in two versions, and both list the same fonts. **Most installed** counts every install. **Most chosen** leaves out the installs that Linux systems make on their own (fonts that come preinstalled, or that another program brings in), so those fonts are ranked on the installs people made themselves. The overall rank uses *most chosen*, blended with the *Used in projects* rank. Past #100 we show bands, because the data can't separate those fonts precisely.
+The desktop rank comes in two versions, and both list the same fonts. **Installed (desktop)** counts every install. **Chosen (desktop)** leaves out the installs that Linux systems make on their own (fonts that come preinstalled, or that another program brings in), so those fonts are ranked on the installs people made themselves. The overall rank uses *Chosen (desktop)*, blended with the *Projects* rank. Past #100 we show bands, because the data can't separate those fonts precisely.
 
 The ranked catalog is about the 500 most-used fonts. Every other font that passes the license and Latin checks will be listed too, after the ranked ones, A–Z and without a rank, because past about #500 the evidence is too thin to put fonts in a useful order (owner ruling of 2026-09-29). That list comes after the site's launch (owner ruling of 2026-09-30).
 
@@ -18,7 +18,7 @@ The ranked catalog is about the 500 most-used fonts. Every other font that passe
 
 - Filter first, then rank: an ineligible font never takes a rank or shifts one.
 - Absent is not unpopular.
-- Each raw source feeds exactly one survey. Of the two desktop views, only *most chosen* feeds the overall rank; *most installed* and the extra views reuse the same data but never feed it.
+- Each raw source feeds exactly one survey. Of the two desktop views, only *Chosen (desktop)* feeds the overall rank; *Installed (desktop)* and the extra views reuse the same data but never feed it.
 - Scores are rank-based, so a spike lifts a font to the top of one source and no further.
 
 ## 2. What is ranked
@@ -165,8 +165,8 @@ The missing Debian package costs Monaspace only a slightly stronger pull toward 
 
 Both views use the sources below. They differ only in how fonts that Linux systems install automatically are counted:
 
-- **Most chosen**: fonts people deliberately install. A Linux source leaves out a font that a Linux system preinstalls, or that one other package pulls in for at least half of its installs; the font is still ranked on its other sources. **This view feeds the overall rank.**
-- **Most installed**: fonts on the most computers. Every install counts as it is, automatic or not. Published as its own view; it does not affect the overall rank.
+- **Chosen (desktop)**: fonts people deliberately install. A Linux source leaves out a font that a Linux system preinstalls, or that one other package pulls in for at least half of its installs; the font is still ranked on its other sources. **This view feeds the overall rank.**
+- **Installed (desktop)**: fonts on the most computers. Every install counts as it is, automatic or not. Published as its own view; it does not affect the overall rank.
 
 In both views, affected fonts carry a tag naming the systems they come with or the packages that pull them in.
 
@@ -455,7 +455,7 @@ The monthly pull request asks the owner only to review what it flags: new aliase
 
 - **Developer skew.** The desktop data comes from developers who leave telemetry on. About 59% of Homebrew font installs are Nerd builds. The 10 biggest plain casks come from 8 families, and 7 of those are coding fonts.
 - **Thin platform coverage.** There is no Windows source in v1: Chocolatey's terms forbid automated access, so it was dropped. Windows users, and designers who download zips, show up only through GitHub counters.
-- **Defaults.** Installs driven by tool defaults count in both desktop views (Meslo via Powerlevel10k). Installs that Linux systems make automatically count fully in *most installed*. In *most chosen* they are left out, and those fonts are ranked on their other sources. The preinstalled list is kept by hand, and derivative distributions we don't parse leak through into *most chosen*.
+- **Defaults.** Installs driven by tool defaults count in both desktop views (Meslo via Powerlevel10k). Installs that Linux systems make automatically count fully in *Installed (desktop)*. In *Chosen (desktop)* they are left out, and those fonts are ranked on their other sources. The preinstalled list is kept by hand, and derivative distributions we don't parse leak through into *Chosen (desktop)*.
 - **Web data.**
   - Fonts Over Time crawls US homepages only, and half of them are startups.
   - The Almanac is yearly, covers only the top 100, and folds width cuts into their parents.

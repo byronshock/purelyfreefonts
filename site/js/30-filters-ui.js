@@ -9,9 +9,9 @@
 // The hide key has checkboxes (limited, attr) and one select (#f-os, the operating
 // systems), which offers one system at a time.
 //
-// Sorting (owner ruling of 2026-09-30, sort_header): a button over each column, Rank and
-// Name. Clicking the one in use reverses its order; clicking the other sorts by it, in its
-// usual order (rank best first, name A to Z). The words for each order are the button's own
+// Sorting (owner ruling of 2026-09-30, sort_header): a button over each column, Popularity
+// and Name. Clicking the one in use reverses its order; clicking the other sorts by it, in its
+// usual order (most popular first, name A to Z). The words for each order are the button's own
 // data-asc and data-desc (and data-asc-spoken, data-desc-spoken for screen readers), so the
 // template stays their home.
 const FiltersUI = (() => {
