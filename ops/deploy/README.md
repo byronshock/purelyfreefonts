@@ -108,7 +108,7 @@ shred -u "$SCRATCH/staging"
 
 ## GitHub settings (the owner's, before the first Actions deploy)
 
-None of these exist yet (checked read-only on 2026-09-26). GitHub creates an unprotected environment the first time a job names one, so create each environment with its branch rule before adding its secrets.
+The `production` and `staging` environments don't exist yet (checked read-only on 2026-10-17; `refresh`, item 4, does). GitHub creates an unprotected environment the first time a job names one, so create each environment with its branch rule before adding its secrets.
 
 1. **Environments.** `production`, deployments from `main` only; `staging`, deployments from `staging` only (Settings → Environments → Deployment branches and tags → Selected branches).
 2. **Environment secrets** (each environment its own): `DEPLOY_SSH_KEY`, `DEPLOY_KNOWN_HOSTS` and `DEPLOY_HOST`; **variables** `DEPLOY_USER` (`deploy` or `deploy-staging`) and, optionally, `SITE_URL`, the address the live checks use (without it, `https://purelyfreefonts.com` for production and `https://staging.purelyfreefonts.com` for staging). `DEPLOY_HOST` is the origin's IP address, kept only as an environment secret (Actions masks it in logs). Never create a DNS name for it: an unproxied (grey-cloud) record would publish the origin IP, which lets anyone bypass Cloudflare (AUTHORITY.md, `ops/SERVER.local.md`).
@@ -120,7 +120,7 @@ None of these exist yet (checked read-only on 2026-09-26). GitHub creates an unp
    gh label create bug --description "Something's broken (issue form)" --force
    gh label create deploy-failure --description "Opened by the deploy workflow"
    ```
-4. **Refresh (Milestone 1 step 19).** `DATA_STORE_KEY` goes in an environment that only `main` may use (for example `refresh`), not in a repository secret, which every branch's workflows can read. Turn on "Allow GitHub Actions to create and approve pull requests" (Settings → Actions → General); the owner's ruling of 2026-09-26 (CI1) lets Claude do this with `gh` when step 19 is ready.
+4. **Refresh (Milestone 1 step 19; milestone-refresh.md step 1).** `DATA_STORE_KEY` is a secret of the environment `refresh`, which takes deployments from `main` only, not a repository secret, which every branch's workflows can read *(set up 2026-10-17, [ops/SERVER.md](../SERVER.md) item 27a)*. So `refresh.yml` runs only from `main`: a dispatch from another branch fails at the environment. "Allow GitHub Actions to create and approve pull requests" (Settings → Actions → General) is on *(done 2026-09-30, item 26, under ruling CI1 of 2026-09-26)*.
 5. **Optional hardening.** Settings → Actions → General: "Require actions to be pinned to a full-length commit SHA" (every workflow already pins by SHA).
 6. **Before `PRODUCTION_DEPLOYS=on`:** Caddy header phase B must be live (step 6 below). Until `ops/Caddyfile` drops `header -Content-Security-Policy`, both deploy.yml and `ops/deploy.sh` refuse to build a production deploy.
 

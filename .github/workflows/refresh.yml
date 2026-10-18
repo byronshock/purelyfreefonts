@@ -26,10 +26,15 @@ name: Refresh
 # Nothing from the run's log goes into the issue or the pull request: rulings T2
 # and T4 keep Google and Fonts Over Time raw values private.
 #
-# Until Milestone 1 step 19 sets up the data store's key (owner ruling of 2026-09-29), the
-# schedule does nothing: a scheduled run starts only once the repository variable
-# REFRESH_SCHEDULE is "on" (gh variable set REFRESH_SCHEDULE --body on). A skipped refresh
-# skips the other jobs too, and opens no issue. Dispatches always run.
+# The data store's key, DATA_STORE_KEY, is a secret of the environment "refresh", whose
+# deployments are limited to main (store_key_environment_timing, ops/SERVER.md item 27a):
+# only the refresh and store jobs name it. A dispatch from any other branch fails at the
+# refresh job before its first step, and report opens its issue.
+#
+# Until milestone-refresh.md step 1 turns it on (owner ruling of 2026-09-29), the schedule
+# does nothing: a scheduled run starts only once the repository variable REFRESH_SCHEDULE is
+# "on" (gh variable set REFRESH_SCHEDULE --body on). A skipped refresh skips the other jobs
+# too, and opens no issue. Dispatches from main always run.
 
 on:
   schedule:
@@ -54,6 +59,9 @@ jobs:
     name: refresh
     # Owner ruling of 2026-09-29: scheduled runs wait for REFRESH_SCHEDULE == 'on'.
     if: ${{ github.event_name != 'schedule' || vars.REFRESH_SCHEDULE == 'on' }}
+    # DATA_STORE_KEY is a secret of the environment "refresh", which only main may use
+    # (store_key_environment_timing, 2026-10-16), so no other branch's workflow can read it.
+    environment: refresh
     runs-on: ubuntu-24.04
     timeout-minutes: 345
     # Read only: this job downloads and parses third-party data, so it holds no write token.
@@ -259,6 +267,7 @@ jobs:
     name: store
     needs: refresh
     if: ${{ !cancelled() && needs.refresh.outputs.store_bundle == 'true' }}
+    environment: refresh  # DATA_STORE_KEY, as in the refresh job
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
