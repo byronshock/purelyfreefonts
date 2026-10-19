@@ -1,0 +1,31 @@
+# Owner rulings of 2026-10-19 on the October run, asked in chat by the lead session as single-select questions after
+# the owner asked: "What do we need to do to get the October data onto staging? This should be in the plan."
+# Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md (Monthly data refresh).
+
+[staging_previews_held_runs]
+choice = "b"
+recommended = false
+value = "october_catalog_and_layout_in_one_deploy"
+ruling = "Amends refresh_collect_and_hold for the test site: staging may show a held run's catalog, built on a branch preview/<date> that is never merged and has no pull request, and deployed with ops/deploy.sh staging. Production, main's build/ and state/, and the published scores still wait for Milestone 2's launch and the scoring-method port. The October preview goes to staging in one deploy with main's site as of 2026-10-19 (the mobile first screen of #65 and the wordmark of #68), so round 2's testers see both changes at once. While a preview stands, every staging deploy comes from the preview branch rebased on main; a deploy of main brings back the 2026-09-26 catalog."
+reason = "The owner, in chat with the lead session on 2026-10-19: \"Both in one deploy\". Of (a) the layout first and October after the owner's look, Claude's recommendation, so round 2's findings would not mix a layout change with a data change, (b) both in one deploy, and (c) the layout now and October only after the port, the owner chose (b). The owner: \"We need to keep working on the October run ... What do we need to do to get the October data onto staging?\""
+
+[store_topup_luciole]
+choice = "b"
+recommended = false
+value = "verify_and_links_refetch_2026_10_17"
+ruling = "The October preview is a local replay of 2026-10-17 with the rulings of 2026-10-17 (#71). Luciole's license text, named in config/license-texts.toml after the run, is added to the stored 2026-10-17 snapshot with `tff-catalog verify --date 2026-10-17 --refetch`, and Redaction's gate K link is checked into it with `tff-catalog links --date 2026-10-17`, so gates L3 and K pass on stored evidence. Claude diffs the store row by row before accepting (unpinned texts are fetched again from the web) and pushes the store commit."
+reason = "The owner, in chat with the lead session on 2026-10-19: \"With rulings, top up the store\". Of (a) the rulings with Luciole kept by an owner ruling at L3 until next month's live run fetches its text, Claude's recommendation, (b) the rulings with the store topped up, and (c) #70 as it is, the owner chose (b)."
+
+[preview_stopgap_pins]
+choice = "a"
+recommended = true
+value = "pins_on_the_preview_branch"
+ruling = "The preview's new and changed specimens are pinned in src/tff_site/trim.sha256 and tests/site/trimmed.sha256 on the preview branch only, as docs/milestone-refresh.md step 1's stopgap describes, so the site serves their name line only and the site tests pass. PLAN-REVIEWERS-1.md step 7d stays frozen and open for main."
+reason = "The owner, in chat with the lead session on 2026-10-19: \"Stopgap pins (Recommended)\", over landing step 7d now (the names-only renderer and a redraw of every specimen)."
+
+[october_summary_now]
+choice = "a"
+recommended = true
+value = "short_summary_no_rulings"
+ruling = "Claude summarizes the October scores (the current method) for the owner in a page: the top-100 entries and exits and the biggest moves, in ranks only (T2, T4). No score rulings are asked; the formal score review still waits for the replay under the new method (refresh_gate_review_now)."
+reason = "The owner, in chat with the lead session on 2026-10-19: \"Short summary now (Recommended)\", over (b) a full score review under the current method and (c) keeping it deferred. Nearly every big move is a font crossing a hand-set floor that the port retires."
