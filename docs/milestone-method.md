@@ -83,3 +83,9 @@ This checklist brings the owner's scoring-method rulings of 2026-09-30 and 2026-
 ### Step 15: Staging, and the owner's look
 - [ ] `preview/2026-10-17` rebuilt from the new pull request, with the specimen pins (`preview_stopgap_pins`), CI passing, deployed; the browser checks done.
 - [ ] A summary for the owner (ranks only for Google and Fonts Over Time), then the October score review that `refresh_gate_review_now` deferred.
+
+### Later: the drift flag (`q9_theta_cadence`)
+Not needed for this checklist. It needs months on the held fit, so it comes after the switch.
+- [ ] Each run also fits its model views afresh and keeps that fit in the private store, beside the held one, so a replay can repeat the flag.
+- [ ] Calibrate the flag's alarm levels against a null that allows for the model's misfit (a sandwich covariance, or a bootstrap over fonts). The first levels would fire on the misfit alone.
+- [ ] Then turn it on as a review flag: the order under the fresh fit against the order under the held one. An early refit stays an owner ruling.
