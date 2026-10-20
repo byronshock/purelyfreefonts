@@ -47,6 +47,7 @@ DESIGN_COMMANDS = {
 STORE_COMMANDS = ("ls", "check", "commit", "gc")
 COMMON_FLAGS = ["--date", "2026-10-03", "--only", "a,b", "--only", "c"]
 COMMON_FLAGS += ["--from-snapshots", "2026-10-03", "--refetch", "--keep-raw"]
+COMMON_FLAGS += ["--skip-fetch", "npm,x", "--skip-fetch", "y"]
 
 
 def _subcommands(parser: argparse.ArgumentParser) -> dict[str, argparse.ArgumentParser]:
@@ -139,6 +140,7 @@ def test_stages_take_the_common_flags(stage: str) -> None:
     assert (args.refetch, args.keep_raw) == (True, True)
     options = cli._options(args)
     assert options.only == ("a", "b", "c")
+    assert options.skip_fetch == ("npm", "x", "y")
     assert options.replay
 
 

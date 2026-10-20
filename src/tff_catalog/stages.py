@@ -40,6 +40,9 @@ class RunOptions:
     from_snapshots: date | None = None  # --from-snapshots: replay, no network
     refetch: bool = False  # --refetch: replace today's snapshot
     keep_raw: bool = False  # --keep-raw: keep big raw files after the run
+    # --skip-fetch: collectors stage "fetch" doesn't ask; each keeps a complete snapshot of
+    # the day if one is there, else falls back as a failed fetch would (npm_own_job)
+    skip_fetch: tuple[str, ...] = ()
 
     @property
     def replay(self) -> bool:

@@ -107,6 +107,15 @@ def _common_flags() -> argparse.ArgumentParser:
         help="replay from the store's snapshots for this date, with no network",
     )
     g.add_argument("--refetch", action="store_true", help="replace today's snapshots")
+    g.add_argument(
+        "--skip-fetch",
+        type=_names,
+        action="extend",
+        default=[],
+        metavar="NAMES",
+        help="collectors not to fetch: each keeps today's complete snapshot, else falls back "
+        "to its last one as a failed fetch would (comma-separated, repeatable)",
+    )
     g.add_argument("--keep-raw", action="store_true", help="keep big raw downloads after the run")
     return common
 
@@ -212,6 +221,7 @@ def _options(args: argparse.Namespace) -> stages.RunOptions:
         from_snapshots=args.from_snapshots,
         refetch=args.refetch,
         keep_raw=args.keep_raw,
+        skip_fetch=tuple(args.skip_fetch),
     )
 
 

@@ -82,9 +82,11 @@ USER_AGENT = (
 )
 DEFAULT_MIN_INTERVAL = 1.0  # seconds between requests to one host
 # Hosts that need a slower pace than the default, unless a caller's min_interval says
-# otherwise. npm's download API answered about one request in five with a 429 (and no
-# Retry-After) at one request a second.
-HOST_MIN_INTERVAL: dict[str, float] = {"api.npmjs.org": 1.5}
+# otherwise. npm's download API accepted 20 requests a minute from a GitHub runner on
+# 2026-10-17 (run 38999881962: 230 of 235 full minutes had exactly 20 successes, about half
+# of the tries at 1.5 s drew a 429, and none sent Retry-After), so one request every 3.1 s
+# stays under it; from a home connection it had taken one every 1.5 s (2026-09-26).
+HOST_MIN_INTERVAL: dict[str, float] = {"api.npmjs.org": 3.1}
 DEFAULT_RETRIES = 4
 DEFAULT_TIMEOUT = 60.0
 CONNECT_TIMEOUT = 15.0  # opening a connection; reads keep the full timeout
@@ -273,6 +275,8 @@ class _Shared:
     # UNREACHABLE_FOR seconds. ``gave_up`` keeps every host given up on, for the log.
     unreachable: dict[str, tuple[str, float]] = field(default_factory=dict)
     gave_up: dict[str, str] = field(default_factory=dict)
+    # Hosts whose first 429 had its rate-limit headers logged (once per host and run).
+    limit_logged: set[str] = field(default_factory=set)
 
     def host_lock(self, host: str) -> threading.Lock:
         with self.lock:
@@ -383,6 +387,22 @@ def _retry_wait(status: int, headers: httpx.Headers) -> float | None:
         if reset.isdigit():
             asked = _seconds_until(datetime.fromtimestamp(int(reset), UTC)) + 1.0
     return asked or 0.0
+
+
+# The headers a server may use to say how fast it may be asked.
+LIMIT_HEADERS = ("retry-after", "ratelimit", "ratelimit-policy", "x-ratelimit-")
+
+
+def limit_headers(headers: httpx.Headers) -> dict[str, str]:
+    """The rate-limit headers of a response (``LIMIT_HEADERS``), by lower-case name."""
+    return {
+        name.lower(): value
+        for name, value in headers.items()
+        if any(
+            name.lower() == h or (h.endswith("-") and name.lower().startswith(h))
+            for h in LIMIT_HEADERS
+        )
+    }
 
 
 def _github_secondary_limit(response: httpx.Response) -> bool:
@@ -659,6 +679,21 @@ class Fetcher:
             return result
         raise AssertionError("unreachable")  # the loop always returns or raises
 
+    def _log_limit_headers(self, host: str, headers: httpx.Headers) -> None:
+        """Log the rate-limit headers of the first 429 from ``host`` in a run, or that it sent
+        none, so a slow host's limit can be read from the log."""
+        shared = self._shared
+        with shared.lock:
+            if host in shared.limit_logged:
+                return
+            shared.limit_logged.add(host)
+        found = limit_headers(headers)
+        shared.log.info(
+            "%s: first HTTP 429 of the run; rate-limit headers: %s",
+            host,
+            ", ".join(f"{k}: {v}" for k, v in sorted(found.items())) or "none",
+        )
+
     def _attempt(
         self,
         method: str,
@@ -689,6 +724,8 @@ class Fetcher:
             raise _Retry(f"{type(exc).__name__}: {exc}") from exc
         try:
             status = response.status_code
+            if status == 429:
+                self._log_limit_headers(target.host, response.headers)
             wait = _retry_wait(status, response.headers)
             if not wait and _github_secondary_limit(response):
                 wait = GITHUB_SECONDARY_WAIT
@@ -965,6 +1002,9 @@ def fetch_all(
     store = ctx.require_store()
     fetcher = ctx.require_fetcher()
     chosen = select(ctx, discover() if collectors is None else collectors)
+    for name in ctx.options.skip_fetch:
+        if name not in chosen:
+            ctx.log.warning("--skip-fetch %s: no selected collector of that name", name)
     settings = {name: load_settings(c, ctx.paths) for name, c in sorted(chosen.items())}
     # As in parse: Settings without an ``enabled`` switch mean always on.
     enabled = [name for name, s in settings.items() if getattr(s, "enabled", True)]
@@ -1022,6 +1062,24 @@ def _fetch_one(
     if exists and not refetch:
         log.info("%s: the %s snapshot is already complete (--refetch replaces it)", c.name, day)
         return SourceFetch(c.name, "kept", day)
+    if c.name in ctx.options.skip_fetch:
+        # Another job fetched it (refresh.yml's npm job, npm_own_job) and either placed the
+        # day's snapshot, kept above, or failed: never fetch it here as well.
+        if exists:
+            log.info("%s: not fetched (--skip-fetch); the %s snapshot stays", c.name, day)
+            return SourceFetch(c.name, "kept", day)
+        snapshot, stale = _fallback(store, c.name, day, max_age)
+        log.warning(
+            "%s: not fetched (--skip-fetch) and no %s snapshot; parse will use %s",
+            c.name,
+            day,
+            f"the {snapshot} snapshot{', flagged stale' if stale else ''}"
+            if snapshot is not None
+            else "none, so it drops out this run",
+        )
+        return SourceFetch(
+            c.name, "failed", snapshot, stale=stale, error="not fetched (--skip-fetch)"
+        )
     if day in frozen:
         if exists:
             raise SnapshotFrozen(

@@ -675,16 +675,22 @@ def test_workflow_triggers_and_settings() -> None:
     assert doc["concurrency"]["cancel-in-progress"] is False
     assert doc["permissions"] == {"contents": "read"}
     jobs = doc["jobs"]
-    assert list(jobs) == ["refresh", "store", "publish", "report"]
+    assert list(jobs) == ["npm", "refresh", "store", "publish", "report"]
     # Owner ruling of 2026-09-29: the schedule is off until the variable turns it on; a
     # skipped refresh leaves the others skipped (no store bundle, no pull request, no failure).
-    assert jobs["refresh"]["if"] == (
+    assert jobs["npm"]["if"] == (
         "${{ github.event_name != 'schedule' || vars.REFRESH_SCHEDULE == 'on' }}"
+    )
+    # npm_own_job (2026-10-19): the refresh job follows the npm job whatever its outcome.
+    assert jobs["refresh"]["needs"] == "npm"
+    assert jobs["refresh"]["if"] == (
+        "${{ !cancelled() && (github.event_name != 'schedule' || vars.REFRESH_SCHEDULE == 'on') }}"
     )
     assert jobs["store"]["needs"] == jobs["publish"]["needs"] == "refresh"
     assert jobs["report"]["if"] == "${{ failure() }}"
     # Least privilege: the job that downloads and parses third-party data can only read;
     # the jobs that write parse nothing the run produced.
+    assert jobs["npm"]["permissions"] == {"contents": "read"}
     assert jobs["refresh"]["permissions"] == {"contents": "read"}
     assert jobs["store"]["permissions"] == {"contents": "read"}
     assert jobs["publish"]["permissions"] == {
@@ -723,6 +729,39 @@ def test_workflow_triggers_and_settings() -> None:
     assert jobs["refresh"]["env"]["TFF_STORE_PUSH"] == "0"
 
 
+def test_the_npm_job_fetches_npm_alone_within_the_runners_limit() -> None:
+    """npm_own_job (2026-10-19): npm's download API accepts 20 requests a minute from a
+    runner, so its fetch gets a job of its own, with no store key, inside GitHub's 360-minute
+    limit; a failure or timeout of the fetch leaves the run to fall back on the last snapshot."""
+    jobs = _workflow("refresh.yml")["jobs"]
+    npm = jobs["npm"]
+    assert "environment" not in npm
+    assert npm["env"]["TFF_STORE"] == "${{ github.workspace }}/_npm_store"
+    assert npm["env"]["TFF_STORE_PUSH"] == "0"
+    assert not [s for s in npm["steps"] if s.get("with", {}).get("path") == "_store"]
+    assert npm["timeout-minutes"] <= 360
+    steps = {s.get("name"): s for s in npm["steps"]}
+    fetch_npm = steps["Fetch npm"]
+    assert fetch_npm["continue-on-error"] is True
+    assert fetch_npm["timeout-minutes"] < npm["timeout-minutes"]
+    assert fetch_npm["if"] == "${{ env.FROM_SNAPSHOTS == '' }}"
+    assert npm["outputs"] == {
+        "run_date": "${{ steps.prep.outputs.run_date }}",
+        "snapshot": "${{ steps.check.outputs.snapshot }}",
+    }
+    (upload,) = [s for s in npm["steps"] if "upload-artifact" in str(s.get("uses", ""))]
+    assert upload["with"]["name"] == "npm-snapshot"
+    assert upload["if"] == "${{ !cancelled() && steps.check.outputs.snapshot == 'true' }}"
+    # The refresh job takes the npm job's date and snapshot, and never asks npm itself.
+    refresh = jobs["refresh"]
+    assert refresh["env"]["NPM_RUN_DATE"] == "${{ needs.npm.outputs.run_date }}"
+    assert refresh["env"]["NPM_SNAPSHOT"] == "${{ needs.npm.outputs.snapshot }}"
+    names = [s.get("name") for s in refresh["steps"]]
+    assert names.index("Place the npm snapshot") < names.index("Refresh")
+    (download,) = [s for s in refresh["steps"] if "download-artifact" in str(s.get("uses", ""))]
+    assert download["with"]["name"] == "npm-snapshot"
+
+
 def test_workflow_reuses_ci_pins() -> None:
     pins = {s["uses"] for s in _steps(_workflow("ci.yml")) if "uses" in s}
     used = {s["uses"] for s in _steps(_workflow("refresh.yml")) if "uses" in s}
@@ -749,7 +788,7 @@ def test_workflow_opens_the_pull_request_dispatches_ci_and_reports_failures() ->
     assert jobs["store"]["needs"] == "refresh"
     assert "git -C _store push" in runs["Push the new snapshots to the store"]["run"]
     assert jobs["report"]["if"] == "${{ failure() }}"
-    assert jobs["report"]["needs"] == ["refresh", "store", "publish"]
+    assert jobs["report"]["needs"] == ["npm", "refresh", "store", "publish"]
     issue = runs["Report the failure in an issue"]
     assert "gh issue create" in issue["run"]
     replay = runs["Replay offline from a clean checkout"]
@@ -918,11 +957,87 @@ def test_step_prepare(tmp_path: Path) -> None:
     assert step.code == 1
     assert "::error::from_snapshots must be YYYY-MM-DD" in step.out
 
+    # A live run keeps the date the npm job fixed when it started (npm_own_job).
+    step = run_step("Prepare", tmp_path / "after-npm", NPM_RUN_DATE="2026-11-03")
+    assert step.files["output"] == "run_date=2026-11-03\n"
+
+
+def test_step_prepare_the_npm_fetch(tmp_path: Path) -> None:
+    name = "Prepare the npm fetch"
+    step = run_step(name, tmp_path / "live")
+    assert step.code == 0, step.out
+    assert re.fullmatch(r"run_date=\d{4}-\d{2}-\d{2}\n", step.files["output"])
+    assert step.files["env"] == f"TFF_RAW={step.temp}/raw\n"
+    workspace = tmp_path / "live" / "workspace"
+    assert (workspace / ".git" / "info" / "exclude").read_text(encoding="utf-8") == "/_npm_store/\n"
+    assert (workspace / "_npm_store").is_dir()
+    assert step.calls == []
+
+    step = run_step(name, tmp_path / "replay", FROM_SNAPSHOTS="2026-09-03")
+    assert step.files["output"] == "run_date=2026-09-03\n"
+    step = run_step(name, tmp_path / "bad", FROM_SNAPSHOTS="2026-9-3")
+    assert step.code == 1
+
+
+def test_step_fetch_npm(tmp_path: Path) -> None:
+    step = run_step("Fetch npm", tmp_path / "live")
+    assert step.code == 0, step.out
+    assert step.calls == [f"uv run --locked tff-catalog -v fetch --date {OCT} --only npm"]
+    assert f"npm fetch of {OCT}" in step.files["summary"]
+
+
+def test_step_check_the_npm_snapshot(tmp_path: Path) -> None:
+    if shutil.which("jq", path="/usr/bin:/bin") is None:
+        pytest.skip("no jq")
+    name = "Check the npm snapshot"
+    for case, manifest, want in (
+        ("complete", '{"complete": true}', "true"),
+        ("partial", '{"complete": false}', "false"),
+        ("none", None, "false"),
+    ):
+        root = tmp_path / case
+        if manifest is not None:
+            day = root / "workspace" / "_npm_store" / "npm" / OCT.isoformat()
+            day.mkdir(parents=True)
+            (day / "manifest.json").write_text(manifest, encoding="utf-8")
+        step = run_step(name, root)
+        assert step.code == 0, step.out
+        assert step.files["output"] == f"snapshot={want}\n", case
+        assert ("::warning::no complete npm snapshot" in step.out) == (want == "false")
+
+
+def test_step_place_the_npm_snapshot(tmp_path: Path) -> None:
+    name = "Place the npm snapshot"
+    placed = tmp_path / "placed"
+    artifact = placed / "runner-temp" / "npm-snapshot"
+    artifact.mkdir(parents=True)
+    (artifact / "manifest.json").write_text('{"complete": true}', encoding="utf-8")
+    step = run_step(name, placed)
+    assert step.code == 0, step.out
+    target = placed / "workspace" / "_store" / "npm" / OCT.isoformat()
+    assert (target / "manifest.json").read_text(encoding="utf-8") == '{"complete": true}'
+    assert "is placed in the store" in step.files["summary"]
+
+    # A snapshot the store already has for the day is never replaced.
+    kept = tmp_path / "kept"
+    artifact = kept / "runner-temp" / "npm-snapshot"
+    artifact.mkdir(parents=True)
+    (artifact / "manifest.json").write_text('{"new": true}', encoding="utf-8")
+    target = kept / "workspace" / "_store" / "npm" / OCT.isoformat()
+    target.mkdir(parents=True)
+    (target / "manifest.json").write_text('{"old": true}', encoding="utf-8")
+    step = run_step(name, kept)
+    assert step.code == 0, step.out
+    assert (target / "manifest.json").read_text(encoding="utf-8") == '{"old": true}'
+    assert not (target / "npm-snapshot").exists()
+    assert "keeping it" in step.files["summary"]
+
 
 def test_step_refresh(tmp_path: Path) -> None:
     step = run_step("Refresh", tmp_path / "live")
     assert step.code == 0, step.out
-    assert step.calls == [f"uv run --locked tff-catalog -v refresh --date {OCT}"]
+    # The npm job fetched npm, or failed to: the refresh job never asks npm (npm_own_job).
+    assert step.calls == [f"uv run --locked tff-catalog -v refresh --date {OCT} --skip-fetch npm"]
     step = run_step(
         "Refresh", tmp_path / "replay", RUN_DATE=str(S0_DAY), FROM_SNAPSHOTS=str(S0_DAY)
     )

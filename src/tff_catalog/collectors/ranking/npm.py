@@ -5,11 +5,12 @@
 ``registry.npmjs.org/-/org/<org>/package``, and their daily downloads from
 ``api.npmjs.org/downloads/range/<start>:<end>/<package>``. npm computes each
 day once, soon after UTC midnight. Scoped packages can't be asked for in bulk,
-so it is one request per package, at the fetcher's 1 a second per host (npm's
-crawler policy): about 4,700 requests. Even at that pace npm answered one
-request in five to ten with a 429 on 2026-09-26, which the fetcher's retries
-absorb, so a full run takes about 90 to 110 minutes. The counts are open data
-(ruling T1: raw counts may be published).
+so it is one request per package: about 4,700 requests. From a GitHub runner
+npm accepts 20 a minute (2026-10-17), so the fetcher asks once every 3.1 s
+(``fetch.HOST_MIN_INTERVAL``) and a full run takes about four hours; the monthly
+refresh fetches npm in a job of its own (refresh.yml, owner ruling
+``npm_own_job``). The counts are open data (ruling T1: raw counts may be
+published).
 
 **Fetch.**
 
