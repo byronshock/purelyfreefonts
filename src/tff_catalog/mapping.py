@@ -54,11 +54,11 @@ reads (its collector, series, npm scopes, Nerd's excluded assets, FOT's
 methods, no prereleases, with Google's fallback when the main series is
 missing) and ``volumes`` turns them into one number per key in the source's
 ``rate`` units, counted by the source's ``counting`` as methodology §3 and §5
-say: a rate over min(window, days available), where the days available run
-from the key's ``first_seen`` attr (a lifetime counter: from the asset's
-creation); a share (count / ``samples`` when the row is a count); the mean of
-monthly shares from the key's first non-zero month; the mean of the last
-month's weekly values (a missing week counts 0); or the value as it is.
+say: a rate over the window, never scaled up for a young key (a lifetime counter:
+over the days since the asset's creation); a share (count / ``samples`` when the
+row is a count); Arch's installs pooled over the window's system-months; the mean
+of the last month's weekly values (a missing week counts 0); or the value as it
+is. Debian reads only packages in the release's main archive (debian_frame).
 Only font keys take a rank (``font_key_filter``): not reverse dependents
 (``dependents``: packages that only pull fonts in and whose names are not font
 package names), nor unresolved distro packages with no font package name and
@@ -334,8 +334,13 @@ def _wanted(src: SourceBase, o: Observation, selects: Callable[[SourceKey], bool
     nerd_asset = isinstance(src, NerdSource) and isinstance(asset, str)
     if nerd_asset and not selects(SourceKey(o.key.ns, str(asset))):
         return False
+    if src.collector == DEBIAN and _attr(o, "packaged") is False:
+        return False  # not in the release's main archive (debian_frame)
     method = _attr(o, "method")
     return not (isinstance(src, FotSource) and method is not None and method not in src.methods)
+
+
+DEBIAN = "debian"  # the popcon collector, whose rows say whether a package is in the release
 
 
 def _attr(o: Observation | Relation, name: str) -> object:
@@ -368,18 +373,13 @@ def window_days(start: date, end: date) -> float:
 
 
 def days_available(o: Observation, *, lifetime: bool = False) -> float:
-    """The days ``o``'s value was counted over (methodology §3: min(window, days
-    available)). The days available run from the key's ``first_seen`` attr; for a
-    lifetime counter, from the asset's creation (``first_seen``, else
-    ``published_at``, else ``start``)."""
+    """The days ``o``'s value was counted over: its window, however young the key (owner
+    ruling of 2026-09-30, b8a_no_scaling_any_source); for a lifetime counter, the days
+    since the asset's creation (``first_seen``, else ``published_at``, else ``start``)."""
     if lifetime:
         created = _attr_date(o, "first_seen") or _attr_date(o, "published_at") or o.start
         return float(max(1, (o.end - created).days))
-    window = window_days(o.start, o.end)
-    seen = _attr_date(o, "first_seen")
-    if seen is not None and seen > o.start:
-        return max(1.0, min(window, float((o.end - seen).days + 1)))
-    return window
+    return window_days(o.start, o.end)
 
 
 def rate_value(o: Observation, rate: str, *, lifetime: bool = False) -> float | None:
@@ -410,8 +410,8 @@ def volumes(src: SourceBase, rows: Iterable[Observation]) -> dict[SourceKey, flo
     if not rows:
         return {}
     match src.counting:
-        case "monthly_mean_share":
-            return _monthly_mean(rows, src.rate, getattr(src, "months", 12))
+        case "pooled_share":
+            return _pooled(rows, getattr(src, "months", 12))
         case "weekly_mean":
             return _weekly_mean(rows, src.rate)
         case "snapshot_delta":  # the report reads one snapshot: the first-run rule
@@ -429,24 +429,16 @@ def _totals[K](values: Iterable[tuple[K, float | None]]) -> dict[K, float]:
     return {key: math.fsum(vs) for key, vs in parts.items()}
 
 
-def _monthly_mean(rows: Sequence[Observation], rate: str, months: int) -> dict[SourceKey, float]:
-    """Arch: the mean of the last ``months`` monthly shares, from the key's first
-    non-zero month on (a newer package is averaged over the months it existed)."""
-    window = sorted({o.series for o in rows})[-months:]
-    inside = set(window)
-    by_key: dict[SourceKey, dict[str, float]] = defaultdict(dict)
-    for (key, month), v in _totals(
-        ((o.key, o.series), rate_value(o, rate)) for o in rows if o.series in inside
-    ).items():
-        by_key[key][month] = v
-    out: dict[SourceKey, float] = {}
-    for key, shares in by_key.items():
-        nonzero = [m for m in window if shares.get(m, 0.0) > 0]
-        if not nonzero:
-            continue
-        used = window[window.index(nonzero[0]) :]
-        out[key] = math.fsum(shares.get(m, 0.0) for m in used) / len(used)
-    return out
+def _pooled(rows: Sequence[Observation], months: int) -> dict[SourceKey, float]:
+    """Arch: each key's installs over the last ``months`` months, over the systems sampled
+    in them (a2_arch_pool_months), as stage "correct" counts them."""
+    from tff_catalog.corrections import count_pooled
+
+    return {
+        key: kv.value
+        for key, kv in count_pooled(rows, months).items()
+        if kv.value is not None and kv.value > 0
+    }
 
 
 def _weekly_mean(rows: Sequence[Observation], rate: str) -> dict[SourceKey, float]:
