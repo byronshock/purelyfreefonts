@@ -1,8 +1,9 @@
 # Ranking collector npm: daily downloads of the Fontsource and Expo font
 # packages, from api.npmjs.org/downloads/range (open data, ruling T1). One
-# request per package, one every 1.5 seconds (fetch.HOST_MIN_INTERVAL): about
-# 4,700 requests. At one a second npm answered one in five with a 429 (the
-# fetcher retries), so a full run takes about two hours.
+# request per package, one every 3.1 seconds (fetch.HOST_MIN_INTERVAL): about
+# 4,700 requests. npm accepts 20 a minute from a GitHub runner (2026-10-17), so
+# a full run takes about four hours; refresh.yml fetches npm in a job of its own
+# (owner ruling npm_own_job).
 enabled = true
 
 # npm organisations whose packages are fetched. ranking.toml's engine sources
@@ -21,8 +22,8 @@ exclude = ["@expo-google-fonts/dev"]
 history_days = 540
 
 # 0 fetches every package. A positive number fetches an evenly spaced sample of
-# that many packages per scope, for local runs (a full run takes over 90
-# minutes); the manifest notes it. Keep 0 here.
+# that many packages per scope, for local runs (a full run takes about four
+# hours); the manifest notes it. Keep 0 here.
 max_packages = 0
 
 # Packages whose request may still fail after the fetcher's retries, or whose

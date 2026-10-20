@@ -532,11 +532,51 @@ def test_npm_downloads_are_paced_slower_by_default(server: Server, fake_time: Fa
     with Fetcher(transport=server.transport) as f:
         f.get(npm)
         f.get(npm)
-    assert fake_time.sleeps == [fetch.HOST_MIN_INTERVAL["api.npmjs.org"]] == [1.5]
+    # npm accepted 20 requests a minute from a runner (2026-10-17): one every 3.1 s.
+    assert fetch.HOST_MIN_INTERVAL["api.npmjs.org"] == 3.1
+    assert fake_time.sleeps == pytest.approx([3.1])
     with Fetcher(transport=server.transport, min_interval={"api.npmjs.org": 0.0}) as f:
         f.get(npm)
         f.get(npm)  # a caller's own interval wins
-    assert fake_time.sleeps == [1.5]
+    assert fake_time.sleeps == pytest.approx([3.1])
+
+
+def test_the_first_429_of_a_host_logs_its_rate_limit_headers(
+    server: Server, fake_time: FakeTime, caplog: pytest.LogCaptureFixture
+) -> None:
+    other = "https://example.net/x"
+    server.on(
+        URL,
+        reply(429, x_ratelimit_limit="20", content_type="text/html"),
+        reply(429),
+        reply(body=b"ok"),
+    )
+    server.on(other, reply(429), reply(body=b"ok"))
+    with caplog.at_level(logging.INFO), server.fetcher() as f:
+        assert f.get(URL).content == b"ok"
+        assert f.get(other).content == b"ok"
+    logged = [r.getMessage() for r in caplog.records if "first HTTP 429" in r.getMessage()]
+    assert logged == [
+        "example.org: first HTTP 429 of the run; rate-limit headers: x-ratelimit-limit: 20",
+        "example.net: first HTTP 429 of the run; rate-limit headers: none",
+    ]
+    assert fetch.limit_headers(
+        httpx.Headers(
+            {
+                "Retry-After": "7",
+                "RateLimit-Policy": "20;w=60",
+                "RateLimit-Remaining": "0",
+                "X-Rate-Limit-Limit": "20",
+                "Set-Cookie": "a=b",
+                "X-Other": "1",
+            }
+        )
+    ) == {
+        "retry-after": "7",
+        "ratelimit-policy": "20;w=60",
+        "ratelimit-remaining": "0",
+        "x-rate-limit-limit": "20",
+    }
 
 
 def test_min_interval_is_per_host(server: Server, fake_time: FakeTime) -> None:
@@ -1116,6 +1156,51 @@ def test_only_selects_collectors_directly_or_by_engine_source(
     with caplog.at_level(logging.WARNING):
         assert [r.source for r in stage.run(only=("npm_fontsource", "nosuch"))] == ["beta"]
     assert "--only nosuch" in caplog.text
+
+
+def test_skip_fetch_keeps_a_complete_snapshot_of_the_day(stage: Stage) -> None:
+    """refresh.yml's npm job places the day's snapshot; the refresh job then asks nothing."""
+    stage.add(make_collector("alpha"))
+    stage.serve("alpha", reply(body=b'{"v": 1}'), reply(body=b'{"v": 2}'))
+    stage.run()
+    requests = len(stage.server.requests)
+    assert stage.run(skip_fetch=("alpha",)) == (SourceFetch("alpha", "kept", DAY),)
+    # --refetch would replace it; --skip-fetch leaves it alone all the same.
+    assert stage.run(skip_fetch=("alpha",), refetch=True) == (SourceFetch("alpha", "kept", DAY),)
+    assert len(stage.server.requests) == requests
+    snap = stage.store.snapshot("alpha", DAY)
+    assert snap is not None
+    assert snap.load_json("alpha.json") == {"v": 1}
+
+
+def test_skip_fetch_without_a_snapshot_falls_back_without_a_request(stage: Stage) -> None:
+    """The npm job failed or ran out of time: the refresh job never fetches npm itself."""
+    stage.add(make_collector("alpha"))
+    stage.add(make_collector("beta"))
+    stage.serve("alpha", reply(body=b"{}"))
+    stage.serve("beta", reply(body=b"{}"))
+    earlier = DAY - timedelta(days=30)
+    stage.run(earlier)
+    requests = len(stage.server.requests)
+    alpha, beta = stage.run(skip_fetch=("alpha",))
+    assert (alpha.outcome, alpha.snapshot, alpha.stale) == ("failed", earlier, True)
+    assert alpha.error == "not fetched (--skip-fetch)"
+    assert beta == SourceFetch("beta", "fetched", DAY)
+    assert len(stage.server.requests) == requests + 1  # beta's only
+    assert stage.store.dates("alpha") == [earlier]
+
+
+def test_skip_fetch_past_the_stale_window_drops_the_source(
+    stage: Stage, caplog: pytest.LogCaptureFixture
+) -> None:
+    stage.add(make_collector("alpha"))
+    stage.serve("alpha", reply(body=b"{}"))
+    stage.run(DAY - timedelta(days=63))  # two months are 62 days
+    with caplog.at_level(logging.WARNING):
+        [alpha] = stage.run(skip_fetch=("alpha", "nosuch"))
+    assert (alpha.outcome, alpha.snapshot, alpha.stale) == ("failed", None, False)
+    assert "drops out this run" in caplog.text
+    assert "--skip-fetch nosuch" in caplog.text
 
 
 def test_settings_are_checked_before_any_request(stage: Stage) -> None:

@@ -29,3 +29,10 @@ recommended = true
 value = "short_summary_no_rulings"
 ruling = "Claude summarizes the October scores (the current method) for the owner in a page: the top-100 entries and exits and the biggest moves, in ranks only (T2, T4). No score rulings are asked; the formal score review still waits for the replay under the new method (refresh_gate_review_now)."
 reason = "The owner, in chat with the lead session on 2026-10-19: \"Short summary now (Recommended)\", over (b) a full score review under the current method and (c) keeping it deferred. Nearly every big move is a font crossing a hand-set floor that the port retires."
+
+[npm_own_job]
+choice = "a"
+recommended = true
+value = "npm_job_3_1_s_and_skip_fetch"
+ruling = "The monthly refresh fetches npm in a job of its own, ahead of the refresh job, at one request every 3.1 s (fetch.HOST_MIN_INTERVAL), with its own 355 minutes inside GitHub's 360-minute cap; it uploads the day's npm snapshot, which the refresh job places in its store and runs with --skip-fetch npm, so the refresh job never asks npm. If the npm fetch fails or runs out of time (its step stops at 340 minutes and the job carries on), the run uses the last npm snapshot within the stale window, flagged stale in the pull request, and the other sources still land."
+reason = "The owner, in chat with the lead session on 2026-10-19: \"npm in its own job (Recommended)\", over (b) pacing and a 355-minute timeout only, which leave the whole run about 5 h 05 of 5 h 55, and (c) its own job at the 1.5 s pace. On 2026-10-17 (run 38999881962) npm's download API accepted exactly 20 requests a minute from the runner in 230 of 235 full minutes, so its 4,711 packages took 3 h 56 min whatever the pace, and the refresh job used 297.5 of its 345 minutes. Scoped packages can't be batched, npm sends no Retry-After, and an incremental fetch is still one request per package."
