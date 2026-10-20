@@ -18,10 +18,11 @@ name: Refresh
 #    locally, even when the run failed, so a rerun the same day reuses them. Replay the
 #    same snapshots offline from a clean checkout of the same commit; build/ must come
 #    out identical (methodology §9: a rerun from the same snapshots giving different
-#    output is a hard failure). It uploads the store's new commits as a git bundle and
-#    the pull request's files as an artifact. The store is cloned without keeping its
-#    key, and the job's GITHUB_TOKEN can only read (the collectors' API budget).
-# 2. store: pushes that bundle to the data repository. It runs no repository code.
+#    output is a hard failure). It uploads the store's new commits as an encrypted git
+#    bundle and the pull request's files as an artifact. The store is cloned without
+#    keeping its key, and the job's GITHUB_TOKEN can only read (the collectors' API budget).
+# 2. store (actions: write): decrypts that bundle, pushes it to the data repository, and
+#    deletes its artifact. It runs no repository code.
 # 3. publish (contents, pull-requests and actions: write): opens or updates the pull
 #    request on the fixed branch refresh/monthly with the artifact's files (build/
 #    outputs, build/state/ copied to state/, and the alias table and seeds the run
@@ -41,6 +42,14 @@ name: Refresh
 # deployments are limited to main (store_key_environment_timing, ops/SERVER.md item 27a):
 # only the refresh and store jobs name it. A dispatch from any other branch fails at the
 # refresh job before its first step, and report opens its issue.
+#
+# The store bundle is encrypted with STORE_BUNDLE_KEY, a secret of the same environment
+# (store_bundle_encrypted, 2026-10-19): any signed-in GitHub user can download a public
+# repository's artifacts, and the store holds the Google Fonts and Fonts Over Time
+# snapshots that rulings T2 and T4 keep private. Without the key the refresh job fails
+# before it fetches anything. The store job checks the decrypted bundle against the
+# sha256 the refresh job reports, and deletes the run's store-bundle artifacts (every
+# attempt's) once the push has landed.
 #
 # Until milestone-refresh.md step 1 turns it on (owner ruling of 2026-09-29), the schedule
 # does nothing: a scheduled run starts only once the repository variable REFRESH_SCHEDULE is
@@ -171,6 +180,7 @@ jobs:
     outputs:
       run_date: ${{ steps.prep.outputs.run_date }}
       store_bundle: ${{ steps.store-bundle.outputs.bundle }}
+      store_bundle_sha256: ${{ steps.store-bundle.outputs.sha256 }}
       pull_request: ${{ steps.pr-files.outputs.changed }}
     # Job-level env may use only the github, needs, strategy, matrix, vars, secrets and
     # inputs contexts (not runner), so Prepare sets TFF_RAW from $RUNNER_TEMP.
@@ -187,6 +197,17 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+
+      # Before anything is fetched: a run that could not upload its store bundle would
+      # lose its snapshots (store_bundle_encrypted).
+      - name: Check the store bundle's key
+        env:
+          STORE_BUNDLE_KEY: ${{ secrets.STORE_BUNDLE_KEY }}
+        run: |
+          if [ -z "$STORE_BUNDLE_KEY" ]; then
+            echo "::error::STORE_BUNDLE_KEY is not set in the environment refresh (store_bundle_encrypted)"
+            exit 1
+          fi
 
       # The key clones the store and is not kept: nothing later in this job can push.
       - name: Check out the snapshot store
@@ -293,14 +314,29 @@ jobs:
           RUN_DATE: ${{ steps.prep.outputs.run_date }}
         run: uv run --locked tff-catalog store commit -m "snapshots $RUN_DATE"
 
+      # Only the encrypted file is in the uploaded folder; the plain bundle is written
+      # beside it and removed (store_bundle_encrypted). The store job decrypts with the
+      # same cipher, digest and iteration count.
       - name: Bundle the store's new commits
         id: store-bundle
         if: ${{ !cancelled() && steps.store-check.outcome == 'success' }}
+        env:
+          STORE_BUNDLE_KEY: ${{ secrets.STORE_BUNDLE_KEY }}
         run: |
-          mkdir -p "$RUNNER_TEMP/store"
+          mkdir -p "$RUNNER_TEMP/store" "$RUNNER_TEMP/store-plain"
           # Commits the clone has beyond the fetched head; none (nothing new) is no bundle.
           if [ -n "$(git -C _store rev-list '@{upstream}..HEAD')" ]; then
-            git -C _store bundle create "$RUNNER_TEMP/store/store.bundle" '@{upstream}..HEAD'
+            if [ -z "$STORE_BUNDLE_KEY" ]; then
+              echo "::error::STORE_BUNDLE_KEY is not set: the store bundle is not uploaded"
+              exit 1
+            fi
+            plain="$RUNNER_TEMP/store-plain/store.bundle"
+            git -C _store bundle create "$plain" '@{upstream}..HEAD'
+            sha=$(sha256sum "$plain" | cut -d ' ' -f 1)
+            openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -md sha256 -salt \
+              -pass env:STORE_BUNDLE_KEY -in "$plain" -out "$RUNNER_TEMP/store/store.bundle.enc"
+            rm -f "$plain"
+            echo "sha256=$sha" >> "$GITHUB_OUTPUT"
             echo "bundle=true" >> "$GITHUB_OUTPUT"
           else
             echo "bundle=false" >> "$GITHUB_OUTPUT"
@@ -400,11 +436,12 @@ jobs:
     name: store
     needs: refresh
     if: ${{ !cancelled() && needs.refresh.outputs.store_bundle == 'true' }}
-    environment: refresh  # DATA_STORE_KEY, as in the refresh job
+    environment: refresh  # DATA_STORE_KEY and STORE_BUNDLE_KEY, as in the refresh job
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
       contents: read
+      actions: write # deletes the store bundle's artifact after the push
     steps:
       - name: Check out the snapshot store
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -418,12 +455,55 @@ jobs:
         with:
           name: store-bundle
           path: ${{ runner.temp }}/store
+      - name: Decrypt the store bundle
+        env:
+          STORE_BUNDLE_KEY: ${{ secrets.STORE_BUNDLE_KEY }}
+          BUNDLE_SHA256: ${{ needs.refresh.outputs.store_bundle_sha256 }}
+        run: |
+          if [ -z "$STORE_BUNDLE_KEY" ] || [ -z "$BUNDLE_SHA256" ]; then
+            echo "::error::the store bundle's key or sha256 is missing (store_bundle_encrypted)"
+            exit 1
+          fi
+          mkdir -p "$RUNNER_TEMP/store-plain"
+          plain="$RUNNER_TEMP/store-plain/store.bundle"
+          openssl enc -d -aes-256-cbc -pbkdf2 -iter 100000 -md sha256 \
+            -pass env:STORE_BUNDLE_KEY -in "$RUNNER_TEMP/store/store.bundle.enc" -out "$plain"
+          # The cipher has no integrity check of its own: the sha256 comes through the job's
+          # outputs, not the artifact.
+          if [ "$(sha256sum "$plain" | cut -d ' ' -f 1)" != "$BUNDLE_SHA256" ]; then
+            echo "::error::the decrypted store bundle does not match the refresh job's sha256"
+            exit 1
+          fi
+      # A rerun after the push landed (say the delete below failed) clones the store at the
+      # bundle's tip, which lacks the bundle's prerequisite, so it only checks the tip is there.
       - name: Push the new snapshots to the store
         run: |
-          git -C _store bundle verify "$RUNNER_TEMP/store/store.bundle"
-          git -C _store fetch --quiet "$RUNNER_TEMP/store/store.bundle" HEAD
+          plain="$RUNNER_TEMP/store-plain/store.bundle"
+          tip=$(git -C _store bundle list-heads "$plain" HEAD | cut -d ' ' -f 1)
+          if [ -n "$tip" ] && git -C _store cat-file -e "$tip^{commit}" 2>/dev/null; then
+            echo "The store already has the bundle's commits ($tip)." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git -C _store bundle verify "$plain"
+          git -C _store fetch --quiet "$plain" HEAD
           git -C _store merge --ff-only --quiet FETCH_HEAD
           git -C _store push --quiet origin HEAD
+      # Only after the push: a failed push keeps the encrypted artifact for "Re-run failed jobs".
+      # By name, so an earlier attempt's upload goes too.
+      - name: Delete the store bundle's artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ids=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts?name=store-bundle&per_page=100" \
+            --jq '.artifacts[].id')
+          if [ -z "$ids" ]; then
+            echo "::error::the run has no store-bundle artifact to delete"
+            exit 1
+          fi
+          for id in $ids; do
+            gh api --silent -X DELETE "repos/$GITHUB_REPOSITORY/actions/artifacts/$id"
+            echo "The store bundle's artifact $id is deleted." >> "$GITHUB_STEP_SUMMARY"
+          done
 
   publish:
     name: publish
