@@ -117,6 +117,23 @@ def _common_flags() -> argparse.ArgumentParser:
         "to its last one as a failed fetch would (comma-separated, repeatable)",
     )
     g.add_argument("--keep-raw", action="store_true", help="keep big raw downloads after the run")
+    fits = g.add_mutually_exclusive_group()
+    fits.add_argument(
+        "--write-fit",
+        dest="fit",
+        action="store_const",
+        const="write",
+        default="read",
+        help="with no stored model fit for the date, fit it and keep it in the store, once "
+        "(the GitHub run)",
+    )
+    fits.add_argument(
+        "--fit-in-memory",
+        dest="fit",
+        action="store_const",
+        const="memory",
+        help="with no stored model fit for the date, fit it and keep nothing (a local dry run)",
+    )
     return common
 
 
@@ -222,6 +239,7 @@ def _options(args: argparse.Namespace) -> stages.RunOptions:
         refetch=args.refetch,
         keep_raw=args.keep_raw,
         skip_fetch=tuple(args.skip_fetch),
+        fit=args.fit,
     )
 
 

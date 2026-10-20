@@ -426,7 +426,11 @@ def run_manifest(
         "code_dirty": run.changes is not None,
         "code_changes_sha256": run.changes,
         "config_sha256": config_hash(config),
-        "options": {"only": list(ctx.options.only), "refetch": ctx.options.refetch},
+        "options": {
+            "only": list(ctx.options.only),
+            "refetch": ctx.options.refetch,
+            "fit": ctx.options.fit,
+        },
         "snapshots": snapshots,
         "sizes": _sizes(ctx.store, snapshots),
         "stale": stageio.encode(dict(sorted(_stale(ctx.paths).items()))),

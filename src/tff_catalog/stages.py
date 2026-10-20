@@ -43,6 +43,10 @@ class RunOptions:
     # --skip-fetch: collectors stage "fetch" doesn't ask; each keeps a complete snapshot of
     # the day if one is there, else falls back as a failed fetch would (npm_own_job)
     skip_fetch: tuple[str, ...] = ()
+    # The measurement model's fit when none is stored (tff_catalog.fitstore): "read" stops,
+    # "write" (--write-fit, the GitHub run) fits and keeps it, "memory" (--fit-in-memory, a
+    # local dry run) fits and keeps nothing. A merged run's date fits in memory.
+    fit: str = "read"
 
     @property
     def replay(self) -> bool:

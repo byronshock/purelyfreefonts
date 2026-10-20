@@ -267,7 +267,10 @@ jobs:
           # The GitHub API budget of the collectors (1,000 requests an hour); read only.
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          args=(refresh --date "$RUN_DATE")
+          # --write-fit: with no stored model fit for the date (the held October run's replay,
+          # the switch), fit it and keep it in the store, once (fitstore, q9_theta_cadence);
+          # the offline replay below reads it back.
+          args=(refresh --date "$RUN_DATE" --write-fit)
           if [ -n "$FROM_SNAPSHOTS" ]; then
             args+=(--from-snapshots "$FROM_SNAPSHOTS")
           else
