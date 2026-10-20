@@ -12,8 +12,10 @@ ids are ``large-<category>-<n>``, families ``Large <Category> <n>``, and the cat
 - **Shaped like the sample:** font ``k`` copies the traits of sample font ``k % 40``
   (category, monospace, formats, Latin coverage, license, systems, aliases, flags and
   per-source states), so every filter, badge and fallback text keeps its share. Every view
-  gets a fresh ranking: an exact top 100, then the bands up to "501+", and a few unranked
-  fonts with a reason (Coding holds only the monospace fonts).
+  the sample ranks gets a fresh ranking: an exact top 100, then the bands up to "501+", and a
+  few unranked fonts with a reason (Coding holds only the monospace fonts). That includes the
+  retired Overall, which v1 of the schema still requires in every font's ``ranks`` although
+  the sample lists it with ``available: false``; Rising, which no sample font has, gets none.
 - **Specimens:** every font with ``preview_ok`` gets ``specimens/<id>.svg`` next to the
   catalog, copied in turn from the committed sample specimens
   (``tests/fixtures/specimens/*.svg``) with its real sha256, so the page loads a realistic
@@ -49,7 +51,7 @@ CATALOG_NAME = "catalog-site.json"
 # Share of each view's universe left unranked (with a reason), as in the sample.
 UNRANKED_SHARE = 0.06
 # Views where a font flagged too_new stays unranked as "too new to rank" (the sample's shape:
-# ranked overall and in projects, too new elsewhere).
+# ranked in projects and in the retired Overall, too new elsewhere).
 TOO_NEW_VIEWS = frozenset({"desktop_chosen", "desktop_installed", "coding", "dev_apps"})
 CATEGORY_WORD = {
     "sans-serif": "Sans",
@@ -71,7 +73,8 @@ def make_catalog(
     rng = np.random.default_rng(seed)
     svgs = [path.read_bytes() for path in sorted(SPECIMENS.glob("*.svg"))]
     templates = sample["fonts"]
-    views = [v["key"] for v in sample["views"] if v["available"]]
+    # The views the sample's fonts carry: the available ones and the retired Overall (v1).
+    views = [v["key"] for v in sample["views"] if any(v["key"] in f["ranks"] for f in templates)]
 
     made: list[dict[str, Any]] = []
     specimens: dict[str, bytes] = {}

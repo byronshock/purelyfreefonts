@@ -367,6 +367,11 @@ def check_site(cfg: Config) -> None:
     keys = [v.key for v in site.views]
     if sorted(keys) != sorted(RANK_KEYS):
         _fail("site.toml: views", f"need every rank key once: {', '.join(RANK_KEYS)}")
+    default = site.views[0]
+    if default.retired or default.key == "rising":
+        # The list opens on the first view (M2-D1), so it must always be offered: never a
+        # retired view, nor Rising, which waits for months of history.
+        _fail("site.toml: views", f"the first view is the default (M2-D1): not {default.key!r}")
     classes = [c.id for c in site.license_classes]
     for klass in classes:
         if not _TOKEN.match(klass) or classes.count(klass) > 1:
