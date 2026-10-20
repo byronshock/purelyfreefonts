@@ -20,7 +20,9 @@ Every stage is its own command, so each state file has owning stages
 
 Files (all JSON, written with ``jsonio.dump``)::
 
-    run_history.json    [{run_date, merged_pr, code_commit, config_sha256, snapshots: {source: date}}]  <= 24
+    run_history.json    [{run_date, merged_pr, code_commit, config_sha256, snapshots: {source: date},
+                         method_versions: {rank_key: date}}]  <= 24 (method_versions since
+                         the scoring-method port: tff_catalog.methods)
     ids.json            {family_id: {family, minted_from, first_seen}}      append-only id registry
     first_seen.json     {family_id: {catalog: date|null, sources: {source: date}}}
     membership.json     {catalog: {id: {member, entered, runs_outside}}, top100: {rank_key: {id: {...}}}}
