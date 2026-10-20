@@ -367,6 +367,9 @@ class SurveyRank:
 
 @dataclass(frozen=True, slots=True)
 class OverallRank:
+    # The rank key overall repeats (owner ruling of 2026-10-01, q12_overall_stand_in), or ""
+    # for the fused mix of D12.
+    stand_in: str
     mix: dict[str, float]  # rank key -> share of the overall mix (D12)
 
 

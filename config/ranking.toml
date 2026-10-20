@@ -306,6 +306,9 @@ sources = ["npm_expo", "flutter"]
 
 # --- Ranks and views (rank keys are versioned schema constants, §7) ------------
 
+[ranks.overall]
+stand_in = ""                   # q12_overall_stand_in: "project" makes ranks.overall repeat the Projects entry (catalog-site.json v1 needs it); "" fuses the mix below
+
 [ranks.overall.mix]             # D12: usage only
 desktop_chosen = 0.5
 project = 0.5

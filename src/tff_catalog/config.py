@@ -179,6 +179,9 @@ def check_ranking(r: RankingConfig) -> None:
     if not 0 <= c.dependency_review <= c.dependency_abstain <= 1:
         _fail("ranking.toml: corrections", "need 0 <= dependency_review <= dependency_abstain <= 1")
 
+    stand_in = r.ranks.overall.stand_in
+    if stand_in and stand_in not in ("desktop_chosen", "desktop_installed", "project"):
+        _fail("ranking.toml: ranks.overall.stand_in", f"{stand_in!r} cannot stand in for overall")
     mix = r.ranks.overall.mix
     for key in mix:
         if key not in ("desktop_chosen", "desktop_installed", "project"):

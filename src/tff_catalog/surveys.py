@@ -534,7 +534,7 @@ def views(inputs: RankInputs, cfg: RankingConfig) -> dict[str, SurveyScores]:
     """Every published rank key, including coding, dev_apps and rising.
 
     Each key ranks only on ``inputs.terms[key]`` with ``inputs.weights[key]``, or a model
-    view on its entries in ``inputs.models`` (``modelviews.survey_scores``), except overall (``overall``, reusing the surveys' equating and guards) and
+    view on its entries in ``inputs.models`` (``modelviews.survey_scores``), except overall (``overall``, reusing the surveys' equating and guards, or a copy of its stand-in's scores: ``ranks.overall.stand_in``, q12) and
     rising (``rising_terms`` agreement). So an extra view's weights never reach
     overall. Keys in ``RANK_KEYS`` order; a key with no terms is empty.
     """
@@ -547,10 +547,17 @@ def views(inputs: RankInputs, cfg: RankingConfig) -> dict[str, SurveyScores]:
             out[key] = modelviews.survey_scores(key, inputs.models[key], inputs.names, cfg)
         elif key not in ("overall", "rising"):
             out[key], parts[key] = _scores(key, inputs, cfg)
-    for k in cfg.ranks.overall.mix:
-        if k not in parts:
-            parts[k] = _part(inputs.terms.get(k, {}), inputs.weights.get(k, {}), inputs.ruler, cfg)
-    out["overall"] = _overall(inputs, parts, cfg)
+    stand_in = cfg.ranks.overall.stand_in
+    if stand_in:  # q12: overall repeats its stand-in's entry (catalog-site.json v1 needs it)
+        s = out[stand_in]
+        out["overall"] = SurveyScores("overall", s.fused, s.placements, s.overlaps, s.weights)
+    else:
+        for k in cfg.ranks.overall.mix:
+            if k not in parts:
+                parts[k] = _part(
+                    inputs.terms.get(k, {}), inputs.weights.get(k, {}), inputs.ruler, cfg
+                )
+        out["overall"] = _overall(inputs, parts, cfg)
     out["rising"] = _rising_scores(inputs, cfg)
     return {key: out[key] for key in RANK_KEYS}
 

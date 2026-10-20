@@ -518,7 +518,8 @@ def run(ctx: StageContext) -> None:
     out: dict[str, dict[str, Confidence]] = {}
     for key in sorted(published, key=_key_order):
         orders = published[key]
-        model = inputs.models.get(key)
+        stood_in = ranking.ranks.overall.stand_in if key == "overall" else ""
+        model = inputs.models.get(stood_in or key)
         if model is not None:
             points = {fid: model[fid].score for fid in orders}
             bounds = {fid: (model[fid].low, model[fid].high) for fid in orders}

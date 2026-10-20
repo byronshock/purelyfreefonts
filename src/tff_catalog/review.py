@@ -1124,7 +1124,8 @@ def knobs(cfg: RankingConfig) -> list[Knob]:
         )
         for survey in ("desktop", "project")
     }
-    mixed = {getattr(getattr(cfg.ranks, k), "survey", None) for k in cfg.ranks.overall.mix}
+    feeds = (cfg.ranks.overall.stand_in,) if cfg.ranks.overall.stand_in else cfg.ranks.overall.mix
+    mixed = {getattr(getattr(cfg.ranks, k), "survey", None) for k in feeds}
     out = []
     for survey, keys in survey_keys.items():
         with_overall = ("overall", *keys) if survey in mixed else keys
@@ -1143,10 +1144,11 @@ def knobs(cfg: RankingConfig) -> list[Knob]:
         Knob(f"project_group_shares.{group}.share", "group", group, "", project)
         for group in cfg.project_group_shares
     ]
-    out += [
-        Knob(f"ranks.overall.mix.{key}", "mix", "overall", key, ("overall",))
-        for key in cfg.ranks.overall.mix
-    ]
+    if not cfg.ranks.overall.stand_in:  # a stand-in has no mix (q12)
+        out += [
+            Knob(f"ranks.overall.mix.{key}", "mix", "overall", key, ("overall",))
+            for key in cfg.ranks.overall.mix
+        ]
     return out
 
 

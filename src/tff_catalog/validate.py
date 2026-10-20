@@ -406,7 +406,8 @@ def check_monotone(run: Run) -> Iterator[Failure]:
     for key in export.RANK_KEYS:
         terms = export.view_terms(inputs.terms, key)
         scores = inputs.scores.get(key)
-        if key == "rising" or key in models or terms is None or scores is None:
+        stood_in = key == "overall" and run.cfg.ranking.ranks.overall.stand_in
+        if key == "rising" or key in models or stood_in or terms is None or scores is None:
             continue
         groups: dict[tuple[tuple[str, float], ...], list[tuple[str, list[float], float]]] = (
             defaultdict(list)

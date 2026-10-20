@@ -492,10 +492,17 @@ def new_fonts(first_seen: Mapping[str, Any], run_date: date, days: int) -> froze
     return frozenset(new)
 
 
+def stand_in(cfg: Config, key: str) -> str:
+    """The rank key whose entry ``key`` repeats: overall's stand-in (q12), else ``key``."""
+    if key == "overall" and cfg.ranking.ranks.overall.stand_in:
+        return cfg.ranking.ranks.overall.stand_in
+    return key
+
+
 def view_sources(cfg: Config, key: str) -> frozenset[str]:
     """The engine sources rank key ``key`` weighs."""
     r = cfg.ranking
-    match key:
+    match stand_in(cfg, key):
         case "overall":
             return frozenset(r.surveys.desktop.weights) | frozenset(r.surveys.project.weights)
         case "desktop_chosen" | "desktop_installed":
@@ -516,6 +523,7 @@ def view_abstains(cfg: Config, key: str) -> bool:
     abstains like every rank but most installed (D8; ``surveys.RISING_ABSTAINS``, and
     stage "correct" writes ``terms.json["rising"]`` so)."""
     ranks = cfg.ranking.ranks
+    key = stand_in(cfg, key)
     if key == "overall":
         return ranks.desktop_chosen.abstain
     if key == "rising":
@@ -814,7 +822,7 @@ class CatalogBuilder:
             kept = {fid: t for fid, t in terms.items() if fid not in failed}
             self.base[s] = source_view(kept, inputs.ruler, smoothed if s == FOT else None)
         self.related = related_families(inputs)
-        self.view_terms = {k: view_terms(inputs.terms, k) for k in RANK_KEYS}
+        self.view_terms = {k: view_terms(inputs.terms, stand_in(cfg, k)) for k in RANK_KEYS}
         exact_top = cfg.ranking.display.exact_top
         self.shift = {k: band_shift(placed, exact_top) for k, placed in inputs.ranks.items()}
         from tff_catalog.engine.order import held_places
@@ -1070,6 +1078,9 @@ class CatalogBuilder:
         """v_s = M_g·w_s·factor·guard / W_g in the overall rank; None without a term there."""
         src = self.src[s]
         key = survey_view(src)
+        replaced_by = self.cfg.ranking.ranks.overall.stand_in
+        if replaced_by and key != replaced_by:
+            return None  # overall stands in for another rank: this source has no weight there
         term = (self.view_terms[key] or {}).get(s, {}).get(fid)
         scores = self.inputs.scores.get(key)
         if term is None or term.state not in COUNTED or scores is None:
@@ -1077,7 +1088,7 @@ class CatalogBuilder:
         total = sum(scores.weights.values())
         if total <= 0:
             return 0.0
-        mix = self.cfg.ranking.ranks.overall.mix.get(key, 0.0)
+        mix = 1.0 if replaced_by else self.cfg.ranking.ranks.overall.mix.get(key, 0.0)
         return num(mix * scores.weights.get(s, 0.0) * term.factor * self.guard(s, fid, key) / total)
 
     def guard(self, s: str, fid: str, key: str) -> float:

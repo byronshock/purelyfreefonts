@@ -439,6 +439,8 @@ def flags(
     rank_inputs = cast("RankInputs", inputs)
     # Rising has no weights to rerun; the model views are the model's, not the engine's.
     skip = _UNCHECKED | frozenset(cfg.model.views)
+    if cfg.ranks.overall.stand_in:  # overall repeats a rank checked under its own key (q12)
+        skip |= {"overall"}
     keys = [k for k in RANK_KEYS if k in orders and k not in skip]
     if not keys:
         return []
