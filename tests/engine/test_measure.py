@@ -204,6 +204,22 @@ def test_quantiles_bracket_the_score(two_terms):
     assert fit.quantiles([0.5]).tobytes() == fit.quantiles([0.5]).tobytes()
 
 
+def test_quantiles_of_a_posterior_narrower_than_a_step():
+    """Each node's weight spreads over its cell, so even a posterior far narrower than the
+    grid's step gets quantiles on either side of its mean."""
+    ids = np.arange(3)
+    term = measure.CountTerm("t", ids, np.array([10.0, 1e3, 1e5]), np.zeros(3), dist="lognormal")
+    model = measure.Mixed((term,))
+    theta = np.array([measure.LOG_B_MIN, 2.0, np.log(3.0), np.log(0.01)])  # sigma 0.01
+    fit = measure.MixedFit(model, theta, 0.0, np.zeros((4, 4)), True, (1, 2, 3))
+    eap, sd = fit.scores()
+    assert (sd < measure.GRID_STEP).all()
+    q = fit.quantiles([0.05, 0.95])
+    assert (q[:, 0] < eap).all()
+    assert (eap < q[:, 1]).all()
+    assert (q[:, 1] - q[:, 0] < measure.GRID_STEP).all()
+
+
 def test_term_scores_are_each_terms_own_posterior_mean(two_terms):
     """q18b: a term's z is the posterior mean of eta from that term alone; a font with one
     term has that as its score."""

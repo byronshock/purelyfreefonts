@@ -379,12 +379,18 @@ class MixedFit:
         return eap, np.sqrt(np.maximum(pi @ x**2 - eap**2, 0))
 
     def quantiles(self, qs: Any, theta: np.ndarray | None = None) -> np.ndarray:
-        """Posterior quantiles of eta, N x len(qs), deterministic (q19): the grid's
-        cumulative weights, interpolated linearly between nodes."""
+        """Posterior quantiles of eta, N x len(qs), deterministic (q19): each node's weight
+        spread evenly over its cell of the grid, the cumulative weight interpolated linearly
+        between cell edges, so a posterior narrower than a step still gets quantiles inside
+        its cell rather than at a node."""
         x, _ = self.grid
-        cum = np.cumsum(self.posterior(theta), axis=1)
+        h = x[1] - x[0]
+        edges = np.concatenate([[x[0] - h / 2], x + h / 2])
+        cum = np.concatenate(
+            [np.zeros((len(self.model.ids), 1)), self.posterior(theta).cumsum(1)], 1
+        )
         qs = np.asarray(qs, float)
-        return np.array([np.interp(qs, row, x) for row in cum])
+        return np.array([np.interp(qs, row, edges) for row in cum])
 
     def term_scores(self) -> list[np.ndarray]:
         """For each term, the posterior mean of eta from that term alone, for its fonts
