@@ -88,8 +88,8 @@ HOME_PAGE = {
     "path": "/",
     "title": "Purely Free Fonts: the most popular fonts free for personal and commercial use",
     "description": (
-        "The most popular purely free fonts, ranked by how many people install and use them. "
-        "Every font here is free for any personal or commercial use."
+        "The most popular purely free fonts, ranked by public counts of use in websites, code "
+        "and apps, and of installs. Free for any personal or commercial use."
     ),
     "canonical": True,
 }

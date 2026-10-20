@@ -9,7 +9,7 @@
   },
   "data_license": {"spdx": "CC-BY-SA-4.0", "provisional": false, "url": "https://creativecommons.org/licenses/by-sa/4.0/"},
   "views": [
-    {"key": "project", "label": "Projects", "measures": "Use in websites (55%), code (30%) and apps (15%).", "available": true},
+    {"key": "project", "label": "Projects", "measures": "Use in websites, code and apps, combined into one measure of popularity.", "available": true},
     {
       "key": "desktop_chosen",
       "label": "Chosen (desktop)",
@@ -51,7 +51,7 @@
       "name": "Arch Linux pkgstats",
       "group": "arch",
       "survey": "desktop",
-      "measures": "Share of Arch Linux systems with each font package, 12-month mean",
+      "measures": "Share of Arch Linux systems with each font package, pooled over 12 months",
       "url": "https://pkgstats.archlinux.de",
       "license": "No data license stated; counts may be published, with credit",
       "data_date": "2026-09-01",
