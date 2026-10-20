@@ -390,7 +390,7 @@ def _retry_wait(status: int, headers: httpx.Headers) -> float | None:
 
 
 # The headers a server may use to say how fast it may be asked.
-LIMIT_HEADERS = ("retry-after", "ratelimit", "ratelimit-policy", "x-ratelimit-")
+LIMIT_HEADERS = ("retry-after", "ratelimit", "ratelimit-", "x-ratelimit-", "x-rate-limit-")
 
 
 def limit_headers(headers: httpx.Headers) -> dict[str, str]:
@@ -724,8 +724,8 @@ class Fetcher:
             raise _Retry(f"{type(exc).__name__}: {exc}") from exc
         try:
             status = response.status_code
-            if status == 429:
-                self._log_limit_headers(target.host, response.headers)
+            if status == 429:  # the hop that answered, which a redirect may have moved
+                self._log_limit_headers(response.request.url.host, response.headers)
             wait = _retry_wait(status, response.headers)
             if not wait and _github_secondary_limit(response):
                 wait = GITHUB_SECONDARY_WAIT

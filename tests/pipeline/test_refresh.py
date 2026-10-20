@@ -678,8 +678,10 @@ def test_workflow_triggers_and_settings() -> None:
     assert list(jobs) == ["npm", "refresh", "store", "publish", "report"]
     # Owner ruling of 2026-09-29: the schedule is off until the variable turns it on; a
     # skipped refresh leaves the others skipped (no store bundle, no pull request, no failure).
+    # Only main runs the npm job: from another branch the refresh job fails at its environment.
     assert jobs["npm"]["if"] == (
-        "${{ github.event_name != 'schedule' || vars.REFRESH_SCHEDULE == 'on' }}"
+        "${{ github.ref == 'refs/heads/main' && "
+        "(github.event_name != 'schedule' || vars.REFRESH_SCHEDULE == 'on') }}"
     )
     # npm_own_job (2026-10-19): the refresh job follows the npm job whatever its outcome.
     assert jobs["refresh"]["needs"] == "npm"
@@ -745,13 +747,17 @@ def test_the_npm_job_fetches_npm_alone_within_the_runners_limit() -> None:
     assert fetch_npm["continue-on-error"] is True
     assert fetch_npm["timeout-minutes"] < npm["timeout-minutes"]
     assert fetch_npm["if"] == "${{ env.FROM_SNAPSHOTS == '' }}"
+    # The snapshot is reported only once uploaded: a failed upload is a fallback, not a failure.
     assert npm["outputs"] == {
         "run_date": "${{ steps.prep.outputs.run_date }}",
-        "snapshot": "${{ steps.check.outputs.snapshot }}",
+        "snapshot": "${{ steps.upload.outcome == 'success' && 'true' || 'false' }}",
     }
     (upload,) = [s for s in npm["steps"] if "upload-artifact" in str(s.get("uses", ""))]
+    assert upload["id"] == "upload"
     assert upload["with"]["name"] == "npm-snapshot"
+    assert upload["with"]["path"] == "_npm_store/npm/${{ steps.prep.outputs.run_date }}"
     assert upload["if"] == "${{ !cancelled() && steps.check.outputs.snapshot == 'true' }}"
+    assert "_npm_store/npm/$RUN_DATE/manifest.json" in steps["Check the npm snapshot"]["run"]
     # The refresh job takes the npm job's date and snapshot, and never asks npm itself.
     refresh = jobs["refresh"]
     assert refresh["env"]["NPM_RUN_DATE"] == "${{ needs.npm.outputs.run_date }}"
@@ -760,6 +766,16 @@ def test_the_npm_job_fetches_npm_alone_within_the_runners_limit() -> None:
     assert names.index("Place the npm snapshot") < names.index("Refresh")
     (download,) = [s for s in refresh["steps"] if "download-artifact" in str(s.get("uses", ""))]
     assert download["with"]["name"] == "npm-snapshot"
+    assert download["with"]["path"] == "${{ runner.temp }}/npm-snapshot"
+    # Downloaded only when the npm job uploaded one; an artifact that is gone (a re-run after
+    # its 7 days) falls back rather than failing the run.
+    assert download["if"] == "${{ env.FROM_SNAPSHOTS == '' && env.NPM_SNAPSHOT == 'true' }}"
+    assert download["continue-on-error"] is True
+    place = {s.get("name"): s for s in refresh["steps"]}["Place the npm snapshot"]
+    assert place["if"] == (
+        "${{ env.FROM_SNAPSHOTS == '' && steps." + download["id"] + ".outcome == 'success' }}"
+    )
+    assert '"$RUNNER_TEMP/npm-snapshot"' in place["run"]
 
 
 def test_workflow_reuses_ci_pins() -> None:
@@ -780,7 +796,12 @@ def test_workflow_opens_the_pull_request_dispatches_ci_and_reports_failures() ->
     assert "apply_state" in commit["run"]
     assert "git bundle create" in commit["run"]
     assert jobs["publish"]["needs"] == "refresh"
-    assert "refs/heads/main" in jobs["publish"]["if"]
+    # An explicit status check, so a failed npm job (refresh's need) doesn't skip it when the
+    # refresh job succeeded on the stale npm snapshot (npm_own_job).
+    assert jobs["publish"]["if"] == (
+        "${{ !cancelled() && needs.refresh.result == 'success' && "
+        "github.ref == 'refs/heads/main' && needs.refresh.outputs.pull_request == 'true' }}"
+    )
     pr = runs["Open or update the refresh pull request"]
     for needle in ("git bundle verify", "gh pr create", "gh pr edit", "gh workflow run ci.yml"):
         assert needle in pr["run"], needle

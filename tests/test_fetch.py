@@ -561,8 +561,22 @@ def test_the_first_429_of_a_host_logs_its_rate_limit_headers(
         "example.net: first HTTP 429 of the run; rate-limit headers: none",
     ]
     assert fetch.limit_headers(
-        httpx.Headers({"Retry-After": "7", "RateLimit-Policy": "20;w=60", "X-Other": "1"})
-    ) == {"retry-after": "7", "ratelimit-policy": "20;w=60"}
+        httpx.Headers(
+            {
+                "Retry-After": "7",
+                "RateLimit-Policy": "20;w=60",
+                "RateLimit-Remaining": "0",
+                "X-Rate-Limit-Limit": "20",
+                "Set-Cookie": "a=b",
+                "X-Other": "1",
+            }
+        )
+    ) == {
+        "retry-after": "7",
+        "ratelimit-policy": "20;w=60",
+        "ratelimit-remaining": "0",
+        "x-rate-limit-limit": "20",
+    }
 
 
 def test_min_interval_is_per_host(server: Server, fake_time: FakeTime) -> None:

@@ -9,7 +9,9 @@ name: Refresh
 #    from a runner, so its 4,700-odd packages take about four hours; in its own job they
 #    have its own six hours, and the refresh job about one (owner ruling of 2026-10-19,
 #    npm_own_job). If it fails or runs out of time, the refresh job doesn't fetch npm
-#    itself: parse uses the last npm snapshot within the stale window, flagged stale.
+#    itself: parse uses the last npm snapshot within the stale window, flagged stale. It
+#    can't see the store, so a new dispatch fetches npm again (about four hours) even when
+#    the store has the day's snapshot, which is then kept; "Re-run failed jobs" doesn't.
 # 1. refresh (contents: read): place the npm job's snapshot in the store, fetch every
 #    other source into the private snapshot store and
 #    run the pipeline (tff-catalog refresh), then commit the new snapshots to the store
@@ -66,8 +68,9 @@ concurrency:
 jobs:
   npm:
     name: npm
-    # Owner ruling of 2026-09-29: scheduled runs wait for REFRESH_SCHEDULE == 'on'.
-    if: ${{ github.event_name != 'schedule' || vars.REFRESH_SCHEDULE == 'on' }}
+    # Owner ruling of 2026-09-29: scheduled runs wait for REFRESH_SCHEDULE == 'on'. Only main
+    # runs it: from another branch the refresh job fails at its environment anyway.
+    if: ${{ github.ref == 'refs/heads/main' && (github.event_name != 'schedule' || vars.REFRESH_SCHEDULE == 'on') }}
     runs-on: ubuntu-24.04
     # GitHub's runners stop any job at 360 minutes; the fetch step stops first, at 340.
     timeout-minutes: 355
@@ -76,7 +79,8 @@ jobs:
       contents: read
     outputs:
       run_date: ${{ steps.prep.outputs.run_date }}
-      snapshot: ${{ steps.check.outputs.snapshot }}
+      # 'true' only once the artifact is uploaded: a failed upload leaves the run to fall back.
+      snapshot: ${{ steps.upload.outcome == 'success' && 'true' || 'false' }}
     env:
       FROM_SNAPSHOTS: ${{ inputs.from_snapshots }}
       TFF_STORE: ${{ github.workspace }}/_npm_store
@@ -141,6 +145,7 @@ jobs:
           fi
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        id: upload
         if: ${{ !cancelled() && steps.check.outputs.snapshot == 'true' }}
         with:
           name: npm-snapshot
@@ -229,8 +234,12 @@ jobs:
           git -C _store config user.name "github-actions[bot]"
           git -C _store config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+      # An artifact that is gone (a re-run after its 7 days) or fails to download is no
+      # failure: the run then keeps the store's npm snapshot of the day, or falls back.
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        id: npm-download
         if: ${{ env.FROM_SNAPSHOTS == '' && env.NPM_SNAPSHOT == 'true' }}
+        continue-on-error: true
         with:
           name: npm-snapshot
           path: ${{ runner.temp }}/npm-snapshot
@@ -238,7 +247,7 @@ jobs:
       # The npm job's snapshot joins the store as fetched today. A snapshot the store already
       # has for the day is never replaced.
       - name: Place the npm snapshot
-        if: ${{ env.FROM_SNAPSHOTS == '' && env.NPM_SNAPSHOT == 'true' }}
+        if: ${{ env.FROM_SNAPSHOTS == '' && steps.npm-download.outcome == 'success' }}
         env:
           RUN_DATE: ${{ steps.prep.outputs.run_date }}
         run: |
@@ -419,7 +428,9 @@ jobs:
   publish:
     name: publish
     needs: refresh
-    if: ${{ github.ref == 'refs/heads/main' && needs.refresh.outputs.pull_request == 'true' }}
+    # An explicit status check: without one, a failed npm job (an ancestor through refresh)
+    # would skip this job even when the refresh job succeeded on the stale npm snapshot.
+    if: ${{ !cancelled() && needs.refresh.result == 'success' && github.ref == 'refs/heads/main' && needs.refresh.outputs.pull_request == 'true' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
@@ -512,8 +523,10 @@ jobs:
           The run log names the failed job and step and, for hard-check failures, each
           failure; if the refresh job failed, no refresh pull request was opened or
           updated. New snapshots were committed
-          to the store if the store check passed, so a rerun today reuses them; a later
-          rerun can replay them with the workflow's from_snapshots input.
+          to the store if the store check passed, so "Re-run failed jobs" today reuses
+          them (a new dispatch fetches npm again in its own job, about four hours, and then
+          keeps the stored snapshot); a later rerun can replay them with the workflow's
+          from_snapshots input.
           EOF
           number=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open \
             --search "\"$title\" in:title" --json number,title \
