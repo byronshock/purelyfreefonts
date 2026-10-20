@@ -34,6 +34,43 @@
         "method_version": {
           "$ref": "#/$defs/date"
         },
+        "method_versions": {
+          "description": "The method version of each rank: the date of the rules it is scored by (tff_catalog.methods). method_version is the newest of them. Absent from catalogs made before ranks had their own versions.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "overall",
+            "desktop_chosen",
+            "desktop_installed",
+            "project",
+            "coding",
+            "dev_apps",
+            "rising"
+          ],
+          "properties": {
+            "overall": {
+              "$ref": "#/$defs/date"
+            },
+            "desktop_chosen": {
+              "$ref": "#/$defs/date"
+            },
+            "desktop_installed": {
+              "$ref": "#/$defs/date"
+            },
+            "project": {
+              "$ref": "#/$defs/date"
+            },
+            "coding": {
+              "$ref": "#/$defs/date"
+            },
+            "dev_apps": {
+              "$ref": "#/$defs/date"
+            },
+            "rising": {
+              "$ref": "#/$defs/date"
+            }
+          }
+        },
         "config_sha256": {
           "$ref": "#/$defs/sha256"
         },

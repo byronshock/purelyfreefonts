@@ -61,7 +61,7 @@ from datetime import date
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from tff_catalog import METHOD_VERSION, __version__, stageio, stages, state
+from tff_catalog import METHOD_VERSION, METHOD_VERSIONS, __version__, stageio, stages, state
 from tff_catalog.config import config_hash, load_config
 from tff_catalog.store import PSEUDO_SOURCES, Store
 from tff_catalog.validate import ValidationFailed
@@ -284,6 +284,9 @@ class _Run:
             "code_commit": self.commit,
             "config_sha256": config_hash(config),
             "snapshots": snapshots_used(self.ctx),
+            # Each rank's method (tff_catalog.methods): next month's run bootstraps the
+            # previous_score of a rank whose method changed since.
+            "method_versions": dict(METHOD_VERSIONS),
         }
 
     def stale_sources(self) -> tuple[str, ...]:
@@ -420,6 +423,7 @@ def run_manifest(
         "run_date": ctx.run_date.isoformat(),
         "version": __version__,
         "method_version": METHOD_VERSION,
+        "method_versions": dict(METHOD_VERSIONS),
         "code_commit": run.commit,
         # True when the run used uncommitted changes to the code, config or data; the hash
         # names them, since code_commit alone cannot reproduce the run.

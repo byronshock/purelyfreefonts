@@ -46,6 +46,7 @@ import yaml
 from tests.helpers import ROOT, synth
 from tests.helpers.treehash import tree_diff, treehash
 
+import tff_catalog
 from tff_catalog import cli, jsonio, parse, refresh, stageio, stages, state
 from tff_catalog.collectors.base import Collector, CollectorBase, ParseContext
 from tff_catalog.config import config_hash, load_config
@@ -440,6 +441,7 @@ def test_run_history_entry(
             synth.PACKAGES: OCT.isoformat(),  # no November snapshot: stale
             synth.UNIVERSE: NOV.isoformat(),
         },
+        "method_versions": dict(tff_catalog.METHOD_VERSIONS),
     }
     assert result.stale == (synth.PACKAGES,)
     head = subprocess.run(

@@ -21,6 +21,7 @@ from tests.pipeline.test_export import (
     run_all,
 )
 
+import tff_catalog
 from tff_catalog import export, jsonio, stageio, validate
 from tff_catalog.corrections import Term
 from tff_catalog.engine.order import Placement
@@ -948,6 +949,32 @@ def test_a_clone_checks_previous_scores_only_while_bootstrapping(ctx: StageConte
     runs = ({"run_date": "2026-09-26"}, {"run_date": "2026-10-26"})
     later = dataclasses.replace(ctx, state=dataclasses.replace(ctx.state, run_history=runs))
     assert committed_failures(later, "previous_score") == []
+
+
+def test_a_previous_score_bootstraps_where_the_method_changed(tmp_path: Path) -> None:
+    """q20_previous_score_at_switch: in a rank whose method changed since the last merged
+    run, previous_score must be the score, in a run and on a clone of the next merge."""
+    last_month = {"overall": {"alpha-sans": 1.25}, "desktop_chosen": {"alpha-sans": 0.5}}
+    before = {**tff_catalog.METHOD_VERSIONS, "desktop_chosen": "2026-01-01"}
+    history = ({"run_date": "2026-08-26", "method_versions": before},)
+    ctx = make_build(
+        tmp_path, state=State(published_scores=last_month, run_history=history), previews=PREVIEWS
+    )
+    run_all(ctx)
+    assert "previous_score" not in checks(ctx)
+    set_previous_score(ctx, export.CATALOG_FILE, "alpha-sans", "desktop_chosen", 0.5)
+    assert ids(checks(ctx)["previous_score"]) == {"alpha-sans"}
+    # On a clone after that run merged, the rank it changed is checked; the others can't be.
+    now = {"run_date": "2026-09-26", "method_versions": dict(tff_catalog.METHOD_VERSIONS)}
+    clone = dataclasses.replace(
+        ctx, state=dataclasses.replace(ctx.state, run_history=(*history, now))
+    )
+    assert ids(committed_failures(clone, "previous_score")) == {"alpha-sans"}
+    doc = jsonio.load(ctx.paths.build / export.CATALOG_FILE)
+    alpha = next(f for f in doc["fonts"] if f["id"] == "alpha-sans")["ranks"]["desktop_chosen"]
+    set_previous_score(ctx, export.CATALOG_FILE, "alpha-sans", "desktop_chosen", alpha["score"])
+    set_previous_score(ctx, export.SITE_FILE, "alpha-sans", "overall", 0.0)  # not checkable
+    assert committed_failures(clone, "previous_score") == []
 
 
 # --- the committed outputs alone (validate --committed) --------------------------------------
