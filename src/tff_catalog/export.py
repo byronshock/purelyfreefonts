@@ -1132,7 +1132,7 @@ def catalog_document(
 ) -> dict[str, Any]:
     """``catalog.json`` from loaded inputs (``build_catalog`` without the file reads)."""
     views = available_views(cfg, state, run_date)
-    changed = methods.changed_since_last_run(state.run_history)
+    changed = methods.changed_since_last_run(state.run_history, run_date)
     builder = CatalogBuilder(cfg, inputs, run_date, views, state.published_scores, changed)
     return builder.document(commit)
 

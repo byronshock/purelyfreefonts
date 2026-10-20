@@ -605,7 +605,7 @@ def check_previous_scores(run: Run) -> Iterator[Failure]:
     """``previous_score``: last month's published score, or ``score`` in the bootstrap and
     in a rank whose method changed since (``methods.changed_since_last_run``)."""
     published = run.ctx.state.published_scores
-    changed = methods.changed_since_last_run(run.ctx.state.run_history)
+    changed = methods.changed_since_last_run(run.ctx.state.run_history, run.ctx.run_date)
 
     def expected(key: str, fid: str, entry: Mapping[str, Any]) -> float | None:
         if not published or key in changed:

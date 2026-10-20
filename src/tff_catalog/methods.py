@@ -7,16 +7,22 @@ A run records the versions it used in its ``run_history`` entry (``method_versio
 run manifest and in ``catalog.json``'s run block; ``METHOD_VERSION``, the newest, stays the
 single ``run.method_version`` both catalogs carry.
 
-A rank whose version differs from the one the last merged run recorded is new under its
-method, so its ``previous_score`` bootstraps: it equals ``score``, as before any catalog was
+A rank whose version differs from the one the last merged run before this one recorded is
+new under its method, so its ``previous_score`` bootstraps: it equals ``score``, as before any catalog was
 published (score_previous_bootstrap), and a change of method never shows as movement. At the
 switch every rank changes (method_versions_all_seven, 2026-10-19). A ``run_history`` entry
 from before per-rank versions (the run of 2026-09-26) records none: every rank had
-``LEGACY_METHOD_VERSION`` then. With no merged run at all, nothing has changed, and the
-bootstrap is the one ``published_scores`` being empty gives.
+``LEGACY_METHOD_VERSION`` then.
+
+"Before this one" matters for a replay of a merged run's own date: the run replaces that
+run's entry (``refresh.next_run_history``), so it is compared with the entry before it, as
+``validate --committed`` compares the committed catalog. A replay of the first merged run has
+nothing before it and bootstraps every rank, as that run did. With no merged run at all,
+nothing has changed, and the bootstrap is the one ``published_scores`` being empty gives.
 """
 
 from collections.abc import Iterable, Mapping
+from datetime import date
 from typing import Any
 
 from tff_catalog import LEGACY_METHOD_VERSION, METHOD_VERSIONS
@@ -42,11 +48,17 @@ def _by_date(history: Iterable[Mapping[str, Any]]) -> list[Mapping[str, Any]]:
     return sorted(history, key=lambda entry: str(entry["run_date"]))
 
 
-def changed_since_last_run(history: Iterable[Mapping[str, Any]]) -> frozenset[str]:
-    """The ranks whose method this code changes from the newest merged run's: the ranks whose
-    ``previous_score`` bootstraps in this run. None changed with no merged run."""
+def changed_since_last_run(history: Iterable[Mapping[str, Any]], run_date: date) -> frozenset[str]:
+    """The ranks whose method this code changes from that of the newest merged run dated
+    before ``run_date``: the ranks whose ``previous_score`` bootstraps in a run on that date.
+    Every rank when no merged run is earlier; none with no merged run at all."""
     runs = _by_date(history)
-    return changed(recorded(runs[-1])) if runs else frozenset()
+    if not runs:
+        return frozenset()
+    earlier = [entry for entry in runs if str(entry["run_date"]) < run_date.isoformat()]
+    if not earlier:
+        return frozenset(METHOD_VERSIONS)
+    return changed(recorded(earlier[-1]))
 
 
 def changed_by_last_run(history: Iterable[Mapping[str, Any]]) -> frozenset[str] | None:

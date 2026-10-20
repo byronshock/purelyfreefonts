@@ -970,9 +970,13 @@ def test_a_previous_score_bootstraps_where_the_method_changed(tmp_path: Path) ->
         ctx, state=dataclasses.replace(ctx.state, run_history=(*history, now))
     )
     assert ids(committed_failures(clone, "previous_score")) == {"alpha-sans"}
+    set_previous_score(ctx, export.SITE_FILE, "alpha-sans", "desktop_chosen", 0.5)
+    failing = committed_failures(clone, "previous_score")
+    assert {f.message.split(":")[0] for f in failing} == {export.CATALOG_FILE, export.SITE_FILE}
     doc = jsonio.load(ctx.paths.build / export.CATALOG_FILE)
     alpha = next(f for f in doc["fonts"] if f["id"] == "alpha-sans")["ranks"]["desktop_chosen"]
-    set_previous_score(ctx, export.CATALOG_FILE, "alpha-sans", "desktop_chosen", alpha["score"])
+    for name in (export.CATALOG_FILE, export.SITE_FILE):
+        set_previous_score(ctx, name, "alpha-sans", "desktop_chosen", alpha["score"])
     set_previous_score(ctx, export.SITE_FILE, "alpha-sans", "overall", 0.0)  # not checkable
     assert committed_failures(clone, "previous_score") == []
 
