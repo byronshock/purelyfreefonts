@@ -20,6 +20,7 @@ dependencies = [
   "jinja2>=3.1.6",            # M2 templates
   "markdown-it-py>=4.2.0",    # M2 /methodology from docs
   "mdit-py-plugins>=0.6.1",   # M2 heading anchors
+  "scipy>=1.18.1",            # the measurement model (engine/measure.py)
 ]
 
 [project.urls]
