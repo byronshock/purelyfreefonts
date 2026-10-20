@@ -110,7 +110,7 @@ Each font row is 161 px tall.
 
   Also `docs/usability-test.md`'s wording. Re-measure the header's single-row breakpoint for the wider nav, and move the `47.5rem` rule and its test to match (PLAN-REVIEWERS-1.md step 5's note on `wordmark_breakpoint`). Tick PLAN-REVIEWERS-1.md step 4 when it lands.
 - [ ] **Lapis lazuli** (`lapis_lazuli_blue`): `#26619C` replaces `#0a56c2` for `--c-link`, `--c-focus`, `--c-accent`, `--c-header-link` and `--c-header-focus` in light mode and in the white header. In dark mode `#8CB6E3` replaces `#8ab4f8` for `--c-link`, `--c-focus` and `--c-accent`. Check contrast in both themes and forced colours. The favicon, touch icon and share image are regenerated in lapis with `site/static/_src/make_static.py` (`icons_lapis`).
-- [ ] Ask the lead to redeploy staging.
+- [x] Ask the lead to redeploy staging. *(Done 2026-10-19 with the October preview, in one deploy by the owner's choice (`staging_previews_held_runs`): staging shows `main`'s site as of dd71891, with this step's mobile first screen (#65) and the wordmark (#68), and the 2026-10-17 catalog, from `preview/2026-10-17` at 28bcdee. Round 2's findings from here on may come from either change.)*
 
 **Done when:**
 - at 375 × 812 and 390 × 844, the first two font rows are fully visible on load, with no scrolling;
