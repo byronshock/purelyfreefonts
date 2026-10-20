@@ -142,6 +142,21 @@ def test_stages_take_the_common_flags(stage: str) -> None:
     assert options.only == ("a", "b", "c")
     assert options.skip_fetch == ("npm", "x", "y")
     assert options.replay
+    assert options.fit == "read"  # no stored fit: stop (tff_catalog.fitstore)
+
+
+@pytest.mark.parametrize(
+    ("flag", "mode"), [("--write-fit", "write"), ("--fit-in-memory", "memory")]
+)
+def test_the_fit_flags_choose_one_mode(flag: str, mode: str) -> None:
+    args = cli.build_parser().parse_args(["refresh", flag])
+    assert cli._options(args).fit == mode
+
+
+def test_the_fit_flags_exclude_each_other(capsys: pytest.CaptureFixture[str]) -> None:
+    with pytest.raises(SystemExit):
+        cli.build_parser().parse_args(["refresh", "--write-fit", "--fit-in-memory"])
+    assert "not allowed with" in capsys.readouterr().err
 
 
 @pytest.mark.parametrize(

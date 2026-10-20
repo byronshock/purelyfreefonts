@@ -1058,12 +1058,15 @@ def test_step_refresh(tmp_path: Path) -> None:
     step = run_step("Refresh", tmp_path / "live")
     assert step.code == 0, step.out
     # The npm job fetched npm, or failed to: the refresh job never asks npm (npm_own_job).
-    assert step.calls == [f"uv run --locked tff-catalog -v refresh --date {OCT} --skip-fetch npm"]
+    assert step.calls == [
+        f"uv run --locked tff-catalog -v refresh --date {OCT} --write-fit --skip-fetch npm"
+    ]
     step = run_step(
         "Refresh", tmp_path / "replay", RUN_DATE=str(S0_DAY), FROM_SNAPSHOTS=str(S0_DAY)
     )
     assert step.calls == [
-        f"uv run --locked tff-catalog -v refresh --date {S0_DAY} --from-snapshots {S0_DAY}"
+        f"uv run --locked tff-catalog -v refresh --date {S0_DAY} --write-fit "
+        f"--from-snapshots {S0_DAY}"
     ]
 
 
