@@ -700,19 +700,11 @@ def test_axe_finds_nothing_in_an_open_panel(guarded_context, scheme):
 # ------------------------------------------------------------------------ the owner's ten
 
 
-def _tier_label(tier: str) -> str:
-    return f"Tier {tier}"
-
-
-def _place(entry: dict[str, Any], *, tier: bool = True) -> str:
+def _place(entry: dict[str, Any]) -> str:
+    """The place only: no tier, no likely range (no_tiers_or_ranges, 2026-09-30)."""
     if entry["unranked"]:
         return f"Not ranked: {data.UNRANKED_LABELS[entry['unranked']]}"
-    bits = [f"#{entry['rank']}" if entry["rank"] else f"Band {entry['band']}"]
-    if tier:
-        bits.append(f"tier {entry['tier']}")
-    low, high = entry["range"]
-    bits.append(f"likely #{low}" if low == high else f"likely #{low} to #{high}")
-    return ", ".join(bits)
+    return f"#{entry['rank']}" if entry["rank"] else f"Band {entry['band']}"
 
 
 def _source_text(doc: dict[str, Any], source: dict[str, Any], entry: dict[str, Any]) -> str:
@@ -783,16 +775,13 @@ def expected_panel(
     views = [v for v in doc["views"] if v["available"] and v["key"] in font["ranks"]]
     shown = next((v for v in views if v["key"] == rank), views[0])
     entry = font["ranks"][shown["key"]]
-    rank_now = f"{shown['label']}: {_place(entry, tier=False)}"
+    rank_now = f"{shown['label']}: {_place(entry)}"
     essentials.append(["Rank", rank_now + (GATE_LINE if entry["gate_held"] else "")])
 
-    ranks, tiers = [], set()
+    ranks = []
     for view in views:
         entry = font["ranks"][view["key"]]
-        if entry["tier"]:
-            tiers.add(entry["tier"])
         ranks.append([view["label"], _place(entry), GATE_LINE if entry["gate_held"] else None])
-    tier_pairs = [[_tier_label(t), doc["tiers"][t]] for t in "ABC" if t in tiers]
     pulled = []
     if font["pulled_in_by"]:
         packages = "; ".join(
@@ -832,7 +821,7 @@ def expected_panel(
         "evidence": EVIDENCE,
         "evidence_open": False,
         "ranks": ranks,
-        "tiers": tier_pairs,
+        "tiers": [],  # no tier legend (no_tiers_or_ranges)
         "pulled": pulled,
         "sources": sources,
         "report": report,

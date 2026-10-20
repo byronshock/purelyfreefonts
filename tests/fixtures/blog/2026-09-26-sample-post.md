@@ -9,7 +9,7 @@ This sample post exists only for the tests in `tests/site/test_blog.py`. It is a
 
 ## What a post can hold
 
-A post is Markdown with raw HTML off, so <b>tags</b> show as text. It can link to [the About page](/about/), to [the tiers on How we rank](/methodology/#tiers), and to other sites, such as [the CC BY-SA 4.0 deed](https://creativecommons.org/licenses/by-sa/4.0/).
+A post is Markdown with raw HTML off, so <b>tags</b> show as text. It can link to [the About page](/about/), to [the scores on How we measure popularity](/methodology/#scores), and to other sites, such as [the CC BY-SA 4.0 deed](https://creativecommons.org/licenses/by-sa/4.0/).
 
 - Lists, **bold** and *italic* text, and `code`.
 - Brief quotes:

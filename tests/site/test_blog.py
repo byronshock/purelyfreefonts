@@ -923,7 +923,7 @@ def test_the_feed_passes_the_atom_check(site_dir):
     assert "CC BY-SA 4.0" in root.findtext(f"{ATOM}rights")
     content = entry.findtext(f"{ATOM}content")
     assert f'src="{build.BASE_URL}/assets/blog/{SLUG}.' in content
-    assert f'href="{build.BASE_URL}/methodology/#tiers"' in content
+    assert f'href="{build.BASE_URL}/methodology/#scores"' in content
 
 
 def test_the_feed_of_several_posts_passes_the_atom_check(tmp_path, site_data):

@@ -41,7 +41,7 @@ A round is done when:
 **Before each round** (the owner, with Claude):
 
 - Check that the site under test shows the current data, and note its `version.txt` run date in the round's notes.
-- Choose task 6's two fonts from the current *Projects* rank, the one the list opens on: both well known, close together in the top 30, preferably with different tiers. Use the same pair all round.
+- Choose task 6's two fonts from the current *Projects* rank, the one the list opens on: both well known, close together in the top 30. Use the same pair all round.
 - Round 1 only: run the trial session and fix the script. File a test issue through each form, check that it gets its label (step 12), then close it.
 - Create `research/usability/round-N/`, with one notes file per session from the [template](#notes-template).
 
@@ -104,8 +104,8 @@ Each task has what to **say**, when it's **done** (for the notes, not read aloud
 ### 6. Why does one font rank above another?
 
 - **Say:** "Why does <font A> rank above <font B>? How sure is the site about that?" Use the round's chosen pair.
-- **Done:** they open both fonts' details and "All ranks and sources", point to the per-source ranks, and read the tier (Firm, Fair or Rough) or the range, saying in their own words how sure the site is. Opening *How it works*, the page "How we measure popularity", counts too.
-- **Watch for:** jargon: tier, band, range, "below the floor", "not covered"; whether they follow a source to its credit on the methodology page; whether they trust the rank, and why.
+- **Done:** they open both fonts' details and "All ranks and sources", point to the per-source ranks, and say in their own words why one ranks above the other and how sure the site seems. Opening *How it works*, the page "How we measure popularity", counts too.
+- **Watch for:** jargon: band, "below the floor", "not covered"; whether they follow a source to its credit on the methodology page; whether they trust the rank, and why.
 
 ### 7. A handwriting font's download page, on a phone
 
