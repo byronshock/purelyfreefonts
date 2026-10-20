@@ -39,6 +39,10 @@ How each check reads the run (``CHECKS``, in order; ``docs/catalog-schema.md``):
   another one, say) would send its key to the unmatched list and drop its counts
   without a word, so a fold must retarget its rows. A "distinct" row whose family has
   gone blocks nothing and is no failure.
+- ``model_fit`` and ``model_monotone``: each model view's fit (``[model] views``,
+  ``modelviews``) passes ``MixedFit.problems``, and no term's monotonicity scan finds a
+  higher count lowering the score (scoring plan §8.5); the model views are left out of
+  ``higher_count_lower_rank``, which is the engine's.
 - ``higher_count_lower_rank``: among fonts with the same terms (sources and
   weight factors) in a view and no guard event, one whose every value is at
   least another's, and one higher, never scores lower. A font whose Fonts Over
@@ -398,10 +402,11 @@ def check_monotone(run: Run) -> Iterator[Failure]:
     smoothing = state.read_part(run.paths, "smoothing") or {}
     history = frozenset(smoothing.get("fot_ewma_base") or ())
     inputs = run.inputs
+    models = run.cfg.ranking.model.views  # the model views have their own scan
     for key in export.RANK_KEYS:
         terms = export.view_terms(inputs.terms, key)
         scores = inputs.scores.get(key)
-        if key == "rising" or terms is None or scores is None:
+        if key == "rising" or key in models or terms is None or scores is None:
             continue
         groups: dict[tuple[tuple[str, float], ...], list[tuple[str, list[float], float]]] = (
             defaultdict(list)
@@ -631,6 +636,30 @@ def check_committed_previous_scores(run: Run) -> Iterator[Failure]:
     return _previous_score_failures(run, expected)
 
 
+def check_model_fit(run: Run) -> Iterator[Failure]:
+    """Each model view's fit passes ``MixedFit.problems`` (convergence, a positive definite
+    covariance over the free parameters, no free parameter on a bound, a grid fine enough):
+    stage "rank" recorded what it found in ``build/stage/fits.json``. Names only."""
+    fits = run.optional("fits") or {}
+    for key in run.cfg.ranking.model.views:
+        fit = fits.get(key)
+        if fit is None:
+            yield Failure("model_fit", f"{key}: stage 'rank' recorded no model fit")
+            continue
+        for problem in fit.problems:
+            yield Failure("model_fit", f"{key}: {problem}")
+
+
+def check_model_monotone(run: Run) -> Iterator[Failure]:
+    """A higher count never lowers a model view's score: the monotonicity scan of each term
+    (a font with that term alone, across its counts) finds no fall (scoring plan §8.5)."""
+    fits = run.optional("fits") or {}
+    for key in run.cfg.ranking.model.views:
+        fit = fits.get(key)
+        for term in fit.falls if fit is not None else ():
+            yield Failure("model_monotone", f"{key}: a higher {term} count lowers the score")
+
+
 CHECKS: tuple[tuple[str, Check], ...] = (
     ("schema", check_schema),
     ("ineligible_ranked", check_ineligible_ranked),
@@ -639,6 +668,8 @@ CHECKS: tuple[tuple[str, Check], ...] = (
     ("known_answer", check_known_answers),
     ("alias_target", check_alias_targets),
     ("higher_count_lower_rank", check_monotone),
+    ("model_fit", check_model_fit),
+    ("model_monotone", check_model_monotone),
     ("desktop_views_differ", check_desktop_views),
     ("abstention_leak", check_abstention_leak),
     ("raw_value_published", check_raw_values),

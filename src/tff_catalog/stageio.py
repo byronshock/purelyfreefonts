@@ -79,6 +79,10 @@ STAGE_FILES: dict[str, StageFile] = {
     "ruler": StageFile("ruler.json", "rank", "map", "float"),
     "scores": StageFile("scores.json", "rank", "map", "tff_catalog.surveys:SurveyScores"),
     "ranks": StageFile("ranks.json", "rank", "map2", "tff_catalog.engine.order:Placement"),
+    # The measurement model's views (modelviews; docs/milestone-method.md step 10). Private
+    # like the rest of build/stage: Google's and Fonts Over Time's shares and z are in it.
+    "model": StageFile("model.json", "rank", "map2", "tff_catalog.modelviews:ModelEntry"),
+    "fits": StageFile("fits.json", "rank", "map", "tff_catalog.modelviews:FitInfo"),
     "membership": StageFile(
         "membership.json", "membership", "doc", "tff_catalog.membership:Membership"
     ),

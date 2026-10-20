@@ -73,7 +73,7 @@ replays read what that run used. Stage "confidence" reads this run's file back.
 import math
 import re
 from collections.abc import Iterable, Mapping
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from datetime import date
 from statistics import fmean
 from typing import TYPE_CHECKING, Any, Literal
@@ -90,6 +90,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
     from tff_catalog.config_model import RankingConfig, RisingView
+    from tff_catalog.modelviews import ModelEntry
     from tff_catalog.paths import Paths
     from tff_catalog.stages import StageContext
 
@@ -134,6 +135,9 @@ class RankInputs:
     ruler: Mapping[str, float]  # z_R by family, from build/stage/ruler_counts.json
     weights: Mapping[str, Mapping[str, float]]  # {rank key: {source: weight}} (effective_weights)
     names: Mapping[str, str]  # family_id -> family name (tie order)
+    # {rank key: {family_id: ModelEntry}} for the model views (modelviews; [model] views),
+    # which rank on these instead of their terms and weights.
+    models: Mapping[str, Mapping[str, ModelEntry]] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)
@@ -351,12 +355,14 @@ def rank_inputs(
     stale: frozenset[str] = frozenset(),
     phasing: Mapping[str, bool] | None = None,
     rising: Terms | None = None,
+    models: Mapping[str, Mapping[str, ModelEntry]] | None = None,
 ) -> RankInputs:
     """``RankInputs`` for every rank key: view terms, overlaps and effective weights.
 
     ``stale`` names the stale-dropped engine sources, ``phasing`` the
     phase-in state (``phase_in``) and ``rising`` the log-ratio terms
-    (``rising_terms``); without it the Rising view is empty.
+    (``rising_terms``); without it the Rising view is empty. ``models`` holds the model
+    views' entries (``modelviews.run``).
     """
     phasing = phasing if phasing is not None else {}
     keys = [k for k in RANK_KEYS if k not in ("overall", "rising")]
@@ -372,7 +378,11 @@ def rank_inputs(
         terms=terms,
         ruler=dict(sorted(ruler.items())),
         weights=weights,
-        names={f: names.get(f, f) for f in sorted(ids)},
+        names={
+            f: names.get(f, f)
+            for f in sorted(ids | {f for m in (models or {}).values() for f in m})
+        },
+        models=dict(models or {}),
     )
 
 
@@ -523,15 +533,19 @@ def _overall(inputs: RankInputs, parts: Mapping[str, _Part], cfg: RankingConfig)
 def views(inputs: RankInputs, cfg: RankingConfig) -> dict[str, SurveyScores]:
     """Every published rank key, including coding, dev_apps and rising.
 
-    Each key ranks only on ``inputs.terms[key]`` with ``inputs.weights[key]``,
-    except overall (``overall``, reusing the surveys' equating and guards) and
+    Each key ranks only on ``inputs.terms[key]`` with ``inputs.weights[key]``, or a model
+    view on its entries in ``inputs.models`` (``modelviews.survey_scores``), except overall (``overall``, reusing the surveys' equating and guards) and
     rising (``rising_terms`` agreement). So an extra view's weights never reach
     overall. Keys in ``RANK_KEYS`` order; a key with no terms is empty.
     """
+    from tff_catalog import modelviews
+
     out: dict[str, SurveyScores] = {}
     parts: dict[str, _Part] = {}
     for key in RANK_KEYS:
-        if key not in ("overall", "rising"):
+        if key in cfg.model.views and key in inputs.models:
+            out[key] = modelviews.survey_scores(key, inputs.models[key], inputs.names, cfg)
+        elif key not in ("overall", "rising"):
             out[key], parts[key] = _scores(key, inputs, cfg)
     for k in cfg.ranks.overall.mix:
         if k not in parts:
@@ -1090,6 +1104,9 @@ def run(ctx: StageContext) -> None:
     monospace = frozenset(fid for fid, f in facts.items() if f.is_monospace)
     dropped = stale_dropped(cfg, state.read_part(paths, "stale"))
     smoothed = _smoothing(ctx, terms_all, ruler, dropped)
+    from tff_catalog import modelviews
+
+    models, fits = modelviews.run(ctx)
     inputs = rank_inputs(
         smoothed.terms,
         ruler,
@@ -1099,11 +1116,14 @@ def run(ctx: StageContext) -> None:
         stale=dropped,
         phasing=smoothed.phasing,
         rising=smoothed.rising,
+        models=models,
     )
     scores = views(inputs, cfg)
     stageio.dump_stage(paths, "ruler", inputs.ruler)
     stageio.dump_stage(paths, "scores", scores)
     stageio.dump_stage(paths, "ranks", {k: dict(s.placements) for k, s in scores.items()})
+    stageio.dump_stage(paths, "model", models)
+    stageio.dump_stage(paths, "fits", fits)
     state.write_part(paths, "smoothing", smoothed.state, stage="rank")
     _report(ctx, inputs, scores, terms_all, excluded, dropped)
 

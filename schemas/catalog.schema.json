@@ -71,6 +71,32 @@
             }
           }
         },
+        "model_fits": {
+          "description": "Each rank the measurement model scores: the date of the fit it used and the sha256 of the fit's file in the private store, never its parameters (tff_catalog.fitstore).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "fitted_on",
+              "sha256"
+            ],
+            "properties": {
+              "fitted_on": {
+                "$ref": "#/$defs/date"
+              },
+              "sha256": {
+                "$ref": "#/$defs/sha256"
+              }
+            }
+          },
+          "propertyNames": {
+            "enum": [
+              "project",
+              "dev_apps"
+            ]
+          }
+        },
         "config_sha256": {
           "$ref": "#/$defs/sha256"
         },

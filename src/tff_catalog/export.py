@@ -69,6 +69,12 @@ How the per-font fields are made (``docs/catalog-schema.md`` says it for readers
   font's views whose terms leave out a Linux source that covers it (every view
   but ``desktop_installed``, Rising included: D8). A source whose
   ``publish_rank`` is false shows no rank, z or value.
+  When the Project view is a model view (``ranking.toml [model] views``), a project source
+  that gives the font a model term is ``observed``, with no reason, its interval terms
+  included (owner ruling of 2026-10-01, q18a_state_observed); its ``z`` is the posterior
+  mean from that source's terms alone, but Fonts Over Time keeps its rank-based z (q18b);
+  and its ``weight_used`` is its share of the font's posterior expected information, null
+  for Google and Fonts Over Time, whose parameters are private (q16_weight_used).
 - **Sources listed** are the enabled engine sources, less any the parse stage
   dropped (no snapshot inside the stale window).
 - **The Nerd Font link** (``links.nerd``) is stage "links"' choice, except that a link
@@ -102,6 +108,7 @@ from tff_catalog import (
 from tff_catalog.config_model import OS_FAMILIES
 from tff_catalog.config_model import RANK_KEYS as _CONFIG_RANK_KEYS
 from tff_catalog.keys import match_key
+from tff_catalog.modelviews import FOT_SOURCE, PRIVATE_SHARES
 from tff_catalog.records import SourceKey
 
 if TYPE_CHECKING:
@@ -118,6 +125,7 @@ if TYPE_CHECKING:
     from tff_catalog.licenses import Verdict
     from tff_catalog.links import Link, Links
     from tff_catalog.membership import Membership
+    from tff_catalog.modelviews import FitInfo, ModelEntry
     from tff_catalog.parse import SourceSnapshot, StaleSource
     from tff_catalog.paths import Paths
     from tff_catalog.specimens.stage import Preview
@@ -259,6 +267,20 @@ class Inputs:
     @cached_property
     def confidence(self) -> Mapping[str, Mapping[str, Confidence]]:
         return self._stage("confidence")
+
+    @cached_property
+    def fits(self) -> Mapping[str, FitInfo]:
+        """The model views' fits (stage "rank", ``modelviews``); none before them."""
+        if not stageio.stage_path(self.paths, "fits").is_file():
+            return {}
+        return self._stage("fits")
+
+    @cached_property
+    def models(self) -> Mapping[str, Mapping[str, ModelEntry]]:
+        """The model views' entries (stage "rank", ``modelviews``); none before them."""
+        if not stageio.stage_path(self.paths, "model").is_file():
+            return {}
+        return self._stage("model")
 
     @cached_property
     def links(self) -> Mapping[str, Links]:
@@ -833,6 +855,7 @@ class CatalogBuilder:
                 "date": self.run_date.isoformat(),
                 "method_version": METHOD_VERSION,
                 "method_versions": dict(METHOD_VERSIONS),
+                **self.model_fits(),
                 "config_sha256": config_hash(self.cfg),
                 "ranking_toml_sha256": ranking_hash(self.cfg),
                 "code_commit": commit,
@@ -842,6 +865,16 @@ class CatalogBuilder:
             "sources": [self.source(s) for s in self.sources],
             "fonts": [self.font(fid) for fid in members],
         }
+
+    def model_fits(self) -> dict[str, Any]:
+        """``run.model_fits``: each model view's fit date and the sha256 of its stored file,
+        so a replay can be held to the same fit; never a parameter (T2, T4)."""
+        fits = {
+            key: {"fitted_on": f.fitted_on.isoformat(), "sha256": f.sha256}
+            for key, f in sorted(self.inputs.fits.items())
+            if key in self.cfg.ranking.model.views
+        }
+        return {"model_fits": fits} if fits else {}
 
     def missing(self, members: Iterable[str]) -> list[str]:
         """Members some stage has no row for (a pipeline fault, not an eligibility one)."""
@@ -1007,17 +1040,31 @@ class CatalogBuilder:
         term = view.terms.get(fid)
         state, reason = state_reason(term, src)
         shown = publish_rank(self.cfg, s)
+        z, weight = view.z.get(fid), self.weight_used(s, fid)
+        modelled = self.model_entry(src, fid)
+        if modelled is not None and s in modelled.z:
+            state, reason = "observed", None  # q18a: every model term, intervals included
+            z = view.z.get(fid) if s == FOT_SOURCE else modelled.z[s]  # q18b; T4 for FoT
+            share = modelled.info.get(s)
+            weight = None if s in PRIVATE_SHARES or share is None else num(share)  # q16
         entry: dict[str, Any] = {
             "state": state,
             "reason": reason,
             "rank_in_source": view.ranks.get(fid) if shown and state == "observed" else None,
-            "z": num(view.z.get(fid)) if shown and state in COUNTED else None,
-            "weight_used": self.weight_used(s, fid),
+            "z": num(z) if shown and state in COUNTED and z is not None else None,
+            "weight_used": weight,
             "abstains_in": [k for k in keys if self.abstains(s, fid, k)],
         }
         if src.publish_raw and shown and state in COUNTED and term and term.value is not None:
             entry["value"] = num(term.value)
         return entry
+
+    def model_entry(self, src: SourceBase, fid: str) -> ModelEntry | None:
+        """The font's entry in its source's survey view when that view is a model view."""
+        key = survey_view(src)
+        if key not in self.cfg.ranking.model.views:
+            return None
+        return self.inputs.models.get(key, {}).get(fid)
 
     def weight_used(self, s: str, fid: str) -> float | None:
         """v_s = M_g·w_s·factor·guard / W_g in the overall rank; None without a term there."""

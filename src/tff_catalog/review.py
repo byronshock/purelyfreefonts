@@ -61,6 +61,10 @@ values:
   ``engine.overlap_full`` fonts in common with the ruler (its weight is scaled
   down, or off under ``engine.overlap_off``).
 - ``guard``: outlier-guard hits (``scores.json``) in the top ``catalog_size``.
+- ``pit``: in a model view, a font whose term from one source its other sources predict
+  badly (leave-one-term-out PIT in a tail of ``[model] pit_tail``; ``build/stage/model.json``),
+  in the top ``catalog_size``: a font whose sources conflict, flagged in place of the
+  guard's down-weighting (owner ruling of 2026-10-01, q2_guard_retired).
 - ``crosscheck``: ``engine.crosscheck.flags``, fonts moving more than 30%
   under RRF or the Fontsource ruler, in the top ``catalog_size``.
 - ``disagreement``: fonts in the top ``review.disagreement_top`` of
@@ -144,7 +148,7 @@ INFO = "info"
 NONE = "\u2013"  # an en dash: an empty cell, or a range
 TIMES = "\u00d7"  # a multiplication sign
 # Kinds whose review.md list stops at the exact top; the pack has them all.
-CAPPED = frozenset({"guard", "crosscheck"})
+CAPPED = frozenset({"guard", "pit", "crosscheck"})
 
 # Flag kinds in review.md order: kind -> (heading, what the section lists).
 KINDS: dict[str, tuple[str, str]] = {
@@ -160,6 +164,10 @@ KINDS: dict[str, tuple[str, str]] = {
     "stale": ("Stale sources and schema mismatches", "Sources used stale or left out."),
     "ruler_overlap": ("Ruler overlaps", "Sources with too few fonts in common with the ruler."),
     "guard": ("Outlier-guard hits", "Terms the outlier guard gave reduced weight."),
+    "pit": (
+        "Conflicting sources",
+        "Model terms the font's other sources predict badly (leave-one-term-out PIT).",
+    ),
     "crosscheck": ("Cross-check moves", "Fonts moving under RRF or the Fontsource ruler."),
     "disagreement": ("Most chosen versus project", "Fonts high in one rank and low in the other."),
     "term": ("Term flags", 'Evidence flags from stage "correct", by source.'),
@@ -671,6 +679,27 @@ def overlap_flags(
             out.append(
                 Flag("ruler_overlap", f"`{s}`: {n} fonts in common with the ruler, {effect}", key)
             )
+    return out
+
+
+def pit_flags(
+    models: Mapping[str, Mapping[str, Any]],
+    orders: Mapping[str, Mapping[str, int]],
+    names: Mapping[str, str],
+    limit: int,
+) -> list[Flag]:
+    """Model terms in a PIT tail (``modelviews.ModelEntry.pit``) of fonts at order ``limit``
+    or better, per model view: source names only, never a value."""
+    out = []
+    for key in sorted(models):
+        hits = sorted(
+            (orders[key][f], f, entry.pit)
+            for f, entry in models[key].items()
+            if entry.pit and f in orders.get(key, {}) and orders[key][f] <= limit
+        )
+        for order, f, sources in hits:
+            listed = ", ".join(f"`{s}`" for s in sources)
+            out.append(Flag("pit", f"{_name(names, f)} ({order}): {listed}", key, f))
     return out
 
 
@@ -1769,7 +1798,10 @@ def _health_flags(
         notes.append('Stale sources: build/stage/stale.json is missing (run stage "parse").')
     flags = stale_flags(stale, stale_state, cfg)
     flags += overlap_flags(scores, cfg, surveys.stale_dropped(cfg, stale_state))
-    return flags + guard_flags(scores, now, names, cfg.membership.catalog_size)
+    flags += guard_flags(scores, now, names, cfg.membership.catalog_size)
+    model_path = stageio.stage_path(ctx.paths, "model")
+    models = stageio.load_stage(ctx.paths, "model") if model_path.is_file() else {}
+    return flags + pit_flags(models, now, names, cfg.membership.catalog_size)
 
 
 def _rank_inputs(
