@@ -13,14 +13,15 @@ import copy
 import functools
 import hashlib
 import json
+import math
 import os
 import re
 import shutil
-import statistics
 import subprocess
 import sys
 import textwrap
 import tomllib
+from decimal import Decimal
 from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
@@ -613,10 +614,41 @@ def test_a_missing_context_field_fails_the_build(tmp_path, catalog, mini_site):
 # -------------------------------------------------------------------- the list page
 
 
+def linear_score(z: float) -> int:
+    """The shown score, written out independently with Decimal (data.display_score)."""
+    share = min(max(Decimal(repr(z)) / 3, Decimal(0)), Decimal(1))
+    return max(1, math.ceil(share * 100))
+
+
+@pytest.mark.parametrize(
+    ("z", "shown"),
+    [
+        (None, -1),
+        (-1.2, 1),  # below the low end: clipped, and never 0
+        (0.0, 1),
+        (0.03, 1),  # exactly the first step
+        (0.030001, 2),
+        (0.06, 2),
+        (1.5, 50),
+        (2.97, 99),
+        (2.970001, 100),
+        (3.0, 100),
+        (4.2, 100),  # above the high end: clipped
+    ],
+)
+def test_the_shown_score_is_linear_between_its_ends(z, shown):
+    """q11_display_linear, q30_display_ends (2026-10-01): max(1, ⌈100·clip(z / 3, 0, 1)⌉),
+    exact at its steps; score_display_linear_all_views (2026-10-19): in every view."""
+    assert data.display_score(z) == shown
+    if z is not None:
+        assert data.display_score(z) == linear_score(z)
+
+
 def expected_labels(doc: dict) -> list[str]:
     """The unfiltered default view's rank cells (Projects) as text, written out
-    independently: each ranked font's score, 100·Φ(z) rounded, as screen readers hear it
-    (owner rulings of 2026-09-29 and 2026-09-30: score_display, score_curve,
+    independently: each ranked font's score, max(1, ⌈100·clip(z / 3, 0, 1)⌉), as screen
+    readers hear it (owner rulings of 2026-09-29, 2026-10-01 and 2026-10-19: score_display,
+    q11_display_linear, q30_display_ends, score_display_linear_all_views,
     held_marker_style)."""
     labels = []
     for font in data.server_order(doc):
@@ -624,7 +656,7 @@ def expected_labels(doc: dict) -> list[str]:
         if entry["unranked"]:
             labels.append("Not ranked: " + data.UNRANKED_LABELS[entry["unranked"]])
             continue
-        score = round(100 * statistics.NormalDist().cdf(entry["score"]))
+        score = linear_score(entry["score"])
         held = ", from one kind of source" if entry["gate_held"] else ""
         labels.append(f"Score {score} of 100{held}")
     return labels
@@ -812,7 +844,7 @@ def test_list_index_format(tmp_path, catalog, mini_site):
         for i, font_id in enumerate(index["ids"]):
             entry = fonts_[font_id]["ranks"].get(key)
             ranked = entry is not None and entry["order"] is not None
-            score = round(100 * statistics.NormalDist().cdf(entry["score"])) if ranked else -1
+            score = linear_score(entry["score"]) if ranked else -1
             assert col["s"][i] == score
             assert col["held"][i] == ("1" if ranked and entry["gate_held"] else "0")
     coding = index["r"]["coding"]["u"]
