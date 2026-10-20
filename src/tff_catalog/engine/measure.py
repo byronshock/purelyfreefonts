@@ -43,6 +43,15 @@ LOG2PI = float(np.log(2 * np.pi))
 GRID_LO, GRID_HI, GRID_STEP = -6.0, 7.0, 0.05  # the prior outside holds 1e-9
 LOG_B_MIN = float(np.log(1e-12))  # "no bulk": a baseline held here contributes nothing
 TAU_MIN = float(np.log(1e-3))
+# Every parameter is bounded, so that the likelihood stays finite over the whole box the
+# optimizer searches: L-BFGS-B's first steps can be huge, and an unbounded alpha once took a
+# fit to exp(alpha + lambda eta) = inf, then NaN, which it did not always recover from (which
+# it did depended on the BLAS kernel). With |alpha| <= 50 and lambda <= 20, alpha + lambda x
+# stays under 190 at the grid's edges, far from exp's overflow at 709, and a real count's alpha
+# (the log of its popularity part's median at the average font) lies far inside. A log-normal
+# term's noise sd (on the log scale) stays under 20, so that exp(sigma^2) is finite too.
+ALPHA_LIMIT = 50.0
+LOG_SIGMA_MAX = float(np.log(20.0))
 DISTS = ("negbin", "lognormal", "lognormal_sum")
 # The 5% point of 1/2 chi2_0 + 1/2 chi2_1: a test of b = 0, which lies on the boundary.
 LR_BOUNDARY_5PCT = 2.706
@@ -502,10 +511,11 @@ class MixedFit:
 def _bounds(model: Mixed) -> list[tuple[float | None, float | None]]:
     bounds: list[tuple[float | None, float | None]] = []
     for term in model.counts:
+        noise_max = float(np.log(1e3)) if term.dist == "negbin" else LOG_SIGMA_MAX
         bounds += [(LOG_B_MIN, float(np.log(1e15)))] * term.k + [
-            (None, None),
+            (-ALPHA_LIMIT, ALPHA_LIMIT),
             (float(np.log(1e-2)), float(np.log(20))),
-            (float(np.log(1e-2)), float(np.log(1e3))),
+            (float(np.log(1e-2)), noise_max),
         ]
         if term.dist == "lognormal_sum":
             bounds.append((TAU_MIN, float(np.log(5.0))))

@@ -91,6 +91,32 @@ def test_negbin_is_finite_at_the_grid_edges():
     assert np.isfinite(measure.count_loglik(term, tc, x)).all()
 
 
+def test_every_parameter_is_bounded_and_the_likelihood_finite_at_every_corner():
+    """The optimizer's box: no unbounded parameter, and every term's log-likelihood finite at
+    each corner of its own box, at every grid node (an unbounded alpha once took a fit to NaN)."""
+    import itertools
+
+    x, _ = measure.grid_nodes()
+    y = np.array([0.0, 1.0, 7.0, 1e3, 3e9])
+    n2d = np.array([1.0, 0.0, 2.0, 1.0, 0.5])
+    terms = (
+        measure.CountTerm("nb", np.arange(5), y, n2d, y_hi=y * 2),
+        measure.CountTerm("ln", np.arange(5), y, n2d, y_hi=y * 2, dist="lognormal"),
+        measure.CountTerm("sum", np.arange(5), y, n2d, dist="lognormal_sum"),
+        measure.CountTerm("fot", np.arange(5), y, np.zeros(5), exposure=np.full(5, 1e4)),
+    )
+    model = measure.Mixed(terms)
+    bounds = measure._bounds(model)
+    assert all(lo is not None and hi is not None for lo, hi in bounds)
+    for term, (start, stop) in zip(
+        terms, itertools.pairwise([*model.offsets(), len(bounds)]), strict=True
+    ):
+        box = bounds[start:stop]
+        for corner in itertools.product(*box):
+            ll = measure.count_loglik(term, np.array(corner), x)
+            assert np.isfinite(ll).all(), (term.name, corner)
+
+
 def test_grid_matches_a_dense_integral():
     """The trapezoid grid integrates sharp posteriors far from 0."""
     rng = np.random.default_rng(3)
