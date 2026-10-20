@@ -9,7 +9,7 @@ This milestone runs the monthly refresh live for the first time and switches its
 - the schedule is on, and the watchdog is installed;
 - a refresh has reached the live site with no step beyond the merge (or one command under M2-D6 (a)), and the post-deploy test has passed.
 
-**Collect and hold (owner rulings of 2026-10-16).** While Milestone 2's launch and the scoring-method port are on hold, a live run is dispatched each month and its pull request is kept as an unmerged draft (`refresh_collect_and_hold`). Such a run tests most of step 1 below, but step 1's items that a run checks stay unticked until a merged run; what a held run verifies is noted here.
+**Collect and hold (owner rulings of 2026-10-16).** While Milestone 2's launch is on hold (and, until 2026-10-19, the scoring-method port: [docs/milestone-method.md](milestone-method.md)), a live run is dispatched each month and its pull request is kept as an unmerged draft (`refresh_collect_and_hold`). Such a run tests most of step 1 below, but step 1's items that a run checks stay unticked until a merged run; what a held run verifies is noted here.
 
 - [ ] **The 2026-10-17 run** (run [38999881962](https://github.com/byronshock/purelyfreefonts/actions/runs/38999881962), dispatched by Claude from `main` at 7f8f798):
   - [x] `refresh`, `store` and `publish` succeed, and `report` is skipped; *(the `refresh` job took 4 h 58 min of its 5 h 45 min limit: see the next run's item below)*
