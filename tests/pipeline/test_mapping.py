@@ -424,8 +424,9 @@ def test_volumes_in_rate_units() -> None:
     _, arch = mapping.engine_observations(cfg.arch, recs)
     vols = mapping.volumes(cfg.arch, arch)
     assert vols[SourceKey("arch-pkg", "inter-font")] == pytest.approx(0.2)
-    # a package first seen in the last month is averaged over that month only
-    assert vols[SourceKey("arch-pkg", "ttf-foo")] == pytest.approx(1_000 / 12_000)
+    # a package first seen in the last month: its installs over the window's system-months
+    # (a2_arch_pool_months, b8a_no_scaling_any_source)
+    assert vols[SourceKey("arch-pkg", "ttf-foo")] == pytest.approx(1_000 / 22_000)
     _, fot = mapping.engine_observations(cfg.fot, recs)
     vols = mapping.volumes(cfg.fot, fot)
     assert vols[SourceKey("fot-name", "Proxima Nova")] == pytest.approx(38)
@@ -455,11 +456,12 @@ def test_rate_value() -> None:
     assert mapping.rate_value(obs("x", "arch-pkg", "a", 5), "share") is None  # no denominator
 
 
-def test_rates_count_only_the_days_available() -> None:
-    """Methodology §3: counts become rates over min(window, days available)."""
+def test_rates_are_over_the_window_however_young_the_key() -> None:
+    """b8a_no_scaling_any_source (2026-09-30): a count is a rate over its window, never over
+    the days a young key has existed."""
     end = YEAR_END
     young = obs("npm", "npm", "a", 6_000, first_seen=(end - timedelta(days=29)).isoformat())
-    assert mapping.rate_value(young, "per_month") == pytest.approx(6_000 * (365 / 12) / 30)
+    assert mapping.rate_value(young, "per_month") == pytest.approx(500)
     old = obs("npm", "npm", "a", 6_000, first_seen="2020-01-01")  # before the window: no effect
     assert mapping.rate_value(old, "per_month") == pytest.approx(500)
     # a window within a few days of a year or a month is exactly one, as stage "correct" counts
@@ -475,9 +477,9 @@ def test_rates_count_only_the_days_available() -> None:
     assert mapping.rate_value(seen, "per_year", lifetime=True) == pytest.approx(7_300)
 
 
-def test_a_young_package_above_its_floor_is_reported() -> None:
-    """A key 30 days old with 6,000 downloads runs at about 6,000 a month, far above
-    npm's floor of 1,000: averaged over a whole year it would hide at 500."""
+def test_a_young_package_counts_its_window_as_it_is() -> None:
+    """A key 30 days old with 6,000 downloads in the year counts 500 a month, as any other
+    key would (b8a_no_scaling_any_source), under npm's floor of 1,000: not reported."""
     recs = scenario()
     first = (YEAR_END - timedelta(days=29)).isoformat()
     recs["npm"].append(
@@ -493,10 +495,10 @@ def test_a_young_package_above_its_floor_is_reported() -> None:
     )
     rows, _ = mapping.report_rows(ranking().sources.all(), recs, IDX)
     got = {u.key.key: u.value for u in rows if u.source == "npm_fontsource"}
-    assert got["@fontsource/newcomer"] == pytest.approx(6_000 * (365 / 12) / 30)
+    assert "@fontsource/newcomer" not in got
 
 
-def test_arch_mean_runs_from_the_first_nonzero_month() -> None:
+def test_arch_pools_every_month_of_the_window() -> None:
     src = ranking().sources.arch
     rows = [
         obs("pkgstats", "arch-pkg", "gap", share, series=month, unit="share")
@@ -702,7 +704,7 @@ def test_report_rows() -> None:
         ("homebrew", "font-mystery"): (5, pytest.approx(5_000)),
         ("homebrew", "font-roboto-flex"): (8, pytest.approx(2_500)),
         ("debian", "fonts-unknown"): (3, 400.0),  # gnome-shell is a dependent: no rank
-        ("arch", "ttf-foo"): (2, pytest.approx(1 / 12)),
+        ("arch", "ttf-foo"): (2, pytest.approx(1 / 22)),
         ("npm_fontsource", "@fontsource/mystery"): (3, pytest.approx(5_000)),
         ("npm_expo", "@expo-google-fonts/inter"): (1, pytest.approx(2_000)),
         ("fot", "Proxima Nova"): (3, None),  # ranks only (ruling T4)

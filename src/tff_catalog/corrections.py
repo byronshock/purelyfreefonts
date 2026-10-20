@@ -43,9 +43,11 @@ baselines of lifetime counters); the ``bundle`` rows of ``data/aliases.csv``
    patterns), npm scopes, Nerd ``exclude_assets``, FOT ``methods``, the GitHub
    ``release_history`` (gate M2); prereleases count only for the GitHub repos in
    ``prerelease_repos`` (repos that publish nothing else);
-2. count one number per source key (``count_keys``, by ``counting``), as a rate
-   in the source's ``rate`` unit over min(window, days available), where the
-   days available run from the key's ``first_seen`` attr (design-m1 gap G3);
+2. count one number per source key (``count_keys``, by ``counting``), in the
+   source's ``rate`` unit over its window: a young key's count is never scaled up
+   to a rate over its days available (owner rulings of 2026-09-30,
+   h3_young_casks_not_scaled and b8a_no_scaling_any_source; its ``first_seen``
+   still gives the 60-day grace, b8b_grace_kept);
    a window within a few days of a year or a month counts as exactly one;
    for the crawls, keys that differ only in case count once, at the larger
    value (the Almanac's case duplicates: max, not sum);
@@ -71,8 +73,14 @@ covered.
 Exposure (gap G3): ``add_date``, ``first_nonzero_day`` and ``asset_created``
 come from the keys' ``first_seen`` attrs, ``first_nonzero_month`` from the
 monthly series, ``date_added`` from the ``added`` date of the universe record
-with the same key (Google's dateAdded; the views become a rate over the days
-since); an earlier date for the same source in ``state/first_seen.json`` wins.
+with the same key (Google's dateAdded); an earlier date for the same source in
+``state/first_seen.json`` wins. Exposure sets the 60-day grace only: no count
+becomes a rate over the days since (b8a_no_scaling_any_source).
+
+Debian (owner ruling of 2026-09-30, debian_frame): popcon counts a font only
+through a package in the release's main archive (``packaged``), so a row for a
+removed or third-party package ("(Not in sid)") or one only in sid is not read,
+and a font with only such rows is not covered.
 The crawls (``data_date``) count from the earliest date the family is known to
 exist (``availability``). A family with no known start counts as covered. The
 next ``first_seen`` part records a source's date for a family only when the
@@ -190,6 +198,7 @@ _CJK_TOKENS = frozenset({"cjk"})
 _CJK_SUFFIXES = ("-cn",)
 PULLING_KINDS = frozenset({"depends", "recommends"})  # pacman optdepends are never auto-installed
 NERD_GROUP = "nerd-fonts"  # the Arch package group of gate M4
+DEBIAN = "debian"  # the popcon collector, whose rows say whether a package is in the release
 CRAWL_COUNTINGS = frozenset({"weekly_mean", "yearly"})
 CHANNEL_EXPOSURES = frozenset(
     {"add_date", "first_nonzero_day", "first_nonzero_month", "date_added", "asset_created"}
@@ -796,6 +805,8 @@ def _wanted(src: SourceBase, o: Observation, scopes: tuple[str, ...]) -> bool:
         names = {_asset_base(o.key.key), _asset_base(str(_attr(o, "asset") or ""))}
         if names & set(src.exclude_assets):
             return False
+    if src.collector == DEBIAN and _attr(o, "packaged") is False:
+        return False  # not in the release's main archive (debian_frame)
     method = _attr(o, "method")
     return not (isinstance(src, FotSource) and method is not None and method not in src.methods)
 
@@ -842,8 +853,8 @@ def count_keys(
     match src.counting:
         case "window":
             return _count_window(obs, src.rate)
-        case "monthly_mean_share":
-            return _count_monthly(obs, getattr(src, "months", 12))
+        case "pooled_share":
+            return count_pooled(obs, getattr(src, "months", 12))
         case "snapshot_delta":
             return _count_delta(obs, baseline, src.rate)
         case "weekly_mean":
@@ -863,16 +874,15 @@ def _snap(days: int) -> float:
     return float(max(days, 1))
 
 
-def _to_rate(total: float, start: date, end: date, seen: date | None, rate: str) -> float:
+def _to_rate(total: float, start: date, end: date, rate: str) -> float:
+    """``total`` in ``rate`` units over its window, however young the key: what happened in
+    the window, never scaled up for the days a key existed (b8a_no_scaling_any_source)."""
     window = _snap((end - start).days + 1)
-    avail = window
-    if seen is not None and seen > start:
-        avail = max(1.0, min(window, float((end - seen).days + 1)))
     if rate == "per_year":
-        return total * _YEAR / avail
+        return total * _YEAR / window
     if rate == "per_month":
-        return total * _MONTH / avail
-    return total * window / avail
+        return total * _MONTH / window
+    return total
 
 
 def _count_window(obs: Sequence[Observation], rate: str) -> dict[SourceKey, KeyValue]:
@@ -881,7 +891,7 @@ def _count_window(obs: Sequence[Observation], rate: str) -> dict[SourceKey, KeyV
         start, end = min(o.start for o in group), max(o.end for o in group)
         seen = _earliest(_attr_date(o, "first_seen") for o in group)
         total = _total(group)
-        value = None if total is None else _to_rate(total, start, end, seen, rate)
+        value = None if total is None else _to_rate(total, start, end, rate)
         out[key] = KeyValue(value, seen, end)
     return out
 
@@ -897,38 +907,53 @@ def _count_plain(obs: Sequence[Observation]) -> dict[SourceKey, KeyValue]:
     }
 
 
-def _share(o: Observation) -> float | None:
-    if o.value is None:
-        return None
-    samples = _attr(o, "samples")
-    if o.unit != "share" and isinstance(samples, int) and samples > 0:
-        return o.value / samples
-    return o.value
+def month_samples(obs: Sequence[Observation], window: Sequence[str]) -> dict[str, int]:
+    """Arch: the systems pkgstats sampled each month of ``window`` (the rows' ``samples``),
+    one number a month, which every row of that month must share."""
+    out: dict[str, int] = {}
+    for o in obs:
+        samples = _attr(o, "samples")
+        if o.series not in window or type(samples) is not int:
+            continue
+        if out.setdefault(o.series, samples) != samples:
+            raise ValueError(f"{o.source} {o.series}: rows disagree on the systems sampled")
+    return out
 
 
-def _count_monthly(obs: Sequence[Observation], months: int) -> dict[SourceKey, KeyValue]:
-    """Arch: the mean of monthly shares from the key's first non-zero month on."""
+def count_pooled(obs: Sequence[Observation], months: int) -> dict[SourceKey, KeyValue]:
+    """Arch: every system-month counted once (owner ruling of 2026-09-30,
+    a2_arch_pool_months): a key's installs summed over the last ``months`` months, over
+    the systems sampled in those months, so a month with a larger sample carries more.
+    Every month of the window counts for every key, a young package's included
+    (b8a_no_scaling_any_source); its first non-zero month starts its exposure. A row given
+    as a share (no ``samples``) counts as its share of the month's sample; a month whose
+    sample nobody gives weighs one, so shares alone pool to their mean over the window."""
     window = sorted({o.series for o in obs})[-months:]
     if not window:
         return {}
     inside = [o for o in obs if o.series in set(window)]
     month_start = {m: min(o.start for o in inside if o.series == m) for m in window}
     data_end = max(o.end for o in inside)
+    known_samples = month_samples(inside, window)
+    weight = {m: float(known_samples.get(m, 1)) for m in window}
+    total_samples = math.fsum(weight.values())
     out = {}
     for key, group in _by_key(inside).items():
-        shares: dict[str, float] = defaultdict(float)
+        counts: dict[str, float] = defaultdict(float)
         known = False
         for o in group:
-            s = _share(o)
-            if s is not None:
-                shares[o.series] += s
-                known = True
-        nonzero = [m for m in window if shares.get(m, 0.0) > 0]
-        if not nonzero:
+            if o.value is None:
+                continue
+            known = True
+            if o.unit == "share" or type(_attr(o, "samples")) is not int:
+                counts[o.series] += o.value * weight[o.series]
+            else:
+                counts[o.series] += o.value
+        nonzero = [m for m in window if counts.get(m, 0.0) > 0]
+        if not nonzero or total_samples <= 0:
             out[key] = KeyValue(0.0 if known else None, None, data_end)
             continue
-        used = window[window.index(nonzero[0]) :]
-        value = math.fsum(shares.get(m, 0.0) for m in used) / len(used)
+        value = math.fsum(counts.values()) / total_samples
         start = None if nonzero[0] == window[0] else month_start[nonzero[0]]
         out[key] = KeyValue(value, start, data_end)
     return out

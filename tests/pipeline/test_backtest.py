@@ -404,7 +404,7 @@ def test_backtest_on_synthetic_history(tmp_path: Path) -> None:
     assert suggested["coverage_change_max"] >= max(v for _, v in report.coverage)
     assert dict(report.current)["rbo_min"] == RANKING.review.rbo_min
     notes = " ".join(report.notes)
-    assert "`github`: no records from `github_releases`" in notes
+    assert "`github`" not in notes  # off in every rank (g1_github_deferred): not backtested
     assert "`homebrew`: only fixed windows are published" in notes
     assert backtest.backtest(context(paths)) == report  # deterministic
 

@@ -168,9 +168,7 @@ def _convert(tp: Any, value: Any, where: str) -> Any:
 # How a source's values become one number per key: a fixed window total, the mean
 # of monthly shares, the change between lifetime-counter snapshots, the mean of
 # weekly snapshots, a yearly edition, or a current count.
-Counting = Literal[
-    "window", "monthly_mean_share", "snapshot_delta", "weekly_mean", "yearly", "current"
-]
+Counting = Literal["window", "pooled_share", "snapshot_delta", "weekly_mean", "yearly", "current"]
 # Where a channel's exposure ("too new") is counted from: design-m1 gap G3.
 Exposure = Literal[
     "add_date",

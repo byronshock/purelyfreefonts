@@ -609,12 +609,11 @@ def test_floors_credits_ruler_and_gates(world: Paths) -> None:
     assert installed["arch"]["fantasque-sans-mono"].value == pytest.approx(
         max(0.01, 0.045 - 0.0415)
     )
-    # Gate M5: the cask downloads the repo's asset, so GitHub joins the homebrew group.
-    assert installed["github"]["jetbrains-mono"].group == "homebrew"
-    # Nerd Fonts keeps its own group, although JetBrains Mono's Nerd cask downloads the
-    # Nerd release (owner ruling of 2026-09-29, gate R round 1).
-    assert installed["nerd"]["jetbrains-mono"].group == "nerd"
-    assert installed["nerd"]["hack"].group == "nerd"
+    # GitHub and Nerd Fonts have no term in any rank (owner rulings of 2026-09-30,
+    # g1_github_deferred and g2_nerd_deferred); gates M5 and R are moot meanwhile.
+    for view in views.values():
+        assert "github" not in view
+        assert "nerd" not in view
     # Google: ranks only in the report; the term keeps its value for the engine.
     assert views["project"]["google"]["fira-sans"].state == "observed"
 
@@ -671,7 +670,7 @@ def test_state_and_reruns_are_byte_stable(world: Paths) -> None:
     assert seen["quicksand"]["catalog"] == "2026-09-03"
     assert seen["quicksand"]["sources"]["homebrew"] == "2018-01-01"  # the earlier date wins
     assert seen["jetbrains-mono"]["sources"]["homebrew"] == "2019-06-01"
-    assert seen["jetbrains-mono"]["sources"]["github"] == "2023-01-14"  # the asset's creation
+    assert "github" not in seen["jetbrains-mono"]["sources"]  # off (g1_github_deferred)
     assert seen["newfont-sans"]["sources"]["homebrew"] == (END - timedelta(days=20)).isoformat()
     # Only a channel's own date is a first day on it: Debian has none, and an Arch
     # package with shares from the first month of the window is older than the window.
@@ -1014,7 +1013,8 @@ def test_arch_group_floor_spares_new_members() -> None:
     assert notes[0].value == pytest.approx(0.041)  # p10 of the tenured 0.04 and 0.05
     assert floored[k("arch-pkg", "ttf-a-nerd")].value == pytest.approx(0.0)
     assert floored[k("arch-pkg", "ttf-b-nerd")].value == pytest.approx(0.009)
-    assert floored[k("arch-pkg", "ttf-new-nerd")].value == pytest.approx(0.001)  # 3 months: kept
+    # 3 months of 0.1%, pooled over the window's 12 (a2_arch_pool_months): kept, untenured.
+    assert floored[k("arch-pkg", "ttf-new-nerd")].value == pytest.approx(0.001 * 3 / 12)
     assert floored[k("arch-pkg", "ttf-c")].value == pytest.approx(0.2)
     flat = replace(SRC.arch, nerd_group_floor="flat")
     floored, _ = key_floors("arch", flat, values, edges)
@@ -1032,7 +1032,9 @@ def test_nerd_releases_drop_excluded_assets_and_subtract_p10() -> None:
     assert min(v.value or 0.0 for v in floored.values()) == 0.0
 
 
-def test_window_counts_become_rates_over_days_available() -> None:
+def test_window_counts_are_never_scaled_up_for_a_young_key() -> None:
+    """h3_young_casks_not_scaled, b8a_no_scaling_any_source (2026-09-30): what happened in
+    the window, as it is, however few days the key has existed."""
     full = obs(
         "homebrew_analytics", "365d", k("brew-cask", "font-a"), 365.0, first_seen="2019-01-01"
     )
@@ -1045,12 +1047,57 @@ def test_window_counts_become_rates_over_days_available() -> None:
     )
     values = count_keys(SRC.homebrew, [full, young])
     assert values[full.key].value == 365.0
-    assert values[young.key].value == pytest.approx(100.0 * 365 / 100)
+    assert values[young.key].value == 100.0
+    assert values[young.key].start == END - timedelta(days=99)  # still its 60-day grace
     npm = obs("npm", "last-year", k("npm", "@fontsource/a"), 12_000.0, first_seen="2020-01-01")
     assert count_keys(SRC.npm_fontsource, [npm])[npm.key].value == pytest.approx(1_000.0)
 
 
-def test_monthly_shares_average_from_the_first_nonzero_month() -> None:
+def test_arch_pools_installs_over_the_systems_sampled() -> None:
+    """a2_arch_pool_months with pkgstats' own rows: installs and the month's sample."""
+    rows = [
+        obs(
+            "pkgstats",
+            ym,
+            k("arch-pkg", pkg),
+            count,
+            start=month(ym)[0],
+            end=month(ym)[1],
+            unit="installs",
+            samples=samples,
+        )
+        for ym, samples, counts in (
+            (MONTHS[-2], 10_000, {"ttf-a": 100, "ttf-b": 0}),
+            (MONTHS[-1], 30_000, {"ttf-a": 900, "ttf-b": 300}),
+        )
+        for pkg, count in counts.items()
+    ]
+    values = count_keys(SRC.arch, select(SRC.arch, rows))
+    assert values[k("arch-pkg", "ttf-a")].value == pytest.approx(1_000 / 40_000)
+    # Not the mean of its monthly shares (0.5%, 3%), and the empty month still counts.
+    assert values[k("arch-pkg", "ttf-b")].value == pytest.approx(300 / 40_000)
+    assert values[k("arch-pkg", "ttf-b")].start == month(MONTHS[-1])[0]  # its grace starts
+    bad = [*rows, replace(rows[0], key=k("arch-pkg", "ttf-c"), attrs=attrs(samples=9))]
+    with pytest.raises(ValueError, match="disagree on the systems sampled"):
+        count_keys(SRC.arch, select(SRC.arch, bad))
+
+
+def test_debian_reads_only_packages_in_the_release() -> None:
+    """debian_frame (2026-09-30): a removed or third-party package ("(Not in sid)") and one
+    only in sid are not read, so a font with only such rows is not covered (de1)."""
+    shipped = obs("debian", "inst", k("deb-pkg", "fonts-a"), 900.0, packaged=True, in_sid=True)
+    sid_only = obs("debian", "inst", k("deb-pkg", "fonts-b"), 50.0, packaged=False, in_sid=True)
+    removed = obs("debian", "inst", k("deb-pkg", "fonts-c"), 40.0, packaged=False, in_sid=False)
+    assert select(SRC.debian, [shipped, sid_only, removed]) == [shipped]
+    # The engine reads popcon's inst series only (de3_drop_vote): there is no vote term.
+    assert SRC.debian.series == "inst"
+    vote = obs("debian", "vote", k("deb-pkg", "fonts-a"), 300.0, packaged=True)
+    assert select(SRC.debian, [vote]) == []
+
+
+def test_arch_pools_the_window_s_system_months() -> None:
+    """a2_arch_pool_months (2026-09-30): every system-month counted once, a young package's
+    months before it existed included (b8a); shares alone weigh each month as one."""
     stats = pkgstats("ttf-old", 0.02) + pkgstats("ttf-young", 0.03, MONTHS[-4:])
     stats += [
         obs(
@@ -1067,9 +1114,9 @@ def test_monthly_shares_average_from_the_first_nonzero_month() -> None:
     assert values[k("arch-pkg", "ttf-old")] == KeyValue(
         pytest.approx(0.02), None, date(2026, 8, 31)
     )  # type: ignore[arg-type]
-    assert values[k("arch-pkg", "ttf-young")].value == pytest.approx(0.03)
-    assert values[k("arch-pkg", "ttf-young")].start == date(2026, 5, 1)
-    assert values[k("arch-pkg", "ttf-gap")].value == pytest.approx(0.06 / 7)  # later months count 0
+    assert values[k("arch-pkg", "ttf-young")].value == pytest.approx(0.03 * 4 / 12)
+    assert values[k("arch-pkg", "ttf-young")].start == date(2026, 5, 1)  # the grace's start
+    assert values[k("arch-pkg", "ttf-gap")].value == pytest.approx(0.06 / 12)
 
 
 def test_snapshot_delta_first_run_and_baseline() -> None:
@@ -1376,7 +1423,7 @@ def test_google_falls_back_to_popularity_ranks() -> None:
     assert res.terms["b"].value == 1.0
 
 
-def test_google_counts_views_from_the_date_added() -> None:
+def test_google_s_date_added_sets_only_the_grace() -> None:
     names = ["Old Sans", "Young Sans", "Fresh Sans", "Quiet Sans", "Newest Sans"]
     fams = [family(n.split()[0].lower(), n, [("gf-family", n)]) for n in names]
     listed = fams[:3]  # Quiet and Newest are on Google with no views row yet
@@ -1396,7 +1443,7 @@ def test_google_counts_views_from_the_date_added() -> None:
     res = corr.correct_source("google", SRC.google, inp, RANKING, {})
     assert res is not None
     assert res.terms["old"].value == 36_500.0
-    assert res.terms["young"].value == pytest.approx(36_500 * 365 / 100)  # a rate since added
+    assert res.terms["young"].value == 36_500.0  # never a rate since added (b8a)
     assert res.terms["fresh"] == Term(None, "too_new", "google")
     assert res.terms["quiet"] == Term(None, "censored", "google", "no_value")
     assert res.terms["newest"] == Term(None, "too_new", "google")  # not a zero
