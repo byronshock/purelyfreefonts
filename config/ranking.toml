@@ -363,13 +363,13 @@ categories = ["sans-serif", "serif", "display", "handwriting", "monospace"]  # B
 # --- Membership, confidence, stability -----------------------------------------
 
 [membership]
-catalog_size = 500              # the overall top 500 ...
+catalog_size = 500              # the overall top 500 (Projects', q12, q13_catalog_membership) ...
 enter = 450                     # ... entered at 450 or better
 leave = 550                     # ... left after leave_runs runs below 550
 leave_runs = 2
-extra_top = 100                 # plus the top 100 of these ranks
-extra_ranks = ["project", "desktop_chosen", "desktop_installed"]
-l3_overall_max = 700            # L3 license checks (step 6b): overall order 700 or better ...
+extra_top = 100                 # plus the top 100 of these ranks: every rank's (q13_catalog_membership)
+extra_ranks = ["project", "desktop_chosen", "desktop_installed", "coding", "dev_apps", "rising"]
+l3_overall_max = 700            # L3 license checks (step 6b): overall order 700 or better (Projects', q13) ...
 l3_extra_top = 150              # ... and the top 150 of each extra rank, so a font is checked before it can enter
 
 [membership.top100]             # hysteresis of each published top-100 list
