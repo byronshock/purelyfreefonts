@@ -6,11 +6,11 @@
 
 Each month we collect public counts of how often free fonts are installed on computers and used in websites, code and apps. Two methods turn those counts into ranks, and each rank uses one of them.
 
-The *Projects* and *Developers & apps* ranks use a measurement model. Each font has one underlying popularity, and each source's count is a noisy signal of it. The model learns from the data how noisy each source is, and how much every package collects whatever its popularity. So a low count is weak evidence of a less popular font, not a zero. A font's score is the model's best estimate of its popularity from all its sources.
+The *Projects* and *Developers & apps* ranks use a measurement model. Each font has one underlying popularity, and each source's count is a noisy signal of it. The model learns from the data how noisy each source is, and how much every package collects anyway, however popular its font: mirrors, bots and build servers fetch every package. So a low count is weak evidence of a less popular font, not a zero. A font's score is the model's best estimate of its popularity from all its sources.
 
-The desktop ranks, *Coding* and *Rising* still use the engine. The sources measure different things, so it compares positions, not raw numbers: each source's order is translated onto one shared scale, and a font's score is the weighted average over the sources that could have seen it. Desktop moves to a model of its own later.
+The desktop ranks, *Coding* and *Rising* still use our earlier method, the engine. The sources measure different things, so it compares positions, not raw numbers: each source's order is translated onto one shared scale, and a font's score is the weighted average over the sources that could have seen it. Desktop moves to a model of its own later.
 
-In both methods, a source that doesn't carry a font at all (a Linux distribution with no package for it) is left out, not counted as zero. Fonts with little evidence are pulled toward the middle. No font reaches the top 100 on one kind of evidence alone.
+In both methods, a source that doesn't carry a font at all (a Linux distribution with no package for it) is left out, not counted as zero. Fonts with little evidence are pulled toward the average tracked font. No font reaches the top 100 on one kind of evidence alone.
 
 The desktop rank comes in two versions, and both list the same fonts. **Installed (desktop)** counts every install. **Chosen (desktop)** leaves out the installs that Linux systems make on their own (fonts that come preinstalled, or that another program brings in), so those fonts are ranked on the installs people made themselves. No rank blends the desktop views with *Projects* any more: the overall rank retired, and the list opens on *Projects* (owner ruling of 2026-09-30).
 
@@ -216,7 +216,7 @@ Both views use the sources below, scored by the engine. They differ only in how 
 
 In both views, affected fonts carry a tag naming the systems they come with or the packages that pull them in.
 
-Until desktop has a model of its own, the engine runs with interim rules (owner rulings of 2026-09-30). No source scales a young font's count up to a year. Arch pools its months. Debian counts only packages in the release's main archive. GitHub and Nerd Fonts release downloads are still collected, but not used yet.
+Until desktop has a model of its own, the engine runs with interim rules (owner rulings of 2026-09-30). A young font's count is never scaled up to a full year. Arch's monthly samples are pooled into one. Debian counts only packages in the release's main archive. GitHub and Nerd Fonts release downloads are still collected, but not used yet.
 
 | Source | Weight | Handling |
 |---|---|---|
@@ -540,10 +540,10 @@ The monthly pull request asks the owner only to review what it flags: new aliase
   - Fonts Over Time crawls US homepages only, and half of them are startups.
   - The Almanac is yearly, covers only the top 100, and folds width cuts into their parents.
   - Google's views are weighted by traffic and can't see self-hosted fonts.
-  - Google's views also include the traffic of Google's own products, such as Google Sans and Arimo. The model leaves that to its noise rather than correcting it: when the owner ruled on this (2026-10-01), Google Sans ranked #71 on *Projects* under the model.
+  - Google's views also include the traffic of Google's own products, such as Google Sans and Arimo. The model doesn't correct for it, so Google's own fonts may rank a little high: when the owner ruled on this (2026-10-01), Google Sans ranked #71 on *Projects* under the model.
   - CI runs inflate npm.
-- **Sources that move together.** The model treats a font's sources as independent once its popularity is known. A few pairs still move together beyond that: Google views and jsDelivr, ecosyste.ms and Expo, and the two Fonts Over Time terms. Their shared part counts a little more than it should. The owner accepted this, with this note (owner ruling of 2026-10-01). In the check behind that ruling, leaving jsDelivr out altogether barely changed the *Projects* order: Spearman 0.9902, with 98 of the top 100 shared.
+- **Sources that move together.** The model counts each source as separate evidence of a font's popularity. A few pairs move together more than that allows: Google views and jsDelivr, ecosyste.ms and Expo, and the two Fonts Over Time terms. What they share counts a little more than it should. The owner accepted this, with this note (owner ruling of 2026-10-01). In the check behind that ruling, leaving jsDelivr out altogether barely changed the *Projects* order: 98 of the top 100 stayed, and the rank correlation (Spearman) was 0.9902.
 - **Two methods.** The desktop ranks, *Coding* and *Rising* are still scored by the engine, and *Projects* and *Developers & apps* by the model. A score compares fonts within one rank, so the same score in two ranks doesn't mean the same thing.
-- **The ruler.** In the engine's ranks, Homebrew is the ruler, so it decides how popular each source's fonts count as a group. As a check, each run also ranks those fonts with Fontsource as the ruler.
+- **The ruler.** In the engine's ranks, Homebrew's installs are the ruler that puts the other sources on one scale, so Homebrew decides how popular each source's fonts count as a group. As a check, each run also ranks those fonts with Fontsource as the ruler.
 - **Not measured.** Print use is unmeasured, and the site itself will nudge installs.
 - **Listed on request.** Once fonts are added on request (after launch), a font that no directory carries is listed only once someone asks for it, so fonts whose makers or fans ask are more likely to be listed than equally good fonts nobody has mentioned. Being added on request never changes a rank.
