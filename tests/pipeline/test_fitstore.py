@@ -40,7 +40,9 @@ class Fitter:
 
 
 def obtain(store: Path | None, mode: str, run_date: date, merged=(), model=MODEL, fit=None):
-    return fitstore.obtain(
+    """``fitstore.obtain``; a pending fit (--write-fit) is staged and kept at once, as a
+    passing run's refresh keeps it (``store_pending``)."""
+    got = fitstore.obtain(
         mode=mode,
         store_root=store,
         view="project",
@@ -50,6 +52,11 @@ def obtain(store: Path | None, mode: str, run_date: date, merged=(), model=MODEL
         method_version=VERSION,
         fit=fit or Fitter(),
     )
+    if got.source == "pending" and store is not None:
+        stage = store / "stage"
+        fitstore.stage_pending(stage, "project", got.data)
+        fitstore.store_pending(stage, store, run_date)
+    return got
 
 
 def test_the_github_run_writes_the_fit_once_and_later_runs_read_it(tmp_path: Path) -> None:
@@ -57,7 +64,7 @@ def test_the_github_run_writes_the_fit_once_and_later_runs_read_it(tmp_path: Pat
     first = obtain(tmp_path, "write", OCT, fit=fitter)
     path = fitstore.fit_path(tmp_path, "project", OCT)
     assert path == tmp_path / "_state" / "fit" / "project" / "2026-10-17.json"
-    assert (first.source, first.fitted_on, fitter.calls) == ("written", OCT, 1)
+    assert (first.source, first.fitted_on, fitter.calls) == ("pending", OCT, 1)
     doc = jsonio.load(path)
     assert doc["view"] == "project"
     assert doc["spec_sha256"] == fitstore.spec_sha256(MODEL, VERSION)
@@ -106,11 +113,12 @@ def test_a_dry_run_and_a_merged_date_fit_in_memory_and_keep_nothing(tmp_path: Pa
     merged = obtain(tmp_path, "write", SEP, merged=[SEP])  # 2026-09-26 has no fit, ever
     plain = obtain(None, "read", SEP, merged=[SEP])
     assert (dry.source, merged.source, plain.source) == ("memory", "memory", "memory")
+    assert (dry.data, merged.data, plain.data) == (None, None, None)
     assert not (tmp_path / "_state").exists()
     # In memory too, the fit is used as read back, so the dry run scores as the stored would.
-    written = obtain(tmp_path, "write", OCT)
-    assert written.sha256 == dry.sha256
-    assert written.fit.theta.tobytes() == dry.fit.theta.tobytes()
+    kept = obtain(tmp_path, "write", OCT)
+    assert kept.sha256 == dry.sha256
+    assert kept.fit.theta.tobytes() == dry.fit.theta.tobytes()
 
 
 def test_a_stored_fit_is_never_replaced(tmp_path: Path) -> None:
@@ -186,6 +194,31 @@ def test_the_record_holds_the_spec_and_nothing_else(tmp_path: Path) -> None:
     assert fitstore.spec(MODEL, VERSION)["terms"] == [
         {"name": "installs", "dist": "negbin", "groups": ["packages"]}
     ]
+
+
+def test_a_pending_fit_is_kept_only_when_the_run_stores_it(tmp_path: Path) -> None:
+    """--write-fit stages the fit; refresh keeps it only once the run has passed, and a rank
+    rerun after "verify" replaces what the first pass staged."""
+    store, stage = tmp_path / "store", tmp_path / "stage"
+    first = fitstore.obtain(
+        mode="write",
+        store_root=store,
+        view="project",
+        run_date=OCT,
+        merged_dates=(),
+        model=MODEL,
+        method_version=VERSION,
+        fit=Fitter(),
+    )
+    assert first.source == "pending"
+    assert not (store / "_state").exists()  # nothing kept by the stage itself
+    fitstore.stage_pending(stage, "project", b"first pass")
+    fitstore.stage_pending(stage, "project", first.data)  # the rerun's replaces it
+    assert fitstore.store_pending(stage, store, OCT) == [fitstore.fit_path(store, "project", OCT)]
+    assert fitstore.fit_path(store, "project", OCT).read_bytes() == first.data
+    with pytest.raises(fitstore.FitError, match="not this run's fit"):
+        fitstore.store_pending(stage, store, NOV)
+    assert fitstore.store_pending(tmp_path / "no-stage", store, OCT) == []
 
 
 def test_obtain_refuses_an_unknown_mode(tmp_path: Path) -> None:

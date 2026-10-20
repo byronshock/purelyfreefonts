@@ -18,10 +18,14 @@ replay gives the same bytes (§8.4). The first fit is the GitHub replay of the h
 - **The spec:** ``spec_sha256`` hashes what the parameters mean (the terms, their families
   and baseline groups, the grid and the view's method version), so a fit is never read into
   a model it wasn't made for. A changed model needs a new method version and a new fit.
-- **When none is stored** (``obtain``): ``--write-fit`` (the GitHub run) fits, writes and
-  uses it; ``--fit-in-memory`` (a local dry run) fits and writes nothing; and a date a merged
-  run used (2026-09-26 has none) is fitted in memory, writing nothing, whatever the flag. Any
-  other run stops: it would otherwise publish scores from a fit nobody kept.
+- **When none is stored** (``obtain``): ``--write-fit`` (the GitHub run) fits it and uses it,
+  and stage "rank" stages the record in ``build/stage/fits-pending/<view>.json``; refresh
+  stores it (``store_pending``) only once the whole run has passed its checks, so a failed
+  run keeps nothing, and a rank rerun after "verify" (refresh's ``RERUN_AFTER_VERIFY``)
+  replaces the staged record, so the fit kept is the one the published scores used.
+  ``--fit-in-memory`` (a local dry run) fits and keeps nothing; and a date a merged run used
+  (2026-09-26 has none) is fitted in memory, keeping nothing, whatever the flag. Any other
+  run stops: it would otherwise publish scores from a fit nobody kept.
 - **Read back:** a fit is always used as read back from its JSON, even one made in memory,
   so a run and its replay score with the same bits.
 
@@ -60,7 +64,8 @@ class Obtained:
     fit: MixedFit
     fitted_on: date
     sha256: str  # of the file's bytes (or, in memory, of the bytes it would have)
-    source: Literal["store", "written", "memory"]
+    source: Literal["store", "pending", "memory"]
+    data: bytes | None = None  # a pending fit's record, for ``stage_pending``
 
 
 def fit_path(store_root: Path, view: str, day: date) -> Path:
@@ -189,14 +194,35 @@ def obtain(
     if problems:
         raise FitError(f"{view}: the fit of {run_date.isoformat()} fails: {'; '.join(problems)}")
     data = jsonio.canonical_bytes(document(view, run_date, model, method_version, made))
-    if mode == "write" and not merged:
-        assert store_root is not None
-        path = fit_path(store_root, view, run_date)
-        write_once(path, data)
-        data = path.read_bytes()
-        source: Literal["written", "memory"] = "written"
-    else:
-        source = "memory"
+    source: Literal["pending", "memory"] = "pending" if mode == "write" and not merged else "memory"
     where = f"{view} fit of {run_date.isoformat()}"
     fitted = from_bytes(data, where, view, model, method_version, run_date)
-    return Obtained(fitted, run_date, hashlib.sha256(data).hexdigest(), source)
+    pending = data if source == "pending" else None
+    return Obtained(fitted, run_date, hashlib.sha256(data).hexdigest(), source, pending)
+
+
+PENDING_DIR = "fits-pending"  # under build/stage: this run's fits, until it has passed
+
+
+def stage_pending(stage_dir: Path, view: str, data: bytes) -> Path:
+    """Stage a pending fit's record for ``store_pending``; a later pass replaces it."""
+    path = stage_dir / PENDING_DIR / f"{view}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(data)
+    return path
+
+
+def store_pending(stage_dir: Path, store_root: Path, run_date: date) -> list[Path]:
+    """Store, once each, the fits this run staged (``stage_pending``): refresh calls it when
+    the run has passed. A stored fit is never replaced (``write_once``)."""
+    folder = stage_dir / PENDING_DIR
+    written = []
+    for path in sorted(folder.glob("*.json")) if folder.is_dir() else ():
+        data = path.read_bytes()
+        doc = json.loads(data)
+        if doc.get("fitted_on") != run_date.isoformat() or doc.get("view") != path.stem:
+            raise FitError(f"{path}: not this run's fit of {path.stem}")
+        target = fit_path(store_root, path.stem, run_date)
+        write_once(target, data)
+        written.append(target)
+    return written

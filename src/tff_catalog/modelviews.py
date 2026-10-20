@@ -93,7 +93,7 @@ class FitInfo:
 
     fitted_on: date
     sha256: str
-    source: Literal["store", "written", "memory"]
+    source: Literal["store", "pending", "memory"]
     fonts: int
     problems: tuple[str, ...]  # MixedFit.problems()
     falls: tuple[str, ...]  # terms whose monotonicity scan finds a fall
@@ -271,6 +271,8 @@ def run(ctx: StageContext) -> tuple[dict[str, dict[str, ModelEntry]], dict[str, 
             method_version=METHOD_VERSIONS[key],
             fit=fit,
         )
+        if got.data is not None:
+            fitstore.stage_pending(ctx.paths.stage, key, got.data)
         out[key] = entries(got.fit, data.frames, cfg.model)
         falls = tuple(m["term"] for m in measure.monotonicity_scan(got.fit) if m["falls"])
         fits[key] = FitInfo(

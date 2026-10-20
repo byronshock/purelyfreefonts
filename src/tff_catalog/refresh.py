@@ -117,6 +117,8 @@ def refresh(
             _reset_build(paths)
         run.pipeline()
         run.finish_state(config)
+        if options.fit == "write" and not run.failures:
+            run.store_fits()
     except BaseException as exc:
         if not options.replay:
             _write_manifest_quietly(run, config, time.perf_counter() - started, exc)
@@ -264,6 +266,14 @@ class _Run:
             return False
         self.ran.append(stage.name)
         return True
+
+    def store_fits(self) -> None:
+        """Keep, write-once, the model fits a passing run staged (``fitstore``)."""
+        from tff_catalog import fitstore
+
+        store = self.ctx.require_store()
+        for path in fitstore.store_pending(self.ctx.paths.stage, store.root, self.ctx.run_date):
+            self.ctx.log.info("model fit kept in the store: %s", path.relative_to(store.root))
 
     def finish_state(self, config: Config) -> None:
         """Write the whole next state to ``build/state/`` (module docstring, step 5)."""
