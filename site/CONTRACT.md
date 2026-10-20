@@ -401,7 +401,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 | `bits` | int[n] | flags, below |
 | `keys` | string[n] | `search_key` of the family, then of each alias in catalog order, joined by `\|` |
 | `by_name` | int[n] | font indexes sorted by Python `str.casefold()` of the family, then id |
-| `views` | object[] | the catalog's `views`, with each view's `label` and `measures` from `config/site.toml` (section 1, `view_labels_short`) |
+| `views` | object[] | the catalog's `views` in `config/site.toml`'s order, with each view's `label` and `measures` from it (section 1, `view_labels_short`), and `available: false` for a view it retires (Overall, `overall_retired`) |
 | `bands` | string[] | band labels, in order |
 | `why_labels` | string[] | unranked-reason labels, in the order `no_deliberate_evidence`, `no_evidence`, `too_new` |
 | `score_words` | object | the words around a score for screen readers: `before` ("Score "), `after` (" of 100"), `held` (", from one kind of source") |
@@ -430,7 +430,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 |---|---|
 | `v` | `1` |
 | `run_date` | `run.date` |
-| `views` | the catalog's `views`, with each view's `label` and `measures` from `config/site.toml` (section 1, `view_labels_short`) |
+| `views` | the catalog's `views` in `config/site.toml`'s order, with each view's `label` and `measures` from it (section 1, `view_labels_short`), and `available: false` for a view it retires (Overall, `overall_retired`) |
 | `bands`, `tiers`, `sources`, `systems`, `license_classes`, `nerd` | as in the catalog |
 | `state_labels` | `{observed, censored, not_covered, too_new}` → label (`censored` → "below the floor") |
 | `why_labels` | `{no_deliberate_evidence, no_evidence, too_new}` → label |

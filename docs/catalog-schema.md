@@ -23,7 +23,7 @@ The rank keys are versioned constants, the same in all three schemas and in the 
 | `overall` | Overall: desktop *most chosen* and *Projects*, half each; retired on 2026-09-30, so the site no longer offers it (owner ruling `overall_retired`) | – |
 | `desktop_chosen` | Desktop: most chosen | yes |
 | `desktop_installed` | Desktop: most installed | no |
-| `project` | Used in projects | yes |
+| `project` | Projects (labelled "Used in projects" in the committed catalog of 2026-09-26) | yes |
 | `coding` | Coding fonts (monospace only) | no |
 | `dev_apps` | Developers & apps | no |
 | `rising` | Rising (beta) | no |
