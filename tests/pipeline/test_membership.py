@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from tests.helpers import ROOT
+from tests.helpers import ROOT, engine_only
 
 from tff_catalog import jsonio, membership, stageio
 from tff_catalog.config_model import Config, RankingConfig, from_mapping, load_toml
@@ -30,7 +30,9 @@ from tff_catalog.stages import StageContext
 from tff_catalog.state import State
 from tff_catalog.universe import Family, Universe
 
-RANKING: RankingConfig = from_mapping(RankingConfig, load_toml(ROOT / "config" / "ranking.toml"))
+RANKING: RankingConfig = engine_only(
+    from_mapping(RankingConfig, load_toml(ROOT / "config" / "ranking.toml"))
+)
 CFG = RANKING.membership
 OCT, NOV, DEC, JAN = date(2026, 10, 3), date(2026, 11, 3), date(2026, 12, 3), date(2027, 1, 3)
 EMPTY = Membership({}, {})

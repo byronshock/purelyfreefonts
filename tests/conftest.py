@@ -162,3 +162,24 @@ def synth_store(tmp_path: Path) -> Path:
 def synth_state(tmp_path: Path, synth_store: Path) -> Path:
     """State S0 matching ``synth_store`` (``synth.make_state``)."""
     return synth.make_state(tmp_path / "state", synth_store)
+
+
+@pytest.fixture(autouse=True)
+def _engine_only_config(request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Every rank on the engine unless the test is marked ``model_config``
+    (``tests.helpers.engine_only``): ``load_config`` reads ranking.toml through
+    ``config.from_mapping``, so every stage, the CLI and ``config_hash`` see the same."""
+    if request.node.get_closest_marker("model_config"):
+        return
+    from tests.helpers import engine_only
+
+    from tff_catalog import config
+    from tff_catalog.config_model import RankingConfig
+
+    real = config.from_mapping
+
+    def from_mapping(cls: Any, data: Any, where: str = "") -> Any:
+        out = real(cls, data, where=where)
+        return engine_only(out) if cls is RankingConfig else out
+
+    monkeypatch.setattr(config, "from_mapping", from_mapping)

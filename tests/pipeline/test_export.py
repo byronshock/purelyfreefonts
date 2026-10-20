@@ -650,6 +650,71 @@ def test_rank_in_source_is_a_competition_rank(built) -> None:
     assert gamma_arch["z"] is not None
 
 
+@pytest.mark.model_config
+def test_a_model_view_s_sources_are_observed_with_their_own_z_and_shares(tmp_path: Path) -> None:
+    """q18a, q18b, q16 (2026-10-01) and q12: with Projects on the model and overall standing
+    in for it, a project source with a model term is observed with no reason; its z is the
+    model's per-source score, Fonts Over Time's the rank-based one; its weight is its share
+    of the information, null for Google and Fonts Over Time; desktop sources weigh nothing
+    in overall."""
+    from datetime import date
+
+    from tff_catalog.modelviews import FitInfo, ModelEntry
+
+    cfg = config()
+    assert cfg.ranking.model.views == ("project", "dev_apps")  # the config as it is
+    assert cfg.ranking.ranks.overall.stand_in == "project"
+    ctx = make_build(tmp_path, cfg=cfg, previews=PREVIEWS)
+    terms = stageio.load_stage(ctx.paths, "terms")["project"]
+    ids = sorted({f for fam in terms.values() for f in fam})
+    rows = {
+        fid: ModelEntry(
+            score=0.1 * i,
+            sd=0.3,
+            low=0.1 * i - 0.5,
+            high=0.1 * i + 0.5,
+            terms=sum(fid in fam for fam in terms.values()),
+            groups=(),
+            z={s: 0.25 + i / 100 for s, fam in terms.items() if fid in fam},
+            info={s: 0.125 for s, fam in terms.items() if fid in fam},
+            pit=(),
+        )
+        for i, fid in enumerate(ids)
+    }
+    fit = FitInfo(date(2026, 10, 17), "a" * 64, "written", len(ids), (), ())
+    stageio.dump_stage(ctx.paths, "model", {"project": rows, "dev_apps": {}})
+    stageio.dump_stage(ctx.paths, "fits", {"project": fit, "dev_apps": fit})
+    docs = run_all(ctx)
+    catalog = fonts(docs[export.CATALOG_FILE])
+    checked = 0
+    for fid, font in catalog.items():
+        row = rows.get(fid)
+        for s, entry in font["sources"].items():
+            src = cfg.ranking.sources.all()[s]
+            if src.survey == "desktop":
+                assert entry["weight_used"] is None, (fid, s)  # overall is Projects (q12)
+                continue
+            if row is None or s not in row.z:
+                continue
+            checked += 1
+            assert (entry["state"], entry["reason"]) == ("observed", None), (fid, s)
+            if s == "fot":
+                assert entry["z"] != export.num(row.z[s])  # the rank-based z (T4)
+            elif entry["z"] is not None:
+                assert entry["z"] == export.num(row.z[s]), (fid, s)
+            if s in ("google", "fot"):
+                assert entry["weight_used"] is None, (fid, s)
+            else:
+                assert entry["weight_used"] == 0.125, (fid, s)
+    assert checked
+    run = docs[export.CATALOG_FILE]["run"]
+    assert run["model_fits"] == {
+        "dev_apps": {"fitted_on": "2026-10-17", "sha256": "a" * 64},
+        "project": {"fitted_on": "2026-10-17", "sha256": "a" * 64},
+    }
+    assert "model_fits" not in docs[export.SITE_FILE]["run"]
+
+
 def test_weight_used_follows_the_overall_formula(built) -> None:
     ctx, docs = built
     alpha = fonts(docs[export.CATALOG_FILE])["alpha-sans"]["sources"]

@@ -12,12 +12,12 @@ __version__ = "0.1.0"
 LEGACY_METHOD_VERSION = "2026-09-29"  # every rank's, before ranks had their own (methods.py)
 METHOD_VERSIONS = MappingProxyType(
     {
-        "overall": "2026-09-29",
+        "overall": "2026-10-20",  # the measurement model (milestone-method step 10)
         "desktop_chosen": "2026-09-29",
         "desktop_installed": "2026-09-29",
-        "project": "2026-09-29",
+        "project": "2026-10-20",  # the measurement model (milestone-method step 10)
         "coding": "2026-09-29",
-        "dev_apps": "2026-09-29",
+        "dev_apps": "2026-10-20",  # the measurement model (milestone-method step 10)
         "rising": "2026-09-29",
     }
 )
