@@ -1,0 +1,8 @@
+# Owner rulings, gate K: link overrides of the October preview (staging_previews_held_runs), asked in chat on 2026-10-19.
+# Ruled by the owner in chat; recorded with `tff-catalog rulings apply`.
+
+[K-luciole]
+choice = "a"
+recommended = true
+ruling = "https://luciole-vision.com/en/ (from homebrew_casks)"
+reason = "The owner's ruling in chat with the lead session on 2026-10-19 (\"luciole-vision.com/en/ (Recommended)\"): Luciole, licensed at gate LIC on 2026-10-17 (CC BY 4.0), had only Homebrew's cask naming its page. luciole-vision.com is its designers' own site (Laurent Bourcellier and Jonathan Fabreguettes (Perez)), where the fonts are downloaded and CC BY 4.0 is stated."
