@@ -27,7 +27,7 @@ This checklist brings the owner's scoring-method rulings of 2026-09-30 and 2026-
 - [x] `refresh.yml`: the refresh job encrypts the bundle with `STORE_BUNDLE_KEY` (a secret of the environment `refresh`) and uploads only the encrypted file; it fails, uploading nothing, without the key.
 - [x] The store job decrypts, verifies and pushes, then deletes the artifact. *(#77)*
 - [x] Tests pin it: no unencrypted bundle is uploaded, and the store job deletes the artifact. *(#77)*
-- [ ] The owner sets the secret, and Claude checks it read-only.
+- [x] The owner sets the secret, and Claude checks it read-only. *(2026-10-21: `gh secret list --env refresh` lists `STORE_BUNDLE_KEY`.)*
 
 ### Step 3: The list opens on Projects (`default_rank_project`)
 - [x] The parked branch's site work (673e5bb, 9e0efd3) on `main`, without its rulings commit or its rebuild.
