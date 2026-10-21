@@ -80,7 +80,8 @@ becomes a rate over the days since (b8a_no_scaling_any_source).
 Debian (owner ruling of 2026-09-30, debian_frame): popcon counts a font only
 through a package in the release's main archive (``packaged``), so a row for a
 removed or third-party package ("(Not in sid)") or one only in sid is not read,
-and a font with only such rows is not covered.
+and a font with only such rows is not covered, even when a package in main
+depends on, recommends or suggests one of them (``_frame``).
 The crawls (``data_date``) count from the earliest date the family is known to
 exist (``availability``). A family with no known start counts as covered. The
 next ``first_seen`` part records a source's date for a family only when the
@@ -1261,15 +1262,24 @@ def _frame(
     """The families the source could show (module docstring), as ``mapping.frames`` rules:
     its keys' families, universe keys in its namespaces and npm scopes, and for a package
     source either end of any relation between keys it reads (a distro package with no
-    count is then censored, not uncovered)."""
+    count is then censored, not uncovered).
+
+    Debian's universe keys and relation ends count only when the source reads a row for
+    them (owner ruling of 2026-09-30, debian_frame): the collector gives every font
+    package in the release's main archive a row, with no value when popcon has none, so
+    a key without one is a package outside main. A package in main that depends on such
+    a package leaves its font not covered, not censored."""
     if src.counting in CRAWL_COUNTINGS:
         # Methodology §4: "A desktop-only font gets censored terms from the web crawls,
         # not a placeholder", so the crawls' frame is every eligible family.
         return set(inp.families)
     namespaces = {o.key.ns for o in obs}
     scopes = tuple(getattr(src, "scopes", ()))
+    in_main = {o.key for o in obs} if src.collector == DEBIAN else None
 
     def reads(key: SourceKey) -> bool:
+        if in_main is not None and key not in in_main:
+            return False
         return key.ns in namespaces and in_scopes(key, scopes)
 
     fams = {link.family_id for link in links}
