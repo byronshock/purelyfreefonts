@@ -1,4 +1,5 @@
-"""The rank views' wording on the site: ``config/site.toml``'s over the catalog's copies.
+"""The rank views on the site: ``config/site.toml``'s wording, order and retired views over the
+catalog's.
 
 ``config/site.toml`` is the one home for the views' wording (site/CONTRACT.md section 1), and
 Milestone 1's export copies it into ``catalog-site.json``. The owner's site ruling of
@@ -10,12 +11,18 @@ that refresh carries the new wording into the catalog, the site build reads conf
 wherever the page names a view: the rank select, the list index (the measures line), the
 details payload and the methodology page.
 
-Everything else about a view stays the catalog's: which views there are, their order and
-``available``. The catalog remains the record of what was published, and once a refresh has
-copied the same wording this changes nothing (tests/site/test_views.py compares config with
-the committed ``build/catalog-site.json``, which may differ from it only in wording). The keys
-must match: a view that config names and the catalog lacks, or the other way round, fails the
-build.
+The same holds for the views' order and the retired ones, since the scoring-method port
+(``docs/milestone-method.md`` step 3): the list opens on Projects (``default_rank_project``,
+2026-09-30), config's first view, and never offers Overall (``overall_retired``), which config
+marks ``retired = true``. The committed catalog of 2026-09-26 still lists Overall first and
+available, so the build takes config's order and sets ``available`` false for a retired view.
+
+Everything else about a view stays the catalog's: which views there are, and ``available``
+for the rest (Rising waits for its history). The catalog remains the record of what was
+published, and once a refresh has exported the same views this changes nothing
+(tests/site/test_views.py compares config with the committed ``build/catalog-site.json``,
+which may differ from it only there). The keys must match: a view that config names and the
+catalog lacks, or the other way round, fails the build.
 
 Read with ``tomllib``, not ``tff_catalog.config``, so the site build keeps to light imports
 (the ``tff_site`` package docstring). ``CONFIG_PATH`` is found from this file, as ``site/`` and
@@ -43,12 +50,14 @@ class ConfigError(ValueError):
         super().__init__(f"{len(errors)} problem(s); first: {errors[0] if errors else '-'}")
 
 
-def load(path: Path = CONFIG_PATH) -> dict[str, dict[str, str]]:
-    """Return config's view wording, ``{key: {"label": …, "measures": …}}``, in its order.
+def load(path: Path = CONFIG_PATH) -> dict[str, dict[str, Any]]:
+    """Return config's views, ``{key: {"label": …, "measures": …}}``, in its order, with
+    ``"retired": True`` for a retired view.
 
     Each ``[[views]]`` entry needs a ``key``, a ``label`` and a ``measures`` line, all
-    non-empty strings, and no key may appear twice (``tff_catalog.config`` checks the rest,
-    such as the keys being rank keys)."""
+    non-empty strings, and no key may appear twice; ``retired``, if given, is a boolean
+    (``tff_catalog.config`` checks the rest, such as the keys being rank keys and the first
+    view not retired)."""
     path = Path(path)
     try:
         doc = tomllib.loads(path.read_text(encoding="utf-8"))
@@ -58,7 +67,7 @@ def load(path: Path = CONFIG_PATH) -> dict[str, dict[str, str]]:
     if not isinstance(views, list) or not views:
         raise ConfigError([f"{path}: no [[views]] entries"])
     errors: list[str] = []
-    out: dict[str, dict[str, str]] = {}
+    out: dict[str, dict[str, Any]] = {}
     for i, view in enumerate(views):
         where = f"{path}: views[{i}]"
         if not isinstance(view, dict):
@@ -71,15 +80,21 @@ def load(path: Path = CONFIG_PATH) -> dict[str, dict[str, str]]:
         if view["key"] in out:
             errors.append(f"{where}: key {view['key']!r} listed twice")
             continue
+        if not isinstance(view.get("retired", False), bool):
+            errors.append(f"{where}: retired must be true or false")
+            continue
         out[view["key"]] = {field: view[field] for field in WORDING}
+        if view.get("retired"):
+            out[view["key"]]["retired"] = True
     if errors:
         raise ConfigError(errors)
     return out
 
 
-def apply(doc: Mapping[str, Any], wording: Mapping[str, Mapping[str, str]]) -> dict[str, Any]:
-    """Return a shallow copy of ``doc`` whose views take ``wording``'s label and measures
-    line, by key, keeping the catalog's order and every other field. ``doc`` is unchanged.
+def apply(doc: Mapping[str, Any], wording: Mapping[str, Mapping[str, Any]]) -> dict[str, Any]:
+    """Return a shallow copy of ``doc`` whose views are in ``wording``'s order and take its
+    label and measures line, by key, with ``available`` false for a retired view, keeping
+    every other field. ``doc`` is unchanged.
 
     Raises ``ConfigError`` unless the two name exactly the same views."""
     keys = [view["key"] for view in doc["views"]]
@@ -94,7 +109,15 @@ def apply(doc: Mapping[str, Any], wording: Mapping[str, Mapping[str, str]]) -> d
     ]
     if errors:
         raise ConfigError(errors)
-    views = [{**view, **{f: wording[view["key"]][f] for f in WORDING}} for view in doc["views"]]
+    by_key = {view["key"]: view for view in doc["views"]}
+    views = [
+        {
+            **by_key[key],
+            **{f: given[f] for f in WORDING},
+            **({"available": False} if given.get("retired") else {}),
+        }
+        for key, given in wording.items()
+    ]
     return {**doc, "views": views}
 
 

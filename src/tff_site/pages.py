@@ -19,11 +19,12 @@ The page supplies its own headings, so the document's headings may change (M1 st
 "(draft for the public page)") without moving an anchor. Relative links in the extract point
 to the file on GitHub. Everything else on the page comes from the catalog: the views, bands,
 tiers, source credits (one ``#source-<id>`` anchor per source, which the details panel links
-to), data license, run date, method version and stale sources. The views' labels and measures
-lines are ``config/site.toml``'s, which ``tff_site.build`` puts over the catalog's copies
-before this module sees the document (``tff_site.views``); ``method.view_labels`` maps each
-view's key to its label, so the template's own sentences name a view by key, never by a copy
-of its name. The extract keeps the document's own words.
+to), data license, run date, method version and stale sources. The views' labels, measures
+lines, order and retired views are ``config/site.toml``'s, which ``tff_site.build`` puts over
+the catalog's before this module sees the document (``tff_site.views``); ``method.view_labels``
+maps each view's key to its label, so the template's own sentences name a view by key, never
+by a copy of its name. A retired view (``data.RETIRED_VIEWS``) is left out of the ranks it
+lists. The extract keeps the document's own words.
 
 ``/privacy/`` and ``/about/`` are ``site/content/<name>.md``: YAML front matter with exactly
 ``title`` (the page's ``<h1>``) and ``description``, then Markdown that starts its headings at
@@ -227,8 +228,11 @@ def methodology_context(doc: Mapping[str, Any], source: Path | None = None) -> d
             "full_text_url": METHODOLOGY_URL,
             "run_date": doc["run"]["date"],
             "method_version": doc["run"]["method_version"],
+            # A retired view is left out; one not available yet says "Not shown yet."
             "views": [
-                {k: v[k] for k in ("key", "label", "measures", "available")} for v in doc["views"]
+                {k: v[k] for k in ("key", "label", "measures", "available")}
+                for v in doc["views"]
+                if v["key"] not in data.RETIRED_VIEWS
             ],
             "view_labels": {v["key"]: v["label"] for v in doc["views"]},
             "bands": [band["label"] for band in doc["bands"]],
