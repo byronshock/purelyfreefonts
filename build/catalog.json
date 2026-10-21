@@ -1549,9 +1549,7 @@
       "category": "serif",
       "family": "Adamina",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "e7108cfee0a718d5885fc8d0f03555fa6e0c4b6309e4b15ea991aadd824c34b7",
@@ -1590,7 +1588,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/adamina.svg",
+        "sha256": "f8ea22807f0a964457f9e5293e5275e53f86c5d1a9223e109408f9ef5466a50b"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -5516,9 +5517,7 @@
       "category": "handwriting",
       "family": "Allison",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "990750bc970472808cef2fceaed3424c922e781aee99e57907a68a9932d3a066",
@@ -5557,7 +5556,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/allison.svg",
+        "sha256": "1894bfcbe8e1bdf6a8671eaaf83fe6e59833f4bb86ec916af1fc94e51b502673"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -6810,7 +6812,6 @@
       "family": "Andada Pro",
       "first_seen": "2026-09-26",
       "flags": [
-        "specimen_failed",
         "stale_sync"
       ],
       "font_file": {
@@ -6851,7 +6852,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/andada-pro.svg",
+        "sha256": "dd3c09c8c1f0901f7c04a6c2c1daf631f025eb4c197b5c0d2725122cb7465f0c"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -8369,9 +8373,7 @@
       "category": "display",
       "family": "Anybody",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "b184bd7e6ca8348bbaecec98951565729d7e89b7872d4898a1f9981342b5b64c",
@@ -8410,7 +8412,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/anybody.svg",
+        "sha256": "34fa38306effc561f29837823199871359155289b5eb6cf1b8f3a7ceab5a20cd"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -8579,9 +8584,7 @@
       "category": "sans-serif",
       "family": "Apfel Grotezk",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "otf",
         "sha256": "cae57b5afdbaf2f7f816cdf39ad12a1d27247611334eb76120eefd6df1e46ad6",
@@ -8618,7 +8621,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/apfel-grotezk.svg",
+        "sha256": "93fe69a33990094496ccdfe967a3a343c556c4f3e7c2c7c89748f3d19ea3628c"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -8786,7 +8792,6 @@
       "family": "Arapey",
       "first_seen": "2026-09-26",
       "flags": [
-        "specimen_failed",
         "stale_sync"
       ],
       "font_file": {
@@ -8827,7 +8832,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/arapey.svg",
+        "sha256": "fb18a45f7e0029ce0763ea040173f7f3fb24ac484df672c3ae40e9d9a539f581"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -9871,7 +9879,6 @@
       "family": "Aref Ruqaa",
       "first_seen": "2026-09-26",
       "flags": [
-        "specimen_failed",
         "stale_sync"
       ],
       "font_file": {
@@ -9912,7 +9919,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/aref-ruqaa.svg",
+        "sha256": "f84da6c7284f2d8446977703591590b8d8e6557957fd30017887823df527e04e"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -12318,9 +12328,7 @@
       "category": "sans-serif",
       "family": "Average Sans",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "f978bb0eb5ad93b02f3a8e4ef0ed525a1192b4076e8a8d0bb37b2546a297762e",
@@ -12359,7 +12367,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/average-sans.svg",
+        "sha256": "36843dfd43f08738c04c6949898374759bb4cdc58f10c13dab5d8b32027d80a9"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -12528,9 +12539,7 @@
       "category": "display",
       "family": "Averia Libre",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "3dda695e06012f89b39eaccd77fbbcf22133a17b00ce5ddf3e4e9a996546b865",
@@ -12567,7 +12576,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/averia-libre.svg",
+        "sha256": "6faf2c0fbd16c40c141953da712b905a49724654b6b8292c3b4fddc3767ce603"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -12736,9 +12748,7 @@
       "category": "display",
       "family": "Averia Serif Libre",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "c64545bce66be1d737832337c1188015f9acacc5230ccbeb4ce646a0eaa252da",
@@ -12777,7 +12787,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/averia-serif-libre.svg",
+        "sha256": "e39e26c7f64dfe517db3cb3f22bfba4ad4a91698f55b7f43eb7999919fe1b2e5"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -14070,9 +14083,7 @@
       "category": "display",
       "family": "Balsamiq Sans",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "fcc9c00a9ad6e78673fa84653745569097241d99b5d1387a23f395858ed46b7e",
@@ -14111,7 +14122,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/balsamiq-sans.svg",
+        "sha256": "c601beee677155efad9853e4076228eb44f3c21a5bcc3e0125b529da42b0753f"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -15161,9 +15175,7 @@
       "category": "sans-serif",
       "family": "Basic",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "077f7245f6459045495b1ca0493f2b426c421d2112d10b48a38ff8858a07397a",
@@ -15202,7 +15214,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/basic.svg",
+        "sha256": "9e80270e687625dd9c27afa5f7d342a8d88623b90f5b7350dea4c1fd55f3b836"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -16023,9 +16038,7 @@
       "category": "serif",
       "family": "Bellefair",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "5c0cd4d526e6dfcb189106af6b5e6ec99a54efb6d458dfd61626ce6dc0f03026",
@@ -16064,7 +16077,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/bellefair.svg",
+        "sha256": "3876ee50ffe59b9af74d78da99c05d5b751f9e0a1a2ba013ec238052926287ee"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -16883,9 +16899,7 @@
       "category": "handwriting",
       "family": "Birthstone",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "cd04bb37f03d2e8caebaee2f26b09d3244bab7810fa348d8acb2e6a5228d8783",
@@ -16924,7 +16938,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/birthstone.svg",
+        "sha256": "07d0d6acacf13497cb0e84c040c96790a2eabd8ba06c473f13671820c5af7a38"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -18224,9 +18241,7 @@
       "category": "display",
       "family": "Boogaloo",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "c38febf770bec2b8e30ea6bc1ddb39c9b0ce0e8625d94ceeafbe3af1c7096d9d",
@@ -18265,7 +18280,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/boogaloo.svg",
+        "sha256": "47731c37f765d714fe47c70b8a57a2878c519b8175e4b4c3c19bb0ca204ce7df"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -18434,9 +18452,7 @@
       "category": "display",
       "family": "Bowlby One",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "c46a806d7b51fd4987e5f0be449fe40a944cb407e43290ce1cdeed029a8cdc1d",
@@ -18475,7 +18491,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/bowlby-one.svg",
+        "sha256": "96a1a13e443ba91cebaed7b32174abad1a72fe18284626206845f3b7d1078223"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -18644,9 +18663,7 @@
       "category": "display",
       "family": "Bowlby One SC",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "dc9f2325fb6bab327c26619a752b274b8f0f4022756d896450911e885609f071",
@@ -18685,7 +18702,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/bowlby-one-sc.svg",
+        "sha256": "1b933e96c52427850fe0ca45e910a44834c76db71bbe4bf8ebf4e8a10d71893f"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -19284,9 +19304,7 @@
       "category": "serif",
       "family": "Brygada 1918",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "93a23e7c6de5e2c54410116abceed294a05b71aa03af52fbaa92c2cc79003d4d",
@@ -19325,7 +19343,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/brygada-1918.svg",
+        "sha256": "d78ad46f08bba187c1afd3b6033284a6d874c687d547d1ffb7764ad9491879b0"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -19494,9 +19515,7 @@
       "category": "display",
       "family": "Bubblegum Sans",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "db8d1c71c398266ecabe9ae4923c4feb1323441a4f056a9339e41d8f847bd0c0",
@@ -19535,7 +19554,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/bubblegum-sans.svg",
+        "sha256": "8e478da59487d0c078207869792a2104e4732c7d7d2e22ddb63b24a5bb5f979d"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -19915,9 +19937,7 @@
       "category": "display",
       "family": "Bungee Shade",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "665c626082682b462f4e696308eafa7071c114da8f8ff3fb73a289c7ff7df482",
@@ -19956,7 +19976,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/bungee-shade.svg",
+        "sha256": "df5016b4e2d9dd4dda1622431e04eab3a41e5726da8bb79fb85ee3bc637beb2d"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -23766,9 +23789,7 @@
       "category": "handwriting",
       "family": "Cedarville Cursive",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "5f86d71d08a68605d5912b9bcb639a060ce9c0debd7e0b715f5e268d4a4bc317",
@@ -23807,7 +23828,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/cedarville-cursive.svg",
+        "sha256": "550e3c29768ca65e2481fb395cca53798091d578d09f45f3228ac39e2a334160"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -24408,9 +24432,7 @@
       "category": "display",
       "family": "Changa One",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "7ac4d26a3a45b4731904b59cbb8a9cc15b7b70d447fc2b5dda40ef17c5d2e16d",
@@ -24449,7 +24471,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/changa-one.svg",
+        "sha256": "c994a19b26b656236054b7af9b16907e4a62f95fab60048eb6493209b13df9d4"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -26149,9 +26174,7 @@
       "category": "display",
       "family": "Climate Crisis",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "4b25279f80e420f9f09dbba13eb14d0beabfa013d17f74bad19cc9fdf4d55523",
@@ -26190,7 +26213,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/climate-crisis.svg",
+        "sha256": "ba10b7567df0ad0078dcec90c7f2593feab82e218660337e097af519d44e1427"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -26821,9 +26847,7 @@
       "category": "handwriting",
       "family": "Coming Soon",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "cf81388f587ff6122de1a705d1070b8f00abccdba66108509908b5d10715068c",
@@ -26866,7 +26890,10 @@
           "system": "android"
         }
       ],
-      "preview": null,
+      "preview": {
+        "path": "specimens/coming-soon.svg",
+        "sha256": "ed08eecef3067bc73974f390ae695b916e8d777891d9b846f8cc19c1911ffbf2"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -27504,9 +27531,7 @@
       "category": "display",
       "family": "Concert One",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "54e934724b90a9c20d53b25a8d17574a7631f8461e29c8462bd7b36d49fc1e78",
@@ -27545,7 +27570,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/concert-one.svg",
+        "sha256": "a222539457bfa4974e56eee502fd5d3d973532fd9a9ae384734282bae6a1eee8"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -27714,9 +27742,7 @@
       "category": "handwriting",
       "family": "Cookie",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "9daf3cc9e5efe1b65094cdf1f14729ef6f07a70c27ee0679bf7f544a828b080e",
@@ -27755,7 +27781,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/cookie.svg",
+        "sha256": "02ddca0d7144389e382bdeb06cf19da32e32f97049f7454daabc364194d85aca"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -30628,9 +30657,7 @@
       "category": "serif",
       "family": "Crete Round",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "2b06ee75c35806b9fab35e054fbb97af98fb6b2419c6105697351dc1a2b306c8",
@@ -30669,7 +30696,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/crete-round.svg",
+        "sha256": "bd3d33700e4c091e19f0ea7a218a55be16ce2ed7b40273d778fe90732ed58f93"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -31507,9 +31537,7 @@
       "category": "handwriting",
       "family": "Damion",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "a51fd6c3c517feb9924b98139c2e902a7317caee52c22a2ec9682973969562bf",
@@ -31548,7 +31576,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/damion.svg",
+        "sha256": "41d2863fe84783f261c64bc2b6076a1e0c153d7c1e906a052c5273aadb2d73c6"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -32153,9 +32184,7 @@
       "category": "sans-serif",
       "family": "Days One",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "7b5a0e6d88696e43e95f6320613908e53d36ad854b4a18e4a1b8d1c19fdbf1fe",
@@ -32194,7 +32223,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/days-one.svg",
+        "sha256": "abe9ed93b67fba81253114ebd70b06264c9fb5306704c6eddf7f309ad15091b0"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -33160,9 +33192,7 @@
       "category": "handwriting",
       "family": "Delius",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "c0fd66626926b637d64eb13de013b3318dbd72cdf92c33e41a29a03828bab6f6",
@@ -33201,7 +33231,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/delius.svg",
+        "sha256": "396a83e7fe1789890c1da5ed6d237d7d53790cd0f31a590091b079e3fef0eb7b"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -35152,9 +35185,7 @@
       "category": "sans-serif",
       "family": "Doto",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "6f4fe7d37853b91df3698daa84cde2dbe1c9695d88c986e6510134910337d426",
@@ -35193,7 +35224,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/doto.svg",
+        "sha256": "aa8b60d552e7e2a0818307d63dc6f24ecab8249373fee17436d540429f9acd8b"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -35628,9 +35662,7 @@
       "category": "display",
       "family": "DynaPuff",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "c3752fc6dd8aaa46a88637f061a9a4e6ab44c02c5f0afd65528b91ae8ff6f948",
@@ -35669,7 +35701,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/dynapuff.svg",
+        "sha256": "4f5a04248a34cb001617c71f58f87fed86d26e4c7b7cbf3469498b2b215f12b1"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -40540,9 +40575,7 @@
       "category": "display",
       "family": "Forum",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "5c9fbe9c4ce76d0269f5088d921d57e58082fd9c28433eacb6de95baf938adf8",
@@ -40581,7 +40614,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/forum.svg",
+        "sha256": "bc5de8c59ed278a63b5564a416e62297b0181db683601923ae0df48badae20ec"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -41889,9 +41925,7 @@
       "category": "display",
       "family": "Fugaz One",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "14fd5becce8b0ae987e44b3f9fa9e3e6c87463e9585ac15db6c8271462068a62",
@@ -41930,7 +41964,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/fugaz-one.svg",
+        "sha256": "a4af687e896d648db7ab83f4001b5fc6fa4ac50b89a49b870b18de789a122da5"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -43674,8 +43711,7 @@
       "first_seen": "2026-09-26",
       "flags": [
         "bundle_only",
-        "no_deliberate_evidence",
-        "specimen_failed"
+        "no_deliberate_evidence"
       ],
       "font_file": {
         "format": "ttf",
@@ -43715,7 +43751,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/gentium-book-plus.svg",
+        "sha256": "f67f876a32834441c157497b00c94444d373661cc2f833aa2abd07d6fbac05eb"
+      },
       "preview_ok": true,
       "pulled_in_by": [
         {
@@ -44342,9 +44381,7 @@
       "category": "sans-serif",
       "family": "Georama",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "0a62419702ab557e0610a5a073a56f246d13a7db094ef97945a0aa56faf14ab1",
@@ -44383,7 +44420,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/georama.svg",
+        "sha256": "48b3831f501d2ee2b26ed856cfeda549915f51980b566d57760f4e76f1ce3b0b"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -44553,8 +44593,7 @@
       "family": "GFS Didot",
       "first_seen": "2026-09-26",
       "flags": [
-        "no_deliberate_evidence",
-        "specimen_failed"
+        "no_deliberate_evidence"
       ],
       "font_file": {
         "format": "ttf",
@@ -44594,7 +44633,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/gfs-didot.svg",
+        "sha256": "e1315762b6e26dc0231e8af7acb9f1849795a240f1fb2f996b29c25410e1bd33"
+      },
       "preview_ok": true,
       "pulled_in_by": [
         {
@@ -44993,9 +45035,7 @@
       "category": "serif",
       "family": "Gloock",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "c3a67e0212f7da01764796ae721cb9bab3e122d142354f97cf9c63fb763e6d77",
@@ -45034,7 +45074,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/gloock.svg",
+        "sha256": "5b09942350b9dcbf76ca593ef89fd7216302975fa86d9c5900b3b1db35ea25b7"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -45893,9 +45936,7 @@
       "category": "display",
       "family": "Goldman",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "747d4eb547ffca1b1c4ceb49d38f04a2cd8767d5d86425b71290456ab8eb280a",
@@ -45934,7 +45975,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/goldman.svg",
+        "sha256": "6eb00e26c4ed7a2d44e0ebe2a9423bf28eddf7fdd689ca5c03cf0176c3f92e5f"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -47010,9 +47054,7 @@
       "category": "serif",
       "family": "Graduate",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "971222b309851d86f2513f89b510dc52d52ef7798b5f43af2c6f58d43df568e5",
@@ -47051,7 +47093,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/graduate.svg",
+        "sha256": "9e6fcbb2c7e075ff9c816bc4732ba5c540350dee173a51c1cfafb9538b1b8822"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -48146,9 +48191,7 @@
       "category": "serif",
       "family": "Halant",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "f646ffa1cdf2d4ab36326943d3494c98416264f4df40f8e7bf86211de571df07",
@@ -48187,7 +48230,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/halant.svg",
+        "sha256": "74fb0e0fbd29bfd05ceb77160a050c2c3bcadccdbd0ef431cbd6f9a0431b7e29"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -49042,9 +49088,7 @@
       "category": "serif",
       "family": "Hedvig Letters Serif",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "10eb164574c5858855e2708bb12a628a385e021be5dd9ff2f586c4ff73b8ce5c",
@@ -49083,7 +49127,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/hedvig-letters-serif.svg",
+        "sha256": "7774bcdd3fae4a933c7b3f0ab3e030553dc3530f286c4499553130e3303003e4"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -49472,9 +49519,7 @@
       "category": "serif",
       "family": "Hepta Slab",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "737badc7944d5b6f92c05919995240d6ea70e86bebe45d196e61677e7a901f29",
@@ -49513,7 +49558,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/hepta-slab.svg",
+        "sha256": "b17741da8b395cc3ecfd3bd33d7acc3397ff53586a14dee6c2776324aec42d0c"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -50319,9 +50367,7 @@
       "category": "sans-serif",
       "family": "Hubot Sans",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "229c7682f64b499668d2f47ac803bbde0b5a63225326c8659ea436748ab29965",
@@ -50360,7 +50406,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/hubot-sans.svg",
+        "sha256": "e0e1648854e4519b07f4e12cf7eb5f24f6e69186e6bcc0a39badb9618d9cb7f1"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -51318,9 +51367,7 @@
       "category": "serif",
       "family": "Ibarra Real Nova",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "c627ab48daf6544099014b4c5c7faa4e3b993ef5ec77709c89dd37efd4107ddd",
@@ -51359,7 +51406,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/ibarra-real-nova.svg",
+        "sha256": "2459091e99bd816de53e89046b6ed464c82221cf8457f0f6c97f93e13df4a706"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -52932,9 +52982,7 @@
       "category": "serif",
       "family": "IM Fell English SC",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "102324fb5434bb5da7963533426b0ad44c85bbc9e7755067535c9d11464a176b",
@@ -52973,7 +53021,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/im-fell-english-sc.svg",
+        "sha256": "e89b34b2e952d559ca91e7d2c63e828490137cd4ad0a30940a05fe1fba29be9b"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -53143,7 +53194,6 @@
       "family": "Inclusive Sans",
       "first_seen": "2026-09-26",
       "flags": [
-        "specimen_failed",
         "stale_sync"
       ],
       "font_file": {
@@ -53184,7 +53234,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/inclusive-sans.svg",
+        "sha256": "b1b410c64d41ac0528d29e677352a6d6e9f4a671874a8bd6f7da6a7c33512c06"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -54122,9 +54175,7 @@
       "category": "serif",
       "family": "Inknut Antiqua",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "d46c7420b1e5fedc2086c8ce89275a6ed13c6778829c0617f56df8c3bddd686f",
@@ -54163,7 +54214,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/inknut-antiqua.svg",
+        "sha256": "5d17fdc1b8b718665feaeb760723437e19fb26de1a7a666e0f17db966a8756d5"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -57131,9 +57185,7 @@
       "category": "handwriting",
       "family": "Italianno",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "f6ae96dea0da46c73370eb0575848ab0eda190315bdfda3f5b252bba3dc9173c",
@@ -57172,7 +57224,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/italianno.svg",
+        "sha256": "5162e4e2eb32ace6bb8e53b6c0e18a3435bd07fb6bd8bc223e61de5a344c3198"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -57552,9 +57607,7 @@
       "category": "display",
       "family": "Jersey 10",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "db9cbd091617048a145d249daa2b815fe7083be6ab66ac26626e21a4e01c3e82",
@@ -57593,7 +57646,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/jersey-10.svg",
+        "sha256": "ad59d868115563ccde1b4a8b1243252bc2731b6cf38b01b0d985a3faf73dc93d"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -57762,9 +57818,7 @@
       "category": "display",
       "family": "Jersey 15",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "dbe00479d62bb3b9fcf0d28f88a021ffc4bd7b01d6ad5c6f74b5fa371bb210ed",
@@ -57803,7 +57857,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/jersey-15.svg",
+        "sha256": "9e90624697871234801b7fc7a4090ec42d45a45f5af8467834618c7599189a8e"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -58248,9 +58305,7 @@
       "category": "sans-serif",
       "family": "Jockey One",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "6331a3e99e240c45e4b5eb99845f5724932157d6a4766f2b4836f7582891ac4a",
@@ -58289,7 +58344,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/jockey-one.svg",
+        "sha256": "a3badfe6212f9b9d24789484a6d20815c81aac25261cd26b1192946238915941"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -59762,9 +59820,7 @@
       "category": "sans-serif",
       "family": "K2D",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "bfab1193b93b9200455119c968f0ccac24b68d2408d26a8123a4c3c01fb11821",
@@ -59807,7 +59863,10 @@
           "system": "macos"
         }
       ],
-      "preview": null,
+      "preview": {
+        "path": "specimens/k2d.svg",
+        "sha256": "71f8fa42b3b917bbcbd172ad2ce5135c5d7d647766c2663306890551d1e521d0"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -61515,9 +61574,7 @@
       "category": "sans-serif",
       "family": "Krona One",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "273463916f96a4707e697e3013d955cde8154b4e6d635a55132e7a12f276534c",
@@ -61554,7 +61611,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/krona-one.svg",
+        "sha256": "ba90d7b10134152d339ac663bc505c30b742c7e8505b076df4426fad4f06805f"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -61723,9 +61783,7 @@
       "category": "sans-serif",
       "family": "Krub",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "24e5c4084ee9e878d54e70bfe5fceccf3ae46fd4aae73a794c04df4091f5e69d",
@@ -61768,7 +61826,10 @@
           "system": "macos"
         }
       ],
-      "preview": null,
+      "preview": {
+        "path": "specimens/krub.svg",
+        "sha256": "a062d4caf892da2bbacfcc4a9b46b61eaa9ac214639ae25cc790c433361206e3"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -62357,9 +62418,7 @@
       "category": "sans-serif",
       "family": "Lalezar",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "7b80807bc831f141de0f7dcf6816412bf0c548968d548c5156ca388733390ea9",
@@ -62398,7 +62457,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/lalezar.svg",
+        "sha256": "1470d34bd5d142bbb877690dd26c925a052a884874b78de4841c3ed292774d95"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -67626,9 +67688,7 @@
       "category": "display",
       "family": "Limelight",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "f5bf8a9159adfc5b9c756c85d812a4fd1299b8916fefdf39ad4b24ade6d8d0cf",
@@ -67665,7 +67725,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/limelight.svg",
+        "sha256": "368dc8294bb8e0f0fe0fe7fa8a3c7e5f8bd4d6c249d194f1a04ea14f11ff7d92"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -68944,9 +69007,7 @@
       "category": "display",
       "family": "Londrina Solid",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "e82b9b3ee21ccf153dcf67e5f4226a210474591a6ad31b5f17f2f14dc2524514",
@@ -68985,7 +69046,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/londrina-solid.svg",
+        "sha256": "3fa9301dab65916472a14fc5e137e02730c460c01b9d662e5d99d83489f3b24d"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -69583,9 +69647,7 @@
       "category": "serif",
       "family": "Lustria",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "8b50753779d151674dcc74bdf9cdde1e788d8fb2b9ace8fb183a0def0f7361ce",
@@ -69622,7 +69684,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/lustria.svg",
+        "sha256": "526c56567043bc6b46d99410ab54e1d6e264ba876cc502573edf05f61d1d15bb"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -69791,9 +69856,7 @@
       "category": "sans-serif",
       "family": "Mada",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "bf4d193ee78cea2fd8bdc9e64e5cb7e8a19ff76ab74f97a9a4a0e80f8f4cefde",
@@ -69832,7 +69895,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/mada.svg",
+        "sha256": "91002e047fdf7469aade53979bfa79c310090c3f81f85b9507734b680ecae4e7"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -70002,8 +70068,7 @@
       "family": "Major Mono Display",
       "first_seen": "2026-09-26",
       "flags": [
-        "gate_held",
-        "specimen_failed"
+        "gate_held"
       ],
       "font_file": {
         "format": "ttf",
@@ -70043,7 +70108,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/major-mono-display.svg",
+        "sha256": "dcb3c871656885a4ed49062660570ddc5d1825a065b3d8e0128b6c575e301d7f"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -70227,9 +70295,7 @@
       "category": "handwriting",
       "family": "Mali",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "e3212f0f9be130743d32a4f174b7d79628daa5db0d72ca4c63c799ae465597bb",
@@ -70272,7 +70338,10 @@
           "system": "macos"
         }
       ],
-      "preview": null,
+      "preview": {
+        "path": "specimens/mali.svg",
+        "sha256": "09a4a01bbdd1db6569849caec390d8d0808a3c036718dab883c21762a6198bae"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -71121,9 +71190,7 @@
       "category": "serif",
       "family": "Marcellus SC",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "03044ab65228b0554c9a5c1e63df29d4e58a71857e212801aaf768dfd106bdf0",
@@ -71160,7 +71227,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/marcellus-sc.svg",
+        "sha256": "9e1e6242cf3ed4434a94a6d1bc4fd6e407c48cd73e0258bdb1976862ee328ed5"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -71540,9 +71610,7 @@
       "category": "serif",
       "family": "Markazi Text",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "424b7331681160ff2a4b209bfc356ea9564d429a7daea43ee4dc28de8ff4f9fe",
@@ -71581,7 +71649,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/markazi-text.svg",
+        "sha256": "96bae0910dfab54b9628426078364e87d7bd49525e649c067aa9ba9f509d251c"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -73366,9 +73437,7 @@
       "category": "display",
       "family": "Metamorphous",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "55939a5664e06807e87fa4af64f52039ead12f002dda8317393fdce2f7ff57fe",
@@ -73407,7 +73476,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/metamorphous.svg",
+        "sha256": "198dd006bca5d72027595a0cc211ade3b406b73e0aacb24dce188c436fe54b16"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -73998,9 +74070,7 @@
       "category": "sans-serif",
       "family": "Mitr",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "3763923ca8d860f9c06f483f663cd3d8d94e9ed8c2f35a7ce35bb6b13e1219fd",
@@ -74039,7 +74109,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/mitr.svg",
+        "sha256": "a2f27e4672243b8f3f5a6622930a198d99900622df7d726b90f7b96aba57124c"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -75810,9 +75883,7 @@
       "category": "sans-serif",
       "family": "Monda",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "c95b63f7612df912adc262cb0ef3e8a6c3e6022beb279d9c2ca01c557aa94b59",
@@ -75851,7 +75922,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/monda.svg",
+        "sha256": "1509203e520fe97281b6f392de8eb507759210f2feaff09480f1a2bfbfc43616"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -76021,8 +76095,7 @@
       "family": "Monofett",
       "first_seen": "2026-09-26",
       "flags": [
-        "gate_held",
-        "specimen_failed"
+        "gate_held"
       ],
       "font_file": {
         "format": "ttf",
@@ -76062,7 +76135,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/monofett.svg",
+        "sha256": "b9c92eee0b9cfab0f27896950a3e6d03fcf32e84056ab25c9511fca153389607"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -77686,9 +77762,7 @@
       "category": "handwriting",
       "family": "Mr Dafoe",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "a42a3c66a709927f358243fdfcbc437bd8eb188e2ee6a680c52f5be12c670fd2",
@@ -77727,7 +77801,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/mr-dafoe.svg",
+        "sha256": "4a36036b64749dfd4d86e25b78193fff2739ff687fa367359d9102fd15644d84"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -78758,9 +78835,7 @@
       "category": "sans-serif",
       "family": "Nacelle",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "otf",
         "sha256": "f4516aaacac91e11aa114a4e3099eb04f2f583880eb6467d670d132bf7121100",
@@ -78797,7 +78872,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/nacelle.svg",
+        "sha256": "4b8e9fa68134d48d458edb81f1bf230b3a860d05e1af8af9379e506efa448d45"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -78959,9 +79037,7 @@
       "category": "handwriting",
       "family": "Neucha",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "7927bd6ce090fa032857dcbc3ad0e8b765c462d0a72a8779068132496b4e087d",
@@ -78998,7 +79074,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/neucha.svg",
+        "sha256": "44ac0cf759269b93b8458081e81046b1b5f534f63e457fb8735a6d168ea26567"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -79168,7 +79247,6 @@
       "family": "Neuton",
       "first_seen": "2026-09-26",
       "flags": [
-        "specimen_failed",
         "stale_sync"
       ],
       "font_file": {
@@ -79209,7 +79287,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/neuton.svg",
+        "sha256": "0110ffbf7bbc94619a5bd40259049304d653d28e5a30a79604f9d7ae9b487fcd"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -79597,9 +79678,7 @@
       "category": "handwriting",
       "family": "Nothing You Could Do",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "1daf8cf79076bf59c5a9117b5efd6ecea35e57a05ef127fe4f95b072b8a5245d",
@@ -79636,7 +79715,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/nothing-you-could-do.svg",
+        "sha256": "bdf5d8ffb882e60719ba5cf2601a337a4797968a19fbeb66b430502d869bf8a0"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -82894,9 +82976,7 @@
       "category": "handwriting",
       "family": "Oooh Baby",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "904d1b79093da1ae4b7436ac2190ddf5048e3cb839b2dc0c0516d0f58a1c25ee",
@@ -82935,7 +83015,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/oooh-baby.svg",
+        "sha256": "9a67f8396097aa1662457b378cb02fff722433a33f10ba4c56c1a897cdbd92b0"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -83976,9 +84059,7 @@
       "category": "sans-serif",
       "family": "Open Sauce Two",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "52f3fa3da48a996858ce3f469b4fe42933ce3c41a2e1385e532a361c73693c2a",
@@ -84015,7 +84096,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/open-sauce-two.svg",
+        "sha256": "1ea1496c9209573fc7ca702a7be98a81c14c2474728fae25102636060c54fce4"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -85568,9 +85652,7 @@
       "category": "sans-serif",
       "family": "Overused Grotesk",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "otf",
         "sha256": "74fa9c0e54060d3f4359ff11e5f94e672abcc4e65b3689e6182a8695bc72c98e",
@@ -85607,7 +85689,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/overused-grotesk.svg",
+        "sha256": "8ebba6b043eda7bbc46c5aa5c7bf18caafa86cf10ffe8310e085daa1df2f44eb"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -87289,9 +87374,7 @@
       "category": "sans-serif",
       "family": "Parkinsans",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "a4e64caa56ec94dcc82335be924e68c2a4a24544646d819abffe035d87158fa8",
@@ -87330,7 +87413,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/parkinsans.svg",
+        "sha256": "14eafeb2a700def93d40b8a92c07406413b99788a7e5f0986273f83689b7111f"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -88134,9 +88220,7 @@
       "category": "sans-serif",
       "family": "Paytone One",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "1c07073b0b578199b54c7866d55e2b631d285e8aa4bb4fbc08809d980cd49b14",
@@ -88175,7 +88259,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/paytone-one.svg",
+        "sha256": "9f1a508817b0f4182eee73e6d09d427e5c93a8a8ef5c28e12d696b77cd0cf1e9"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -88559,9 +88646,7 @@
       "category": "handwriting",
       "family": "Petit Formal Script",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "9b80a05170bac7f372b7e00bc762fe14bafd4abdeb013747b189f66525cffe89",
@@ -88598,7 +88683,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/petit-formal-script.svg",
+        "sha256": "e4f4f68b4f3fcb735c7f6745c6c3318575085c762cc487a9a0b3c818ccea4e5f"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -89189,9 +89277,7 @@
       "category": "serif",
       "family": "Piazzolla",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "b6b6451daba93a4b71f88ca8e37a66c3fd2b4e57ec54a407cddf6ae65b62c7b7",
@@ -89230,7 +89316,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/piazzolla.svg",
+        "sha256": "0b6e7757aef20ec3c0e1ad3b0e89c33e552eb8768c25dae710e2072e9195bf0e"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -89610,9 +89699,7 @@
       "category": "display",
       "family": "Pirata One",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "5347a2e155589ecf667d4b766613c8ee003edde9f83717fd24c09599a4b1ecc0",
@@ -89651,7 +89738,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/pirata-one.svg",
+        "sha256": "3f7c6c4598dd24d2874a3bfbad17df72e978064e1aab1538783533d8a8604464"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -90031,9 +90121,7 @@
       "category": "serif",
       "family": "Platypi",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "c4a2f2525bd0deaed25ccca4e0be42d5dcbf2a4739e2cc32fe3e7603333b7d53",
@@ -90072,7 +90160,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/platypi.svg",
+        "sha256": "8ef2d511a3b0e55fe22e0192de32bed1fac2421926924af0202c46f1fcb8c58d"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -90888,9 +90979,7 @@
       "category": "handwriting",
       "family": "Playpen Sans",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "e083f9da8be210e08ea982ab510894641aab37590e70620d6db73f8de881ec4a",
@@ -90929,7 +91018,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/playpen-sans.svg",
+        "sha256": "d5665afd51830b31518fe55e1e3a991d7755666b0aed0b1805ac8c13303981d6"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -91528,9 +91620,7 @@
       "category": "sans-serif",
       "family": "Pontano Sans",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "cafd98966b473326a8d6344abb34ec543267f47fb76ca7532855db5a08a0a002",
@@ -91569,7 +91659,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/pontano-sans.svg",
+        "sha256": "fa754e7fa9f358722fa12839481fc3122973e536dbae7613a304e4bea6295fa5"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -94697,9 +94790,7 @@
       "category": "sans-serif",
       "family": "Quattrocento Sans",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "8ee55c4a998c079efce0db96a30520a121d2bb90fe568f6a9e5cef54cc82ad59",
@@ -94736,7 +94827,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/quattrocento-sans.svg",
+        "sha256": "026d8156c9a47a7136685a6d765d1a006e1e2c29c05cd0fb860e7ce0bc74db22"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -95346,9 +95440,7 @@
       "category": "display",
       "family": "Racing Sans One",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "8b5cada83e3e4692f624f1b583a069b34e457e07a4210ceddbb1133b3383673e",
@@ -95385,7 +95477,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/racing-sans-one.svg",
+        "sha256": "c125ee57852a3948dc273b479d8556e200e316504c402321c39f1736e7ca5409"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -97353,8 +97448,7 @@
       "family": "Redaction",
       "first_seen": "2026-09-26",
       "flags": [
-        "gate_held",
-        "specimen_failed"
+        "gate_held"
       ],
       "font_file": {
         "format": "ttf",
@@ -97392,7 +97486,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/redaction.svg",
+        "sha256": "bbd9871593cac64b16db045f2c47db69700eaca4ba11e6475b1fbcd306e112e1"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -97560,8 +97657,7 @@
       "family": "Redaction 70",
       "first_seen": "2026-09-26",
       "flags": [
-        "gate_held",
-        "specimen_failed"
+        "gate_held"
       ],
       "font_file": {
         "format": "ttf",
@@ -97599,7 +97695,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/redaction-70.svg",
+        "sha256": "3031b416c6fc4d647ac8e155a870cf1818cc1b8e58911932a7410822b658d585"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -100883,9 +100982,7 @@
       "category": "sans-serif",
       "family": "Ronzino",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "otf",
         "sha256": "38eae51962f14cc86e5e3cc4cf0c6e0892ff40e3377de39a163c1e7ffe3e6305",
@@ -100922,7 +101019,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/ronzino.svg",
+        "sha256": "ae35d86f882bbbdb6b8d2fd28796f260cff42e6cca2965790328c89fd2c95049"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -101083,9 +101183,7 @@
       "category": "sans-serif",
       "family": "Route 159",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "otf",
         "sha256": "2f2226814078a82f0f052b0eb28142b22f7587bea912b82eaf0aac4169764f05",
@@ -101122,7 +101220,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/route-159.svg",
+        "sha256": "368780676ecce43c756874eac2e9670a6edbe91140994ccc684faf5baa4b925f"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -101283,9 +101384,7 @@
       "category": "serif",
       "family": "Rozha One",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "8491b838c31f30272aa6da67e4749afabab8297db82a055fd2d0aa689f500ee3",
@@ -101324,7 +101423,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/rozha-one.svg",
+        "sha256": "dd28b9a7e911b3a6e7d489de58f9f4c07a668706a1ae3b9e1705ea9e898901e1"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -103006,9 +103108,7 @@
       "category": "sans-serif",
       "family": "Saira Extra Condensed",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "5e9260f29b5ebaa3230df0937783a1b980d8f285fb4e982bd72e559ce990ec61",
@@ -103047,7 +103147,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/saira-extra-condensed.svg",
+        "sha256": "1607c0d1cd2e0e1fdc670ab294601d4c12c3423627a1b2771d0585f0c174fe7a"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -103432,9 +103535,7 @@
       "category": "sans-serif",
       "family": "Sansita",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "1b25171a67a8fb26972f8bdabe31ed3ccd37db4ea8f7d817fc37d572024208ad",
@@ -103473,7 +103574,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/sansita.svg",
+        "sha256": "32a1ee27ee7ed6deaae92a5da34700161e72ff2c57cc8e7121432c1a5fa82353"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -104521,7 +104625,6 @@
       "family": "Schoolbell",
       "first_seen": "2026-09-26",
       "flags": [
-        "specimen_failed",
         "stale_sync"
       ],
       "font_file": {
@@ -104560,7 +104663,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/schoolbell.svg",
+        "sha256": "bcfbef9c9caffe07b041a235fa886a35968acb09eafd874f886f7018578885e9"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -106271,9 +106377,7 @@
       "category": "display",
       "family": "Sigmar One",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "0817eb698a5c4aac2c07bb84be1ead806494c489da468db23f5ffd9bcf3f0970",
@@ -106312,7 +106416,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/sigmar-one.svg",
+        "sha256": "7dee1648b799deafd0acffdb132289a9f9468939d5bf1f18b987137bfefdd180"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -110504,9 +110611,7 @@
       "category": "sans-serif",
       "family": "Special Gothic Expanded One",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "b6c347c00c607f9ca562e6054cadf87fb3ea20dbe2cc482bad3086fa4de48027",
@@ -110545,7 +110650,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/special-gothic-expanded-one.svg",
+        "sha256": "e7a65d2b9fe3c463ef60d576081e940e44f4ee455aa35d7e3a29d98277e397c9"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -111799,9 +111907,7 @@
       "category": "sans-serif",
       "family": "Stack Sans Headline",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "42ed62a3e0739d9f734298bc102efbccc17553cc10766bfa4e7844beb4089bfa",
@@ -111840,7 +111946,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/stack-sans-headline.svg",
+        "sha256": "6f00d21fc19fff07e170657cc3b89d1b2857cc4b81d4671905efb39855c9dd04"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -112248,9 +112357,7 @@
       "category": "serif",
       "family": "Suez One",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "3ef86844aad0cf9db7dcbda326f3d2f54cc4ccfe56db949e9e0c60a17031bd41",
@@ -112289,7 +112396,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/suez-one.svg",
+        "sha256": "9a6c828620c8b4676ed5545d1abf3f01b999d83e8c0b96ded37dbec875f64189"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -112888,9 +112998,7 @@
       "category": "handwriting",
       "family": "Tangerine",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "3f5db6010de48f7173939f16621c0e0e794b589eec04e3b04e0a81be848dfab9",
@@ -112929,7 +113037,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/tangerine.svg",
+        "sha256": "3d8d39260e3a6b8a3113e75e5ad73150cc311304799496cc0565197966d99070"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -113520,9 +113631,7 @@
       "category": "display",
       "family": "Tektur",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "a4c451e5336874811267c2a514efa09bca7bc8cabf32a310f0b44e111eacb933",
@@ -113561,7 +113670,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/tektur.svg",
+        "sha256": "c8f07730b63e621d6001406ac28049003563817815cf63fae499e521fd40ea44"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -116193,9 +116305,7 @@
       "category": "sans-serif",
       "family": "TikTok Sans",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "0e7f0a3e924c9a86478fc6fc2946de2e4ab8fc704ed72ee40434ade94bb9b0c6",
@@ -116234,7 +116344,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/tiktok-sans.svg",
+        "sha256": "5c1a16bec6cb82a30590061491c60e55b9ac25062e91a223ab997d3d68aa4302"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -116663,9 +116776,7 @@
       "category": "serif",
       "family": "Tiro Devanagari Hindi",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "d2abcb4d352f0bfab91632df5d9c8173882073c182e662fa731a5a738e6681d7",
@@ -116708,7 +116819,10 @@
           "system": "macos"
         }
       ],
-      "preview": null,
+      "preview": {
+        "path": "specimens/tiro-devanagari-hindi.svg",
+        "sha256": "7c7096ebfb0fa743b266960b272064c2b61a37a8ca12ed030b085b2431b287a8"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -117304,9 +117418,7 @@
       "category": "sans-serif",
       "family": "Tomorrow",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "6bb5534178637f472be093b2df876d580e7cb50df53e1a4b2be9f94070ff1767",
@@ -117345,7 +117457,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/tomorrow.svg",
+        "sha256": "dbca7be906052dc25e903c15b3931948e9ef205103d6de3426adb6bdbc40cea3"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -118910,9 +119025,7 @@
       "category": "display",
       "family": "Uncial Antiqua",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "33a5128b59d1c95d4f3788164f4ab3a1196f0a982263cb2cd278c47418366766",
@@ -118949,7 +119062,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/uncial-antiqua.svg",
+        "sha256": "c22765055233e6e92e4b6f445c7a19adfcd2b99201c2e68fb364d38e4350c5d3"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -119330,9 +119446,7 @@
       "category": "display",
       "family": "UnifrakturCook",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "ea002fa9c65f1a612af100e00d87ab65f16381f450020ec3d021f3dbf79a6dcd",
@@ -119369,7 +119483,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/unifrakturcook.svg",
+        "sha256": "2c2cf8d5c1cf1da9d41b2587ae104d0f9407b56aefdd82f6bb2b65e62dbd5a7e"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -123053,9 +123170,7 @@
       "category": "sans-serif",
       "family": "Zalando Sans Expanded",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "e3f331b7125dfdcd202f2135c8b48a3766ba5c4fafaa6fedad1bf37b01d6fb3b",
@@ -123094,7 +123209,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/zalando-sans-expanded.svg",
+        "sha256": "1ccfee9fde985ebe2c09e113a597a8bf6b8c41071d1a9e003ed31b69cf068346"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -123263,9 +123381,7 @@
       "category": "sans-serif",
       "family": "Zalando Sans SemiExpanded",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "d4ef6e1d652da0590b7d0cceb5b4d5a1a063b4927be99f52dcb7a679eb3ae92b",
@@ -123304,7 +123420,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/zalando-sans-semiexpanded.svg",
+        "sha256": "3f0aaa26b4946bbdbf9b8978a497783c3128da464ca7000e40a1859618e38ca3"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
@@ -123473,9 +123592,7 @@
       "category": "display",
       "family": "Zen Dots",
       "first_seen": "2026-09-26",
-      "flags": [
-        "specimen_failed"
-      ],
+      "flags": [],
       "font_file": {
         "format": "ttf",
         "sha256": "2f81a9f4c26f302d87a40792e048cd7193c886aa50fa6792a4b4fb6266c25609",
@@ -123514,7 +123631,10 @@
         }
       },
       "preinstalled_on": [],
-      "preview": null,
+      "preview": {
+        "path": "specimens/zen-dots.svg",
+        "sha256": "091b614cdff6df39824ac7f9d9dd001811388051ffad983eea4986aae6e8d5f8"
+      },
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {
