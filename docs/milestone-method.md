@@ -61,7 +61,7 @@ This checklist brings the owner's scoring-method rulings of 2026-09-30 and 2026-
 - [ ] Written once per view and date in the private store; a replay reads them; a merged date without them is fitted in memory and writes nothing; a held date's first new-method replay on GitHub writes them once.
 
 ### Step 10: Engine: the model in the pipeline, then on for Projects and Developers & apps (`q1_model_views`, `q15_views_meanwhile`)
-- [ ] The model's ranks, with the two-group rule meaning "above bulk" (`q14_two_groups`), hidden deterministic ranges (`q19_ranges_tiers_stand_in`), the sources' state, z and weight (`q16_weight_used`, `q18a_state_observed`, `q18b_z`), and the review flag in place of the guard (`q2_guard_retired`).
+- [ ] The model's ranks, with the two-group rule meaning "above bulk" (`q14_two_groups`), hidden deterministic ranges (`q19_ranges_tiers_stand_in`), the sources' state, z and weight (`q16_weight_used`, `q18a_state_observed`, `q18b_z`), and the review flag in place of the guard (`q2_guard_retired`). *Amended 2026-10-20:* `weight_used` is a share among the font's open sources (`q16_open_source_shares`), and a font with only Fonts Over Time terms is unranked (`fot_only_needs_another_source`).
 - [ ] Two local replays of 2026-09-26 identical, and matching the parity reference.
 
 ### Step 11: Engine: the interim desktop rules

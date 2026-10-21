@@ -249,7 +249,8 @@ Answers to the Milestone 1, Step 0 decisions in [docs/ranking-methodology.md](do
     - D7's full credit stays for CJK builds (`q27_cjk_credit`).
     - The model's parameters are held for a year, and re-estimated early when a drift check fires or a source changes (`q9_theta_cadence`).
   - **Published fields (v1 unchanged).**
-    - `weight_used` is each term's share of the font's information, and null for Google and Fonts Over Time (`q16_weight_used`).
+    - `weight_used` is each term's share of the font's information, and null for Google and Fonts Over Time (`q16_weight_used`). *Amended 2026-10-20:* it is the source's share of the information from the font's open sources only, so the published shares add up to 1 and give nothing private back (`q16_open_source_shares`, `data/reviews/method/2026-10-20.toml`).
+    - A font whose only terms are Fonts Over Time's is unranked in the model views: its score would be Fonts Over Time's alone. Any other source's term, an interval included, ranks it (`fot_only_needs_another_source`, 2026-10-20).
     - Every term's `state` reads "observed", interval terms included. That was the owner's choice; Claude had recommended "censored" for an interval (`q18a_state_observed`).
     - A term's `z` is the popularity that term alone implies; Fonts Over Time keeps its rank-based z (`q18b_z`, `q17_t4_wording`).
     - A rank's first run under a new method bootstraps `previous_score`, so no triangle shows that month (`q20_previous_score_at_switch`).
