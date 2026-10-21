@@ -11,7 +11,7 @@ from dataclasses import replace
 
 import numpy as np
 import pytest
-from scipy import special, stats
+from scipy import optimize, special, stats
 
 from tff_catalog.engine import measure
 
@@ -229,6 +229,96 @@ def test_the_iteration_limit_binds_before_the_evaluation_limit(monkeypatch):
         assert options["maxfun"] > options["maxiter"] * (2 * free + 1)
 
 
+def early_stop():
+    """An ill-conditioned objective near 3e4, as the models' are, and where L-BFGS-B with
+    two-point differences stops on ftol, short of the minimum; and the minimum's value."""
+    rng = np.random.default_rng(0)
+    q, _ = np.linalg.qr(rng.standard_normal((10, 10)))
+    a = q @ np.diag(np.geomspace(1e2, 1e-4, 10)) @ q.T
+    centre = rng.standard_normal(10)
+
+    def f(x: np.ndarray) -> float:
+        d = x - centre
+        return float(3e4 + 0.5 * d @ a @ d + 0.01 * np.sum(d**4))
+
+    bounds = [(-50.0, 50.0)] * 10
+    res = optimize.minimize(
+        f, np.full(10, 3.0), method="L-BFGS-B", bounds=bounds, options=measure.LBFGSB
+    )
+    return f, res, bounds, 3e4
+
+
+def test_the_polish_goes_on_where_l_bfgs_b_stopped_short():
+    f, res, bounds, best = early_stop()
+    assert res.success
+    assert res.fun - best > 10 * measure.POLISH_TOL  # stopped short
+    polished = measure._polish(f, res, bounds)
+    assert polished.success
+    assert polished.fun - best < measure.POLISH_TOL
+
+
+def test_the_polish_has_not_converged_while_it_still_gains(monkeypatch):
+    monkeypatch.setattr(measure, "POLISH_RESTARTS", 1)
+    f, _, bounds, _ = early_stop()
+    start = optimize.OptimizeResult(x=np.full(10, 3.0), fun=f(np.full(10, 3.0)), success=True)
+    assert not measure._polish(f, start, bounds).success
+
+
+def flat_baseline() -> measure.Mixed:
+    """A count whose baseline is weakly identified (a standard error above 2 on the log
+    scale) yet not zero: fit_mixed's likelihood-ratio step tests it and keeps it free."""
+    rng = np.random.default_rng(1)
+    n = 1500
+    eta = rng.standard_normal(n)
+    y = rng.negative_binomial(3.0, 3.0 / (3.0 + 0.5 + np.exp(2.0 + 1.5 * eta))).astype(float)
+    return measure.Mixed((measure.CountTerm("t", np.arange(n), y, np.ones(n)),))
+
+
+@pytest.fixture(scope="module")
+def flat():
+    model = flat_baseline()
+    return model, measure.fit_mixed(model)
+
+
+def test_a_fit_ends_where_a_restart_gains_nothing(flat):
+    """The likelihood-ratio step and the Hessian work at the optimum: a fresh start there,
+    with central differences, finds nothing more."""
+    model, fit = flat
+    assert fit.se[0] > 2  # so the likelihood-ratio step tests it
+    assert fit.held == ()
+    again = optimize.minimize(
+        measure._negll(model, fit.grid),
+        fit.theta,
+        method="L-BFGS-B",
+        jac="3-point",
+        bounds=measure._bounds(model),
+        options=measure.POLISH_LBFGSB,
+    )
+    assert -fit.loglik - again.fun <= measure.POLISH_TOL
+
+
+def test_a_held_fit_that_beats_the_free_one_sends_the_free_fit_back(flat, monkeypatch):
+    """Should a free fit stop short of its optimum (forced here, with b too low), the held
+    fit beats it, and the likelihood-ratio test would hold b against it: the free fit is
+    redone from the better point instead, and b stays free."""
+    model, good = flat
+    polish = measure._polish
+    calls = []
+
+    def short_first(negll, res, bounds):  # type: ignore[no-untyped-def]
+        calls.append(1)
+        if len(calls) > 1:
+            return polish(negll, res, bounds)
+        x = good.theta.copy()
+        x[0] -= 2.0
+        return optimize.OptimizeResult(x=x, fun=negll(x), success=True)
+
+    monkeypatch.setattr(measure, "_polish", short_first)
+    fit = measure.fit_mixed(model)
+    assert fit.held == ()
+    assert np.max(np.abs(fit.theta - good.theta) / good.se) < 1e-3
+
+
 def test_a_stored_fit_scores_bit_for_bit(two_terms):
     """The fitted parameters go to the private store as JSON and later runs score with what
     they read back (scoring plan §8.3, §8.4): the same bits, so the same scores."""
@@ -328,6 +418,7 @@ def test_two_baselines_share_one_curve():
 
 
 @pytest.mark.slow
+@pytest.mark.timeout(900)  # a full fit on 3,000 fonts, polished: over 300 s on a loaded machine
 def test_interval_censored_counts_with_exposure():
     """Counts hidden below a reporting threshold, over unequal exposures, still recover the
     curve when the hidden part is given as an interval."""
@@ -380,6 +471,7 @@ def test_empty_bulk_is_held_and_draws_skip_it():
 
 
 @pytest.mark.slow
+@pytest.mark.timeout(900)  # a full fit on 4,000 fonts, polished: over 300 s on a loaded machine
 def test_lognormal_sum_recovers_bulk_and_popularity_noise():
     """Downloads = a tight bulk + a noisy popularity part: the sum model recovers both. Two
     more terms on the same fonts let the term's own noise be told from eta's spread."""

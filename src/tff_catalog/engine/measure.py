@@ -59,6 +59,16 @@ LR_BOUNDARY_5PCT = 2.706
 # default) counts the evaluations of the finite-difference gradients too, about 30 an
 # iteration for the Project model's 29 free parameters, and would stop it near 500 iterations.
 LBFGSB = {"maxiter": 5000, "maxfun": 1_000_000, "ftol": 1e-12}
+# A fit is polished (``_polish``) until no more than this is left to gain in log-likelihood.
+POLISH_TOL = 1e-6
+POLISH_RESTARTS = 20  # rounds of Newton steps or restarts
+# The longest Newton step the polish trusts, on the parameters' own (mostly log) scales: near
+# the optimum a step is far shorter, and a longer one comes from a quadratic model that
+# doesn't hold, which can throw a parameter to its bound.
+NEWTON_MAX_STEP = 0.5
+# The polish's restarts stop on the projected gradient (pgtol) rather than on one step's
+# small gain (ftol): with central differences the gradient is accurate enough for that.
+POLISH_LBFGSB = {**LBFGSB, "ftol": 0.0}
 # A fitted model's record (``MixedFit.to_record``); a change of its shape bumps it.
 RECORD_FORMAT = 1
 
@@ -619,6 +629,91 @@ def hold_bulk_noise(fit: MixedFit) -> MixedFit:
     return replace(fit, cov=cov, free=tuple(free), held=held, at_bound=at_bound)
 
 
+def _polish(negll: Any, res: Any, bounds: list[tuple[float | None, float | None]]) -> Any:
+    """L-BFGS-B's result ``res`` taken on to the optimum. With two-point differences in its
+    gradient, L-BFGS-B stops on ``ftol`` short of the optimum, at a point that moves with the
+    BLAS kernel's rounding: by a few thousandths of a standard error on October's terms, and
+    far enough, a review found, to flip a likelihood-ratio hold. Newton steps
+    (``_newton_step``) go on from there until the gain their quadratic model predicts is at
+    most ``POLISH_TOL`` in log-likelihood; where Newton isn't to be trusted or gains too
+    little, L-BFGS-B is restarted with central differences, which drops its stale curvature.
+    At most ``POLISH_RESTARTS`` rounds: converged once a round finds nothing more to gain,
+    not converged if they run out while still gaining."""
+    for _ in range(POLISH_RESTARTS):
+        new, predicted = _newton_step(negll, res, bounds)
+        if predicted <= POLISH_TOL:  # at the optimum, once this step is taken
+            res = new
+            break
+        if new.fun < res.fun - POLISH_TOL:  # Newton is still on its way
+            res = new
+            continue
+        again = optimize.minimize(
+            negll, new.x, method="L-BFGS-B", jac="3-point", bounds=bounds, options=POLISH_LBFGSB
+        )
+        if not again.fun < new.fun - POLISH_TOL:  # nothing more to gain either way
+            res = new
+            break
+        res = again
+    else:
+        res.success = False
+        return res
+    res.success = bool(np.isfinite(res.fun))
+    return res
+
+
+def _gradient_fd(f: Any, theta: np.ndarray, eps: float = 1e-5) -> np.ndarray:
+    """Gradient of scalar ``f`` at ``theta`` by central differences."""
+    return np.array([(f(theta + d) - f(theta - d)) / (2 * eps) for d in np.eye(len(theta)) * eps])
+
+
+def _newton_step(
+    negll: Any, res: Any, bounds: list[tuple[float | None, float | None]]
+) -> tuple[Any, float]:
+    """``res`` after one Newton step over its free parameters if the step gains (else
+    ``res``), and the gain the quadratic model predicts for it: infinite where Newton isn't
+    to be trusted, far from the optimum, with a Hessian not positive definite or a step
+    longer than ``NEWTON_MAX_STEP`` or out of the box. The gradient and Hessian are by
+    central differences; a parameter on a bound stays there unless the gradient pulls it
+    inward by more than L-BFGS-B's own tolerance (1e-5). Near the optimum Newton converges
+    quadratically, to where fits under different BLAS kernels agree to 1e-6 standard
+    errors."""
+    lo = np.array([-np.inf if b[0] is None else b[0] for b in bounds])
+    hi = np.array([np.inf if b[1] is None else b[1] for b in bounds])
+    x = np.array(res.x, float)
+    free = np.flatnonzero(lo < hi)
+
+    def sub(v: np.ndarray, at: np.ndarray = free) -> float:
+        th = x.copy()
+        th[at] = v
+        return negll(th)
+
+    g = _gradient_fd(sub, x[free])
+    out = ((x[free] <= lo[free]) & (g > -1e-5)) | ((x[free] >= hi[free]) & (g < 1e-5))
+    move, g = free[~out], g[~out]
+    if not len(move):
+        return res, 0.0
+    h = _hessian_fd(lambda v: sub(v, move), x[move])
+    try:
+        np.linalg.cholesky(h)
+    except np.linalg.LinAlgError:
+        return res, np.inf
+    step = -np.linalg.solve(h, g)
+    predicted = float(-0.5 * g @ step)
+    new = x.copy()
+    new[move] += step
+    if (
+        not np.isfinite(predicted)
+        or np.abs(step).max() > NEWTON_MAX_STEP
+        or (new[move] < lo[move]).any()
+        or (new[move] > hi[move]).any()
+    ):
+        return res, np.inf
+    fun = negll(new)
+    if fun < res.fun:
+        return optimize.OptimizeResult({**res, "x": new, "fun": fun}), predicted
+    return res, predicted
+
+
 def fit_mixed(
     model: Mixed,
     start: np.ndarray | None = None,
@@ -639,7 +734,13 @@ def fit_mixed(
     2. a baseline whose standard error is undefined or above 2 on the log scale (a flat
        likelihood) is held if a likelihood-ratio test can't reject b = 0: twice the loss in
        log-likelihood below 2.706, the 5% point of 1/2 chi2_0 + 1/2 chi2_1 (b = 0 lies on the
-       boundary). The Hessian's standard errors mean nothing for either."""
+       boundary). The Hessian's standard errors mean nothing for either.
+
+    Every minimization is polished (``_polish``), so that both steps, and the Hessian, see
+    the optimum itself rather than wherever the finite differences let L-BFGS-B stop, which
+    moved with the BLAS kernel's rounding and once flipped a hold. A held fit that beats the
+    free one in step 2 shows the free fit short of its optimum: the free fit is redone, and
+    both steps again."""
     nodes = grid_nodes() if nodes is None else nodes
     negll = _negll(model, nodes)
     bounds = _bounds(model)
@@ -650,39 +751,53 @@ def fit_mixed(
         for i, v in fixed.items():
             start[i] = v
             b[i] = (v, v)
-        return optimize.minimize(negll, start, method="L-BFGS-B", bounds=b, options=LBFGSB)
+        res = optimize.minimize(negll, start, method="L-BFGS-B", bounds=b, options=LBFGSB)
+        return _polish(negll, res, b)
 
     fixed = dict(fixed or {})
     held: list[str] = []
     res = minimize(_start(model) if start is None else start, fixed)
-    while hold_empty_bulk:
-        low = [
-            i
-            for i, scale in zip(model.bulk_index(), model.bulk_scale(), strict=True)
-            if i not in fixed and (res.x[i] <= LOG_B_MIN + 1e-6 or np.exp(res.x[i]) * scale < 0.01)
-        ]
-        if not low:
+    while True:
+        while hold_empty_bulk:
+            low = [
+                i
+                for i, scale in zip(model.bulk_index(), model.bulk_scale(), strict=True)
+                if i not in fixed
+                and (res.x[i] <= LOG_B_MIN + 1e-6 or np.exp(res.x[i]) * scale < 0.01)
+            ]
+            if not low:
+                break
+            fixed.update(dict.fromkeys(low, LOG_B_MIN))
+            held += [names[i] for i in low]
+            res = minimize(res.x, fixed)
+        free, cov = covariance(model, res.x, fixed, nodes)
+        if not hold_empty_bulk:
             break
-        fixed.update(dict.fromkeys(low, LOG_B_MIN))
-        held += [names[i] for i in low]
-        res = minimize(res.x, fixed)
-    free, cov = covariance(model, res.x, fixed, nodes)
-    if hold_empty_bulk:
         var = np.diag(cov)
         flat = [
             i
             for i in model.bulk_index()
             if i in free and (not np.isfinite(var[i]) or var[i] <= 0 or var[i] > 4.0)
         ]
-        changed = False
+        changed, better = False, None
         for i in sorted(flat, key=lambda i: -var[i] if np.isfinite(var[i]) else -np.inf):
             trial = {**fixed, i: LOG_B_MIN}
             alt = minimize(res.x, trial)
+            if alt.fun < res.fun - POLISH_TOL:
+                better = alt  # the fit with b free was short of its optimum
+                break
             if 2 * (alt.fun - res.fun) < LR_BOUNDARY_5PCT:
                 fixed, res, changed = trial, alt, True
                 held.append(f"{names[i]} (likelihood-ratio test)")
+        if better is not None:
+            # The free fit again, from where it stopped (from the better point, b would sit
+            # on its bound with no gradient to climb), or else from the better point.
+            again = minimize(res.x, fixed)
+            res = again if again.fun <= better.fun else minimize(better.x, fixed)
+            continue
         if changed:
             free, cov = covariance(model, res.x, fixed, nodes)
+        break
     at_bound = tuple(
         names[i]
         for i in free
