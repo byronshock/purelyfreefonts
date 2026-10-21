@@ -1,6 +1,7 @@
 {#-
-  index.html.j2: the list page (Milestone 2 step 3). Server-rendered in Overall order, so the
-  page works without JavaScript; the script then filters and reorders these rows. Context:
+  index.html.j2: the list page (Milestone 2 step 3). Server-rendered in the default rank's
+  order, Projects (M2-D1, amended 2026-09-30), so the page works without JavaScript;
+  the script then filters and reorders these rows. Context:
   site/CONTRACT.md, "Templates" (every page's context plus `list`). The list itself, filters
   included, is in _list.html.j2 so a later /check/ page can include it unchanged.
 
@@ -16,6 +17,7 @@
 {% endblock %}
 {% block main %}
 <h1 class="list-title">The most popular purely free fonts</h1>
-<p class="lead">Every font here is free for any personal or commercial use, and you may share the files. <span class="visually-hidden-phone">They are ranked by how many people install them and use them in their work.</span></p>
+{# The lead's second sentence: the owner's wording of 2026-10-05 (front_page_lead_counts), landing with the Project default. #}
+<p class="lead">Every font here is free for any personal or commercial use, and you may share the files. <span class="visually-hidden-phone">They are ranked by public counts of use in websites, code and apps.</span></p>
 {% include "_list.html.j2" %}
 {% endblock %}
