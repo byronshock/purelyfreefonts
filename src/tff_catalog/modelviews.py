@@ -21,12 +21,15 @@ the private store or fits it (``fitstore.obtain``, by the run's ``--write-fit`` 
   for review, a font whose sources conflict, in place of the guard's down-weighting (q2).
 
 They are ``ModelEntry`` rows in ``build/stage/model.json``, with each view's ``FitInfo`` in
-``build/stage/fits.json``: where the fit came from, its sha256, the problems
-``MixedFit.problems`` finds and the terms its monotonicity scan finds falling (validate's
-hard checks). ``survey_scores`` turns the rows into the engine's ``Fused`` and
-``Placement``, so the order, the two-group gate and the bands are the engine's own
-(``order.place``). The order sorts on the score and then its sd, each rounded to ``DIGITS``
-(scoring plan §8.4), the more precisely measured font first, then the name.
+``build/stage/fits.json``: the fit's date and sha256, the problems ``MixedFit.problems``
+finds, the terms its monotonicity scan finds falling (validate's hard checks) and the
+parameters it holds. Where the fit came from (the store, a new fit, memory) is only logged,
+so a run that made the fit and its replay that read it leave the same build/; the fit's
+record is staged beside them (``fitstore.stage_record``). ``survey_scores`` turns the rows
+into the engine's ``Fused`` and ``Placement``, so the order, the two-group gate and the
+bands are the engine's own (``order.place``). The order sorts on the score and then its
+sd, each rounded to ``DIGITS`` (scoring plan §8.4), the more precisely measured font first,
+then the name.
 
 Both files stay in ``build/stage/``, never committed: the shares and per-source z of Google
 and Fonts Over Time derive from their private values (T2, T4).
@@ -38,7 +41,7 @@ import math
 from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import date
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING
 
 from tff_catalog.engine import builders
 from tff_catalog.engine.fuse import Fused
@@ -89,14 +92,15 @@ class ModelEntry:
 
 @dataclass(frozen=True, slots=True)
 class FitInfo:
-    """Where a view's fit came from, and what its checks found (names only, never values)."""
+    """A view's fit and what its checks found (names only, never values): the same whatever
+    the run's fit mode, so a run that made the fit and its replay that read it agree."""
 
     fitted_on: date
-    sha256: str
-    source: Literal["store", "pending", "memory"]
+    sha256: str  # of the fit's record (fitstore)
     fonts: int
     problems: tuple[str, ...]  # MixedFit.problems()
     falls: tuple[str, ...]  # terms whose monotonicity scan finds a fall
+    held: tuple[str, ...]  # parameters the fit holds (MixedFit.held), by name
 
 
 def entries(
@@ -237,12 +241,6 @@ def _precision(sd: float) -> float:
     return math.inf if s <= 0 else 1.0 / (s * s)
 
 
-def _merged_dates(ctx: StageContext) -> list[date]:
-    return [
-        date.fromisoformat(str(e["run_date"])) for e in ctx.state.run_history if e.get("run_date")
-    ]
-
-
 def run(ctx: StageContext) -> tuple[dict[str, dict[str, ModelEntry]], dict[str, FitInfo]]:
     """Stage "rank"'s model views: their entries and fits, for ``[model] views``."""
     cfg = ctx.config.ranking
@@ -266,22 +264,22 @@ def run(ctx: StageContext) -> tuple[dict[str, dict[str, ModelEntry]], dict[str, 
             store_root=None if ctx.store is None else ctx.store.root,
             view=key,
             run_date=ctx.run_date,
-            merged_dates=_merged_dates(ctx),
+            merged_dates=fitstore.merged_dates(ctx.state.run_history),
             model=model,
             method_version=METHOD_VERSIONS[key],
             fit=fit,
+            stage_dir=ctx.paths.stage,
         )
-        if got.data is not None:
-            fitstore.stage_pending(ctx.paths.stage, key, got.data)
+        fitstore.stage_record(ctx.paths.stage, key, got.data)
         out[key] = entries(got.fit, data.frames, cfg.model)
         falls = tuple(m["term"] for m in measure.monotonicity_scan(got.fit) if m["falls"])
         fits[key] = FitInfo(
             fitted_on=got.fitted_on,
             sha256=got.sha256,
-            source=got.source,
             fonts=len(model.ids),
             problems=tuple(got.fit.problems()),
             falls=falls,
+            held=tuple(got.fit.held),
         )
         ctx.log.info(
             "%s: model on %d fonts, fit of %s (%s)", key, len(model.ids), got.fitted_on, got.source

@@ -27,6 +27,7 @@ When the real stages can run on a synthetic store, ``test_state_two_runs.py``'s
 """
 
 import ast
+import hashlib
 import importlib.machinery
 import importlib.util
 import os
@@ -114,13 +115,18 @@ class SynthStages:
 
     ``fail_l3``: "verify" fails the first catalog member. ``hard_failures``:
     "validate" raises them. ``crash_in``: that stage raises ``RuntimeError``.
+    ``model``: "rank" also runs the real model views (``modelviews.run``, on the
+    synthetic model of ``tests.helpers.models``), and "verify" records the fits the
+    rank before it scored with, as the real one's scope follows that rank's order.
     """
 
     fail_l3: bool = False
     hard_failures: tuple[Failure, ...] = ()
     crash_in: str | None = None
+    model: bool = False
     calls: list[Call] = field(default_factory=list)
     rank_saw: list[frozenset[str]] = field(default_factory=list)
+    rank_fits: list[dict[str, str]] = field(default_factory=list)  # each pass: {view: sha256}
 
     def load(self, stage: stages.Stage) -> Callable[[stages.StageContext], None]:
         def run(ctx: stages.StageContext) -> None:
@@ -166,7 +172,22 @@ class SynthStages:
             synth.write_snapshot(ctx.require_store().root, "font_facts", ctx.run_date, [])
         return files
 
+    def _rank(self, ctx: stages.StageContext) -> None:
+        self._generic("rank", ctx)
+        if not self.model:
+            return
+        from tff_catalog import modelviews
+
+        models, fits = modelviews.run(ctx)
+        stageio.dump_stage(ctx.paths, "model", models)
+        stageio.dump_stage(ctx.paths, "fits", fits)
+        self.rank_fits.append({view: f.sha256 for view, f in fits.items()})
+
     def _verify(self, ctx: stages.StageContext) -> None:
+        if self.model:
+            fits = stageio.load_stage(ctx.paths, "fits")
+            saw = {view: f.sha256 for view, f in sorted(fits.items())}
+            jsonio.dump(saw, ctx.paths.stage / "synth" / "verify-saw.json")
         files = self._generic("verify", ctx)
         members = sorted(f for f, m in files["membership"]["catalog"].items() if m["member"])
         failed = set(members[:1]) if self.fail_l3 else set()
@@ -326,6 +347,59 @@ def test_replay_of_a_live_run_gives_its_build(
     assert_same_tree(live.build, replayed.build)
     assert live.stages == tuple(expected_stages(replay=False))
     assert replayed.stages == tuple(expected_stages(replay=True))
+
+
+@pytest.mark.model_config
+@pytest.mark.parametrize("live", [False, True], ids=["from-snapshots", "live"])
+def test_a_run_that_writes_its_fit_gives_the_build_of_its_replay(
+    runner: Runner,
+    synth_stages: SynthStages,
+    synth_state: Path,
+    synth_store: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    live: bool,
+) -> None:
+    """q9_theta_cadence, october_replay_is_the_switch: a --write-fit run keeps its fits once
+    and ends with the build/ that its offline replay, reading them back, gives. Its first
+    rank fits a model that "verify" then shrinks, so "rank" fits again and only that fit is
+    kept; refresh replays the run with the kept fits, so no pass scores with the other."""
+    from tests.helpers import models
+
+    from tff_catalog import fitstore
+
+    fitted = models.stub_model_inputs(
+        monkeypatch, drop=lambda paths: len(refresh.l3_excluded(paths))
+    )
+    synth_stages.fail_l3 = True  # "verify" fails a family: "rank" reruns on a smaller model
+    synth_stages.model = True
+    day = DEC if live else OCT
+    options = stages.RunOptions(fit="write", from_snapshots=None if live else day)
+    wrote = refresh.refresh(runner.paths("write", synth_state), day, options=options)
+    assert wrote.ok, wrote.failures
+    views = ("dev_apps", "project")
+    assert {v: fitstore.stored_dates(synth_store, v) for v in views} == {v: [day] for v in views}
+    kept = {
+        v: hashlib.sha256(fitstore.fit_path(synth_store, v, day).read_bytes()).hexdigest()
+        for v in views
+    }
+    # The first pass fits twice (before and after verify's exclusions), the second never.
+    first, rerun, *again = synth_stages.rank_fits
+    assert fitted == [models.FONTS] * 2 + [models.FONTS - 1] * 2
+    assert first != rerun == kept
+    assert again == [kept, kept]
+    assert wrote.stages == tuple(
+        expected_stages(replay=not live, rerun=True) + expected_stages(replay=True, rerun=True)
+    )
+
+    synth_stages.rank_fits.clear()
+    replayed = runner.run("replay", synth_state, day)  # read mode, as the job's own replay
+    assert replayed.ok, replayed.failures
+    assert synth_stages.rank_fits == [kept, kept]
+    assert len(fitted) == 4, "the replay fitted again"
+    assert_same_tree(wrote.build, replayed.build)
+    assert jsonio.load(wrote.build / "stage" / "synth" / "verify-saw.json") == kept
+    assert not list(wrote.build.rglob("*pending*"))
+    assert all("source" not in f for f in jsonio.load(wrote.build / "stage" / "fits.json").values())
 
 
 # --- stages, fetcher and the rerun -------------------------------------------------------------
