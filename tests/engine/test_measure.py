@@ -74,6 +74,29 @@ def test_lognormal_interval_matches_normal_cdf():
     assert np.allclose(ll, [ref0, ref1], atol=1e-6)
 
 
+@pytest.mark.parametrize(
+    ("dist", "noise"), [("lognormal", []), ("lognormal_sum", [np.log(0.3)])], ids=["one", "sum"]
+)
+def test_a_zero_in_a_lognormal_term_reads_as_under_one(dist, noise):
+    """A log-normal has no zero: a font's zero (or a value its source lacks, read as 0) is
+    the interval [0, 1), so it scores about as a count of 1 does, with a posterior as wide,
+    rather than as a density at the log of nearly nothing (the grid's floor, or worse)."""
+    ids = np.array(["a", "b", "c", "d"])
+    deps = measure.CountTerm("deps", ids, np.full(4, 5.0), np.ones(4))
+    npm = measure.CountTerm("npm", ids[:3], np.array([0.0, 1.0, 3000.0]), np.ones(3), dist=dist)
+    assert npm.y_hi.tolist() == [1.0, 1.0, 3000.0]  # the zero only becomes an interval
+    model = measure.Mixed((deps, npm))
+    theta = np.array([np.log(2.0), 1.0, np.log(1.2), np.log(3.0), np.log(1e3), 8.0, 0.4, 0.0])
+    theta = np.concatenate([theta, noise])
+    k = len(theta)
+    fit = measure.MixedFit(model, theta, 0.0, np.zeros((k, k)), True, tuple(range(k)))
+    eap, sd = fit.scores()
+    assert np.isfinite(eap).all()
+    assert sd[0] > measure.GRID_STEP
+    assert eap[0] == pytest.approx(eap[1], abs=0.05)
+    assert sd[0] == pytest.approx(sd[1], abs=0.05)
+
+
 def test_lognormal_sum_is_finite_at_the_grid_edges():
     """No overflow to NaN where the popularity part is huge or the bulk is nil."""
     y = np.array([1.0, 1e3, 1e9])
@@ -410,6 +433,8 @@ def test_terms_and_models_refuse_bad_shapes():
         measure.CountTerm("t", np.arange(2), np.ones(2), np.ones((2, 2)))
     with pytest.raises(ValueError, match="twice"):
         measure.CountTerm("t", np.array([1, 1]), np.ones(2), np.ones(2))
+    with pytest.raises(ValueError, match="negative"):
+        measure.CountTerm("t", np.arange(2), np.array([3.0, -1.0]), np.ones(2), dist="lognormal")
     term = measure.CountTerm("t", np.arange(2), np.ones(2), np.ones(2))
     with pytest.raises(ValueError, match="each named once"):
         measure.Mixed((term, term))
