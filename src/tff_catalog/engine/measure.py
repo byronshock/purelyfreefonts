@@ -82,7 +82,12 @@ class CountTerm:
 
     ``n`` is the packages summed, per baseline group: shape (N,) for one baseline, or (N, K)
     for K groups that share the popularity curve but not the baseline. A young package's
-    share of the window multiplies its entry of ``n``: it scales the expected bulk only."""
+    share of the window multiplies its entry of ``n``: it scales the expected bulk only.
+
+    A log-normal has no zero, so a zero in a log-normal term (a source's zero, or a value it
+    lacks read as 0) is read as "under 1", the interval [0, 1) through ``y_hi``, rather than
+    as a density at the log of nearly nothing, which pinned the font to the grid's floor. A
+    negative count is refused."""
 
     name: str
     ids: np.ndarray  # fonts with this term, unique
@@ -107,6 +112,13 @@ class CountTerm:
             raise ValueError(f"CountTerm {self.name}: one group name per column of n")
         if len(np.unique(self.ids)) != len(self.ids):
             raise ValueError(f"CountTerm {self.name}: a font appears twice")
+        if (np.asarray(self.y) < 0).any():
+            raise ValueError(f"CountTerm {self.name}: a count is negative")
+        if self.dist != "negbin":
+            hi = self.y if self.y_hi is None else self.y_hi
+            zero = (self.y == 0) & ~(hi > self.y)  # a point at zero, not already an interval
+            if zero.any():
+                object.__setattr__(self, "y_hi", np.where(zero, 1.0, hi).astype(float))
 
     @property
     def k(self) -> int:
