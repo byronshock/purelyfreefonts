@@ -77,7 +77,7 @@ This checklist brings the owner's scoring-method rulings of 2026-09-30 and 2026-
 
 ### Step 14: The switch: October replayed on the new method
 - [ ] A local dry run of 2026-10-17 that writes nothing: new members and any gate questions listed; store top-ups (`october_topups_preauthorized`), diffed before the store commit; questions ruled in a pull request. *(Gate questions ruled in #81. Dry runs pass; the top-ups wait in a store clone, unpushed, for the review fixes, which can move the Projects top-500 cut.)*
-- [ ] The GitHub replay (`from_snapshots=2026-10-17`): the parameters written once, the in-job replay identical, the bundle encrypted, the log clean.
+- [ ] The GitHub replay (`from_snapshots=2026-10-17`, `write_fit=true`: the workflow writes a fit only when a dispatch asks): the parameters written once, the in-job replay identical, the bundle encrypted, the log clean.
 - [ ] Its pull request replaces #70 as the held draft, with its CI noted.
 
 ### Step 15: Staging, and the owner's look
