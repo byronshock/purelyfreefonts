@@ -264,6 +264,36 @@ def test_the_polish_has_not_converged_while_it_still_gains(monkeypatch):
     assert not measure._polish(f, start, bounds).success
 
 
+def test_every_minimization_of_a_fit_is_polished(monkeypatch):
+    """fit_mixed hands every result of L-BFGS-B to the polish before it uses it, so no hold
+    decision, and no Hessian, sees a point where the finite differences let L-BFGS-B stop."""
+    raw, polished, inside = [], [], []
+    minimize, polish = measure.optimize.minimize, measure._polish
+
+    def spy_minimize(fun, x0, **kwargs):  # type: ignore[no-untyped-def]
+        res = minimize(fun, x0, **kwargs)
+        if not inside:  # fit_mixed's own call, not one of the polish's restarts
+            raw.append(res)
+        return res
+
+    def spy_polish(negll, res, bounds):  # type: ignore[no-untyped-def]
+        polished.append(res)
+        inside.append(1)
+        try:
+            return polish(negll, res, bounds)
+        finally:
+            inside.pop()
+
+    monkeypatch.setattr(measure.optimize, "minimize", spy_minimize)
+    monkeypatch.setattr(measure, "_polish", spy_polish)
+    model, _ = simulate_two_terms(n=300, seed=1)
+    fit = measure.fit_mixed(model)
+    assert fit.held  # so the fit was repeated: two minimizations at least
+    assert len(raw) >= 2
+    assert len(polished) == len(raw)
+    assert all(p is r for p, r in zip(polished, raw, strict=True))
+
+
 def flat_baseline() -> measure.Mixed:
     """A count whose baseline is weakly identified (a standard error above 2 on the log
     scale) yet not zero: fit_mixed's likelihood-ratio step tests it and keeps it free."""
@@ -280,12 +310,18 @@ def flat():
     return model, measure.fit_mixed(model)
 
 
-def test_a_fit_ends_where_a_restart_gains_nothing(flat):
-    """The likelihood-ratio step and the Hessian work at the optimum: a fresh start there,
-    with central differences, finds nothing more."""
-    model, fit = flat
-    assert fit.se[0] > 2  # so the likelihood-ratio step tests it
+def test_a_fit_ends_where_a_restart_gains_nothing(flat, monkeypatch):
+    """The likelihood-ratio step and the Hessian work at the optimum, even where L-BFGS-B
+    stops well short of it (forced here with a loose ftol, a tenth of a standard error
+    short): a fresh start there, with central differences, finds nothing more, and the fit
+    is the one with L-BFGS-B's own tolerance."""
+    model, good = flat
+    assert good.se[0] > 2  # so the likelihood-ratio step tests it
+    assert good.held == ()
+    monkeypatch.setattr(measure, "LBFGSB", {**measure.LBFGSB, "ftol": 1e-5})
+    fit = measure.fit_mixed(model)
     assert fit.held == ()
+    assert np.max(np.abs(fit.theta - good.theta) / good.se) < 1e-4
     again = optimize.minimize(
         measure._negll(model, fit.grid),
         fit.theta,
@@ -315,6 +351,7 @@ def test_a_held_fit_that_beats_the_free_one_sends_the_free_fit_back(flat, monkey
 
     monkeypatch.setattr(measure, "_polish", short_first)
     fit = measure.fit_mixed(model)
+    assert len(calls) >= 3  # the short free fit, the held fit that beat it, the free redone
     assert fit.held == ()
     assert np.max(np.abs(fit.theta - good.theta) / good.se) < 1e-3
 
