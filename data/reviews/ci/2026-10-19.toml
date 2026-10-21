@@ -36,3 +36,17 @@ recommended = true
 value = "npm_job_3_1_s_and_skip_fetch"
 ruling = "The monthly refresh fetches npm in a job of its own, ahead of the refresh job, at one request every 3.1 s (fetch.HOST_MIN_INTERVAL), with its own 355 minutes inside GitHub's 360-minute cap; it uploads the day's npm snapshot, which the refresh job places in its store and runs with --skip-fetch npm, so the refresh job never asks npm. If the npm fetch fails or runs out of time (its step stops at 340 minutes and the job carries on), the run uses the last npm snapshot within the stale window, flagged stale in the pull request, and the other sources still land."
 reason = "The owner, in chat with the lead session on 2026-10-19: \"npm in its own job (Recommended)\", over (b) pacing and a 355-minute timeout only, which leave the whole run about 5 h 05 of 5 h 55, and (c) its own job at the 1.5 s pace. On 2026-10-17 (run 38999881962) npm's download API accepted exactly 20 requests a minute from the runner in 230 of 235 full minutes, so its 4,711 packages took 3 h 56 min whatever the pace, and the refresh job used 297.5 of its 345 minutes. Scoped packages can't be batched, npm sends no Retry-After, and an incremental fetch is still one request per package."
+
+[store_bundle_encrypted]
+choice = "a"
+recommended = true
+value = "encrypt_then_delete"
+ruling = "The refresh workflow's store-bundle artifact, the store's new commits on their way to the store job, is encrypted before upload with a key held only as a secret of the main-only environment refresh, and the store job deletes the artifact once it has pushed. The repository is public, so any signed-in GitHub user can download its artifacts; unencrypted, the bundle carried the raw Google Fonts and Fonts Over Time snapshots that rulings T2 and T4 keep private, and the October replay would add the model's private parameters. The October run's artifact was deleted by the owner on 2026-10-20 (the store holds the same data). It lands before the October replay and November's run."
+reason = "The owner, in chat with the lead session on 2026-10-19: \"Encrypt, then delete (Recommended)\", over deleting the artifact after the push only, which leaves the raw data downloadable while a run goes on. Found by Claude's review while planning the port."
+
+[october_topups_preauthorized]
+choice = "a"
+recommended = true
+value = "topups_for_new_members"
+ruling = "Before the October replay, Claude may top up the stored 2026-10-17 snapshots with what fonts entering only under the new membership lack (tff-catalog verify, links and specimens with --date 2026-10-17), diffing every changed row before the store commit and stopping to show the owner anything unexpected, as for store_topup_luciole."
+reason = "The owner, in chat with the lead session on 2026-10-19: \"Yes, pre-authorized (Recommended)\", over bringing the list of missing items to the owner first."

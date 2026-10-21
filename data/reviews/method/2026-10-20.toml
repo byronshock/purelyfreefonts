@@ -1,0 +1,16 @@
+# Owner rulings of 2026-10-20 on the scoring-method port, asked in chat by the lead session as single-select questions.
+# Ruled by the owner, Byron Shock; recorded by Claude. Found by the adversarial review of the port before the October replay. Also in AUTHORITY.md (The scoring method).
+
+[q16_open_source_shares]
+choice = "a"
+recommended = true
+value = "share_among_open_sources"
+ruling = "In the model views, a source entry's weight_used is that source's share of the information from the font's open sources only, every source except Google and Fonts Over Time, so a font's open shares add up to 1; Google's and Fonts Over Time's stay null. This amends q16_weight_used: shares taken over all of a font's sources let 1 minus the published ones give back the private shares."
+reason = "The owner, in chat with the lead session: \"Share among open sources (Recommended)\", over (b) withholding weight_used for every Projects source and (c) publishing as ruled. On the October dry run, 1 minus a font's published shares gave Fonts Over Time's share exactly for the 73 catalog fonts without a Google term, and Google's and Fonts Over Time's together for the other 482."
+
+[fot_only_needs_another_source]
+choice = "a"
+recommended = true
+value = "rank_needs_a_non_fot_term"
+ruling = "In the model views, a font is ranked only with a term from a source other than Fonts Over Time. A font whose only terms are Fonts Over Time's is unranked there (no_evidence): its score would be the model's estimate from Fonts Over Time alone, which T4 and q18b_z withhold. A font with any other source's term as well, an interval included, stays ranked, since its score combines several sources (q17_t4_wording). Such a font can still enter the catalog through another rank's top 100."
+reason = "The owner, in chat with the lead session: \"Needs another source (Recommended)\", over (b) requiring another source's point count, which would also unrank the 39 catalog fonts whose other term is the Web Almanac's below-list interval, and (c) extending q17 to single-source scores. On the October dry run, 8 fonts in the Projects model had only Fonts Over Time terms, 2 of them catalog members."

@@ -1,0 +1,9 @@
+# Owner rulings of 2026-10-19 on the site, from the planning of the scoring-method port, asked in chat by the lead session.
+# Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md.
+
+[score_display_linear_all_views]
+choice = "a"
+recommended = true
+value = "a_prime_every_view"
+ruling = "Every view shows A′, max(1, ⌈100·clip(score/3, 0, 1)⌉): the model's Projects and Developers & apps, and the engine's desktop most chosen, desktop most installed, Coding and Rising until desktop's model lands. It extends q11_display_linear and q30_display_ends to every view and replaces score_curve (2026-09-29) everywhere. The ends stay site constants, reviewed with the model's parameters (q9_theta_cadence). It lands just before the October replay, so no staging deploy shows it on old-method scores."
+reason = "The owner, in chat with the lead session on 2026-10-19: \"A′ everywhere (Recommended)\", as q11 reads (it replaces 100·Φ), over keeping 100·Φ in the engine's views until desktop's model."
