@@ -479,6 +479,74 @@ def test_pit_finds_nothing_in_model_data():
     assert [len(z) for z in zs] == [n, n, n]
 
 
+def pit_terms(ids: np.ndarray, seed: int = 9) -> tuple[measure.CountTerm, ...]:
+    """A count with a bulk and a log-normal on the same fonts, drawn at ``PIT_THETA``."""
+    rng = np.random.default_rng(seed)
+    eta = rng.standard_normal(len(ids))
+    mean = 2.0 + np.exp(1.0 + 1.2 * eta)
+    deps = rng.negative_binomial(3.0, 3.0 / (3.0 + mean)).astype(float)
+    npm = np.exp(8.0 + 1.5 * eta + rng.standard_normal(len(ids)))
+    return (
+        measure.CountTerm("deps", ids, deps, np.ones(len(ids))),
+        measure.CountTerm("npm", ids, npm, np.zeros(len(ids)), dist="lognormal"),
+    )
+
+
+PIT_THETA = np.array([np.log(2.0), 1.0, np.log(1.2), np.log(3.0), measure.LOG_B_MIN, 8.0, 0.4, 0.0])
+
+
+def held_fit(terms: tuple[measure.CountTerm, ...]) -> measure.MixedFit:
+    """A fit of ``terms`` at ``PIT_THETA``, held there."""
+    k = len(PIT_THETA)
+    return measure.MixedFit(
+        measure.Mixed(terms), PIT_THETA, 0.0, np.zeros((k, k)), True, tuple(range(k))
+    )
+
+
+def test_a_pit_flag_needs_the_whole_interval_in_a_tail():
+    """q2's review flag: a count is flagged only when every u its PIT interval allows is in
+    a tail, so no draw decides it; a log-normal value's PIT is a point, flagged as before.
+    (A wide tail, so that many counts' intervals straddle it.)"""
+    tail = 0.2
+    fit = held_fit(pit_terms(np.array([f"f{i:03d}" for i in range(300)])))
+    deps, npm = measure.pit_flags(fit, tail)
+    in_tail = [
+        [np.abs(z) > -special.ndtri(tail) for z in measure.loto_pit(fit, seed)[0]]
+        for seed in range(20)
+    ]
+    always = np.all([d for d, _ in in_tail], axis=0)
+    sometimes = np.any([d for d, _ in in_tail], axis=0)
+    assert (always[deps]).all()  # flagged: in the tail whatever the draw
+    assert (sometimes & ~deps).sum() > 10  # these a draw would have flagged
+    assert all((n == npm).all() for _, n in in_tail)  # a point: no draw to make
+
+
+def test_pit_flags_ignore_unrelated_fonts():
+    """With theta held, a font's flags depend on its own counts only: they stay put when
+    fonts before it leave the terms and another enters."""
+    tail = 0.2
+
+    def flags(terms: tuple[measure.CountTerm, ...]) -> dict[str, tuple[bool, bool]]:
+        deps, npm = measure.pit_flags(held_fit(terms), tail)
+        return {str(f): (d, n) for f, d, n in zip(terms[0].ids, deps, npm, strict=True)}
+
+    def change(term: measure.CountTerm, drop: int, extra: float) -> measure.CountTerm:
+        return measure.CountTerm(
+            term.name,
+            np.concatenate([["a-new"], term.ids[drop:]]),
+            np.concatenate([[extra], term.y[drop:]]),
+            np.concatenate([term.n[:1], term.n[drop:]]),
+            dist=term.dist,
+        )
+
+    terms = pit_terms(np.array([f"f{i:03d}" for i in range(300)]))
+    before = flags(terms)
+    for drop in (1, 2):
+        after = flags((change(terms[0], drop, 7.0), change(terms[1], drop, 3e3)))
+        assert len(after) == 301 - drop
+        assert all(before[f] == after[f] for f in after if f != "a-new")
+
+
 def test_monotone_families_never_fall():
     """A negative binomial and a one-noise log-normal score a higher count higher."""
     rng = np.random.default_rng(13)
