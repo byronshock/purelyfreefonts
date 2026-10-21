@@ -262,7 +262,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 - **Details panel** (owned by `Details`; only these hooks are frozen): the panel's first child is `<h4 class="details-title" id="details-<id>-h" tabindex="-1">`, which receives focus when the panel opens from a `#font=` link, and it has a `button.details-close`. Esc or the close button returns focus to the row's `.details-toggle`. Its body, in order (owner ruling of 2026-09-30, `details_layout`):
   1. "Type your own text": `button.typeown-load` ("Type your own text (loads 312 KB)"), then `input.typeown-input`;
   2. `div.details-summary`, one `dl.details-essentials`: Get it (`ul.details-links`: "Official: …", "Designer: …", and for a Nerd Font build the link `a.details-nf-link`, its text by section 1's Nerd rule, with no "NF" box before it (owner's site ruling of 2026-10-05, `details_nerd_box_dropped`) and no legend; the line leads with "Nerd Font:", `details_nerd_lead_in`), License (`a.details-lic-link`, then "No credit needed." or "Credit required: …"), Font (formats and Latin coverage), Comes with, Also known as, and Rank (`span.details-rank-now`: the rank the selector shows, kept current);
-  3. `details.details-evidence`, closed, its `summary` "All ranks and sources": every available rank with tier and range, the tier legend, "Pulled in by", and the per-source tables (`table.details-src-table[data-survey]`), where a Linux source "left out of" some ranks names the available ones only;
+  3. `details.details-evidence`, closed, its `summary` "All ranks and sources": every available rank with its place only ("#12", "Band 101–250" or "Not ranked: …"; no tier, likely range or tier legend: owner's site ruling of 2026-09-30, `no_tiers_or_ranges`), "Pulled in by", and the per-source tables (`table.details-src-table[data-survey]`), where a Linux source "left out of" some ranks names the available ones only;
   4. `p.details-report`.
 
 ### The About page
@@ -306,7 +306,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 
 **`View.compute(state, index, filters)`** is pure and unit-tested through `page.evaluate`:
 
-1. The universe is the fonts in the rank's universe (tier character not `.`, section 7).
+1. The universe is the fonts in the rank's universe (`u` character not `.`, section 7).
 2. Apply the filters and search (`Keys.searchKey(state.q)` as a substring of `keys[i]`).
 3. Apply the external filters with `affectsNumbering: true`.
 4. Sort ranked fonts by score (the index's `order`), then unranked fonts by `by_name`.
@@ -391,7 +391,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 
 | Key | Type | Contents |
 |---|---|---|
-| `v` | int | format version, `3` (2026-09-30: scores, `r.<key>.s`, `held` and `note`, and `order` by score; `2`: `cat` is the site category, and `lics`/`lic` are gone) |
+| `v` | int | format version, `4` (`no_tiers_or_ranges`: `u` in place of `tier`; `3`, 2026-09-30: scores, `r.<key>.s`, `held` and `note`, and `order` by score; `2`: `cat` is the site category, and `lics`/`lic` are gone) |
 | `commit` | string | the commit in `version.txt` |
 | `run_date` | string | `run.date` |
 | `n` | int | number of fonts |
@@ -419,7 +419,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 | `note` | string or null | a note shown above the list in this view instead of held markers (Developers & apps) |
 | `top` | int[n] | exact rank 1–100, or 0 |
 | `band` | int[n] | index into `bands`, or -1 |
-| `tier` | string (n chars) | `A`, `B` or `C` if ranked; `-` if in the view's universe but unranked; `.` if not in the universe (a non-monospace font in Coding) |
+| `u` | string (n chars) | `+` if ranked; `-` if in the view's universe but unranked; `.` if not in the universe (a non-monospace font in Coding). It replaced `tier` (format 4): the site shows no tiers |
 | `why` | int[n] | index into `why_labels` for unranked fonts, else -1 |
 
 ## 8. Details JSON
@@ -428,14 +428,14 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 
 | Key | Contents |
 |---|---|
-| `v` | `1` |
+| `v` | `2` (`no_tiers_or_ranges`: no `tiers`, and no `tier` or `range` in a font's ranks) |
 | `run_date` | `run.date` |
 | `views` | the catalog's `views` in `config/site.toml`'s order, with each view's `label` and `measures` from it (section 1, `view_labels_short`), and `available: false` for a view it retires (Overall, `overall_retired`) |
-| `bands`, `tiers`, `sources`, `systems`, `license_classes`, `nerd` | as in the catalog |
+| `bands`, `sources`, `systems`, `license_classes`, `nerd` | as in the catalog |
 | `state_labels` | `{observed, censored, not_covered, too_new}` → label (`censored` → "below the floor") |
 | `why_labels` | `{no_deliberate_evidence, no_evidence, too_new}` → label |
 | `report` | `{issue_url, email}`: `https://github.com/byronshock/purelyfreefonts/issues/new?template=license.yml`, to which `Details` appends `&font_id=<id>&data_date=<run_date>`, and the fallback address for a `mailto:` link |
-| `fonts` | `{<id>: font}`: the catalog's font object without `preview` and `font_file`, plus `type_own`: `{url, size}` (the hashed `/assets/fonts/…` URL and its size in bytes) or `null` |
+| `fonts` | `{<id>: font}`: the catalog's font object without `preview` and `font_file`, and each of its `ranks` without `tier` and `range`, plus `type_own`: `{url, size}` (the hashed `/assets/fonts/…` URL and its size in bytes) or `null` |
 
 Each source links to its credit at `/methodology/#source-<id>`.
 

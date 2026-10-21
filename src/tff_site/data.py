@@ -109,10 +109,18 @@ BIT_NEW = 2048
 BIT_PULLED = 4096
 BIT_NERD = 8192  # a Nerd Font build (links.nerd): the "Nerd Font available" filter (TASK-2)
 
-LIST_FORMAT = 3  # 3 (2026-09-30): scores (s, held, note), order by score; 2: site categories
-DETAILS_FORMAT = 1
-TIER_UNRANKED = "-"
-TIER_OUTSIDE = "."
+# 4 (no_tiers_or_ranges, 2026-09-30): ``u`` in place of the tier column; 3 (2026-09-30):
+# scores (s, held, note), order by score; 2: site categories
+LIST_FORMAT = 4
+DETAILS_FORMAT = 2  # 2 (no_tiers_or_ranges): no tiers, no likely ranges
+# The list index's ``u`` column, one character a font: in the rank's universe and ranked, in
+# it and unranked, or outside it (Coding: a font that isn't monospaced).
+U_RANKED = "+"
+U_UNRANKED = "-"
+U_OUTSIDE = "."
+# Fields of a rank entry the site never shows (owner's site ruling of 2026-09-30,
+# no_tiers_or_ranges); catalog-site.json v1 keeps them.
+UNSHOWN_RANK_FIELDS = ("tier", "range")
 
 # Where people report problems (M2-D10): the license issue form, and the email fallback.
 REPO_URL = "https://github.com/byronshock/purelyfreefonts"
@@ -316,6 +324,10 @@ def details(doc: Mapping[str, Any], *, font_assets: Mapping[str, str]) -> dict[s
     out: dict[str, Any] = {}
     for font_id, font in fonts.items():
         entry = {k: v for k, v in font.items() if k not in ("preview", "font_file")}
+        entry["ranks"] = {
+            key: {k: v for k, v in rank.items() if k not in UNSHOWN_RANK_FIELDS}
+            for key, rank in font["ranks"].items()
+        }
         url = font_assets.get(font_id)
         entry["type_own"] = None if url is None else {"url": url, "size": font["font_file"]["size"]}
         out[font_id] = entry
@@ -324,7 +336,6 @@ def details(doc: Mapping[str, Any], *, font_assets: Mapping[str, str]) -> dict[s
         "run_date": doc["run"]["date"],
         "views": doc["views"],
         "bands": doc["bands"],
-        "tiers": doc["tiers"],
         "sources": doc["sources"],
         "systems": doc["systems"],
         "license_classes": doc["license_classes"],
@@ -447,14 +458,14 @@ def _view_columns(fonts: list[Mapping[str, Any]], key: str, bands: list[str]) ->
     why_index = {reason: i for i, reason in enumerate(UNRANKED_LABELS)}
     entries = [font["ranks"].get(key) for font in fonts]
     ranked = [e if e and e["order"] is not None else None for e in entries]
-    tiers = []
+    universe = []
     for entry in entries:
         if entry is None:
-            tiers.append(TIER_OUTSIDE)
+            universe.append(U_OUTSIDE)
         elif entry["order"] is None:
-            tiers.append(TIER_UNRANKED)
+            universe.append(U_UNRANKED)
         else:
-            tiers.append(entry["tier"])
+            universe.append(U_RANKED)
     return {
         "order": score_order(entries),
         "s": [display_score(e["score"]) if e else -1 for e in ranked],
@@ -462,7 +473,7 @@ def _view_columns(fonts: list[Mapping[str, Any]], key: str, bands: list[str]) ->
         "note": VIEW_NOTES.get(key),
         "top": [(e["rank"] or 0) if e else 0 for e in entries],
         "band": [band_index[e["band"]] if e and e["band"] is not None else -1 for e in entries],
-        "tier": "".join(tiers),
+        "u": "".join(universe),
         "why": [why_index[e["unranked"]] if e and e["unranked"] else -1 for e in entries],
     }
 

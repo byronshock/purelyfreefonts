@@ -25,7 +25,7 @@ Every factual claim below was checked against the live site, the catalog or the 
   - The site switch exists only on the lead's parked branch `claude/projects-default`. It isn't on `main`. *(Since 2026-10-20 its site work is on `main` without its rebuild, as the scoring-method port's step 3: config/site.toml sets the order and retires Overall over the committed catalog.)*
   - Wherever this plan says "the default view", it means "Projects: most used".
 - **The shown score** (2026-10-01). It is linear between fixed ends on the new method's latent scale: max(1, ⌈100·clip(η̂/3, 0, 1)⌉). This replaces 100·Φ(z) (`q11_display_linear`, `q30_display_ends`; **The scoring method** in AUTHORITY.md). It settles Q1, and it lands with the port.
-- **No tiers or likely ranges** (2026-09-30, `no_tiers_or_ranges`). Every rank shows just its place, and How we rank loses its tier section. This lands after the freeze.
+- **No tiers or likely ranges** (2026-09-30, `no_tiers_or_ranges`). Every rank shows just its place, and How we rank loses its tier section. This lands after the freeze. *(Built with the scoring-method port, [docs/milestone-method.md](docs/milestone-method.md) step 4.)*
 - **The rename** (2026-10-02):
   - Public copy says "purely free" where it said "truly free".
   - The contact address is admin@purelyfreefonts.com.

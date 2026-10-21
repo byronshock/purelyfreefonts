@@ -753,7 +753,7 @@ def test_list_index_format(tmp_path, catalog, mini_site):
     fonts_ = {f["id"]: f for f in doc["fonts"]}
     assert set(index) == set(LIST_KEYS)
     assert (index["v"], index["commit"], index["run_date"], index["n"]) == (
-        3,
+        4,
         COMMIT,
         "2026-09-25",
         n,
@@ -781,21 +781,22 @@ def test_list_index_format(tmp_path, catalog, mini_site):
     available = [v["key"] for v in doc["views"] if v["available"]]
     assert sorted(index["r"]) == sorted(available)  # canonical JSON sorts keys
     for key, col in index["r"].items():
-        assert len(col["top"]) == len(col["band"]) == len(col["why"]) == len(col["tier"]) == n
+        assert len(col["top"]) == len(col["band"]) == len(col["why"]) == len(col["u"]) == n
+        assert "tier" not in col  # no_tiers_or_ranges
         for i, font_id in enumerate(index["ids"]):
             entry = fonts_[font_id]["ranks"].get(key)
             if entry is None:
-                assert (col["tier"][i], col["top"][i], col["band"][i], col["why"][i]) == (
+                assert (col["u"][i], col["top"][i], col["band"][i], col["why"][i]) == (
                     ".",
                     0,
                     -1,
                     -1,
                 )
             elif entry["unranked"]:
-                assert col["tier"][i] == "-"
+                assert col["u"][i] == "-"
                 assert index["why_labels"][col["why"][i]] == data.UNRANKED_LABELS[entry["unranked"]]
             else:
-                assert col["tier"][i] == entry["tier"]
+                assert col["u"][i] == "+"
                 assert col["top"][i] == (entry["rank"] or 0)
                 assert col["band"][i] == (
                     index["bands"].index(entry["band"]) if entry["band"] else -1
@@ -805,7 +806,7 @@ def test_list_index_format(tmp_path, catalog, mini_site):
             for i in col["order"]
         ]
         assert best == sorted(best)  # by score, best first
-        assert len(col["order"]) == sum(c in "ABC" for c in col["tier"])
+        assert len(col["order"]) == col["u"].count("+")
         assert len(col["s"]) == len(col["held"]) == n
         assert col["note"] == data.VIEW_NOTES.get(key)
         for i, font_id in enumerate(index["ids"]):
@@ -814,7 +815,7 @@ def test_list_index_format(tmp_path, catalog, mini_site):
             score = round(100 * statistics.NormalDist().cdf(entry["score"])) if ranked else -1
             assert col["s"][i] == score
             assert col["held"][i] == ("1" if ranked and entry["gate_held"] else "0")
-    coding = index["r"]["coding"]["tier"]
+    coding = index["r"]["coding"]["u"]
     for i, font_id in enumerate(index["ids"]):
         assert (coding[i] != ".") == fonts_[font_id]["is_monospace"]
 
@@ -905,9 +906,10 @@ def test_details_format(tmp_path, catalog, mini_site):
     page = parse((out / "index.html").read_text(encoding="utf-8"))
     payload = load_json(out, next(a["data-details"] for t, a in page.tags if t == "ol"))
     doc = data.load(catalog[0])
-    for key in ("views", "bands", "tiers", "sources", "systems", "license_classes"):
+    for key in ("views", "bands", "sources", "systems", "license_classes"):
         assert payload[key] == doc[key], key
-    assert payload["v"] == 1
+    assert "tiers" not in payload  # no_tiers_or_ranges
+    assert payload["v"] == 2
     assert payload["run_date"] == doc["run"]["date"]
     assert payload["state_labels"]["censored"] == "below the floor"
     assert payload["why_labels"] == data.UNRANKED_LABELS
@@ -920,6 +922,11 @@ def test_details_format(tmp_path, catalog, mini_site):
         got = dict(payload["fonts"][font["id"]])
         type_own = got.pop("type_own")
         want = {k: v for k, v in font.items() if k not in ("preview", "font_file")}
+        # Each rank's place, without its tier or likely range (no_tiers_or_ranges).
+        want["ranks"] = {
+            key: {k: v for k, v in rank.items() if k not in ("tier", "range")}
+            for key, rank in font["ranks"].items()
+        }
         assert got == want
         if font["font_file"]:
             assert type_own["size"] == font["font_file"]["size"]
