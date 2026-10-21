@@ -8,7 +8,9 @@ Only ``build/stage/`` is read, so a replay gives the same terms:
 - ``records/fot.jsonl``: Fonts Over Time's weekly rows with their categories, methods and
   sites crawled; ``records/npm.jsonl``: each package's first-seen day;
   ``records/google_metadata.jsonl``: the day Google Fonts added each family;
-- ``l3.json``: the families license check L3 failed, which stage "rank" leaves out.
+- ``l3.json``: the families license check L3 failed, which stage "rank" leaves out;
+- ``snapshots.json``: each source's data date, where Google's, npm's and Expo's age shares
+  are measured to (q7), as the 60-day grace is (b8b).
 
 Counts are read and passed on, never logged: some are Google's or Fonts Over Time's (T2, T4).
 """
@@ -61,8 +63,13 @@ def _excluded(paths: Paths) -> frozenset[str]:
     return license_l3.exclusions(paths)
 
 
-def project_data(paths: Paths, run_date: date) -> builders.ProjectData:
-    """Everything the Project and Developers & apps terms read, from ``paths.stage``."""
+AGE_SOURCES = ("gf_stats", "npm")  # the sources whose packages' bulk is scaled by age (q7)
+
+
+def project_data(paths: Paths, run_date: date, *, window_ends: bool = True) -> builders.ProjectData:
+    """Everything the Project and Developers & apps terms read, from ``paths.stage``. With
+    ``window_ends`` false, every age share is measured to the run date, as the reference
+    implementation did (the parity test)."""
     terms = jsonio.load(stageio.stage_path(paths, "terms"))[PROJECT_VIEW]
     excluded = _excluded(paths)
     frames = {source: builders.frame(entries, excluded) for source, entries in terms.items()}
@@ -128,6 +135,11 @@ def project_data(paths: Paths, run_date: date) -> builders.ProjectData:
         for row in _lines(records / "fot.jsonl")
         if row.get("type") == "Observation"
     )
+    data_dates: dict[str, date] = {}
+    if window_ends:
+        for source, snap in stageio.load_stage(paths, "snapshots").items():
+            if source in AGE_SOURCES and snap.data_date is not None:
+                data_dates[source] = snap.data_date
     return builders.ProjectData(
         run_date=run_date,
         frames=frames,
@@ -138,12 +150,15 @@ def project_data(paths: Paths, run_date: date) -> builders.ProjectData:
         npm=packages,
         ecosystems=tuple(ecosystems),
         jsdelivr=tuple(jsdelivr),
+        data_dates=data_dates,
     )
 
 
-def models(paths: Paths, run_date: date) -> dict[str, tuple[measure.Mixed, dict[int, float]]]:
+def models(
+    paths: Paths, run_date: date, *, window_ends: bool = True
+) -> dict[str, tuple[measure.Mixed, dict[int, float]]]:
     """The Project and Developers & apps models of a run, with their fixed parameters."""
-    terms = builders.project_terms(project_data(paths, run_date))
+    terms = builders.project_terms(project_data(paths, run_date, window_ends=window_ends))
     return {
         "project": builders.model(terms, builders.PROJECT_TERMS),
         "dev_apps": builders.model(terms, builders.DEV_APPS_TERMS),

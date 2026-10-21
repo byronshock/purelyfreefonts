@@ -50,7 +50,8 @@ def reference() -> dict[str, Any]:
 def ported(reference: dict[str, Any]) -> dict[str, tuple[measure.Mixed, dict[int, float]]]:
     meta = reference["meta"]
     paths = Paths.for_root(Path(meta["stage_root"]))
-    return modelinputs.models(paths, date.fromisoformat(meta["date"]))
+    # The reference measured every package's age to its run date, not to the source's data date.
+    return modelinputs.models(paths, date.fromisoformat(meta["date"]), window_ends=False)
 
 
 def _differs(name: str, ours: np.ndarray, theirs: np.ndarray) -> str | None:

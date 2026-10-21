@@ -33,7 +33,7 @@ from __future__ import annotations
 import math
 from collections import defaultdict
 from collections.abc import Iterable, Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date, timedelta
 from typing import Any
 
@@ -89,11 +89,13 @@ def frame(
     }
 
 
-def age_share(first_seen: date | None, run_date: date, window_days: int = YEAR_DAYS) -> float:
-    """The share of the window a package has existed, between 0 and 1; 1 when unknown."""
+def age_share(first_seen: date | None, end: date, window_days: int = YEAR_DAYS) -> float:
+    """The share of the window, ending on ``end``, that a package has existed, between 0 and 1;
+    1 when unknown. ``end`` is the source's data date, as for the 60-day grace (b8b): a
+    young package is not marked down for bulk it could not have collected (q7)."""
     if first_seen is None:
         return 1.0
-    return min(max((run_date - first_seen).days / window_days, 0.0), 1.0)
+    return min(max((end - first_seen).days / window_days, 0.0), 1.0)
 
 
 def month_weeks(rows: Sequence[FotRow]) -> list[str]:
@@ -251,21 +253,28 @@ class ProjectData:
     npm: Mapping[str, tuple[tuple[str, str, float, date | None], ...]]  # source -> packages
     ecosystems: tuple[tuple[str, str, float, date | None], ...]
     jsdelivr: tuple[tuple[str, str, float, date | None], ...]
+    # source -> its data date, where each package's age share is measured to (q7); a source
+    # missing here is measured to the run date
+    data_dates: Mapping[str, date] = field(default_factory=dict)
 
 
 def project_terms(data: ProjectData) -> list[measure.CountTerm]:
     """The eight Project terms, in the reference's order."""
     f, day = data.frames, data.run_date
+    google_end = data.data_dates.get("gf_stats", day)
+    npm_end = data.data_dates.get("npm", day)
     return [
         *fot_terms(data.fot, data.fot_links, list(f["fot"])),
         almanac_term(f["almanac"]),
-        google_term(data.google, data.google_added, list(f["google"]), day),
-        traffic_term(NPM_FONTSOURCE, data.npm["npm_fontsource"], list(f["npm_fontsource"]), day),
+        google_term(data.google, data.google_added, list(f["google"]), google_end),
+        traffic_term(
+            NPM_FONTSOURCE, data.npm["npm_fontsource"], list(f["npm_fontsource"]), npm_end
+        ),
         traffic_term(
             ECOSYSTEMS, data.ecosystems, list(f["ecosystems"]), day, age=False, dist="negbin"
         ),
         traffic_term(JSDELIVR, data.jsdelivr, list(f["jsdelivr"]), day, age=False, drop_zero=True),
-        traffic_term(EXPO, data.npm["npm_expo"], list(f["npm_expo"]), day),
+        traffic_term(EXPO, data.npm["npm_expo"], list(f["npm_expo"]), npm_end),
     ]
 
 
