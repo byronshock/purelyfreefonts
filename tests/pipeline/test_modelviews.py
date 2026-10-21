@@ -98,7 +98,8 @@ def test_the_engine_orders_gates_and_bands_the_model_view(model) -> None:
 
 def test_equal_rounded_scores_order_by_sd_then_name() -> None:
     def entry(score: float, sd: float) -> modelviews.ModelEntry:
-        return modelviews.ModelEntry(score, sd, score - 1, score + 1, 2, ("a", "b"), {}, {}, ())
+        z = {"ecosystems": score, "npm_fontsource": score}
+        return modelviews.ModelEntry(score, sd, score - 1, score + 1, 2, ("a", "b"), z, {}, ())
 
     rows = {
         "b": entry(1.0000001, 0.2),
@@ -108,6 +109,26 @@ def test_equal_rounded_scores_order_by_sd_then_name() -> None:
     }
     places = modelviews.survey_scores("dev_apps", rows, {f: f for f in rows}, RANKING).placements
     assert sorted(places, key=lambda f: places[f].order) == ["d", "c", "a", "b"]
+
+
+def test_a_font_with_only_fonts_over_time_terms_is_not_ranked() -> None:
+    """fot_only_needs_another_source (2026-10-20): a font is ranked only with a term from a
+    source other than Fonts Over Time, an interval included; one with only Fonts Over Time's
+    terms has neither a place nor a score."""
+
+    def entry(score: float, *sources: str) -> modelviews.ModelEntry:
+        z = dict.fromkeys(sources, score)
+        return modelviews.ModelEntry(score, 0.2, score - 1, score + 1, 2, ("a", "b"), z, {}, ())
+
+    rows = {
+        "fot-only": entry(3.0, "fot"),
+        "fot-and-almanac": entry(2.0, "fot", "almanac"),  # the Almanac's below-list interval
+        "npm": entry(1.0, "npm_fontsource"),
+    }
+    assert [modelviews.rankable(e) for e in rows.values()] == [False, True, True]
+    scores = modelviews.survey_scores("project", rows, {f: f for f in rows}, RANKING)
+    assert set(scores.placements) == set(scores.fused) == {"fot-and-almanac", "npm"}
+    assert scores.placements["fot-and-almanac"].order == 1
 
 
 def test_a_quantile_range_is_the_rank_at_the_font_s_own_quantiles() -> None:

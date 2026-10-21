@@ -43,6 +43,10 @@ How each check reads the run (``CHECKS``, in order; ``docs/catalog-schema.md``):
   ``modelviews``) passes ``MixedFit.problems``, and no term's monotonicity scan finds a
   higher count lowering the score (scoring plan §8.5); the model views are left out of
   ``higher_count_lower_rank``, which is the engine's.
+- ``fot_only_ranked``: no model view, nor overall standing in for one, places or scores a
+  font whose only model terms are Fonts Over Time's, in stage "rank"'s files or in
+  ``catalog.json`` (owner ruling of 2026-10-20, fot_only_needs_another_source): its score
+  would be the model's estimate from Fonts Over Time alone, which T4 withholds.
 - ``higher_count_lower_rank``: among fonts with the same terms (sources and
   weight factors) in a view and no guard event, one whose every value is at
   least another's, and one higher, never scores lower. A font whose Fonts Over
@@ -651,6 +655,37 @@ def check_model_fit(run: Run) -> Iterator[Failure]:
             yield Failure("model_fit", f"{key}: {problem}")
 
 
+def check_fot_only(run: Run) -> Iterator[Failure]:
+    """No model view ranks or scores a font on Fonts Over Time's terms alone (owner ruling
+    of 2026-10-20, fot_only_needs_another_source; ``modelviews.rankable``): neither stage
+    "rank"'s placements and scores, nor the catalog's rank entries of the model views and
+    of overall when it stands in for one. A font with no model entry is held to the same."""
+    from tff_catalog.modelviews import rankable
+
+    cfg, inputs = run.cfg, run.inputs
+    keys = {k: export.stand_in(cfg, k) for k in export.RANK_KEYS}
+    keys = {k: model for k, model in keys.items() if model in cfg.ranking.model.views}
+
+    def alone(key: str, fid: str) -> bool:
+        entry = inputs.models.get(keys[key], {}).get(fid)
+        return entry is None or not rankable(entry)
+
+    found: set[tuple[str, str]] = set()
+    for key in sorted(keys):
+        scores = inputs.scores.get(key)
+        placed = set(inputs.ranks.get(key, {})) | set(scores.fused if scores else ())
+        found |= {(key, fid) for fid in placed if alone(key, fid)}
+    for font in run.doc(export.CATALOG_FILE)["fonts"]:
+        for key, entry in font["ranks"].items():
+            scored = entry["score"] is not None or entry["order"] is not None
+            if key in keys and scored and alone(key, font["id"]):
+                found.add((key, font["id"]))
+    for key, fid in sorted(found):
+        yield Failure(
+            "fot_only_ranked", f"{key}: ranked or scored on Fonts Over Time's terms alone", fid
+        )
+
+
 def check_model_monotone(run: Run) -> Iterator[Failure]:
     """A higher count never lowers a model view's score: the monotonicity scan of each term
     (a font with that term alone, across its counts) finds no fall (scoring plan §8.5)."""
@@ -671,6 +706,7 @@ CHECKS: tuple[tuple[str, Check], ...] = (
     ("higher_count_lower_rank", check_monotone),
     ("model_fit", check_model_fit),
     ("model_monotone", check_model_monotone),
+    ("fot_only_ranked", check_fot_only),
     ("desktop_views_differ", check_desktop_views),
     ("abstention_leak", check_abstention_leak),
     ("raw_value_published", check_raw_values),

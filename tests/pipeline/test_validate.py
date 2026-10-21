@@ -18,6 +18,8 @@ from tests.pipeline.test_export import (
     PREVIEWS,
     fixed_commit,  # noqa: F401 (an autouse fixture)
     make_build,
+    model_build,
+    npm_registry,
     run_all,
 )
 
@@ -666,6 +668,46 @@ def test_an_abstaining_source_carries_no_overall_weight(ctx: StageContext) -> No
     beta["sources"]["arch"]["weight_used"] = 0.1
     jsonio.dump(doc, path)
     assert ids(checks(ctx)["abstention_leak"]) == {"beta-mono"}
+
+
+# --- the model views ------------------------------------------------------------------------------
+
+
+@pytest.fixture
+def model_ctx(tmp_path: Path) -> StageContext:
+    """A clean build with Projects on the model (``test_export.model_build``)."""
+    extra = {"ecosystems": {"alpha-sans": npm_registry(500), "gamma-serif": npm_registry(50)}}
+    context, _ = model_build(tmp_path, extra)
+    run_all(context)
+    return context
+
+
+@pytest.mark.model_config
+def test_a_clean_model_build_passes_every_check(model_ctx: StageContext) -> None:
+    assert [str(f) for f in validate.hard_checks(model_ctx)] == []
+    assert [str(f) for f in validate.hard_checks(model_ctx, validate.COMMITTED_CHECKS)] == []
+
+
+@pytest.mark.model_config
+def test_a_font_ranked_on_fonts_over_time_alone_fails(model_ctx: StageContext) -> None:
+    """fot_only_needs_another_source: stage "rank" placed and scored kappa-sans, and the
+    catalog shows its score, though its only model terms are Fonts Over Time's."""
+    from tff_catalog import modelviews
+
+    def only_fot(models: dict[str, Any]) -> None:
+        row = models["project"]["kappa-sans"]
+        models["project"]["kappa-sans"] = dataclasses.replace(
+            row, z={"fot": row.z["fot"]}, info={"fot": 1.0}
+        )
+
+    edit_stage(model_ctx, "model", only_fot)
+    rows = stageio.load_stage(model_ctx.paths, "model")["project"]
+    assert not modelviews.rankable(rows["kappa-sans"])
+    found = checks(model_ctx)["fot_only_ranked"]
+    assert {(f.family_id, f.message.split(":")[0]) for f in found} == {
+        ("kappa-sans", "overall"),
+        ("kappa-sans", "project"),
+    }
 
 
 # --- the real engine --------------------------------------------------------------------------------

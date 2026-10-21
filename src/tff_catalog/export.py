@@ -74,7 +74,10 @@ How the per-font fields are made (``docs/catalog-schema.md`` says it for readers
   included (owner ruling of 2026-10-01, q18a_state_observed); its ``z`` is the posterior
   mean from that source's terms alone, but Fonts Over Time keeps its rank-based z (q18b);
   and its ``weight_used`` is its share of the font's posterior expected information, null
-  for Google and Fonts Over Time, whose parameters are private (q16_weight_used).
+  for Google and Fonts Over Time, whose parameters are private (q16_weight_used). A font
+  whose only model terms are Fonts Over Time's is unranked there, with no score, and
+  its reason is ``no_evidence`` (owner ruling of 2026-10-20,
+  fot_only_needs_another_source; ``CatalogBuilder.reasons``).
 - **Sources listed** are the enabled engine sources, less any the parse stage
   dropped (no snapshot inside the stale window).
 - **The Nerd Font link** (``links.nerd``) is stage "links"' choice, except that a link
@@ -108,7 +111,7 @@ from tff_catalog import (
 from tff_catalog.config_model import OS_FAMILIES
 from tff_catalog.config_model import RANK_KEYS as _CONFIG_RANK_KEYS
 from tff_catalog.keys import match_key
-from tff_catalog.modelviews import FOT_SOURCE, PRIVATE_SHARES
+from tff_catalog.modelviews import FOT_SOURCE, PRIVATE_SHARES, rankable
 from tff_catalog.records import SourceKey
 
 if TYPE_CHECKING:
@@ -834,7 +837,11 @@ class CatalogBuilder:
     @cached_property
     def reasons(self) -> dict[str, dict[str, str]]:
         """Stage "rank"'s reason for each catalog font without a place, by rank key
-        (``surveys.unranked``; Rising is not among them)."""
+        (``surveys.unranked``; Rising is not among them). In a model view, and in overall
+        when it stands in for one, a font the model has terms for but leaves unranked
+        because they are all Fonts Over Time's is ``no_evidence``, even when another
+        source's term is too new (owner ruling of 2026-10-20,
+        fot_only_needs_another_source)."""
         from tff_catalog.surveys import unranked
 
         facts = self.inputs.facts
@@ -846,7 +853,16 @@ class CatalogBuilder:
             ]
             for key in self.views
         }
-        return unranked(self.inputs.terms, self.inputs.scores, self.cfg.ranking, listed)
+        out = unranked(self.inputs.terms, self.inputs.scores, self.cfg.ranking, listed)
+        for key, reasons in out.items():
+            model = stand_in(self.cfg, key)
+            if model not in self.cfg.ranking.model.views:
+                continue
+            rows = self.inputs.models.get(model, {})
+            for fid in reasons:
+                if fid in rows and not rankable(rows[fid]):
+                    reasons[fid] = "no_evidence"
+        return out
 
     # -- the document --
 
