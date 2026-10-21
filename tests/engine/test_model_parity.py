@@ -108,6 +108,7 @@ def test_at_the_reference_parameters_the_scores_agree(reference, ported, view):
 
 
 @pytest.mark.slow
+@pytest.mark.timeout(3600)  # a full refit on the real terms: minutes, more under load
 @pytest.mark.skipif(not os.environ.get("TFF_PARITY_REFIT"), reason="TFF_PARITY_REFIT=1 refits")
 @pytest.mark.parametrize("view", VIEWS)
 def test_a_refit_lands_on_the_reference(reference, ported, view):
