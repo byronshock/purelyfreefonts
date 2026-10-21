@@ -76,9 +76,13 @@ How the per-font fields are made (``docs/catalog-schema.md`` says it for readers
   and its ``weight_used`` is its share of the information from the font's open sources,
   every source but Google and Fonts Over Time, so a font's open shares add up to 1 and
   leave no remainder that gives back a private one; Google's and Fonts Over Time's stay
-  null (owner ruling of 2026-10-20, q16_open_source_shares, amending q16_weight_used). A font
-  whose only model terms are Fonts Over Time's is unranked there, with no score, and
-  its reason is ``no_evidence`` (owner ruling of 2026-10-20,
+  null (owner ruling of 2026-10-20, q16_open_source_shares, amending q16_weight_used). A
+  project source that gives the font no model term is ``too_new`` if the engine says so
+  and otherwise ``not_covered``, with the engine's reason or, for a counted engine term
+  the model leaves out, ``outside_frame``, and no rank, z, weight or value: a jsDelivr
+  family with no hits (q29), say, keeps a counted engine term but has none in the model.
+  A font whose only model terms are Fonts Over Time's is unranked there, with no score,
+  and its reason is ``no_evidence`` (owner ruling of 2026-10-20,
   fot_only_needs_another_source; ``CatalogBuilder.reasons``).
 - **Sources listed** are the enabled engine sources, less any the parse stage
   dropped (no snapshot inside the stale window).
@@ -1077,18 +1081,17 @@ class CatalogBuilder:
     def font_source(self, s: str, fid: str, keys: list[str]) -> dict[str, Any]:
         src, view = self.src[s], self.base[s]
         term = view.terms.get(fid)
-        state, reason = state_reason(term, src)
         shown = publish_rank(self.cfg, s)
-        z, weight = view.z.get(fid), self.weight_used(s, fid)
-        modelled = self.model_entry(src, fid)
-        if modelled is not None and s in modelled.z:
-            state, reason = "observed", None  # q18a: every model term, intervals included
-            z = view.z.get(fid) if s == FOT_SOURCE else modelled.z[s]  # q18b; T4 for FoT
-            weight = open_share(modelled, s)  # q16_open_source_shares
+        if self.modelled(src):
+            state, reason, rank, z, weight = self.model_source(s, fid, term)
+        else:
+            state, reason = state_reason(term, src)
+            rank = view.ranks.get(fid) if state == "observed" else None
+            z, weight = view.z.get(fid), self.weight_used(s, fid)
         entry: dict[str, Any] = {
             "state": state,
             "reason": reason,
-            "rank_in_source": view.ranks.get(fid) if shown and state == "observed" else None,
+            "rank_in_source": rank if shown else None,
             "z": num(z) if shown and state in COUNTED and z is not None else None,
             "weight_used": weight,
             "abstains_in": [k for k in keys if self.abstains(s, fid, k)],
@@ -1097,12 +1100,35 @@ class CatalogBuilder:
             entry["value"] = num(term.value)
         return entry
 
+    def model_source(
+        self, s: str, fid: str, term: Term | None
+    ) -> tuple[str, str | None, int | None, float | None, float | None]:
+        """(state, reason, rank_in_source, z, weight_used) of a source whose survey view is
+        a model view (module docstring). With a model term: observed (q18a), its rank in the
+        source, its own z (q18b; Fonts Over Time's rank-based, T4) and its open share
+        (``open_share``, q16_open_source_shares). Without one: too new or not covered, with
+        nothing else (q29; methodology §7)."""
+        src, view = self.src[s], self.base[s]
+        modelled = self.model_entry(src, fid)
+        if modelled is None or s not in modelled.z:
+            if term is not None and term.state == "too_new":
+                return "too_new", None, None, None, None
+            state, reason = state_reason(term, src)
+            if state != "not_covered":
+                reason = "outside_frame"  # a counted engine term the model leaves out
+            return "not_covered", reason, None, None, None
+        z = view.z.get(fid) if s == FOT_SOURCE else modelled.z[s]
+        return "observed", None, view.ranks.get(fid), z, open_share(modelled, s)
+
+    def modelled(self, src: SourceBase) -> bool:
+        """Whether the source's survey view is a model view (``ranking.toml [model] views``)."""
+        return survey_view(src) in self.cfg.ranking.model.views
+
     def model_entry(self, src: SourceBase, fid: str) -> ModelEntry | None:
         """The font's entry in its source's survey view when that view is a model view."""
-        key = survey_view(src)
-        if key not in self.cfg.ranking.model.views:
+        if not self.modelled(src):
             return None
-        return self.inputs.models.get(key, {}).get(fid)
+        return self.inputs.models.get(survey_view(src), {}).get(fid)
 
     def weight_used(self, s: str, fid: str) -> float | None:
         """v_s = M_g·w_s·factor·guard / W_g in the overall rank; None without a term there."""

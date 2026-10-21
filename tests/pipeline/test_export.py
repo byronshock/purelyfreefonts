@@ -818,6 +818,38 @@ def test_a_model_view_publishes_shares_of_the_open_sources_only(tmp_path: Path) 
 
 
 @pytest.mark.model_config
+def test_a_model_source_without_a_model_term_is_not_covered(tmp_path: Path) -> None:
+    """q29 and methodology §7: a jsDelivr family with no hits keeps a counted engine term but
+    has no model term, so it is not covered, with no rank, z, weight or value; a source the
+    engine finds too new stays too new."""
+    zero = Term(0.0, "censored", "jsdelivr", "below_floor")
+    extra = {"jsdelivr": {"alpha-sans": Term(1e6, "observed", "jsdelivr"), "beta-mono": zero}}
+    ctx, rows = model_build(tmp_path, extra, dropped=frozenset({("jsdelivr", "beta-mono")}))
+    catalog = fonts(run_all(ctx)[export.CATALOG_FILE])
+    beta = catalog["beta-mono"]["sources"]
+    assert "jsdelivr" not in rows["beta-mono"].z
+    assert beta["jsdelivr"] == {
+        "state": "not_covered",
+        "reason": "outside_frame",
+        "rank_in_source": None,
+        "z": None,
+        "weight_used": None,
+        "abstains_in": [],
+    }
+    assert beta["npm_fontsource"]["weight_used"] == 1.0  # the share among its model terms
+    assert catalog["alpha-sans"]["sources"]["jsdelivr"]["state"] == "observed"
+    delta = catalog["delta-display"]["sources"]["google"]  # every term too new
+    assert delta == {
+        "state": "too_new",
+        "reason": None,
+        "rank_in_source": None,
+        "z": None,
+        "weight_used": None,
+        "abstains_in": [],
+    }
+
+
+@pytest.mark.model_config
 def test_a_font_with_only_fonts_over_time_terms_is_unranked_with_no_score(tmp_path: Path) -> None:
     """fot_only_needs_another_source (2026-10-20): a font whose only model terms are Fonts
     Over Time's has no place and no score in Projects or overall, and its reason is
