@@ -89,3 +89,9 @@ Not needed for this checklist. It needs months on the held fit, so it comes afte
 - [ ] Each run also fits its model views afresh and keeps that fit in the private store, beside the held one, so a replay can repeat the flag.
 - [ ] Calibrate the flag's alarm levels against a null that allows for the model's misfit (a sandwich covariance, or a bootstrap over fonts). The first levels would fire on the misfit alone.
 - [ ] Then turn it on as a review flag: the order under the fresh fit against the order under the held one. An early refit stays an owner ruling.
+
+### Later: from the port's adversarial review (2026-10-20)
+None of these changes October's scores. Each is fixed before it can.
+- [ ] Bundle packages in the model's terms: a bundle package counts as half a package with half its count, in every source (`de4_bundle_credit_half`). The model reads only mapped rows, which carry no bundle rows. Today no bundle row reaches a Projects frame, so nothing is affected.
+- [ ] An ecosyste.ms package that ecosyste.ms doesn't know reads as 0 dependents with a full bulk. Settle whether that is evidence or no coverage (`q3_coverage_mar`), before a known font hits it. In October it touched 11 fonts, none in the catalog.
+- [ ] The refresh's publish job should wait for the store push when the store bundle carries a model fit, so a pull request never names a fit the store lacks.
