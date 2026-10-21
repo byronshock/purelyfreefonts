@@ -57,6 +57,11 @@ on:
         required: false
         default: ""
         type: string
+      write_fit:
+        description: "Fit the model and keep the fit in the store when none is stored for the date: the switch (2026-10-17) and owner-ruled refits only"
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -266,11 +271,18 @@ jobs:
           RUN_DATE: ${{ steps.prep.outputs.run_date }}
           # The GitHub API budget of the collectors (1,000 requests an hour); read only.
           GITHUB_TOKEN: ${{ github.token }}
+          # Only a dispatch that asks for it, never the schedule (q9_theta_cadence).
+          WRITE_FIT: ${{ github.event_name == 'workflow_dispatch' && inputs.write_fit }}
         run: |
-          # --write-fit: with no stored model fit for the date (the held October run's replay,
-          # the switch), fit it and keep it in the store, once (fitstore, q9_theta_cadence);
-          # the offline replay below reads it back.
-          args=(refresh --date "$RUN_DATE" --write-fit)
+          # --write-fit: with no stored model fit for the date, fit it and keep it in the
+          # store, once (fitstore). Only the switch, the replay of the held run of 2026-10-17
+          # (october_replay_is_the_switch), and refits the owner rules ask for it
+          # (q9_theta_cadence); every other run reads the stored fit, and stops without one.
+          # The offline replay below reads it back.
+          args=(refresh --date "$RUN_DATE")
+          if [ "$WRITE_FIT" = true ]; then
+            args+=(--write-fit)
+          fi
           if [ -n "$FROM_SNAPSHOTS" ]; then
             args+=(--from-snapshots "$FROM_SNAPSHOTS")
           else

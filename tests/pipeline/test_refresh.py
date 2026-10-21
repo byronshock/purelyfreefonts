@@ -1057,19 +1057,43 @@ def test_step_place_the_npm_snapshot(tmp_path: Path) -> None:
 
 
 def test_step_refresh(tmp_path: Path) -> None:
-    step = run_step("Refresh", tmp_path / "live")
+    step = run_step("Refresh", tmp_path / "live", WRITE_FIT="false")
     assert step.code == 0, step.out
     # The npm job fetched npm, or failed to: the refresh job never asks npm (npm_own_job).
-    assert step.calls == [
-        f"uv run --locked tff-catalog -v refresh --date {OCT} --write-fit --skip-fetch npm"
-    ]
+    assert step.calls == [f"uv run --locked tff-catalog -v refresh --date {OCT} --skip-fetch npm"]
+    # The switch: a dispatch that asks for a new fit (october_replay_is_the_switch).
     step = run_step(
-        "Refresh", tmp_path / "replay", RUN_DATE=str(S0_DAY), FROM_SNAPSHOTS=str(S0_DAY)
+        "Refresh",
+        tmp_path / "switch",
+        RUN_DATE=str(OCT),
+        FROM_SNAPSHOTS=str(OCT),
+        WRITE_FIT="true",
     )
     assert step.calls == [
-        f"uv run --locked tff-catalog -v refresh --date {S0_DAY} --write-fit "
-        f"--from-snapshots {S0_DAY}"
+        f"uv run --locked tff-catalog -v refresh --date {OCT} --write-fit --from-snapshots {OCT}"
     ]
+    # The schedule has no inputs: the expression gives false, or nothing at all.
+    step = run_step("Refresh", tmp_path / "scheduled", WRITE_FIT="")
+    assert "--write-fit" not in step.calls[0]
+
+
+def test_only_a_dispatch_that_asks_writes_a_fit() -> None:
+    """q9_theta_cadence: the fit is made once and re-estimated only by owner ruling, so the
+    schedule never passes --write-fit; a dispatch does when its write_fit input says so."""
+    doc = _workflow("refresh.yml")
+    on = doc.get("on", doc.get(True))
+    write_fit = on["workflow_dispatch"]["inputs"]["write_fit"]
+    assert (write_fit["type"], write_fit["default"], write_fit["required"]) == (
+        "boolean",
+        False,
+        False,
+    )
+    (step,) = [s for s in doc["jobs"]["refresh"]["steps"] if s.get("name") == "Refresh"]
+    assert step["env"]["WRITE_FIT"] == (
+        "${{ github.event_name == 'workflow_dispatch' && inputs.write_fit }}"
+    )
+    steps = _steps(doc)
+    assert [s.get("name") for s in steps if "--write-fit" in str(s.get("run", ""))] == ["Refresh"]
 
 
 def test_step_replay(tmp_path: Path) -> None:
