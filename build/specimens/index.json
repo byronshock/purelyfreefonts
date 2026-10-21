@@ -216,20 +216,6 @@
     "reason": null,
     "sha256": "a27584d6e74cc9bbc50369338da870bb227ac2a19b81da64589423d618fdf441"
   },
-  "anka-coder": {
-    "flags": [],
-    "key": "d46d4e2a834a3d0b6c55fb602f85091110b6d7b093acb165d65fa1eb97f46067",
-    "path": "specimens/anka-coder.svg",
-    "reason": null,
-    "sha256": "913addcd2c29f39f3452d3802ab6ade4a769afdc4d4411fbcf1fe453773d0e89"
-  },
-  "annotation-mono": {
-    "flags": [],
-    "key": "12dead79409f929ac57a9deac4b0125ebafb16c35cbee497dc7083efcb146106",
-    "path": "specimens/annotation-mono.svg",
-    "reason": null,
-    "sha256": "97ec9b2e240b66510bfe28ca81c771b944d8c1bdabf62b3a5f429d4b33981898"
-  },
   "anonymous-pro": {
     "flags": [],
     "key": "7988acdff4aa9f096f500d3310d05ef3562fec0eb4dd0bab24c322bbece06670",
@@ -250,6 +236,13 @@
     "path": "specimens/antonio.svg",
     "reason": null,
     "sha256": "a0d67ebfaad14c77ea7de6ac5a6d38ea1f905141904906f230cf377eae183df1"
+  },
+  "anuphan": {
+    "flags": [],
+    "key": "14a95bb74a47a7bbbca2bbbe7ba6242ea0549e13e533053371c8f42fe78b0630",
+    "path": "specimens/anuphan.svg",
+    "reason": null,
+    "sha256": "8becbca9bac2857d6598cb410d62f59eeec9170bbf7651a4a5ce47a5282bb4f9"
   },
   "architects-daughter": {
     "flags": [],
@@ -349,13 +342,6 @@
     "reason": null,
     "sha256": "ba1b355394102e9eb3b025f328c4cbcee611220020a78f3d705451371e7b74a0"
   },
-  "awami-nastaliq": {
-    "flags": [],
-    "key": "9f63a51866ffaa97388fc544d29b6e33e06d05515e1c48b3ba621a1ff84e9388",
-    "path": "specimens/awami-nastaliq.svg",
-    "reason": null,
-    "sha256": "4cd1918f5ea6cd3549ff069c288a035f41679dc4a6934a9d40b295f13f85ac6a"
-  },
   "azeret-mono": {
     "flags": [],
     "key": "8e317a27a1bec5c5351e797d26eba2eb000f0f31982899ecadb35abe9d396a18",
@@ -454,12 +440,12 @@
     "reason": null,
     "sha256": "1743e371b4fe3c33459b54d109575bdd0326796f40d44ebfdf1dc12811fb6c54"
   },
-  "big-shoulders-display": {
+  "big-shoulders": {
     "flags": [],
-    "key": "ef46f80e7a372cba224e4309da0f870764c3d9b0fe88f4bdaa11050f7ff04454",
-    "path": "specimens/big-shoulders-display.svg",
+    "key": "c1b10c1dd3c94d79f9540e0c5331421cde9b69b222ae5ba4fc91310191f55b0b",
+    "path": "specimens/big-shoulders.svg",
     "reason": null,
-    "sha256": "504493d6ae8cc4458da013820ba03c0b103fd4dcde9125f243b859f831069ee6"
+    "sha256": "9301641997591b5061016ab5a2fbde9ee2344c064e5a98d674696414503975ea"
   },
   "bitstream-vera-sans-mono": {
     "flags": [],
@@ -516,13 +502,6 @@
     "path": "specimens/bungee.svg",
     "reason": null,
     "sha256": "bd9c32c5bcbbfa623a10faa79b2a941f698521a444dab15e7b3bae3bed7649fc"
-  },
-  "caacupe-one": {
-    "flags": [],
-    "key": "fdcb7aeb73f7e708ce7d931b456cae3c42ec370cc0be1c391b82d0fde92338ed",
-    "path": "specimens/caacupe-one.svg",
-    "reason": null,
-    "sha256": "ed6534668d02d3fdbaa31b661b8d9db9aabdcf70f3af1679b9622c836a509907"
   },
   "cabin": {
     "flags": [],
@@ -659,10 +638,10 @@
   },
   "charter": {
     "flags": [],
-    "key": "639dd200301bd2a6b50d307263eb9285215b1e510def5d4512f4ab8be393f502",
+    "key": "3b93a055d5662b32e3d5b2ec873eddd2b7c2c40cc729116f1db50d7a9411e3b9",
     "path": "specimens/charter.svg",
     "reason": null,
-    "sha256": "4707a68364e7463ec204f718d3010b9151752af804ce2a509794ef1ec7ae5b8c"
+    "sha256": "6cd4b41869b313ff59bc6c9ccbdfe8d36a5bb9ad8ab8efcfe5151be9a3fd9844"
   },
   "chewy": {
     "flags": [],
@@ -699,13 +678,6 @@
     "reason": null,
     "sha256": "b94654680a6c743b2644f73320fcbcc5bc80d2b0206fe55aee613eae1513c4d2"
   },
-  "clear-sans": {
-    "flags": [],
-    "key": "00482ab9a5a41a660096b79b6a4efedd1a335805960143a8c2aa0b3d1f9866fd",
-    "path": "specimens/clear-sans.svg",
-    "reason": null,
-    "sha256": "bbbaa122258a93bba00f1c77b18c8497f5a167034285229ef94d7ea879125a39"
-  },
   "comfortaa": {
     "flags": [],
     "key": "c43f24243aca0b3261a5693728a3a7fb83f26d86e9a577d2d26d6db0b4ef1d91",
@@ -733,13 +705,6 @@
     "path": "specimens/commit-mono.svg",
     "reason": null,
     "sha256": "391c639e695cac54fd3d0e852b377d0b4a8f2ee60cc4d83bc75ce988abebfba2"
-  },
-  "compagnon": {
-    "flags": [],
-    "key": "e7f260e3ee9ae5babd6838fbba5cd5c9e9258cc33f229ec7088cef3048c3a4eb",
-    "path": "specimens/compagnon.svg",
-    "reason": null,
-    "sha256": "7b485ac10e1fe73a2d08248ab65b52d56d96aad2b7da4441fe1702b17ff0a022"
   },
   "cooper-hewitt": {
     "flags": [],
@@ -776,20 +741,6 @@
     "reason": null,
     "sha256": "bcb92e030f256b569d6c5e20940b0984fc7edb39a1e10f3886bce09f5a63d2ab"
   },
-  "cormorant-unicase": {
-    "flags": [],
-    "key": "fbe7be0029a3bbafda8f500c6460ed9ddfe2b7478eca19dd05963320598f9360",
-    "path": "specimens/cormorant-unicase.svg",
-    "reason": null,
-    "sha256": "d9b957042f696f433a86ffdf0719997eda278048265d47eb557ae980678628a7"
-  },
-  "cormorant-upright": {
-    "flags": [],
-    "key": "e056e9178a7585f08935ef969f35779472f141535514530c679236b3206c2079",
-    "path": "specimens/cormorant-upright.svg",
-    "reason": null,
-    "sha256": "c4c309700b85dcaeecdb304055fd3038fe298f22225d0bc8702f1a3aaa6ed7f2"
-  },
   "courgette": {
     "flags": [],
     "key": "0300679893052fa811fd4991d60e78a41c57f307c19c9ff7fe7bb03e0759f207",
@@ -810,13 +761,6 @@
     "path": "specimens/courier-prime-code.svg",
     "reason": null,
     "sha256": "fe26e2c77ee8f1271b7b3f14ce3cb127fc8909e12337566db2f58f717a10f6a0"
-  },
-  "courier-prime-sans": {
-    "flags": [],
-    "key": "8cfc7476d8652b290dfdf7a58a042b09c6c4049c60194d6af722f96a8c20f4bb",
-    "path": "specimens/courier-prime-sans.svg",
-    "reason": null,
-    "sha256": "b4d2e89dd6adf125a9b3bae3007597a445a393a8e7e15e4e21662a1f34856d3b"
   },
   "cousine": {
     "flags": [],
@@ -1049,20 +993,6 @@
     "reason": null,
     "sha256": "9a44ebae107cc627c42fc83bba6aaeaef59e5bbeb22a92b1acb655d10492f10d"
   },
-  "fanwood": {
-    "flags": [],
-    "key": "eef1c3c2abf3561c0b8a3b1d40f7561d1a4f0a2943dcbd4c9f464bdd05957744",
-    "path": "specimens/fanwood.svg",
-    "reason": null,
-    "sha256": "925fb6d53ff3b95686da24c5a10d26705cf94b83e5247d5d71f500410fd1830b"
-  },
-  "fascinate": {
-    "flags": [],
-    "key": "818e15519abd6a99bc15eae677c9789381919801fb09d1095b4e191aeb4dc6e4",
-    "path": "specimens/fascinate.svg",
-    "reason": null,
-    "sha256": "5d2390fffb75213ec3b4ebaf00fbeee08c5e8835c5a451d05b05328b8f7d9e12"
-  },
   "faustina": {
     "flags": [],
     "key": "5223e9fa46896e07d5b1a67c450017409dde32277ad90a0009f700dbffd36a7e",
@@ -1076,13 +1006,6 @@
     "path": "specimens/figtree.svg",
     "reason": null,
     "sha256": "abf010da018cf47680556e83ffa8b5ef6b558bd15d4567f49f650479f94e6dba"
-  },
-  "finlandica-headline": {
-    "flags": [],
-    "key": "d5d4e13292a5233f8fd604c82d44bf246de44c0238d4a171f1f3f7d0c252576e",
-    "path": "specimens/finlandica-headline.svg",
-    "reason": null,
-    "sha256": "a36250913348a7f8653f8066aee44497871237c9f48a08254fb933ae52d38fbd"
   },
   "fira-code": {
     "flags": [],
@@ -1140,13 +1063,6 @@
     "reason": null,
     "sha256": "302e6e158c4fe353418928a86c61cc84070e233d41c0e817b39d6c15e29d0fe6"
   },
-  "francois-one": {
-    "flags": [],
-    "key": "e9a8b518857ba0435c64da09e0777d2c5b59c73e2f504a286a93280f066a85de",
-    "path": "specimens/francois-one.svg",
-    "reason": null,
-    "sha256": "c0ea4400e873dd2271abfd8a1f43ab1803718b1432c083da1a3517e82c89298d"
-  },
   "frank-ruhl-libre": {
     "flags": [],
     "key": "53ff5bc9bf452be53318f6dbacf241e2e33e4b9eb55d45f60df98a8f8d506dd0",
@@ -1189,6 +1105,13 @@
     "reason": null,
     "sha256": "084d822e293d3c2f72db27113641c3b1386ba629944195ad984fbda805bf418e"
   },
+  "fustat": {
+    "flags": [],
+    "key": "8b32cbac6f4dc64a49b6d2f1153abc601de95c5fb0b48f59daa4ff6d861c1863",
+    "path": "specimens/fustat.svg",
+    "reason": null,
+    "sha256": "184112027490c050cde809722fe4cee2d3b937e43c01d948e208538bacad2a27"
+  },
   "gabarito": {
     "flags": [],
     "key": "bcf1f3284794ef0b83a0cdada8beefc4c8f14a81614d8bbfcfe86c235f39cf86",
@@ -1210,26 +1133,12 @@
     "reason": null,
     "sha256": "71f0cbf85f170ed14ce2a34ec46445fc8cb428c84f8cddfc90a5c457b1a42ee2"
   },
-  "geist-pixel": {
-    "flags": [],
-    "key": "10c99dbb9a17f6ad33058ab0b2f740813fa11d7a4eb7dcaefbaac4118e97eca1",
-    "path": "specimens/geist-pixel.svg",
-    "reason": null,
-    "sha256": "942fd14935110b949e08ac9c9e423b5c6d0fb2f4f60baf4b390685a11dfa6ea5"
-  },
   "gelasio": {
     "flags": [],
     "key": "5ca92040d6e3467551ee7ed2c1a89640bd7fba35bb1f05358a4957532c0198e1",
     "path": "specimens/gelasio.svg",
     "reason": null,
     "sha256": "9bba8c6e2b9dad34a5ca209fa55cb96dad7720628352f510e946bb22ea9c2cf3"
-  },
-  "gentium": {
-    "flags": [],
-    "key": "dcd8441d6831f217bc0a87fba5087e7fd319aa8806e6ff96605b51962e2c8b30",
-    "path": "specimens/gentium.svg",
-    "reason": null,
-    "sha256": "784d60355b59865f7b6334b24005573fa5e6eb5682f6f35c54dd2f68d4ecbb56"
   },
   "gentium-plus": {
     "flags": [],
@@ -1258,13 +1167,6 @@
     "path": "specimens/gloria-hallelujah.svg",
     "reason": null,
     "sha256": "b959e58ae3a261a63eda12c1037531277d87d8eb6742fc7994f8888381c6e39a"
-  },
-  "go": {
-    "flags": [],
-    "key": "025c29c4bcd2d0844012793a9aa9ab37818c385a966140b656ddcc5999d0a4cb",
-    "path": "specimens/go.svg",
-    "reason": null,
-    "sha256": "6eb3dfeb7f019b31c50b2c18ccce875685f3114638769021c4d1ac952a9319fb"
   },
   "go-mono": {
     "flags": [],
@@ -1303,17 +1205,10 @@
   },
   "google-sans-flex": {
     "flags": [],
-    "key": "c2bb2d1ffe7946be50ddeafcbb26619775a37aa59d18de3f933779153b711f46",
+    "key": "26512504578321753f78a879b452698124a93f81b51092e4959b8d5e6e237ed7",
     "path": "specimens/google-sans-flex.svg",
     "reason": null,
     "sha256": "c783f4e8ab16c996a313e26f37a855cc9962dd75010398f649864b8a2790a662"
-  },
-  "goudy-bookletter-1911": {
-    "flags": [],
-    "key": "1995f2861568cbf4465c10c9d736cd7a665885a5b18c0b99d7662de641252c13",
-    "path": "specimens/goudy-bookletter-1911.svg",
-    "reason": null,
-    "sha256": "58e708423aeda76fc19a43333083707e514b7937b52ab7d54e064082ee8aa052"
   },
   "grandstander": {
     "flags": [],
@@ -1343,13 +1238,6 @@
     "reason": null,
     "sha256": "a960e10b6ce58966709dd530ab11f1c8aa2d0802c736ab9beacde73ba977a583"
   },
-  "hammersmith-one": {
-    "flags": [],
-    "key": "1ca3d167596cca9a19d3db287d7d4fb04fff2762cde91642166220da298b10c4",
-    "path": "specimens/hammersmith-one.svg",
-    "reason": null,
-    "sha256": "41f2b0b65a74eb41ec742208392d8745b59c3b44ec3c58657efd9877c3e7c8f7"
-  },
   "handlee": {
     "flags": [],
     "key": "9dcd72b3972d08eb8438941c993e2638b6a32afd9c5c52b5447718d2224a1cf0",
@@ -1370,13 +1258,6 @@
     "path": "specimens/hasklig.svg",
     "reason": null,
     "sha256": "11ef4fe5dc14f86abd36509c200369b90b295ade4fbcbbfa3ad5a658eccb4798"
-  },
-  "heavy-data": {
-    "flags": [],
-    "key": "3d550acbb9c25639e7ec54e578ebbb9615d9a965a644ea76216be9ae5b7e5d1a",
-    "path": "specimens/heavy-data.svg",
-    "reason": null,
-    "sha256": "a8d3a4ed5d0c28a7ca88d54e81f823d575b5290e47fd158a17f1a24965ca1d31"
   },
   "heebo": {
     "flags": [],
@@ -1546,20 +1427,6 @@
     "reason": null,
     "sha256": "6508a320bb77457820e69db540e38f4de70ad6f22b7cf69b4873348d028d5dde"
   },
-  "iosevka-charon": {
-    "flags": [],
-    "key": "1d960ae6e2729fa98d857b2d82b832dc31293276ff6e1f95e0fca874fb539e52",
-    "path": "specimens/iosevka-charon.svg",
-    "reason": null,
-    "sha256": "54e9fec2876fef8ef740734841f74546ad84086eb7fd7547f7d1925177403f4a"
-  },
-  "iosevka-charon-mono": {
-    "flags": [],
-    "key": "746e5a143aad681927b86db70ae1572609137a450ea77b6d94e6550679531d47",
-    "path": "specimens/iosevka-charon-mono.svg",
-    "reason": null,
-    "sha256": "1393ef3e401fde58b41e06fa3315f6420d5cf2d5a3f8db225e485f74d8cf1061"
-  },
   "iosevka-curly": {
     "flags": [],
     "key": "daad407f78bbf7bfbce27ed7116adac3e65e3d22991a17ee9598c012e8513544",
@@ -1581,12 +1448,12 @@
     "reason": null,
     "sha256": "e8d762967aae7d4ad6a0c392f7d63c8674d3873cd4d33ce9f40c135290e1fec2"
   },
-  "ioskeley-mono": {
+  "italiana": {
     "flags": [],
-    "key": "e05c8e446ea3ea9d558abe10c248ac84a8373f74a667b11a0b3268edb85417a8",
-    "path": "specimens/ioskeley-mono.svg",
+    "key": "9780cf58b16897e648cc08e04a1ecc9435607bc7d8f048db555c9ca185e66576",
+    "path": "specimens/italiana.svg",
     "reason": null,
-    "sha256": "f5d4546405a816e67da3fab3f5904ac463c4adcd108a3d36beaf389dad56efc9"
+    "sha256": "38b50852a74a2d8cf38ae2d235c36f408da36afee8868296c16e3fab8c7d69f2"
   },
   "itim": {
     "flags": [],
@@ -1688,10 +1555,10 @@
   },
   "kode-mono": {
     "flags": [],
-    "key": "4d0f70077fc27d8bf216663cfc701a8281baaf3d17114ac801c92cb8612e973b",
+    "key": "46abecc6a0ca9b51af482ab0a0ed258904f5eb1e6c811aa736e6734eb61dea17",
     "path": "specimens/kode-mono.svg",
     "reason": null,
-    "sha256": "44c644e62009db77fb15bc637db88fa9ec9782566540ad7f783748184abcdd25"
+    "sha256": "3f9ddeca5ba80d1379d1ec06366473eedffb97f5fbd509fb06f47b91953b4083"
   },
   "kumbh-sans": {
     "flags": [],
@@ -1706,13 +1573,6 @@
     "path": "specimens/la-belle-aurore.svg",
     "reason": null,
     "sha256": "e4b205639e6156d93926e1c93f96bb8c147edec5f3b9e63676393206ba471d18"
-  },
-  "lateef": {
-    "flags": [],
-    "key": "5a26b58ccbd8ccc634e348b8387b48e03b26a4348b2f3b5580cbc4143153d8f6",
-    "path": "specimens/lateef.svg",
-    "reason": null,
-    "sha256": "5e38e2d257f7d3dea88200e476f89ff25f62b711d61c61c60cf5c53c8a766438"
   },
   "latin-modern": {
     "flags": [],
@@ -1735,13 +1595,6 @@
     "reason": null,
     "sha256": "f3aa04bb68d6c0f4f195c69d45f295433e27197a41cfe64975fc9f8fb60b8ee5"
   },
-  "league-mono": {
-    "flags": [],
-    "key": "aab05c834bb0ecd5950a53859aa06281452c780b4a31f94d40cc52298a7b84d6",
-    "path": "specimens/league-mono.svg",
-    "reason": null,
-    "sha256": "175020e91be95bf900079696e74d8c2569b906192b0814f9ba4f1a030b4a4c89"
-  },
   "league-spartan": {
     "flags": [],
     "key": "ac7e7dc651cfc58e894a81a18db6d07fc2be3386110314353791c3afebdd6a2e",
@@ -1756,13 +1609,6 @@
     "reason": null,
     "sha256": "b33d0094a6a2276c6c5515c096639ff8c774d31495ee6e7382d2fe13ff123f7f"
   },
-  "lemonada": {
-    "flags": [],
-    "key": "21ff9e553dd0e2c565c6ec2a2cf97f1bba12369162e644ec160739f2dbcca4aa",
-    "path": "specimens/lemonada.svg",
-    "reason": null,
-    "sha256": "8619520bf2ad754c293d654f0681646f92c4e351161de86866eddd019b7ee057"
-  },
   "lexend": {
     "flags": [],
     "key": "159ca13f4c6c6d8bfcf7262a4a5e1b101030d8726e9c385764476efe3efce374",
@@ -1776,27 +1622,6 @@
     "path": "specimens/lexend-deca.svg",
     "reason": null,
     "sha256": "1bf85ded68eb73519571b18bc30e1aaccb0372256a66c9c2e0c40fe9d6ad0771"
-  },
-  "lexend-exa": {
-    "flags": [],
-    "key": "5d7a60224622c78ce7bcbecc54a6495355067a52fb7fbad832726b02a5dc17c4",
-    "path": "specimens/lexend-exa.svg",
-    "reason": null,
-    "sha256": "24f73979e64bc6df11e87754907babf28cb4c4afaf9d361e1accec6529235da8"
-  },
-  "lexend-giga": {
-    "flags": [],
-    "key": "cc2ac6ad733e7f2c4c91f4eafbf65849d7ff51a7889a62388b814b911b63167b",
-    "path": "specimens/lexend-giga.svg",
-    "reason": null,
-    "sha256": "9211e8cc4933ead9e196c40bd4b9a52654bc1142e3b3db94603367c30ac38a8f"
-  },
-  "lexend-zetta": {
-    "flags": [],
-    "key": "85ddd2f526f39d5c65d1bd124517ff3fe2596bc1fc36bfe61d9162925744eaa7",
-    "path": "specimens/lexend-zetta.svg",
-    "reason": null,
-    "sha256": "b55cf44c1ebedf4daffa92eda89d1c529eef0e1397752dd7dccb07fd10608edb"
   },
   "liberation-mono": {
     "flags": [],
@@ -1860,6 +1685,13 @@
     "path": "specimens/libre-baskerville.svg",
     "reason": null,
     "sha256": "0313acf897330f9438944ec8eac5bff276692e6239bce839812b01d9b95dae90"
+  },
+  "libre-bodoni": {
+    "flags": [],
+    "key": "eae33e7c83f5672ae0b56b286c011b962220681ee9219eba458a80162b6570b2",
+    "path": "specimens/libre-bodoni.svg",
+    "reason": null,
+    "sha256": "f8d118b2f88ac2bf9f19750050ae58e2958ad14f7ed728cce34e26678e9cb392"
   },
   "libre-caslon-display": {
     "flags": [],
@@ -1945,13 +1777,6 @@
     "reason": null,
     "sha256": "bbe1c03d9d7440f554d4e630e041aea2f5d754810ca161d12319dfd3d5927484"
   },
-  "m-plus-code-latin": {
-    "flags": [],
-    "key": "0f5284663f55f4bf75b67e076ae4e398a102f527141775282c3c39b157e1460c",
-    "path": "specimens/m-plus-code-latin.svg",
-    "reason": null,
-    "sha256": "8508f1e81ec83e015d5b187d9b2031612356dc18260502ffc52cd95db8bf9603"
-  },
   "manrope": {
     "flags": [],
     "key": "1e17ea3e8260e9bb47024c4c7830004214b968bd4d75b422b94ee0a1054a225e",
@@ -2036,27 +1861,6 @@
     "reason": null,
     "sha256": "de82b1202f1fcd0cd88bb3662b554342a1bdd104add33bcb96e65b6419961408"
   },
-  "microsoft-selawik": {
-    "flags": [],
-    "key": "f42ff288ac63fb5738485be1ae8b9e27490db2ff9f3a8c0f187b02b4a043876d",
-    "path": "specimens/microsoft-selawik.svg",
-    "reason": null,
-    "sha256": "1f464740bf555134b3db343b10b4476e90ed9b6dbf4450cbd4657eeee3f00434"
-  },
-  "miracode": {
-    "flags": [],
-    "key": "471e830b2b5c6a34ea6499f1da44763b40e914f47a4af016b7cd0abdbea41b0f",
-    "path": "specimens/miracode.svg",
-    "reason": null,
-    "sha256": "bd266fdcbc1cd6903012f5e5d738acd9ccd4134743b1d14013a62bda9a4db246"
-  },
-  "molengo": {
-    "flags": [],
-    "key": "8958bc4205afbd442dfcb0342a5c8cb92be1878527701e45836bcada47e676e6",
-    "path": "specimens/molengo.svg",
-    "reason": null,
-    "sha256": "fc6b77bcd9171665c6b16231696383218a53e3195e5417b78327dc3f34131446"
-  },
   "mona-sans": {
     "flags": [],
     "key": "c19ed6b68d9941f5df93eebce3c8987241175e9ce86d0a762d53b21c04485d2f",
@@ -2099,13 +1903,6 @@
     "reason": null,
     "sha256": "250129031eb2bf93f73b1e5e779fe83d73cee9074df6b50ce74759ebe13289e3"
   },
-  "monocraft": {
-    "flags": [],
-    "key": "6ace53a8411b3d9da8d155001e4ca5c903462971f09520a7056d815f781aa411",
-    "path": "specimens/monocraft.svg",
-    "reason": null,
-    "sha256": "c0b4dcec45a1bc0077555660d70cafb331945559187f57f7836502e1ca09be0d"
-  },
   "monofur": {
     "flags": [],
     "key": "0c93aa68626472662c0dc9746096ff6ec8f32067cd3336cbe4879f56f919eb49",
@@ -2119,13 +1916,6 @@
     "path": "specimens/monoid.svg",
     "reason": null,
     "sha256": "9fb7627b36b858f2cd1a3b14099e11a55256bac4e1485d85975b733ec2a34044"
-  },
-  "monoisome": {
-    "flags": [],
-    "key": "8e85266bf0656d51d2c15ae2e99190bf1ae35e956ff87ba85b68e24b4d6d6635",
-    "path": "specimens/monoisome.svg",
-    "reason": null,
-    "sha256": "b77abe46e7703f45010901c5e40efbcceececf9645247a7e5da82608064dbbe9"
   },
   "mononoki": {
     "flags": [],
@@ -2182,13 +1972,6 @@
     "path": "specimens/museomoderno.svg",
     "reason": null,
     "sha256": "52ff2faf67486cdcfe2513487420573fe6a5a22d0be6f2116815b52df632c3f2"
-  },
-  "myna": {
-    "flags": [],
-    "key": "7a71e5f6ae949a116a8602ec94c5468d8a8e68c0321aae58899542e0de454b2c",
-    "path": "specimens/myna.svg",
-    "reason": null,
-    "sha256": "6fd0f31f638c43a147bf0d38d0a021ccf711055f6a6b5f56aa54010057c265c1"
   },
   "newsreader": {
     "flags": [],
@@ -2330,13 +2113,6 @@
     "reason": null,
     "sha256": "bdaefd93a10e99b450bf2c46ab2197ffce1453e87a31a7a6b0382d127f1c0371"
   },
-  "original-surfer": {
-    "flags": [],
-    "key": "981e3e5051ebed0df17cffa1d7777f6a52e0d229cd5c91a840f8d3684661c0bf",
-    "path": "specimens/original-surfer.svg",
-    "reason": null,
-    "sha256": "b4ddfbcca65c7bdefd100f05940048a5a404b6287bfa6ec03ff30ed7c81d7167"
-  },
   "oswald": {
     "flags": [],
     "key": "12137c722fcc89fed3f5b651b332f4c3e6b89dd01d9aaa768f4a0a1c998441c7",
@@ -2427,6 +2203,13 @@
     "path": "specimens/patrick-hand.svg",
     "reason": null,
     "sha256": "e5edfb85d58a08fea647d4b5581f98058bc81ef2a8443c7783e71e3e84381c40"
+  },
+  "patua-one": {
+    "flags": [],
+    "key": "a6766e3187ff2b6eb641b17aa876049f7e041435367b76fc82fcaa2b5050798b",
+    "path": "specimens/patua-one.svg",
+    "reason": null,
+    "sha256": "9b6f8c809c6832b2645686bc407c2084db76850a966f6d4bc1ae571e21f7afd5"
   },
   "permanent-marker": {
     "flags": [],
@@ -2519,13 +2302,6 @@
     "reason": null,
     "sha256": "5ba25b4e0dc02db9c08370348594bc445ba00c936f4d407ddfaeed38ff4965ec"
   },
-  "pretendard-std": {
-    "flags": [],
-    "key": "f820d0301892c8301379d6e7b2d027babf2df909d93f3ca3e24e8acf0ac8244a",
-    "path": "specimens/pretendard-std.svg",
-    "reason": null,
-    "sha256": "047784b11c012a4935c60a496cd0f9035dea0a82879b468aade933ca97401aa9"
-  },
   "profont": {
     "flags": [],
     "key": "b9b24493547437cb5e235243886cdfce2717d075b5b552b34bf97b13de28f973",
@@ -2539,13 +2315,6 @@
     "path": "specimens/prompt.svg",
     "reason": null,
     "sha256": "7dece77b2b75eb7ec6b2c30653531fda1fa7d32c614bcc9bca8e430a08a02370"
-  },
-  "psudofont-liga-mono": {
-    "flags": [],
-    "key": "fb6ecd02f9e0bc449a4bca79fab1e569da04aa4bbf4c9c748d3dcb793f8953bd",
-    "path": "specimens/psudofont-liga-mono.svg",
-    "reason": null,
-    "sha256": "02048dfbc5fb6db44e5c9d3af75b35a2396fa5f89eccc464536312bbc2db7cf0"
   },
   "pt-mono": {
     "flags": [],
@@ -2582,13 +2351,6 @@
     "reason": null,
     "sha256": "3c16607c1a6ce2bb80afa3f379bc3f8ab1ff1d34082aaf821d974bce5d08a271"
   },
-  "pt-serif-caption": {
-    "flags": [],
-    "key": "18167978ee3ee32ddca265b3ce354f82622d147be6c644d80c34ed9e32dda851",
-    "path": "specimens/pt-serif-caption.svg",
-    "reason": null,
-    "sha256": "e016473641ed0f5ad121083a49a0ecc44ceff005a597f345782be47e3ef15712"
-  },
   "public-sans": {
     "flags": [],
     "key": "c7e49284835804190e7fb02e3aeb6c20d9c7b8919ff2acc86c69c3e52652a27f",
@@ -2624,27 +2386,6 @@
     "reason": null,
     "sha256": "319e54d3f97e5bb3e8e692781c32747b4d25aa73df06a5bc50cf63c88e4e327c"
   },
-  "quintessential": {
-    "flags": [],
-    "key": "ceade99d603058c10e62b1ca07efa3b1fbac7824111096739952e138422dd303",
-    "path": "specimens/quintessential.svg",
-    "reason": null,
-    "sha256": "2a7952b973273208a3a3b071d60be8d3377e066ae611cc3ada7f9b2a90c0e668"
-  },
-  "qwigley": {
-    "flags": [],
-    "key": "fbdb444a955817123d135b13fe5312d8a90f63b56eb42d3da3bb866e94929e86",
-    "path": "specimens/qwigley.svg",
-    "reason": null,
-    "sha256": "fba01d4fe8415b6c6c81590d0c2d10532722618a6c0920240058c3f7c2495886"
-  },
-  "radio-canada": {
-    "flags": [],
-    "key": "d2bd44db2f7ccdf6e6bdc29d735079ebcc43c6c305d97cf3e7ff67822753c6d8",
-    "path": "specimens/radio-canada.svg",
-    "reason": null,
-    "sha256": "2efbfcd137b58dbf0faf315370c8dfb8d6f80dbfbd43641e4e45eb9dceeab4cf"
-  },
   "rajdhani": {
     "flags": [],
     "key": "6b9b243e8506e1c9670527398d4f23d2cf837e06bd757298c460cb318596350b",
@@ -2658,13 +2399,6 @@
     "path": "specimens/raleway.svg",
     "reason": null,
     "sha256": "4a4defa5f4ca539f59020d59993fed7068deb4c7add98e6a6acc0a201ec7b00f"
-  },
-  "rambla": {
-    "flags": [],
-    "key": "daf06f5c5c65783976051a3853beb6c8ce39734360142fd0fbdca7a1ccc1f0be",
-    "path": "specimens/rambla.svg",
-    "reason": null,
-    "sha256": "28aa574ebaa3c2c8ee18da02654f5cc33e39f2e18af362f02b83c2f74046d2b1"
   },
   "rammetto-one": {
     "flags": [],
@@ -2721,6 +2455,13 @@
     "path": "specimens/reddit-sans.svg",
     "reason": null,
     "sha256": "d4c11511ebf62756d6aed7439e6deffd4631da821602a6c2a9af2b53c174c7b6"
+  },
+  "reem-kufi": {
+    "flags": [],
+    "key": "dcc1e9bf712c579f09af597e046c3365d12214a927ece194d9dfb999acc5a7e4",
+    "path": "specimens/reem-kufi.svg",
+    "reason": null,
+    "sha256": "f1066f64d8a2dd633c3aa53c6b03c8e63fbdc98c00ee5e611d9bb7602a44d72e"
   },
   "reenie-beanie": {
     "flags": [],
@@ -2855,13 +2596,6 @@
     "reason": null,
     "sha256": "e87237c714c756b5c3b3e1eaf37f51ee1de104ba6a316f576ed94492a46351ac"
   },
-  "sanchez": {
-    "flags": [],
-    "key": "ac6a5bdab65bfdc47ee8b2b810db51b0642c5015102baed246b54eefd0dacd62",
-    "path": "specimens/sanchez.svg",
-    "reason": null,
-    "sha256": "5056d53290a9f50753b8b23a37edcdeb70a85476a682125e074d66938989ee0b"
-  },
   "sarabun": {
     "flags": [],
     "key": "07b766de8e695e2ed0de455ac5c1167d485566974d4e6f0f1ee9692b117bf69d",
@@ -2889,13 +2623,6 @@
     "path": "specimens/schibsted-grotesk.svg",
     "reason": null,
     "sha256": "4c1a4b6038e62e3f03a7fc226ae75e85d8302a9fd2c27c953832de68d654b0c1"
-  },
-  "scoutie-sans": {
-    "flags": [],
-    "key": "0cae6295de1c5dd67cce500723990e16fe67375e491440d84a708bf44f9bbb28",
-    "path": "specimens/scoutie-sans.svg",
-    "reason": null,
-    "sha256": "bf483f5ae4f86b5652b01911787f96cb0f71a8d7747625bed58e4724d2ff0224"
   },
   "secular-one": {
     "flags": [],
@@ -2981,13 +2708,6 @@
     "reason": null,
     "sha256": "361a40f001ccab1603b4b606f92d884373a474dd2e884c341361cd9e54a9260c"
   },
-  "sn-pro-font-family": {
-    "flags": [],
-    "key": "5092e14979af8b5399a9fbcd46b9f96fa449f6c3e8b2514a17b05a0bb0adf0e3",
-    "path": "specimens/sn-pro-font-family.svg",
-    "reason": null,
-    "sha256": "f69a7401e7af94ce1ccfe52983fcaa3f02ca2edb78c5c783986d48f774da78db"
-  },
   "sniglet": {
     "flags": [],
     "key": "5824ff76eeda1740c52243b8cc60ea7c95cceaecc74eefb7083ac350a284d107",
@@ -3009,19 +2729,19 @@
     "reason": null,
     "sha256": "85a507c208edec53fb983cf6002ca45a3b0fcd05eb4c9e851c62dfe26200ce33"
   },
+  "sofia-sans-extra-condensed": {
+    "flags": [],
+    "key": "6d050936478b0f4a50f44c24b530cb7a658c895ac8b8b32e29ee12c80972eb1d",
+    "path": "specimens/sofia-sans-extra-condensed.svg",
+    "reason": null,
+    "sha256": "7be849b5347911368c783b7b014973d11bde8df387f5f76cfa1a5544fe7da821"
+  },
   "sometype-mono": {
     "flags": [],
     "key": "3a35cccd5cefc48ae755db08862acbd7627ce1a0f85cb5819a65a5e682643628",
     "path": "specimens/sometype-mono.svg",
     "reason": null,
     "sha256": "d3071b0fb864c749bd922927ae5cf0c1b9b71ead76c7b27d696492e0a826abf2"
-  },
-  "sophia-nubian": {
-    "flags": [],
-    "key": "84bbf13c31bb868fc6dce5546e832094ebad4ee9129404f364ff18616f02ac47",
-    "path": "specimens/sophia-nubian.svg",
-    "reason": null,
-    "sha256": "ef5f4ab0d1180a94d85dc2f8be6d429f999a6c220bc88dff97a9724e47498f80"
   },
   "sora": {
     "flags": [],
@@ -3121,41 +2841,6 @@
     "reason": null,
     "sha256": "c245ce623a21b9b20f694cf7d5d419e770521e5433c612bc53d1c27fb1f51096"
   },
-  "strichpunkt-sans": {
-    "flags": [],
-    "key": "d7081a151630ee545c8cc2160530953ef8824ea25e238a1c75ffa02482fa1446",
-    "path": "specimens/strichpunkt-sans.svg",
-    "reason": null,
-    "sha256": "035936df101f74ee318309d77b5afd602325ef9b39f87351739861efcd43ca98"
-  },
-  "sudo": {
-    "flags": [],
-    "key": "0f48211aa9ca2ddbd70e996b1836ecf20333e0ef2e4c9b07ea0aa3f13f54e7e3",
-    "path": "specimens/sudo.svg",
-    "reason": null,
-    "sha256": "f068a3dabfa981d139f85b372b00d544eb6d6d589a3ee3b68a66950371b86171"
-  },
-  "sunshiney": {
-    "flags": [],
-    "key": "ec0af1bee3dc5b928d413953d5593a821f61d25413865698144f9dfbda704444",
-    "path": "specimens/sunshiney.svg",
-    "reason": null,
-    "sha256": "9d61b92439a1b8fb2366e29f3eaa23f7215fe0af83923bb83317371042cf78c6"
-  },
-  "suse": {
-    "flags": [],
-    "key": "0853c4a9404c731db2993bc655e4e77c6f2dc129dc17ab825f1c1658844bd9a4",
-    "path": "specimens/suse.svg",
-    "reason": null,
-    "sha256": "d7eea2d81ac1bdbe004538889f4c37396903334adac2edb6d1d8f55d726623bd"
-  },
-  "suse-mono": {
-    "flags": [],
-    "key": "9da54335ad9af6ae895e8d9003502eaa5952a9c37e5721b7f6e50375169e1277",
-    "path": "specimens/suse-mono.svg",
-    "reason": null,
-    "sha256": "84218871a13cf696ed6e3249184c6aefb363ec94afb9dcce76174aee073c9bae"
-  },
   "syncopate": {
     "flags": [],
     "key": "78e8b7b2d74bd8b39673bbc96a376dea9c9d8dec1e3541d1786c4b806aa35f6f",
@@ -3169,13 +2854,6 @@
     "path": "specimens/syne.svg",
     "reason": null,
     "sha256": "2d6d28ac435f00e015337e4a1c4c4cc402000258b1a9180741ecc55cf21d8825"
-  },
-  "tagmukay": {
-    "flags": [],
-    "key": "666636ac1fbe3e61c6023dad864df8a06a5ea11a13974421f409005fc8681862",
-    "path": "specimens/tagmukay.svg",
-    "reason": null,
-    "sha256": "338ebc71a698cc8faae306c2811713cf4415d507f942c573bbfd63089799441c"
   },
   "taviraj": {
     "flags": [],
@@ -3289,13 +2967,6 @@
     "reason": null,
     "sha256": "465e0a9901bcb922ccd6026860847fa8f5c81e8f230a08ee8f0138486a0a6b7b"
   },
-  "twilio-sans-mono": {
-    "flags": [],
-    "key": "dae0d52b708071d85868eba46515e76bc5ed7497a9f368ad8f60a8be3bcfe02e",
-    "path": "specimens/twilio-sans-mono.svg",
-    "reason": null,
-    "sha256": "7873d874aeb41a67aaff2da8988734430d89312ea570447eddee3314ab49c8fd"
-  },
   "ubuntu": {
     "flags": [],
     "key": "43e33fc5155127480a2b252677c1adb57f9f2402532a367bf7fd95e58398d9d1",
@@ -3316,13 +2987,6 @@
     "path": "specimens/ubuntu-mono.svg",
     "reason": null,
     "sha256": "e915b51289706899e0820dc4a11e3947b3b9234bf2fe9722d468b4a54434eae7"
-  },
-  "ubuntu-sans": {
-    "flags": [],
-    "key": "da47ea67064aa56843d3b21339887b15f81b34ee8a00582c87cef6f7f89ba5a5",
-    "path": "specimens/ubuntu-sans.svg",
-    "reason": null,
-    "sha256": "591a6e4cac7210e9a7011904f1f270abca640108c95783227ad5edd94154d21a"
   },
   "ubuntu-sans-mono": {
     "flags": [],
@@ -3366,13 +3030,6 @@
     "reason": null,
     "sha256": "91d2335c1ede843891911eb953ecbc4765c13418b389a39ae8aa029bcc8f890f"
   },
-  "varela": {
-    "flags": [],
-    "key": "ab393a58819798af18930864a10b8d3bd29c1a730acdd48f3c4c8297803143bc",
-    "path": "specimens/varela.svg",
-    "reason": null,
-    "sha256": "31680030f2adae29d04db5c64e24fa75c40ff45d1cff50c0745f117f05d51ff3"
-  },
   "varela-round": {
     "flags": [],
     "key": "2491b192b4c2ea992d5c9fca5db75660dbcc0b73af44725a063015107a79d319",
@@ -3407,13 +3064,6 @@
     "path": "specimens/vt323.svg",
     "reason": null,
     "sha256": "a69616c67eb8ae38ae221f209d681064d3162f467dc525d018ad921ba8daf2d8"
-  },
-  "whisper": {
-    "flags": [],
-    "key": "027df13db4742545aabdb3a6b8b0da9ae2257ec7b050c840bb30e03dc5dd90b0",
-    "path": "specimens/whisper.svg",
-    "reason": null,
-    "sha256": "b3e99adaa2bcec9aa07431362dc18c5af8518fe94773ec893d024e12eb823bb6"
   },
   "wix-madefor-display": {
     "flags": [],
@@ -3477,20 +3127,6 @@
     "path": "specimens/zalando-sans.svg",
     "reason": null,
     "sha256": "1fa0e40298a11bd124ca6cf9d50c23f25519bafb8f08189a2c87067e8bba8949"
-  },
-  "zed-mono": {
-    "flags": [],
-    "key": "5b6f61f0b598bdc83f035b23596275bc9bc2d1e0651d925092c8958d147bdb28",
-    "path": "specimens/zed-mono.svg",
-    "reason": null,
-    "sha256": "b6cb0932e9e7d315a785e1720b52c092c42dec0865da0669774c96e4795da89a"
-  },
-  "zed-sans": {
-    "flags": [],
-    "key": "827c0e98144e8db6bf7c26dbdf72a6afc082e4bcc242a2e8c1a8b5c3d0d65511",
-    "path": "specimens/zed-sans.svg",
-    "reason": null,
-    "sha256": "38e8f605320cc4d44e49d708a45d29401305f5cb42e8cb2cddd935c4465ef46b"
   },
   "zilla-slab": {
     "flags": [],

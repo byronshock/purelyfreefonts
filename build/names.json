@@ -123,7 +123,7 @@
       "distinct_from": [],
       "family": "Adamina",
       "id": "adamina",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -529,7 +529,7 @@
       "distinct_from": [],
       "family": "Allison",
       "id": "allison",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -713,7 +713,7 @@
       "distinct_from": [],
       "family": "Andada Pro",
       "id": "andada-pro",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -785,7 +785,7 @@
       "distinct_from": [],
       "family": "Anka/Coder",
       "id": "anka-coder",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -809,7 +809,7 @@
       "distinct_from": [],
       "family": "Annotation Mono",
       "id": "annotation-mono",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [
         {
           "detail": "nerd",
@@ -953,7 +953,7 @@
       "distinct_from": [],
       "family": "Anuphan",
       "id": "anuphan",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -961,7 +961,7 @@
       "distinct_from": [],
       "family": "Anybody",
       "id": "anybody",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -969,7 +969,7 @@
       "distinct_from": [],
       "family": "Apfel Grotezk",
       "id": "apfel-grotezk",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -985,7 +985,7 @@
       "distinct_from": [],
       "family": "Arapey",
       "id": "arapey",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -1049,7 +1049,7 @@
       "distinct_from": [],
       "family": "Aref Ruqaa",
       "id": "aref-ruqaa",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -1378,7 +1378,7 @@
       "distinct_from": [],
       "family": "Average Sans",
       "id": "average-sans",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -1394,7 +1394,7 @@
       "distinct_from": [],
       "family": "Averia Libre",
       "id": "averia-libre",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -1410,7 +1410,7 @@
       "distinct_from": [],
       "family": "Averia Serif Libre",
       "id": "averia-serif-libre",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -1418,7 +1418,7 @@
       "distinct_from": [],
       "family": "Awami Nastaliq",
       "id": "awami-nastaliq",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -1538,7 +1538,7 @@
       "distinct_from": [],
       "family": "Balsamiq Sans",
       "id": "balsamiq-sans",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -1602,7 +1602,7 @@
       "distinct_from": [],
       "family": "Basic",
       "id": "basic",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -1729,7 +1729,7 @@
       "distinct_from": [],
       "family": "Bellefair",
       "id": "bellefair",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -1865,16 +1865,19 @@
       "distinct_from": [],
       "family": "Big Shoulders",
       "id": "big-shoulders",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Big Shoulders Display",
-      "id": "big-shoulders-display",
       "in_catalog": true,
-      "names": [],
+      "names": [
+        {
+          "detail": "opsz",
+          "name": "Big Shoulders Display",
+          "relation": "build"
+        },
+        {
+          "detail": "opsz",
+          "name": "Big Shoulders Text",
+          "relation": "build"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -1890,29 +1893,24 @@
       "family": "Big Shoulders Inline",
       "id": "big-shoulders-inline",
       "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Big Shoulders Inline Display",
-      "id": "big-shoulders-inline-display",
-      "in_catalog": false,
-      "names": [],
+      "names": [
+        {
+          "detail": "opsz",
+          "name": "Big Shoulders Inline Display",
+          "relation": "build"
+        },
+        {
+          "detail": "opsz",
+          "name": "Big Shoulders Inline Text",
+          "relation": "build"
+        }
+      ],
       "superfamily_id": null
     },
     {
       "distinct_from": [],
       "family": "Big Shoulders Inline Display SC",
       "id": "big-shoulders-inline-display-sc",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Big Shoulders Inline Text",
-      "id": "big-shoulders-inline-text",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -1930,15 +1928,18 @@
       "family": "Big Shoulders Stencil",
       "id": "big-shoulders-stencil",
       "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Big Shoulders Stencil Display",
-      "id": "big-shoulders-stencil-display",
-      "in_catalog": false,
-      "names": [],
+      "names": [
+        {
+          "detail": "opsz",
+          "name": "Big Shoulders Stencil Display",
+          "relation": "build"
+        },
+        {
+          "detail": "opsz",
+          "name": "Big Shoulders Stencil Text",
+          "relation": "build"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -1951,24 +1952,8 @@
     },
     {
       "distinct_from": [],
-      "family": "Big Shoulders Stencil Text",
-      "id": "big-shoulders-stencil-text",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
       "family": "Big Shoulders Stencil Text SC",
       "id": "big-shoulders-stencil-text-sc",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Big Shoulders Text",
-      "id": "big-shoulders-text",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -2033,7 +2018,7 @@
       "distinct_from": [],
       "family": "Birthstone",
       "id": "birthstone",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -2309,7 +2294,7 @@
       "distinct_from": [],
       "family": "Boogaloo",
       "id": "boogaloo",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -2339,7 +2324,7 @@
       "distinct_from": [],
       "family": "Bowlby One",
       "id": "bowlby-one",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -2347,7 +2332,7 @@
       "distinct_from": [],
       "family": "Bowlby One SC",
       "id": "bowlby-one-sc",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -2411,7 +2396,7 @@
       "distinct_from": [],
       "family": "Brygada 1918",
       "id": "brygada-1918",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -2419,7 +2404,7 @@
       "distinct_from": [],
       "family": "Bubblegum Sans",
       "id": "bubblegum-sans",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -2491,7 +2476,7 @@
       "distinct_from": [],
       "family": "Bungee Shade",
       "id": "bungee-shade",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -2547,7 +2532,7 @@
       "distinct_from": [],
       "family": "Caacupe One",
       "id": "caacupe-one",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -2932,7 +2917,7 @@
       "distinct_from": [],
       "family": "Cedarville Cursive",
       "id": "cedarville-cursive",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -2964,7 +2949,7 @@
       "distinct_from": [],
       "family": "Changa One",
       "id": "changa-one",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -2978,18 +2963,15 @@
     },
     {
       "distinct_from": [],
-      "family": "Charis",
-      "id": "charis",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
       "family": "Charis SIL",
       "id": "charis-sil",
       "in_catalog": true,
-      "names": [],
+      "names": [
+        {
+          "name": "Charis",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -3188,7 +3170,7 @@
       "distinct_from": [],
       "family": "Clear Sans",
       "id": "clear-sans",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -3204,7 +3186,7 @@
       "distinct_from": [],
       "family": "Climate Crisis",
       "id": "climate-crisis",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -3292,7 +3274,7 @@
       "distinct_from": [],
       "family": "Coming Soon",
       "id": "coming-soon",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -3363,7 +3345,7 @@
       "distinct_from": [],
       "family": "Compagnon",
       "id": "compagnon",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -3379,7 +3361,7 @@
       "distinct_from": [],
       "family": "Concert One",
       "id": "concert-one",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -3411,7 +3393,7 @@
       "distinct_from": [],
       "family": "Cookie",
       "id": "cookie",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -3491,7 +3473,7 @@
       "distinct_from": [],
       "family": "Cormorant Unicase",
       "id": "cormorant-unicase",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -3499,7 +3481,7 @@
       "distinct_from": [],
       "family": "Cormorant Upright",
       "id": "cormorant-upright",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -3547,7 +3529,7 @@
       "distinct_from": [],
       "family": "Courier Prime Sans",
       "id": "courier-prime-sans",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -3642,7 +3624,7 @@
       "distinct_from": [],
       "family": "Crete Round",
       "id": "crete-round",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -3714,7 +3696,7 @@
       "distinct_from": [],
       "family": "Damion",
       "id": "damion",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -3770,7 +3752,7 @@
       "distinct_from": [],
       "family": "Days One",
       "id": "days-one",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -3870,7 +3852,7 @@
       "distinct_from": [],
       "family": "Delius",
       "id": "delius",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -4077,7 +4059,7 @@
       "distinct_from": [],
       "family": "Doto",
       "id": "doto",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -4222,7 +4204,7 @@
       "distinct_from": [],
       "family": "DynaPuff",
       "id": "dynapuff",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -4817,7 +4799,7 @@
       "distinct_from": [],
       "family": "Fanwood",
       "id": "fanwood",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -4849,7 +4831,7 @@
       "distinct_from": [],
       "family": "Fascinate",
       "id": "fascinate",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -4951,21 +4933,13 @@
     },
     {
       "distinct_from": [],
-      "family": "Finlandica",
-      "id": "finlandica",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
       "family": "Finlandica Headline",
       "id": "finlandica-headline",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [
         {
           "name": "Finlandica",
-          "relation": "related"
+          "relation": "rename"
         }
       ],
       "superfamily_id": null
@@ -5104,6 +5078,14 @@
     },
     {
       "distinct_from": [],
+      "family": "Firjar",
+      "id": "firjar",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
       "family": "Fixedsys Excelsior",
       "id": "fixedsys-excelsior",
       "in_catalog": false,
@@ -5178,7 +5160,7 @@
       "distinct_from": [],
       "family": "Forum",
       "id": "forum",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -5202,7 +5184,7 @@
       "distinct_from": [],
       "family": "Francois One",
       "id": "francois-one",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -5315,7 +5297,7 @@
       "distinct_from": [],
       "family": "Fugaz One",
       "id": "fugaz-one",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -5347,7 +5329,7 @@
       "distinct_from": [],
       "family": "Fustat",
       "id": "fustat",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -5497,7 +5479,7 @@
       "distinct_from": [],
       "family": "Geist Pixel",
       "id": "geist-pixel",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -5526,22 +5508,6 @@
       "superfamily_id": null
     },
     {
-      "distinct_from": [],
-      "family": "Gentium",
-      "id": "gentium",
-      "in_catalog": true,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Gentium Book",
-      "id": "gentium-book",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
       "distinct_from": [
         "gentium-book-plus"
       ],
@@ -5557,8 +5523,12 @@
       ],
       "family": "Gentium Book Plus",
       "id": "gentium-book-plus",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [
+        {
+          "name": "Gentium Book",
+          "relation": "rename"
+        },
         {
           "name": "Gentium Plus Book",
           "relation": "rename"
@@ -5571,7 +5541,12 @@
       "family": "Gentium Plus",
       "id": "gentium-plus",
       "in_catalog": true,
-      "names": [],
+      "names": [
+        {
+          "name": "Gentium",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -5658,7 +5633,7 @@
       "distinct_from": [],
       "family": "Georama",
       "id": "georama",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -5690,7 +5665,7 @@
       "distinct_from": [],
       "family": "GFS Didot",
       "id": "gfs-didot",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -5770,7 +5745,7 @@
       "distinct_from": [],
       "family": "Gloock",
       "id": "gloock",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -5802,7 +5777,7 @@
       "distinct_from": [],
       "family": "Go",
       "id": "go",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -5865,7 +5840,7 @@
       "distinct_from": [],
       "family": "Goldman",
       "id": "goldman",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -5958,7 +5933,7 @@
       "distinct_from": [],
       "family": "Goudy Bookletter 1911",
       "id": "goudy-bookletter-1911",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -5966,7 +5941,7 @@
       "distinct_from": [],
       "family": "Graduate",
       "id": "graduate",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -6178,7 +6153,7 @@
       "distinct_from": [],
       "family": "Halant",
       "id": "halant",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -6194,7 +6169,7 @@
       "distinct_from": [],
       "family": "Hammersmith One",
       "id": "hammersmith-one",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -6326,7 +6301,7 @@
       "distinct_from": [],
       "family": "Heavy Data",
       "id": "heavy-data",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [
         {
           "detail": "nerd",
@@ -6373,7 +6348,7 @@
       "distinct_from": [],
       "family": "Hedvig Letters Serif",
       "id": "hedvig-letters-serif",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -6397,7 +6372,7 @@
       "distinct_from": [],
       "family": "Hepta Slab",
       "id": "hepta-slab",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -6509,7 +6484,7 @@
       "distinct_from": [],
       "family": "Hubot Sans",
       "id": "hubot-sans",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -6648,7 +6623,7 @@
       "distinct_from": [],
       "family": "Ibarra Real Nova",
       "id": "ibarra-real-nova",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -6824,7 +6799,7 @@
       "distinct_from": [],
       "family": "IM Fell English SC",
       "id": "im-fell-english-sc",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -6888,7 +6863,7 @@
       "distinct_from": [],
       "family": "Inclusive Sans",
       "id": "inclusive-sans",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -7060,7 +7035,7 @@
       "distinct_from": [],
       "family": "Inknut Antiqua",
       "id": "inknut-antiqua",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -7309,7 +7284,7 @@
       "distinct_from": [],
       "family": "Iosevka Charon",
       "id": "iosevka-charon",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -7317,7 +7292,7 @@
       "distinct_from": [],
       "family": "Iosevka Charon Mono",
       "id": "iosevka-charon-mono",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -7349,7 +7324,7 @@
       "distinct_from": [],
       "family": "Ioskeley Mono",
       "id": "ioskeley-mono",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -7389,7 +7364,7 @@
       "distinct_from": [],
       "family": "Italiana",
       "id": "italiana",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -7397,7 +7372,7 @@
       "distinct_from": [],
       "family": "Italianno",
       "id": "italianno",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -7509,7 +7484,7 @@
       "distinct_from": [],
       "family": "Jersey 10",
       "id": "jersey-10",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -7525,7 +7500,7 @@
       "distinct_from": [],
       "family": "Jersey 15",
       "id": "jersey-15",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -7643,7 +7618,7 @@
       "distinct_from": [],
       "family": "Jockey One",
       "id": "jockey-one",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -7771,7 +7746,7 @@
       "distinct_from": [],
       "family": "K2D",
       "id": "k2d",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -8083,7 +8058,7 @@
       "distinct_from": [],
       "family": "Krona One",
       "id": "krona-one",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -8091,7 +8066,7 @@
       "distinct_from": [],
       "family": "Krub",
       "id": "krub",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -8179,7 +8154,7 @@
       "distinct_from": [],
       "family": "Lalezar",
       "id": "lalezar",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -8203,7 +8178,7 @@
       "distinct_from": [],
       "family": "Lateef",
       "id": "lateef",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -8257,7 +8232,7 @@
       "distinct_from": [],
       "family": "League Mono",
       "id": "league-mono",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -8344,7 +8319,7 @@
       "distinct_from": [],
       "family": "Lemonada",
       "id": "lemonada",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -8368,7 +8343,7 @@
       "distinct_from": [],
       "family": "Lexend Exa",
       "id": "lexend-exa",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -8376,7 +8351,7 @@
       "distinct_from": [],
       "family": "Lexend Giga",
       "id": "lexend-giga",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -8408,7 +8383,7 @@
       "distinct_from": [],
       "family": "Lexend Zetta",
       "id": "lexend-zetta",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -8561,7 +8536,7 @@
       "distinct_from": [],
       "family": "Libre Bodoni",
       "id": "libre-bodoni",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -8672,7 +8647,7 @@
       "distinct_from": [],
       "family": "Limelight",
       "id": "limelight",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -8776,7 +8751,7 @@
       "distinct_from": [],
       "family": "Londrina Solid",
       "id": "londrina-solid",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -8816,6 +8791,14 @@
       "distinct_from": [],
       "family": "Lovers Quarrel",
       "id": "lovers-quarrel",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Luciole",
+      "id": "luciole",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -8864,7 +8847,7 @@
       "distinct_from": [],
       "family": "Lustria",
       "id": "lustria",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -8888,7 +8871,7 @@
       "distinct_from": [],
       "family": "M PLUS Code Latin",
       "id": "m-plus-code-latin",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [
         {
           "name": "M+",
@@ -8945,7 +8928,7 @@
       "distinct_from": [],
       "family": "Mada",
       "id": "mada",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -8985,7 +8968,7 @@
       "distinct_from": [],
       "family": "Major Mono Display",
       "id": "major-mono-display",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -9001,7 +8984,7 @@
       "distinct_from": [],
       "family": "Mali",
       "id": "mali",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -9092,7 +9075,7 @@
       "distinct_from": [],
       "family": "Marcellus SC",
       "id": "marcellus-sc",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -9124,7 +9107,7 @@
       "distinct_from": [],
       "family": "Markazi Text",
       "id": "markazi-text",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -9367,7 +9350,7 @@
       "distinct_from": [],
       "family": "Merienda",
       "id": "merienda",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -9470,7 +9453,7 @@
       "distinct_from": [],
       "family": "Metamorphous",
       "id": "metamorphous",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -9524,10 +9507,15 @@
     },
     {
       "distinct_from": [],
-      "family": "Microsoft Selawik",
+      "family": "Selawik",
       "id": "microsoft-selawik",
-      "in_catalog": true,
-      "names": [],
+      "in_catalog": false,
+      "names": [
+        {
+          "name": "Microsoft Selawik",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -9582,7 +9570,7 @@
       "distinct_from": [],
       "family": "Miracode",
       "id": "miracode",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -9622,7 +9610,7 @@
       "distinct_from": [],
       "family": "Mitr",
       "id": "mitr",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -9670,7 +9658,7 @@
       "distinct_from": [],
       "family": "Molengo",
       "id": "molengo",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -9973,7 +9961,7 @@
       "distinct_from": [],
       "family": "Monda",
       "id": "monda",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -9981,7 +9969,7 @@
       "distinct_from": [],
       "family": "Monocraft",
       "id": "monocraft",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [
         {
           "detail": "nerd",
@@ -9995,7 +9983,7 @@
       "distinct_from": [],
       "family": "Monofett",
       "id": "monofett",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -10086,7 +10074,7 @@
       "distinct_from": [],
       "family": "Monoisome",
       "id": "monoisome",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -10290,7 +10278,7 @@
       "distinct_from": [],
       "family": "Mr Dafoe",
       "id": "mr-dafoe",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -10367,7 +10355,7 @@
       "distinct_from": [],
       "family": "Myna",
       "id": "myna",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -10399,7 +10387,7 @@
       "distinct_from": [],
       "family": "Nacelle",
       "id": "nacelle",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -10479,7 +10467,7 @@
       "distinct_from": [],
       "family": "Neucha",
       "id": "neucha",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -10487,7 +10475,7 @@
       "distinct_from": [],
       "family": "Neuton",
       "id": "neuton",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -10584,15 +10572,12 @@
       "family": "Nosifer",
       "id": "nosifer",
       "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Nosifer Caps",
-      "id": "nosifer-caps",
-      "in_catalog": false,
-      "names": [],
+      "names": [
+        {
+          "name": "Nosifer Caps",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -10615,7 +10600,7 @@
       "distinct_from": [],
       "family": "Nothing You Could Do",
       "id": "nothing-you-could-do",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -11018,14 +11003,6 @@
     },
     {
       "distinct_from": [],
-      "family": "OFL Sorts Mill Goudy TT",
-      "id": "ofl-sorts-mill-goudy-tt",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
       "family": "Oi",
       "id": "oi",
       "in_catalog": false,
@@ -11092,7 +11069,7 @@
       "distinct_from": [],
       "family": "Oooh Baby",
       "id": "oooh-baby",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -11142,7 +11119,7 @@
       "distinct_from": [],
       "family": "Open Sauce Two",
       "id": "open-sauce-two",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -11229,7 +11206,7 @@
       "distinct_from": [],
       "family": "Original Surfer",
       "id": "original-surfer",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -11332,6 +11309,14 @@
       "distinct_from": [],
       "family": "Overpass Mono",
       "id": "overpass-mono",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Overused Grotesk",
+      "id": "overused-grotesk",
       "in_catalog": true,
       "names": [],
       "superfamily_id": null
@@ -11452,7 +11437,7 @@
       "distinct_from": [],
       "family": "Parkinsans",
       "id": "parkinsans",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -11524,7 +11509,7 @@
       "distinct_from": [],
       "family": "Patua One",
       "id": "patua-one",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -11548,7 +11533,7 @@
       "distinct_from": [],
       "family": "Paytone One",
       "id": "paytone-one",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -11588,7 +11573,7 @@
       "distinct_from": [],
       "family": "Petit Formal Script",
       "id": "petit-formal-script",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -11620,7 +11605,7 @@
       "distinct_from": [],
       "family": "Piazzolla",
       "id": "piazzolla",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -11644,7 +11629,7 @@
       "distinct_from": [],
       "family": "Pirata One",
       "id": "pirata-one",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -11700,7 +11685,7 @@
       "distinct_from": [],
       "family": "Platypi",
       "id": "platypi",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -11748,7 +11733,7 @@
       "distinct_from": [],
       "family": "Playpen Sans",
       "id": "playpen-sans",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -12660,7 +12645,7 @@
       "distinct_from": [],
       "family": "Pontano Sans",
       "id": "pontano-sans",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -12729,7 +12714,7 @@
       "distinct_from": [],
       "family": "Pretendard Std",
       "id": "pretendard-std",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -12856,7 +12841,7 @@
       "distinct_from": [],
       "family": "psudoFont Liga Mono",
       "id": "psudofont-liga-mono",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -12904,7 +12889,7 @@
       "distinct_from": [],
       "family": "PT Serif Caption",
       "id": "pt-serif-caption",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -12982,7 +12967,7 @@
       "distinct_from": [],
       "family": "Quattrocento Sans",
       "id": "quattrocento-sans",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -13006,7 +12991,7 @@
       "distinct_from": [],
       "family": "Quintessential",
       "id": "quintessential",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -13014,7 +12999,7 @@
       "distinct_from": [],
       "family": "Qwigley",
       "id": "qwigley",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -13030,7 +13015,7 @@
       "distinct_from": [],
       "family": "Racing Sans One",
       "id": "racing-sans-one",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -13038,7 +13023,7 @@
       "distinct_from": [],
       "family": "Radio Canada",
       "id": "radio-canada",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -13094,7 +13079,7 @@
       "distinct_from": [],
       "family": "Rambla",
       "id": "rambla",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -13236,6 +13221,66 @@
       "superfamily_id": null
     },
     {
+      "distinct_from": [
+        "redaction-70"
+      ],
+      "family": "Redaction",
+      "id": "redaction",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Redaction 10",
+      "id": "redaction-10",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Redaction 100",
+      "id": "redaction-100",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Redaction 20",
+      "id": "redaction-20",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Redaction 35",
+      "id": "redaction-35",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Redaction 50",
+      "id": "redaction-50",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [
+        "redaction"
+      ],
+      "family": "Redaction 70",
+      "id": "redaction-70",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
       "distinct_from": [],
       "family": "Reddit Mono",
       "id": "reddit-mono",
@@ -13271,7 +13316,7 @@
       "distinct_from": [],
       "family": "Reem Kufi",
       "id": "reem-kufi",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -13503,7 +13548,7 @@
       "distinct_from": [],
       "family": "Ronzino",
       "id": "ronzino",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -13551,7 +13596,7 @@
       "distinct_from": [],
       "family": "Route 159",
       "id": "route-159",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -13567,7 +13612,7 @@
       "distinct_from": [],
       "family": "Rozha One",
       "id": "rozha-one",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -13576,7 +13621,12 @@
       "family": "Rubik",
       "id": "rubik",
       "in_catalog": true,
-      "names": [],
+      "names": [
+        {
+          "name": "Rubik One",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -13735,14 +13785,6 @@
       "distinct_from": [],
       "family": "Rubik Moonrocks",
       "id": "rubik-moonrocks",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Rubik One",
-      "id": "rubik-one",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -13919,7 +13961,7 @@
       "distinct_from": [],
       "family": "Saira Extra Condensed",
       "id": "saira-extra-condensed",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -13988,7 +14030,7 @@
       "distinct_from": [],
       "family": "Sanchez",
       "id": "sanchez",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -14020,16 +14062,13 @@
       "distinct_from": [],
       "family": "Sansita",
       "id": "sansita",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Sansita One",
-      "id": "sansita-one",
-      "in_catalog": false,
-      "names": [],
+      "in_catalog": true,
+      "names": [
+        {
+          "name": "Sansita One",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -14106,18 +14145,15 @@
     },
     {
       "distinct_from": [],
-      "family": "Scheherazade",
-      "id": "scheherazade",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
       "family": "Scheherazade New",
       "id": "scheherazade-new",
       "in_catalog": true,
-      "names": [],
+      "names": [
+        {
+          "name": "Scheherazade",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -14132,7 +14168,7 @@
       "distinct_from": [],
       "family": "Schoolbell",
       "id": "schoolbell",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -14156,7 +14192,7 @@
       "distinct_from": [],
       "family": "Scoutie Sans",
       "id": "scoutie-sans",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -14212,14 +14248,6 @@
       "distinct_from": [],
       "family": "Sekuya",
       "id": "sekuya",
-      "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Selawik",
-      "id": "selawik",
       "in_catalog": false,
       "names": [],
       "superfamily_id": null
@@ -14432,7 +14460,7 @@
       "distinct_from": [],
       "family": "Sigmar One",
       "id": "sigmar-one",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -14620,14 +14648,6 @@
     },
     {
       "distinct_from": [],
-      "family": "SN Pro Font Family",
-      "id": "sn-pro-font-family",
-      "in_catalog": true,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
       "family": "Sneaky Times",
       "id": "sneaky-times",
       "in_catalog": false,
@@ -14694,7 +14714,7 @@
       "distinct_from": [],
       "family": "Sofia Sans Extra Condensed",
       "id": "sofia-sans-extra-condensed",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -14750,7 +14770,7 @@
       "distinct_from": [],
       "family": "Sophia Nubian",
       "id": "sophia-nubian",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -14767,7 +14787,12 @@
       "family": "Sorts Mill Goudy",
       "id": "sorts-mill-goudy",
       "in_catalog": true,
-      "names": [],
+      "names": [
+        {
+          "name": "OFL Sorts Mill Goudy TT",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -14928,7 +14953,7 @@
       "distinct_from": [],
       "family": "Special Gothic Expanded One",
       "id": "special-gothic-expanded-one",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -15040,7 +15065,7 @@
       "distinct_from": [],
       "family": "Stack Sans Headline",
       "id": "stack-sans-headline",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -15144,7 +15169,7 @@
       "distinct_from": [],
       "family": "Strichpunkt Sans",
       "id": "strichpunkt-sans",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -15168,7 +15193,7 @@
       "distinct_from": [],
       "family": "Sudo",
       "id": "sudo",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -15184,7 +15209,7 @@
       "distinct_from": [],
       "family": "Suez One",
       "id": "suez-one",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -15208,7 +15233,7 @@
       "distinct_from": [],
       "family": "Sunshiney",
       "id": "sunshiney",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -15232,7 +15257,7 @@
       "distinct_from": [],
       "family": "SUSE",
       "id": "suse",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -15240,7 +15265,7 @@
       "distinct_from": [],
       "family": "SUSE Mono",
       "id": "suse-mono",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -15312,7 +15337,7 @@
       "distinct_from": [],
       "family": "Tagmukay",
       "id": "tagmukay",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -15328,7 +15353,7 @@
       "distinct_from": [],
       "family": "Tangerine",
       "id": "tangerine",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -15392,7 +15417,7 @@
       "distinct_from": [],
       "family": "Tektur",
       "id": "tektur",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -15614,7 +15639,7 @@
       "distinct_from": [],
       "family": "TikTok Sans",
       "id": "tiktok-sans",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -15717,7 +15742,7 @@
       "distinct_from": [],
       "family": "Tiro Devanagari Hindi",
       "id": "tiro-devanagari-hindi",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -15797,7 +15822,7 @@
       "distinct_from": [],
       "family": "Tomorrow",
       "id": "tomorrow",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -15901,7 +15926,7 @@
       "distinct_from": [],
       "family": "Twilio Sans Mono",
       "id": "twilio-sans-mono",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -16007,7 +16032,7 @@
       "distinct_from": [],
       "family": "Ubuntu Sans",
       "id": "ubuntu-sans",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [
         {
           "detail": "nerd",
@@ -16070,7 +16095,7 @@
       "distinct_from": [],
       "family": "Uncial Antiqua",
       "id": "uncial-antiqua",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -16108,7 +16133,7 @@
       "distinct_from": [],
       "family": "UnifrakturCook",
       "id": "unifrakturcook",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -16180,7 +16205,7 @@
       "distinct_from": [],
       "family": "Varela",
       "id": "varela",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -16443,7 +16468,7 @@
       "distinct_from": [],
       "family": "Whisper",
       "id": "whisper",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -16562,15 +16587,12 @@
       "family": "Yaldevi",
       "id": "yaldevi",
       "in_catalog": false,
-      "names": [],
-      "superfamily_id": null
-    },
-    {
-      "distinct_from": [],
-      "family": "Yaldevi Colombo",
-      "id": "yaldevi-colombo",
-      "in_catalog": false,
-      "names": [],
+      "names": [
+        {
+          "name": "Yaldevi Colombo",
+          "relation": "rename"
+        }
+      ],
       "superfamily_id": null
     },
     {
@@ -16697,7 +16719,7 @@
       "distinct_from": [],
       "family": "Zalando Sans Expanded",
       "id": "zalando-sans-expanded",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -16705,7 +16727,7 @@
       "distinct_from": [],
       "family": "Zalando Sans SemiExpanded",
       "id": "zalando-sans-semiexpanded",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -16713,7 +16735,7 @@
       "distinct_from": [],
       "family": "Zed Mono",
       "id": "zed-mono",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [
         {
           "detail": "nerd",
@@ -16752,7 +16774,7 @@
       "distinct_from": [],
       "family": "Zed Sans",
       "id": "zed-sans",
-      "in_catalog": true,
+      "in_catalog": false,
       "names": [],
       "superfamily_id": null
     },
@@ -16760,7 +16782,7 @@
       "distinct_from": [],
       "family": "Zen Dots",
       "id": "zen-dots",
-      "in_catalog": false,
+      "in_catalog": true,
       "names": [],
       "superfamily_id": null
     },
@@ -17428,7 +17450,7 @@
     },
     {
       "name": "BLOKK Neue",
-      "reason": "latin"
+      "reason": "license"
     },
     {
       "name": "BM",
@@ -19595,6 +19617,10 @@
       "reason": "latin"
     },
     {
+      "name": "Ioskeley Mono Term Nerd Font",
+      "reason": "license"
+    },
+    {
       "name": "Iowan Old Style",
       "reason": "system"
     },
@@ -20027,6 +20053,10 @@
       "reason": "latin"
     },
     {
+      "name": "Lexica Ultralegible",
+      "reason": "latin"
+    },
+    {
       "name": "Libertinus Math",
       "reason": "icon"
     },
@@ -20173,10 +20203,6 @@
     {
       "name": "Lucida Sans Unicode",
       "reason": "proprietary"
-    },
-    {
-      "name": "Luciole",
-      "reason": "license"
     },
     {
       "name": "Luculent",
@@ -20456,6 +20482,10 @@
     },
     {
       "name": "MiaoUnicode",
+      "reason": "license"
+    },
+    {
+      "name": "Microsoft Aptos font family",
       "reason": "license"
     },
     {
@@ -22003,10 +22033,6 @@
       "reason": "latin"
     },
     {
-      "name": "Overused Grotesk",
-      "reason": "license"
-    },
-    {
       "name": "P052",
       "reason": "license"
     },
@@ -22353,34 +22379,6 @@
     {
       "name": "Redacted Script",
       "reason": "icon"
-    },
-    {
-      "name": "Redaction",
-      "reason": "latin"
-    },
-    {
-      "name": "Redaction 10",
-      "reason": "latin"
-    },
-    {
-      "name": "Redaction 100",
-      "reason": "latin"
-    },
-    {
-      "name": "Redaction 20",
-      "reason": "latin"
-    },
-    {
-      "name": "Redaction 35",
-      "reason": "latin"
-    },
-    {
-      "name": "Redaction 50",
-      "reason": "latin"
-    },
-    {
-      "name": "Redaction 70",
-      "reason": "latin"
     },
     {
       "name": "Red Hat",
@@ -23532,8 +23530,8 @@
     }
   ],
   "run": {
-    "date": "2026-09-26",
-    "method_version": "2026-09-29"
+    "date": "2026-10-17",
+    "method_version": "2026-10-20"
   },
   "schema_version": "0.1.0-draft"
 }
