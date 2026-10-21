@@ -3,8 +3,8 @@ Developers & apps on the measurement model, overall standing in for Projects (ow
 of 2026-10-01, q1_model_views, q12_overall_stand_in, q13_catalog_membership,
 q2_guard_retired and q5_group_shares_retired).
 
-review.md and the pack describe the method as it is: ruler overlaps and guard hits cover
-the engine's ranks only (methodology §9). The model's fit is
+review.md and the pack describe the method as it is: ruler overlaps, guard hits and the
+what-if table cover the engine's ranks only (methodology §9). The model's fit is
 replaced by synthetic entries (``fake_models``): these tests read what review writes, not
 what the model fits.
 """
@@ -22,6 +22,7 @@ from tests.helpers import ROOT
 from tests.pipeline.test_review import (  # noqa: F401 (replay_collector is a fixture)
     RUN,
     SMALL,
+    pack_bytes,
     ranked_build,
     replay_collector,
     small,
@@ -139,3 +140,39 @@ def test_overlap_flags_skip_the_model_views() -> None:
     }
     flags = review.overlap_flags(scores, MODEL)  # type: ignore[arg-type]
     assert [(f.rank_key, f.message.split(":")[0]) for f in flags] == [("desktop_chosen", "`arch`")]
+
+
+def test_the_what_if_table_varies_only_the_engine_s_weights() -> None:
+    """q5_group_shares_retired: the project survey's weights, the group shares and the
+    dev_apps weights score no rank, so they have no knob; every knob left moves an engine
+    rank."""
+    paths = {k.path: k for k in review.knobs(MODEL)}
+    assert "surveys.desktop.weights.homebrew" in paths
+    assert "ranks.coding.weights.homebrew" in paths
+    assert not [p for p in paths if p.startswith("surveys.project.")]
+    assert not [p for p in paths if p.startswith("project_group_shares.")]
+    assert not [p for p in paths if p.startswith("ranks.dev_apps.")]
+    assert not [p for p in paths if p.startswith("ranks.overall.")]  # a stand-in has no mix
+    assert all(set(k.keys) <= set(ENGINE) for k in paths.values())
+
+
+@pytest.mark.usefixtures("replay_collector")
+def test_the_what_if_pack_names_the_engine_s_rules_only(model_build: StageContext) -> None:
+    ctx = model_build
+    review.run(ctx)
+    pack = pack_bytes(ctx.paths)
+    what_if = pack["what-if.md"].decode()
+    head = what_if.split("\n| Weight |")[0]
+    assert "# What if: each engine weight halved and doubled" in head
+    assert "The model's ranks (project, dev_apps; overall repeats project) have no rows" in head
+    for retired in ("gate M9 (b)", "phase_in_weight", "phasing in"):
+        assert retired not in what_if
+    rows = [line.split(" | ") for line in what_if.splitlines() if line.startswith("| ranks.")]
+    rows += [line.split(" | ") for line in what_if.splitlines() if line.startswith("| surveys.")]
+    assert rows
+    assert {row[2] for row in rows} <= set(ENGINE)
+    for path in ("surveys.project.", "project_group_shares.", "ranks.dev_apps."):
+        assert path not in what_if
+        assert path not in pack["anomalies.md"].decode()
+    readme = pack["README.md"].decode()
+    assert "Weights in ranking.toml move the engine's ranks only (what-if.md)." in readme

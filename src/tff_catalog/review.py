@@ -75,11 +75,13 @@ values:
 - ``term``: term flags (``corrections.TERM_FLAGS``) by source.
 - ``growth``: a store source whose newest snapshot is more than
   ``store.GROWTH_FLAG`` bigger than its previous one.
-- ``what_if``: each weight of ``ranking.toml`` (survey and view weights,
-  project group shares, the overall mix) times each of
-  ``review.what_if_factors``, with its effect on every rank key it can move
-  (``what_if``). It reranks about 50 times (``surveys.views`` takes about
-  0.2 s at 2,000 families).
+- ``what_if``: each weight of ``ranking.toml`` that an engine rank uses (survey
+  and view weights, project group shares, the overall mix) times each of
+  ``review.what_if_factors``, with its effect on every engine rank key it can
+  move (``what_if``). A weight only the model views would use is left out: they
+  weigh each term by its fitted noise (q5_group_shares_retired; methodology §8).
+  It reranks once per live row (``surveys.views`` takes about 0.2 s at 2,000
+  families).
 - ``nerd_link``: catalog fonts whose Nerd Font build link failed the run's link
   check (``links.Links.nerd_problem``), which stage "export" leaves out until it
   passes again (owner ruling of 2026-09-29); the font stays listed.
@@ -189,7 +191,7 @@ KINDS: dict[str, tuple[str, str]] = {
         "stays listed, with no Nerd Font tag, link or filter match until the link passes "
         "again.",
     ),
-    "what_if": ("What if", "Each ranking.toml weight halved and doubled."),
+    "what_if": ("What if", "Each ranking.toml weight of the engine's ranks halved and doubled."),
 }
 # The owner's ruling of 2026-09-26 (review_report): the what-if table stays in the private
 # pack, and review.md lists cross-check moves only inside the exact top and of at least
@@ -216,7 +218,7 @@ PACK_FILES: dict[str, str] = {
     "old-top100.md": "The comparison with the old Top 100 (first run).",
     "disagreements.md": "Fonts in the top of most chosen or project but low in the other.",
     "anomalies.md": "Every flag, uncut (review.md stops some lists at the exact top).",
-    "what-if.md": "The what-if table: each weight halved and doubled.",
+    "what-if.md": "The what-if table: each engine weight halved and doubled.",
     "sources.md": "Per-source statistics against the last run, ruler overlaps and weights.",
     "checks.md": "Catalog fonts with the default category, and the families to watch.",
     "no-license.md": "Families with no license found, and the overall order each would get.",
@@ -672,6 +674,14 @@ def model_keys(cfg: RankingConfig) -> frozenset[str]:
     if cfg.ranks.overall.stand_in in keys:
         keys.add("overall")
     return frozenset(keys)
+
+
+def _model_views_text(cfg: RankingConfig) -> str:
+    """The model views in words, for the pack: "project, dev_apps; overall repeats project"."""
+    text = ", ".join(k for k in RANK_KEYS if k in cfg.model.views)
+    if "overall" in model_keys(cfg):
+        text += f"; overall repeats {cfg.ranks.overall.stand_in}"
+    return text
 
 
 def overlap_flags(
@@ -1134,7 +1144,11 @@ def knobs(cfg: RankingConfig) -> list[Knob]:
 
     Survey weights move the survey's rank keys and overall; view weights their
     view; project group shares move project and overall; the overall mix moves
-    overall. Disabled sources are left out.
+    overall. Disabled sources are left out, and so is every weight whose keys are
+    all model views (``model_keys``): the model weighs each term by its fitted
+    noise, so the project survey's weights, the group shares and the dev_apps
+    weights score no rank once Projects is on the model and overall repeats it
+    (q5_group_shares_retired, q12_overall_stand_in; methodology §8).
     """
     sources = cfg.sources.all()
     survey_keys = {
@@ -1170,7 +1184,8 @@ def knobs(cfg: RankingConfig) -> list[Knob]:
             Knob(f"ranks.overall.mix.{key}", "mix", "overall", key, ("overall",))
             for key in cfg.ranks.overall.mix
         ]
-    return out
+    model = model_keys(cfg)
+    return [k for k in out if set(k.keys) - model]
 
 
 def vary(
@@ -1249,6 +1264,8 @@ def what_if(
 ) -> tuple[WhatIf, ...]:
     """Every knob (``knobs``) times every ``review.what_if_factors``, against the
     unchanged ranks recomputed from the same inputs (so a factor of 1 moves nothing).
+    Each row's effects are on the knob's keys outside the model views (``model_keys``),
+    which ignore the weights.
 
     ``phasing`` names the sources still phasing in: their weight this run is
     ``sources.<name>.phase_in_weight``, not the knob's key, and the row says so.
@@ -1256,6 +1273,7 @@ def what_if(
     from tff_catalog import surveys
 
     base = _orders({k: s.placements for k, s in surveys.views(inputs, cfg).items()})
+    model = model_keys(cfg)
     out = []
     for knob in knobs(cfg):
         note = ""
@@ -1268,7 +1286,11 @@ def what_if(
                 continue
             scores = surveys.views(varied, varied_cfg)
             orders = _orders({k: s.placements for k, s in scores.items()})
-            effects = tuple(effect(k, base.get(k, {}), orders.get(k, {}), cfg) for k in knob.keys)
+            effects = tuple(
+                effect(k, base.get(k, {}), orders.get(k, {}), cfg)
+                for k in knob.keys
+                if k not in model
+            )
             out.append(WhatIf(knob, factor, True, effects, note))
     return tuple(out)
 
@@ -2152,18 +2174,33 @@ def _pack_checks(a: Analysis) -> str:
 
 
 def _pack_what_if(a: Analysis, cfg: RankingConfig) -> str:
+    """The what-if table, for the engine's ranks: its header names the rules that apply
+    to the rows it holds, and the model views it leaves out (``knobs``)."""
     top = cfg.display.exact_top
-    lines = [
-        f"# What if: each weight halved and doubled, {a.run_date}",
-        "",
-        f"Each row multiplies one ranking.toml weight and reranks. RBO: the top "
-        f"{cfg.membership.catalog_size} against this run's (p {cfg.review.rbo_p}); In and Out: "
-        f"fonts entering and leaving the top {top}. Project sources keep their group's fixed "
-        "share (gate M9 (b)), so only the split inside the group changes. A source still "
-        "phasing in is weighted by its `phase_in_weight` this run, whatever its key says; "
-        "its rows vary that weight.",
-        "",
-    ]
+    text = (
+        f"Each row multiplies one ranking.toml weight of the engine's ranks and reranks. RBO: "
+        f"the top {cfg.membership.catalog_size} against this run's (p {cfg.review.rbo_p}); In "
+        f"and Out: fonts entering and leaving the top {top}."
+    )
+    knob_list = [row.knob for row in a.what_if]
+    if any(k.kind == "group" or (k.kind, k.owner) == ("survey", "project") for k in knob_list):
+        text += (
+            " Project sources keep their group's fixed share (gate M9 (b)), so only the "
+            "split inside the group changes."
+        )
+    if any(row.note for row in a.what_if):
+        text += (
+            " A source still phasing in is weighted by its `phase_in_weight` this run, "
+            "whatever its key says; its rows vary that weight."
+        )
+    if cfg.model.views:
+        text += (
+            f" The model's ranks ({_model_views_text(cfg)}) have no rows: they weigh each term "
+            "by its fitted noise, not by a ranking.toml weight (owner rulings of 2026-10-01, "
+            "q1_model_views and q5_group_shares_retired), so a weight only they would use "
+            "is left out."
+        )
+    lines = [f"# What if: each engine weight halved and doubled, {a.run_date}", "", text, ""]
     rows = []
     for row in a.what_if:
         path = f"{row.knob.path} ({row.note})" if row.note else row.knob.path
@@ -2288,10 +2325,20 @@ def _pack_old(a: Analysis, cfg: RankingConfig) -> str:
     return "\n".join([*lines, ""])
 
 
-def _pack_readme(a: Analysis) -> str:
+def _pack_readme(a: Analysis, cfg: RankingConfig) -> str:
+    """The pack's index and the gate R question. With model views, a line says which ranks
+    a ranking.toml weight can still move (q5_group_shares_retired)."""
     from tff_catalog import reviews
 
     options = reviews.catalogue("R")[0].options
+    weights = []
+    if cfg.model.views:
+        weights = [
+            "Weights in ranking.toml move the engine's ranks only (what-if.md). The model's "
+            f"ranks ({_model_views_text(cfg)}) weigh each term by its fitted noise (owner "
+            "ruling of 2026-10-01, q5_group_shares_retired).",
+            "",
+        ]
     lines = [
         f"# Review pack, {a.run_date}",
         "",
@@ -2308,6 +2355,7 @@ def _pack_readme(a: Analysis) -> str:
         "",
         *(f"- ({reviews.LETTERS[i]}) {o}." for i, o in enumerate(options)),
         "",
+        *weights,
         f"Answers are recorded in `data/reviews/{reviews.GATE_DIRS['R']}/<date>.toml` "
         f"(`tff-catalog questions --gate R`, then `tff-catalog rulings apply FILE`). Up to "
         f"{reviews.REVIEW_ROUNDS} rounds.",
@@ -2330,7 +2378,7 @@ def write_pack(directory: Path, a: Analysis, cfg: RankingConfig) -> Path:
         "checks.md": _pack_checks(a),
         "no-license.md": _pack_no_license(a),
     }
-    texts["README.md"] = _pack_readme(a)
+    texts["README.md"] = _pack_readme(a, cfg)
     if directory.exists():
         shutil.rmtree(directory)
     for name in PACK_FILES:
