@@ -15,10 +15,12 @@ the private store or fits it (``fitstore.obtain``, by the run's ``--write-fit`` 
   bulk, a positive count or a place on the list (q14_two_groups); the two-group rule then
   holds a font out of the top 100 as before;
 - each source's z, the posterior mean from that source's terms alone (q18b), and its share
-  of the font's posterior expected information (q16), which export publishes for every
-  source except Google and Fonts Over Time (null, as their parameters are private);
-- the sources whose leave-one-term-out PIT lies in a tail of ``[model] pit_tail``: flagged
-  for review, a font whose sources conflict, in place of the guard's down-weighting (q2).
+  of the font's posterior expected information (q16), which export publishes as a share
+  among the font's open sources only, null for Google and Fonts Over Time, so nothing
+  private can be worked back (q16_open_source_shares, 2026-10-20);
+- the sources whose leave-one-term-out PIT interval lies wholly in a tail of ``[model]
+  pit_tail`` (``measure.pit_flags``): flagged for review, a font whose sources conflict, in
+  place of the guard's down-weighting (q2).
 
 They are ``ModelEntry`` rows in ``build/stage/model.json``, with each view's ``FitInfo`` in
 ``build/stage/fits.json``: the fit's date and sha256, the problems ``MixedFit.problems``

@@ -17,8 +17,9 @@ model views score the copy with the fits this run's stage "rank" scored with
 ``build/stage/``), never a new fit and never the store, so a run that made its
 fit and its replay that read it list the same orders. Nothing in the real build
 changes. Each family's orders in that run are what it would get if its license
-were found; the other fonts move a little too, which the orders here ignore. Stage "review" lists the result in the review pack
-(``no-license.md``); a license Claude finds goes to the owner as a gate LIC
+were found; the other fonts move a little too, which the orders here ignore. Stage
+"review" lists the result in the review pack (``no-license.md``); a license Claude finds
+goes to the owner as a gate LIC
 family question (``LIC-<family id>``, with ``spdx``).
 
 Candidates (``candidates``) are the licenses queue's ``no_license`` families
