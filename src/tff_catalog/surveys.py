@@ -1144,12 +1144,18 @@ def _report(
     dropped: frozenset[str],
 ) -> None:
     """Log what the review needs: counts, guard events, overlaps and weights, and the
-    fonts unranked in most chosen only because of abstentions, which must carry a tag."""
+    fonts unranked in most chosen only because of abstentions, which must carry a tag.
+
+    A model view has no ruler and no hand weights (owner rulings of 2026-10-01,
+    q1_model_views and q5_group_shares_retired), so its sources get no overlap and weight
+    line: the weight would be one no rank uses."""
     log = ctx.log
     for key, sc in scores.items():
         guarded = sum(1 for f in sc.fused.values() if f.guard)
         log.info("%s: %d ranked, %d guard events", key, len(sc.placements), guarded)
     for key in ("desktop_chosen", "project"):
+        if key in ctx.config.ranking.model.views and key in inputs.models:
+            continue
         for s, w in inputs.weights.get(key, {}).items():
             n = scores[key].overlaps.get(s, 0)
             log.info("%s %s: overlap %d, weight %.4f", key, s, n, w)

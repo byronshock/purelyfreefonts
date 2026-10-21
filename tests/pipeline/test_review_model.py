@@ -11,6 +11,7 @@ what the model fits.
 """
 
 import dataclasses
+import logging
 import math
 from collections import defaultdict
 from collections.abc import Iterable, Mapping
@@ -144,6 +145,26 @@ def test_overlap_flags_skip_the_model_views() -> None:
     }
     flags = review.overlap_flags(scores, MODEL)  # type: ignore[arg-type]
     assert [(f.rank_key, f.message.split(":")[0]) for f in flags] == [("desktop_chosen", "`arch`")]
+
+
+def test_the_rank_log_gives_no_overlap_or_weight_for_a_model_view(
+    model_build: StageContext, caplog: pytest.LogCaptureFixture
+) -> None:
+    """q1_model_views, q5_group_shares_retired: Projects on the model has no ruler and no
+    hand weights, so the rank log's overlap and weight lines cover most chosen only; with
+    the model views off, Projects gets its lines back."""
+    from tff_catalog import surveys
+
+    def logged(ctx: StageContext) -> set[str]:
+        caplog.clear()
+        with caplog.at_level(logging.INFO, logger=ctx.log.name):
+            surveys.run(ctx)
+        return {r.getMessage().split()[0] for r in caplog.records if ": overlap " in r.getMessage()}
+
+    assert logged(model_build) == {"desktop_chosen"}
+    engine = dataclasses.replace(MODEL, model=dataclasses.replace(MODEL.model, views=()))
+    ctx = dataclasses.replace(model_build, config=SimpleNamespace(ranking=engine))
+    assert logged(ctx) == {"desktop_chosen", "project"}
 
 
 def test_the_what_if_table_varies_only_the_engine_s_weights() -> None:
