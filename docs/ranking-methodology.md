@@ -195,7 +195,7 @@ The missing Debian package costs Monaspace only a slightly stronger pull toward 
 
 ### The measurement model: the posterior
 
-The model needs no separate fusion step: the posterior of §3 combines a font's terms, and its mean is the score. There is no κ, and no outlier guard: the guard's half weight retired for the model's ranks (q2). Instead, each term gets a leave-one-term-out check. The font's other terms predict that term's count, and when the count's probability integral transform (PIT) under that prediction falls below 0.001 or above 0.999, the font goes to review as one whose sources conflict (§9). Nothing is down-weighted.
+The model needs no separate fusion step: the posterior of §3 combines a font's terms, and its mean is the score. There is no κ, and no outlier guard: the guard's half weight retired for the model's ranks (q2). Instead, each term gets a leave-one-term-out check. The font's other terms predict that term's count, and when the count's probability integral transform (PIT) under that prediction falls below 0.001 or above 0.999, the font goes to review as one whose sources conflict (§9). For a count or an interval, the PIT is itself an interval, and the font is flagged only when all of it lies in a tail, so the flag depends on the font's own counts alone. Nothing is down-weighted.
 
 ### Overall and the display
 
@@ -465,7 +465,7 @@ Source weights and fixed floors are in the §5 tables. The model's fitted parame
 | **The model (`[model]`)** | |
 | views | `project`, `dev_apps` (q1, q15) |
 | quantiles | 0.05, 0.95: the likely range's ends (q19) |
-| pit_tail | 0.001: a term whose leave-one-term-out PIT is below it, or above 1 minus it, is flagged for review (q2) |
+| pit_tail | 0.001: a term whose whole leave-one-term-out PIT interval is below it, or above 1 minus it, is flagged for review (q2) |
 | **Both** | |
 | min_exposure_days | 60, counted from the data date |
 | nerd_credit, cjk_build_credit, bundle_credit | 1.0, 1.0, 0.5 |
@@ -499,7 +499,8 @@ No rank's score uses these any more, since *Projects* moved to the model (owner 
 - the two desktop views differ for any reason other than Linux abstentions;
 - a Linux source that abstains for a font in *most chosen* still gives it a term in another rank that abstains, or a `weight_used`;
 - a `previous_score` is not the font's last published score, or, in a rank's first run under a new method, not its own score;
-- a Google or Fonts Over Time value, share or history appears in any published or committed file (T2, T4).
+- a Google or Fonts Over Time value, share or history appears in any published or committed file (T2, T4), or can be worked back from one: a font's published `weight_used` shares in the model's ranks must add up to 1, or all be null;
+- a model rank places or scores a font on Fonts Over Time's terms alone (owner ruling of 2026-10-20).
 
 **Flags in the pull request, not blocking:**
 
@@ -508,7 +509,7 @@ No rank's score uses these any more, since *Projects* moved to the model (owner 
 - a coverage change above 10%;
 - stale sources and schema mismatches;
 - in the engine's ranks, ruler overlaps and outlier-guard hits;
-- in the model's ranks, conflicting sources: a font in the top 500 with a term whose leave-one-term-out PIT is below 0.001 or above 0.999, named by source only (q2);
+- in the model's ranks, conflicting sources: a font in the top 500 with a term whose whole leave-one-term-out PIT interval is below 0.001 or above 0.999, named by source only (q2);
 - one-source share jumps above 3×;
 - top-100 entries that came from below 250;
 - in the engine's ranks, a font moving more than 30% under the coverage-aware RRF or Fontsource-ruler cross-checks;

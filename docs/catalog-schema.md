@@ -43,7 +43,7 @@ The full catalog: every font in it, every rank, and every source.
 - `data_license`: `CC-BY-SA-4.0`, not provisional, with its URL.
 - `sources[]`: one entry per engine source used this run, in `ranking.toml` order. Disabled sources (Flutter, for now) and sources dropped after two stale months are left out. Each entry has:
   - `id`, `collector`, independence `group` and `survey`;
-  - `weight`: its effective weight in the survey view that feeds the overall rank, after overlap scaling, phase-in and the project group shares;
+  - `weight`: for a source of the engine's ranks, its effective weight in its survey view, after overlap scaling; null for a source the model's ranks read, which weigh each term by its fitted noise, not a hand weight (q5);
   - `publish_raw`: whether raw values may appear (false for Google and Fonts Over Time, rulings T2 and T4);
   - `data_date` and `fetched_at` of the snapshot used, and `stale` when that snapshot is older than the run;
   - `ruler_overlap`: how many families the source shares with the ruler (Homebrew).
@@ -114,7 +114,7 @@ The catalog is the overall top 500 plus the top 100 of the project rank and both
 `sources` has one entry per source in `sources[]`. It describes the font as the source's own survey sees it, where nothing abstains: *most installed* for desktop sources, *Used in projects* for project sources. Families that failed the license check are left out there, as the ranking leaves them out, so they take no rank in a source either.
 
 - `state`: `observed`; `censored` (the source could show the font, but its value is under the floor: `reason` `below_floor` or `no_value`); `not_covered` (`reason` `no_package`, `outside_frame` or `merged_into_parent`); or `too_new`. A project source with a term in the model is always `observed`, intervals included, with no reason (q18a).
-- `rank_in_source`: the font's rank among the source's observed values, 1 being the highest; ties share a rank (1, 2, 2, 4). Null unless observed.
+- `rank_in_source`: the font's rank among the source's observed values, 1 being the highest; ties share a rank (1, 2, 2, 4). For a project source, it ranks among every font with a model term from that source and a value, so no observed entry with a value lacks one. Null unless observed. A project source that has no model term for the font (jsDelivr with no hits yet, q29) is `not_covered`, with no rank, z or `weight_used`.
 - `z`: for a desktop source, the source's value mapped onto the ruler's scale (rank-based), as the ranking used it. For a project source, the posterior mean of the font's popularity from that source's terms alone (q18b), except Fonts Over Time's, which stays rank-based (T4). For Fonts Over Time that is after its monthly smoothing (methodology §6), so its `z` can order fonts differently from its `rank_in_source`, which is this month's own count.
 - `weight_used`: for a project source, its share of the posterior expected information from the font's open sources in *Projects*, every source but Google and Fonts Over Time, so the published shares add up to 1 (q16, amended 2026-10-20); null for Google and Fonts Over Time. Null for a desktop source, since the overall entry repeats *Projects* (q12). Null as well when the font has no term from it (not covered, too new, or abstaining).
 - `abstains_in[]`: the views where a Linux source leaves the font out because a Linux system preinstalls it or another package pulls it in: every view it is in except *most installed*, Rising included.
