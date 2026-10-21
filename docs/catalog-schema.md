@@ -39,7 +39,7 @@ The full catalog: every font in it, every rank, and every source.
 ### Top level
 
 - `schema_version`.
-- `run`: the run `date`, the `method_version` (the date of the methodology the code implements), `config_sha256` (all config files), `ranking_toml_sha256` (the ranking parameters alone), `code_commit` (the commit that ran; forty zeros outside a git checkout) and `generator`.
+- `run`: the run `date`, the `method_version` (the date of the methodology the code implements: the newest of `method_versions`), `method_versions` (catalog.json only, from the scoring-method port: each rank's own method version, `tff_catalog.methods`; a rank whose version changed since the last merged run publishes `previous_score` equal to `score`), `config_sha256` (all config files), `ranking_toml_sha256` (the ranking parameters alone), `code_commit` (the commit that ran; forty zeros outside a git checkout) and `generator`.
 - `data_license`: `CC-BY-SA-4.0`, not provisional, with its URL.
 - `sources[]`: one entry per engine source used this run, in `ranking.toml` order. Disabled sources (Flutter, for now) and sources dropped after two stale months are left out. Each entry has:
   - `id`, `collector`, independence `group` and `survey`;

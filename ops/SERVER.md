@@ -110,6 +110,14 @@ Milestone 1 step 19. The refresh workflow opens its own pull request and reaches
   ```bash
   bash -c 'umask 077; d=$(mktemp -d) || exit 1; trap "rm -rf \"$d\"" EXIT; u=git@github.com:byronshock/trulyfreefonts-data.git; ssh-keygen -q -t ed25519 -N "" -C "purelyfreefonts refresh" -f "$d/key" || exit 1; ssh-keygen -l -f "$d/key.pub"; echo; cat "$d/key.pub"; echo; read -r -p "Add the key above as a deploy key with write access, then press Enter: " _ || exit 1; export GIT_SSH_COMMAND="ssh -i $d/key -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new"; git ls-remote --exit-code "$u" HEAD && git init -q "$d/empty" && git -C "$d/empty" push --dry-run "$u" : && gh secret set DATA_STORE_KEY --env refresh --repo byronshock/purelyfreefonts < "$d/key" && echo "Read and write work; the secret is set."'
   ```
+- [ ] 27b. **The store bundle's key, `STORE_BUNDLE_KEY`, in the environment `refresh`** (`store_bundle_encrypted`, 2026-10-19; [docs/milestone-method.md](../docs/milestone-method.md) step 2). Any signed-in GitHub user can download a public repository's workflow artifacts, and the refresh's `store-bundle` artifact carries the store's new snapshots, Google Fonts' and Fonts Over Time's among them (rulings T2, T4). So the `refresh` job encrypts the bundle with this key before uploading it, and fails before fetching anything without it; the `store` job decrypts it, checks it against the sha256 the `refresh` job reports, pushes it, and deletes the run's `store-bundle` artifacts. The key is 64 hex digits from `openssl rand`, made and set in one command, and kept nowhere else: it is needed only between a run's two jobs.
+  - [ ] Set by the owner with the command below, and checked read-only by Claude: `gh secret list --env refresh --repo byronshock/purelyfreefonts` lists `DATA_STORE_KEY` and `STORE_BUNDLE_KEY`.
+
+  **To set or rotate it**, between runs (a run whose `store` job hasn't pushed yet needs the key it was encrypted with): check that no refresh is running (`gh run list --workflow refresh.yml --repo byronshock/purelyfreefonts --status in_progress`), then run:
+
+  ```bash
+  bash -c 'umask 077; k=$(openssl rand -hex 32) || exit 1; printf %s "$k" | gh secret set STORE_BUNDLE_KEY --env refresh --repo byronshock/purelyfreefonts && echo "The secret is set."'
+  ```
 
 ### K. The new domains (2026-10-02)
 The owner's rulings of 2026-10-02 (AUTHORITY.md, **Name and domain**): the site becomes Purely Free Fonts at purelyfreefonts.com, and four more zones join the three above. Zone ids stay in `ops/SERVER.local.md`, never here. Each zone gets the settings of items 11, 17 and 19:

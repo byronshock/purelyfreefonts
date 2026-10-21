@@ -27,6 +27,7 @@ When the real stages can run on a synthetic store, ``test_state_two_runs.py``'s
 """
 
 import ast
+import hashlib
 import importlib.machinery
 import importlib.util
 import os
@@ -46,6 +47,7 @@ import yaml
 from tests.helpers import ROOT, synth
 from tests.helpers.treehash import tree_diff, treehash
 
+import tff_catalog
 from tff_catalog import cli, jsonio, parse, refresh, stageio, stages, state
 from tff_catalog.collectors.base import Collector, CollectorBase, ParseContext
 from tff_catalog.config import config_hash, load_config
@@ -113,13 +115,18 @@ class SynthStages:
 
     ``fail_l3``: "verify" fails the first catalog member. ``hard_failures``:
     "validate" raises them. ``crash_in``: that stage raises ``RuntimeError``.
+    ``model``: "rank" also runs the real model views (``modelviews.run``, on the
+    synthetic model of ``tests.helpers.models``), and "verify" records the fits the
+    rank before it scored with, as the real one's scope follows that rank's order.
     """
 
     fail_l3: bool = False
     hard_failures: tuple[Failure, ...] = ()
     crash_in: str | None = None
+    model: bool = False
     calls: list[Call] = field(default_factory=list)
     rank_saw: list[frozenset[str]] = field(default_factory=list)
+    rank_fits: list[dict[str, str]] = field(default_factory=list)  # each pass: {view: sha256}
 
     def load(self, stage: stages.Stage) -> Callable[[stages.StageContext], None]:
         def run(ctx: stages.StageContext) -> None:
@@ -165,7 +172,22 @@ class SynthStages:
             synth.write_snapshot(ctx.require_store().root, "font_facts", ctx.run_date, [])
         return files
 
+    def _rank(self, ctx: stages.StageContext) -> None:
+        self._generic("rank", ctx)
+        if not self.model:
+            return
+        from tff_catalog import modelviews
+
+        models, fits = modelviews.run(ctx)
+        stageio.dump_stage(ctx.paths, "model", models)
+        stageio.dump_stage(ctx.paths, "fits", fits)
+        self.rank_fits.append({view: f.sha256 for view, f in fits.items()})
+
     def _verify(self, ctx: stages.StageContext) -> None:
+        if self.model:
+            fits = stageio.load_stage(ctx.paths, "fits")
+            saw = {view: f.sha256 for view, f in sorted(fits.items())}
+            jsonio.dump(saw, ctx.paths.stage / "synth" / "verify-saw.json")
         files = self._generic("verify", ctx)
         members = sorted(f for f, m in files["membership"]["catalog"].items() if m["member"])
         failed = set(members[:1]) if self.fail_l3 else set()
@@ -252,10 +274,11 @@ class Runner:
         ).with_(config=self.config)
 
     def run(
-        self, name: str, state_dir: Path, day: date, *, replay: bool = True
+        self, name: str, state_dir: Path, day: date, *, replay: bool = True, fit: str = "read"
     ) -> refresh.RunResult:
         paths = self.paths(name, state_dir)
-        return refresh.refresh(paths, day, from_snapshots=day if replay else None)
+        options = stages.RunOptions(fit=fit)
+        return refresh.refresh(paths, day, from_snapshots=day if replay else None, options=options)
 
 
 @pytest.fixture
@@ -325,6 +348,87 @@ def test_replay_of_a_live_run_gives_its_build(
     assert_same_tree(live.build, replayed.build)
     assert live.stages == tuple(expected_stages(replay=False))
     assert replayed.stages == tuple(expected_stages(replay=True))
+
+
+@pytest.mark.model_config
+@pytest.mark.parametrize("live", [False, True], ids=["from-snapshots", "live"])
+def test_a_run_that_writes_its_fit_gives_the_build_of_its_replay(
+    runner: Runner,
+    synth_stages: SynthStages,
+    synth_state: Path,
+    synth_store: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    live: bool,
+) -> None:
+    """q9_theta_cadence, october_replay_is_the_switch: a --write-fit run keeps its fits once
+    and ends with the build/ that its offline replay, reading them back, gives. Its first
+    rank fits a model that "verify" then shrinks, so "rank" fits again and only that fit is
+    kept; refresh replays the run with the kept fits, so no pass scores with the other."""
+    from tests.helpers import models
+
+    from tff_catalog import fitstore
+
+    fitted = models.stub_model_inputs(
+        monkeypatch, drop=lambda paths: len(refresh.l3_excluded(paths))
+    )
+    synth_stages.fail_l3 = True  # "verify" fails a family: "rank" reruns on a smaller model
+    synth_stages.model = True
+    day = DEC if live else OCT
+    options = stages.RunOptions(fit="write", from_snapshots=None if live else day)
+    wrote = refresh.refresh(runner.paths("write", synth_state), day, options=options)
+    assert wrote.ok, wrote.failures
+    views = ("dev_apps", "project")
+    assert {v: fitstore.stored_dates(synth_store, v) for v in views} == {v: [day] for v in views}
+    kept = {
+        v: hashlib.sha256(fitstore.fit_path(synth_store, v, day).read_bytes()).hexdigest()
+        for v in views
+    }
+    # The first pass fits twice (before and after verify's exclusions), the second never.
+    first, rerun, *again = synth_stages.rank_fits
+    assert fitted == [models.FONTS] * 2 + [models.FONTS - 1] * 2
+    assert first != rerun == kept
+    assert again == [kept, kept]
+    assert wrote.stages == tuple(
+        expected_stages(replay=not live, rerun=True) + expected_stages(replay=True, rerun=True)
+    )
+
+    synth_stages.rank_fits.clear()
+    replayed = runner.run("replay", synth_state, day)  # read mode, as the job's own replay
+    assert replayed.ok, replayed.failures
+    assert synth_stages.rank_fits == [kept, kept]
+    assert len(fitted) == 4, "the replay fitted again"
+    assert_same_tree(wrote.build, replayed.build)
+    assert jsonio.load(wrote.build / "stage" / "synth" / "verify-saw.json") == kept
+    assert not list(wrote.build.rglob("*pending*"))
+    assert all("source" not in f for f in jsonio.load(wrote.build / "stage" / "fits.json").values())
+
+
+@pytest.mark.model_config
+def test_a_run_without_its_fit_stops_before_it_fetches(
+    runner: Runner,
+    synth_stages: SynthStages,
+    synth_state: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """A read-mode run with no stored fit on or before its date stops in one line, before
+    build/ is emptied or anything fetched; so does --write-fit with --only."""
+    build = runner.run("kept", synth_state, OCT, fit="memory").build
+    before = treehash(build)
+    synth_stages.calls.clear()
+    paths = runner.paths("kept", synth_state)
+    monkeypatch.setattr(Paths, "from_env", classmethod(lambda cls, root=None, env=None: paths))
+    assert cli.main(["refresh", "--date", DEC.isoformat()]) == 1
+    err = capsys.readouterr().err
+    assert err == (
+        f"tff-catalog refresh: project: no stored fit on or before {DEC.isoformat()}; only "
+        "the switch or a refit by owner ruling makes one (--write-fit, the refresh workflow's "
+        "write_fit input), and a local dry run can pass --fit-in-memory\n"
+    )
+    assert cli.main(["refresh", "--date", DEC.isoformat(), "--write-fit", "--only", "x"]) == 1
+    assert "only in a full run" in capsys.readouterr().err
+    assert synth_stages.calls == []
+    assert treehash(build) == before
 
 
 # --- stages, fetcher and the rerun -------------------------------------------------------------
@@ -440,6 +544,7 @@ def test_run_history_entry(
             synth.PACKAGES: OCT.isoformat(),  # no November snapshot: stale
             synth.UNIVERSE: NOV.isoformat(),
         },
+        "method_versions": dict(tff_catalog.METHOD_VERSIONS),
     }
     assert result.stale == (synth.PACKAGES,)
     head = subprocess.run(
@@ -694,7 +799,8 @@ def test_workflow_triggers_and_settings() -> None:
     # the jobs that write parse nothing the run produced.
     assert jobs["npm"]["permissions"] == {"contents": "read"}
     assert jobs["refresh"]["permissions"] == {"contents": "read"}
-    assert jobs["store"]["permissions"] == {"contents": "read"}
+    # actions: write only to delete the store bundle's artifact (store_bundle_encrypted).
+    assert jobs["store"]["permissions"] == {"contents": "read", "actions": "write"}
     assert jobs["publish"]["permissions"] == {
         "contents": "write",
         "pull-requests": "write",
@@ -720,11 +826,12 @@ def test_workflow_triggers_and_settings() -> None:
     named = {name for name, job in jobs.items() if job.get("environment") == "refresh"}
     readers = {name for name, job in jobs.items() if "DATA_STORE_KEY" in str(job)}
     assert named == readers == {"refresh", "store"}
+    bundle_key = {name for name, job in jobs.items() if "STORE_BUNDLE_KEY" in str(job)}
+    assert bundle_key == {"refresh", "store"}
     others = sorted(p.name for p in WORKFLOWS.glob("*.yml") if p.name != "refresh.yml")
     assert others  # ci.yml and deploy.yml
-    assert not [
-        n for n in others if "DATA_STORE_KEY" in (WORKFLOWS / n).read_text(encoding="utf-8")
-    ]
+    for secret in ("DATA_STORE_KEY", "STORE_BUNDLE_KEY"):
+        assert not [n for n in others if secret in (WORKFLOWS / n).read_text(encoding="utf-8")]
     (clone,) = [s for s in jobs["refresh"]["steps"] if s.get("with", {}).get("path") == "_store"]
     assert clone["with"]["persist-credentials"] is False  # the key is not kept while parsing
     assert jobs["refresh"]["env"]["TFF_STORE"] == "${{ github.workspace }}/_store"
@@ -879,11 +986,15 @@ STUBS: dict[str, str] = {
     case "$3" in *.bundle) exit 0 ;; esac
     exit "${STUB_BRANCH_EXISTS:-1}" ;;
   "-C _store")
-    if [ "$3" = rev-list ]; then printf '%s' "${STUB_REV_LIST:-}"; fi ;;
+    if [ "$3" = rev-list ]; then printf '%s' "${STUB_REV_LIST:-}"; fi
+    if [ "$3 $4" = "bundle create" ]; then printf '%s' "$STUB_BUNDLE" > "$5"; fi
+    if [ "$3 $4" = "bundle list-heads" ]; then printf '%s HEAD\\n' "${STUB_TIP:-abc}"; fi
+    if [ "$3" = cat-file ]; then exit "${STUB_HAS_TIP:-1}"; fi ;;
 esac""",
     "gh": """case "$1 $2" in
   "pr list") printf '%s\\n' "${STUB_PR:-}" ;;
   "issue list") printf '%s\\n' "${STUB_ISSUE:-}" ;;
+  "api repos/"*/runs/*) printf '%s' "${STUB_ARTIFACTS:-}" ;;
 esac""",
     "sudo": 'exit "${STUB_SUDO:-1}"',
     "diff": 'exit "${STUB_DIFF:-0}"',
@@ -1055,16 +1166,43 @@ def test_step_place_the_npm_snapshot(tmp_path: Path) -> None:
 
 
 def test_step_refresh(tmp_path: Path) -> None:
-    step = run_step("Refresh", tmp_path / "live")
+    step = run_step("Refresh", tmp_path / "live", WRITE_FIT="false")
     assert step.code == 0, step.out
     # The npm job fetched npm, or failed to: the refresh job never asks npm (npm_own_job).
     assert step.calls == [f"uv run --locked tff-catalog -v refresh --date {OCT} --skip-fetch npm"]
+    # The switch: a dispatch that asks for a new fit (october_replay_is_the_switch).
     step = run_step(
-        "Refresh", tmp_path / "replay", RUN_DATE=str(S0_DAY), FROM_SNAPSHOTS=str(S0_DAY)
+        "Refresh",
+        tmp_path / "switch",
+        RUN_DATE=str(OCT),
+        FROM_SNAPSHOTS=str(OCT),
+        WRITE_FIT="true",
     )
     assert step.calls == [
-        f"uv run --locked tff-catalog -v refresh --date {S0_DAY} --from-snapshots {S0_DAY}"
+        f"uv run --locked tff-catalog -v refresh --date {OCT} --write-fit --from-snapshots {OCT}"
     ]
+    # The schedule has no inputs: the expression gives false, or nothing at all.
+    step = run_step("Refresh", tmp_path / "scheduled", WRITE_FIT="")
+    assert "--write-fit" not in step.calls[0]
+
+
+def test_only_a_dispatch_that_asks_writes_a_fit() -> None:
+    """q9_theta_cadence: the fit is made once and re-estimated only by owner ruling, so the
+    schedule never passes --write-fit; a dispatch does when its write_fit input says so."""
+    doc = _workflow("refresh.yml")
+    on = doc.get("on", doc.get(True))
+    write_fit = on["workflow_dispatch"]["inputs"]["write_fit"]
+    assert (write_fit["type"], write_fit["default"], write_fit["required"]) == (
+        "boolean",
+        False,
+        False,
+    )
+    (step,) = [s for s in doc["jobs"]["refresh"]["steps"] if s.get("name") == "Refresh"]
+    assert step["env"]["WRITE_FIT"] == (
+        "${{ github.event_name == 'workflow_dispatch' && inputs.write_fit }}"
+    )
+    steps = _steps(doc)
+    assert [s.get("name") for s in steps if "--write-fit" in str(s.get("run", ""))] == ["Refresh"]
 
 
 def test_step_replay(tmp_path: Path) -> None:
@@ -1186,16 +1324,158 @@ def test_step_pull_request(tmp_path: Path) -> None:
     assert step.called("gh workflow") == [dispatch]
 
 
+STAND_IN = "ab" * 32  # stands in for the store bundle's secret: 64 hex digits, as made
+BUNDLE = "# v2 git bundle\nraw Google Fonts views and Fonts Over Time counts\n"
+
+
+def test_the_store_bundle_is_encrypted_and_deleted_after_the_push() -> None:
+    """store_bundle_encrypted (2026-10-19): any signed-in user can download a public
+    repository's artifacts, so the store bundle is uploaded only encrypted, its sha256
+    travels through the job's outputs, and the store job deletes it once pushed."""
+    jobs = _workflow("refresh.yml")["jobs"]
+    refresh, store = jobs["refresh"], jobs["store"]
+    names = [s.get("name") for s in refresh["steps"]]
+    assert names.index("Check the store bundle's key") < names.index("Check out the snapshot store")
+    (upload,) = [
+        s
+        for s in refresh["steps"]
+        if "upload-artifact" in str(s.get("uses", "")) and s["with"]["name"] == "store-bundle"
+    ]
+    assert upload["with"]["path"] == "${{ runner.temp }}/store"
+    bundle = {s.get("name"): s for s in refresh["steps"]}["Bundle the store's new commits"]
+    assert bundle["env"] == {"STORE_BUNDLE_KEY": "${{ secrets.STORE_BUNDLE_KEY }}"}
+    assert refresh["outputs"]["store_bundle_sha256"] == "${{ steps.store-bundle.outputs.sha256 }}"
+    # Every artifact the run uploads: only the store bundle's comes from the store, and its
+    # folder holds the encrypted file alone (test_step_store_bundle).
+    uploads = [
+        s["with"]["name"]
+        for s in _steps(_workflow("refresh.yml"))
+        if "upload-artifact" in str(s.get("uses", ""))
+    ]
+    assert sorted(uploads) == ["npm-snapshot", "pull-request", "store-bundle"]
+    steps = [s.get("name") or s.get("uses", "").split("@")[0] for s in store["steps"]]
+    assert steps == [
+        "Check out the snapshot store",
+        "actions/download-artifact",
+        "Decrypt the store bundle",
+        "Push the new snapshots to the store",
+        "Delete the store bundle's artifacts",
+    ]
+    by_name = {s.get("name"): s for s in store["steps"]}
+    assert by_name["Decrypt the store bundle"]["env"] == {
+        "STORE_BUNDLE_KEY": "${{ secrets.STORE_BUNDLE_KEY }}",
+        "BUNDLE_SHA256": "${{ needs.refresh.outputs.store_bundle_sha256 }}",
+    }
+    # Deleted by name, every attempt's upload of this run, never by an id a job reported.
+    delete = by_name["Delete the store bundle's artifacts"]
+    assert delete["env"] == {"GH_TOKEN": "${{ github.token }}"}
+    assert "/runs/$GITHUB_RUN_ID/artifacts?name=store-bundle" in delete["run"]
+    # Both ends name the same cipher, digest and iteration count.
+    cipher = "-aes-256-cbc -pbkdf2 -iter 100000 -md sha256"
+    assert cipher in bundle["run"]
+    assert cipher in by_name["Decrypt the store bundle"]["run"]
+
+
+def test_step_check_the_store_bundle_key(tmp_path: Path) -> None:
+    name = "Check the store bundle's key"
+    step = run_step(name, tmp_path / "none")
+    assert step.code == 1
+    assert "::error::STORE_BUNDLE_KEY is not set" in step.out
+    step = run_step(name, tmp_path / "set", STORE_BUNDLE_KEY=STAND_IN)
+    assert step.code == 0, step.out
+    assert STAND_IN not in step.out
+
+
 def test_step_store_bundle(tmp_path: Path) -> None:
     name = "Bundle the store's new commits"
-    step = run_step(name, tmp_path / "none")
+    step = run_step(name, tmp_path / "none", STORE_BUNDLE_KEY=STAND_IN)
     assert step.code == 0, step.out
     assert step.files["output"] == "bundle=false\n"
-    step = run_step(name, tmp_path / "new", STUB_REV_LIST="abc123")
+    assert not list((step.temp / "store").iterdir())
+
+    # New commits without the key: nothing is bundled or uploaded.
+    step = run_step(name, tmp_path / "no-key", STUB_REV_LIST="abc123", STUB_BUNDLE=BUNDLE)
+    assert step.code == 1
+    assert "::error::STORE_BUNDLE_KEY is not set" in step.out
+    assert step.called("git -C _store bundle") == []
+    assert not list((step.temp / "store").iterdir())
+    assert "bundle=true" not in step.files["output"]
+
+    if shutil.which("openssl", path="/usr/bin:/bin") is None:
+        pytest.skip("no openssl")
+    new = tmp_path / "new"
+    step = run_step(
+        name, new, STUB_REV_LIST="abc123", STUB_BUNDLE=BUNDLE, STORE_BUNDLE_KEY=STAND_IN
+    )
     assert step.code == 0, step.out
-    assert step.files["output"] == "bundle=true\n"
     (bundle,) = step.called("git -C _store bundle")
-    assert "store/store.bundle @{upstream}..HEAD" in bundle
+    assert "store-plain/store.bundle @{upstream}..HEAD" in bundle
+    sha = hashlib.sha256(BUNDLE.encode()).hexdigest()
+    assert step.files["output"] == f"sha256={sha}\nbundle=true\n"
+    # The uploaded folder holds the encrypted file alone, and the plain bundle is gone.
+    assert [p.name for p in (step.temp / "store").iterdir()] == ["store.bundle.enc"]
+    sealed = (step.temp / "store" / "store.bundle.enc").read_bytes()
+    assert sealed.startswith(b"Salted__")
+    assert b"Google" not in sealed
+    assert not list((step.temp / "store-plain").iterdir())
+    assert STAND_IN not in step.out
+
+    # The store job decrypts it with the key, against the refresh job's sha256.
+    name = "Decrypt the store bundle"
+    for case, env, ok in (
+        ("good", {"STORE_BUNDLE_KEY": STAND_IN, "BUNDLE_SHA256": sha}, True),
+        ("wrong-key", {"STORE_BUNDLE_KEY": "f" * 64, "BUNDLE_SHA256": sha}, False),
+        ("wrong-sha", {"STORE_BUNDLE_KEY": STAND_IN, "BUNDLE_SHA256": "0" * 64}, False),
+        ("no-key", {"BUNDLE_SHA256": sha}, False),
+        ("no-sha", {"STORE_BUNDLE_KEY": STAND_IN}, False),
+    ):
+        root = tmp_path / f"decrypt-{case}"
+        (root / "runner-temp" / "store").mkdir(parents=True)
+        (root / "runner-temp" / "store" / "store.bundle.enc").write_bytes(sealed)
+        step = run_step(name, root, **env)
+        assert (step.code == 0) == ok, (case, step.out)
+        if ok:
+            plain = step.temp / "store-plain" / "store.bundle"
+            assert plain.read_text(encoding="utf-8") == BUNDLE
+        else:
+            assert "::error::" in step.out or "bad decrypt" in step.out, case
+
+
+def test_step_push_and_delete_the_store_bundle(tmp_path: Path) -> None:
+    name = "Push the new snapshots to the store"
+    step = run_step(name, tmp_path / "push", STUB_TIP="f00d")
+    assert step.code == 0, step.out
+    plain = f"{step.temp}/store-plain/store.bundle"
+    assert step.calls == [
+        f"git -C _store bundle list-heads {plain} HEAD",
+        "git -C _store cat-file -e f00d^{commit}",
+        f"git -C _store bundle verify {plain}",
+        f"git -C _store fetch --quiet {plain} HEAD",
+        "git -C _store merge --ff-only --quiet FETCH_HEAD",
+        "git -C _store push --quiet origin HEAD",
+    ]
+    # A rerun after the push landed: the clone already has the tip, so nothing is pushed
+    # (its depth-1 clone lacks the bundle's prerequisite, which verify would ask for).
+    step = run_step(name, tmp_path / "pushed", STUB_TIP="f00d", STUB_HAS_TIP="0")
+    assert step.code == 0, step.out
+    assert step.called("git -C _store bundle verify", "git -C _store push") == []
+    assert "already has the bundle's commits (f00d)" in step.files["summary"]
+
+    name = "Delete the store bundle's artifacts"
+    listing = "gh api repos/owner/repo/actions/runs/7/artifacts?name=store-bundle&per_page=100"
+    step = run_step(name, tmp_path / "delete", GITHUB_RUN_ID="7", STUB_ARTIFACTS="11\n12\n")
+    assert step.code == 0, step.out
+    assert step.calls == [
+        f"{listing} --jq .artifacts[].id",
+        "gh api --silent -X DELETE repos/owner/repo/actions/artifacts/11",
+        "gh api --silent -X DELETE repos/owner/repo/actions/artifacts/12",
+    ]
+    assert "artifact 11 is deleted" in step.files["summary"]
+    assert "artifact 12 is deleted" in step.files["summary"]
+    step = run_step(name, tmp_path / "none", GITHUB_RUN_ID="7")
+    assert step.code == 1
+    assert "::error::the run has no store-bundle artifact" in step.out
+    assert [c for c in step.calls if "DELETE" in c] == []
 
 
 def test_step_failure_issue(tmp_path: Path) -> None:

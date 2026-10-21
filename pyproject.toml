@@ -20,6 +20,7 @@ dependencies = [
   "jinja2>=3.1.6",            # M2 templates
   "markdown-it-py>=4.2.0",    # M2 /methodology from docs
   "mdit-py-plugins>=0.6.1",   # M2 heading anchors
+  "scipy>=1.18.1",            # the measurement model (engine/measure.py)
 ]
 
 [project.urls]
@@ -87,5 +88,6 @@ markers = [
   "sample_only: runs on the sample catalog only; site-real and deploy.yml deselect it",
   "real_catalog(**params): on the real catalog, only these parameters run (the rest get sample_only)",
   "slow",
+  "model_config: runs on config/ranking.toml as it is, model views on (tests/conftest.py)",
 ]
 timeout = 300

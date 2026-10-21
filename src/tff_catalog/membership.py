@@ -19,6 +19,11 @@ The rules, per list (the catalog, and the top-100 list of every rank key):
   top-100 list of an ``extra_ranks`` key, whatever its overall order.
 - With ``top100.enabled`` false (gate M11 (b)), a top-100 list is simply this
   run's top ``extra_top``.
+- A rank whose method changed since the last merged run (``tff_catalog.methods``) starts its
+  top-100 list afresh, and the catalog starts afresh when overall's did, as on a first run
+  (owner ruling of 2026-10-19, membership_fresh_at_switch): at the switch the catalog is
+  exactly the Projects top 500 plus each rank's top 100 (q13_catalog_membership), with no
+  member kept from the old method by its counters.
 
 The stage starts from the committed ``state/membership.json`` (``ctx.state``),
 never from ``build/state/``, so a rerun after stage "verify" (or a second
@@ -212,15 +217,28 @@ def _eligible(ctx: StageContext) -> frozenset[str] | None:
     return frozenset(fams)
 
 
+def fresh(prev: Membership, changed: frozenset[str]) -> Membership:
+    """``prev`` without the lists of the rank keys in ``changed``; without the catalog's too
+    when overall is among them (membership_fresh_at_switch)."""
+    return Membership(
+        catalog={} if "overall" in changed else prev.catalog,
+        top100={k: v for k, v in prev.top100.items() if k not in changed},
+    )
+
+
 def run(ctx: StageContext) -> None:
     """Stage "membership"."""
+    from tff_catalog import methods
     from tff_catalog.engine.order import published_orders
 
     placements = stageio.load_stage(ctx.paths, "ranks")
     # The published orders: a font the gate holds out of a short exact top sits past it, so
     # it never takes a top-100 place without a rank (methodology §6).
     orders = published_orders(placements, ctx.config.ranking.display.exact_top)
-    prev = load(ctx.state.membership)
+    changed = methods.changed_since_last_run(ctx.state.run_history, ctx.run_date)
+    prev = fresh(load(ctx.state.membership), changed)
+    if changed:
+        ctx.log.info("membership starts afresh in: %s", ", ".join(sorted(changed)))
     m = update(orders, prev, ctx.config.ranking.membership, ctx.run_date)
     excluded = _l3_failures(ctx)
     eligible = _eligible(ctx)

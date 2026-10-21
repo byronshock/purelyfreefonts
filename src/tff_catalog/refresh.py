@@ -30,7 +30,21 @@ writes ``state/``. The contract, step by step:
 4. **Hard failures.** ``validate.ValidationFailed`` from stage "validate"
    stops the run: any later stage is skipped (validate runs last, after
    "review", so ``review.md`` is written and scanned) and each failure becomes
-   one line of ``RunResult.failures``. Any other exception propagates.
+   one line of ``RunResult.failures``. Any other exception propagates. A run
+   that stage "rank" would stop for want of a model fit (``fitstore.check_ready``)
+   stops in setup, before anything is emptied or fetched.
+4b. **A new model fit** (``--write-fit``, ``fitstore``; owner rulings
+   q9_theta_cadence and october_replay_is_the_switch). With no stored fit for
+   the date, stage "rank" fits the model views. Once the run has passed,
+   refresh keeps the fits in the store, write-once (``fitstore.store_pending``),
+   and runs the whole pipeline again offline, from the same snapshots and in
+   read mode, into an emptied ``build/stage/`` and ``build/state/``. The first
+   pass scored each rank pass with the fit it made then, and when "verify"
+   reran "rank", the one before was never kept, so verify's scope and its
+   outputs could differ from the offline replay's. The second pass scores
+   every rank pass with the kept fits, as that replay does, and its ``build/``
+   is the run's. If it fails, the fits stay stored: they are the ones the first
+   pass passed with, and later runs read them rather than fit again.
 5. **Next state.** Refresh builds the whole ``NextState`` in memory: every
    part as this run's stages wrote it (``state.read_part``), else as committed,
    plus its own part, ``run_history``: the committed entries, less any for
@@ -61,7 +75,7 @@ from datetime import date
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from tff_catalog import METHOD_VERSION, __version__, stageio, stages, state
+from tff_catalog import METHOD_VERSION, METHOD_VERSIONS, __version__, stageio, stages, state
 from tff_catalog.config import config_hash, load_config
 from tff_catalog.store import PSEUDO_SOURCES, Store
 from tff_catalog.validate import ValidationFailed
@@ -111,12 +125,20 @@ def refresh(
     config = load_config(paths)
     # Loads and checks state/ too, so a bad state file stops the run before build/ is emptied.
     ctx = stages.make_context(paths, config, run_date, options, network=not options.replay)
+    try:
+        check_fits(ctx)
+    except BaseException:
+        if ctx.fetcher is not None:
+            ctx.fetcher.close()
+        raise
     run = _Run(ctx)
     try:
         if not options.only:
             _reset_build(paths)
         run.pipeline()
         run.finish_state(config)
+        if options.fit == "write" and not run.failures and run.store_fits():
+            run.replay_with_kept_fits(config)
     except BaseException as exc:
         if not options.replay:
             _write_manifest_quietly(run, config, time.perf_counter() - started, exc)
@@ -165,6 +187,20 @@ def _check_layout(paths: Paths) -> None:
                 f"{label} ({directory}) overlaps state/ ({paths.state}); "
                 "refresh never writes state/"
             )
+
+
+def check_fits(ctx: StageContext) -> None:
+    """Stop a run whose model fits would stop stage "rank" (``fitstore.check_ready``)."""
+    from tff_catalog import fitstore
+
+    fitstore.check_ready(
+        mode=ctx.options.fit,  # type: ignore[arg-type]
+        store_root=None if ctx.store is None else ctx.store.root,
+        views=ctx.config.ranking.model.views,
+        run_date=ctx.run_date,
+        merged_dates=fitstore.merged_dates(ctx.state.run_history),
+        full_run=not ctx.options.only,
+    )
 
 
 def _reset_build(paths: Paths) -> None:
@@ -265,6 +301,48 @@ class _Run:
         self.ran.append(stage.name)
         return True
 
+    def store_fits(self) -> list[Path]:
+        """Keep, write-once, the new model fits a passing run staged (``fitstore``); the
+        files written."""
+        from tff_catalog import fitstore
+
+        store = self.ctx.require_store()
+        kept = fitstore.store_pending(
+            self.ctx.paths.stage,
+            store.root,
+            self.ctx.run_date,
+            self.ctx.config.ranking.model.views,
+            fitstore.merged_dates(self.ctx.state.run_history),
+        )
+        for path in kept:
+            self.ctx.log.info("model fit kept in the store: %s", path.relative_to(store.root))
+        return kept
+
+    def replay_with_kept_fits(self, config: Config) -> None:
+        """Run the whole pipeline again offline from this run's snapshots, reading the fits
+        it kept, into an emptied build/ (module docstring, step 4b). Its stages and hard
+        failures become this run's."""
+        day = self.ctx.options.from_snapshots or self.ctx.run_date
+        ctx = stages.make_context(
+            self.ctx.paths,
+            config,
+            self.ctx.run_date,
+            stages.RunOptions(from_snapshots=day),
+            network=False,
+            log=self.ctx.log,
+        )
+        self.ctx.log.info(
+            "replaying the snapshots of %s offline with the model fits kept, so every rank "
+            "pass scores with them",
+            day,
+        )
+        again = _Run(ctx)
+        _reset_build(ctx.paths)
+        again.pipeline()
+        again.finish_state(config)
+        self.ran += again.ran
+        self.failures = again.failures
+
     def finish_state(self, config: Config) -> None:
         """Write the whole next state to ``build/state/`` (module docstring, step 5)."""
         paths = self.ctx.paths
@@ -284,6 +362,9 @@ class _Run:
             "code_commit": self.commit,
             "config_sha256": config_hash(config),
             "snapshots": snapshots_used(self.ctx),
+            # Each rank's method (tff_catalog.methods): next month's run bootstraps the
+            # previous_score of a rank whose method changed since.
+            "method_versions": dict(METHOD_VERSIONS),
         }
 
     def stale_sources(self) -> tuple[str, ...]:
@@ -420,13 +501,18 @@ def run_manifest(
         "run_date": ctx.run_date.isoformat(),
         "version": __version__,
         "method_version": METHOD_VERSION,
+        "method_versions": dict(METHOD_VERSIONS),
         "code_commit": run.commit,
         # True when the run used uncommitted changes to the code, config or data; the hash
         # names them, since code_commit alone cannot reproduce the run.
         "code_dirty": run.changes is not None,
         "code_changes_sha256": run.changes,
         "config_sha256": config_hash(config),
-        "options": {"only": list(ctx.options.only), "refetch": ctx.options.refetch},
+        "options": {
+            "only": list(ctx.options.only),
+            "refetch": ctx.options.refetch,
+            "fit": ctx.options.fit,
+        },
         "snapshots": snapshots,
         "sizes": _sizes(ctx.store, snapshots),
         "stale": stageio.encode(dict(sorted(_stale(ctx.paths).items()))),

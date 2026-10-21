@@ -17,7 +17,7 @@ Every factual claim below was checked against the live site, the catalog or the 
 
 **Status (2026-10-05):** step 1 is recorded in this pull request (#56). The owner's rulings of 2026-09-30 and answers of 2026-10-05 are in `data/reviews/site/` and AUTHORITY.md (**First reviews of the test site**). Nothing is built.
 
-**Holds.** On 2026-10-02 the owner put the scoring-method port and the soft launch on hold: "We are on hold for now." Production serves a renamed stub. Step 1 goes ahead. Build steps that need the new scores or the new default view wait for the port: step 3, Q3's lead sentence, and the row order in Q12 and step 9b.
+**Holds.** On 2026-10-02 the owner put the scoring-method port and the soft launch on hold: "We are on hold for now." *Lifted for the port and the freeze on 2026-10-19 (`port_freeze_lifted`); the soft launch stays on hold. The frozen steps go ahead with the port, [docs/milestone-method.md](docs/milestone-method.md): step 3 with its steps 12–13, the default view with its step 3, and no tiers or ranges with its step 4.* Production serves a renamed stub. Step 1 goes ahead. Build steps that need the new scores or the new default view wait for the port: step 3, Q3's lead sentence, and the row order in Q12 and step 9b.
 
 **Decided since the reviews:**
 - **The default view** (2026-09-30). The fused Overall rank retires (`overall_retired`, D12), and the list opens on the Project rank (`default_rank_project`, M2-D1). Those records still carry the old label, "Used in projects".
@@ -72,7 +72,7 @@ Tick each item as soon as it is done and verified. Checklists nest: a parent is 
 6. **The rest:** steps 2, 3, 4, 6 and 10, then step 5's second part, which waits for step 2. Step 7d goes in once the lead accepts a redraw, or at the latest at the first live refresh. Step 7e comes after the freeze.
 7. Step 11, the second review round, after the unfrozen steps (the owner, 2026-10-05). Then usability round 1 with human reviewers (M2 step 13).
 
-Steps 4, 5, 8b and 9b change the templates, the no-JavaScript note or the front-page copy. They start from `origin/main` after the lead's parked `claude/projects-default` has merged, so the two don't conflict. That branch waits on the scoring-method freeze, and the owner chose on 2026-09-30 to keep these steps waiting with it.
+Steps 4, 5, 8b and 9b change the templates, the no-JavaScript note or the front-page copy. They start from `origin/main` after the lead's parked `claude/projects-default` has merged, so the two don't conflict. That branch waits on the scoring-method freeze, and the owner chose on 2026-09-30 to keep these steps waiting with it. *Since 2026-10-19 the freeze is lifted (`port_freeze_lifted`): the branch's site work lands as [docs/milestone-method.md](docs/milestone-method.md) step 3, and these steps start after it.*
 
 Step 7's list parts don't wait for it: on 2026-10-05 the owner moved them ahead (`step7_list_first`). 7a changes no template. 7b and 7c touch `_list.html.j2` and `_row.html.j2`, which that branch also edits. Whichever lands second fixes `site/CONTRACT.md`'s `rows` line by hand, and re-measures the 24 px `--row-est-h` tolerance that branch adds to `test_details.py`. Branch step 7 from `origin/main` (`d66c60e` or later, which includes #55), not from this plan's branch.
 
@@ -221,7 +221,7 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
 **Done when:** `tff-catalog validate` passes, and the hand check finds no misleading reason.
 
 ### Step 3: The score's scale and its explanation
-**Who:** the scoring-method port, not this plan. **Depends on:** the port, which is on hold.
+**Who:** the scoring-method port, not this plan. **Depends on:** the port, [docs/milestone-method.md](docs/milestone-method.md) step 12 (on hold until 2026-10-19).
 - [ ] The port brings the new shown score (Q1, settled), and with it How we rank's text. It must remove these two:
   - the wrong sentence, "a font scoring 90 stands above about 90% of them";
   - "Past #100 we show bands".
@@ -237,7 +237,7 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
 - [ ] Update the templates, the sort header's script, `site/CONTRACT.md` §3, the nav, the methodology page's title, and their tests.
 - [ ] The nav's new "How it works" changes its width. If step 4 lands before step 5, re-measure the header's single-row breakpoint as step 5 describes.
 - [ ] Check the sort button fits its 96 px column, including at 320 px reflow.
-- [ ] Update `docs/usability-test.md` to match: the "rank" wording in tasks 5 and 6, and "Choose task 6's two fonts from the current Overall rank", since Overall retires. Unless the lead's branch already does this.
+- [ ] Update `docs/usability-test.md` to match: the "rank" wording in tasks 5 and 6, and "Choose task 6's two fonts from the current Overall rank", since Overall retires. Unless the lead's branch already does this. *(The port does it: [docs/milestone-method.md](docs/milestone-method.md) steps 3 and 4.)*
 
 **Done when:** CI passes, and no visible "Rank" is left over the score column.
 

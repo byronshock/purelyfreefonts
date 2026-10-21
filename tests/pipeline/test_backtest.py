@@ -13,7 +13,7 @@ from types import SimpleNamespace
 
 import numpy as np
 import pytest
-from tests.helpers import ROOT
+from tests.helpers import ROOT, engine_only
 
 from tff_catalog import backtest, records, stageio
 from tff_catalog.backtest import Window
@@ -24,7 +24,9 @@ from tff_catalog.records import Observation, SourceKey, attrs
 from tff_catalog.stages import StageContext
 from tff_catalog.state import State
 
-RANKING: RankingConfig = from_mapping(RankingConfig, load_toml(ROOT / "config" / "ranking.toml"))
+RANKING: RankingConfig = engine_only(
+    from_mapping(RankingConfig, load_toml(ROOT / "config" / "ranking.toml"))
+)
 RUN_DATE = date(2026, 10, 3)
 N_FONTS = 80
 
@@ -404,7 +406,7 @@ def test_backtest_on_synthetic_history(tmp_path: Path) -> None:
     assert suggested["coverage_change_max"] >= max(v for _, v in report.coverage)
     assert dict(report.current)["rbo_min"] == RANKING.review.rbo_min
     notes = " ".join(report.notes)
-    assert "`github`: no records from `github_releases`" in notes
+    assert "`github`" not in notes  # off in every rank (g1_github_deferred): not backtested
     assert "`homebrew`: only fixed windows are published" in notes
     assert backtest.backtest(context(paths)) == report  # deterministic
 

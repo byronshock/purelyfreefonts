@@ -9,7 +9,7 @@ import numpy as np
 import pytest
 from hypothesis import assume, given
 from hypothesis import strategies as st
-from tests.helpers import ROOT
+from tests.helpers import ROOT, engine_only
 
 from tff_catalog import surveys
 from tff_catalog.config_model import RANK_KEYS, RankingConfig, from_mapping, load_toml
@@ -20,7 +20,9 @@ from tff_catalog.engine.order import Placement
 from tff_catalog.review import Flag
 from tff_catalog.surveys import RankInputs, SurveyScores
 
-CFG = from_mapping(RankingConfig, load_toml(ROOT / "config" / "ranking.toml"), "ranking.toml")
+CFG = engine_only(
+    from_mapping(RankingConfig, load_toml(ROOT / "config" / "ranking.toml"), "ranking.toml")
+)
 GROUP = {name: src.group for name, src in CFG.sources.all().items()}
 
 
@@ -580,8 +582,8 @@ def test_flags_on_the_real_pipeline() -> None:
     )
     assert all(shape.match(f.message) for f in got if f.family_id), [f.message for f in got]
     # The rerun switches off every source that overlaps the jsDelivr ruler on fewer
-    # than 15 families (GitHub on 10, Debian on 0), so a font whose observed terms
-    # all came from those has no place under it: the families only GitHub carries.
+    # than 15 families (Debian on 0; GitHub is off in every rank, g1_github_deferred), so a
+    # font whose observed terms all came from those has no place under it.
     new = equate.build_ruler(crosscheck.ruler_values(inputs.terms, "jsdelivr"))
     rerun = dataclasses.replace(inputs, ruler=new, weights=crosscheck.reweigh(inputs, new, CFG))
 
@@ -596,7 +598,7 @@ def test_flags_on_the_real_pipeline() -> None:
     assert lost == {
         (k, f) for k in CHECKED if k != "coding" for f in orders[k] if not evidenced(k, f)
     }
-    assert {("desktop_chosen", "g0"), ("overall", "g1")} <= lost
+    assert lost  # some fonts' observed terms all come from switched-off sources
     # Coding keeps too few Fontsource families for any source: one flag, not one per font.
     coding = [f for f in got if f.rank_key == "coding" and ruler_label in f.message]
     assert coding == [Flag("crosscheck", f"No font has a place under {ruler_label}", "coding")]

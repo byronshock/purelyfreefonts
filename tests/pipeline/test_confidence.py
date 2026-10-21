@@ -16,7 +16,7 @@ from typing import Any
 
 import numpy as np
 import pytest
-from tests.helpers import ROOT
+from tests.helpers import ROOT, engine_only
 
 from tff_catalog import confidence, stageio
 from tff_catalog.confidence import Confidence, Layout
@@ -30,7 +30,9 @@ from tff_catalog.state import State
 from tff_catalog.surveys import RankInputs
 from tff_catalog.universe import Family, Universe
 
-RANKING: RankingConfig = from_mapping(RankingConfig, load_toml(ROOT / "config" / "ranking.toml"))
+RANKING: RankingConfig = engine_only(
+    from_mapping(RankingConfig, load_toml(ROOT / "config" / "ranking.toml"))
+)
 UNCERTAINTY = RANKING.uncertainty
 TIERS = RANKING.tiers
 

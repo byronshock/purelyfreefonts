@@ -39,6 +39,14 @@ How each check reads the run (``CHECKS``, in order; ``docs/catalog-schema.md``):
   another one, say) would send its key to the unmatched list and drop its counts
   without a word, so a fold must retarget its rows. A "distinct" row whose family has
   gone blocks nothing and is no failure.
+- ``model_fit`` and ``model_monotone``: each model view's fit (``[model] views``,
+  ``modelviews``) passes ``MixedFit.problems``, and no term's monotonicity scan finds a
+  higher count lowering the score (scoring plan §8.5); the model views are left out of
+  ``higher_count_lower_rank``, which is the engine's.
+- ``fot_only_ranked``: no model view, nor overall standing in for one, places or scores a
+  font whose only model terms are Fonts Over Time's, in stage "rank"'s files or in
+  ``catalog.json`` (owner ruling of 2026-10-20, fot_only_needs_another_source): its score
+  would be the model's estimate from Fonts Over Time alone, which T4 withholds.
 - ``higher_count_lower_rank``: among fonts with the same terms (sources and
   weight factors) in a view and no guard event, one whose every value is at
   least another's, and one higher, never scores lower. A font whose Fonts Over
@@ -64,14 +72,20 @@ How each check reads the run (``CHECKS``, in order; ``docs/catalog-schema.md``):
 - ``previous_score``: every rank entry's ``previous_score``, in ``catalog.json`` and
   ``catalog-site.json``, is the font's score in that rank in the last published catalog
   (``published_scores`` of the state this run started from), or null if it had none there.
-  With none published yet (the bootstrap), it equals ``score``, so nothing shows as moved
-  (owner ruling of 2026-09-30, score_previous_bootstrap).
+  With none published yet (the bootstrap), and in a rank whose method changed since the last
+  merged run (``tff_catalog.methods``, q20_previous_score_at_switch), it equals ``score``, so
+  nothing shows as moved (owner ruling of 2026-09-30, score_previous_bootstrap).
 
 - ``private_fields``: no committed JSON output (``build/*.json``,
   ``build/specimens/index.json``, ``state/`` and this run's ``build/state/``)
   holds, under the id of a source whose ``publish_raw`` is false, anything but
   the fields a ranks-only source may publish (``PRIVATE_SOURCE_FIELDS``); so no
   Google or Fonts Over Time value, share or history is published by any file.
+- ``private_share``: nor can one be rebuilt from the others. Where Projects is a model view
+  (``catalog.json`` ``run.model_fits``), every font's Google and Fonts Over Time
+  ``weight_used`` is null and its other project sources' add up to 1, within rounding, or
+  are all null, so 1 minus their sum gives back no private share (owner ruling of
+  2026-10-20, q16_open_source_shares).
 
 Gaps in the exact ranks are no failure (owner ruling of 2026-09-28, rank_holes): stage
 "export" closes the ranks up over a member it holds back for want of a download link,
@@ -80,13 +94,15 @@ still fails ``schema``, through the site's cross-references (one font per order)
 
 **Committed outputs only** (``validate --committed``, CI's ``site-real`` job):
 ``COMMITTED_CHECKS`` run on what a clone holds, without ``build/stage/``:
-``schema``, ``private_fields``, the ``catalog.json`` half of
+``schema``, ``private_fields``, ``private_share``, the ``catalog.json`` half of
 ``raw_value_published``, the known answers ``names.json`` can answer
 (``committed_known_answers``), and ``previous_score`` for the bootstrap
 (``committed_previous_scores``): while ``state/run_history.json`` holds at most one run,
 the committed catalog was built with no earlier scores, so every ``previous_score``
-equals its ``score``. Later, ``state/`` holds the merged run's own scores, not those it
-started from, so a clone can't check more.
+equals its ``score``; later, so does every ``previous_score`` in a rank whose method the
+newest run changed from the one before it (``methods.changed_by_last_run``). Otherwise
+``state/`` holds the merged run's own scores, not those it started from, so a clone can't
+check more.
 
 A check that can't run (a missing file, or any error in it) fails with the
 reason, and the others still run. Each check lists at most ``MAX_PER_CHECK``
@@ -107,7 +123,7 @@ from functools import cached_property
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from tff_catalog import export, jsonio, stageio
+from tff_catalog import export, jsonio, methods, stageio
 from tff_catalog.records import SourceKey
 
 if TYPE_CHECKING:
@@ -395,10 +411,12 @@ def check_monotone(run: Run) -> Iterator[Failure]:
     smoothing = state.read_part(run.paths, "smoothing") or {}
     history = frozenset(smoothing.get("fot_ewma_base") or ())
     inputs = run.inputs
+    models = run.cfg.ranking.model.views  # the model views have their own scan
     for key in export.RANK_KEYS:
         terms = export.view_terms(inputs.terms, key)
         scores = inputs.scores.get(key)
-        if key == "rising" or terms is None or scores is None:
+        stood_in = key == "overall" and run.cfg.ranking.ranks.overall.stand_in
+        if key == "rising" or key in models or stood_in or terms is None or scores is None:
             continue
         groups: dict[tuple[tuple[str, float], ...], list[tuple[str, list[float], float]]] = (
             defaultdict(list)
@@ -599,19 +617,118 @@ def _previous_score_failures(
 
 
 def check_previous_scores(run: Run) -> Iterator[Failure]:
-    """``previous_score``: last month's published score, or ``score`` in the bootstrap."""
+    """``previous_score``: last month's published score, or ``score`` in the bootstrap and
+    in a rank whose method changed since (``methods.changed_since_last_run``)."""
     published = run.ctx.state.published_scores
-    if not published:
-        return _previous_score_failures(run, lambda key, fid, entry: entry["score"])
-    return _previous_score_failures(run, lambda key, fid, entry: published.get(key, {}).get(fid))
+    changed = methods.changed_since_last_run(run.ctx.state.run_history, run.ctx.run_date)
+
+    def expected(key: str, fid: str, entry: Mapping[str, Any]) -> float | None:
+        if not published or key in changed:
+            return entry["score"]
+        return published.get(key, {}).get(fid)
+
+    return _previous_score_failures(run, expected)
 
 
 def check_committed_previous_scores(run: Run) -> Iterator[Failure]:
     """The bootstrap on a clone: with at most one run in ``state/run_history.json``, every
-    ``previous_score`` equals its ``score``."""
-    if len(run.ctx.state.run_history) > 1:
+    ``previous_score`` equals its ``score``; later, every one in a rank whose method the
+    newest run changed (``methods.changed_by_last_run``). Other ranks can't be checked."""
+    changed = methods.changed_by_last_run(run.ctx.state.run_history)
+    if changed is not None and not changed:
         return iter(())
-    return _previous_score_failures(run, lambda key, fid, entry: entry["score"])
+
+    def expected(key: str, fid: str, entry: Mapping[str, Any]) -> float | None:
+        if changed is None or key in changed:
+            return entry["score"]
+        return entry["previous_score"]  # not checkable: passes
+
+    return _previous_score_failures(run, expected)
+
+
+def check_model_fit(run: Run) -> Iterator[Failure]:
+    """Each model view's fit passes ``MixedFit.problems`` (convergence, a positive definite
+    covariance over the free parameters, no free parameter on a bound, a grid fine enough):
+    stage "rank" recorded what it found in ``build/stage/fits.json``. Names only."""
+    fits = run.optional("fits") or {}
+    for key in run.cfg.ranking.model.views:
+        fit = fits.get(key)
+        if fit is None:
+            yield Failure("model_fit", f"{key}: stage 'rank' recorded no model fit")
+            continue
+        for problem in fit.problems:
+            yield Failure("model_fit", f"{key}: {problem}")
+
+
+def check_private_shares(run: Run) -> Iterator[Failure]:
+    """No published share lets a private one be rebuilt (owner ruling of 2026-10-20,
+    q16_open_source_shares). In a catalog whose Projects is a model view (``run.model_fits``
+    names it), every font's Google and Fonts Over Time ``weight_used`` is null, and its
+    other project sources' values add up to 1, within their rounding, or are all null: a
+    remainder would be the private sources' share. Reads ``catalog.json`` only."""
+    from tff_catalog.modelviews import PRIVATE_SHARES
+
+    catalog = run.doc(export.CATALOG_FILE)
+    if export.PROJECT_VIEW not in (catalog["run"].get("model_fits") or {}):
+        return
+    project = {s["id"] for s in catalog["sources"] if s["survey"] == "project"}
+    for font in catalog["fonts"]:
+        shares = []
+        for s, entry in sorted(font["sources"].items()):
+            if s not in project or entry["weight_used"] is None:
+                continue
+            if s in PRIVATE_SHARES:
+                yield Failure("private_share", f"{s} carries a weight_used", font["id"])
+            else:
+                shares.append(entry["weight_used"])
+        if shares and abs(math.fsum(shares) - 1.0) > len(shares) * 10.0**-export.DIGITS:
+            yield Failure(
+                "private_share",
+                "the open sources' weight_used do not add up to 1: the remainder gives back "
+                "a private share",
+                font["id"],
+            )
+
+
+def check_fot_only(run: Run) -> Iterator[Failure]:
+    """No model view ranks or scores a font on Fonts Over Time's terms alone (owner ruling
+    of 2026-10-20, fot_only_needs_another_source; ``modelviews.rankable``): neither stage
+    "rank"'s placements and scores, nor the catalog's rank entries of the model views and
+    of overall when it stands in for one. A font with no model entry is held to the same."""
+    from tff_catalog.modelviews import rankable
+
+    cfg, inputs = run.cfg, run.inputs
+    keys = {k: export.stand_in(cfg, k) for k in export.RANK_KEYS}
+    keys = {k: model for k, model in keys.items() if model in cfg.ranking.model.views}
+
+    def alone(key: str, fid: str) -> bool:
+        entry = inputs.models.get(keys[key], {}).get(fid)
+        return entry is None or not rankable(entry)
+
+    found: set[tuple[str, str]] = set()
+    for key in sorted(keys):
+        scores = inputs.scores.get(key)
+        placed = set(inputs.ranks.get(key, {})) | set(scores.fused if scores else ())
+        found |= {(key, fid) for fid in placed if alone(key, fid)}
+    for font in run.doc(export.CATALOG_FILE)["fonts"]:
+        for key, entry in font["ranks"].items():
+            scored = entry["score"] is not None or entry["order"] is not None
+            if key in keys and scored and alone(key, font["id"]):
+                found.add((key, font["id"]))
+    for key, fid in sorted(found):
+        yield Failure(
+            "fot_only_ranked", f"{key}: ranked or scored on Fonts Over Time's terms alone", fid
+        )
+
+
+def check_model_monotone(run: Run) -> Iterator[Failure]:
+    """A higher count never lowers a model view's score: the monotonicity scan of each term
+    (a font with that term alone, across its counts) finds no fall (scoring plan §8.5)."""
+    fits = run.optional("fits") or {}
+    for key in run.cfg.ranking.model.views:
+        fit = fits.get(key)
+        for term in fit.falls if fit is not None else ():
+            yield Failure("model_monotone", f"{key}: a higher {term} count lowers the score")
 
 
 CHECKS: tuple[tuple[str, Check], ...] = (
@@ -622,11 +739,15 @@ CHECKS: tuple[tuple[str, Check], ...] = (
     ("known_answer", check_known_answers),
     ("alias_target", check_alias_targets),
     ("higher_count_lower_rank", check_monotone),
+    ("model_fit", check_model_fit),
+    ("model_monotone", check_model_monotone),
+    ("fot_only_ranked", check_fot_only),
     ("desktop_views_differ", check_desktop_views),
     ("abstention_leak", check_abstention_leak),
     ("raw_value_published", check_raw_values),
     ("previous_score", check_previous_scores),
     ("private_fields", check_private_fields),
+    ("private_share", check_private_shares),
 )
 # What ``validate --committed`` runs: the checks a clone's committed files can answer.
 COMMITTED_CHECKS: tuple[tuple[str, Check], ...] = (
@@ -635,6 +756,7 @@ COMMITTED_CHECKS: tuple[tuple[str, Check], ...] = (
     ("raw_value_published", check_catalog_raw_values),
     ("previous_score", check_committed_previous_scores),
     ("private_fields", check_private_fields),
+    ("private_share", check_private_shares),
 )
 
 

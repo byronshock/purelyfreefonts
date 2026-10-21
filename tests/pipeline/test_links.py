@@ -650,6 +650,9 @@ def test_committed_overrides_cover_the_gate_k_families() -> None:
         "K-tex-gyre-heros-cn-page",
         # Ruled later on 2026-09-29, once Go had a font file: Go's page, as for Go Mono.
         "K-go-page",
+        # Ruled on 2026-10-20 for the October replay: each font's own page on dotcolon.net.
+        "K-nacelle-page",
+        "K-route-159-page",
     }
     # Every one is approved in data/reviews/links/ (Monofur's capture on the owner's second
     # answer: the 2022 capture approved first turned out to be a parking page).

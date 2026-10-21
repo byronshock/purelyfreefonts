@@ -26,7 +26,7 @@ from typing import Any
 import pytest
 from tests.pipeline.test_surveys import (
     ABSTAIN,
-    DESKTOP,
+    ENABLED_DESKTOP,
     LINUX,
     LINUX_ONLY,
     RANKING,
@@ -139,7 +139,7 @@ def test_the_desktop_views_differ_only_through_abstaining_terms() -> None:
     s = synth()
     inputs = inputs_of(s)
     chosen, installed = inputs.terms["desktop_chosen"], inputs.terms["desktop_installed"]
-    for source in DESKTOP:
+    for source in ENABLED_DESKTOP:
         missing = set(installed[source]) - set(chosen[source])
         assert chosen[source] == {f: installed[source][f] for f in chosen[source]}
         assert missing <= ABSTAIN | set(LINUX_ONLY)
@@ -181,7 +181,7 @@ def test_unranked_reasons_too_new_and_no_evidence() -> None:
     s = synth()
     group = SOURCES["homebrew"].group
     for key in ("desktop_chosen", "desktop_installed"):
-        for source in DESKTOP:
+        for source in ENABLED_DESKTOP:
             s.terms[key][source].pop("fam-011", None)
             s.terms[key][source].pop("fam-012", None)
         s.terms[key]["homebrew"]["fam-011"] = Term(value=None, state="too_new", group=group)
@@ -575,7 +575,10 @@ def test_the_stage_flags_abstaining_fonts_without_a_tag(
     stageio.dump_stage(ctx.paths, "tags", {LINUX_ONLY[0]: tagged})
     with caplog.at_level(logging.INFO, logger="test.rank"):
         surveys.run(ctx)
-    assert "unranked in desktop_chosen only because of abstentions: 2" in caplog.text
+    # fam-003 abstains too: with GitHub and Nerd Fonts off (g1, g2) its only desktop
+    # evidence is from Linux sources, so it joins the two Linux-only fonts.
+    assert "unranked in desktop_chosen only because of abstentions: 3" in caplog.text
     warning = next(r.message for r in caplog.records if "no preinstalled_on" in r.message)
     assert LINUX_ONLY[1] in warning
+    assert "fam-003" in warning
     assert LINUX_ONLY[0] not in warning
