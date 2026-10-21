@@ -704,8 +704,8 @@ def test_a_model_view_s_sources_are_observed_with_their_own_z_and_shares(tmp_pat
                 assert entry["z"] == export.num(row.z[s]), (fid, s)
             if s in ("google", "fot"):
                 assert entry["weight_used"] is None, (fid, s)
-            else:
-                assert entry["weight_used"] == 0.125, (fid, s)
+            else:  # npm is each font's only open source here (q16_open_source_shares)
+                assert entry["weight_used"] == 1.0, (fid, s)
     assert checked
     run = docs[export.CATALOG_FILE]["run"]
     assert run["model_fits"] == {
@@ -713,6 +713,210 @@ def test_a_model_view_s_sources_are_observed_with_their_own_z_and_shares(tmp_pat
         "project": {"fitted_on": "2026-10-17", "sha256": "a" * 64},
     }
     assert "model_fits" not in docs[export.SITE_FILE]["run"]
+
+
+def model_build(
+    tmp_path: Path,
+    extra: Mapping[str, Mapping[str, Term]] | None = None,
+    dropped: frozenset[tuple[str, str]] = frozenset(),
+    state: State | None = None,
+) -> tuple[StageContext, dict[str, Any]]:
+    """``make_build`` on the config as it is (Projects and Developers & apps on the model,
+    overall standing in for Projects), its Project terms updated by ``extra`` ({source:
+    {id: Term}}), and in each model view an entry for every font with a counted term there:
+    a model term from each such source but the (source, id) pairs in ``dropped``,
+    information shares 1, 2, 3, ... over 1 + 2 + 3 + ... in source order, and synthetic
+    scores. Stage "rank"'s scores, placements and confidence of those views are what
+    ``modelviews.survey_scores`` makes of them. Returns the Projects entries."""
+    from tff_catalog import modelviews
+
+    cfg = config()
+    ctx = make_build(tmp_path, cfg=cfg, state=state, previews=PREVIEWS)
+    terms = stageio.load_stage(ctx.paths, "terms")
+    for s, by_id in (extra or {}).items():
+        terms["project"][s] = {**terms["project"].get(s, {}), **by_id}
+    stageio.dump_stage(ctx.paths, "terms", terms)
+    universe = stageio.load_stage(ctx.paths, "universe")
+    names = {fid: fam.family for fid, fam in universe.families.items()}
+    scores = stageio.load_stage(ctx.paths, "scores")
+    ranks = stageio.load_stage(ctx.paths, "ranks")
+    models: dict[str, dict[str, modelviews.ModelEntry]] = {}
+    for view in ("project", "dev_apps"):
+        rows = models.setdefault(view, {})
+        by_source = terms[view]
+        for i, fid in enumerate(sorted({f for by_id in by_source.values() for f in by_id})):
+            mine = [
+                s
+                for s, by_id in sorted(by_source.items())
+                if (t := by_id.get(fid)) and t.state in export.COUNTED and (s, fid) not in dropped
+            ]
+            if not mine:
+                continue
+            total = sum(range(1, len(mine) + 1))
+            rows[fid] = modelviews.ModelEntry(
+                score=1.0 - 0.1 * i,
+                sd=0.3,
+                low=0.5 - 0.1 * i,
+                high=1.5 - 0.1 * i,
+                terms=len(mine),
+                groups=tuple(sorted({by_source[s][fid].group for s in mine})),
+                z=dict.fromkeys(mine, 0.25 + i / 100),
+                info={s: (j + 1) / total for j, s in enumerate(mine)},
+                pit=(),
+            )
+        placed = modelviews.survey_scores(view, rows, names, cfg.ranking)
+        for key in (view, "overall") if view == "project" else (view,):
+            scores[key] = SurveyScores(key, placed.fused, placed.placements, {}, {})
+            ranks[key] = dict(placed.placements)
+    fit = modelviews.FitInfo(
+        date(2026, 10, 17), "a" * 64, "pending", len(models["project"]), (), ()
+    )
+    stageio.dump_stage(ctx.paths, "scores", scores)
+    stageio.dump_stage(ctx.paths, "ranks", ranks)
+    stageio.dump_stage(ctx.paths, "confidence", confidence(ranks))
+    stageio.dump_stage(ctx.paths, "model", models)
+    stageio.dump_stage(ctx.paths, "fits", {"project": fit, "dev_apps": fit})
+    return ctx, models["project"]
+
+
+def npm_registry(value: float | None, state: str = "observed", reason: str | None = None) -> Term:
+    return Term(value, state, "npm_registry", reason)  # type: ignore[arg-type]
+
+
+@pytest.mark.model_config
+def test_a_model_view_publishes_shares_of_the_open_sources_only(tmp_path: Path) -> None:
+    """q16_open_source_shares (2026-10-20): a font's open shares add up to 1, so 1 minus
+    their sum gives back no Google or Fonts Over Time share; a font with only their terms
+    publishes no share at all."""
+    extra = {
+        "ecosystems": {"alpha-sans": npm_registry(500), "gamma-serif": npm_registry(50)},
+        "jsdelivr": {"alpha-sans": Term(1e6, "observed", "jsdelivr")},
+    }
+    ctx, rows = model_build(tmp_path, extra)
+    doc = run_all(ctx)[export.CATALOG_FILE]
+    catalog = fonts(doc)
+    # alpha-sans: ecosystems, fot, google, jsdelivr and npm at 1, 2, 3, 4 and 5 fifteenths.
+    alpha = catalog["alpha-sans"]["sources"]
+    assert {"google", "fot"} <= set(rows["alpha-sans"].info)
+    assert [alpha[s]["weight_used"] for s in ("ecosystems", "jsdelivr", "npm_fontsource")] == [
+        0.1,
+        0.4,
+        0.5,
+    ]
+    assert alpha["google"]["weight_used"] is None
+    assert alpha["fot"]["weight_used"] is None
+    assert catalog["gamma-serif"]["sources"]["ecosystems"]["weight_used"] == 1.0
+    kappa = catalog["kappa-sans"]["sources"]  # Google and Fonts Over Time only
+    assert set(rows["kappa-sans"].info) == {"fot", "google"}
+    assert all(kappa[s]["weight_used"] is None for s in kappa)
+    project = {s["id"] for s in doc["sources"] if s["survey"] == "project"}
+    for font in doc["fonts"]:
+        shares = [e["weight_used"] for s, e in font["sources"].items() if s in project]
+        got = [w for w in shares if w is not None]
+        assert not got or sum(got) == pytest.approx(1.0, abs=1e-6), font["id"]
+    assert export.open_share(rows["alpha-sans"], "google") is None
+
+
+@pytest.mark.model_config
+def test_a_model_view_s_sources_claim_no_hand_weight(tmp_path: Path) -> None:
+    """q5_group_shares_retired: the model weighs each term by its fitted noise, so a source
+    of a model view has a null sources[].weight, not a weight of 0; desktop sources keep the
+    engine's."""
+    ctx, _ = model_build(tmp_path)
+    doc = run_all(ctx)[export.CATALOG_FILE]
+    weights = {s["id"]: s["weight"] for s in doc["sources"]}
+    project = [s["id"] for s in doc["sources"] if s["survey"] == "project"]
+    assert project
+    assert all(weights[s] is None for s in project)
+    assert weights["homebrew"] == 1.0
+
+
+@pytest.mark.model_config
+def test_a_model_source_without_a_model_term_is_not_covered(tmp_path: Path) -> None:
+    """q29 and methodology §7: a jsDelivr family with no hits keeps a counted engine term but
+    has no model term, so it is not covered, with no rank, z, weight or value; a source the
+    engine finds too new stays too new."""
+    zero = Term(0.0, "censored", "jsdelivr", "below_floor")
+    extra = {"jsdelivr": {"alpha-sans": Term(1e6, "observed", "jsdelivr"), "beta-mono": zero}}
+    ctx, rows = model_build(tmp_path, extra, dropped=frozenset({("jsdelivr", "beta-mono")}))
+    catalog = fonts(run_all(ctx)[export.CATALOG_FILE])
+    beta = catalog["beta-mono"]["sources"]
+    assert "jsdelivr" not in rows["beta-mono"].z
+    assert beta["jsdelivr"] == {
+        "state": "not_covered",
+        "reason": "outside_frame",
+        "rank_in_source": None,
+        "z": None,
+        "weight_used": None,
+        "abstains_in": [],
+    }
+    assert beta["npm_fontsource"]["weight_used"] == 1.0  # the share among its model terms
+    assert catalog["alpha-sans"]["sources"]["jsdelivr"]["state"] == "observed"
+    delta = catalog["delta-display"]["sources"]["google"]  # every term too new
+    assert delta == {
+        "state": "too_new",
+        "reason": None,
+        "rank_in_source": None,
+        "z": None,
+        "weight_used": None,
+        "abstains_in": [],
+    }
+
+
+@pytest.mark.model_config
+def test_a_model_source_ranks_every_font_with_a_model_term(tmp_path: Path) -> None:
+    """A model view's rank_in_source counts every font with a model term from the source,
+    the counts under the engine's floor too, as the model takes them (the engine ranked only
+    the observed ones); a term with no value has no rank, and fonts outside the catalog
+    count too."""
+    extra = {
+        "ecosystems": {
+            "alpha-sans": npm_registry(500),
+            "gamma-serif": npm_registry(3, "censored", "below_floor"),
+            "beta-mono": npm_registry(0, "censored", "below_floor"),
+            "alpha-slab": npm_registry(40),
+        }
+    }
+    ctx, _ = model_build(tmp_path, extra)
+    catalog = fonts(run_all(ctx)[export.CATALOG_FILE])
+
+    def rank(fid: str, s: str) -> int | None:
+        return catalog[fid]["sources"][s]["rank_in_source"]
+
+    assert [rank(f, "ecosystems") for f in ("alpha-sans", "gamma-serif", "beta-mono")] == [1, 3, 4]
+    gamma = catalog["gamma-serif"]["sources"]
+    assert (gamma["ecosystems"]["state"], gamma["ecosystems"]["value"]) == ("observed", 3.0)
+    # Fonts Over Time: alpha 120 and kappa 30 observed, gamma's 1 under the floor.
+    assert [rank(f, "fot") for f in ("alpha-sans", "kappa-sans", "gamma-serif")] == [1, 2, 3]
+    assert "value" not in gamma["fot"]  # ranks only (T4)
+
+
+@pytest.mark.model_config
+def test_a_font_with_only_fonts_over_time_terms_is_unranked_with_no_score(tmp_path: Path) -> None:
+    """fot_only_needs_another_source (2026-10-20): a font whose only model terms are Fonts
+    Over Time's has no place and no score in Projects or overall, and its reason is
+    no_evidence even though another source finds it too new."""
+    extra = {"google": {"kappa-sans": Term(None, "too_new", "google")}}
+    ctx, rows = model_build(tmp_path, extra)
+    assert set(rows["kappa-sans"].z) == {"fot"}
+    docs = run_all(ctx)
+    for name in (export.CATALOG_FILE, export.SITE_FILE):
+        kappa = fonts(docs[name])["kappa-sans"]
+        for key in ("project", "overall"):
+            entry = kappa["ranks"][key]
+            assert entry["unranked"] == "no_evidence", (name, key)
+            assert entry["order"] is None, (name, key)
+            assert entry["score"] is None, (name, key)
+            assert entry["previous_score"] is None, (name, key)  # the method's first run (q20)
+        assert "too_new" not in kappa["flags"]
+    kappa = fonts(docs[export.CATALOG_FILE])["kappa-sans"]
+    assert kappa["ranks"]["project"]["groups"] == 0
+    assert kappa["sources"]["fot"]["state"] == "observed"  # its rank in the source stays
+    assert all(e["weight_used"] is None for e in kappa["sources"].values())
+    published = jsonio.load(ctx.paths.next_state / "published_scores.json")
+    assert "kappa-sans" not in published["project"]
+    assert "kappa-sans" not in published["overall"]
+    assert fonts(docs[export.CATALOG_FILE])["alpha-sans"]["ranks"]["project"]["rank"] == 1
 
 
 def test_weight_used_follows_the_overall_formula(built) -> None:

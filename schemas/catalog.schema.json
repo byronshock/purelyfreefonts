@@ -180,8 +180,12 @@
             ]
           },
           "weight": {
-            "type": "number",
-            "minimum": 0
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "description": "The source's effective weight in its survey view on the engine, after overlap scaling and phase-in. Null when that view is a model view (ranking.toml [model] views, Projects at the switch), which weighs each term by its fitted noise, not a hand weight (q5_group_shares_retired)."
           },
           "publish_raw": {
             "type": "boolean"
@@ -1039,7 +1043,7 @@
             "null"
           ],
           "minimum": 1,
-          "description": "Competition rank (1, 2, 2, 4) among the source's observed values; null unless observed or when the terms ruling hides ranks."
+          "description": "Competition rank (1, 2, 2, 4) among the source's observed values. In a model view, among the values of every font with a model term from the source, the counts under the engine's floor included; null for a term with no value (an interval). Null unless observed, and when the terms ruling hides ranks."
         },
         "z": {
           "type": [
@@ -1054,7 +1058,7 @@
             "null"
           ],
           "minimum": 0,
-          "description": "The weight this source's term carried in the overall rank for this font: v_s = M_g * w'_s / W_g after the outlier guard and the term's factor. Null when the source had no term in overall (not covered, too new, or abstaining)."
+          "description": "On the engine, the weight this source's term carried in the overall rank for this font: v_s = M_g * w'_s / W_g after the outlier guard and the term's factor. In a model view, the source's share of the posterior expected information from the font's open sources, every source but Google and Fonts Over Time, so a font's shares add up to 1 (q16_open_source_shares); always null for Google and Fonts Over Time, and for every source of a font with only their terms. Null when the source had no term in overall (not covered, too new, or abstaining), and for a desktop source while overall stands in for Projects (q12)."
         },
         "value": {
           "description": "The value after alias sums, credits and floors; present only when the source's publish_raw allows it (never for google or fot).",

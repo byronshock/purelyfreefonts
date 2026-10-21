@@ -27,9 +27,10 @@ parameters it holds. Where the fit came from (the store, a new fit, memory) is o
 so a run that made the fit and its replay that read it leave the same build/; the fit's
 record is staged beside them (``fitstore.stage_record``). ``survey_scores`` turns the rows
 into the engine's ``Fused`` and ``Placement``, so the order, the two-group gate and the
-bands are the engine's own (``order.place``). The order sorts on the score and then its
-sd, each rounded to ``DIGITS`` (scoring plan §8.4), the more precisely measured font first,
-then the name.
+bands are the engine's own (``order.place``), less the fonts whose only terms are Fonts Over
+Time's, which stay unranked (``rankable``; owner ruling of 2026-10-20,
+fot_only_needs_another_source). The order sorts on the score and then its sd, each rounded
+to ``DIGITS`` (scoring plan §8.4), the more precisely measured font first, then the name.
 
 Both files stay in ``build/stage/``, never committed: the shares and per-source z of Google
 and Fonts Over Time derive from their private values (T2, T4).
@@ -187,6 +188,14 @@ def _above_bulk(term, tc, frame: Mapping[str, Mapping[str, object]]):  # type: i
     return term.y > bulk[:, 0]
 
 
+def rankable(entry: ModelEntry) -> bool:
+    """Whether a model view may rank the font: it has a term from a source other than Fonts
+    Over Time, an interval included (owner ruling of 2026-10-20,
+    fot_only_needs_another_source). A score from Fonts Over Time's terms alone would be the
+    model's estimate from that source, which T4 and q18b_z withhold."""
+    return any(s != FOT_SOURCE for s in entry.z)
+
+
 def survey_scores(
     key: str,
     rows: Mapping[str, ModelEntry],
@@ -194,10 +203,16 @@ def survey_scores(
     cfg: RankingConfig,
 ) -> SurveyScores:
     """A model view as the engine's ``SurveyScores``: one ``Fused`` per font (every term
-    counts as observed, q18a; no guard, q2) and the engine's placements."""
+    counts as observed, q18a; no guard, q2) and the engine's placements.
+
+    A font whose only terms are Fonts Over Time's (``rankable``) is left out of both, so it
+    is unranked there with no score (fot_only_needs_another_source): stage "export" gives
+    it the reason ``no_evidence``, and the stages that read the placements (confidence,
+    membership, the license check's reach, review) never see it."""
     from tff_catalog import surveys
     from tff_catalog.engine import order
 
+    rows = {fid: e for fid, e in rows.items() if rankable(e)}
     fused = {
         fid: Fused(
             score=e.score,
