@@ -95,7 +95,15 @@ from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING, Any
 from urllib.parse import urlsplit
 
-from tff_catalog import METHOD_VERSION, __version__, fontfiles, jsonio, stageio
+from tff_catalog import (
+    METHOD_VERSION,
+    METHOD_VERSIONS,
+    __version__,
+    fontfiles,
+    jsonio,
+    methods,
+    stageio,
+)
 from tff_catalog.config_model import OS_FAMILIES
 from tff_catalog.config_model import RANK_KEYS as _CONFIG_RANK_KEYS
 from tff_catalog.keys import match_key
@@ -770,12 +778,14 @@ class CatalogBuilder:
         run_date: date,
         views: tuple[str, ...],
         previous: Mapping[str, Mapping[str, float]] | None = None,
+        changed: frozenset[str] = frozenset(),
     ) -> None:
         self.cfg = cfg
         self.inputs = inputs
         self.run_date = run_date
         self.views = views
         self.previous = previous or {}
+        self.changed = changed  # ranks new under their method (methods.changed_since_last_run)
         self.sources = published_sources(cfg, inputs)
         self.src = cfg.ranking.sources.all()
         from tff_catalog.surveys import FOT
@@ -828,6 +838,7 @@ class CatalogBuilder:
             "run": {
                 "date": self.run_date.isoformat(),
                 "method_version": METHOD_VERSION,
+                "method_versions": dict(METHOD_VERSIONS),
                 "config_sha256": config_hash(self.cfg),
                 "ranking_toml_sha256": ranking_hash(self.cfg),
                 "code_commit": commit,
@@ -970,9 +981,10 @@ class CatalogBuilder:
     def previous_score(self, key: str, fid: str, score: float | None) -> float | None:
         """The font's score in ``key`` in the last published catalog (state
         ``published_scores``), or None if it had none there. Before any catalog has been
-        published (the bootstrap), the score itself, so nothing shows as moved (owner
-        ruling of 2026-09-30, score_previous_bootstrap)."""
-        if not self.previous:
+        published (the bootstrap), and in a rank whose method changed since then
+        (``tff_catalog.methods``, q20_previous_score_at_switch), the score itself, so
+        nothing shows as moved (owner ruling of 2026-09-30, score_previous_bootstrap)."""
+        if not self.previous or key in self.changed:
             return score
         return self.previous.get(key, {}).get(fid)
 
@@ -1126,7 +1138,9 @@ def catalog_document(
 ) -> dict[str, Any]:
     """``catalog.json`` from loaded inputs (``build_catalog`` without the file reads)."""
     views = available_views(cfg, state, run_date)
-    return CatalogBuilder(cfg, inputs, run_date, views, state.published_scores).document(commit)
+    changed = methods.changed_since_last_run(state.run_history, run_date)
+    builder = CatalogBuilder(cfg, inputs, run_date, views, state.published_scores, changed)
+    return builder.document(commit)
 
 
 def build_catalog(ctx: StageContext) -> dict[str, Any]:
