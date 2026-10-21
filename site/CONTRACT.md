@@ -22,7 +22,7 @@ Contents:
 - **`catalog-site.json`**, schema `schemas/catalog-site.schema.json` (`schema_version` `1.0.0`, frozen by Milestone 1 step 20 on 2026-09-30; a change to a v1 field needs v2, owner ruling `site_fields_v1`). `tff_site.data.validate` runs the schema and then the cross-reference checks the schema can't express (`semantic_errors`). `tff-site validate FILE` prints `valid (1.0.0), N fonts`.
   - **Stricter than JSON:** a key repeated in one object, `NaN` and `Infinity` make the file invalid (`tff_site.data.loads`), because the schema would check only one of the repeated values while the page showed another.
 - **Wording** in the catalog (view labels and measures lines, tiers, license classes, the Nerd Font marker and legend, source credits, system labels) comes from `config/site.toml`, the one home for the owner's wording rulings about the data; Milestone 1's export copies it, and a contract test keeps the sample equal to it.
-  - **The views' names, read at build time** (the owner's site ruling of 2026-10-07, `view_labels_short`): the views are "Overall", "Chosen (desktop)", "Installed (desktop)", "Projects", "Coding" and "Developers & apps" (Rising unchanged and unavailable). Only a monthly refresh writes the catalog, and rebuilding the committed one before the first live refresh would move its scores (`tff-catalog validate --committed` fails), so the committed `build/catalog-site.json` still carries the old names ("Desktop: most chosen", "Used in projects", …). Until that refresh copies the new ones, `tff_site.views` reads `config/site.toml`'s `[[views]]` with `tomllib` (no `tff_catalog` import) and the build shows config's `label` and `measures` for each view, by key, wherever the site's own code or templates name a view: the rank select and its measures line, the list index, the details payload, and on the methodology page the list of ranks and the template's own sentences that name one (`method.view_labels`, by key, so no template spells a view's name). The prose the methodology page takes from `docs/ranking-methodology.md` (§1 and §5) is not overridden: it keeps the document's own words ("most chosen", "most installed", "Used in projects") until that document is edited. Which views there are, their order and `available` stay the catalog's, and the catalog file is left as it is, the record of what was published (`version.txt` hashes it as read). So until the refresh the page and the catalog differ in those two fields only. The keys must match: a view that config names and the catalog lacks, or the other way round, fails the build. `tests/site/test_views.py` checks that the committed catalog differs from config only in labels and measures lines, so once the refresh carries config's wording the override changes nothing. `views.CONFIG_PATH` is `config/site.toml` in the checkout the build runs from (CI's site jobs and `ops/deploy.sh` build in one); `build(site_config=…)` takes another file.
+  - **The views' names, read at build time** (the owner's site ruling of 2026-10-07, `view_labels_short`): the views are "Overall", "Chosen (desktop)", "Installed (desktop)", "Projects", "Coding" and "Developers & apps" (Rising unchanged and unavailable). Only a monthly refresh writes the catalog, and rebuilding the committed one before the first live refresh would move its scores (`tff-catalog validate --committed` fails), so the committed `build/catalog-site.json` still carries the old names ("Desktop: most chosen", "Used in projects", …). Until that refresh copies the new ones, `tff_site.views` reads `config/site.toml`'s `[[views]]` with `tomllib` (no `tff_catalog` import) and the build shows config's `label` and `measures` for each view, by key, wherever the site's own code or templates name a view: the rank select and its measures line, the list index, the details payload, and on the methodology page the list of ranks and the template's own sentences that name one (`method.view_labels`, by key, so no template spells a view's name). The prose the methodology page takes from `docs/ranking-methodology.md` (§1 and §5) is not overridden: it keeps the document's own words ("most chosen", "most installed", "Used in projects") until that document is edited. Since the scoring-method port ([docs/milestone-method.md](../docs/milestone-method.md) step 3) the views' order and the retired ones are config's too: the list opens on Projects, config's first view (`default_rank_project`), and a view config marks `retired = true`, Overall (`overall_retired`), gets `available: false`, though the committed catalog of 2026-09-26 lists Overall first and available. Which views there are, and `available` for the others, stay the catalog's, and the catalog file is left as it is, the record of what was published (`version.txt` hashes it as read). So until the refresh the page and the catalog differ in those fields only. The keys must match: a view that config names and the catalog lacks, or the other way round, fails the build. `tests/site/test_views.py` checks that the committed catalog differs from config only in labels, measures lines, order and the retired view's `available`, so once the refresh carries config's views the override changes nothing. `views.CONFIG_PATH` is `config/site.toml` in the checkout the build runs from (CI's site jobs and `ops/deploy.sh` build in one); `build(site_config=…)` takes another file.
   - The page's own text (the list page's lead, the filter and sort labels, the About page's note "Why isn't my favorite free font here?", the footer's privacy line and tip link) lives in the templates, and where the owner ruled on it, a test holds it to the ruling in `data/reviews/site/`.
 - **Nerd Font builds** (owner rulings of 2026-09-28 and 2026-09-29, TASK-2, and the site rulings of 2026-10-05, `nerd_tag` and `details_nerd_box_dropped`). A font whose `links.nerd` is set has a Nerd Font build: its row has the tag "Nerd Font available" (badge `nerd`, section 3), the details panel lists the build's link, whose own text gives the build's name (section 4), and the "Nerd Font available" filter keeps only these fonts. The page shows none of the catalog's `nerd` wording, which stays in the data (frozen in v1) and in the details payload: no `nerd.marker` ("NF"), since the details panel dropped the fixed-width "NF" box before the link, and no `nerd.legend`, whose caution about the icons' licenses moves into the details panel with PLAN-REVIEWERS-1.md step 7e (`nerd_caution_in_details`). Like "Official:", the line leads with a visible "Nerd Font:" (site ruling of 2026-10-06, `details_nerd_lead_in`): a maker's own build can be named "<family> NF" ("Cascadia Code NF", 9 of the 70 on the real list), which says "Nerd Font" nowhere. The sample gives one to `sample-mono-02` (a Nerd Fonts folder) and `sample-mono-13` (a maker's own build).
   - `links.nerd` is null, so the font shows no tag, no Nerd link and no filter match, when the font has no build, when the build's link failed the link check recorded for the run's date (the font stays listed; the link is back once a check passes, and `review.md` flags it), or when the owner hides the build (`config/nerd-hidden.toml`, with the reason). The site never decides any of this itself: it shows what the data gives.
@@ -48,7 +48,7 @@ Contents:
 
 | Path | Contents | Cache-Control (from `ops/caddy/site.caddy`) |
 |---|---|---|
-| `index.html` | the list, server-rendered in Overall order | `no-cache, no-transform` |
+| `index.html` | the list, server-rendered in the default rank's order, Projects (section 7) | `no-cache, no-transform` |
 | `methodology/index.html`, `privacy/index.html`, `about/index.html` | the content pages | `no-cache, no-transform` |
 | `404.html` | served with status 404 by Caddy's `handle_errors` | `no-cache, no-transform` |
 | `robots.txt`, `sitemap.xml` | per M2-D8 | `no-cache, no-transform` |
@@ -110,13 +110,13 @@ Jinja2 with `autoescape=True`, `StrictUndefined`, `trim_blocks`, `lstrip_blocks`
 
 | Field | Contents |
 |---|---|
-| `views` | the available views, `{key, label, measures}`, in catalog order, with `label` and `measures` from `config/site.toml` (section 1); the first is the default (Overall, M2-D1) |
+| `views` | the available views, `{key, label, measures}`, in config order, with `label` and `measures` from `config/site.toml` (section 1); the first is the default, Projects (`project`: M2-D1, amended 2026-09-30, `default_rank_project`), and the build fails if it isn't. The retired Overall rank (`retired = true` in config) is left out, so it is never offered |
 | `categories` | `{value, label}`: `sans-serif` Sans serif, `serif` Serif, `display` Display, `handwriting` Handwriting, `monospace` Monospace |
 | `credit_filter` | true when some font needs credit (`attribution_required`): only then is "No credit required" shown (owner ruling of 2026-09-30, `license_filter`) |
 | `systems_os` | `{value, label}`: `windows` Windows, `macos` macOS, `linux` Linux, `android` Android |
 | `total` | number of fonts |
 | `index_url`, `details_url` | hashed URLs of the two payloads |
-| `rows` | one per font, in server order (section 7): `id`, `family`, `label` (the Overall rank label), `category_label` (of the site category, `tff_site.data.site_category`: Monospace for every monospaced font), `license_name`, `badges` [{`key`, `text`}], `specimen` {`url`, `width`, `height`} or none (`width` and `height` are the no-script `<img>`'s display size: 64 px high, the wide-screen `--spec-h` box, and as wide as the SVG's aspect ratio makes it; phones show it 48 px high), `fallback` (none, `"license"` or `"failed"`), `download` {`url`, `label`} |
+| `rows` | one per font, in server order (section 7): `id`, `family`, `label` (the rank label in the default rank, Projects), `category_label` (of the site category, `tff_site.data.site_category`: Monospace for every monospaced font), `license_name`, `badges` [{`key`, `text`}], `specimen` {`url`, `width`, `height`} or none (`width` and `height` are the no-script `<img>`'s display size: 64 px high, the wide-screen `--spec-h` box, and as wide as the SVG's aspect ratio makes it; phones show it 48 px high), `fallback` (none, `"license"` or `"failed"`), `download` {`url`, `label`} |
 
 Badge keys, in this order: `variable` ("Adjustable weight", owner ruling of 2026-09-30, `variable_label`), `nerd` ("Nerd Font available": a font with a Nerd Font build, `links.nerd`; the owner's site ruling of 2026-10-05, `nerd_tag`, in place of the "NF" marker beside the name), `limited` ("Limited accents"), `attribution` ("Credit required"), `preinstalled` ("Comes with Windows, Linux, LibreOffice": each operating system once, every Linux distribution being "Linux", then apps; `tff_site.build.comes_with`), `new` ("New"). Kept short (owner ruling of 2026-09-30, `filters_layout`): there is no "Monospace" badge (the category says it) or "Not redistributable" one (Rule 3), and "Pulled in by" is in the details panel. `preinstalled` is the tag that explains "Not ranked: no evidence of deliberate installs" in *most chosen* (Milestone 2 step 3); the details panel names the packages.
 
@@ -172,7 +172,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
         <button type="button" id="f-clear">Clear filters</button>
       </div>
     </search>
-    <noscript><p class="noscript-note">Filters and search need JavaScript. Below is the full list by overall rank.</p></noscript>
+    <noscript><p class="noscript-note">Filters and search need JavaScript. Below is the full list, ranked by use in projects.</p></noscript>
     <section id="results" class="results" aria-labelledby="results-h">
       <h2 id="results-h" class="visually-hidden-phone">Fonts</h2>
       <p id="ext-summary" class="ext-summary" hidden></p>             <!-- Milestone 3: tff.list.setSummary -->
@@ -262,7 +262,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 - **Details panel** (owned by `Details`; only these hooks are frozen): the panel's first child is `<h4 class="details-title" id="details-<id>-h" tabindex="-1">`, which receives focus when the panel opens from a `#font=` link, and it has a `button.details-close`. Esc or the close button returns focus to the row's `.details-toggle`. Its body, in order (owner ruling of 2026-09-30, `details_layout`):
   1. "Type your own text": `button.typeown-load` ("Type your own text (loads 312 KB)"), then `input.typeown-input`;
   2. `div.details-summary`, one `dl.details-essentials`: Get it (`ul.details-links`: "Official: …", "Designer: …", and for a Nerd Font build the link `a.details-nf-link`, its text by section 1's Nerd rule, with no "NF" box before it (owner's site ruling of 2026-10-05, `details_nerd_box_dropped`) and no legend; the line leads with "Nerd Font:", `details_nerd_lead_in`), License (`a.details-lic-link`, then "No credit needed." or "Credit required: …"), Font (formats and Latin coverage), Comes with, Also known as, and Rank (`span.details-rank-now`: the rank the selector shows, kept current);
-  3. `details.details-evidence`, closed, its `summary` "All ranks and sources": every rank with tier and range, the tier legend, "Pulled in by", and the per-source tables (`table.details-src-table[data-survey]`);
+  3. `details.details-evidence`, closed, its `summary` "All ranks and sources": every available rank with its place only ("#12", "Band 101–250" or "Not ranked: …"; no tier, likely range or tier legend: owner's site ruling of 2026-09-30, `no_tiers_or_ranges`), "Pulled in by", and the per-source tables (`table.details-src-table[data-survey]`), where a Linux source "left out of" some ranks names the available ones only;
   4. `p.details-report`.
 
 ### The About page
@@ -306,7 +306,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 
 **`View.compute(state, index, filters)`** is pure and unit-tested through `page.evaluate`:
 
-1. The universe is the fonts in the rank's universe (tier character not `.`, section 7).
+1. The universe is the fonts in the rank's universe (`u` character not `.`, section 7).
 2. Apply the filters and search (`Keys.searchKey(state.q)` as a substring of `keys[i]`).
 3. Apply the external filters with `affectsNumbering: true`.
 4. Sort ranked fonts by score (the index's `order`), then unranked fonts by `by_name`.
@@ -387,11 +387,11 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 
 `/assets/list.<h>.json`, built by `tff_site.data.list_index`, preloaded by `<link rel="preload" as="fetch" crossorigin href>` in the list page's `head` block and fetched from `#list[data-index]`. Columnar: every per-font array has `n` entries, indexed by font index.
 
-**Font index** `i` is the server-rendered order: fonts ranked in Overall by score, best first, ties by `order` (`tff_site.data.score_order`), then fonts unranked in Overall by Python `str.casefold()` of the family, then by id.
+**Font index** `i` is the server-rendered order: fonts ranked in the default rank, Projects (`tff_site.data.DEFAULT_VIEW`, `project`), by score, best first, ties by `order` (`tff_site.data.score_order`), then fonts unranked there by Python `str.casefold()` of the family, then by id.
 
 | Key | Type | Contents |
 |---|---|---|
-| `v` | int | format version, `3` (2026-09-30: scores, `r.<key>.s`, `held` and `note`, and `order` by score; `2`: `cat` is the site category, and `lics`/`lic` are gone) |
+| `v` | int | format version, `4` (`no_tiers_or_ranges`: `u` in place of `tier`; `3`, 2026-09-30: scores, `r.<key>.s`, `held` and `note`, and `order` by score; `2`: `cat` is the site category, and `lics`/`lic` are gone) |
 | `commit` | string | the commit in `version.txt` |
 | `run_date` | string | `run.date` |
 | `n` | int | number of fonts |
@@ -401,7 +401,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 | `bits` | int[n] | flags, below |
 | `keys` | string[n] | `search_key` of the family, then of each alias in catalog order, joined by `\|` |
 | `by_name` | int[n] | font indexes sorted by Python `str.casefold()` of the family, then id |
-| `views` | object[] | the catalog's `views`, with each view's `label` and `measures` from `config/site.toml` (section 1, `view_labels_short`) |
+| `views` | object[] | the catalog's `views` in `config/site.toml`'s order, with each view's `label` and `measures` from it (section 1, `view_labels_short`), and `available: false` for a view it retires (Overall, `overall_retired`) |
 | `bands` | string[] | band labels, in order |
 | `why_labels` | string[] | unranked-reason labels, in the order `no_deliberate_evidence`, `no_evidence`, `too_new` |
 | `score_words` | object | the words around a score for screen readers: `before` ("Score "), `after` (" of 100"), `held` (", from one kind of source") |
@@ -419,7 +419,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 | `note` | string or null | a note shown above the list in this view instead of held markers (Developers & apps) |
 | `top` | int[n] | exact rank 1–100, or 0 |
 | `band` | int[n] | index into `bands`, or -1 |
-| `tier` | string (n chars) | `A`, `B` or `C` if ranked; `-` if in the view's universe but unranked; `.` if not in the universe (a non-monospace font in Coding) |
+| `u` | string (n chars) | `+` if ranked; `-` if in the view's universe but unranked; `.` if not in the universe (a non-monospace font in Coding). It replaced `tier` (format 4): the site shows no tiers |
 | `why` | int[n] | index into `why_labels` for unranked fonts, else -1 |
 
 ## 8. Details JSON
@@ -428,14 +428,14 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 
 | Key | Contents |
 |---|---|
-| `v` | `1` |
+| `v` | `2` (`no_tiers_or_ranges`: no `tiers`, and no `tier` or `range` in a font's ranks) |
 | `run_date` | `run.date` |
-| `views` | the catalog's `views`, with each view's `label` and `measures` from `config/site.toml` (section 1, `view_labels_short`) |
-| `bands`, `tiers`, `sources`, `systems`, `license_classes`, `nerd` | as in the catalog |
+| `views` | the catalog's `views` in `config/site.toml`'s order, with each view's `label` and `measures` from it (section 1, `view_labels_short`), and `available: false` for a view it retires (Overall, `overall_retired`) |
+| `bands`, `sources`, `systems`, `license_classes`, `nerd` | as in the catalog |
 | `state_labels` | `{observed, censored, not_covered, too_new}` → label (`censored` → "below the floor") |
 | `why_labels` | `{no_deliberate_evidence, no_evidence, too_new}` → label |
 | `report` | `{issue_url, email}`: `https://github.com/byronshock/purelyfreefonts/issues/new?template=license.yml`, to which `Details` appends `&font_id=<id>&data_date=<run_date>`, and the fallback address for a `mailto:` link |
-| `fonts` | `{<id>: font}`: the catalog's font object without `preview` and `font_file`, plus `type_own`: `{url, size}` (the hashed `/assets/fonts/…` URL and its size in bytes) or `null` |
+| `fonts` | `{<id>: font}`: the catalog's font object without `preview` and `font_file`, and each of its `ranks` without `tier` and `range`, plus `type_own`: `{url, size}` (the hashed `/assets/fonts/…` URL and its size in bytes) or `null` |
 
 Each source links to its credit at `/methodology/#source-<id>`.
 
@@ -452,7 +452,7 @@ key   = "rank" / "cat" / "var" / "nerd" / "hide" / "q" / "sort" / "font"
 
 | Key | Value | Default (omitted) |
 |---|---|---|
-| `rank` | a view key with `available: true` | `overall` |
+| `rank` | a view key with `available: true` | `project` (Projects) |
 | `cat` | `sans-serif`, `serif`, `display`, `handwriting` or `monospace` (every monospaced font) | any category |
 | `var` | `1`: variable fonts only | off |
 | `nerd` | `1`: "Nerd Font available", fonts with a Nerd Font build only | off |
@@ -464,11 +464,11 @@ key   = "rank" / "cat" / "var" / "nerd" / "hide" / "q" / "sort" / "font"
 - **Writing:** keys in the table's order, defaults left out; the default view is the empty hash, restored with `history.replaceState(null, '', location.pathname + location.search)`. Discrete changes use `pushState`; search typing uses `replaceState`, debounced 300 ms.
 - **Reading:** split on `&`, then each pair at its first `=`; a key seen twice keeps the last value; for the keys in the table, undecodable and invalid values fall back to the default. If the canonical form differs from `location.hash`, it is rewritten with `replaceState`. `popstate` and `hashchange` apply the hash without pushing.
 - **Retired keys** (owner rulings of 2026-09-30): `spacing`, `lic` and `redist` are read and dropped, so old links still open and the rewritten hash no longer has them. `spacing=monospaced` becomes `cat=monospace` when the hash has no `cat`; `spacing=proportional`, `lic` and `redist` add nothing (every listed font is redistributable). Milestone 3 must not use these names as extension keys.
-- **Extension keys.** A key not in the table and not retired belongs to someone else, for example Milestone 3's system tabs (`os=linux`). `State` never interprets or drops one: when it reads, canonicalises or writes the hash, it keeps every extension pair exactly as written (key and raw value), in its original order, after its own keys. When it writes, it takes the extension pairs from `location.hash` as they stand at that moment, so a change Milestone 3 made meanwhile survives. The default view with extension keys is `#` plus those pairs. `State`'s tests must show that `#rank=project&os=linux` survives the first load, a filter change and Back.
+- **Extension keys.** A key not in the table and not retired belongs to someone else, for example Milestone 3's system tabs (`os=linux`). `State` never interprets or drops one: when it reads, canonicalises or writes the hash, it keeps every extension pair exactly as written (key and raw value), in its original order, after its own keys. When it writes, it takes the extension pairs from `location.hash` as they stand at that moment, so a change Milestone 3 made meanwhile survives. The default view with extension keys is `#` plus those pairs. `State`'s tests must show that `#rank=coding&os=linux` survives the first load, a filter change and Back.
 - **In-page anchors.** `State` runs only on pages with `#list`. A hash of one token with no `=` or `&` that names an element in the document (the skip link's `#main`, `#font-<id>`) is not a view: `State` leaves `location.hash` alone for it, and its next write drops the anchor. A single token that names no element is read as a hash like any other.
 - **`font`.** A font the current view hides stays in the hash; its panel opens when a later view shows it.
-- `rank=rising` while Rising has `available: false` means `overall`.
-- Example: `#rank=project&cat=serif&hide=limited,windows&font=inter`.
+- `rank=rising` while Rising has `available: false` means the default, `project`. So does `rank=overall`: Overall retired on 2026-09-30 (owner ruling `overall_retired`) and has `available: false`, so an old link opens the default view and the rewritten hash drops the pair, as it drops a retired key.
+- Example: `#rank=desktop_chosen&cat=serif&hide=limited,windows&font=inter`.
 
 ## 10. Milestone 3 hook (`globalThis.tff`)
 

@@ -799,7 +799,8 @@ def test_workflow_triggers_and_settings() -> None:
     # the jobs that write parse nothing the run produced.
     assert jobs["npm"]["permissions"] == {"contents": "read"}
     assert jobs["refresh"]["permissions"] == {"contents": "read"}
-    assert jobs["store"]["permissions"] == {"contents": "read"}
+    # actions: write only to delete the store bundle's artifact (store_bundle_encrypted).
+    assert jobs["store"]["permissions"] == {"contents": "read", "actions": "write"}
     assert jobs["publish"]["permissions"] == {
         "contents": "write",
         "pull-requests": "write",
@@ -825,11 +826,12 @@ def test_workflow_triggers_and_settings() -> None:
     named = {name for name, job in jobs.items() if job.get("environment") == "refresh"}
     readers = {name for name, job in jobs.items() if "DATA_STORE_KEY" in str(job)}
     assert named == readers == {"refresh", "store"}
+    bundle_key = {name for name, job in jobs.items() if "STORE_BUNDLE_KEY" in str(job)}
+    assert bundle_key == {"refresh", "store"}
     others = sorted(p.name for p in WORKFLOWS.glob("*.yml") if p.name != "refresh.yml")
     assert others  # ci.yml and deploy.yml
-    assert not [
-        n for n in others if "DATA_STORE_KEY" in (WORKFLOWS / n).read_text(encoding="utf-8")
-    ]
+    for secret in ("DATA_STORE_KEY", "STORE_BUNDLE_KEY"):
+        assert not [n for n in others if secret in (WORKFLOWS / n).read_text(encoding="utf-8")]
     (clone,) = [s for s in jobs["refresh"]["steps"] if s.get("with", {}).get("path") == "_store"]
     assert clone["with"]["persist-credentials"] is False  # the key is not kept while parsing
     assert jobs["refresh"]["env"]["TFF_STORE"] == "${{ github.workspace }}/_store"
@@ -984,11 +986,15 @@ STUBS: dict[str, str] = {
     case "$3" in *.bundle) exit 0 ;; esac
     exit "${STUB_BRANCH_EXISTS:-1}" ;;
   "-C _store")
-    if [ "$3" = rev-list ]; then printf '%s' "${STUB_REV_LIST:-}"; fi ;;
+    if [ "$3" = rev-list ]; then printf '%s' "${STUB_REV_LIST:-}"; fi
+    if [ "$3 $4" = "bundle create" ]; then printf '%s' "$STUB_BUNDLE" > "$5"; fi
+    if [ "$3 $4" = "bundle list-heads" ]; then printf '%s HEAD\\n' "${STUB_TIP:-abc}"; fi
+    if [ "$3" = cat-file ]; then exit "${STUB_HAS_TIP:-1}"; fi ;;
 esac""",
     "gh": """case "$1 $2" in
   "pr list") printf '%s\\n' "${STUB_PR:-}" ;;
   "issue list") printf '%s\\n' "${STUB_ISSUE:-}" ;;
+  "api repos/"*/runs/*) printf '%s' "${STUB_ARTIFACTS:-}" ;;
 esac""",
     "sudo": 'exit "${STUB_SUDO:-1}"',
     "diff": 'exit "${STUB_DIFF:-0}"',
@@ -1318,16 +1324,158 @@ def test_step_pull_request(tmp_path: Path) -> None:
     assert step.called("gh workflow") == [dispatch]
 
 
+STAND_IN = "ab" * 32  # stands in for the store bundle's secret: 64 hex digits, as made
+BUNDLE = "# v2 git bundle\nraw Google Fonts views and Fonts Over Time counts\n"
+
+
+def test_the_store_bundle_is_encrypted_and_deleted_after_the_push() -> None:
+    """store_bundle_encrypted (2026-10-19): any signed-in user can download a public
+    repository's artifacts, so the store bundle is uploaded only encrypted, its sha256
+    travels through the job's outputs, and the store job deletes it once pushed."""
+    jobs = _workflow("refresh.yml")["jobs"]
+    refresh, store = jobs["refresh"], jobs["store"]
+    names = [s.get("name") for s in refresh["steps"]]
+    assert names.index("Check the store bundle's key") < names.index("Check out the snapshot store")
+    (upload,) = [
+        s
+        for s in refresh["steps"]
+        if "upload-artifact" in str(s.get("uses", "")) and s["with"]["name"] == "store-bundle"
+    ]
+    assert upload["with"]["path"] == "${{ runner.temp }}/store"
+    bundle = {s.get("name"): s for s in refresh["steps"]}["Bundle the store's new commits"]
+    assert bundle["env"] == {"STORE_BUNDLE_KEY": "${{ secrets.STORE_BUNDLE_KEY }}"}
+    assert refresh["outputs"]["store_bundle_sha256"] == "${{ steps.store-bundle.outputs.sha256 }}"
+    # Every artifact the run uploads: only the store bundle's comes from the store, and its
+    # folder holds the encrypted file alone (test_step_store_bundle).
+    uploads = [
+        s["with"]["name"]
+        for s in _steps(_workflow("refresh.yml"))
+        if "upload-artifact" in str(s.get("uses", ""))
+    ]
+    assert sorted(uploads) == ["npm-snapshot", "pull-request", "store-bundle"]
+    steps = [s.get("name") or s.get("uses", "").split("@")[0] for s in store["steps"]]
+    assert steps == [
+        "Check out the snapshot store",
+        "actions/download-artifact",
+        "Decrypt the store bundle",
+        "Push the new snapshots to the store",
+        "Delete the store bundle's artifacts",
+    ]
+    by_name = {s.get("name"): s for s in store["steps"]}
+    assert by_name["Decrypt the store bundle"]["env"] == {
+        "STORE_BUNDLE_KEY": "${{ secrets.STORE_BUNDLE_KEY }}",
+        "BUNDLE_SHA256": "${{ needs.refresh.outputs.store_bundle_sha256 }}",
+    }
+    # Deleted by name, every attempt's upload of this run, never by an id a job reported.
+    delete = by_name["Delete the store bundle's artifacts"]
+    assert delete["env"] == {"GH_TOKEN": "${{ github.token }}"}
+    assert "/runs/$GITHUB_RUN_ID/artifacts?name=store-bundle" in delete["run"]
+    # Both ends name the same cipher, digest and iteration count.
+    cipher = "-aes-256-cbc -pbkdf2 -iter 100000 -md sha256"
+    assert cipher in bundle["run"]
+    assert cipher in by_name["Decrypt the store bundle"]["run"]
+
+
+def test_step_check_the_store_bundle_key(tmp_path: Path) -> None:
+    name = "Check the store bundle's key"
+    step = run_step(name, tmp_path / "none")
+    assert step.code == 1
+    assert "::error::STORE_BUNDLE_KEY is not set" in step.out
+    step = run_step(name, tmp_path / "set", STORE_BUNDLE_KEY=STAND_IN)
+    assert step.code == 0, step.out
+    assert STAND_IN not in step.out
+
+
 def test_step_store_bundle(tmp_path: Path) -> None:
     name = "Bundle the store's new commits"
-    step = run_step(name, tmp_path / "none")
+    step = run_step(name, tmp_path / "none", STORE_BUNDLE_KEY=STAND_IN)
     assert step.code == 0, step.out
     assert step.files["output"] == "bundle=false\n"
-    step = run_step(name, tmp_path / "new", STUB_REV_LIST="abc123")
+    assert not list((step.temp / "store").iterdir())
+
+    # New commits without the key: nothing is bundled or uploaded.
+    step = run_step(name, tmp_path / "no-key", STUB_REV_LIST="abc123", STUB_BUNDLE=BUNDLE)
+    assert step.code == 1
+    assert "::error::STORE_BUNDLE_KEY is not set" in step.out
+    assert step.called("git -C _store bundle") == []
+    assert not list((step.temp / "store").iterdir())
+    assert "bundle=true" not in step.files["output"]
+
+    if shutil.which("openssl", path="/usr/bin:/bin") is None:
+        pytest.skip("no openssl")
+    new = tmp_path / "new"
+    step = run_step(
+        name, new, STUB_REV_LIST="abc123", STUB_BUNDLE=BUNDLE, STORE_BUNDLE_KEY=STAND_IN
+    )
     assert step.code == 0, step.out
-    assert step.files["output"] == "bundle=true\n"
     (bundle,) = step.called("git -C _store bundle")
-    assert "store/store.bundle @{upstream}..HEAD" in bundle
+    assert "store-plain/store.bundle @{upstream}..HEAD" in bundle
+    sha = hashlib.sha256(BUNDLE.encode()).hexdigest()
+    assert step.files["output"] == f"sha256={sha}\nbundle=true\n"
+    # The uploaded folder holds the encrypted file alone, and the plain bundle is gone.
+    assert [p.name for p in (step.temp / "store").iterdir()] == ["store.bundle.enc"]
+    sealed = (step.temp / "store" / "store.bundle.enc").read_bytes()
+    assert sealed.startswith(b"Salted__")
+    assert b"Google" not in sealed
+    assert not list((step.temp / "store-plain").iterdir())
+    assert STAND_IN not in step.out
+
+    # The store job decrypts it with the key, against the refresh job's sha256.
+    name = "Decrypt the store bundle"
+    for case, env, ok in (
+        ("good", {"STORE_BUNDLE_KEY": STAND_IN, "BUNDLE_SHA256": sha}, True),
+        ("wrong-key", {"STORE_BUNDLE_KEY": "f" * 64, "BUNDLE_SHA256": sha}, False),
+        ("wrong-sha", {"STORE_BUNDLE_KEY": STAND_IN, "BUNDLE_SHA256": "0" * 64}, False),
+        ("no-key", {"BUNDLE_SHA256": sha}, False),
+        ("no-sha", {"STORE_BUNDLE_KEY": STAND_IN}, False),
+    ):
+        root = tmp_path / f"decrypt-{case}"
+        (root / "runner-temp" / "store").mkdir(parents=True)
+        (root / "runner-temp" / "store" / "store.bundle.enc").write_bytes(sealed)
+        step = run_step(name, root, **env)
+        assert (step.code == 0) == ok, (case, step.out)
+        if ok:
+            plain = step.temp / "store-plain" / "store.bundle"
+            assert plain.read_text(encoding="utf-8") == BUNDLE
+        else:
+            assert "::error::" in step.out or "bad decrypt" in step.out, case
+
+
+def test_step_push_and_delete_the_store_bundle(tmp_path: Path) -> None:
+    name = "Push the new snapshots to the store"
+    step = run_step(name, tmp_path / "push", STUB_TIP="f00d")
+    assert step.code == 0, step.out
+    plain = f"{step.temp}/store-plain/store.bundle"
+    assert step.calls == [
+        f"git -C _store bundle list-heads {plain} HEAD",
+        "git -C _store cat-file -e f00d^{commit}",
+        f"git -C _store bundle verify {plain}",
+        f"git -C _store fetch --quiet {plain} HEAD",
+        "git -C _store merge --ff-only --quiet FETCH_HEAD",
+        "git -C _store push --quiet origin HEAD",
+    ]
+    # A rerun after the push landed: the clone already has the tip, so nothing is pushed
+    # (its depth-1 clone lacks the bundle's prerequisite, which verify would ask for).
+    step = run_step(name, tmp_path / "pushed", STUB_TIP="f00d", STUB_HAS_TIP="0")
+    assert step.code == 0, step.out
+    assert step.called("git -C _store bundle verify", "git -C _store push") == []
+    assert "already has the bundle's commits (f00d)" in step.files["summary"]
+
+    name = "Delete the store bundle's artifacts"
+    listing = "gh api repos/owner/repo/actions/runs/7/artifacts?name=store-bundle&per_page=100"
+    step = run_step(name, tmp_path / "delete", GITHUB_RUN_ID="7", STUB_ARTIFACTS="11\n12\n")
+    assert step.code == 0, step.out
+    assert step.calls == [
+        f"{listing} --jq .artifacts[].id",
+        "gh api --silent -X DELETE repos/owner/repo/actions/artifacts/11",
+        "gh api --silent -X DELETE repos/owner/repo/actions/artifacts/12",
+    ]
+    assert "artifact 11 is deleted" in step.files["summary"]
+    assert "artifact 12 is deleted" in step.files["summary"]
+    step = run_step(name, tmp_path / "none", GITHUB_RUN_ID="7")
+    assert step.code == 1
+    assert "::error::the run has no store-bundle artifact" in step.out
+    assert [c for c in step.calls if "DELETE" in c] == []
 
 
 def test_step_failure_issue(tmp_path: Path) -> None:

@@ -12,18 +12,18 @@ the build loudly. From them the page shows:
 
 - ``plain_words``: all of section 1 without its heading, its quote unwrapped;
 - ``desktop_views``: the prose of section 5's ``### Desktop: two views``, up to its table;
-- ``confidence``: section 6's paragraph that starts ``**Confidence.**``, with its list;
 - ``biases``: all of section 11 without its heading.
 
 The page supplies its own headings, so the document's headings may change (M1 step 17 drops
 "(draft for the public page)") without moving an anchor. Relative links in the extract point
 to the file on GitHub. Everything else on the page comes from the catalog: the views, bands,
-tiers, source credits (one ``#source-<id>`` anchor per source, which the details panel links
-to), data license, run date, method version and stale sources. The views' labels and measures
-lines are ``config/site.toml``'s, which ``tff_site.build`` puts over the catalog's copies
-before this module sees the document (``tff_site.views``); ``method.view_labels`` maps each
-view's key to its label, so the template's own sentences name a view by key, never by a copy
-of its name. The extract keeps the document's own words.
+source credits (one ``#source-<id>`` anchor per source, which the details panel links
+to), data license, run date, method version and stale sources. The views' labels, measures
+lines, order and retired views are ``config/site.toml``'s, which ``tff_site.build`` puts over
+the catalog's before this module sees the document (``tff_site.views``); ``method.view_labels``
+maps each view's key to its label, so the template's own sentences name a view by key, never
+by a copy of its name. A retired view (``data.RETIRED_VIEWS``) is left out of the ranks it
+lists. The extract keeps the document's own words.
 
 ``/privacy/`` and ``/about/`` are ``site/content/<name>.md``: YAML front matter with exactly
 ``title`` (the page's ``<h1>``) and ``description``, then Markdown that starts its headings at
@@ -56,11 +56,12 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 METHODOLOGY_MD = REPO_ROOT / "docs" / "ranking-methodology.md"
 CONTENT_DIR = REPO_ROOT / "site" / "content"
 
-# §1 in plain words, §5 the rankings (the two desktop views), §6 tiers, §11 known biases.
-METHODOLOGY_SECTIONS: tuple[int, ...] = (1, 5, 6, 11)
-# The parts of sections 5 and 6 the page shows (see the module docstring).
+# §1 in plain words, §5 the rankings (the two desktop views), §11 known biases. §6, the
+# tiers, left with the site's tiers and ranges (owner's site ruling of 2026-09-30,
+# no_tiers_or_ranges).
+METHODOLOGY_SECTIONS: tuple[int, ...] = (1, 5, 11)
+# The part of section 5 the page shows (see the module docstring).
 DESKTOP_VIEWS_HEADING = "Desktop: two views"
-CONFIDENCE_LEAD = "**Confidence.**"
 
 # build.SITE_NAME; build imports this module, so it can't be imported from there.
 SITE_NAME = "Purely Free Fonts"
@@ -74,8 +75,8 @@ METHODOLOGY_PAGE = {
     # The owner's site ruling of 2026-10-05 (method_page_name); the nav link says "How it works".
     "heading": "How we measure popularity",
     "description": (
-        "How Purely Free Fonts ranks fonts: the method in plain words, how to read ranks, "
-        "bands and tiers, known biases, and credits for every data source."
+        "How Purely Free Fonts ranks fonts: the method in plain words, how to read ranks "
+        "and bands, known biases, and credits for every data source."
     ),
 }
 # Page text for the 404 page (owner approval: M2 step 7); build.NOT_FOUND_PAGE is the fallback.
@@ -110,7 +111,6 @@ TEMPLATE_IDS = frozenset(
         "scores",
         "not-ranked",
         "evidence-states",
-        "tiers",
         "biases",
         "sources",
         "sources-desktop",
@@ -227,12 +227,14 @@ def methodology_context(doc: Mapping[str, Any], source: Path | None = None) -> d
             "full_text_url": METHODOLOGY_URL,
             "run_date": doc["run"]["date"],
             "method_version": doc["run"]["method_version"],
+            # A retired view is left out; one not available yet says "Not shown yet."
             "views": [
-                {k: v[k] for k in ("key", "label", "measures", "available")} for v in doc["views"]
+                {k: v[k] for k in ("key", "label", "measures", "available")}
+                for v in doc["views"]
+                if v["key"] not in data.RETIRED_VIEWS
             ],
             "view_labels": {v["key"]: v["label"] for v in doc["views"]},
             "bands": [band["label"] for band in doc["bands"]],
-            "tiers": [{"tier": t, "text": doc["tiers"][t]} for t in sorted(doc["tiers"])],
             "unranked": [{"key": k, "label": v} for k, v in data.UNRANKED_LABELS.items()],
             "states": [{"key": k, "label": v} for k, v in data.STATE_LABELS.items()],
             "surveys": [
@@ -266,7 +268,6 @@ def methodology_parts(markdown: str, *, where: str = "the methodology") -> dict[
             _subsection(sections[5], DESKTOP_VIEWS_HEADING, where=f"{where} §5"),
             where=f"{where} §5",
         ),
-        "confidence": _lead_block(sections[6], CONFIDENCE_LEAD, where=f"{where} §6"),
         "biases": _nonempty(_body(sections[11]), where=f"{where} §11"),
     }
 
@@ -321,20 +322,6 @@ def _until_table(text: str, *, where: str) -> str:
             break
         kept.append(line)
     return _nonempty("\n".join(kept), where=f"{where}, before its table")
-
-
-def _lead_block(section: str, lead: str, *, where: str) -> str:
-    """The paragraph starting with ``lead`` and the blocks after it, up to the next bold lead."""
-    blocks = _BLANK_LINES.split(_body(section))
-    for i, block in enumerate(blocks):
-        if block.lstrip().startswith(lead):
-            kept = [block]
-            for later in blocks[i + 1 :]:
-                if later.lstrip().startswith(("**", "#")):
-                    break
-                kept.append(later)
-            return "\n\n".join(b.strip("\n") for b in kept).strip() + "\n"
-    raise PageError(f"{where}: no paragraph starting '{lead}'; /methodology/ shows it")
 
 
 def _nonempty(text: str, *, where: str) -> str:

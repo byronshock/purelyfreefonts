@@ -15,8 +15,8 @@
   source ranks each have a test.
 - **The owner's ten** (``-k owner_ten``): every field of ten fonts' panels against the site
   data. The ten are ``TFF_OWNER_TEN`` (comma-separated ids) if set, else Claude's pick: the
-  top 5 overall and 5 edge cases (attribution required, not redistributable, held by the
-  gate, preinstalled, pulled in by a package). Run it on real data with
+  top 5 in the default rank (Projects) and 5 edge cases (attribution required, a
+  Nerd Font build, held by the gate, preinstalled, pulled in by a package). Run it on real data with
   ``TFF_SITE_DATA=build/catalog-site.json TFF_OWNER_TEN=a,b,…``.
 - **linkcheck** (no network): a mock transport checks rate limiting per host, redirects,
   failures and the CLI; one ``network`` test checks a real font's links.
@@ -64,7 +64,8 @@ def _load_doc(path: Path) -> dict[str, Any]:
 
 
 def owner_ten(doc: dict[str, Any]) -> list[str]:
-    """``TFF_OWNER_TEN``, or the top 5 overall plus the first font of each edge case."""
+    """``TFF_OWNER_TEN``, or the top 5 in the default rank plus the first font of each edge
+    case."""
     given = os.environ.get("TFF_OWNER_TEN", "")
     if given.strip():
         return [i.strip() for i in given.split(",") if i.strip()]
@@ -343,11 +344,11 @@ def test_toggle_opens_one_panel_at_a_time_and_back_follows(guarded_context):
 def test_opening_keeps_other_hash_pairs(guarded_context):
     _sample_only()
     guarded = guarded_context()
-    page = _open_page(guarded, "/#rank=project&os=linux")
-    _wait_for(page, "location.hash.startsWith('#rank=project')")
+    page = _open_page(guarded, "/#rank=desktop_chosen&os=linux")
+    _wait_for(page, "location.hash.startsWith('#rank=desktop_chosen')")
     _toggle(page, "sample-sans-01").click()
     _wait_ready(page, "sample-sans-01")
-    assert _hash(page) == "#rank=project&font=sample-sans-01&os=linux"
+    assert _hash(page) == "#rank=desktop_chosen&font=sample-sans-01&os=linux"
     guarded.assert_clean(page)
 
 
@@ -393,7 +394,7 @@ def test_font_link_on_load_opens_and_focuses_the_heading(guarded_context):
 def test_font_link_with_another_rank_lands_on_the_moved_row(guarded_context):
     _sample_only()
     guarded = guarded_context(viewport={"width": 1280, "height": 800})
-    font_id = "sample-mono-07"  # 7th overall, 2nd in Coding: the row moves on load
+    font_id = "sample-mono-07"  # 18th in Projects, 2nd in Coding: the row moves on load
     page = _open_page(guarded, f"/#rank=coding&font={font_id}")
     _wait_for(page, "globalThis.tff !== undefined")
     _wait_ready(page, font_id)
@@ -407,8 +408,16 @@ def test_font_link_with_another_rank_lands_on_the_moved_row(guarded_context):
     )
     assert place == 1  # second, by its Coding score
     assert page.locator(f"#font-{font_id} .rank").text_content().startswith("Score ")
+    # The row is scrolled to the top and its focused heading is in view. A row above it that
+    # the default view never drew is sized by --row-est-h until drawn (content-visibility),
+    # so the landing may be off by that estimate's error: here sample-mono-02, drawn only
+    # once Coding puts it first (4.8 px in Firefox), so allow 24 px.
     top = page.evaluate(f"document.getElementById('font-{font_id}').getBoundingClientRect().top")
-    assert -1 <= top < 800
+    heading = page.evaluate(
+        f"document.getElementById('details-{font_id}-h').getBoundingClientRect().top"
+    )
+    assert -24 <= top < 800
+    assert 0 <= heading < 800
     guarded.assert_clean(page)
 
 
@@ -691,19 +700,11 @@ def test_axe_finds_nothing_in_an_open_panel(guarded_context, scheme):
 # ------------------------------------------------------------------------ the owner's ten
 
 
-def _tier_label(tier: str) -> str:
-    return f"Tier {tier}"
-
-
-def _place(entry: dict[str, Any], *, tier: bool = True) -> str:
+def _place(entry: dict[str, Any]) -> str:
+    """The place only: no tier, no likely range (no_tiers_or_ranges, 2026-09-30)."""
     if entry["unranked"]:
         return f"Not ranked: {data.UNRANKED_LABELS[entry['unranked']]}"
-    bits = [f"#{entry['rank']}" if entry["rank"] else f"Band {entry['band']}"]
-    if tier:
-        bits.append(f"tier {entry['tier']}")
-    low, high = entry["range"]
-    bits.append(f"likely #{low}" if low == high else f"likely #{low} to #{high}")
-    return ", ".join(bits)
+    return f"#{entry['rank']}" if entry["rank"] else f"Band {entry['band']}"
 
 
 def _source_text(doc: dict[str, Any], source: dict[str, Any], entry: dict[str, Any]) -> str:
@@ -714,15 +715,19 @@ def _source_text(doc: dict[str, Any], source: dict[str, Any], entry: dict[str, A
             out = f"#{entry['rank_in_source']}"
         elif not source["publish_rank"]:
             out = f"{label}; rank not published"
-    if entry["abstains_in"]:
-        views = {v["key"]: v["label"] for v in doc["views"]}
-        out += "; left out of " + " and ".join(views[k] for k in entry["abstains_in"])
+    # Only the ranks the page offers are named: never the retired Overall (2026-09-30).
+    views = {v["key"]: v["label"] for v in doc["views"] if v["available"]}
+    left_out = [views[k] for k in entry["abstains_in"] if k in views]
+    if left_out:
+        out += "; left out of " + " and ".join(left_out)
     if source["stale"]:
         out += f" (stale: data from {source['data_date']})"
     return out
 
 
-def expected_panel(doc: dict[str, Any], font: dict[str, Any], rank: str = "overall") -> dict:
+def expected_panel(
+    doc: dict[str, Any], font: dict[str, Any], rank: str = data.DEFAULT_VIEW
+) -> dict:
     """What the panel of ``font`` must show, from the site data (the Python reference), with
     ``rank`` chosen in the selector. The layout is the owner's of 2026-09-30 (details_layout):
     the essentials, then every rank and source folded in "All ranks and sources"."""
@@ -770,16 +775,13 @@ def expected_panel(doc: dict[str, Any], font: dict[str, Any], rank: str = "overa
     views = [v for v in doc["views"] if v["available"] and v["key"] in font["ranks"]]
     shown = next((v for v in views if v["key"] == rank), views[0])
     entry = font["ranks"][shown["key"]]
-    rank_now = f"{shown['label']}: {_place(entry, tier=False)}"
+    rank_now = f"{shown['label']}: {_place(entry)}"
     essentials.append(["Rank", rank_now + (GATE_LINE if entry["gate_held"] else "")])
 
-    ranks, tiers = [], set()
+    ranks = []
     for view in views:
         entry = font["ranks"][view["key"]]
-        if entry["tier"]:
-            tiers.add(entry["tier"])
         ranks.append([view["label"], _place(entry), GATE_LINE if entry["gate_held"] else None])
-    tier_pairs = [[_tier_label(t), doc["tiers"][t]] for t in "ABC" if t in tiers]
     pulled = []
     if font["pulled_in_by"]:
         packages = "; ".join(
@@ -819,7 +821,7 @@ def expected_panel(doc: dict[str, Any], font: dict[str, Any], rank: str = "overa
         "evidence": EVIDENCE,
         "evidence_open": False,
         "ranks": ranks,
-        "tiers": tier_pairs,
+        "tiers": [],  # no tier legend (no_tiers_or_ranges)
         "pulled": pulled,
         "sources": sources,
         "report": report,

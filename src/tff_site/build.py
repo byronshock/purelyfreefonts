@@ -3,10 +3,11 @@
 The build is offline and deterministic: it makes no network request (tests run it under a
 socket guard), reads no clock, and two builds of the same inputs are byte-identical.
 
-Steps: validate the data (``tff_site.data``); take the views' labels and measures lines from
-``config/site.toml`` (``tff_site.views``, the owner's site ruling of 2026-10-07,
-``view_labels_short``: until the first live refresh carries that wording into the catalog, the
-page shows config's); concatenate and hash the JS and CSS parts
+Steps: validate the data (``tff_site.data``); take the views' labels, measures lines, order
+and retired views from ``config/site.toml`` (``tff_site.views``: the owner's site rulings of
+2026-10-07, ``view_labels_short``, and 2026-09-30, ``default_rank_project`` and
+``overall_retired``; until a refresh carries them into the catalog, the page shows config's);
+concatenate and hash the JS and CSS parts
 (``tff_site.assets``); write the list-index and details JSON; serve each ``preview`` SVG from
 ``specimens/`` next to the data file as ``/assets/specimens/<id>.<h>.svg``, checking its
 sha256 and trimming it to the family's name (below); copy each ``font_file`` from the font
@@ -404,7 +405,10 @@ def _list_context(
         {k: v[k] for k in ("key", "label", "measures")} for v in doc["views"] if v["available"]
     ]
     if not views or views[0]["key"] != data.DEFAULT_VIEW:
-        raise BuildError([f"the first available view must be {data.DEFAULT_VIEW!r} (M2-D1)"])
+        # The list opens on Projects (M2-D1, amended 2026-09-30: default_rank_project).
+        raise BuildError(
+            [f"the first available view must be {data.DEFAULT_VIEW!r} (M2-D1, amended 2026-09-30)"]
+        )
     rows = _rows(doc, specimens)
     return {
         "views": views,

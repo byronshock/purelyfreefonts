@@ -1526,6 +1526,9 @@ UNPINNED_UPSTREAMS = (
     "https://software.sil.org/downloads/r/scheherazade/Scheherazade-2.100.zip#",
     "https://software.sil.org/downloads/r/sophianubian/SophiaNubian-1.0.zip#",
     "https://ftp.gnu.org/gnu/freefont/freefont-ttf-20120503.zip#",
+    # dotcolon.net (Sora Sagano) publishes versioned zips and no repository (2026-10-20)
+    "https://dotcolon.net/files/fonts/nacelle_100.zip#",
+    "https://dotcolon.net/files/fonts/route159_110.zip#",
 )
 
 

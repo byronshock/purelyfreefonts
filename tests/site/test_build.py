@@ -20,6 +20,7 @@ import statistics
 import subprocess
 import sys
 import textwrap
+import tomllib
 from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
@@ -613,12 +614,13 @@ def test_a_missing_context_field_fails_the_build(tmp_path, catalog, mini_site):
 
 
 def expected_labels(doc: dict) -> list[str]:
-    """The unfiltered Overall view's rank cells as text, written out independently: each
-    ranked font's score, 100·Φ(z) rounded, as screen readers hear it (owner rulings of
-    2026-09-29 and 2026-09-30: score_display, score_curve, held_marker_style)."""
+    """The unfiltered default view's rank cells (Projects) as text, written out
+    independently: each ranked font's score, 100·Φ(z) rounded, as screen readers hear it
+    (owner rulings of 2026-09-29 and 2026-09-30: score_display, score_curve,
+    held_marker_style)."""
     labels = []
     for font in data.server_order(doc):
-        entry = font["ranks"]["overall"]
+        entry = font["ranks"]["project"]
         if entry["unranked"]:
             labels.append("Not ranked: " + data.UNRANKED_LABELS[entry["unranked"]])
             continue
@@ -628,7 +630,8 @@ def expected_labels(doc: dict) -> list[str]:
     return labels
 
 
-def test_index_is_server_rendered_in_overall_order(tmp_path, catalog, mini_site):
+def test_index_is_server_rendered_in_the_default_order(tmp_path, catalog, mini_site):
+    """Projects (M2-D1, amended 2026-09-30: default_rank_project)."""
     out = tmp_path / "site"
     run_build(catalog, out, mini_site)
     page = parse((out / "index.html").read_text(encoding="utf-8"))
@@ -636,12 +639,13 @@ def test_index_is_server_rendered_in_overall_order(tmp_path, catalog, mini_site)
     index = load_json(out, next(a["data-index"] for t, a in page.tags if t == "ol"))
     assert rows == index["ids"]
     assert len(rows) == 40
-    overall = {f["id"]: f["ranks"]["overall"] for f in SAMPLE["fonts"]}
-    ranked = [i for i in rows if overall[i]["order"] is not None]
+    project = {f["id"]: f["ranks"]["project"] for f in SAMPLE["fonts"]}
+    ranked = [i for i in rows if project[i]["order"] is not None]
     # By score, best first: a font the two-source rule holds back takes its score's place.
-    assert ranked == sorted(ranked, key=lambda i: (-overall[i]["score"], overall[i]["order"]))
+    assert ranked == sorted(ranked, key=lambda i: (-project[i]["score"], project[i]["order"]))
     # The sample's held sample-mono-23 (order 101) scores above fonts in the top 100.
-    assert ranked != sorted(ranked, key=lambda i: overall[i]["order"])
+    assert project["sample-mono-23"]["gate_held"]
+    assert ranked != sorted(ranked, key=lambda i: project[i]["order"])
     assert rows[: len(ranked)] == ranked
     unranked = [f for f in SAMPLE["fonts"] if f["id"] in rows[len(ranked) :]]
     assert rows[len(ranked) :] == [
@@ -650,7 +654,8 @@ def test_index_is_server_rendered_in_overall_order(tmp_path, catalog, mini_site)
     assert page.ranks == expected_labels(SAMPLE)
     assert not set(BANDS) & set(page.ranks)  # no bands, and no numbers, in the list
     assert any(label.endswith(", from one kind of source") for label in page.ranks)
-    assert page.ranks[-1] == "Not ranked: no evidence of deliberate installs"
+    # The unranked fonts close the list, A to Z (no font lacks deliberate installs in projects).
+    assert page.ranks[-1] == "Not ranked: no evidence in this rank"
 
 
 def test_rows_carry_specimens_and_fallbacks(tmp_path, catalog, mini_site):
@@ -748,7 +753,7 @@ def test_list_index_format(tmp_path, catalog, mini_site):
     fonts_ = {f["id"]: f for f in doc["fonts"]}
     assert set(index) == set(LIST_KEYS)
     assert (index["v"], index["commit"], index["run_date"], index["n"]) == (
-        3,
+        4,
         COMMIT,
         "2026-09-25",
         n,
@@ -776,21 +781,22 @@ def test_list_index_format(tmp_path, catalog, mini_site):
     available = [v["key"] for v in doc["views"] if v["available"]]
     assert sorted(index["r"]) == sorted(available)  # canonical JSON sorts keys
     for key, col in index["r"].items():
-        assert len(col["top"]) == len(col["band"]) == len(col["why"]) == len(col["tier"]) == n
+        assert len(col["top"]) == len(col["band"]) == len(col["why"]) == len(col["u"]) == n
+        assert "tier" not in col  # no_tiers_or_ranges
         for i, font_id in enumerate(index["ids"]):
             entry = fonts_[font_id]["ranks"].get(key)
             if entry is None:
-                assert (col["tier"][i], col["top"][i], col["band"][i], col["why"][i]) == (
+                assert (col["u"][i], col["top"][i], col["band"][i], col["why"][i]) == (
                     ".",
                     0,
                     -1,
                     -1,
                 )
             elif entry["unranked"]:
-                assert col["tier"][i] == "-"
+                assert col["u"][i] == "-"
                 assert index["why_labels"][col["why"][i]] == data.UNRANKED_LABELS[entry["unranked"]]
             else:
-                assert col["tier"][i] == entry["tier"]
+                assert col["u"][i] == "+"
                 assert col["top"][i] == (entry["rank"] or 0)
                 assert col["band"][i] == (
                     index["bands"].index(entry["band"]) if entry["band"] else -1
@@ -800,7 +806,7 @@ def test_list_index_format(tmp_path, catalog, mini_site):
             for i in col["order"]
         ]
         assert best == sorted(best)  # by score, best first
-        assert len(col["order"]) == sum(c in "ABC" for c in col["tier"])
+        assert len(col["order"]) == col["u"].count("+")
         assert len(col["s"]) == len(col["held"]) == n
         assert col["note"] == data.VIEW_NOTES.get(key)
         for i, font_id in enumerate(index["ids"]):
@@ -809,7 +815,7 @@ def test_list_index_format(tmp_path, catalog, mini_site):
             score = round(100 * statistics.NormalDist().cdf(entry["score"])) if ranked else -1
             assert col["s"][i] == score
             assert col["held"][i] == ("1" if ranked and entry["gate_held"] else "0")
-    coding = index["r"]["coding"]["tier"]
+    coding = index["r"]["coding"]["u"]
     for i, font_id in enumerate(index["ids"]):
         assert (coding[i] != ".") == fonts_[font_id]["is_monospace"]
 
@@ -900,9 +906,10 @@ def test_details_format(tmp_path, catalog, mini_site):
     page = parse((out / "index.html").read_text(encoding="utf-8"))
     payload = load_json(out, next(a["data-details"] for t, a in page.tags if t == "ol"))
     doc = data.load(catalog[0])
-    for key in ("views", "bands", "tiers", "sources", "systems", "license_classes"):
+    for key in ("views", "bands", "sources", "systems", "license_classes"):
         assert payload[key] == doc[key], key
-    assert payload["v"] == 1
+    assert "tiers" not in payload  # no_tiers_or_ranges
+    assert payload["v"] == 2
     assert payload["run_date"] == doc["run"]["date"]
     assert payload["state_labels"]["censored"] == "below the floor"
     assert payload["why_labels"] == data.UNRANKED_LABELS
@@ -915,6 +922,11 @@ def test_details_format(tmp_path, catalog, mini_site):
         got = dict(payload["fonts"][font["id"]])
         type_own = got.pop("type_own")
         want = {k: v for k, v in font.items() if k not in ("preview", "font_file")}
+        # Each rank's place, without its tier or likely range (no_tiers_or_ranges).
+        want["ranks"] = {
+            key: {k: v for k, v in rank.items() if k not in ("tier", "range")}
+            for key, rank in font["ranks"].items()
+        }
         assert got == want
         if font["font_file"]:
             assert type_own["size"] == font["font_file"]["size"]
@@ -1378,12 +1390,21 @@ def test_unsupported_page_paths_fail(tmp_path, catalog, mini_site, monkeypatch, 
         run_build(catalog, tmp_path / "out", mini_site)
 
 
-def test_the_first_view_must_be_overall(tmp_path, catalog, mini_site):
-    doc = data.load(catalog[0])
-    doc["views"].insert(0, doc["views"].pop(3))
-    catalog[0].write_bytes(jsonio.pretty_bytes(doc))
+def test_the_first_view_must_be_projects(tmp_path, catalog, mini_site):
+    """The order is config/site.toml's (tff_site.views), so config's first view is checked."""
+    raw = tomllib.loads(views.CONFIG_PATH.read_text(encoding="utf-8"))
+    assert raw["views"][0]["key"] == "project"
+    raw["views"].insert(0, raw["views"].pop(3))  # Coding first
+    config = tmp_path / "site.toml"
+    config.write_text(
+        "".join(
+            "[[views]]\n" + "".join(f"{k} = {json.dumps(v)}\n" for k, v in view.items())
+            for view in raw["views"]
+        ),
+        encoding="utf-8",
+    )
     with pytest.raises(build.BuildError, match="M2-D1"):
-        run_build(catalog, tmp_path / "site", mini_site)
+        run_build(catalog, tmp_path / "site", mini_site, site_config=config)
 
 
 OLD_WORDING = {  # the catalog's labels before the owner's site ruling of 2026-10-07
@@ -1394,12 +1415,18 @@ OLD_WORDING = {  # the catalog's labels before the owner's site ruling of 2026-1
 }
 
 
-def test_the_page_shows_config_s_view_wording(tmp_path, catalog, mini_site):
-    """view_labels_short (2026-10-07): until the first live refresh carries the new names into
-    the catalog, the build shows config/site.toml's labels and measures lines, by key, in the
-    rank select, the list index and the details payload. The catalog keeps its own copies,
-    order and ``available``, and version.txt still hashes the file as read."""
+def test_the_page_shows_config_s_view_wording_order_and_retired_view(tmp_path, catalog, mini_site):
+    """view_labels_short (2026-10-07): until the next refresh carries the new names into the
+    catalog, the build shows config/site.toml's labels and measures lines, by key, in the rank
+    select, the list index and the details payload; and since the scoring-method port, config's
+    order and retired views (default_rank_project, overall_retired), so a catalog in the
+    committed shape of 2026-09-26, Overall first and available, opens on Projects and never
+    offers Overall. The catalog keeps its own copies, order and ``available``, and version.txt
+    still hashes the file as read."""
     doc = data.load(catalog[0])
+    by_key = {view["key"]: view for view in doc["views"]}
+    doc["views"] = [by_key["overall"]] + [v for v in doc["views"] if v["key"] != "overall"]
+    by_key["overall"]["available"] = True
     for view in doc["views"]:
         if view["key"] in OLD_WORDING:
             view["label"] = OLD_WORDING[view["key"]]
@@ -1409,17 +1436,26 @@ def test_the_page_shows_config_s_view_wording(tmp_path, catalog, mini_site):
     out = tmp_path / "site"
     run_build(catalog, out, mini_site)
     wording = views.load()
-    shown = [{**v, **wording[v["key"]]} for v in doc["views"]]
+    shown = [
+        {
+            **by_key[key],
+            "label": given["label"],
+            "measures": given["measures"],
+            **({"available": False} if given.get("retired") else {}),
+        }
+        for key, given in wording.items()
+    ]
     available = [v for v in shown if v["available"]]
+    assert "overall" not in [v["key"] for v in available]
     html = (out / "index.html").read_text(encoding="utf-8")
     options = re.findall(r'<option value="([^"]+)" data-measures="([^"]*)">([^<]*)</option>', html)
     assert [tuple(map(unescape, o)) for o in options] == [
         (v["key"], v["measures"], v["label"]) for v in available
     ]
-    assert [o[2] for o in options[1:5]] == [
+    assert [o[2] for o in options[:4]] == [
+        "Projects",
         "Chosen (desktop)",
         "Installed (desktop)",
-        "Projects",
         "Coding",
     ]
     page = parse(html)
@@ -1700,7 +1736,8 @@ def test_real_templates_render_the_list_contract(tmp_path, catalog, real_site):
             current.append(a["value"])
     options = selects["f-rank"]
     assert options == [v["key"] for v in SAMPLE["views"] if v["available"]]
-    assert options[0] == "overall"
+    assert options[0] == "project"
+    assert "overall" not in options  # retired (owner ruling of 2026-09-30, overall_retired)
     assert selects["f-os"] == ["", "windows", "macos", "linux", "android"]
     assert "f-sort" not in selects  # sorting is buttons over the list (sort_header)
     sorts = [a for t, a in tags if t == "button" and a.get("data-sort")]

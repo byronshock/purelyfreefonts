@@ -1,0 +1,37 @@
+# Owner rulings of 2026-10-19 on the scoring-method port, asked in chat by the lead session as single-select questions.
+# Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md (The scoring method) and docs/milestone-method.md.
+
+[port_freeze_lifted]
+choice = "a"
+recommended = true
+value = "port_and_freeze"
+ruling = "The hold of 2026-10-02 on the scoring-method port (\"We are on hold for now\") and the freeze of 2026-09-30 on the methodology-tied work (\"freeze this work until the methodology is sound\") are lifted. The port of the rulings of 2026-09-30 and 2026-10-01 goes ahead, with the site work that waited for it: the list opening on Projects (default_rank_project), no tiers or ranges on the site (no_tiers_or_ranges), the new shown score and the methodology text. The soft launch (Milestone 2 step 14) stays on hold until the owner has seen the new scores; production, main's build/ and state/, and the published scores still wait. The working checklist is docs/milestone-method.md."
+reason = "The owner: \"We still have not applied the new methodology. We will be doing that this week.\" and \"Please proceed in plan mode.\" The plan asked these as single-select questions; \"Port and the freeze (Recommended)\", over (b) the port only and (c) the port, the freeze and the launch."
+
+[port_by_lead]
+choice = "a"
+recommended = true
+value = "lead_session"
+ruling = "The lead session ports the method, PR by PR in the order of docs/milestone-method.md, with the private workbench tff-stats as the reference; it re-runs tff-stats' extraction and fits at the current main for the parity test."
+reason = "The owner, in chat with the lead session on 2026-10-19: \"This session (Recommended)\", over the scoring-method session porting it with the lead reviewing. That session's worktree was three weeks behind main with no work of its own; its work lives in tff-stats."
+
+[october_replay_is_the_switch]
+choice = "a"
+recommended = true
+value = "github_replay_of_2026_10_17_fits_theta_once"
+ruling = "After the port merges, one replay of the held run of 2026-10-17 on GitHub (refresh.yml with from_snapshots=2026-10-17, from main) is the method switch. Because a held date has no stored model parameters, that replay fits them once on October's data and writes them, write-once, to the private store, as a live run would; the job's own offline replay reads them back, and they are held for the year (q9_theta_cadence). Its \"Monthly refresh 2026-10-17\" pull request replaces draft #70 and stays an unmerged draft (refresh_collect_and_hold). Staging previews it from preview/2026-10-17 (staging_previews_held_runs), and the owner reviews its scores (refresh_gate_review_now). November's live run reuses the stored parameters. This amends the scoring plan's \"a replay never refits\" and \"the switch lands in the first live refresh\" for held dates only: a local replay still writes nothing to the store, and main's build/ changes only when a refresh pull request merges."
+reason = "The owner: \"We still have not applied the new methodology. We will be doing that this week.\" and \"Please proceed in plan mode.\" The plan asked these as single-select questions; \"Replay October on GitHub (Recommended)\", over (b) waiting for November's live run, which the plan had foreseen, and (c) a local October preview that stores nothing."
+
+[membership_fresh_at_switch]
+choice = "a"
+recommended = true
+value = "bootstrap_membership"
+ruling = "A rank whose method changes starts the catalog's membership afresh, as a first run does: the Projects top 500 plus each rank's top 100, exactly as q13_catalog_membership rules, without the hysteresis that keeps earlier members until they have been outside 550 for two runs. So October's replay shows q13's catalog."
+reason = "The owner, in chat with the lead session on 2026-10-19: \"Start fresh (Recommended)\", over keeping September's members under the slow rule. On a held run the membership state never advances, so the slow rule would have mixed the old Overall members with the new Projects ones."
+
+[method_versions_all_seven]
+choice = "a"
+recommended = true
+value = "all_seven_ranks"
+ruling = "At the switch every rank whose scoring rules change takes a new method version, so its previous_score bootstraps (q20_previous_score_at_switch): Projects, Developers & apps and Overall (the model), and desktop most chosen, desktop most installed, Coding and Rising (the interim desktop rulings: no young-font scaling, the Debian frame, no vote, pooled Arch months, GitHub and Nerd Fonts off). No rank reports a change of method as movement since 2026-09-26."
+reason = "The owner, in chat with the lead session on 2026-10-19: \"Yes, all seven (Recommended)\", over only the model ranks starting over."

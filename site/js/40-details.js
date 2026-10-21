@@ -424,22 +424,22 @@ const Details = (() => {
   const aliasNames = (font) =>
     font.aliases.map((a) => (a.relation === 'postscript' ? `${a.name} (PostScript name)` : a.name));
 
-  // The rank the selector shows: State's, else the page's default.
+  // The rank the selector shows: State's, else the page's default, Projects.
   const shownRank = () => {
     if (typeof State === 'object' && State && typeof State.get === 'function') {
       return State.get().rank;
     }
-    return 'overall';
+    return 'project';
   };
 
-  // "Overall: #39, likely #29 to #53", plus the gate line when the rule holds the font back.
+  // "Projects: #39", plus the gate line when the rule holds the font back.
   const rankNow = (payload, font, key) => {
     const views = (payload.views || []).filter((v) => v.available && font.ranks[v.key]);
     const view = views.find((v) => v.key === key) || views[0];
     if (!view) return [];
     const entry = font.ranks[view.key];
     return [
-      `${view.label}: ${placeText(payload, entry, { tier: false })}`,
+      `${view.label}: ${placeText(payload, entry)}`,
       entry.gate_held && el('span', { class: 'details-gate', text: WORDS.gate }),
     ];
   };
@@ -459,17 +459,13 @@ const Details = (() => {
 
   // ---- the evidence, folded
 
-  const range = ([low, high]) => (low === high ? `likely #${low}` : `likely #${low} to #${high}`);
-
-  // "#1, tier A, likely #1 to #6"; "Band 101–250, tier C, …"; "Not ranked: <why>".
-  const placeText = (payload, entry, { tier = true } = {}) => {
+  // The place only, no tier or likely range (owner's site ruling of 2026-09-30,
+  // no_tiers_or_ranges): "#1"; "Band 101–250"; "Not ranked: <why>".
+  const placeText = (payload, entry) => {
     if (entry.unranked) {
       return `Not ranked: ${(payload.why_labels || {})[entry.unranked] || entry.unranked}`;
     }
-    const bits = [entry.rank ? `#${entry.rank}` : `Band ${entry.band}`];
-    if (tier && entry.tier) bits.push(`tier ${entry.tier}`);
-    if (entry.range) bits.push(range(entry.range));
-    return bits.join(', ');
+    return entry.rank ? `#${entry.rank}` : `Band ${entry.band}`;
   };
 
   const evidenceSection = (payload, font) =>
@@ -483,27 +479,21 @@ const Details = (() => {
     );
 
   const ranksSection = (payload, font) => {
-    const tiers = new Set();
     const items = (payload.views || [])
       .filter((view) => view.available && font.ranks[view.key])
       .map((view) => {
         const entry = font.ranks[view.key];
-        if (entry.tier) tiers.add(entry.tier);
         return [
           view.label,
           el('span', { class: 'details-place', text: placeText(payload, entry) }),
           entry.gate_held && el('span', { class: 'details-gate', text: WORDS.gate }),
         ];
       });
-    const legend = ['A', 'B', 'C']
-      .filter((tier) => tiers.has(tier) && payload.tiers && payload.tiers[tier])
-      .map((tier) => [`Tier ${tier}`, payload.tiers[tier]]);
     return section(
       'ranks',
       'Ranks',
       pairs(items, 'details-rank-list'),
-      legend.length > 0 && pairs(legend, 'details-tiers'),
-      el('p', { class: 'details-more' }, link(METHODOLOGY, 'How ranks, bands and tiers work')),
+      el('p', { class: 'details-more' }, link(METHODOLOGY, 'How ranks and bands work')),
     );
   };
 
@@ -516,8 +506,13 @@ const Details = (() => {
     return pairs([['Pulled in by', text]], 'details-pulled');
   };
 
+  // The labels of the views in `keys` that the page offers: an unavailable one, such as the
+  // retired Overall (owner ruling of 2026-09-30), is never named.
   const viewLabels = (payload, keys) =>
-    keys.map((key) => ((payload.views || []).find((v) => v.key === key) || { label: key }).label);
+    keys
+      .map((key) => (payload.views || []).find((v) => v.key === key))
+      .filter((view) => view && view.available)
+      .map((view) => view.label);
 
   // "#2"; "below the floor"; "observed; rank not published"; plus abstentions and staleness.
   const sourceText = (payload, source, entry) => {
@@ -530,9 +525,8 @@ const Details = (() => {
       if (!source.publish_rank) out = `${label}; rank not published`;
       else if (entry.rank_in_source) out = `#${entry.rank_in_source}`;
     }
-    if (entry.abstains_in && entry.abstains_in.length) {
-      out += `; left out of ${viewLabels(payload, entry.abstains_in).join(' and ')}`;
-    }
+    const leftOut = viewLabels(payload, entry.abstains_in || []);
+    if (leftOut.length) out += `; left out of ${leftOut.join(' and ')}`;
     if (source.stale) out += ` (stale: data from ${source.data_date})`;
     return out;
   };

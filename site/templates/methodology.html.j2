@@ -1,7 +1,7 @@
 {#-
   methodology.html.j2: /methodology/ (Milestone 2 step 7). The method text comes from
   docs/ranking-methodology.md, cut out by tff_site.pages at build time, so the page and the
-  document can't drift; the rest comes from the catalog (ranks, bands, tiers, source credits,
+  document can't drift; the rest comes from the catalog (ranks, bands, source credits,
   licenses, this run). Context: every page's, plus `heading` and `method` (pages.py).
 
   Anchors are stable, whatever the document's headings say: the section ids below, and
@@ -39,7 +39,6 @@
 <li><a href="#in-plain-words">In plain words</a></li>
 <li><a href="#desktop-views">The two desktop views</a></li>
 <li><a href="#reading-ranks">Reading the ranks</a></li>
-<li><a href="#tiers">Confidence tiers</a></li>
 <li><a href="#biases">Known biases</a></li>
 <li><a href="#sources">Sources and credits</a></li>
 <li><a href="#licenses">Licenses</a></li>
@@ -61,6 +60,8 @@
 <h2 id="reading-ranks">Reading the ranks</h2>
 <h3 id="ranks">The ranks</h3>
 <p>Choose a measure at the top of the list. Each one answers a different question:</p>
+{# method.views leaves out a retired view (data.RETIRED_VIEWS, 2026-09-30); "Not shown yet."
+   marks one that isn't available yet, such as Rising. #}
 <dl class="terms">
 {% for view in method.views %}
 <dt>{{ view.label }}</dt>
@@ -92,21 +93,6 @@
 {% endfor %}
 </ul>
 <p>A Linux source can also be "left out of" some ranks: it counted the font, but Linux systems install that font on their own, and only {{ installed }} counts such installs.</p>
-</section>
-
-<section class="page-section">
-<h2 id="tiers">Confidence tiers</h2>
-<p>Every ranked font, numbered or in a band, comes with a tier that says how firm its place is. The details also show a range: the ranks the font would likely take if the sources or their weights changed a little.</p>
-<dl class="terms">
-{% for item in method.tiers %}
-<dt>Tier {{ item.tier }}</dt>
-<dd>{{ item.text }}</dd>
-{% endfor %}
-</dl>
-<p>In the methodology's own words:</p>
-<div class="quoted">
-{{ method.confidence }}
-</div>
 </section>
 
 <section class="page-section">

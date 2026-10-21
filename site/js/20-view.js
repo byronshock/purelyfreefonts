@@ -27,7 +27,7 @@ const View = (() => {
   });
   const OUTSIDE = '.';
   const UNRANKED = '-';
-  const DEFAULT_RANK = 'overall';
+  const DEFAULT_RANK = 'project'; // Projects (M2-D1, amended 2026-09-30)
   const NOT_RANKED = 'Not ranked';
 
   const report = (error) => {
@@ -120,19 +120,19 @@ const View = (() => {
   const compute = (state, index, filters = []) => {
     const rank = index.r[state.rank] ? state.rank : DEFAULT_RANK;
     const view = index.r[rank];
-    const { tier, why, s } = view;
+    const { u, why, s } = view;
     const note = view.note || null;
     const words = index.score_words;
     const n = index.n;
 
-    // 1. The universe: every font whose tier isn't "." (Coding: monospace fonts only).
+    // 1. The universe: every font whose u isn't "." (Coding: monospace fonts only).
     let total = 0;
-    for (let i = 0; i < n; i += 1) if (tier[i] !== OUTSIDE) total += 1;
+    for (let i = 0; i < n; i += 1) if (u[i] !== OUTSIDE) total += 1;
 
     // 4 (first, as it doesn't depend on the filters). Ranked fonts by score (the index's
     // `order`), then unranked fonts by name.
     const sequence = view.order.slice();
-    for (const i of index.by_name) if (tier[i] === UNRANKED) sequence.push(i);
+    for (const i of index.by_name) if (u[i] === UNRANKED) sequence.push(i);
 
     // 2. The filters and the search.
     const test = matcher(state, index);

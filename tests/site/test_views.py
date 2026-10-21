@@ -1,5 +1,7 @@
 """``tff_site.views``: the views' wording comes from config/site.toml (owner's site ruling of
-2026-10-07, ``view_labels_short``), over the catalog's copies until the first live refresh.
+2026-10-07, ``view_labels_short``), over the catalog's copies until the next refresh, and so do
+their order and the retired Overall (``default_rank_project``, ``overall_retired``, 2026-09-30;
+docs/milestone-method.md step 3).
 
 Offline, no browser. The build's use of it is in test_build.py
 (``test_the_page_shows_config_s_view_wording`` and the mismatch tests), and the list page's
@@ -38,12 +40,15 @@ def test_config_is_where_the_reader_looks():
     assert CONFIG.is_file()
 
 
-def test_config_has_the_ruled_view_names():
+def test_config_has_the_ruled_view_names_order_and_retired_view():
     wording = views.load()
-    assert list(wording) == list(data.RANK_KEYS)
+    assert sorted(wording) == sorted(data.RANK_KEYS)
+    assert next(iter(wording)) == data.DEFAULT_VIEW == "project"  # the list opens on it
+    assert list(wording)[-1] == "overall"
+    assert {k for k, v in wording.items() if v.get("retired")} == data.RETIRED_VIEWS
     assert {k: v["label"] for k, v in wording.items() if k in RULED} == RULED
     assert wording["rising"]["label"] == "Rising (beta)"  # unchanged, and still unavailable
-    assert all(set(v) == set(views.WORDING) for v in wording.values())
+    assert all(set(v) - {"retired"} == set(views.WORDING) for v in wording.values())
     raw = tomllib.loads(CONFIG.read_text(encoding="utf-8"))["views"]
     assert [{"key": k, **v} for k, v in wording.items()] == raw
 
@@ -56,45 +61,57 @@ def test_the_ruling_matches_when_its_record_is_here():
         assert ruling["value"].split(" / ") == list(RULED.values())
 
 
-def test_the_committed_catalog_differs_from_config_only_in_wording():
-    """The catalog stays the record of what was published: the same views in the same order,
-    with the same fields, as config would give it. Only the labels and measures lines may
-    differ, until the first live refresh copies config's; then the site's override is a no-op
-    (below)."""
-    committed = data.load(COMMITTED)["views"]
-    config = tomllib.loads(CONFIG.read_text(encoding="utf-8"))["views"]
-    assert [v["key"] for v in committed] == [v["key"] for v in config]
-    for given, published in zip(config, committed, strict=True):
-        assert set(given) <= set(published), given["key"]
-        rest = [k for k in given if k not in views.WORDING]
-        assert {k: given[k] for k in rest} == {k: published[k] for k in rest}
-    # What the site shows differs from the catalog in those two fields only.
-    shown = views.apply({"views": committed}, views.load())["views"]
-    for view, published in zip(shown, committed, strict=True):
-        assert {k for k in view if view[k] != published[k]} <= set(views.WORDING)
+def test_the_committed_catalog_differs_from_config_only_in_wording_order_and_retirement():
+    """The catalog stays the record of what was published: the same views, with the same
+    fields, as config would give it. Only the labels, measures lines, the order and a retired
+    view's ``available`` may differ, until the next refresh exports config's; then the site's
+    override is a no-op (below)."""
+    committed = {v["key"]: v for v in data.load(COMMITTED)["views"]}
+    wording = views.load()
+    assert sorted(committed) == sorted(wording)
+    shown = views.apply({"views": list(committed.values())}, wording)["views"]
+    assert [v["key"] for v in shown] == list(wording)
+    for view in shown:
+        published = committed[view["key"]]
+        allowed = set(views.WORDING) | (
+            {"available"} if data.RETIRED_VIEWS & {view["key"]} else set()
+        )
+        assert {k for k in view if view[k] != published[k]} <= allowed, view["key"]
+        assert set(view) == set(published)
+    assert not [v["key"] for v in shown if v["available"] and v["key"] in data.RETIRED_VIEWS]
 
 
-def test_the_override_is_a_no_op_once_the_catalog_carries_config_s_wording():
+def test_the_override_is_a_no_op_once_the_catalog_carries_config_s_views():
     committed = data.load(COMMITTED)
     refreshed = copy.deepcopy(committed)
     wording = views.load()
+    by_key = {view["key"]: view for view in refreshed["views"]}
+    refreshed["views"] = [by_key[key] for key in wording]
     for view in refreshed["views"]:
-        view.update(wording[view["key"]])
+        view.update({f: wording[view["key"]][f] for f in views.WORDING})
+        if wording[view["key"]].get("retired"):
+            view["available"] = False
     assert views.apply(refreshed, wording) == refreshed
     assert views.apply(SAMPLE, wording) == SAMPLE  # the sample already matches config
 
 
-def test_apply_takes_config_s_label_and_measures_by_key_and_keeps_the_rest():
+def test_apply_takes_config_s_order_label_and_measures_by_key_and_keeps_the_rest():
     doc = copy.deepcopy(SAMPLE)
+    for view in doc["views"]:
+        view["available"] = True  # as the committed catalog lists Overall
     before = copy.deepcopy(doc)
-    doc["views"].reverse()  # the catalog's order is kept, whatever config's
+    doc["views"].reverse()  # config's order wins, whatever the catalog's
     wording = {
         v["key"]: {"label": f"L {v['key']}", "measures": f"M {v['key']}."} for v in SAMPLE["views"]
     }
+    wording["dev_apps"]["retired"] = True
     shown = views.apply(doc, wording)
-    assert [v["key"] for v in shown["views"]] == [v["key"] for v in doc["views"]]
-    for view, was in zip(shown["views"], doc["views"], strict=True):
-        assert view == {**was, "label": f"L {was['key']}", "measures": f"M {was['key']}."}
+    assert [v["key"] for v in shown["views"]] == [v["key"] for v in SAMPLE["views"]]
+    was = {v["key"]: v for v in doc["views"]}
+    for view in shown["views"]:
+        key = view["key"]
+        retired = {"available": False} if key == "dev_apps" else {}
+        assert view == {**was[key], "label": f"L {key}", "measures": f"M {key}.", **retired}
     assert shown["fonts"] is doc["fonts"]
     doc["views"].reverse()
     assert doc == before  # unchanged
@@ -128,6 +145,10 @@ def test_apply_refuses_views_that_differ(change, message):
             "key 'overall' listed twice",
         ),
         ("[[views]\n", "site.toml: "),
+        (
+            "[[views]]\nkey = 'overall'\nlabel = 'Overall'\nmeasures = 'M.'\nretired = 'yes'\n",
+            "retired must be true or false",
+        ),
     ],
 )
 def test_load_refuses_a_bad_config(tmp_path, text, message):

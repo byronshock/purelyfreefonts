@@ -31,7 +31,8 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 SCHEMA_PATH = REPO_ROOT / "schemas" / "catalog-site.schema.json"
 SCHEMA_VERSION = "1.0.0"
 
-# Versioned rank keys (methodology §7), in the rank selector's order.
+# Versioned rank keys (methodology §7), in the schema's order. The rank selector follows
+# config/site.toml's order (``tff_site.views``), the default first.
 RANK_KEYS = (
     "overall",
     "desktop_chosen",
@@ -74,8 +75,15 @@ SPECIMEN_FLAGS = frozenset({"specimen_failed", "specimen_name_only", "specimen_h
 # Written by the sample until the specimens are rendered: the build treats it as no preview.
 PLACEHOLDER_SHA256 = "0" * 64
 
-# The rank the list page shows first and server-renders (M2-D1).
-DEFAULT_VIEW = "overall"
+# The rank the list page shows first and server-renders: Projects (M2-D1, amended by the
+# owner's ruling of 2026-09-30, default_rank_project).
+DEFAULT_VIEW = "project"
+# Views the owner retired, which no page offers or names: Overall, on 2026-09-30 (owner ruling
+# overall_retired, AUTHORITY.md D12). catalog-site.json v1 still lists them (its schema needs
+# every rank key, and each font's ranks.overall). A catalog exported since the scoring-method
+# port marks them available false; the committed one of 2026-09-26 doesn't, so the build sets
+# it from config/site.toml's ``retired`` (``tff_site.views``), which must name the same views.
+RETIRED_VIEWS = frozenset({"overall"})
 # Categories in schema order (the list index's ``cats``), with their page labels.
 CATEGORY_LABELS = {
     "sans-serif": "Sans serif",
@@ -101,10 +109,18 @@ BIT_NEW = 2048
 BIT_PULLED = 4096
 BIT_NERD = 8192  # a Nerd Font build (links.nerd): the "Nerd Font available" filter (TASK-2)
 
-LIST_FORMAT = 3  # 3 (2026-09-30): scores (s, held, note), order by score; 2: site categories
-DETAILS_FORMAT = 1
-TIER_UNRANKED = "-"
-TIER_OUTSIDE = "."
+# 4 (no_tiers_or_ranges, 2026-09-30): ``u`` in place of the tier column; 3 (2026-09-30):
+# scores (s, held, note), order by score; 2: site categories
+LIST_FORMAT = 4
+DETAILS_FORMAT = 2  # 2 (no_tiers_or_ranges): no tiers, no likely ranges
+# The list index's ``u`` column, one character a font: in the rank's universe and ranked, in
+# it and unranked, or outside it (Coding: a font that isn't monospaced).
+U_RANKED = "+"
+U_UNRANKED = "-"
+U_OUTSIDE = "."
+# Fields of a rank entry the site never shows (owner's site ruling of 2026-09-30,
+# no_tiers_or_ranges); catalog-site.json v1 keeps them.
+UNSHOWN_RANK_FIELDS = ("tier", "range")
 
 # Where people report problems (M2-D10): the license issue form, and the email fallback.
 REPO_URL = "https://github.com/byronshock/purelyfreefonts"
@@ -260,8 +276,9 @@ def band_of(order: int, bands: list[Mapping[str, Any]]) -> str | None:
 def list_index(doc: Mapping[str, Any], *, commit: str) -> dict[str, Any]:
     """Return the list-index payload (``/assets/list.<h>.json``; format in site/CONTRACT.md).
 
-    Font index ``i`` is the ``i``-th server-rendered row: Overall by score (``score_order``),
-    then fonts unranked in Overall by Python ``str.casefold`` of the family, then id.
+    Font index ``i`` is the ``i``-th server-rendered row: the default view (``DEFAULT_VIEW``,
+    Projects) by score (``score_order``), then fonts unranked there by Python
+    ``str.casefold`` of the family, then id.
 
     Bit 32 (a specimen) is set for a ``preview`` whose sha256 is not the placeholder, and bit
     64 ("Type your own text") for a ``font_file``: a build without font files passes a
@@ -307,6 +324,10 @@ def details(doc: Mapping[str, Any], *, font_assets: Mapping[str, str]) -> dict[s
     out: dict[str, Any] = {}
     for font_id, font in fonts.items():
         entry = {k: v for k, v in font.items() if k not in ("preview", "font_file")}
+        entry["ranks"] = {
+            key: {k: v for k, v in rank.items() if k not in UNSHOWN_RANK_FIELDS}
+            for key, rank in font["ranks"].items()
+        }
         url = font_assets.get(font_id)
         entry["type_own"] = None if url is None else {"url": url, "size": font["font_file"]["size"]}
         out[font_id] = entry
@@ -315,7 +336,6 @@ def details(doc: Mapping[str, Any], *, font_assets: Mapping[str, str]) -> dict[s
         "run_date": doc["run"]["date"],
         "views": doc["views"],
         "bands": doc["bands"],
-        "tiers": doc["tiers"],
         "sources": doc["sources"],
         "systems": doc["systems"],
         "license_classes": doc["license_classes"],
@@ -438,14 +458,14 @@ def _view_columns(fonts: list[Mapping[str, Any]], key: str, bands: list[str]) ->
     why_index = {reason: i for i, reason in enumerate(UNRANKED_LABELS)}
     entries = [font["ranks"].get(key) for font in fonts]
     ranked = [e if e and e["order"] is not None else None for e in entries]
-    tiers = []
+    universe = []
     for entry in entries:
         if entry is None:
-            tiers.append(TIER_OUTSIDE)
+            universe.append(U_OUTSIDE)
         elif entry["order"] is None:
-            tiers.append(TIER_UNRANKED)
+            universe.append(U_UNRANKED)
         else:
-            tiers.append(entry["tier"])
+            universe.append(U_RANKED)
     return {
         "order": score_order(entries),
         "s": [display_score(e["score"]) if e else -1 for e in ranked],
@@ -453,7 +473,7 @@ def _view_columns(fonts: list[Mapping[str, Any]], key: str, bands: list[str]) ->
         "note": VIEW_NOTES.get(key),
         "top": [(e["rank"] or 0) if e else 0 for e in entries],
         "band": [band_index[e["band"]] if e and e["band"] is not None else -1 for e in entries],
-        "tier": "".join(tiers),
+        "u": "".join(universe),
         "why": [why_index[e["unranked"]] if e and e["unranked"] else -1 for e in entries],
     }
 

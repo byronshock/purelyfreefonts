@@ -344,7 +344,7 @@ def test_the_command_says_when_the_port_is_taken(tmp_path):
 DOUBLES = r"""
 const State = (() => {
   const KEYS = Object.freeze(['rank', 'cat', 'var', 'nerd', 'hide', 'q', 'sort', 'font']);
-  let current = { rank: 'overall', cat: '', var: false, nerd: false, hide: [], q: '',
+  let current = { rank: 'project', cat: '', var: false, nerd: false, hide: [], q: '',
     sort: 'rank', font: '', internal: 'not a hash key' };
   const calls = [];
   const get = () => ({ ...current, hide: [...current.hide] });
@@ -357,7 +357,7 @@ const State = (() => {
 })();
 const Data = (() => {
   const index = { v: 1, n: 3, ids: ['a', 'b', 'c'], bits: new Int32Array([1, 2, 3]),
-    r: { overall: { order: [0, 1, 2], top: [1, 2, 0], tier: 'AB-' } } };
+    r: { project: { order: [0, 1, 2], top: [1, 2, 0], tier: 'AB-' } } };
   let loads = 0;
   return {
     index,
@@ -619,7 +619,7 @@ def test_get_state_is_a_copy_with_only_the_hash_keys(hook):
         }"""
     )
     assert result["state"] == {
-        "rank": "overall",
+        "rank": "project",
         "cat": "",
         "var": False,
         "nerd": False,
@@ -634,7 +634,7 @@ def test_get_state_is_a_copy_with_only_the_hash_keys(hook):
 def test_set_state_hands_a_copy_to_state(hook):
     result = hook.evaluate(
         """() => {
-          const partial = { rank: 'project', hide: ['windows'], os: 'linux' };
+          const partial = { rank: 'desktop_chosen', hide: ['windows'], os: 'linux' };
           tff.list.setState(partial);
           tff.list.setState({ q: 'mono' }, { push: false });
           partial.hide.push('macos');
@@ -645,7 +645,7 @@ def test_set_state_hands_a_copy_to_state(hook):
     )
     assert result == {
         "calls": [
-            [{"rank": "project", "hide": ["windows"]}, {"push": True}],
+            [{"rank": "desktop_chosen", "hide": ["windows"]}, {"push": True}],
             [{"q": "mono"}, {"push": False}],
         ],
         "error": "TypeError",
@@ -660,7 +660,7 @@ def test_index_is_a_deep_frozen_copy_loaded_once(hook):
           return {
             same: one === two,
             loads: window.__h.Data.loads,
-            frozen: [one, one.ids, one.bits, one.r, one.r.overall, one.r.overall.top]
+            frozen: [one, one.ids, one.bits, one.r, one.r.project, one.r.project.top]
               .every(Object.isFrozen),
             bits: one.bits,
             ids: one.ids,

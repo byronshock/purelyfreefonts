@@ -41,7 +41,6 @@ PAGES = {
             "in-plain-words",
             "desktop-views",
             "reading-ranks",
-            "tiers",
             "biases",
             "sources",
             "licenses",
@@ -192,13 +191,12 @@ def test_render_markdown_keeps_local_images():
 
 def test_extract_sections_from_the_methodology():
     sections = pages.extract_sections(methodology_text())
-    assert list(sections) == list(pages.METHODOLOGY_SECTIONS) == [1, 5, 6, 11]
+    assert list(sections) == list(pages.METHODOLOGY_SECTIONS) == [1, 5, 11]
     for number, text in sections.items():
         first, *rest = text.splitlines()
         assert first.startswith(f"## {number}. "), first
         assert not any(re.match(r"#{1,2} ", line) for line in rest), number
     assert "### Desktop: two views" in sections[5]
-    assert "**Confidence.**" in sections[6]
 
 
 SYNTHETIC = """\
@@ -246,16 +244,13 @@ def test_extract_sections_refuses_a_repeated_number():
 
 def test_methodology_parts_from_the_document():
     parts = pages.methodology_parts(methodology_text())
-    assert list(parts) == ["plain_words", "desktop_views", "confidence", "biases"]
+    assert list(parts) == ["plain_words", "desktop_views", "biases"]
     assert parts["plain_words"].startswith("Each month we collect public counts")
     assert not any(line.startswith(">") for line in parts["plain_words"].splitlines())
     # The document names the two desktop views as the rank select does (view_labels_short).
     assert "**Chosen (desktop)**" in parts["desktop_views"]
     assert "**Installed (desktop)**" in parts["desktop_views"]
     assert not any(line.startswith("|") for line in parts["desktop_views"].splitlines())
-    assert parts["confidence"].startswith("**Confidence.**")
-    assert "Tier C" in parts["confidence"]
-    assert "**Outages.**" not in parts["confidence"]
     assert parts["biases"].startswith("- **Developer skew.**")
 
 
@@ -263,7 +258,6 @@ BREAKS = {
     "no section 11": (r"^## 11\. .*$", "## Eleven", "'## 11.'"),
     "no section 5": (r"^## 5\. .*$", "## The rankings", "'## 5.'"),
     "renamed subsection": (r"^### Desktop: two views$", "### Desktop", "Desktop: two views"),
-    "no confidence paragraph": (r"^\*\*Confidence\.\*\*", "Confidence:", "Confidence"),
     "empty section 11": (r"(^## 11\. .*$)[\s\S]*", r"\1\n", "§11 is empty"),
     "empty section 1": (r"(^## 1\. .*$)[\s\S]*?(?=^## 2\. )", r"\1\n\n", "§1 is empty"),
 }
@@ -285,10 +279,10 @@ def test_a_missing_methodology_fails_loudly(tmp_path):
 
 def test_a_broken_methodology_fails_the_build(tmp_path, monkeypatch):
     broken = tmp_path / "ranking-methodology.md"
-    broken.write_text(re.sub(r"^## 6\. ", "## Six. ", methodology_text(), flags=re.M))
+    broken.write_text(re.sub(r"^## 5\. ", "## Five. ", methodology_text(), flags=re.M))
     monkeypatch.setattr(pages, "METHODOLOGY_MD", broken)
     sample = ROOT / "tests" / "fixtures" / "catalog-site.sample.json"
-    with pytest.raises(pages.PageError, match=r"ranking-methodology\.md: no '## 6\.' section"):
+    with pytest.raises(pages.PageError, match=r"ranking-methodology\.md: no '## 5\.' section"):
         build.build(sample, tmp_path / "out", commit=COMMIT, font_files=False)
     assert not (tmp_path / "out").exists()
 
@@ -324,7 +318,15 @@ def test_methodology_context_comes_from_the_catalog():
     listed = [s["id"] for survey in method["surveys"] for s in survey["sources"]]
     assert sorted(listed) == sorted(s["id"] for s in doc["sources"])
     assert method["bands"] == [b["label"] for b in doc["bands"]]
-    assert [t["tier"] for t in method["tiers"]] == ["A", "B", "C"]
+    assert [v["key"] for v in method["views"]] == [
+        "project",
+        "desktop_chosen",
+        "desktop_installed",
+        "coding",
+        "dev_apps",
+        "rising",
+    ]  # config's order, less the retired Overall
+    assert "tiers" not in method  # no_tiers_or_ranges
     assert method["data_license"]["name"] == "CC BY-SA 4.0"
     assert all(s["measures"].endswith(".") for s in listed_sources(method))
 
@@ -602,10 +604,10 @@ def test_links_between_pages_resolve(site_dir, built):
 
 
 def test_methodology_shows_the_document(built):
-    """The four parts appear exactly as the document renders them: the page can't drift."""
+    """The three parts appear exactly as the document renders them: the page can't drift."""
     html_parts = pages.methodology_context(SAMPLE)["method"]
     text = built["methodology/index.html"].plain
-    for name in ("plain_words", "desktop_views", "confidence", "biases"):
+    for name in ("plain_words", "desktop_views", "biases"):
         rendered = parse(str(html_parts[name])).plain
         assert rendered in text, name
 
@@ -615,13 +617,24 @@ def test_methodology_shows_the_run_and_the_credits(site_dir, built, site_data):
     html = read(site_dir, "methodology/index.html")
     text = built["methodology/index.html"].plain
     assert f"Data from {doc['run']['date']}. Method version {doc['run']['method_version']}." in text
+    ranks = re.search(r'id="ranks">(.*?)</dl>', html, re.S)
+    assert ranks
+    ranks_text = parse(ranks[1]).plain
     for view in doc["views"]:
-        assert view["label"] in text
-        assert view["measures"] in text
+        # A retired view (Overall, 2026-09-30) is left out; one not available yet is listed
+        # as "Not shown yet."
+        retired = view["key"] in data.RETIRED_VIEWS
+        assert (view["measures"] in text) != retired, view["key"]
+        assert (view["label"] in ranks_text) != retired, view["key"]
+        pending = f"{view['measures']} Not shown yet."
+        assert (pending in ranks_text) == (not retired and not view["available"]), view["key"]
+    assert "Overall" not in ranks_text
     for band in doc["bands"]:
         assert band["label"] in text
-    for tier, meaning in doc["tiers"].items():
-        assert f"Tier {tier} {meaning}" in text
+    # No tiers and no likely ranges (no_tiers_or_ranges, 2026-09-30).
+    for meaning in doc["tiers"].values():
+        assert meaning not in text
+    assert "likely #" not in text
     for label in (*data.UNRANKED_LABELS.values(), *data.STATE_LABELS.values()):
         assert label in text.lower()
     for source in doc["sources"]:
