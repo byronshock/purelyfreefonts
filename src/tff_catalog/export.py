@@ -83,9 +83,10 @@ How the per-font fields are made (``docs/catalog-schema.md`` says it for readers
   and otherwise ``not_covered``, with the engine's reason or, for a counted engine term
   the model leaves out, ``outside_frame``, and no rank, z, weight or value: a jsDelivr
   family with no hits (q29), say, keeps a counted engine term but has none in the model.
-  A font whose only model terms are Fonts Over Time's is unranked there, with no score,
-  and its reason is ``no_evidence`` (owner ruling of 2026-10-20,
-  fot_only_needs_another_source; ``CatalogBuilder.reasons``).
+  Such a source's ``sources[].weight`` is null, as the model weighs each term by its
+  fitted noise, not a hand weight (q5_group_shares_retired). A font whose only model terms
+  are Fonts Over Time's is unranked there, with no score, and its reason is ``no_evidence``
+  (owner ruling of 2026-10-20, fot_only_needs_another_source; ``CatalogBuilder.reasons``).
 - **Sources listed** are the enabled engine sources, less any the parse stage
   dropped (no snapshot inside the stale window).
 - **The Nerd Font link** (``links.nerd``) is stage "links"' choice, except that a link
@@ -962,15 +963,19 @@ class CatalogBuilder:
         ]
 
     def source(self, s: str) -> dict[str, Any]:
+        """One ``sources[]`` entry. ``weight`` is the source's effective weight in its survey
+        view on the engine, and null when that view is a model view, which weighs each term
+        by its fitted noise, not a hand weight (q5_group_shares_retired)."""
         src = self.src[s]
         snap = (self.inputs.snapshots or {}).get(src.collector)
         scores = self.inputs.scores.get(survey_view(src))
+        weight = num(scores.weights.get(s, 0.0)) if scores else 0.0
         return {
             "id": s,
             "collector": src.collector,
             "group": src.group,
             "survey": src.survey,
-            "weight": num(scores.weights.get(s, 0.0)) if scores else 0.0,
+            "weight": None if self.modelled(src) else weight,
             "publish_raw": src.publish_raw,
             "data_date": (snap.data_date or snap.snapshot).isoformat() if snap else None,
             "fetched_at": snap.fetched_at if snap else None,

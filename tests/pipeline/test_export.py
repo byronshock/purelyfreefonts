@@ -818,6 +818,20 @@ def test_a_model_view_publishes_shares_of_the_open_sources_only(tmp_path: Path) 
 
 
 @pytest.mark.model_config
+def test_a_model_view_s_sources_claim_no_hand_weight(tmp_path: Path) -> None:
+    """q5_group_shares_retired: the model weighs each term by its fitted noise, so a source
+    of a model view has a null sources[].weight, not a weight of 0; desktop sources keep the
+    engine's."""
+    ctx, _ = model_build(tmp_path)
+    doc = run_all(ctx)[export.CATALOG_FILE]
+    weights = {s["id"]: s["weight"] for s in doc["sources"]}
+    project = [s["id"] for s in doc["sources"] if s["survey"] == "project"]
+    assert project
+    assert all(weights[s] is None for s in project)
+    assert weights["homebrew"] == 1.0
+
+
+@pytest.mark.model_config
 def test_a_model_source_without_a_model_term_is_not_covered(tmp_path: Path) -> None:
     """q29 and methodology §7: a jsDelivr family with no hits keeps a counted engine term but
     has no model term, so it is not covered, with no rank, z, weight or value; a source the

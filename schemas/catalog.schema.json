@@ -180,8 +180,12 @@
             ]
           },
           "weight": {
-            "type": "number",
-            "minimum": 0
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "description": "The source's effective weight in its survey view on the engine, after overlap scaling and phase-in. Null when that view is a model view (ranking.toml [model] views, Projects at the switch), which weighs each term by its fitted noise, not a hand weight (q5_group_shares_retired)."
           },
           "publish_raw": {
             "type": "boolean"
