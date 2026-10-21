@@ -21,7 +21,7 @@ import numpy as np
 import pytest
 from hypothesis import given
 from hypothesis import strategies as st
-from tests.helpers import ROOT
+from tests.helpers import ROOT, engine_only
 
 from tff_catalog import jsonio, stageio, surveys
 from tff_catalog.config_model import Config, RankingConfig, from_mapping, load_toml
@@ -36,7 +36,9 @@ from tff_catalog.stages import StageContext
 from tff_catalog.state import State
 from tff_catalog.universe import Family, Universe
 
-RANKING: RankingConfig = from_mapping(RankingConfig, load_toml(ROOT / "config" / "ranking.toml"))
+RANKING: RankingConfig = engine_only(
+    from_mapping(RankingConfig, load_toml(ROOT / "config" / "ranking.toml"))
+)
 SOURCES = RANKING.sources.all()
 DESKTOP = tuple(sorted(RANKING.surveys.desktop.weights))
 PROJECT = tuple(sorted(RANKING.surveys.project.weights))

@@ -74,6 +74,24 @@ How the per-font fields are made (``docs/catalog-schema.md`` says it for readers
   font's views whose terms leave out a Linux source that covers it (every view
   but ``desktop_installed``, Rising included: D8). A source whose
   ``publish_rank`` is false shows no rank, z or value.
+  When the Project view is a model view (``ranking.toml [model] views``), a project source
+  that gives the font a model term is ``observed``, with no reason, its interval terms
+  included (owner ruling of 2026-10-01, q18a_state_observed); its ``rank_in_source`` is
+  the competition rank of its value among the fonts with a model term from that source,
+  as the model takes every count, below the engine's floor too; its ``z`` is the posterior
+  mean from that source's terms alone, but Fonts Over Time keeps its rank-based z (q18b);
+  and its ``weight_used`` is its share of the information from the font's open sources,
+  every source but Google and Fonts Over Time, so a font's open shares add up to 1 and
+  leave no remainder that gives back a private one; Google's and Fonts Over Time's stay
+  null (owner ruling of 2026-10-20, q16_open_source_shares, amending q16_weight_used). A
+  project source that gives the font no model term is ``too_new`` if the engine says so
+  and otherwise ``not_covered``, with the engine's reason or, for a counted engine term
+  the model leaves out, ``outside_frame``, and no rank, z, weight or value: a jsDelivr
+  family with no hits (q29), say, keeps a counted engine term but has none in the model.
+  Such a source's ``sources[].weight`` is null, as the model weighs each term by its
+  fitted noise, not a hand weight (q5_group_shares_retired). A font whose only model terms
+  are Fonts Over Time's is unranked there, with no score, and its reason is ``no_evidence``
+  (owner ruling of 2026-10-20, fot_only_needs_another_source; ``CatalogBuilder.reasons``).
 - **Sources listed** are the enabled engine sources, less any the parse stage
   dropped (no snapshot inside the stale window).
 - **The Nerd Font link** (``links.nerd``) is stage "links"' choice, except that a link
@@ -107,6 +125,7 @@ from tff_catalog import (
 from tff_catalog.config_model import OS_FAMILIES
 from tff_catalog.config_model import RANK_KEYS as _CONFIG_RANK_KEYS
 from tff_catalog.keys import match_key
+from tff_catalog.modelviews import FOT_SOURCE, PRIVATE_SHARES, rankable
 from tff_catalog.records import SourceKey
 
 if TYPE_CHECKING:
@@ -123,6 +142,7 @@ if TYPE_CHECKING:
     from tff_catalog.licenses import Verdict
     from tff_catalog.links import Link, Links
     from tff_catalog.membership import Membership
+    from tff_catalog.modelviews import FitInfo, ModelEntry
     from tff_catalog.parse import SourceSnapshot, StaleSource
     from tff_catalog.paths import Paths
     from tff_catalog.specimens.stage import Preview
@@ -264,6 +284,20 @@ class Inputs:
     @cached_property
     def confidence(self) -> Mapping[str, Mapping[str, Confidence]]:
         return self._stage("confidence")
+
+    @cached_property
+    def fits(self) -> Mapping[str, FitInfo]:
+        """The model views' fits (stage "rank", ``modelviews``); none before them."""
+        if not stageio.stage_path(self.paths, "fits").is_file():
+            return {}
+        return self._stage("fits")
+
+    @cached_property
+    def models(self) -> Mapping[str, Mapping[str, ModelEntry]]:
+        """The model views' entries (stage "rank", ``modelviews``); none before them."""
+        if not stageio.stage_path(self.paths, "model").is_file():
+            return {}
+        return self._stage("model")
 
     @cached_property
     def links(self) -> Mapping[str, Links]:
@@ -476,10 +510,17 @@ def new_fonts(first_seen: Mapping[str, Any], run_date: date, days: int) -> froze
     return frozenset(new)
 
 
+def stand_in(cfg: Config, key: str) -> str:
+    """The rank key whose entry ``key`` repeats: overall's stand-in (q12), else ``key``."""
+    if key == "overall" and cfg.ranking.ranks.overall.stand_in:
+        return cfg.ranking.ranks.overall.stand_in
+    return key
+
+
 def view_sources(cfg: Config, key: str) -> frozenset[str]:
     """The engine sources rank key ``key`` weighs."""
     r = cfg.ranking
-    match key:
+    match stand_in(cfg, key):
         case "overall":
             return frozenset(r.surveys.desktop.weights) | frozenset(r.surveys.project.weights)
         case "desktop_chosen" | "desktop_installed":
@@ -500,6 +541,7 @@ def view_abstains(cfg: Config, key: str) -> bool:
     abstains like every rank but most installed (D8; ``surveys.RISING_ABSTAINS``, and
     stage "correct" writes ``terms.json["rising"]`` so)."""
     ranks = cfg.ranking.ranks
+    key = stand_in(cfg, key)
     if key == "overall":
         return ranks.desktop_chosen.abstain
     if key == "rising":
@@ -729,10 +771,7 @@ def source_view(
     observed = {
         fid: t.value for fid, t in terms.items() if t.state == "observed" and t.value is not None
     }
-    ascending = sorted(observed.values())
-    ranks = {
-        fid: len(ascending) - bisect.bisect_right(ascending, v) + 1 for fid, v in observed.items()
-    }
+    ranks = competition_ranks(observed)
     swap = ranked_on or {}
     xs = {
         fid: swap.get(fid, observed[fid]) if fid in observed else -math.inf
@@ -740,6 +779,43 @@ def source_view(
         if t.state in COUNTED
     }
     return SourceView(terms, ranks, equate_source(xs, ruler))
+
+
+def competition_ranks(values: Mapping[str, float]) -> dict[str, int]:
+    """Each id's competition rank (1, 2, 2, 4) by value, 1 the highest."""
+    ascending = sorted(values.values())
+    return {
+        fid: len(ascending) - bisect.bisect_right(ascending, v) + 1 for fid, v in values.items()
+    }
+
+
+def model_ranks(
+    terms: Mapping[str, Term], source: str, rows: Mapping[str, ModelEntry]
+) -> dict[str, int]:
+    """A model-view source's ranks: the competition ranks of the values of the fonts with a
+    model term from ``source`` (``rows``, the view's entries), every count included, as the
+    model takes it, the ones under the engine's floor too. A term with no value (the Web
+    Almanac below its list, a count missing from the frame) has no rank."""
+    return competition_ranks(
+        {
+            fid: t.value
+            for fid, t in terms.items()
+            if t.value is not None and fid in rows and source in rows[fid].z
+        }
+    )
+
+
+def open_share(entry: ModelEntry, source: str) -> float | None:
+    """``source``'s published ``weight_used`` in a model view: its share of the information
+    from the font's open sources, every source but Google and Fonts Over Time, so the
+    published shares add up to 1 and 1 minus their sum gives back no private share (owner
+    ruling of 2026-10-20, q16_open_source_shares). None for Google and Fonts Over Time, for
+    a source with no term, and for every source of a font with only private terms."""
+    share = entry.info.get(source)
+    if source in PRIVATE_SHARES or share is None:
+        return None
+    total = math.fsum(v for s, v in entry.info.items() if s not in PRIVATE_SHARES)
+    return num(share / total) if total > 0 else None
 
 
 def smoothed_values(smoothing: Mapping[str, Any], run_date: date) -> dict[str, float]:
@@ -793,12 +869,16 @@ class CatalogBuilder:
         failed = inputs.l3_failed
         smoothed = smoothed_values(inputs.smoothing, run_date)
         self.base = {}
+        self.model_ranks: dict[str, dict[str, int]] = {}
         for s in self.sources:
             terms = inputs.terms.get(base_view(self.src[s]), {}).get(s, {})
             kept = {fid: t for fid, t in terms.items() if fid not in failed}
             self.base[s] = source_view(kept, inputs.ruler, smoothed if s == FOT else None)
+            if self.modelled(self.src[s]):
+                rows = inputs.models.get(survey_view(self.src[s]), {})
+                self.model_ranks[s] = model_ranks(kept, s, rows)
         self.related = related_families(inputs)
-        self.view_terms = {k: view_terms(inputs.terms, k) for k in RANK_KEYS}
+        self.view_terms = {k: view_terms(inputs.terms, stand_in(cfg, k)) for k in RANK_KEYS}
         exact_top = cfg.ranking.display.exact_top
         self.shift = {k: band_shift(placed, exact_top) for k, placed in inputs.ranks.items()}
         from tff_catalog.engine.order import held_places
@@ -810,7 +890,11 @@ class CatalogBuilder:
     @cached_property
     def reasons(self) -> dict[str, dict[str, str]]:
         """Stage "rank"'s reason for each catalog font without a place, by rank key
-        (``surveys.unranked``; Rising is not among them)."""
+        (``surveys.unranked``; Rising is not among them). In a model view, and in overall
+        when it stands in for one, a font the model has terms for but leaves unranked
+        because they are all Fonts Over Time's is ``no_evidence``, even when another
+        source's term is too new (owner ruling of 2026-10-20,
+        fot_only_needs_another_source)."""
         from tff_catalog.surveys import unranked
 
         facts = self.inputs.facts
@@ -822,7 +906,16 @@ class CatalogBuilder:
             ]
             for key in self.views
         }
-        return unranked(self.inputs.terms, self.inputs.scores, self.cfg.ranking, listed)
+        out = unranked(self.inputs.terms, self.inputs.scores, self.cfg.ranking, listed)
+        for key, reasons in out.items():
+            model = stand_in(self.cfg, key)
+            if model not in self.cfg.ranking.model.views:
+                continue
+            rows = self.inputs.models.get(model, {})
+            for fid in reasons:
+                if fid in rows and not rankable(rows[fid]):
+                    reasons[fid] = "no_evidence"
+        return out
 
     # -- the document --
 
@@ -839,6 +932,7 @@ class CatalogBuilder:
                 "date": self.run_date.isoformat(),
                 "method_version": METHOD_VERSION,
                 "method_versions": dict(METHOD_VERSIONS),
+                **self.model_fits(),
                 "config_sha256": config_hash(self.cfg),
                 "ranking_toml_sha256": ranking_hash(self.cfg),
                 "code_commit": commit,
@@ -848,6 +942,16 @@ class CatalogBuilder:
             "sources": [self.source(s) for s in self.sources],
             "fonts": [self.font(fid) for fid in members],
         }
+
+    def model_fits(self) -> dict[str, Any]:
+        """``run.model_fits``: each model view's fit date and the sha256 of its stored file,
+        so a replay can be held to the same fit; never a parameter (T2, T4)."""
+        fits = {
+            key: {"fitted_on": f.fitted_on.isoformat(), "sha256": f.sha256}
+            for key, f in sorted(self.inputs.fits.items())
+            if key in self.cfg.ranking.model.views
+        }
+        return {"model_fits": fits} if fits else {}
 
     def missing(self, members: Iterable[str]) -> list[str]:
         """Members some stage has no row for (a pipeline fault, not an eligibility one)."""
@@ -865,15 +969,19 @@ class CatalogBuilder:
         ]
 
     def source(self, s: str) -> dict[str, Any]:
+        """One ``sources[]`` entry. ``weight`` is the source's effective weight in its survey
+        view on the engine, and null when that view is a model view, which weighs each term
+        by its fitted noise, not a hand weight (q5_group_shares_retired)."""
         src = self.src[s]
         snap = (self.inputs.snapshots or {}).get(src.collector)
         scores = self.inputs.scores.get(survey_view(src))
+        weight = num(scores.weights.get(s, 0.0)) if scores else 0.0
         return {
             "id": s,
             "collector": src.collector,
             "group": src.group,
             "survey": src.survey,
-            "weight": num(scores.weights.get(s, 0.0)) if scores else 0.0,
+            "weight": None if self.modelled(src) else weight,
             "publish_raw": src.publish_raw,
             "data_date": (snap.data_date or snap.snapshot).isoformat() if snap else None,
             "fetched_at": snap.fetched_at if snap else None,
@@ -1011,24 +1119,62 @@ class CatalogBuilder:
     def font_source(self, s: str, fid: str, keys: list[str]) -> dict[str, Any]:
         src, view = self.src[s], self.base[s]
         term = view.terms.get(fid)
-        state, reason = state_reason(term, src)
         shown = publish_rank(self.cfg, s)
+        if self.modelled(src):
+            state, reason, rank, z, weight = self.model_source(s, fid, term)
+        else:
+            state, reason = state_reason(term, src)
+            rank = view.ranks.get(fid) if state == "observed" else None
+            z, weight = view.z.get(fid), self.weight_used(s, fid)
         entry: dict[str, Any] = {
             "state": state,
             "reason": reason,
-            "rank_in_source": view.ranks.get(fid) if shown and state == "observed" else None,
-            "z": num(view.z.get(fid)) if shown and state in COUNTED else None,
-            "weight_used": self.weight_used(s, fid),
+            "rank_in_source": rank if shown else None,
+            "z": num(z) if shown and state in COUNTED and z is not None else None,
+            "weight_used": weight,
             "abstains_in": [k for k in keys if self.abstains(s, fid, k)],
         }
         if src.publish_raw and shown and state in COUNTED and term and term.value is not None:
             entry["value"] = num(term.value)
         return entry
 
+    def model_source(
+        self, s: str, fid: str, term: Term | None
+    ) -> tuple[str, str | None, int | None, float | None, float | None]:
+        """(state, reason, rank_in_source, z, weight_used) of a source whose survey view is
+        a model view (module docstring). With a model term: observed (q18a), its rank among
+        the fonts with one (``model_ranks``), its own z (q18b; Fonts Over Time's rank-based,
+        T4) and its open share (``open_share``, q16_open_source_shares). Without one: too new
+        or not covered, with nothing else (q29; methodology §7)."""
+        src, view = self.src[s], self.base[s]
+        modelled = self.model_entry(src, fid)
+        if modelled is None or s not in modelled.z:
+            if term is not None and term.state == "too_new":
+                return "too_new", None, None, None, None
+            state, reason = state_reason(term, src)
+            if state != "not_covered":
+                reason = "outside_frame"  # a counted engine term the model leaves out
+            return "not_covered", reason, None, None, None
+        z = view.z.get(fid) if s == FOT_SOURCE else modelled.z[s]
+        return "observed", None, self.model_ranks[s].get(fid), z, open_share(modelled, s)
+
+    def modelled(self, src: SourceBase) -> bool:
+        """Whether the source's survey view is a model view (``ranking.toml [model] views``)."""
+        return survey_view(src) in self.cfg.ranking.model.views
+
+    def model_entry(self, src: SourceBase, fid: str) -> ModelEntry | None:
+        """The font's entry in its source's survey view when that view is a model view."""
+        if not self.modelled(src):
+            return None
+        return self.inputs.models.get(survey_view(src), {}).get(fid)
+
     def weight_used(self, s: str, fid: str) -> float | None:
         """v_s = M_g·w_s·factor·guard / W_g in the overall rank; None without a term there."""
         src = self.src[s]
         key = survey_view(src)
+        replaced_by = self.cfg.ranking.ranks.overall.stand_in
+        if replaced_by and key != replaced_by:
+            return None  # overall stands in for another rank: this source has no weight there
         term = (self.view_terms[key] or {}).get(s, {}).get(fid)
         scores = self.inputs.scores.get(key)
         if term is None or term.state not in COUNTED or scores is None:
@@ -1036,7 +1182,7 @@ class CatalogBuilder:
         total = sum(scores.weights.values())
         if total <= 0:
             return 0.0
-        mix = self.cfg.ranking.ranks.overall.mix.get(key, 0.0)
+        mix = 1.0 if replaced_by else self.cfg.ranking.ranks.overall.mix.get(key, 0.0)
         return num(mix * scores.weights.get(s, 0.0) * term.factor * self.guard(s, fid, key) / total)
 
     def guard(self, s: str, fid: str, key: str) -> float:

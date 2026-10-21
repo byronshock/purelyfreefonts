@@ -9,7 +9,7 @@ import numpy as np
 import pytest
 from hypothesis import assume, given
 from hypothesis import strategies as st
-from tests.helpers import ROOT
+from tests.helpers import ROOT, engine_only
 
 from tff_catalog import surveys
 from tff_catalog.config_model import RANK_KEYS, RankingConfig, from_mapping, load_toml
@@ -20,7 +20,9 @@ from tff_catalog.engine.order import Placement
 from tff_catalog.review import Flag
 from tff_catalog.surveys import RankInputs, SurveyScores
 
-CFG = from_mapping(RankingConfig, load_toml(ROOT / "config" / "ranking.toml"), "ranking.toml")
+CFG = engine_only(
+    from_mapping(RankingConfig, load_toml(ROOT / "config" / "ranking.toml"), "ranking.toml")
+)
 GROUP = {name: src.group for name, src in CFG.sources.all().items()}
 
 

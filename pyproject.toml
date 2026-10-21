@@ -88,5 +88,6 @@ markers = [
   "sample_only: runs on the sample catalog only; site-real and deploy.yml deselect it",
   "real_catalog(**params): on the real catalog, only these parameters run (the rest get sample_only)",
   "slow",
+  "model_config: runs on config/ranking.toml as it is, model views on (tests/conftest.py)",
 ]
 timeout = 300

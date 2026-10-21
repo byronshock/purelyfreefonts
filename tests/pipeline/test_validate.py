@@ -18,6 +18,8 @@ from tests.pipeline.test_export import (
     PREVIEWS,
     fixed_commit,  # noqa: F401 (an autouse fixture)
     make_build,
+    model_build,
+    npm_registry,
     run_all,
 )
 
@@ -666,6 +668,79 @@ def test_an_abstaining_source_carries_no_overall_weight(ctx: StageContext) -> No
     beta["sources"]["arch"]["weight_used"] = 0.1
     jsonio.dump(doc, path)
     assert ids(checks(ctx)["abstention_leak"]) == {"beta-mono"}
+
+
+# --- the model views ------------------------------------------------------------------------------
+
+
+@pytest.fixture
+def model_ctx(tmp_path: Path) -> StageContext:
+    """A clean build with Projects on the model (``test_export.model_build``)."""
+    extra = {"ecosystems": {"alpha-sans": npm_registry(500), "gamma-serif": npm_registry(50)}}
+    context, _ = model_build(tmp_path, extra)
+    run_all(context)
+    return context
+
+
+def edit_catalog_source(ctx: StageContext, fid: str, source: str, **fields: Any) -> None:
+    path = ctx.paths.build / export.CATALOG_FILE
+    doc = jsonio.load(path)
+    next(f for f in doc["fonts"] if f["id"] == fid)["sources"][source].update(fields)
+    jsonio.dump(doc, path)
+
+
+@pytest.mark.model_config
+def test_a_clean_model_build_passes_every_check(model_ctx: StageContext) -> None:
+    assert [str(f) for f in validate.hard_checks(model_ctx)] == []
+    assert [str(f) for f in validate.hard_checks(model_ctx, validate.COMMITTED_CHECKS)] == []
+
+
+@pytest.mark.model_config
+def test_open_shares_that_leave_a_remainder_fail(model_ctx: StageContext) -> None:
+    """q16_open_source_shares: 1 minus a font's open shares would give back the private
+    sources' share, so they must add up to 1; a clone can check it (validate --committed)."""
+    edit_catalog_source(model_ctx, "alpha-sans", "ecosystems", weight_used=0.05)
+    found = checks(model_ctx)["private_share"]
+    assert ids(found) == {"alpha-sans"}
+    assert "do not add up to 1" in found[0].message
+    assert ids(committed_failures(model_ctx, "private_share")) == {"alpha-sans"}
+
+
+@pytest.mark.model_config
+def test_a_private_share_in_a_model_view_fails(model_ctx: StageContext) -> None:
+    edit_catalog_source(model_ctx, "kappa-sans", "fot", weight_used=0.25)
+    found = checks(model_ctx)["private_share"]
+    assert [(f.family_id, f.message) for f in found] == [
+        ("kappa-sans", "fot carries a weight_used")
+    ]
+
+
+def test_engine_shares_need_not_add_up_to_1(ctx: StageContext) -> None:
+    # On the engine weight_used is v_s in overall, from hand weights: nothing to rebuild.
+    assert "model_fits" not in jsonio.load(ctx.paths.build / export.CATALOG_FILE)["run"]
+    assert "private_share" not in checks(ctx)
+
+
+@pytest.mark.model_config
+def test_a_font_ranked_on_fonts_over_time_alone_fails(model_ctx: StageContext) -> None:
+    """fot_only_needs_another_source: stage "rank" placed and scored kappa-sans, and the
+    catalog shows its score, though its only model terms are Fonts Over Time's."""
+    from tff_catalog import modelviews
+
+    def only_fot(models: dict[str, Any]) -> None:
+        row = models["project"]["kappa-sans"]
+        models["project"]["kappa-sans"] = dataclasses.replace(
+            row, z={"fot": row.z["fot"]}, info={"fot": 1.0}
+        )
+
+    edit_stage(model_ctx, "model", only_fot)
+    rows = stageio.load_stage(model_ctx.paths, "model")["project"]
+    assert not modelviews.rankable(rows["kappa-sans"])
+    found = checks(model_ctx)["fot_only_ranked"]
+    assert {(f.family_id, f.message.split(":")[0]) for f in found} == {
+        ("kappa-sans", "overall"),
+        ("kappa-sans", "project"),
+    }
 
 
 # --- the real engine --------------------------------------------------------------------------------

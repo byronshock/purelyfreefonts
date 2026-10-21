@@ -57,10 +57,16 @@ values:
 - ``stale``: sources used stale or dropped (``build/stage/stale.json``, which
   also carries schema mismatches), and engine sources left out after more
   than ``stale.max_months`` stale runs.
-- ``ruler_overlap``: a weighted source with fewer than
+- ``ruler_overlap``: in the engine's ranks, a weighted source with fewer than
   ``engine.overlap_full`` fonts in common with the ruler (its weight is scaled
-  down, or off under ``engine.overlap_off``).
-- ``guard``: outlier-guard hits (``scores.json``) in the top ``catalog_size``.
+  down, or off under ``engine.overlap_off``). The model views (``model_keys``)
+  have no ruler, so none of their sources is flagged (methodology §9).
+- ``guard``: in the engine's ranks, outlier-guard hits (``scores.json``) in the
+  top ``catalog_size``.
+- ``pit``: in a model view, a font whose term from one source its other sources predict
+  badly (leave-one-term-out PIT in a tail of ``[model] pit_tail``; ``build/stage/model.json``),
+  in the top ``catalog_size``: a font whose sources conflict, flagged in place of the
+  guard's down-weighting (owner ruling of 2026-10-01, q2_guard_retired).
 - ``crosscheck``: ``engine.crosscheck.flags``, fonts moving more than 30%
   under RRF or the Fontsource ruler, in the top ``catalog_size``.
 - ``disagreement``: fonts in the top ``review.disagreement_top`` of
@@ -69,11 +75,13 @@ values:
 - ``term``: term flags (``corrections.TERM_FLAGS``) by source.
 - ``growth``: a store source whose newest snapshot is more than
   ``store.GROWTH_FLAG`` bigger than its previous one.
-- ``what_if``: each weight of ``ranking.toml`` (survey and view weights,
-  project group shares, the overall mix) times each of
-  ``review.what_if_factors``, with its effect on every rank key it can move
-  (``what_if``). It reranks about 50 times (``surveys.views`` takes about
-  0.2 s at 2,000 families).
+- ``what_if``: each weight of ``ranking.toml`` that an engine rank uses (survey
+  and view weights, project group shares, the overall mix) times each of
+  ``review.what_if_factors``, with its effect on every engine rank key it can
+  move (``what_if``). A weight only the model views would use is left out: they
+  weigh each term by its fitted noise (q5_group_shares_retired; methodology §8).
+  It reranks once per live row (``surveys.views`` takes about 0.2 s at 2,000
+  families).
 - ``nerd_link``: catalog fonts whose Nerd Font build link failed the run's link
   check (``links.Links.nerd_problem``), which stage "export" leaves out until it
   passes again (owner ruling of 2026-09-29); the font stays listed.
@@ -94,12 +102,18 @@ for the owner to correct (the corrections go in ``config/category-overrides.toml
 and a family listed there has basis "owner", so it is never on this list), and
 the families in ``GATE_R_WATCH`` with their rank
 in each source; and ``no-license.md``, the families with no license found and
-the overall order each would get (``nolicense.what_if``, which reruns stages
+the orders each would get (``nolicense.what_if``, which reruns stages
 "correct" and "rank" on a copy of the build), for the owner's ruling of
 2026-09-26 (no_license_families): Claude researches those at
 ``nolicense.RESEARCH_TOP`` or better, and a note in review.md counts them. It
 is rebuilt from scratch on every run. The old Top 100 and the installed-fonts filter it
 reads come from the private store's seed copy and never reach review.md.
+
+**Overall as a stand-in** (``ranks.overall.stand_in``, owner ruling of 2026-10-01,
+q12_overall_stand_in): overall's orders are its stand-in's, so text that names an
+overall order names the stand-in (``overall_name``: the catalog's reach and the
+license research are the project top 500 and 700, q13_catalog_membership), and the
+pack shows the stand-in's lists once, under its own key, with no copy under overall.
 
 Everything is deterministic: the same build, state and store give the same
 bytes.
@@ -144,7 +158,7 @@ INFO = "info"
 NONE = "\u2013"  # an en dash: an empty cell, or a range
 TIMES = "\u00d7"  # a multiplication sign
 # Kinds whose review.md list stops at the exact top; the pack has them all.
-CAPPED = frozenset({"guard", "crosscheck"})
+CAPPED = frozenset({"guard", "pit", "crosscheck"})
 
 # Flag kinds in review.md order: kind -> (heading, what the section lists).
 KINDS: dict[str, tuple[str, str]] = {
@@ -158,8 +172,15 @@ KINDS: dict[str, tuple[str, str]] = {
     "coverage": ("Coverage changes", "Sources whose count of fonts with a value changed a lot."),
     "share_jump": ("Share jumps", "One font's share in one source jumping up or down."),
     "stale": ("Stale sources and schema mismatches", "Sources used stale or left out."),
-    "ruler_overlap": ("Ruler overlaps", "Sources with too few fonts in common with the ruler."),
-    "guard": ("Outlier-guard hits", "Terms the outlier guard gave reduced weight."),
+    "ruler_overlap": (
+        "Ruler overlaps",
+        "In the engine's ranks, sources with too few fonts in common with the ruler.",
+    ),
+    "guard": ("Outlier-guard hits", "In the engine's ranks, terms the guard gave reduced weight."),
+    "pit": (
+        "Conflicting sources",
+        "Model terms the font's other sources predict badly (leave-one-term-out PIT).",
+    ),
     "crosscheck": ("Cross-check moves", "Fonts moving under RRF or the Fontsource ruler."),
     "disagreement": ("Most chosen versus project", "Fonts high in one rank and low in the other."),
     "term": ("Term flags", 'Evidence flags from stage "correct", by source.'),
@@ -176,7 +197,7 @@ KINDS: dict[str, tuple[str, str]] = {
         "stays listed, with no Nerd Font tag, link or filter match until the link passes "
         "again.",
     ),
-    "what_if": ("What if", "Each ranking.toml weight halved and doubled."),
+    "what_if": ("What if", "Each ranking.toml weight of the engine's ranks halved and doubled."),
 }
 # The owner's ruling of 2026-09-26 (review_report): the what-if table stays in the private
 # pack, and review.md lists cross-check moves only inside the exact top and of at least
@@ -189,6 +210,9 @@ TERM_NOTES = {
     "dependency_review": "a Linux dependent holds 35-50% of installs; gate X",
     "stale_sync": "ecosyste.ms data not synced recently",
 }
+# The notes for a source only the model views use: the model has no hand weights, so the
+# Almanac's parent_merge_factor halves no weight there (methodology §8).
+MODEL_TERM_NOTES = {"parent_merge": "width cuts folded into the parent"}
 # Families the owner asked to look at at gate R, with why (owner ruling of 2026-09-26,
 # data_defaults): shown in the pack's checks.md with their rank in every source.
 GATE_R_WATCH: dict[str, str] = {
@@ -203,10 +227,10 @@ PACK_FILES: dict[str, str] = {
     "old-top100.md": "The comparison with the old Top 100 (first run).",
     "disagreements.md": "Fonts in the top of most chosen or project but low in the other.",
     "anomalies.md": "Every flag, uncut (review.md stops some lists at the exact top).",
-    "what-if.md": "The what-if table: each weight halved and doubled.",
+    "what-if.md": "The what-if table: each engine weight halved and doubled.",
     "sources.md": "Per-source statistics against the last run, ruler overlaps and weights.",
     "checks.md": "Catalog fonts with the default category, and the families to watch.",
-    "no-license.md": "Families with no license found, and the overall order each would get.",
+    "no-license.md": "Families with no license found, and the orders each would get.",
 }
 
 
@@ -431,18 +455,23 @@ def catalog_flags(
     names: Mapping[str, str],
     overall: Mapping[str, int],
     failed_l3: frozenset[str] = frozenset(),
+    *,
+    rank: str = "overall",
 ) -> list[Flag]:
     """Catalog entries and exits: this run's membership against ``state/membership.json``.
 
-    Empty on the first run (no committed members).
+    Each names the font's ``overall`` order as ``rank``'s (``overall_name``: under a
+    stand-in the catalog is the project top 500, q13_catalog_membership). Empty on the
+    first run (no committed members).
     """
     before = {f for f, s in (committed.get("catalog") or {}).items() if s.get("member")}
     if not before:
         return []
     after = set(m.members())
+    unranked = "not ranked overall" if rank == "overall" else f"not ranked in {rank}"
 
     def where(f: str) -> str:
-        return f"overall {overall[f]}" if f in overall else "not ranked overall"
+        return f"{rank} {overall[f]}" if f in overall else unranked
 
     out = [
         Flag("entry", f"{_name(names, f)} joins the catalog ({where(f)})", CATALOG, f)
@@ -647,18 +676,62 @@ def stale_flags(
     return out
 
 
+def model_keys(cfg: RankingConfig) -> frozenset[str]:
+    """The rank keys the measurement model scores (``[model] views``, q1_model_views), and
+    overall when it stands in for one of them (q12_overall_stand_in).
+
+    They have no ruler, no outlier guard and no hand weights (q2_guard_retired,
+    q5_group_shares_retired), so the ruler overlaps, the guard summary and the what-if table
+    cover the engine's ranks only (methodology §9).
+    """
+    keys = set(cfg.model.views)
+    if cfg.ranks.overall.stand_in in keys:
+        keys.add("overall")
+    return frozenset(keys)
+
+
+def model_sources(cfg: RankingConfig) -> frozenset[str]:
+    """The sources no engine rank weighs (only ``model_keys`` use them): their hand weights and
+    weight factors score no rank (q5_group_shares_retired; methodology §8)."""
+    from tff_catalog import surveys
+
+    model = model_keys(cfg)
+    keys = [k for k in RANK_KEYS if k not in model and k not in ("overall", "rising")]
+    if not cfg.ranks.overall.stand_in:  # the D12 mix weighs its keys' sources, a model's too
+        keys += list(cfg.ranks.overall.mix)
+    engine = {s for k in keys for s, w in surveys.nominal_weights(cfg, k).items() if w > 0}
+    return frozenset(s for s in cfg.sources.all() if s not in engine)
+
+
+def _model_views_text(cfg: RankingConfig) -> str:
+    """The model views in words, for the pack: "project, dev_apps; overall repeats project"."""
+    text = ", ".join(k for k in RANK_KEYS if k in cfg.model.views)
+    if "overall" in model_keys(cfg):
+        text += f"; overall repeats {cfg.ranks.overall.stand_in}"
+    return text
+
+
+def overall_name(cfg: RankingConfig) -> str:
+    """The rank overall's orders are: its stand-in (q12_overall_stand_in), whose orders it
+    repeats, or "overall" for the D12 mix. Text that names an overall order names this, so
+    the catalog's reach and the license research read "project" (q13_catalog_membership)."""
+    return cfg.ranks.overall.stand_in or "overall"
+
+
 def overlap_flags(
     scores: Mapping[str, SurveyScores], cfg: RankingConfig, dropped: frozenset[str] = frozenset()
 ) -> list[Flag]:
-    """Weighted sources with fewer than ``overlap_full`` fonts in common with the ruler."""
+    """Weighted sources with fewer than ``overlap_full`` fonts in common with the ruler, in
+    the engine's ranks: a model view has no ruler (``model_keys``)."""
     from tff_catalog import surveys
     from tff_catalog.engine import equate
 
     full, off = cfg.engine.overlap_full, cfg.engine.overlap_off
     sources = cfg.sources.all()
+    model = model_keys(cfg)
     out = []
     for key in RANK_KEYS:
-        if key in ("overall", "rising") or key not in scores:
+        if key in ("overall", "rising") or key in model or key not in scores:
             continue
         for s, w in sorted(surveys.nominal_weights(cfg, key).items()):
             if w <= 0 or not sources[s].enabled or s in dropped or s == cfg.engine.ruler:
@@ -671,6 +744,27 @@ def overlap_flags(
             out.append(
                 Flag("ruler_overlap", f"`{s}`: {n} fonts in common with the ruler, {effect}", key)
             )
+    return out
+
+
+def pit_flags(
+    models: Mapping[str, Mapping[str, Any]],
+    orders: Mapping[str, Mapping[str, int]],
+    names: Mapping[str, str],
+    limit: int,
+) -> list[Flag]:
+    """Model terms in a PIT tail (``modelviews.ModelEntry.pit``) of fonts at order ``limit``
+    or better, per model view: source names only, never a value."""
+    out = []
+    for key in sorted(models):
+        hits = sorted(
+            (orders[key][f], f, entry.pit)
+            for f, entry in models[key].items()
+            if entry.pit and f in orders.get(key, {}) and orders[key][f] <= limit
+        )
+        for order, f, sources in hits:
+            listed = ", ".join(f"`{s}`" for s in sources)
+            out.append(Flag("pit", f"{_name(names, f)} ({order}): {listed}", key, f))
     return out
 
 
@@ -704,8 +798,12 @@ def term_flags(
     terms_all: Mapping[str, Mapping[str, Mapping[str, Term]]],
     names: Mapping[str, str],
     overall: Mapping[str, int],
+    model_only: frozenset[str] = frozenset(),
 ) -> list[Flag]:
-    """One flag per (term flag, source), naming its fonts best-ranked first, across every view."""
+    """One flag per (term flag, source), naming its fonts best-ranked first, across every view.
+
+    A source in ``model_only`` (``model_sources``) takes its ``MODEL_TERM_NOTES`` note.
+    """
     found: dict[tuple[str, str], set[str]] = defaultdict(set)
     for by_source in terms_all.values():
         for source, by_id in by_source.items():
@@ -719,6 +817,8 @@ def term_flags(
             key=lambda f: (overall.get(f, math.inf), _name(names, f).casefold(), f),
         )
         note = TERM_NOTES.get(flag)
+        if source in model_only:
+            note = MODEL_TERM_NOTES.get(flag, note)
         what = f"{flag} ({note})" if note else flag
         listed = _listed([_name(names, f) for f in fids])
         one = fids[0] if len(fids) == 1 else None
@@ -1084,7 +1184,11 @@ def knobs(cfg: RankingConfig) -> list[Knob]:
 
     Survey weights move the survey's rank keys and overall; view weights their
     view; project group shares move project and overall; the overall mix moves
-    overall. Disabled sources are left out.
+    overall. Disabled sources are left out, and so is every weight whose keys are
+    all model views (``model_keys``): the model weighs each term by its fitted
+    noise, so the project survey's weights, the group shares and the dev_apps
+    weights score no rank once Projects is on the model and overall repeats it
+    (q5_group_shares_retired, q12_overall_stand_in; methodology §8).
     """
     sources = cfg.sources.all()
     survey_keys = {
@@ -1095,7 +1199,8 @@ def knobs(cfg: RankingConfig) -> list[Knob]:
         )
         for survey in ("desktop", "project")
     }
-    mixed = {getattr(getattr(cfg.ranks, k), "survey", None) for k in cfg.ranks.overall.mix}
+    feeds = (cfg.ranks.overall.stand_in,) if cfg.ranks.overall.stand_in else cfg.ranks.overall.mix
+    mixed = {getattr(getattr(cfg.ranks, k), "survey", None) for k in feeds}
     out = []
     for survey, keys in survey_keys.items():
         with_overall = ("overall", *keys) if survey in mixed else keys
@@ -1114,11 +1219,13 @@ def knobs(cfg: RankingConfig) -> list[Knob]:
         Knob(f"project_group_shares.{group}.share", "group", group, "", project)
         for group in cfg.project_group_shares
     ]
-    out += [
-        Knob(f"ranks.overall.mix.{key}", "mix", "overall", key, ("overall",))
-        for key in cfg.ranks.overall.mix
-    ]
-    return out
+    if not cfg.ranks.overall.stand_in:  # a stand-in has no mix (q12)
+        out += [
+            Knob(f"ranks.overall.mix.{key}", "mix", "overall", key, ("overall",))
+            for key in cfg.ranks.overall.mix
+        ]
+    model = model_keys(cfg)
+    return [k for k in out if set(k.keys) - model]
 
 
 def vary(
@@ -1197,6 +1304,8 @@ def what_if(
 ) -> tuple[WhatIf, ...]:
     """Every knob (``knobs``) times every ``review.what_if_factors``, against the
     unchanged ranks recomputed from the same inputs (so a factor of 1 moves nothing).
+    Each row's effects are on the knob's keys outside the model views (``model_keys``),
+    which ignore the weights.
 
     ``phasing`` names the sources still phasing in: their weight this run is
     ``sources.<name>.phase_in_weight``, not the knob's key, and the row says so.
@@ -1204,6 +1313,7 @@ def what_if(
     from tff_catalog import surveys
 
     base = _orders({k: s.placements for k, s in surveys.views(inputs, cfg).items()})
+    model = model_keys(cfg)
     out = []
     for knob in knobs(cfg):
         note = ""
@@ -1216,7 +1326,11 @@ def what_if(
                 continue
             scores = surveys.views(varied, varied_cfg)
             orders = _orders({k: s.placements for k, s in scores.items()})
-            effects = tuple(effect(k, base.get(k, {}), orders.get(k, {}), cfg) for k in knob.keys)
+            effects = tuple(
+                effect(k, base.get(k, {}), orders.get(k, {}), cfg)
+                for k in knob.keys
+                if k not in model
+            )
             out.append(WhatIf(knob, factor, True, effects, note))
     return tuple(out)
 
@@ -1445,14 +1559,19 @@ def published(
 
 
 def _source_ranks(inputs: RankInputs, cfg: RankingConfig) -> dict[str, dict[str, dict[str, int]]]:
-    """Each rank key's rank in source per weighted source (overall: its mix keys' sources)."""
+    """Each rank key's rank in source per weighted source (overall: its stand-in's sources,
+    q12_overall_stand_in, else its mix keys' sources)."""
     from tff_catalog.engine import crosscheck
 
     out = {}
+    stand_in = cfg.ranks.overall.stand_in
     for key in RANK_KEYS:
         if key == "rising":
             continue
-        parts = sorted(cfg.ranks.overall.mix) if key == "overall" else [key]
+        if key != "overall":
+            parts = [key]
+        else:
+            parts = [stand_in] if stand_in else sorted(cfg.ranks.overall.mix)
         terms: dict[str, Mapping[str, Term]] = {}
         for part in parts:
             ws = inputs.weights.get(part, {})
@@ -1490,7 +1609,7 @@ def analyse(ctx: StageContext) -> Analysis:
     inputs = _rank_inputs(ctx, scores, notes)
     flags += _crosscheck_flags(inputs, now, cfg, notes)
     flags += disagreement_flags(now, names, cfg)
-    flags += term_flags(_optional(ctx, "terms") or {}, names, overall)
+    flags += term_flags(_optional(ctx, "terms") or {}, names, overall, model_sources(cfg))
     growth, store_line = growth_flags(ctx, run)
     flags += growth
     rows = what_if(inputs, cfg, phasing_in(ctx)) if inputs is not None else ()
@@ -1529,7 +1648,9 @@ def analyse(ctx: StageContext) -> Analysis:
 
 def _no_license(ctx: StageContext, notes: list[str]) -> tuple[NoLicense, ...]:
     """``nolicense.what_if`` for the pack, with a note on the families Claude researches
-    (owner ruling of 2026-09-26, no_license_families)."""
+    (owner ruling of 2026-09-26, no_license_families): those that would reach the top
+    ``nolicense.RESEARCH_TOP`` of the rank overall repeats (``overall_name``; the Project
+    top 700 under q13_catalog_membership)."""
     from tff_catalog import nolicense
 
     try:
@@ -1539,11 +1660,15 @@ def _no_license(ctx: StageContext, notes: list[str]) -> tuple[NoLicense, ...]:
         return ()
     found = [r for r in rows if r.to_research]
     if found:
+        cfg = ctx.config.ranking
+        rulings = "owner ruling of 2026-09-26"
+        if cfg.ranks.overall.stand_in:
+            rulings = "owner rulings of 2026-09-26 and 2026-10-01, q13_catalog_membership"
         notes.append(
             f"{len(found)} {'family' if len(found) == 1 else 'families'} with no license "
-            "found would reach the overall "
-            f"top {nolicense.RESEARCH_TOP}; Claude researches their licenses (owner ruling of "
-            "2026-09-26; the list is in build/review-pack/no-license.md)."
+            f"found would reach the {overall_name(cfg)} top {nolicense.RESEARCH_TOP}; Claude "
+            f"researches their licenses ({rulings}; the list is in "
+            "build/review-pack/no-license.md)."
         )
     return rows
 
@@ -1741,7 +1866,8 @@ def _change_flags(
     failed = frozenset(f for f, r in l3.items() if r.level == "failed")
     membership = _optional(ctx, "membership")
     if membership is not None:
-        flags += catalog_flags(ctx.state.membership, membership, names, overall, failed)
+        rank = overall_name(ctx.config.ranking)
+        flags += catalog_flags(ctx.state.membership, membership, names, overall, failed, rank=rank)
     after = _next_part(ctx, "license_hashes")
     if after is None:
         notes.append('License changes: skipped, stage "verify" wrote no license_hashes this run.')
@@ -1769,7 +1895,10 @@ def _health_flags(
         notes.append('Stale sources: build/stage/stale.json is missing (run stage "parse").')
     flags = stale_flags(stale, stale_state, cfg)
     flags += overlap_flags(scores, cfg, surveys.stale_dropped(cfg, stale_state))
-    return flags + guard_flags(scores, now, names, cfg.membership.catalog_size)
+    flags += guard_flags(scores, now, names, cfg.membership.catalog_size)
+    model_path = stageio.stage_path(ctx.paths, "model")
+    models = stageio.load_stage(ctx.paths, "model") if model_path.is_file() else {}
+    return flags + pit_flags(models, now, names, cfg.membership.catalog_size)
 
 
 def _rank_inputs(
@@ -1861,13 +1990,14 @@ def _info(
             f"Not measured against the last run: {', '.join(unmeasured)} "
             "(reasons in build/review-pack/sources.md)."
         )
+    model = model_keys(cfg)  # no guard in a model view (q2_guard_retired)
     guarded = [
         f"{k} {sum(1 for f in scores[k].fused.values() if f.guard)}"
         for k in RANK_KEYS
-        if k in scores and k not in ("overall", "rising")
+        if k in scores and k not in ("overall", "rising") and k not in model
     ]
     if guarded:
-        lines.append(f"Fonts with an outlier-guard hit, all ranks: {', '.join(guarded)}.")
+        lines.append(f"Fonts with an outlier-guard hit, the engine's ranks: {', '.join(guarded)}.")
     if store_line:
         lines.append(store_line)
     return lines
@@ -1925,6 +2055,18 @@ def _range(conf: Mapping[str, Mapping[str, Confidence]], key: str, fid: str) -> 
     return (NONE, NONE) if c is None else (c.tier, f"{c.range[0]}{NONE}{c.range[1]}")
 
 
+def _stood_in(cfg: RankingConfig, key: str) -> str:
+    """The line a pack section of overall holds in place of a copy of its stand-in's
+    (q12_overall_stand_in), or "" for every other key and for the D12 mix."""
+    stand_in = cfg.ranks.overall.stand_in
+    if key != "overall" or not stand_in:
+        return ""
+    return (
+        f"Repeats {stand_in} (owner ruling of 2026-10-01, q12_overall_stand_in): see "
+        f"{stand_in} below."
+    )
+
+
 def _pack_top100(a: Analysis, cfg: RankingConfig) -> str:
     top = cfg.display.exact_top
     lines = [
@@ -1936,6 +2078,10 @@ def _pack_top100(a: Analysis, cfg: RankingConfig) -> str:
         "",
     ]
     for key in RANK_KEYS:
+        lines += [f"## {key}", ""]
+        if stood_in := _stood_in(cfg, key):
+            lines += [stood_in, ""]
+            continue
         orders = a.now.get(key, {})
         per_source = a.source_ranks.get(key, {})
         sources = sorted(per_source)
@@ -1946,7 +2092,6 @@ def _pack_top100(a: Analysis, cfg: RankingConfig) -> str:
             rows.append(
                 [orders[f], _name(a.names, f), tier, span, _groups(a.scores, key, f), *cells]
             )
-        lines += [f"## {key}", ""]
         if rows:
             header = ["Rank", "Font", "Tier", "Range", "Groups", *sources]
             lines += _table(header, rows, "rllll" + "r" * len(sources))
@@ -1956,7 +2101,7 @@ def _pack_top100(a: Analysis, cfg: RankingConfig) -> str:
     return "\n".join(lines)
 
 
-def _pack_held(a: Analysis) -> str:
+def _pack_held(a: Analysis, cfg: RankingConfig) -> str:
     lines = [
         f"# Held back by the two-group gate, {a.run_date}",
         "",
@@ -1965,10 +2110,13 @@ def _pack_held(a: Analysis) -> str:
         "",
     ]
     for key in RANK_KEYS:
+        lines += [f"## {key}", ""]
+        if stood_in := _stood_in(cfg, key):
+            lines += [stood_in, ""]
+            continue
         held = sorted(
             (p.order, f, p.band) for f, p in a.placements.get(key, {}).items() if p.gate_held
         )
-        lines += [f"## {key}", ""]
         rows = [
             [o, _name(a.names, f), band or NONE, _groups(a.scores, key, f)] for o, f, band in held
         ]
@@ -1986,13 +2134,16 @@ def _pack_tier_c(a: Analysis, cfg: RankingConfig) -> str:
         "",
     ]
     for key in RANK_KEYS:
+        lines += [f"## {key}", ""]
+        if stood_in := _stood_in(cfg, key):
+            lines += [stood_in, ""]
+            continue
         orders = a.now.get(key, {})
         rows = []
         for f in _top(orders, depth):
             tier, span = _range(a.confidence, key, f)
             if tier == "C":
                 rows.append([orders[f], _name(a.names, f), span, _groups(a.scores, key, f)])
-        lines += [f"## {key}", ""]
         lines += _table(["Order", "Font", "Range", "Groups"], rows, "rlll") if rows else ["None."]
         lines.append("")
     return "\n".join(lines)
@@ -2019,18 +2170,29 @@ def _pack_disagreements(a: Analysis, cfg: RankingConfig) -> str:
     return "\n".join([*lines, ""])
 
 
-def _pack_no_license(a: Analysis) -> str:
+def _pack_no_license(a: Analysis, cfg: RankingConfig) -> str:
+    """The no-license families and their what-if orders. Under a stand-in, overall's orders
+    are its stand-in's, so the table shows that rank once, first, and the research reach is
+    its top ``RESEARCH_TOP`` (q12_overall_stand_in, q13_catalog_membership)."""
     from tff_catalog.nolicense import KEYS, RESEARCH_TOP
 
+    reach = overall_name(cfg)
+    ruling = "the owner's ruling of 2026-09-26 (no_license_families)"
+    keys = list(KEYS)
+    if cfg.ranks.overall.stand_in:
+        ruling = (
+            "the owner's rulings of 2026-09-26 (no_license_families) and 2026-10-01 "
+            "(q13_catalog_membership)"
+        )
+        keys = [reach, *(k for k in KEYS if k not in ("overall", reach))]
     lines = [
         f"# Families with no license found, {a.run_date}",
         "",
         "No source states a license for these families, so they are left out before ranking. "
         "The orders are what each would get if its license were found (a rerun of stages "
-        '"correct" and "rank" on a copy of the build). By the owner\'s ruling of 2026-09-26 '
-        f"(no_license_families), Claude researches every one at overall {RESEARCH_TOP} or "
-        "better; a license found goes to the owner as a gate LIC question (`LIC-<id>`, with "
-        "`spdx`).",
+        f'"correct" and "rank" on a copy of the build). By {ruling}, Claude researches every '
+        f"one at {reach} {RESEARCH_TOP} or better; a license found goes to the owner as a "
+        "gate LIC question (`LIC-<id>`, with `spdx`).",
         "",
     ]
     if not a.no_license:
@@ -2043,15 +2205,18 @@ def _pack_no_license(a: Analysis) -> str:
             "yes" if r.to_research else "no",
             _name(a.names, r.id),
             r.id,
-            *(NONE if r.orders.get(k) is None else r.orders[k] for k in KEYS),
+            *(NONE if r.orders.get(k) is None else r.orders[k] for k in keys),
         ]
         for r in rows
     ]
-    heads = ["Research", "Font", "Id", *KEYS]
-    return "\n".join([*lines, *_table(heads, table, "lll" + "r" * len(KEYS))]) + "\n"
+    heads = ["Research", "Font", "Id", *keys]
+    return "\n".join([*lines, *_table(heads, table, "lll" + "r" * len(keys))]) + "\n"
 
 
-def _pack_checks(a: Analysis) -> str:
+def _pack_checks(a: Analysis, cfg: RankingConfig) -> str:
+    """The gate R checks (owner ruling of 2026-09-26, data_defaults). Under a stand-in the
+    order column names the rank overall repeats, and the watch tables leave out overall's
+    copy of its row (q12_overall_stand_in)."""
     overall = a.now.get("overall", {})
     lines = [
         f"# Checks for gate R, {a.run_date}",
@@ -2069,12 +2234,15 @@ def _pack_checks(a: Analysis) -> str:
         ([overall.get(f, NONE), _name(a.names, f), f] for f in a.defaulted),
         key=lambda r: (r[0] if isinstance(r[0], int) else math.inf, r[2]),
     )
-    lines += _table(["Overall", "Font", "Id"], rows, "rll") if rows else ["None."]
+    column = overall_name(cfg).capitalize()
+    lines += _table([column, "Font", "Id"], rows, "rll") if rows else ["None."]
     lines += ["", "## Families to watch", ""]
     for fid, why in sorted(GATE_R_WATCH.items()):
         lines += [f"### {_name(a.names, fid)} (`{fid}`)", "", f"{why}.", ""]
         rows = []
         for key in RANK_KEYS:
+            if _stood_in(cfg, key):
+                continue
             order = a.now.get(key, {}).get(fid)
             ranks = a.source_ranks.get(key, {})
             by_source = [f"{s} {r[fid]}" for s, r in sorted(ranks.items()) if fid in r]
@@ -2096,18 +2264,33 @@ def _pack_checks(a: Analysis) -> str:
 
 
 def _pack_what_if(a: Analysis, cfg: RankingConfig) -> str:
+    """The what-if table, for the engine's ranks: its header names the rules that apply
+    to the rows it holds, and the model views it leaves out (``knobs``)."""
     top = cfg.display.exact_top
-    lines = [
-        f"# What if: each weight halved and doubled, {a.run_date}",
-        "",
-        f"Each row multiplies one ranking.toml weight and reranks. RBO: the top "
-        f"{cfg.membership.catalog_size} against this run's (p {cfg.review.rbo_p}); In and Out: "
-        f"fonts entering and leaving the top {top}. Project sources keep their group's fixed "
-        "share (gate M9 (b)), so only the split inside the group changes. A source still "
-        "phasing in is weighted by its `phase_in_weight` this run, whatever its key says; "
-        "its rows vary that weight.",
-        "",
-    ]
+    text = (
+        f"Each row multiplies one ranking.toml weight of the engine's ranks and reranks. RBO: "
+        f"the top {cfg.membership.catalog_size} against this run's (p {cfg.review.rbo_p}); In "
+        f"and Out: fonts entering and leaving the top {top}."
+    )
+    knob_list = [row.knob for row in a.what_if]
+    if any(k.kind == "group" or (k.kind, k.owner) == ("survey", "project") for k in knob_list):
+        text += (
+            " Project sources keep their group's fixed share (gate M9 (b)), so only the "
+            "split inside the group changes."
+        )
+    if any(row.note for row in a.what_if):
+        text += (
+            " A source still phasing in is weighted by its `phase_in_weight` this run, "
+            "whatever its key says; its rows vary that weight."
+        )
+    if cfg.model.views:
+        text += (
+            f" The model's ranks ({_model_views_text(cfg)}) have no rows: they weigh each term "
+            "by its fitted noise, not by a ranking.toml weight (owner rulings of 2026-10-01, "
+            "q1_model_views and q5_group_shares_retired), so a weight only they would use "
+            "is left out."
+        )
+    lines = [f"# What if: each engine weight halved and doubled, {a.run_date}", "", text, ""]
     rows = []
     for row in a.what_if:
         path = f"{row.knob.path} ({row.note})" if row.note else row.knob.path
@@ -2232,10 +2415,20 @@ def _pack_old(a: Analysis, cfg: RankingConfig) -> str:
     return "\n".join([*lines, ""])
 
 
-def _pack_readme(a: Analysis) -> str:
+def _pack_readme(a: Analysis, cfg: RankingConfig) -> str:
+    """The pack's index and the gate R question. With model views, a line says which ranks
+    a ranking.toml weight can still move (q5_group_shares_retired)."""
     from tff_catalog import reviews
 
     options = reviews.catalogue("R")[0].options
+    weights = []
+    if cfg.model.views:
+        weights = [
+            "Weights in ranking.toml move the engine's ranks only (what-if.md). The model's "
+            f"ranks ({_model_views_text(cfg)}) weigh each term by its fitted noise (owner "
+            "ruling of 2026-10-01, q5_group_shares_retired).",
+            "",
+        ]
     lines = [
         f"# Review pack, {a.run_date}",
         "",
@@ -2252,6 +2445,7 @@ def _pack_readme(a: Analysis) -> str:
         "",
         *(f"- ({reviews.LETTERS[i]}) {o}." for i, o in enumerate(options)),
         "",
+        *weights,
         f"Answers are recorded in `data/reviews/{reviews.GATE_DIRS['R']}/<date>.toml` "
         f"(`tff-catalog questions --gate R`, then `tff-catalog rulings apply FILE`). Up to "
         f"{reviews.REVIEW_ROUNDS} rounds.",
@@ -2264,17 +2458,17 @@ def write_pack(directory: Path, a: Analysis, cfg: RankingConfig) -> Path:
     """Write every ``PACK_FILES`` file into ``directory``, replacing whatever was there."""
     texts = {
         "top100.md": _pack_top100(a, cfg),
-        "held-back.md": _pack_held(a),
+        "held-back.md": _pack_held(a, cfg),
         "tier-c.md": _pack_tier_c(a, cfg),
         "old-top100.md": _pack_old(a, cfg),
         "disagreements.md": _pack_disagreements(a, cfg),
         "anomalies.md": render_review(a.prev, a.published, a.all_flags, private=False),
         "what-if.md": _pack_what_if(a, cfg),
         "sources.md": _pack_sources(a, cfg),
-        "checks.md": _pack_checks(a),
-        "no-license.md": _pack_no_license(a),
+        "checks.md": _pack_checks(a, cfg),
+        "no-license.md": _pack_no_license(a, cfg),
     }
-    texts["README.md"] = _pack_readme(a)
+    texts["README.md"] = _pack_readme(a, cfg)
     if directory.exists():
         shutil.rmtree(directory)
     for name in PACK_FILES:

@@ -116,7 +116,17 @@ def _check_weights(where: str, weights: dict[str, float], known: dict[str, Any])
 
 def check_ranking(r: RankingConfig) -> None:
     """Cross-field checks for ``ranking.toml``; raises ``ConfigError``."""
+    from tff_catalog.modelviews import MODEL_VIEWS
+
     sources = r.sources.all()
+    for key in r.model.views:
+        if key not in MODEL_VIEWS:
+            _fail(
+                "ranking.toml: model.views", f"{key!r} has no model (one of {sorted(MODEL_VIEWS)})"
+            )
+    lo, hi = r.model.quantiles
+    if not 0 < lo < hi < 1 or not 0 < r.model.pit_tail < 0.5:
+        _fail("ranking.toml: model", "quantiles need 0 < low < high < 1, and pit_tail 0 < p < 0.5")
     for name, src in sources.items():
         where = f"ranking.toml: sources.{name}"
         if src.group not in GROUPS:
@@ -169,6 +179,9 @@ def check_ranking(r: RankingConfig) -> None:
     if not 0 <= c.dependency_review <= c.dependency_abstain <= 1:
         _fail("ranking.toml: corrections", "need 0 <= dependency_review <= dependency_abstain <= 1")
 
+    stand_in = r.ranks.overall.stand_in
+    if stand_in and stand_in not in ("desktop_chosen", "desktop_installed", "project"):
+        _fail("ranking.toml: ranks.overall.stand_in", f"{stand_in!r} cannot stand in for overall")
     mix = r.ranks.overall.mix
     for key in mix:
         if key not in ("desktop_chosen", "desktop_installed", "project"):

@@ -1,6 +1,7 @@
 """nolicense: what-if orders for families with no license found (owner ruling of 2026-09-26)."""
 
 import logging
+from dataclasses import replace
 from datetime import date
 from pathlib import Path
 from types import SimpleNamespace
@@ -121,6 +122,55 @@ def test_what_if_reruns_on_a_copy_and_leaves_the_build_alone(
     assert row.to_research
     assert stageio.stage_path(ctx.paths, "licenses").read_bytes() == real
     assert not stageio.stage_path(ctx.paths, "ranks").exists()
+
+
+@pytest.mark.model_config
+@pytest.mark.parametrize("mode", ["read", "write", "memory"])
+def test_what_if_scores_with_the_runs_own_fit_in_every_fit_mode(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mode: str
+) -> None:
+    """The copy's model views score with the fit this run's stage "rank" scored with, read
+    back from its staged record: never a new fit, never the store, whatever the run's mode."""
+    from tests.helpers import ROOT, models
+    from tests.helpers.treehash import treehash
+
+    from tff_catalog import fitstore, modelviews
+    from tff_catalog.config import load_config
+    from tff_catalog.stages import RunOptions
+    from tff_catalog.store import Store
+
+    fitted = models.stub_model_inputs(monkeypatch)
+    store = tmp_path / "store"
+    store.mkdir()
+    ctx = replace(
+        build(tmp_path / "root"),
+        config=load_config(Paths.for_root(ROOT)),
+        store=None if mode == "memory" else Store(store),
+        options=RunOptions(fit=mode),
+    )
+    jsonio.dump({}, ctx.paths.next_state / "stale.json")  # no source stale
+    views = ctx.config.ranking.model.views
+    assert views == ("project", "dev_apps")  # the config as it is
+    if mode == "read":  # the fit a --write-fit run kept for the date
+        modelviews.run(replace(ctx, options=RunOptions(fit="write")))
+        assert fitstore.store_pending(ctx.paths.stage, store, DAY, views)
+    _, fits = modelviews.run(ctx)  # this run's own stage "rank"
+    made, kept = len(fitted), treehash(store)
+    seen: list[object] = []
+
+    def rank(copy: StageContext) -> None:
+        assert copy.store is None
+        seen.append(modelviews.run(copy)[1])
+        unlicensed = {"unlicensed": Placement(12, 12, None, False)}
+        stageio.dump_stage(copy.paths, "ranks", {"overall": unlicensed, "project": unlicensed})
+
+    monkeypatch.setattr(corrections, "run", lambda copy: None)
+    monkeypatch.setattr(surveys, "run", rank)
+    [row] = nolicense.what_if(ctx)
+    assert seen == [fits]  # the same fits: the same records, dates and checks
+    assert len(fitted) == made, "the what-if fitted again"
+    assert treehash(store) == kept
+    assert (row.overall, row.orders["project"]) == (12, 12)
 
 
 @pytest.mark.parametrize(

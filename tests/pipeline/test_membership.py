@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from tests.helpers import ROOT
+from tests.helpers import ROOT, engine_only
 
 from tff_catalog import jsonio, membership, stageio
 from tff_catalog.config_model import Config, RankingConfig, from_mapping, load_toml
@@ -30,7 +30,9 @@ from tff_catalog.stages import StageContext
 from tff_catalog.state import State
 from tff_catalog.universe import Family, Universe
 
-RANKING: RankingConfig = from_mapping(RankingConfig, load_toml(ROOT / "config" / "ranking.toml"))
+RANKING: RankingConfig = engine_only(
+    from_mapping(RankingConfig, load_toml(ROOT / "config" / "ranking.toml"))
+)
 CFG = RANKING.membership
 OCT, NOV, DEC, JAN = date(2026, 10, 3), date(2026, 11, 3), date(2026, 12, 3), date(2027, 1, 3)
 EMPTY = Membership({}, {})
@@ -122,14 +124,24 @@ def test_an_unranked_member_counts_as_outside() -> None:
 
 def test_the_top_100_of_the_extra_ranks_joins_the_catalog() -> None:
     base = ids(700)
-    assert CFG.extra_ranks == ("project", "desktop_chosen", "desktop_installed")
+    # Every rank's top 100 (owner ruling of 2026-10-01, q13_catalog_membership).
+    assert CFG.extra_ranks == (
+        "project",
+        "desktop_chosen",
+        "desktop_installed",
+        "coding",
+        "dev_apps",
+        "rising",
+    )
     for key in CFG.extra_ranks:
         fid = base[650]
         ranks = only_overall(base) | {key: orders(moved(base, fid, 7))}
         m = membership.update(ranks, EMPTY, CFG, OCT)
         assert m.catalog[fid] == MemberState(True, OCT, 0), key
+    # A rank not listed adds nothing: here, one with Coding taken out of the list.
+    narrow = dataclasses.replace(CFG, extra_ranks=("project",))
     coding = only_overall(base) | {"coding": orders(moved(base, base[650], 1))}
-    assert base[650] not in membership.update(coding, EMPTY, CFG, OCT).catalog
+    assert base[650] not in membership.update(coding, EMPTY, narrow, OCT).catalog
 
 
 def test_a_top_100_member_keeps_its_catalog_place_whatever_its_overall_order() -> None:

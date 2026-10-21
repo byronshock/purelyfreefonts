@@ -37,9 +37,16 @@ point rank. Tiers use each font's independence groups in that rank key
 font is tier C while the view is in beta (owner ruling of 2026-09-26), because
 its unweighted ranges are nearly all single points and would read as tier A.
 
+A model view (``[model] views``; ``tff_catalog.modelviews``) moves with no weight, so its
+range is deterministic instead (owner ruling of 2026-10-01, q19_ranges_tiers_stand_in): a
+font's rank at its own posterior quantiles (``[model] quantiles``) among every other ranked
+font's score (``quantile_range``), widened as above to hold its published order; its tier
+follows from the range as for every other key, with its groups above bulk.
+
 Writes ``build/stage/confidence.json`` ({rank key: {id: Confidence}}).
 """
 
+import bisect
 import dataclasses
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
@@ -196,6 +203,21 @@ def _collect(
             continue
         unranked = max(len(orders), len(fids)) + 1
         samples[key].append(np.array([orders.get(fid, unranked) for fid in fids], dtype=np.int64))
+
+
+def quantile_range(
+    scores: Mapping[str, float], quantiles: Mapping[str, tuple[float, float]], fid: str
+) -> Range:
+    """``fid``'s rank at its low and high posterior quantiles among the other fonts'
+    scores (q19): one plus the others scoring above each, best first. ``scores`` are the
+    ranked fonts' scores, ``quantiles`` their (low, high) quantiles."""
+    others = sorted(v for f, v in scores.items() if f != fid)
+
+    def rank_at(x: float) -> int:
+        return 1 + len(others) - bisect.bisect_right(others, x)
+
+    low, high = quantiles[fid]
+    return (rank_at(high), rank_at(low))
 
 
 def contain(rng: Range, order: int) -> Range:
@@ -391,6 +413,8 @@ def load_inputs(ctx: StageContext, scores: Mapping[str, SurveyScores]) -> RankIn
     terms_all = _smoothed_fot(terms_all, smoothing.get("fot_ewma", {}), cfg)
     universe = stageio.load_stage(paths, "universe")
     facts = stageio.load_stage(paths, "facts")
+    model_path = stageio.stage_path(paths, "model")
+    models = stageio.load_stage(paths, "model") if model_path.is_file() else {}
     inputs = surveys.rank_inputs(
         terms_all,
         stageio.load_stage(paths, "ruler"),
@@ -399,8 +423,12 @@ def load_inputs(ctx: StageContext, scores: Mapping[str, SurveyScores]) -> RankIn
         monospace=frozenset(fid for fid, f in facts.items() if f.is_monospace),
         stale=dropped,
         rising=rise,
+        models=models,
     )
-    return dataclasses.replace(inputs, weights={key: dict(s.weights) for key, s in scores.items()})
+    # A model view keeps its engine weights here: overall still mixes them until it stands
+    # in for Projects (q12), and stage "rank" computed them the same way.
+    weights = {key: dict(s.weights) for key, s in scores.items() if key not in models}
+    return dataclasses.replace(inputs, weights={**inputs.weights, **weights})
 
 
 def _l3_failed(paths: Paths) -> frozenset[str]:
@@ -490,9 +518,15 @@ def run(ctx: StageContext) -> None:
     out: dict[str, dict[str, Confidence]] = {}
     for key in sorted(published, key=_key_order):
         orders = published[key]
-        key_ranges = {
-            fid: contain(ranges.get(key, {}).get(fid, (o, o)), o) for fid, o in orders.items()
-        }
+        stood_in = ranking.ranks.overall.stand_in if key == "overall" else ""
+        model = inputs.models.get(stood_in or key)
+        if model is not None:
+            points = {fid: model[fid].score for fid in orders}
+            bounds = {fid: (model[fid].low, model[fid].high) for fid in orders}
+            found = {fid: quantile_range(points, bounds, fid) for fid in orders}
+        else:
+            found = ranges.get(key, {})
+        key_ranges = {fid: contain(found.get(fid, (o, o)), o) for fid, o in orders.items()}
         fused = scores[key].fused if key in scores else {}
         groups = {fid: len(f.groups) for fid, f in fused.items()}
         key_tiers = tiers({key: key_ranges}, {key: orders}, groups, ranking.tiers)[key]

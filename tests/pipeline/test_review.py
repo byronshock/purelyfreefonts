@@ -17,7 +17,7 @@ from typing import Any, ClassVar
 
 import numpy as np
 import pytest
-from tests.helpers import ROOT, synth
+from tests.helpers import ROOT, engine_only, synth
 
 from tff_catalog import backtest, jsonio, records, review, stageio, surveys
 from tff_catalog.collectors.base import CollectorBase, ParseContext
@@ -38,7 +38,9 @@ from tff_catalog.state import State
 from tff_catalog.store import Store
 from tff_catalog.universe import Family, Universe
 
-RANKING: RankingConfig = from_mapping(RankingConfig, load_toml(ROOT / "config" / "ranking.toml"))
+RANKING: RankingConfig = engine_only(
+    from_mapping(RankingConfig, load_toml(ROOT / "config" / "ranking.toml"))
+)
 
 
 def small(cfg: RankingConfig = RANKING) -> RankingConfig:

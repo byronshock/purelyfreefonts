@@ -365,6 +365,9 @@ class SurveyRank:
 
 @dataclass(frozen=True, slots=True)
 class OverallRank:
+    # The rank key overall repeats (owner ruling of 2026-10-01, q12_overall_stand_in), or ""
+    # for the fused mix of D12.
+    stand_in: str
     mix: dict[str, float]  # rank key -> share of the overall mix (D12)
 
 
@@ -435,6 +438,15 @@ class Uncertainty:
 
 
 @dataclass(frozen=True, slots=True)
+class Model:
+    """The measurement model (``tff_catalog.modelviews``)."""
+
+    views: tuple[str, ...]  # rank keys it scores; the others stay on the engine (q1)
+    quantiles: tuple[float, float]  # q19: the likely range's posterior quantiles
+    pit_tail: float  # q2: a leave-one-term-out PIT this far into a tail is flagged
+
+
+@dataclass(frozen=True, slots=True)
 class Tiers:
     a_min_groups: int
     a_min_width: int
@@ -492,6 +504,7 @@ class RankingConfig:
     ranks: Ranks
     display: Display
     membership: Membership
+    model: Model
     uncertainty: Uncertainty
     tiers: Tiers
     stale: Stale
