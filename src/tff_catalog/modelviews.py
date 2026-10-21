@@ -242,14 +242,16 @@ def _precision(sd: float) -> float:
 
 
 def run(ctx: StageContext) -> tuple[dict[str, dict[str, ModelEntry]], dict[str, FitInfo]]:
-    """Stage "rank"'s model views: their entries and fits, for ``[model] views``."""
+    """Stage "rank"'s model views: their entries and fits, for ``[model] views``. A Project
+    source with no data this run stops them (``modelinputs.SourceMissing``)."""
     cfg = ctx.config.ranking
     if not cfg.model.views:
         return {}, {}
-    from tff_catalog import METHOD_VERSIONS, fitstore, modelinputs
+    from tff_catalog import METHOD_VERSIONS, fitstore, modelinputs, state, surveys
     from tff_catalog.engine import measure
 
-    data = modelinputs.project_data(ctx.paths, ctx.run_date)
+    dropped = surveys.stale_dropped(cfg, state.read_part(ctx.paths, "stale"))
+    data = modelinputs.project_data(ctx.paths, ctx.run_date, dropped)
     terms = builders.project_terms(data)
     out: dict[str, dict[str, ModelEntry]] = {}
     fits: dict[str, FitInfo] = {}
