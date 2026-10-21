@@ -409,6 +409,7 @@ def test_fonts_align_on_the_union_of_their_terms():
 
 
 @pytest.mark.slow
+@pytest.mark.timeout(900)  # a full fit on 2,500 fonts: CI's runners take over 300 s
 def test_pit_finds_nothing_in_model_data():
     rng = np.random.default_rng(12)
     n = 2500
