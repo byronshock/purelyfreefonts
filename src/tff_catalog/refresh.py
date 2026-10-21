@@ -30,7 +30,9 @@ writes ``state/``. The contract, step by step:
 4. **Hard failures.** ``validate.ValidationFailed`` from stage "validate"
    stops the run: any later stage is skipped (validate runs last, after
    "review", so ``review.md`` is written and scanned) and each failure becomes
-   one line of ``RunResult.failures``. Any other exception propagates.
+   one line of ``RunResult.failures``. Any other exception propagates. A run
+   that stage "rank" would stop for want of a model fit (``fitstore.check_ready``)
+   stops in setup, before anything is emptied or fetched.
 4b. **A new model fit** (``--write-fit``, ``fitstore``; owner rulings
    q9_theta_cadence and october_replay_is_the_switch). With no stored fit for
    the date, stage "rank" fits the model views. Once the run has passed,
@@ -123,6 +125,12 @@ def refresh(
     config = load_config(paths)
     # Loads and checks state/ too, so a bad state file stops the run before build/ is emptied.
     ctx = stages.make_context(paths, config, run_date, options, network=not options.replay)
+    try:
+        check_fits(ctx)
+    except BaseException:
+        if ctx.fetcher is not None:
+            ctx.fetcher.close()
+        raise
     run = _Run(ctx)
     try:
         if not options.only:
@@ -179,6 +187,20 @@ def _check_layout(paths: Paths) -> None:
                 f"{label} ({directory}) overlaps state/ ({paths.state}); "
                 "refresh never writes state/"
             )
+
+
+def check_fits(ctx: StageContext) -> None:
+    """Stop a run whose model fits would stop stage "rank" (``fitstore.check_ready``)."""
+    from tff_catalog import fitstore
+
+    fitstore.check_ready(
+        mode=ctx.options.fit,  # type: ignore[arg-type]
+        store_root=None if ctx.store is None else ctx.store.root,
+        views=ctx.config.ranking.model.views,
+        run_date=ctx.run_date,
+        merged_dates=fitstore.merged_dates(ctx.state.run_history),
+        full_run=not ctx.options.only,
+    )
 
 
 def _reset_build(paths: Paths) -> None:

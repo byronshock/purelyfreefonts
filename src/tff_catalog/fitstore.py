@@ -25,8 +25,8 @@ replay gives the same bytes (§8.4). The first fit is the GitHub replay of the h
   every rank pass, the one before "verify" included, scores with the fit kept, as the job's
   own replay does (refresh.py). ``--fit-in-memory`` (a local dry run) fits and keeps nothing;
   and a date a merged run used (2026-09-26 has none) is fitted in memory, keeping nothing,
-  whatever the flag. Any other run stops: it would otherwise publish scores from a fit
-  nobody kept.
+  whatever the flag. Any other run stops (refresh checks this before it fetches anything,
+  ``check_ready``): it would otherwise publish scores from a fit nobody kept.
 - **Staged:** stage "rank" stages the record of the fit each view scored with in
   ``build/stage/fit-records/<view>.json`` (``stage_record``): the same bytes in a run that
   made the fit and in its replay that reads it back. ``store_pending`` keeps a new one from
@@ -222,6 +222,30 @@ def obtain(
     where = f"{view} fit of {run_date.isoformat()}"
     fitted = from_bytes(data, where, view, model, method_version, run_date)
     return Obtained(fitted, run_date, hashlib.sha256(data).hexdigest(), source, data)
+
+
+def check_ready(
+    *,
+    mode: Mode,
+    store_root: Path | None,
+    views: Iterable[str],
+    run_date: date,
+    merged_dates: Iterable[date],
+    full_run: bool,
+) -> None:
+    """Stop a run before it empties build/ or fetches anything when its fits would stop it:
+    in read mode, a view with no stored fit on or before ``run_date`` (``obtain``); with
+    --write-fit, a fit to make in a run that is not a full one (``--only``), since refresh
+    replays the whole run once it has kept a new fit."""
+    if run_date in set(merged_dates) or mode not in ("read", "write"):
+        return
+    for view in views:
+        if store_root is not None and in_use(store_root, view, run_date) is not None:
+            continue
+        if mode == "read":
+            raise FitError(_no_fit(view, run_date))
+        if not full_run:
+            raise FitError(f"{view}: --write-fit makes a new fit only in a full run, not --only")
 
 
 def record_path(stage_dir: Path, view: str) -> Path:

@@ -263,6 +263,35 @@ def test_a_run_scores_and_its_replay_reads_back_the_same_record(tmp_path: Path) 
         fitstore.staged(store / "stage", "dev_apps", MODEL, VERSION)
 
 
+def test_a_run_without_its_fit_stops_before_it_starts(tmp_path: Path) -> None:
+    """refresh's check before it fetches: read mode needs a stored fit on or before the
+    date, unless a merged run used the date; --write-fit makes a new one only in a full run."""
+    views = ("project",)
+
+    def check(mode: str, day: date, *, merged=(), full: bool = True) -> None:
+        fitstore.check_ready(
+            mode=mode,  # type: ignore[arg-type]
+            store_root=tmp_path,
+            views=views,
+            run_date=day,
+            merged_dates=merged,
+            full_run=full,
+        )
+
+    with pytest.raises(fitstore.FitError, match="no stored fit on or before 2026-10-17"):
+        check("read", OCT)
+    with pytest.raises(fitstore.FitError, match="only in a full run"):
+        check("write", OCT, full=False)
+    check("write", OCT)
+    check("memory", OCT, full=False)
+    check("read", SEP, merged=[SEP])
+    obtain(tmp_path, "write", OCT)
+    for mode in ("read", "write"):
+        check(mode, NOV, full=False)
+    with pytest.raises(fitstore.FitError, match="no stored fit on or before 2026-09-26"):
+        check("read", SEP)
+
+
 def test_obtain_refuses_an_unknown_mode(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="fit mode"):
         obtain(tmp_path, "sometimes", OCT)

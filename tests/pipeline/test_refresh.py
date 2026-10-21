@@ -274,10 +274,11 @@ class Runner:
         ).with_(config=self.config)
 
     def run(
-        self, name: str, state_dir: Path, day: date, *, replay: bool = True
+        self, name: str, state_dir: Path, day: date, *, replay: bool = True, fit: str = "read"
     ) -> refresh.RunResult:
         paths = self.paths(name, state_dir)
-        return refresh.refresh(paths, day, from_snapshots=day if replay else None)
+        options = stages.RunOptions(fit=fit)
+        return refresh.refresh(paths, day, from_snapshots=day if replay else None, options=options)
 
 
 @pytest.fixture
@@ -400,6 +401,34 @@ def test_a_run_that_writes_its_fit_gives_the_build_of_its_replay(
     assert jsonio.load(wrote.build / "stage" / "synth" / "verify-saw.json") == kept
     assert not list(wrote.build.rglob("*pending*"))
     assert all("source" not in f for f in jsonio.load(wrote.build / "stage" / "fits.json").values())
+
+
+@pytest.mark.model_config
+def test_a_run_without_its_fit_stops_before_it_fetches(
+    runner: Runner,
+    synth_stages: SynthStages,
+    synth_state: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """A read-mode run with no stored fit on or before its date stops in one line, before
+    build/ is emptied or anything fetched; so does --write-fit with --only."""
+    build = runner.run("kept", synth_state, OCT, fit="memory").build
+    before = treehash(build)
+    synth_stages.calls.clear()
+    paths = runner.paths("kept", synth_state)
+    monkeypatch.setattr(Paths, "from_env", classmethod(lambda cls, root=None, env=None: paths))
+    assert cli.main(["refresh", "--date", DEC.isoformat()]) == 1
+    err = capsys.readouterr().err
+    assert err == (
+        f"tff-catalog refresh: project: no stored fit on or before {DEC.isoformat()}; only "
+        "the switch or a refit by owner ruling makes one (--write-fit, the refresh workflow's "
+        "write_fit input), and a local dry run can pass --fit-in-memory\n"
+    )
+    assert cli.main(["refresh", "--date", DEC.isoformat(), "--write-fit", "--only", "x"]) == 1
+    assert "only in a full run" in capsys.readouterr().err
+    assert synth_stages.calls == []
+    assert treehash(build) == before
 
 
 # --- stages, fetcher and the rerun -------------------------------------------------------------
