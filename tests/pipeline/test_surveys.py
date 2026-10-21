@@ -41,6 +41,11 @@ SOURCES = RANKING.sources.all()
 DESKTOP = tuple(sorted(RANKING.surveys.desktop.weights))
 PROJECT = tuple(sorted(RANKING.surveys.project.weights))
 LINUX = frozenset(name for name, src in SOURCES.items() if src.linux)
+# GitHub and Nerd Fonts are off in every rank (owner rulings of 2026-09-30, g1_github_deferred
+# and g2_nerd_deferred); the synthetic data still draws their terms, so the other sources'
+# terms are the same as before, and then leaves them out.
+DEFERRED = frozenset({"github", "nerd"})
+ENABLED_DESKTOP = tuple(s for s in DESKTOP if SOURCES[s].enabled)
 ABSTAIN = frozenset({"fam-003", "fam-010", "fam-021", "fam-042"})
 LINUX_ONLY = ("lin-with-project", "lin-desktop-only")  # desktop evidence from Linux sources only
 GUARDED = "guard-case"  # high on the desktop, low in projects: the combined guard would fire
@@ -73,7 +78,7 @@ def synth(seed: int = 11, n: int = 80) -> Synth:
     counts = {fid: float(round(math.exp(3.0 + 1.5 * latent[fid]))) for fid in ids}
     installed: dict[str, dict[str, Term]] = {}
     for source in (*DESKTOP, *PROJECT):
-        if not SOURCES[source].enabled:
+        if not SOURCES[source].enabled and source not in DEFERRED:
             continue
         fam: dict[str, Term] = {}
         for fid in ids:
@@ -92,15 +97,19 @@ def synth(seed: int = 11, n: int = 80) -> Synth:
     counts[GUARDED] = 5000.0
     installed["homebrew"][GUARDED] = _term(900.0, "homebrew")
     installed["github"][GUARDED] = _term(800.0, "github")
+    installed["arch"][GUARDED] = _term(800.0, "arch")  # in place of GitHub's, which is off
     for source in ("almanac", "google", "npm_fontsource"):
         installed[source][GUARDED] = _term(4.5, source)
+    for source in DEFERRED:
+        installed.pop(source, None)
     chosen = {
         s: {f: t for f, t in fam.items() if not (s in LINUX and (f in ABSTAIN or f in LINUX_ONLY))}
         for s, fam in installed.items()
     }
     terms = {
-        "desktop_installed": {s: installed[s] for s in DESKTOP},
-        "desktop_chosen": {s: chosen[s] for s in DESKTOP},
+        # GitHub and Nerd Fonts are off (g1_github_deferred, g2_nerd_deferred): no terms.
+        "desktop_installed": {s: installed[s] for s in DESKTOP if s in installed},
+        "desktop_chosen": {s: chosen[s] for s in DESKTOP if s in chosen},
         "project": {s: installed[s] for s in PROJECT if s in installed},
     }
     return Synth(terms, counts, names, monospace)
@@ -122,8 +131,9 @@ def canonical(obj: object) -> bytes:
 def test_desktop_weights_scale_with_overlap() -> None:
     overlaps = {"homebrew": 80, "arch": 25, "github": 10, "nerd": 50, "debian": 60}
     w = surveys.effective_weights(RANKING, "desktop_chosen", overlaps, frozenset(), {})
+    # GitHub and Nerd Fonts are off (g1_github_deferred, g2_nerd_deferred): no weight.
     assert w == pytest.approx(
-        {"homebrew": 1.0, "arch": 0.375, "github": 0.0, "nerd": 0.3, "debian": 0.25}
+        {"homebrew": 1.0, "arch": 0.375, "github": 0.0, "nerd": 0.0, "debian": 0.25}
     )
 
 
@@ -206,8 +216,9 @@ def test_dev_apps_uses_the_rescaled_project_weights_as_they_are() -> None:
 def test_coding_weights_have_no_chocolatey() -> None:
     """Ruling T3 (a): Chocolatey is not a source, so it has no Coding weight."""
     w = surveys.effective_weights(RANKING, "coding", FULL, frozenset(), {})
+    # GitHub and Nerd Fonts are off (g1_github_deferred, g2_nerd_deferred): no weight.
     assert w == pytest.approx(
-        {"nerd": 1.0, "homebrew": 1.0, "arch": 0.75, "github": 0.5, "npm_fontsource": 0.5}
+        {"nerd": 0.0, "homebrew": 1.0, "arch": 0.75, "github": 0.0, "npm_fontsource": 0.5}
     )
     assert "chocolatey" not in SOURCES
 
@@ -272,7 +283,7 @@ def test_scores_follow_the_latent_popularity() -> None:
 
 def test_a_font_with_only_censored_terms_is_not_ranked() -> None:
     s = synth()
-    for source in DESKTOP:
+    for source in ENABLED_DESKTOP:
         for key in ("desktop_chosen", "desktop_installed"):
             s.terms[key][source]["fam-005"] = _term(1.0, source)
     scores = surveys.views(inputs_of(s), RANKING)["desktop_installed"]
@@ -285,7 +296,7 @@ def test_a_switched_off_source_adds_no_group() -> None:
     """Overlap below 15 switches a source off: its term makes no group for the gate."""
     s = synth()
     for key in ("desktop_chosen", "desktop_installed"):
-        for source in DESKTOP:
+        for source in ENABLED_DESKTOP:
             s.terms[key][source].pop("fam-007", None)
         s.terms[key]["homebrew"]["fam-007"] = _term(500.0, "homebrew")
         s.terms[key]["debian"] = dict(list(s.terms[key]["debian"].items())[:10])
@@ -300,7 +311,7 @@ def test_the_two_group_gate_holds_single_group_fonts_out_of_the_top() -> None:
     """Every synthetic font scores inside the exact top 100, so a one-group font is held."""
     s = synth()
     for key in ("desktop_chosen", "desktop_installed"):
-        for source in DESKTOP:
+        for source in ENABLED_DESKTOP:
             s.terms[key][source].pop("fam-001", None)
         s.terms[key]["homebrew"]["fam-001"] = _term(1e6, "homebrew")
     s.counts["fam-001"] = 1e7

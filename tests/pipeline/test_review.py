@@ -475,7 +475,8 @@ def test_knobs_cover_every_live_weight() -> None:
     assert "surveys.project.weights.fot" in paths
     assert "surveys.project.weights.flutter" not in paths  # disabled
     assert "ranks.dev_apps.weights.flutter" not in paths
-    assert "ranks.coding.weights.nerd" in paths
+    assert "ranks.coding.weights.homebrew" in paths
+    assert "ranks.coding.weights.nerd" not in paths  # off (g2_nerd_deferred)
     assert "project_group_shares.web.share" in paths
     assert "ranks.overall.mix.project" in paths
     assert paths["surveys.desktop.weights.arch"].keys == (
@@ -484,7 +485,7 @@ def test_knobs_cover_every_live_weight() -> None:
         "desktop_installed",
     )
     assert paths["project_group_shares.code.share"].keys == ("overall", "project")
-    assert paths["ranks.coding.weights.nerd"].keys == ("coding",)
+    assert paths["ranks.coding.weights.homebrew"].keys == ("coding",)
 
 
 def test_vary_keeps_fixed_group_shares() -> None:
