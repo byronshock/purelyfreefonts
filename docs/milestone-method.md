@@ -24,17 +24,17 @@ This checklist brings the owner's scoring-method rulings of 2026-09-30 and 2026-
 ### Step 2: The store bundle, encrypted (`store_bundle_encrypted`)
 **Needs:** the owner's new environment secret. **Must land before** step 14 and November's live run.
 - [x] The October run's public `store-bundle` artifact deleted. *(The owner, 2026-10-20; GitHub answers 404 for artifact 12095776025.)*
-- [ ] `refresh.yml`: the refresh job encrypts the bundle with `STORE_BUNDLE_KEY` (a secret of the environment `refresh`) and uploads only the encrypted file; it fails, uploading nothing, without the key.
-- [ ] The store job decrypts, verifies and pushes, then deletes the artifact.
-- [ ] Tests pin it: no unencrypted bundle is uploaded, and the store job deletes the artifact.
+- [x] `refresh.yml`: the refresh job encrypts the bundle with `STORE_BUNDLE_KEY` (a secret of the environment `refresh`) and uploads only the encrypted file; it fails, uploading nothing, without the key.
+- [x] The store job decrypts, verifies and pushes, then deletes the artifact. *(#77)*
+- [x] Tests pin it: no unencrypted bundle is uploaded, and the store job deletes the artifact. *(#77)*
 - [ ] The owner sets the secret, and Claude checks it read-only.
 
 ### Step 3: The list opens on Projects (`default_rank_project`)
-- [ ] The parked branch's site work (673e5bb, 9e0efd3) on `main`, without its rulings commit or its rebuild.
-- [ ] `src/tff_site/views.py` takes the views' order and a retired Overall from `config/site.toml`, so the site needs no rebuild.
-- [ ] The default view is Projects in the build and the scripts; "left out of" never names Overall.
-- [ ] The front page's lead (`front_page_lead_counts`) and the Projects measures line without the retired 55/30/15.
-- [ ] `docs/usability-test.md` chooses task 6's pair from the Projects rank, not Overall (PLAN-REVIEWERS-1.md step 4).
+- [x] The parked branch's site work (673e5bb, 9e0efd3) on `main`, without its rulings commit or its rebuild.
+- [x] `src/tff_site/views.py` takes the views' order and a retired Overall from `config/site.toml`, so the site needs no rebuild.
+- [x] The default view is Projects in the build and the scripts; "left out of" never names Overall.
+- [ ] The front page's lead (`front_page_lead_counts`) and the Projects measures line without the retired 55/30/15. *(The lead is on `main`, #78; the measures line changes with step 12.)*
+- [x] `docs/usability-test.md` chooses task 6's pair from the Projects rank, not Overall (PLAN-REVIEWERS-1.md step 4).
 
 ### Step 4: No tiers or ranges on the site (`no_tiers_or_ranges`)
 - [ ] The details panel shows the place only ("#12", "Band 101–250"), with no tier, range or legend.
@@ -55,7 +55,7 @@ This checklist brings the owner's scoring-method rulings of 2026-09-30 and 2026-
 - [ ] The parity test against the reference, run with the private store; its messages carry no values.
 
 ### Step 8: Engine: method versions per rank (`q20_previous_score_at_switch`, `method_versions_all_seven`)
-- [ ] Each run records a method version per rank; `previous_score` bootstraps for a rank whose method changed, and both validate checks follow.
+- [x] Each run records a method version per rank; `previous_score` bootstraps for a rank whose method changed, and both validate checks follow. *(#80)*
 
 ### Step 9: Engine: the fitted parameters in the store (`q9_theta_cadence`, `october_replay_is_the_switch`)
 - [ ] Written once per view and date in the private store; a replay reads them; a merged date without them is fitted in memory and writes nothing; a held date's first new-method replay on GitHub writes them once.
@@ -76,7 +76,7 @@ This checklist brings the owner's scoring-method rulings of 2026-09-30 and 2026-
 - [ ] max(1, ⌈100·clip(score/3, 0, 1)⌉), computed exactly at its steps.
 
 ### Step 14: The switch: October replayed on the new method
-- [ ] A local dry run of 2026-10-17 that writes nothing: new members and any gate questions listed; store top-ups (`october_topups_preauthorized`), diffed before the store commit; questions ruled in a pull request.
+- [ ] A local dry run of 2026-10-17 that writes nothing: new members and any gate questions listed; store top-ups (`october_topups_preauthorized`), diffed before the store commit; questions ruled in a pull request. *(Gate questions ruled in #81. Dry runs pass; the top-ups wait in a store clone, unpushed, for the review fixes, which can move the Projects top-500 cut.)*
 - [ ] The GitHub replay (`from_snapshots=2026-10-17`): the parameters written once, the in-job replay identical, the bundle encrypted, the log clean.
 - [ ] Its pull request replaces #70 as the held draft, with its CI noted.
 
