@@ -721,32 +721,42 @@ def single_term_posterior(
 # --- checks on a fitted model -------------------------------------------------------------
 
 
-def loto_pit(fit: MixedFit, seed: int = 2) -> tuple[list[np.ndarray], list[dict[str, Any]]]:
-    """Leave-one-term-out predictive calibration. For each term, each font's eta posterior
-    from its other terms predicts the term's count; the randomized PIT u (uniform under a
-    correct model; between F(lo-) and F(hi) for counts and intervals) is returned as a normal
-    score per font, one array per term (aligned with the term's ``ids``), with a per-term
-    summary (the KS p, the scores' sd, the share in each tail): rank statistics only."""
+def _loto_intervals(fit: MixedFit) -> list[tuple[np.ndarray, np.ndarray]]:
+    """For each term, each font's PIT interval [F(lo-), F(hi)] (aligned with the term's
+    ``ids``): F is the term's predictive distribution under the font's eta posterior from its
+    other terms. A count is the event lo-1 < Y <= hi; a log-normal value is a point, where
+    F(lo-) = F(hi) is its PIT, unless it is an interval."""
     x, logw = fit.grid
-    rng = np.random.default_rng(seed)
     model = fit.model
     per = model.term_logliks(fit.theta, x)
     total = np.zeros((len(model.ids), len(x))) + logw[None, :]
     for rows, ll in zip(model.rows, per, strict=True):
         total[rows] += ll
-    zs, summary = [], []
+    out = []
     for term, rows, ll, tc in zip(
         model.counts, model.rows, per, model.split(fit.theta), strict=True
     ):
         a = total[rows] - ll
         post = np.exp(a - special.logsumexp(a, axis=1)[:, None])
         lo, hi = term.y, term.y if term.y_hi is None else term.y_hi
-        # a count is the event lo-1 < Y <= hi; a log-normal value is a point unless it is an
-        # interval
         below = lo - 1 if term.dist == "negbin" else lo
-        f_lo = (post * cdf(term, tc, x, below)).sum(1)
-        f_hi = (post * cdf(term, tc, x, hi)).sum(1)
-        spread = (term.dist == "negbin") | (hi > lo)
+        out.append(((post * cdf(term, tc, x, below)).sum(1), (post * cdf(term, tc, x, hi)).sum(1)))
+    return out
+
+
+def loto_pit(fit: MixedFit, seed: int = 2) -> tuple[list[np.ndarray], list[dict[str, Any]]]:
+    """Leave-one-term-out predictive calibration. For each term, each font's eta posterior
+    from its other terms predicts the term's count; the randomized PIT u (uniform under a
+    correct model; drawn between F(lo-) and F(hi) for counts and intervals) is returned as a
+    normal score per font, one array per term (aligned with the term's ``ids``), with a
+    per-term summary (the KS p, the scores' sd, the share in each tail): rank statistics
+    only. A font's draw depends on the fonts before it in the term, so review's flag comes
+    from ``pit_flags`` instead."""
+    rng = np.random.default_rng(seed)
+    zs, summary = [], []
+    for term, (f_lo, f_hi) in zip(fit.model.counts, _loto_intervals(fit), strict=True):
+        hi = term.y if term.y_hi is None else term.y_hi
+        spread = (term.dist == "negbin") | (hi > term.y)
         u = np.where(spread, f_lo + rng.random(len(f_lo)) * (f_hi - f_lo), f_hi)
         u = np.clip(u, 1e-12, 1 - 1e-12)
         z = special.ndtri(u)
@@ -762,6 +772,16 @@ def loto_pit(fit: MixedFit, seed: int = 2) -> tuple[list[np.ndarray], list[dict[
             }
         )
     return zs, summary
+
+
+def pit_flags(fit: MixedFit, tail: float) -> list[np.ndarray]:
+    """Review's flag of conflicting sources (q2): for each term, whether each font's whole
+    leave-one-term-out PIT interval lies in a tail, F(hi) below ``tail`` or F(lo-) above
+    1 - ``tail`` (for a point log-normal value, its PIT itself). One boolean array per term,
+    aligned with the term's ``ids``. Deterministic, a function of the font's own counts and
+    the fit: ``loto_pit``'s randomized u decided a font whose interval straddles the tail by
+    a draw that moved when an unrelated font entered or left the term."""
+    return [(f_hi < tail) | (f_lo > 1 - tail) for f_lo, f_hi in _loto_intervals(fit)]
 
 
 def monotonicity_scan(fit: MixedFit, points: int = 2000) -> list[dict[str, Any]]:
