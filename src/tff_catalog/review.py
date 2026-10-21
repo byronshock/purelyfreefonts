@@ -57,10 +57,12 @@ values:
 - ``stale``: sources used stale or dropped (``build/stage/stale.json``, which
   also carries schema mismatches), and engine sources left out after more
   than ``stale.max_months`` stale runs.
-- ``ruler_overlap``: a weighted source with fewer than
+- ``ruler_overlap``: in the engine's ranks, a weighted source with fewer than
   ``engine.overlap_full`` fonts in common with the ruler (its weight is scaled
-  down, or off under ``engine.overlap_off``).
-- ``guard``: outlier-guard hits (``scores.json``) in the top ``catalog_size``.
+  down, or off under ``engine.overlap_off``). The model views (``model_keys``)
+  have no ruler, so none of their sources is flagged (methodology §9).
+- ``guard``: in the engine's ranks, outlier-guard hits (``scores.json``) in the
+  top ``catalog_size``.
 - ``pit``: in a model view, a font whose term from one source its other sources predict
   badly (leave-one-term-out PIT in a tail of ``[model] pit_tail``; ``build/stage/model.json``),
   in the top ``catalog_size``: a font whose sources conflict, flagged in place of the
@@ -162,8 +164,11 @@ KINDS: dict[str, tuple[str, str]] = {
     "coverage": ("Coverage changes", "Sources whose count of fonts with a value changed a lot."),
     "share_jump": ("Share jumps", "One font's share in one source jumping up or down."),
     "stale": ("Stale sources and schema mismatches", "Sources used stale or left out."),
-    "ruler_overlap": ("Ruler overlaps", "Sources with too few fonts in common with the ruler."),
-    "guard": ("Outlier-guard hits", "Terms the outlier guard gave reduced weight."),
+    "ruler_overlap": (
+        "Ruler overlaps",
+        "In the engine's ranks, sources with too few fonts in common with the ruler.",
+    ),
+    "guard": ("Outlier-guard hits", "In the engine's ranks, terms the guard gave reduced weight."),
     "pit": (
         "Conflicting sources",
         "Model terms the font's other sources predict badly (leave-one-term-out PIT).",
@@ -655,18 +660,34 @@ def stale_flags(
     return out
 
 
+def model_keys(cfg: RankingConfig) -> frozenset[str]:
+    """The rank keys the measurement model scores (``[model] views``, q1_model_views), and
+    overall when it stands in for one of them (q12_overall_stand_in).
+
+    They have no ruler, no outlier guard and no hand weights (q2_guard_retired,
+    q5_group_shares_retired), so the ruler overlaps, the guard summary and the what-if table
+    cover the engine's ranks only (methodology §9).
+    """
+    keys = set(cfg.model.views)
+    if cfg.ranks.overall.stand_in in keys:
+        keys.add("overall")
+    return frozenset(keys)
+
+
 def overlap_flags(
     scores: Mapping[str, SurveyScores], cfg: RankingConfig, dropped: frozenset[str] = frozenset()
 ) -> list[Flag]:
-    """Weighted sources with fewer than ``overlap_full`` fonts in common with the ruler."""
+    """Weighted sources with fewer than ``overlap_full`` fonts in common with the ruler, in
+    the engine's ranks: a model view has no ruler (``model_keys``)."""
     from tff_catalog import surveys
     from tff_catalog.engine import equate
 
     full, off = cfg.engine.overlap_full, cfg.engine.overlap_off
     sources = cfg.sources.all()
+    model = model_keys(cfg)
     out = []
     for key in RANK_KEYS:
-        if key in ("overall", "rising") or key not in scores:
+        if key in ("overall", "rising") or key in model or key not in scores:
             continue
         for s, w in sorted(surveys.nominal_weights(cfg, key).items()):
             if w <= 0 or not sources[s].enabled or s in dropped or s == cfg.engine.ruler:
@@ -1895,13 +1916,14 @@ def _info(
             f"Not measured against the last run: {', '.join(unmeasured)} "
             "(reasons in build/review-pack/sources.md)."
         )
+    model = model_keys(cfg)  # no guard in a model view (q2_guard_retired)
     guarded = [
         f"{k} {sum(1 for f in scores[k].fused.values() if f.guard)}"
         for k in RANK_KEYS
-        if k in scores and k not in ("overall", "rising")
+        if k in scores and k not in ("overall", "rising") and k not in model
     ]
     if guarded:
-        lines.append(f"Fonts with an outlier-guard hit, all ranks: {', '.join(guarded)}.")
+        lines.append(f"Fonts with an outlier-guard hit, the engine's ranks: {', '.join(guarded)}.")
     if store_line:
         lines.append(store_line)
     return lines
