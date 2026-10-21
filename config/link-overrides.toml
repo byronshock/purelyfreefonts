@@ -388,3 +388,21 @@ primary = "https://go.dev/blog/go-fonts"
 primary_label = "The Go Blog: Go fonts"
 primary_note = "The Go project's announcement of its fonts, by Nigel Tao, Chuck Bigelow and Rob Pike. The TrueType files are in the Go image repository (go.googlesource.com/image), in font/gofont/ttfs, under the Go project's BSD-style license."
 reason = "As for Go Mono (K-go-mono-page): the Go fonts have no download page of their own, and the Go project's post of 16 November 2016 is the official page, which describes Go and Go Mono, states the license and says where the TTF files are. The printed pick, go.googlesource.com/image/+/master/font/gofont/ttfs/README, is the README file of the fonts' folder."
+
+# --- K-nacelle-page ------------------------------------------------------------------------------
+
+[[override]]
+family = "nacelle"
+name = "Nacelle"
+question = "K-nacelle-page"
+primary = "https://www.dotcolon.net/fonts/nacelle/"
+reason = "Sora Sagano's page for Nacelle on dotcolon.net, the designer's own site: it says the font is licensed under the SIL Open Font License 1.1 and links the release zip. The only candidate the sources gave was dotcolon.net's home page (Fontist)."
+
+# --- K-route-159-page ----------------------------------------------------------------------------
+
+[[override]]
+family = "route-159"
+name = "Route 159"
+question = "K-route-159-page"
+primary = "https://www.dotcolon.net/fonts/route159/"
+reason = "Sora Sagano's page for Route 159 on dotcolon.net, the designer's own site: it says the font is licensed under the SIL Open Font License 1.1 and links the release zip. The only candidate the sources gave was dotcolon.net's home page (Fontist)."
