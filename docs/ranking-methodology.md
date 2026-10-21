@@ -155,7 +155,7 @@ Also:
 
 mean_f = e_f · (n_f·b + exp(α + λ·η_f))
 
-- n_f·b is the *bulk*: the baseline b that every package collects whatever its popularity, times n_f, the packages the font's count sums over (a bundle package counts as half, D2). For Google views, npm and Expo, each package counts for the share of the year since it first appeared, at most 1 (q7): a young package isn't expected to have a year's bulk, and its own counts are never scaled.
+- n_f·b is the *bulk*: the baseline b that every package collects whatever its popularity, times n_f, the packages the font's count sums over (a bundle package is to count as half, D2, though no bundle reaches these sources yet). For Google views, npm and Expo, each package counts for the share of the source's year it has existed, up to the source's data date and at most 1 (q7): a young package isn't expected to have a year's bulk, and its own counts are never scaled.
 - exp(α + λ·η_f) is the part that comes from people choosing the font, with λ > 0, so a more popular font expects more.
 - e_f is the exposure, where the source has one (Fonts Over Time: the sites crawled); otherwise 1.
 
@@ -325,7 +325,7 @@ The owner chose all four (D13).
 
 **Evidence.**
 
-- *Ranked at all:* at least 1 observed term in that rank. Every model term counts as observed.
+- *Ranked at all:* at least 1 observed term in that rank. Every model term counts as observed, but a font whose only terms are Fonts Over Time's is unranked in the model's ranks: its score would be that source's alone (T4; owner ruling of 2026-10-20). Any other source's term, an interval included, ranks it.
 - *Top 100 of any rank:* evidence from at least 2 independence groups. In the engine, a group gives evidence with an observed term. In the model, a group gives evidence when one of its terms sits above what bulk alone predicts: a count above the expected bulk, or, for a term with no bulk, a positive count or a place on the Almanac's list (q14). The groups are:
   - Google serving;
   - FOT;
@@ -439,7 +439,7 @@ The model's fitted parameters are not in `state/`: they stay in the private data
 - **Held-back fonts:** a catalog font with no accepted download link yet (the owner decides the link at gate K) is held back from `catalog.json`, and the published exact ranks close up over it: in each view, every font ranked below it moves up one place, with its range. Places past the exact top keep their order. The monthly review names the held-back font and its places (owner ruling of 2026-09-28).
 - **Per source:** {state, rank_in_source, z, weight_used}, describing the font in the source's own survey view, where nothing abstains.
   - *Desktop sources (the engine):* `state` as in §3's table; `z` equated to the ruler; `weight_used` null, since the overall entry now repeats *Projects* and no longer weighs desktop sources.
-  - *Project sources (the model):* every term's `state` is "observed", intervals included, with no reason (q18a, the owner's choice); `z` is the posterior mean of η from that source's terms alone (q18b), except Fonts Over Time's, which stays rank-based (T4); `weight_used` is the source's share of the font's posterior expected information (q16), null for Google and Fonts Over Time. A source with no term for the font is not covered or too new.
+  - *Project sources (the model):* every term's `state` is "observed", intervals included, with no reason (q18a, the owner's choice); `z` is the posterior mean of η from that source's terms alone (q18b), except Fonts Over Time's, which stays rank-based (T4); `weight_used` is the source's share of the posterior expected information from the font's open sources, every source but Google and Fonts Over Time, so a font's published shares add up to 1 and give nothing private back; it is null for those two (q16, amended 2026-10-20). A source with no term for the font is not covered or too new.
   - Raw values appear only where the source's terms allow; never for Google or Fonts Over Time, whose entries carry no raw values (rulings T2, T4).
 - **Top level:** the run date; `method_version`, the newest rank's; `method_versions`, each rank's own, which moves when that rank's rules change; `model_fits`, each model rank's `fitted_on` date and the `sha256` of its stored fit file, so a replay can be held to the same fit (never a parameter); the `ranking.toml` hash; fetch times.
 
