@@ -35,12 +35,16 @@ def synth(n: int = 400, seed: int = 3) -> tuple[measure.MixedFit, dict[str, dict
         measure.CountTerm(builders.NPM_FONTSOURCE, ids, npm, np.ones(n), dist="lognormal"),
     )
     fit = measure.fit_mixed(measure.Mixed(terms))
+    return fit, frames_for(ids)
+
+
+def frames_for(ids: np.ndarray) -> dict[str, dict[str, Any]]:
+    """The two sources' frames: every font observed, each source its own group."""
     group = {"ecosystems": "ecosystems", "npm_fontsource": "npm"}
-    frames = {
+    return {
         s: {str(f): {"state": "observed", "group": g, "value": 1.0} for f in ids}
         for s, g in group.items()
     }
-    return fit, frames
 
 
 @pytest.fixture(scope="module")
@@ -77,6 +81,31 @@ def test_the_outlier_is_flagged_for_review(model) -> None:
     assert "npm_fontsource" in rows["f-000"].pit or "ecosystems" in rows["f-000"].pit
     flagged = sum(1 for r in rows.values() if r.pit)
     assert flagged < 10  # a 0.1% tail, two terms, 400 fonts: the planted one and few others
+
+
+def test_the_pit_flag_ignores_unrelated_fonts(model) -> None:
+    """A font's flags come from its own counts, theta held: they stay put when fonts before
+    it leave the view and a new one enters, as with an exclusion or a new family. (A wide
+    tail, so that many fonts' PIT intervals straddle it.)"""
+    fit, _ = model
+    cfg = replace(MODEL, pit_tail=0.2)
+    before = modelviews.entries(fit, frames_for(fit.model.ids), cfg)
+    assert sum(1 for r in before.values() if r.pit) > 10
+    for drop in (1, 2):
+        terms = tuple(
+            measure.CountTerm(
+                t.name,
+                np.concatenate([["a-new"], t.ids[drop:]]),
+                np.concatenate([[y], t.y[drop:]]),
+                np.ones(len(t.ids) - drop + 1),
+                dist=t.dist,
+            )
+            for t, y in zip(fit.model.counts, (4.0, 3e3), strict=True)
+        )
+        other = replace(fit, model=measure.Mixed(terms))
+        after = modelviews.entries(other, frames_for(other.model.ids), cfg)
+        assert len(after) == len(before) + 1 - drop
+        assert all(after[f].pit == before[f].pit for f in after if f != "a-new")
 
 
 def test_the_engine_orders_gates_and_bands_the_model_view(model) -> None:

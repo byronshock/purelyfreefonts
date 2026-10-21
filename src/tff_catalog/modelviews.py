@@ -118,8 +118,7 @@ def entries(
     x, logw = fit.grid
     term_ll = model.term_logliks(fit.theta, x)
     shares = fit.info_shares()
-    pit_z, _ = measure.loto_pit(fit)
-    tail = special.ndtri(cfg.pit_tail)  # PIT u < tail  <=>  z < ndtri(tail)
+    pit = measure.pit_flags(fit, cfg.pit_tail)  # each term's fonts, by their own counts
     sources = sorted({TERM_SOURCES[t.name] for t in model.counts})
     # Per source: the summed log-likelihood of its terms, for each font that has one.
     by_source: dict[str, np.ndarray] = {s: np.zeros((len(model.ids), len(x))) for s in sources}
@@ -139,7 +138,7 @@ def entries(
             fid = str(model.ids[row])
             if evidence[i]:
                 groups[row].add(str(frames[source][fid]["group"]))
-            if abs(pit_z[j][i]) > -tail:
+            if pit[j][i]:
                 flagged[row].add(source)
     alone: dict[str, np.ndarray] = {}
     for s in sources:
