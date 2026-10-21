@@ -221,3 +221,19 @@ def test_the_pack_shows_the_stand_in_s_lists_once(model_build: StageContext) -> 
     assert a.source_ranks["overall"] == a.source_ranks["project"]
     checks = review._pack_checks(dataclasses.replace(a, defaulted=("fam-00",)), MODEL)
     assert "| Project | Font | Id |" in checks
+
+
+@pytest.mark.usefixtures("replay_collector")
+def test_a_model_only_source_s_term_note_halves_no_weight(model_build: StageContext) -> None:
+    """Methodology §8: no rank's score uses the Almanac's parent_merge_factor under the
+    model, so its term flag no longer says the weight is halved; an engine source keeps its
+    note."""
+    assert "almanac" in review.model_sources(MODEL)
+    assert "npm_fontsource" not in review.model_sources(MODEL)  # Coding weighs it
+    assert "homebrew" not in review.model_sources(MODEL)
+    assert review.model_sources(SMALL) == frozenset()
+    ctx = model_build
+    review.run(ctx)
+    text = (ctx.paths.build / review.REVIEW_FILE).read_text()
+    assert "`almanac` parent_merge (width cuts folded into the parent): 1 font" in text
+    assert "weight halved" not in text

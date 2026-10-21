@@ -210,6 +210,9 @@ TERM_NOTES = {
     "dependency_review": "a Linux dependent holds 35-50% of installs; gate X",
     "stale_sync": "ecosyste.ms data not synced recently",
 }
+# The notes for a source only the model views use: the model has no hand weights, so the
+# Almanac's parent_merge_factor halves no weight there (methodology §8).
+MODEL_TERM_NOTES = {"parent_merge": "width cuts folded into the parent"}
 # Families the owner asked to look at at gate R, with why (owner ruling of 2026-09-26,
 # data_defaults): shown in the pack's checks.md with their rank in every source.
 GATE_R_WATCH: dict[str, str] = {
@@ -687,6 +690,19 @@ def model_keys(cfg: RankingConfig) -> frozenset[str]:
     return frozenset(keys)
 
 
+def model_sources(cfg: RankingConfig) -> frozenset[str]:
+    """The sources no engine rank weighs (only ``model_keys`` use them): their hand weights and
+    weight factors score no rank (q5_group_shares_retired; methodology §8)."""
+    from tff_catalog import surveys
+
+    model = model_keys(cfg)
+    keys = [k for k in RANK_KEYS if k not in model and k not in ("overall", "rising")]
+    if not cfg.ranks.overall.stand_in:  # the D12 mix weighs its keys' sources, a model's too
+        keys += list(cfg.ranks.overall.mix)
+    engine = {s for k in keys for s, w in surveys.nominal_weights(cfg, k).items() if w > 0}
+    return frozenset(s for s in cfg.sources.all() if s not in engine)
+
+
 def _model_views_text(cfg: RankingConfig) -> str:
     """The model views in words, for the pack: "project, dev_apps; overall repeats project"."""
     text = ", ".join(k for k in RANK_KEYS if k in cfg.model.views)
@@ -782,8 +798,12 @@ def term_flags(
     terms_all: Mapping[str, Mapping[str, Mapping[str, Term]]],
     names: Mapping[str, str],
     overall: Mapping[str, int],
+    model_only: frozenset[str] = frozenset(),
 ) -> list[Flag]:
-    """One flag per (term flag, source), naming its fonts best-ranked first, across every view."""
+    """One flag per (term flag, source), naming its fonts best-ranked first, across every view.
+
+    A source in ``model_only`` (``model_sources``) takes its ``MODEL_TERM_NOTES`` note.
+    """
     found: dict[tuple[str, str], set[str]] = defaultdict(set)
     for by_source in terms_all.values():
         for source, by_id in by_source.items():
@@ -797,6 +817,8 @@ def term_flags(
             key=lambda f: (overall.get(f, math.inf), _name(names, f).casefold(), f),
         )
         note = TERM_NOTES.get(flag)
+        if source in model_only:
+            note = MODEL_TERM_NOTES.get(flag, note)
         what = f"{flag} ({note})" if note else flag
         listed = _listed([_name(names, f) for f in fids])
         one = fids[0] if len(fids) == 1 else None
@@ -1587,7 +1609,7 @@ def analyse(ctx: StageContext) -> Analysis:
     inputs = _rank_inputs(ctx, scores, notes)
     flags += _crosscheck_flags(inputs, now, cfg, notes)
     flags += disagreement_flags(now, names, cfg)
-    flags += term_flags(_optional(ctx, "terms") or {}, names, overall)
+    flags += term_flags(_optional(ctx, "terms") or {}, names, overall, model_sources(cfg))
     growth, store_line = growth_flags(ctx, run)
     flags += growth
     rows = what_if(inputs, cfg, phasing_in(ctx)) if inputs is not None else ()
