@@ -1268,7 +1268,8 @@ def _frame(
     them (owner ruling of 2026-09-30, debian_frame): the collector gives every font
     package in the release's main archive a row, with no value when popcon has none, so
     a key without one is a package outside main. A package in main that depends on such
-    a package leaves its font not covered, not censored."""
+    a package leaves its font not covered, not censored. ``mapping.frames`` applies the
+    same rule."""
     if src.counting in CRAWL_COUNTINGS:
         # Methodology §4: "A desktop-only font gets censored terms from the web crawls,
         # not a placeholder", so the crawls' frame is every eligible family.
