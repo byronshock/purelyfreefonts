@@ -222,7 +222,7 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
 
 ### Step 3: The score's scale and its explanation
 **Who:** the scoring-method port, not this plan. **Depends on:** the port, [docs/milestone-method.md](docs/milestone-method.md) step 12 (on hold until 2026-10-19).
-- [ ] The port brings the new shown score (Q1, settled), and with it How we rank's text. It must remove these two:
+- [x] The port brings the new shown score (Q1, settled), and with it How we rank's text. It must remove these two: *(The port merged in #79, #83 and #86; both sentences go with A′ and the methodology text, docs/milestone-method.md steps 12 and 13.)*
   - the wrong sentence, "a font scoring 90 stands above about 90% of them";
   - "Past #100 we show bands".
 
