@@ -36,7 +36,10 @@ through ``frames`` and ``evidence_state`` instead:
 - ``packaged`` sources (Homebrew, Arch, Debian, GitHub, Nerd, npm, ecosyste.ms,
   jsDelivr): families with a key in the source's namespaces (and npm scopes)
   among the universe keys, the source's own records (any series; a ``None``
-  value is "in the frame, no usable value") and either end of any relation;
+  value is "in the frame, no usable value") and either end of any relation.
+  Debian counts only the keys it reads a row for (debian_frame): every font
+  package in the release's main archive has one, so a removed, third-party or
+  sid-only package covers no family, at a relation's end too;
 - ``listed`` (Google): the same without relations, so a non-Google font is
   outside the frame;
 - ``web_servable`` (Fonts Over Time, the Almanac): every eligible family, as
@@ -621,7 +624,8 @@ def frames(
             continue
         basis = frame_basis(src)
         ns = frozenset(o.key.ns for o in obs)
-        reads = _reader(ns, selector(src))
+        rows = frozenset(o.key for o in obs) if collector == DEBIAN else None
+        reads = _reader(ns, selector(src), rows)
         own = {k for r in recs.get(collector, ()) for k in _ends(r) if reads(k)}
         if basis == "web_servable":
             known = list(eligible)
@@ -635,10 +639,17 @@ def frames(
 
 
 def _reader(
-    namespaces: frozenset[str], selects: Callable[[SourceKey], bool]
+    namespaces: frozenset[str],
+    selects: Callable[[SourceKey], bool],
+    rows: frozenset[SourceKey] | None = None,
 ) -> Callable[[SourceKey], bool]:
-    """Whether a key is one a source reads: in its namespaces and selected."""
-    return lambda key: key.ns in namespaces and selects(key)
+    """Whether a key is one a source reads: in its namespaces and selected, and when
+    ``rows`` is given (Debian), one of the keys the source reads a row for.
+
+    Every font package in Debian's main archive has a row, with no value when popcon
+    has none, so a key without one is a package outside main: it puts no family in
+    the frame, through a relation end or a universe key either (debian_frame)."""
+    return lambda key: key.ns in namespaces and selects(key) and (rows is None or key in rows)
 
 
 def _ends(rec: Observation | Relation) -> tuple[SourceKey, ...]:
