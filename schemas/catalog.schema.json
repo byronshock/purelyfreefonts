@@ -1039,7 +1039,7 @@
             "null"
           ],
           "minimum": 1,
-          "description": "Competition rank (1, 2, 2, 4) among the source's observed values; null unless observed or when the terms ruling hides ranks."
+          "description": "Competition rank (1, 2, 2, 4) among the source's observed values. In a model view, among the values of every font with a model term from the source, the counts under the engine's floor included; null for a term with no value (an interval). Null unless observed, and when the terms ruling hides ranks."
         },
         "z": {
           "type": [

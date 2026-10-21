@@ -850,6 +850,34 @@ def test_a_model_source_without_a_model_term_is_not_covered(tmp_path: Path) -> N
 
 
 @pytest.mark.model_config
+def test_a_model_source_ranks_every_font_with_a_model_term(tmp_path: Path) -> None:
+    """A model view's rank_in_source counts every font with a model term from the source,
+    the counts under the engine's floor too, as the model takes them (the engine ranked only
+    the observed ones); a term with no value has no rank, and fonts outside the catalog
+    count too."""
+    extra = {
+        "ecosystems": {
+            "alpha-sans": npm_registry(500),
+            "gamma-serif": npm_registry(3, "censored", "below_floor"),
+            "beta-mono": npm_registry(0, "censored", "below_floor"),
+            "alpha-slab": npm_registry(40),
+        }
+    }
+    ctx, _ = model_build(tmp_path, extra)
+    catalog = fonts(run_all(ctx)[export.CATALOG_FILE])
+
+    def rank(fid: str, s: str) -> int | None:
+        return catalog[fid]["sources"][s]["rank_in_source"]
+
+    assert [rank(f, "ecosystems") for f in ("alpha-sans", "gamma-serif", "beta-mono")] == [1, 3, 4]
+    gamma = catalog["gamma-serif"]["sources"]
+    assert (gamma["ecosystems"]["state"], gamma["ecosystems"]["value"]) == ("observed", 3.0)
+    # Fonts Over Time: alpha 120 and kappa 30 observed, gamma's 1 under the floor.
+    assert [rank(f, "fot") for f in ("alpha-sans", "kappa-sans", "gamma-serif")] == [1, 2, 3]
+    assert "value" not in gamma["fot"]  # ranks only (T4)
+
+
+@pytest.mark.model_config
 def test_a_font_with_only_fonts_over_time_terms_is_unranked_with_no_score(tmp_path: Path) -> None:
     """fot_only_needs_another_source (2026-10-20): a font whose only model terms are Fonts
     Over Time's has no place and no score in Projects or overall, and its reason is
