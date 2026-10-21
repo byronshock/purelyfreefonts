@@ -79,9 +79,7 @@ def fake_models(ctx: StageContext) -> tuple[dict[str, Any], dict[str, Any]]:
         key: model_rows(terms, [s for s, w in weights[key].items() if w > 0])
         for key in cfg.model.views
     }
-    fits = {
-        key: FitInfo(RUN, "a" * 64, "memory", len(rows), (), ()) for key, rows in models.items()
-    }
+    fits = {key: FitInfo(RUN, "a" * 64, len(rows), (), (), ()) for key, rows in models.items()}
     return models, fits
 
 

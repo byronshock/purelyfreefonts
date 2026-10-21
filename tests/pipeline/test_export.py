@@ -768,9 +768,7 @@ def model_build(
         for key in (view, "overall") if view == "project" else (view,):
             scores[key] = SurveyScores(key, placed.fused, placed.placements, {}, {})
             ranks[key] = dict(placed.placements)
-    fit = modelviews.FitInfo(
-        date(2026, 10, 17), "a" * 64, "pending", len(models["project"]), (), ()
-    )
+    fit = modelviews.FitInfo(date(2026, 10, 17), "a" * 64, len(models["project"]), (), (), ())
     stageio.dump_stage(ctx.paths, "scores", scores)
     stageio.dump_stage(ctx.paths, "ranks", ranks)
     stageio.dump_stage(ctx.paths, "confidence", confidence(ranks))
