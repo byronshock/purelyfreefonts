@@ -805,11 +805,43 @@ def test_package_frames() -> None:
     )
     assert f["homebrew"].basis == "packaged"
     assert f["homebrew"].namespaces == ("brew-cask",)
-    # Debian: roboto-slab has no popcon row, but its package appears in a relation
-    assert f["debian"].families == ("inter", "roboto", "roboto-slab")
+    # Debian: roboto-slab's package appears in a relation but has no row, so it is not in
+    # the release's main archive and covers nothing (debian_frame)
+    assert f["debian"].families == ("inter", "roboto")
     assert f["arch"].families == ("inter",)
     assert f["npm_fontsource"].families == ("inter", "source-sans-3")
     assert f["npm_expo"].families == ()  # no alias row for the Expo package yet
+
+
+def test_debian_frame_holds_only_packages_in_main() -> None:
+    """debian_frame: a family is in Debian's frame only through a package in main.
+
+    A packaged=False row (removed, third-party or sid-only) puts no family in it, even
+    when a package in main recommends it; a package in main with no popcon count does,
+    with no usable value. Arch keeps the general rule: a relation end covers a family."""
+    idx = index_of(
+        [*universe_index(UNIVERSE), *ALIASES, entry("arch-pkg", "ttf-slab", "roboto-slab")]
+    )
+    slab = SourceKey("deb-pkg", "fonts-roboto-slab")
+    recs = scenario()
+    recs["debian"] += [
+        obs("debian", "deb-pkg", slab.key, 900, series="inst", start=YEAR_END, packaged=False),
+        rel("debian", DEPENDENT, slab, "recommends"),
+    ]
+    recs["pkgstats"].append(
+        rel("pkgstats", SourceKey("arch-pkg", "ttf-slab"), SourceKey("arch-pkg", "fontconfig"))
+    )
+    f = mapping.frames(ranking().sources.all(), UNIVERSE, recs, idx)
+    assert f["debian"].families == ("inter", "roboto")
+    assert evidence_state(f["debian"], "roboto-slab", None, 0.0) == ("not_covered", "no_package")
+    assert f["arch"].families == ("inter", "roboto-slab")
+    assert evidence_state(f["arch"], "roboto-slab", None, 0.0) == ("censored", "no_value")
+
+    in_main = obs("debian", "deb-pkg", slab.key, None, series="inst", start=YEAR_END, packaged=True)
+    recs["debian"] = [*scenario()["debian"], in_main]
+    f = mapping.frames(ranking().sources.all(), UNIVERSE, recs, idx)
+    assert f["debian"].families == ("inter", "roboto", "roboto-slab")
+    assert evidence_state(f["debian"], "roboto-slab", None, 0.0) == ("censored", "no_value")
 
 
 def test_list_and_web_frames() -> None:

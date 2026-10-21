@@ -846,6 +846,76 @@ def test_bundle_rows_credit_every_family(tmp_path: Path) -> None:
     assert sums["liberation-sans"].value == pytest.approx(1_000.0)  # 1/3: mono is in the bundle
 
 
+def test_debian_packages_outside_main_cover_no_font(tmp_path: Path) -> None:
+    """debian_frame (2026-09-30): a font whose only Debian packages are outside the
+    release's main archive is not covered, even when a package in main depends on,
+    recommends or suggests one of them (it was censored, no_value, through the relation's
+    end). The dependency rule still reads Depends and Recommends of packages in main."""
+    paths = build_world(tmp_path)
+    paths.aliases_csv.parent.mkdir(parents=True, exist_ok=True)
+    paths.aliases_csv.write_text(
+        "alias,ns,family_id,relation,detail,source,first_seen,reviewed_by\n"
+        + "".join(
+            f"fonts-synth-removed,deb-pkg,{fid},bundle,,synth,2026-09-01,owner\n"
+            for fid in ("jetbrains-mono", "newfont-sans")
+        )
+    )
+
+    def row(pkg: str, value: float, packaged: bool, in_sid: bool = True) -> Observation:
+        return obs(
+            "debian", "inst", k("deb-pkg", pkg), value, start=END, packaged=packaged, in_sid=in_sid
+        )
+
+    def office(kind: str, pkg: str) -> Relation:  # Suggests is kind "optdepends"
+        return Relation("debian", k("deb-pkg", "synth-office"), kind, k("deb-pkg", pkg))
+
+    # Fira Sans's only package is in sid alone; Quicksand also has a removed one.
+    mapped_rows = [
+        (row("fonts-firasans", 700, packaged=False), "fira-sans"),
+        (row("fonts-quicksand-old", 999_000, packaged=False, in_sid=False), "quicksand"),
+    ]
+    debian = [
+        *debian_records(),
+        *(o for o, _ in mapped_rows),
+        row("fonts-synth-removed", 5_000, packaged=False, in_sid=False),
+        row("synth-office", 60_000, packaged=True),
+        office("depends", "fonts-firasans"),
+        office("depends", "fonts-quicksand-old"),
+        office("recommends", "fonts-synth-removed"),
+        office("optdepends", "fonts-synth-removed"),
+        office("recommends", "fonts-hack"),
+        office("optdepends", "fonts-fantasque-sans"),
+    ]
+    write_jsonl(debian, paths.records / "debian.jsonl")
+    mapped = stageio.load_stage(paths, "mapped")
+    stageio.dump_stage(
+        paths, "mapped", [*mapped, *(Mapped(o, fid, "package", "") for o, fid in mapped_rows)]
+    )
+    corr.run(context(paths))
+    views = stageio.load_stage(paths, "terms")
+    debian_views = {view: terms["debian"] for view, terms in views.items() if "debian" in terms}
+    assert {"desktop_chosen", "desktop_installed"} <= set(debian_views)
+    for terms in debian_views.values():
+        for fid in ("fira-sans", "jetbrains-mono", "newfont-sans"):
+            assert fid not in terms  # not covered, rather than censored below the floor
+    installed = debian_views["desktop_installed"]
+    assert installed["quicksand"].value == 128_000  # its package in main, not the removed one
+    # synth-office recommends Hack's package in main and pulls it in; a Suggests never does.
+    chosen = debian_views["desktop_chosen"]
+    assert "hack" not in chosen
+    assert installed["hack"].state == "observed"
+    assert chosen["fantasque-sans-mono"].state == "observed"
+    assert "quicksand" not in chosen  # desktop-base still pulls it in
+    tags = stageio.load_stage(paths, "tags")
+    assert ("debian", "synth-office") in tags["hack"].pulled_in_by
+    assert tags["quicksand"].pulled_in_by == (("debian", "desktop-base"),)
+    assert "fira-sans" not in tags
+    cases = {(c["source"], c["family_id"]): c["id"] for c in jsonio.load(paths.queues / corr.QUEUE)}
+    assert cases[("debian", "hack")] == "dep-debian-hack"
+    for fid in ("fira-sans", "jetbrains-mono", "newfont-sans"):
+        assert ("debian", fid) not in cases  # a package outside main pulls nothing in
+
+
 def test_a_bundle_package_pulls_in_each_of_its_families() -> None:
     counts = {"debian": {"deb-pkg:fonts-bundle": 100.0, "deb-pkg:app": 80.0}}
     families = {"deb-pkg:fonts-bundle": ("x-sans", "x-serif")}
@@ -1523,25 +1593,63 @@ def test_fonts_over_time_startups_hold_at_most_the_cap_of_each_week() -> None:
 
 
 def test_a_package_only_a_relation_names_is_censored_not_uncovered() -> None:
-    """mapping.frames' rule: either end of a relation puts the family in a package frame."""
+    """mapping.frames' rule: either end of a relation puts the family in a package frame
+    (an Arch package pkgstats does not list)."""
     fams = [
         family("quicksand", "Quicksand", [("gf-family", "Quicksand")]),
         family("orbit", "Orbit", [("gf-family", "Orbit")]),
     ]
     keymap = {
-        k("deb-pkg", "fonts-quicksand"): ("quicksand", "direct", ""),
-        k("deb-pkg", "fonts-orbit"): ("orbit", "direct", ""),
+        k("arch-pkg", "ttf-quicksand"): ("quicksand", "package", ""),
+        k("arch-pkg", "ttf-orbit"): ("orbit", "package", ""),
     }
-    data = [obs("debian", "inst", k("deb-pkg", "fonts-quicksand"), 5_000.0, start=END)]
-    rel = depends("debian", "some-app", "fonts-orbit")
+    data = pkgstats("ttf-quicksand", 0.02)
+    rel = depends("arch_repos", "some-app", "ttf-orbit")
     res = corr.correct_source(
-        "debian", SRC.debian, inputs(fams, keymap, data, relations=(rel,)), RANKING, {}
+        "arch", SRC.arch, inputs(fams, keymap, data, relations=(rel,)), RANKING, {}
     )
     assert res is not None
-    assert res.terms["orbit"].state == "censored"
-    alone = corr.correct_source("debian", SRC.debian, inputs(fams, keymap, data), RANKING, {})
+    assert res.terms["orbit"] == Term(None, "censored", "arch", "no_value")
+    alone = corr.correct_source("arch", SRC.arch, inputs(fams, keymap, data), RANKING, {})
     assert alone is not None
     assert "orbit" not in alone.terms  # without the relation: not covered
+
+
+def test_debian_s_frame_holds_only_packages_in_main() -> None:
+    """debian_frame (2026-09-30): Debian's relation ends and universe keys count only with
+    a row in the release's main archive, which every font package there has (no value
+    when popcon has none). A package a relation names with no such row is outside main."""
+    fams = [
+        family("quicksand", "Quicksand", [("gf-family", "Quicksand")]),
+        family("orbit", "Orbit", [("gf-family", "Orbit")]),
+        family("comet", "Comet", [("gf-family", "Comet")]),
+        family("nova", "Nova", [("gf-family", "Nova")]),
+        family("dust", "Dust", [("deb-pkg", "fonts-dust")]),  # a universe key, no row
+    ]
+    keymap = {
+        k("deb-pkg", "fonts-quicksand"): ("quicksand", "package", ""),
+        k("deb-pkg", "fonts-orbit"): ("orbit", "package", ""),
+        k("deb-pkg", "fonts-comet"): ("comet", "package", ""),
+        k("deb-pkg", "fonts-nova"): ("nova", "package", ""),
+    }
+    data = [
+        obs("debian", "inst", k("deb-pkg", "fonts-quicksand"), 5_000.0, start=END, packaged=True),
+        obs("debian", "inst", k("deb-pkg", "some-app"), 9_000.0, start=END, packaged=True),
+        obs("debian", "inst", k("deb-pkg", "fonts-comet"), 800.0, start=END, packaged=False),
+        obs("debian", "inst", k("deb-pkg", "fonts-nova"), None, start=END, packaged=True),
+    ]
+    rels = tuple(
+        depends("debian", "some-app", pkg) for pkg in ("fonts-orbit", "fonts-comet", "fonts-nova")
+    )
+    res = corr.correct_source(
+        "debian", SRC.debian, inputs(fams, keymap, data, relations=rels), RANKING, {}
+    )
+    assert res is not None
+    assert res.terms["quicksand"].state == "observed"
+    assert res.terms["nova"] == Term(None, "censored", "debian", "no_value")  # in main
+    for fid in ("orbit", "comet", "dust"):
+        assert fid not in res.terms  # not covered
+    assert "deb-pkg:fonts-comet" not in res.counts  # so it pulls nothing in either
 
 
 def test_npm_scopes_read_purl_keys_too() -> None:
