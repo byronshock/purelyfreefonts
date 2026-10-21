@@ -144,7 +144,8 @@ def test_the_models_and_their_fixed_baselines(tmp_path: Path):
     assert by_name[builders.GOOGLE].n.tolist() == pytest.approx([183 / 365])
     npm = by_name[builders.NPM_FONTSOURCE]
     assert npm.ids.tolist() == ["inter"]  # lato is L3-failed, out of every frame
-    assert npm.n.tolist() == pytest.approx([1.0 + 183 / 365])
+    # npm's data date is 5 days before the run: the young package's age ends there (q7)
+    assert npm.n.tolist() == pytest.approx([1.0 + 178 / 365])
     expo = by_name[builders.EXPO]
     assert expo.ids.tolist() == ["inter"]
     assert by_name[builders.JSDELIVR].ids.tolist() == ["inter"]  # lato: zero hits
@@ -152,6 +153,15 @@ def test_the_models_and_their_fixed_baselines(tmp_path: Path):
     others = by_name[builders.FOT_OTHERS]
     assert others.y.tolist() == [4.0]  # (6 + 2) / 2 weeks
     assert by_name[builders.ALMANAC].y_hi.tolist() == [30.0]
+
+
+def test_without_window_ends_every_age_is_measured_to_the_run_date(tmp_path: Path):
+    """As the reference implementation measured them (the parity test)."""
+    paths = Paths.for_root(tmp_path)
+    write_stage(paths)
+    project, _ = modelinputs.models(paths, RUN, window_ends=False)["project"]
+    npm = next(t for t in project.counts if t.name == builders.NPM_FONTSOURCE)
+    assert npm.n.tolist() == pytest.approx([1.0 + 183 / 365])
 
 
 # --- a synthetic stage -------------------------------------------------------------------------
@@ -164,6 +174,9 @@ def write_stage(paths: Paths) -> None:
     sources = ("fot", "almanac", "google", "npm_fontsource", "ecosystems", "jsdelivr", "npm_expo")
     terms = {"project": {s: dict(counted) for s in sources}}
     (stage / "terms.json").write_text(json.dumps(terms))
+    (stage / "snapshots.json").write_text(
+        json.dumps({"npm": snapshot("2026-10-12"), "gf_stats": snapshot("2026-10-17")})
+    )
     (stage / "l3.json").write_text(
         json.dumps({"inter": l3("inter", "L3"), "lato": l3("lato", "failed")})
     )
@@ -220,6 +233,19 @@ def write_stage(paths: Paths) -> None:
             },
         ],
     )
+
+
+def snapshot(data_date: str) -> dict[str, Any]:
+    return {
+        "snapshot": "2026-10-17",
+        "stale": False,
+        "data_date": data_date,
+        "window": None,
+        "fetched_at": None,
+        "collector_version": 1,
+        "records": 1,
+        "baselines": [],
+    }
 
 
 def l3(fid: str, level: str) -> dict[str, Any]:
