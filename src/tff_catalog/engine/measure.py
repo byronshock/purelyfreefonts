@@ -55,6 +55,10 @@ LOG_SIGMA_MAX = float(np.log(20.0))
 DISTS = ("negbin", "lognormal", "lognormal_sum")
 # The 5% point of 1/2 chi2_0 + 1/2 chi2_1: a test of b = 0, which lies on the boundary.
 LR_BOUNDARY_5PCT = 2.706
+# L-BFGS-B's options, so that maxiter is the limit that binds: scipy's maxfun (15,000 by
+# default) counts the evaluations of the finite-difference gradients too, about 30 an
+# iteration for the Project model's 29 free parameters, and would stop it near 500 iterations.
+LBFGSB = {"maxiter": 5000, "maxfun": 1_000_000, "ftol": 1e-12}
 # A fitted model's record (``MixedFit.to_record``); a change of its shape bumps it.
 RECORD_FORMAT = 1
 
@@ -634,9 +638,7 @@ def fit_mixed(
         for i, v in fixed.items():
             start[i] = v
             b[i] = (v, v)
-        return optimize.minimize(
-            negll, start, method="L-BFGS-B", bounds=b, options={"maxiter": 5000, "ftol": 1e-12}
-        )
+        return optimize.minimize(negll, start, method="L-BFGS-B", bounds=b, options=LBFGSB)
 
     fixed = dict(fixed or {})
     held: list[str] = []

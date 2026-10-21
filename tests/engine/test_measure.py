@@ -188,6 +188,24 @@ def test_the_fit_is_a_stationary_point(two_terms):
         assert abs(grad) < 0.05, fit.model.param_names()[i]
 
 
+def test_the_iteration_limit_binds_before_the_evaluation_limit(monkeypatch):
+    """scipy's maxfun counts the finite-difference gradients' evaluations, so every L-BFGS-B
+    call of a fit allows maxiter iterations at two evaluations a free parameter and more."""
+    calls = []
+    minimize = measure.optimize.minimize
+
+    def spy(fun, x0, **kwargs):
+        calls.append((len(x0) - sum(lo == hi for lo, hi in kwargs["bounds"]), kwargs["options"]))
+        return minimize(fun, x0, **kwargs)
+
+    monkeypatch.setattr(measure.optimize, "minimize", spy)
+    model, _ = simulate_two_terms(n=300, seed=1)
+    measure.fit_mixed(model)
+    assert calls
+    for free, options in calls:
+        assert options["maxfun"] > options["maxiter"] * (2 * free + 1)
+
+
 def test_a_stored_fit_scores_bit_for_bit(two_terms):
     """The fitted parameters go to the private store as JSON and later runs score with what
     they read back (scoring plan §8.3, §8.4): the same bits, so the same scores."""
