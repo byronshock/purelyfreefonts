@@ -20,10 +20,11 @@ Handy selections (Milestone 2 design §8, step 3): ``-k retired_keys``, ``-k url
 import copy
 import hashlib
 import json
+import math
 import re
-import statistics
 from collections.abc import Iterator
 from dataclasses import dataclass, field
+from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
@@ -82,8 +83,10 @@ HELD = ", from one kind of source"
 
 
 def score_of(entry: dict[str, Any]) -> int:
-    """A ranked entry's score as the list shows it: 100·Φ(z), rounded (score_curve)."""
-    return round(100 * statistics.NormalDist().cdf(entry["score"]))
+    """A ranked entry's score as the list shows it, written out independently with Decimal:
+    max(1, ⌈100·clip(z / 3, 0, 1)⌉) (q11, q30, score_display_linear_all_views)."""
+    share = min(max(Decimal(repr(entry["score"])) / 3, Decimal(0)), Decimal(1))
+    return max(1, math.ceil(share * 100))
 
 
 def oracle(doc: dict[str, Any], state: dict[str, Any]) -> tuple[list[str], list[str], int]:

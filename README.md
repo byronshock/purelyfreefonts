@@ -66,9 +66,9 @@ The license column shows each source's license or terms and, where the owner has
 
 | Source | What we use | License or terms |
 |---|---|---|
-| [Fonts Over Time](https://fontsovertime.com) | fonts on about 10,000 homepages | used with credit and a link back, as its data page asks; an explicit license has been [requested](https://github.com/fcjr/fontsovertime/issues/1) (no license file; the data page says the data is free to download and reuse). Only ranks and rank-based scores are published |
+| [Fonts Over Time](https://fontsovertime.com) | fonts on about 10,000 homepages | used with credit and a link back, as its data page asks; an explicit license has been [requested](https://github.com/fcjr/fontsovertime/issues/1) (no license file; the data page says the data is free to download and reuse). Only ranks and rank-based scores are published; a score that combines it with other sources is not a Fonts Over Time value |
 | [Web Almanac 2025](https://almanac.httparchive.org) | pages declaring each font | Apache 2.0 |
-| [Google Fonts](https://fonts.google.com) | views over one year | used for ranks and rank-based scores only; view counts are not published ([Google Terms of Service](https://policies.google.com/terms)) |
+| [Google Fonts](https://fonts.google.com) | views over one year | used for ranks and scores only; view counts are not published ([Google Terms of Service](https://policies.google.com/terms)) |
 | [npm](https://www.npmjs.com) downloads of `@fontsource`, `@fontsource-variable` and `@expo-google-fonts` packages | code and app use | npm's terms say nothing specific about download counts; counts may be published, with credit |
 | [ecosyste.ms](https://packages.ecosyste.ms) | GitHub projects that depend on each @fontsource or @fontsource-variable package | CC BY-SA 4.0 |
 | [jsDelivr](https://www.jsdelivr.com) hits, through [Fontsource](https://fontsource.org)'s stats | CDN use | no data license stated; counts may be published, with credit |

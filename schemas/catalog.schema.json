@@ -926,7 +926,7 @@
           ]
         },
         "previous_score": {
-          "description": "This font's score in this rank in the last published catalog (state published_scores), on the same scale as score, or null if it had none there. Before any catalog has been published it equals score, so nothing shows as moved (owner ruling of 2026-09-30, score_previous_bootstrap). Kept for the rising and falling markers of Backlog TASK-4.",
+          "description": "This font's score in this rank in the last published catalog (state published_scores), on the same scale as score, or null if it had none there. Before any catalog has been published, and in a rank's first run under a new method version, it equals score, so nothing shows as moved (owner rulings of 2026-09-30, score_previous_bootstrap, and 2026-10-01, q20). Kept for the rising and falling markers of Backlog TASK-4.",
           "type": [
             "number",
             "null"
@@ -948,7 +948,7 @@
           ]
         }
       },
-      "description": "A font's place in one rank. Ranked: an exact rank (1-100) or a band, plus order, tier and range. Unranked: every placement field null and a reason. score and groups describe the fused score either way.",
+      "description": "A font's place in one rank. Ranked: an exact rank (1-100) or a band, plus order, tier and range. Unranked: every placement field null and a reason. score and groups describe the rank's score either way: in the model's ranks (project, dev_apps) the posterior mean of the font's popularity, with groups counting those with a term above bulk (q14); in the engine's, the fused score, with groups counting those among observed terms. overall repeats project (q12).",
       "if": {
         "properties": {
           "unranked": {
@@ -1050,7 +1050,7 @@
             "number",
             "null"
           ],
-          "description": "The source's equated z for this font (rank-based); null unless observed or censored."
+          "description": "In the engine's ranks, the source's equated z for this font (rank-based). For a project source, the posterior mean of the font's popularity from that source's terms alone (q18b), except Fonts Over Time's, which stays rank-based (T4). Null unless observed or censored."
         },
         "weight_used": {
           "type": [

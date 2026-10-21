@@ -26,7 +26,7 @@ url = "https://creativecommons.org/licenses/by-sa/4.0/"
 [[views]]
 key = "project"
 label = "Projects"
-measures = "Use in websites (55%), code (30%) and apps (15%)."  # gate M9 (b): fixed group shares
+measures = "Use in websites, code and apps, combined into one measure of popularity."  # q5_group_shares_retired (2026-10-01): no fixed shares; the model weighs each source by its fitted noise
 
 [[views]]
 key = "desktop_chosen"
@@ -125,7 +125,7 @@ publish_rank = true
 
 [sources.arch]
 name = "Arch Linux pkgstats"
-measures = "Share of Arch Linux systems with each font package, 12-month mean"
+measures = "Share of Arch Linux systems with each font package, pooled over 12 months"  # a2_arch_pool_months (2026-09-30)
 url = "https://pkgstats.archlinux.de"
 license = "No data license stated; counts may be published, with credit"  # gate T1 (a)
 publish_rank = true

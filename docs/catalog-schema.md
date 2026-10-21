@@ -43,7 +43,7 @@ The full catalog: every font in it, every rank, and every source.
 - `data_license`: `CC-BY-SA-4.0`, not provisional, with its URL.
 - `sources[]`: one entry per engine source used this run, in `ranking.toml` order. Disabled sources (Flutter, for now) and sources dropped after two stale months are left out. Each entry has:
   - `id`, `collector`, independence `group` and `survey`;
-  - `weight`: its effective weight in the survey view that feeds the overall rank, after overlap scaling, phase-in and the project group shares;
+  - `weight`: for a source of the engine's ranks, its effective weight in its survey view, after overlap scaling; null for a source the model's ranks read, which weigh each term by its fitted noise, not a hand weight (q5);
   - `publish_raw`: whether raw values may appear (false for Google and Fonts Over Time, rulings T2 and T4);
   - `data_date` and `fetched_at` of the snapshot used, and `stale` when that snapshot is older than the run;
   - `ruler_overlap`: how many families the source shares with the ruler (Homebrew).
@@ -99,24 +99,24 @@ The catalog is the overall top 500 plus the top 100 of the project rank and both
   - `order`, its exact position;
   - `rank`, the same number, inside the top 100;
   - `band` instead of `rank` past 100: `101–250`, `251–500` or `501+`;
-  - `tier` (A, B or C) and `range`, the 5–95% rank range;
+  - `tier` (A, B or C) and `range`, the 5–95% rank range (methodology §6; the site shows neither, `no_tiers_or_ranges`);
   - `gate_held` when the two-group gate moved it past 100.
 - Nothing sits inside the top 100 without an exact rank. When fewer fonts pass the two-group gate than the top 100 holds, the top holds only those, and every other font's `order` (and `range`) counts on from 101 in the same sequence. This happens in *Developers & apps*: all its sources are one independence group (the npm registry) while Flutter is off, so no font there passes the gate.
 - An **unranked** font has every placement field null and a reason in `unranked`:
   - `no_deliberate_evidence`: a Linux source abstained, and it had observed the font in *most installed*;
   - `too_new`: its terms in that rank are too new; in Rising, the font's first day on any channel is under 90 days ago (the "New" list);
   - `no_evidence`: anything else.
-- Either way, `score` is the fused score (null without a term) and `groups` the number of independence groups among observed terms.
-- `previous_score` is the font's score in that rank in the last published catalog (`state/published_scores.json`, which each run's export writes for the next), or null if it had none there. Before any catalog has been published it equals `score`, so nothing shows as moved (owner ruling of 2026-09-30, `score_previous_bootstrap`). It is kept for the rising and falling markers of Backlog TASK-4.
+- Either way, `score` is the rank's score (null without a term) and `groups` the number of its independence groups with evidence. In the model's ranks (`project`, `dev_apps`), the score is the posterior mean of the font's popularity, and a group counts when one of its terms sits above bulk (q14). In the engine's, it is the fused score, and a group counts with an observed term. `overall` repeats `project` (q12).
+- `previous_score` is the font's score in that rank in the last published catalog (`state/published_scores.json`, which each run's export writes for the next), or null if it had none there. Before any catalog has been published, and in a rank's first run under a new method version (`method_versions`), it equals `score`, so nothing shows as moved (owner rulings of 2026-09-30, `score_previous_bootstrap`, and 2026-10-01, q20). It is kept for the rising and falling markers of Backlog TASK-4.
 
 ### Each source
 
 `sources` has one entry per source in `sources[]`. It describes the font as the source's own survey sees it, where nothing abstains: *most installed* for desktop sources, *Used in projects* for project sources. Families that failed the license check are left out there, as the ranking leaves them out, so they take no rank in a source either.
 
-- `state`: `observed`; `censored` (the source could show the font, but its value is under the floor: `reason` `below_floor` or `no_value`); `not_covered` (`reason` `no_package`, `outside_frame` or `merged_into_parent`); or `too_new`.
-- `rank_in_source`: the font's rank among the source's observed values, 1 being the highest; ties share a rank (1, 2, 2, 4). Null unless observed.
-- `z`: the source's value mapped onto the ruler's scale (rank-based), as the ranking used it. For Fonts Over Time that is after its monthly smoothing (methodology §6), so its `z` can order fonts differently from its `rank_in_source`, which is this month's own count.
-- `weight_used`: the weight this source's term carried in the overall rank, after the outlier guard and any weight factor. Null when the font has no term from it there (not covered, too new, or abstaining).
+- `state`: `observed`; `censored` (the source could show the font, but its value is under the floor: `reason` `below_floor` or `no_value`); `not_covered` (`reason` `no_package`, `outside_frame` or `merged_into_parent`); or `too_new`. A project source with a term in the model is always `observed`, intervals included, with no reason (q18a).
+- `rank_in_source`: the font's rank among the source's observed values, 1 being the highest; ties share a rank (1, 2, 2, 4). For a project source, it ranks among every font with a model term from that source and a value, so no observed entry with a value lacks one. Null unless observed. A project source that has no model term for the font (jsDelivr with no hits yet, q29) is `not_covered`, with no rank, z or `weight_used`.
+- `z`: for a desktop source, the source's value mapped onto the ruler's scale (rank-based), as the ranking used it. For a project source, the posterior mean of the font's popularity from that source's terms alone (q18b), except Fonts Over Time's, which stays rank-based (T4). For Fonts Over Time that is after its monthly smoothing (methodology §6), so its `z` can order fonts differently from its `rank_in_source`, which is this month's own count.
+- `weight_used`: for a project source, its share of the posterior expected information from the font's open sources in *Projects*, every source but Google and Fonts Over Time, so the published shares add up to 1 (q16, amended 2026-10-20); null for Google and Fonts Over Time. Null for a desktop source, since the overall entry repeats *Projects* (q12). Null as well when the font has no term from it (not covered, too new, or abstaining).
 - `abstains_in[]`: the views where a Linux source leaves the font out because a Linux system preinstalls it or another package pulls it in: every view it is in except *most installed*, Rising included.
 - `value`: the value after alias sums, credits and floors. It appears only for sources whose `publish_raw` is true. Google and Fonts Over Time never carry one; their ranks and z are published, their counts are not.
 
@@ -149,7 +149,7 @@ The same as in `catalog.json`, trimmed:
 - `preview` and `font_file` only for fonts whose license allows previews; `font_file` also only up to 20 MB;
 - `aliases[]` only the renames, builds and PostScript names, which the search uses;
 - `flags[]` only `too_new` and the specimen flags (the others are in the rank entries);
-- each rank without `groups`, but with `score`, the fused score, which Milestone 2 shows as a 0–100 bar, 100·Φ(score) (site rulings of 2026-09-29, `score_display`, `score_curve`); every ranked entry has one; and `previous_score`, as in `catalog.json`;
+- each rank without `groups`, but with `score`, the fused score, which the site shows as a 1–100 bar, max(1, ⌈100·clip(score / 3, 0, 1)⌉) since the scoring-method port (earlier 100·Φ(score)) (site rulings of 2026-09-29, `score_display`, `score_curve`); every ranked entry has one; and `previous_score`, as in `catalog.json`;
 - each source as `state`, `rank_in_source`, `reason` and `abstains_in` only. The file never holds a raw value.
 
 The site build checks more than the schema can: unique ids, bands that follow each other, rank equal to order in the top 100, known classes and systems, one source entry per source, and each font in every available view (`tff_site.data.semantic_errors`).

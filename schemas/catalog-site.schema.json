@@ -85,7 +85,7 @@
       }
     },
     "tiers": {
-      "description": "Plain-words meaning of each confidence tier (methodology §6).",
+      "description": "Plain-words meaning of each confidence tier (methodology §6). Kept for v1; the site shows no tiers (no_tiers_or_ranges).",
       "type": "object",
       "additionalProperties": false,
       "required": ["A", "B", "C"],
@@ -280,7 +280,7 @@
       }
     },
     "rank_entry": {
-      "description": "A font's place in one rank. Ranked: an exact rank (1-100) or a band, plus order, tier, range and score. Unranked: every placement field null and a reason; score is the fused score, if any, as in catalog.json.",
+      "description": "A font's place in one rank. Ranked: an exact rank (1-100) or a band, plus order, tier, range and score. Unranked: every placement field null and a reason; score is the rank's score, if any, as in catalog.json.",
       "type": "object",
       "additionalProperties": false,
       "required": ["rank", "band", "order", "tier", "range", "score", "previous_score", "gate_held", "unranked"],
@@ -313,11 +313,11 @@
           ]
         },
         "score": {
-          "description": "The fused score on the shared z scale, as in catalog.json. From Milestone 2 the list shows 100·Φ(score) as a bar (site rulings of 2026-09-29, score_display and score_curve).",
+          "description": "The rank's score, as in catalog.json: the model's posterior mean in project and dev_apps, the engine's fused score in the others. The list shows it as a bar, max(1, ceil(100 * clip(score / 3, 0, 1))) (site rulings of 2026-09-29, score_display, and 2026-10-19, score_display_linear_all_views).",
           "type": ["number", "null"]
         },
         "previous_score": {
-          "description": "This font's score in this rank in the last published catalog (catalog.json's previous_score), on the same scale as score, or null if it had none there. Before any catalog has been published it equals score, so nothing shows as moved (owner ruling of 2026-09-30, score_previous_bootstrap). Kept for the rising and falling markers of Backlog TASK-4.",
+          "description": "This font's score in this rank in the last published catalog (catalog.json's previous_score), on the same scale as score, or null if it had none there. Before any catalog has been published, and in a rank's first run under a new method version, it equals score, so nothing shows as moved (owner rulings of 2026-09-30, score_previous_bootstrap, and 2026-10-01, q20). Kept for the rising and falling markers of Backlog TASK-4.",
           "type": ["number", "null"]
         },
         "gate_held": {

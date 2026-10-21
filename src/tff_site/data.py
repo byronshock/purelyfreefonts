@@ -20,6 +20,7 @@ import math
 from collections import Counter
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
+from fractions import Fraction
 from itertools import pairwise
 from pathlib import Path
 from typing import Any
@@ -432,11 +433,22 @@ def nerd_link_text(link: Mapping[str, Any]) -> str:
     return f"{link['label']} ({url_destination(link['url'])})"
 
 
+# The shown score's ends on the latent scale (owner ruling of 2026-10-01, q30_display_ends): 0
+# is the average tracked font and shows as 1, 3 is three standard deviations above it and
+# shows as 100. Site constants, held with the model's parameters.
+SCORE_LOW, SCORE_HIGH = Fraction(0), Fraction(3)
+
+
 def display_score(z: float | None) -> int:
-    """A rank's score as the list shows it, 0 to 100: 100·Φ(z), the normal curve of
-    ``ranks.<key>.score``, rounded (owner rulings of 2026-09-29, score_display and
-    score_curve); -1 for none."""
-    return -1 if z is None else round(50 * (1 + math.erf(z / math.sqrt(2))))
+    """A rank's score as the list shows it, 1 to 100, in every view (owner rulings of
+    2026-10-01, q11_display_linear and q30_display_ends, and of 2026-10-19,
+    score_display_linear_all_views): max(1, ⌈100·clip((z - 0) / (3 - 0), 0, 1)⌉) of
+    ``ranks.<key>.score``; -1 for none. Computed on the score's decimal value as the
+    catalog writes it, so a score on a step (0.03, 0.06, …) shows exactly that step."""
+    if z is None:
+        return -1
+    share = (Fraction(repr(z)) - SCORE_LOW) / (SCORE_HIGH - SCORE_LOW)
+    return max(1, math.ceil(100 * min(max(share, Fraction(0)), Fraction(1))))
 
 
 def score_order(entries: list[Mapping[str, Any] | None]) -> list[int]:
