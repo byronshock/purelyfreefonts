@@ -102,12 +102,18 @@ for the owner to correct (the corrections go in ``config/category-overrides.toml
 and a family listed there has basis "owner", so it is never on this list), and
 the families in ``GATE_R_WATCH`` with their rank
 in each source; and ``no-license.md``, the families with no license found and
-the overall order each would get (``nolicense.what_if``, which reruns stages
+the orders each would get (``nolicense.what_if``, which reruns stages
 "correct" and "rank" on a copy of the build), for the owner's ruling of
 2026-09-26 (no_license_families): Claude researches those at
 ``nolicense.RESEARCH_TOP`` or better, and a note in review.md counts them. It
 is rebuilt from scratch on every run. The old Top 100 and the installed-fonts filter it
 reads come from the private store's seed copy and never reach review.md.
+
+**Overall as a stand-in** (``ranks.overall.stand_in``, owner ruling of 2026-10-01,
+q12_overall_stand_in): overall's orders are its stand-in's, so text that names an
+overall order names the stand-in (``overall_name``: the catalog's reach and the
+license research are the project top 500 and 700, q13_catalog_membership), and the
+pack shows the stand-in's lists once, under its own key, with no copy under overall.
 
 Everything is deterministic: the same build, state and store give the same
 bytes.
@@ -221,7 +227,7 @@ PACK_FILES: dict[str, str] = {
     "what-if.md": "The what-if table: each engine weight halved and doubled.",
     "sources.md": "Per-source statistics against the last run, ruler overlaps and weights.",
     "checks.md": "Catalog fonts with the default category, and the families to watch.",
-    "no-license.md": "Families with no license found, and the overall order each would get.",
+    "no-license.md": "Families with no license found, and the orders each would get.",
 }
 
 
@@ -446,18 +452,23 @@ def catalog_flags(
     names: Mapping[str, str],
     overall: Mapping[str, int],
     failed_l3: frozenset[str] = frozenset(),
+    *,
+    rank: str = "overall",
 ) -> list[Flag]:
     """Catalog entries and exits: this run's membership against ``state/membership.json``.
 
-    Empty on the first run (no committed members).
+    Each names the font's ``overall`` order as ``rank``'s (``overall_name``: under a
+    stand-in the catalog is the project top 500, q13_catalog_membership). Empty on the
+    first run (no committed members).
     """
     before = {f for f, s in (committed.get("catalog") or {}).items() if s.get("member")}
     if not before:
         return []
     after = set(m.members())
+    unranked = "not ranked overall" if rank == "overall" else f"not ranked in {rank}"
 
     def where(f: str) -> str:
-        return f"overall {overall[f]}" if f in overall else "not ranked overall"
+        return f"{rank} {overall[f]}" if f in overall else unranked
 
     out = [
         Flag("entry", f"{_name(names, f)} joins the catalog ({where(f)})", CATALOG, f)
@@ -682,6 +693,13 @@ def _model_views_text(cfg: RankingConfig) -> str:
     if "overall" in model_keys(cfg):
         text += f"; overall repeats {cfg.ranks.overall.stand_in}"
     return text
+
+
+def overall_name(cfg: RankingConfig) -> str:
+    """The rank overall's orders are: its stand-in (q12_overall_stand_in), whose orders it
+    repeats, or "overall" for the D12 mix. Text that names an overall order names this, so
+    the catalog's reach and the license research read "project" (q13_catalog_membership)."""
+    return cfg.ranks.overall.stand_in or "overall"
 
 
 def overlap_flags(
@@ -1519,14 +1537,19 @@ def published(
 
 
 def _source_ranks(inputs: RankInputs, cfg: RankingConfig) -> dict[str, dict[str, dict[str, int]]]:
-    """Each rank key's rank in source per weighted source (overall: its mix keys' sources)."""
+    """Each rank key's rank in source per weighted source (overall: its stand-in's sources,
+    q12_overall_stand_in, else its mix keys' sources)."""
     from tff_catalog.engine import crosscheck
 
     out = {}
+    stand_in = cfg.ranks.overall.stand_in
     for key in RANK_KEYS:
         if key == "rising":
             continue
-        parts = sorted(cfg.ranks.overall.mix) if key == "overall" else [key]
+        if key != "overall":
+            parts = [key]
+        else:
+            parts = [stand_in] if stand_in else sorted(cfg.ranks.overall.mix)
         terms: dict[str, Mapping[str, Term]] = {}
         for part in parts:
             ws = inputs.weights.get(part, {})
@@ -1603,7 +1626,9 @@ def analyse(ctx: StageContext) -> Analysis:
 
 def _no_license(ctx: StageContext, notes: list[str]) -> tuple[NoLicense, ...]:
     """``nolicense.what_if`` for the pack, with a note on the families Claude researches
-    (owner ruling of 2026-09-26, no_license_families)."""
+    (owner ruling of 2026-09-26, no_license_families): those that would reach the top
+    ``nolicense.RESEARCH_TOP`` of the rank overall repeats (``overall_name``; the Project
+    top 700 under q13_catalog_membership)."""
     from tff_catalog import nolicense
 
     try:
@@ -1613,11 +1638,15 @@ def _no_license(ctx: StageContext, notes: list[str]) -> tuple[NoLicense, ...]:
         return ()
     found = [r for r in rows if r.to_research]
     if found:
+        cfg = ctx.config.ranking
+        rulings = "owner ruling of 2026-09-26"
+        if cfg.ranks.overall.stand_in:
+            rulings = "owner rulings of 2026-09-26 and 2026-10-01, q13_catalog_membership"
         notes.append(
             f"{len(found)} {'family' if len(found) == 1 else 'families'} with no license "
-            "found would reach the overall "
-            f"top {nolicense.RESEARCH_TOP}; Claude researches their licenses (owner ruling of "
-            "2026-09-26; the list is in build/review-pack/no-license.md)."
+            f"found would reach the {overall_name(cfg)} top {nolicense.RESEARCH_TOP}; Claude "
+            f"researches their licenses ({rulings}; the list is in "
+            "build/review-pack/no-license.md)."
         )
     return rows
 
@@ -1815,7 +1844,8 @@ def _change_flags(
     failed = frozenset(f for f, r in l3.items() if r.level == "failed")
     membership = _optional(ctx, "membership")
     if membership is not None:
-        flags += catalog_flags(ctx.state.membership, membership, names, overall, failed)
+        rank = overall_name(ctx.config.ranking)
+        flags += catalog_flags(ctx.state.membership, membership, names, overall, failed, rank=rank)
     after = _next_part(ctx, "license_hashes")
     if after is None:
         notes.append('License changes: skipped, stage "verify" wrote no license_hashes this run.')
@@ -2003,6 +2033,18 @@ def _range(conf: Mapping[str, Mapping[str, Confidence]], key: str, fid: str) -> 
     return (NONE, NONE) if c is None else (c.tier, f"{c.range[0]}{NONE}{c.range[1]}")
 
 
+def _stood_in(cfg: RankingConfig, key: str) -> str:
+    """The line a pack section of overall holds in place of a copy of its stand-in's
+    (q12_overall_stand_in), or "" for every other key and for the D12 mix."""
+    stand_in = cfg.ranks.overall.stand_in
+    if key != "overall" or not stand_in:
+        return ""
+    return (
+        f"Repeats {stand_in} (owner ruling of 2026-10-01, q12_overall_stand_in): see "
+        f"{stand_in} below."
+    )
+
+
 def _pack_top100(a: Analysis, cfg: RankingConfig) -> str:
     top = cfg.display.exact_top
     lines = [
@@ -2014,6 +2056,10 @@ def _pack_top100(a: Analysis, cfg: RankingConfig) -> str:
         "",
     ]
     for key in RANK_KEYS:
+        lines += [f"## {key}", ""]
+        if stood_in := _stood_in(cfg, key):
+            lines += [stood_in, ""]
+            continue
         orders = a.now.get(key, {})
         per_source = a.source_ranks.get(key, {})
         sources = sorted(per_source)
@@ -2024,7 +2070,6 @@ def _pack_top100(a: Analysis, cfg: RankingConfig) -> str:
             rows.append(
                 [orders[f], _name(a.names, f), tier, span, _groups(a.scores, key, f), *cells]
             )
-        lines += [f"## {key}", ""]
         if rows:
             header = ["Rank", "Font", "Tier", "Range", "Groups", *sources]
             lines += _table(header, rows, "rllll" + "r" * len(sources))
@@ -2034,7 +2079,7 @@ def _pack_top100(a: Analysis, cfg: RankingConfig) -> str:
     return "\n".join(lines)
 
 
-def _pack_held(a: Analysis) -> str:
+def _pack_held(a: Analysis, cfg: RankingConfig) -> str:
     lines = [
         f"# Held back by the two-group gate, {a.run_date}",
         "",
@@ -2043,10 +2088,13 @@ def _pack_held(a: Analysis) -> str:
         "",
     ]
     for key in RANK_KEYS:
+        lines += [f"## {key}", ""]
+        if stood_in := _stood_in(cfg, key):
+            lines += [stood_in, ""]
+            continue
         held = sorted(
             (p.order, f, p.band) for f, p in a.placements.get(key, {}).items() if p.gate_held
         )
-        lines += [f"## {key}", ""]
         rows = [
             [o, _name(a.names, f), band or NONE, _groups(a.scores, key, f)] for o, f, band in held
         ]
@@ -2064,13 +2112,16 @@ def _pack_tier_c(a: Analysis, cfg: RankingConfig) -> str:
         "",
     ]
     for key in RANK_KEYS:
+        lines += [f"## {key}", ""]
+        if stood_in := _stood_in(cfg, key):
+            lines += [stood_in, ""]
+            continue
         orders = a.now.get(key, {})
         rows = []
         for f in _top(orders, depth):
             tier, span = _range(a.confidence, key, f)
             if tier == "C":
                 rows.append([orders[f], _name(a.names, f), span, _groups(a.scores, key, f)])
-        lines += [f"## {key}", ""]
         lines += _table(["Order", "Font", "Range", "Groups"], rows, "rlll") if rows else ["None."]
         lines.append("")
     return "\n".join(lines)
@@ -2097,18 +2148,29 @@ def _pack_disagreements(a: Analysis, cfg: RankingConfig) -> str:
     return "\n".join([*lines, ""])
 
 
-def _pack_no_license(a: Analysis) -> str:
+def _pack_no_license(a: Analysis, cfg: RankingConfig) -> str:
+    """The no-license families and their what-if orders. Under a stand-in, overall's orders
+    are its stand-in's, so the table shows that rank once, first, and the research reach is
+    its top ``RESEARCH_TOP`` (q12_overall_stand_in, q13_catalog_membership)."""
     from tff_catalog.nolicense import KEYS, RESEARCH_TOP
 
+    reach = overall_name(cfg)
+    ruling = "the owner's ruling of 2026-09-26 (no_license_families)"
+    keys = list(KEYS)
+    if cfg.ranks.overall.stand_in:
+        ruling = (
+            "the owner's rulings of 2026-09-26 (no_license_families) and 2026-10-01 "
+            "(q13_catalog_membership)"
+        )
+        keys = [reach, *(k for k in KEYS if k not in ("overall", reach))]
     lines = [
         f"# Families with no license found, {a.run_date}",
         "",
         "No source states a license for these families, so they are left out before ranking. "
         "The orders are what each would get if its license were found (a rerun of stages "
-        '"correct" and "rank" on a copy of the build). By the owner\'s ruling of 2026-09-26 '
-        f"(no_license_families), Claude researches every one at overall {RESEARCH_TOP} or "
-        "better; a license found goes to the owner as a gate LIC question (`LIC-<id>`, with "
-        "`spdx`).",
+        f'"correct" and "rank" on a copy of the build). By {ruling}, Claude researches every '
+        f"one at {reach} {RESEARCH_TOP} or better; a license found goes to the owner as a "
+        "gate LIC question (`LIC-<id>`, with `spdx`).",
         "",
     ]
     if not a.no_license:
@@ -2121,15 +2183,18 @@ def _pack_no_license(a: Analysis) -> str:
             "yes" if r.to_research else "no",
             _name(a.names, r.id),
             r.id,
-            *(NONE if r.orders.get(k) is None else r.orders[k] for k in KEYS),
+            *(NONE if r.orders.get(k) is None else r.orders[k] for k in keys),
         ]
         for r in rows
     ]
-    heads = ["Research", "Font", "Id", *KEYS]
-    return "\n".join([*lines, *_table(heads, table, "lll" + "r" * len(KEYS))]) + "\n"
+    heads = ["Research", "Font", "Id", *keys]
+    return "\n".join([*lines, *_table(heads, table, "lll" + "r" * len(keys))]) + "\n"
 
 
-def _pack_checks(a: Analysis) -> str:
+def _pack_checks(a: Analysis, cfg: RankingConfig) -> str:
+    """The gate R checks (owner ruling of 2026-09-26, data_defaults). Under a stand-in the
+    order column names the rank overall repeats, and the watch tables leave out overall's
+    copy of its row (q12_overall_stand_in)."""
     overall = a.now.get("overall", {})
     lines = [
         f"# Checks for gate R, {a.run_date}",
@@ -2147,12 +2212,15 @@ def _pack_checks(a: Analysis) -> str:
         ([overall.get(f, NONE), _name(a.names, f), f] for f in a.defaulted),
         key=lambda r: (r[0] if isinstance(r[0], int) else math.inf, r[2]),
     )
-    lines += _table(["Overall", "Font", "Id"], rows, "rll") if rows else ["None."]
+    column = overall_name(cfg).capitalize()
+    lines += _table([column, "Font", "Id"], rows, "rll") if rows else ["None."]
     lines += ["", "## Families to watch", ""]
     for fid, why in sorted(GATE_R_WATCH.items()):
         lines += [f"### {_name(a.names, fid)} (`{fid}`)", "", f"{why}.", ""]
         rows = []
         for key in RANK_KEYS:
+            if _stood_in(cfg, key):
+                continue
             order = a.now.get(key, {}).get(fid)
             ranks = a.source_ranks.get(key, {})
             by_source = [f"{s} {r[fid]}" for s, r in sorted(ranks.items()) if fid in r]
@@ -2368,15 +2436,15 @@ def write_pack(directory: Path, a: Analysis, cfg: RankingConfig) -> Path:
     """Write every ``PACK_FILES`` file into ``directory``, replacing whatever was there."""
     texts = {
         "top100.md": _pack_top100(a, cfg),
-        "held-back.md": _pack_held(a),
+        "held-back.md": _pack_held(a, cfg),
         "tier-c.md": _pack_tier_c(a, cfg),
         "old-top100.md": _pack_old(a, cfg),
         "disagreements.md": _pack_disagreements(a, cfg),
         "anomalies.md": render_review(a.prev, a.published, a.all_flags, private=False),
         "what-if.md": _pack_what_if(a, cfg),
         "sources.md": _pack_sources(a, cfg),
-        "checks.md": _pack_checks(a),
-        "no-license.md": _pack_no_license(a),
+        "checks.md": _pack_checks(a, cfg),
+        "no-license.md": _pack_no_license(a, cfg),
     }
     texts["README.md"] = _pack_readme(a, cfg)
     if directory.exists():

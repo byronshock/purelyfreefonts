@@ -4,11 +4,13 @@ of 2026-10-01, q1_model_views, q12_overall_stand_in, q13_catalog_membership,
 q2_guard_retired and q5_group_shares_retired).
 
 review.md and the pack describe the method as it is: ruler overlaps, guard hits and the
-what-if table cover the engine's ranks only (methodology §9). The model's fit is
+what-if table cover the engine's ranks only (methodology §9), text that named an overall
+order names the stand-in, and the pack shows the stand-in's lists once. The model's fit is
 replaced by synthetic entries (``fake_models``): these tests read what review writes, not
 what the model fits.
 """
 
+import dataclasses
 import math
 from collections import defaultdict
 from collections.abc import Iterable, Mapping
@@ -108,6 +110,8 @@ def test_the_config_has_the_model_views_and_the_stand_in() -> None:
     assert MODEL.ranks.overall.stand_in == "project"
     assert review.model_keys(MODEL) == {"overall", "project", "dev_apps"}
     assert review.model_keys(SMALL) == frozenset()  # the engine-only default of the tests
+    assert review.overall_name(MODEL) == "project"
+    assert review.overall_name(SMALL) == "overall"
 
 
 @pytest.mark.usefixtures("replay_collector")
@@ -176,3 +180,44 @@ def test_the_what_if_pack_names_the_engine_s_rules_only(model_build: StageContex
         assert path not in pack["anomalies.md"].decode()
     readme = pack["README.md"].decode()
     assert "Weights in ranking.toml move the engine's ranks only (what-if.md)." in readme
+
+
+@pytest.mark.usefixtures("replay_collector")
+def test_the_review_names_the_stand_in_where_it_named_overall(model_build: StageContext) -> None:
+    """q13_catalog_membership: the license research reaches the Project top 700, and the
+    catalog is the Project top 500, so the text names project, not overall."""
+    ctx = model_build
+    review.run(ctx)
+    text = (ctx.paths.build / review.REVIEW_FILE).read_text()
+    assert "would reach the project top 700" in text
+    assert "overall top 700" not in text
+    assert "| catalog | fam-99 leaves the catalog (not ranked in project) |" in text
+    assert "joins the catalog (overall" not in text
+    no_license = pack_bytes(ctx.paths)["no-license.md"].decode()
+    assert "Claude researches every one at project 700 or better" in no_license
+    assert "| Research | Font | Id | project | desktop_chosen | coding |" in no_license
+    assert "| yes | fam-91 | fam-91 | 120 | 60 | 7 |" in no_license
+
+
+@pytest.mark.usefixtures("replay_collector")
+def test_the_pack_shows_the_stand_in_s_lists_once(model_build: StageContext) -> None:
+    """q12_overall_stand_in: overall repeats project, so its sections point to project's
+    instead of copying them, and the overall top-100 table has no desktop columns."""
+    ctx = model_build
+    review.run(ctx)
+    pack = pack_bytes(ctx.paths)
+    line = "Repeats project (owner ruling of 2026-10-01, q12_overall_stand_in): see project below."
+    for name in ("top100.md", "held-back.md", "tier-c.md"):
+        text = pack[name].decode()
+        assert section(text, "overall").strip() == line, name
+        assert "## project\n" in text
+    top100 = pack["top100.md"].decode()
+    header = section(top100, "project").split("\n")[1]
+    assert header.startswith("| Rank | Font | Tier | Range | Groups | ")
+    columns = header.strip("| ").split(" | ")[5:]
+    assert columns
+    assert set(columns) <= set(MODEL.surveys.project.weights)  # no desktop column
+    a = review.analyse(ctx)
+    assert a.source_ranks["overall"] == a.source_ranks["project"]
+    checks = review._pack_checks(dataclasses.replace(a, defaulted=("fam-00",)), MODEL)
+    assert "| Project | Font | Id |" in checks

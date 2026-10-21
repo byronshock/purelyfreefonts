@@ -4,7 +4,9 @@ A family for which no source states any license is excluded before ranking (D3,
 "no license found"; methodology §1: filter first), so the ranks never show how
 far it would get. The owner's ruling ``no_license_families`` keeps that
 exclusion, but Claude researches any such family that would reach the overall
-top ``RESEARCH_TOP`` (700).
+top ``RESEARCH_TOP`` (700). Overall repeats Projects (``ranks.overall.stand_in``,
+owner ruling of 2026-10-01, q12_overall_stand_in), so that is the Project top 700
+(q13_catalog_membership).
 
 ``what_if`` finds those families. It copies this run's ``build/stage/`` and
 ``build/state/`` into a temporary build directory, marks the families' licenses
@@ -37,9 +39,11 @@ if TYPE_CHECKING:
     from tff_catalog.stages import StageContext
 
 # Owner ruling of 2026-09-26 (licenses, no_license_families): Claude researches a family with
-# no license found that would reach this overall order or better.
+# no license found that would reach this overall order or better: the Project order while
+# overall stands in for it (q13_catalog_membership).
 RESEARCH_TOP = 700
-# The orders the pack shows for each family: overall first, then its two halves (D12).
+# The orders found for each family. Overall's is the stand-in's under ranks.overall.stand_in
+# (q12), and the pack then shows it once, under the stand-in's key.
 KEYS = ("overall", "desktop_chosen", "project", "coding")
 # What the copy says about each family's license; never written outside the copy.
 WHAT_IF_REASON = "what-if: no license found, counted as allowed to find its order"
@@ -58,7 +62,8 @@ class NoLicense:
 
     @property
     def to_research(self) -> bool:
-        """Whether the ruling asks Claude to research it: overall ``RESEARCH_TOP`` or better."""
+        """Whether the ruling asks Claude to research it: overall ``RESEARCH_TOP`` or better
+        (the Project order under the stand-in, q13_catalog_membership)."""
         return self.overall is not None and self.overall <= RESEARCH_TOP
 
 
