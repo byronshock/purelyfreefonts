@@ -1,0 +1,15 @@
+# Owner rulings, gate K: links for the October replay on the new method.
+# Ruled by the owner in chat on 2026-10-20 ("GitHub releases (Recommended)" for Redaction 70; "Qualifies, GitHub releases (Recommended)" for Overused Grotesk); recorded with `tff-catalog rulings apply`.
+
+[K-redaction-70]
+choice = "b"
+recommended = true
+recommendation = "b"
+ruling = "https://github.com/jeremymickel/Redaction/releases (from google_repo)"
+reason = "The owner's ruling in chat with the lead session on 2026-10-20 (\"GitHub releases (Recommended)\"), as for K-redaction (2026-10-17), over the queue's mechanical (a): the designer's GitHub releases page holds every Redaction family's current files under the plain OFL with no click-through; redaction.us serves an older 2020 build behind an \"Agree\" step."
+
+[K-overused-grotesk]
+choice = "a"
+recommended = true
+ruling = "https://github.com/RandomMaerks/Overused-Grotesk/releases (from homebrew_casks)"
+reason = "The owner's ruling in chat with the lead session on 2026-10-20 (\"Qualifies, GitHub releases (Recommended)\"), with LIC-overused-grotesk: the designer's page links only to the repository, whose releases page has the downloads; it is the queue's only candidate."

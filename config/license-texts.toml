@@ -468,6 +468,38 @@ name = "Luciole"
 texts = ["https://raw.githubusercontent.com/creativecommons/cc-legal-tools-data/a0dac18d1a773b4cdb7d8dd5d9bf4efab7901030/docs/licenses/by/4.0/legalcode.txt"]
 reason = "No source states a license; the owner ruled it qualifies under CC BY 4.0, attribution required (LIC-luciole). luciole-vision.com and the fonts' name IDs 13 and 14 (Luciole 2.001, in the Homebrew cask's zip) name Creative Commons Attribution 4.0 International, and no source gave a text; Creative Commons' plain-text legal code, pinned at a commit of its cc-legal-tools-data repository and byte for byte the file creativecommons.org serves, matches the canonical CC-BY-4.0 text (checked 2026-10-17)."
 
+# --- families that came into scope with the method port's October replay (researched 2026-10-20) --
+# Every URL below answered HTTP 200 on 2026-10-20.
+
+[[family]]
+family = "nacelle"
+name = "Nacelle"
+texts = ["https://dotcolon.net/files/fonts/nacelle_100.zip#SIL%20Open%20Font%20License.txt"]
+page = "https://www.dotcolon.net/fonts/nacelle/"
+reason = "The only text the sources gave was the OFL's web page (scripts.sil.org/OFL). Sora Sagano's release zip nacelle_100.zip (dotcolon.net, the file the sources give) holds 'SIL Open Font License.txt', OFL-1.1 with no Reserved Font Name; the font's page on dotcolon.net says it is licensed under the SIL Open Font License 1.1."
+
+[[family]]
+family = "route-159"
+name = "Route 159"
+texts = ["https://dotcolon.net/files/fonts/route159_110.zip#OFL.txt"]
+page = "https://www.dotcolon.net/fonts/route159/"
+reason = "The only text the sources gave was the OFL's web page (scripts.sil.org/OFL). Sora Sagano's release zip route159_110.zip (dotcolon.net, the file the sources give) holds OFL.txt, OFL-1.1 with no Reserved Font Name (Copyright 2015 Sora Sagano); the font's page on dotcolon.net says it is licensed under the SIL Open Font License 1.1."
+
+[[family]]
+family = "ronzino"
+name = "Ronzino"
+texts = ["https://raw.githubusercontent.com/collletttivo/ronzino/24df8cdde479fef13948de629c3b10849e1dffb5/LICENSE.txt"]
+reason = "No upstream text was found automatically. Collletttivo's repository, at the commit config/foundries.toml pins for its font file, has LICENSE.txt: OFL-1.1 with no Reserved Font Name (Copyright 2023 Collletttivo); GitHub reads it as OFL-1.1."
+
+# --- families the owner let in on 2026-10-20 (gate LIC, data/reviews/licenses/2026-10-20.toml) --
+
+[[family]]
+family = "overused-grotesk"
+name = "Overused Grotesk"
+texts = ["https://raw.githubusercontent.com/RandomMaerks/Overused-Grotesk/73d02b98d4d9c3cb0532fb0c72f5e1597a46f106/LICENSE.txt"]
+files = ["https://raw.githubusercontent.com/RandomMaerks/Overused-Grotesk/73d02b98d4d9c3cb0532fb0c72f5e1597a46f106/fonts/otf/OverusedGrotesk-Roman.otf"]
+reason = "No source states a license; the owner ruled it qualifies under OFL-1.1 (LIC-overused-grotesk). The designer's repository (RandomMaerks), pinned at its main branch's commit of 2026-10-20, has LICENSE.txt, OFL-1.1 with no Reserved Font Name (Copyright 2023-2025 Bao Nguyen/RandomMaerks), and the font files; the designer's page randommaerks.github.io/typefaces/overused-grotesk names the SIL Open Font License."
+
 # --- researched texts --------------------------------------------------------------------------
 
 [[text]]

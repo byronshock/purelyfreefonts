@@ -64,8 +64,9 @@ How each check reads the run (``CHECKS``, in order; ``docs/catalog-schema.md``):
 - ``previous_score``: every rank entry's ``previous_score``, in ``catalog.json`` and
   ``catalog-site.json``, is the font's score in that rank in the last published catalog
   (``published_scores`` of the state this run started from), or null if it had none there.
-  With none published yet (the bootstrap), it equals ``score``, so nothing shows as moved
-  (owner ruling of 2026-09-30, score_previous_bootstrap).
+  With none published yet (the bootstrap), and in a rank whose method changed since the last
+  merged run (``tff_catalog.methods``, q20_previous_score_at_switch), it equals ``score``, so
+  nothing shows as moved (owner ruling of 2026-09-30, score_previous_bootstrap).
 
 - ``private_fields``: no committed JSON output (``build/*.json``,
   ``build/specimens/index.json``, ``state/`` and this run's ``build/state/``)
@@ -85,8 +86,10 @@ still fails ``schema``, through the site's cross-references (one font per order)
 (``committed_known_answers``), and ``previous_score`` for the bootstrap
 (``committed_previous_scores``): while ``state/run_history.json`` holds at most one run,
 the committed catalog was built with no earlier scores, so every ``previous_score``
-equals its ``score``. Later, ``state/`` holds the merged run's own scores, not those it
-started from, so a clone can't check more.
+equals its ``score``; later, so does every ``previous_score`` in a rank whose method the
+newest run changed from the one before it (``methods.changed_by_last_run``). Otherwise
+``state/`` holds the merged run's own scores, not those it started from, so a clone can't
+check more.
 
 A check that can't run (a missing file, or any error in it) fails with the
 reason, and the others still run. Each check lists at most ``MAX_PER_CHECK``
@@ -107,7 +110,7 @@ from functools import cached_property
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from tff_catalog import export, jsonio, stageio
+from tff_catalog import export, jsonio, methods, stageio
 from tff_catalog.records import SourceKey
 
 if TYPE_CHECKING:
@@ -599,19 +602,33 @@ def _previous_score_failures(
 
 
 def check_previous_scores(run: Run) -> Iterator[Failure]:
-    """``previous_score``: last month's published score, or ``score`` in the bootstrap."""
+    """``previous_score``: last month's published score, or ``score`` in the bootstrap and
+    in a rank whose method changed since (``methods.changed_since_last_run``)."""
     published = run.ctx.state.published_scores
-    if not published:
-        return _previous_score_failures(run, lambda key, fid, entry: entry["score"])
-    return _previous_score_failures(run, lambda key, fid, entry: published.get(key, {}).get(fid))
+    changed = methods.changed_since_last_run(run.ctx.state.run_history, run.ctx.run_date)
+
+    def expected(key: str, fid: str, entry: Mapping[str, Any]) -> float | None:
+        if not published or key in changed:
+            return entry["score"]
+        return published.get(key, {}).get(fid)
+
+    return _previous_score_failures(run, expected)
 
 
 def check_committed_previous_scores(run: Run) -> Iterator[Failure]:
     """The bootstrap on a clone: with at most one run in ``state/run_history.json``, every
-    ``previous_score`` equals its ``score``."""
-    if len(run.ctx.state.run_history) > 1:
+    ``previous_score`` equals its ``score``; later, every one in a rank whose method the
+    newest run changed (``methods.changed_by_last_run``). Other ranks can't be checked."""
+    changed = methods.changed_by_last_run(run.ctx.state.run_history)
+    if changed is not None and not changed:
         return iter(())
-    return _previous_score_failures(run, lambda key, fid, entry: entry["score"])
+
+    def expected(key: str, fid: str, entry: Mapping[str, Any]) -> float | None:
+        if changed is None or key in changed:
+            return entry["score"]
+        return entry["previous_score"]  # not checkable: passes
+
+    return _previous_score_failures(run, expected)
 
 
 CHECKS: tuple[tuple[str, Check], ...] = (

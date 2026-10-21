@@ -37,6 +37,7 @@ from typing import Any
 import pytest
 from tests.helpers import ROOT
 
+import tff_catalog
 from tff_catalog import export, jsonio, stageio
 from tff_catalog.confidence import Confidence
 from tff_catalog.config import load_config
@@ -1159,6 +1160,26 @@ def test_previous_score_is_last_months_published_score(tmp_path: Path) -> None:
         assert doc["gamma-serif"]["ranks"]["overall"]["previous_score"] is None, name
         assert doc["alpha-sans"]["ranks"]["desktop_chosen"]["previous_score"] is None, name
         assert doc["alpha-sans"]["ranks"]["overall"]["score"] != 1.25, name
+
+
+def test_previous_score_bootstraps_in_a_rank_whose_method_changed(tmp_path: Path) -> None:
+    """q20_previous_score_at_switch: a rank scored under other rules than the last merged run
+    recorded starts afresh, so a change of method never shows as movement; the others keep
+    last month's scores."""
+    last_month = {"overall": {"alpha-sans": 1.25}, "desktop_chosen": {"alpha-sans": 0.5}}
+    before = {**tff_catalog.METHOD_VERSIONS, "desktop_chosen": "2026-01-01"}
+    history = ({"run_date": "2026-08-26", "method_versions": before},)
+    state = State(published_scores=last_month, run_history=history)
+    ctx = make_build(tmp_path, state=state, previews=PREVIEWS)
+    docs = run_all(ctx)
+    for name in (export.CATALOG_FILE, export.SITE_FILE):
+        alpha = fonts(docs[name])["alpha-sans"]["ranks"]
+        assert alpha["overall"]["previous_score"] == 1.25, name
+        chosen = alpha["desktop_chosen"]
+        assert chosen["previous_score"] == chosen["score"] != 0.5, name
+    run = docs[export.CATALOG_FILE]["run"]
+    assert run["method_versions"] == dict(tff_catalog.METHOD_VERSIONS)
+    assert run["method_version"] == max(run["method_versions"].values())
 
 
 def test_missing_stage_file_names_its_stage(tmp_path: Path) -> None:
