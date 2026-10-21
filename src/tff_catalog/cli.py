@@ -16,9 +16,11 @@ Modules are imported only when their command runs, so ``--help`` and
 
 Expected failures end in one line, ``tff-catalog <command>: <message>``, and
 exit code 1, never a traceback: a fetch, host scope, budget, frozen snapshot or
-git error, a missing or malformed input or stage file, and each of validate's
-hard failures (already redacted, since Actions logs of the public repo are
-public). Any other exception is a bug and keeps its traceback.
+git error, a missing or malformed input or stage file, a model fit that is
+missing, unusable or not this model's (``fitstore.FitError``, which names views,
+dates and files, never values), and each of validate's hard failures (already
+redacted, since Actions logs of the public repo are public). Any other
+exception is a bug and keeps its traceback.
 """
 
 import argparse
@@ -33,6 +35,7 @@ from pathlib import Path
 from tff_catalog import __version__, clock, stages
 from tff_catalog.config_model import ConfigError
 from tff_catalog.fetch import BudgetExceeded, FetchError, HostNotAllowed
+from tff_catalog.fitstore import FitError
 from tff_catalog.gitsrc import GitError
 from tff_catalog.paths import Paths, StoreNotConfigured
 from tff_catalog.reviews import GATES
@@ -125,7 +128,7 @@ def _common_flags() -> argparse.ArgumentParser:
         const="write",
         default="read",
         help="with no stored model fit for the date, fit it and keep it in the store, once "
-        "(the GitHub run)",
+        "(the switch, or a refit by owner ruling, on GitHub)",
     )
     fits.add_argument(
         "--fit-in-memory",
@@ -333,8 +336,8 @@ def _cmd_rulings_apply(args: argparse.Namespace) -> int:
 # --- main ---------------------------------------------------------------------------------
 
 # Expected failures (module docstring): a message and exit code 1. StageFileError
-# is a ValueError and FileNotFoundError an OSError; neither base is caught, so
-# other errors of those kinds keep their tracebacks.
+# is a ValueError, FileNotFoundError an OSError and FitError a RuntimeError; no
+# base is caught, so other errors of those kinds keep their tracebacks.
 _FAILURES: tuple[type[Exception], ...] = (
     FetchError,
     HostNotAllowed,
@@ -343,6 +346,7 @@ _FAILURES: tuple[type[Exception], ...] = (
     GitError,
     StageFileError,
     FileNotFoundError,
+    FitError,
 )
 
 

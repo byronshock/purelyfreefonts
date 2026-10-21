@@ -13,6 +13,7 @@ from tests.helpers import ROOT
 from tff_catalog import __version__, cli, stages
 from tff_catalog.config import config_hash, load_config
 from tff_catalog.fetch import BudgetExceeded, FetchError, HostNotAllowed
+from tff_catalog.fitstore import FitError
 from tff_catalog.gitsrc import GitError
 from tff_catalog.paths import Paths
 from tff_catalog.stageio import StageFileError
@@ -226,6 +227,7 @@ EXPECTED_FAILURES = [
     GitError("git clone failed: repository not found"),
     StageFileError("$.inter: Facts unknown ['x'], missing []"),
     FileNotFoundError("build/stage/universe.json: missing; run stage 'universe' first"),
+    FitError("project: no stored fit on or before 2026-11-03; only the switch makes one"),
 ]
 
 
