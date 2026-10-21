@@ -73,8 +73,10 @@ How the per-font fields are made (``docs/catalog-schema.md`` says it for readers
   that gives the font a model term is ``observed``, with no reason, its interval terms
   included (owner ruling of 2026-10-01, q18a_state_observed); its ``z`` is the posterior
   mean from that source's terms alone, but Fonts Over Time keeps its rank-based z (q18b);
-  and its ``weight_used`` is its share of the font's posterior expected information, null
-  for Google and Fonts Over Time, whose parameters are private (q16_weight_used). A font
+  and its ``weight_used`` is its share of the information from the font's open sources,
+  every source but Google and Fonts Over Time, so a font's open shares add up to 1 and
+  leave no remainder that gives back a private one; Google's and Fonts Over Time's stay
+  null (owner ruling of 2026-10-20, q16_open_source_shares, amending q16_weight_used). A font
   whose only model terms are Fonts Over Time's is unranked there, with no score, and
   its reason is ``no_evidence`` (owner ruling of 2026-10-20,
   fot_only_needs_another_source; ``CatalogBuilder.reasons``).
@@ -769,6 +771,19 @@ def source_view(
     return SourceView(terms, ranks, equate_source(xs, ruler))
 
 
+def open_share(entry: ModelEntry, source: str) -> float | None:
+    """``source``'s published ``weight_used`` in a model view: its share of the information
+    from the font's open sources, every source but Google and Fonts Over Time, so the
+    published shares add up to 1 and 1 minus their sum gives back no private share (owner
+    ruling of 2026-10-20, q16_open_source_shares). None for Google and Fonts Over Time, for
+    a source with no term, and for every source of a font with only private terms."""
+    share = entry.info.get(source)
+    if source in PRIVATE_SHARES or share is None:
+        return None
+    total = math.fsum(v for s, v in entry.info.items() if s not in PRIVATE_SHARES)
+    return num(share / total) if total > 0 else None
+
+
 def smoothed_values(smoothing: Mapping[str, Any], run_date: date) -> dict[str, float]:
     """Fonts Over Time's EWMA z by family (``smoothing.json`` ``fot_ewma``), which stage
     "rank" ranks on in place of its observed values; {} unless the part is this run
@@ -1069,8 +1084,7 @@ class CatalogBuilder:
         if modelled is not None and s in modelled.z:
             state, reason = "observed", None  # q18a: every model term, intervals included
             z = view.z.get(fid) if s == FOT_SOURCE else modelled.z[s]  # q18b; T4 for FoT
-            share = modelled.info.get(s)
-            weight = None if s in PRIVATE_SHARES or share is None else num(share)  # q16
+            weight = open_share(modelled, s)  # q16_open_source_shares
         entry: dict[str, Any] = {
             "state": state,
             "reason": reason,

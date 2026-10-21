@@ -704,8 +704,8 @@ def test_a_model_view_s_sources_are_observed_with_their_own_z_and_shares(tmp_pat
                 assert entry["z"] == export.num(row.z[s]), (fid, s)
             if s in ("google", "fot"):
                 assert entry["weight_used"] is None, (fid, s)
-            else:
-                assert entry["weight_used"] == 0.125, (fid, s)
+            else:  # npm is each font's only open source here (q16_open_source_shares)
+                assert entry["weight_used"] == 1.0, (fid, s)
     assert checked
     run = docs[export.CATALOG_FILE]["run"]
     assert run["model_fits"] == {
@@ -781,6 +781,40 @@ def model_build(
 
 def npm_registry(value: float | None, state: str = "observed", reason: str | None = None) -> Term:
     return Term(value, state, "npm_registry", reason)  # type: ignore[arg-type]
+
+
+@pytest.mark.model_config
+def test_a_model_view_publishes_shares_of_the_open_sources_only(tmp_path: Path) -> None:
+    """q16_open_source_shares (2026-10-20): a font's open shares add up to 1, so 1 minus
+    their sum gives back no Google or Fonts Over Time share; a font with only their terms
+    publishes no share at all."""
+    extra = {
+        "ecosystems": {"alpha-sans": npm_registry(500), "gamma-serif": npm_registry(50)},
+        "jsdelivr": {"alpha-sans": Term(1e6, "observed", "jsdelivr")},
+    }
+    ctx, rows = model_build(tmp_path, extra)
+    doc = run_all(ctx)[export.CATALOG_FILE]
+    catalog = fonts(doc)
+    # alpha-sans: ecosystems, fot, google, jsdelivr and npm at 1, 2, 3, 4 and 5 fifteenths.
+    alpha = catalog["alpha-sans"]["sources"]
+    assert {"google", "fot"} <= set(rows["alpha-sans"].info)
+    assert [alpha[s]["weight_used"] for s in ("ecosystems", "jsdelivr", "npm_fontsource")] == [
+        0.1,
+        0.4,
+        0.5,
+    ]
+    assert alpha["google"]["weight_used"] is None
+    assert alpha["fot"]["weight_used"] is None
+    assert catalog["gamma-serif"]["sources"]["ecosystems"]["weight_used"] == 1.0
+    kappa = catalog["kappa-sans"]["sources"]  # Google and Fonts Over Time only
+    assert set(rows["kappa-sans"].info) == {"fot", "google"}
+    assert all(kappa[s]["weight_used"] is None for s in kappa)
+    project = {s["id"] for s in doc["sources"] if s["survey"] == "project"}
+    for font in doc["fonts"]:
+        shares = [e["weight_used"] for s, e in font["sources"].items() if s in project]
+        got = [w for w in shares if w is not None]
+        assert not got or sum(got) == pytest.approx(1.0, abs=1e-6), font["id"]
+    assert export.open_share(rows["alpha-sans"], "google") is None
 
 
 @pytest.mark.model_config

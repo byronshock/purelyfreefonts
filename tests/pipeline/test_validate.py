@@ -682,10 +682,43 @@ def model_ctx(tmp_path: Path) -> StageContext:
     return context
 
 
+def edit_catalog_source(ctx: StageContext, fid: str, source: str, **fields: Any) -> None:
+    path = ctx.paths.build / export.CATALOG_FILE
+    doc = jsonio.load(path)
+    next(f for f in doc["fonts"] if f["id"] == fid)["sources"][source].update(fields)
+    jsonio.dump(doc, path)
+
+
 @pytest.mark.model_config
 def test_a_clean_model_build_passes_every_check(model_ctx: StageContext) -> None:
     assert [str(f) for f in validate.hard_checks(model_ctx)] == []
     assert [str(f) for f in validate.hard_checks(model_ctx, validate.COMMITTED_CHECKS)] == []
+
+
+@pytest.mark.model_config
+def test_open_shares_that_leave_a_remainder_fail(model_ctx: StageContext) -> None:
+    """q16_open_source_shares: 1 minus a font's open shares would give back the private
+    sources' share, so they must add up to 1; a clone can check it (validate --committed)."""
+    edit_catalog_source(model_ctx, "alpha-sans", "ecosystems", weight_used=0.05)
+    found = checks(model_ctx)["private_share"]
+    assert ids(found) == {"alpha-sans"}
+    assert "do not add up to 1" in found[0].message
+    assert ids(committed_failures(model_ctx, "private_share")) == {"alpha-sans"}
+
+
+@pytest.mark.model_config
+def test_a_private_share_in_a_model_view_fails(model_ctx: StageContext) -> None:
+    edit_catalog_source(model_ctx, "kappa-sans", "fot", weight_used=0.25)
+    found = checks(model_ctx)["private_share"]
+    assert [(f.family_id, f.message) for f in found] == [
+        ("kappa-sans", "fot carries a weight_used")
+    ]
+
+
+def test_engine_shares_need_not_add_up_to_1(ctx: StageContext) -> None:
+    # On the engine weight_used is v_s in overall, from hand weights: nothing to rebuild.
+    assert "model_fits" not in jsonio.load(ctx.paths.build / export.CATALOG_FILE)["run"]
+    assert "private_share" not in checks(ctx)
 
 
 @pytest.mark.model_config

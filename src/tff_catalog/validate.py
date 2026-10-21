@@ -81,6 +81,11 @@ How each check reads the run (``CHECKS``, in order; ``docs/catalog-schema.md``):
   holds, under the id of a source whose ``publish_raw`` is false, anything but
   the fields a ranks-only source may publish (``PRIVATE_SOURCE_FIELDS``); so no
   Google or Fonts Over Time value, share or history is published by any file.
+- ``private_share``: nor can one be rebuilt from the others. Where Projects is a model view
+  (``catalog.json`` ``run.model_fits``), every font's Google and Fonts Over Time
+  ``weight_used`` is null and its other project sources' add up to 1, within rounding, or
+  are all null, so 1 minus their sum gives back no private share (owner ruling of
+  2026-10-20, q16_open_source_shares).
 
 Gaps in the exact ranks are no failure (owner ruling of 2026-09-28, rank_holes): stage
 "export" closes the ranks up over a member it holds back for want of a download link,
@@ -89,7 +94,7 @@ still fails ``schema``, through the site's cross-references (one font per order)
 
 **Committed outputs only** (``validate --committed``, CI's ``site-real`` job):
 ``COMMITTED_CHECKS`` run on what a clone holds, without ``build/stage/``:
-``schema``, ``private_fields``, the ``catalog.json`` half of
+``schema``, ``private_fields``, ``private_share``, the ``catalog.json`` half of
 ``raw_value_published``, the known answers ``names.json`` can answer
 (``committed_known_answers``), and ``previous_score`` for the bootstrap
 (``committed_previous_scores``): while ``state/run_history.json`` holds at most one run,
@@ -655,6 +660,36 @@ def check_model_fit(run: Run) -> Iterator[Failure]:
             yield Failure("model_fit", f"{key}: {problem}")
 
 
+def check_private_shares(run: Run) -> Iterator[Failure]:
+    """No published share lets a private one be rebuilt (owner ruling of 2026-10-20,
+    q16_open_source_shares). In a catalog whose Projects is a model view (``run.model_fits``
+    names it), every font's Google and Fonts Over Time ``weight_used`` is null, and its
+    other project sources' values add up to 1, within their rounding, or are all null: a
+    remainder would be the private sources' share. Reads ``catalog.json`` only."""
+    from tff_catalog.modelviews import PRIVATE_SHARES
+
+    catalog = run.doc(export.CATALOG_FILE)
+    if export.PROJECT_VIEW not in (catalog["run"].get("model_fits") or {}):
+        return
+    project = {s["id"] for s in catalog["sources"] if s["survey"] == "project"}
+    for font in catalog["fonts"]:
+        shares = []
+        for s, entry in sorted(font["sources"].items()):
+            if s not in project or entry["weight_used"] is None:
+                continue
+            if s in PRIVATE_SHARES:
+                yield Failure("private_share", f"{s} carries a weight_used", font["id"])
+            else:
+                shares.append(entry["weight_used"])
+        if shares and abs(math.fsum(shares) - 1.0) > len(shares) * 10.0**-export.DIGITS:
+            yield Failure(
+                "private_share",
+                "the open sources' weight_used do not add up to 1: the remainder gives back "
+                "a private share",
+                font["id"],
+            )
+
+
 def check_fot_only(run: Run) -> Iterator[Failure]:
     """No model view ranks or scores a font on Fonts Over Time's terms alone (owner ruling
     of 2026-10-20, fot_only_needs_another_source; ``modelviews.rankable``): neither stage
@@ -712,6 +747,7 @@ CHECKS: tuple[tuple[str, Check], ...] = (
     ("raw_value_published", check_raw_values),
     ("previous_score", check_previous_scores),
     ("private_fields", check_private_fields),
+    ("private_share", check_private_shares),
 )
 # What ``validate --committed`` runs: the checks a clone's committed files can answer.
 COMMITTED_CHECKS: tuple[tuple[str, Check], ...] = (
@@ -720,6 +756,7 @@ COMMITTED_CHECKS: tuple[tuple[str, Check], ...] = (
     ("raw_value_published", check_catalog_raw_values),
     ("previous_score", check_committed_previous_scores),
     ("private_fields", check_private_fields),
+    ("private_share", check_private_shares),
 )
 
 
