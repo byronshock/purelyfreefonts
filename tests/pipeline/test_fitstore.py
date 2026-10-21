@@ -40,8 +40,8 @@ class Fitter:
 
 
 def obtain(store: Path | None, mode: str, run_date: date, merged=(), model=MODEL, fit=None):
-    """``fitstore.obtain``; a pending fit (--write-fit) is staged and kept at once, as a
-    passing run's refresh keeps it (``store_pending``)."""
+    """``fitstore.obtain``; the record is staged, as stage "rank" stages it, and with
+    --write-fit kept at once, as a passing run's refresh keeps it (``store_pending``)."""
     got = fitstore.obtain(
         mode=mode,
         store_root=store,
@@ -52,10 +52,11 @@ def obtain(store: Path | None, mode: str, run_date: date, merged=(), model=MODEL
         method_version=VERSION,
         fit=fit or Fitter(),
     )
-    if got.source == "pending" and store is not None:
+    if store is not None:
         stage = store / "stage"
-        fitstore.stage_pending(stage, "project", got.data)
-        fitstore.store_pending(stage, store, run_date)
+        fitstore.stage_record(stage, "project", got.data)
+        if mode == "write":
+            fitstore.store_pending(stage, store, run_date, ["project"], merged)
     return got
 
 
@@ -113,8 +114,7 @@ def test_a_dry_run_and_a_merged_date_fit_in_memory_and_keep_nothing(tmp_path: Pa
     merged = obtain(tmp_path, "write", SEP, merged=[SEP])  # 2026-09-26 has no fit, ever
     plain = obtain(None, "read", SEP, merged=[SEP])
     assert (dry.source, merged.source, plain.source) == ("memory", "memory", "memory")
-    assert (dry.data, merged.data, plain.data) == (None, None, None)
-    assert not (tmp_path / "_state").exists()
+    assert not (tmp_path / "_state").exists()  # staged for the run, never stored
     # In memory too, the fit is used as read back, so the dry run scores as the stored would.
     kept = obtain(tmp_path, "write", OCT)
     assert kept.sha256 == dry.sha256
@@ -212,13 +212,84 @@ def test_a_pending_fit_is_kept_only_when_the_run_stores_it(tmp_path: Path) -> No
     )
     assert first.source == "pending"
     assert not (store / "_state").exists()  # nothing kept by the stage itself
-    fitstore.stage_pending(stage, "project", b"first pass")
-    fitstore.stage_pending(stage, "project", first.data)  # the rerun's replaces it
-    assert fitstore.store_pending(stage, store, OCT) == [fitstore.fit_path(store, "project", OCT)]
+    path = fitstore.stage_record(stage, "project", b"first pass")
+    assert path == stage / "fit-records" / "project.json"
+    fitstore.stage_record(stage, "project", first.data)  # the rerun's replaces it
+    kept = fitstore.store_pending(stage, store, OCT, ["project", "dev_apps"])
+    assert kept == [fitstore.fit_path(store, "project", OCT)]
     assert fitstore.fit_path(store, "project", OCT).read_bytes() == first.data
-    with pytest.raises(fitstore.FitError, match="not this run's fit"):
-        fitstore.store_pending(stage, store, NOV)
-    assert fitstore.store_pending(tmp_path / "no-stage", store, OCT) == []
+    # Kept once: storing again writes nothing new, and a record of another date is not kept.
+    assert fitstore.store_pending(stage, store, OCT, ["project"]) == []
+    assert fitstore.store_pending(stage, store, NOV, ["project"]) == []
+    assert fitstore.store_pending(tmp_path / "no-stage", store, OCT, ["project"]) == []
+    # Only the views asked for, and never a merged date's fit in memory.
+    other = tmp_path / "other-store"
+    assert fitstore.store_pending(stage, other, OCT, ["dev_apps"]) == []
+    assert fitstore.store_pending(stage, other, OCT, ["project"], [OCT]) == []
+    assert not (other / "_state").exists()
+    fitstore.stage_record(stage, "dev_apps", first.data)  # a record of another view
+    with pytest.raises(fitstore.FitError, match="not a staged fit of dev_apps"):
+        fitstore.store_pending(stage, other, OCT, ["dev_apps"])
+
+
+def test_a_run_scores_and_its_replay_reads_back_the_same_record(tmp_path: Path) -> None:
+    """The staged record is the same bytes whether the run made the fit or read it back, and
+    mode "staged" (nolicense's what-if) reads it with no store and no fit."""
+    store = tmp_path / "store"
+    fitter = Fitter()
+    made = obtain(store, "write", OCT, fit=fitter)
+    staged_by_write = fitstore.record_path(store / "stage", "project").read_bytes()
+    read = obtain(store, "read", OCT, fit=fitter)
+    assert (made.source, read.source) == ("pending", "store")
+    assert fitstore.record_path(store / "stage", "project").read_bytes() == staged_by_write
+    assert made.data == read.data == staged_by_write
+    again = fitstore.obtain(
+        mode="staged",
+        store_root=None,
+        view="project",
+        run_date=NOV,
+        merged_dates=(),
+        model=MODEL,
+        method_version=VERSION,
+        fit=fitter,
+        stage_dir=store / "stage",
+    )
+    assert (again.source, again.fitted_on, again.sha256) == ("staged", OCT, made.sha256)
+    assert again.fit.theta.tobytes() == made.fit.theta.tobytes()
+    assert fitter.calls == 1
+    with pytest.raises(fitstore.FitError, match="another model of project"):
+        fitstore.staged(store / "stage", "project", make_model("lognormal"), VERSION)
+    with pytest.raises(fitstore.FitError, match="no staged fit of dev_apps"):
+        fitstore.staged(store / "stage", "dev_apps", MODEL, VERSION)
+
+
+def test_a_run_without_its_fit_stops_before_it_starts(tmp_path: Path) -> None:
+    """refresh's check before it fetches: read mode needs a stored fit on or before the
+    date, unless a merged run used the date; --write-fit makes a new one only in a full run."""
+    views = ("project",)
+
+    def check(mode: str, day: date, *, merged=(), full: bool = True) -> None:
+        fitstore.check_ready(
+            mode=mode,  # type: ignore[arg-type]
+            store_root=tmp_path,
+            views=views,
+            run_date=day,
+            merged_dates=merged,
+            full_run=full,
+        )
+
+    with pytest.raises(fitstore.FitError, match="no stored fit on or before 2026-10-17"):
+        check("read", OCT)
+    with pytest.raises(fitstore.FitError, match="only in a full run"):
+        check("write", OCT, full=False)
+    check("write", OCT)
+    check("memory", OCT, full=False)
+    check("read", SEP, merged=[SEP])
+    obtain(tmp_path, "write", OCT)
+    for mode in ("read", "write"):
+        check(mode, NOV, full=False)
+    with pytest.raises(fitstore.FitError, match="no stored fit on or before 2026-09-26"):
+        check("read", SEP)
 
 
 def test_obtain_refuses_an_unknown_mode(tmp_path: Path) -> None:

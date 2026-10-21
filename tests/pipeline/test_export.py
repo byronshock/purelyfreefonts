@@ -681,7 +681,7 @@ def test_a_model_view_s_sources_are_observed_with_their_own_z_and_shares(tmp_pat
         )
         for i, fid in enumerate(ids)
     }
-    fit = FitInfo(date(2026, 10, 17), "a" * 64, "pending", len(ids), (), ())
+    fit = FitInfo(date(2026, 10, 17), "a" * 64, len(ids), (), (), ())
     stageio.dump_stage(ctx.paths, "model", {"project": rows, "dev_apps": {}})
     stageio.dump_stage(ctx.paths, "fits", {"project": fit, "dev_apps": fit})
     docs = run_all(ctx)

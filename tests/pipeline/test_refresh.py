@@ -27,6 +27,7 @@ When the real stages can run on a synthetic store, ``test_state_two_runs.py``'s
 """
 
 import ast
+import hashlib
 import importlib.machinery
 import importlib.util
 import os
@@ -114,13 +115,18 @@ class SynthStages:
 
     ``fail_l3``: "verify" fails the first catalog member. ``hard_failures``:
     "validate" raises them. ``crash_in``: that stage raises ``RuntimeError``.
+    ``model``: "rank" also runs the real model views (``modelviews.run``, on the
+    synthetic model of ``tests.helpers.models``), and "verify" records the fits the
+    rank before it scored with, as the real one's scope follows that rank's order.
     """
 
     fail_l3: bool = False
     hard_failures: tuple[Failure, ...] = ()
     crash_in: str | None = None
+    model: bool = False
     calls: list[Call] = field(default_factory=list)
     rank_saw: list[frozenset[str]] = field(default_factory=list)
+    rank_fits: list[dict[str, str]] = field(default_factory=list)  # each pass: {view: sha256}
 
     def load(self, stage: stages.Stage) -> Callable[[stages.StageContext], None]:
         def run(ctx: stages.StageContext) -> None:
@@ -166,7 +172,22 @@ class SynthStages:
             synth.write_snapshot(ctx.require_store().root, "font_facts", ctx.run_date, [])
         return files
 
+    def _rank(self, ctx: stages.StageContext) -> None:
+        self._generic("rank", ctx)
+        if not self.model:
+            return
+        from tff_catalog import modelviews
+
+        models, fits = modelviews.run(ctx)
+        stageio.dump_stage(ctx.paths, "model", models)
+        stageio.dump_stage(ctx.paths, "fits", fits)
+        self.rank_fits.append({view: f.sha256 for view, f in fits.items()})
+
     def _verify(self, ctx: stages.StageContext) -> None:
+        if self.model:
+            fits = stageio.load_stage(ctx.paths, "fits")
+            saw = {view: f.sha256 for view, f in sorted(fits.items())}
+            jsonio.dump(saw, ctx.paths.stage / "synth" / "verify-saw.json")
         files = self._generic("verify", ctx)
         members = sorted(f for f, m in files["membership"]["catalog"].items() if m["member"])
         failed = set(members[:1]) if self.fail_l3 else set()
@@ -253,10 +274,11 @@ class Runner:
         ).with_(config=self.config)
 
     def run(
-        self, name: str, state_dir: Path, day: date, *, replay: bool = True
+        self, name: str, state_dir: Path, day: date, *, replay: bool = True, fit: str = "read"
     ) -> refresh.RunResult:
         paths = self.paths(name, state_dir)
-        return refresh.refresh(paths, day, from_snapshots=day if replay else None)
+        options = stages.RunOptions(fit=fit)
+        return refresh.refresh(paths, day, from_snapshots=day if replay else None, options=options)
 
 
 @pytest.fixture
@@ -326,6 +348,87 @@ def test_replay_of_a_live_run_gives_its_build(
     assert_same_tree(live.build, replayed.build)
     assert live.stages == tuple(expected_stages(replay=False))
     assert replayed.stages == tuple(expected_stages(replay=True))
+
+
+@pytest.mark.model_config
+@pytest.mark.parametrize("live", [False, True], ids=["from-snapshots", "live"])
+def test_a_run_that_writes_its_fit_gives_the_build_of_its_replay(
+    runner: Runner,
+    synth_stages: SynthStages,
+    synth_state: Path,
+    synth_store: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    live: bool,
+) -> None:
+    """q9_theta_cadence, october_replay_is_the_switch: a --write-fit run keeps its fits once
+    and ends with the build/ that its offline replay, reading them back, gives. Its first
+    rank fits a model that "verify" then shrinks, so "rank" fits again and only that fit is
+    kept; refresh replays the run with the kept fits, so no pass scores with the other."""
+    from tests.helpers import models
+
+    from tff_catalog import fitstore
+
+    fitted = models.stub_model_inputs(
+        monkeypatch, drop=lambda paths: len(refresh.l3_excluded(paths))
+    )
+    synth_stages.fail_l3 = True  # "verify" fails a family: "rank" reruns on a smaller model
+    synth_stages.model = True
+    day = DEC if live else OCT
+    options = stages.RunOptions(fit="write", from_snapshots=None if live else day)
+    wrote = refresh.refresh(runner.paths("write", synth_state), day, options=options)
+    assert wrote.ok, wrote.failures
+    views = ("dev_apps", "project")
+    assert {v: fitstore.stored_dates(synth_store, v) for v in views} == {v: [day] for v in views}
+    kept = {
+        v: hashlib.sha256(fitstore.fit_path(synth_store, v, day).read_bytes()).hexdigest()
+        for v in views
+    }
+    # The first pass fits twice (before and after verify's exclusions), the second never.
+    first, rerun, *again = synth_stages.rank_fits
+    assert fitted == [models.FONTS] * 2 + [models.FONTS - 1] * 2
+    assert first != rerun == kept
+    assert again == [kept, kept]
+    assert wrote.stages == tuple(
+        expected_stages(replay=not live, rerun=True) + expected_stages(replay=True, rerun=True)
+    )
+
+    synth_stages.rank_fits.clear()
+    replayed = runner.run("replay", synth_state, day)  # read mode, as the job's own replay
+    assert replayed.ok, replayed.failures
+    assert synth_stages.rank_fits == [kept, kept]
+    assert len(fitted) == 4, "the replay fitted again"
+    assert_same_tree(wrote.build, replayed.build)
+    assert jsonio.load(wrote.build / "stage" / "synth" / "verify-saw.json") == kept
+    assert not list(wrote.build.rglob("*pending*"))
+    assert all("source" not in f for f in jsonio.load(wrote.build / "stage" / "fits.json").values())
+
+
+@pytest.mark.model_config
+def test_a_run_without_its_fit_stops_before_it_fetches(
+    runner: Runner,
+    synth_stages: SynthStages,
+    synth_state: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """A read-mode run with no stored fit on or before its date stops in one line, before
+    build/ is emptied or anything fetched; so does --write-fit with --only."""
+    build = runner.run("kept", synth_state, OCT, fit="memory").build
+    before = treehash(build)
+    synth_stages.calls.clear()
+    paths = runner.paths("kept", synth_state)
+    monkeypatch.setattr(Paths, "from_env", classmethod(lambda cls, root=None, env=None: paths))
+    assert cli.main(["refresh", "--date", DEC.isoformat()]) == 1
+    err = capsys.readouterr().err
+    assert err == (
+        f"tff-catalog refresh: project: no stored fit on or before {DEC.isoformat()}; only "
+        "the switch or a refit by owner ruling makes one (--write-fit, the refresh workflow's "
+        "write_fit input), and a local dry run can pass --fit-in-memory\n"
+    )
+    assert cli.main(["refresh", "--date", DEC.isoformat(), "--write-fit", "--only", "x"]) == 1
+    assert "only in a full run" in capsys.readouterr().err
+    assert synth_stages.calls == []
+    assert treehash(build) == before
 
 
 # --- stages, fetcher and the rerun -------------------------------------------------------------
@@ -1057,19 +1160,43 @@ def test_step_place_the_npm_snapshot(tmp_path: Path) -> None:
 
 
 def test_step_refresh(tmp_path: Path) -> None:
-    step = run_step("Refresh", tmp_path / "live")
+    step = run_step("Refresh", tmp_path / "live", WRITE_FIT="false")
     assert step.code == 0, step.out
     # The npm job fetched npm, or failed to: the refresh job never asks npm (npm_own_job).
-    assert step.calls == [
-        f"uv run --locked tff-catalog -v refresh --date {OCT} --write-fit --skip-fetch npm"
-    ]
+    assert step.calls == [f"uv run --locked tff-catalog -v refresh --date {OCT} --skip-fetch npm"]
+    # The switch: a dispatch that asks for a new fit (october_replay_is_the_switch).
     step = run_step(
-        "Refresh", tmp_path / "replay", RUN_DATE=str(S0_DAY), FROM_SNAPSHOTS=str(S0_DAY)
+        "Refresh",
+        tmp_path / "switch",
+        RUN_DATE=str(OCT),
+        FROM_SNAPSHOTS=str(OCT),
+        WRITE_FIT="true",
     )
     assert step.calls == [
-        f"uv run --locked tff-catalog -v refresh --date {S0_DAY} --write-fit "
-        f"--from-snapshots {S0_DAY}"
+        f"uv run --locked tff-catalog -v refresh --date {OCT} --write-fit --from-snapshots {OCT}"
     ]
+    # The schedule has no inputs: the expression gives false, or nothing at all.
+    step = run_step("Refresh", tmp_path / "scheduled", WRITE_FIT="")
+    assert "--write-fit" not in step.calls[0]
+
+
+def test_only_a_dispatch_that_asks_writes_a_fit() -> None:
+    """q9_theta_cadence: the fit is made once and re-estimated only by owner ruling, so the
+    schedule never passes --write-fit; a dispatch does when its write_fit input says so."""
+    doc = _workflow("refresh.yml")
+    on = doc.get("on", doc.get(True))
+    write_fit = on["workflow_dispatch"]["inputs"]["write_fit"]
+    assert (write_fit["type"], write_fit["default"], write_fit["required"]) == (
+        "boolean",
+        False,
+        False,
+    )
+    (step,) = [s for s in doc["jobs"]["refresh"]["steps"] if s.get("name") == "Refresh"]
+    assert step["env"]["WRITE_FIT"] == (
+        "${{ github.event_name == 'workflow_dispatch' && inputs.write_fit }}"
+    )
+    steps = _steps(doc)
+    assert [s.get("name") for s in steps if "--write-fit" in str(s.get("run", ""))] == ["Refresh"]
 
 
 def test_step_replay(tmp_path: Path) -> None:

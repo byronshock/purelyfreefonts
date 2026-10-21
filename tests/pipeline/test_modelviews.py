@@ -173,7 +173,7 @@ def test_fit_info_round_trips_through_its_stage_file(tmp_path) -> None:
     from tff_catalog import stageio
 
     paths = Paths.for_root(tmp_path)
-    info = modelviews.FitInfo(date(2026, 10, 17), "a" * 64, "pending", 1741, (), ("Expo",))
+    info = modelviews.FitInfo(date(2026, 10, 17), "a" * 64, 1741, (), ("Expo",), ("Expo b",))
     stageio.dump_stage(paths, "fits", {"project": info})
     assert stageio.load_stage(paths, "fits") == {"project": info}
     row = modelviews.ModelEntry(1.0, 0.2, 0.7, 1.3, 3, ("g",), {"google": 0.9}, {"google": 1.0}, ())

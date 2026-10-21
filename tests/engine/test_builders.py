@@ -320,3 +320,78 @@ def test_two_families_with_different_dates_for_one_font_stop(tmp_path: Path):
         )
     with pytest.raises(ValueError, match="two families with different dates"):
         modelinputs.models(paths, RUN)
+
+
+# --- a source with no data -------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("gone", "named"),
+    [
+        ("records/npm.jsonl", "npm_expo and npm_fontsource (no build/stage/records/npm.jsonl"),
+        ("records/fot.jsonl", "fot (no build/stage/records/fot.jsonl"),
+        ("records/google_metadata.jsonl", "google (no build/stage/records/google_metadata.jsonl"),
+        ("terms:jsdelivr", "jsdelivr (no font with a count in build/stage/terms.json)"),
+        ("terms:almanac", "almanac (no font with a count in build/stage/terms.json)"),
+        ("rows:fot", "fot (no rows in build/stage/records/fot.jsonl)"),
+    ],
+)
+def test_a_source_with_no_data_stops_the_model_in_one_line(
+    tmp_path: Path, gone: str, named: str
+) -> None:
+    """q9_theta_cadence: a fit holds every Project source's terms, so a source stage "parse"
+    dropped (no records file) or stage "correct" found nothing of stops the model views with
+    one line naming the source and why, never a traceback from a missing file or frame."""
+    paths = Paths.for_root(tmp_path)
+    write_stage(paths)
+    kind, _, what = gone.partition(":")
+    if kind == "terms":
+        terms = json.loads((paths.stage / "terms.json").read_text())
+        del terms["project"][what]
+        (paths.stage / "terms.json").write_text(json.dumps(terms))
+    elif kind == "rows":
+        (paths.stage / "records" / f"{what}.jsonl").write_text("")
+    else:
+        (paths.stage / gone).unlink()
+    with pytest.raises(modelinputs.SourceMissing) as caught:
+        modelinputs.models(paths, RUN)
+    message = str(caught.value)
+    assert "\n" not in message
+    assert named in message
+    assert message.endswith("which takes an owner ruling to re-estimate (q9_theta_cadence)")
+
+
+@pytest.mark.model_config
+def test_a_source_the_engine_drops_as_stale_stops_the_model_views(tmp_path: Path) -> None:
+    """A source stale for more than [stale] max_months runs, which the engine leaves out
+    (surveys.stale_dropped), stops the model views too: leaving it out needs a refit."""
+    import logging
+
+    from tests.helpers import ROOT
+
+    from tff_catalog import jsonio, modelviews
+    from tff_catalog.config import load_config
+    from tff_catalog.stages import RunOptions, StageContext
+    from tff_catalog.state import State
+
+    paths = Paths.for_root(tmp_path)
+    write_stage(paths)
+    cfg = load_config(Paths.for_root(ROOT))
+    runs = cfg.ranking.stale.max_months + 1
+    jsonio.dump(
+        {"almanac": {"last_good": "2026-06-03", "stale_runs": runs}},
+        paths.next_state / "stale.json",
+    )
+    ctx = StageContext(
+        paths=paths,
+        config=cfg,
+        state=State(),
+        run_date=RUN,
+        store=None,
+        fetcher=None,
+        log=logging.getLogger("test.builders"),
+        options=RunOptions(fit="memory"),
+    )
+    with pytest.raises(modelinputs.SourceMissing, match=r"from almanac \(stale for more than"):
+        modelviews.run(ctx)
+    assert not (paths.stage / "fit-records").exists()

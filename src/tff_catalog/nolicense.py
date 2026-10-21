@@ -9,10 +9,13 @@ top ``RESEARCH_TOP`` (700).
 ``what_if`` finds those families. It copies this run's ``build/stage/`` and
 ``build/state/`` into a temporary build directory, marks the families' licenses
 allowed there, and reruns stages "correct" and "rank" on the copy, with no
-snapshot store (so stage "rank" keeps no private history) and a silent log.
-Nothing in the real build changes. Each family's orders in that run are what it
-would get if its license were found; the other fonts move a little too, which
-the orders here ignore. Stage "review" lists the result in the review pack
+snapshot store (so stage "rank" keeps no private history) and a silent log. The
+model views score the copy with the fits this run's stage "rank" scored with
+(fit mode "staged": the records ``fitstore.stage_record`` left in
+``build/stage/``), never a new fit and never the store, so a run that made its
+fit and its replay that read it list the same orders. Nothing in the real build
+changes. Each family's orders in that run are what it would get if its license
+were found; the other fonts move a little too, which the orders here ignore. Stage "review" lists the result in the review pack
 (``no-license.md``); a license Claude finds goes to the owner as a gate LIC
 family question (``LIC-<family id>``, with ``spdx``).
 
@@ -130,7 +133,12 @@ def what_if(ctx: StageContext, fids: Iterable[str] | None = None) -> tuple[NoLic
         if ctx.paths.next_state.is_dir():
             shutil.copytree(ctx.paths.next_state, build / "state")
         copy = dataclasses.replace(
-            ctx, paths=ctx.paths.with_(build=build), store=None, fetcher=None, log=_silent()
+            ctx,
+            paths=ctx.paths.with_(build=build),
+            store=None,
+            fetcher=None,
+            log=_silent(),
+            options=dataclasses.replace(ctx.options, fit="staged"),
         )
         _allow(copy, wanted)
         corrections.run(copy)

@@ -18,14 +18,20 @@ replay gives the same bytes (§8.4). The first fit is the GitHub replay of the h
 - **The spec:** ``spec_sha256`` hashes what the parameters mean (the terms, their families
   and baseline groups, the grid and the view's method version), so a fit is never read into
   a model it wasn't made for. A changed model needs a new method version and a new fit.
-- **When none is stored** (``obtain``): ``--write-fit`` (the GitHub run) fits it and uses it,
-  and stage "rank" stages the record in ``build/stage/fits-pending/<view>.json``; refresh
-  stores it (``store_pending``) only once the whole run has passed its checks, so a failed
-  run keeps nothing, and a rank rerun after "verify" (refresh's ``RERUN_AFTER_VERIFY``)
-  replaces the staged record, so the fit kept is the one the published scores used.
-  ``--fit-in-memory`` (a local dry run) fits and keeps nothing; and a date a merged run used
-  (2026-09-26 has none) is fitted in memory, keeping nothing, whatever the flag. Any other
-  run stops: it would otherwise publish scores from a fit nobody kept.
+- **When none is stored** (``obtain``): ``--write-fit`` (the GitHub run of the switch, or of
+  a refit the owner rules, when the workflow's ``write_fit`` input asks) fits it and uses it;
+  refresh stores it (``store_pending``) only once the whole run has passed its checks, so a
+  failed run keeps nothing, and then runs the pipeline again offline in read mode, so that
+  every rank pass, the one before "verify" included, scores with the fit kept, as the job's
+  own replay does (refresh.py). ``--fit-in-memory`` (a local dry run) fits and keeps nothing;
+  and a date a merged run used (2026-09-26 has none) is fitted in memory, keeping nothing,
+  whatever the flag. Any other run stops (refresh checks this before it fetches anything,
+  ``check_ready``): it would otherwise publish scores from a fit nobody kept.
+- **Staged:** stage "rank" stages the record of the fit each view scored with in
+  ``build/stage/fit-records/<view>.json`` (``stage_record``): the same bytes in a run that
+  made the fit and in its replay that reads it back. ``store_pending`` keeps a new one from
+  there, and the what-if rerun of ``nolicense`` scores with it (mode ``"staged"``: it never
+  fits, and never reads or writes the store).
 - **Read back:** a fit is always used as read back from its JSON, even one made in memory,
   so a run and its replay score with the same bits.
 
@@ -36,7 +42,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -49,8 +55,10 @@ if TYPE_CHECKING:
 
 FIT_DIR = ("_state", "fit")
 FIT_SCHEMA = 1
-Mode = Literal["read", "write", "memory"]  # stages.RunOptions.fit
-MODES: tuple[Mode, ...] = ("read", "write", "memory")
+# stages.RunOptions.fit: the command line sets the first three; "staged" is nolicense's.
+Mode = Literal["read", "write", "memory", "staged"]
+MODES: tuple[Mode, ...] = ("read", "write", "memory", "staged")
+RECORDS_DIR = "fit-records"  # under build/stage: the record of each view's fit in use
 
 
 class FitError(RuntimeError):
@@ -63,9 +71,14 @@ class Obtained:
 
     fit: MixedFit
     fitted_on: date
-    sha256: str  # of the file's bytes (or, in memory, of the bytes it would have)
-    source: Literal["store", "pending", "memory"]
-    data: bytes | None = None  # a pending fit's record, for ``stage_pending``
+    sha256: str  # of the record's bytes, ``data``
+    source: Literal["store", "pending", "memory", "staged"]  # logged, never in build/
+    data: bytes  # the record, as stored (or as it would be), for ``stage_record``
+
+
+def merged_dates(run_history: Iterable[Mapping[str, Any]]) -> list[date]:
+    """The dates of the merged runs in ``state/run_history.json``."""
+    return [date.fromisoformat(str(e["run_date"])) for e in run_history if e.get("run_date")]
 
 
 def fit_path(store_root: Path, view: str, day: date) -> Path:
@@ -160,6 +173,14 @@ def write_once(path: Path, data: bytes) -> None:
     tmp.replace(path)
 
 
+def _no_fit(view: str, run_date: date) -> str:
+    return (
+        f"{view}: no stored fit on or before {run_date.isoformat()}; only the switch or a "
+        "refit by owner ruling makes one (--write-fit, the refresh workflow's write_fit "
+        "input), and a local dry run can pass --fit-in-memory"
+    )
+
+
 def obtain(
     *,
     mode: Mode,
@@ -170,23 +191,26 @@ def obtain(
     model: Mixed,
     method_version: str,
     fit: Callable[[Mixed], MixedFit],
+    stage_dir: Path | None = None,
 ) -> Obtained:
-    """The fit a run on ``run_date`` scores ``view`` with (module docstring)."""
+    """The fit a run on ``run_date`` scores ``view`` with (module docstring). ``stage_dir``
+    is where mode ``"staged"`` reads the record back (``staged``)."""
     if mode not in MODES:
         raise ValueError(f"fit mode {mode!r}: one of {MODES}")
+    if mode == "staged":
+        if stage_dir is None:
+            raise ValueError("fit mode 'staged' needs the stage directory")
+        return staged(stage_dir, view, model, method_version)
     if store_root is not None:
         day = in_use(store_root, view, run_date)
         if day is not None:
             path = fit_path(store_root, view, day)
             data = path.read_bytes()
             fitted = from_bytes(data, str(path), view, model, method_version, day)
-            return Obtained(fitted, day, hashlib.sha256(data).hexdigest(), "store")
+            return Obtained(fitted, day, hashlib.sha256(data).hexdigest(), "store", data)
     merged = run_date in set(merged_dates)
     if mode == "read" and not merged:
-        raise FitError(
-            f"{view}: no stored fit on or before {run_date.isoformat()}; the GitHub run fits "
-            "it with --write-fit, and a local dry run can pass --fit-in-memory"
-        )
+        raise FitError(_no_fit(view, run_date))
     if mode == "write" and not merged and store_root is None:
         raise FitError(f"{view}: --write-fit needs TFF_STORE, where the fit is kept")
     made = fit(model)
@@ -197,32 +221,89 @@ def obtain(
     source: Literal["pending", "memory"] = "pending" if mode == "write" and not merged else "memory"
     where = f"{view} fit of {run_date.isoformat()}"
     fitted = from_bytes(data, where, view, model, method_version, run_date)
-    pending = data if source == "pending" else None
-    return Obtained(fitted, run_date, hashlib.sha256(data).hexdigest(), source, pending)
+    return Obtained(fitted, run_date, hashlib.sha256(data).hexdigest(), source, data)
 
 
-PENDING_DIR = "fits-pending"  # under build/stage: this run's fits, until it has passed
+def check_ready(
+    *,
+    mode: Mode,
+    store_root: Path | None,
+    views: Iterable[str],
+    run_date: date,
+    merged_dates: Iterable[date],
+    full_run: bool,
+) -> None:
+    """Stop a run before it empties build/ or fetches anything when its fits would stop it:
+    in read mode, a view with no stored fit on or before ``run_date`` (``obtain``); with
+    --write-fit, a fit to make in a run that is not a full one (``--only``), since refresh
+    replays the whole run once it has kept a new fit."""
+    if run_date in set(merged_dates) or mode not in ("read", "write"):
+        return
+    for view in views:
+        if store_root is not None and in_use(store_root, view, run_date) is not None:
+            continue
+        if mode == "read":
+            raise FitError(_no_fit(view, run_date))
+        if not full_run:
+            raise FitError(f"{view}: --write-fit makes a new fit only in a full run, not --only")
 
 
-def stage_pending(stage_dir: Path, view: str, data: bytes) -> Path:
-    """Stage a pending fit's record for ``store_pending``; a later pass replaces it."""
-    path = stage_dir / PENDING_DIR / f"{view}.json"
+def record_path(stage_dir: Path, view: str) -> Path:
+    """``build/stage/fit-records/<view>.json``: the record of the fit ``view`` scored with."""
+    return stage_dir / RECORDS_DIR / f"{view}.json"
+
+
+def stage_record(stage_dir: Path, view: str, data: bytes) -> Path:
+    """Stage the record of the fit ``view`` scored with; a rank rerun replaces it."""
+    path = record_path(stage_dir, view)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(data)
     return path
 
 
-def store_pending(stage_dir: Path, store_root: Path, run_date: date) -> list[Path]:
-    """Store, once each, the fits this run staged (``stage_pending``): refresh calls it when
-    the run has passed. A stored fit is never replaced (``write_once``)."""
-    folder = stage_dir / PENDING_DIR
+def staged(stage_dir: Path, view: str, model: Mixed, method_version: str) -> Obtained:
+    """The fit this build's stage "rank" scored ``view`` with, read back from its staged
+    record and checked against the model's spec: never a new fit, never the store."""
+    path = record_path(stage_dir, view)
+    if not path.is_file():
+        raise FitError(f"{path}: no staged fit of {view}; stage 'rank' stages one")
+    data = path.read_bytes()
+    try:
+        day = date.fromisoformat(json.loads(data)["fitted_on"])
+    except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
+        raise FitError(f"{path}: not a fit of {view} (schema {FIT_SCHEMA})") from exc
+    fitted = from_bytes(data, str(path), view, model, method_version, day)
+    return Obtained(fitted, day, hashlib.sha256(data).hexdigest(), "staged", data)
+
+
+def store_pending(
+    stage_dir: Path,
+    store_root: Path,
+    run_date: date,
+    views: Iterable[str],
+    merged_dates: Iterable[date] = (),
+) -> list[Path]:
+    """Store, once each, the fits this run made to keep: the staged records of ``views``
+    (``stage_record``) fitted on ``run_date``, unless that date is a merged run's, whose fit
+    stays in memory. refresh calls it when a --write-fit run has passed. A record read from
+    the store is left as it is, and a stored fit is never replaced (``write_once``). Returns
+    the files it wrote."""
+    if run_date in set(merged_dates):
+        return []
     written = []
-    for path in sorted(folder.glob("*.json")) if folder.is_dir() else ():
+    for view in sorted(views):
+        path = record_path(stage_dir, view)
+        if not path.is_file():
+            continue
         data = path.read_bytes()
         doc = json.loads(data)
-        if doc.get("fitted_on") != run_date.isoformat() or doc.get("view") != path.stem:
-            raise FitError(f"{path}: not this run's fit of {path.stem}")
-        target = fit_path(store_root, path.stem, run_date)
+        if not isinstance(doc, dict) or doc.get("view") != view:
+            raise FitError(f"{path}: not a staged fit of {view}")
+        if doc.get("fitted_on") != run_date.isoformat():
+            continue  # an earlier fit the run read from the store
+        target = fit_path(store_root, view, run_date)
+        new = not target.is_file()
         write_once(target, data)
-        written.append(target)
+        if new:
+            written.append(target)
     return written
