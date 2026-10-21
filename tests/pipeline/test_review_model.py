@@ -245,6 +245,28 @@ def test_the_pack_shows_the_stand_in_s_lists_once(model_build: StageContext) -> 
 
 
 @pytest.mark.usefixtures("replay_collector")
+def test_a_family_to_watch_has_no_overall_row_under_the_stand_in(
+    model_build: StageContext, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """q12_overall_stand_in: checks.md gives a family to watch one row for project, not a
+    second for overall repeating it; with no stand-in, overall keeps its row."""
+    a = review.analyse(model_build)
+    fid = min(a.now["project"], key=a.now["project"].__getitem__)
+    monkeypatch.setattr(review, "GATE_R_WATCH", {fid: "a synthetic family to watch"})
+
+    def rows(cfg: RankingConfig) -> list[str]:
+        table = review._pack_checks(a, cfg).split(f"(`{fid}`)\n")[1]
+        cells = [line.split(" | ")[0].lstrip("| ") for line in table.splitlines()]
+        return [c for c in cells if c in review.RANK_KEYS]
+
+    assert "project" in rows(MODEL)
+    assert "overall" not in rows(MODEL)
+    overall = dataclasses.replace(MODEL.ranks.overall, stand_in="")
+    mixed = dataclasses.replace(MODEL, ranks=dataclasses.replace(MODEL.ranks, overall=overall))
+    assert {"overall", "project"} <= set(rows(mixed))
+
+
+@pytest.mark.usefixtures("replay_collector")
 def test_a_model_only_source_s_term_note_halves_no_weight(model_build: StageContext) -> None:
     """Methodology §8: no rank's score uses the Almanac's parent_merge_factor under the
     model, so its term flag no longer says the weight is halved; an engine source keeps its
