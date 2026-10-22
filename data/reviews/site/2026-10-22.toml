@@ -1,0 +1,16 @@
+# Owner rulings of 2026-10-22: the lead's plan for the hopper (Milestone 3, slice 1), approved by the owner in chat ("Please proceed"), adopts these defaults and one change to the milestone's step 3.
+# Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md (Inventory tools) and docs/milestone-3.md (Slice 1 and Decisions).
+
+[inventory_slice_1_defaults]
+choice = "a"
+recommended = true
+value = "d3a_d4a_d5a_d7a_d10a_d13a_show_menu"
+ruling = "The hopper takes Milestone 3's defaults: an old name counts as owned (M3-D3 a: Source Sans Pro means you have Source Sans 3); a patched build counts as owned (M3-D4 a: FiraCode Nerd Font means you have Fira Code), with the \"Count patched builds as mine\" switch left for later; derived and related families are never owned (M3-D5 a); the match data loads only when a list arrives (M3-D7 a: a drop, a chosen file or a paste); once a list loads, previews that haven't loaded stay off until a reload (M3-D10 a, with the \"Load previews\" button left for later); nothing is stored, and the operating system's tab doesn't enter the address either (M3-D13 a, amended). \"Show only mine\" (inventory_additions) is the third choice of a Show menu: fonts you don't have (the default), all fonts with yours marked, or only fonts you have."
+reason = "The lead's plan of 2026-10-21 proposed these defaults; the owner approved it."
+
+[inventory_match_data_site_build]
+choice = "a"
+recommended = true
+value = "site_build_from_names_json"
+ruling = "The hopper's match data is derived by the site build from the committed build/names.json and catalog-site.json (src/tff_catalog/owned.py), published as a hashed file beside the list, not written by the pipeline's \"match\" stage. That stage would need a new run of build/, which main can't have before the launch; it can call the same function later. This amends Milestone 3 step 3."
+reason = "The lead's plan of 2026-10-21 proposed it; the owner approved it."
