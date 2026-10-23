@@ -942,7 +942,7 @@ def test_published_z_and_weights_are_the_engines(tmp_path: Path) -> None:
     gate_only = ctx.config.ranking.sources.gate_only()
     compared = 0
     for s in (e["id"] for e in catalog["sources"]):
-        if s in gate_only:  # its state only (deferred_sources_count_for_gate)
+        if s in gate_only:  # state, reason and group only (deferred_sources_count_for_gate)
             for font in catalog["fonts"]:
                 entry = font["sources"][s]
                 assert (entry["z"], entry["weight_used"], entry["rank_in_source"]) == (

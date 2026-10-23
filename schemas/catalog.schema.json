@@ -688,7 +688,7 @@
             "additionalProperties": {
               "$ref": "#/$defs/source_entry"
             },
-            "description": "One entry per engine source id. value appears only for sources whose publish_raw is true (validate.py checks it against sources[]); Google (ruling T2) and Fonts Over Time (ruling T4) never carry one. A gate-only source's entry has its state and reason only: rank_in_source, z and weight_used null, no value.",
+            "description": "One entry per engine source id. value appears only for sources whose publish_raw is true (validate.py checks it against sources[]); Google (ruling T2) and Fonts Over Time (ruling T4) never carry one. A gate-only source's entry has its state, reason and group only: rank_in_source, z and weight_used null, no value, an empty abstains_in.",
             "properties": {
               "google": {
                 "allOf": [
