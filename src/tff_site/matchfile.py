@@ -201,9 +201,10 @@ def _entry_problem(kind: str, entry: Mapping[str, Any]) -> str | None:
         return None
     if not (isinstance(entry["family"], str) and entry["family"]):
         return "the family must be a family id"
-    if entry["relation"] not in owned.RECODE_RELATIONS:
+    relation = entry["relation"]
+    if not (isinstance(relation, str) and relation in owned.RECODE_RELATIONS):
         return (
-            f"relation {entry['relation']!r} is not one of {sorted(owned.RECODE_RELATIONS)}: "
+            f"relation {relation!r} is not one of {sorted(owned.RECODE_RELATIONS)}: "
             "a recode can only make an alias a near-match"
         )
     return None

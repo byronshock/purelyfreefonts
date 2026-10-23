@@ -467,6 +467,11 @@ def test_a_missing_reviewed_list_is_an_empty_one(tmp_path):
             id="owned-relation",
         ),
         pytest.param(
+            REVIEWED.replace('relation = "related"', "relation = []"),
+            "recode[0]: relation [] is not one of",
+            id="list-relation",
+        ),
+        pytest.param(
             REVIEWED.replace('family = "sample-mono-20"', "family = 20"),
             "recode[0]: the family must be a family id",
             id="number-family",
