@@ -515,7 +515,7 @@ document.dispatchEvent(new CustomEvent('tff:list-ready', { detail: globalThis.tf
 
 ## 11. Match JSON
 
-`/assets/match.<h>.json` is the hopper's match data (Milestone 3, slice 1). The owner's ruling of 2026-10-22, `inventory_match_data_site_build`, amends Milestone 3 step 3: the build makes the file with `tff_catalog.owned.match_document`, from `names.json` and the catalog's ids (section 1), in `tff_site.matchfile`, and no pipeline stage writes it. It is canonical compact JSON like the other payloads, so the same inputs always give the same bytes and the same name. `tff-site check` holds it to `budgets.MATCH_MAX` (50 KB gzip -9).
+`/assets/match.<h>.json` is the hopper's match data (Milestone 3, slice 1). The owner's ruling of 2026-10-22, `inventory_match_data_site_build`, amends Milestone 3 step 3: the build makes the file with `tff_catalog.owned.match_document`, from `names.json` and the catalog's ids (section 1), in `tff_site.matchfile`, and no pipeline stage writes it. It is canonical compact JSON like the other payloads, so the same inputs always give the same bytes and the same name. Its schema is `schemas/match.schema.json`, which docs/catalog-schema.md ("The hopper's match file") describes in plain words. `tff-site check` holds it to `budgets.MATCH_MAX` (50 KB gzip -9).
 
 **What the build refuses**, listing every problem:
 

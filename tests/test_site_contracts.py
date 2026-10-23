@@ -71,7 +71,8 @@ def section(text: str, heading: str) -> str:
 
 
 @pytest.mark.parametrize(
-    "name", ["catalog-site.schema.json", "name-keys.schema.json", "names.schema.json"]
+    "name",
+    ["catalog-site.schema.json", "match.schema.json", "name-keys.schema.json", "names.schema.json"],
 )
 def test_schema_is_valid_2020_12(name):
     schema = load_schema(name)

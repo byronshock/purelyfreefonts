@@ -173,6 +173,19 @@ The site build derives the hopper's match file, `/assets/match.<h>.json`, from t
 
 `build/names.reviewed.toml` sits beside it, but no stage writes it. It is the owner's review, edited by hand, each entry citing its ruling: the names the match file treats as ambiguous (`[[ambiguous]]`), and the aliases the hopper codes as near-matches only (`[[recode]]`: HackGen, a build of Hack here, is only related to Hack in the hopper, `hopper_hackgen_related`). A refresh that changes the ambiguous set, or moves a recoded alias, fails the site build until the owner has reviewed it and the list is updated on the refresh pull request; one that drops a family the hopper's known answers name fails `tests/test_owned.py` until those cases are edited there too ([ops/MONTHLY.md](../ops/MONTHLY.md) step 5).
 
+## The hopper's match file
+
+`/assets/match.<h>.json` is not a run output and is not committed: `tff-site build` makes it from `names.json`, the ids in `catalog-site.json` and `build/names.reviewed.toml`, and publishes it with the site, named by a hash of its bytes. Its schema is `schemas/match.schema.json` (`format` `tff-match`, `v` 1); [site/CONTRACT.md](../site/CONTRACT.md) section 11 lists its keys and codes and works an example. It holds:
+
+- `run_date` and `names_sha256`: the run, and the sha256 of the canonical `names.json` it came from;
+- `ids`: the catalog's font ids, sorted;
+- `k`: every known name's match key (the name in NFKC, case-folded, with no spaces, hyphens or underscores; `tff_catalog.keys.match_key`), with what it is: a catalog family itself, its PostScript name, a build of the same font, an old name or a patched build (all of which count as owned), or a sibling, related family, bundle or package of one (a near-match only, M3-D5 a); a known family outside the catalog; or an ineligible name with its reason;
+- `amb`: the ambiguous names, each with the catalog families it may be a weight of;
+- `reasons`: the ineligible reasons in use;
+- `words`: the style words, Nerd suffixes and separators the hopper strips from an installed font's name before it looks the name up.
+
+The schema gives the shape. The hopper's reader, `tff_catalog.owned.Table.from_document`, which the page's script mirrors, also refuses an index out of range and malformed words, and the build refuses any file that reader refuses. `tests/test_schemas.py` checks that the schema is valid 2020-12, like every schema in `schemas/`, and the tests validate the sample's match file and the committed run's against it.
+
 ## Validation
 
 `uv run tff-catalog validate` runs after the export stages in every refresh. Any failure blocks the refresh pull request. It checks:
