@@ -168,6 +168,10 @@ def match_cases() -> list[tuple[str, tuple[owned.Entry, ...]]]:
         ("ambiguous, trusted, camel-case styles", (_e(("Foo Sans BlackItalic",), trusted=True),)),
         ("known not listed, hyphenated styles", (_e(full="Foo Sans Hairline-Regular"),)),
         ("ambiguous, PostScript", (_e(ps="FooSansBlack-Regular"),)),
+        ("ambiguous, PostScript of a weight", (_e(ps="FooSans-Black"),)),
+        ("ambiguous, PostScript with two hyphens", (_e(ps="Foo-Sans-Black-Bold"),)),
+        ("ambiguous, PostScript without a hyphen", (_e(ps="FooSansBlack"),)),
+        ("ambiguous, PostScript form in a list", (_e(("FooSansBlack-Bold",)),)),
         ("ambiguous patched, trusted", (_e(("Foo Sans Black NF",), trusted=True),)),
         ("ambiguous patched, untrusted", (_e(full="Foo Sans Black NF"),)),
         ("known not listed, ambiguous, trusted", (_e(("Foo Sans Hairline",), trusted=True),)),
@@ -230,6 +234,7 @@ CANDIDATE_NAMES = [
     "Bungee Hairline-Regular", "Gentium BookItalic", "Syne Italic-Bold", "Foo ExtraLightItalic",
     "Foo Extra_Light-Italic", "Foo Semi-Bold", "Foo SemiLight", "Foo BoldExtra", "Foo bolditalic",
     "Foo bold-italic", "Foo BOLDItalic", "Foo Extra BoldItalic", "Foo Sans BlackItalic NF",
+    "Archivo-Black-Bold", "Archivo-Black", "ArchivoBlackNF-Regular", "Foo-Bold-NF", "A-B-C-Bold",
 ]  # fmt: skip
 
 
@@ -1033,6 +1038,29 @@ def known_answers() -> list[dict[str, Any]]:
             {"archivo-black": "family"},
             ("archivo",),
             outcome="owned",
+        ),
+        k(
+            "static Archivo's Black weight on macOS owns Archivo, not Archivo Black",
+            _e(("Archivo",), "Archivo Black", "Archivo-Black", trusted=t),
+            {"archivo": "family"},
+            ("archivo-black",),
+            outcome="owned",
+        ),
+        k(
+            "PostScript Archivo-Black, static Archivo's Black, is near both",
+            _e(ps="Archivo-Black"),
+            {},
+            ("archivo", "archivo-black"),
+            ("archivo", "archivo-black"),
+            "near",
+        ),
+        k(
+            "one-per-line Archivo-Black-Bold is near both",
+            _e(("Archivo-Black-Bold",)),
+            {},
+            ("archivo", "archivo-black"),
+            ("archivo", "archivo-black"),
+            "near",
         ),
         k(
             "one-per-line ArchivoBlack-Regular owns Archivo Black",

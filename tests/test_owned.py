@@ -226,7 +226,24 @@ def test_words_are_the_shared_constants_as_json():
                 ("maplemono", True, False),
             ],
         ),
-        ("Inter-Tight-Bold", [("intertightbold", False, False), ("intertight", False, True)]),
+        ("Inter-Tight-Bold", [("intertightbold", False, False), ("intertight", False, False)]),
+        (
+            "Archivo-Black-Bold",
+            [
+                ("archivoblackbold", False, False),
+                ("archivoblack", False, False),
+                ("archivo", False, False),
+            ],
+        ),
+        (
+            "ArchivoBlackNF-Regular",
+            [
+                ("archivoblacknfregular", False, False),
+                ("archivoblacknf", False, True),
+                ("archivoblack", True, True),
+            ],
+        ),
+        ("Archivo-Black", [("archivoblack", False, False), ("archivo", False, True)]),
         (
             "ArchivoBlack-Regular",
             [("archivoblackregular", False, False), ("archivoblack", False, True)],
@@ -894,6 +911,15 @@ def test_the_named_match_cases_say_what_their_labels_say():
     assert by_label["ambiguous, PostScript"]["owned"] == {
         "foo-sans-black": {"as": "FooSansBlack-Regular", "how": "family"}
     }
+    for label in (
+        "ambiguous, PostScript of a weight",
+        "ambiguous, PostScript with two hyphens",
+        "ambiguous, PostScript without a hyphen",
+        "ambiguous, untrusted, camel-case styles",
+        "ambiguous, untrusted, hyphenated styles",
+    ):
+        assert by_label[label]["owned"] == {}, label
+        assert set(by_label[label]["near"]) == {"foo-sans", "foo-sans-black"}, label
     assert by_label["ineligible stops the chain"]["counts"]["reasons"] == {"cjk": 1}
     assert by_label["Object.prototype keys"]["counts"]["unknown"] == 4
     assert by_label["prefixes never match"]["counts"]["unknown"] == 3

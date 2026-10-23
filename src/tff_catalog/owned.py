@@ -126,7 +126,9 @@ class Candidate:
     key: str
     text: str
     patched: bool = False  # a Nerd, CN, PL or NL suffix was stripped
-    postscript: bool = False  # a PostScript style part was stripped (ArchivoBlack-Regular)
+    # The family part before a PostScript name's one hyphen (ArchivoBlack-Regular), a
+    # trusted name; not set for a part that more hyphens leave in doubt (Archivo-Black-Bold).
+    postscript: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -347,10 +349,15 @@ def _chain(name: str, rules: _Rules) -> tuple[Candidate, ...]:
     text = _normalize(name, rules)
     out = [Candidate(key, text)]
     patched = postscript = False
+    ps_steps = 0
     while (step := _strip(text, rules)) is not None:
         text, kind = step
         patched = patched or kind == "patched"
-        postscript = postscript or kind == "postscript"
+        if kind == "postscript":
+            # Only a family part that one hyphen set apart is certain (ArchivoBlack-Regular,
+            # Milestone 3 step 5): in Archivo-Black-Bold either hyphen may end the family.
+            ps_steps += 1
+            postscript = postscript or (ps_steps == 1 and "-" not in text)
         out.append(Candidate(match_key(text), text, patched, postscript))
     return tuple(out)
 
@@ -1418,13 +1425,18 @@ class Result:
 
 
 def _tries(entry: Entry) -> Iterator[tuple[str, bool]]:
-    """(name, trusted) in matching order. A PostScript name is per font, so it is trusted."""
+    """(name, trusted) in matching order.
+
+    A PostScript name is no more trusted than any other: only its family part before its one
+    hyphen is, through the candidate (``Candidate.postscript``), so "ArchivoBlack-Regular"
+    can own Archivo Black and "Archivo-Black", static Archivo's Black weight, can't.
+    """
     for n, family in enumerate(entry.families):
         yield family, entry.trusted and n == 0
     if entry.full:
         yield entry.full, False
     if entry.postscript:
-        yield entry.postscript, True
+        yield entry.postscript, False
 
 
 def _hit(entry: Entry, table: Table) -> tuple[str, Candidate, tuple[_Code, ...], bool] | None:
@@ -1462,7 +1474,9 @@ def match(parsed: Parsed | Iterable[Entry], table: Table, *, patched: bool = Tru
       reason, also when its key is ambiguous and the entry trusted), unknown.
 
     An ambiguous key counts as owned only as a trusted name: fc-list's first
-    name, a macOS family, or a PostScript name. Owned beats near; per family the
+    name, a macOS family, or the family part before a PostScript name's one hyphen
+    ("ArchivoBlack-Regular", in any list; not "Archivo-Black" or "Archivo-Black-Bold";
+    Milestone 3 step 5). Owned beats near; per family the
     first ``HOW`` (or ``WHY``) in order wins, then the first entry.
     """
     entries = parsed.entries if isinstance(parsed, Parsed) else tuple(parsed)
