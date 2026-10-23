@@ -443,11 +443,16 @@ def _edge_parse_cases() -> list[tuple[str, bytes | str]]:
     utf16 = "Foo Sans\nBar Mono\n"  # 18 characters: 18 NUL bytes on one side
     window = ("Foo Sans\nBar Mono\n" * 114)[: owned.SNIFF_BYTES // 2]
     plain = [f"{c}{n:02d} Sans" for c in "defghijk" for n in range(63)]
-    # The same first letters, each with a mark: the search key's first character is the letter.
+    # The same first letters past ASCII, in turn: with a mark ("\u010f"), after a lone mark,
+    # and after an underscore with a mark. Each is the search key's first character, so a port
+    # that misreads any of the three sees fewer than CUT_OFF_LINES of them.
     accented = [
         f"{c}{n:02d} Sans"
         for c in "\u010f\u00e9\u1e1f\u011d\u0125\u00ed\u0135\u0137"
         for n in range(63)
+    ]
+    past_ascii = [
+        (accented[i], "\u0301" + plain[i], "_" + accented[i])[i % 3] for i in range(len(plain))
     ]
     names = ", ".join(f'"Name {i}"' for i in range(40))
     return [
@@ -479,16 +484,8 @@ def _edge_parse_cases() -> list[tuple[str, bytes | str]]:
         ("500 sorted names pasted are cut off", "\n".join(plain[: owned.CUT_OFF_LINES])),
         ("499 are not", "\n".join(plain[: owned.CUT_OFF_LINES - 1])),
         (
-            "a sorted paste's first letters with accents count as their letters",
-            "\n".join(accented[: owned.CUT_OFF_LINES]),
-        ),
-        (
-            "a first mark of no letter counts the letter after it",
-            "\n".join("\u0301" + name for name in plain[: owned.CUT_OFF_LINES]),
-        ),
-        (
-            "a first underscore is dropped before an accented letter",
-            "\n".join("_" + name for name in accented[: owned.CUT_OFF_LINES]),
+            "first letters past ASCII count as theirs in a sorted paste",
+            "\n".join(past_ascii[: owned.CUT_OFF_LINES]),
         ),
         ("names sorted nine in ten are cut off", _sorted_firsts(50)),
         ("names sorted below nine in ten are not", _sorted_firsts(51)),
