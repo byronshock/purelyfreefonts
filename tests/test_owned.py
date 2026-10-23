@@ -24,6 +24,7 @@
 after a deliberate change; review the diff.
 """
 
+import base64
 import functools
 import hashlib
 import itertools
@@ -32,6 +33,7 @@ import re
 import subprocess
 import sys
 import time
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
@@ -726,9 +728,79 @@ def test_a_fixture_parses_as_expected(name):
 
 
 # Real home folders and user names must never reach a public fixture (Milestone 3 step 2).
-_HOME = re.compile(r"/home/|/Users/|/root/|[A-Za-z]:\\{1,2}Users\\", re.IGNORECASE)
+# A Windows path may use either slash; "Documents and Settings" is the old home folder.
+_HOME = re.compile(
+    r"/home/|/Users/|/root/|[A-Za-z]:[\\/]+(?:Users|Documents and Settings)[\\/]", re.IGNORECASE
+)
 # A user@host prompt; drawn listings glue pieces, so the user may follow other letters.
-_AT_HOST = re.compile(r"([A-Za-z0-9_.-]+)@([A-Za-z0-9_.-]+)")
+# Each match starts a run (the lookbehind), so a long run without "@" costs linear time.
+_AT_HOST = re.compile(r"(?<![A-Za-z0-9_.-])([A-Za-z0-9_.-]+)@([A-Za-z0-9_.-]+)")
+# JSON's and Python's escapes of "/" and "\": "\/", "\\", "\u002f", "\u005c".
+_SLASH_ESCAPE = re.compile(r"\\(?:[/\\]|u00(?:2[fF]|5[cC]))")
+
+
+def _unescaped(text: str) -> str:
+    """``text`` with escaped slashes and backslashes spelled plainly, however deeply nested
+    (a JSON text inside a JSON string escapes them twice)."""
+    for _ in range(8):
+        plain = _SLASH_ESCAPE.sub(lambda m: "/" if m.group()[-1] in "/fF" else "\\", text)
+        if plain == text:
+            break
+        text = plain
+    return text
+
+
+def _readings(raw: bytes) -> list[str]:
+    """Every text a leak in ``raw`` could hide in: UTF-8, the parser's own decoding (a
+    byte-order mark, or UTF-16 by its NUL pattern), and UTF-16 either way at either offset.
+
+    UTF-16 gives an ASCII character only from a pair with a NUL byte, and every pattern
+    here is ASCII, so bytes without a NUL need only their UTF-8 reading.
+    """
+    texts = [raw.decode("utf-8", "replace")]
+    if 0 in raw:
+        texts.append(owned._decode(raw)[0])
+        for codec in ("utf-16-le", "utf-16-be"):
+            texts += [raw.decode(codec, "replace"), raw[1:].decode(codec, "replace")]
+    return texts
+
+
+def _json_strings(value: Any) -> Iterator[str]:
+    """Every string in a JSON value, keys included, as its escapes decode."""
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, list):
+        for item in value:
+            yield from _json_strings(item)
+    elif isinstance(value, dict):
+        for key, item in value.items():
+            yield key
+            yield from _json_strings(item)
+
+
+def _leaks(raw: bytes) -> list[str]:
+    """The home paths, and user@host pairs other than user@host, that ``raw`` holds in any
+    reading: its bytes, the strings of its JSON, and every parse input of a vector file
+    (base64, UTF-16 units and parts decoded, as the page builds them)."""
+    texts = _readings(raw)
+    try:
+        doc = json.loads(raw)
+    except ValueError:
+        doc = None
+    texts += _json_strings(doc)
+    if isinstance(doc, dict) and isinstance(doc.get("parse"), list):
+        for case in doc["parse"]:
+            data = ov.data_of(case["input"])
+            texts += _readings(data) if isinstance(data, bytes) else [data]
+    found: list[str] = []
+    for text in map(_unescaped, texts):
+        found += _HOME.findall(text)
+        found += [
+            f"{user}@{host}"
+            for user, host in _AT_HOST.findall(text)
+            if not (user.endswith("user") and host == "host")
+        ]
+    return found
 
 
 def _guarded_files() -> list[Path]:
@@ -741,27 +813,42 @@ def _guarded_files() -> list[Path]:
 
 @pytest.mark.parametrize("path", _guarded_files(), ids=lambda p: p.name)
 def test_no_fixture_or_vector_holds_a_home_path_or_a_real_host(path):
-    raw = path.read_bytes()
-    texts = [raw.decode("utf-8", "replace")]
-    if raw.startswith((b"\xff\xfe", b"\xfe\xff")):
-        texts.append(raw.decode("utf-16", "replace"))
-    for text in texts:
-        assert _HOME.findall(text) == []
-        for user, host in _AT_HOST.findall(text):
-            assert user.endswith("user"), user
-            assert host == "host", host
+    assert _leaks(path.read_bytes()) == []
 
 
-def test_the_guard_catches_home_paths_in_each_spelling():
-    for text in [
-        "/home/ann/x",
-        "/Users/Ann/Library",
-        "C:\\Users\\ann",
-        "c:\\\\users\\\\ann",
-        "/root/x",
-    ]:
-        assert _HOME.findall(text), text
-    assert _AT_HOST.findall("ann@laptop ~ $") == [("ann", "laptop")]
+def _b64(text: str) -> str:
+    return base64.b64encode(text.encode("utf-8")).decode("ascii")
+
+
+@pytest.mark.parametrize(
+    "raw",
+    [
+        b"/home/ann/x",
+        b"/Users/Ann/Library",
+        b"/root/x",
+        b"C:\\Users\\ann",
+        b"c:\\\\users\\\\ann",
+        b"C:/Users/ann",
+        b"C:\\Documents and Settings\\ann",
+        b'{"path" : "\\/Users\\/ann\\/Library\\/Fonts\\/X.ttf"}',
+        b'{"path": "\\u002fhome\\u002fann"}',
+        "C:\\Users\\ann\\AppData\\Local".encode("utf-16-le"),
+        b"\x00" + "/home/ann".encode("utf-16-be"),
+        json.dumps({"parse": [{"input": {"base64": _b64("/home/ann/x")}}]}).encode(),
+        json.dumps({"parse": [{"input": {"base64": _b64("C:\\Users\\ann")}}]}).encode(),
+        json.dumps({"parse": [{"input": {"units": [ord(c) for c in "/Users/ann"]}}]}).encode(),
+        json.dumps({"parse": [{"input": {"parts": [["/ho", 1], ["me/ann", 2]]}}]}).encode(),
+        json.dumps({"parse": [{"input": {"text": '{"path": "\\/Users\\/ann"}'}}]}).encode(),
+        b"ann@laptop ~ $",
+        b'{"x": "ann\\u0040laptop"}',
+    ],
+)
+def test_the_guard_catches_a_home_path_or_host_in_each_spelling(raw):
+    assert _leaks(raw), raw
+
+
+def test_the_guard_lets_the_synthetic_prompt_through():
+    assert _leaks(b"user@host ~ $ fc-list\n[user@host fonts]$\nmyuser@host:~$") == []
 
 
 @settings(max_examples=1500, derandomize=True, deadline=None)
