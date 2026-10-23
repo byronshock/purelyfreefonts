@@ -5,8 +5,9 @@
 - ``tests/vectors/owned-fonts.json``: the constants (``spec``); a synthetic names.json
   (``names``, ``catalog_ids``, ``run_date``) and its match document (``document``); parse
   cases (every fixture among them), candidates and match cases with the results owned.py
-  gives; and match files it must refuse (``malformed``). site/js's port must give the same
-  results (``tests/site/test_owned_js.py``).
+  gives (a match case with a ``document`` of its own runs on that one); and match files it
+  must refuse (``malformed``). site/js's port must give the same results
+  (``tests/site/test_owned_js.py``).
 - ``tests/vectors/owned-known-answers.json``: the known answers on the real
   ``build/names.json``. These are expectations written here by hand, not results.
 - ``tests/fixtures/owned/expected.json``: each fixture's parse, as a dropped file.
@@ -208,6 +209,34 @@ def match_cases() -> list[tuple[str, tuple[owned.Entry, ...]]]:
             (_e(("Foo",), trusted=True), _e(("Foo Sans Ti",), trusted=True), _e(full="Foo Sansa")),
         ),
         ("no entries", ()),
+    ]
+
+
+# A hand-made match file the build never writes (its ids are no slugs), whose ids and reasons
+# are named after Object.prototype's keys: a reader that keeps them as plain object keys loses
+# "__proto__", which sets an object's prototype instead of adding a key.
+PROTO_DOCUMENT = {
+    "format": owned.FORMAT,
+    "v": owned.VERSION,
+    "run_date": RUN_DATE,
+    "ids": ["__proto__", "constructor", "plain"],
+    "k": {"foo": "0", "bar": "!0", "baz": "0x", "qux": "1,2u", "amb": "2", "ts": "!1"},
+    "amb": {"amb": [0, 1]},
+    "reasons": ["__proto__", "toString"],
+    "words": owned.WORDS,
+}
+
+
+def own_document_cases() -> list[tuple[str, dict[str, Any], tuple[owned.Entry, ...]]]:
+    """Match cases on a document of their own: (label, document, entries)."""
+    return [
+        (
+            "ids and reasons named after Object.prototype's keys",
+            PROTO_DOCUMENT,
+            (_e(("Foo",), trusted=True), _e(("Bar",)), _e(("Qux",)), _e(full="Ts Bold")),
+        ),
+        ("near-matches named after Object.prototype's keys", PROTO_DOCUMENT, (_e(("Baz",)),)),
+        ("ambiguous ids named after Object.prototype's keys", PROTO_DOCUMENT, (_e(full="Amb"),)),
     ]
 
 
@@ -1254,18 +1283,24 @@ def vectors() -> dict[str, Any]:
         }
         for name in names
     ]
-    runs = match_cases()
-    runs += [(f"drawn entries {i}", entries) for i, entries in enumerate(_drawn_entries(rng, 40))]
-    match = [
-        {
-            "label": label + ("" if patched else ", patched off"),
-            "entries": [e.to_json() for e in entries],
-            "patched": patched,
-            "expect": owned.match(entries, table, patched=patched).to_json(),
-        }
-        for label, entries in runs
-        for patched in (True, False)
+    runs: list[tuple[str, dict[str, Any] | None, tuple[owned.Entry, ...]]] = [
+        (label, None, entries) for label, entries in match_cases()
     ]
+    runs += [
+        (f"drawn entries {i}", None, entries) for i, entries in enumerate(_drawn_entries(rng, 40))
+    ]
+    runs += own_document_cases()
+    match = []
+    for label, doc, entries in runs:
+        on = table if doc is None else owned.Table.from_document(doc)
+        for patched in (True, False):
+            case = {
+                "label": label + ("" if patched else ", patched off"),
+                "entries": [e.to_json() for e in entries],
+                "patched": patched,
+                "expect": owned.match(entries, on, patched=patched).to_json(),
+            }
+            match.append(case if doc is None else {**case, "document": doc})
     malformed = [{"label": label, "document": doc} for label, doc in _malformed(document)]
     for group in (parse, match, malformed):
         labels = [c["label"] for c in group]

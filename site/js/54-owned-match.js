@@ -439,18 +439,16 @@ const OwnedMatch = (() => {
         for (const reason of why) reasons.set(reason, (reasons.get(reason) || 0) + 1);
       } else counts.unknown += 1;
     });
-    const result = { owned: {}, near: {}, counts: { entries: entries.length, ...counts } };
-    for (const fid of [...owned.keys()].sort()) {
-      result.owned[fid] = { as: owned.get(fid)[2], how: HOW[owned.get(fid)[0]] };
-    }
-    for (const fid of [...near.keys()].sort()) {
-      if (!owned.has(fid)) result.near[fid] = { as: near.get(fid)[2], why: WHY[near.get(fid)[0]] };
-    }
-    result.counts.reasons = {};
-    for (const reason of [...reasons.keys()].sort()) {
-      result.counts.reasons[reason] = reasons.get(reason);
-    }
-    return result;
+    // The result's keys are the file's ids and reasons, so its objects are built from entries:
+    // assigning to a "__proto__" key would set the object's prototype, not add the key.
+    const sorted = (map, value) =>
+      Object.fromEntries([...map.keys()].sort().map((key) => [key, value(map.get(key))]));
+    for (const fid of owned.keys()) near.delete(fid);
+    return {
+      owned: sorted(owned, ([how, , as]) => ({ as, how: HOW[how] })),
+      near: sorted(near, ([why, , as]) => ({ as, why: WHY[why] })),
+      counts: { entries: entries.length, ...counts, reasons: sorted(reasons, (n) => n) },
+    };
   };
 
   return Object.freeze({ table, match, candidates, FORMAT, VERSION, HOW, WHY, OUTCOMES });

@@ -1064,9 +1064,28 @@ def test_candidates_vector(case):
 
 @pytest.mark.parametrize("case", MATCH, ids=[c["label"] for c in MATCH])
 def test_match_vector(case):
+    """On the file's document, or on the case's own (a hand-made one)."""
     entries = [ov.entry_of(e) for e in case["entries"]]
-    got = owned.match(entries, vector_table(), patched=case["patched"]).to_json()
+    table = owned.Table.from_document(case["document"]) if "document" in case else vector_table()
+    got = owned.match(entries, table, patched=case["patched"]).to_json()
     assert got == case["expect"]
+
+
+def test_the_object_prototype_vectors_say_what_their_labels_say():
+    """Ids and reasons named "__proto__" and "constructor" are kept as keys like any other."""
+    by_label = {c["label"]: c["expect"] for c in MATCH}
+    owned_case = by_label["ids and reasons named after Object.prototype's keys"]
+    assert owned_case["owned"] == {
+        "__proto__": {"as": "Foo", "how": "family"},
+        "constructor": {"as": "Qux", "how": "family"},
+    }
+    assert owned_case["near"] == {"plain": {"as": "Qux", "why": "bundle"}}
+    assert owned_case["counts"]["reasons"] == {"__proto__": 1, "toString": 1}
+    near_case = by_label["near-matches named after Object.prototype's keys"]
+    assert near_case["near"] == {"__proto__": {"as": "Baz", "why": "related"}}
+    assert set(by_label["ambiguous ids named after Object.prototype's keys"]["near"]) == {
+        "__proto__", "constructor", "plain"
+    }  # fmt: skip
 
 
 @pytest.mark.parametrize("case", MALFORMED, ids=[c["label"] for c in MALFORMED])

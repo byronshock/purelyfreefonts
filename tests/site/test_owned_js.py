@@ -241,6 +241,24 @@ def match_in_page(
     return loaded.run(body, runs)
 
 
+# In the page: each match vector on the file's table, or on a table of its own document's,
+# as JSON text.
+MATCH_VECTORS = """arg.map(([entries, patched, doc]) => JSON.stringify(
+  M.match(entries, doc === null ? globalThis.__tffVectors : M.table(JSON.parse(doc)), { patched })))"""
+
+
+def match_vectors_in_page(loaded: Loaded, cases: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """The page's result for each match vector. Its own document goes to the page as JSON text,
+    read with JSON.parse as Data.loadMatch reads one, and every result comes back as JSON text:
+    Playwright's own serialization drops a "__proto__" key both ways, and the vectors hold ids
+    and reasons of that name."""
+    runs = [
+        (c["entries"], c["patched"], json.dumps(c["document"]) if "document" in c else None)
+        for c in cases
+    ]
+    return [json.loads(text) for text in loaded.run(MATCH_VECTORS, runs)]
+
+
 # ---------------------------------------------------------------- the parts themselves
 
 PARSE = VECTORS["parse"]
@@ -266,7 +284,8 @@ WORKLOAD = """(() => {
     const tables = [M.table(arg.document), M.table(arg.real)];
     arg.parse.forEach((c) => P.parse(inputOf(c)));
     arg.candidates.forEach((name) => M.candidates(name, tables[0]));
-    arg.match.forEach(([entries, patched]) => M.match(entries, tables[0], { patched }));
+    arg.match.forEach(([entries, patched, doc]) =>
+      M.match(entries, doc === null ? tables[0] : M.table(doc), { patched }));
     arg.known.forEach((entries) => M.match(entries, tables[1]));
     arg.malformed.forEach((doc) => {
       try {
@@ -292,7 +311,7 @@ def test_parts_read_no_environment_global_and_make_no_request(browser):
             "real": real()[0],
             "parse": [c["input"] for c in PARSE if "parts" not in c["input"]],
             "candidates": [c["name"] for c in CANDIDATES],
-            "match": [[c["entries"], c["patched"]] for c in MATCH],
+            "match": [[c["entries"], c["patched"], c.get("document")] for c in MATCH],
             "known": [[c["entry"]] for c in KNOWN],
             "malformed": [c["document"] for c in VECTORS["malformed"]],
         }
@@ -399,7 +418,7 @@ def test_candidates_vector(candidates_results, index):
 
 @pytest.fixture(scope="module")
 def match_results(loaded: Loaded) -> list[dict[str, Any]]:
-    return match_in_page(loaded, "__tffVectors", [(c["entries"], c["patched"]) for c in MATCH])
+    return match_vectors_in_page(loaded, MATCH)
 
 
 @pytest.mark.parametrize("index", range(len(MATCH)), ids=[c["label"] for c in MATCH])
