@@ -6,7 +6,7 @@
   (``names``, ``catalog_ids``, ``run_date``) and its match document (``document``); parse
   cases (every fixture among them), candidates and match cases with the results owned.py
   gives; and match files it must refuse (``malformed``). site/js's port must give the same
-  results (PR 3).
+  results (``tests/site/test_owned_js.py``).
 - ``tests/vectors/owned-known-answers.json``: the known answers on the real
   ``build/names.json``. These are expectations written here by hand, not results.
 - ``tests/fixtures/owned/expected.json``: each fixture's parse, as a dropped file.

@@ -1022,7 +1022,7 @@ def test_parse_vectors_reach_javascript_as_python_reads_them():
 
 
 def test_every_fixture_is_a_parse_vector_too():
-    """PR 3 checks the port against the vectors only, so each fixture is one of them."""
+    """test_owned_js.py checks the port against the vectors only, so each fixture is one."""
     by_label = {c["label"]: c for c in PARSE}
     for path in ov.fixture_files():
         case = by_label[f"fixture {path.name}"]

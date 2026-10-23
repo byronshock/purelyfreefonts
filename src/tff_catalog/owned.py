@@ -5,8 +5,10 @@ The hopper (Milestone 3, slice 1; owner rulings of 2026-10-21 to 2026-10-23,
 ``hopper_hackgen_related``) takes a visitor's list of installed fonts in the
 browser and hides the catalog families they already have. This module is the
 reference that the site's JavaScript port must agree with
-(``tests/vectors/owned-fonts.json``). A visitor's list never leaves the browser,
-so this code reads real lists only in tests.
+(``tests/vectors/owned-fonts.json``): ``site/js/52-owned-parse.js`` and
+``54-owned-match.js``, which ``tests/site/test_owned_js.py`` holds to it in
+Chromium and Firefox. A visitor's list never leaves the browser, so this code
+reads real lists only in tests.
 
 - ``WORDS``: the characters and words that ``candidates`` strips, as one
   JSON-ready object. The match document carries it, so the port derives its
