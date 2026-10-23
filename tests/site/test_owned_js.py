@@ -45,7 +45,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from hypothesis import given, settings
+from hypothesis import example, given, settings
 from hypothesis import strategies as st
 from tests.fixtures import hopper_lists
 from tests.helpers import owned_vectors as ov
@@ -509,26 +509,6 @@ def test_ten_megabytes_of_escaped_quotes_parse_in_linear_time(loaded):
     assert got["ms"] < LINEAR_MS, got["ms"]
 
 
-def _plain_listing(lines: int, written: int) -> str:
-    """``lines`` plain font names, the first ``written`` of them split at a fontconfig comma."""
-    return "\n".join(
-        f"Font {i:03d},Font {i:03d} Sans" if i < written else f"Font {i:03d}" for i in range(lines)
-    )
-
-
-def test_fc_list_trust_at_one_written_line_in_20_reads_as_in_python(loaded):
-    """A list is fc-list's while at least one plain line in FC_LIST_ONE_IN was split at a
-    fontconfig comma: 1 in 20 is, 1 in 21 isn't. No vector sits on that edge."""
-    inputs: list[bytes | str] = [
-        _plain_listing(lines, written)
-        for lines, written in ((19, 1), (20, 1), (21, 1), (40, 2), (41, 2), (21, 0))
-    ]
-    inputs += [text.encode("utf-8") for text in inputs]
-    want = [owned.parse(data).to_json() for data in inputs]
-    assert [w["format"] for w in want[:6]] == ["fc-list", "fc-list", "lines", "fc-list", "lines", "lines"]  # fmt: skip
-    assert parse_in_page(loaded, inputs) == want
-
-
 @pytest.mark.parametrize("label", [*hopper_lists.LABELS, "5 MB cut"])
 def test_realistic_lists_parse_and_match_as_in_python(loaded, label):
     """The lists test_perf.py times: 10,000 fonts as the registry, fc-list and system_profiler
@@ -834,6 +814,12 @@ def _words_file(changes: list[tuple[str, str, str]]) -> str:
 @SETTINGS
 @given(st.lists(st.lists(_change, min_size=1, max_size=6), min_size=1, max_size=8),
        st.lists(_names, max_size=20))  # fmt: skip
+# A Nerd phrase and a joined variable word that end in upper case: the port's test on a text's
+# last character must read the phrase in any case and the joined word in its own.
+@example(
+    files=[[("nerd", "NF", "only")], [("variable_joined", "VF", "only")]],
+    names=["Foo nf", "Foo NF", "FooVF", "Foovf"],
+)
 def test_other_words_give_python_s_candidates(loaded, files, names):
     """Words a later build might write, or a damaged file holds, as both sides read them."""
     _compare_under_each(loaded, [_words_file(changes) for changes in files], [*PROBES, *names])

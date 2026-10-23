@@ -198,6 +198,10 @@ def match_cases() -> list[tuple[str, tuple[owned.Entry, ...]]]:
             ),
         ),
         ("second family", (_e(("Mystery Sans", "Foo Sans")),)),
+        (
+            "a trusted entry's second family is untrusted",
+            (_e(("Mystery Sans", "Foo Sans Black"), trusted=True),),
+        ),
         ("full name after unknown families", (_e(("Mystery Sans",), "Foo Sans Bold"),)),
         (
             "owned beats near; family beats rename",
@@ -212,31 +216,44 @@ def match_cases() -> list[tuple[str, tuple[owned.Entry, ...]]]:
     ]
 
 
-# A hand-made match file the build never writes (its ids are no slugs), whose ids and reasons
-# are named after Object.prototype's keys: a reader that keeps them as plain object keys loses
-# "__proto__", which sets an object's prototype instead of adding a key.
-PROTO_DOCUMENT = {
+# A hand-made match file with what the build never writes. Its ids (no slugs) and reasons are
+# named after Object.prototype's keys: a reader that keeps them as plain object keys loses
+# "__proto__", which sets an object's prototype instead of adding a key. "amb2" is an
+# ambiguous key that also names a known family, "dup" gives one reason twice, and "abcxyz"
+# and "abdxyz" share the port's hash of a key (its length, first and last three characters).
+HAND_DOCUMENT = {
     "format": owned.FORMAT,
     "v": owned.VERSION,
     "run_date": RUN_DATE,
     "ids": ["__proto__", "constructor", "plain"],
-    "k": {"foo": "0", "bar": "!0", "baz": "0x", "qux": "1,2u", "amb": "2", "ts": "!1"},
-    "amb": {"amb": [0, 1]},
+    "k": {
+        "foo": "0", "bar": "!0", "baz": "0x", "qux": "1,2u", "amb": "2", "ts": "!1",
+        "amb2": "2,-", "dup": "!0,!0", "abcxyz": "0", "abdxyz": "1",
+    },
+    "amb": {"amb": [0, 1], "amb2": [0, 1]},
     "reasons": ["__proto__", "toString"],
     "words": owned.WORDS,
-}
+}  # fmt: skip
 
 
 def own_document_cases() -> list[tuple[str, dict[str, Any], tuple[owned.Entry, ...]]]:
     """Match cases on a document of their own: (label, document, entries)."""
+    hand = HAND_DOCUMENT
     return [
         (
             "ids and reasons named after Object.prototype's keys",
-            PROTO_DOCUMENT,
+            hand,
             (_e(("Foo",), trusted=True), _e(("Bar",)), _e(("Qux",)), _e(full="Ts Bold")),
         ),
-        ("near-matches named after Object.prototype's keys", PROTO_DOCUMENT, (_e(("Baz",)),)),
-        ("ambiguous ids named after Object.prototype's keys", PROTO_DOCUMENT, (_e(full="Amb"),)),
+        ("near-matches named after Object.prototype's keys", hand, (_e(("Baz",)),)),
+        ("ambiguous ids named after Object.prototype's keys", hand, (_e(full="Amb"),)),
+        (
+            "an ambiguous key that names a known family too, trusted",
+            hand,
+            (_e(("Amb2",), trusted=True),),
+        ),
+        ("a reason given twice counts once", hand, (_e(("Dup",)),)),
+        ("keys that share a hash", hand, (_e(("Abcxyz",)), _e(("Abdxyz",)), _e(("Abexyz",)))),
     ]
 
 
@@ -265,6 +282,7 @@ CANDIDATE_NAMES = [
     "Foo Extra_Light-Italic", "Foo Semi-Bold", "Foo SemiLight", "Foo BoldExtra", "Foo bolditalic",
     "Foo bold-italic", "Foo BOLDItalic", "Foo Extra BoldItalic", "Foo Sans BlackItalic NF",
     "Archivo-Black-Bold", "Archivo-Black", "ArchivoBlackNF-Regular", "Foo-Bold-NF", "A-B-C-Bold",
+    "Foo SemiItalic", "Foo Extra SemiItalic", "Foo BoldExtraLight", "Foo S_B", "Foo Bd_",
 ]  # fmt: skip
 
 
@@ -332,6 +350,78 @@ COMMANDS = [
     "Get-Item 'HKLM:\\Software\\Microsoft\\Windows NT\\CurrentVersion\\Fonts' | ForEach-Object Property",
     "system_profiler SPFontsDataType | grep 'Family:' | sort -u | pbcopy",
 ]
+
+
+def _plain_listing(lines: int, written: int) -> str:
+    """``lines`` plain font names, the first ``written`` of them split at a fontconfig comma."""
+    return "\n".join(
+        f"Font {i:03d},Font {i:03d} Sans" if i < written else f"Font {i:03d}" for i in range(lines)
+    )
+
+
+def _sorted_firsts(descents: int) -> str:
+    """501 names whose first characters fall back ``descents`` times from "d", then rise."""
+    firsts = ["d"] + ["e", "d"] * descents + ["z"] * (500 - 2 * descents)
+    return "\n".join(f"{c}{i:03d} Sans" for i, c in enumerate(firsts))
+
+
+def _edge_parse_cases() -> list[tuple[str, bytes | str]]:
+    """Each threshold met exactly and missed by one, and each pattern's case, where a port
+    could read otherwise (tests/site/test_owned_js.py's mutants found these gaps): the sniff
+    windows in code points (A is two UTF-16 units), the UTF-16 guess's nine NULs in ten and
+    its window of SNIFF_BYTES bytes, the font magic's NUL in 12 bytes, fc-list's one written
+    line in FC_LIST_ONE_IN, a cut-off paste's CUT_OFF_LINES and nine in ten sorted, the JSON
+    line sniff's 50 lines in 200, and the registry, HTML, sudo, table and rule patterns."""
+    utf16 = "Foo Sans\nBar Mono\n"  # 18 characters: 18 NUL bytes on one side
+    window = ("Foo Sans\nBar Mono\n" * 114)[: owned.SNIFF_BYTES // 2]
+    plain = [f"{c}{n:02d} Sans" for c in "defghijk" for n in range(63)]
+    names = ", ".join(f'"Name {i}"' for i in range(40))
+    return [
+        ("UTF-16LE without a BOM at nine NULs in ten", utf16.encode("utf-16-le") + b"\x00X\x00Y"),
+        (
+            "UTF-16LE without a BOM below nine in ten is binary",
+            utf16[:-1].encode("utf-16-le") + b"\x00X\x00Y",
+        ),
+        ("UTF-16BE without a BOM at nine NULs in ten", utf16.encode("utf-16-be") + b"X\x00Y\x00"),
+        (
+            "UTF-16BE without a BOM below nine in ten is binary",
+            utf16[:-1].encode("utf-16-be") + b"X\x00Y\x00",
+        ),
+        ("one NUL byte is no UTF-16", b"Foo Sans\x00"),
+        ("two NUL bytes on one side are UTF-16", b"F\x00o\x00"),
+        (
+            "the UTF-16 guess reads the first 4,096 bytes only",
+            window.encode("utf-16-le") + b"\x00X" * owned.SNIFF_BYTES,
+        ),
+        (
+            "registry suffixes in any case",
+            "Arial (truetype)\nCourier New (TRUETYPE)\nSymbol (type 1)\nModern (All Res)\n"
+            "Marlett (opentype) : marlett.ttf\n",
+        ),
+        ("one written line in 20 is fc-list", _plain_listing(20, 1)),
+        ("one written line in 21 is not", _plain_listing(21, 1)),
+        ("two written lines in 40 are fc-list", _plain_listing(40, 2)),
+        ("two written lines in 41 are not", _plain_listing(41, 2)),
+        ("500 sorted names pasted are cut off", "\n".join(plain[: owned.CUT_OFF_LINES])),
+        ("499 are not", "\n".join(plain[: owned.CUT_OFF_LINES - 1])),
+        ("names sorted nine in ten are cut off", _sorted_firsts(50)),
+        ("names sorted below nine in ten are not", _sorted_firsts(51)),
+        ("HTML in upper case", "<HTML><BODY>x</BODY></HTML>"),
+        ("Sudo and a command", "Sudo fc-list : family\nArchivo\nInter\n"),
+        ("20 JSON lines in the first 50 are no JSON", '"Archivo",\n' * 20 + "\n".join(plain[:30])),
+        ("JSON lines after 70 blank ones", "\n" * 70 + '"Archivo",\n"Inter",\n"Roboto"\n'),
+        ("a font magic number with a NUL at byte 12", b"OTTO" + b"ABCDEFG" + b"\x00" + b"x" * 20),
+        ("a NUL at byte 13 is no font", b"OTTO" + b"ABCDEFGH" + b"\x00" + b"x" * 20),
+        (
+            "a registry name starting Fonts and one space",
+            "Fonts Display (TrueType)\nArial (TrueType)\n",
+        ),
+        ("a one-letter registry name", "X(TrueType)\nArial (TrueType)\n"),
+        ("a JSON family of joiners only", '[{"family": "\u200b\u200d"}, {"family": "Inter"}]'),
+        ("a JSON string holding U+001F", '["Foo\x1fBar", ' + names + "]"),
+        ("two dashes are no table rule", "Name\n--\nArial\n"),
+        ("a header of two words over a rule of one", "Name Property\n----\nArial\n"),
+    ]
 
 
 def _hand_parse_cases() -> list[tuple[str, bytes | str]]:
@@ -449,6 +539,7 @@ def _hand_parse_cases() -> list[tuple[str, bytes | str]]:
         ("only prompts", "user@host ~ $\n$\n"),
     ]
     cases += [(f"the command: {cmd}", cmd + "\n") for cmd in COMMANDS]
+    cases += _edge_parse_cases()
     # The fixtures too, as dropped files, so the port meets every one of them.
     cases += [(f"fixture {path.name}", path.read_bytes()) for path in fixture_files()]
     return cases
@@ -465,6 +556,17 @@ def parts_cases() -> list[tuple[str, list[list[Any]], bool]]:
     return [
         ("too big, pasted", [["a", owned.MAX_CHARS + 1]], False),
         ("too big, dropped", [["a", owned.MAX_BYTES + 1]], True),
+        # The sniff windows count code points (A is two UTF-16 units): "{", 4,086 As and
+        # '"family":' are 4,096; 1,018 As and "<html>" are 1,024.
+        (
+            "a JSON member that ends at code point 4,096 is sniffed",
+            [["{", 1], [A, 4086], ['"family": "Foo"}', 1]],
+            False,
+        ),
+        ("one code point later it isn't", [["{", 1], [A, 4087], ['"family": "Foo"}', 1]], False),
+        ("<html> that ends at code point 1,024 is sniffed", [[A, 1018], ["<html>", 1]], False),
+        ("one code point later it isn't sniffed", [[A, 1019], ["<html>", 1]], False),
+        ("MAX_BYTES bytes are not too big", [["a", owned.MAX_BYTES]], True),
         ("5,000,001 astral characters are within MAX_CHARS", [[A, 5_000_001]], False),
         ("10 MB of short lines, pasted", [["Inter Bold\n", 909_000]], False),
         ("10 MB of short lines, dropped", [["Inter Bold\n", 909_000]], True),
@@ -727,7 +829,9 @@ def _malformed(doc: dict[str, Any]) -> list[tuple[str, dict[str, Any]]]:
         ("k a list", _with(doc, ("k",), [])),
         ("a k value a number", _with(doc, ("k", "x"), 5)),
         ("a code past the ids", _with(doc, ("k", "x"), "9")),
+        ("a code one past the ids", _with(doc, ("k", "x"), str(len(doc["ids"])))),
         ("a reason past the reasons", _with(doc, ("k", "x"), "!7")),
+        ("a reason one past the reasons", _with(doc, ("k", "x"), f"!{len(doc['reasons'])}")),
         ("a code with an unknown letter", _with(doc, ("k", "x"), "1q")),
         ("a code with a leading zero", _with(doc, ("k", "x"), "01")),
         ("an empty code", _with(doc, ("k", "x"), "1,,2")),
@@ -736,6 +840,7 @@ def _malformed(doc: dict[str, Any]) -> list[tuple[str, dict[str, Any]]]:
         ("a negative code", _with(doc, ("k", "x"), "-1")),
         ("amb a list", _with(doc, ("amb",), [])),
         ("an amb index past the ids", _with(doc, ("amb", amb_key), [9])),
+        ("an amb index one past the ids", _with(doc, ("amb", amb_key), [len(doc["ids"])])),
         ("a negative amb index", _with(doc, ("amb", amb_key), [-1])),
         ("an amb index of 1.5", _with(doc, ("amb", amb_key), [1.5])),
         ("an amb index true", _with(doc, ("amb", amb_key), [True])),

@@ -1052,6 +1052,83 @@ def test_the_registry_vectors_say_what_their_labels_say():
     ]
 
 
+# Each edge vector's (format, error), so a regenerated file that moved an edge shows here.
+EDGES = {
+    "a JSON member that ends at code point 4,096 is sniffed": ("macos-json", None),
+    "one code point later it isn't": (None, "no_names"),
+    "<html> that ends at code point 1,024 is sniffed": (None, "html"),
+    "one code point later it isn't sniffed": (None, "no_names"),
+    "UTF-16LE without a BOM at nine NULs in ten": ("lines", None),
+    "UTF-16LE without a BOM below nine in ten is binary": (None, "binary"),
+    "UTF-16BE without a BOM at nine NULs in ten": ("lines", None),
+    "UTF-16BE without a BOM below nine in ten is binary": (None, "binary"),
+    "one NUL byte is no UTF-16": (None, "binary"),
+    "two NUL bytes on one side are UTF-16": ("lines", None),
+    "the UTF-16 guess reads the first 4,096 bytes only": ("lines", None),
+    "registry suffixes in any case": ("windows-registry", None),
+    "one written line in 20 is fc-list": ("fc-list", None),
+    "one written line in 21 is not": ("lines", None),
+    "two written lines in 40 are fc-list": ("fc-list", None),
+    "two written lines in 41 are not": ("lines", None),
+    "500 sorted names pasted are cut off": ("lines", None),
+    "499 are not": ("lines", None),
+    "names sorted nine in ten are cut off": ("lines", None),
+    "names sorted below nine in ten are not": ("lines", None),
+    "HTML in upper case": (None, "html"),
+    "Sudo and a command": ("lines", None),
+    "20 JSON lines in the first 50 are no JSON": ("fc-list", None),
+    "JSON lines after 70 blank ones": ("json-list", None),
+    "a font magic number with a NUL at byte 12": (None, "font_file"),
+    "a NUL at byte 13 is no font": (None, "binary"),
+    "a registry name starting Fonts and one space": ("windows-registry", None),
+    "a one-letter registry name": ("windows-registry", None),
+    "a JSON family of joiners only": ("macos-json", None),
+    "a JSON string holding U+001F": (None, "no_names"),
+    "two dashes are no table rule": ("lines", None),
+    "a header of two words over a rule of one": ("lines", None),
+    "MAX_BYTES bytes are not too big": (None, "no_names"),
+}
+CUT_OFF = {
+    "500 sorted names pasted are cut off": True,
+    "499 are not": False,
+    "names sorted nine in ten are cut off": True,
+    "names sorted below nine in ten are not": False,
+}
+
+
+def test_the_edge_vectors_say_what_their_labels_say():
+    """Each threshold met and missed by one (ov._edge_parse_cases): the port must count as
+    Python does, in code points, bytes and lines, or a vector fails in the browser."""
+    by_label = {c["label"]: c["expect"] for c in PARSE}
+    assert {
+        label: (by_label[label]["format"], by_label[label]["error"]) for label in EDGES
+    } == EDGES
+    registry = by_label["registry suffixes in any case"]["entries"]
+    assert [e["full"] for e in registry] == ["Arial", "Courier New", "Symbol", "Modern", "Marlett"]
+    window = by_label["the UTF-16 guess reads the first 4,096 bytes only"]["entries"]
+    assert [e["families"] for e in window] == [["Foo Sans"], ["Bar Mono"]]
+    assert {label: "cut_off" in by_label[label]["warnings"] for label in CUT_OFF} == CUT_OFF
+    names = {
+        label: [e["families"] or [e["full"]] for e in by_label[label]["entries"]]
+        for label in (
+            "Sudo and a command",
+            "a registry name starting Fonts and one space",
+            "a one-letter registry name",
+            "a JSON family of joiners only",
+            "two dashes are no table rule",
+            "a header of two words over a rule of one",
+        )
+    }
+    assert names == {
+        "Sudo and a command": [["Archivo"], ["Inter"]],
+        "a registry name starting Fonts and one space": [["Fonts Display"], ["Arial"]],
+        "a one-letter registry name": [["X"], ["Arial"]],
+        "a JSON family of joiners only": [["Inter"]],
+        "two dashes are no table rule": [["Name"], ["--"], ["Arial"]],
+        "a header of two words over a rule of one": [["Name Property"], ["Arial"]],
+    }
+
+
 @pytest.mark.parametrize("case", CANDIDATES, ids=[repr(c["name"]) for c in CANDIDATES])
 def test_candidates_vector(case):
     got = [
@@ -1086,6 +1163,26 @@ def test_the_object_prototype_vectors_say_what_their_labels_say():
     assert set(by_label["ambiguous ids named after Object.prototype's keys"]["near"]) == {
         "__proto__", "constructor", "plain"
     }  # fmt: skip
+
+
+def test_the_hand_document_vectors_say_what_their_labels_say():
+    """The hand-made file's other cases (ov.HAND_DOCUMENT), and a trusted entry's second
+    family, which is no more trusted than any other."""
+    by_label = {c["label"]: c["expect"] for c in MATCH}
+    known_too = by_label["an ambiguous key that names a known family too, trusted"]
+    assert (known_too["owned"], known_too["near"]) == (
+        {"plain": {"as": "Amb2", "how": "family"}},
+        {},
+    )
+    assert by_label["a reason given twice counts once"]["counts"]["reasons"] == {"__proto__": 1}
+    shared = by_label["keys that share a hash"]
+    assert {fid: v["as"] for fid, v in shared["owned"].items()} == {
+        "__proto__": "Abcxyz", "constructor": "Abdxyz"
+    }  # fmt: skip
+    assert shared["counts"]["unknown"] == 1
+    second = by_label["a trusted entry's second family is untrusted"]
+    assert second["owned"] == {}
+    assert set(second["near"]) == {"foo-sans", "foo-sans-black"}
 
 
 @pytest.mark.parametrize("case", MALFORMED, ids=[c["label"] for c in MALFORMED])
