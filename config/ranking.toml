@@ -1,6 +1,7 @@
 # Ranking parameters (docs/ranking-methodology.md, §5 tables and §8).
 #
-# Every key is required and unknown keys are rejected, so a typo fails loudly.
+# Every key is required and unknown keys are rejected, so a typo fails loudly. One
+# exception: a source's `gate_only`, false unless set (see [sources.github]).
 # `uv run tff-catalog config` prints the effective values and, on its last
 # line, their sha256.
 #
@@ -100,6 +101,13 @@ collector = "github_releases"
 group = "github_counters"
 survey = "desktop"
 enabled = false                 # owner rulings 2026-09-30 (g1_github_deferred, g3_github_revisit): no term in any rank until 6 monthly snapshots; the collector still snapshots
+# Owner ruling 2026-10-23 (deferred_sources_count_for_gate): while deferred, its evidence
+# still counts toward the two-group gate (engine.top100_min_groups, D14), with no term, weight,
+# ruler role or cross-check in any score. A font with an observed term, counted as the source
+# counts it (growth since the run_history baseline, floors, exposure), gets its group for the
+# gate in each engine rank that lists the source: homebrew under M5 for a cask's own repo,
+# else github_counters. Only for a disabled source.
+gate_only = true
 linux = false
 publish_raw = true              # gate T1 (rec)
 series = "lifetime"
@@ -116,6 +124,7 @@ collector = "nerd_releases"
 group = "nerd"                  # owner ruling 2026-09-29 (gate R, R1): its own group, never Homebrew's under M5 (Homebrew's Nerd casks are a small share of Nerd's downloads)
 survey = "desktop"
 enabled = false                 # owner ruling 2026-09-30 (g2_nerd_deferred): deferred with GitHub until the revisit; the collector still snapshots
+gate_only = true                # owner ruling 2026-10-23 (deferred_sources_count_for_gate): counts toward the two-group gate as its own group, nerd, with no term in any score (see [sources.github])
 linux = false
 publish_raw = true              # gate T1 (rec)
 series = "lifetime"
