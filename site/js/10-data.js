@@ -46,13 +46,20 @@ const Data = (() => {
     return response.json();
   };
 
-  // Freeze a parsed payload all the way down, so no part (or Milestone 3) can change it.
-  const deepFreeze = (value) => {
-    if (value && typeof value === 'object' && !Object.isFrozen(value)) {
-      Object.freeze(value);
-      for (const key of Object.keys(value)) deepFreeze(value[key]);
+  // Freeze a parsed payload all the way down, so no part (or Milestone 3) can change it. A
+  // loop, not recursion: loadMatch checks only a match file's header, and a body nested
+  // deeper than the call stack must not reject with a RangeError, which is neither Stale nor
+  // a MatchError.
+  const deepFreeze = (root) => {
+    const pending = [root];
+    while (pending.length) {
+      const value = pending.pop();
+      if (value && typeof value === 'object' && !Object.isFrozen(value)) {
+        Object.freeze(value);
+        for (const key of Object.keys(value)) pending.push(value[key]);
+      }
     }
-    return value;
+    return root;
   };
 
   // The checks every later part relies on: the format version, the lists State and View

@@ -924,6 +924,30 @@ def test_load_match_fetches_the_list_s_match_file_once_and_checks_it(data_page, 
     assert {(r.method, r.post_data) for r in sent} <= {("GET", None)}
 
 
+DEEP = 200_000
+# In the page: the match file's "x", walked down to its innermost list, each level frozen.
+DEEPEST = """async () => {
+  const doc = await globalThis.__tffData.loadMatch();
+  let value = doc.x;
+  let depth = 0;
+  while (Array.isArray(value) && Object.isFrozen(value) && value.length) {
+    value = value[0];
+    depth += 1;
+  }
+  return [depth, Array.isArray(value) && Object.isFrozen(value)];
+}"""
+
+
+def test_load_match_freezes_a_file_nested_deeper_than_the_call_stack(data_page):
+    """Only the header is checked, so a body of 200,000 nested lists loads, frozen all the way
+    down. A recursive freeze rejected with a RangeError (Chromium) or an InternalError
+    (Firefox), which is neither of the two failures section 5 promises."""
+    open_page, _requests = data_page
+    body = json.dumps(DOC)[:-1] + ', "x": ' + "[" * DEEP + "]" * DEEP + "}"
+    page = open_page(f'data-match="{MATCH_PATH}"', (200, body))
+    assert page.evaluate(DEEPEST) == [DEEP - 1, True]
+
+
 @pytest.mark.parametrize(
     "attr",
     ["", 'data-match="/assets/match.json?x=1"', 'data-match="/assets/match.json#x"',
