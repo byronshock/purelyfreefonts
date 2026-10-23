@@ -337,16 +337,17 @@ def test_parts_expose_exactly_their_members_frozen(loaded):
 
 
 def test_a_table_keeps_nothing_of_the_lists_matched_against_it(loaded):
-    """A table is the file and its rules; what match works out lives only during the call."""
+    """A table is the file, its rules and its keys by hash; what match works out lives only
+    during the call."""
     body = """(() => {
       const t = globalThis.__tffReal;
-      const sizes = () => [t.k.size, t.amb.size, Object.keys(t.rules).length];
+      const sizes = () => [t.k.size, t.amb.size, Object.keys(t.rules).length, t.hashed.size];
       const before = sizes();
       M.match(P.parse(Array.from({ length: 500 }, (_, i) => `Zeta ${i} Bold`).join('\\n')), t);
       return [Object.keys(t), Object.isFrozen(t), before, sizes()];
     })()"""
     keys, frozen, before, after = loaded.run(body)
-    assert (keys, frozen, before) == (["ids", "k", "amb", "rules"], True, after)
+    assert (keys, frozen, before) == (["ids", "k", "amb", "rules", "hashed"], True, after)
 
 
 def test_constants_equal_python_s(loaded):

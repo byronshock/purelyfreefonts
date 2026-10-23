@@ -9,26 +9,35 @@
 // and Firefox). Pure code, like OwnedParse; the rules come from the file's words, so this
 // part holds no copy of the style and suffix lists. A table holds only the file: what match
 // works out about a list's names lives only while that call runs.
+//
+// Step 5 gives 10,000 names 200 ms with the CPU slowed 4x, the first time this code runs. So
+// the walk down a name's candidates builds and hashes as few strings as it can: on ASCII text
+// a candidate's key is a prefix of the name's, worked out once and found among the table's
+// keys by a small hash (fill, find), and a test on a text's last character, a necessary
+// condition, skips each rule that can't apply. No list's names are kept from call to call.
 const OwnedMatch = (() => {
   const FORMAT = 'tff-match';
   const VERSION = 1;
   const HOW = Object.freeze(['family', 'postscript', 'build', 'rename', 'patched']);
   const WHY = Object.freeze(['ambiguous', 'patched', 'sibling', 'related', 'bundle']);
   const OUTCOMES = Object.freeze(['owned', 'near', 'known', 'ineligible', 'unknown']);
-  const HOW_OF = new Map([
-    ['', 'family'], ['p', 'postscript'], ['b', 'build'], ['r', 'rename'], ['n', 'patched'],
-  ]);
-  const WHY_OF = new Map([['n', 'patched'], ['s', 'sibling'], ['x', 'related'], ['u', 'bundle']]);
+  // A code's letter as an index in HOW (an owned code) or in WHY (a near-match).
+  const HOW_INDEX = new Map([['', 0], ['p', 1], ['b', 2], ['r', 3], ['n', 4]]);
+  const WHY_INDEX = new Map([['n', 1], ['s', 2], ['x', 3], ['u', 4]]);
+  const AMBIGUOUS = 0;
+  const PATCHED = 1;
   const SAME_FONT = new Set(['', 'p', 'b', 'r']); // codes that name the font itself
   const LETTERS = 'pbrnusx';
-  const LOWER = new Set('abcdefghijklmnopqrstuvwxyz');
   const LOWER_DIGIT = new Set('abcdefghijklmnopqrstuvwxyz0123456789');
   const ASCII = /^[\x00-\x7f]*$/;
   const PRINTABLE = /^[\x20-\x7e]+$/;
   const ASCII_DROP = /[\t-\r \-_]/g;
+  const JOINS = /[-_]/g;
   const HEX = /^[0-9A-Fa-f]{1,6}$/;
   const INDEX = /^(?:0|[1-9][0-9]*)$/;
   const CAMEL = /[A-Z]+(?![a-z])|[A-Z]?[a-z]+|[0-9]+/g;
+  // A token that CAMEL reads as one part, which is then the token itself.
+  const ONE_PART = /^(?:[A-Z]?[a-z]+|[A-Z]+|[0-9]+)$/;
   const TOKEN_CHARS = /^[A-Za-z0-9_-]+$/;
   const LONE = /(\p{Cs})/u;
   const PARTS = Object.freeze([
@@ -79,6 +88,16 @@ const OwnedMatch = (() => {
   const hex = (cp) => `\\u{${cp.toString(16)}}`;
   const escape = (s) => s.replace(/[\\^$.*+?()[\]{}|/-]/g, '\\$&');
   const byLength = (items) => [...items].sort((a, b) => b.length - a.length);
+  // A table of the printable ASCII characters that end one of the words, for the cheap test
+  // on a text's last character; lower case only makes it hold their lower-case form.
+  const lastChars = (words, lower = false) => {
+    const table = new Uint8Array(128);
+    for (const word of words) {
+      const c = word.charCodeAt(word.length - 1);
+      table[lower && c >= 0x41 && c <= 0x5a ? c | 0x20 : c] = 1;
+    }
+    return table;
+  };
 
   // The rules of a words object (owned.py's _compile), refused as it refuses them. The
   // three character tables become one class, and a match is replaced as Python's
@@ -110,8 +129,8 @@ const OwnedMatch = (() => {
       throw refuse('words.nerd must hold phrases');
     }
     const nerd = phrases.map((phrase) => phrase.map(escape).join(`${sep}*`)).join('|');
-    // The pattern matches only a text that ends with a phrase's last word, in ASCII case.
-    const nerdTails = [...new Set(phrases.map((phrase) => phrase[phrase.length - 1].toLowerCase()))];
+    const tails = [...byLength(parts.nerd_tokens), ...parts.cased];
+    const lengths = parts.variable.map((word) => word.length);
     const style = new Set(parts.style);
     const span = ([from, to]) => (from === to ? hex(from) : `${hex(from)}-${hex(to)}`);
     const swap = (c) => {
@@ -127,24 +146,33 @@ const OwnedMatch = (() => {
       swap,
       asciiKept,
       seps: new Set(seps),
+      sepCodes: lastChars(seps),
       afterToken: new Set([...LOWER_DIGIT, ...seps]),
       style,
       psStyle: new Set([...style, ...parts.postscript]),
       modifiers: new Set(parts.modifiers),
       abbreviations: new Set(parts.abbreviations),
+      modifiersLast: lastChars(parts.modifiers, true),
       variable: new Set(parts.variable),
+      variableLast: lastChars(parts.variable, true),
+      variableMin: Math.min(...lengths),
+      variableMax: Math.max(...lengths),
       variableJoined: parts.variable_joined,
+      variableJoinedLast: lastChars(parts.variable_joined),
+      // The pattern matches only a text that ends with a phrase's last word, in ASCII case.
       nerd: new RegExp(`${sep}*(?:${nerd})$`, 'i'),
-      nerdTails,
-      tails: [...byLength(parts.nerd_tokens), ...parts.cased],
+      nerdLast: lastChars(phrases.map((phrase) => phrase[phrase.length - 1]), true),
+      tails,
+      tailsLast: lastChars(tails),
       cased: new Set(parts.cased),
     };
   };
 
+  const spaced = (s) => s.includes('  ') || s[0] === ' ' || s[s.length - 1] === ' ';
+
   // The name as stripping reads it: NFKC, the tables applied, white space runs one space.
-  const normalize = (name, rules) => {
-    const spaced = (s) => s.includes('  ') || s[0] === ' ' || s[s.length - 1] === ' ';
-    if (rules.asciiKept && PRINTABLE.test(name) && !spaced(name)) return name;
+  const normalize = (name, rules, printable) => {
+    if (printable && rules.asciiKept && !spaced(name)) return name;
     return nfkc(name).replace(rules.tableRe, rules.swap).split(' ').filter(Boolean).join(' ');
   };
 
@@ -154,138 +182,256 @@ const OwnedMatch = (() => {
     return s.slice(0, j);
   };
 
-  // 'style' or 'abbreviation' when the token is a style word, else null: names.is_style_word
-  // restricted to ASCII letters, digits, hyphens and underscores.
-  const styleToken = (token, rules, postscript) => {
-    if (!ASCII.test(token)) return null;
+  // names.is_style_word restricted to ASCII letters, digits, hyphens and underscores, as a
+  // number: 0 for none, 1 for a style word, 2 for an abbreviation, 3 for a token of style
+  // parts (camel-case, or joined by hyphens or underscores) with at least one style word.
+  const styleCode = (token, rules, postscript, ascii) => {
+    if (!ascii && !ASCII.test(token)) return 0;
     const words = postscript ? rules.psStyle : rules.style;
-    const flat = token.toLowerCase().replace(/[-_]/g, '');
-    if (words.has(flat)) return 'style';
-    if (rules.abbreviations.has(flat)) return 'abbreviation';
-    if (!TOKEN_CHARS.test(token)) return null;
-    const parts = (token.match(CAMEL) || []).map((part) => part.toLowerCase());
-    const known = parts.every((part) => words.has(part) || rules.modifiers.has(part));
-    return parts.length && known && parts.some((part) => words.has(part)) ? 'style' : null;
-  };
-
-  // The style unit that ends a spaced name's last token, as [kind, what stays of the token],
-  // or null (owned.py's _style_tail). A style word or abbreviation goes whole ("Semi-Bold",
-  // "Med"); in a token of camel-case or hyphen- or underscore-joined parts, only the last part
-  // goes, with the modifiers before it, so "Archivo BlackItalic" reaches "Archivo Black" before
-  // "Archivo", as "Archivo Black Italic" does. A token that ends in a modifier ("BoldExtra")
-  // strips nothing.
-  const styleTail = (token, rules) => {
-    const kind = styleToken(token, rules, false);
-    if (kind === null) return null;
-    if (kind === 'abbreviation' || rules.style.has(token.toLowerCase().replace(/[-_]/g, ''))) {
-      return [kind, ''];
+    const lower = token.toLowerCase();
+    const flat = lower.includes('-') || lower.includes('_') ? lower.replace(JOINS, '') : lower;
+    if (words.has(flat)) return 1;
+    if (rules.abbreviations.has(flat)) return 2;
+    // One part is the token itself, which isn't a style word.
+    if (ONE_PART.test(token) || !TOKEN_CHARS.test(token)) return 0;
+    let style = false;
+    for (const part of token.match(CAMEL) || []) {
+      const word = part.toLowerCase();
+      if (words.has(word)) style = true;
+      else if (!rules.modifiers.has(word)) return 0;
     }
-    const parts = [...token.matchAll(CAMEL)];
-    let n = parts.length - 1;
-    if (!rules.style.has(parts[n][0].toLowerCase())) return null;
-    while (n > 0 && rules.modifiers.has(parts[n - 1][0].toLowerCase())) n -= 1;
-    let end = parts[n].index;
-    while (end > 0 && (token[end - 1] === '-' || token[end - 1] === '_')) end -= 1;
-    return [kind, token.slice(0, end)];
+    return style ? 3 : 0;
   };
 
-  // [head, key] when the head's key is non-empty, else null.
-  const keyed = (head) => {
-    const key = matchKey(head);
-    return key ? [head, key] : null;
+  // An ASCII key maps each character on its own: it keeps every character but \t to \r, the
+  // space, the hyphen and the underscore, in lower case. On ASCII text a head's key is a
+  // prefix of the text's, so the walk works the text's key out once (fill) and finds a
+  // head's key among k's by a hash of that prefix, without building a string or hashing
+  // one. Every other text goes by its key string.
+  const kept = (c) => c !== 0x20 && c !== 0x2d && c !== 0x5f && (c < 0x09 || c > 0x0d);
+  const asciiKey = (text) => text.toLowerCase().replace(ASCII_DROP, '');
+  // A key's hash, from its length n, its first character and its last three (0 for none):
+  // a small integer, a cheap Map key, and quick to work out on the table's every key.
+  const mix = (h, c) => Math.imul(h, 0x01000193) ^ c;
+  const hash = (n, first, last, second, third) =>
+    mix(mix(mix(mix(n, first), last), second), third) & 0x3fffffff;
+  const hashOf = (key) => {
+    const n = key.length;
+    const second = n > 1 ? key.charCodeAt(n - 2) : 0;
+    const third = n > 2 ? key.charCodeAt(n - 3) : 0;
+    return hash(n, key.charCodeAt(0), key.charCodeAt(n - 1), second, third);
   };
 
-  // The text without one trailing unit, what the unit was and the new text's key, as
-  // [text, kind, key]; null when none strips. Every branch keeps a head with a non-empty key,
-  // so "- Bold" stops at "bold".
-  const stripUnit = (text, rules) => {
-    const ends = (tail) => text.length >= tail.length && text.slice(-tail.length).toLowerCase() === tail;
-    const m = rules.nerdTails.some(ends) ? rules.nerd.exec(text) : null;
-    const nerd = m === null ? null : keyed(text.slice(0, m.index));
-    if (nerd !== null) return [nerd[0], 'patched', nerd[1]];
-    for (const tail of rules.tails) {
-      if (text.endsWith(tail)) {
-        const head = text.slice(0, text.length - tail.length);
-        const after = rules.cased.has(tail) ? rules.seps : rules.afterToken;
-        if (head && after.has(head[head.length - 1])) {
-          const kept = keyed(rstripSeps(head, rules));
-          if (kept !== null) return [kept[0], 'patched', kept[1]];
+  // A call's scratch space: an ASCII text's key characters.
+  const scratch = () => ({ chars: new Uint16Array(64) });
+  // Work text's key out into the scratch space; returns its length.
+  const fill = (space, text) => {
+    if (space.chars.length < text.length) space.chars = new Uint16Array(text.length);
+    const chars = space.chars;
+    let n = 0;
+    for (let i = 0; i < text.length; i += 1) {
+      const c = text.charCodeAt(i);
+      if (kept(c)) {
+        chars[n] = c >= 0x41 && c <= 0x5a ? c | 0x20 : c;
+        n += 1;
+      }
+    }
+    return n;
+  };
+  // Whether key is the first n characters of the filled key.
+  const same = (key, chars, n) => {
+    if (key.length !== n) return false;
+    for (let i = n - 1; i >= 0; i -= 1) if (key.charCodeAt(i) !== chars[i]) return false;
+    return true;
+  };
+  // k's key that is the first n characters of the filled key (n > 0), or null.
+  const find = (tbl, space, n) => {
+    const chars = space.chars;
+    const second = n > 1 ? chars[n - 2] : 0;
+    const third = n > 2 ? chars[n - 3] : 0;
+    const held = tbl.hashed.get(hash(n, chars[0], chars[n - 1], second, third));
+    if (held === undefined) return null;
+    if (typeof held === 'string') return same(held, chars, n) ? held : null;
+    for (const key of held) if (same(key, chars, n)) return key;
+    return null;
+  };
+
+  // The ASCII key length of text.slice(0, j), from n, text's own.
+  const keyLengthBefore = (text, j, n) => {
+    let left = n;
+    for (let i = j; i < text.length; i += 1) if (kept(text.charCodeAt(i))) left -= 1;
+    return left;
+  };
+
+  // A walk's state: its text, whether that is ASCII, and its key: on ASCII text the key's
+  // length n (its characters are in the scratch space); otherwise the key itself.
+  const keyNow = (state) => (state.ascii ? asciiKey(state.text) : state.key);
+
+  // Make text, a prefix of state.text, the walk's text when its key isn't empty.
+  const head = (state, text) => {
+    if (state.ascii) {
+      const n = keyLengthBefore(state.text, text.length, state.n);
+      if (n === 0) return false;
+      state.n = n;
+    } else {
+      const key = matchKey(text);
+      if (!key) return false;
+      state.key = key;
+    }
+    state.text = text;
+    return true;
+  };
+
+  // state.text without one trailing unit, as head sets it; returns what the unit was, or
+  // null (state unchanged) when none strips (owned.py's _strip). Every branch keeps a head
+  // with a non-empty key, so "- Bold" stops at "bold".
+  const strip = (state, rules) => {
+    const text = state.text;
+    const ascii = state.ascii;
+    const length = text.length;
+    const last = text.charCodeAt(length - 1); // NaN for '', which no table holds
+    const lower = last >= 0x41 && last <= 0x5a ? last | 0x20 : last;
+    if (rules.nerdLast[lower] === 1) {
+      const m = rules.nerd.exec(text);
+      if (m !== null && head(state, text.slice(0, m.index))) return 'patched';
+    }
+    if (rules.tailsLast[last] === 1) {
+      for (const tail of rules.tails) {
+        if (text.endsWith(tail)) {
+          const rest = text.slice(0, length - tail.length);
+          const after = rules.cased.has(tail) ? rules.seps : rules.afterToken;
+          if (rest && after.has(rest[rest.length - 1]) && head(state, rstripSeps(rest, rules))) {
+            return 'patched';
+          }
         }
       }
     }
     // The last separator, in one pass from the end (each a single unit).
-    let cut = text.length - 1;
-    while (cut >= 0 && !rules.seps.has(text[cut])) cut -= 1;
-    if (cut > 0) {
+    let cut = length - 1;
+    while (cut >= 0 && rules.sepCodes[text.charCodeAt(cut)] !== 1) cut -= 1;
+    const wordLength = length - cut - 1;
+    if (
+      cut > 0 &&
+      rules.variableLast[lower] === 1 &&
+      wordLength >= rules.variableMin &&
+      wordLength <= rules.variableMax
+    ) {
       const word = text.slice(cut + 1);
-      if (ASCII.test(word) && rules.variable.has(word.toLowerCase())) {
-        const head = keyed(rstripSeps(text.slice(0, cut), rules));
-        if (head !== null) return [head[0], 'variable', head[1]];
+      if (
+        (ascii || ASCII.test(word)) &&
+        rules.variable.has(word.toLowerCase()) &&
+        head(state, rstripSeps(text.slice(0, cut), rules))
+      ) {
+        return 'variable';
       }
     }
-    for (const tail of rules.variableJoined) {
-      const before = text.length - tail.length - 1;
-      if (text.endsWith(tail) && before >= 0 && LOWER.has(text[before])) {
-        const head = text.slice(0, before + 1);
-        return [head, 'variable', matchKey(head)];
+    if (rules.variableJoinedLast[last] === 1) {
+      for (const tail of rules.variableJoined) {
+        const before = length - tail.length - 1;
+        const c = before >= 0 ? text.charCodeAt(before) : 0;
+        // A lower-case letter ends the head, so its key isn't empty.
+        if (c >= 0x61 && c <= 0x7a && text.endsWith(tail)) {
+          if (head(state, text.slice(0, before + 1))) return 'variable';
+        }
       }
     }
-    if (!text.includes(' ')) {
+    let end = text.lastIndexOf(' ');
+    if (end < 0) {
       // A PostScript name: only the part after the last hyphen can go, so
       // "Inter-Tight-Bold" reaches "Inter-Tight" and never "Inter".
       const dash = text.lastIndexOf('-');
-      const family = dash >= 0 ? keyed(text.slice(0, dash)) : null;
-      if (family !== null && styleToken(text.slice(dash + 1), rules, true)) {
-        return [family[0], 'postscript', family[1]];
+      return dash >= 0 &&
+        styleCode(text.slice(dash + 1), rules, true, ascii) !== 0 &&
+        head(state, text.slice(0, dash))
+        ? 'postscript'
+        : null;
+    }
+    // The last word's style unit goes (owned.py's _style_tail). A style word or abbreviation
+    // goes whole ("Semi-Bold", "Med"); in a token of style parts, only the last part goes,
+    // with the modifiers before it, so "Archivo BlackItalic" reaches "Archivo Black" before
+    // "Archivo", as "Archivo Black Italic" does. A token that ends in a modifier
+    // ("BoldExtra") strips nothing.
+    const token = text.slice(end + 1);
+    const code = styleCode(token, rules, false, ascii);
+    if (code === 0) return null;
+    if (code === 3) {
+      const parts = [...token.matchAll(CAMEL)];
+      let n = parts.length - 1;
+      if (!rules.style.has(parts[n][0].toLowerCase())) return null;
+      while (n > 0 && rules.modifiers.has(parts[n - 1][0].toLowerCase())) n -= 1;
+      let stays = parts[n].index;
+      while (stays > 0 && (token[stays - 1] === '-' || token[stays - 1] === '_')) stays -= 1;
+      // What stays of the token ends in a letter or digit, so its key isn't empty.
+      if (stays > 0 && head(state, text.slice(0, end + 1 + stays))) return 'style';
+    }
+    // When the whole word goes, so do the modifiers before a style word ("Extra Light"), but
+    // never the first word; words are found by index where split(' ') and join(' ') would
+    // find them.
+    while (code !== 2) {
+      const before = text.charCodeAt(end - 1);
+      if (rules.modifiersLast[before >= 0x41 && before <= 0x5a ? before | 0x20 : before] !== 1) {
+        break;
       }
-      return null;
-    }
-    // The last word's style unit goes (styleTail). When the whole word goes, so do the
-    // modifiers before a style word ("Extra Light"), but never the first word; words are found
-    // by index where split(' ') and join(' ') would find them.
-    let end = text.lastIndexOf(' ');
-    const tail = styleTail(text.slice(end + 1), rules);
-    if (tail === null) return null;
-    const [kind, rest] = tail;
-    if (rest) {
-      const kept = text.slice(0, end + 1) + rest;
-      return [kept, 'style', matchKey(kept)];
-    }
-    while (kind === 'style') {
       const start = text.lastIndexOf(' ', end - 1);
       const word = text.slice(start + 1, end);
-      if (start < 0 || !ASCII.test(word) || !rules.modifiers.has(word.toLowerCase())) break;
+      if (start < 0 || (!ascii && !ASCII.test(word))) break;
+      if (!rules.modifiers.has(word.toLowerCase())) break;
       end = start;
     }
-    const head = keyed(text.slice(0, end));
-    return head === null ? null : [head[0], 'style', head[1]];
+    return head(state, text.slice(0, end)) ? 'style' : null;
   };
 
-  // A name's candidates (owned.candidates): its key, then one trailing unit stripped at a
-  // time, longest first, each as {key, text, patched, postscript}. Each goes to visit; the
-  // first value visit returns other than undefined ends the walk, and walk returns it.
-  const walk = (name, rules, visit) => {
-    const key = matchKey(name);
-    if (!key) return undefined;
-    let text = normalize(name, rules);
+  // A name's candidates (owned._chain): its key, then one trailing unit stripped at a time,
+  // longest first. With a list, each goes into it as {key, text, patched, postscript} and
+  // the result is null; without, the walk stops at the first key that the table's k holds
+  // and returns {key, patched, postscript, codes}, or null when none is. Only the first key
+  // is the name's own; the others are of the normalized text's heads.
+  const chain = (name, tbl, out, space) => {
+    const { rules, k } = tbl;
+    const printable = PRINTABLE.test(name);
+    const ascii = printable || ASCII.test(name);
+    let key = null;
+    let n = 0;
+    if (ascii) {
+      n = fill(space, name);
+      if (n === 0) return null;
+      if (out !== null) key = asciiKey(name);
+      else {
+        key = find(tbl, space, n);
+        if (key !== null) return { key, patched: false, postscript: false, codes: k.get(key) };
+      }
+    } else {
+      key = matchKey(name);
+      if (!key) return null;
+      const codes = out === null ? k.get(key) : undefined;
+      if (codes !== undefined) return { key, patched: false, postscript: false, codes };
+    }
+    const text = normalize(name, rules, printable);
+    const state = { text, ascii: text === name ? ascii : ASCII.test(text), n, key: null };
+    if (state.ascii && text !== name) state.n = fill(space, text);
+    if (out !== null) out.push({ key, text, patched: false, postscript: false });
     let patched = false;
     let postscript = false;
     let psSteps = 0;
-    let found = visit({ key, text, patched, postscript });
-    while (found === undefined) {
-      const step = stripUnit(text, rules);
-      if (step === null) break;
-      text = step[0];
-      patched = patched || step[1] === 'patched';
-      if (step[1] === 'postscript') {
+    for (let kind = strip(state, rules); kind !== null; kind = strip(state, rules)) {
+      patched = patched || kind === 'patched';
+      if (kind === 'postscript') {
         // Only a family part that one hyphen set apart is certain (ArchivoBlack-Regular,
         // Milestone 3 step 5): in Archivo-Black-Bold either hyphen may end the family.
         psSteps += 1;
-        postscript = postscript || (psSteps === 1 && !text.includes('-'));
+        postscript = postscript || (psSteps === 1 && !state.text.includes('-'));
       }
-      found = visit({ key: step[2], text, patched, postscript });
+      if (out !== null) {
+        out.push({ key: keyNow(state), text: state.text, patched, postscript });
+      } else if (state.ascii) {
+        const now = find(tbl, space, state.n);
+        if (now !== null) return { key: now, patched, postscript, codes: k.get(now) };
+      } else {
+        const codes = k.get(state.key);
+        if (codes !== undefined) return { key: state.key, patched, postscript, codes };
+      }
     }
-    return found;
+    return null;
   };
 
   const index = (text, size) => {
@@ -337,55 +483,45 @@ const OwnedMatch = (() => {
       }
       amb.set(key, value.map((i) => ids[index(String(i), ids.length)]));
     }
-    return Object.freeze({ ids, k, amb, rules: compile(doc.words) });
+    // k's keys by hash, a list where hashes meet: a key that no ASCII text has stays unfound.
+    const hashed = new Map();
+    for (const key of k.keys()) {
+      const h = hashOf(key);
+      const held = hashed.get(h);
+      if (held === undefined) hashed.set(h, key);
+      else hashed.set(h, [...(typeof held === 'string' ? [held] : held), key]);
+    }
+    return Object.freeze({ ids, k, amb, rules: compile(doc.words), hashed });
   };
 
   // A name's candidates under a table's rules, all of them (for tests and tools).
   const candidates = (name, tbl) => {
     const out = [];
-    walk(name, tbl.rules, (cand) => {
-      out.push(cand);
-    });
+    chain(name, tbl, out, scratch());
     return out;
   };
 
-  // The first of a name's candidates whose key the table knows, with its codes, or null; the
-  // chain is worked out only that far.
-  const firstHit = (name, tbl) => {
-    const found = walk(name, tbl.rules, (cand) => {
-      const codes = tbl.k.get(cand.key);
-      return codes === undefined ? undefined : [cand, codes];
-    });
-    return found === undefined ? null : found;
-  };
-
-  // [name, trusted] in matching order. A PostScript name is no more trusted than any other:
-  // only its family part before its one hyphen is, through the candidate's postscript, so
-  // "ArchivoBlack-Regular" can own Archivo Black and "Archivo-Black" can't.
-  const tries = (entry) => {
-    const out = entry.families.map((family, n) => [family, entry.trusted && n === 0]);
-    if (entry.full) out.push([entry.full, false]);
-    if (entry.postscript) out.push([entry.postscript, false]);
-    return out;
-  };
-
-  // An entry's first hit: [name, candidate, codes, trusted], or null. seen keeps each name's
-  // firstHit for one match call, so a family that many entries name is worked out once.
-  const hit = (entry, tbl, seen) => {
-    for (const [name, trusted] of tries(entry)) {
-      let found = seen.get(name);
-      if (found === undefined) {
-        found = firstHit(name, tbl);
-        seen.set(name, found);
-      }
-      if (found !== null) return [name, found[0], found[1], trusted || found[0].postscript];
+  // Set a family's value in an entry's families and values, as Map.set would.
+  const put = (families, values, fid, value) => {
+    const i = families.indexOf(fid);
+    if (i < 0) {
+      families.push(fid);
+      values.push(value);
+    } else {
+      values[i] = value;
     }
-    return null;
   };
 
-  const before = (a, b) => a[0] - b[0] || a[1] - b[1] || (a[2] < b[2] ? -1 : a[2] > b[2] ? 1 : 0);
-  const keep = (best, fid, rank) => {
-    if (!best.has(fid) || before(rank, best.get(fid)) < 0) best.set(fid, rank);
+  // Keep [value, n, shown] for fid unless best holds one before it, compared in that order.
+  const keep = (best, fid, value, n, shown) => {
+    const held = best.get(fid);
+    if (
+      held === undefined ||
+      value < held[0] ||
+      (value === held[0] && (n < held[1] || (n === held[1] && shown < held[2])))
+    ) {
+      best.set(fid, [value, n, shown]);
+    }
   };
 
   // Which catalog families the entries own, and which they only nearly match (owned.match,
@@ -394,51 +530,98 @@ const OwnedMatch = (() => {
   // parsed is OwnedParse.parse's result or a list of its entries.
   const match = (parsed, tbl, { patched = true } = {}) => {
     const entries = Array.isArray(parsed) ? parsed : parsed.entries;
-    const seen = new Map();
-    const owned = new Map();
-    const near = new Map();
+    // A name's first hit. The last name's is kept, since fc-list repeats a family on line
+    // after line; a map of every name would cost more than most walks, which end within a
+    // few steps (a parsed name is at most MAX_NAME long).
+    let lastName = null;
+    let lastFound = null;
+    const space = scratch();
+    const lookup = (name) => {
+      if (name !== lastName) {
+        lastFound = chain(name, tbl, null, space);
+        lastName = name;
+      }
+      return lastFound;
+    };
+    const owned = new Map(); // id -> [index in HOW, entry, shown]
+    const near = new Map(); // id -> [index in WHY, entry, shown]
     const counts = { owned: 0, near: 0, known: 0, ineligible: 0, unknown: 0 };
     const reasons = new Map();
-    entries.forEach((entry, n) => {
-      const found = hit(entry, tbl, seen);
+    // One entry's families and what each got (an index in HOW or WHY), and its reasons.
+    const ownIds = [];
+    const ownHow = [];
+    const nearIds = [];
+    const nearWhy = [];
+    const why = [];
+    for (let n = 0; n < entries.length; n += 1) {
+      // The names in matching order (owned._tries): the families, then the full name and
+      // the PostScript name. Only a trusted entry's first family is trusted; a PostScript
+      // name's family part before its one hyphen is, through the hit (Milestone 3 step 5).
+      const entry = entries[n];
+      const families = entry.families;
+      let found = null;
+      let shown = null;
+      let trusted = false;
+      for (let i = 0; found === null && i < families.length; i += 1) {
+        found = lookup(families[i]);
+        shown = families[i];
+        trusted = entry.trusted && i === 0;
+      }
+      if (found === null && entry.full) {
+        found = lookup(entry.full);
+        shown = entry.full;
+        trusted = false;
+      }
+      if (found === null && entry.postscript) {
+        found = lookup(entry.postscript);
+        shown = entry.postscript;
+        trusted = false;
+      }
       if (found === null) {
         counts.unknown += 1;
-        return;
+        continue;
       }
-      const [shown, cand, codes, trusted] = found;
-      const amb = tbl.amb.get(cand.key) || [];
-      const doubt = amb.length > 0 && !trusted;
-      const gotOwned = new Map();
-      const gotNear = new Map();
-      const why = new Set();
+      trusted = trusted || found.postscript;
+      const amb = tbl.amb.get(found.key);
+      const ambiguous = amb !== undefined && amb.length > 0;
+      const doubt = ambiguous && !trusted;
+      ownIds.length = 0;
+      ownHow.length = 0;
+      nearIds.length = 0;
+      nearWhy.length = 0;
+      why.length = 0;
       let known = false;
       let hasFamily = false;
-      for (const code of codes) {
+      const codes = found.codes;
+      for (let c = 0; c < codes.length; c += 1) {
+        const code = codes[c];
         if (code.family === null) {
           known = known || code.known;
-          if (code.reason !== null) why.add(code.reason);
+          if (code.reason !== null && !why.includes(code.reason)) why.push(code.reason);
           continue;
         }
         hasFamily = true;
-        const letter = cand.patched && SAME_FONT.has(code.letter) ? 'n' : code.letter;
-        if (letter === 'n' && !patched) gotNear.set(code.family, 'patched');
-        else if (!HOW_OF.has(letter)) gotNear.set(code.family, WHY_OF.get(letter));
-        else if (doubt) gotNear.set(code.family, 'ambiguous');
-        else gotOwned.set(code.family, HOW_OF.get(letter));
+        const letter = found.patched && SAME_FONT.has(code.letter) ? 'n' : code.letter;
+        if (letter === 'n' && !patched) put(nearIds, nearWhy, code.family, PATCHED);
+        else if (!HOW_INDEX.has(letter)) {
+          put(nearIds, nearWhy, code.family, WHY_INDEX.get(letter));
+        }
+        else if (doubt) put(nearIds, nearWhy, code.family, AMBIGUOUS);
+        else put(ownIds, ownHow, code.family, HOW_INDEX.get(letter));
       }
-      if (amb.length && (doubt || (known && !hasFamily))) {
-        for (const fid of amb) if (!gotOwned.has(fid)) gotNear.set(fid, 'ambiguous');
+      if (ambiguous && (doubt || (known && !hasFamily))) {
+        for (const fid of amb) if (!ownIds.includes(fid)) put(nearIds, nearWhy, fid, AMBIGUOUS);
       }
-      for (const [fid, how] of gotOwned) keep(owned, fid, [HOW.indexOf(how), n, shown]);
-      for (const [fid, reason] of gotNear) keep(near, fid, [WHY.indexOf(reason), n, shown]);
-      if (gotOwned.size) counts.owned += 1;
-      else if (gotNear.size) counts.near += 1;
+      for (let i = 0; i < ownIds.length; i += 1) keep(owned, ownIds[i], ownHow[i], n, shown);
+      for (let i = 0; i < nearIds.length; i += 1) keep(near, nearIds[i], nearWhy[i], n, shown);
+      if (ownIds.length) counts.owned += 1;
+      else if (nearIds.length) counts.near += 1;
       else if (known) counts.known += 1;
-      else if (why.size) {
+      else if (why.length) {
         counts.ineligible += 1;
         for (const reason of why) reasons.set(reason, (reasons.get(reason) || 0) + 1);
       } else counts.unknown += 1;
-    });
+    }
     // The result's keys are the file's ids and reasons, so its objects are built from entries:
     // assigning to a "__proto__" key would set the object's prototype, not add the key.
     const sorted = (map, value) =>
@@ -446,8 +629,8 @@ const OwnedMatch = (() => {
     for (const fid of owned.keys()) near.delete(fid);
     return {
       owned: sorted(owned, ([how, , as]) => ({ as, how: HOW[how] })),
-      near: sorted(near, ([why, , as]) => ({ as, why: WHY[why] })),
-      counts: { entries: entries.length, ...counts, reasons: sorted(reasons, (n) => n) },
+      near: sorted(near, ([reason, , as]) => ({ as, why: WHY[reason] })),
+      counts: { entries: entries.length, ...counts, reasons: sorted(reasons, (count) => count) },
     };
   };
 
