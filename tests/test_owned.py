@@ -926,6 +926,37 @@ def test_parse_vectors_reach_javascript_as_python_reads_them():
             assert ov.spelled(data) == case["input"]
 
 
+def test_every_fixture_is_a_parse_vector_too():
+    """PR 3 checks the port against the vectors only, so each fixture is one of them."""
+    by_label = {c["label"]: c for c in PARSE}
+    for path in ov.fixture_files():
+        case = by_label[f"fixture {path.name}"]
+        assert ov.data_of(case["input"]) == path.read_bytes()
+        assert case["expect"] == EXPECTED[path.name]
+
+
+def test_the_registry_vectors_say_what_their_labels_say():
+    """Value names without a suffix ("Courier 10,12,15") stay whole and untrusted in a list
+    with at least as many registry lines as plain ones; with fewer, commas split as fc-list's."""
+    by_label = {c["label"]: c["expect"] for c in PARSE}
+    for label in (
+        "registry value names without a suffix stay whole",
+        "registry value names without a suffix stay whole at a tie too",
+        "registry value names without a suffix stay whole, as UTF-16",
+        "fixture windows-registry-utf16.txt",
+    ):
+        expect = by_label[label]
+        assert expect["format"] == "windows-registry", label
+        assert {"Courier 10,12,15", "Small Fonts"} <= {e["full"] for e in expect["entries"]}
+        assert not any(e["trusted"] or e["families"] for e in expect["entries"]), label
+    fewer = by_label["fewer registry lines than plain ones leave fc-list's commas"]
+    assert fewer["format"] == "fc-list"
+    assert [e["families"] for e in fewer["entries"] if e["trusted"]] == [
+        ["Archivo", "Archivo Black"],
+        ["Foo,Bar", "Baz"],
+    ]
+
+
 @pytest.mark.parametrize("case", CANDIDATES, ids=[repr(c["name"]) for c in CANDIDATES])
 def test_candidates_vector(case):
     got = [

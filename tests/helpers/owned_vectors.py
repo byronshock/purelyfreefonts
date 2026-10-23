@@ -3,9 +3,10 @@
 ``uv run python -m tests.helpers.owned_vectors`` rewrites, from ``tff_catalog.owned``:
 
 - ``tests/vectors/owned-fonts.json``: the constants (``spec``); a synthetic names.json
-  (``names``, ``catalog_ids``, ``run_date``) and its match document (``document``); parse,
-  candidates and match cases with the results owned.py gives; and match files it must refuse
-  (``malformed``). site/js's port must give the same results (PR 3).
+  (``names``, ``catalog_ids``, ``run_date``) and its match document (``document``); parse
+  cases (every fixture among them), candidates and match cases with the results owned.py
+  gives; and match files it must refuse (``malformed``). site/js's port must give the same
+  results (PR 3).
 - ``tests/vectors/owned-known-answers.json``: the known answers on the real
   ``build/names.json``. These are expectations written here by hand, not results.
 - ``tests/fixtures/owned/expected.json``: each fixture's parse, as a dropped file.
@@ -350,7 +351,22 @@ def _hand_parse_cases() -> list[tuple[str, bytes | str]]:
         ("registry, UTF-16 big-endian", codecs.BOM_UTF16_BE + REGISTRY.encode("utf-16-be")),
         (
             "registry value names without a suffix stay whole",
+            "Arial (TrueType)\nCourier 10,12,15\nMS Sans Serif 8,10,12,14,18,24\nSegoe UI (TrueType)\nSmall Fonts\nSymbol 8,10,12,14,18,24 (VGA res)\nTahoma (TrueType)\n",
+        ),
+        (
+            "registry value names without a suffix stay whole at a tie too",
             "Arial (TrueType)\nCourier 10,12,15\nMS Sans Serif 8,10,12,14,18,24\nSegoe UI (TrueType)\nSmall Fonts\nSymbol 8,10,12,14,18,24 (VGA res)\n",
+        ),
+        (
+            "registry value names without a suffix stay whole, as UTF-16",
+            codecs.BOM_UTF16_LE
+            + "Arial (TrueType)\r\nCourier 10,12,15\r\nSmall Fonts\r\nTahoma (TrueType)\r\nWingdings (TrueType)\r\n".encode(
+                "utf-16-le"
+            ),
+        ),
+        (
+            "fewer registry lines than plain ones leave fc-list's commas",
+            "Arial (TrueType)\nArchivo,Archivo Black\nFoo\\,Bar,Baz\n",
         ),
         (
             "UTF-16 without a byte-order mark, CJK names",
@@ -404,7 +420,14 @@ def _hand_parse_cases() -> list[tuple[str, bytes | str]]:
         ("only prompts", "user@host ~ $\n$\n"),
     ]
     cases += [(f"the command: {cmd}", cmd + "\n") for cmd in COMMANDS]
+    # The fixtures too, as dropped files, so the port meets every one of them.
+    cases += [(f"fixture {path.name}", path.read_bytes()) for path in fixture_files()]
     return cases
+
+
+def fixture_files() -> list[Path]:
+    """The synthetic fixtures in tests/fixtures/owned/, without expected.json."""
+    return sorted(path for path in FIXTURES.iterdir() if path.name != EXPECTED.name)
 
 
 def parts_cases() -> list[tuple[str, list[list[Any]], bool]]:
@@ -1264,11 +1287,7 @@ def vectors() -> dict[str, Any]:
 
 def expected_fixtures() -> dict[str, Any]:
     """Each fixture's parse, as a dropped file."""
-    return {
-        path.name: owned.parse(path.read_bytes()).to_json()
-        for path in sorted(FIXTURES.iterdir())
-        if path.name != EXPECTED.name
-    }
+    return {path.name: owned.parse(path.read_bytes()).to_json() for path in fixture_files()}
 
 
 def main() -> None:

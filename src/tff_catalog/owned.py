@@ -1250,9 +1250,11 @@ def _parse_lines(lines: list[str], state: _State) -> Parsed:
 
     Dropped lines: PowerShell table rules with the header above them, "Hive:",
     PSPath and its siblings, error records, prompts, commands and not-found
-    errors. In a list with more registry lines than plain ones, the plain lines
-    are value names without a suffix ("Courier 10,12,15", "Small Fonts"), kept
-    whole. Otherwise a list is fc-list's (``trusted``) when at least one plain
+    errors. In a list with at least as many registry lines as plain ones, the
+    plain lines are value names without a suffix ("Courier 10,12,15", "Small
+    Fonts"), kept whole and untrusted: fontconfig never writes a registry suffix,
+    and of the two readings this one trusts nothing, so a tie counts too.
+    Otherwise a list is fc-list's (``trusted``) when at least one plain
     line in ``FC_LIST_ONE_IN`` split at a fontconfig comma or held an escape;
     commas split either way, so one stray "Foo,Bar" changes no other line's trust.
     """
@@ -1320,7 +1322,7 @@ def _parse_lines(lines: list[str], state: _State) -> Parsed:
     for item in items:
         if item is None or item[0] != "plain":
             continue
-        if kinds["windows-registry"] > kinds["plain"]:
+        if kinds["windows-registry"] >= kinds["plain"]:
             item[0], item[1] = "windows-registry", item[1].split(" & ")
             continue
         item[1], by_fontconfig = _split_fc(item[1])
