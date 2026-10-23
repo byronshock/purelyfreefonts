@@ -1,0 +1,9 @@
+# Owner ruling of 2026-10-23 on the interim desktop rules, asked in chat by the lead session as a single-select question.
+# Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md (The scoring method) and docs/ranking-methodology.md.
+
+[deferred_sources_count_for_gate]
+choice = "a"
+recommended = true
+value = "gate_only"
+ruling = "While GitHub and Nerd Fonts release downloads stay out of every score (g1_github_deferred, g2_nerd_deferred), they count toward the two-group rule (D14): a font that has evidence from one of them, observed above that source's noise floor as the source would count it, gets that independence group for the gate, with no term in its score. Their groups follow the existing rules: Nerd Fonts is its own group, and GitHub merges with Homebrew for a font whose Homebrew cask downloads that repository's release asset (M5). The ranks whose placements this changes (most chosen, most installed and Coding) take a new method version."
+reason = "Found in the owner's look at October on the new method: Hack would be #5 in Chosen (desktop) and #9 in Coding on its score, but the two-group rule held it at 101 with Homebrew its only group, since the Linux sources abstain for a font KDE Plasma preinstalls and the deferral had removed Nerd Fonts' vote along with its score term. Of (a) counting them for the rule only, (b) keeping the interim rules until GitHub and Nerd Fonts return after six monthly snapshots, and (c) relaxing the two-group rule for the desktop ranks, the owner took Claude's recommendation."
