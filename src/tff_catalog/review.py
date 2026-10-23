@@ -1609,7 +1609,11 @@ def analyse(ctx: StageContext) -> Analysis:
     inputs = _rank_inputs(ctx, scores, notes)
     flags += _crosscheck_flags(inputs, now, cfg, notes)
     flags += disagreement_flags(now, names, cfg)
-    flags += term_flags(_optional(ctx, "terms") or {}, names, overall, model_sources(cfg))
+    terms = {  # a gate-only source's terms reach no score (deferred_sources_count_for_gate)
+        view: {s: ts for s, ts in by_source.items() if s not in cfg.sources.gate_only()}
+        for view, by_source in (_optional(ctx, "terms") or {}).items()
+    }
+    flags += term_flags(terms, names, overall, model_sources(cfg))
     growth, store_line = growth_flags(ctx, run)
     flags += growth
     rows = what_if(inputs, cfg, phasing_in(ctx)) if inputs is not None else ()
@@ -2046,8 +2050,13 @@ def _finish(
 
 
 def _groups(scores: Mapping[str, SurveyScores], key: str, fid: str) -> str:
+    """The font's groups in ``key``: its score's, then those only a gate-only source gave it
+    (deferred_sources_count_for_gate), marked "(gate only)"."""
     fused = scores[key].fused.get(fid) if key in scores else None
-    return ", ".join(fused.groups) if fused is not None and fused.groups else NONE
+    if fused is None:
+        return NONE
+    names = [*fused.groups, *(f"{g} (gate only)" for g in fused.gate_groups)]
+    return ", ".join(names) if names else NONE
 
 
 def _range(conf: Mapping[str, Mapping[str, Confidence]], key: str, fid: str) -> tuple[str, str]:
@@ -2073,7 +2082,9 @@ def _pack_top100(a: Analysis, cfg: RankingConfig) -> str:
         f"# Top {top} of each rank, {a.run_date}",
         "",
         f'Tier and 5{NONE}95% range from stage "confidence". Groups: the independence groups of the '
-        "font's observed terms. Each source column is the font's rank among the fonts that "
+        'font\'s observed terms; "(gate only)" marks one only a gate-only source gives, which '
+        "counts toward the two-group gate and not the score. Each source column is the font's "
+        "rank among the fonts that "
         f"source covers (1 = the most; censored fonts share the bottom rank; {NONE} = not covered).",
         "",
     ]
@@ -2106,7 +2117,8 @@ def _pack_held(a: Analysis, cfg: RankingConfig) -> str:
         f"# Held back by the two-group gate, {a.run_date}",
         "",
         "Fonts that scored inside the exact top but have observed terms from fewer than "
-        "`engine.top100_min_groups` independence groups (D14). They sit just after the top.",
+        "`engine.top100_min_groups` independence groups (D14), a gate-only source's included. "
+        "They sit just after the top.",
         "",
     ]
     for key in RANK_KEYS:
