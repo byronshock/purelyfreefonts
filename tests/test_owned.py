@@ -587,11 +587,73 @@ def test_a_recode_changes_only_its_alias_s_code():
         ({"Foo Sans": "related"}, "no alias of names.json"),
         ({"Foo Sans Text": "rename"}, "is not one of"),
         ({"Foo Sans Text": "build"}, "is not one of"),
+        ({"-": "related"}, "no alias of names.json"),
+        ({"Foo Sans Text": "related", "FooSansText": "sibling"}, "two relations"),
     ],
 )
 def test_a_recode_must_name_an_alias_and_a_near_match_relation(recodes, message):
     with pytest.raises(ValueError, match=message):
         owned.match_document(ov.NAMES, ov.CATALOG_IDS, ov.RUN_DATE, recodes=recodes)
+    with pytest.raises(ValueError, match=message):
+        owned.check_document(ov.NAMES, ov.CATALOG_IDS, recodes=recodes)
+
+
+def _with_rows(*rows: dict[str, str]) -> dict[str, Any]:
+    """The synthetic names.json with more alias rows for Foo Sans."""
+    doc = json.loads(json.dumps(ov.NAMES))
+    doc["families"][1]["names"].extend(rows)
+    return doc
+
+
+def test_a_recode_works_by_key_whatever_the_spelling():
+    """Another spelling of a recoded alias, at the same key, is recoded too: kept as a
+    build, it would leave Foo Sans owned there (hopper_hackgen_related)."""
+    doc = _with_rows({"name": "FooSans Text", "relation": "build", "detail": ""})
+    built = owned.match_document(
+        doc, ov.CATALOG_IDS, ov.RUN_DATE, recodes={"Foo Sans Text": "related"}
+    )
+    assert built["k"]["foosanstext"] == "1x"
+    respelled = owned.match_document(
+        ov.NAMES, ov.CATALOG_IDS, ov.RUN_DATE, recodes={"FOO SANS TEXT": "related"}
+    )
+    assert respelled == owned.match_document(
+        ov.NAMES, ov.CATALOG_IDS, ov.RUN_DATE, recodes={"Foo Sans Text": "related"}
+    )
+
+
+@pytest.mark.parametrize(
+    ("row", "recodes", "message"),
+    [
+        (
+            {"name": "Foo Sans Text NF", "relation": "build", "detail": "nf"},
+            {"Foo Sans Text": "related"},
+            "'Foo Sans Text NF' reaches it and still counts as owned",
+        ),
+        (
+            {"name": "Foo Sans Text Bold", "relation": "rename"},
+            {"Foo Sans Text": "sibling"},
+            "'Foo Sans Text Bold' reaches it",
+        ),
+        (
+            {"name": "FooSans", "relation": "rename"},
+            {"FooSans": "related"},
+            "family name of foo-sans",
+        ),
+    ],
+)
+def test_a_recode_that_leaves_its_family_owned_is_refused(row, recodes, message):
+    """A list's "Foo Sans Text NF" would hit its own build row and own Foo Sans again, so
+    the reviewed list must recode it too; a family's own name can't be recoded."""
+    doc = _with_rows(row)
+    owned.match_document(doc, ov.CATALOG_IDS, ov.RUN_DATE)
+    with pytest.raises(ValueError, match=message):
+        owned.match_document(doc, ov.CATALOG_IDS, ov.RUN_DATE, recodes=recodes)
+    with pytest.raises(ValueError, match=message):
+        owned.check_document(doc, ov.CATALOG_IDS, recodes=recodes)
+    if "reaches" in message:
+        both = {**recodes, row["name"]: recodes["Foo Sans Text"]}
+        built = owned.match_document(doc, ov.CATALOG_IDS, ov.RUN_DATE, recodes=both)
+        assert not built["k"][names.match_key(row["name"])].endswith(("b", "n", "r"))
 
 
 def test_the_check_finds_a_planted_meeting_of_distinct_families():

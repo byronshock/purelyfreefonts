@@ -400,23 +400,31 @@ RECODE_RELATIONS = frozenset({"related", "sibling", "bundle"})
 
 
 def _recodes(names_doc: Mapping[str, Any], recodes: Mapping[str, str] | None) -> dict[str, str]:
-    """``recodes`` checked: each name an alias some family of ``names_doc`` lists, each
-    relation one of ``RECODE_RELATIONS``; else ValueError, so a stale entry is caught."""
-    out = dict(recodes or {})
-    for name, relation in out.items():
+    """``recodes`` by ``match_key``, checked: each relation one of ``RECODE_RELATIONS``, one
+    relation per key, and each key one that an alias of ``names_doc`` has; else ValueError,
+    so a stale entry is caught.
+
+    By key, as the hopper matches: a recode of "HackGen" recodes an alias spelled "Hack Gen"
+    too, which would otherwise keep Hack owned at the same key.
+    """
+    out: dict[str, str] = {}
+    for name, relation in (recodes or {}).items():
         if not isinstance(name, str) or relation not in RECODE_RELATIONS:
             raise ValueError(
                 f"recode {name!r}: {relation!r} is not one of {sorted(RECODE_RELATIONS)}"
             )
-    listed = {row["name"] for fam in names_doc["families"] for row in fam["names"]}
-    stale = sorted(set(out) - listed)
+        key = match_key(name)
+        if out.setdefault(key, relation) != relation:
+            raise ValueError(f"recodes give the key {key!r} two relations")
+    listed = {match_key(row["name"]) for fam in names_doc["families"] for row in fam["names"]}
+    stale = sorted(name for name in recodes or {} if match_key(name) not in listed - {""})
     if stale:
         raise ValueError(f"recodes name no alias of names.json: {stale}")
     return out
 
 
-def _letter(item: Mapping[str, Any], recodes: Mapping[str, str]) -> str:
-    relation = recodes.get(item["name"], item["relation"])
+def _letter(item: Mapping[str, Any], key: str, recodes: Mapping[str, str]) -> str:
+    relation = recodes.get(key, item["relation"])
     if relation == "build":
         detail = item.get("detail")
         if detail in PATCHED_DETAILS:
@@ -446,14 +454,23 @@ class _Holders:
 def _holders(
     names_doc: Mapping[str, Any], catalog: frozenset[str], recodes: Mapping[str, str]
 ) -> tuple[dict[str, _Holders], list[str]]:
-    """Every known name's key with its holders, and the known names in document order."""
+    """Every known name's key with its holders, and the known names in document order.
+
+    ``recodes`` (by key, ``_recodes``) apply to every alias row at their keys.
+    ``_check_recodes`` then refuses a recode that leaves its family owned there.
+    """
     out: dict[str, _Holders] = defaultdict(_Holders)
     seen: dict[str, None] = {}
+    recoded: dict[str, set[str]] = defaultdict(set)  # key -> families with a recoded row
     for fam in names_doc["families"]:
         fid = fam["id"]
-        rows = [(fam["family"], ""), *((n["name"], _letter(n, recodes)) for n in fam["names"])]
-        for name, letter in rows:
-            key = match_key(name)
+        rows = [(fam["family"], match_key(fam["family"]), "")]
+        for item in fam["names"]:
+            key = match_key(item["name"])
+            rows.append((item["name"], key, _letter(item, key, recodes)))
+            if key in recodes:
+                recoded[key].add(fid)
+        for name, key, letter in rows:
             if not key:
                 continue
             seen.setdefault(name)
@@ -465,7 +482,40 @@ def _holders(
         if key:
             seen.setdefault(row["name"])
             out[key].reasons.add(row["reason"])
+    _check_recodes(names_doc, out, recoded)
     return dict(out), list(seen)
+
+
+def _check_recodes(
+    names_doc: Mapping[str, Any], holders: Mapping[str, _Holders], recoded: Mapping[str, set[str]]
+) -> None:
+    """ValueError when a recoded family could still be owned through a recoded name.
+
+    That is when its own family name has the recoded key, or when another of its names
+    keeps an owned code at its own key while its candidates reach the recoded one: an alias
+    "HackGen NF" as a patched build of Hack would make a list's "HackGen NF" own Hack again,
+    so it needs a recode of its own (``hopper_hackgen_related``).
+    """
+    for key, fids in sorted(recoded.items()):
+        for fid in sorted(fids):
+            if holders[key].owns(fid):
+                raise ValueError(f"recode {key!r}: the family name of {fid} has that key")
+    by_family: dict[str, set[str]] = defaultdict(set)
+    for key, fids in recoded.items():
+        for fid in fids:
+            by_family[fid].add(key)
+    for fam in names_doc["families"]:
+        keys_here = by_family.get(fam["id"])
+        if not keys_here:
+            continue
+        for name in (fam["family"], *(item["name"] for item in fam["names"])):
+            chain = candidates(name)
+            reached = sorted(keys_here & {c.key for c in chain[1:]})
+            if reached and holders[chain[0].key].owns(fam["id"]):
+                raise ValueError(
+                    f"recode {reached[0]!r}: {fam['id']}'s name {name!r} reaches it and still "
+                    "counts as owned; recode that name too"
+                )
 
 
 @dataclass(frozen=True, slots=True)
@@ -602,12 +652,14 @@ def match_document(
     (``check_document``). ``names_sha256`` hashes the canonical form of
     ``names_doc``. The catalog ids must be exactly the ``in_catalog`` families.
 
-    ``recodes`` maps alias names, as names.json spells them, to the relation the
-    hopper gives them instead (``RECODE_RELATIONS``), in every family that lists
-    them: a reviewed list beside names.json, which the site build reads
-    (``hopper_hackgen_related``: ``{"HackGen": "related"}``, so HackGen is only a
-    near-match of Hack while the alias row, and the ranking, stay). A name no
-    family lists as an alias, or another relation, is a ValueError.
+    ``recodes`` maps alias names to the relation the hopper gives them instead
+    (``RECODE_RELATIONS``): a reviewed list beside names.json, which the site build
+    reads (``hopper_hackgen_related``: ``{"HackGen": "related"}``, so HackGen is only
+    a near-match of Hack while the alias row, and the ranking, stay). A recode
+    works by ``match_key``, on every alias row of every family at that key, however
+    names.json spells it. A ValueError, so that a stale or bypassed recode is caught:
+    a key no alias has, a relation outside ``RECODE_RELATIONS``, two relations for one
+    key, or a recoded family still owned through it (``_check_recodes``).
     """
     ids = _catalog_ids(names_doc, catalog_ids, run_date)
     index = {fid: n for n, fid in enumerate(ids)}
