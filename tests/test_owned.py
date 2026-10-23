@@ -614,7 +614,7 @@ def test_no_fixture_or_vector_holds_a_home_path_or_a_real_host(path):
 
 def test_the_guard_catches_home_paths_in_each_spelling():
     for text in [
-        "/home/byron/x",
+        "/home/ann/x",
         "/Users/Ann/Library",
         "C:\\Users\\ann",
         "c:\\\\users\\\\ann",
