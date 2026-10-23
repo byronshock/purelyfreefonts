@@ -344,9 +344,9 @@ def test_rrf_orders_place_fonts_by_the_engines_rules() -> None:
             "x": cen(10.0),
         },
         "arch": {"a": obs(0.5, "arch"), "b": obs(0.4, "arch"), "c": obs(0.3, "arch")},
-        "nerd": {"solo": obs(99.0, "nerd")},  # no weight: no second group for solo
+        "debian": {"solo": obs(99.0, "debian")},  # no weight: no second group for solo
     }
-    weights = {"homebrew": 1.0, "arch": 0.75, "nerd": 0.0}
+    weights = {"homebrew": 1.0, "arch": 0.75, "debian": 0.0}
     inputs = RankInputs(
         terms={"desktop_chosen": terms},
         ruler={},
@@ -360,6 +360,29 @@ def test_rrf_orders_place_fonts_by_the_engines_rules() -> None:
     assert got == {"a": 1, "b": 2, "solo": 3, "c": 4}
     among = crosscheck.rrf_orders(inputs, "desktop_chosen", _small(2), among=["a", "c", "solo"])
     assert among == {"a": 1, "c": 2, "solo": 3}
+
+
+def test_rrf_orders_count_a_gate_only_group_as_the_published_order_does() -> None:
+    """Nerd Fonts is gate-only (owner ruling of 2026-10-23, deferred_sources_count_for_gate):
+    its observed term gives solo a second group for the gate, and RRF still never scores it,
+    as the published order (``surveys.views``) places solo."""
+    terms = {
+        "homebrew": {"solo": obs(1000.0), "a": obs(900.0), "b": obs(800.0)},
+        "arch": {"a": obs(0.5, "arch"), "b": obs(0.4, "arch")},
+        "nerd": {"solo": obs(99.0, "nerd"), "b": obs(1e9, "nerd")},
+    }
+    weights = {"homebrew": 1.0, "arch": 0.75, "nerd": 0.0}
+    inputs = RankInputs(
+        terms={"desktop_chosen": terms},
+        ruler={},
+        weights={"desktop_chosen": weights},
+        names={f: f.upper() for f in ("solo", "a", "b")},
+    )
+    without = dict(terms)
+    del without["nerd"]
+    scores = crosscheck.rrf(crosscheck.source_ranks(terms), weights, 60)
+    assert scores == crosscheck.rrf(crosscheck.source_ranks(without), weights, 60)
+    assert crosscheck.rrf_orders(inputs, "desktop_chosen", _small(2)) == {"solo": 1, "a": 2, "b": 3}
 
 
 def test_rrf_orders_give_a_term_without_weight_no_group() -> None:

@@ -250,6 +250,13 @@ WRONG_VALUES = {
         _set("project_group_shares", "apps", "sources", value=["npm_expo", "flutter", "homebrew"]),
         "not a project source",
     ),
+    # deferred_sources_count_for_gate (2026-10-23): gate_only is for a disabled source that
+    # only the engine's ranks list.
+    "gate-only-enabled": (
+        _set("sources", "homebrew", "gate_only", value=True),
+        "sources.homebrew.gate_only: only for a disabled source",
+    ),
+    "gate-only-not-a-bool": (_set("sources", "nerd", "gate_only", value=1), "true or false"),
 }
 
 
@@ -329,6 +336,35 @@ def test_project_group_shares_follow_ruling_m9() -> None:
         "code": {"npm_fontsource", "ecosystems", "jsdelivr"},
         "apps": {"npm_expo", "flutter"},
     }
+
+
+def test_github_and_nerd_fonts_count_for_the_gate_only_by_the_ruling_of_2026_10_23() -> None:
+    """deferred_sources_count_for_gate: both stay disabled (g1_github_deferred,
+    g2_nerd_deferred) and are the only gate-only sources."""
+    ruling = tomllib.loads(
+        (ROOT / "data" / "reviews" / "method" / "2026-10-23.toml").read_text(encoding="utf-8")
+    )
+    assert ruling["deferred_sources_count_for_gate"]["value"] == "gate_only"
+    sources = load_config(Paths.for_root(ROOT)).ranking.sources
+    assert sources.gate_only() == {"github", "nerd"}
+    assert (sources.github.enabled, sources.nerd.enabled) == (False, False)
+    assert [n for n, s in sources.all().items() if s.gate_only] == ["github", "nerd"]
+
+
+@pytest.mark.model_config
+def test_gate_only_needs_an_engine_rank(cfg: ConfigCopy) -> None:
+    """A model view has no gate-only path: Flutter feeds Projects and Developers & apps."""
+    cfg.change("ranking.toml", _set("sources", "flutter", "gate_only", value=True))
+    message = "sources.flutter.gate_only: model view(s) dev_apps, project list it"
+    with pytest.raises(ConfigError, match=re.escape(message)):
+        cfg.load()
+
+
+def test_gate_only_is_optional_and_false_when_unset(cfg: ConfigCopy) -> None:
+    cfg.change("ranking.toml", _drop("sources", "nerd", "gate_only"))
+    sources = cfg.load().ranking.sources
+    assert sources.nerd.gate_only is False
+    assert sources.gate_only() == {"github"}
 
 
 def test_chocolatey_is_dropped_by_ruling_t3() -> None:
