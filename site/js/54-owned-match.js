@@ -501,7 +501,9 @@ const OwnedMatch = (() => {
     return out;
   };
 
-  // Set a family's value in an entry's families and values, as Map.set would.
+  // Set a family's value in an entry's families and values, as Map.set would: a later value
+  // replaces an earlier one, so an ambiguous key's "ambiguous" replaces the near reason the
+  // family's own code gave there (owned.py's got_near, where ambiguous wins).
   const put = (families, values, fid, value) => {
     const i = families.indexOf(fid);
     if (i < 0) {

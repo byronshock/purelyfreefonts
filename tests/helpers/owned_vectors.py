@@ -236,9 +236,27 @@ HAND_DOCUMENT = {
 }  # fmt: skip
 
 
+# A hand-made match file whose families are coded at keys that are ambiguous too, which neither
+# real names.json has: there an untrusted entry's "ambiguous" replaces the near reason the
+# family's own code gives (owned.match: ambiguous is first in WHY, so it wins). "fooblack" is
+# a build of foo (patched once a Nerd suffix is stripped), "foolight" a sibling, and "foowide"
+# a related name of foo and a bundle of bar.
+AMBIGUOUS_DOCUMENT = {
+    "format": owned.FORMAT,
+    "v": owned.VERSION,
+    "run_date": RUN_DATE,
+    "ids": ["bar", "foo"],
+    "k": {"bar": "0", "foo": "1", "fooblack": "1b", "foolight": "1s", "foowide": "1x,0u"},
+    "amb": {"fooblack": [1], "foolight": [1], "foowide": [0, 1]},
+    "reasons": [],
+    "words": owned.WORDS,
+}  # fmt: skip
+
+
 def own_document_cases() -> list[tuple[str, dict[str, Any], tuple[owned.Entry, ...]]]:
     """Match cases on a document of their own: (label, document, entries)."""
     hand = HAND_DOCUMENT
+    amb = AMBIGUOUS_DOCUMENT
     return [
         (
             "ids and reasons named after Object.prototype's keys",
@@ -254,6 +272,15 @@ def own_document_cases() -> list[tuple[str, dict[str, Any], tuple[owned.Entry, .
         ),
         ("a reason given twice counts once", hand, (_e(("Dup",)),)),
         ("keys that share a hash", hand, (_e(("Abcxyz",)), _e(("Abdxyz",)), _e(("Abexyz",)))),
+        ("an ambiguous key's own build, patched, untrusted", amb, (_e(full="Foo Black NF"),)),
+        ("an ambiguous key's own sibling, untrusted", amb, (_e(("Foo Light",)),)),
+        ("an ambiguous key's own sibling, trusted", amb, (_e(("Foo Light",), trusted=True),)),
+        ("an ambiguous key's own related and bundle names, untrusted", amb, (_e(full="Foo Wide"),)),
+        (
+            "an ambiguous key's own related and bundle names, trusted",
+            amb,
+            (_e(("Foo Wide",), trusted=True),),
+        ),
     ]
 
 

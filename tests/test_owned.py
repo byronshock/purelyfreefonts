@@ -1185,6 +1185,32 @@ def test_the_hand_document_vectors_say_what_their_labels_say():
     assert set(second["near"]) == {"foo-sans", "foo-sans-black"}
 
 
+def test_an_ambiguous_key_s_ambiguous_replaces_the_reason_a_family_s_own_code_gives():
+    """ov.AMBIGUOUS_DOCUMENT: on an untrusted entry, an ambiguous key's families are near-matches
+    as "ambiguous", even where the family's own code there gives another near reason (patched
+    with patched off, sibling, related, bundle); a trusted entry keeps the code's reason."""
+    by_label = {c["label"]: c["expect"] for c in MATCH}
+
+    def why(label: str) -> dict[str, str]:
+        assert by_label[label]["owned"] == {}, label
+        return {fid: v["why"] for fid, v in by_label[label]["near"].items()}
+
+    stem = "an ambiguous key's own"
+    for off in ("", ", patched off"):
+        assert why(f"{stem} build, patched, untrusted{off}") == {"foo": "ambiguous"}
+        assert why(f"{stem} sibling, untrusted{off}") == {"foo": "ambiguous"}
+        assert why(f"{stem} sibling, trusted{off}") == {"foo": "sibling"}
+        untrusted = why(f"{stem} related and bundle names, untrusted{off}")
+        assert untrusted == {"foo": "ambiguous", "bar": "ambiguous"}
+        trusted = why(f"{stem} related and bundle names, trusted{off}")
+        assert trusted == {"foo": "related", "bar": "bundle"}
+    # Without the ambiguous key, the patched build with patched off is "patched".
+    table = owned.Table.from_document({**ov.AMBIGUOUS_DOCUMENT, "amb": {}})
+    entries = [owned.Entry((), "Foo Black NF", None, False)]
+    got = owned.match(entries, table, patched=False).to_json()["near"]
+    assert got == {"foo": {"as": "Foo Black NF", "why": "patched"}}
+
+
 @pytest.mark.parametrize("case", MALFORMED, ids=[c["label"] for c in MALFORMED])
 def test_a_malformed_match_file_is_refused(case):
     with pytest.raises(ValueError):  # noqa: PT011 (every refusal is a ValueError)
