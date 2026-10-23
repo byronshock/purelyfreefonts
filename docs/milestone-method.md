@@ -66,6 +66,7 @@ This checklist brings the owner's scoring-method rulings of 2026-09-30 and 2026-
 
 ### Step 11: Engine: the interim desktop rules
 - [x] No young-font scaling with the 60-day grace kept (`h3_young_casks_not_scaled`, `b8a_no_scaling_any_source`, `b8b_grace_kept`); the Debian frame (`debian_frame`, `de1_frame_effect`, `de3_drop_vote`); pooled Arch months (`a2_arch_pool_months`); GitHub and Nerd Fonts out of every rank (`g1_github_deferred`, `g2_nerd_deferred`), still collected. *(#83, with the Debian frame's relation ends)*
+- [x] *Amended 2026-10-23:* GitHub and Nerd Fonts count toward the two-group gate, with no term in any score (`deferred_sources_count_for_gate`): `gate_only` in `ranking.toml`, their growth since the run history's baseline, method version 2026-10-23 for both desktop views and Coding. *(This pull request. A local offline replay of 2026-10-17: every score as in #88, Projects and Developers & apps unchanged; Hack #5 in Chosen and #9 in Coding.)*
 
 ### Step 12: The methodology text and the schema descriptions
 - [ ] `docs/ranking-methodology.md` and the methodology page describe both methods side by side, disclose `q25_residual_dependence` and `q23_google_own_traffic`, and drop "a font scoring 90 stands above about 90%" and "Past #100 we show bands" (PLAN-REVIEWERS-1.md step 3). Step 0's check, a fresh reader, and the owner's review. *(The text, the leak check and a fresh reader are in this pull request; the owner's review is still to come.)*
