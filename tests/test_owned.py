@@ -17,6 +17,8 @@
   is refused.
 - The known answers (``tests/vectors/owned-known-answers.json``) on ``build/names.json``,
   with the recodes; a strict xfail marks a known data problem.
+- Speed and imports: 10,000 names parse and match well inside a second, and owned.py loads
+  only the standard library and three light modules.
 
 ``uv run python -m tests.helpers.owned_vectors`` rewrites the vectors and ``expected.json``
 after a deliberate change; review the diff.
@@ -27,6 +29,8 @@ import hashlib
 import itertools
 import json
 import re
+import subprocess
+import sys
 import time
 from pathlib import Path
 from typing import Any
@@ -917,3 +921,58 @@ def test_without_its_recode_hackgen_is_a_build_of_hack():
     only the hopper's recode makes it a near-match."""
     result = owned.match([E(("HackGen",), trusted=True)], real_table(recoded=False))
     assert result.owned == {"hack": {"as": "HackGen", "how": "build"}}
+
+
+# ---------------------------------------------------------------- speed and imports
+
+
+def test_ten_thousand_names_parse_and_match_well_inside_a_second():
+    """Milestone 3 step 5 asks the browser for 200 ms; the reference takes about 90 ms here."""
+    doc, _ = real()
+    base = [f["family"] for f in doc["families"]] + [r["name"] for r in doc["ineligible"]]
+    styles = [
+        "",
+        " Bold",
+        " Italic",
+        " Light Italic",
+        " NF",
+        " Nerd Font Mono",
+        " Variable",
+        " Condensed Bold",
+        "-Regular",
+    ]
+    text = "\n".join(
+        base[i % len(base)]
+        + styles[(i // len(base)) % len(styles)]
+        + ("" if i < 3 * len(base) else f" {i}")
+        for i in range(10_000)
+    )
+    built = jsonio.canonical_bytes(owned.match_document(doc, real()[1], doc["run"]["date"]))
+    start = time.perf_counter()
+    table = owned.Table.from_document(json.loads(built))
+    result = owned.match(owned.parse(text), table)
+    elapsed = time.perf_counter() - start
+    assert result.counts["entries"] > 9_000
+    assert elapsed < 1.0, elapsed
+
+
+def test_owned_imports_only_the_standard_library_and_three_light_modules():
+    """tff_site imports owned.py for the site build, which loads none of the pipeline."""
+    code = (
+        "import sys, tff_catalog.owned\n"
+        "mods = {m.split('.')[0] for m in sys.modules} - set(sys.stdlib_module_names)\n"
+        "print(sorted(mods - {'__main__', '_virtualenv'}))\n"
+        "print(sorted(m for m in sys.modules if m.startswith('tff_catalog')))\n"
+    )
+    out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True)
+    third, ours = out.stdout.splitlines()
+    assert third == "['tff_catalog']"
+    assert ours == str(
+        [
+            "tff_catalog",
+            "tff_catalog.jsonio",
+            "tff_catalog.keys",
+            "tff_catalog.names",
+            "tff_catalog.owned",
+        ]
+    )
