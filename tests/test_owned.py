@@ -9,6 +9,9 @@
   words, and that every chain shrinks one known unit at a time.
 - The match document and its collision check, on a synthetic names.json and on the
   committed ``build/names.json``, with the reviewed recodes (``hopper_hackgen_related``).
+- The parser: every fixture in ``tests/fixtures/owned/`` against ``expected.json``, the
+  fixtures and vectors free of real paths and hosts, Hypothesis inputs that never make it
+  raise, JSON read alike whole or cut, and 10 MB of escaped quotes read in linear time.
 """
 
 import functools
@@ -16,6 +19,8 @@ import hashlib
 import itertools
 import json
 import re
+import time
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -546,3 +551,169 @@ def test_the_real_match_document_is_valid_and_its_codes_name_every_alias():
     assert built["k"]["hackgen"] == f"{built['ids'].index('hack')}x"
     unrecoded = owned.match_document(doc, ids, doc["run"]["date"])
     assert unrecoded["k"]["hackgen"] == f"{built['ids'].index('hack')}b"
+
+
+# ---------------------------------------------------------------- parsing
+
+
+EXPECTED = json.loads(ov.EXPECTED.read_text(encoding="utf-8"))
+FIXTURE_FILES = sorted(p.name for p in ov.FIXTURES.iterdir() if p.name != ov.EXPECTED.name)
+
+
+def test_every_fixture_has_an_expectation_and_the_fixtures_cover_every_format():
+    assert sorted(EXPECTED) == FIXTURE_FILES
+    formats = {result["format"] for result in EXPECTED.values()} - {None}
+    assert formats == set(owned.FORMATS)
+    errors = {result["error"] for result in EXPECTED.values()} - {None}
+    assert errors == {"empty", "html", "command", "not_found", "font_file"}
+
+
+@pytest.mark.parametrize("name", FIXTURE_FILES)
+def test_a_fixture_parses_as_expected(name):
+    assert owned.parse((ov.FIXTURES / name).read_bytes()).to_json() == EXPECTED[name]
+
+
+# Real home folders and user names must never reach a public fixture (Milestone 3 step 2).
+_HOME = re.compile(r"/home/|/Users/|/root/|[A-Za-z]:\\{1,2}Users\\", re.IGNORECASE)
+# A user@host prompt; drawn listings glue pieces, so the user may follow other letters.
+_AT_HOST = re.compile(r"([A-Za-z0-9_.-]+)@([A-Za-z0-9_.-]+)")
+
+
+def _guarded_files() -> list[Path]:
+    return [
+        *sorted(ov.FIXTURES.iterdir()),
+        *sorted((ROOT / "tests" / "vectors").glob("owned-*.json")),
+        ROOT / "tests" / "helpers" / "owned_vectors.py",
+    ]
+
+
+@pytest.mark.parametrize("path", _guarded_files(), ids=lambda p: p.name)
+def test_no_fixture_or_vector_holds_a_home_path_or_a_real_host(path):
+    raw = path.read_bytes()
+    texts = [raw.decode("utf-8", "replace")]
+    if raw.startswith((b"\xff\xfe", b"\xfe\xff")):
+        texts.append(raw.decode("utf-16", "replace"))
+    for text in texts:
+        assert _HOME.findall(text) == []
+        for user, host in _AT_HOST.findall(text):
+            assert user.endswith("user"), user
+            assert host == "host", host
+
+
+def test_the_guard_catches_home_paths_in_each_spelling():
+    for text in [
+        "/home/byron/x",
+        "/Users/Ann/Library",
+        "C:\\Users\\ann",
+        "c:\\\\users\\\\ann",
+        "/root/x",
+    ]:
+        assert _HOME.findall(text), text
+    assert _AT_HOST.findall("ann@laptop ~ $") == [("ann", "laptop")]
+
+
+@settings(max_examples=1500, derandomize=True, deadline=None)
+@given(st.one_of(st.binary(max_size=400), st.text(max_size=400)))
+def test_parse_never_raises_and_its_results_hold_together(data):
+    p = owned.parse(data)
+    assert (p.error is None) == bool(p.entries)
+    assert p.error is None or p.error in owned.ERRORS
+    assert p.format is None or p.format in owned.FORMATS
+    assert list(p.warnings) == [w for w in owned.WARNINGS if w in p.warnings]
+    assert p.counts["entries"] == len(p.entries)
+    text = json.dumps(p.to_json(), ensure_ascii=False)
+    text.encode("utf-8")  # no lone surrogate is left
+    for entry in p.entries:
+        for name in (*entry.families, entry.full, entry.postscript):
+            if name is not None:
+                assert name
+                assert len(name) <= owned.MAX_NAME
+                assert name == " ".join(name.split(" "))
+                assert name.strip(" ") == name
+
+
+_JSON_KEYS = st.sampled_from(
+    ["family", "fullname", "_name", "path", "typefaces", "0", "1", "x", "SPFontsDataType"]
+)
+_JSON_LEAVES = st.one_of(
+    st.none(),
+    st.booleans(),
+    st.integers(-(10**30), 10**30),
+    st.floats(allow_nan=False, allow_infinity=False),
+    st.text(max_size=8),
+    st.sampled_from(["Archivo", "Inter Bold", "\U0001d504", "a\\b", 'q"t']),
+)
+_JSON_VALUES = st.recursive(
+    _JSON_LEAVES,
+    lambda inner: st.one_of(
+        st.lists(inner, max_size=4), st.dictionaries(_JSON_KEYS, inner, max_size=5)
+    ),
+    max_leaves=30,
+)
+
+
+def _walk_of_json_loads(text: str) -> tuple[list[dict[str, Any]], list[str]]:
+    """Every object's string members and every listed string of ``json.loads(text)``, in
+    opening order: what the scanner must give for valid JSON whose keys are unique."""
+    objects: list[dict[str, Any]] = []
+    strings: list[str] = []
+    stack: list[tuple[Any, bool]] = [(json.loads(text), True)]
+    while stack:
+        item, listed = stack.pop()
+        if isinstance(item, dict):
+            members = {k: v for k, v in item.items() if isinstance(v, str)}
+            if members:
+                objects.append(members)
+            stack.extend((v, False) for v in reversed(list(item.values())))
+        elif isinstance(item, list):
+            stack.extend((v, True) for v in reversed(item))
+        elif isinstance(item, str) and listed:
+            strings.append(item)
+    return objects, strings
+
+
+@settings(max_examples=1500, derandomize=True, deadline=None)
+@given(_JSON_VALUES, st.booleans())
+def test_the_json_scanner_reads_valid_json_as_json_loads_does(value, indent):
+    text = json.dumps(value, indent=2 if indent else None, ensure_ascii=not indent)
+    objects, strings, cut = owned._json_values(text)
+    assert (objects, strings) == _walk_of_json_loads(text)
+    assert not cut
+
+
+@pytest.mark.parametrize(
+    ("text", "families"),
+    [
+        ('{"0": 1, "x": ["Archivo"], "x": ["Inter"]}', ["Archivo", "Inter"]),
+        ('{"0": {"family": "Archivo"}, "0": {"family": "Inter"}}', ["Archivo", "Inter"]),
+        (
+            '{"x": {"family": "Archivo"}, "x": {"family": "Inter"}, "n": 1' + "0" * 5000 + "}",
+            ["Archivo", "Inter"],
+        ),
+        ('{"x": ["Archivo"], "x": ["Inter"], "n": 1' + "0" * 5000 + "}", ["Archivo", "Inter"]),
+        (
+            "[\n" * 120_000
+            + '{"x": {"family": "Archivo"}, "x": {"family": "Inter"}}'
+            + "\n]" * 120_000,
+            ["Archivo", "Inter"],
+        ),
+    ],
+    ids=["lists", "integer keys", "a huge integer", "lists and a huge integer", "120,000 deep"],
+)
+def test_duplicate_keys_keep_every_object_and_list(text, families):
+    """json.loads would keep only the last of duplicate keys, refuse a 5,000-digit integer
+    and overflow on deep nesting; the scanner reads them all, as the port does."""
+    p = owned.parse(text)
+    assert [e.families[0] for e in p.entries] == families
+    assert "cut_off" not in p.warnings
+
+
+def test_ten_megabytes_of_escaped_quotes_parse_in_linear_time():
+    """'["' and 5 million escaped quotes: a scan that tokenized all the text from every
+    quote took 9 s for 80 KB; this one reads it once."""
+    text = '["' + '\\"' * 4_999_990
+    start = time.perf_counter()
+    p = owned.parse(text)
+    elapsed = time.perf_counter() - start
+    assert p.error == "no_names"
+    assert elapsed < 2.0, elapsed

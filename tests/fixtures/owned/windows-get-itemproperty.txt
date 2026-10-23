@@ -1,0 +1,12 @@
+
+Arial (TrueType)                  : arial.ttf
+Arial Bold (TrueType)             : arialbd.ttf
+Archivo Black (TrueType)          : D:\Fonts\Archivo-Black.ttf
+Segoe UI (TrueType)               : segoeui.ttf
+Odd Name                          : D:\Fonts\odd.ttf
+PSPath                            : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Fonts
+PSParentPath                      : Microsoft.PowerShell.Core\Registry::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion
+PSChildName                       : Fonts
+PSDrive                           : HKLM
+PSProvider                        : Microsoft.PowerShell.Core\Registry
+

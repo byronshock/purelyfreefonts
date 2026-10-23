@@ -1,0 +1,69 @@
+Fonts:
+
+    Archivo-Black.ttf:
+
+      Kind: TrueType
+      Valid: Yes
+      Enabled: Yes
+      Location: /Library/Fonts/Archivo-Black.ttf
+      Typefaces:
+        ArchivoBlack-Regular:
+          Full Name: Archivo Black
+          Family: Archivo Black
+          Style: Regular
+          Version: Version 1.002
+          Vendor: Omnibus-Type
+          Unique Name: 1.002;OMNI;ArchivoBlack-Regular
+          Copyright: Copyright 2017 The Archivo Black Project Authors
+          Outline: Yes
+          Valid: Yes
+          Enabled: Yes
+          Duplicate: No
+          Copy Protected: No
+          Embeddable: Yes
+
+    SFNS.ttf:
+
+      Kind: TrueType
+      Valid: Yes
+      Enabled: Yes
+      Location: /System/Library/Fonts/SFNS.ttf
+      Typefaces:
+        .SFNS-Regular:
+          Full Name: System Font Regular
+          Family: .SF NS
+          Style: Regular
+          Version: 20.0d8e1
+          Outline: Yes
+          Valid: Yes
+          Enabled: Yes
+
+    Inter.ttc:
+
+      Kind: TrueType
+      Valid: Yes
+      Enabled: Yes
+      Location: /Library/Fonts/Inter.ttc
+      Typefaces:
+        Inter-Regular:
+          Full Name: Inter Regular
+          Family: Inter
+          Style: Regular
+          Version: Version 4.001
+        Inter-Bold:
+          Full Name: Inter Bold
+          Family: Inter
+          Style: Bold
+          Version: Version 4.001
+
+    Helvetica.ttc:
+
+      Kind: TrueType
+      Valid: Yes
+      Enabled: Yes
+      Location: /System/Library/Fonts/Helvetica.ttc
+      Typefaces:
+        Helvetica:
+          Full Name: Helvetica
+          Family: Helvetica
+          Style: Regular

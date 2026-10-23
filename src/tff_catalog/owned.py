@@ -19,9 +19,18 @@ never leaves the browser, so this code reads real lists only in tests.
 - ``check_document``: the collision check (Milestone 3 step 3): names that
   stripping turns into another family's key (the ``amb`` set), and
   ``distinct_from`` pairs that must never meet.
+- ``parse``: a dropped file or a paste, in any format of docs/owned-fonts.md, to
+  entries, warnings and error codes. It never raises.
 
 Rules that keep the port in step:
 
+- Lengths, limits and sniffing windows count code points, never UTF-16 units:
+  a name of 200 astral characters is 400 units long in JavaScript and still
+  within ``MAX_NAME``.
+- Lone surrogates, which only pasted text and JSON escapes can hold, become
+  U+FFFD with the warning ``decoding``; valid astral characters stay. In
+  JavaScript that is ``/\\p{Cs}/gu`` or ``toWellFormed()``: ``[\\ud800-\\udfff]``
+  without the u flag also matches both halves of every astral character.
 - Rules are ASCII-only, with no ``\\s``, ``\\d``, ``\\w`` or Unicode case folding.
   Case-insensitive rules fold ASCII letters only (Python ``re.ASCII |
   re.IGNORECASE``, JavaScript ``/i`` without ``u``), and names are NFKC-normalized
@@ -30,16 +39,20 @@ Rules that keep the port in step:
   a line may hold U+2028.
 - No optional group holds a capture that the code reads: JavaScript gives
   ``undefined`` where Python gives ``""``.
+- Every JSON text in a visitor's list goes through one scanner (``_scan_json``),
+  never ``json.loads`` or ``JSON.parse``, so duplicate keys, huge integers and
+  deep nesting read alike on both sides.
 
 Standard library only (``keys``, ``names`` and ``jsonio``), so ``tff_site`` can
 import it.
 """
 
 import hashlib
+import itertools
 import json
 import re
 import unicodedata
-from collections import defaultdict
+from collections import Counter, defaultdict
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
 from typing import Any
@@ -49,7 +62,9 @@ from tff_catalog.keys import (
     DASH_CODEPOINTS,
     JOINER_CODEPOINTS,
     WHITESPACE_CODEPOINTS,
+    expand_codepoints,
     match_key,
+    search_key,
 )
 from tff_catalog.names import (
     MODIFIERS,
@@ -572,3 +587,668 @@ def match_document(
         "reasons": reasons,
         "words": json.loads(json.dumps(WORDS)),
     }
+
+
+# --- parsing -----------------------------------------------------------------------------------
+
+# Limits and windows count code points (Unicode scalar values), except MAX_BYTES
+# and the UTF-16 sniff, which count bytes of a dropped file.
+MAX_BYTES = 10_000_000
+MAX_CHARS = 10_000_000
+MAX_LINE = 2_000
+MAX_NAME = 200  # after white space is collapsed
+SNIFF_BYTES = 4_096  # UTF-16 without a byte-order mark
+SNIFF_HTML = 1_024
+SNIFF_JSON = 4_096
+FEW_NAMES = 20
+CUT_OFF_LINES = 500  # a pasted list this long whose top looks missing
+FC_LIST_ONE_IN = 20  # one plain line in 20 written by fontconfig makes the list fc-list's
+
+FORMATS = (
+    "macos-json", "macos-text", "fc-list", "fc-list-plain", "windows-registry", "json-list", "lines",
+)  # fmt: skip
+ERRORS = ("empty", "too_big", "binary", "font_file", "html", "command", "not_found", "no_names")
+WARNINGS = ("few_names", "cut_off", "prompt_dropped", "decoding", "paths_dropped", "hidden_skipped")
+# The commands of docs/owned-fonts.md and their parts; compared in ASCII lower case.
+COMMAND_WORDS = frozenset(
+    {
+        "fc-list", "fc-match", "fc-query", "system_profiler", "osascript", "pbcopy", "wl-copy",
+        "xclip", "get-item", "get-childitem", "get-itemproperty", "add-type", "set-clipboard",
+        "foreach-object", "new-object", "powershell", "powershell.exe", "pwsh", "pwsh.exe",
+    }
+)  # fmt: skip
+FONT_EXTENSIONS = frozenset(
+    {"ttf", "otf", "ttc", "otc", "fon", "fnt", "pfm", "pfb", "woff", "woff2"}
+)
+
+
+@dataclass(frozen=True, slots=True)
+class Entry:
+    """One installed font as a list gives it: its family names, full name and PostScript name.
+
+    ``trusted`` when the first family name is the font's real family (fc-list's
+    first name, a macOS Family), so an ambiguous name there may count as owned.
+    """
+
+    families: tuple[str, ...] = ()
+    full: str | None = None
+    postscript: str | None = None
+    trusted: bool = False
+
+    def to_json(self) -> dict[str, Any]:
+        return {
+            "families": list(self.families),
+            "full": self.full,
+            "postscript": self.postscript,
+            "trusted": self.trusted,
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class Parsed:
+    """What ``parse`` found: entries, the format, counts, warnings, or an error code."""
+
+    entries: tuple[Entry, ...] = ()
+    format: str | None = None
+    counts: Mapping[str, int] = field(default_factory=dict)
+    warnings: tuple[str, ...] = ()
+    error: str | None = None
+
+    def to_json(self) -> dict[str, Any]:
+        return {
+            "format": self.format,
+            "error": self.error,
+            "warnings": list(self.warnings),
+            "counts": dict(self.counts),
+            "entries": [e.to_json() for e in self.entries],
+        }
+
+
+_FONT_MAGIC = (b"\x00\x01\x00\x00", b"OTTO", b"true", b"ttcf", b"wOFF", b"wOF2")
+_BINARY_MAGIC = (b"PK\x03\x04", b"PK\x05\x06", b"%PDF-", b"\x89PNG\r\n\x1a\n", b"\x1f\x8b")
+_WS = expand_codepoints(WHITESPACE_CODEPOINTS)
+_WS_TABLE = dict.fromkeys(_WS, " ")
+_BLANK = _WS | expand_codepoints(JOINER_CODEPOINTS)
+_BLANK_CHARS = "".join(map(chr, sorted(_BLANK)))
+_VISIBLE = re.compile("[^" + "".join(re.escape(chr(c)) for c in sorted(_BLANK)) + "]")
+_ASCII_LOWER = str.maketrans("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")
+_ASCII_ALNUM = frozenset("0123456789abcdefghijklmnopqrstuvwxyz")
+_LINE_BREAK = re.compile(r"\r\n|\r|\n")
+_CONTROL = re.compile(r"[\x00-\x08\x0e-\x1f\x7f]")  # C0 controls but white space, and DEL
+_SURROGATE = re.compile(r"[\ud800-\udfff]")  # in a str, only lone surrogates
+_HTML = re.compile(r"<!doctype html|<html[ \t\r\n>]|<head[ \t\r\n>]|<body[ \t\r\n>]")
+# JSON: the first visible character opens it, or (a paste cut at the top) most of
+# the first lines are JSON members, strings or brackets.
+_JSON_MEMBER = re.compile(r'"(?:[^"\\]|\\.)*"[ \t\r\n]*:', re.DOTALL)
+_JSON_ARRAY = re.compile(r'\[[ \t\r\n]*"')
+_JSON_LINE = re.compile(r'[ \t]*(?:"(?:[^"\\]|\\.)*"[ \t]*(?::.*|,?)|[\[\]{}],?)[ \t]*', re.DOTALL)
+_JSON_TOKEN = re.compile(r'"(?:[^"\\\x00-\x1f]|\\.)*"|[{}\[\]:,]|[^ \t\r\n{}\[\]:,"]+|"', re.DOTALL)
+_FAMILY_LINE = re.compile(r"[ \t]*Family:[ \t]*(?P<name>.*)", re.DOTALL)
+_LOCATION_LINE = re.compile(r"[ \t]*Location:")
+# The patterns below run on cleaned lines: single spaces, no tabs, no controls.
+_DASH_RULE = re.compile(r"-{3,}(?: -{3,})*")
+_PATH = re.compile(r"/|~|[A-Za-z]:\\")
+_REGISTRY_SUFFIX = re.compile(
+    r"\((?:TrueType|OpenType|Type 1|All res|VGA res|8514/a res|[0-9,]+ res)\)(?: ?:.*)?",
+    re.ASCII | re.IGNORECASE | re.DOTALL,
+)
+_TABLE_KEY = re.compile(r"Fonts[ \t]{2,}")  # Get-Item's Name column, on the raw line
+_PS_PROPERTY = re.compile(r"PS(?:Path|ParentPath|ChildName|Drive|Provider) ?:")
+_NOT_FOUND = re.compile(
+    r"command not found|is not recognized as|commandnotfoundexception|unknown command",
+    re.ASCII | re.IGNORECASE,
+)
+# PowerShell's error record and fish's caret line, after a not-found line.
+_ERROR_DETAIL = re.compile(r"\+ |At line:[0-9]|At char:[0-9]")
+_CARETS = re.compile(r"\^[~^]*")
+_PROMPT_SYMBOL = "[$#%>\u276f]"
+# A prompt shape: PowerShell's "PS C:\...>", "[user@host dir]$", "user@host:~$",
+# "user@host ~ %" or "~/dir $", then the rest of the line (maybe a command).
+_PROMPT = re.compile(
+    r"(?:PS(?: [^>]*)?>"
+    rf"|\[[^\]]*\] ?{_PROMPT_SYMBOL}"
+    rf"|[A-Za-z0-9_.-]+@[A-Za-z0-9_.-]+(?:[: ][^ $#%>\u276f]*)? ?{_PROMPT_SYMBOL}"
+    rf"|~[^ $#%>\u276f]* ?{_PROMPT_SYMBOL}"
+    r") ?(?P<rest>.*)",
+    re.DOTALL,
+)
+# A bare prompt symbol counts alone or before a command ("$ fc-list : family"),
+# so names that start or end with $, #, % or > are kept.
+_BARE_PROMPT = re.compile(rf"{_PROMPT_SYMBOL} (?P<rest>.+)", re.DOTALL)
+_LONE_PROMPT = frozenset("$#%>\u276f")
+# A command's first word, after "(" or "&" and an optional sudo or doas.
+_COMMAND = re.compile(
+    r"(?:[(&] ?)*(?:(?:sudo|doas) )?(?P<word>[^ :|>;&()]+)", re.ASCII | re.IGNORECASE
+)
+
+
+def _decode(raw: bytes) -> tuple[str, bool]:
+    """The text of ``raw`` and whether a replacement character went in."""
+    if raw.startswith(b"\xef\xbb\xbf"):
+        codec, body = "utf-8", raw[3:]
+    elif raw.startswith(b"\xff\xfe"):
+        codec, body = "utf-16-le", raw[2:]
+    elif raw.startswith(b"\xfe\xff"):
+        codec, body = "utf-16-be", raw[2:]
+    else:
+        codec, body = _utf16_guess(raw[:SNIFF_BYTES]) or "utf-8", raw
+    try:
+        return body.decode(codec), False
+    except UnicodeDecodeError:
+        return body.decode(codec, errors="replace"), True
+
+
+def _utf16_guess(sample: bytes) -> str | None:
+    """UTF-16 without a byte-order mark: two or more NUL bytes, nine in ten on one side of the pairs.
+
+    Line breaks alone give the pattern, so a list of CJK names is caught too.
+    """
+    even = sample[0::2].count(0)
+    odd = sample[1::2].count(0)
+    if even + odd < 2:
+        return None
+    if odd >= 9 * even:
+        return "utf-16-le"
+    if even >= 9 * odd:
+        return "utf-16-be"
+    return None
+
+
+def _clean(text: str) -> str:
+    """``text`` with controls dropped, lone surrogates replaced and white space collapsed.
+
+    "" when nothing visible is left (white space and joiners only).
+    """
+    if text.isascii() and text.isprintable():
+        return " ".join(text.split())  # the same result, faster
+    text = _CONTROL.sub("", text)
+    if _SURROGATE.search(text) is not None:
+        text = _SURROGATE.sub("\ufffd", text)
+    text = " ".join(part for part in text.translate(_WS_TABLE).split(" ") if part)
+    return text if _VISIBLE.search(text) else ""
+
+
+@dataclass(slots=True)
+class _State:
+    pasted: bool
+    warnings: set[str] = field(default_factory=set)
+    lines: int = 0
+    hidden: int = 0
+    too_long: int = 0
+    dropped: int = 0
+
+    def name(self, raw: str | None) -> str | None:
+        """A kept name, or None for an empty, over-long or hidden one (counted)."""
+        if raw is None:
+            return None
+        if not raw.isascii() and _SURROGATE.search(raw) is not None:
+            self.warnings.add("decoding")  # a JSON escape held a lone surrogate
+        text = _clean(raw)
+        if not text:
+            return None
+        if len(text) > MAX_NAME:
+            self.too_long += 1
+            return None
+        if text.startswith("."):
+            self.hidden += 1
+            return None
+        return text
+
+    def done(self, entries: list[tuple[str, Entry]], error: str | None = None) -> Parsed:
+        unique = list(dict.fromkeys(entries))
+        kinds = Counter(kind for kind, _ in unique)
+        fmt = max(FORMATS, key=lambda f: (kinds[f], -FORMATS.index(f))) if unique else None
+        if not unique and error is None:
+            error = "no_names"
+        if 0 < len(unique) < FEW_NAMES:
+            self.warnings.add("few_names")
+        if self.hidden:
+            self.warnings.add("hidden_skipped")
+        if (
+            self.pasted
+            and fmt in ("macos-text", "fc-list", "windows-registry", "lines")
+            and _cut_off([e for kind, e in unique if kind == fmt])
+        ):
+            self.warnings.add("cut_off")
+        counts = {
+            "lines": self.lines,
+            "entries": 0 if error else len(unique),
+            "hidden": self.hidden,
+            "too_long": self.too_long,
+            "dropped": self.dropped,
+        }
+        return Parsed(
+            entries=() if error else tuple(e for _, e in unique),
+            format=None if error else fmt,
+            counts=counts,
+            warnings=tuple(w for w in WARNINGS if w in self.warnings),
+            error=error,
+        )
+
+
+def _cut_off(entries: list[Entry]) -> bool:
+    """A sorted paste of 500 or more names whose first name starts after C: its top is missing.
+
+    Only names whose search key starts with an ASCII letter or digit count, so
+    the comparison is the same in code points and in UTF-16 units. Sorted: at
+    least nine in ten neighbouring pairs in order.
+    """
+    firsts: list[str] = []
+    for entry in entries:
+        first = search_key(entry.families[0] if entry.families else entry.full or "")[:1]
+        if first in _ASCII_ALNUM:
+            if not firsts and first < "d":
+                return False  # the list starts before D, so its top is there
+            firsts.append(first)
+    if len(firsts) < CUT_OFF_LINES:
+        return False
+    in_order = sum(a <= b for a, b in itertools.pairwise(firsts))
+    return 10 * in_order >= 9 * (len(firsts) - 1) and firsts[0] >= "d"
+
+
+def parse(data: bytes | str) -> Parsed:
+    """Entries from a dropped file (bytes) or a paste (text), in any format of docs/owned-fonts.md.
+
+    It never raises: a list it can't read gives an error code (``ERRORS``) and no
+    entries. In order:
+
+    - bytes: over ``MAX_BYTES`` is ``too_big``; a font's magic number (with a NUL
+      in the first 12 bytes) is ``font_file``; ZIP, PDF, PNG or gzip is
+      ``binary``. Then UTF-8 or UTF-16 by byte-order mark, UTF-16 by NUL pattern
+      (``_utf16_guess``), else UTF-8, all with replacement characters and the
+      warning ``decoding``. Text: lone surrogates become U+FFFD (``decoding``).
+    - over ``MAX_CHARS`` code points is ``too_big``; a NUL, or controls over 1%
+      of the code points, is ``binary``; nothing visible is ``empty``; an HTML
+      tag near the top is ``html``.
+    - JSON (``_json_like``): ``system_profiler -json``'s typefaces (family,
+      fullname, _name; trusted), or a JSON list of names (untrusted). A cut or
+      broken document gives what it holds and the warning ``cut_off``.
+    - "Family:" lines: ``system_profiler`` text (trusted).
+    - otherwise line by line (``_parse_lines``), lines over ``MAX_LINE`` code
+      points dropped (counted ``too_long``).
+
+    A pasted sorted list of 500 or more names that starts after C warns
+    ``cut_off`` (a terminal's scrollback cut its top); a dropped file never does,
+    except for broken JSON, where the cut is certain rather than guessed.
+    """
+    state = _State(pasted=isinstance(data, str))
+    if isinstance(data, bytes | bytearray):
+        raw = bytes(data)
+        if len(raw) > MAX_BYTES:
+            return state.done([], "too_big")
+        if raw[:4] in _FONT_MAGIC and 0 in raw[:12]:
+            return state.done([], "font_file")
+        if raw.startswith(_BINARY_MAGIC):
+            return state.done([], "binary")
+        text, replaced = _decode(raw)
+    elif isinstance(data, str):
+        if len(data) > MAX_CHARS:
+            return state.done([], "too_big")
+        replaced = _SURROGATE.search(data) is not None
+        text = _SURROGATE.sub("\ufffd", data) if replaced else data
+    else:
+        return state.done([], "empty")
+    if replaced:
+        state.warnings.add("decoding")
+    if len(text) > MAX_CHARS:
+        return state.done([], "too_big")
+    text = text.removeprefix("\ufeff")
+    if "\x00" in text or len(_CONTROL.findall(text)) * 100 > len(text):
+        return state.done([], "binary")
+    if _VISIBLE.search(text) is None:
+        return state.done([], "empty")
+    body = text.lstrip(_BLANK_CHARS)
+    if _HTML.search(body[:SNIFF_HTML].translate(_ASCII_LOWER)):
+        return state.done([], "html")
+    lines = _LINE_BREAK.split(text)
+    state.lines = sum(1 for line in lines if _VISIBLE.search(line))
+    if _json_like(body, lines):
+        return _parse_json(text, state)
+    if any(_FAMILY_LINE.fullmatch(line) for line in lines):
+        return _parse_macos_text(lines, state)
+    return _parse_lines(lines, state)
+
+
+# --- JSON (system_profiler -json SPFontsDataType, or a list of names) ---
+
+
+def _json_like(body: str, lines: list[str]) -> bool:
+    if body[:1] in ("{", "[") and (
+        _JSON_MEMBER.search(body[:SNIFF_JSON]) or _JSON_ARRAY.match(body)
+    ):
+        return True
+    head = [line for line in lines[:200] if _VISIBLE.search(line)][:50]
+    return len(head) >= 3 and 2 * sum(bool(_JSON_LINE.fullmatch(line)) for line in head) >= len(
+        head
+    )
+
+
+def _json_string(token: str) -> str | None:
+    """A whole JSON string token decoded, or None when its escapes are bad."""
+    try:
+        return json.loads(token)
+    except ValueError:
+        return None
+
+
+def _json_tokens(text: str) -> list[str]:
+    """``_JSON_TOKEN``'s tokens of ``text`` up to and with the first lone '"', where
+    ``_scan_json`` stops: a string that the text or a control character ends before it closes.
+
+    Found one at a time, so a run of escaped quotes after such a quote is read once;
+    ``findall`` would rescan from every quote to the end (quadratic: 9 s for 80 KB).
+    """
+    tokens: list[str] = []
+    for found in _JSON_TOKEN.finditer(text):
+        tokens.append(found.group())
+        if tokens[-1] == '"':
+            break
+    return tokens
+
+
+def _json_values(text: str) -> tuple[list[dict[str, Any]], list[str], bool]:
+    """Every JSON object (its string members) and every listed string, in opening order, and
+    whether the text was cut: ``_scan_json``'s, for valid JSON too.
+
+    ``json.loads`` keeps only the last of duplicate keys, so a walk of its result loses the
+    objects and lists inside the earlier ones, and when it raises (an integer of more than
+    4,300 digits, nesting deeper than the interpreter allows) depends on the platform. The
+    port uses the same scanner, so both sides read every text alike.
+    """
+    return _scan_json(text)
+
+
+def _scan_json(text: str) -> tuple[list[dict[str, Any]], list[str], bool]:
+    """The objects and listed strings of a JSON text, whole, cut or broken, in opening order.
+
+    Members before the first "{" (a paste cut at the top) belong to an implicit
+    object, which a stray "}" closes; strings there count as listed. A member
+    whose value is no string removes the key, as a later duplicate would.
+    """
+    tokens = _json_tokens(text)
+    root: dict[str, Any] = {}
+    out: list[dict[str, Any]] = [root]
+    strings: list[str] = []
+    stack: list[dict[str, Any] | None] = [root]  # None marks an array
+    cut = False
+    i = 0
+    while i < len(tokens):
+        token = tokens[i]
+        if token == "{":
+            obj: dict[str, Any] = {}
+            out.append(obj)
+            stack.append(obj)
+        elif token == "[":
+            stack.append(None)
+        elif token == "}":
+            while len(stack) > 1 and stack[-1] is None:
+                stack.pop()
+            if len(stack) > 1:
+                stack.pop()
+            else:
+                cut = True
+                stack[0] = {}
+                out.append(stack[0])
+        elif token == "]":
+            if len(stack) > 1 and stack[-1] is None:
+                stack.pop()
+        elif token == '"':
+            cut = True  # an unclosed string: the text ends inside it
+            break
+        elif token[0] == '"' and i + 1 < len(tokens) and tokens[i + 1] == ":":
+            top = stack[-1]
+            key = _json_string(token)
+            value = tokens[i + 2] if i + 2 < len(tokens) else None
+            if top is not None and key is not None:
+                if value is not None and len(value) > 1 and value[0] == '"':
+                    decoded = _json_string(value)
+                    if decoded is None:
+                        top.pop(key, None)
+                    else:
+                        top[key] = decoded
+                    i += 3
+                    continue
+                top.pop(key, None)
+            i += 2
+            continue
+        elif token[0] == '"' and (stack[-1] is None or len(stack) == 1):
+            if (decoded := _json_string(token)) is not None:
+                strings.append(decoded)
+        i += 1
+    cut = cut or len(stack) > 1 or bool(root)
+    return [obj for obj in out if obj], strings, cut
+
+
+def _parse_json(text: str, state: _State) -> Parsed:
+    objects, strings, cut = _json_values(text)
+    if cut:
+        state.warnings.add("cut_off")
+    entries: list[tuple[str, Entry]] = []
+    for obj in objects:
+        if isinstance(obj.get("path"), str):
+            state.warnings.add("paths_dropped")
+        family = obj.get("family")
+        if not isinstance(family, str):
+            continue
+        name = state.name(family)
+        if name is None:
+            continue
+        full, ps = obj.get("fullname"), obj.get("_name")
+        entry = Entry(
+            families=(name,),
+            full=state.name(full) if isinstance(full, str) else None,
+            postscript=state.name(ps) if isinstance(ps, str) else None,
+            trusted=True,
+        )
+        entries.append(("macos-json", entry))
+    if not entries:
+        # A list of names (ConvertTo-Json of a one-per-line command, for example).
+        kept = (state.name(item) for item in strings)
+        entries.extend(("json-list", Entry(families=(name,))) for name in kept if name is not None)
+    return state.done(entries)
+
+
+# --- system_profiler text, fc-list, the registry and one name per line ---
+
+
+def _parse_macos_text(lines: list[str], state: _State) -> Parsed:
+    entries: list[tuple[str, Entry]] = []
+    for line in lines:
+        if len(line) > MAX_LINE:
+            state.too_long += 1
+        elif m := _FAMILY_LINE.fullmatch(line):
+            if (name := state.name(m["name"])) is not None:
+                entries.append(("macos-text", Entry(families=(name,), trusted=True)))
+        elif _LOCATION_LINE.match(line):
+            state.warnings.add("paths_dropped")
+        elif _VISIBLE.search(line):
+            state.dropped += 1
+    return state.done(entries)
+
+
+def _split_fc(text: str) -> tuple[list[str], bool]:
+    """``text`` split at fontconfig's commas and unescaped, and whether fontconfig wrote it.
+
+    A comma splits unless a backslash escapes it or a space follows it
+    (fontconfig never writes ", "). ``\\\\``, ``\\,``, ``\\:`` and ``\\-`` are
+    fontconfig's escapes; any other backslash stays. Fontconfig wrote the text
+    when it split or held an escape.
+    """
+    if "," not in text and "\\" not in text:
+        return [text], False
+    parts: list[str] = []
+    current: list[str] = []
+    written = False
+    i, n = 0, len(text)
+    while i < n:
+        c = text[i]
+        if c == "\\" and i + 1 < n and text[i + 1] in "\\,:-":
+            current.append(text[i + 1])
+            written = True
+            i += 2
+            continue
+        if c == "," and (i + 1 == n or text[i + 1] != " "):
+            parts.append("".join(current))
+            current = []
+            written = True
+        else:
+            current.append(c)
+        i += 1
+    parts.append("".join(current))
+    return parts, written
+
+
+def _before_unescaped(text: str, sep: str) -> str:
+    """``text`` up to its first ``sep`` that no backslash escapes."""
+    i = 0
+    while i < len(text):
+        if text[i] == "\\":
+            i += 2
+            continue
+        if text[i] == sep:
+            return text[:i]
+        i += 1
+    return text
+
+
+def _is_command(line: str) -> bool:
+    """Whether a cleaned line starts with a command of docs/owned-fonts.md ("sudo fc-list:family")."""
+    m = _COMMAND.match(line)
+    return m is not None and m["word"].translate(_ASCII_LOWER) in COMMAND_WORDS
+
+
+def _registry_name(line: str, state: _State) -> str | None:
+    """The value name of a registry line ("Arial (TrueType)", "Odd Name : odd.ttf"), or None.
+
+    The suffix is found from the last "(" backwards, so a line costs linear time.
+    """
+    i = line.rfind("(")
+    while i > 0:
+        if _REGISTRY_SUFFIX.fullmatch(line, i):
+            data = line[line.index(")", i) :]
+            if "\\" in data or "/" in data:
+                state.warnings.add("paths_dropped")
+            return line[:i].rstrip(" ")
+        i = line.rfind("(", 0, i)
+    name, colon, data = line.partition(" : ")
+    if colon and name and data.rpartition(".")[2].translate(_ASCII_LOWER) in FONT_EXTENSIONS:
+        if "\\" in data or "/" in data:
+            state.warnings.add("paths_dropped")
+        return name
+    return None
+
+
+def _families(state: _State, raw: list[str]) -> tuple[str, ...] | None:
+    """The kept names of one font, or None when its first name is hidden or none is kept."""
+    if raw and _clean(raw[0]).startswith("."):
+        state.hidden += 1
+        return None
+    names = tuple(n for n in (state.name(r) for r in raw) if n is not None)
+    return tuple(dict.fromkeys(names)) or None
+
+
+def _parse_lines(lines: list[str], state: _State) -> Parsed:
+    """fc-list (comma-joined or plain), the registry, or one name per line.
+
+    Dropped lines: PowerShell table rules with the header above them, "Hive:",
+    PSPath and its siblings, error records, prompts, commands and not-found
+    errors. In a list with more registry lines than plain ones, the plain lines
+    are value names without a suffix ("Courier 10,12,15", "Small Fonts"), kept
+    whole. Otherwise a list is fc-list's (``trusted``) when at least one plain
+    line in ``FC_LIST_ONE_IN`` split at a fontconfig comma or held an escape;
+    commas split either way, so one stray "Foo,Bar" changes no other line's trust.
+    """
+    items: list[list[Any] | None] = []  # [kind, payload]; None once dropped
+    previous: int | None = None  # the item of the previous visible line
+    not_found = command = False
+    for raw in lines:
+        if len(raw) > MAX_LINE:
+            state.too_long += 1
+            previous = None
+            continue
+        stripped = raw.strip(_BLANK_CHARS)
+        table = _TABLE_KEY.match(stripped)
+        line = _clean(stripped[table.end() :] if table else stripped)
+        if not line:
+            continue
+        here: int | None = None
+        if _DASH_RULE.fullmatch(line):
+            # A PowerShell table rule: the line above it, with as many words, is the header.
+            item = items[previous] if previous is not None else None
+            if item is not None and item[0] == "plain" and item[1].count(" ") == line.count(" "):
+                items[previous] = None
+                state.dropped += 1
+            state.dropped += 1
+        elif (
+            line.startswith("Hive:")
+            or _PS_PROPERTY.match(line)
+            or _ERROR_DETAIL.match(line)
+            or _CARETS.fullmatch(line)
+            or "Check the spelling of the name" in line
+        ):
+            state.dropped += 1
+        elif _NOT_FOUND.search(line):
+            not_found = True
+            state.dropped += 1
+        elif (m := _PROMPT.fullmatch(line)) is not None or line in _LONE_PROMPT:
+            state.warnings.add("prompt_dropped")
+            command = command or (m is not None and _is_command(m["rest"]))
+            state.dropped += 1
+        elif (m := _BARE_PROMPT.fullmatch(line)) is not None and _is_command(m["rest"]):
+            state.warnings.add("prompt_dropped")
+            command = True
+            state.dropped += 1
+        elif _is_command(line):
+            command = True
+            state.dropped += 1
+        elif _PATH.match(line):
+            # Plain fc-list: "path: Family,Other:style=Bold"; the path goes at once.
+            state.warnings.add("paths_dropped")
+            _, colon, rest = line.partition(": ")
+            if colon:
+                here = len(items)
+                items.append(["fc-list-plain", _split_fc(_before_unescaped(rest, ":"))[0]])
+            else:
+                state.dropped += 1
+        elif (name := _registry_name(line, state)) is not None:
+            here = len(items)
+            items.append(["windows-registry", name.split(" & ")])
+        else:
+            here = len(items)
+            items.append(["plain", line])
+        previous = here
+    kinds = Counter(item[0] for item in items if item is not None)
+    written = plain = 0
+    for item in items:
+        if item is None or item[0] != "plain":
+            continue
+        if kinds["windows-registry"] > kinds["plain"]:
+            item[0], item[1] = "windows-registry", item[1].split(" & ")
+            continue
+        item[1], by_fontconfig = _split_fc(item[1])
+        plain += 1
+        written += by_fontconfig
+    fc_list = written > 0 and written * FC_LIST_ONE_IN >= plain
+    entries: list[tuple[str, Entry]] = []
+    for item in items:
+        if item is None:
+            continue
+        kind, payload = item
+        if kind == "plain":
+            if names := _families(state, payload):
+                entries.append(
+                    ("fc-list" if fc_list else "lines", Entry(families=names, trusted=fc_list))
+                )
+        elif kind == "fc-list-plain":
+            if names := _families(state, payload):
+                entries.append(("fc-list-plain", Entry(families=names, trusted=True)))
+        else:
+            kept = (state.name(part) for part in payload)
+            entries.extend(
+                ("windows-registry", Entry(full=name)) for name in kept if name is not None
+            )
+    if not_found and len(entries) < FEW_NAMES:
+        return state.done([], "not_found")
+    if not entries and command:
+        return state.done([], "command")
+    return state.done(entries)

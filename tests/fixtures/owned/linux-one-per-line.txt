@@ -1,0 +1,17 @@
+Adwaita Mono
+Adwaita Sans
+Archivo
+Archivo Black
+Archivo SemiBold
+Cantarell
+DejaVu Sans
+DejaVu Sans Condensed
+DejaVu Sans Mono
+FiraCode Nerd Font
+Inter
+Inter Tight
+Noto Sans
+Noto Sans JP
+Roboto Slab
+Sarasa UI J
+更紗ゴシック UI J
