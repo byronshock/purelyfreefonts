@@ -39,6 +39,7 @@ JS_PARTS: tuple[tuple[str, str], ...] = (
     ("45-specimens.js", "Specimens"),
     ("50-ext.js", "Ext"),
     ("52-owned-parse.js", "OwnedParse"),
+    ("54-owned-match.js", "OwnedMatch"),
     ("90-main.js", "Main"),
 )
 CSS_PARTS: tuple[str, ...] = (
