@@ -17,6 +17,15 @@ every size budget and the CSP lint, and each check fails on a site made to break
   each timed from its change event to the second animation frame after it; every one must
   take at most 200 ms, and the list must then show what the count says.
 - Specimens: at load, no specimen is requested for a row more than 1000 px below the screen.
+- The hopper (Milestone 3 steps 4 and 5), each run in a fresh context (nothing compiled yet,
+  as for a visitor's first list), with the match file the site build makes from the committed
+  ``build/names.json`` and three realistic lists of 10,000 fonts
+  (``tests/fixtures/hopper_lists.py``). Under the same CPU slowdown, reading the match file,
+  readying its table and matching must take under 200 ms (step 5), and parsing 5 MB of
+  ``system_profiler -json`` cut short under a second (step 4). Without a slowdown, as
+  Lighthouse's desktop setting runs (the hopper needs a computer), parsing and matching
+  together must take under 200 ms. Each is the median of five runs, with one more set when it
+  fails. These need no built site.
 
 The site is ``TFF_PERF_SITE_DIR`` when that is set (CI's 540-font build, or a real
 catalog's build), else a 540-font site this module builds from make_large_catalog. It is
@@ -35,6 +44,7 @@ without ``TFF_PERF_URL``, which no CI job sets::
         tests/site/test_perf.py -k deployed --browser chromium -s
 """
 
+import functools
 import gzip
 import json
 import os
@@ -52,9 +62,12 @@ from urllib.parse import unquote, urlsplit
 
 import numpy as np
 import pytest
+from tests.fixtures import hopper_lists
 
-from tff_site import budgets, cli, data
+from tff_catalog import owned
+from tff_site import budgets, cli, data, matchfile
 
+ROOT = Path(__file__).resolve().parents[2]
 FAKE_COMMIT = "0" * 40
 CI_CADDY_URL = "http://127.0.0.1:8080"
 LARGE_FONTS = 540
@@ -619,6 +632,130 @@ def test_no_specimen_loads_far_below_the_screen(
     assert len(requested) < with_specimen, "every specimen loaded at once"
     far = [(i, round(d)) for i, d in below if d is None or d > FAR_BELOW_PX]
     assert far == [], f"specimens requested for rows far below the screen: {far[:10]}"
+
+
+# ------------------------------------------------------------- the hopper (Milestone 3)
+
+HOPPER_PARTS = ("05-keys.js", "52-owned-parse.js", "54-owned-match.js")
+HOPPER_MS = 200  # Milestone 3 step 5: 10,000 names match in under 200 ms
+PROFILER_MS = 1000  # step 4: 5 MB of system_profiler -json parses in under a second
+# The parts, then one line that hands their consts to the timed code, as test_owned_js.py
+# loads them.
+HOPPER_PAGE = (
+    "<!doctype html><html lang=en><meta charset=utf-8><title>hopper</title>"
+    "<script type=module>\n{parts}\nglobalThis.__tffOwned = {{ OwnedParse, OwnedMatch }};\n</script>"
+)
+# A visitor's list: parsing it (``parse_ms``), then reading the match file, readying its table
+# and matching (``match_ms``, step 5's "match"); ``ms`` is both.
+HOPPER_RUN_JS = """(arg) => {
+  const { OwnedParse, OwnedMatch } = globalThis.__tffOwned;
+  const t0 = performance.now();
+  const parsed = OwnedParse.parse(arg.text);
+  const t1 = performance.now();
+  const result = OwnedMatch.match(parsed, OwnedMatch.table(JSON.parse(arg.doc)));
+  const t2 = performance.now();
+  return {
+    parse_ms: t1 - t0, match_ms: t2 - t1, ms: t2 - t0,
+    entries: parsed.entries.length, warnings: parsed.warnings, owned: result.owned,
+  };
+}"""
+
+
+@functools.cache
+def _hopper() -> dict[str, Any]:
+    """The parts' page, the match file the site build makes from the committed
+    build/names.json, as its text and its Python table, the three lists of 10,000 fonts, and
+    the 5 MB paste."""
+    parts = "\n".join(
+        (ROOT / "site" / "js" / name).read_text(encoding="utf-8") for name in HOPPER_PARTS
+    )
+    names_path = ROOT / "build" / "names.json"
+    names = json.loads(names_path.read_text(encoding="utf-8"))
+    catalog = json.loads((ROOT / "build" / "catalog-site.json").read_text(encoding="utf-8"))
+    text = matchfile.match_file(catalog, names_path).blob.decode("utf-8")
+    return {
+        "page": HOPPER_PAGE.format(parts=parts),
+        "doc": text,
+        "table": owned.Table.from_document(json.loads(text)),
+        "lists": hopper_lists.lists(names),
+        "profiler": hopper_lists.system_profiler_cut(),
+    }
+
+
+def _hopper_run(browser: Any, text: str, slowdown: int) -> dict[str, Any]:
+    """One run of HOPPER_RUN_JS on ``text``, in a context of its own with the CPU slowed
+    ``slowdown`` times from the start."""
+    context = browser.new_context()
+    try:
+        page = context.new_page()
+        cdp = context.new_cdp_session(page)
+        cdp.send("Emulation.setCPUThrottlingRate", {"rate": slowdown})
+        page.set_content(_hopper()["page"], wait_until="load")
+        return page.evaluate(HOPPER_RUN_JS, {"doc": _hopper()["doc"], "text": text})
+    finally:
+        context.close()
+
+
+def _assert_hopper_budget(
+    browser: Any, text: str, field: str, budget_ms: float, slowdown: int
+) -> None:
+    """The median of ``field`` over RUNS cold runs is under ``budget_ms``, and every run reads
+    and matches ``text`` as Python does."""
+    parsed = owned.parse(text)
+    want = parsed.to_json()
+    want_owned = owned.match(parsed, _hopper()["table"]).to_json()["owned"]
+    summary: dict[str, Any] = {}
+    median = float("inf")
+    # Shared CI runners are noisy: a failing median gets one more set of runs (design-m2 §9).
+    for _attempt in range(2):
+        runs = [_hopper_run(browser, text, slowdown) for _ in range(RUNS)]
+        for run in runs:
+            assert (run["entries"], run["warnings"]) == (len(want["entries"]), want["warnings"])
+            assert run["owned"] == want_owned
+        median = statistics.median(run[field] for run in runs)
+        summary = {
+            "hopper": field,
+            "cpu_slowdown": slowdown,
+            "median_ms": round(median),
+            "runs_ms": [round(run[field]) for run in runs],
+            "parse_ms": [round(run["parse_ms"]) for run in runs],
+            "match_ms": [round(run["match_ms"]) for run in runs],
+        }
+        print(json.dumps(summary))
+        if median < budget_ms:
+            break
+    assert median < budget_ms, summary
+
+
+@pytest.mark.parametrize("label", hopper_lists.LABELS)
+def test_the_hopper_matches_10000_fonts_within_200_ms(
+    browser: Any, browser_name: str, label: str
+) -> None:
+    """Step 5's budget, under the list page's CPU slowdown: reading the match file, readying
+    its table and matching a parsed list of 10,000 fonts."""
+    _chromium(browser_name)
+    text = _hopper()["lists"][label]
+    assert owned.parse(text).counts["entries"] > 8000
+    _assert_hopper_budget(browser, text, "match_ms", HOPPER_MS, CPU_SLOWDOWN)
+
+
+@pytest.mark.parametrize("label", hopper_lists.LABELS)
+def test_the_hopper_parses_and_matches_10000_fonts_within_200_ms_without_a_slowdown(
+    browser: Any, browser_name: str, label: str
+) -> None:
+    """The whole of a visitor's wait, on a computer: the hopper needs one (step 6 tells phones
+    so), and Lighthouse's desktop setting slows no CPU."""
+    _chromium(browser_name)
+    _assert_hopper_budget(browser, _hopper()["lists"][label], "ms", HOPPER_MS, 1)
+
+
+def test_the_hopper_parses_5_mb_of_system_profiler_json_within_a_second(
+    browser: Any, browser_name: str
+) -> None:
+    """Step 4's budget, under the list page's CPU slowdown: a paste cut at 5 MB, so the text
+    ends inside a string."""
+    _chromium(browser_name)
+    _assert_hopper_budget(browser, _hopper()["profiler"], "parse_ms", PROFILER_MS, CPU_SLOWDOWN)
 
 
 # ------------------------------------------------------------ a deployed site (by hand)
