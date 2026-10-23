@@ -18,11 +18,11 @@ section 11). ``match_file`` first refuses, listing every problem at once:
 
 The reviewed list sits beside the names file (``default_reviewed_path``); for the catalog
 that is ``build/names.reviewed.toml``, which no pipeline stage writes. It holds the reviewed
-ambiguous names, which only pass or fail the build, and the reviewed recodes, which change
-an alias's code in the match file and nothing in ``names.json`` (``hopper_hackgen_related``,
-2026-10-23: HackGen, a build of Hack in names.json, is only related to Hack in the hopper,
-so the ranking keeps its alias row). It is read with ``tomllib``, as ``tff_site.views``
-reads ``config/site.toml``.
+ambiguous names, which only pass or fail the build (the match file's ``amb`` is derived, so
+they change none of its bytes), and the reviewed recodes, which change an alias's code in the
+match file and nothing in ``names.json`` (``hopper_hackgen_related``, 2026-10-23: HackGen, a
+build of Hack in names.json, is only related to Hack in the hopper, so the ranking keeps its
+alias row). It is read with ``tomllib``, as ``tff_site.views`` reads ``config/site.toml``.
 """
 
 import hashlib
