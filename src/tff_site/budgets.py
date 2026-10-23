@@ -12,12 +12,16 @@ Sizes are gzip level 9 (``gzip_size``), in decimal kilobytes:
   ``SPECIMENS_TOTAL_RAW_MAX`` uncompressed. ``tff_catalog.specimens.budget`` measures the
   same way, so a site whose specimens passed the specimens stage passes here too;
 - the interface font: each ``assets/ui/*.woff2`` at most ``UI_FONT_MAX`` (AUTHORITY.md,
-  "Interface font"). WOFF2 is compressed already, so gzip -9 barely changes it.
+  "Interface font"). WOFF2 is compressed already, so gzip -9 barely changes it;
+- the hopper's match file: at most ``MATCH_MAX`` (Milestone 3 step 3's aim). It loads only
+  once a visitor's list arrives, so it is outside the page budget, and only the list page's
+  ``#list[data-match]`` may name it, once (M3-D7 a): no other page, no preload, prefetch or
+  other link, and no script or payload (``TEXT_SUFFIXES`` files are searched for its name).
 
 The files come from the list page itself: ``<link rel="stylesheet" href>``,
-``<script src>`` and ``#list``'s ``data-index`` and ``data-details`` (site/CONTRACT.md
-sections 2 and 4). A reference that names no file in the site is a problem too, and so is a
-``<link rel="preload" as="font">`` that does.
+``<script src>`` and ``#list``'s ``data-index``, ``data-details`` and ``data-match``
+(site/CONTRACT.md sections 2 and 4). A reference that names no file in the site is a problem
+too, and so is a ``<link rel="preload" as="font">`` that does.
 
 The CSP lint fails on an inline ``<script>`` without ``src``, a ``<style>`` element, any
 ``style=`` or ``on*=`` attribute, a ``<form>``, and ``rel=prefetch``. Under the same policy
@@ -44,11 +48,14 @@ SPECIMEN_HALF_MAX = 5 * KB
 SPECIMEN_MAX = 16 * KB
 SPECIMENS_TOTAL_RAW_MAX = 10_000 * KB
 UI_FONT_MAX = 30 * KB
+MATCH_MAX = 50 * KB
 
 LIST_PAGE = "index.html"
 SPECIMENS_DIR = "assets/specimens"
 DETAILS_GLOB = "assets/details*.json"
 UI_FONTS_GLOB = "assets/ui/*.woff2"
+# Built files that could name the match file; fonts and images can't.
+TEXT_SUFFIXES = frozenset({".html", ".js", ".css", ".json", ".xml", ".txt", ".svg"})
 
 # Attributes that make the browser fetch something as the page loads, by element. <a href>,
 # <link rel=canonical> and <meta content> are left out: nothing is fetched until a click.
@@ -126,6 +133,7 @@ def check(site_dir: Path) -> list[Problem]:
         problems += found
         if payload is not None:
             details.add(payload)
+        problems += _check_match(site, refs)
     else:
         problems.append(Problem(LIST_PAGE, "missing: the list page"))
     for path in sorted(details):
@@ -152,13 +160,14 @@ def lint_html(path: str, html: str) -> list[Problem]:
 
 @dataclass
 class _Refs:
-    """What the list page loads: its stylesheets and scripts, and the two JSON payloads."""
+    """What the list page loads: its stylesheets and scripts, and the three JSON payloads."""
 
     styles: list[str] = field(default_factory=list)
     scripts: list[str] = field(default_factory=list)
     fonts: list[str] = field(default_factory=list)
     index: str | None = None
     details: str | None = None
+    match: str | None = None
 
 
 class _RefParser(HTMLParser):
@@ -178,6 +187,7 @@ class _RefParser(HTMLParser):
         elif a.get("id") == "list":
             self.refs.index = a.get("data-index") or None
             self.refs.details = a.get("data-details") or None
+            self.refs.match = a.get("data-match") or None
 
     handle_startendtag = handle_starttag
 
@@ -247,6 +257,41 @@ def _check_size(site: Path, path: Path, what: str, limit: int, hint: str = "") -
         return []
     rel = path.resolve().relative_to(site.resolve()).as_posix()
     return [Problem(rel, f"the {what} is {_kb(size)} gzip -9, over the {_kb(limit)} budget{hint}")]
+
+
+def _check_match(site: Path, refs: _Refs) -> list[Problem]:
+    """The match file's size, and that only ``#list[data-match]`` names it (M3-D7 a)."""
+    match, problems = _payload(site, refs.match, "match file", "data-match")
+    if match is None:
+        return problems
+    problems += _check_size(site, match, "match file", MATCH_MAX)
+    files = (
+        (path.relative_to(site).as_posix(), path.read_bytes())
+        for path in sorted(site.rglob("*"))
+        if path.suffix in TEXT_SUFFIXES and path.is_file() and path.resolve() != match
+    )
+    return problems + _match_mentions(files, match.name)
+
+
+def _match_mentions(files: Iterable[tuple[str, bytes]], name: str) -> list[Problem]:
+    """Files that name the match file ``name`` beyond the list page's one ``data-match``: a
+    preload, prefetch or link on any page, or its URL in a script or payload. The name alone
+    is searched for, so a relative URL counts too."""
+    needle = name.encode()
+    problems: list[Problem] = []
+    for rel, blob in files:
+        count = blob.count(needle)
+        allowed = 1 if rel == LIST_PAGE else 0
+        if count > allowed:
+            times = f" {count} times" if allowed else ""
+            problems.append(
+                Problem(
+                    rel,
+                    f"names the match file {name}{times}; only the list page's "
+                    "#list[data-match] may, once (M3-D7 a)",
+                )
+            )
+    return problems
 
 
 def _check_specimens(site: Path) -> list[Problem]:
