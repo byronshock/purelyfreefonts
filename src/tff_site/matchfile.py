@@ -220,13 +220,14 @@ def _entry_problem(kind: str, entry: Mapping[str, Any]) -> str | None:
 def names_shape_errors(names: Any) -> list[str]:
     """Where ``names`` lacks the shape the match file is made from, by JSON pointer.
 
-    What ``names_errors`` and ``tff_catalog.owned`` read is checked: ``run.date``; each
-    family's ``id``, ``family``, ``in_catalog``, ``distinct_from`` and ``names`` (a name, a
-    relation, and on a build a detail that ``owned`` knows); each ineligible name and reason.
-    So are every object's keys, against what the schema allows, and each family's
-    ``superfamily_id`` (null or a string), so nothing the build doesn't read can hide in the
-    file and reach the serialiser (``owned`` hashes the whole document). A broken file gets a message
-    that says where, never a bare ``KeyError`` or ``RecursionError``. The full schema takes
+    What ``names_errors`` and ``tff_catalog.owned`` read is checked: the run's ``date`` and
+    ``method_version``; each family's ``id``, ``family``, ``in_catalog``, ``distinct_from`` and
+    ``names`` (a name, a relation, and on a build a detail that ``owned`` knows); each
+    ineligible name and reason. So are every object's keys, against what the schema allows,
+    and each family's ``superfamily_id`` (null or a string), so nothing the build doesn't read
+    can hide in the file and reach the serialiser (``owned`` hashes the whole document). A
+    broken file gets a message that says where, never a bare ``KeyError`` or
+    ``RecursionError``. The full schema takes
     seconds on the real file, and CI runs it on the committed one (docs/catalog-schema.md,
     "Validation").
     """
@@ -236,8 +237,13 @@ def names_shape_errors(names: Any) -> list[str]:
     run = names.get("run")
     if isinstance(run, dict):
         errors += _unknown_keys("/run", run, RUN_KEYS)
-    if not (isinstance(run, dict) and isinstance(run.get("date"), str)):
-        errors.append("/run/date is missing or not a string")
+        errors += [
+            f"/run/{key} is missing or not a string"
+            for key in sorted(RUN_KEYS)
+            if not isinstance(run.get(key), str)
+        ]
+    else:
+        errors.append("/run is missing or not an object")
     families = names.get("families")
     if not isinstance(families, list):
         errors.append("/families is missing or not a list")
@@ -262,7 +268,9 @@ def names_errors(doc: Mapping[str, Any], names: Any) -> list[str]:
     """Why ``names`` isn't the names file of the catalog ``doc``'s run; empty when it is.
 
     The two must be of one run: ``names`` at ``NAMES_SCHEMA_VERSION`` and of the shape
-    ``names_shape_errors`` checks, with the catalog's ``run.date``, no family listed twice, its
+    ``names_shape_errors`` checks, with the catalog's ``run.date`` and ``run.method_version``
+    (one run's snapshots scored again under a new method keep their date, as the run of
+    2026-10-17 did under the method of 2026-10-20), no family listed twice, its
     ``in_catalog`` families exactly the catalog's fonts, each under the catalog's family name
     and holding every alias the catalog gives the font, with its relation.
     """
@@ -273,9 +281,11 @@ def names_errors(doc: Mapping[str, Any], names: Any) -> list[str]:
     errors = names_shape_errors(names)
     if errors:
         return errors
-    run_date = doc["run"]["date"]
-    if names["run"]["date"] != run_date:
-        errors.append(f"run.date is {names['run']['date']}, the catalog's is {run_date}")
+    errors += [
+        f"run.{key} is {names['run'][key]}, the catalog's is {doc['run'][key]}"
+        for key in ("date", "method_version")
+        if names["run"][key] != doc["run"][key]
+    ]
     counts = Counter(fam["id"] for fam in names["families"])
     errors += [f"family {fid} is listed {n} times" for fid, n in sorted(counts.items()) if n > 1]
     listed = {fam["id"]: fam for fam in names["families"] if fam["in_catalog"]}

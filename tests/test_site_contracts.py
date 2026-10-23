@@ -395,7 +395,7 @@ def test_the_contract_s_match_example_is_what_the_code_gives(tmp_path):
     (tmp_path / "names.json").write_text(names_text, encoding="utf-8")
     (tmp_path / "names.reviewed.toml").write_text(reviewed_text, encoding="utf-8")
     catalog = {
-        "run": {"date": names["run"]["date"]},
+        "run": names["run"],
         "fonts": [
             {"id": f["id"], "family": f["family"], "aliases": []}
             for f in names["families"]

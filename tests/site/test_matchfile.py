@@ -155,6 +155,11 @@ NAMES_OF_ANOTHER_RUN = [
         id="run-date",
     ),
     pytest.param(
+        lambda n: n["run"].update(method_version="2026-10-20"),
+        "run.method_version is 2026-10-20, the catalog's is 2026-09-29",
+        id="method-version",
+    ),
+    pytest.param(
         lambda n: family(n, "sample-sans-40").update(in_catalog=False),
         "sample-sans-40: in the catalog, but not an in_catalog family",
         id="missing-id",
@@ -268,7 +273,18 @@ MALFORMED_NAMES = [
         "/families/0 is not an object",
         id="string-family",
     ),
-    pytest.param(lambda n: n.update(run=[]), "/run/date is missing or not a string", id="list-run"),
+    pytest.param(lambda n: n.update(run=[]), "/run is missing or not an object", id="list-run"),
+    pytest.param(lambda n: n.pop("run"), "/run is missing or not an object", id="no-run"),
+    pytest.param(
+        lambda n: n["run"].update(date=20260925),
+        "/run/date is missing or not a string",
+        id="number-date",
+    ),
+    pytest.param(
+        lambda n: n["run"].pop("method_version"),
+        "/run/method_version is missing or not a string",
+        id="no-method-version",
+    ),
     pytest.param(
         lambda n: n["families"][3].update(in_catalog="yes"),
         "/families/3/in_catalog is missing or not true or false",
@@ -332,6 +348,7 @@ def test_the_shape_check_allows_exactly_the_keys_the_schema_does():
     for keys, part in objects.items():
         assert part["additionalProperties"] is False
         assert keys == set(part["properties"])
+    assert set(props["run"]["required"]) == matchfile.RUN_KEYS
 
 
 def splice(where: str, value: str) -> str:
