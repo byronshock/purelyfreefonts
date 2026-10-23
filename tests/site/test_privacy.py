@@ -1062,6 +1062,8 @@ def test_the_live_checks_catch_what_they_are_for() -> None:
         "<url><loc>https://purelyfreefonts.com/</loc></url></urlset>"
     )
     version = "commit=" + "1" * 40 + "\nrun_date=2026-09-25\n"
+    # The list page each crawl gets: this one first, then one whose payloads are elsewhere.
+    served = {"/": home}
 
     def handler(request: httpx.Request) -> httpx.Response:
         path = request.url.path
@@ -1071,7 +1073,7 @@ def test_the_live_checks_catch_what_they_are_for() -> None:
         body: str = "x"
         status = 200
         if path == "/":
-            body = home
+            body = served["/"]
             headers["Set-Cookie"] = "__cf_bm=1"
             headers["X-Robots-Tag"] = "noindex"
         elif path == "/sitemap.xml":
@@ -1103,6 +1105,22 @@ def test_the_live_checks_catch_what_they_are_for() -> None:
         "/ names 'https://static.cloudflareinsights.com/beacon.min.js' (js), which is not a path "
         "on this site",
     ]
+    # Every payload must be on this site, the match file too (M3-D7 a): never fetched from
+    # another, by URL or protocol-relative URL.
+    served["/"] = home.replace(
+        'data-details="/assets/d.0123456789.json"', 'data-details="https://x.test/d.json"'
+    ).replace(
+        'data-match="/assets/match.0123456789.json"',
+        'data-match="//x.test/assets/match.0123456789.json"',
+    )
+    with checks.client("https://example.test", transport=transport) as http:
+        elsewhere, foreign = checks.crawl(http)
+    assert foreign == [
+        *problems,
+        "/ names 'https://x.test/d.json' (json), which is not a path on this site",
+        "/ names '//x.test/assets/match.0123456789.json' (json), which is not a path on this site",
+    ]
+    assert not any(f.path.startswith(checks.MATCH_PREFIX) for f in elsewhere)
     payloads = checks.payload_problems(fetched)
     assert len(payloads) == 3
     assert payloads[0] == "/assets/list.0123456789.json (200): a JSON list, not an object"

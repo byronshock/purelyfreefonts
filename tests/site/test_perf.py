@@ -797,6 +797,20 @@ def test_a_list_without_data_match_is_a_problem(tmp_path: Path) -> None:
     ]
 
 
+@pytest.mark.parametrize(
+    "url", [f"https://x.test/{MATCH}", f"//x.test/{MATCH}", f"/../{MATCH}", f"{MATCH}"]
+)
+def test_a_match_file_off_this_site_is_a_problem(tmp_path: Path, url: str) -> None:
+    """M3-D7 (a): the hopper's match file is a same-site asset, so ``data-match`` that names
+    another site (or no site path) is flagged, though the site holds the file."""
+    site = _fake_site(tmp_path)
+    page = site / "index.html"
+    page.write_text(page.read_text().replace(f'data-match="/{MATCH}"', f'data-match="{url}"'))
+    assert [(p.path, p.message) for p in budgets.check(site)] == [
+        ("index.html", f"{url}: the match file is referenced, but not in the site")
+    ]
+
+
 NAME = MATCH.rsplit("/", 1)[1]
 
 
