@@ -6,7 +6,7 @@ Each monthly run writes three JSON files to `build/`. This page says what is in 
 |---|---|---|---|
 | `catalog.json` | stage `export` | `schemas/catalog.schema.json` | the specimens stage, the monthly review, anyone who wants the full data |
 | `catalog-site.json` | stage `export-site` | `schemas/catalog-site.schema.json` | `tff-site build` (Milestone 2) |
-| `names.json` | stage `export-site` | `schemas/names.schema.json` | owned-font matching (Milestone 3) |
+| `names.json` | stage `export-site` | `schemas/names.schema.json` | owned-font matching (Milestone 3): `tff-site build` derives the hopper's match file from it |
 
 All three are public and committed. Their data license is CC BY-SA 4.0 (D17, final since ruling T5).
 
@@ -168,6 +168,10 @@ The names Milestone 3 needs to recognise installed fonts. It covers the whole un
   - `icon`: icon, emoji, symbol, barcode, math and music fonts;
   - `cjk` and `latin`: fonts that fail the Latin gate;
   - `license`: fonts whose license is excluded or failed the license check.
+
+The site build derives the hopper's match file, `/assets/match.<h>.json`, from this file and `catalog-site.json` (`tff_site.matchfile`, with `tff_catalog.owned.match_document`; site/CONTRACT.md section 11), and fails unless the two are of one run: the same `run.date`, the catalog's fonts exactly the `in_catalog` families under the same names, and every catalog alias among the family's `names` with its relation (the owner's ruling of 2026-10-22, `inventory_match_data_site_build`). It also fails on what Milestone 3 step 3's collision check finds: two families that `distinct_from` keeps apart meeting, a key two catalog families own, or an ambiguous name nobody has reviewed. `version.txt` records the file's sha256 as `names_sha256`.
+
+`build/names.reviewed.toml` sits beside it, but no stage writes it. It is the owner's review, edited by hand, each entry citing its ruling: the names the match file treats as ambiguous (`[[ambiguous]]`), and the aliases the hopper codes as near-matches only (`[[recode]]`: HackGen, a build of Hack here, is only related to Hack in the hopper, `hopper_hackgen_related`). A refresh that changes the ambiguous set, or moves a recoded alias, fails the site build until the list is updated.
 
 ## Validation
 
