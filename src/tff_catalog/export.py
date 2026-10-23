@@ -97,10 +97,14 @@ How the per-font fields are made (``docs/catalog-schema.md`` says it for readers
   gate-only ones with terms this run (``ranking.toml`` ``gate_only``: GitHub and Nerd
   Fonts while deferred, owner ruling of 2026-10-23, deferred_sources_count_for_gate), so
   a reader can see the evidence that gave a font a group for the two-group gate. Such a
-  source has ``weight`` 0, no ``ruler_overlap``, and per font only its ``state`` and
-  ``reason``: no ``rank_in_source``, ``z``, ``weight_used`` or ``value``, since none of
-  its numbers reach a score, and ``abstains_in`` empty. Its flags stay off the font, and
-  ``catalog-site.json`` leaves it out, so the site shows only the sources that score.
+  source has ``weight`` 0, no ``ruler_overlap``, and per font only its ``state``,
+  ``reason`` and ``group``: the independence group an observed term gives the gate (the
+  term's, so ``homebrew`` for a GitHub repository the font's cask downloads, gate M5,
+  which adds no group to a font Homebrew observes), null unless observed; no
+  ``rank_in_source``, ``z``, ``weight_used`` or ``value``, since none of its numbers
+  reach a score, and ``abstains_in`` empty. Only these entries carry ``group``. Its flags
+  stay off the font, and ``catalog-site.json`` leaves it out, so the site shows only the
+  sources that score.
 - **The Nerd Font link** (``links.nerd``) is stage "links"' choice, except that a link
   that failed the check recorded for the run's date (``Links.nerd_problem``) is left
   out, null, until a later check passes (owner ruling of 2026-09-29); the font stays.
@@ -1130,11 +1134,12 @@ class CatalogBuilder:
         src, view = self.src[s], self.base[s]
         term = view.terms.get(fid)
         shown = publish_rank(self.cfg, s)
-        if s in self.gate_only:  # its state only: no number of it reaches a score
+        if s in self.gate_only:  # its state and gate group only: no number reaches a score
             state, reason = state_reason(term, src)
             return {
                 "state": state,
                 "reason": reason,
+                "group": term.group if term is not None and state == "observed" else None,
                 "rank_in_source": None,
                 "z": None,
                 "weight_used": None,

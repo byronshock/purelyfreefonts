@@ -1077,6 +1077,23 @@
             "merged_into_parent"
           ]
         },
+        "group": {
+          "enum": [
+            null,
+            "arch",
+            "debian",
+            "flutter",
+            "fot",
+            "github_counters",
+            "google",
+            "homebrew",
+            "http_archive",
+            "jsdelivr",
+            "nerd",
+            "npm_registry"
+          ],
+          "description": "Gate-only sources only (ranking.toml gate_only: GitHub and Nerd Fonts while deferred, deferred_sources_count_for_gate), the one place this field appears: the independence group the font's observed term gives the two-group gate, which is the source's own group except that a GitHub repository whose release asset the font's Homebrew cask downloads is in homebrew's (gate M5), so it adds no group to a font Homebrew observes. Null unless observed."
+        },
         "abstains_in": {
           "type": "array",
           "uniqueItems": true,
@@ -1191,6 +1208,25 @@
             "properties": {
               "reason": {
                 "const": null
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "group"
+            ],
+            "properties": {
+              "group": {
+                "type": "string"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "state": {
+                "const": "observed"
               }
             }
           }

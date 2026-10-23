@@ -972,7 +972,8 @@ def test_published_z_and_weights_are_the_engines(tmp_path: Path) -> None:
 def test_gate_only_sources_are_in_catalog_json_only(tmp_path: Path) -> None:
     """Owner ruling of 2026-10-23 (deferred_sources_count_for_gate): catalog.json lists
     GitHub and Nerd Fonts, with weight 0 and no ruler overlap, and gives each font their
-    state; catalog-site.json leaves them out. Every exact rank in a desktop view has two
+    state and, when observed, the group the term gives the gate (only these entries carry
+    one); catalog-site.json leaves them out. Every exact rank in a desktop view has two
     groups once a gate-only source's observed term is counted, and every check passes."""
     ctx, _ = engine_build(tmp_path)
     docs = run_all(ctx)
@@ -985,10 +986,16 @@ def test_gate_only_sources_are_in_catalog_json_only(tmp_path: Path) -> None:
     assert not gate_only & {s["id"] for s in site["sources"]}
     assert all(not gate_only & set(f["sources"]) for f in site["fonts"])
     assert {f["sources"]["nerd"]["state"] for f in catalog["fonts"]} >= {"observed"}
-    groups = {s: ENGINE_GROUPS[s] for s in gate_only}
     lifted = 0
     for font in catalog["fonts"]:
-        extra = {groups[s] for s in gate_only if font["sources"][s]["state"] == "observed"}
+        for s, entry in font["sources"].items():
+            if s not in gate_only:
+                assert "group" not in entry, (s, font["id"])
+            elif entry["state"] == "observed":
+                assert entry["group"] == ENGINE_GROUPS[s], (s, font["id"])  # no M5 merge here
+            else:
+                assert entry["group"] is None, (s, font["id"])
+        extra = {font["sources"][s]["group"] for s in gate_only} - {None}
         for key in ("desktop_chosen", "desktop_installed"):
             entry = font["ranks"][key]
             if entry["rank"] is not None and entry["groups"] < 2:
@@ -996,6 +1003,26 @@ def test_gate_only_sources_are_in_catalog_json_only(tmp_path: Path) -> None:
                 lifted += 1
     assert lifted > 0
     assert checks(ctx) == {}
+
+
+def test_a_gate_only_entry_gives_the_group_m5_puts_it_in(tmp_path: Path) -> None:
+    """A GitHub term that gate M5 puts in Homebrew's group (the font's cask downloads that
+    repository's release asset) says so in catalog.json, so a reader can see why it gave a
+    font Homebrew observes no second group for the gate."""
+    ctx, _ = engine_build(tmp_path)
+
+    def merge(terms: dict[str, Any]) -> None:
+        github = terms["desktop_installed"]["github"]
+        for fid, t in github.items():
+            github[fid] = dataclasses.replace(t, group="homebrew")
+
+    edit_stage(ctx, "terms", merge)
+    catalog = run_all(ctx)[export.CATALOG_FILE]
+    entries = [f["sources"]["github"] for f in catalog["fonts"]]
+    observed = [e for e in entries if e["state"] == "observed"]
+    assert observed
+    assert {e["group"] for e in observed} == {"homebrew"}
+    assert {e["group"] for e in entries if e["state"] != "observed"} <= {None}
 
 
 def test_bands_and_rising_from_the_real_engine_pass_every_check(tmp_path: Path) -> None:
