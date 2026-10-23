@@ -494,10 +494,22 @@ const OwnedMatch = (() => {
     return Object.freeze({ ids, k, amb, rules: compile(doc.words), hashed });
   };
 
+  // A match of nothing in nothing, as each entry point returns: it leaves '' in the engine's
+  // legacy RegExp statics (RegExp.input, lastMatch and the rest), which hold the text of the
+  // last successful match, so no script can read a list's names there afterwards.
+  const NOTHING = /(?:)/;
+  const forget = () => {
+    NOTHING.exec('');
+  };
+
   // A name's candidates under a table's rules, all of them (for tests and tools).
   const candidates = (name, tbl) => {
     const out = [];
-    chain(name, tbl, out, scratch());
+    try {
+      chain(name, tbl, out, scratch());
+    } finally {
+      forget();
+    }
     return out;
   };
 
@@ -526,11 +538,8 @@ const OwnedMatch = (() => {
     }
   };
 
-  // Which catalog families the entries own, and which they only nearly match (owned.match,
-  // whose docstring gives the rules): {owned: {id: {as, how}}, near: {id: {as, why}},
-  // counts: {entries, owned, near, known, ineligible, unknown, reasons: {reason: n}}}.
-  // parsed is OwnedParse.parse's result or a list of its entries.
-  const match = (parsed, tbl, { patched = true } = {}) => {
+  // The work of match (below).
+  const matchEntries = (parsed, tbl, { patched = true }) => {
     const entries = Array.isArray(parsed) ? parsed : parsed.entries;
     // A name's first hit. The last name's is kept, since fc-list repeats a family on line
     // after line; a map of every name would cost more than most walks, which end within a
@@ -634,6 +643,18 @@ const OwnedMatch = (() => {
       near: sorted(near, ([reason, , as]) => ({ as, why: WHY[reason] })),
       counts: { entries: entries.length, ...counts, reasons: sorted(reasons, (count) => count) },
     };
+  };
+
+  // Which catalog families the entries own, and which they only nearly match (owned.match,
+  // whose docstring gives the rules): {owned: {id: {as, how}}, near: {id: {as, why}},
+  // counts: {entries, owned, near, known, ineligible, unknown, reasons: {reason: n}}}.
+  // parsed is OwnedParse.parse's result or a list of its entries.
+  const match = (parsed, tbl, options = {}) => {
+    try {
+      return matchEntries(parsed, tbl, options);
+    } finally {
+      forget();
+    }
   };
 
   return Object.freeze({ table, match, candidates, FORMAT, VERSION, HOW, WHY, OUTCOMES });

@@ -742,11 +742,10 @@ const OwnedParse = (() => {
     return done(state, entries);
   };
 
-  // Entries from a dropped file (an ArrayBuffer or typed array) or a paste (a string):
-  // {format, error, warnings, counts, entries}, as Python's Parsed.to_json(). The checks, in
-  // owned.py parse's order: size, font and binary magic numbers, encoding, controls, nothing
-  // visible, HTML, then JSON, system_profiler text or line by line. Anything else is 'empty'.
-  const parse = (input) => {
+  // The checks, in owned.py parse's order: size, font and binary magic numbers, encoding,
+  // controls, nothing visible, HTML, then JSON, system_profiler text or line by line.
+  // Anything else is 'empty'.
+  const read = (input) => {
     const pasted = typeof input === 'string';
     const state = newState(pasted);
     let text;
@@ -780,6 +779,26 @@ const OwnedParse = (() => {
     if (jsonLike(body, lines)) return parseJson(text, state);
     if (lines.some((line) => FAMILY_LINE.test(line))) return parseMacosText(lines, state);
     return parseLines(lines, state);
+  };
+
+  // Every successful match leaves its text in the engine's legacy RegExp statics (RegExp.input,
+  // lastMatch, leftContext and the rest), and a sticky pattern its lastIndex, until the next
+  // one: a match of nothing in nothing on the way out leaves '' in all of them, so no script
+  // can read anything of a list there once parse returns.
+  const NOTHING = /(?:)/;
+  const forget = () => {
+    REGISTRY_SUFFIX.lastIndex = 0;
+    NOTHING.exec('');
+  };
+
+  // Entries from a dropped file (an ArrayBuffer or typed array) or a paste (a string):
+  // {format, error, warnings, counts, entries}, as Python's Parsed.to_json() (read).
+  const parse = (input) => {
+    try {
+      return read(input);
+    } finally {
+      forget();
+    }
   };
 
   return Object.freeze({

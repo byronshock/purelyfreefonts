@@ -20,7 +20,8 @@ into a page on a routed origin that answers only that page. In each engine given
 - 10 MB of escaped quotes parse in linear time;
 - the parts are pure code: they name no network, page, frame, worker, storage, clock or
   randomness API; no such global is read while they load and run, and they make no request;
-  a table keeps nothing of the lists matched against it.
+  a table keeps nothing of the lists matched against it, and once parse, match or candidates
+  returns, the engine's legacy RegExp statics hold nothing of the list.
 
 How fast they are (Milestone 3 steps 4 and 5) is test_perf.py's to measure, in CI's site-perf
 job.
@@ -348,6 +349,49 @@ def test_a_table_keeps_nothing_of_the_lists_matched_against_it(loaded):
     })()"""
     keys, frozen, before, after = loaded.run(body)
     assert (keys, frozen, before) == (["ids", "k", "amb", "rules", "hashed"], True, after)
+
+
+# Lists whose text a regex would leave in the RegExp statics, each as the page gets it.
+_PROFILER = {"SPFontsDataType": [{"_name": "Secret.ttf", "typefaces": [
+    {"_name": "SecretGrotesk-Bold", "family": "Secret Grotesk", "fullname": "Secret Grotesk Bold"}
+]}]}  # fmt: skip
+LEFTOVER_LISTS = {
+    "a paste of names": "Secret Studio Grotesk\nInter\nFira Code Bold\nZzz Private Name Italic",
+    "fc-list lines": "Secret Sans,Secret Sans Bold\n/usr/share/fonts/secret.ttf: Secret Mono:style=Bold",
+    "a registry paste": "Secret Serif Bold (TrueType)\nSecret Serif & Secret Serif Italic (TrueType)",
+    "system_profiler -json, dropped": json.dumps(_PROFILER).encode(),
+    "an html page": "<!doctype html><title>Secret page</title><p>Secret Studio Grotesk</p>",
+    "names past ASCII": "\u00c9criture Secr\u00e8te Bold\n\u793a\u4f8b Secret 12\nZ\u00fc Light NF",
+    "a pasted command": "fc-list : family | grep Secret",
+}
+# In the page: each list's parse, match and candidates, with a regex run on other text before
+# each call, and the legacy RegExp statics after it.
+STATICS = """(() => {
+  const statics = () => [RegExp.input, RegExp.lastMatch, RegExp.lastParen, RegExp.leftContext,
+    RegExp.rightContext, RegExp.$1, RegExp.$2, RegExp.$3, RegExp.$4, RegExp.$5, RegExp.$6,
+    RegExp.$7, RegExp.$8, RegExp.$9];
+  const other = () => /(o)th(e)r/.exec('some other text');
+  other();
+  const parsed = P.parse(inputOf(arg));
+  const afterParse = statics();
+  other();
+  M.match(parsed, globalThis.__tffReal);
+  const afterMatch = statics();
+  const first = parsed.entries[0];
+  const name = first ? first.families[0] || first.full : 'Secret Sans Bold';
+  other();
+  M.candidates(name, globalThis.__tffReal);
+  return { afterParse, afterMatch, afterCandidates: statics(), entries: parsed.entries.length };
+})()"""
+
+
+@pytest.mark.parametrize("label", LEFTOVER_LISTS)
+def test_no_regexp_static_holds_anything_of_a_list_once_a_call_returns(loaded, label):
+    """Every successful match leaves its text in RegExp.input, lastMatch and the other legacy
+    statics until the next one; parse, match and candidates each leave '' in all of them."""
+    got = loaded.run(STATICS, ov.spelled(LEFTOVER_LISTS[label]))
+    empty = [""] * 14
+    assert (got["afterParse"], got["afterMatch"], got["afterCandidates"]) == (empty,) * 3
 
 
 def test_constants_equal_python_s(loaded):
