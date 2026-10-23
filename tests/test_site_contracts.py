@@ -379,6 +379,75 @@ def test_the_committed_reviewed_list_recodes_hackgen_per_its_ruling():
     assert recode.relation in owned.RECODE_RELATIONS
 
 
+MATCH_SECTION = section(CONTRACT, "11. Match JSON")
+
+
+def _blocks(text: str, language: str) -> list[str]:
+    return re.findall(rf"```{language}\n(.*?)\n```", text, re.DOTALL)
+
+
+def test_the_contract_s_match_example_is_what_the_code_gives(tmp_path):
+    """Section 11's worked example: its names.json and reviewed list, through the build's
+    ``matchfile.match_file``, give its match file (``names_sha256`` and ``words`` aside)."""
+    names_text, match_text = _blocks(MATCH_SECTION, "json")
+    (reviewed_text,) = _blocks(MATCH_SECTION, "toml")
+    names = json.loads(names_text)
+    (tmp_path / "names.json").write_text(names_text, encoding="utf-8")
+    (tmp_path / "names.reviewed.toml").write_text(reviewed_text, encoding="utf-8")
+    catalog = {
+        "run": {"date": names["run"]["date"]},
+        "fonts": [
+            {"id": f["id"], "family": f["family"], "aliases": []}
+            for f in names["families"]
+            if f["in_catalog"]
+        ],
+    }
+    made = json.loads(matchfile.match_file(catalog, tmp_path / "names.json").blob)
+    want = json.loads(match_text)
+    assert {key: made[key] for key in want} == want
+    assert set(made) - set(want) == {"names_sha256", "words"}
+    assert code_kinds(made) == MATCH_CODES
+
+
+def test_the_contract_s_code_table_lists_every_code():
+    # table_after would drop the "-" row, which looks like a separator row.
+    table = MATCH_SECTION[MATCH_SECTION.index("**Codes**") : MATCH_SECTION.index("**A worked")]
+    codes = re.findall(r"^\| `([^`]+)` \|", table, re.MULTILINE)
+    kinds = {
+        "-" if code == "-" else "!" if code.startswith("!") else code.removeprefix("<i>")
+        for code in codes
+    }
+    assert len(codes) == len(kinds) == len(MATCH_CODES)
+    assert kinds == MATCH_CODES
+
+
+def test_the_contract_names_the_match_file():
+    output = section(CONTRACT, "2. Build output")
+    assert "| `assets/match.<h>.json` |" in output
+    assert "`names_sha256=`" in output
+    assert "`reviewed_sha256=`" in output
+    dom = section(CONTRACT, "4. DOM")
+    assert 'data-match="/assets/match.<h>.json"' in dom
+    assert "`#list[data-match]` names the hopper's match file" in dom
+    assert "`#list[data-match]`, fetched only once a visitor's list arrives" in section(
+        CONTRACT, "5. JS parts"
+    )
+    assert "`match_url`" in section(CONTRACT, "3. Templates")
+    keys = [row[0] for row in table_after(MATCH_SECTION, "| Key |")]
+    assert keys == [
+        "format",
+        "v",
+        "run_date",
+        "names_sha256",
+        "ids",
+        "k",
+        "amb",
+        "reasons",
+        "words",
+    ]
+    assert set(keys) == set(json.loads(matchfile.match_file(SAMPLE, NAMES_SAMPLE_PATH).blob))
+
+
 def _font(doc: dict, font_id: str) -> dict:
     return next(f for f in doc["fonts"] if f["id"] == font_id)
 

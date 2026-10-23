@@ -63,6 +63,7 @@ from urllib.parse import urlsplit
 
 import httpx
 import pytest
+from tests.helpers.names_files import copy_names
 from tests.live import checks
 
 from tff_site import serve
@@ -616,6 +617,7 @@ def privacy_data(site_data: Path, tmp_path_factory: pytest.TempPathFactory) -> P
             fonts.cache_path(font_file["sha256"], font_dir).write_bytes(blob)
     path = dest / "catalog-site.json"
     path.write_text(json.dumps(doc, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    copy_names(site_data, path)
     return path
 
 

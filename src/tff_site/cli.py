@@ -5,7 +5,7 @@ value is the exit code: 0 success, 1 a failed check or not implemented yet, 2 us
 
 | Command | Calls |
 |---|---|
-| ``build [--data F] [--out D] [--drafts] ...`` | ``tff_site.build.build`` |
+| ``build [--data F] [--names F] [--out D] [--drafts] ...`` | ``tff_site.build.build`` |
 | ``serve [SITE_DIR] [--host H] [--port N]`` | ``tff_site.serve.serve`` |
 | ``check [SITE_DIR]`` | ``tff_site.budgets.check`` |
 | ``pack [SITE_DIR] [--out F] [--only F] [--manifest F]`` | ``tff_site.pack.pack`` |
@@ -57,6 +57,7 @@ def _cmd_build(ns: argparse.Namespace) -> int:
     result = build.build(
         ns.data,
         ns.out,
+        names_path=ns.names,
         fonts_dir=ns.fonts_dir,
         commit=ns.commit,
         allow_dirty=ns.allow_dirty,
@@ -143,6 +144,11 @@ def _parser() -> argparse.ArgumentParser:
 
     p = add("build", _cmd_build, "build the site from catalog-site.json, offline")
     p.add_argument("--data", **catalog, help="catalog-site.json (default: build/catalog-site.json)")
+    p.add_argument(
+        "--names",
+        type=Path,
+        help="names.json of the catalog's run (default: beside --data, catalog-site read as names)",
+    )
     p.add_argument("--out", type=Path, default=build.DEFAULT_OUT, help="default: build/site")
     p.add_argument("--fonts-dir", type=Path, default=fonts.DEFAULT_CACHE, help="font cache")
     p.add_argument("--commit", help="commit to record in version.txt (default: git HEAD)")

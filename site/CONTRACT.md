@@ -16,11 +16,15 @@ Contents:
 8. [Details JSON](#8-details-json)
 9. [URL hash](#9-url-hash)
 10. [Milestone 3 hook (`globalThis.tff`)](#10-milestone-3-hook-globalthistff)
+11. [Match JSON](#11-match-json)
 
 ## 1. Data in
 
 - **`catalog-site.json`**, schema `schemas/catalog-site.schema.json` (`schema_version` `1.0.0`, frozen by Milestone 1 step 20 on 2026-09-30; a change to a v1 field needs v2, owner ruling `site_fields_v1`). `tff_site.data.validate` runs the schema and then the cross-reference checks the schema can't express (`semantic_errors`). `tff-site validate FILE` prints `valid (1.0.0), N fonts`.
-  - **Stricter than JSON:** a key repeated in one object, `NaN` and `Infinity` make the file invalid (`tff_site.data.loads`), because the schema would check only one of the repeated values while the page showed another.
+  - **Stricter than JSON:** a key repeated in one object, `NaN` and `Infinity` make the file invalid (`tff_site.data.loads`), because the schema would check only one of the repeated values while the page showed another. So does nesting too deep for the parser, which would otherwise end in a traceback.
+- **`names.json`**, schema `schemas/names.schema.json` (`0.1.0-draft`; docs/catalog-schema.md): the names of the catalog's run, from which the build derives the hopper's match file (section 11; the owner's ruling of 2026-10-22, `inventory_match_data_site_build`). By default it is the file beside the catalog, its name with `catalog-site` read as `names` (`build/names.json`; for the sample, `tests/fixtures/names.sample.json`); `tff-site build --names F` takes another. The build fails unless the file is at `0.1.0-draft`, has the catalog's `run.date`, lists exactly the catalog's fonts as `in_catalog` families, each under the catalog's family name, and holds every catalog alias with its relation (`tff_site.matchfile.names_errors`), and it lists every problem at once. CI validates the committed file against its schema, so the build checks only what the match file relies on, each problem by its JSON pointer.
+  - **The reviewed list** beside it, `names.reviewed.toml` (`build/names.reviewed.toml`; the sample's `tests/fixtures/names.sample.reviewed.toml`; beside `--names F`, its name with `.json` read as `.reviewed.toml`): the owner's reviewed ambiguous names and recodes (section 11). No pipeline stage writes it.
+  - **The sample's names** are synthetic like the sample: its 40 fonts as `in_catalog` families with their aliases; a bundle, a related and a sibling name; a build alias, "Sample Mono 20 Gen", that the sample's reviewed list recodes as related, as `build/names.reviewed.toml` recodes HackGen; three families outside the catalog (`Sample Held 41`, held back; `Sample Sans 06 Black`, whose name is also Sample Sans 06's Black weight, ambiguous as Archivo Black is; `Sample Sans 01 Tight`, distinct from Sample Sans 01); and three ineligible names. Its match file holds every code of section 11.
 - **Wording** in the catalog (view labels and measures lines, tiers, license classes, the Nerd Font marker and legend, source credits, system labels) comes from `config/site.toml`, the one home for the owner's wording rulings about the data; Milestone 1's export copies it, and a contract test keeps the sample equal to it.
   - **The views' names, read at build time** (the owner's site ruling of 2026-10-07, `view_labels_short`): the views are "Overall", "Chosen (desktop)", "Installed (desktop)", "Projects", "Coding" and "Developers & apps" (Rising unchanged and unavailable). Only a monthly refresh writes the catalog, and rebuilding the committed one before the first live refresh would move its scores (`tff-catalog validate --committed` fails), so the committed `build/catalog-site.json` still carries the old names ("Desktop: most chosen", "Used in projects", …). Until that refresh copies the new ones, `tff_site.views` reads `config/site.toml`'s `[[views]]` with `tomllib` (no `tff_catalog` import) and the build shows config's `label` and `measures` for each view, by key, wherever the site's own code or templates name a view: the rank select and its measures line, the list index, the details payload, and on the methodology page the list of ranks and the template's own sentences that name one (`method.view_labels`, by key, so no template spells a view's name). The prose the methodology page takes from `docs/ranking-methodology.md` (§1 and §5) is not overridden: it keeps the document's own words ("most chosen", "most installed", "Used in projects") until that document is edited. Since the scoring-method port ([docs/milestone-method.md](../docs/milestone-method.md) step 3) the views' order and the retired ones are config's too: the list opens on Projects, config's first view (`default_rank_project`), and a view config marks `retired = true`, Overall (`overall_retired`), gets `available: false`, though the committed catalog of 2026-09-26 lists Overall first and available. Which views there are, and `available` for the others, stay the catalog's, and the catalog file is left as it is, the record of what was published (`version.txt` hashes it as read). So until the refresh the page and the catalog differ in those fields only. The keys must match: a view that config names and the catalog lacks, or the other way round, fails the build. `tests/site/test_views.py` checks that the committed catalog differs from config only in labels, measures lines, order and the retired view's `available`, so once the refresh carries config's views the override changes nothing. `views.CONFIG_PATH` is `config/site.toml` in the checkout the build runs from (CI's site jobs and `ops/deploy.sh` build in one); `build(site_config=…)` takes another file.
   - The page's own text (the list page's lead, the filter and sort labels, the About page's note "Why isn't my favorite free font here?", the footer's privacy line and tip link) lives in the templates, and where the owner ruled on it, a test holds it to the ruling in `data/reviews/site/`.
@@ -52,12 +56,13 @@ Contents:
 | `methodology/index.html`, `privacy/index.html`, `about/index.html` | the content pages | `no-cache, no-transform` |
 | `404.html` | served with status 404 by Caddy's `handle_errors` | `no-cache, no-transform` |
 | `robots.txt`, `sitemap.xml` | per M2-D8 | `no-cache, no-transform` |
-| `version.txt` | `commit=`, `run_date=`, `method_version=`, `catalog_sha256=` (the sha256 of the `catalog-site.json` file's bytes), `schema=catalog-site/1`, one per line; never a build time | `no-cache, no-transform` |
+| `version.txt` | `commit=`, `run_date=`, `method_version=`, `catalog_sha256=` (the sha256 of the `catalog-site.json` file's bytes), `names_sha256=` and `reviewed_sha256=` (the sha256 of the bytes of `names.json` and of the reviewed list beside it, of no bytes when there is none: the match file's inputs, section 11), `schema=catalog-site/1`, one per line; never a build time | `no-cache, no-transform` |
 | `favicon.ico`, `favicon.svg`, `apple-touch-icon.png`, `share.png`, `wordmark.svg` | copied from `site/static/` (these five files only; `site/static/_src/` holds their generators and sources and is never published). `wordmark.svg` is the header's wordmark, the owner's "Purely Free Fonts" plate (black outlines on a white rectangle), written by `_src/make_wordmark.py` from his drawing (`_src/wordmark-source.svg`, sha256-pinned) with the editor's data left out (AUTHORITY.md, "Headline font") | `no-cache, no-transform` |
 | `assets/app.<h>.js` | the one script: `site/js/*.js` concatenated (section 5) | `public, max-age=31536000, immutable` |
 | `assets/style.<h>.css` | the one stylesheet: `site/css/*.css` concatenated (section 6) | immutable |
 | `assets/list.<h>.json` | the list index (section 7) | immutable |
 | `assets/details.<h>.json` | the details payload (section 8), fetched on first use | immutable |
+| `assets/match.<h>.json` | the hopper's match data (section 11), from `names.json` and the reviewed list; fetched only once a visitor's list arrives | immutable |
 | `assets/specimens/<id>.<h>.svg` | one specimen per font with a preview | immutable |
 | `assets/fonts/<id>.<h>.<ext>` | the unchanged upstream font file, for "Type your own text" | immutable |
 | `assets/ui/arimo.<h>.woff2`, `assets/ui/arimo-italic.<h>.woff2` | the interface font, Arimo upright and italic, cut to Latin in `site/static/fonts/` (section 6) | immutable |
@@ -115,7 +120,7 @@ Jinja2 with `autoescape=True`, `StrictUndefined`, `trim_blocks`, `lstrip_blocks`
 | `credit_filter` | true when some font needs credit (`attribution_required`): only then is "No credit required" shown (owner ruling of 2026-09-30, `license_filter`) |
 | `systems_os` | `{value, label}`: `windows` Windows, `macos` macOS, `linux` Linux, `android` Android |
 | `total` | number of fonts |
-| `index_url`, `details_url` | hashed URLs of the two payloads |
+| `index_url`, `details_url`, `match_url` | hashed URLs of the three payloads: the list index, the details and the hopper's match file (section 11) |
 | `rows` | one per font, in server order (section 7): `id`, `family`, `label` (the rank label in the default rank, Projects), `category_label` (of the site category, `tff_site.data.site_category`: Monospace for every monospaced font), `license_name`, `badges` [{`key`, `text`}], `specimen` {`url`, `width`, `height`} or none (`width` and `height` are the no-script `<img>`'s display size: 64 px high, the wide-screen `--spec-h` box, and as wide as the SVG's aspect ratio makes it; phones show it 48 px high), `fallback` (none, `"license"` or `"failed"`), `download` {`url`, `label`} |
 
 Badge keys, in this order: `variable` ("Adjustable weight", owner ruling of 2026-09-30, `variable_label`), `nerd` ("Nerd Font available": a font with a Nerd Font build, `links.nerd`; the owner's site ruling of 2026-10-05, `nerd_tag`, in place of the "NF" marker beside the name), `limited` ("Limited accents"), `attribution` ("Credit required"), `preinstalled` ("Comes with Windows, Linux, LibreOffice": each operating system once, every Linux distribution being "Linux", then apps; `tff_site.build.comes_with`), `new` ("New"). Kept short (owner ruling of 2026-09-30, `filters_layout`): there is no "Monospace" badge (the category says it) or "Not redistributable" one (Rule 3), and "Pulled in by" is in the details panel. `preinstalled` is the tag that explains "Not ranked: no evidence of deliberate installs" in *most chosen* (Milestone 2 step 3); the details panel names the packages.
@@ -196,7 +201,8 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
           data-asc-spoken="A to Z" data-desc-spoken="Z to A" aria-pressed="false">…Name…</button>
       </div>
       <ol id="list" class="font-list" data-index="/assets/list.<h>.json"
-          data-details="/assets/details.<h>.json" data-run-date="2026-09-25">…rows…</ol>
+          data-details="/assets/details.<h>.json" data-match="/assets/match.<h>.json"
+          data-run-date="2026-09-25">…rows…</ol>
     </section>
   </div>
 </main>
@@ -204,6 +210,7 @@ Ids, classes, `data-` attributes and ARIA below are the contract; visible text i
 
 - **The page stops after the lead** (owner's site rulings of 2026-10-07, `why_not_listed_to_about` and `privacy_line_in_footer`): `main` holds the `h1`, `p.lead` and `div.layout`, nothing else, on every screen. The note "Why isn't my favorite free font here?" is on the About page (below), and the privacy line is in every page's footer ("Shared classes").
 - **Phones** (below `40rem`; the owner's site rulings of 2026-10-06, `mobile_first_screen_two_fonts` and `early_line_hidden_on_phones`): two fonts fit on a 375 x 812 first screen. Top to bottom: the header without its early-version line; a smaller `h1` (`--fs-xl`); the lead's first sentence, its second in `span.visually-hidden-phone`, so screen readers keep it; **the controls row**, `#f-q`, `#f-rank` and `#f-toggle` on one line, their labels and `#f-rank-measures` hidden from sight by `visually-hidden-phone` (the labels stay the controls' accessible names and `#f-rank-measures` the select's description), the search box showing "Search" as a placeholder (the start of its name, "Search fonts", short enough to show whole), every target at least 24 px, `#f-toggle` as wide as its longest text ("Filters (6)", `7em`) so the count of filters on never changes the row, search and the select sharing the rest two to three (each at least `5.5rem`), the line on one row from 336 px and in two below that, whatever the count, never scrolling sideways, and M2-D4 unchanged, with everything else behind `#f-toggle`; then the results, whose `#results-h` is hidden from sight but stays for screen readers and headings navigation, and **the sort row**, `#list-sort` with `#count` after it at the row's end (`order`; on its own line where it can't keep about 7.5em beside the buttons, below 337 px since the Popularity button's words became "most popular", and on two lines beside them up to about 390 px), its first line level with the buttons' labels, so a count that changes length moves nothing. `#held-legend`, `#view-note` and `#no-results` stay above the sort row. From `40rem` up the page is as before: visible labels, the measures line, the "Fonts" heading with the count under it, then the sort buttons ("Sorting", below).
+- `#list[data-match]` names the hopper's match file (section 11). Nothing else in the built site names it: no preload, prefetch or other link, no other page, and no script or payload. `tff-site check` fails a site where any file but the list page names it, or where the list page names it more than once. The script fetches it only once a visitor's list arrives (M3-D7 a, `inventory_slice_1_defaults`); `tests/site/test_privacy.py` checks that loading, scrolling and using the list without a list never request it.
 - The controls' `name` attributes are the hash keys (section 9); `value` is the key's value. Filters live in `<search>` and `<fieldset>`/`<legend>` groups, never in a `<form>`.
 - `#filters` and `#list-sort` carry `hidden` in the HTML; the script removes it. Showing them must not move the list (reserve their space in CSS), because the layout-shift budget is 0.1.
 - **A link with a view or filters in it** (`State.changesList`: any hash pair but `font`'s, an extension's included) would have the first render change the server's list after it is painted: on phones, where the list starts on the first screen, rows and the footer would move (layout shift up to about 0.55 on 2026-10-07). So, as the script starts, Main sets `html[data-list-pending=""]`, under which `#results` and `.site-footer` aren't displayed; after the first render it sets `data-list-pending="settling"`, under which they are laid out but invisible for two frames, while the rows on the screen grow from their `contain-intrinsic-size` estimate to their own height; then it removes the attribute, and only then does `tff:list-ready` fire (section 10), since an invisible row can't take focus, which a `#font=` link's heading needs. They show anyway if the list index fails to load, and after 3 seconds without it (the late render then moves the list). No hash, an in-page anchor or a font alone never sets it. Layout shift on load is 0 on every screen for such links, with the index held back so the page paints first; `#font=` links still shift when Details opens the panel and scrolls to it, as before.
@@ -286,7 +293,7 @@ The build concatenates `site/js/*.js` in filename order into one ES module, `/as
 - Any other top-level line only closes the declaration: closing brackets, a call's parentheses and arguments, and one final `;` (`})();`, `})(Core);`), so no second statement can hide behind it.
 - A part's initializer may use only lower-numbered parts. Its functions may call any part once `Main.start()` runs.
 - Never, anywhere, comments included: `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `eval(`, `Function(`, `document.write`. Build nodes with `Core.el` and `textContent`.
-- `fetch()` takes only relative URLs read from the DOM (`#list[data-index]`, `#list[data-details]`). No other request API: no `sendBeacon`, `XMLHttpRequest`, `WebSocket` or `EventSource`. No `setAttribute('style'` either (the CSP blocks style attributes; set styles through CSSOM).
+- `fetch()` takes only relative URLs read from the DOM (`#list[data-index]`, `#list[data-details]`, and `#list[data-match]`, fetched only once a visitor's list arrives: section 11). No other request API: no `sendBeacon`, `XMLHttpRequest`, `WebSocket` or `EventSource`. No `setAttribute('style'` either (the CSP blocks style attributes; set styles through CSSOM).
 - Nothing is stored: no `localStorage`, `sessionStorage`, `indexedDB`, `document.cookie`, `caches`, service workers or `cookieStore`. The privacy tests fail on any use.
 
 | File | Const | Owner | Status | Responsibilities |
@@ -505,3 +512,118 @@ document.dispatchEvent(new CustomEvent('tff:list-ready', { detail: globalThis.tf
 - Milestone 3 keeps its own URL state in extension keys (section 9), which `State` preserves.
 - The hook works for either Milestone 3 design (M3-D8): the same list markup (`_list.html.j2`) on the home page or on a `/check/` page.
 - **Open for Milestone 3 step 0:** the hook has no way to announce a change it makes (WCAG 4.1.3), for example `refresh({ announce })` or `announce(text)` routed to `Announce`. It is added then, as an additive v1 field, not by changing the frozen hook now.
+
+## 11. Match JSON
+
+`/assets/match.<h>.json` is the hopper's match data (Milestone 3, slice 1). The owner's ruling of 2026-10-22, `inventory_match_data_site_build`, amends Milestone 3 step 3: the build makes the file with `tff_catalog.owned.match_document`, from `names.json` and the catalog's ids (section 1), in `tff_site.matchfile`, and no pipeline stage writes it. It is canonical compact JSON like the other payloads, so the same inputs always give the same bytes and the same name. `tff-site check` holds it to `budgets.MATCH_MAX` (50 KB gzip -9).
+
+**What the build refuses**, listing every problem:
+
+- a names file of another run, or of the wrong shape (section 1);
+- a `distinct_from` pair that meets (a name of one family that, stripped, is a key at which the other could count as owned: Inter Tight never reaches Inter, M3-D5 a);
+- a key that two catalog families own outside the ambiguous set;
+- a catalog name that strips to the key of a family outside the catalog;
+- an ambiguous set other than the reviewed one: an ambiguous name nobody has reviewed, a reviewed one whose families changed, or one that is no longer ambiguous;
+- a recode whose key isn't an alias of exactly the family it names, or that another alias of that family bypasses (a patched build of the recoded name would own the family again, so it needs a recode of its own);
+- a match file that `owned.Table.from_document`, the reader the page mirrors, refuses.
+
+**The reviewed list**, `names.reviewed.toml` beside the names file (section 1), is edited by hand after the owner's review, and each entry cites the ruling in `data/reviews/` that records it (`tests/test_site_contracts.py` checks that every cited ruling is recorded). A missing list reviews nothing, so any ambiguous name fails the build.
+
+- `[[ambiguous]]` entries (`name`, `families`, `ruling`): names that are a family of their own and also, with a style word stripped, a catalog family's weight ("Archivo Black" may be Archivo's Black). The hopper treats them with doubt (`owned.match`): only a trusted name (fc-list's first family, a macOS family, or a PostScript name's part before its hyphen) counts as owned. They only pass or fail the build and change none of its bytes.
+- `[[recode]]` entries (`name`, `family`, `relation`, `ruling`): an alias that the hopper codes as a near-match only (`related`, `sibling` or `bundle`), though `names.json` gives it an owned relation. HackGen, a build of Hack in `names.json` through an alias row the ranking keeps, is only related to Hack here (`hopper_hackgen_related`, 2026-10-23). A recode changes the match file's codes, and nothing in `names.json`.
+
+**Loading** (M3-D7 a): the page names the file in `#list[data-match]` only (section 4). The script fetches it once a visitor's list arrives (a drop, a chosen file or a paste), from that same-origin hashed URL as the DOM gives it. The request has no query string and no body, and nothing from the list goes in it, so it is the same for every visitor, and the file is cached as immutable. The matching runs in the page. A 404 or 410 means the page is more than one deploy old: the receiver keeps one generation of assets for open tabs. The hopper then says the list was updated and asks for a reload, as `Data.Stale` does for the details payload (section 5). Any other failure gives an error message: a network error, another status, a body that isn't JSON, or a file the reader refuses (`format` not `tff-match`, `v` not 1, or a malformed part). The hopper never shows a result it couldn't compute, and never an empty one in its place.
+
+| Key | Type | Contents |
+|---|---|---|
+| `format` | string | `"tff-match"` |
+| `v` | int | format version, `1` |
+| `run_date` | string | `run.date` of both files |
+| `names_sha256` | string | sha256 of `names.json` in canonical form (`jsonio.canonical_bytes`). It is not the file's hash: `version.txt`'s `names_sha256` is that (section 2) |
+| `ids` | string[] | the catalog's font ids, sorted; `<i>` in a code indexes this |
+| `k` | object | the `match_key` (`Keys.matchKey`) of every known name → its codes, comma-joined: every `names.json` family's `family` and `names[]`, catalog or not, and every `ineligible[]` name. Look keys up in a `Map` or with `Object.hasOwn`: "Constructor" is a font name too |
+| `amb` | object | ambiguous keys (step 3's collision check, `owned.check_document`) → the indexes of the catalog families their name may be a weight of |
+| `reasons` | string[] | the ineligible reasons in use, sorted; `!<j>` indexes this |
+| `words` | object | what `owned.candidates` strips (`owned.WORDS`): `whitespace`, `dashes`, `joiners` and `separators` (hex code points), `style`, `modifiers`, `postscript`, `abbreviations`, `variable`, `variable_joined`, `nerd`, `nerd_tokens`, `cased` |
+
+**Codes**, one per catalog family per key (the strongest), by index; then `-` once at most; then `!` codes:
+
+| Code | The name is | Owned? |
+|---|---|---|
+| `<i>` | the family `ids[i]` | yes |
+| `<i>p` | its PostScript name | yes |
+| `<i>b` | a build of the same font (`detail` empty, `variable`, `static`, `opsz`) | yes |
+| `<i>r` | an old name (M3-D3 a) | yes |
+| `<i>n` | a patched build (`nerd`, `nf`, `nfm`, `nfp`, `propo`, `powerline`, `nl`, `cjk`; M3-D4 a) | yes, while patched builds count |
+| `<i>s` | a width sibling folded into it | never (M3-D5 a): a near-match |
+| `<i>x` | a related family, or an alias the reviewed list recodes as related | never: a near-match |
+| `<i>u` | a bundle or package holding it | never: a near-match |
+| `-` | a known family outside the catalog | no; known, so no near-match |
+| `!<j>` | an ineligible name, for `reasons[j]` | no |
+
+**A worked example.** With the catalog ids `["foo-sans"]` and the run date 2026-01-01, this `names.json`:
+
+```json
+{
+  "schema_version": "0.1.0-draft",
+  "run": {"date": "2026-01-01", "method_version": "2026-01-01"},
+  "families": [
+    {"id": "foo-sans", "family": "Foo Sans", "in_catalog": true, "superfamily_id": null,
+     "names": [
+       {"name": "FooSans-Regular", "relation": "postscript"},
+       {"name": "Foo Sans Variable", "relation": "build", "detail": "variable"},
+       {"name": "Foo Grotesk", "relation": "rename"},
+       {"name": "Foo Sans NF", "relation": "build", "detail": "nf"},
+       {"name": "Foo Sans Gen", "relation": "build", "detail": ""},
+       {"name": "Foo Sans Narrow", "relation": "sibling"},
+       {"name": "Foo Text", "relation": "related"},
+       {"name": "Foo Collection", "relation": "bundle"}
+     ],
+     "distinct_from": []},
+    {"id": "foo-sans-black", "family": "Foo Sans Black", "in_catalog": false,
+     "superfamily_id": null, "names": [], "distinct_from": []}
+  ],
+  "ineligible": [{"name": "Foo Icons", "reason": "icon"}]
+}
+```
+
+with this reviewed list beside it ("Foo Sans Black" is ambiguous: a family, and also Foo Sans's Black; "Foo Sans Gen" is recoded):
+
+```toml
+[[ambiguous]]
+name = "Foo Sans Black"
+families = ["foo-sans"]
+ruling = "example_ambiguous"
+
+[[recode]]
+name = "Foo Sans Gen"
+family = "foo-sans"
+relation = "related"
+ruling = "example_recode"
+```
+
+gives this match file, `names_sha256` and `words` left out. `tests/test_site_contracts.py` checks it.
+
+```json
+{
+  "format": "tff-match",
+  "v": 1,
+  "run_date": "2026-01-01",
+  "ids": ["foo-sans"],
+  "k": {
+    "foocollection": "0u",
+    "foogrotesk": "0r",
+    "fooicons": "!0",
+    "foosans": "0",
+    "foosansblack": "-",
+    "foosansgen": "0x",
+    "foosansnarrow": "0s",
+    "foosansnf": "0n",
+    "foosansregular": "0p",
+    "foosansvariable": "0b",
+    "footext": "0x"
+  },
+  "amb": {"foosansblack": [0]},
+  "reasons": ["icon"]
+}
+```

@@ -28,16 +28,20 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from tests.helpers.names_files import copy_names
 
-from tff_catalog import jsonio
+from tff_catalog import jsonio, owned
 from tff_catalog.keys import search_key
-from tff_site import assets, build, data, fonts, pages, trim, views
+from tff_site import assets, build, data, fonts, matchfile, pages, trim, views
 from tff_site.cli import main
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 SAMPLE_PATH = ROOT / "tests" / "fixtures" / "catalog-site.sample.json"
 SAMPLE = json.loads(SAMPLE_PATH.read_text(encoding="utf-8"))
+NAMES_PATH = matchfile.default_names_path(SAMPLE_PATH)
+NAMES = json.loads(NAMES_PATH.read_text(encoding="utf-8"))
+REVIEWED_PATH = matchfile.default_reviewed_path(NAMES_PATH)
 COMMIT = "0123456789abcdef0123456789abcdef01234567"
 HASHED = re.compile(r"^(?P<stem>.+)\.(?P<h>[0-9a-f]{10})\.(?P<ext>[a-z0-9]+)$")
 SPECIMEN_IDS = ("sample-sans-01", "sample-mono-02", "sample-display-25")
@@ -107,7 +111,8 @@ INDEX = """\
 </search>
 <p id="count" class="count">Showing {{ list.total }} of {{ list.total }} fonts</p>
 <ol id="list" class="font-list" data-index="{{ list.index_url }}"
-    data-details="{{ list.details_url }}" data-run-date="{{ build.run_date }}">
+    data-details="{{ list.details_url }}" data-match="{{ list.match_url }}"
+    data-run-date="{{ build.run_date }}">
 {% for row in list.rows %}
 <li class="font" id="font-{{ row.id }}" data-id="{{ row.id }}">
 <span class="rank">{{ row.label }}</span>
@@ -223,7 +228,8 @@ def fake_font(font_id: str) -> bytes:
 
 @pytest.fixture
 def catalog(tmp_path: Path) -> tuple[Path, Path]:
-    """A copy of the sample with three rendered specimens and cached (fake) font files.
+    """A copy of the sample with three rendered specimens and cached (fake) font files, and
+    the sample's names file and reviewed list beside it (the hopper's match file).
 
     Every other preview is the placeholder, whatever the sample holds, so these tests don't
     depend on tests/fixtures/specimens/. Returns ``(data file, font cache)``.
@@ -247,6 +253,7 @@ def catalog(tmp_path: Path) -> tuple[Path, Path]:
             fonts.cache_path(sha, cache).write_bytes(blob)
     path = data_dir / "catalog-site.json"
     path.write_bytes(jsonio.pretty_bytes(doc))
+    copy_names(SAMPLE_PATH, path)
     return path, cache
 
 
@@ -404,6 +411,7 @@ def test_output_layout(tmp_path, catalog, mini_site):
     exts = {f["id"]: f["font_file"]["format"] for f in SAMPLE["fonts"] if f["font_file"]}
     assert kinds == (
         {"assets/app.js", "assets/style.css", "assets/list.json", "assets/details.json"}
+        | {"assets/match.json"}
         | {f"assets/specimens/{i}.svg" for i in SPECIMEN_IDS}
         | {f"assets/fonts/{i}.{exts[i]}" for i in with_files}
         | {f"assets/ui/{name}" for name, _ in build.UI_FONTS}
@@ -975,7 +983,143 @@ def test_details_refuses_font_assets_for_fonts_without_a_file():
         data.details(SAMPLE, font_assets={"sample-sans-03": "/assets/fonts/x.0123456789.ttf"})
 
 
+# ------------------------------------------------------------------------ the match file
+
+
+def write_names(catalog: tuple[Path, Path], names: dict) -> Path:
+    """Replace the ``catalog`` fixture's names file; return its path."""
+    path = matchfile.default_names_path(catalog[0])
+    path.write_bytes(jsonio.pretty_bytes(names))
+    return path
+
+
+def match_url(out: Path) -> str:
+    page = parse((out / "index.html").read_text(encoding="utf-8"))
+    return next(a for t, a in page.tags if t == "ol" and a.get("id") == "list")["data-match"]
+
+
+def test_the_match_file_is_derived_from_names_json_and_named_on_the_list(
+    tmp_path, catalog, mini_site
+):
+    """The hopper's match data (the owner's ruling of 2026-10-22,
+    ``inventory_match_data_site_build``): ``owned.match_document`` of the names file beside the
+    catalog, with the reviewed list's recodes, as canonical JSON at a hashed URL that
+    ``#list[data-match]`` names."""
+    out = tmp_path / "site"
+    run_build(catalog, out, mini_site)
+    url = match_url(out)
+    assert re.fullmatch(r"/assets/match\.[0-9a-f]{10}\.json", url)
+    blob = asset(out, url).read_bytes()
+    ids = [f["id"] for f in SAMPLE["fonts"]]
+    recodes = matchfile.load_reviewed(REVIEWED_PATH)[0].relations()
+    want = owned.match_document(NAMES, ids, SAMPLE["run"]["date"], recodes=recodes)
+    assert blob == jsonio.canonical_bytes(want)
+    doc = json.loads(blob)
+    assert (doc["format"], doc["v"], doc["run_date"]) == ("tff-match", 1, SAMPLE["run"]["date"])
+    assert doc["ids"] == sorted(ids)
+    assert doc["names_sha256"] == hashlib.sha256(jsonio.canonical_bytes(NAMES)).hexdigest()
+
+
+def test_the_match_file_follows_names_json_and_moves_only_its_name_on_the_list(
+    tmp_path, catalog, mini_site
+):
+    run_build(catalog, tmp_path / "a", mini_site)
+    names = copy.deepcopy(NAMES)
+    names["ineligible"].append({"name": "Sample Extra Icons", "reason": "icon"})
+    write_names(catalog, names)
+    run_build(catalog, tmp_path / "b", mini_site)
+    a, b = tree(tmp_path / "a"), tree(tmp_path / "b")
+    assert {k for k in a if k not in b} == {match_url(tmp_path / "a").lstrip("/")}
+    assert sorted(k for k in a if k in b and a[k] != b[k]) == ["index.html", "version.txt"]
+
+
+def test_a_names_file_of_another_run_fails_the_build_and_writes_nothing(
+    tmp_path, catalog, mini_site
+):
+    """Each problem ``matchfile`` finds is one of the build's (test_matchfile.py has them all),
+    found before any output is written."""
+    names = copy.deepcopy(NAMES)
+    names["run"]["date"] = "2026-09-26"
+    names["families"] = [f for f in names["families"] if f["id"] != "sample-sans-40"]
+    path = write_names(catalog, names)
+    with pytest.raises(build.BuildError) as caught:
+        run_build(catalog, tmp_path / "site", mini_site)
+    assert caught.value.errors == [
+        f"{path}: run.date is 2026-09-26, the catalog's is 2026-09-25",
+        f"{path}: sample-sans-40: in the catalog, but not an in_catalog family",
+    ]
+    assert not (tmp_path / "site").exists()
+
+
+def test_an_unreviewed_ambiguous_name_fails_the_build(tmp_path, catalog, mini_site):
+    path = matchfile.default_names_path(catalog[0])
+    reviewed = matchfile.default_reviewed_path(path)
+    reviewed.unlink()
+    with pytest.raises(build.BuildError) as caught:
+        run_build(catalog, tmp_path / "site", mini_site)
+    assert caught.value.errors == [
+        f"{path}: 'Sample Sans 06 Black' may be a weight of sample-sans-06: an ambiguous name "
+        f"nobody has reviewed; once the owner has, list it in {reviewed}"
+    ]
+
+
+def test_the_command_line_takes_another_names_file(
+    tmp_path, catalog, mini_site, monkeypatch, capsys
+):
+    """``--names F``: the reviewed list is then the one beside F."""
+    monkeypatch.setattr(build, "build", functools.partial(build.build, site_dir=mini_site))
+    path, cache = catalog
+    other = tmp_path / "elsewhere" / "names-of-the-run.json"
+    other.parent.mkdir()
+    names = matchfile.default_names_path(path)
+    names.rename(other)
+    matchfile.default_reviewed_path(names).rename(matchfile.default_reviewed_path(other))
+    out = tmp_path / "site"
+    argv = ["build", "--data", str(path), "--out", str(out), "--fonts-dir", str(cache)]
+    assert main([*argv, "--commit", COMMIT]) == 1
+    assert f"{names}: not found" in capsys.readouterr().err
+    assert main([*argv, "--commit", COMMIT, "--names", str(other)]) == 0
+    assert asset(out, match_url(out)).is_file()
+    version = (out / "version.txt").read_text(encoding="utf-8")
+    assert f"names_sha256={hashlib.sha256(other.read_bytes()).hexdigest()}\n" in version
+
+
+def test_the_names_file_s_folder_is_never_replaced(tmp_path, catalog, mini_site):
+    other = tmp_path / "names-dir"
+    other.mkdir()
+    names = matchfile.default_names_path(catalog[0])
+    shutil.copyfile(names, other / "names.json")
+    shutil.copyfile(matchfile.default_reviewed_path(names), other / "names.reviewed.toml")
+    with pytest.raises(build.BuildError, match="it holds"):
+        run_build(catalog, other, mini_site, names_path=other / "names.json")
+
+
+def test_no_page_preloads_or_names_the_match_file_but_the_list(tmp_path, catalog, real_site):
+    """M3-D7 (a): the match file loads only once a visitor's list arrives. Only ``#list``'s
+    ``data-match`` names it: no preload, no other page, and neither the script nor a payload."""
+    out = tmp_path / "out"
+    run_build(catalog, out, real_site)
+    url = match_url(out)
+    name = url.rsplit("/", 1)[1]
+    for path, blob in tree(out).items():
+        if path == url.lstrip("/"):
+            continue
+        assert blob.count(name.encode()) == (1 if path == "index.html" else 0), path
+    tags = parse((out / "index.html").read_text(encoding="utf-8")).tags
+    assert [a for t, a in tags if t == "link" and url in a.values()] == []
+
+
 # ------------------------------------------------------------------------- version.txt
+
+
+def _hashes(catalog: tuple[Path, Path]) -> dict[str, str]:
+    """The sha256 of the names file and the reviewed list beside the ``catalog`` fixture."""
+    names = matchfile.default_names_path(catalog[0])
+    reviewed = matchfile.default_reviewed_path(names)
+    return {
+        "names_sha256": hashlib.sha256(names.read_bytes()).hexdigest(),
+        "reviewed_sha256": hashlib.sha256(reviewed.read_bytes()).hexdigest(),
+    }
 
 
 def test_version_txt(tmp_path, catalog, mini_site):
@@ -984,18 +1128,23 @@ def test_version_txt(tmp_path, catalog, mini_site):
     doc = data.load(catalog[0])
     text = (out / "version.txt").read_text(encoding="utf-8")
     file_sha = hashlib.sha256(catalog[0].read_bytes()).hexdigest()  # as `sha256sum` prints it
+    hashes = _hashes(catalog)
+    assert hashes["names_sha256"] == hashlib.sha256(NAMES_PATH.read_bytes()).hexdigest()
+    assert hashes["reviewed_sha256"] == hashlib.sha256(REVIEWED_PATH.read_bytes()).hexdigest()
     assert text == (
         f"commit={COMMIT}\n"
         f"run_date={doc['run']['date']}\n"
         f"method_version={doc['run']['method_version']}\n"
         f"catalog_sha256={file_sha}\n"
+        f"names_sha256={hashes['names_sha256']}\n"
+        f"reviewed_sha256={hashes['reviewed_sha256']}\n"
         "schema=catalog-site/1\n"
     )
     assert result.version == dict(line.split("=", 1) for line in text.splitlines())
-    assert build.version_txt(COMMIT, doc, catalog_sha256=file_sha) == text
+    assert build.version_txt(COMMIT, doc, catalog_sha256=file_sha, **hashes) == text
     # the catalog fixture is written as Milestone 1 writes it (jsonio.dump), so the default
     # agrees with the file
-    assert build.version_txt(COMMIT, doc) == text
+    assert build.version_txt(COMMIT, doc, **hashes) == text
 
 
 def test_version_txt_names_the_file_bytes(tmp_path, catalog, mini_site):
@@ -1010,13 +1159,38 @@ def test_version_txt_names_the_file_bytes(tmp_path, catalog, mini_site):
         k: v for k, v in second.version.items() if k != "catalog_sha256"
     }
     # without a file, version_txt hashes the data as Milestone 1 writes it, and follows it
+    hashes = _hashes(catalog)
     doc = copy.deepcopy(SAMPLE)
     want = hashlib.sha256(jsonio.pretty_bytes(doc)).hexdigest()
-    assert f"catalog_sha256={want}\n" in build.version_txt(COMMIT, doc)
+    assert f"catalog_sha256={want}\n" in build.version_txt(COMMIT, doc, **hashes)
     doc["fonts"][0]["family"] = "Sample Sans One"
-    assert build.version_txt(COMMIT, doc) != build.version_txt(COMMIT, SAMPLE)
+    assert build.version_txt(COMMIT, doc, **hashes) != build.version_txt(COMMIT, SAMPLE, **hashes)
+    for name in ("catalog_sha256", "names_sha256", "reviewed_sha256"):
+        with pytest.raises(ValueError, match=f"{name} 'abc' is not 64 hex"):
+            build.version_txt(COMMIT, doc, **{**hashes, name: "abc"})
     with pytest.raises(ValueError, match="64 hex"):
-        build.version_txt(COMMIT, doc, catalog_sha256="abc")
+        build.version_txt(COMMIT, doc, **{**hashes, "names_sha256": "A" * 64})
+
+
+def test_version_txt_names_the_names_file_and_the_reviewed_list_by_their_bytes(
+    tmp_path, catalog, mini_site
+):
+    """Another formatting of names.json changes ``names_sha256`` and nothing else: the match
+    file's bytes, and so its URL, follow the data (its own ``names_sha256`` hashes the
+    canonical form). A changed reviewed list changes ``reviewed_sha256``."""
+    first = run_build(catalog, tmp_path / "a", mini_site)
+    names = matchfile.default_names_path(catalog[0])
+    names.write_text(json.dumps(NAMES, indent=4), encoding="utf-8")
+    second = run_build(catalog, tmp_path / "b", mini_site)
+    assert second.version["names_sha256"] == hashlib.sha256(names.read_bytes()).hexdigest()
+    changed = {k for k in first.version if first.version[k] != second.version[k]}
+    assert changed == {"names_sha256"}
+    assert tree(tmp_path / "a")["index.html"] == tree(tmp_path / "b")["index.html"]
+    reviewed = matchfile.default_reviewed_path(names)
+    reviewed.write_text("# reviewed again\n" + reviewed.read_text(encoding="utf-8"))
+    third = run_build(catalog, tmp_path / "c", mini_site)
+    changed = {k for k in second.version if second.version[k] != third.version[k]}
+    assert changed == {"reviewed_sha256"}
 
 
 def test_version_txt_has_no_build_time(tmp_path, catalog, mini_site, monkeypatch):
@@ -1085,6 +1259,7 @@ def test_placeholder_previews_build_as_not_available_yet(tmp_path, mini_site):
             font["preview"]["sha256"] = data.PLACEHOLDER_SHA256
     path = tmp_path / "catalog-site.json"
     path.write_bytes(jsonio.pretty_bytes(doc))
+    copy_names(SAMPLE_PATH, path)
     build.build(path, out, commit=COMMIT, site_dir=mini_site, font_files=False)
     assert not (out / "assets" / "specimens").exists()
     assert not (out / "assets" / "fonts").exists()
@@ -1746,8 +1921,9 @@ def test_real_templates_render_the_list_contract(tmp_path, catalog, real_site):
     index = load_json(out, ol["data-index"])
     details = load_json(out, ol["data-details"])
     preloads = [a for t, a in tags if t == "link" and a.get("rel") == "preload"]
-    preload = next(a for a in preloads if a.get("as") == "fetch")
+    (preload,) = [a for a in preloads if a.get("as") == "fetch"]  # never the match file
     assert (preload["href"], preload["as"]) == (ol["data-index"], "fetch")
+    assert load_json(out, ol["data-match"])["format"] == "tff-match"
     assert "crossorigin" in preload
     assert ol["data-run-date"] == SAMPLE["run"]["date"]
     lis = [a for t, a in tags if t == "li" and "font" in (a.get("class") or "").split()]
@@ -1826,15 +2002,31 @@ def test_built_site_follows_the_output_contract(site_dir, site_data):
             assert match["h"] == hashlib.sha256(files[path]).hexdigest()[:10], path
     doc = data.load(site_data)
     version = dict(line.split("=", 1) for line in files["version.txt"].decode().splitlines())
-    assert list(version) == ["commit", "run_date", "method_version", "catalog_sha256", "schema"]
+    assert list(version) == [
+        "commit",
+        "run_date",
+        "method_version",
+        "catalog_sha256",
+        "names_sha256",
+        "reviewed_sha256",
+        "schema",
+    ]
     assert build.COMMIT_PATTERN.fullmatch(version["commit"])
     file_sha = hashlib.sha256(site_data.read_bytes()).hexdigest()
-    assert version == build.version_fields(version["commit"], doc, catalog_sha256=file_sha)
+    names_path = matchfile.default_names_path(site_data)
+    made = matchfile.match_file(doc, names_path)
+    assert version == build.version_fields(
+        version["commit"],
+        doc,
+        catalog_sha256=file_sha,
+        names_sha256=made.names_sha256,
+        reviewed_sha256=made.reviewed_sha256,
+    )
     for name in ("robots.txt", "sitemap.xml", *build.STATIC_FILES):
         assert name in files, name
     index = parse(files["index.html"].decode())
     ol = next(a for t, a in index.tags if t == "ol" and a.get("id") == "list")
-    local = [ol["data-index"], ol["data-details"]]
+    local = [ol["data-index"], ol["data-details"], ol["data-match"]]
     for tag, attrs in index.tags:
         rel = set((attrs.get("rel") or "").split())
         if tag == "link" and rel & RESOURCE_RELS:
@@ -1852,6 +2044,11 @@ def test_built_site_follows_the_output_contract(site_dir, site_data):
         if t == "li" and "font" in (a.get("class") or "").split()
     ]
     assert rows == list_index["ids"]
+    # the hopper's match file is the one the site's names file gives (CONTRACT.md section 11)
+    match = files[ol["data-match"].lstrip("/")]
+    assert match == made.blob
+    assert json.loads(match)["ids"] == sorted(list_index["ids"])
+    assert json.loads(match)["run_date"] == doc["run"]["date"]
 
 
 def test_built_site_builds_twice_identically(tmp_path, site_data):
