@@ -31,7 +31,7 @@ The owner, 2026-10-21: "a single tool that is more or less universal: The user g
 - **Where:** in the list's filter panel, beside "Hide fonts that come with" (`inventory_on_list_page`). The first, no-permission step that `inventory_additions` asks for is that filter, already live.
 - **Input:** a file, dropped or chosen, or a paste (`inventory_file_or_paste`). Each command writes `fonts.txt` in the home folder: not the Desktop, which iCloud and OneDrive sync off the machine.
 - **Commands:** Linux's is tested; macOS's and Windows's say "not yet tested" (`inventory_linux_tested_only`).
-- **Matching:** M3-D3 (a), M3-D4 (a) without its switch yet, and M3-D5 (a). A near-match is counted, never hidden.
+- **Matching:** M3-D3 (a), M3-D4 (a) without its switch yet, and M3-D5 (a). A near-match is counted, never hidden. HackGen is only a near-match of Hack (`hopper_hackgen_related`, 2026-10-23).
 - **Privacy:** M3-D7 (a), M3-D10 (a) without its button yet, and M3-D13 (a), with nothing from the list, and no OS tab, in the address.
 - **Show:** fonts you don't have (the default), all fonts with yours marked, or only fonts you have.
 - **Match data:** built by the site build from the committed `build/names.json` (`inventory_match_data_site_build`, amending step 3).
