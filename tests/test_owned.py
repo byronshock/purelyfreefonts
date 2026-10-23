@@ -12,6 +12,12 @@
 - The parser: every fixture in ``tests/fixtures/owned/`` against ``expected.json``, the
   fixtures and vectors free of real paths and hosts, Hypothesis inputs that never make it
   raise, JSON read alike whole or cut, and 10 MB of escaped quotes read in linear time.
+- The vectors (``tests/vectors/owned-fonts.json``), which site/js's port must pass too:
+  every parse, candidates and match case gives its result, and every malformed match file
+  is refused.
+
+``uv run python -m tests.helpers.owned_vectors`` rewrites the vectors and ``expected.json``
+after a deliberate change; review the diff.
 """
 
 import functools
@@ -717,3 +723,139 @@ def test_ten_megabytes_of_escaped_quotes_parse_in_linear_time():
     elapsed = time.perf_counter() - start
     assert p.error == "no_names"
     assert elapsed < 2.0, elapsed
+
+
+# ---------------------------------------------------------------- the vectors
+
+
+VECTORS = json.loads(ov.VECTORS.read_text(encoding="utf-8"))
+E = owned.Entry
+
+
+@functools.cache
+def vector_table() -> owned.Table:
+    return owned.Table.from_document(VECTORS["document"])
+
+
+def test_the_vector_document_is_match_document_s_output_and_valid():
+    built = owned.match_document(VECTORS["names"], VECTORS["catalog_ids"], VECTORS["run_date"])
+    assert json.loads(json.dumps(built)) == VECTORS["document"]
+    assert list(_schema("match").iter_errors(VECTORS["document"])) == []
+    assert list(_schema("names").iter_errors(VECTORS["names"])) == []
+
+
+def test_a_recoded_alias_matches_only_as_a_near_match():
+    doc = owned.match_document(
+        ov.NAMES, ov.CATALOG_IDS, ov.RUN_DATE, recodes={"Foo Sans Text": "related"}
+    )
+    result = owned.match([E(("Foo Sans Text",), trusted=True)], owned.Table.from_document(doc))
+    assert result.owned == {}
+    assert result.near == {"foo-sans": {"as": "Foo Sans Text", "why": "related"}}
+
+
+def test_the_vector_file_s_spec_is_owned_py_s():
+    assert (VECTORS["format"], VECTORS["version"]) == ("tff-owned-fonts", 1)
+    assert VECTORS["spec"] == ov.spec()
+    assert VECTORS["spec"]["words"] == owned.WORDS
+    assert list(_schema("owned-fonts").iter_errors(VECTORS)) == []
+
+
+PARSE = VECTORS["parse"]
+CANDIDATES = VECTORS["candidates"]
+MATCH = VECTORS["match"]
+MALFORMED = VECTORS["malformed"]
+
+
+@pytest.mark.parametrize("case", PARSE, ids=[c["label"] for c in PARSE])
+def test_parse_vector(case):
+    assert owned.parse(ov.data_of(case["input"])).to_json() == case["expect"]
+
+
+def test_parse_vectors_reach_javascript_as_python_reads_them():
+    """No text input holds a surrogate pair as two code points (JavaScript would join them),
+    and every input the page builds from parts holds no surrogate."""
+    for case in PARSE:
+        data = ov.data_of(case["input"])
+        if "parts" not in case["input"]:
+            assert ov.spelled(data) == case["input"]
+
+
+@pytest.mark.parametrize("case", CANDIDATES, ids=[repr(c["name"]) for c in CANDIDATES])
+def test_candidates_vector(case):
+    got = [
+        {"key": c.key, "text": c.text, "patched": c.patched, "postscript": c.postscript}
+        for c in vector_table().candidates(case["name"])
+    ]
+    assert got == case["expect"]
+    assert tuple(owned.candidates(case["name"])) == vector_table().candidates(case["name"])
+
+
+@pytest.mark.parametrize("case", MATCH, ids=[c["label"] for c in MATCH])
+def test_match_vector(case):
+    entries = [ov.entry_of(e) for e in case["entries"]]
+    got = owned.match(entries, vector_table(), patched=case["patched"]).to_json()
+    assert got == case["expect"]
+
+
+@pytest.mark.parametrize("case", MALFORMED, ids=[c["label"] for c in MALFORMED])
+def test_a_malformed_match_file_is_refused(case):
+    with pytest.raises(ValueError):  # noqa: PT011 (every refusal is a ValueError)
+        owned.Table.from_document(json.loads(json.dumps(case["document"])))
+
+
+def test_the_reader_takes_json_numbers_as_json_parse_leaves_them():
+    """1.0 is the version 1 and 0.0 the index 0, since JSON.parse can't tell them apart."""
+    doc = json.loads(json.dumps(VECTORS["document"]))
+    doc["v"] = 1.0
+    doc["amb"] = {key: [float(i) for i in v] for key, v in doc["amb"].items()}
+    table = owned.Table.from_document(doc)
+    assert table.amb == vector_table().amb
+    assert owned.Table.from_document(json.loads(json.dumps(VECTORS["document"]))).amb == table.amb
+
+
+def test_the_named_match_cases_say_what_their_labels_say():
+    """A few vectors read in words, so a regenerated file that changed them shows here."""
+    by_label = {c["label"]: c["expect"] for c in MATCH}
+    assert by_label["family"]["owned"] == {"foo-sans": {"as": "Foo Sans", "how": "family"}}
+    assert by_label["listed patched build, patched off"]["near"] == {
+        "foo-sans": {"as": "Foo Sans NF", "why": "patched"}
+    }
+    assert by_label["ambiguous, untrusted"]["near"] == {
+        "foo-sans": {"as": "Foo Sans Black", "why": "ambiguous"},
+        "foo-sans-black": {"as": "Foo Sans Black", "why": "ambiguous"},
+    }
+    assert by_label["ambiguous, PostScript"]["owned"] == {
+        "foo-sans-black": {"as": "FooSansBlack-Regular", "how": "family"}
+    }
+    assert by_label["ineligible stops the chain"]["counts"]["reasons"] == {"cjk": 1}
+    assert by_label["Object.prototype keys"]["counts"]["unknown"] == 4
+    assert by_label["prefixes never match"]["counts"]["unknown"] == 3
+
+
+_ENTRY_NAMES = st.one_of(
+    st.sampled_from(ov._SYN_NAMES).flatmap(
+        lambda n: st.sampled_from(ov._SUFFIXES).map(lambda s: n + s)
+    ),
+    st.text(max_size=20),
+)
+_ENTRIES = st.builds(
+    E,
+    st.lists(_ENTRY_NAMES, max_size=3).map(tuple),
+    st.none() | _ENTRY_NAMES,
+    st.none() | _ENTRY_NAMES,
+    st.booleans(),
+)
+
+
+@settings(max_examples=1000, derandomize=True, deadline=None)
+@given(st.lists(_ENTRIES, max_size=8), st.booleans())
+def test_match_never_raises_and_never_counts_a_family_both_ways(entries, patched):
+    result = owned.match(entries, vector_table(), patched=patched)
+    assert not set(result.owned) & set(result.near)
+    assert set(result.owned) | set(result.near) <= set(vector_table().ids)
+    counts = result.counts
+    assert counts["entries"] == len(entries) == sum(counts[o] for o in owned.OUTCOMES)
+    assert all(v["how"] in owned.HOW for v in result.owned.values())
+    assert all(v["why"] in owned.WHY for v in result.near.values())
+    if not patched:
+        assert "patched" not in {v["how"] for v in result.owned.values()}

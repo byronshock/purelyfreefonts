@@ -4,8 +4,9 @@ The hopper (Milestone 3, slice 1; owner rulings of 2026-10-21 to 2026-10-23,
 ``inventory_slice_1_defaults``, ``inventory_match_data_site_build`` and
 ``hopper_hackgen_related``) takes a visitor's list of installed fonts in the
 browser and hides the catalog families they already have. This module is the
-reference that the site's JavaScript port must agree with. A visitor's list
-never leaves the browser, so this code reads real lists only in tests.
+reference that the site's JavaScript port must agree with
+(``tests/vectors/owned-fonts.json``). A visitor's list never leaves the browser,
+so this code reads real lists only in tests.
 
 - ``WORDS``: the characters and words that ``candidates`` strips, as one
   JSON-ready object. The match document carries it, so the port derives its
@@ -21,8 +22,12 @@ never leaves the browser, so this code reads real lists only in tests.
   ``distinct_from`` pairs that must never meet.
 - ``parse``: a dropped file or a paste, in any format of docs/owned-fonts.md, to
   entries, warnings and error codes. It never raises.
+- ``Table`` and ``match``: entries to owned and near-match families. An old name
+  counts as owned (M3-D3 a), a patched build counts as owned unless
+  ``patched=False`` (M3-D4 a), and derived, related, sibling and bundle names are
+  never owned (M3-D5 a).
 
-Rules that keep the port in step:
+Rules that keep the port in step (each has a vector):
 
 - Lengths, limits and sniffing windows count code points, never UTF-16 units:
   a name of 200 astral characters is 400 units long in JavaScript and still
@@ -39,6 +44,9 @@ Rules that keep the port in step:
   a line may hold U+2028.
 - No optional group holds a capture that the code reads: JavaScript gives
   ``undefined`` where Python gives ``""``.
+- Keys are looked up in maps (JavaScript ``Map`` or ``Object.hasOwn``):
+  "Constructor" has the key "constructor", which a plain object lookup finds on
+  ``Object.prototype``.
 - Every JSON text in a visitor's list goes through one scanner (``_scan_json``),
   never ``json.loads`` or ``JSON.parse``, so duplicate keys, huge integers and
   deep nesting read alike on both sides.
@@ -53,7 +61,7 @@ import json
 import re
 import unicodedata
 from collections import Counter, defaultdict
-from collections.abc import Iterable, Mapping
+from collections.abc import Iterable, Iterator, Mapping
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -1252,3 +1260,239 @@ def _parse_lines(lines: list[str], state: _State) -> Parsed:
     if not entries and command:
         return state.done([], "command")
     return state.done(entries)
+
+
+# --- matching ----------------------------------------------------------------------------------
+
+HOW = ("family", "postscript", "build", "rename", "patched")
+WHY = ("ambiguous", "patched", "sibling", "related", "bundle")
+OUTCOMES = ("owned", "near", "known", "ineligible", "unknown")
+_HOW = {"": "family", "p": "postscript", "b": "build", "r": "rename", "n": "patched"}
+_WHY = {"n": "patched", "s": "sibling", "x": "related", "u": "bundle"}
+_SAME_FONT = frozenset({"", "p", "b", "r"})  # codes that name the font itself
+_CODE_LETTERS = frozenset("pbrnusx")
+
+
+@dataclass(frozen=True, slots=True)
+class _Code:
+    family: str | None = None  # a catalog id
+    letter: str = ""
+    known: bool = False  # "-": a known family that isn't listed
+    reason: str | None = None  # "!j": an ineligible name
+
+
+def _number(text: str, size: int) -> int:
+    """A code's index: ASCII digits without a leading zero, below ``size``; else ValueError."""
+    if not (text.isascii() and text.isdigit()) or (len(text) > 1 and text[0] == "0"):
+        raise ValueError(f"bad index {text!r}")
+    if int(text) >= size:
+        raise ValueError(f"index {text} out of range (size {size})")
+    return int(text)
+
+
+def _parse_code(code: str, ids: tuple[str, ...], reasons: tuple[str, ...]) -> _Code:
+    if code == "-":
+        return _Code(known=True)
+    if code[:1] == "!":
+        return _Code(reason=reasons[_number(code[1:], len(reasons))])
+    letter = code[-1] if code[-1:] in _CODE_LETTERS else ""
+    return _Code(family=ids[_number(code[: len(code) - len(letter)], len(ids))], letter=letter)
+
+
+def _is_number(value: Any) -> bool:
+    """A JSON number: an int or a float, never a bool (``True == 1`` in Python)."""
+    return isinstance(value, int | float) and not isinstance(value, bool)
+
+
+def _is_integer(value: Any) -> bool:
+    """A JSON number with an integral value: 0, 0.0 and 1e0 alike, as after ``JSON.parse``."""
+    return _is_number(value) and (isinstance(value, int) or value.is_integer())
+
+
+def _strings(value: Any) -> bool:
+    return isinstance(value, list) and all(isinstance(item, str) for item in value)
+
+
+class Table:
+    """A match document, ready to match against, with its rules compiled and its candidates memoized."""
+
+    def __init__(
+        self,
+        ids: tuple[str, ...],
+        k: Mapping[str, tuple[_Code, ...]],
+        amb: Mapping[str, tuple[str, ...]],
+        words: Mapping[str, Any],
+    ) -> None:
+        self.ids = ids
+        self.k = k
+        self.amb = amb
+        self.words = words
+        self._rules = _DEFAULT_RULES if words is WORDS else _compile(words)
+        self._candidates: dict[str, tuple[Candidate, ...]] = {}
+
+    @classmethod
+    def from_document(cls, doc: Any) -> Table:
+        """The table of a match document (``match_document``'s output, or its JSON).
+
+        ValueError for anything malformed, exactly as the port's ``OwnedMatch.table``: not
+        an object; a wrong format; ``v`` not the number 1; ``ids`` or ``reasons`` no list of
+        strings; ``k`` or ``amb`` no object; a ``k`` value no string, or a bad code or index
+        in it; an ``amb`` key missing from ``k``, or its value no list of integers below
+        ``len(ids)``; bad words (``_compile``). Numbers are compared as JSON numbers, which
+        is all ``JSON.parse`` leaves the port: 1 and 1.0 are the same, and ``true`` is no 1.
+        """
+        if not isinstance(doc, dict) or doc.get("format") != FORMAT:
+            raise ValueError(f"not a {FORMAT} document")
+        if not _is_number(doc.get("v")) or doc["v"] != VERSION:
+            raise ValueError(f"not version {VERSION}")
+        ids, reasons = doc.get("ids"), doc.get("reasons")
+        if not _strings(ids) or not _strings(reasons):
+            raise ValueError("ids and reasons must be lists of strings")
+        ids, reasons = tuple(ids), tuple(reasons)
+        k_doc, amb_doc = doc.get("k"), doc.get("amb")
+        if not isinstance(k_doc, dict) or not isinstance(amb_doc, dict):
+            raise ValueError("k and amb must be objects")
+        k: dict[str, tuple[_Code, ...]] = {}
+        for key, codes in k_doc.items():
+            if not isinstance(key, str) or not isinstance(codes, str):
+                raise ValueError(f"bad entry {key!r}: {codes!r}")
+            k[key] = tuple(_parse_code(code, ids, reasons) for code in codes.split(","))
+        amb: dict[str, tuple[str, ...]] = {}
+        for key, indices in amb_doc.items():
+            if key not in k:
+                raise ValueError(f"amb key {key!r} is not in k")
+            if not isinstance(indices, list) or not all(_is_integer(i) for i in indices):
+                raise ValueError(f"amb {key!r}: indices must be integers")
+            amb[key] = tuple(ids[_number(str(int(i)), len(ids))] for i in indices)
+        return cls(ids, k, amb, doc.get("words"))
+
+    def candidates(self, name: str) -> tuple[Candidate, ...]:
+        """``candidates(name)`` under this document's words, memoized."""
+        found = self._candidates.get(name)
+        if found is None:
+            found = self._candidates[name] = _chain(name, self._rules)
+        return found
+
+
+@dataclass(frozen=True, slots=True)
+class Result:
+    """Owned and near-match catalog families, and every entry's outcome counted."""
+
+    owned: Mapping[str, Mapping[str, str]]  # id -> {"as": name, "how": HOW}
+    near: Mapping[str, Mapping[str, str]]  # id -> {"as": name, "why": WHY}; never owned
+    counts: Mapping[str, Any]  # entries and OUTCOMES, plus "reasons": {reason: n}
+
+    def to_json(self) -> dict[str, Any]:
+        return {"owned": dict(self.owned), "near": dict(self.near), "counts": dict(self.counts)}
+
+
+def _tries(entry: Entry) -> Iterator[tuple[str, bool]]:
+    """(name, trusted) in matching order. A PostScript name is per font, so it is trusted."""
+    for n, family in enumerate(entry.families):
+        yield family, entry.trusted and n == 0
+    if entry.full:
+        yield entry.full, False
+    if entry.postscript:
+        yield entry.postscript, True
+
+
+def _hit(entry: Entry, table: Table) -> tuple[str, Candidate, tuple[_Code, ...], bool] | None:
+    for name, trusted in _tries(entry):
+        for cand in table.candidates(name):
+            codes = table.k.get(cand.key)
+            if codes is not None:
+                return name, cand, codes, trusted or cand.postscript
+    return None
+
+
+def _keep(best: dict[str, tuple[int, int, str]], fid: str, rank: tuple[int, int, str]) -> None:
+    if fid not in best or rank < best[fid]:
+        best[fid] = rank
+
+
+def match(parsed: Parsed | Iterable[Entry], table: Table, *, patched: bool = True) -> Result:
+    """Which catalog families ``parsed``'s entries own, and which they only nearly match.
+
+    Per entry, names are tried in order (first family, other families, full name,
+    PostScript name), each with its candidates longest first; the first
+    candidate that is a known key decides the entry, a known family that isn't
+    listed and an ineligible name included.
+
+    - Owned: the family, a PostScript name, a same-font build, a rename (M3-D3 a),
+      and a patched build while ``patched`` (M3-D4 a). A family, rename,
+      PostScript or build hit reached by stripping a Nerd, CN, PL or NL suffix is
+      a patched build.
+    - Near: a sibling, related or bundle name (M3-D5 a), with its own reason; a
+      patched build with ``patched`` off ("patched"); and "ambiguous": on an
+      untrusted entry, an ambiguous key's owned codes and the families its name
+      may be a weight of; on any entry, those families when the key names no
+      catalog family but a known one that isn't listed (Bungee Hairline).
+    - Counted only: a known family that isn't listed, an ineligible name (by
+      reason, also when its key is ambiguous and the entry trusted), unknown.
+
+    An ambiguous key counts as owned only as a trusted name: fc-list's first
+    name, a macOS family, or a PostScript name. Owned beats near; per family the
+    first ``HOW`` (or ``WHY``) in order wins, then the first entry.
+    """
+    entries = parsed.entries if isinstance(parsed, Parsed) else tuple(parsed)
+    owned: dict[str, tuple[int, int, str]] = {}
+    near: dict[str, tuple[int, int, str]] = {}
+    counts = dict.fromkeys(OUTCOMES, 0)
+    reasons: Counter[str] = Counter()
+    for n, entry in enumerate(entries):
+        hit = _hit(entry, table)
+        if hit is None:
+            counts["unknown"] += 1
+            continue
+        shown, cand, codes, trusted = hit
+        amb = table.amb.get(cand.key, ())
+        doubt = bool(amb) and not trusted
+        got_owned: dict[str, str] = {}
+        got_near: dict[str, str] = {}
+        known = has_family = False
+        why: set[str] = set()
+        for code in codes:
+            if code.family is None:
+                known = known or code.known
+                if code.reason is not None:
+                    why.add(code.reason)
+                continue
+            has_family = True
+            letter = "n" if cand.patched and code.letter in _SAME_FONT else code.letter
+            if letter == "n" and not patched:
+                got_near[code.family] = "patched"
+            elif letter in _HOW:
+                if doubt:
+                    got_near[code.family] = "ambiguous"
+                else:
+                    got_owned[code.family] = _HOW[letter]
+            else:
+                got_near[code.family] = _WHY[letter]
+        if amb and (doubt or (known and not has_family)):
+            for fid in amb:
+                if fid not in got_owned:
+                    got_near[fid] = "ambiguous"  # first in WHY, so it wins over the code's own
+        for fid, how in got_owned.items():
+            _keep(owned, fid, (HOW.index(how), n, shown))
+        for fid, reason in got_near.items():
+            _keep(near, fid, (WHY.index(reason), n, shown))
+        if got_owned:
+            counts["owned"] += 1
+        elif got_near:
+            counts["near"] += 1
+        elif known:
+            counts["known"] += 1
+        elif why:
+            counts["ineligible"] += 1
+            reasons.update(why)
+        else:
+            counts["unknown"] += 1
+    return Result(
+        owned={fid: {"as": owned[fid][2], "how": HOW[owned[fid][0]]} for fid in sorted(owned)},
+        near={
+            fid: {"as": near[fid][2], "why": WHY[near[fid][0]]}
+            for fid in sorted(near)
+            if fid not in owned
+        },
+        counts={"entries": len(entries), **counts, "reasons": dict(sorted(reasons.items()))},
+    )
