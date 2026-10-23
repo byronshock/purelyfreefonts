@@ -1052,6 +1052,29 @@ def test_the_known_answers_are_ov_s_and_name_real_families():
     assert named <= ids
 
 
+def test_the_known_answers_carry_every_case_the_milestone_names():
+    """Milestone 3 step 5's fixture, which Milestone 4's final check reuses, and the slice's
+    checklist (Source Sans Pro, FiraCode NF, Roboto Slab, Adwaita Sans, HackGen)."""
+    tried = {
+        name
+        for c in KNOWN
+        for name in (*c["entry"]["families"], c["entry"]["full"], c["entry"]["postscript"])
+        if name
+    }
+    assert {
+        "Inter Variable", "Inter Display", "Fira Code Retina", "Source Sans 3 ExtraLight",
+        "Playfair Display Bold", "JetBrains Mono NL", "Cascadia Code PL", "Cascadia Code NF",
+        "Inter Tight", "Noto Sans JP", "Roboto Condensed", "Archivo", "Archivo Black",
+        "Source Sans Pro", "FiraCode NF", "Roboto Slab", "Adwaita Sans", "HackGen",
+    } <= tried  # fmt: skip
+    static_archivo = [c for c in KNOWN if c["entry"]["families"][:1] == ["Archivo"]]
+    assert all(
+        c["owned"] == {"archivo": "family"} and "archivo-black" in c["not_owned"]
+        for c in static_archivo
+    )
+    assert len(static_archivo) == 2
+
+
 @pytest.mark.parametrize(
     "case",
     [

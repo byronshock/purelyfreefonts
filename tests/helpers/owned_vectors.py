@@ -923,6 +923,18 @@ def known_answers() -> list[dict[str, Any]]:
             outcome="owned",
         ),
         k(
+            "Cascadia Code NF is a patched Cascadia Code",
+            _e(("Cascadia Code NF",), trusted=t),
+            {"cascadia-code": "patched"},
+            outcome="owned",
+        ),
+        k(
+            "Cascadia Code NF in the registry is a patched Cascadia Code",
+            _e(full="Cascadia Code NF"),
+            {"cascadia-code": "patched"},
+            outcome="owned",
+        ),
+        k(
             "Maple Mono NF CN is a patched Maple Mono",
             _e(("Maple Mono NF CN",), trusted=t),
             {"maple-mono": "patched"},
