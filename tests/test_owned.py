@@ -15,6 +15,8 @@
 - The vectors (``tests/vectors/owned-fonts.json``), which site/js's port must pass too:
   every parse, candidates and match case gives its result, and every malformed match file
   is refused.
+- The known answers (``tests/vectors/owned-known-answers.json``) on ``build/names.json``,
+  with the recodes; a strict xfail marks a known data problem.
 
 ``uv run python -m tests.helpers.owned_vectors`` rewrites the vectors and ``expected.json``
 after a deliberate change; review the diff.
@@ -859,3 +861,59 @@ def test_match_never_raises_and_never_counts_a_family_both_ways(entries, patched
     assert all(v["why"] in owned.WHY for v in result.near.values())
     if not patched:
         assert "patched" not in {v["how"] for v in result.owned.values()}
+
+
+# ---------------------------------------------------------------- known answers
+
+
+KNOWN = json.loads(ov.KNOWN.read_text(encoding="utf-8"))
+
+
+@functools.cache
+def real_table(recoded: bool = True) -> owned.Table:
+    """The table of the real match document, read back from its JSON as the page reads it."""
+    doc, ids = real()
+    recodes = RECODES if recoded else None
+    built = owned.match_document(doc, ids, doc["run"]["date"], recodes=recodes)
+    return owned.Table.from_document(json.loads(jsonio.canonical_bytes(built)))
+
+
+def _holds(case: dict[str, Any], result: dict[str, Any]) -> bool:
+    outcome = next((o for o in owned.OUTCOMES if result["counts"][o]), None)
+    return (
+        all(result["owned"].get(fid, {}).get("how") == how for fid, how in case["owned"].items())
+        and not set(case["not_owned"]) & set(result["owned"])
+        and set(case["near"]) <= set(result["near"])
+        and (case["outcome"] is None or case["outcome"] == outcome)
+    )
+
+
+def test_the_known_answers_are_ov_s_and_name_real_families():
+    assert ov.known_answers() == KNOWN
+    assert list(_schema("owned-known-answers").iter_errors(KNOWN)) == []
+    labels = [c["label"] for c in KNOWN]
+    assert len(set(labels)) == len(labels)
+    doc, _ = real()
+    ids = {f["id"] for f in doc["families"]}
+    named = {fid for c in KNOWN for fid in (*c["owned"], *c["not_owned"], *c["near"])}
+    assert named <= ids
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        pytest.param(c, marks=pytest.mark.xfail(strict=True, reason=c["xfail"])) if "xfail" in c else c
+        for c in KNOWN
+    ],
+    ids=[c["label"] for c in KNOWN],
+)  # fmt: skip
+def test_known_answer_holds_on_the_real_names_json(case):
+    result = owned.match([ov.entry_of(case["entry"])], real_table(), patched=case["patched"])
+    assert _holds(case, result.to_json())
+
+
+def test_without_its_recode_hackgen_is_a_build_of_hack():
+    """The alias row that folds HackGen into Hack for the ranking stays (leftover_cica_hackgen);
+    only the hopper's recode makes it a near-match."""
+    result = owned.match([E(("HackGen",), trusted=True)], real_table(recoded=False))
+    assert result.owned == {"hack": {"as": "HackGen", "how": "build"}}

@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trulyfreefonts.com/schemas/owned-known-answers/1",
+  "title": "Owned-font known answers",
+  "description": "tests/vectors/owned-known-answers.json: expectations of the matcher on the committed build/names.json, with the reviewed recodes (Milestone 3 steps 3 and 5). Each case holds when every owned family is owned that way, no not_owned family is owned, every near family is near, and outcome (when not null) is the entry's outcome. A case with xfail is a known data problem and must still fail.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "label",
+      "entry",
+      "patched",
+      "owned",
+      "not_owned",
+      "near",
+      "outcome"
+    ],
+    "properties": {
+      "label": {
+        "type": "string",
+        "minLength": 1
+      },
+      "entry": {
+        "$ref": "#/$defs/entry"
+      },
+      "patched": {
+        "type": "boolean"
+      },
+      "owned": {
+        "type": "object",
+        "additionalProperties": {
+          "enum": [
+            "family",
+            "postscript",
+            "build",
+            "rename",
+            "patched"
+          ]
+        }
+      },
+      "not_owned": {
+        "type": "array",
+        "uniqueItems": true,
+        "items": {
+          "type": "string"
+        }
+      },
+      "near": {
+        "type": "array",
+        "uniqueItems": true,
+        "items": {
+          "type": "string"
+        }
+      },
+      "outcome": {
+        "enum": [
+          null,
+          "owned",
+          "near",
+          "known",
+          "ineligible",
+          "unknown"
+        ]
+      },
+      "xfail": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "families",
+        "full",
+        "postscript",
+        "trusted"
+      ],
+      "properties": {
+        "families": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "full": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "postscript": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "trusted": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}
