@@ -274,6 +274,41 @@ MALFORMED_NAMES = [
         "/families/3/in_catalog is missing or not true or false",
         id="string-in-catalog",
     ),
+    pytest.param(
+        lambda n: n["families"][0].update(superfamily_id=7),
+        "/families/0/superfamily_id is missing or not null or a string",
+        id="number-superfamily",
+    ),
+    pytest.param(
+        lambda n: n["families"][0].pop("superfamily_id"),
+        "/families/0/superfamily_id is missing or not null or a string",
+        id="no-superfamily",
+    ),
+    pytest.param(
+        lambda n: n.update(extra=1),
+        "/ has the key 'extra', which schemas/names.schema.json doesn't allow",
+        id="unknown-key",
+    ),
+    pytest.param(
+        lambda n: n["run"].update(when="now"),
+        "/run has the key 'when', which schemas/names.schema.json doesn't allow",
+        id="unknown-run-key",
+    ),
+    pytest.param(
+        lambda n: n["families"][0].update(note="x"),
+        "/families/0 has the key 'note', which schemas/names.schema.json doesn't allow",
+        id="unknown-family-key",
+    ),
+    pytest.param(
+        lambda n: n["families"][0]["names"][0].update(note="x"),
+        "/families/0/names/0 has the key 'note', which schemas/names.schema.json doesn't allow",
+        id="unknown-name-key",
+    ),
+    pytest.param(
+        lambda n: n["ineligible"][0].update(note="x"),
+        "/ineligible/0 has the key 'note', which schemas/names.schema.json doesn't allow",
+        id="unknown-ineligible-key",
+    ),
 ]
 
 
@@ -281,6 +316,69 @@ MALFORMED_NAMES = [
 def test_a_malformed_names_file_is_refused_saying_where(tmp_path, mutate, message):
     path = write(tmp_path, names_with(mutate))
     assert errors_of(path) == [f"{path}: {message}"]
+
+
+def test_the_shape_check_allows_exactly_the_keys_the_schema_does():
+    schema = json.loads((ROOT / matchfile.NAMES_SCHEMA).read_text(encoding="utf-8"))
+    props = schema["properties"]
+    family_schema = props["families"]["items"]
+    objects = {
+        matchfile.NAMES_KEYS: schema,
+        matchfile.RUN_KEYS: props["run"],
+        matchfile.FAMILY_KEYS: family_schema,
+        matchfile.NAME_KEYS: family_schema["properties"]["names"]["items"],
+        matchfile.INELIGIBLE_KEYS: props["ineligible"]["items"],
+    }
+    for keys, part in objects.items():
+        assert part["additionalProperties"] is False
+        assert keys == set(part["properties"])
+
+
+def splice(where: str, value: str) -> str:
+    """The sample's names file as JSON text with ``value`` (JSON text) put ``where``: under a
+    new top-level key, as the first family's superfamily_id, or under a new key of its first
+    postscript name or of the first ineligible row."""
+    text = json.dumps(NAMES)
+    if where == "top":
+        return text[:-1] + f', "x": {value}}}'
+    old = {
+        "superfamily": '"superfamily_id": null',
+        "name": '"relation": "postscript"',
+        "ineligible": '"reason": "icon"',
+    }[where]
+    assert old in text
+    new = f'"superfamily_id": {value}' if where == "superfamily" else f'{old}, "y": {value}'
+    return text.replace(old, new, 1)
+
+
+@pytest.mark.parametrize("depth", [3, data.MAX_DEPTH, 50_000])
+@pytest.mark.parametrize(
+    ("where", "shallow"),
+    [
+        ("top", "/ has the key 'x', which schemas/names.schema.json doesn't allow"),
+        ("superfamily", "/families/0/superfamily_id is missing or not null or a string"),
+        (
+            "name",
+            "/families/0/names/1 has the key 'y', which schemas/names.schema.json doesn't allow",
+        ),
+        (
+            "ineligible",
+            "/ineligible/0 has the key 'y', which schemas/names.schema.json doesn't allow",
+        ),
+    ],
+)
+def test_a_value_nested_deeply_anywhere_is_refused_without_a_traceback(
+    tmp_path, where, shallow, depth
+):
+    """Python's serialisers recurse: a value some 47,000 levels deep, under a key the build
+    doesn't read, crashed it with a ``RecursionError`` though the parser had read it.
+    ``data.loads`` refuses more than ``MAX_DEPTH`` levels anywhere, and the shape check refuses
+    a key the schema doesn't allow, or a superfamily_id that is neither null nor a string."""
+    path = tmp_path / "names.json"
+    path.write_text(splice(where, "[" * depth + "]" * depth), encoding="utf-8")
+    (tmp_path / "names.reviewed.toml").write_text(REVIEWED, encoding="utf-8")
+    deep = f"nested too deeply to read (more than {data.MAX_DEPTH} levels)"
+    assert errors_of(path) == [f"{path}: {deep if depth >= data.MAX_DEPTH else shallow}"]
 
 
 def test_a_names_file_that_is_no_object_is_refused(tmp_path):

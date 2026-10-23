@@ -49,6 +49,13 @@ NAMES_RELATIONS = frozenset(
 MAX_SHAPE_ERRORS = 20
 # names.json -> names.reviewed.toml, beside it.
 REVIEWED_SUFFIX = ".reviewed.toml"
+# The keys schemas/names.schema.json allows in each kind of object (additionalProperties is
+# false throughout), so names_shape_errors refuses the rest.
+NAMES_KEYS = frozenset({"schema_version", "run", "families", "ineligible"})
+RUN_KEYS = frozenset({"date", "method_version"})
+FAMILY_KEYS = frozenset({"id", "family", "superfamily_id", "in_catalog", "names", "distinct_from"})
+NAME_KEYS = frozenset({"name", "relation", "detail"})
+INELIGIBLE_KEYS = frozenset({"name", "reason"})
 AMBIGUOUS_FIELDS = frozenset({"name", "families", "ruling"})
 RECODE_FIELDS = frozenset({"name", "family", "relation", "ruling"})
 
@@ -213,17 +220,22 @@ def _entry_problem(kind: str, entry: Mapping[str, Any]) -> str | None:
 def names_shape_errors(names: Any) -> list[str]:
     """Where ``names`` lacks the shape the match file is made from, by JSON pointer.
 
-    Only what ``names_errors`` and ``tff_catalog.owned`` read is checked: ``run.date``; each
+    What ``names_errors`` and ``tff_catalog.owned`` read is checked: ``run.date``; each
     family's ``id``, ``family``, ``in_catalog``, ``distinct_from`` and ``names`` (a name, a
     relation, and on a build a detail that ``owned`` knows); each ineligible name and reason.
-    So a broken file gets a message that says where, never a bare ``KeyError``. The full schema
-    takes seconds on the real file, and CI runs it on the committed one
-    (docs/catalog-schema.md, "Validation").
+    So are every object's keys, against what the schema allows, and each family's
+    ``superfamily_id`` (null or a string), so nothing the build doesn't read can hide in the
+    file and reach the serialiser (``owned`` hashes the whole document). A broken file gets a message
+    that says where, never a bare ``KeyError`` or ``RecursionError``. The full schema takes
+    seconds on the real file, and CI runs it on the committed one (docs/catalog-schema.md,
+    "Validation").
     """
     if not isinstance(names, dict):
         return [f"/ is a {type(names).__name__}, not an object"]
-    errors: list[str] = []
+    errors = _unknown_keys("", names, NAMES_KEYS)
     run = names.get("run")
+    if isinstance(run, dict):
+        errors += _unknown_keys("/run", run, RUN_KEYS)
     if not (isinstance(run, dict) and isinstance(run.get("date"), str)):
         errors.append("/run/date is missing or not a string")
     families = names.get("families")
@@ -236,11 +248,11 @@ def names_shape_errors(names: Any) -> list[str]:
     if not isinstance(ineligible, list):
         errors.append("/ineligible is missing or not a list")
         ineligible = []
-    errors += [
-        f"/ineligible/{n} is not a name and a reason, both strings"
-        for n, row in enumerate(ineligible)
-        if not (isinstance(row, dict) and _strings(row.get("name"), row.get("reason")))
-    ]
+    for n, row in enumerate(ineligible):
+        if not (isinstance(row, dict) and _strings(row.get("name"), row.get("reason"))):
+            errors.append(f"/ineligible/{n} is not a name and a reason, both strings")
+        else:
+            errors += _unknown_keys(f"/ineligible/{n}", row, INELIGIBLE_KEYS)
     if len(errors) > MAX_SHAPE_ERRORS:
         errors[MAX_SHAPE_ERRORS:] = [f"and {len(errors) - MAX_SHAPE_ERRORS} more such problems"]
     return errors
@@ -429,14 +441,24 @@ def _strings(*values: Any) -> bool:
     return all(isinstance(value, str) for value in values)
 
 
+def _unknown_keys(at: str, obj: Mapping[str, Any], allowed: frozenset[str]) -> list[str]:
+    return [
+        f"{at or '/'} has the key {key!r}, which {NAMES_SCHEMA} doesn't allow"
+        for key in sorted(obj.keys() - allowed)
+    ]
+
+
 def _family_shape_errors(at: str, fam: Any) -> list[str]:
     if not isinstance(fam, dict):
         return [f"{at} is not an object"]
-    errors = [
+    errors = _unknown_keys(at, fam, FAMILY_KEYS)
+    errors += [
         f"{at}/{key} is missing or not a string"
         for key in ("id", "family")
         if not isinstance(fam.get(key), str)
     ]
+    if "superfamily_id" not in fam or not isinstance(fam["superfamily_id"], str | None):
+        errors.append(f"{at}/superfamily_id is missing or not null or a string")
     if not isinstance(fam.get("in_catalog"), bool):
         errors.append(f"{at}/in_catalog is missing or not true or false")
     others = fam.get("distinct_from")
@@ -450,6 +472,7 @@ def _family_shape_errors(at: str, fam: Any) -> list[str]:
         if not (isinstance(entry, dict) and isinstance(entry.get("name"), str)):
             errors.append(f"{where} is not an object with a name string")
             continue
+        errors += _unknown_keys(where, entry, NAME_KEYS)
         relation, detail = entry.get("relation"), entry.get("detail")
         if not (isinstance(relation, str) and relation in NAMES_RELATIONS):
             errors.append(f"{where}/relation is {relation!r}, not a relation of {NAMES_SCHEMA}")

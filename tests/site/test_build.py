@@ -1084,6 +1084,26 @@ def test_the_command_line_takes_another_names_file(
     assert f"names_sha256={hashlib.sha256(other.read_bytes()).hexdigest()}\n" in version
 
 
+def test_a_names_file_nested_deeply_fails_the_command_line_in_a_line(
+    tmp_path, catalog, mini_site, monkeypatch, capsys
+):
+    """A value 50,000 levels deep under a key the build doesn't read printed some 50,000
+    lines of a ``RecursionError``; now it is one problem, and nothing is written."""
+    monkeypatch.setattr(build, "build", functools.partial(build.build, site_dir=mini_site))
+    path, cache = catalog
+    names = matchfile.default_names_path(path)
+    text = names.read_text(encoding="utf-8").rstrip()
+    names.write_text(text[:-1] + ', "x": ' + "[" * 50_000 + "]" * 50_000 + "}", encoding="utf-8")
+    out = tmp_path / "site"
+    argv = ["build", "--data", str(path), "--out", str(out), "--fonts-dir", str(cache)]
+    assert main([*argv, "--commit", COMMIT, "--names", str(names)]) == 1
+    err = capsys.readouterr().err
+    assert "Traceback" not in err
+    assert f"{names}: nested too deeply to read" in err
+    assert len(err.splitlines()) < 5
+    assert not out.exists()
+
+
 def test_the_names_file_s_folder_is_never_replaced(tmp_path, catalog, mini_site):
     other = tmp_path / "names-dir"
     other.mkdir()

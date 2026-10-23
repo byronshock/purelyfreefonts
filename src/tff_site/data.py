@@ -129,6 +129,11 @@ FEEDBACK_EMAIL = "admin@purelyfreefonts.com"
 REPORT_ISSUE_URL = f"{REPO_URL}/issues/new?template=license.yml"
 
 
+# How deep ``loads`` lets arrays and objects nest. catalog-site.json nests 6 levels and
+# names.json 5, so this leaves room to grow and stays far below Python's recursion limit.
+MAX_DEPTH = 64
+
+
 class CatalogError(ValueError):
     """The catalog failed validation. ``errors`` holds one line per problem."""
 
@@ -155,13 +160,36 @@ def loads(blob: bytes) -> dict[str, Any]:
 
     Stricter than ``json.loads``: a key repeated in one object, ``NaN`` and ``Infinity`` are
     refused (``ValueError``), because the schema would see only one of the repeated values. A
-    document nested too deeply for the parser is refused too (``ValueError``), so no input
-    ends in a traceback; the build reads the catalog and ``names.json`` through this.
+    document nested more than ``MAX_DEPTH`` levels deep is refused too (``ValueError``),
+    wherever the depth is: the parser reads tens of thousands of levels, but the validators
+    and serialisers that later walk the document recurse, and can fail sooner with a
+    ``RecursionError``. So no input ends in a traceback; the build reads the catalog and
+    ``names.json`` through this.
     """
+    too_deep = f"nested too deeply to read (more than {MAX_DEPTH} levels)"
     try:
-        return json.loads(blob.decode("utf-8"), object_pairs_hook=_unique, parse_constant=_no_nan)
+        doc = json.loads(blob.decode("utf-8"), object_pairs_hook=_unique, parse_constant=_no_nan)
     except RecursionError:
-        raise ValueError("nested too deeply to read") from None
+        raise ValueError(too_deep) from None
+    if _deeper_than(doc, MAX_DEPTH):
+        raise ValueError(too_deep)
+    return doc
+
+
+def _deeper_than(doc: Any, limit: int) -> bool:
+    """Whether arrays and objects nest more than ``limit`` levels in ``doc``. A loop, not a
+    recursion, so any depth the parser returns can be measured."""
+    stack = [(doc, 1)]
+    while stack:
+        value, level = stack.pop()
+        if isinstance(value, dict):
+            value = value.values()
+        elif not isinstance(value, list):
+            continue
+        if level > limit:
+            return True
+        stack.extend((item, level + 1) for item in value)
+    return False
 
 
 def _unique(pairs: list[tuple[str, Any]]) -> dict[str, Any]:

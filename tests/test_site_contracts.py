@@ -787,6 +787,18 @@ def test_validate_command_rejects_a_catalog_nested_too_deeply(tmp_path, capsys):
     assert "Traceback" not in err
 
 
+def test_loads_reads_max_depth_levels_and_refuses_one_more():
+    """``data.loads`` caps nesting at ``MAX_DEPTH`` levels wherever they are, far below where
+    the serialisers and validators that walk a document recurse too deeply."""
+    deep = data.MAX_DEPTH
+    assert data.loads(("[" * deep + "]" * deep).encode()) == json.loads("[" * deep + "]" * deep)
+    nested = '{"a": ' * (deep - 1) + "[]" + "}" * (deep - 1)
+    assert data.loads(nested.encode())
+    for text in ("[" * (deep + 1) + "]" * (deep + 1), '{"a": [1, {"b": [' + nested + "]}]}"):
+        with pytest.raises(ValueError, match=f"nested too deeply to read .more than {deep} "):
+            data.loads(text.encode())
+
+
 def test_a_failed_build_prints_its_problems_not_a_traceback(tmp_path, capsys):
     missing = tmp_path / "missing.json"
     assert main(["build", "--data", str(missing), "--out", str(tmp_path / "site")]) == 1
