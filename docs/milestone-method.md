@@ -77,12 +77,12 @@ This checklist brings the owner's scoring-method rulings of 2026-09-30 and 2026-
 
 ### Step 14: The switch: October replayed on the new method
 - [x] A local dry run of 2026-10-17 that writes nothing: new members and any gate questions listed; store top-ups (`october_topups_preauthorized`), diffed before the store commit; questions ruled in a pull request. *(Gate questions ruled in #81. Dry runs pass; the top-ups wait in a store clone, unpushed, for the review fixes, which can move the Projects top-500 cut.)* *(Gate questions ruled in #81 and #85. The top-ups were pushed to the store after a row-by-row diff: the refetched snapshots were unioned with the committed rows, so nothing was removed (33dd502).)*
-- [ ] The GitHub replay (`from_snapshots=2026-10-17`, `write_fit=true`: the workflow writes a fit only when a dispatch asks): the parameters written once, the in-job replay identical, the bundle encrypted, the log clean.
-- [ ] Its pull request replaces #70 as the held draft, with its CI noted.
+- [x] The GitHub replay (`from_snapshots=2026-10-17`, `write_fit=true`: the workflow writes a fit only when a dispatch asks): the parameters written once, the in-job replay identical, the bundle encrypted, the log clean. *(2026-10-21, run 39592471047 from main at 9abb12d: each view's fit written once to the store (f0e5258), bit-identical to the local rehearsal's; the in-job replay identical; the bundle encrypted and its artifact deleted; the log scanned for this run's private values, with none found.)*
+- [x] Its pull request replaces #70 as the held draft, with its CI noted. *(#88, a draft. Its held CI passes except the two specimen-pin tests, as expected while step 7d stays frozen for main; noted on #88.)*
 
 ### Step 15: Staging, and the owner's look
-- [ ] `preview/2026-10-17` rebuilt from the new pull request, with the specimen pins (`preview_stopgap_pins`), CI passing, deployed; the browser checks done.
-- [ ] A summary for the owner (ranks only for Google and Fonts Over Time), then the October score review that `refresh_gate_review_now` deferred.
+- [x] `preview/2026-10-17` rebuilt from the new pull request, with the specimen pins (`preview_stopgap_pins`), CI passing, deployed; the browser checks done. *(5f04524: #88's scores, with the 109 specimens the GitHub replay couldn't draw drawn locally from the same font files (Merienda's stays out), and 118 stopgap pins. CI passed; deployed to staging, where the live test and the browser checks pass; production unchanged.)*
+- [ ] A summary for the owner (ranks only for Google and Fonts Over Time), then the October score review that `refresh_gate_review_now` deferred. *(The summary went to the owner on 2026-10-21; the review is still to come.)*
 
 ### Later: the drift flag (`q9_theta_cadence`)
 Not needed for this checklist. It needs months on the held fit, so it comes after the switch.
@@ -95,3 +95,4 @@ None of these changes October's scores. Each is fixed before it can.
 - [ ] Bundle packages in the model's terms: a bundle package counts as half a package with half its count, in every source (`de4_bundle_credit_half`). The model reads only mapped rows, which carry no bundle rows. Today no bundle row reaches a Projects frame, so nothing is affected.
 - [ ] An ecosyste.ms package that ecosyste.ms doesn't know reads as 0 dependents with a full bulk. Settle whether that is evidence or no coverage (`q3_coverage_mar`), before a known font hits it. In October it touched 11 fonts, none in the catalog.
 - [ ] The refresh's publish job should wait for the store push when the store bundle carries a model fit, so a pull request never names a fit the store lacks.
+- [ ] A replay from snapshots draws a specimen only from the font cache, since it never downloads: the switch run lacked 109. Fill the cache before a replay (`tff-site fetch-fonts`), so a held run's pull request has every specimen.
