@@ -858,6 +858,31 @@ def test_js_part_follows_the_rule(filename, const):
     assert lint_part(filename, const, (JS_DIR / filename).read_text(encoding="utf-8")) == []
 
 
+# The members a part's IIFE returns, from its last lines: "return Object.freeze({ ... });\n})();".
+_EXPORTS = re.compile(r"return Object\.freeze\(\{([^}]*)\}\);\n\}\)\(\);\s*\Z")
+
+
+@pytest.mark.parametrize("filename", ["52-owned-parse.js", "54-owned-match.js"])
+def test_the_hopper_parts_rows_name_every_member(filename):
+    """The hopper's parts (Milestone 3, slice 1) export what their section 5 row says."""
+    found = _EXPORTS.search((JS_DIR / filename).read_text(encoding="utf-8"))
+    assert found is not None, filename
+    members = [name.strip() for name in found.group(1).split(",") if name.strip()]
+    row = next(row for row in JS_TABLE if row[0] == filename)
+    cell = "`" + row[4]  # table_after strips the cell's own first backtick
+    assert members
+    assert [name for name in members if f"`{name}" not in cell] == []
+
+
+def test_the_fetch_rule_names_every_attribute_data_reads_a_url_from():
+    """Section 5's fetch rule names each #list attribute that 10-data.js fetches from."""
+    lines = section(CONTRACT, "5. JS parts").splitlines()
+    rule = next(line for line in lines if line.startswith("- `fetch()`"))
+    names = set(re.findall(r"urlOf\('([a-z]+)'\)", (JS_DIR / "10-data.js").read_text("utf-8")))
+    assert names == {"details", "index", "match"}
+    assert sorted(name for name in names if f"`#list[data-{name}]`" not in rule) == []
+
+
 # One example per refusal in site/CONTRACT.md sections 5 and 6.
 BAD_JS = [
     ("00-core.js", "const Core = 1;\nconst Extra = 2;\n"),
