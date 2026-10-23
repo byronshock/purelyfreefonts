@@ -8,9 +8,10 @@
 //
 // JavaScript has no casefold. Python's str.casefold() gives the same as toLowerCase(), with
 // sharp s to "ss" and final sigma to medial sigma, for every code point that can follow NFKC
-// except those in CASEFOLD_EXTRA. Each code point is folded on its own, as the spec says, so
-// toLowerCase()'s final-sigma rule never applies. Anything that isn't a string is read as
-// String(s), and null or undefined as ''. A lone surrogate is kept, as Python keeps it.
+// except those in CASEFOLD_EXTRA. Each code point is folded on its own, as the spec says:
+// toLowerCase()'s one rule that looks at neighbours, final sigma, gives ς, which becomes σ as
+// any ς does. Anything that isn't a string is read as String(s), and null or undefined as ''.
+// A lone surrogate is kept, as Python keeps it.
 const Keys = (() => {
   // Whitespace, hyphens and dashes, underscores and invisible joiners: hex code points and
   // inclusive ranges, in the vector file's order.
@@ -114,8 +115,18 @@ const Keys = (() => {
           .join('')
       : s.normalize(form);
 
-  // Python's str.casefold(), for text that is already NFKC.
+  // Any of EXTRA's characters.
+  const HAS_EXTRA = new RegExp(
+    `[${Object.keys(CASEFOLD_EXTRA).map((hex) => `\\u{${hex}}`).join('')}]`,
+    'u',
+  );
+
+  // Python's str.casefold(), for text that is already NFKC; without one of EXTRA's characters,
+  // the whole text is lowered in one call (the header says why that is the same).
   const casefold = (s) => {
+    if (!HAS_EXTRA.test(s)) {
+      return s.toLowerCase().replaceAll(SHARP_S, 'ss').replaceAll(FINAL_SIGMA, SIGMA);
+    }
     let out = '';
     for (const ch of s) {
       const extra = EXTRA.get(ch);
