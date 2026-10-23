@@ -7,17 +7,25 @@
   what the pipeline's rules strip (``names.strip_style``, ``name_tables.strip_styles``,
   ``NERD_SUFFIX``, ``CJK_BUILD_SUFFIX``, ``fot._VARIABLE``) on ASCII names built from their
   words, and that every chain shrinks one known unit at a time.
+- The match document and its collision check, on a synthetic names.json and on the
+  committed ``build/names.json``, with the reviewed recodes (``hopper_hackgen_related``).
 """
 
+import functools
+import hashlib
 import itertools
 import json
 import re
+from typing import Any
 
 import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
+from jsonschema import Draft202012Validator
+from tests.helpers import ROOT
+from tests.helpers import owned_vectors as ov
 
-from tff_catalog import keys, names, owned
+from tff_catalog import jsonio, keys, names, owned
 from tff_catalog.aliases.miners import builds, name_tables
 from tff_catalog.collectors.ranking import fot
 from tff_catalog.latin import CJK_BUILD_SUFFIX
@@ -364,3 +372,177 @@ def test_the_suffix_rules_strip_what_the_pipeline_strips(base, sep, tail, lower_
     if want is not None:
         want = " ".join(want.split()).rstrip(" -_")
     assert got == want
+
+
+# ---------------------------------------------------------------- the match document
+
+
+NAMES_JSON = ROOT / "build" / "names.json"
+CATALOG = ROOT / "build" / "catalog-site.json"
+# The reviewed recodes the site build will read from a file beside names.json (PR 2);
+# owner ruling hopper_hackgen_related, 2026-10-23.
+RECODES = {"HackGen": "related"}
+
+
+def _schema(name: str) -> Draft202012Validator:
+    return Draft202012Validator(
+        json.loads((ROOT / "schemas" / f"{name}.schema.json").read_text(encoding="utf-8"))
+    )
+
+
+@functools.cache
+def real() -> tuple[dict[str, Any], list[str]]:
+    """The committed build/names.json and the catalog's ids."""
+    doc = json.loads(NAMES_JSON.read_text(encoding="utf-8"))
+    ids = [font["id"] for font in json.loads(CATALOG.read_text(encoding="utf-8"))["fonts"]]
+    return doc, ids
+
+
+def synthetic() -> dict[str, Any]:
+    """The match document of the synthetic names.json, as JSON gives it back."""
+    return json.loads(json.dumps(owned.match_document(ov.NAMES, ov.CATALOG_IDS, ov.RUN_DATE)))
+
+
+def test_the_suffix_words_are_the_pipeline_s_build_tokens():
+    """Every token the builds miner and name_tables read as a patched build strips here too,
+    and the details split as names.schema.json's enum does."""
+    stripped = {*owned.WORDS["nerd_tokens"], *owned.WORDS["cased"]}
+    patched_tokens = {t for t, d in builds.DETAILS.items() if d in owned.PATCHED_DETAILS}
+    assert patched_tokens - {"Nerd Font"} == stripped
+    assert {"Var", "Variable"} <= {t for t, d in builds.DETAILS.items() if d == "variable"}
+    cased = {t for t, d in name_tables.CASED_WORDS.items() if d in owned.PATCHED_DETAILS}
+    assert cased == stripped
+    assert {
+        t.lower() for t, d in name_tables.CASED_WORDS.items() if d == "variable"
+    } <= names.VARIABLE_WORDS
+    schema = json.loads((ROOT / "schemas" / "names.schema.json").read_text(encoding="utf-8"))
+    row = schema["properties"]["families"]["items"]["properties"]["names"]["items"]
+    details = set(row["properties"]["detail"]["enum"])
+    assert details == owned.SAME_FONT_DETAILS | owned.PATCHED_DETAILS
+    assert not owned.SAME_FONT_DETAILS & owned.PATCHED_DETAILS
+    relations = set(row["properties"]["relation"]["enum"])
+    assert relations == {"build", *owned._LETTERS}
+    assert relations >= owned.RECODE_RELATIONS
+
+
+def test_the_synthetic_document_codes_every_relation():
+    doc = synthetic()
+    assert doc["ids"] == ["bar-serif", "foo-sans", "foo-sans-black", "foo-sans-tight"]
+    assert doc["k"] == {
+        "barmono": "0x", "barserif": "0", "barserifdisplay": "0s", "foofamily": "1u",
+        "foohairline": "-", "foosans": "1", "foosansblack": "2", "foosanshairline": "-",
+        "foosansheavy": "!1", "foosansjp": "!0", "foosansnf": "1n", "foosanspro": "1r",
+        "foosanstext": "1b", "foosanstight": "3", "foosansvariable": "1b", "fsans": "1p",
+    }  # fmt: skip
+    assert doc["amb"] == {"foosansblack": [1], "foosanshairline": [1], "foosansheavy": [1]}
+    assert doc["reasons"] == ["cjk", "proprietary"]
+    assert doc["names_sha256"] == hashlib.sha256(jsonio.canonical_bytes(ov.NAMES)).hexdigest()
+
+
+def test_the_document_does_not_depend_on_the_catalog_ids_order():
+    shuffled = list(reversed(ov.CATALOG_IDS))
+    assert (
+        json.loads(json.dumps(owned.match_document(ov.NAMES, shuffled, ov.RUN_DATE))) == synthetic()
+    )
+
+
+@pytest.mark.parametrize(
+    ("ids", "run_date", "message"),
+    [
+        (ov.CATALOG_IDS[1:], ov.RUN_DATE, "only in names.json"),
+        ([*ov.CATALOG_IDS, "foo-sans-hairline"], ov.RUN_DATE, "only in the catalog"),
+        ([*ov.CATALOG_IDS, "bar-serif"], ov.RUN_DATE, "repeat"),
+        (ov.CATALOG_IDS, "2026-01-02", "of run 2026-01-01"),
+    ],
+)
+def test_match_document_refuses_ids_or_a_run_that_differ(ids, run_date, message):
+    with pytest.raises(ValueError, match=message):
+        owned.match_document(ov.NAMES, ids, run_date)
+
+
+@pytest.mark.parametrize(
+    ("row", "message"),
+    [
+        ({"name": "Foo Sans Odd", "relation": "build", "detail": "odd"}, "unknown detail"),
+        ({"name": "Foo Sans Odd", "relation": "cousin"}, "unknown relation"),
+    ],
+)
+def test_match_document_refuses_unknown_relations_and_details(row, message):
+    doc = json.loads(json.dumps(ov.NAMES))
+    doc["families"][1]["names"].append(row)
+    with pytest.raises(ValueError, match=message):
+        owned.match_document(doc, ov.CATALOG_IDS, ov.RUN_DATE)
+
+
+def test_a_recode_changes_only_its_alias_s_code():
+    recodes = {"Foo Sans Text": "related"}
+    doc = owned.match_document(ov.NAMES, ov.CATALOG_IDS, ov.RUN_DATE, recodes=recodes)
+    assert doc["k"]["foosanstext"] == "1x"
+    plain = synthetic()["k"]
+    assert {key: codes for key, codes in doc["k"].items() if key != "foosanstext"} == {
+        key: codes for key, codes in plain.items() if key != "foosanstext"
+    }
+    assert owned.check_document(ov.NAMES, ov.CATALOG_IDS, recodes=recodes).meetings == ()
+
+
+@pytest.mark.parametrize(
+    ("recodes", "message"),
+    [
+        ({"Foo Sans Txt": "related"}, "no alias of names.json"),
+        ({"Foo Sans": "related"}, "no alias of names.json"),
+        ({"Foo Sans Text": "rename"}, "is not one of"),
+        ({"Foo Sans Text": "build"}, "is not one of"),
+    ],
+)
+def test_a_recode_must_name_an_alias_and_a_near_match_relation(recodes, message):
+    with pytest.raises(ValueError, match=message):
+        owned.match_document(ov.NAMES, ov.CATALOG_IDS, ov.RUN_DATE, recodes=recodes)
+
+
+def test_the_check_finds_a_planted_meeting_of_distinct_families():
+    assert owned.check_document(ov.NAMES, ov.CATALOG_IDS).meetings == ()
+    planted = json.loads(json.dumps(ov.NAMES))
+    planted["families"][4]["names"] = [{"name": "Foo Sans Bold", "relation": "related"}]
+    meetings = owned.check_document(planted, ov.CATALOG_IDS).meetings
+    assert [(m.family, m.other, m.name, m.key) for m in meetings] == [
+        ("foo-sans-tight", "foo-sans", "Foo Sans Bold", "foosans")
+    ]
+
+
+def test_the_check_reports_shared_owned_keys():
+    shared = json.loads(json.dumps(ov.NAMES))
+    shared["families"][0]["names"].append({"name": "Foo Sans Pro", "relation": "rename"})
+    assert owned.check_document(shared, ov.CATALOG_IDS).shared == {
+        "foosanspro": ("bar-serif", "foo-sans")
+    }
+
+
+def test_the_real_names_json_has_five_ambiguous_keys_and_no_meeting():
+    doc, ids = real()
+    check = owned.check_document(doc, ids, recodes=RECODES)
+    assert check.amb == {
+        "archivoblack": ("archivo",),
+        "bungeehairline": ("bungee",),
+        "gentiumbook": ("gentium",),
+        "gentiumplusbook": ("gentium-plus",),
+        "syneitalic": ("syne",),
+    }
+    assert check.meetings == ()
+    assert check.shared == {}
+    assert len(check.collisions) == 15
+    assert sum(bool(c.catalog) for c in check.collisions) == 5
+
+
+def test_the_real_match_document_is_valid_and_its_codes_name_every_alias():
+    doc, ids = real()
+    built = owned.match_document(doc, ids, doc["run"]["date"], recodes=RECODES)
+    assert list(_schema("match").iter_errors(json.loads(json.dumps(built)))) == []
+    assert built["ids"] == sorted(ids)
+    every = {f["family"] for f in doc["families"]} | {
+        n["name"] for f in doc["families"] for n in f["names"]
+    }
+    every |= {row["name"] for row in doc["ineligible"]}
+    assert {names.match_key(n) for n in every} - {""} == set(built["k"])
+    assert built["k"]["hackgen"] == f"{built['ids'].index('hack')}x"
+    unrecoded = owned.match_document(doc, ids, doc["run"]["date"])
+    assert unrecoded["k"]["hackgen"] == f"{built['ids'].index('hack')}b"

@@ -13,6 +13,12 @@ never leaves the browser, so this code reads real lists only in tests.
 - ``candidates``: a name's ``match_key``, then one trailing style word or build
   suffix stripped at a time. Width words stay, at least one word is kept, and
   nothing matches by prefix.
+- ``match_document``: the compact match file that the site build publishes
+  from ``build/names.json`` and the catalog's ids, with the reviewed recodes
+  (``hopper_hackgen_related``: HackGen is only related to Hack here).
+- ``check_document``: the collision check (Milestone 3 step 3): names that
+  stripping turns into another family's key (the ``amb`` set), and
+  ``distinct_from`` pairs that must never meet.
 
 Rules that keep the port in step:
 
@@ -25,15 +31,20 @@ Rules that keep the port in step:
 - No optional group holds a capture that the code reads: JavaScript gives
   ``undefined`` where Python gives ``""``.
 
-Standard library only (``keys`` and ``names``), so ``tff_site`` can import it.
+Standard library only (``keys``, ``names`` and ``jsonio``), so ``tff_site`` can
+import it.
 """
 
+import hashlib
+import json
 import re
 import unicodedata
-from collections.abc import Mapping
-from dataclasses import dataclass
+from collections import defaultdict
+from collections.abc import Iterable, Mapping
+from dataclasses import dataclass, field
 from typing import Any
 
+from tff_catalog import jsonio
 from tff_catalog.keys import (
     DASH_CODEPOINTS,
     JOINER_CODEPOINTS,
@@ -307,3 +318,257 @@ def candidates(name: str, words: Mapping[str, Any] = WORDS) -> tuple[Candidate, 
     must be ``WORDS``-shaped (ValueError otherwise).
     """
     return _chain(name, _DEFAULT_RULES if words is WORDS else _compile(words))
+
+
+# --- the match document ----------------------------------------------------------------------
+
+_LETTERS = {
+    "rename": "r",
+    "postscript": "p",
+    "bundle": "u",
+    "package": "u",  # none yet; a near-match only until a ruling says otherwise
+    "sibling": "s",
+    "related": "x",
+}
+# One code per family per key: the strongest.
+_STRENGTH = {letter: n for n, letter in enumerate(("", "p", "b", "r", "n", "s", "x", "u"))}
+_OWNED_LETTERS = frozenset({"", "p", "b", "r", "n"})
+# What a reviewed recode may make of a names.json alias: a near-match relation only
+# (hopper_hackgen_related: HackGen, a build of Hack in names.json, is related here).
+RECODE_RELATIONS = frozenset({"related", "sibling", "bundle"})
+
+
+def _recodes(names_doc: Mapping[str, Any], recodes: Mapping[str, str] | None) -> dict[str, str]:
+    """``recodes`` checked: each name an alias some family of ``names_doc`` lists, each
+    relation one of ``RECODE_RELATIONS``; else ValueError, so a stale entry is caught."""
+    out = dict(recodes or {})
+    for name, relation in out.items():
+        if not isinstance(name, str) or relation not in RECODE_RELATIONS:
+            raise ValueError(
+                f"recode {name!r}: {relation!r} is not one of {sorted(RECODE_RELATIONS)}"
+            )
+    listed = {row["name"] for fam in names_doc["families"] for row in fam["names"]}
+    stale = sorted(set(out) - listed)
+    if stale:
+        raise ValueError(f"recodes name no alias of names.json: {stale}")
+    return out
+
+
+def _letter(item: Mapping[str, Any], recodes: Mapping[str, str]) -> str:
+    relation = recodes.get(item["name"], item["relation"])
+    if relation == "build":
+        detail = item.get("detail")
+        if detail in PATCHED_DETAILS:
+            return "n"
+        if detail in SAME_FONT_DETAILS:
+            return "b"
+        raise ValueError(f"names.json: build {item['name']!r} has an unknown detail {detail!r}")
+    if relation not in _LETTERS:
+        raise ValueError(f"names.json: {item['name']!r} has an unknown relation {relation!r}")
+    return _LETTERS[relation]
+
+
+@dataclass(slots=True)
+class _Holders:
+    ids: dict[str, str] = field(default_factory=dict)  # catalog id -> strongest letter
+    others: dict[str, str] = field(default_factory=dict)  # the same, for families not listed
+    reasons: set[str] = field(default_factory=set)  # ineligible names' reasons
+
+    def families(self) -> set[str]:
+        return set(self.ids) | set(self.others)
+
+    def owns(self, fid: str) -> bool:
+        """Whether a hit on this key could count ``fid`` as owned (not only near)."""
+        return self.ids.get(fid, self.others.get(fid, "u")) in _OWNED_LETTERS
+
+
+def _holders(
+    names_doc: Mapping[str, Any], catalog: frozenset[str], recodes: Mapping[str, str]
+) -> tuple[dict[str, _Holders], list[str]]:
+    """Every known name's key with its holders, and the known names in document order."""
+    out: dict[str, _Holders] = defaultdict(_Holders)
+    seen: dict[str, None] = {}
+    for fam in names_doc["families"]:
+        fid = fam["id"]
+        rows = [(fam["family"], ""), *((n["name"], _letter(n, recodes)) for n in fam["names"])]
+        for name, letter in rows:
+            key = match_key(name)
+            if not key:
+                continue
+            seen.setdefault(name)
+            held = out[key].ids if fid in catalog else out[key].others
+            if fid not in held or _STRENGTH[letter] < _STRENGTH[held[fid]]:
+                held[fid] = letter
+    for row in names_doc["ineligible"]:
+        key = match_key(row["name"])
+        if key:
+            seen.setdefault(row["name"])
+            out[key].reasons.add(row["reason"])
+    return dict(out), list(seen)
+
+
+@dataclass(frozen=True, slots=True)
+class Collision:
+    """A known name whose stripped form is another family's key."""
+
+    name: str
+    key: str
+    reached: str  # the first stripped key that is known
+    families: tuple[str, ...]  # its families that the name's own key lacks
+    catalog: tuple[str, ...]  # those in the catalog: the name's amb entry
+
+
+@dataclass(frozen=True, slots=True)
+class Meeting:
+    """A name of ``family`` whose candidate chain reaches ``other``, which it is distinct from."""
+
+    family: str
+    other: str
+    name: str
+    key: str
+
+
+@dataclass(frozen=True, slots=True)
+class Check:
+    """What ``check_document`` found. ``meetings`` must be empty; the rest is reported."""
+
+    collisions: tuple[Collision, ...]
+    amb: Mapping[str, tuple[str, ...]]  # key -> catalog ids its name may be a weight of
+    meetings: tuple[Meeting, ...]
+    shared: Mapping[str, tuple[str, ...]]  # keys that several catalog families own
+
+
+def check_document(
+    names_doc: Mapping[str, Any],
+    catalog_ids: Iterable[str],
+    *,
+    recodes: Mapping[str, str] | None = None,
+) -> Check:
+    """The collision check of Milestone 3 step 3, on ``names.json`` and the catalog's ids.
+
+    It reads names, not the match document's keys, because stripping needs the
+    word boundaries that keys drop. For every known name, the first stripped
+    candidate that is a known key decides, as in ``match``: when that key belongs
+    to a family the name's own key lacks, it is a collision, and the catalog
+    families among them make the name's key ambiguous ("Archivo Black" may be
+    Archivo's Black weight). For every ``distinct_from`` pair, in both
+    directions, no candidate of any name of one family may be a key at which the
+    other holds a code that could count it as owned (Inter Tight never reaches
+    Inter; a bundle name both share, such as "Libertinus", only gives near-matches).
+    ``recodes`` as in ``match_document``.
+    """
+    catalog = frozenset(catalog_ids)
+    holders, names = _holders(names_doc, catalog, _recodes(names_doc, recodes))
+    collisions: list[Collision] = []
+    amb: dict[str, set[str]] = defaultdict(set)
+    for name in names:
+        chain = candidates(name)
+        own = holders[chain[0].key].families()
+        for cand in chain[1:]:
+            if cand.key in holders:
+                new = holders[cand.key].families() - own
+                if new:
+                    cat = tuple(sorted(new & catalog))
+                    collisions.append(
+                        Collision(name, chain[0].key, cand.key, tuple(sorted(new)), cat)
+                    )
+                    amb[chain[0].key].update(cat)
+                break
+    by_id = {fam["id"]: fam for fam in names_doc["families"]}
+    pairs = {(fam["id"], other) for fam in names_doc["families"] for other in fam["distinct_from"]}
+    meetings: list[Meeting] = []
+    for fid, other in sorted(pairs | {(b, a) for a, b in pairs}):
+        fam = by_id.get(fid)
+        if fam is None:
+            continue
+        for name in (fam["family"], *(n["name"] for n in fam["names"])):
+            for cand in candidates(name):
+                found = holders.get(cand.key)
+                if found is not None and found.owns(other):
+                    meetings.append(Meeting(fid, other, name, cand.key))
+    shared = {
+        key: tuple(sorted(fid for fid, letter in h.ids.items() if letter in _OWNED_LETTERS))
+        for key, h in sorted(holders.items())
+        if sum(letter in _OWNED_LETTERS for letter in h.ids.values()) > 1
+    }
+    return Check(
+        tuple(collisions),
+        {key: tuple(sorted(ids)) for key, ids in sorted(amb.items()) if ids},
+        tuple(meetings),
+        shared,
+    )
+
+
+def _catalog_ids(
+    names_doc: Mapping[str, Any], catalog_ids: Iterable[str], run_date: str
+) -> list[str]:
+    ids = list(catalog_ids)
+    if len(set(ids)) != len(ids):
+        raise ValueError("the catalog ids repeat an id")
+    if names_doc.get("run", {}).get("date") != run_date:
+        raise ValueError(
+            f"names.json is of run {names_doc.get('run', {}).get('date')}, not {run_date}"
+        )
+    listed = {fam["id"] for fam in names_doc["families"] if fam["in_catalog"]}
+    if set(ids) != listed:
+        only_catalog = sorted(set(ids) - listed)[:5]
+        only_names = sorted(listed - set(ids))[:5]
+        raise ValueError(
+            "the catalog ids are not names.json's in_catalog families: "
+            f"only in the catalog {only_catalog}, only in names.json {only_names}"
+        )
+    return sorted(ids)
+
+
+def match_document(
+    names_doc: Mapping[str, Any],
+    catalog_ids: Iterable[str],
+    run_date: str,
+    *,
+    recodes: Mapping[str, str] | None = None,
+) -> dict[str, Any]:
+    """The hopper's match file, compact and canonical, from ``names.json`` and the catalog ids.
+
+    ``{"format": "tff-match", "v": 1, "run_date", "names_sha256", "ids", "k",
+    "amb", "reasons", "words"}``: ``ids`` are the catalog's family ids, sorted;
+    ``k`` maps every known name's ``match_key`` (catalog or not, aliases and
+    ineligible names too) to its codes, comma-joined: ``<i>`` the family ``ids[i]``
+    itself, ``<i>r`` a rename, ``<i>p`` a PostScript name, ``<i>b`` a same-font
+    build, ``<i>n`` a patched build, ``<i>u`` a bundle (or package), ``<i>s`` a
+    sibling, ``<i>x`` a related family, ``-`` a known family not in the catalog,
+    ``!<j>`` an ineligible name with ``reasons[j]``. ``amb`` maps ambiguous keys to
+    the indices of the catalog families their name may be a weight of
+    (``check_document``). ``names_sha256`` hashes the canonical form of
+    ``names_doc``. The catalog ids must be exactly the ``in_catalog`` families.
+
+    ``recodes`` maps alias names, as names.json spells them, to the relation the
+    hopper gives them instead (``RECODE_RELATIONS``), in every family that lists
+    them: a reviewed list beside names.json, which the site build reads
+    (``hopper_hackgen_related``: ``{"HackGen": "related"}``, so HackGen is only a
+    near-match of Hack while the alias row, and the ranking, stay). A name no
+    family lists as an alias, or another relation, is a ValueError.
+    """
+    ids = _catalog_ids(names_doc, catalog_ids, run_date)
+    index = {fid: n for n, fid in enumerate(ids)}
+    holders, _ = _holders(names_doc, frozenset(ids), _recodes(names_doc, recodes))
+    reasons = sorted({row["reason"] for row in names_doc["ineligible"]})
+    rindex = {reason: n for n, reason in enumerate(reasons)}
+    k: dict[str, str] = {}
+    for key in sorted(holders):
+        h = holders[key]
+        codes = [f"{index[fid]}{h.ids[fid]}" for fid in sorted(h.ids, key=index.__getitem__)]
+        codes += ["-"] * bool(h.others)
+        codes += [f"!{rindex[r]}" for r in sorted(h.reasons, key=rindex.__getitem__)]
+        k[key] = ",".join(codes)
+    check = check_document(names_doc, ids, recodes=recodes)
+    return {
+        "format": FORMAT,
+        "v": VERSION,
+        "run_date": run_date,
+        "names_sha256": hashlib.sha256(jsonio.canonical_bytes(names_doc)).hexdigest(),
+        "ids": ids,
+        "k": k,
+        "amb": {key: [index[fid] for fid in fids] for key, fids in check.amb.items()},
+        "reasons": reasons,
+        "words": json.loads(json.dumps(WORDS)),
+    }
