@@ -628,22 +628,18 @@ def test_a_recode_that_another_alias_bypasses_is_refused(tmp_path):
 
 
 def test_the_committed_names_give_a_match_file_within_budget():
-    """build/names.json with build/names.reviewed.toml: the five reviewed ambiguous names,
-    HackGen only related to Hack, and the file within ``budgets.MATCH_MAX``."""
+    """build/names.json with build/names.reviewed.toml: the reviewed ambiguous names (a
+    refresh that changes them edits only the list, ops/MONTHLY.md step 5), HackGen only related
+    to Hack, and the file within ``budgets.MATCH_MAX``."""
     doc = data.load(COMMITTED_DATA)
     names_path = matchfile.default_names_path(COMMITTED_DATA)
     made = matchfile.match_file(doc, names_path)
     match = json.loads(made.blob)
     assert budgets.gzip_size(made.blob) <= budgets.MATCH_MAX
-    assert sorted(match["amb"]) == [
-        "archivoblack",
-        "bungeehairline",
-        "gentiumbook",
-        "gentiumplusbook",
-        "syneitalic",
-    ]
-    assert match["k"]["hackgen"] == f"{match['ids'].index('hack')}x"
     reviewed, _ = matchfile.load_reviewed(matchfile.default_reviewed_path(names_path))
+    amb = {key: [match["ids"][n] for n in at] for key, at in match["amb"].items()}
+    assert amb == {key: list(a.families) for key, a in reviewed.ambiguous.items()}
+    assert match["k"]["hackgen"] == f"{match['ids'].index('hack')}x"
     assert reviewed.relations() == {"HackGen": "related"}
     assert {r.family for r in reviewed.recodes.values()} == {"hack"}
 
