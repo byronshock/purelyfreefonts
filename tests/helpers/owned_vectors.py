@@ -253,10 +253,27 @@ AMBIGUOUS_DOCUMENT = {
 }  # fmt: skip
 
 
+# A hand-made match file with keys past ASCII, which the port finds by the same hash as ASCII
+# ones, from a name's key worked out once in pieces: "foo\uac00" is reached only through NFC
+# (U+1100 and U+1161 join once the space between them is dropped), and "\u00e9axyz" and
+# "\u00e9bxyz" share the hash.
+PAST_ASCII_DOCUMENT = {
+    "format": owned.FORMAT,
+    "v": owned.VERSION,
+    "run_date": RUN_DATE,
+    "ids": ["ecriture", "foo-ga", "hash-a", "hash-b"],
+    "k": {"\u00e9criture": "0", "foo\uac00": "1", "\u00e9axyz": "2", "\u00e9bxyz": "3"},
+    "amb": {},
+    "reasons": [],
+    "words": owned.WORDS,
+}  # fmt: skip
+
+
 def own_document_cases() -> list[tuple[str, dict[str, Any], tuple[owned.Entry, ...]]]:
     """Match cases on a document of their own: (label, document, entries)."""
     hand = HAND_DOCUMENT
     amb = AMBIGUOUS_DOCUMENT
+    past = PAST_ASCII_DOCUMENT
     return [
         (
             "ids and reasons named after Object.prototype's keys",
@@ -280,6 +297,21 @@ def own_document_cases() -> list[tuple[str, dict[str, Any], tuple[owned.Entry, .
             "an ambiguous key's own related and bundle names, trusted",
             amb,
             (_e(("Foo Wide",), trusted=True),),
+        ),
+        (
+            "names past ASCII found after strips",
+            past,
+            (_e(("\u00c9criture Bold Italic",), trusted=True), _e(full="\u00c9CRITURE-Bold")),
+        ),
+        (
+            "a name past ASCII found where only NFC joins its key",
+            past,
+            (_e(("Foo \u1100 \u1161 Bold Italic",), trusted=True),),
+        ),
+        (
+            "keys past ASCII that share a hash",
+            past,
+            (_e(("\u00c9axyz Bold",)), _e(("\u00c9bxyz Italic",)), _e(("\u00c9cxyz Bold",))),
         ),
     ]
 
@@ -310,6 +342,14 @@ CANDIDATE_NAMES = [
     "Foo bold-italic", "Foo BOLDItalic", "Foo Extra BoldItalic", "Foo Sans BlackItalic NF",
     "Archivo-Black-Bold", "Archivo-Black", "ArchivoBlackNF-Regular", "Foo-Bold-NF", "A-B-C-Bold",
     "Foo SemiItalic", "Foo Extra SemiItalic", "Foo BoldExtraLight", "Foo S_B", "Foo Bd_",
+    # Names past ASCII, whose keys the port works out once, in pieces cut before each ASCII
+    # character: a tab and an ideographic space the tables swap, a mark after an ASCII letter,
+    # pieces whose keys join only through NFC (a mark, jamo), a key that NFKC makes longer than
+    # its name, and one past the port's first buffer.
+    "Foo\tBold", "\u00c9criture\tBold Italic", "\u00c9criture\u3000Bold", "Foo Ecriture Bold",
+    "Foo e\u0301 Bold", "Foo e \u0301x Bold Italic", "Foo \u1100 \u1161 Bold Italic",
+    "Foo \u00c9criture Bold Italic", "Foo \ufdfa Bold Italic", "\u00df" * 120 + " Bold Italic",
+    "Z\u00fc " + "Bold " * 30 + "Italic", "\u793a\u4f8b\u9ed1\u4f53 12 Light NF",
 ]  # fmt: skip
 
 
@@ -397,11 +437,18 @@ def _edge_parse_cases() -> list[tuple[str, bytes | str]]:
     could read otherwise (tests/site/test_owned_js.py's mutants found these gaps): the sniff
     windows in code points (A is two UTF-16 units), the UTF-16 guess's nine NULs in ten and
     its window of SNIFF_BYTES bytes, the font magic's NUL in 12 bytes, fc-list's one written
-    line in FC_LIST_ONE_IN, a cut-off paste's CUT_OFF_LINES and nine in ten sorted, the JSON
+    line in FC_LIST_ONE_IN, a cut-off paste's CUT_OFF_LINES, nine in ten sorted and first
+    letters past ASCII (the port reads only a name's start for them), the JSON
     line sniff's 50 lines in 200, and the registry, HTML, sudo, table and rule patterns."""
     utf16 = "Foo Sans\nBar Mono\n"  # 18 characters: 18 NUL bytes on one side
     window = ("Foo Sans\nBar Mono\n" * 114)[: owned.SNIFF_BYTES // 2]
     plain = [f"{c}{n:02d} Sans" for c in "defghijk" for n in range(63)]
+    # The same first letters, each with a mark: the search key's first character is the letter.
+    accented = [
+        f"{c}{n:02d} Sans"
+        for c in "\u010f\u00e9\u1e1f\u011d\u0125\u00ed\u0135\u0137"
+        for n in range(63)
+    ]
     names = ", ".join(f'"Name {i}"' for i in range(40))
     return [
         ("UTF-16LE without a BOM at nine NULs in ten", utf16.encode("utf-16-le") + b"\x00X\x00Y"),
@@ -431,6 +478,18 @@ def _edge_parse_cases() -> list[tuple[str, bytes | str]]:
         ("two written lines in 41 are not", _plain_listing(41, 2)),
         ("500 sorted names pasted are cut off", "\n".join(plain[: owned.CUT_OFF_LINES])),
         ("499 are not", "\n".join(plain[: owned.CUT_OFF_LINES - 1])),
+        (
+            "a sorted paste's first letters with accents count as their letters",
+            "\n".join(accented[: owned.CUT_OFF_LINES]),
+        ),
+        (
+            "a first mark of no letter counts the letter after it",
+            "\n".join("\u0301" + name for name in plain[: owned.CUT_OFF_LINES]),
+        ),
+        (
+            "a first underscore is dropped before an accented letter",
+            "\n".join("_" + name for name in accented[: owned.CUT_OFF_LINES]),
+        ),
         ("names sorted nine in ten are cut off", _sorted_firsts(50)),
         ("names sorted below nine in ten are not", _sorted_firsts(51)),
         ("HTML in upper case", "<HTML><BODY>x</BODY></HTML>"),

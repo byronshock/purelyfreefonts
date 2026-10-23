@@ -168,17 +168,16 @@ const OwnedParse = (() => {
     return s.slice(0, j);
   };
   const collapse = (s) => s.split(' ').filter(Boolean).join(' ');
+  const spaced = (s) => s.includes('  ') || s[0] === ' ' || s[s.length - 1] === ' ';
 
   // Controls dropped, lone surrogates replaced and white space collapsed; '' when nothing
   // visible is left (white space and joiners only).
   const clean = (text) => {
-    if (PRINTABLE.test(text)) {
-      const spaced = text.includes('  ') || text[0] === ' ' || text[text.length - 1] === ' ';
-      return spaced ? collapse(text) : text;
-    }
+    if (PRINTABLE.test(text)) return spaced(text) ? collapse(text) : text;
     let out = text.replace(CONTROL, '');
     if (LONE.test(out)) out = out.replace(LONE_ALL, '\ufffd');
-    out = collapse(out.replace(WS, ' '));
+    out = out.replace(WS, ' ');
+    if (spaced(out)) out = collapse(out);
     return VISIBLE.test(out) ? out : '';
   };
 
@@ -215,20 +214,27 @@ const OwnedParse = (() => {
     return text;
   };
 
+  // \t to \r, space, hyphen and underscore: the ASCII characters a key drops.
+  const dropped = (unit) =>
+    (unit >= 0x09 && unit <= 0x0d) || unit === 0x20 || unit === 0x2d || unit === 0x5f;
   // A sorted paste of 500 or more names whose first name starts after C: its top is missing.
   // Only first characters that are ASCII letters or digits count. Sorted: at least nine in ten
   // neighbouring pairs in order.
+  //
+  // The search key's first character, as far as that test can tell, without the whole key: a
+  // first kept character that is ASCII starts the key, lowered (a mark after it goes with the
+  // accents); and no ASCII character combines with what comes before it, so the search key of
+  // the name up to its next kept ASCII character starts the name's, or that character does
+  // when the key is empty.
   const firstKey = (name) => {
-    if (!ASCII.test(name)) return Keys.searchKey(name).charAt(0);
-    // The ASCII key's first character, without building the key: \t to \r, space, hyphen and
-    // underscore are dropped.
-    for (let i = 0; i < name.length; i++) {
-      const unit = name.charCodeAt(i);
-      if (!((unit >= 0x09 && unit <= 0x0d) || unit === 0x20 || unit === 0x2d || unit === 0x5f)) {
-        return name[i].toLowerCase();
-      }
-    }
-    return '';
+    let i = 0;
+    while (i < name.length && dropped(name.charCodeAt(i))) i += 1;
+    if (i === name.length) return '';
+    if (name.charCodeAt(i) < 0x80) return name[i].toLowerCase();
+    let j = i + 1;
+    while (j < name.length && (name.charCodeAt(j) >= 0x80 || dropped(name.charCodeAt(j)))) j += 1;
+    const first = Keys.searchKey(name.slice(0, j)).charAt(0);
+    return first || (j < name.length ? name[j].toLowerCase() : '');
   };
   const cutOff = (entries) => {
     const firsts = [];

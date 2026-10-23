@@ -13,8 +13,10 @@
 // Step 5 gives 10,000 names 200 ms with the CPU slowed 4x, the first time this code runs. So
 // the walk down a name's candidates builds and hashes as few strings as it can: on ASCII text
 // a candidate's key is a prefix of the name's, worked out once and found among the table's
-// keys by a small hash (fill, find), and a test on a text's last character, a necessary
-// condition, skips each rule that can't apply. No list's names are kept from call to call.
+// keys by a small hash (fill, find); on other text the key is worked out once too, in pieces
+// cut before each ASCII character, and a candidate's is found the same way, as a prefix of it
+// (pieces); and a test on a text's last character, a necessary condition, skips each rule
+// that can't apply. No list's names are kept from call to call.
 const OwnedMatch = (() => {
   const FORMAT = 'tff-match';
   const VERSION = 1;
@@ -48,18 +50,11 @@ const OwnedMatch = (() => {
   // A match file this reader refuses: shown as a failure, never as a result (section 11).
   const refuse = (why) => Object.assign(new Error(`OwnedMatch: ${why}`), { code: 'malformed' });
 
-  // Keys.matchKey, with a fast path for ASCII: there NFKC changes nothing, casefold is
-  // lower case, and the dropped characters are \t to \r, space, hyphen and underscore.
-  const matchKey = (s) =>
-    ASCII.test(s) ? s.toLowerCase().replace(ASCII_DROP, '') : Keys.matchKey(s);
-
   // NFKC, keeping a lone surrogate as Python and Keys do (Firefox would make it U+FFFD).
   const nfkc = (s) =>
-    ASCII.test(s)
-      ? s
-      : LONE.test(s)
-        ? s.split(LONE).map((piece, i) => (i % 2 ? piece : piece.normalize('NFKC'))).join('')
-        : s.normalize('NFKC');
+    LONE.test(s)
+      ? s.split(LONE).map((piece, i) => (i % 2 ? piece : piece.normalize('NFKC'))).join('')
+      : s.normalize('NFKC');
 
   // The words' parts, each a list of non-empty printable ASCII strings: on ASCII words, /i
   // without the u flag folds as Python's re.ASCII | re.IGNORECASE (it would fold é and É).
@@ -141,8 +136,15 @@ const OwnedMatch = (() => {
     const asciiKept = Array.from({ length: 95 }, (_, i) => String.fromCharCode(0x20 + i)).every(
       (c) => !within(c.charCodeAt(0), spans) || swap(c) === c,
     );
+    // The tables' characters outside printable ASCII: where asciiKept, text without one of
+    // them needs no swap.
+    const other = spans.flatMap(([from, to]) => [
+      ...(from < 0x20 ? [[from, Math.min(to, 0x1f)]] : []),
+      ...(to > 0x7e ? [[Math.max(from, 0x7f), to]] : []),
+    ]);
     return {
       tableRe: new RegExp(`[${spans.map(span).join('')}]`, 'gu'),
+      tableOther: other.length ? new RegExp(`[${other.map(span).join('')}]`, 'u') : null,
       swap,
       asciiKept,
       seps: new Set(seps),
@@ -173,7 +175,11 @@ const OwnedMatch = (() => {
   // The name as stripping reads it: NFKC, the tables applied, white space runs one space.
   const normalize = (name, rules, printable) => {
     if (printable && rules.asciiKept && !spaced(name)) return name;
-    return nfkc(name).replace(rules.tableRe, rules.swap).split(' ').filter(Boolean).join(' ');
+    let text = nfkc(name);
+    if (!rules.asciiKept || (rules.tableOther !== null && rules.tableOther.test(text))) {
+      text = text.replace(rules.tableRe, rules.swap);
+    }
+    return spaced(text) ? text.split(' ').filter(Boolean).join(' ') : text;
   };
 
   const rstripSeps = (s, rules) => {
@@ -207,11 +213,11 @@ const OwnedMatch = (() => {
   // space, the hyphen and the underscore, in lower case. On ASCII text a head's key is a
   // prefix of the text's, so the walk works the text's key out once (fill) and finds a
   // head's key among k's by a hash of that prefix, without building a string or hashing
-  // one. Every other text goes by its key string.
+  // one. A non-ASCII text's key is worked out once too (pieces), and found the same way.
   const kept = (c) => c !== 0x20 && c !== 0x2d && c !== 0x5f && (c < 0x09 || c > 0x0d);
   const asciiKey = (text) => text.toLowerCase().replace(ASCII_DROP, '');
-  // A key's hash, from its length n, its first character and its last three (0 for none):
-  // a small integer, a cheap Map key, and quick to work out on the table's every key.
+  // A key's hash, from its length n, its first unit and its last three (0 for none): a small
+  // integer, a cheap Map key, and quick to work out on the table's every key.
   const mix = (h, c) => Math.imul(h, 0x01000193) ^ c;
   const hash = (n, first, last, second, third) =>
     mix(mix(mix(mix(n, first), last), second), third) & 0x3fffffff;
@@ -222,9 +228,18 @@ const OwnedMatch = (() => {
     return hash(n, key.charCodeAt(0), key.charCodeAt(n - 1), second, third);
   };
 
-  // A call's scratch space: an ASCII text's key characters.
-  const scratch = () => ({ chars: new Uint16Array(64) });
-  // Work text's key out into the scratch space; returns its length.
+  // A call's scratch space: a text's key as UTF-16 units (chars); for a non-ASCII text, where
+  // its heads' keys end in it, and the keys of the runs this call has met (pieces).
+  const scratch = () => ({
+    chars: new Uint16Array(64),
+    at: new Int32Array(64),
+    length: 0,
+    key: null,
+    unsafe: -1,
+    lone: false,
+    keys: new Map(),
+  });
+  // Work an ASCII text's key out into the scratch space; returns its length.
   const fill = (space, text) => {
     if (space.chars.length < text.length) space.chars = new Uint16Array(text.length);
     const chars = space.chars;
@@ -238,13 +253,13 @@ const OwnedMatch = (() => {
     }
     return n;
   };
-  // Whether key is the first n characters of the filled key.
+  // Whether key is the first n units of the filled key.
   const same = (key, chars, n) => {
     if (key.length !== n) return false;
     for (let i = n - 1; i >= 0; i -= 1) if (key.charCodeAt(i) !== chars[i]) return false;
     return true;
   };
-  // k's key that is the first n characters of the filled key (n > 0), or null.
+  // k's key that is the first n units of the filled key (n > 0), or null.
   const find = (tbl, space, n) => {
     const chars = space.chars;
     const second = n > 1 ? chars[n - 2] : 0;
@@ -256,6 +271,101 @@ const OwnedMatch = (() => {
     return null;
   };
 
+  // The first n units of chars as a string.
+  const units = (chars, n) => {
+    let s = '';
+    for (let p = 0; p < n; p += 4096) {
+      s += String.fromCharCode(...chars.subarray(p, Math.min(p + 4096, n)));
+    }
+    return s;
+  };
+
+  // NFC, keeping a lone surrogate as Keys does (lone: whether s may hold one).
+  const nfc = (s, lone) =>
+    lone && LONE.test(s)
+      ? s.split(LONE).map((piece, i) => (i % 2 ? piece : piece.normalize('NFC'))).join('')
+      : s.normalize('NFC');
+
+  // A non-ASCII text's key, worked out once for the walk, so that no candidate needs a
+  // Keys.matchKey of its own. Every candidate's text is a head that ends just before an ASCII
+  // character (strip cuts at separators, hyphens and ASCII words only), and no ASCII
+  // character combines with what comes before it: NFKC and NFC never reach across such a
+  // cut, and casefold and the dropped characters go one code point at a time. So a head's key
+  // is NFC of the keys of the text's pieces before it, each piece one ASCII character, with
+  // the run of other characters after it if there is one (only those go through
+  // Keys.matchKey, once per run and call). The pieces' keys are NFC, so they join as they are
+  // wherever the next one starts with an ASCII character, and where it doesn't if the joined
+  // keys are still NFC: a head's key is then a prefix of the text's. Past the first piece
+  // where they aren't (unsafe), a head's key is put through NFC again. The key's units go into
+  // chars, and at[j] is its length before the head of length j.
+  const pieces = (space, text) => {
+    const n = text.length;
+    if (space.at.length <= n) space.at = new Int32Array(n + 1);
+    if (space.chars.length < n) space.chars = new Uint16Array(n);
+    const at = space.at;
+    let chars = space.chars;
+    let length = 0;
+    let unsafe = -1;
+    let i = 0;
+    while (i < n) {
+      const c = text.charCodeAt(i);
+      at[i] = length;
+      let end = c < 0x80 ? i + 1 : i;
+      while (end < n && text.charCodeAt(end) >= 0x80) end += 1;
+      if (c < 0x80 && end === i + 1) {
+        if (kept(c)) {
+          chars[length] = c >= 0x41 && c <= 0x5a ? c | 0x20 : c;
+          length += 1;
+        }
+      } else {
+        const run = text.slice(i, end);
+        let piece = space.keys.get(run);
+        if (piece === undefined) {
+          piece = Keys.matchKey(run);
+          space.keys.set(run, piece);
+        }
+        if (unsafe < 0 && length > 0 && piece.length > 0 && piece.charCodeAt(0) >= 0x80) {
+          const joined = units(chars, length) + piece;
+          if (nfc(joined, true) !== joined) unsafe = length;
+        }
+        // Room for this key, and a unit for each character left.
+        const room = length + piece.length + n - end;
+        if (chars.length < room) {
+          const more = new Uint16Array(2 * room);
+          more.set(chars.subarray(0, length));
+          chars = more;
+          space.chars = more;
+        }
+        for (let p = 0; p < piece.length; p += 1) chars[length + p] = piece.charCodeAt(p);
+        length += piece.length;
+      }
+      i = end;
+    }
+    at[n] = length;
+    space.length = length;
+    space.key = null;
+    space.unsafe = unsafe;
+    space.lone = unsafe >= 0 && LONE.test(text);
+  };
+  // The pieces' key as a string, built when a walk first needs it.
+  const keyOf = (space) => {
+    if (space.key === null) space.key = units(space.chars, space.length);
+    return space.key;
+  };
+  // The key, as a string, of the head of length j of the text pieces last worked out.
+  const keyAt = (space, j) => {
+    const p = space.at[j];
+    const key = keyOf(space).slice(0, p);
+    return space.unsafe < 0 || p <= space.unsafe ? key : nfc(key, space.lone);
+  };
+  // k's key for a head whose key is n units long (n > 0), or null: by hash where the head's
+  // key is the first n units of the text's, else by its own NFC.
+  const findHead = (tbl, space, ascii, n) => {
+    if (ascii || space.unsafe < 0 || n <= space.unsafe) return find(tbl, space, n);
+    const key = nfc(keyOf(space).slice(0, n), space.lone);
+    return tbl.k.has(key) ? key : null;
+  };
+
   // The ASCII key length of text.slice(0, j), from n, text's own.
   const keyLengthBefore = (text, j, n) => {
     let left = n;
@@ -263,21 +373,19 @@ const OwnedMatch = (() => {
     return left;
   };
 
-  // A walk's state: its text, whether that is ASCII, and its key: on ASCII text the key's
-  // length n (its characters are in the scratch space); otherwise the key itself.
-  const keyNow = (state) => (state.ascii ? asciiKey(state.text) : state.key);
+  // A walk's state: its text, whether that is ASCII, the index from which it is (plain), its
+  // key's length n (in the units of the text's key in the scratch space) and the scratch
+  // space. Every unit strip takes off is ASCII, so plain holds for each head.
+  const keyNow = (state) =>
+    state.ascii ? asciiKey(state.text) : keyAt(state.space, state.text.length);
 
   // Make text, a prefix of state.text, the walk's text when its key isn't empty.
   const head = (state, text) => {
-    if (state.ascii) {
-      const n = keyLengthBefore(state.text, text.length, state.n);
-      if (n === 0) return false;
-      state.n = n;
-    } else {
-      const key = matchKey(text);
-      if (!key) return false;
-      state.key = key;
-    }
+    const n = state.ascii
+      ? keyLengthBefore(state.text, text.length, state.n)
+      : state.space.at[text.length];
+    if (n === 0) return false;
+    state.n = n;
     state.text = text;
     return true;
   };
@@ -287,7 +395,8 @@ const OwnedMatch = (() => {
   // with a non-empty key, so "- Bold" stops at "bold".
   const strip = (state, rules) => {
     const text = state.text;
-    const ascii = state.ascii;
+    // From index plain on, text is ASCII.
+    const plain = state.plain;
     const length = text.length;
     const last = text.charCodeAt(length - 1); // NaN for '', which no table holds
     const lower = last >= 0x41 && last <= 0x5a ? last | 0x20 : last;
@@ -318,7 +427,7 @@ const OwnedMatch = (() => {
     ) {
       const word = text.slice(cut + 1);
       if (
-        (ascii || ASCII.test(word)) &&
+        cut + 1 >= plain &&
         rules.variable.has(word.toLowerCase()) &&
         head(state, rstripSeps(text.slice(0, cut), rules))
       ) {
@@ -341,7 +450,7 @@ const OwnedMatch = (() => {
       // "Inter-Tight-Bold" reaches "Inter-Tight" and never "Inter".
       const dash = text.lastIndexOf('-');
       return dash >= 0 &&
-        styleCode(text.slice(dash + 1), rules, true, ascii) !== 0 &&
+        styleCode(text.slice(dash + 1), rules, true, dash + 1 >= plain) !== 0 &&
         head(state, text.slice(0, dash))
         ? 'postscript'
         : null;
@@ -352,7 +461,7 @@ const OwnedMatch = (() => {
     // "Archivo", as "Archivo Black Italic" does. A token that ends in a modifier
     // ("BoldExtra") strips nothing.
     const token = text.slice(end + 1);
-    const code = styleCode(token, rules, false, ascii);
+    const code = styleCode(token, rules, false, end + 1 >= plain);
     if (code === 0) return null;
     if (code === 3) {
       const parts = [...token.matchAll(CAMEL)];
@@ -374,7 +483,7 @@ const OwnedMatch = (() => {
       }
       const start = text.lastIndexOf(' ', end - 1);
       const word = text.slice(start + 1, end);
-      if (start < 0 || (!ascii && !ASCII.test(word))) break;
+      if (start < 0 || (start + 1 < plain && !ASCII.test(word))) break;
       if (!rules.modifiers.has(word.toLowerCase())) break;
       end = start;
     }
@@ -390,25 +499,45 @@ const OwnedMatch = (() => {
     const { rules, k } = tbl;
     const printable = PRINTABLE.test(name);
     const ascii = printable || ASCII.test(name);
+    // The name's own key: a string for the list, else k's key or null.
     let key = null;
+    let text = name;
+    let textAscii = ascii;
     let n = 0;
     if (ascii) {
       n = fill(space, name);
       if (n === 0) return null;
-      if (out !== null) key = asciiKey(name);
-      else {
-        key = find(tbl, space, n);
-        if (key !== null) return { key, patched: false, postscript: false, codes: k.get(key) };
-      }
+      key = out !== null ? asciiKey(name) : find(tbl, space, n);
     } else {
-      key = matchKey(name);
-      if (!key) return null;
-      const codes = out === null ? k.get(key) : undefined;
-      if (codes !== undefined) return { key, patched: false, postscript: false, codes };
+      // The walk's text first: when it is the name, its pieces give the name's key too.
+      text = normalize(name, rules, false);
+      textAscii = text !== name && ASCII.test(text);
+      if (!textAscii) pieces(space, text);
+      if (text === name) {
+        n = space.at[text.length];
+        if (n === 0) return null;
+        key = out !== null ? keyAt(space, text.length) : findHead(tbl, space, false, n);
+      } else {
+        const own = Keys.matchKey(name);
+        if (!own) return null;
+        key = out !== null || k.has(own) ? own : null;
+      }
     }
-    const text = normalize(name, rules, printable);
-    const state = { text, ascii: text === name ? ascii : ASCII.test(text), n, key: null };
-    if (state.ascii && text !== name) state.n = fill(space, text);
+    if (out === null && key !== null) {
+      return { key, patched: false, postscript: false, codes: k.get(key) };
+    }
+    if (ascii) {
+      text = normalize(name, rules, printable);
+      textAscii = text === name || ASCII.test(text);
+      if (!textAscii) pieces(space, text);
+    }
+    if (text !== name) n = textAscii ? fill(space, text) : space.at[text.length];
+    let plain = 0;
+    if (!textAscii) {
+      plain = text.length;
+      while (text.charCodeAt(plain - 1) < 0x80) plain -= 1;
+    }
+    const state = { text, ascii: textAscii, plain, n, space };
     if (out !== null) out.push({ key, text, patched: false, postscript: false });
     let patched = false;
     let postscript = false;
@@ -423,12 +552,9 @@ const OwnedMatch = (() => {
       }
       if (out !== null) {
         out.push({ key: keyNow(state), text: state.text, patched, postscript });
-      } else if (state.ascii) {
-        const now = find(tbl, space, state.n);
-        if (now !== null) return { key: now, patched, postscript, codes: k.get(now) };
       } else {
-        const codes = k.get(state.key);
-        if (codes !== undefined) return { key: state.key, patched, postscript, codes };
+        const now = findHead(tbl, space, state.ascii, state.n);
+        if (now !== null) return { key: now, patched, postscript, codes: k.get(now) };
       }
     }
     return null;
@@ -483,7 +609,7 @@ const OwnedMatch = (() => {
       }
       amb.set(key, value.map((i) => ids[index(String(i), ids.length)]));
     }
-    // k's keys by hash, a list where hashes meet: a key that no ASCII text has stays unfound.
+    // k's keys by hash, a list where hashes meet.
     const hashed = new Map();
     for (const key of k.keys()) {
       const h = hashOf(key);

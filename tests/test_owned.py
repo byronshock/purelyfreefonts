@@ -1211,6 +1211,24 @@ def test_an_ambiguous_key_s_ambiguous_replaces_the_reason_a_family_s_own_code_gi
     assert got == {"foo": {"as": "Foo Black NF", "why": "patched"}}
 
 
+def test_the_past_ascii_vectors_say_what_their_labels_say():
+    """ov.PAST_ASCII_DOCUMENT's keys past ASCII are found after strips, through NFC, and apart
+    where they share the port's hash; the candidates pin keys that only NFC joins."""
+    by_label = {c["label"]: c["expect"] for c in MATCH}
+    found = by_label["names past ASCII found after strips"]
+    assert (set(found["owned"]), found["counts"]["owned"]) == ({"ecriture"}, 2)
+    joined = by_label["a name past ASCII found where only NFC joins its key"]["owned"]
+    assert joined == {"foo-ga": {"as": "Foo \u1100 \u1161 Bold Italic", "how": "family"}}
+    shared = by_label["keys past ASCII that share a hash"]
+    assert {fid: v["as"] for fid, v in shared["owned"].items()} == {
+        "hash-a": "\u00c9axyz Bold", "hash-b": "\u00c9bxyz Italic"
+    }  # fmt: skip
+    assert shared["counts"]["unknown"] == 1
+    keys = {c["name"]: [k["key"] for k in c["expect"]] for c in CANDIDATES}
+    assert keys["Foo \u1100 \u1161 Bold Italic"][-1] == "foo\uac00"
+    assert keys["Foo e \u0301x Bold Italic"][-1] == "foo\u00e9x"
+
+
 @pytest.mark.parametrize("case", MALFORMED, ids=[c["label"] for c in MALFORMED])
 def test_a_malformed_match_file_is_refused(case):
     with pytest.raises(ValueError):  # noqa: PT011 (every refusal is a ValueError)

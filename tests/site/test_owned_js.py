@@ -15,7 +15,7 @@ into a page on a routed origin that answers only that page. In each engine given
   never hides a difference;
 - names from every assigned code point, damaged files in each encoding, fc-list escapes,
   prompts, JSON with duplicate keys, entries, mutated match files and other words, drawn by
-  Hypothesis, give Python's result, and so do three realistic lists of 10,000 fonts and 5 MB
+  Hypothesis, give Python's result, and so do four realistic lists of 10,000 fonts and 5 MB
   of ``system_profiler -json`` cut short;
 - 10 MB of escaped quotes parse in linear time;
 - the parts are pure code: they name no network, page, frame, worker, storage, clock or
@@ -225,7 +225,7 @@ def vector_table() -> owned.Table:
 
 @functools.cache
 def realistic() -> dict[str, str]:
-    """hopper_lists' three lists of 10,000 fonts from the committed names.json, and the 5 MB
+    """hopper_lists' four lists of 10,000 fonts from the committed names.json, and the 5 MB
     system_profiler paste."""
     names = json.loads(NAMES.read_text(encoding="utf-8"))
     return {**hopper_lists.lists(names), "5 MB cut": hopper_lists.system_profiler_cut()}
@@ -556,7 +556,8 @@ def test_ten_megabytes_of_escaped_quotes_parse_in_linear_time(loaded):
 @pytest.mark.parametrize("label", [*hopper_lists.LABELS, "5 MB cut"])
 def test_realistic_lists_parse_and_match_as_in_python(loaded, label):
     """The lists test_perf.py times: 10,000 fonts as the registry, fc-list and system_profiler
-    give them, and a system_profiler paste cut at 5 MB."""
+    give them, fc-list's with a name past ASCII on each line, and a system_profiler paste cut
+    at 5 MB."""
     text = realistic()[label]
     body = "(() => { const p = P.parse(arg); return [p, M.match(p, globalThis.__tffReal)]; })()"
     got = loaded.run(body, text)

@@ -19,8 +19,8 @@ every size budget and the CSP lint, and each check fails on a site made to break
 - Specimens: at load, no specimen is requested for a row more than 1000 px below the screen.
 - The hopper (Milestone 3 steps 4 and 5), each run in a fresh context (nothing compiled yet,
   as for a visitor's first list), with the match file the site build makes from the committed
-  ``build/names.json`` and three realistic lists of 10,000 fonts
-  (``tests/fixtures/hopper_lists.py``). Under the same CPU slowdown, reading the match file,
+  ``build/names.json`` and four realistic lists of 10,000 fonts, one with a name past ASCII on
+  every line (``tests/fixtures/hopper_lists.py``). Under the same CPU slowdown, reading the match file,
   readying its table and matching must take under 200 ms (step 5), and parsing 5 MB of
   ``system_profiler -json`` cut short under a second (step 4). Without a slowdown, as
   Lighthouse's desktop setting runs (the hopper needs a computer), parsing and matching
@@ -664,7 +664,7 @@ HOPPER_RUN_JS = """(arg) => {
 @functools.cache
 def _hopper() -> dict[str, Any]:
     """The parts' page, the match file the site build makes from the committed
-    build/names.json, as its text and its Python table, the three lists of 10,000 fonts, and
+    build/names.json, as its text and its Python table, the four lists of 10,000 fonts, and
     the 5 MB paste."""
     parts = "\n".join(
         (ROOT / "site" / "js" / name).read_text(encoding="utf-8") for name in HOPPER_PARTS
