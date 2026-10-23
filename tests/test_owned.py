@@ -477,9 +477,12 @@ def test_the_suffix_rules_strip_what_the_pipeline_strips(base, sep, tail, lower_
 
 NAMES_JSON = ROOT / "build" / "names.json"
 CATALOG = ROOT / "build" / "catalog-site.json"
-# The reviewed recodes, as the site build reads them from build/names.reviewed.toml
-# (tff_site.matchfile; owner ruling hopper_hackgen_related, 2026-10-23).
-RECODES = matchfile.load_reviewed(matchfile.default_reviewed_path(NAMES_JSON))[0].relations()
+# The reviewed list, as the site build reads it from build/names.reviewed.toml
+# (tff_site.matchfile): its ambiguous names, and its recodes (owner ruling
+# hopper_hackgen_related, 2026-10-23). A refresh that changes the ambiguous set edits the
+# list, not these tests (ops/MONTHLY.md step 5).
+REVIEWED = matchfile.load_reviewed(matchfile.default_reviewed_path(NAMES_JSON))[0]
+RECODES = REVIEWED.relations()
 
 
 def _schema(name: str) -> Draft202012Validator:
@@ -681,20 +684,18 @@ def test_the_reviewed_recodes_are_hackgen_s():
     assert RECODES == {"HackGen": "related"}
 
 
-def test_the_real_names_json_has_five_ambiguous_keys_and_no_meeting():
+def test_the_real_names_json_s_ambiguous_keys_are_the_reviewed_ones_and_nothing_meets():
+    """The ambiguous set (Archivo Black and its like) is the reviewed list's, so a run that
+    changes it edits only the list. Each collision that reaches a catalog family makes
+    one of them, no ``distinct_from`` pair meets, and no key is owned twice outside them: the
+    same rules the build holds (``matchfile.check_errors``), with no count that a refresh
+    moves."""
     doc, ids = real()
     check = owned.check_document(doc, ids, recodes=RECODES)
-    assert check.amb == {
-        "archivoblack": ("archivo",),
-        "bungeehairline": ("bungee",),
-        "gentiumbook": ("gentium",),
-        "gentiumplusbook": ("gentium-plus",),
-        "syneitalic": ("syne",),
-    }
+    assert check.amb == {key: entry.families for key, entry in REVIEWED.ambiguous.items()}
+    assert {c.key for c in check.collisions if c.catalog} == check.amb.keys()
     assert check.meetings == ()
-    assert check.shared == {}
-    assert len(check.collisions) == 15
-    assert sum(bool(c.catalog) for c in check.collisions) == 5
+    assert not check.shared.keys() - check.amb.keys()
 
 
 def test_the_real_match_document_is_valid_and_its_codes_name_every_alias():
@@ -1174,7 +1175,10 @@ def test_the_known_answers_are_ov_s_and_name_real_families():
     doc, _ = real()
     ids = {f["id"] for f in doc["families"]}
     named = {fid for c in KNOWN for fid in (*c["owned"], *c["not_owned"], *c["near"])}
-    assert named <= ids
+    assert not named - ids, (
+        f"the known answers name {sorted(named - ids)}, which build/names.json lacks: a run "
+        "that drops a family edits the cases that name it (ops/MONTHLY.md step 5)"
+    )
 
 
 def test_the_known_answers_carry_every_case_the_milestone_names():
