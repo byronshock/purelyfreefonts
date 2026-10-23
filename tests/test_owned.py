@@ -245,6 +245,48 @@ def test_words_are_the_shared_constants_as_json():
         ("Inter \uff22\uff4f\uff4c\uff44", [("interbold", False, False), ("inter", False, False)]),
         ("InterVariable", [("intervariable", False, False), ("inter", False, False)]),
         ("Cascadia Code PL", [("cascadiacodepl", False, False), ("cascadiacode", True, False)]),
+        (
+            "Archivo BlackItalic",
+            [
+                ("archivoblackitalic", False, False),
+                ("archivoblack", False, False),
+                ("archivo", False, False),
+            ],
+        ),
+        (
+            "Archivo Black-Regular",
+            [
+                ("archivoblackregular", False, False),
+                ("archivoblack", False, False),
+                ("archivo", False, False),
+            ],
+        ),
+        (
+            "Syne Italic-Bold",
+            [
+                ("syneitalicbold", False, False),
+                ("syneitalic", False, False),
+                ("syne", False, False),
+            ],
+        ),
+        (
+            "Foo ExtraLightItalic",
+            [
+                ("fooextralightitalic", False, False),
+                ("fooextralight", False, False),
+                ("foo", False, False),
+            ],
+        ),
+        (
+            "Foo Extra_Light-Italic",
+            [
+                ("fooextralightitalic", False, False),
+                ("fooextralight", False, False),
+                ("foo", False, False),
+            ],
+        ),
+        ("Foo Semi-Bold", [("foosemibold", False, False), ("foo", False, False)]),
+        ("Foo BoldExtra", [("fooboldextra", False, False)]),
         ("", []),
         ("\u200d", []),
     ],
@@ -307,6 +349,25 @@ def test_every_candidate_key_is_a_proper_prefix_of_the_one_before(name):
 _WORD = st.sampled_from(
     ["Inter", "Fira", "Code", "Sans", "Mono", "Condensed", "Tight", "Pro", "One", "Display"]
 )
+_PART = st.sampled_from(sorted(names.STYLE_WORDS | names.MODIFIERS)).map(str.title)
+
+
+@settings(max_examples=1500, derandomize=True, deadline=None)
+@given(
+    st.lists(_WORD, min_size=1, max_size=3),
+    st.lists(_PART, min_size=1, max_size=4),
+    st.sampled_from(["", "-", "_"]),
+)
+def test_a_token_of_style_parts_strips_as_the_spaced_words_do(base, parts, joiner):
+    """One part at a time, longest first: "Archivo BlackItalic" and "Archivo Black-Italic"
+    reach "Archivo Black" before "Archivo", as "Archivo Black Italic" does."""
+    joined = owned.candidates(" ".join([*base, joiner.join(parts)]))
+    spaced = owned.candidates(" ".join([*base, *parts]))
+    assert [(c.key, c.patched, c.postscript) for c in joined] == [
+        (c.key, c.patched, c.postscript) for c in spaced
+    ]
+
+
 _STYLE = st.sampled_from(
     [*sorted(names.STYLE_WORDS), "Semi", "Extra", "Ultra", "Demi", "BoldItalic", "SemiBold",
      "ExtraLightItalic", "It", "BoldIt", "Lt", "Med"]

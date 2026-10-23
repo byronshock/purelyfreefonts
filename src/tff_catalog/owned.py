@@ -92,7 +92,9 @@ WORDS: dict[str, Any] = {
     "dashes": list(DASH_CODEPOINTS),  # read as "-"
     "joiners": list(JOINER_CODEPOINTS),  # removed
     "separators": ["0020", "002D", "005F"],  # before a build suffix
-    "style": sorted(STYLE_WORDS),  # a whole word, or every camel-case part (BoldItalic)
+    # A whole word; in a spaced name also the last part of a token of parts (BlackItalic,
+    # Black-Regular), one at a time; after a PostScript hyphen, every part at once.
+    "style": sorted(STYLE_WORDS),
     "modifiers": sorted(MODIFIERS),  # only with a style word after them (Extra Light)
     "postscript": sorted(PS_ABBREVIATIONS),  # also style words after a PostScript hyphen
     "abbreviations": sorted(STYLE_ABBREVIATIONS),  # whole words only (Kinto Sans Med)
@@ -265,6 +267,30 @@ def _style_token(token: str, rules: _Rules, *, postscript: bool = False) -> str 
     return None
 
 
+def _style_tail(token: str, rules: _Rules) -> tuple[str, str] | None:
+    """The style unit that ends a spaced name's last ``token``: its kind, and what stays of it.
+
+    A style word or abbreviation goes whole ("Bold", "Semi-Bold", "Med"). In a token of
+    camel-case or hyphen- or underscore-joined parts (``_style_token``), only the last part
+    goes, with the modifiers before it ("ExtraLight"), and the rest stays: "BlackItalic"
+    leaves "Black" and "Black-Regular" leaves "Black", so "Archivo BlackItalic" reaches the
+    ambiguous "Archivo Black" before "Archivo", as "Archivo Black Italic" does. A token that
+    ends in a modifier ("BoldExtra") strips nothing, as "Bold Extra" doesn't.
+    """
+    kind = _style_token(token, rules)
+    if kind is None:
+        return None
+    if kind == "abbreviation" or token.lower().replace("-", "").replace("_", "") in rules.style:
+        return kind, ""
+    parts = list(_CAMEL.finditer(token))
+    n = len(parts) - 1
+    if parts[n].group().lower() not in rules.style:
+        return None
+    while n > 0 and parts[n - 1].group().lower() in rules.modifiers:
+        n -= 1
+    return kind, token[: parts[n].start()].rstrip("-_")
+
+
 def _strip(text: str, rules: _Rules) -> tuple[str, str] | None:
     """``text`` without one trailing unit, and what the unit was; None when none strips.
 
@@ -299,9 +325,12 @@ def _strip(text: str, rules: _Rules) -> tuple[str, str] | None:
             return family, "postscript"
         return None
     tokens = text.split(" ")
-    kind = _style_token(tokens[-1], rules)
-    if kind is None:
+    tail = _style_tail(tokens[-1], rules)
+    if tail is None:
         return None
+    kind, rest = tail
+    if rest:
+        return " ".join([*tokens[:-1], rest]), "style"
     tokens.pop()
     while kind == "style" and len(tokens) > 1 and tokens[-1].isascii():
         if tokens[-1].lower() not in rules.modifiers:
@@ -334,7 +363,9 @@ def candidates(name: str, words: Mapping[str, Any] = WORDS) -> tuple[Candidate, 
     (NF, NFM, NFP after a separator, lower-case letter or digit); CN, NL or PL after
     a separator; Variable, Var or VF after a separator, or "Variable" right after a
     lower-case letter; in a name without spaces, a style part after the last hyphen
-    (PostScript form); a style word, with the modifiers before it (Extra Light).
+    (PostScript form); a style word, with the modifiers before it (Extra Light), or
+    the last part of a token of style parts, with its modifiers ("Archivo
+    BlackItalic" gives "Archivo Black", then "Archivo"; ``_style_tail``).
     Width words (Condensed, Narrow) are never stripped, and every key is non-empty.
     ``candidates("Maple Mono NF CN")`` gives the keys maplemononfcn, maplemononf
     and maplemono, the last two patched. An empty key gives ``()``. Other ``words``
