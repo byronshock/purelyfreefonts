@@ -1,0 +1,9 @@
+# Owner ruling of 2026-10-23 on the hopper (Milestone 3, slice 1), asked in chat by the lead session as a single-select question.
+# Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md (Inventory tools) and docs/milestone-3.md (Slice 1).
+
+[hopper_hackgen_related]
+choice = "a"
+recommended = true
+value = "near_match_only"
+ruling = "In the hopper, HackGen (Hack merged with a CJK typeface) is only a near-match of Hack: someone who has HackGen installed still sees Hack listed (M3-D5 a, derived families never owned). A small reviewed list beside names.json recodes it as related in the match file; the alias row that folds HackGen into Hack as a build (leftover_cica_hackgen, 2026-09-28) stays, so the ranking and its scores don't change."
+reason = "Found while prototyping the matcher: names.json carries HackGen as a build of Hack, which M3-D4 would count as owned. Of (a) a near-match only, through the hopper's own list, (b) changing the alias row, which moves Hack's scores and would wait for the next live refresh, and (c) counting Hack as owned, the owner took Claude's recommendation."
