@@ -154,9 +154,14 @@ def loads(blob: bytes) -> dict[str, Any]:
     """Parse catalog-site JSON bytes (UTF-8) without validating the document.
 
     Stricter than ``json.loads``: a key repeated in one object, ``NaN`` and ``Infinity`` are
-    refused (``ValueError``), because the schema would see only one of the repeated values.
+    refused (``ValueError``), because the schema would see only one of the repeated values. A
+    document nested too deeply for the parser is refused too (``ValueError``), so no input
+    ends in a traceback; the build reads the catalog and ``names.json`` through this.
     """
-    return json.loads(blob.decode("utf-8"), object_pairs_hook=_unique, parse_constant=_no_nan)
+    try:
+        return json.loads(blob.decode("utf-8"), object_pairs_hook=_unique, parse_constant=_no_nan)
+    except RecursionError:
+        raise ValueError("nested too deeply to read") from None
 
 
 def _unique(pairs: list[tuple[str, Any]]) -> dict[str, Any]:

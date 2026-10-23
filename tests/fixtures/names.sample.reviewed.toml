@@ -1,0 +1,16 @@
+# The sample's reviewed list (tests/fixtures/names.sample.json), synthetic like it, in the
+# format of build/names.reviewed.toml (tff_site.matchfile.load_reviewed). Its entries cite
+# no owner ruling: "synthetic" marks them as the sample's own.
+
+[[ambiguous]]
+name = "Sample Sans 06 Black"
+families = ["sample-sans-06"]
+ruling = "synthetic"
+
+# As build/names.reviewed.toml recodes HackGen: a build of Sample Mono 20 in names.json,
+# only a near-match of it in the hopper.
+[[recode]]
+name = "Sample Mono 20 Gen"
+family = "sample-mono-20"
+relation = "related"
+ruling = "synthetic"

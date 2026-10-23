@@ -48,6 +48,7 @@ from tff_catalog import jsonio, keys, names, owned
 from tff_catalog.aliases.miners import builds, name_tables
 from tff_catalog.collectors.ranking import fot
 from tff_catalog.latin import CJK_BUILD_SUFFIX
+from tff_site import matchfile
 
 # ---------------------------------------------------------------- the pipeline's words stay
 
@@ -476,9 +477,9 @@ def test_the_suffix_rules_strip_what_the_pipeline_strips(base, sep, tail, lower_
 
 NAMES_JSON = ROOT / "build" / "names.json"
 CATALOG = ROOT / "build" / "catalog-site.json"
-# The reviewed recodes the site build will read from a file beside names.json (PR 2);
-# owner ruling hopper_hackgen_related, 2026-10-23.
-RECODES = {"HackGen": "related"}
+# The reviewed recodes, as the site build reads them from build/names.reviewed.toml
+# (tff_site.matchfile; owner ruling hopper_hackgen_related, 2026-10-23).
+RECODES = matchfile.load_reviewed(matchfile.default_reviewed_path(NAMES_JSON))[0].relations()
 
 
 def _schema(name: str) -> Draft202012Validator:
@@ -676,6 +677,10 @@ def test_the_check_reports_shared_owned_keys():
     }
 
 
+def test_the_reviewed_recodes_are_hackgen_s():
+    assert RECODES == {"HackGen": "related"}
+
+
 def test_the_real_names_json_has_five_ambiguous_keys_and_no_meeting():
     doc, ids = real()
     check = owned.check_document(doc, ids, recodes=RECODES)
@@ -808,6 +813,8 @@ def _guarded_files() -> list[Path]:
         *sorted(ov.FIXTURES.iterdir()),
         *sorted((ROOT / "tests" / "vectors").glob("owned-*.json")),
         ROOT / "tests" / "helpers" / "owned_vectors.py",
+        # The site build's names sample and its reviewed list (tff_site.matchfile).
+        *sorted((ROOT / "tests" / "fixtures").glob("names.sample.*")),
     ]
 
 

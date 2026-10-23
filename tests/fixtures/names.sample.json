@@ -1,0 +1,445 @@
+{
+  "families": [
+    {
+      "distinct_from": [
+        "sample-sans-01-tight"
+      ],
+      "family": "Sample Sans 01",
+      "id": "sample-sans-01",
+      "in_catalog": true,
+      "names": [
+        {
+          "detail": "variable",
+          "name": "Sample Sans 01 Variable",
+          "relation": "build"
+        },
+        {
+          "name": "SampleSans01-Regular",
+          "relation": "postscript"
+        }
+      ],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Mono 02",
+      "id": "sample-mono-02",
+      "in_catalog": true,
+      "names": [
+        {
+          "detail": "nl",
+          "name": "Sample Mono 02 NL",
+          "relation": "build"
+        },
+        {
+          "detail": "nerd",
+          "name": "SampleMono02 Nerd Font",
+          "relation": "build"
+        }
+      ],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Sans 03",
+      "id": "sample-sans-03",
+      "in_catalog": true,
+      "names": [
+        {
+          "detail": "variable",
+          "name": "Sample Sans 03 Variable",
+          "relation": "build"
+        }
+      ],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Serif 04",
+      "id": "sample-serif-04",
+      "in_catalog": true,
+      "names": [
+        {
+          "name": "Sample Serif Collection",
+          "relation": "bundle"
+        }
+      ],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Sans 05",
+      "id": "sample-sans-05",
+      "in_catalog": true,
+      "names": [
+        {
+          "name": "Sample Sans Classic",
+          "relation": "rename"
+        },
+        {
+          "name": "SampleSans05-Regular",
+          "relation": "postscript"
+        }
+      ],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Sans 06",
+      "id": "sample-sans-06",
+      "in_catalog": true,
+      "names": [
+        {
+          "name": "Sample Desktop Sans",
+          "relation": "related"
+        }
+      ],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Mono 07",
+      "id": "sample-mono-07",
+      "in_catalog": true,
+      "names": [
+        {
+          "detail": "nerd",
+          "name": "Sample Mono 07 Nerd Font",
+          "relation": "build"
+        },
+        {
+          "detail": "nf",
+          "name": "SMono07 NF",
+          "relation": "build"
+        }
+      ],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Sans 08",
+      "id": "sample-sans-08",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Serif 09",
+      "id": "sample-serif-09",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Display 10",
+      "id": "sample-display-10",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Sans 11",
+      "id": "sample-sans-11",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Script 12",
+      "id": "sample-script-12",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Mono 13",
+      "id": "sample-mono-13",
+      "in_catalog": true,
+      "names": [
+        {
+          "detail": "powerline",
+          "name": "Sample Mono 13 PL",
+          "relation": "build"
+        }
+      ],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Sans 14",
+      "id": "sample-sans-14",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Serif 15",
+      "id": "sample-serif-15",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Hand 16",
+      "id": "sample-hand-16",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Sans 17",
+      "id": "sample-sans-17",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Display 18",
+      "id": "sample-display-18",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Serif 19",
+      "id": "sample-serif-19",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Mono 20",
+      "id": "sample-mono-20",
+      "in_catalog": true,
+      "names": [
+        {
+          "detail": "",
+          "name": "Sample Mono 20 Gen",
+          "relation": "build"
+        }
+      ],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Sans 21",
+      "id": "sample-sans-21",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Serif 22 With An Exceptionally Long Family Name For Wrapping Tests",
+      "id": "sample-serif-22-long",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Mono 23",
+      "id": "sample-mono-23",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Sans 24",
+      "id": "sample-sans-24",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Display 25",
+      "id": "sample-display-25",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Hand 26",
+      "id": "sample-hand-26",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Straße Serif 27",
+      "id": "sample-serif-27",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Sans Condensed 28",
+      "id": "sample-sans-28",
+      "in_catalog": true,
+      "names": [
+        {
+          "name": "Sample Sans Narrow 28",
+          "relation": "sibling"
+        }
+      ],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Sans 29",
+      "id": "sample-sans-29",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Serif 30",
+      "id": "sample-serif-30",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Display 31",
+      "id": "sample-display-31",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Mono 32",
+      "id": "sample-mono-32",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Hand 33",
+      "id": "sample-hand-33",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Sans 34",
+      "id": "sample-sans-34",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Mono 35",
+      "id": "sample-mono-35",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Serif 36",
+      "id": "sample-serif-36",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Łódź Sans 37",
+      "id": "sample-sans-37",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Display 38",
+      "id": "sample-display-38",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Hand 39",
+      "id": "sample-hand-39",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Sans 40",
+      "id": "sample-sans-40",
+      "in_catalog": true,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Held 41",
+      "id": "sample-held-41",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [],
+      "family": "Sample Sans 06 Black",
+      "id": "sample-sans-06-black",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    },
+    {
+      "distinct_from": [
+        "sample-sans-01"
+      ],
+      "family": "Sample Sans 01 Tight",
+      "id": "sample-sans-01-tight",
+      "in_catalog": false,
+      "names": [],
+      "superfamily_id": null
+    }
+  ],
+  "ineligible": [
+    {
+      "name": "Sample Icons",
+      "reason": "icon"
+    },
+    {
+      "name": "Sample Proprietary Sans",
+      "reason": "proprietary"
+    },
+    {
+      "name": "Sample Sans JP",
+      "reason": "cjk"
+    }
+  ],
+  "run": {
+    "date": "2026-09-25",
+    "method_version": "2026-09-29"
+  },
+  "schema_version": "0.1.0-draft"
+}

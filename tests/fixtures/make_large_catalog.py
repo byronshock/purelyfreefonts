@@ -20,6 +20,10 @@ ids are ``large-<category>-<n>``, families ``Large <Category> <n>``, and the cat
   catalog, copied in turn from the committed sample specimens
   (``tests/fixtures/specimens/*.svg``) with its real sha256, so the page loads a realistic
   number of masks. ``font_file`` is null: builds need no font cache.
+- **Names:** ``names.json`` beside the catalog, of the same run (``make_names``): every font
+  an ``in_catalog`` family with its aliases, a build's ``detail`` from its suffix, so
+  ``tff-site build`` can derive the hopper's match file (site/CONTRACT.md section 11). No name
+  is ambiguous and none is recoded, so it needs no ``names.reviewed.toml``.
 
 Usage::
 
@@ -48,6 +52,9 @@ DEFAULT_FONTS = 540
 DEFAULT_SEED = 2026
 TOP_N = 100
 CATALOG_NAME = "catalog-site.json"
+NAMES_NAME = "names.json"
+# A build alias's names.json detail, by the suffix _font_from gives it; the others are plain builds.
+BUILD_DETAILS = {"Variable": "variable", "Nerd Font": "nerd"}
 # Share of each view's universe left unranked (with a reason), as in the sample.
 UNRANKED_SHARE = 0.06
 # Views where a font flagged too_new stays unranked as "too new to rank" (the sample's shape:
@@ -98,7 +105,8 @@ def make_catalog(
 
 
 def write(out_dir: Path, fonts: int = DEFAULT_FONTS, seed: int = DEFAULT_SEED) -> Path:
-    """Write the catalog and its specimens under ``out_dir``; return the catalog's path."""
+    """Write the catalog, its specimens and its ``names.json`` under ``out_dir``; return the
+    catalog's path."""
     out_dir = Path(out_dir)
     doc, specimens = make_catalog(fonts, seed)
     for rel, blob in specimens.items():
@@ -107,7 +115,38 @@ def write(out_dir: Path, fonts: int = DEFAULT_FONTS, seed: int = DEFAULT_SEED) -
         path.write_bytes(blob)
     target = out_dir / CATALOG_NAME
     jsonio.atomic_write(target, jsonio.pretty_bytes(doc))
+    jsonio.atomic_write(out_dir / NAMES_NAME, jsonio.pretty_bytes(make_names(doc)))
     return target
+
+
+def make_names(doc: Mapping[str, Any]) -> dict[str, Any]:
+    """The ``names.json`` of ``doc``'s run: every font an ``in_catalog`` family with its
+    aliases, and one ineligible name, so ``tff-site build`` can derive the match file."""
+    families = []
+    for font in doc["fonts"]:
+        names = []
+        for alias in font["aliases"]:
+            entry = {"name": alias["name"], "relation": alias["relation"]}
+            if alias["relation"] == "build":
+                suffix = alias["name"].removeprefix(font["family"] + " ")
+                entry["detail"] = BUILD_DETAILS.get(suffix, "")
+            names.append(entry)
+        families.append(
+            {
+                "id": font["id"],
+                "family": font["family"],
+                "in_catalog": True,
+                "superfamily_id": None,
+                "names": names,
+                "distinct_from": [],
+            }
+        )
+    return {
+        "schema_version": "0.1.0-draft",
+        "run": {"date": doc["run"]["date"], "method_version": doc["run"]["method_version"]},
+        "families": families,
+        "ineligible": [{"name": "Large Icons", "reason": "icon"}],
+    }
 
 
 def _font_from(template: Mapping[str, Any], k: int, views: list[str]) -> dict[str, Any]:
@@ -197,7 +236,9 @@ def _band_of(order: int, bands: list[Mapping[str, Any]]) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    parser.add_argument("out_dir", type=Path, help="directory for catalog-site.json and specimens/")
+    parser.add_argument(
+        "out_dir", type=Path, help="directory for catalog-site.json, names.json and specimens/"
+    )
     parser.add_argument("--fonts", type=int, default=DEFAULT_FONTS)
     parser.add_argument("--seed", type=int, default=DEFAULT_SEED)
     args = parser.parse_args(argv)

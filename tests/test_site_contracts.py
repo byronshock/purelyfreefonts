@@ -14,13 +14,17 @@ import pytest
 from jinja2 import ChoiceLoader, DictLoader, Environment, FileSystemLoader, StrictUndefined, nodes
 from jsonschema import Draft202012Validator
 
+from tff_catalog import owned, reviews
 from tff_catalog.keys import search_key
-from tff_site import assets, data, fonts
+from tff_catalog.paths import Paths
+from tff_site import assets, data, fonts, matchfile
 from tff_site.cli import COMMANDS, main
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMAS = ROOT / "schemas"
 SAMPLE_PATH = ROOT / "tests" / "fixtures" / "catalog-site.sample.json"
+NAMES_SAMPLE_PATH = ROOT / "tests" / "fixtures" / "names.sample.json"
+COMMITTED_NAMES = ROOT / "build" / "names.json"
 SPECIMEN_FONTS = ROOT / "tests" / "fixtures" / "specimen-fonts.toml"
 SPECIMENS_DIR = SAMPLE_PATH.parent / "specimens"
 VECTORS = ROOT / "tests" / "vectors" / "name-keys.json"
@@ -66,7 +70,9 @@ def section(text: str, heading: str) -> str:
 # ---------------------------------------------------------------- schemas and the sample
 
 
-@pytest.mark.parametrize("name", ["catalog-site.schema.json", "name-keys.schema.json"])
+@pytest.mark.parametrize(
+    "name", ["catalog-site.schema.json", "name-keys.schema.json", "names.schema.json"]
+)
 def test_schema_is_valid_2020_12(name):
     schema = load_schema(name)
     assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
@@ -283,6 +289,94 @@ def test_sample_previews_match_specimens_or_are_placeholders():
             assert font["preview"]["sha256"] == fonts.file_sha256(svg), font["id"]
         else:
             assert font["preview"]["sha256"] == data.PLACEHOLDER_SHA256, font["id"]
+
+
+# ---------------------------------------------------------------- the names sample
+
+
+NAMES_SAMPLE = json.loads(NAMES_SAMPLE_PATH.read_text(encoding="utf-8"))
+# The codes of a match file (site/CONTRACT.md section 11), by kind: "" a family, then its
+# letters, "-" a known family outside the catalog, "!" an ineligible name.
+MATCH_CODES = {"", "p", "b", "r", "n", "s", "x", "u", "-", "!"}
+
+
+def code_kinds(match: dict) -> set[str]:
+    return {
+        "-" if code == "-" else "!" if code.startswith("!") else code.lstrip("0123456789")
+        for codes in match["k"].values()
+        for code in codes.split(",")
+    }
+
+
+def test_names_sample_validates_and_is_of_the_sample_s_run():
+    errors = Draft202012Validator(load_schema("names.schema.json")).iter_errors(NAMES_SAMPLE)
+    assert [e.message for e in errors] == []
+    assert matchfile.names_errors(SAMPLE, NAMES_SAMPLE) == []
+    assert matchfile.default_names_path(SAMPLE_PATH) == NAMES_SAMPLE_PATH
+
+
+def test_names_sample_is_synthetic():
+    """The names schema allows no ``synthetic`` key, so the ids and names say it (the home-path
+    guard over the file is tests/test_owned.py's)."""
+    for fam in NAMES_SAMPLE["families"]:
+        assert fam["id"].startswith("sample-")
+        assert fam["family"].startswith("Sample ")
+        assert all(n["name"].startswith(("Sample", "SMono")) for n in fam["names"])
+    assert all(row["name"].startswith("Sample ") for row in NAMES_SAMPLE["ineligible"])
+
+
+def test_the_sample_match_file_uses_every_code():
+    """So the browser port's tests (PR 3) meet every case, an ambiguous key and a recode too."""
+    made = matchfile.match_file(SAMPLE, NAMES_SAMPLE_PATH)
+    match = json.loads(made.blob)
+    assert code_kinds(match) == MATCH_CODES
+    assert match["amb"]
+    reviewed, _ = matchfile.load_reviewed(matchfile.default_reviewed_path(NAMES_SAMPLE_PATH))
+    assert reviewed.recodes
+    assert reviewed.rulings() == {"synthetic"}
+    errors = Draft202012Validator(load_schema("match.schema.json")).iter_errors(match)
+    assert [e.message for e in errors] == []
+
+
+RECORDED_RULINGS = frozenset(
+    answer.id for ruling in reviews.load_rulings(Paths.for_root(ROOT)) for answer in ruling.answers
+)
+COMMITTED_REVIEWED, _ = matchfile.load_reviewed(matchfile.default_reviewed_path(COMMITTED_NAMES))
+# Cited before the owner has ruled: the lead asks the question, then records the answer in
+# data/reviews/ and drops the id from here (the strict xfail fails once it is recorded).
+RULINGS_PENDING = {
+    "inventory_ambiguous_names": "the owner's review of the five ambiguous names is to be asked",
+}
+
+
+@pytest.mark.parametrize(
+    "ruling",
+    [
+        pytest.param(
+            ruling,
+            marks=[pytest.mark.xfail(strict=True, reason=RULINGS_PENDING[ruling])]
+            if ruling in RULINGS_PENDING
+            else [],
+        )
+        for ruling in sorted(COMMITTED_REVIEWED.rulings())
+    ],
+)
+def test_the_committed_reviewed_list_cites_recorded_rulings(ruling):
+    """Every entry of build/names.reviewed.toml cites a ruling in data/reviews/, so no entry
+    goes in without the owner's review (Milestone 3 step 3, "the owner reviews flagged
+    collisions"; ``hopper_hackgen_related``)."""
+    assert ruling in RECORDED_RULINGS
+
+
+def test_the_committed_reviewed_list_recodes_hackgen_per_its_ruling():
+    (recode,) = COMMITTED_REVIEWED.recodes.values()
+    assert (recode.name, recode.family, recode.relation, recode.ruling) == (
+        "HackGen",
+        "hack",
+        "related",
+        "hopper_hackgen_related",
+    )
+    assert recode.relation in owned.RECODE_RELATIONS
 
 
 def _font(doc: dict, font_id: str) -> dict:
@@ -613,6 +707,15 @@ def test_validate_command_rejects_a_non_json_file(tmp_path, capsys):
     path.write_text("{", encoding="utf-8")
     assert main(["validate", str(path)]) == 1
     assert "invalid" in capsys.readouterr().err
+
+
+def test_validate_command_rejects_a_catalog_nested_too_deeply(tmp_path, capsys):
+    path = tmp_path / "deep.json"
+    path.write_text("[" * 200_000, encoding="utf-8")
+    assert main(["validate", str(path)]) == 1
+    err = capsys.readouterr().err
+    assert "nested too deeply to read" in err
+    assert "Traceback" not in err
 
 
 def test_a_failed_build_prints_its_problems_not_a_traceback(tmp_path, capsys):
