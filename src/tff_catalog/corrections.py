@@ -49,6 +49,8 @@ baselines of lifetime counters); the ``bundle`` rows of ``data/aliases.csv``
    h3_young_casks_not_scaled and b8a_no_scaling_any_source; its ``first_seen``
    still gives the 60-day grace, b8b_grace_kept);
    a window within a few days of a year or a month counts as exactly one;
+   a lifetime counter (GitHub, Nerd) counts its growth since the baseline
+   snapshot, 28 days to 12 months older, and has no value without one;
    for the crawls, keys that differ only in case count once, at the larger
    value (the Almanac's case duplicates: max, not sum);
 3. subtract the key-level floors, before any credit (``key_floors``): gate M3
@@ -64,11 +66,11 @@ baselines of lifetime counters); the ``bundle`` rows of ``data/aliases.csv``
 
 **Gate-only sources** (``gate_only = true``, disabled: GitHub and Nerd Fonts under the
 owner's ruling of 2026-10-23, deferred_sources_count_for_gate) go through the same steps
-(``gate_source``, which also says how their lifetime counters are counted: growth since
-the run_history baseline, never lifetime over days). Their terms join the views that list
-them, where no weight reaches them, so stage "rank" counts them toward the two-group gate
-only. They make no tags and write no ``first_seen`` dates, and the report gives them a
-section of their own.
+(``gate_source``), their lifetime counters counted as an enabled source's are, except
+that the baseline needs no minimum gap. Their terms join the views that list them, where
+no weight reaches them, so stage "rank" counts them toward the two-group gate only. They
+make no tags and write no ``first_seen`` dates, and the report gives them a section of
+their own.
 
 The frame of a source is every eligible family with a key in it, or with a
 universe key in the same namespace (a Homebrew cask with no analytics row);
@@ -240,6 +242,7 @@ _YEAR = 365.0
 _MONTH = 365.0 / 12
 _MIN_BASELINE_GAP = timedelta(days=28)  # a baseline must be about a month older ...
 _MAX_BASELINE_GAP = timedelta(days=372)  # ... and at most 12 months older (methodology §5)
+_GATE_MIN_BASELINE_GAP = timedelta(days=1)  # for the gate, any older one (gate_source)
 
 
 @dataclass(frozen=True, slots=True)
@@ -858,8 +861,8 @@ def count_keys(
     """One value per source key, by the source's ``counting`` (module docstring, step 2).
 
     ``baseline`` is the earlier snapshot of a lifetime counter
-    (``snapshot_delta``); without one, the first-run rule applies: lifetime
-    total over the days since the asset was created.
+    (``snapshot_delta``), which counts only growth since it: without one there is
+    nothing to count, and it gives no value (``_count_delta``).
     """
     match src.counting:
         case "window":
@@ -992,32 +995,34 @@ def _count_delta(
 ) -> dict[SourceKey, KeyValue]:
     """GitHub and Nerd lifetime counters (methodology §5): growth between snapshots.
 
-    With a baseline, a (key, release) pair present in both snapshots counts its
-    growth, and a negative difference counts as 0. An asset created after the
-    baseline's data date counts its whole count over the days since that date (its
-    baseline is 0: the owner's ruling of 2026-09-26, new_release_assets); an older
-    asset the baseline lacks is ignored. Without a baseline: lifetime total over the
-    days since each asset was created.
+    A (key, release) pair present in both snapshots counts its growth, and a
+    negative difference counts as 0. An asset created after the baseline's data
+    date counts its whole count over the days since that date (its baseline is 0:
+    the owner's ruling of 2026-09-26, new_release_assets); an older asset the
+    baseline lacks is ignored. A key's value is the sum over its releases, in
+    ``rate`` units. Without a baseline there is no growth to count, so nothing is
+    returned: the first-run rule, lifetime total over the days since each asset was
+    created, retired with b8a_no_scaling_any_source (owner ruling of 2026-09-30),
+    and ``correct_source`` and ``gate_source`` give such a source no terms.
     """
+    if not baseline:
+        return {}
     period = _MONTH if rate == "per_month" else _YEAR
     now = _instances(obs)
-    then = _instances(baseline) if baseline else {}
-    base_day = max(o.end for o in baseline) if then else None
+    then = _instances(baseline)
+    base_day = max(o.end for o in baseline)
     values: dict[SourceKey, list[float]] = defaultdict(list)
     created: dict[SourceKey, list[date]] = defaultdict(list)
     ends: dict[SourceKey, list[date]] = defaultdict(list)
     for (key, release), (total, made, end) in now.items():
         created[key].append(made)
         ends[key].append(end)
-        if then:
-            before = then.get((key, release))
-            if before is not None:
-                days = max(1, (end - before[2]).days)
-                values[key].append(max(0.0, total - before[0]) * period / days)
-            elif base_day is not None and made > base_day:
-                values[key].append(total * period / max(1, (end - base_day).days))
-        else:
-            values[key].append(total * period / max(1, (end - made).days))
+        before = then.get((key, release))
+        if before is not None:
+            days = max(1, (end - before[2]).days)
+            values[key].append(max(0.0, total - before[0]) * period / days)
+        elif made > base_day:
+            values[key].append(total * period / max(1, (end - base_day).days))
     return {
         key: KeyValue(
             math.fsum(values[key]) if values.get(key) else None, min(created[key]), max(ends[key])
@@ -1110,7 +1115,8 @@ def key_floors(
       those members' shares; newer members keep theirs. ``flat`` takes
       ``nerd_group_flat_floor`` from every member. ``tenure`` gives each key's
       first month when ``values`` covers too short a window to tell (Rising).
-    - Nerd releases: every asset loses the ``floor_quantile`` of all assets.
+    - Nerd releases: every key (a font's folder: all its files, summed over every release)
+      loses the ``floor_quantile`` of every key's value.
 
     Quantiles are taken over positive values only; values never go below 0;
     keys without a value are left alone.
@@ -1395,11 +1401,14 @@ def _shrunk(obs: Sequence[Observation], baseline: Sequence[Observation]) -> tupl
 def correct_source(
     name: str, src: SourceBase, inp: Inputs, cfg: RankingConfig, availability: Mapping[str, date]
 ) -> SourceResult | None:
-    """Steps 1-6 of the module docstring for one engine source; None when it has no data."""
-    obs, counting_src = _observations(src, inp)
-    if not obs:
-        return None
-    return _correct(name, src, counting_src, obs, _baseline(src, inp, obs), inp, cfg, availability)
+    """Steps 1-6 of the module docstring for one engine source; None when it has no data.
+
+    A lifetime counter (``snapshot_delta``) counts its growth since the baseline snapshot
+    (``_baseline``: the oldest 28 days to 12 months before this one), and has no data
+    without one: the first-run rule, lifetime total over days listed, retired with
+    b8a_no_scaling_any_source (``_count_delta``).
+    """
+    return _counted(name, src, inp, cfg, availability, _MIN_BASELINE_GAP)
 
 
 def gate_source(
@@ -1412,28 +1421,43 @@ def gate_source(
     that source's noise floor as the source would count it", gets that source's group for
     the two-group gate. So the terms are the ones ``correct_source`` makes, by the source's
     own rules: its selection (Nerd's ``exclude_assets`` drop Symbols Only; prereleases only
-    in ``prerelease_repos``; ``release_history``), the key floors (Nerd's 10th percentile
-    of every asset's growth), the Nerd credit to the original font, ``floor`` and
+    in ``prerelease_repos``; ``release_history``), the key floors (Nerd's: each key, a
+    font's folder with all its files summed over every release, loses the 10th percentile
+    of every key's growth), the Nerd credit to the original font, ``floor`` and
     ``censor_below``, the 60-day grace from each asset's creation, and the group (M5's merge
     into ``homebrew`` for a cask's own repository, Nerd Fonts' own group).
 
-    A lifetime counter (``snapshot_delta``) counts the rule it will use when it returns: the
-    growth since the baseline that stage "parse" took from ``run_history`` (the earliest
-    merged run's snapshot within 12 months), an asset created since then counting in full
-    and one that shrank counting 0. It never falls back on the retired first-run rule,
-    lifetime total over days listed (b8a_no_scaling_any_source): with no baseline, as on the
-    first run, the source gives no evidence and has no terms. The about-a-month minimum gap
-    of ``_baseline`` is waived (any older snapshot will do), because the gate asks only
-    whether a font's growth clears the floor, and that answer is the same over any gap: both
-    floors scale with the rate (GitHub's is 0, Nerd's a quantile of the growth). The first
-    two monthly snapshots, 2026-09-26 and 2026-10-17, are 21 days apart.
+    A lifetime counter (``snapshot_delta``) counts as it will when it returns: the growth
+    since the baseline that stage "parse" took from ``run_history`` (the earliest merged
+    run's snapshot within 12 months), an asset created since then counting in full and one
+    that shrank counting 0, and no evidence without a baseline (``_count_delta``), as on
+    the first run. One difference: the 28-day minimum gap of ``correct_source`` is waived
+    (any older snapshot will do), since the first two monthly snapshots, 2026-09-26 and
+    2026-10-17, are 21 days apart. The gate asks only whether a font's growth clears the
+    floor, and the short gap can only make that harder for GitHub and leaves it about the
+    same for Nerd: GitHub's floor is 0, so a font is observed when it grew at all, and a
+    shorter gap can only find less growth; Nerd's floor is a quantile of every font's growth
+    over the same gap, so it moves with the fonts' growth.
     """
+    return _counted(name, src, inp, cfg, availability, _GATE_MIN_BASELINE_GAP)
+
+
+def _counted(
+    name: str,
+    src: SourceBase,
+    inp: Inputs,
+    cfg: RankingConfig,
+    availability: Mapping[str, date],
+    min_gap: timedelta,
+) -> SourceResult | None:
+    """``_correct`` on the source's observations, a lifetime counter's against its baseline
+    at least ``min_gap`` older; None with no observations or no such baseline."""
     obs, counting_src = _observations(src, inp)
     if not obs:
         return None
     if src.counting != "snapshot_delta":
         return _correct(name, src, counting_src, obs, (), inp, cfg, availability)
-    baseline = _baseline(src, inp, obs, min_gap=timedelta(days=1))
+    baseline = _baseline(src, inp, obs, min_gap)
     if not baseline:
         return None
     res = _correct(name, src, counting_src, obs, baseline, inp, cfg, availability)
@@ -2466,7 +2490,9 @@ def run(ctx: StageContext) -> None:
     for name, src in sources.items():
         res = correct_source(name, src, inp, cfg, avail)
         if res is None:
-            ctx.log.warning("engine source %s has no observations this run", name)
+            ctx.log.warning(
+                "engine source %s has no observations (or no baseline snapshot) this run", name
+            )
         else:
             results[name] = res
     recent: dict[str, SourceResult] = {}
