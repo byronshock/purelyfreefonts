@@ -92,6 +92,7 @@ def make_site(path: Path, commit: str, *, variant: str | None = None, shared: by
     js = hashed("app", "js", f"const Main = {{v: '{variant}'}};\n".encode())
     index = hashed("list", "json", json.dumps({"v": 1, "commit": commit}).encode())
     details = hashed("details", "json", json.dumps({"v": 1, "x": variant}).encode())
+    match = hashed("match", "json", json.dumps({"format": "tff-match", "x": variant}).encode())
     font = hashed("fonts/sample-sans-01", "ttf", b"\x00\x01\x00\x00font" + shared)
     spec = hashed("specimens/sample-sans-01", "svg", b"<svg xmlns='http://www.w3.org/2000/svg'/>")
     html = (
@@ -99,7 +100,8 @@ def make_site(path: Path, commit: str, *, variant: str | None = None, shared: by
         f'<link rel="stylesheet" href="{css}"><script type="module" src="{js}"></script>'
         f'<link rel="preload" as="fetch" crossorigin href="{index}">'
         '<link rel="icon" href="/favicon.svg"></head><body>'
-        f'<ol id="list" data-index="{index}" data-details="{details}" data-font="{font}"></ol>'
+        f'<ol id="list" data-index="{index}" data-details="{details}" data-match="{match}"'
+        f' data-font="{font}"></ol>'
         f'<noscript><img src="{spec}" alt=""></noscript></body></html>\n'
     )
     files["index.html"] = html.encode()
@@ -877,7 +879,7 @@ def test_deploy_loop_single_probes(tmp_path: Path) -> None:
         loop = deploy_loop.Loop(url, extras=10)
         loop.probe()
         assert (loop.stats.errors, loop.stats.mixed, loop.stats.versions) == (0, 0, [A])
-        assert loop.stats.requests == 9  # page, 4 core files, 2 extras, version.txt, page
+        assert loop.stats.requests == 10  # page, 5 core files, 2 extras, version.txt, page
 
         (site / "version.txt").write_text(f"commit={B}\n")  # server says B, page says A
         loop.probe()
@@ -886,6 +888,7 @@ def test_deploy_loop_single_probes(tmp_path: Path) -> None:
 
         (site / "version.txt").write_text(f"commit={A}\n")
         js = next((site / "assets").glob("app.*.js"))
+        (tmp_path / "s-js").write_bytes(js.read_bytes())
         js.write_bytes(b"tampered")
         loop.probe()
         assert loop.stats.mixed == 2
@@ -895,6 +898,18 @@ def test_deploy_loop_single_probes(tmp_path: Path) -> None:
         loop.probe()
         assert loop.stats.errors == 1
         assert "HTTP 404" in loop.stats.samples[-1]
+
+        # The hopper's match file is a payload of the page too: mixed, or stranded.
+        js.write_bytes((tmp_path / "s-js").read_bytes())
+        match = next((site / "assets").glob("match.*.json"))
+        match.write_bytes(b'{"format": "tff-match", "x": "other"}')
+        loop.probe()
+        assert loop.stats.mixed == 3
+        assert f"{match.name}: bytes don't match" in loop.stats.samples[-1]
+        match.unlink()
+        loop.probe()
+        assert loop.stats.errors == 2
+        assert f"{match.name}: HTTP 404" in loop.stats.samples[-1]
         loop.client.close()
 
 
