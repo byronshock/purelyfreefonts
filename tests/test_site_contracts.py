@@ -379,6 +379,29 @@ def test_the_committed_reviewed_list_recodes_hackgen_per_its_ruling():
     assert recode.relation in owned.RECODE_RELATIONS
 
 
+# inventory_ambiguous_names (2026-10-23) reviewed exactly these five, each with the families it
+# names: "Gentium Book (or Gentium; Gentium Plus on the October data)".
+AMBIGUOUS_RULED = {
+    "Archivo Black": {("archivo",)},
+    "Bungee Hairline": {("bungee",)},
+    "Gentium Book": {("gentium",), ("gentium-plus",)},
+    "Gentium Plus Book": {("gentium-plus",)},
+    "Syne Italic": {("syne",)},
+}
+
+
+def test_the_committed_ambiguous_names_citing_the_ruling_are_the_five_it_names():
+    """A sixth name, or another family for one of the five, needs the owner's review and a
+    ruling of its own: citing inventory_ambiguous_names doesn't cover it."""
+    cited = {
+        entry.name: entry.families
+        for entry in COMMITTED_REVIEWED.ambiguous.values()
+        if entry.ruling == "inventory_ambiguous_names"
+    }
+    assert cited.keys() == AMBIGUOUS_RULED.keys()
+    assert {name: fids for name, fids in cited.items() if fids not in AMBIGUOUS_RULED[name]} == {}
+
+
 MATCH_SECTION = section(CONTRACT, "11. Match JSON")
 
 
