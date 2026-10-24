@@ -963,6 +963,12 @@ OUTCOME = """async (load) => {
 Answer = tuple[int, Any] | tuple[int, Any, str] | None
 HOLD = "hold"  # an answer that never comes, until the test gives it (data_page's held)
 MATCHER_ATTR = f'data-matcher="{MATCHER_PATH}"'
+# Playwright's clock, where a test asks for it: installed at CLOCK_START and, once the page has
+# loaded, paused an hour on, before anything sets a timer. Installed, it flows with real time
+# whenever the page reads it, so a timer set 30 s ahead could fire within run_for(29_999) on a
+# busy machine; paused, only run_for moves it.
+CLOCK_START = 1_767_225_600_000  # 2026-01-01T00:00:00Z, in ms
+CLOCK_PAUSED = CLOCK_START + 3_600_000
 
 
 @dataclass
@@ -1021,8 +1027,10 @@ class DataPages:
         self.context.route(f"{ORIGIN}/**", handle)
         page = self.context.new_page()
         if clock:
-            page.clock.install()
+            page.clock.install(time=CLOCK_START)
         page.goto(f"{ORIGIN}/")
+        if clock:
+            page.clock.pause_at(CLOCK_PAUSED)
         return page
 
 
