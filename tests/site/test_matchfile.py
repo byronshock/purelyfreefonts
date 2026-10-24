@@ -36,6 +36,11 @@ RECODE_20 = (
     '[[recode]]\nname = "Sample Mono 20 Gen"\nfamily = "sample-mono-20"\nrelation = "related"\n'
     'ruling = "synthetic"\n'
 )
+# How a collision problem that no edit to the reviewed list clears ends (ops/MONTHLY.md step 5).
+UNLISTABLE = (
+    "; no entry in the reviewed list clears this: the owner rules, and an alias row "
+    "(Milestone 1's review) or a change to the build carries it out (ops/MONTHLY.md step 5)"
+)
 
 
 def write(tmp_path: Path, names: Any = None, reviewed: str | None = REVIEWED) -> Path:
@@ -461,19 +466,19 @@ def _strip_out(names: dict[str, Any]) -> None:
         pytest.param(
             _meet,
             "sample-sans-01-tight: its name 'Sample Sans 01 Bold' reaches sample-sans-01 at key "
-            "'samplesans01', and the two are distinct_from each other",
+            f"'samplesans01', and the two are distinct_from each other{UNLISTABLE}",
             id="distinct-from-meets",
         ),
         pytest.param(
             _share,
             "key 'samplesans01' is owned by several catalog families (sample-sans-01, "
-            "sample-sans-03), outside the ambiguous set",
+            f"sample-sans-03), outside the ambiguous set{UNLISTABLE}",
             id="shared-key",
         ),
         pytest.param(
             _strip_out,
             "'Sample Held 41 Bold', a catalog name, strips to the key 'sampleheld41' of "
-            "sample-held-41, outside the catalog, which the ambiguous set can't hold",
+            f"sample-held-41, outside the catalog, which the ambiguous set can't hold{UNLISTABLE}",
             id="catalog-name-to-another-family",
         ),
     ],
@@ -483,6 +488,28 @@ def test_names_that_would_count_a_family_as_owned_wrongly_are_refused(tmp_path, 
     The planted name also makes a new ambiguous key, reported after it."""
     path = write(tmp_path, names_with(mutate))
     assert errors_of(path)[0] == f"{path}: {message}"
+
+
+@pytest.mark.parametrize("mutate", [_meet, _share, _strip_out])
+def test_no_entry_in_the_reviewed_list_clears_a_collision_outside_the_ambiguous_set(
+    tmp_path, mutate
+):
+    """Listing every ambiguous name the build finds leaves the problem the list can't hold,
+    which says so and how it is cleared instead (ops/MONTHLY.md step 5)."""
+    names = names_with(mutate)
+    check = owned.check_document(names, [f["id"] for f in SAMPLE["fonts"]], recodes=SAMPLE_RECODES)
+    first: dict[str, str] = {}
+    for c in check.collisions:
+        first.setdefault(c.key, c.name)
+    listed = "".join(
+        f'[[ambiguous]]\nname = "{first[key]}"\nfamilies = {json.dumps(list(fids))}\n'
+        'ruling = "synthetic"\n\n'
+        for key, fids in check.amb.items()
+    )
+    path = write(tmp_path, names, listed + RECODE_20)
+    (error,) = errors_of(path)
+    assert error.startswith(f"{path}: ")
+    assert error.endswith(UNLISTABLE)
 
 
 @pytest.mark.parametrize("reviewed", [None, "", RECODE_20])
@@ -513,6 +540,24 @@ def test_a_reviewed_name_that_is_no_longer_ambiguous_is_refused(tmp_path):
         f"{path}: 'Sample Serif 04 Light' is reviewed as ambiguous in "
         f"{tmp_path / 'names.reviewed.toml'}, but no longer is; once the owner has reviewed "
         "the drop, remove it"
+    ]
+
+
+def test_a_reviewed_name_whose_other_family_left_the_catalog_is_one_question(tmp_path):
+    """As when Archivo leaves the catalog and Archivo Black stays: the name drops out of the
+    ambiguous set only because the family it may be a weight of left, so removing its entry
+    would leave the collision that no entry clears; the build says the two go together."""
+    listed = tmp_path / "names.reviewed.toml"
+    was = (
+        '[[ambiguous]]\nname = "Sample Held 41 Bold"\nfamilies = ["sample-held-41"]\n'
+        'ruling = "synthetic"\n'
+    )
+    path = write(tmp_path, names_with(_strip_out), REVIEWED + was)
+    assert errors_of(path) == [
+        f"{path}: 'Sample Held 41 Bold' is reviewed as ambiguous in {listed}, but now strips "
+        "only to a family outside the catalog; the owner reviews it with that collision, below",
+        f"{path}: 'Sample Held 41 Bold', a catalog name, strips to the key 'sampleheld41' of "
+        f"sample-held-41, outside the catalog, which the ambiguous set can't hold{UNLISTABLE}",
     ]
 
 
@@ -639,7 +684,7 @@ def test_a_recode_whose_alias_another_family_also_holds_is_refused(tmp_path):
         "sample-mono-20 (synthetic), but names.json's aliases at its key 'samplemono20gen' are "
         "of sample-mono-02, sample-mono-20",
         f"{path}: key 'samplemono20gen' is owned by several catalog families "
-        "(sample-mono-02, sample-mono-20), outside the ambiguous set",
+        f"(sample-mono-02, sample-mono-20), outside the ambiguous set{UNLISTABLE}",
     ]
 
 

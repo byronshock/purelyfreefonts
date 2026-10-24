@@ -61,6 +61,12 @@ NAME_KEYS = frozenset({"name", "relation", "detail"})
 INELIGIBLE_KEYS = frozenset({"name", "reason"})
 AMBIGUOUS_FIELDS = frozenset({"name", "families", "ruling"})
 RECODE_FIELDS = frozenset({"name", "family", "relation", "ruling"})
+# The end of each collision problem that no edit to the reviewed list can clear: a meeting, a
+# shared key, a catalog name reaching a family outside the catalog (ops/MONTHLY.md step 5).
+UNLISTABLE = (
+    "; no entry in the reviewed list clears this: the owner rules, and an alias row "
+    "(Milestone 1's review) or a change to the build carries it out (ops/MONTHLY.md step 5)"
+)
 
 
 class MatchFileError(ValueError):
@@ -367,15 +373,20 @@ def check_errors(
     other than the reviewed one: the hopper doubts those names (``owned.match``), so which ones
     it doubts is the owner's call. A collision that starts from no catalog name and reaches no
     catalog family changes no result, and is only reported.
+
+    Only the ambiguous set's problems are cleared by editing the reviewed list. The other three
+    end with ``UNLISTABLE``: the reviewed list holds no exception for them (step 3 fails them
+    "outside the ambiguous set"), so the owner's ruling is carried out by an alias row or a
+    change to the build (ops/MONTHLY.md step 5).
     """
     errors = [
         f"{m.family}: its name {m.name!r} reaches {m.other} at key {m.key!r}, "
-        "and the two are distinct_from each other"
+        f"and the two are distinct_from each other{UNLISTABLE}"
         for m in check.meetings
     ]
     errors += [
         f"key {key!r} is owned by several catalog families ({', '.join(fids)}), "
-        "outside the ambiguous set"
+        f"outside the ambiguous set{UNLISTABLE}"
         for key, fids in check.shared.items()
         if key not in check.amb
     ]
@@ -394,23 +405,34 @@ def check_errors(
                 f"{first_name[key]!r} may be a weight of {', '.join(fids)}, but was reviewed "
                 f"({seen.ruling}) as one of {', '.join(seen.families)}; the owner reviews the change"
             )
-    errors += [
-        f"{seen.name!r} is reviewed as ambiguous in {reviewed_path}, but no longer is; once "
-        "the owner has reviewed the drop, remove it"
-        for key, seen in sorted(reviewed.ambiguous.items())
-        if key not in check.amb
-    ]
     catalog_keys = {
         match_key(name)
         for fam in names["families"]
         if fam["in_catalog"]
         for name in (fam["family"], *(n["name"] for n in fam["names"]))
     }
+    outside = [
+        c
+        for c in check.collisions
+        if not c.catalog and c.key in catalog_keys and c.key not in check.amb
+    ]
+    # Archivo leaving while Archivo Black stays: the name drops out of the ambiguous set
+    # because its other family left, so removing the entry clears nothing (UNLISTABLE below).
+    left = {c.key for c in outside}
+    errors += [
+        f"{seen.name!r} is reviewed as ambiguous in {reviewed_path}, but now strips only to a "
+        "family outside the catalog; the owner reviews it with that collision, below"
+        if key in left
+        else f"{seen.name!r} is reviewed as ambiguous in {reviewed_path}, but no longer is; "
+        "once the owner has reviewed the drop, remove it"
+        for key, seen in sorted(reviewed.ambiguous.items())
+        if key not in check.amb
+    ]
     errors += [
         f"{c.name!r}, a catalog name, strips to the key {c.reached!r} of "
         f"{', '.join(c.families)}, outside the catalog, which the ambiguous set can't hold"
-        for c in check.collisions
-        if not c.catalog and c.key in catalog_keys and c.key not in check.amb
+        f"{UNLISTABLE}"
+        for c in outside
     ]
     return errors
 
