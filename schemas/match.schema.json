@@ -1,0 +1,207 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trulyfreefonts.com/schemas/match/1",
+  "title": "The hopper's match file",
+  "description": "What the hopper (Milestone 3, slice 1) matches a visitor's font list against, in the browser: tff_catalog.owned.match_document, built by the site build from build/names.json, the catalog's ids and the reviewed recodes (owner rulings inventory_match_data_site_build of 2026-10-22 and hopper_hackgen_related of 2026-10-23). Compact: one map from every known name's match_key to its codes. The schema gives the shape; Table.from_document, like the port's reader, also refuses an index out of range, a code-point range that runs down or names a surrogate, and words that are not printable ASCII.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "v",
+    "run_date",
+    "names_sha256",
+    "ids",
+    "k",
+    "amb",
+    "reasons",
+    "words"
+  ],
+  "properties": {
+    "format": {
+      "const": "tff-match"
+    },
+    "v": {
+      "const": 1
+    },
+    "run_date": {
+      "description": "The run of the names.json it was built from.",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "names_sha256": {
+      "description": "sha256 of that names.json's canonical JSON.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "ids": {
+      "description": "The catalog's family ids, sorted; codes refer to them by index.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      }
+    },
+    "k": {
+      "description": "Every known name's match_key to its codes, comma-joined: <i> the family ids[i] itself, <i>r a rename, <i>p a PostScript name, <i>b a same-font build, <i>n a patched build, <i>u a bundle or package, <i>s a sibling, <i>x a related family (u, s and x are never owned, M3-D5), - a known family not in the catalog, !<j> an ineligible name with reasons[j].",
+      "type": "object",
+      "propertyNames": {
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^(?:(?:0|[1-9][0-9]*)[pbrnusx]?|-|!(?:0|[1-9][0-9]*))(,(?:(?:0|[1-9][0-9]*)[pbrnusx]?|-|!(?:0|[1-9][0-9]*)))*$"
+      }
+    },
+    "amb": {
+      "description": "Ambiguous keys (a family's name that is also another family's weight, such as Archivo Black) to the indices of the catalog families their name may be a weight of. Every key is in k.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "reasons": {
+      "description": "The ineligible names' reasons, sorted.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "words": {
+      "$ref": "#/$defs/words"
+    }
+  },
+  "$defs": {
+    "words": {
+      "description": "What candidates strips (tff_catalog.owned.WORDS). The port compiles its rules from this object; every word is printable ASCII.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "whitespace",
+        "dashes",
+        "joiners",
+        "separators",
+        "style",
+        "modifiers",
+        "postscript",
+        "abbreviations",
+        "variable",
+        "variable_joined",
+        "nerd",
+        "nerd_tokens",
+        "cased"
+      ],
+      "properties": {
+        "whitespace": {
+          "$ref": "#/$defs/codepoints",
+          "description": "Each run becomes one space."
+        },
+        "dashes": {
+          "$ref": "#/$defs/codepoints",
+          "description": "Read as a hyphen."
+        },
+        "joiners": {
+          "$ref": "#/$defs/codepoints",
+          "description": "Removed."
+        },
+        "separators": {
+          "description": "Single printable ASCII code points (hex) that may stand before a build suffix.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9A-Fa-f]{1,6}$"
+          }
+        },
+        "style": {
+          "description": "Style words: a whole word, or every camel-case part of one (BoldItalic).",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[\\x20-\\x7e]+$"
+          }
+        },
+        "modifiers": {
+          "description": "Stripped only with a style word after them (Extra Light).",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[\\x20-\\x7e]+$"
+          }
+        },
+        "postscript": {
+          "description": "Style words too after a PostScript hyphen (BoldIt).",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[\\x20-\\x7e]+$"
+          }
+        },
+        "abbreviations": {
+          "description": "Style abbreviations, stripped as whole words only (Kinto Sans Med).",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[\\x20-\\x7e]+$"
+          }
+        },
+        "variable": {
+          "description": "Variable-font words after a separator, in any ASCII case.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[\\x20-\\x7e]+$"
+          }
+        },
+        "variable_joined": {
+          "description": "Variable-font words as written, right after a lower-case letter (InterVariable).",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[\\x20-\\x7e]+$"
+          }
+        },
+        "nerd": {
+          "description": "Nerd Fonts phrases, in any ASCII case, separators between their words optional.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[\\x20-\\x7e]+$"
+          },
+          "minItems": 1
+        },
+        "nerd_tokens": {
+          "description": "Nerd Fonts tokens as written, after a separator, a lower-case letter or a digit.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[\\x20-\\x7e]+$"
+          }
+        },
+        "cased": {
+          "description": "Build tokens as written, after a separator (CN, NL, PL).",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[\\x20-\\x7e]+$"
+          }
+        }
+      }
+    },
+    "codepoints": {
+      "description": "Hex code points or inclusive ranges, as in tests/vectors/name-keys.json.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9A-Fa-f]{1,6}(-[0-9A-Fa-f]{1,6})?$"
+      }
+    }
+  }
+}

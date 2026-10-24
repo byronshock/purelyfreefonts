@@ -4,8 +4,13 @@
 - ``mint_id`` makes the stable family id, once, at first sighting; the id never
   changes afterwards, even when the family is renamed (methodology §2).
 - ``gf_dir_slug`` is the google/fonts folder name of a family.
-- ``strip_style`` drops trailing style words from a font or PostScript name.
+- ``strip_style`` drops trailing style words from a font or PostScript name;
+  ``is_style_word`` is its test of one word.
 - ``NERD_SUFFIX`` finds a Nerd Fonts build suffix at the end of a name.
+- The words those rules use are public (``STYLE_WORDS``, ``MODIFIERS``,
+  ``PS_ABBREVIATIONS``, ``STYLE_ABBREVIATIONS``, ``VARIABLE_WORDS``), so the
+  hopper's matcher (``owned``, Milestone 3) strips the same words as the
+  pipeline without importing the pipeline's heavier modules.
 
 Nothing here guesses: every function is a fixed text rule, and matching stays
 exact (design-m1: "matching never guesses").
@@ -18,9 +23,14 @@ from tff_catalog.keys import match_key, search_key
 
 __all__ = [
     "ID_PATTERN",
+    "MODIFIERS",
     "NERD_SUFFIX",
+    "PS_ABBREVIATIONS",
+    "STYLE_ABBREVIATIONS",
     "STYLE_WORDS",
+    "VARIABLE_WORDS",
     "gf_dir_slug",
+    "is_style_word",
     "match_key",
     "mint_id",
     "search_key",
@@ -122,24 +132,70 @@ STYLE_WORDS = frozenset(
     }
 )
 # Only stripped together with a style word after them ("Extra Light").
-_MODIFIERS = frozenset({"extra", "ultra", "semi", "demi"})
+MODIFIERS = frozenset({"extra", "ultra", "semi", "demi"})
+_MODIFIERS = MODIFIERS
 _CAMEL = re.compile(r"[A-Z]+(?![a-z])|[A-Z]?[a-z]+|\d+")
 
 
 # PostScript style parts may be abbreviated ("SourceSansPro-BoldIt").
-_PS_ABBREVIATIONS = frozenset({"it"})
+PS_ABBREVIATIONS = frozenset({"it"})
+_PS_ABBREVIATIONS = PS_ABBREVIATIONS
+
+# Style words in ID 1 names that ``strip_style`` keeps: abbreviations and
+# spellings seen in real files ("Martian Mono Cn Lt", "Kinto Sans Med",
+# "Selawik Semilight", "Montserrat Alternates ExLight"). Compared casefolded.
+# The name_tables alias miner strips them (``name_tables.strip_styles``), and so
+# does the hopper, as whole words only.
+STYLE_ABBREVIATIONS = frozenset(
+    {
+        "th",
+        "xlt",
+        "lt",
+        "rg",
+        "med",
+        "md",
+        "sb",
+        "smbd",
+        "bd",
+        "xbd",
+        "blk",
+        "hv",
+        "it",
+        "semilight",
+        "exlight",
+        "exbold",
+    }
+)
+
+# The words of a variable-font build after a separator ("Inter Variable",
+# "Inter var", "Satoshi-VF"), as the Fonts Over Time collector folds them
+# (``collectors.ranking.fot._VARIABLE``, which spells them out; a test keeps
+# the two equal). "Variable" also counts right after a lower-case letter
+# ("InterVariable").
+VARIABLE_WORDS = frozenset({"variable", "var", "vf"})
 
 
-def _is_style(token: str, *, postscript: bool = False) -> bool:
-    words = STYLE_WORDS | _PS_ABBREVIATIONS if postscript else STYLE_WORDS
+def is_style_word(token: str, *, postscript: bool = False) -> bool:
+    """Whether ``strip_style`` drops ``token`` as a trailing style word.
+
+    A token is one when its lower case without hyphens and underscores is a
+    style word ("Bold", "Semi-Bold"), or when its camel-case parts are all style
+    words or modifiers, at least one a style word ("BoldItalic",
+    "ExtraLight"). After a PostScript hyphen, ``PS_ABBREVIATIONS`` count as
+    style words too ("BoldIt").
+    """
+    words = STYLE_WORDS | PS_ABBREVIATIONS if postscript else STYLE_WORDS
     if token.lower().replace("-", "").replace("_", "") in words:
         return True
     parts = [p.lower() for p in _CAMEL.findall(token)]
     return (
         bool(parts)
-        and all(p in words or p in _MODIFIERS for p in parts)
+        and all(p in words or p in MODIFIERS for p in parts)
         and any(p in words for p in parts)
     )
+
+
+_is_style = is_style_word
 
 
 def strip_style(name: str) -> str:
@@ -153,17 +209,17 @@ def strip_style(name: str) -> str:
     text = " ".join(name.split())
     if " " not in text and "-" in text:
         family, _, style = text.rpartition("-")
-        if family and _is_style(style, postscript=True):
+        if family and is_style_word(style, postscript=True):
             return family
         return text
     tokens = text.split(" ")
     stripped_style = False
     while len(tokens) > 1:
         last = tokens[-1]
-        if _is_style(last):
+        if is_style_word(last):
             tokens.pop()
             stripped_style = True
-        elif stripped_style and last.lower() in _MODIFIERS:
+        elif stripped_style and last.lower() in MODIFIERS:
             tokens.pop()
         else:
             break

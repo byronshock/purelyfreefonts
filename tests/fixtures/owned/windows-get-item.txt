@@ -1,0 +1,14 @@
+
+
+    Hive: HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion
+
+
+Name                           Property
+----                           --------
+Fonts                          Arial (TrueType)                : arial.ttf
+                               Arial Bold (TrueType)           : arialbd.ttf
+                               Cambria & Cambria Math (TrueType) : cambria.ttc
+                               Segoe UI  Emoji (TrueType)      : seguiemj.ttf
+                               Inter Variable (TrueType)       : InterVariable.ttf
+                               Odd, Name                       : odd.ttf
+

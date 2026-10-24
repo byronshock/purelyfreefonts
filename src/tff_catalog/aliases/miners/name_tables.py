@@ -97,7 +97,7 @@ from urllib.parse import urlsplit
 from tff_catalog.aliases import AliasCandidate
 from tff_catalog.aliases.miners import MineContext
 from tff_catalog.keys import match_key
-from tff_catalog.names import strip_style
+from tff_catalog.names import STYLE_ABBREVIATIONS, strip_style
 from tff_catalog.paths import StoreNotConfigured
 from tff_catalog.records import FontFileRef, SourceKey, UniverseRecord
 
@@ -158,29 +158,6 @@ OPSZ_WORDS = frozenset(
 )
 OPSZ = "opsz"
 STATIC = "static"
-# Style words in ID 1 names that ``names.strip_style`` keeps: abbreviations and
-# spellings seen in real files ("Martian Mono Cn Lt", "Kinto Sans Med",
-# "Selawik Semilight", "Montserrat Alternates ExLight"). Compared casefolded.
-STYLE_ABBREVIATIONS = frozenset(
-    {
-        "th",
-        "xlt",
-        "lt",
-        "rg",
-        "med",
-        "md",
-        "sb",
-        "smbd",
-        "bd",
-        "xbd",
-        "blk",
-        "hv",
-        "it",
-        "semilight",
-        "exlight",
-        "exbold",
-    }
-)
 _POINT_SIZE = re.compile(r"\d+(?:\.\d+)?pt")
 # When a name carries several build words, the first of these present is the detail.
 DETAIL_ORDER = (

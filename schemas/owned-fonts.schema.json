@@ -1,0 +1,529 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trulyfreefonts.com/schemas/owned-fonts/1",
+  "title": "Owned-font test vectors",
+  "description": "tests/vectors/owned-fonts.json: what tff_catalog.owned (Python) gives, which site/js's parser and matcher must give too (Milestone 3, slice 1). Written by tests/helpers/owned_vectors.py; every input is synthetic.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "version",
+    "spec",
+    "names",
+    "catalog_ids",
+    "run_date",
+    "document",
+    "parse",
+    "candidates",
+    "match",
+    "malformed"
+  ],
+  "properties": {
+    "format": {
+      "const": "tff-owned-fonts"
+    },
+    "version": {
+      "const": 1
+    },
+    "spec": {
+      "description": "owned.py's constants: limits (lower-case names), formats, errors and warnings in order, the command words and font extensions, and WORDS.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "limits",
+        "formats",
+        "errors",
+        "warnings",
+        "command_words",
+        "font_extensions",
+        "words"
+      ],
+      "properties": {
+        "limits": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "formats": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "command_words": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "font_extensions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "words": {
+          "type": "object"
+        }
+      }
+    },
+    "names": {
+      "description": "A synthetic names.json (schemas/names.schema.json).",
+      "type": "object"
+    },
+    "catalog_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "run_date": {
+      "type": "string"
+    },
+    "document": {
+      "description": "The match document of names (schemas/match.schema.json).",
+      "type": "object"
+    },
+    "parse": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "label",
+          "input",
+          "expect"
+        ],
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "input": {
+            "description": "A paste (text, or UTF-16 code units when it holds a lone surrogate), a dropped file (base64), or parts: each [text, times] repeated and joined, as bytes (UTF-8) when bytes is true.",
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "text"
+                ],
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "base64"
+                ],
+                "properties": {
+                  "base64": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9+/]*={0,2}$"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "units"
+                ],
+                "properties": {
+                  "units": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 65535
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "parts",
+                  "bytes"
+                ],
+                "properties": {
+                  "parts": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "array",
+                      "prefixItems": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "integer",
+                          "minimum": 1
+                        }
+                      ],
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  },
+                  "bytes": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            ]
+          },
+          "expect": {
+            "$ref": "#/$defs/parsed"
+          }
+        }
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "expect"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "expect": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "key",
+                "text",
+                "patched",
+                "postscript"
+              ],
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "text": {
+                  "type": "string"
+                },
+                "patched": {
+                  "type": "boolean"
+                },
+                "postscript": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "match": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "label",
+          "entries",
+          "patched",
+          "expect"
+        ],
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/entry"
+            }
+          },
+          "patched": {
+            "type": "boolean"
+          },
+          "expect": {
+            "$ref": "#/$defs/result"
+          }
+        }
+      }
+    },
+    "malformed": {
+      "description": "Match files the readers refuse, each one change away from document.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "label",
+          "document"
+        ],
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "document": {}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "families",
+        "full",
+        "postscript",
+        "trusted"
+      ],
+      "properties": {
+        "families": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "full": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "postscript": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "trusted": {
+          "type": "boolean"
+        }
+      }
+    },
+    "parsed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "format",
+        "error",
+        "warnings",
+        "counts",
+        "entries"
+      ],
+      "properties": {
+        "format": {
+          "enum": [
+            null,
+            "macos-json",
+            "macos-text",
+            "fc-list",
+            "fc-list-plain",
+            "windows-registry",
+            "json-list",
+            "lines"
+          ]
+        },
+        "error": {
+          "enum": [
+            null,
+            "empty",
+            "too_big",
+            "binary",
+            "font_file",
+            "html",
+            "command",
+            "not_found",
+            "no_names"
+          ]
+        },
+        "warnings": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "few_names",
+              "cut_off",
+              "prompt_dropped",
+              "decoding",
+              "paths_dropped",
+              "hidden_skipped"
+            ]
+          }
+        },
+        "counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "lines",
+            "entries",
+            "hidden",
+            "too_long",
+            "dropped"
+          ],
+          "properties": {
+            "lines": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "entries": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "hidden": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "too_long": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "dropped": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entry"
+          }
+        }
+      }
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owned",
+        "near",
+        "counts"
+      ],
+      "properties": {
+        "owned": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "as",
+              "how"
+            ],
+            "properties": {
+              "as": {
+                "type": "string"
+              },
+              "how": {
+                "enum": [
+                  "family",
+                  "postscript",
+                  "build",
+                  "rename",
+                  "patched"
+                ]
+              }
+            }
+          }
+        },
+        "near": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "as",
+              "why"
+            ],
+            "properties": {
+              "as": {
+                "type": "string"
+              },
+              "why": {
+                "enum": [
+                  "ambiguous",
+                  "patched",
+                  "sibling",
+                  "related",
+                  "bundle"
+                ]
+              }
+            }
+          }
+        },
+        "counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "entries",
+            "owned",
+            "near",
+            "known",
+            "ineligible",
+            "unknown",
+            "reasons"
+          ],
+          "properties": {
+            "entries": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "owned": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "near": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "known": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ineligible": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unknown": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "reasons": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

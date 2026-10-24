@@ -1,0 +1,3 @@
+fish: Unknown command: fc-lis
+fc-lis : family | sort
+^~~~~^
