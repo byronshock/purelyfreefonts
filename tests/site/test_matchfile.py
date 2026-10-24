@@ -511,7 +511,8 @@ def test_a_reviewed_name_that_is_no_longer_ambiguous_is_refused(tmp_path):
     path = write(tmp_path, reviewed=stale)
     assert errors_of(path) == [
         f"{path}: 'Sample Serif 04 Light' is reviewed as ambiguous in "
-        f"{tmp_path / 'names.reviewed.toml'}, but no longer is; remove it"
+        f"{tmp_path / 'names.reviewed.toml'}, but no longer is; once the owner has reviewed "
+        "the drop, remove it"
     ]
 
 
@@ -671,7 +672,7 @@ def test_a_recode_whose_alias_is_already_a_near_match_is_refused(tmp_path, relat
         f"{tmp_path / 'names.reviewed.toml'}: 'Sample Mono 20 Gen' is reviewed (synthetic) as an "
         "owned alias of sample-mono-20 that the hopper makes related, but names.json's aliases "
         f"at its key 'samplemono20gen' are already {relation}, so the recode changes nothing; "
-        "remove it"
+        "once the owner has reviewed the change, remove it"
     ]
     (tmp_path / "names.reviewed.toml").write_text(AMBIGUOUS_06, encoding="utf-8")
     doc = json.loads(matchfile.match_file(SAMPLE, path).blob)
@@ -741,7 +742,7 @@ def test_a_refused_recode_and_the_check_s_findings_are_listed_together(tmp_path)
         f"{path}: 'Sample Sans 06 Black' may be a weight of sample-sans-06: an ambiguous name "
         f"nobody has reviewed; once the owner has, list it in {listed}",
         f"{path}: 'Sample Serif 04 Light' is reviewed as ambiguous in {listed}, but no longer "
-        "is; remove it",
+        "is; once the owner has reviewed the drop, remove it",
     ]
 
 

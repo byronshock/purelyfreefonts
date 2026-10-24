@@ -345,7 +345,7 @@ def refused_recodes(names: Mapping[str, Any], reviewed: Reviewed) -> dict[str, s
                 f"{recode.name!r} is reviewed ({recode.ruling}) as an owned alias of "
                 f"{recode.family} that the hopper makes {recode.relation}, but names.json's "
                 f"aliases at its key {key!r} are already {', '.join(sorted(relations[key]))}, "
-                "so the recode changes nothing; remove it"
+                "so the recode changes nothing; once the owner has reviewed the change, remove it"
             )
     return refused
 
@@ -395,7 +395,8 @@ def check_errors(
                 f"({seen.ruling}) as one of {', '.join(seen.families)}; the owner reviews the change"
             )
     errors += [
-        f"{seen.name!r} is reviewed as ambiguous in {reviewed_path}, but no longer is; remove it"
+        f"{seen.name!r} is reviewed as ambiguous in {reviewed_path}, but no longer is; once "
+        "the owner has reviewed the drop, remove it"
         for key, seen in sorted(reviewed.ambiguous.items())
         if key not in check.amb
     ]
