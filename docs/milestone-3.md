@@ -35,6 +35,8 @@ The owner, 2026-10-21: "a single tool that is more or less universal: The user g
 - **Privacy:** M3-D7 (a), M3-D10 (a) without its button yet, and M3-D13 (a), with nothing from the list, and no OS tab, in the address.
 - **Show:** fonts you don't have (the default), all fonts with yours marked, or only fonts you have.
 - **Match data:** built by the site build from the committed `build/names.json` (`inventory_match_data_site_build`, amending step 3).
+- **Ambiguous names:** a reviewed set of five, checked by the site build every month (`inventory_ambiguous_names`).
+- **Loading:** the parser and matcher come as a separate file with the match file, only when a list arrives: two fixed requests (`inventory_matcher_on_demand`, amending step 9).
 
 Each code pull request is built in its own worktree, reviewed adversarially before it opens, and merged by the owner.
 
@@ -44,11 +46,11 @@ Each code pull request is built in its own worktree, reviewed adversarially befo
   - [ ] Shared vectors (`tests/vectors/owned-fonts.json`, `owned-known-answers.json`) and synthetic fixtures for every format in `tests/fixtures/owned/`. CI fails on any real path in them.
   - [ ] The known answers pass on the real `build/names.json` of main and of `preview/2026-10-17`: Source Sans Pro → Source Sans 3, FiraCode NF → Fira Code, Roboto Slab ≠ Roboto, Inter Tight ≠ Inter, Noto Sans JP ≠ Noto Sans, and Adwaita Sans never Inter.
 - [ ] **PR 2, the match file in the site build** (step 3, amended): a hashed `/assets/match.<h>.json`, checked against `catalog-site.json` (same run, same ids, every alias), within a 50 KB budget, and named on the list page. CONTRACT.md and `docs/catalog-schema.md` describe it.
-- [ ] **PR 3, the parser and matcher in the browser** (steps 4 and 5): two script parts that agree with Python on every vector in Chromium and Firefox, and match 10,000 names in under 200 ms.
+- [ ] **PR 3, the parser and matcher in the browser** (steps 4 and 5): a separate script, loaded only when a list arrives, that agrees with Python on every vector in Chromium and Firefox and matches 10,000 names in under 200 ms.
 - [ ] **PR 4, the hopper on the list** (steps 6, 8 and 9):
   - [ ] Drop, choose or paste; a summary; the Show menu; "Forget this list"; each OS's command with a copy button.
   - [ ] Owned fonts leave every view, "Showing N of M" counts them out, and changes are announced.
-  - [ ] Privacy tests: no request until a list arrives, then exactly one, for the match file; nothing in the address, history or storage; it works offline.
+  - [ ] Privacy tests: no request until a list arrives, then exactly two, for the matcher and the match file; nothing in the address, history or storage; it works offline.
   - [ ] Accessibility and keyboard tests, and the page within its budget.
 - [ ] **PR 5, the words**, after the owner's rulings: the early-version line ("Coming next: free font inventory tools."), privacy.md's "Coming next" section, and about.md's "hiding the fonts you already have".
 - [ ] **On staging:** `preview/2026-10-17` rebased on main and deployed; the owner tries his own Linux list in Chromium and Firefox, watching the Network tab.
