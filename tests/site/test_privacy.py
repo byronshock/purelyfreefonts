@@ -728,18 +728,24 @@ def test_built_pages_point_only_at_this_site(site_dir: Path) -> None:
     assert problems == []
 
 
-def test_the_script_names_no_storage_api(site_dir: Path) -> None:
-    """site/CONTRACT.md section 5: nothing is stored. Milestone 3 (M3-D13) turns this into an
-    allowlist if it ever stores anything."""
-    scripts = list(site_dir.glob("assets/app.*.js"))
-    assert len(scripts) == 1
-    source = scripts[0].read_text(encoding="utf-8")
+def test_neither_script_names_a_storage_or_request_api(site_dir: Path) -> None:
+    """site/CONTRACT.md section 5: nothing is stored, and no request goes but by fetch() and
+    the matcher's one script. Both built modules are read, the page's and the matcher's
+    (which reads a visitor's list; inventory_matcher_on_demand), and they are the only
+    scripts the site ships. WebRTC is here because connect-src doesn't govern it. The parts
+    lint refuses the same names (assets.STORAGE_JS and OTHER_JS). Milestone 3 (M3-D13) turns
+    this into an allowlist if it ever stores anything."""
+    scripts = sorted(site_dir.glob("assets/*.js"))
+    assert [s.name.split(".")[0] for s in scripts] == ["app", "matcher"]
     storage = re.compile(
         r"\b(localStorage|sessionStorage|indexedDB|cookieStore|serviceWorker|openDatabase"
-        r"|getDirectory|sendBeacon|WebSocket|WebTransport|EventSource|RTCPeerConnection)\b"
+        r"|getDirectory|sendBeacon|fetchLater|XMLHttpRequest|WebSocket|WebTransport"
+        r"|EventSource|importScripts)\b|RTCPeerConnection|Worker\s*\("
         r"|document\s*\.\s*cookie|\bcaches\s*\.|\bnavigator\s*\.\s*storage\b"
     )
-    assert [m.group(0) for m in storage.finditer(source)] == []
+    for script in scripts:
+        source = script.read_text(encoding="utf-8")
+        assert [m.group(0) for m in storage.finditer(source)] == [], script.name
 
 
 def test_the_tip_link_is_one_plain_link_to_stripe(site_dir: Path, tip_url: str) -> None:

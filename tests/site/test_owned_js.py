@@ -93,10 +93,11 @@ PAGE = (
     f'<script type=module src="{MATCHER_PATH}"></script>'
     "<script type=module>globalThis.__tffWatch = false;</script>"
 )
-# test_keys_js.py's rule, wider: no network, page, frame, worker, storage, clock or
-# randomness name outside comments.
+# test_keys_js.py's rule, wider: no network (WebRTC included, which connect-src doesn't
+# govern), page, frame, worker, storage, clock or randomness name outside comments.
 ENVIRONMENT = re.compile(
-    r"\b(?:fetch|XMLHttpRequest|sendBeacon|WebSocket|EventSource|import|document|window"
+    r"\b(?:fetch|fetchLater|XMLHttpRequest|sendBeacon|WebSocket|WebTransport|EventSource"
+    r"|RTCPeerConnection|webkitRTCPeerConnection|openDatabase|import|document|window"
     r"|navigator|location|globalThis|localStorage|sessionStorage|indexedDB|caches|cookieStore"
     r"|Date|random|setTimeout|setInterval|requestIdleCallback|requestAnimationFrame"
     r"|performance|crypto|self|top|parent|opener|frames|history|Worker|SharedWorker"
@@ -106,7 +107,8 @@ ENVIRONMENT = re.compile(
 # The globals WATCH_JS watches: ENVIRONMENT's, but for the keywords and globalThis. Those the
 # page can't redefine ([LegacyUnforgeable] in Web IDL) are the static rule's alone.
 WATCHED = (
-    "fetch", "XMLHttpRequest", "WebSocket", "EventSource", "navigator", "localStorage",
+    "fetch", "fetchLater", "XMLHttpRequest", "WebSocket", "WebTransport", "EventSource",
+    "RTCPeerConnection", "webkitRTCPeerConnection", "openDatabase", "navigator", "localStorage",
     "sessionStorage", "indexedDB", "caches", "cookieStore", "Date", "setTimeout", "setInterval",
     "requestIdleCallback", "requestAnimationFrame", "performance", "crypto", "self", "parent",
     "opener", "frames", "history", "Worker", "SharedWorker", "BroadcastChannel",

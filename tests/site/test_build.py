@@ -586,9 +586,12 @@ def test_output_passes_the_csp_lint(tmp_path, catalog, mini_site):
     assert len(pages_) == 3
     for page in pages_:
         assert csp_problems(page.read_text(encoding="utf-8")) == [], page
-    js = next((out / "assets").glob("app.*.js")).read_text(encoding="utf-8")
-    for needle in assets.FORBIDDEN_JS + assets.STORAGE_JS:
-        assert needle not in js
+    modules = sorted((out / "assets").glob("*.js"))
+    assert [m.name.split(".")[0] for m in modules] == ["app", "matcher"]
+    for module in modules:
+        js = module.read_text(encoding="utf-8")
+        for needle in assets.FORBIDDEN_JS + assets.STORAGE_JS + assets.OTHER_JS:
+            assert needle not in js, (module.name, needle)
 
 
 @pytest.mark.parametrize(
@@ -1852,6 +1855,21 @@ GOOD_PART = "// 20-view: test.\nconst View = (() => {\n  const x = 1;\n  return 
             "storage",
         ),
         ("20-view.js", "const View = (() => {\n  document.cookie = 'a';\n})();\n", "storage"),
+        # ... and the built-file scan's wider names (test_privacy.py), in either module: WebRTC,
+        # which connect-src doesn't govern, WebTransport, fetchLater and the other stores
+        *(
+            (part, f"const {const} = (() => {{\n  {call};\n}})();\n", problem)
+            for part, const in (("50-ext.js", "Ext"), ("54-owned-match.js", "OwnedMatch"))
+            for call, problem in (
+                ("new RTCPeerConnection()", "forbidden: RTCPeerConnection"),
+                ("new webkitRTCPeerConnection()", "forbidden: RTCPeerConnection"),
+                ("new WebTransport('/x')", "forbidden: WebTransport"),
+                ("fetchLater('/x')", "forbidden: fetchLater"),
+                ("openDatabase('x')", "storage API: openDatabase"),
+                ("globalThis.navigator.storage.persist()", "storage API: navigator.storage"),
+                ("s.getDirectory()", "storage API: getDirectory"),
+            )
+        ),
         (
             "20-view.js",
             "const View = (() => {\n  fetch('https://example.com/x');\n})();\n",

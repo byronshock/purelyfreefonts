@@ -91,7 +91,8 @@ FORBIDDEN_JS: tuple[str, ...] = (
     "DOMParser",
     "srcdoc",
 )
-# Browser storage, refused the same way: nothing is stored (site/CONTRACT.md section 5).
+# Browser storage, refused the same way: nothing is stored (site/CONTRACT.md section 5). The
+# built-file scan (tests/site/test_privacy.py) reads both modules for these and OTHER_JS's.
 STORAGE_JS: tuple[str, ...] = (
     "localStorage",
     "sessionStorage",
@@ -100,15 +101,22 @@ STORAGE_JS: tuple[str, ...] = (
     "caches.",
     "serviceWorker",
     "cookieStore",
+    "openDatabase",
+    "navigator.storage",
+    "getDirectory",
 )
-# Requests other than fetch(), which reads relative URLs from the DOM (section 5), scripts
-# other than the matcher module's (a worker runs one), and style attributes, which the CSP
-# blocks (style-src 'self'; set styles through CSSOM instead).
+# Requests other than fetch(), which reads relative URLs from the DOM (section 5): WebRTC
+# among them, which connect-src doesn't govern; scripts other than the matcher module's (a
+# worker runs one); and style attributes, which the CSP blocks (style-src 'self'; set styles
+# through CSSOM instead).
 OTHER_JS: tuple[str, ...] = (
     "sendBeacon",
+    "fetchLater",
     "XMLHttpRequest",
     "WebSocket",
+    "WebTransport",
     "EventSource",
+    "RTCPeerConnection",
     "Worker(",
     "importScripts",
     "setAttribute('style'",
