@@ -156,6 +156,8 @@ def load_reviewed(path: Path) -> tuple[Reviewed, bytes]:
         doc = tomllib.loads(blob.decode("utf-8"))
     except (UnicodeDecodeError, tomllib.TOMLDecodeError) as exc:
         raise MatchFileError([f"{path}: {exc}"]) from exc
+    except RecursionError:  # tomllib recurses: an array or inline table some 400 levels deep
+        raise MatchFileError([f"{path}: nested too deeply to read"]) from None
     errors = [
         f"{path}: unknown key {key!r}" for key in sorted(doc.keys() - {"ambiguous", "recode"})
     ]

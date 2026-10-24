@@ -538,6 +538,14 @@ def test_a_missing_reviewed_list_is_an_empty_one(tmp_path):
     ("text", "problem"),
     [
         pytest.param("[[ambiguous]\n", "Expected ']]'", id="bad-toml"),
+        pytest.param(
+            "a = " + "[" * 5_000 + "]" * 5_000 + "\n", "nested too deeply to read", id="deep-array"
+        ),
+        pytest.param(
+            "a = " + "{b = " * 5_000 + "1" + "}" * 5_000 + "\n",
+            "nested too deeply to read",
+            id="deep-inline-table",
+        ),
         pytest.param("version = 1\n" + REVIEWED, "unknown key 'version'", id="unknown-key"),
         pytest.param(
             REVIEWED.replace('ruling = "synthetic"\n', 'ruling = "synthetic"\nnote = "x"\n', 1),
