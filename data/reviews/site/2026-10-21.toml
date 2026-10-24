@@ -1,0 +1,23 @@
+# Owner rulings of 2026-10-21 on the first free font inventory tool, the hopper (Milestone 3, slice 1), asked in chat by the lead session as single-select questions.
+# Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md (Inventory tools) and docs/milestone-3.md (Slice 1).
+
+[inventory_on_list_page]
+choice = "a"
+recommended = true
+value = "list_page"
+ruling = "The first inventory tool, the hopper, sits on the main list, in the filter panel beside \"Hide fonts that come with\": a visitor gives it a list of their fonts, and the fonts they have leave every view of the list. There is no separate /check/ page. This answers M3-D6 and M3-D8: the check is part of the main page from the start. It reaches the live site with the soft launch, and staging shows it before then."
+reason = "The owner asked for \"a single tool that is more or less universal: The user generates a text file listing all their fonts, and then drops this on a hopper. Magically it filters out every font already installed on the computer.\" Of (a) on the list and (b) an unlinked /check/ page first (M3-D6's default), the owner took Claude's recommendation: production doesn't deploy until the soft launch anyway."
+
+[inventory_file_or_paste]
+choice = "b"
+recommended = false
+value = "file_or_paste"
+ruling = "The hopper takes a file, dropped on it or chosen with a button, or a paste. Each operating system's command writes fonts.txt, and a variant that copies the list to the clipboard is offered for pasting."
+reason = "The owner's choice, \"A file or a paste\", over Claude's recommendation (a), a file only, the one way the owner had described."
+
+[inventory_linux_tested_only]
+choice = "c"
+recommended = false
+value = "linux_tested_others_marked"
+ruling = "Only the Linux command has been run on a real machine (the owner's CachyOS). The macOS and Windows commands ship marked \"not yet tested\" until someone runs them; step 1's test kit waits for that."
+reason = "The owner's answer, \"Nobody yet\", to who can run the commands on a Mac and on Windows; Claude made no recommendation among (a) the owner, (b) someone else and (c) nobody yet."

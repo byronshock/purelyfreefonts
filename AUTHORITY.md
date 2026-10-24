@@ -427,6 +427,21 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
 
   *(2026-09-30 and 2026-10-05)*
 
+## Inventory tools (Milestone 3)
+
+- **Slice 1: the hopper (2026-10-21).** The owner: "a single tool that is more or less universal: The user generates a text file listing all their fonts, and then drops this on a hopper. Magically it filters out every font already installed on the computer." The plan and its pull requests are in [docs/milestone-3.md](docs/milestone-3.md#slice-1-the-hopper).
+  - **Where:** on the main list, in the filter panel beside "Hide fonts that come with". There is no `/check/` page (`inventory_on_list_page`, answering M3-D6 and M3-D8).
+  - **Input:** a file, dropped or chosen, or a paste (`inventory_file_or_paste`, the owner's choice; Claude had recommended a file only).
+  - **Testing:** only the Linux command has run on a real machine; the macOS and Windows commands show "not yet tested" until someone runs them (`inventory_linux_tested_only`).
+  - **Matching:** an old name counts as owned (M3-D3 a), and so does a patched build (M3-D4 a; its switch comes later); derived and related families never do (M3-D5 a). HackGen, which merges Hack with a CJK typeface, is only a near-match of Hack in the hopper; the alias row that credits its installs to Hack stays (`hopper_hackgen_related`, 2026-10-23).
+  - **Privacy:** the match data loads only when a list arrives (M3-D7 a); after that, previews that haven't loaded stay off (M3-D10 a); nothing is stored, and nothing from the list, nor the operating system's tab, enters the address (M3-D13 a, amended; `inventory_additions`' address test).
+  - **Show:** fonts you don't have (the default), all fonts with yours marked, or only fonts you have (`inventory_additions`' "Show only mine").
+  - **Match data:** built by the site build from the committed `build/names.json` and `catalog-site.json`, not by the pipeline's `match` stage (`inventory_match_data_site_build`, amending step 3).
+  - **Ambiguous names:** Archivo Black, Bungee Hairline, Gentium Book, Gentium Plus Book and Syne Italic are a reviewed set: from a plain list they give only a near-match, and the site build fails on any change to the set until the owner reviews it (`inventory_ambiguous_names`, 2026-10-23).
+  - **On demand:** the parser and matcher load as a separate file with the match file, only when a list arrives: two fixed requests, and the list page keeps its weight (`inventory_matcher_on_demand`, 2026-10-23, amending step 9 and CONTRACT §5).
+
+  *(2026-10-21 to 2026-10-23, `data/reviews/site/`)*
+
 ## Infrastructure
 
 *(2026-09-25; setup checklist and runbook in [ops/SERVER.md](ops/SERVER.md))*
@@ -506,7 +521,7 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
 
 1. Survey the tools that already exist for this, or for parts of it. *(done 2026-09-25; findings in [docs/prior-art.md](docs/prior-art.md))*
 2. Milestone 1: handed off to Milestone 2 (step 20). The 2026-09-26 catalog is built, reviewed by the owner and committed, and `catalog-site.json` v1 is frozen. The handoff note is [docs/milestone-1-handoff.md](docs/milestone-1-handoff.md), and the monthly tasks are in [ops/MONTHLY.md](ops/MONTHLY.md). Left in [docs/milestone-1.md](docs/milestone-1.md): the owner's acceptance of the handoff, and three smaller items (steps 3, 5 and 13). *(2026-09-30)*
-3. **Milestone 2 is the current step:** the filterable list goes live ([docs/milestone-2.md](docs/milestone-2.md)). Its Step 0 decisions are answered, and the questions Milestone 1 left for it are settled (the handoff note). After it come the first live monthly refresh ([docs/milestone-refresh.md](docs/milestone-refresh.md)) and Milestone 3. Milestones 3 and 4 keep their Step 0 until each starts ([docs/roadmap.md](docs/roadmap.md)). *(2026-09-30)* Since 2026-10-19 the scoring-method port runs alongside it ([docs/milestone-method.md](docs/milestone-method.md)); the soft launch (Milestone 2 step 14) waits for the owner's look at its scores.
+3. **Milestone 2 is the current step:** the filterable list goes live ([docs/milestone-2.md](docs/milestone-2.md)). Its Step 0 decisions are answered, and the questions Milestone 1 left for it are settled (the handoff note). After it come the first live monthly refresh ([docs/milestone-refresh.md](docs/milestone-refresh.md)) and Milestone 3. *(2026-10-21)* Milestone 3's first slice, the hopper, is being built while the soft launch waits ([Inventory tools](#inventory-tools-milestone-3)). Milestones 3 and 4 keep their Step 0 until each starts ([docs/roadmap.md](docs/roadmap.md)). *(2026-09-30)* Since 2026-10-19 the scoring-method port runs alongside it ([docs/milestone-method.md](docs/milestone-method.md)); the soft launch (Milestone 2 step 14) waits for the owner's look at its scores.
 
 ## Background
 
