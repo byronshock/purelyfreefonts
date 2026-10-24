@@ -595,6 +595,8 @@ def test_a_recode_changes_only_its_alias_s_code():
         ({"Foo Sans Text": "build"}, "is not one of"),
         ({"-": "related"}, "no alias of names.json"),
         ({"Foo Sans Text": "related", "FooSansText": "sibling"}, "two relations"),
+        ({"Bar Mono": "related"}, "change nothing"),  # already related: a stale entry
+        ({"Foo Family": "related"}, "change nothing"),  # a bundle, a near-match too
     ],
 )
 def test_a_recode_must_name_an_alias_and_a_near_match_relation(recodes, message):

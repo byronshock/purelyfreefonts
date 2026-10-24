@@ -631,6 +631,28 @@ def test_a_recode_whose_alias_is_gone_is_refused(tmp_path):
     ]
 
 
+@pytest.mark.parametrize(("relation", "code"), [("related", "x"), ("sibling", "s")])
+def test_a_recode_whose_alias_is_already_a_near_match_is_refused(tmp_path, relation, code):
+    """A refresh that makes the alias a near-match itself leaves a recode that changes
+    nothing, a stale entry too."""
+
+    def near(names: dict[str, Any]) -> None:
+        family(names, "sample-mono-20")["names"] = [
+            {"name": "Sample Mono 20 Gen", "relation": relation}
+        ]
+
+    path = write(tmp_path, names_with(near))
+    assert errors_of(path) == [
+        f"{tmp_path / 'names.reviewed.toml'}: 'Sample Mono 20 Gen' is reviewed (synthetic) as an "
+        "owned alias of sample-mono-20 that the hopper makes related, but names.json's aliases "
+        f"at its key 'samplemono20gen' are already {relation}, so the recode changes nothing; "
+        "remove it"
+    ]
+    (tmp_path / "names.reviewed.toml").write_text(AMBIGUOUS_06, encoding="utf-8")
+    doc = json.loads(matchfile.match_file(SAMPLE, path).blob)
+    assert doc["k"]["samplemono20gen"] == f"{doc['ids'].index('sample-mono-20')}{code}"
+
+
 def test_a_recode_that_another_alias_bypasses_is_refused(tmp_path):
     """A patched build of the recoded alias would own the family again (``owned``'s check):
     the reviewed list must recode it too (``hopper_hackgen_related``: "HackGen NF")."""

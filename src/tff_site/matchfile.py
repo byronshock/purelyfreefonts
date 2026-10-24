@@ -314,16 +314,19 @@ def names_errors(doc: Mapping[str, Any], names: Any) -> list[str]:
 
 
 def recode_errors(names: Mapping[str, Any], reviewed: Reviewed) -> list[str]:
-    """Recodes whose key isn't an alias of exactly the family they name.
+    """Recodes whose key isn't an alias of exactly the family they name, or whose aliases
+    names.json already gives no owned relation (``owned.OWNED_RELATIONS``).
 
     A recode works by ``match_key`` on every alias row at that key (``owned``), so the review
     of one family's alias would silently recode another's, or recode nothing once a refresh
-    moves the alias (a stale entry).
+    moves the alias or makes it a near-match itself (a stale entry).
     """
     holders: dict[str, set[str]] = defaultdict(set)
+    relations: dict[str, set[str]] = defaultdict(set)
     for fam in names["families"]:
         for item in fam["names"]:
             holders[match_key(item["name"])].add(fam["id"])
+            relations[match_key(item["name"])].add(item["relation"])
     errors: list[str] = []
     for key, recode in sorted(reviewed.recodes.items()):
         found = sorted(holders.get(key, ()))
@@ -331,6 +334,13 @@ def recode_errors(names: Mapping[str, Any], reviewed: Reviewed) -> list[str]:
             errors.append(
                 f"{recode.name!r} is reviewed as an alias of {recode.family} ({recode.ruling}), "
                 f"but names.json's aliases at its key {key!r} are of {', '.join(found) or 'none'}"
+            )
+        elif not relations[key] & owned.OWNED_RELATIONS:
+            errors.append(
+                f"{recode.name!r} is reviewed ({recode.ruling}) as an owned alias of "
+                f"{recode.family} that the hopper makes {recode.relation}, but names.json's "
+                f"aliases at its key {key!r} are already {', '.join(sorted(relations[key]))}, "
+                "so the recode changes nothing; remove it"
             )
     return errors
 
