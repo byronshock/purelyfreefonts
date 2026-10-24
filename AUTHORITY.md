@@ -437,6 +437,8 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
   - **Privacy:** the match data loads only when a list arrives (M3-D7 a); after that, previews that haven't loaded stay off (M3-D10 a); nothing is stored, and nothing from the list, nor the operating system's tab, enters the address (M3-D13 a, amended; `inventory_additions`' address test).
   - **Show:** fonts you don't have (the default), all fonts with yours marked, or only fonts you have (`inventory_additions`' "Show only mine").
   - **Match data:** built by the site build from the committed `build/names.json` and `catalog-site.json`, not by the pipeline's `match` stage (`inventory_match_data_site_build`, amending step 3).
+  - **Ambiguous names:** Archivo Black, Bungee Hairline, Gentium Book, Gentium Plus Book and Syne Italic are a reviewed set: from a plain list they give only a near-match, and the site build fails on any change to the set until the owner reviews it (`inventory_ambiguous_names`, 2026-10-23).
+  - **On demand:** the parser and matcher load as a separate file with the match file, only when a list arrives: two fixed requests, and the list page keeps its weight (`inventory_matcher_on_demand`, 2026-10-23, amending step 9 and CONTRACT §5).
 
   *(2026-10-21 to 2026-10-23, `data/reviews/site/`)*
 
