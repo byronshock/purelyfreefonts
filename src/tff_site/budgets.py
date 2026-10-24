@@ -138,10 +138,8 @@ def check(site_dir: Path) -> list[Problem]:
         problems += found
         if payload is not None:
             details.add(payload)
-        problems += _check_hopper(site, refs, refs.match, "match file", "data-match", MATCH_MAX)
-        problems += _check_hopper(
-            site, refs, refs.matcher, "matcher module", "data-matcher", MATCHER_MAX
-        )
+        problems += _check_hopper(site, refs.match, "match file", "data-match", MATCH_MAX)
+        problems += _check_hopper(site, refs.matcher, "matcher module", "data-matcher", MATCHER_MAX)
     else:
         problems.append(Problem(LIST_PAGE, "missing: the list page"))
     for path in sorted(details):
@@ -271,7 +269,7 @@ def _check_size(site: Path, path: Path, what: str, limit: int, hint: str = "") -
 
 
 def _check_hopper(
-    site: Path, refs: _Refs, url: str | None, what: str, attribute: str, limit: int
+    site: Path, url: str | None, what: str, attribute: str, limit: int
 ) -> list[Problem]:
     """The hopper's file that ``#list[<attribute>]`` names: its size, and that nothing else
     names it (M3-D7 a, inventory_matcher_on_demand)."""
