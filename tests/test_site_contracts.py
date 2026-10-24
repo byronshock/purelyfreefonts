@@ -344,10 +344,9 @@ RECORDED_RULINGS = frozenset(
 )
 COMMITTED_REVIEWED, _ = matchfile.load_reviewed(matchfile.default_reviewed_path(COMMITTED_NAMES))
 # Cited before the owner has ruled: the lead asks the question, then records the answer in
-# data/reviews/ and drops the id from here (the strict xfail fails once it is recorded).
-RULINGS_PENDING = {
-    "inventory_ambiguous_names": "the owner's review of the five ambiguous names is to be asked",
-}
+# data/reviews/ and drops the id from here (the strict xfail fails once it is recorded). None is
+# pending: the five ambiguous names' review, inventory_ambiguous_names, was recorded 2026-10-23.
+RULINGS_PENDING: dict[str, str] = {}
 
 
 @pytest.mark.parametrize(
