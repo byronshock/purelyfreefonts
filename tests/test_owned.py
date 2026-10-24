@@ -606,6 +606,32 @@ def test_a_recode_must_name_an_alias_and_a_near_match_relation(recodes, message)
         owned.check_document(ov.NAMES, ov.CATALOG_IDS, recodes=recodes)
 
 
+def test_the_owned_relations_are_those_whose_codes_count_a_family_as_owned():
+    """A recode is for an alias that counts its family as owned: a rename, a PostScript name
+    or a build, same-font or patched (``_OWNED_LETTERS``); the rest are near-matches."""
+    assert {"rename", "postscript", "build"} == owned.OWNED_RELATIONS
+    assert owned.OWNED_RELATIONS.isdisjoint(owned.RECODE_RELATIONS)
+
+
+@pytest.mark.parametrize(
+    ("alias", "relation"),
+    [
+        ("Foo Sans Pro", "rename"),
+        ("FSans", "postscript"),
+        ("Foo Sans Variable", "build"),
+        ("Foo Sans Text", "build"),
+        ("Foo Sans NF", "build"),
+    ],
+)
+def test_a_recode_of_an_alias_of_each_owned_relation_is_taken(alias, relation):
+    """So no change to the letters can refuse a valid recode unnoticed."""
+    (row,) = [row for row in ov.NAMES["families"][1]["names"] if row["name"] == alias]
+    assert row["relation"] == relation
+    doc = owned.match_document(ov.NAMES, ov.CATALOG_IDS, ov.RUN_DATE, recodes={alias: "related"})
+    assert doc["k"][names.match_key(alias)] == "1x"
+    assert owned.check_document(ov.NAMES, ov.CATALOG_IDS, recodes={alias: "related"}).meetings == ()
+
+
 def _with_rows(*rows: dict[str, str]) -> dict[str, Any]:
     """The synthetic names.json with more alias rows for Foo Sans."""
     doc = json.loads(json.dumps(ov.NAMES))

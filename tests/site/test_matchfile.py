@@ -671,6 +671,22 @@ def test_a_recode_that_another_alias_bypasses_is_refused(tmp_path):
     assert doc["k"]["samplemono20gennf"] == f"{doc['ids'].index('sample-mono-20')}x"
 
 
+def test_a_recode_of_any_owned_relation_is_taken(tmp_path):
+    """A PostScript name and a rename count a family as owned (``owned.OWNED_RELATIONS``), so
+    the build takes a recode of either, as of a build."""
+    recodes = RECODE_20.replace("Sample Mono 20 Gen", "SampleSans01-Regular").replace(
+        "sample-mono-20", "sample-sans-01"
+    ).replace("related", "sibling") + RECODE_20.replace(
+        "Sample Mono 20 Gen", "Sample Sans Classic"
+    ).replace("sample-mono-20", "sample-sans-05").replace("related", "bundle")
+    doc = json.loads(
+        matchfile.match_file(SAMPLE, write(tmp_path, reviewed=REVIEWED + recodes)).blob
+    )
+    assert doc["k"]["samplesans01regular"] == f"{doc['ids'].index('sample-sans-01')}s"
+    assert doc["k"]["samplesansclassic"] == f"{doc['ids'].index('sample-sans-05')}u"
+    assert doc["k"]["samplemono20gen"] == f"{doc['ids'].index('sample-mono-20')}x"
+
+
 # ---------------------------------------------------------------------- every problem in one pass
 
 
