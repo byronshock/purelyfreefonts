@@ -41,12 +41,12 @@ The full catalog: every font in it, every rank, and every source.
 - `schema_version`.
 - `run`: the run `date`, the `method_version` (the date of the methodology the code implements: the newest of `method_versions`), `method_versions` (catalog.json only, from the scoring-method port: each rank's own method version, `tff_catalog.methods`; a rank whose version changed since the last merged run publishes `previous_score` equal to `score`), `config_sha256` (all config files), `ranking_toml_sha256` (the ranking parameters alone), `code_commit` (the commit that ran; forty zeros outside a git checkout) and `generator`.
 - `data_license`: `CC-BY-SA-4.0`, not provisional, with its URL.
-- `sources[]`: one entry per engine source used this run, in `ranking.toml` order. Disabled sources (Flutter, for now) and sources dropped after two stale months are left out. Each entry has:
+- `sources[]`: one entry per engine source used this run, in `ranking.toml` order. Disabled sources (Flutter, for now) and sources dropped after two stale months are left out, except the gate-only ones: GitHub and Nerd Fonts, while deferred, are listed when the run has their growth since an earlier snapshot, because their evidence counts toward the two-group gate (owner ruling of 2026-10-23, `deferred_sources_count_for_gate`). Each entry has:
   - `id`, `collector`, independence `group` and `survey`;
-  - `weight`: for a source of the engine's ranks, its effective weight in its survey view, after overlap scaling; null for a source the model's ranks read, which weigh each term by its fitted noise, not a hand weight (q5);
+  - `weight`: for a source of the engine's ranks, its effective weight in its survey view, after overlap scaling (0 for a gate-only source); null for a source the model's ranks read, which weigh each term by its fitted noise, not a hand weight (q5);
   - `publish_raw`: whether raw values may appear (false for Google and Fonts Over Time, rulings T2 and T4);
   - `data_date` and `fetched_at` of the snapshot used, and `stale` when that snapshot is older than the run;
-  - `ruler_overlap`: how many families the source shares with the ruler (Homebrew).
+  - `ruler_overlap`: how many families the source shares with the ruler (Homebrew); null for a gate-only source, which has no use for the ruler.
 - `fonts[]`: every catalog font, sorted by id.
 
 ### Each font
@@ -106,7 +106,7 @@ The catalog is the overall top 500 plus the top 100 of the project rank and both
   - `no_deliberate_evidence`: a Linux source abstained, and it had observed the font in *most installed*;
   - `too_new`: its terms in that rank are too new; in Rising, the font's first day on any channel is under 90 days ago (the "New" list);
   - `no_evidence`: anything else.
-- Either way, `score` is the rank's score (null without a term) and `groups` the number of its independence groups with evidence. In the model's ranks (`project`, `dev_apps`), the score is the posterior mean of the font's popularity, and a group counts when one of its terms sits above bulk (q14). In the engine's, it is the fused score, and a group counts with an observed term. `overall` repeats `project` (q12).
+- Either way, `score` is the rank's score (null without a term) and `groups` the number of its independence groups with evidence. In the model's ranks (`project`, `dev_apps`), the score is the posterior mean of the font's popularity, and a group counts when one of its terms sits above bulk (q14). In the engine's, it is the fused score, and a group counts with an observed term in it. The two-group gate also counts the `group` of a gate-only source's observed term, which this field leaves out, so a font with an exact rank (1–100) in an engine rank and `groups` 1 has a gate-only source `observed` among its `sources`, with a `group` other than its score's one. `overall` repeats `project` (q12).
 - `previous_score` is the font's score in that rank in the last published catalog (`state/published_scores.json`, which each run's export writes for the next), or null if it had none there. Before any catalog has been published, and in a rank's first run under a new method version (`method_versions`), it equals `score`, so nothing shows as moved (owner rulings of 2026-09-30, `score_previous_bootstrap`, and 2026-10-01, q20). It is kept for the rising and falling markers of Backlog TASK-4.
 
 ### Each source
@@ -121,6 +121,8 @@ The catalog is the overall top 500 plus the top 100 of the project rank and both
 - `value`: the value after alias sums, credits and floors. It appears only for sources whose `publish_raw` is true. Google and Fonts Over Time never carry one; their ranks and z are published, their counts are not.
 
 A source whose terms forbid showing ranks (`publish_rank = false` in `config/site.toml`) shows no rank, z or value for any font.
+
+A gate-only source (GitHub and Nerd Fonts while deferred) gives each font its `state`, `reason` and `group`, with `rank_in_source`, `z` and `weight_used` null, no `value` and an empty `abstains_in`, since none of its numbers reach a score. `group`, which only these entries carry, is the independence group the observed term gives the two-group gate, null unless observed. It is the source's own group (`github_counters`, `nerd`), except that a GitHub repository whose release asset the font's Homebrew cask downloads counts as Homebrew's group (ruling M5): such a term adds no group to a font that Homebrew observes, and the gate can still hold the font. `catalog-site.json` leaves these sources out.
 
 ## catalog-site.json
 

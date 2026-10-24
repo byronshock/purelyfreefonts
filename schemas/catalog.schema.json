@@ -185,7 +185,7 @@
               "null"
             ],
             "minimum": 0,
-            "description": "The source's effective weight in its survey view on the engine, after overlap scaling and phase-in. Null when that view is a model view (ranking.toml [model] views, Projects at the switch), which weighs each term by its fitted noise, not a hand weight (q5_group_shares_retired)."
+            "description": "The source's effective weight in its survey view on the engine, after overlap scaling and phase-in; 0 for a gate-only source (GitHub and Nerd Fonts while deferred, deferred_sources_count_for_gate), listed because its evidence counts toward the two-group gate, with a null ruler_overlap. Null when that view is a model view (ranking.toml [model] views, Projects at the switch), which weighs each term by its fitted noise, not a hand weight (q5_group_shares_retired)."
           },
           "publish_raw": {
             "type": "boolean"
@@ -688,7 +688,7 @@
             "additionalProperties": {
               "$ref": "#/$defs/source_entry"
             },
-            "description": "One entry per engine source id. value appears only for sources whose publish_raw is true (validate.py checks it against sources[]); Google (ruling T2) and Fonts Over Time (ruling T4) never carry one.",
+            "description": "One entry per engine source id. value appears only for sources whose publish_raw is true (validate.py checks it against sources[]); Google (ruling T2) and Fonts Over Time (ruling T4) never carry one. A gate-only source's entry has its state, reason and group only: rank_in_source, z and weight_used null, no value, an empty abstains_in.",
             "properties": {
               "google": {
                 "allOf": [
@@ -948,7 +948,7 @@
           ]
         }
       },
-      "description": "A font's place in one rank. Ranked: an exact rank (1-100) or a band, plus order, tier and range. Unranked: every placement field null and a reason. score and groups describe the rank's score either way: in the model's ranks (project, dev_apps) the posterior mean of the font's popularity, with groups counting those with a term above bulk (q14); in the engine's, the fused score, with groups counting those among observed terms. overall repeats project (q12).",
+      "description": "A font's place in one rank. Ranked: an exact rank (1-100) or a band, plus order, tier and range. Unranked: every placement field null and a reason. score and groups describe the rank's score either way: in the model's ranks (project, dev_apps) the posterior mean of the font's popularity, with groups counting those with a term above bulk (q14); in the engine's, the fused score, with groups counting those among its observed terms; the two-group gate also counts a gate-only source's group, which the font's sources show (deferred_sources_count_for_gate). overall repeats project (q12).",
       "if": {
         "properties": {
           "unranked": {
@@ -1077,6 +1077,23 @@
             "merged_into_parent"
           ]
         },
+        "group": {
+          "enum": [
+            null,
+            "arch",
+            "debian",
+            "flutter",
+            "fot",
+            "github_counters",
+            "google",
+            "homebrew",
+            "http_archive",
+            "jsdelivr",
+            "nerd",
+            "npm_registry"
+          ],
+          "description": "Gate-only sources only (ranking.toml gate_only: GitHub and Nerd Fonts while deferred, deferred_sources_count_for_gate), the one place this field appears: the independence group the font's observed term gives the two-group gate, which is the source's own group except that a GitHub repository whose release asset the font's Homebrew cask downloads is in homebrew's (gate M5), so it adds no group to a font Homebrew observes. Null unless observed."
+        },
         "abstains_in": {
           "type": "array",
           "uniqueItems": true,
@@ -1191,6 +1208,25 @@
             "properties": {
               "reason": {
                 "const": null
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "group"
+            ],
+            "properties": {
+              "group": {
+                "type": "string"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "state": {
+                "const": "observed"
               }
             }
           }

@@ -435,6 +435,20 @@ def counter_records() -> tuple[list[Record], list[Record]]:
     return github, nerd
 
 
+MONTH_AGO = END - timedelta(days=30)  # old enough for an enabled lifetime counter (28 days)
+Baselines = dict[str, tuple[tuple[date, tuple[Observation, ...]], ...]]
+
+
+def month_old_baselines(*records: list[Record], share: float = 0.1) -> Baselines:
+    """``Inputs.baselines`` for lifetime counters on ``MONTH_AGO``: each counter ``share``
+    of its total lower then, so every key grew since."""
+    by: dict[str, list[Observation]] = {}
+    for o in (r for recs in records for r in recs if isinstance(r, Observation)):
+        then = replace(o, value=(o.value or 0.0) * (1 - share), end=MONTH_AGO)
+        by.setdefault(o.source, []).append(then)
+    return {collector: ((MONTH_AGO, tuple(rows)),) for collector, rows in by.items()}
+
+
 def google_records() -> list[Record]:
     views = {
         "Quicksand": 1_000_000,
@@ -609,8 +623,10 @@ def test_floors_credits_ruler_and_gates(world: Paths) -> None:
     assert installed["arch"]["fantasque-sans-mono"].value == pytest.approx(
         max(0.01, 0.045 - 0.0415)
     )
-    # GitHub and Nerd Fonts have no term in any rank (owner rulings of 2026-09-30,
-    # g1_github_deferred and g2_nerd_deferred); gates M5 and R are moot meanwhile.
+    # GitHub and Nerd Fonts have no term in any score (owner rulings of 2026-09-30,
+    # g1_github_deferred and g2_nerd_deferred). They count toward the two-group gate
+    # (deferred_sources_count_for_gate, 2026-10-23), but only as growth since a baseline
+    # snapshot, which this world, a first run, lacks: no terms at all.
     for view in views.values():
         assert "github" not in view
         assert "nerd" not in view
@@ -670,7 +686,7 @@ def test_state_and_reruns_are_byte_stable(world: Paths) -> None:
     assert seen["quicksand"]["catalog"] == "2026-09-03"
     assert seen["quicksand"]["sources"]["homebrew"] == "2018-01-01"  # the earlier date wins
     assert seen["jetbrains-mono"]["sources"]["homebrew"] == "2019-06-01"
-    assert "github" not in seen["jetbrains-mono"]["sources"]  # off (g1_github_deferred)
+    assert "github" not in seen["jetbrains-mono"]["sources"]  # deferred, gate-only at most
     assert seen["newfont-sans"]["sources"]["homebrew"] == (END - timedelta(days=20)).isoformat()
     # Only a channel's own date is a first day on it: Debian has none, and an Arch
     # package with shares from the first month of the window is older than the window.
@@ -1095,7 +1111,7 @@ def test_nerd_releases_drop_excluded_assets_and_subtract_p10() -> None:
     _, nerd = counter_records()
     chosen = select(SRC.nerd, [r for r in nerd if isinstance(r, Observation)])
     assert k("nerd-folder", "FontPatcher") not in {o.key for o in chosen}
-    values = count_keys(SRC.nerd, chosen)
+    values = count_keys(SRC.nerd, chosen, month_old_baselines(chosen)["nerd_releases"][0][1])
     floored, notes = key_floors("nerd", SRC.nerd, values, ())
     rates = sorted(v.value or 0.0 for v in values.values())
     assert notes[0].value == pytest.approx(rates[0] + 0.4 * (rates[1] - rates[0]))
@@ -1189,7 +1205,7 @@ def test_arch_pools_the_window_s_system_months() -> None:
     assert values[k("arch-pkg", "ttf-gap")].value == pytest.approx(0.06 / 12)
 
 
-def test_snapshot_delta_first_run_and_baseline() -> None:
+def test_snapshot_delta_counts_growth_since_the_baseline() -> None:
     def asset(value: float, end: date, release: str = "v1") -> Observation:
         return obs(
             "github_releases",
@@ -1203,8 +1219,9 @@ def test_snapshot_delta_first_run_and_baseline() -> None:
         )
 
     now = [asset(36_500.0, END), asset(1_000.0, END, "v2")]
-    first = count_keys(SRC.github, now)
-    assert first[k("gh-asset", "o/r/font.zip")].value == pytest.approx(36_500 + 1_000)
+    # No baseline, no value: the first-run rule, lifetime total over the days since the
+    # asset was created, retired with b8a_no_scaling_any_source (owner ruling of 2026-09-30).
+    assert count_keys(SRC.github, now) == {}
     base = [asset(30_500.0, END - timedelta(days=60))]
     delta = count_keys(SRC.github, now, base)
     assert delta[k("gh-asset", "o/r/font.zip")].value == pytest.approx(
@@ -1308,6 +1325,7 @@ def test_github_group_follows_the_cask_asset() -> None:
         {key: ("jetbrains-mono", "direct", "")},
         [r for r in github if isinstance(r, Observation)],
         cask_repos={"jetbrains-mono": frozenset({"jetbrains/jetbrainsmono"})},
+        baselines=month_old_baselines(github),
     )
     res = corr.correct_source("github", SRC.github, inp, RANKING, {})
     assert res is not None
@@ -1320,6 +1338,31 @@ def test_github_group_follows_the_cask_asset() -> None:
     res = corr.correct_source("github", SRC.github, other, RANKING, {})
     assert res is not None
     assert res.terms["jetbrains-mono"].group == "github_counters"
+
+
+def test_an_enabled_lifetime_counter_needs_a_baseline_28_days_older() -> None:
+    """Methodology §5: GitHub and Nerd Fonts count their growth between snapshots, and the
+    first-run rule (lifetime total over days listed) retired with b8a_no_scaling_any_source.
+    With no baseline, or only one under 28 days older, the source has no terms that run
+    rather than annualized lifetime totals; a month-old one gives its growth."""
+    fam = family("jetbrains-mono", "JetBrains Mono")
+    github, _ = counter_records()
+    key = k("gh-asset", "JetBrains/JetBrainsMono/JetBrainsMono.zip")
+    now = [r for r in github if isinstance(r, Observation)]
+    inp = inputs([fam], {key: ("jetbrains-mono", "direct", "")}, now)
+    assert corr.correct_source("github", SRC.github, inp, RANKING, {}) is None
+    recent = END - timedelta(days=21)
+    short = {"github_releases": ((recent, tuple(replace(o, end=recent) for o in now)),)}
+    assert (
+        corr.correct_source("github", SRC.github, replace(inp, baselines=short), RANKING, {})
+        is None
+    )
+    res = corr.correct_source(
+        "github", SRC.github, replace(inp, baselines=month_old_baselines(github)), RANKING, {}
+    )
+    assert res is not None
+    assert res.baseline == MONTH_AGO
+    assert res.terms["jetbrains-mono"].value == pytest.approx(56_000 * 365 / 30)
 
 
 NERD_RELEASE_REPO = "ryanoasis/nerd-fonts"  # where Homebrew's Nerd casks download from
@@ -1338,7 +1381,13 @@ def test_nerd_keeps_its_own_group_when_the_cask_downloads_the_nerd_release() -> 
     }
     _, nerd = counter_records()
     data = [r for r in [*homebrew_records(), *nerd] if isinstance(r, Observation)]
-    inp = inputs([fam], keymap, data, cask_repos={"hack": frozenset({NERD_RELEASE_REPO})})
+    inp = inputs(
+        [fam],
+        keymap,
+        data,
+        cask_repos={"hack": frozenset({NERD_RELEASE_REPO})},
+        baselines=month_old_baselines(nerd),
+    )
     terms = {}
     for name in ("homebrew", "nerd"):
         res = corr.correct_source(name, SRC.all()[name], inp, RANKING, {})
@@ -1375,13 +1424,166 @@ def test_only_github_release_counts_join_homebrew_under_m5() -> None:
     }
     data = [r for r in [*github, *nerd] if isinstance(r, Observation)]
     casks = frozenset({"jetbrains/jetbrainsmono", NERD_RELEASE_REPO})
-    inp = inputs([fam], keymap, data, cask_repos={"jetbrains-mono": casks})
+    inp = inputs(
+        [fam],
+        keymap,
+        data,
+        cask_repos={"jetbrains-mono": casks},
+        baselines=month_old_baselines(github, nerd),
+    )
     groups = {}
     for name in ("github", "nerd"):
         res = corr.correct_source(name, SRC.all()[name], inp, RANKING, {})
         assert res is not None
         groups[name] = res.terms["jetbrains-mono"].group
     assert groups == {"github": "homebrew", "nerd": "nerd"}
+
+
+# --- gate-only sources (owner ruling of 2026-10-23, deferred_sources_count_for_gate) -------------
+
+BASE_DAY = END - timedelta(days=21)  # the first two monthly snapshots were 21 days apart
+
+
+def baseline_of(records: list[Record], growth: dict[str, float]) -> list[Observation]:
+    """Each counter as it stood on ``BASE_DAY``: its lifetime total less ``growth[name]``
+    (the key's last part; 0 when unnamed)."""
+    return [
+        replace(
+            o, value=(o.value or 0.0) - growth.get(o.key.key.rsplit("/", 1)[-1], 0.0), end=BASE_DAY
+        )
+        for o in records
+        if isinstance(o, Observation)
+    ]
+
+
+def test_a_gate_only_source_counts_its_growth_since_the_baseline() -> None:
+    """Nerd Fonts as it would count when it returns: each font's growth since the
+    run_history baseline (its folder's files summed over every release), less the 10th
+    percentile of every font's growth, credited in full to the original font. Symbols Only (exclude_assets) and FontPatcher are dropped, and an
+    asset that did not grow is censored. The about-a-month minimum gap is waived; the
+    enabled path would refuse the same baseline."""
+    fams = [
+        family("hack", "Hack", [("nerd-folder", "Hack")]),
+        family("agave", "Agave", [("nerd-folder", "Agave")]),
+        family("symbols", "Symbols", [("nerd-folder", "NerdFontsSymbolsOnly")]),
+    ]
+    keymap = {
+        k("nerd-folder", "Hack"): ("hack", "build", "nerd"),
+        k("nerd-folder", "Agave"): ("agave", "build", "nerd"),
+        k("nerd-folder", "NerdFontsSymbolsOnly"): ("symbols", "build", "nerd"),
+    }
+    _, nerd = counter_records()
+    symbols = replace(
+        next(o for o in nerd if isinstance(o, Observation)),
+        key=k("nerd-folder", "NerdFontsSymbolsOnly"),
+        value=9e6,
+    )
+    now = [o for o in [*nerd, symbols] if isinstance(o, Observation)]
+    growth = {"JetBrainsMono": 21_000, "Hack": 14_000, "FiraCode": 7_000, "Meslo": 3_500}
+    growth |= {"NerdFontsSymbolsOnly": 1e6, "FontPatcher": 1e6}  # Agave did not grow
+    base = baseline_of(now, growth)
+    inp = inputs(fams, keymap, now, baselines={"nerd_releases": ((BASE_DAY, tuple(base)),)})
+    assert corr._baseline(SRC.nerd, inp, select(SRC.nerd, now)) == []  # under 28 days
+    assert corr.correct_source("nerd", SRC.nerd, inp, RANKING, {}) is None  # so no terms
+    res = corr.gate_source("nerd", SRC.nerd, inp, RANKING, {})
+    assert res is not None
+    assert res.baseline == BASE_DAY
+    rates = sorted(g * 365 / 21 for g in (21_000, 14_000, 7_000, 3_500))
+    floor = rates[0] + 0.3 * (rates[1] - rates[0])  # p10 of the assets that grew
+    assert [n.value for n in res.floors] == [pytest.approx(floor)]
+    assert res.terms["hack"].state == "observed"
+    assert res.terms["hack"].value == pytest.approx(14_000 * 365 / 21 - floor)
+    assert res.terms["hack"].group == "nerd"
+    assert res.terms["agave"] == Term(0.0, "censored", "nerd", "below_floor")
+    assert "symbols" not in res.terms or res.terms["symbols"].state != "observed"
+    assert k("nerd-folder", "NerdFontsSymbolsOnly") not in res.key_starts
+    # With no baseline (the first run) it gives no evidence: never lifetime over days.
+    assert corr.gate_source("nerd", SRC.nerd, replace(inp, baselines={}), RANKING, {}) is None
+
+
+def test_a_gate_only_github_term_keeps_m5_prereleases_and_the_grace() -> None:
+    """GitHub, gate-only: M5 puts a repository the cask downloads in Homebrew's group,
+    another repository keeps github_counters; prereleases count only in prerelease_repos,
+    and a font whose assets are all under 60 days old is too new."""
+    fams = [
+        family("jetbrains-mono", "JetBrains Mono"),
+        family("dyslexic", "Dyslexic"),
+        family("beta-sans", "Beta Sans"),
+        family("fresh-sans", "Fresh Sans"),
+    ]
+
+    def asset(repo: str, value: float, created: date, **a: Any) -> Observation:
+        return obs(
+            "github_releases",
+            "lifetime",
+            k("gh-asset", f"{repo}/font.zip"),
+            value,
+            start=created,
+            release="v1",
+            first_seen=created.isoformat(),
+            repo=repo,
+            **a,
+        )
+
+    old = date(2024, 1, 1)
+    now = [
+        asset("JetBrains/JetBrainsMono", 560_000, old),
+        asset("antijingoist/opendyslexic", 9_000, old, prerelease=True),
+        asset("someone/beta", 5_000, old, prerelease=True),
+        asset("someone/fresh", 800, END - timedelta(days=30)),
+    ]
+    keymap = {
+        k("gh-asset", "JetBrains/JetBrainsMono/font.zip"): ("jetbrains-mono", "direct", ""),
+        k("gh-asset", "antijingoist/opendyslexic/font.zip"): ("dyslexic", "direct", ""),
+        k("gh-asset", "someone/beta/font.zip"): ("beta-sans", "direct", ""),
+        k("gh-asset", "someone/fresh/font.zip"): ("fresh-sans", "direct", ""),
+    }
+    base = [replace(o, value=(o.value or 0.0) / 2, end=BASE_DAY) for o in now]
+    inp = inputs(
+        fams,
+        keymap,
+        now,
+        baselines={"github_releases": ((BASE_DAY, tuple(base)),)},
+        cask_repos={"jetbrains-mono": frozenset({"jetbrains/jetbrainsmono"})},
+    )
+    res = corr.gate_source("github", SRC.github, inp, RANKING, {})
+    assert res is not None
+    assert (res.terms["jetbrains-mono"].state, res.terms["jetbrains-mono"].group) == (
+        "observed",
+        "homebrew",
+    )
+    assert (res.terms["dyslexic"].state, res.terms["dyslexic"].group) == (
+        "observed",
+        "github_counters",
+    )
+    assert "beta-sans" not in res.terms  # a prerelease outside prerelease_repos: not read
+    assert res.terms["fresh-sans"].state == "too_new"
+
+
+def test_the_stage_puts_gate_only_terms_in_the_ranks_that_list_them(world: Paths) -> None:
+    """With a baseline snapshot, GitHub and Nerd Fonts terms reach most chosen, most
+    installed and Coding, not Projects, Developers & apps or Rising; they make no tags and
+    write no first_seen dates, and corrections.md gives them a section."""
+    github, nerd = counter_records()
+    growth = {"JetBrainsMono.zip": 7_000, "JetBrainsMono": 21_000, "Hack": 14_000}
+    growth |= {"FiraCode": 7_000, "Meslo": 3_500, "Agave": 2_000}
+    for collector, recs in (("github_releases", github), ("nerd_releases", nerd)):
+        write_jsonl(baseline_of(recs, growth), world.records / f"{collector}@{BASE_DAY}.jsonl")
+    corr.run(context(world))
+    views = stageio.load_stage(world, "terms")
+    for view in ("desktop_chosen", "desktop_installed", "coding"):
+        assert views[view]["nerd"]["hack"].state == "observed", view
+        assert views[view]["nerd"]["hack"].group == "nerd"
+        assert views[view]["github"]["jetbrains-mono"].group == "homebrew"  # M5
+    for view in ("project", "dev_apps", "rising"):
+        assert not {"github", "nerd"} & set(views[view]), view
+    tags = stageio.load_stage(world, "tags")
+    assert tags["cantarell"].flags == ("no_deliberate_evidence",)
+    seen = jsonio.load(world.next_state / "first_seen.json")
+    assert all("github" not in e["sources"] and "nerd" not in e["sources"] for e in seen.values())
+    report = (world.build / "corrections.md").read_text()
+    assert "## Gate-only sources" in report
+    assert f"| nerd | {BASE_DAY} | {END} |" in report
 
 
 def test_almanac_width_cuts_merge_into_their_parent() -> None:

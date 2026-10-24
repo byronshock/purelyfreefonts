@@ -250,6 +250,11 @@ class SourceBase:
     rate: Rate  # the unit of `floor` and `censor_below`
     floor: float  # subtracted before ranking
     censor_below: float  # values under this (after the floor) are censored
+    # A disabled source whose evidence still counts toward the two-group gate (D14), with no
+    # term in any score: owner ruling of 2026-10-23, deferred_sources_count_for_gate
+    # (GitHub and Nerd Fonts while g1_github_deferred and g2_nerd_deferred hold). Only
+    # meaningful with enabled = false (``config.check_ranking``); optional, false when unset.
+    gate_only: bool = dataclasses.field(default=False, kw_only=True)
 
 
 @dataclass(frozen=True, slots=True)
@@ -332,6 +337,11 @@ class Sources:
     def all(self) -> dict[str, SourceBase]:
         """Every engine source by name, in declaration order."""
         return {f.name: getattr(self, f.name) for f in dataclasses.fields(self)}
+
+    def gate_only(self) -> frozenset[str]:
+        """The gate-only sources: disabled, but counted toward the two-group gate
+        (``SourceBase.gate_only``; deferred_sources_count_for_gate)."""
+        return frozenset(n for n, s in self.all().items() if s.gate_only and not s.enabled)
 
 
 @dataclass(frozen=True, slots=True)

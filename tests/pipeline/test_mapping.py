@@ -564,6 +564,31 @@ def test_prereleases_and_excluded_assets_are_not_read() -> None:
     assert [o.key.key for o in nerd] == ["v3.4.0/Hack.zip"]
 
 
+def test_gate_only_sources_are_reported() -> None:
+    """Owner ruling of 2026-10-23 (deferred_sources_count_for_gate): GitHub and Nerd Fonts
+    count toward the two-group gate while deferred, so a key of theirs that reaches no
+    family costs a font that group, and unmatched.md lists it like an enabled source's
+    (and the frames cover them). A source that is neither enabled nor gate-only stays out."""
+    cfg = ranking().sources
+    assert (cfg.github.enabled, cfg.github.gate_only) == (False, True)
+    life = {"series": "lifetime", "unit": "downloads", "start": date(2025, 10, 2), "end": RUN}
+    recs: dict[str, list[Observation | Relation]] = {
+        "github_releases": [
+            obs("github_releases", "gh-asset", "o/r/Mystery.zip", 3_650, release="v1", **life)
+        ],
+        "nerd_releases": [obs("nerd_releases", "gh-asset", "v3.4.0/Mystery.zip", 730, **life)],
+    }
+    rows, floors = mapping.report_rows(cfg.all(), recs, IDX)
+    assert floors == {"github": 0.0, "nerd": 0.0}
+    assert {(u.source, u.key.key, u.rank) for u in rows} == {
+        ("github", "o/r/Mystery.zip", 1),
+        ("nerd", "v3.4.0/Mystery.zip", 1),
+    }
+    assert set(mapping.frames(cfg.all(), UNIVERSE, recs, IDX)) == {"github", "nerd"}
+    off = {n: replace(s, gate_only=False) for n, s in cfg.all().items()}
+    assert mapping.report_rows(off, recs, IDX) == ([], {})
+
+
 def test_selector_scopes_and_excluded_assets() -> None:
     cfg = ranking().sources
     fs, expo = mapping.selector(cfg.npm_fontsource), mapping.selector(cfg.npm_expo)

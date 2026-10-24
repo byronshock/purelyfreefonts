@@ -8,7 +8,7 @@ runs the cross-checks in ``check_ranking`` and friends. Any problem raises
 ``check_collectors(cfg, paths)`` (``tff-catalog config --strict``) adds the
 checks that need the collectors themselves: every ``config/sources/<name>.toml``
 belongs to a discovered collector and loads into its ``Settings``, and every
-enabled engine source reads a discovered ranking collector. It is separate
+enabled or gate-only engine source reads a discovered ranking collector. It is separate
 because it imports every collector module; CI runs it once the collectors exist.
 ``--strict`` also runs ``check_category_ids``: every family of
 ``category-overrides.toml`` and of ``nerd-hidden.toml`` is in the id registry, when
@@ -147,6 +147,7 @@ def check_ranking(r: RankingConfig) -> None:
         if name not in getattr(r.surveys, src.survey).weights:
             _fail(f"ranking.toml: sources.{name}", f"missing from surveys.{src.survey}.weights")
     _check_project_groups(r, sources)
+    _check_gate_only(r, sources)
     for repo in r.sources.github.prerelease_repos:
         # Stage "correct" compares them with the lower-cased repo of each observation.
         if repo != repo.lower() or not re.fullmatch(r"[a-z0-9_.-]+/[a-z0-9_.-]+", repo):
@@ -225,6 +226,28 @@ def check_ranking(r: RankingConfig) -> None:
         _fail("ranking.toml: uncertainty", "need 0 < q_lo < q_hi < 1, runs >= 1, concentration > 0")
 
 
+def _check_gate_only(r: RankingConfig, sources: dict[str, Any]) -> None:
+    """A gate-only source (owner ruling of 2026-10-23, deferred_sources_count_for_gate) is a
+    disabled one, since an enabled source's observed terms count toward the gate already,
+    and only the engine's ranks list it: a model view has a two-group rule of its own (groups
+    above bulk, q14_two_groups) and no gate-only path."""
+    listed = {
+        key: frozenset(getattr(r.surveys, getattr(r.ranks, key).survey).weights)
+        for key in ("desktop_chosen", "desktop_installed", "project")
+    }
+    listed["coding"] = frozenset(r.ranks.coding.weights)
+    listed["dev_apps"] = frozenset(r.ranks.dev_apps.weights)
+    for name, src in sources.items():
+        if not src.gate_only:
+            continue
+        where = f"ranking.toml: sources.{name}.gate_only"
+        if src.enabled:
+            _fail(where, "only for a disabled source: an enabled source's terms count already")
+        models = sorted(k for k, names in listed.items() if name in names and k in r.model.views)
+        if models:
+            _fail(where, f"model view(s) {', '.join(models)} list it, with no gate-only path")
+
+
 def _check_project_groups(r: RankingConfig, sources: dict[str, Any]) -> None:
     """Gate M9 (b): fixed group shares that sum to 1, each project source in one group."""
     where = "ranking.toml: project_group_shares"
@@ -264,7 +287,7 @@ def check_collectors(cfg: Config, paths: Paths) -> None:
     for collector in collectors.values():
         load_settings(collector, paths)
     for name, src in cfg.ranking.sources.all().items():
-        if not src.enabled:
+        if not src.enabled and not src.gate_only:
             continue
         where = f"ranking.toml: sources.{name}.collector"
         if src.collector not in collectors:

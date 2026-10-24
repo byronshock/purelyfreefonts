@@ -33,7 +33,9 @@ The stage rebuilds the inputs stage "rank" ranked (``load_inputs``) and checks
 that they give the published orders. Each published range is widened, if
 needed, to contain the font's published order, so a range always holds its
 point rank. Tiers use each font's independence groups in that rank key
-(``scores.json``), except in the rank keys of ``FIXED_TIERS``: every Rising
+(``scores.json``), the score's own (``Fused.groups``): a gate-only source's group
+(``Fused.gate_groups``, deferred_sources_count_for_gate) counts toward the two-group gate
+only, not toward tier A. The rank keys of ``FIXED_TIERS`` are the exception: every Rising
 font is tier C while the view is in beta (owner ruling of 2026-09-26), because
 its unweighted ranges are nearly all single points and would read as tier A.
 
