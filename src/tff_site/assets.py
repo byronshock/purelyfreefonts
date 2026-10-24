@@ -15,11 +15,16 @@ has the same name in each). The lint refuses extra top-level declarations and st
 ``Main.start();``, once, as the last line of ``90-main.js``, and ``MATCHER_START``, once, as
 the last line of ``58-matcher.js``), ``import``/``export`` (dynamic ``import(`` too),
 HTML-string APIs, ``eval``, ``Function(``, ``document.write``, browser storage APIs, request
-APIs other than ``fetch`` (``OTHER_JS``), ``setAttribute('style'`` and absolute URLs in
-``fetch``; a script element anywhere but ``10-data.js`` (``SCRIPT_JS``), and there only once;
-and in a part of the matcher, any request, page, timer, clock or randomness API
-(``MATCHER_JS``). A file in neither list is refused, and a part of both follows the rules of
-both. The CSS lint refuses files outside ``CSS_PARTS``, ``@import``, ``@font-face`` and
+and script APIs other than ``fetch`` (``OTHER_JS``), ``setAttribute('style'`` and absolute
+URLs in ``fetch``; a script element anywhere but ``10-data.js`` (``SCRIPT_ELEMENT``: any
+case and spacing, ``createElementNS`` and ``Core.el`` too), and there only once; the
+hand-off's name, ``tffMatcher``, in code anywhere but Data's ``MATCHER_GLOBAL`` and
+``MATCHER_START``; in code, a part's use of a const that only the other module holds
+(modules share no top-level names, so it would be a ReferenceError); and in a part of the
+matcher, any request, page, timer, clock or randomness API (``MATCHER_JS``). A file in
+neither list is refused, and a part of both follows the rules of both. "In code" means
+outside the lines that hold only a ``//`` comment, as the build ships it; every other rule
+reads the comments too, to keep the lint dumb. The CSS lint refuses files outside ``CSS_PARTS``, ``@import``, ``@font-face`` and
 ``url()`` with a scheme or another host. Both report every problem at once (``AssetError``).
 The interface font's ``@font-face`` rules come from ``font_faces``, which the build puts ahead
 of the parts, so no part declares a font.
@@ -30,7 +35,7 @@ Every file under ``/assets/`` is named ``<stem>.<h>.<ext>``, where ``<h>`` is th
 
 import hashlib
 import re
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -79,6 +84,11 @@ FORBIDDEN_JS: tuple[str, ...] = (
     "eval(",
     "Function(",
     "document.write",
+    "createContextualFragment",
+    "setHTMLUnsafe",
+    "parseHTMLUnsafe",
+    "DOMParser",
+    "srcdoc",
 )
 # Browser storage, refused the same way: nothing is stored (site/CONTRACT.md section 5).
 STORAGE_JS: tuple[str, ...] = (
@@ -90,24 +100,25 @@ STORAGE_JS: tuple[str, ...] = (
     "serviceWorker",
     "cookieStore",
 )
-# Requests other than fetch(), which reads relative URLs from the DOM (section 5), and style
-# attributes, which the CSP blocks (style-src 'self'; set styles through CSSOM instead).
+# Requests other than fetch(), which reads relative URLs from the DOM (section 5), scripts
+# other than the matcher module's (a worker runs one), and style attributes, which the CSP
+# blocks (style-src 'self'; set styles through CSSOM instead).
 OTHER_JS: tuple[str, ...] = (
     "sendBeacon",
     "XMLHttpRequest",
     "WebSocket",
     "EventSource",
+    "Worker(",
+    "importScripts",
     "setAttribute('style'",
     'setAttribute("style"',
 )
-# A script element: only Data.loadMatcher adds one, for #list[data-matcher] (section 11).
-SCRIPT_JS: tuple[str, ...] = (
-    "createElement('script'",
-    'createElement("script"',
-    "createElement(`script`",
-    "el('script'",
-    'el("script"',
-    "el(`script`",
+# A script element, in any case and spacing, an HTML or SVG one (createElementNS) or through
+# Core.el: only Data.loadMatcher adds one, for #list[data-matcher] (section 11). A tag held in
+# a variable gets past it; the CSP's script-src 'self' still refuses any other site's script.
+SCRIPT_ELEMENT = re.compile(
+    r"(?:\bcreateElement(?:NS)?|(?<![\w$])el)\s*\(\s*(?:[^(),]*,\s*)?(['\"`])\s*script\s*\1",
+    re.IGNORECASE,
 )
 DATA_PART = "10-data.js"
 # Refused in a part of the matcher module, comments included: it is pure code, making no
@@ -135,9 +146,26 @@ MATCHER_PART = "58-matcher.js"
 MATCHER_GLOBAL = "tffMatcher"
 MATCHER_START = f"Object.defineProperty(globalThis, '{MATCHER_GLOBAL}', {{ value: Matcher }});"
 _STARTS = {MAIN_PART: MAIN_START, MATCHER_PART: MATCHER_START}
+# The only code lines that name the hand-off: Data's constant, which loadMatcher reads it by,
+# and the matcher's last line, which defines it (section 5; no other part may touch it).
+MATCHER_GLOBAL_LINES = {
+    DATA_PART: f"  const MATCHER_GLOBAL = '{MATCHER_GLOBAL}';",
+    MATCHER_PART: MATCHER_START,
+}
 
 _PAGE_CONSTS = dict(JS_PARTS)
 _MATCHER_CONSTS = dict(MATCHER_PARTS)
+
+
+def _free_names(names: list[str]) -> re.Pattern[str]:
+    """A use of one of ``names`` as a name of its own: not a property (``api.OwnedParse``) and
+    not part of a longer name (``MatchError``, ``loadMatcher``)."""
+    return re.compile(rf"(?<![\w$.])({'|'.join(map(re.escape, names))})(?![\w$])")
+
+
+# The consts only one module holds: a part of the other may not use them (section 5).
+_PAGE_ONLY = _free_names([c for f, c in JS_PARTS if f not in _MATCHER_CONSTS])
+_MATCHER_ONLY = _free_names([c for f, c in MATCHER_PARTS if f not in _PAGE_CONSTS])
 _TOP_DECLARATION = re.compile(
     r"^(?:export\s+)?(const|let|var|class|function\*?|async\s+function)\s+([A-Za-z_$][\w$]*)",
     re.MULTILINE,
@@ -238,10 +266,28 @@ def lint_js_part(filename: str, source: str) -> list[str]:
         problems += [f"{filename}:{n}: forbidden: {needle}" for n in _lines_with(source, needle)]
     for match in _ABSOLUTE_FETCH.finditer(source):
         problems.append(f"{filename}:{_line_of(source, match.start())}: fetch of an absolute URL")
-    scripts = [n for needle in SCRIPT_JS for n in _lines_with(source, needle)]
+    scripts = [_line_of(source, m.start()) for m in SCRIPT_ELEMENT.finditer(source)]
     if filename != DATA_PART or len(scripts) > 1:
         problems += [
             f"{filename}:{n}: a script element (only {DATA_PART} adds one, once)" for n in scripts
+        ]
+    code = list(_code_lines(source))
+    named = [n for n, line in code if MATCHER_GLOBAL in line]
+    allowed = [n for n, line in code if line == MATCHER_GLOBAL_LINES.get(filename)]
+    if named != allowed[:1]:
+        problems += [
+            f"{filename}:{n}: names {MATCHER_GLOBAL} (only {DATA_PART}'s MATCHER_GLOBAL and"
+            f" {MATCHER_PART}'s last line do, once each)"
+            for n in named
+        ]
+    others = [(_MATCHER_ONLY, "the matcher's")] if in_page else []
+    others += [(_PAGE_ONLY, "the page's")] if in_matcher else []
+    for pattern, module in others:
+        problems += [
+            f"{filename}:{n}: {m.group(1)} is a part of {module} module only (modules share no"
+            " top-level names)"
+            for n, line in code
+            for m in pattern.finditer(line)
         ]
     if in_matcher:
         for needle in MATCHER_JS:
@@ -276,14 +322,17 @@ def strip_js_comments(source: str) -> str:
     """``source`` without the lines that hold only a ``//`` comment, which ship no code but
     cost the page budget (M2 step 10). A line inside a template literal stays: a backtick
     that no backslash escapes opens or closes one. Comments after code stay too."""
-    kept: list[str] = []
+    return "\n".join(line for _, line in _code_lines(source))
+
+
+def _code_lines(source: str) -> Iterator[tuple[int, str]]:
+    """Each line ``strip_js_comments`` keeps, with its line number in ``source``."""
     inside = False
-    for line in source.split("\n"):
+    for lineno, line in enumerate(source.split("\n"), 1):
         if inside or not line.lstrip().startswith("//"):
-            kept.append(line)
+            yield lineno, line
         if len(_BACKTICK.findall(line)) % 2:
             inside = not inside
-    return "\n".join(kept)
 
 
 def strip_css_comments(source: str) -> str:

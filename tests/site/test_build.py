@@ -1907,6 +1907,84 @@ GOOD_PART = "// 20-view: test.\nconst View = (() => {\n  const x = 1;\n  return 
             '  document.createElement("script");\n})();\n',
             "once",
         ),
+        # ... in any case and spacing, an HTML or SVG one, through Core.el, or as HTML text
+        *(
+            ("50-ext.js", f"const Ext = (() => {{\n  {call};\n}})();\n", "a script element")
+            for call in (
+                "document.createElement('SCRIPT')",
+                "document.createElement( 'script')",
+                "document.createElement(\n    `script`,\n  )",
+                "document.createElementNS('http://www.w3.org/1999/xhtml','script')",
+                "document.createElementNS(SVG, ' Script ')",
+                "Core.el('Script')",
+                'Core.el ("script", {})',
+            )
+        ),
+        (
+            "50-ext.js",
+            "const Ext = (() => {\n  document.createRange().createContextualFragment(s);\n})();\n",
+            "createContextualFragment",
+        ),
+        ("50-ext.js", "const Ext = (() => {\n  new DOMParser();\n})();\n", "DOMParser"),
+        ("50-ext.js", "const Ext = (() => {\n  n.setHTMLUnsafe(s);\n})();\n", "setHTMLUnsafe"),
+        ("50-ext.js", "const Ext = (() => {\n  frame.srcdoc = s;\n})();\n", "srcdoc"),
+        ("50-ext.js", "const Ext = (() => {\n  new Worker('/w.js');\n})();\n", "Worker("),
+        ("50-ext.js", "const Ext = (() => {\n  new SharedWorker(u);\n})();\n", "Worker("),
+        # the hand-off's name: only Data's constant and the matcher's last line
+        ("50-ext.js", "const Ext = (() => {\n  globalThis.tffMatcher;\n})();\n", "tffMatcher"),
+        (
+            "50-ext.js",
+            "const Ext = (() => {\n  Object.defineProperty(globalThis, 'tffMatcher', {});\n})();\n",
+            "names tffMatcher",
+        ),
+        (
+            "10-data.js",
+            "const Data = (() => {\n  const MATCHER_GLOBAL = 'tffMatcher';\n"
+            "  const other = 'tffMatcher';\n})();\n",
+            "names tffMatcher",
+        ),
+        (
+            "10-data.js",
+            "const Data = (() => {\n  const MATCHER_GLOBAL = 'tffMatcher';\n"
+            "  const MATCHER_GLOBAL = 'tffMatcher';\n})();\n",
+            "once each",
+        ),
+        (
+            "54-owned-match.js",
+            "const OwnedMatch = (() => {\n  const x = globalThis['tffMatcher'];\n})();\n",
+            "names tffMatcher",
+        ),
+        # modules share no top-level names: a const the other module alone holds
+        (
+            "54-owned-match.js",
+            "const OwnedMatch = (() => {\n  const x = () => Core.$(1);\n})();\n",
+            "Core is a part of the page's module only",
+        ),
+        (
+            "52-owned-parse.js",
+            "const OwnedParse = (() => {\n  const x = (s) => Data.loadIndex(s);\n})();\n",
+            "Data is a part of the page's module only",
+        ),
+        (
+            "58-matcher.js",
+            f"const Matcher = Object.freeze({{ Main }});\n{assets.MATCHER_START}\n",
+            "Main is a part of the page's module only",
+        ),
+        (
+            "05-keys.js",
+            "const Keys = (() => {\n  const f = () => State.get();\n})();\n",
+            "State is a part of the page's module only",
+        ),
+        (
+            "05-keys.js",
+            "const Keys = (() => {\n  const f = (s) => OwnedParse.parse(s);\n})();\n",
+            "OwnedParse is a part of the matcher's module only",
+        ),
+        (
+            "40-details.js",
+            "const Details = (() => {\n  const f = (s) => OwnedMatch.match(s);\n})();\n",
+            "OwnedMatch is a part of the matcher's module only",
+        ),
     ],
 )
 def test_the_js_lint_catches(filename, source, problem):
@@ -1926,6 +2004,20 @@ def test_the_js_lint_passes_good_parts():
     assert assets.lint_js_part("10-data.js", loading) == []
     handing = f"const Matcher = Object.freeze({{}});\n{assets.MATCHER_START}\n"
     assert assets.lint_js_part("58-matcher.js", handing) == []
+    # a comment may name the hand-off and the other module's consts (not a script element); a
+    # property, a longer name or a lowercase word is no use of a const
+    commented = (
+        "// Data.loadMatcher reads globalThis.tffMatcher, as Core.$ reads the page\n"
+        "const OwnedMatch = (() => {\n  const ok = (api) => api.Core && api.Data;\n"
+        "  const MatchError = 1;\n  const label = (s) => `${s} state`;\n})();\n"
+    )
+    assert assets.lint_js_part("54-owned-match.js", commented) == []
+    reading = (
+        "const Data = (() => {\n  const MATCHER_GLOBAL = 'tffMatcher';\n"
+        "  const ok = (api) => typeof api.OwnedParse.parse === 'function';\n"
+        "  const loadMatcher = () => document.createElement('script');\n})();\n"
+    )
+    assert assets.lint_js_part("10-data.js", reading) == []
     for closer in ("})(Core);", "}); // end of State", "}", "}).call(globalThis);"):
         source = f"const State = (() => {{\n  const a = 1;\n{closer}\n"
         assert assets.lint_js_part("15-state.js", source) == [], closer
@@ -2009,7 +2101,8 @@ def test_each_module_takes_its_own_parts_and_every_part_is_linted(tmp_path):
 def test_the_two_modules_lists_agree_and_are_in_filename_order():
     """A part of both modules has one name; each list is in filename order, as the build joins
     them; each module ends with its one statement's part; and the matcher's parts use only
-    lower-numbered parts of its own list (modules share no top-level names)."""
+    lower-numbered parts of its own list (modules share no top-level names; the lint refuses a
+    use of the other module's consts, test_the_js_lint_catches)."""
     page, matcher = dict(assets.JS_PARTS), dict(assets.MATCHER_PARTS)
     assert {name: page[name] for name in page.keys() & matcher.keys()} == {"05-keys.js": "Keys"}
     for parts in (assets.JS_PARTS, assets.MATCHER_PARTS):
@@ -2023,8 +2116,6 @@ def test_the_two_modules_lists_agree_and_are_in_filename_order():
         code = assets.strip_js_comments((ROOT / "site" / "js" / name).read_text(encoding="utf-8"))
         used = {c for c in consts if c != const and re.search(rf"\b{c}\b", code)}
         assert used <= set(consts[:k]), (name, used)
-        others = {c for c in page.values() if c not in consts and re.search(rf"\b{c}\.", code)}
-        assert others == set(), (name, others)
 
 
 # --------------------------------------------------------------------- the real site
