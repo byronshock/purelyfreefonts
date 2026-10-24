@@ -249,6 +249,24 @@ MALFORMED_NAMES = [
         lambda n: n.pop("ineligible"), "/ineligible is missing or not a list", id="no-ineligible"
     ),
     pytest.param(
+        lambda n: n.pop("families"), "/families is missing or not a list", id="no-families"
+    ),
+    pytest.param(
+        lambda n: n["families"][0].pop("id"),
+        "/families/0/id is missing or not a string",
+        id="no-id",
+    ),
+    pytest.param(
+        lambda n: n["families"][0].update(family=7),
+        "/families/0/family is missing or not a string",
+        id="number-family",
+    ),
+    pytest.param(
+        lambda n: n["families"][0]["names"].__setitem__(0, "x"),
+        "/families/0/names/0 is not an object with a name string",
+        id="string-name",
+    ),
+    pytest.param(
         lambda n: n["families"][0].update(distinct_from=None),
         "/families/0/distinct_from is missing or not a list of family ids",
         id="null-distinct-from",
