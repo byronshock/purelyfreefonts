@@ -10,7 +10,9 @@
 # before its hyphen) counts as owned; from a plain list it is a near-match. The build derives
 # the set and fails unless it is exactly this one. These five were found by the collision check
 # on the run of 2026-09-26; the owner reviewed them as a set on 2026-10-23
-# (inventory_ambiguous_names).
+# (inventory_ambiguous_names). The ruling covers Gentium Book as a weight of gentium-plus too,
+# as on the run of 2026-10-17: that refresh sets its families to ["gentium-plus"] and cites
+# the same ruling, with no new question.
 #
 # [[recode]]: an alias that the hopper codes as a near-match only, though names.json gives it an
 # owned relation. The match file changes; names.json, its alias rows and the ranking don't.
