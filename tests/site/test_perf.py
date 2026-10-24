@@ -831,16 +831,18 @@ def _noise(size: int, seed: int = 7) -> bytes:
 
 
 MATCH = "assets/match.0123456789.json"
+MATCHER = "assets/matcher.0123456789.js"
 
 
 def _fake_site(root: Path, *, html_extra: str = "", sizes: dict[str, int] | None = None) -> Path:
-    """A minimal built site: the list page and its five assets, with incompressible filler."""
+    """A minimal built site: the list page and its six assets, with incompressible filler."""
     sizes = {
         "css": 1000,
         "js": 1000,
         "list": 1000,
         "details": 1000,
         "match": 1000,
+        "matcher": 1000,
         "font": 1000,
         **(sizes or {}),
     }
@@ -850,6 +852,7 @@ def _fake_site(root: Path, *, html_extra: str = "", sizes: dict[str, int] | None
         "assets/list.0123456789.json": sizes["list"],
         "assets/details.0123456789.json": sizes["details"],
         MATCH: sizes["match"],
+        MATCHER: sizes["matcher"],
         "assets/ui/arimo.0123456789.woff2": sizes["font"],
     }
     for k, (rel, size) in enumerate(files.items()):
@@ -866,7 +869,7 @@ def _fake_site(root: Path, *, html_extra: str = "", sizes: dict[str, int] | None
         f"</head><body>{html_extra}<main id=main><ol id=list class=font-list"
         ' data-index="/assets/list.0123456789.json"'
         ' data-details="/assets/details.0123456789.json"'
-        f' data-match="/{MATCH}"></ol></main></body></html>\n',
+        f' data-match="/{MATCH}" data-matcher="/{MATCHER}"></ol></main></body></html>\n',
         encoding="utf-8",
     )
     return root
@@ -884,6 +887,7 @@ def test_a_small_site_passes(tmp_path: Path) -> None:
         ({"list": 101_000}, "assets/list.0123456789.json", "list index"),
         ({"details": 151_000}, "assets/details.0123456789.json", "details payload"),
         ({"match": 51_000}, MATCH, "match file"),
+        ({"matcher": 26_000}, MATCHER, "matcher module"),
         ({"font": 31_000}, "assets/ui/arimo.0123456789.woff2", "interface font"),
     ],
 )
@@ -925,13 +929,32 @@ def test_missing_assets_are_problems(tmp_path: Path) -> None:
     assert [p.path for p in budgets.check(site)] == ["index.html"]
 
 
-def test_a_list_without_data_match_is_a_problem(tmp_path: Path) -> None:
+@pytest.mark.parametrize(
+    ("attribute", "path", "what"),
+    [("data-match", MATCH, "match file"), ("data-matcher", MATCHER, "matcher module")],
+)
+def test_a_list_without_one_of_the_hopper_s_files_is_a_problem(
+    tmp_path: Path, attribute: str, path: str, what: str
+) -> None:
     site = _fake_site(tmp_path)
     page = site / "index.html"
-    page.write_text(page.read_text().replace(f' data-match="/{MATCH}"', ""), encoding="utf-8")
+    page.write_text(page.read_text().replace(f' {attribute}="/{path}"', ""), encoding="utf-8")
     assert [(p.path, p.message) for p in budgets.check(site)] == [
-        ("index.html", "#list has no data-match: can't find the match file")
+        ("index.html", f"#list has no {attribute}: can't find the {what}")
     ]
+    _fake_site(tmp_path)
+    (site / path).unlink()
+    assert [(p.path, p.message) for p in budgets.check(site)] == [
+        ("index.html", f"/{path}: the {what} is referenced, but not in the site")
+    ]
+
+
+def test_the_matcher_module_is_held_to_its_own_budget_outside_the_page_s() -> None:
+    """inventory_matcher_on_demand: the parser and matcher left the page's script, so the page
+    keeps its budget, and the module has one of its own, as the match file does."""
+    assert budgets.PAGE_MAX == 100 * budgets.KB
+    assert budgets.MATCHER_MAX == 25 * budgets.KB
+    assert budgets.MATCH_MAX == 50 * budgets.KB
 
 
 @pytest.mark.parametrize(
@@ -949,6 +972,66 @@ def test_a_match_file_off_this_site_is_a_problem(tmp_path: Path, url: str) -> No
 
 
 NAME = MATCH.rsplit("/", 1)[1]
+
+
+MATCHER_NAME = MATCHER.rsplit("/", 1)[1]
+ONLY_DATA_MATCHER = (
+    f"names the matcher module {MATCHER_NAME}; only the list page's #list[data-matcher] may, "
+    "once (M3-D7 a)"
+)
+
+
+@pytest.mark.parametrize(
+    ("path", "text", "problem"),
+    [
+        pytest.param(
+            "index.html",
+            f'<script type="module" src="/{MATCHER}"></script>',
+            f"names the matcher module {MATCHER_NAME} 2 times; only the list page's "
+            "#list[data-matcher] may, once (M3-D7 a)",
+            id="script-on-the-list-page",
+        ),
+        pytest.param(
+            "index.html",
+            f'<link rel="modulepreload" href="/{MATCHER}">',
+            None,
+            id="modulepreload-on-the-list-page",
+        ),
+        pytest.param(
+            "about/index.html",
+            f'<!doctype html><title>t</title><script type="module" src="/{MATCHER}"></script>',
+            ONLY_DATA_MATCHER,
+            id="script-on-another-page",
+        ),
+        pytest.param(
+            "assets/app.0123456789.js", f"import('/{MATCHER}');", ONLY_DATA_MATCHER, id="script"
+        ),
+        pytest.param(
+            "assets/list.0123456789.json", f'{{"m": "/{MATCHER}"}}', ONLY_DATA_MATCHER, id="payload"
+        ),
+    ],
+)
+def test_only_the_list_s_data_matcher_may_name_the_matcher_module(
+    tmp_path: Path, path: str, text: str, problem: str | None
+) -> None:
+    """inventory_matcher_on_demand: the matcher module loads only once a visitor's list
+    arrives, so nothing but ``#list[data-matcher]`` names it: no script element or
+    modulepreload, no other page, script or payload."""
+    on_page = path == "index.html"
+    site = _fake_site(tmp_path, html_extra=text if on_page else "")
+    if not on_page:
+        target = site / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(text, encoding="utf-8")
+    want = problem or (
+        f"names the matcher module {MATCHER_NAME} 2 times; only the list page's "
+        "#list[data-matcher] may, once (M3-D7 a)"
+    )
+    problems = [(p.path, p.message) for p in budgets.check(site)]
+    assert (path, want) in problems
+    assert [p for p in problems if p[0] != path or "names the" not in p[1]] == (
+        [] if not on_page or "modulepreload" in text else [p for p in problems if p[0] != path]
+    )
 
 
 @pytest.mark.parametrize(
