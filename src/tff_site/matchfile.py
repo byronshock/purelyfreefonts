@@ -13,8 +13,8 @@ section 11). ``match_file`` first refuses, listing every problem:
   (``refused_recodes``), or that another name of the family bypasses (``owned.RecodeError``),
   together with what Milestone 3 step 3's collision check finds without them (``check_errors``
   over ``owned.check_document``), including an ambiguous set other than the reviewed one, so
-  a refresh that adds, changes or drops an ambiguous name and moves a recoded alias fails
-  once, naming all of it, until the owner has reviewed it ("the owner reviews flagged
+  a refresh that changes the ambiguous set, moves a recoded alias, or both, fails once,
+  naming all of it, until the owner has reviewed it ("the owner reviews flagged
   collisions");
 - a match file that the hopper's reader, ``owned.Table.from_document``, which the page
   mirrors, refuses.
