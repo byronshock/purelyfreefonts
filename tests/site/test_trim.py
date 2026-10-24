@@ -10,7 +10,7 @@ step 7a; the owner's site ruling of 2026-10-05, ``specimen_trim_served``).
 - Each pinned file whose font is in the font cache trims to exactly the path
   ``render(name_only=True)`` draws, in a box as tall and no wider, once the font has redrawn
   the two-line file byte for byte. CI's site-real job caches every real font (``tff-site
-  fetch-fonts``), so it checks all 500; the test job caches none and skips.
+  fetch-fonts``), so it checks all 557; the test job caches none and skips.
 - Anything else is refused: a file the renderer didn't write, one with no second line, or a
   shift past the name's ink. A file of one line can't be told from two by its contours alone
   (a backward jump between two contours of one name is common), which is why only pinned files
@@ -47,7 +47,6 @@ SHIFTED = {
     "indie-flower",
     "reenie-beanie",
     "shrikhand",
-    "sunshiney",
 }
 
 
@@ -107,7 +106,7 @@ def test_the_pins_are_the_served_specimens() -> None:
     lines = trim.PINS_FILE.read_text(encoding="ascii").splitlines()
     specs = served()
     assert lines == [f"{s.sha256}  {s.path}" for s in specs]  # in LC_ALL=C order
-    assert len(trim.pinned()) == len(specs) == 505
+    assert len(trim.pinned()) == len(specs) == 562
     for spec in specs:
         assert hashlib.sha256((ROOT / spec.path).read_bytes()).hexdigest() == spec.sha256
     assert {s.font_id for s in specs if s.sha256 in trim.SHIFTS} == SHIFTED

@@ -10,13 +10,13 @@ name's contours, then the sample line's. ``name_only`` cuts the path where the s
 starts, at the largest backward jump in x between two contours' start points: the sample line
 starts again near x = 0 after the name has run right. (A rule on height alone cuts 15 of the
 500 files wrongly.) The renderer shifts the whole drawing right when ink reaches left of
-x = 0. In 7 of the committed files the sample line's ink set that shift, so the name moves back
+x = 0. In 6 of the committed files the sample line's ink set that shift, so the name moves back
 to its own left edge, where a names-only drawing puts it, by the file's ``SHIFTS`` entry: the
 file can't say how far. The view box becomes the name's: as wide as its ink (the file doesn't
 record the name's advance), and ``NAME_BOX`` units tall below the top margin the file had,
 grown as the renderer grows it to hold ink below that.
 
-Only files whose sha256 ``PINS_FILE`` lists are trimmed: the 500 committed two-line specimens
+Only files whose sha256 ``PINS_FILE`` lists are trimmed: the 557 committed two-line specimens
 and the sample's 5 (``tests/fixtures/specimens``), each of whose cuts equals the path
 ``render(name_only=True)`` draws from its font. Any other file is served as it is, since a
 wrong cut would ship a plausible but wrong image, not an error. ``PINS_FILE`` is
@@ -47,7 +47,6 @@ SHIFTS = {
     "7eecc6b1b5373d1dc82db9b35813ff626b200b88a8b25aa6e9561b1616b2446b": 3,  # indie-flower
     "eb38b70ab629b933ea98ae1f614e7f8905535ab174c5a9fc86ac5b773977c0d9": 22,  # reenie-beanie
     "8f49f833e07c230f902c4dc14c11af71d42257781964ee750f63f1db24ff16ad": 2,  # shrikhand
-    "9d61b92439a1b8fb2366e29f3eaa23f7215fe0af83923bb83317371042cf78c6": 11,  # sunshiney
 }
 
 _PIN = re.compile(r"([0-9a-f]{64})  (build|tests/fixtures)/specimens/[a-z0-9-]+\.svg")
