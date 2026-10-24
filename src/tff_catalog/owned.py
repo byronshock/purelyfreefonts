@@ -403,6 +403,15 @@ OWNED_RELATIONS = frozenset(
 )
 
 
+class RecodeError(ValueError):
+    """A recode that another name of its family bypasses (``_check_recodes``): ``key`` is the
+    recoded key, so a caller can leave that recode out and check the rest."""
+
+    def __init__(self, key: str, message: str) -> None:
+        super().__init__(message)
+        self.key = key
+
+
 def _recodes(names_doc: Mapping[str, Any], recodes: Mapping[str, str] | None) -> dict[str, str]:
     """``recodes`` by ``match_key``, checked: each relation one of ``RECODE_RELATIONS``, one
     relation per key, and each key one that an alias of ``names_doc`` has with an owned
@@ -505,7 +514,7 @@ def _holders(
 def _check_recodes(
     names_doc: Mapping[str, Any], holders: Mapping[str, _Holders], recoded: Mapping[str, set[str]]
 ) -> None:
-    """ValueError when a recoded family could still be owned through a recoded name.
+    """``RecodeError`` when a recoded family could still be owned through a recoded name.
 
     That is when its own family name has the recoded key, or when another of its names
     keeps an owned code at its own key while its candidates reach the recoded one: an alias
@@ -515,7 +524,7 @@ def _check_recodes(
     for key, fids in sorted(recoded.items()):
         for fid in sorted(fids):
             if holders[key].owns(fid):
-                raise ValueError(f"recode {key!r}: the family name of {fid} has that key")
+                raise RecodeError(key, f"recode {key!r}: the family name of {fid} has that key")
     by_family: dict[str, set[str]] = defaultdict(set)
     for key, fids in recoded.items():
         for fid in fids:
@@ -528,9 +537,10 @@ def _check_recodes(
             chain = candidates(name)
             reached = sorted(keys_here & {c.key for c in chain[1:]})
             if reached and holders[chain[0].key].owns(fam["id"]):
-                raise ValueError(
+                raise RecodeError(
+                    reached[0],
                     f"recode {reached[0]!r}: {fam['id']}'s name {name!r} reaches it and still "
-                    "counts as owned; recode that name too"
+                    "counts as owned; recode that name too",
                 )
 
 

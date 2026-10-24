@@ -517,9 +517,9 @@ document.dispatchEvent(new CustomEvent('tff:list-ready', { detail: globalThis.tf
 
 `/assets/match.<h>.json` is the hopper's match data (Milestone 3, slice 1). The owner's ruling of 2026-10-22, `inventory_match_data_site_build`, amends Milestone 3 step 3: the build makes the file with `tff_catalog.owned.match_document`, from `names.json` and the catalog's ids (section 1), in `tff_site.matchfile`, and no pipeline stage writes it. It is canonical compact JSON like the other payloads, so the same inputs always give the same bytes and the same name. Its schema is `schemas/match.schema.json`, which docs/catalog-schema.md ("The hopper's match file") describes in plain words. `tff-site check` holds it to `budgets.MATCH_MAX` (50 KB gzip -9).
 
-**What the build refuses**, listing every problem:
+**What the build refuses**, listing every problem (`tff_site.matchfile.match_file`). A names file it can't read, of another run or of the wrong shape, and a malformed reviewed list, are listed together and stop it first, since the checks read both. Past them, a refused recode and what the collision check finds come together, the check running without the refused recodes: a refresh that moves a recoded alias and changes the ambiguous set fails once, naming all of it, so the owner is asked once (ops/MONTHLY.md step 5). It refuses:
 
-- a names file of another run, or of the wrong shape (section 1);
+- a names file of another run, or of the wrong shape (section 1), or a reviewed list that is malformed;
 - a `distinct_from` pair that meets (a name of one family that, stripped, is a key at which the other could count as owned: Inter Tight never reaches Inter, M3-D5 a);
 - a key that two catalog families own outside the ambiguous set;
 - a catalog name that strips to the key of a family outside the catalog;

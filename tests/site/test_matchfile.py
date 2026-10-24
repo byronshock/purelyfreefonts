@@ -664,11 +664,67 @@ def test_a_recode_that_another_alias_bypasses_is_refused(tmp_path):
 
     path = write(tmp_path, names_with(patched))
     (error,) = errors_of(path)
-    assert error.startswith(f"{path}: recode 'samplemono20gen': ")
+    assert error.startswith(f"{tmp_path / 'names.reviewed.toml'}: recode 'samplemono20gen': ")
     assert "'Sample Mono 20 Gen NF' reaches it and still counts as owned" in error
     both = REVIEWED + RECODE_20.replace("Sample Mono 20 Gen", "Sample Mono 20 Gen NF")
     doc = json.loads(matchfile.match_file(SAMPLE, write(tmp_path, names_with(patched), both)).blob)
     assert doc["k"]["samplemono20gennf"] == f"{doc['ids'].index('sample-mono-20')}x"
+
+
+# ---------------------------------------------------------------------- every problem in one pass
+
+
+def _unreviewed_and_stale(names: dict[str, Any]) -> tuple[dict[str, Any], str]:
+    """The sample's names with the recoded alias gone, and a reviewed list that misses
+    Sample Sans 06 Black and lists Sample Serif 04 Light, which isn't ambiguous."""
+    family(names, "sample-mono-20")["names"] = [
+        n for n in family(names, "sample-mono-20")["names"] if n["name"] != "Sample Mono 20 Gen"
+    ]
+    reviewed = (
+        '[[ambiguous]]\nname = "Sample Serif 04 Light"\nfamilies = ["sample-serif-04"]\n'
+        'ruling = "synthetic"\n\n' + RECODE_20
+    )
+    return names, reviewed
+
+
+def test_a_refused_recode_and_the_check_s_findings_are_listed_together(tmp_path):
+    """A refresh that moves a recoded alias and changes the ambiguous set fails once, naming
+    all of it, so the owner is asked once (ops/MONTHLY.md step 5): the check runs without the
+    refused recode."""
+    names, reviewed = _unreviewed_and_stale(copy.deepcopy(NAMES))
+    path = write(tmp_path, names, reviewed)
+    listed = tmp_path / "names.reviewed.toml"
+    assert errors_of(path) == [
+        f"{listed}: 'Sample Mono 20 Gen' is reviewed as an alias of sample-mono-20 (synthetic), "
+        "but names.json's aliases at its key 'samplemono20gen' are of none",
+        f"{path}: 'Sample Sans 06 Black' may be a weight of sample-sans-06: an ambiguous name "
+        f"nobody has reviewed; once the owner has, list it in {listed}",
+        f"{path}: 'Sample Serif 04 Light' is reviewed as ambiguous in {listed}, but no longer "
+        "is; remove it",
+    ]
+
+
+def test_a_bypassed_recode_and_the_check_s_findings_are_listed_together(tmp_path):
+    """``owned.RecodeError`` names the bypassed recode, so the check runs on without it."""
+
+    def patched(names: dict[str, Any]) -> None:
+        family(names, "sample-mono-20")["names"].append(
+            {"name": "Sample Mono 20 Gen NF", "relation": "build", "detail": "nf"}
+        )
+
+    path = write(tmp_path, names_with(patched), RECODE_20)
+    listed = tmp_path / "names.reviewed.toml"
+    bypass, unreviewed = errors_of(path)
+    assert bypass.startswith(f"{listed}: recode 'samplemono20gen': ")
+    assert unreviewed.startswith(f"{path}: 'Sample Sans 06 Black' may be a weight of ")
+
+
+def test_a_names_file_and_a_reviewed_list_with_problems_are_listed_together(tmp_path):
+    names = names_with(lambda n: n["run"].update(date="2026-01-02"))
+    path = write(tmp_path, names, "[[ambiguous]]\nname = 1\n")
+    names_error, reviewed_error = errors_of(path)
+    assert names_error.startswith(f"{path}: run.date is 2026-01-02")
+    assert reviewed_error.startswith(f"{tmp_path / 'names.reviewed.toml'}: ambiguous[0]: ")
 
 
 # ---------------------------------------------------------------------- the committed files
