@@ -812,11 +812,17 @@ class _Quiet(SimpleHTTPRequestHandler):
         pass
 
 
+class _Server(ThreadingHTTPServer):
+    # The default listen backlog of 5 overflows under 8 probes on a busy runner (HTTP/1.0, so
+    # a connection per request), and a dropped SYN is retried after 1 s, then 3 s.
+    request_queue_size = 128
+
+
 @contextlib.contextmanager
 def serve(directory: Path) -> Iterator[str]:
     """Serve ``directory`` (resolved per request, so a symlink switch shows at once)."""
     handler = functools.partial(_Quiet, directory=str(directory))
-    server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
+    server = _Server(("127.0.0.1", 0), handler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
     try:
@@ -827,10 +833,48 @@ def serve(directory: Path) -> Iterator[str]:
         thread.join(timeout=5)
 
 
+class _PacedLoop(deploy_loop.Loop):
+    """The probe loop, with a way to keep switches further apart than any probe.
+
+    A probe takes an unchanged page to mean no switch happened during it, so a probe that
+    sees two switches (A to B and back to A) can read B's version.txt between two A pages and
+    count as mixed, though each switch was atomic. On the site switches are minutes apart;
+    here they are a fraction of a second apart, and a probe on a busy runner can take longer.
+    ``settle`` waits until every probe begun so far has ended: called after each switch, it
+    lets no probe see the next one as well.
+    """
+
+    def __init__(self, url: str) -> None:
+        super().__init__(url, extras=2)
+        self.done = threading.Event()
+        self.flight = threading.Condition()
+        self.begun = 0
+        self.running: set[int] = set()
+
+    def probe(self) -> None:
+        with self.flight:
+            n = self.begun
+            self.begun += 1
+            self.running.add(n)
+        try:
+            super().probe()
+        finally:
+            with self.flight:
+                self.running.discard(n)
+                self.flight.notify_all()
+
+    def settle(self, timeout: float = 60.0) -> None:
+        with self.flight:
+            begun = self.begun
+            ended = self.flight.wait_for(lambda: min(self.running, default=begun) >= begun, timeout)
+        assert ended, f"probes still running after {timeout} s"
+
+
 def _loop_in_background(url: str, duration: float):
-    loop = deploy_loop.Loop(url, extras=2)
+    loop = _PacedLoop(url)
     thread = threading.Thread(
-        target=loop.run, kwargs={"interval": 0.01, "duration": duration, "workers": 8}
+        target=loop.run,
+        kwargs={"interval": 0.01, "duration": duration, "workers": 8, "stop": loop.done},
     )
     thread.start()
     return loop, thread
@@ -840,12 +884,16 @@ def test_deploy_loop_sees_no_errors_during_switches(rx: Receiver, tmp_path: Path
     rx.deploy(make_site(tmp_path / "a", A), A)
     rx.deploy(make_site(tmp_path / "b", B), B, activate=False)
     with serve(rx.dir() / "current") as url:
-        loop, thread = _loop_in_background(url, 3.0)
-        time.sleep(0.4)
-        for words in (("activate", B), ("rollback",), ("rollback", B), ("rollback", A)):
-            rx.ok(*words)
+        loop, thread = _loop_in_background(url, 60.0)
+        try:
             time.sleep(0.4)
-        thread.join()
+            for words in (("activate", B), ("rollback",), ("rollback", B), ("rollback", A)):
+                rx.ok(*words)
+                loop.settle()  # every probe that may have seen this switch ends before the next
+                time.sleep(0.4)
+        finally:
+            loop.done.set()
+            thread.join()
         loop.client.close()
     stats = loop.stats
     assert stats.errors == 0, stats.samples

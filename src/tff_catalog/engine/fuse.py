@@ -28,6 +28,10 @@ class Fused:
     observed: int  # observed terms only
     groups: tuple[str, ...]  # distinct independence groups among observed terms, sorted
     guard: tuple[tuple[str, float], ...] = ()  # (source, factor) where the guard fired
+    # Groups the two-group gate counts besides ``groups``, from gate-only sources' observed
+    # terms (deferred_sources_count_for_gate), sorted; no part of the score. ``fuse`` never
+    # sets them: the rank's caller does (``surveys``).
+    gate_groups: tuple[str, ...] = ()
 
 
 def _check_finite(terms: Mapping[str, float], what: str) -> None:

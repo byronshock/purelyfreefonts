@@ -28,6 +28,10 @@ It counts:
 - **switches**: probes during which the page changed, meaning the deploy happened mid-probe.
   They are expected, and their version check is skipped.
 
+An unchanged page is taken to mean no switch happened mid-probe, which holds while switches
+are further apart than a probe takes: a probe that sees two (A to B and back to A) reads B's
+``version.txt`` between two A pages and counts as mixed, though each switch was atomic.
+
 The last line is ``probes=… requests=… errors=E mixed=M switches=… versions=…`` and the exit
 status is 0 when E and M are both 0 (and, with ``--require-switch``, a switch was seen).
 """
@@ -200,14 +204,23 @@ class Loop:
             self._count("mixed", f"page's list data is {page_commit}, version.txt is {served}")
 
     def run(
-        self, *, interval: float, duration: float, workers: int = 16, log: TextIO | None = None
+        self,
+        *,
+        interval: float,
+        duration: float,
+        workers: int = 16,
+        log: TextIO | None = None,
+        stop: threading.Event | None = None,
     ):
+        """Probe every ``interval`` seconds for ``duration`` seconds, or until ``stop`` is set."""
         start = time.monotonic()
         next_at = start
         next_report = start + 10.0
         inflight = threading.Semaphore(workers)
         with ThreadPoolExecutor(max_workers=workers, thread_name_prefix="probe") as pool:
             while (now := time.monotonic()) - start < duration:
+                if stop is not None and stop.is_set():
+                    break
                 if now < next_at:
                     time.sleep(min(next_at - now, 0.05))
                     continue
