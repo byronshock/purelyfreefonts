@@ -959,7 +959,7 @@ def test_the_hand_off_is_the_one_the_contract_names():
     data = (JS_DIR / "10-data.js").read_text(encoding="utf-8")
     assert f"const MATCHER_GLOBAL = '{assets.MATCHER_GLOBAL}';" in data
     hand_off = (JS_DIR / assets.MATCHER_PART).read_text(encoding="utf-8")
-    assert "const Matcher = Object.freeze({ OwnedParse, OwnedMatch });\n" in hand_off
+    assert "  const api = Object.freeze({ OwnedParse, OwnedMatch });\n" in hand_off
 
 
 def test_the_fetch_rule_names_every_attribute_data_reads_a_url_from():

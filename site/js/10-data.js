@@ -166,50 +166,78 @@ const Data = (() => {
     return deepFreeze(doc);
   });
 
-  // The matcher module's hand-off (58-matcher.js): globalThis.tffMatcher, read-only and
-  // permanent, a frozen object of the parser and the matcher. Anything else is no hand-off.
+  // The matcher module's hand-off (58-matcher.js, section 5): its API, a frozen object of the
+  // parser and the matcher, which the module's last line assigns to globalThis.tffMatcher.
+  // Data defines that name itself, just before it adds the module's script: a permanent
+  // accessor (not configurable, so nothing can redefine or delete it) whose setter counts the
+  // values assigned to it, from any script. Data takes a value only on that script's own load
+  // event (one the browser fired, at that element), which comes once the module has run, and
+  // only if exactly one value came, a usable one. The module assigns once, so a value from any
+  // other script makes two. A module that ran before Data asked (only another script could
+  // have added it) left the name defined for good, and Data refuses a name already there. Once
+  // taken, the name reads as the API, and assigning to it does nothing. These checks catch a
+  // mistake; with the built-ins changed they prove nothing, and the CSP is what keeps any
+  // other script out (section 5).
   const MATCHER_GLOBAL = 'tffMatcher';
   const MATCHER_TIMEOUT_MS = 30000;
-  const handedOver = () => {
-    const slot = Object.getOwnPropertyDescriptor(globalThis, MATCHER_GLOBAL);
-    const api = slot && !slot.writable && !slot.configurable ? slot.value : null;
-    const usable =
-      Boolean(api) &&
-      Object.isFrozen(api) &&
-      Boolean(api.OwnedParse) &&
-      typeof api.OwnedParse.parse === 'function' &&
-      Boolean(api.OwnedMatch) &&
-      typeof api.OwnedMatch.table === 'function' &&
-      typeof api.OwnedMatch.match === 'function';
-    return usable ? api : null;
-  };
+  const usable = (api) =>
+    Boolean(api) &&
+    Object.isFrozen(api) &&
+    Boolean(api.OwnedParse) &&
+    typeof api.OwnedParse.parse === 'function' &&
+    Boolean(api.OwnedMatch) &&
+    typeof api.OwnedMatch.table === 'function' &&
+    typeof api.OwnedMatch.match === 'function';
 
-  // The page's one matcher script, added on first use: a promise that resolves once the
-  // module has run, or rejects with 'load' (the script's error event) or 'handoff' (an error
-  // thrown as the module ran, reported with its URL: it defines its global last, so it
-  // handed nothing over, or something else had already taken the name).
+  // The page's one matcher script, added on first use once Data has defined the name: a
+  // promise of the API, or a rejection with 'handoff' (the name was there before, or the
+  // module ran and no single usable value came) or 'load' (the script's error event).
   let matcherRun = null;
-  const addMatcher = (url) =>
-    new Promise((resolve, reject) => {
-      const href = new URL(url, location.href).href;
+  const addMatcher = (url) => {
+    const refused = (why) => Promise.reject(new MatchError('handoff', why));
+    if (Object.getOwnPropertyDescriptor(globalThis, MATCHER_GLOBAL)) {
+      return refused(`${MATCHER_GLOBAL} was defined before ${url} loaded`);
+    }
+    let open = true;
+    let count = 0;
+    let first;
+    let taken;
+    try {
+      Object.defineProperty(globalThis, MATCHER_GLOBAL, {
+        get: () => taken,
+        set: (value) => {
+          if (!open) return;
+          count += 1;
+          if (count === 1) first = value;
+        },
+      });
+    } catch (error) {
+      return refused(`${MATCHER_GLOBAL} could not be defined`);
+    }
+    return new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      const done = (error) => {
-        globalThis.removeEventListener('error', thrown);
-        if (error) reject(error);
-        else resolve();
-      };
-      const thrown = (event) => {
-        if (event.filename === href) done(new MatchError('handoff', `${url} failed as it ran`));
-      };
-      globalThis.addEventListener('error', thrown);
-      script.addEventListener('load', () => done(null));
-      script.addEventListener('error', () =>
-        done(new MatchError('load', `${url} could not be loaded`)),
-      );
+      // An event the browser fired at this script: no event a script dispatches is trusted.
+      const own = (event) => open && event.isTrusted && event.target === script;
+      script.addEventListener('load', (event) => {
+        if (!own(event)) return;
+        open = false;
+        if (count === 1 && usable(first)) {
+          taken = first;
+          resolve(taken);
+        } else {
+          reject(new MatchError('handoff', `${url} gave ${count} values, not one matcher`));
+        }
+      });
+      script.addEventListener('error', (event) => {
+        if (!own(event)) return;
+        open = false;
+        reject(new MatchError('load', `${url} could not be loaded`));
+      });
       script.type = 'module';
       script.src = url;
       document.head.append(script);
     });
+  };
 
   // Promise of the hopper's parser and matcher, { OwnedParse, OwnedMatch }, frozen (section
   // 11): the module in #list[data-matcher], loaded by one <script type="module"> added to the
@@ -217,12 +245,13 @@ const Data = (() => {
   // no inline script runs. It waits for the module's hand-off, at most MATCHER_TIMEOUT_MS, and
   // rejects only with a Data.MatchError: 'url'; 'load' (the script's error event: a network
   // error or a status other than 2xx, which the event can't tell apart, so a stale page shows
-  // through loadMatch's Data.Stale); 'handoff' (the module ran but handed over nothing usable,
-  // or a tffMatcher was there before its script was added, or the module threw as it ran); or
-  // 'timeout'. The page adds the script once, ever: a browser keeps a module's failed fetch
-  // for the page (Chromium does), so 'load' and 'handoff' are kept and need a reload, like
-  // Data.Stale. Only a 'timeout' is forgotten: a later call waits on the same script again,
-  // adding none, and takes its hand-off if it has run since.
+  // through loadMatch's Data.Stale); 'handoff' (a tffMatcher was there before Data added the
+  // script, or the module ran and no single usable value came: it threw first, handed over
+  // something else, or another script assigned to the name as well); or 'timeout'. The page
+  // adds the script once, ever: a browser keeps a module's failed fetch for the page (Chromium
+  // does), so 'load' and 'handoff' are kept and need a reload, like Data.Stale. Only a
+  // 'timeout' is forgotten: a later call waits on the same script again, adding none, and takes
+  // its hand-off if it has run since.
   const loadMatcher = memo(
     async () => {
       let url;
@@ -234,12 +263,7 @@ const Data = (() => {
       if (url.includes('?') || url.includes('#')) {
         throw new MatchError('url', `${url} has a query`);
       }
-      if (!matcherRun) {
-        if (Object.getOwnPropertyDescriptor(globalThis, MATCHER_GLOBAL)) {
-          throw new MatchError('handoff', `${MATCHER_GLOBAL} was defined before ${url} loaded`);
-        }
-        matcherRun = addMatcher(url);
-      }
+      if (!matcherRun) matcherRun = addMatcher(url);
       let timer;
       const late = new Promise((resolve, reject) => {
         timer = setTimeout(
@@ -248,13 +272,10 @@ const Data = (() => {
         );
       });
       try {
-        await Promise.race([matcherRun, late]);
+        return await Promise.race([matcherRun, late]);
       } finally {
         clearTimeout(timer);
       }
-      const api = handedOver();
-      if (!api) throw new MatchError('handoff', `${url} handed over no matcher`);
-      return api;
     },
     (error) => !(error instanceof MatchError && error.code === 'timeout'),
   );

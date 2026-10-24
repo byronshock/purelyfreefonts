@@ -825,8 +825,8 @@ LIST_ARRIVES_JS = """async (text) => {
   const slot = Object.getOwnPropertyDescriptor(globalThis, 'tffMatcher');
   return {
     result: JSON.stringify(OwnedMatch.match(OwnedParse.parse(text), OwnedMatch.table(doc))),
-    handOff: [api === slot.value, slot.writable, slot.configurable, slot.enumerable,
-      [api, OwnedParse, OwnedMatch].every(Object.isFrozen)],
+    handOff: [globalThis.tffMatcher === api, typeof slot.get, typeof slot.set, slot.configurable,
+      slot.enumerable, [api, OwnedParse, OwnedMatch].every(Object.isFrozen)],
     again: (await data.loadMatcher()) === api && (await data.loadMatch()) === doc,
   };
 }"""
@@ -850,8 +850,8 @@ def test_a_list_makes_exactly_two_requests_both_fixed_same_origin_gets(
     files with the page; once a list arrives, Data.loadMatcher and Data.loadMatch make exactly
     two new requests, GETs of the hashed URLs on #list with no query string and no body, so
     nothing of the list goes in them. Under the site's CSP the module's script loads (script-src
-    'self'), its hand-off is frozen and read-only, the parser and matcher match a list as
-    Python does, and a second list asks for nothing."""
+    'self'), its hand-off is frozen, the name it came through is Data's permanent accessor, the
+    parser and matcher match a list as Python does, and a second list asks for nothing."""
     from tff_catalog import owned
 
     guarded = guarded_context(viewport=WIDE)
@@ -882,7 +882,7 @@ def test_a_list_makes_exactly_two_requests_both_fixed_same_origin_gets(
     assert {r.resource_type for r in new} == {"script", "fetch"}
     table = owned.Table.from_document(json.loads((site_dir / match.lstrip("/")).read_bytes()))
     assert json.loads(got["result"]) == owned.match(owned.parse(text), table).to_json()
-    assert got["handOff"] == [True, False, False, False, True]
+    assert got["handOff"] == [True, "function", "function", False, False, True]
     assert got["again"] is True
     page.evaluate(LIST_ARRIVES_JS, "Some Other Font\n")
     page.wait_for_load_state("networkidle")

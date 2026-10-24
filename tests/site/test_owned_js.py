@@ -25,8 +25,9 @@ Firefox):
   randomness API; no such global is read while they load and run, and they make no request;
   a table keeps nothing of the lists matched against it, and once parse, match or candidates
   returns, the engine's legacy RegExp statics hold nothing of the list;
-- the module hands over exactly ``{ OwnedParse, OwnedMatch }``, frozen, as a global that, once
-  defined, can't be written, deleted or listed.
+- run with no page asking for it, the module defines ``globalThis.tffMatcher`` itself as
+  exactly ``{ OwnedParse, OwnedMatch }``, frozen, a global that can't be written, deleted or
+  listed.
 
 How fast they are (Milestone 3 steps 4 and 5) is test_perf.py's to measure, in CI's site-perf
 job.
@@ -38,10 +39,13 @@ routed page with a stub list: one GET of the path in ``#list[data-match]``, memo
 ``#list[data-matcher]``, memoised, resolving with the module's hand-off, and each way it can
 fail (no load, no usable hand-off, no answer in ``MATCHER_TIMEOUT_MS``, on Playwright's clock) a
 ``Data.MatchError`` with its code; the page adds that script once, ever, so a failure to load
-or hand over is kept until a reload, and a retry after a timeout waits on the same script; a
-``tffMatcher`` that something else defines before or while the module loads is refused, never
-taken; a URL off the page's origin is never requested; and the parser and matcher that
-loadMatcher hands over match a list on loadMatch's file as Python does.
+or hand over is kept until a reload, and a retry after a timeout waits on the same script;
+the name is Data's permanent setter from just before it adds the script, and a stand-in that
+another script gives is never taken, however it does so (before or during the download, with a
+dispatched load event, with the module's errors hidden, as the load arrives, or after running
+the module first): the hand-off is refused ('handoff'), or times out if the load is hidden; a
+URL off the page's origin is never requested; and the parser and matcher that loadMatcher
+hands over match a list on loadMatch's file as Python does.
 
 A parse input reaches the page as the vector file spells it (``owned_vectors.spelled``): a lone
 surrogate can't cross to the page as a string, so a text that holds one goes as UTF-16 code
@@ -378,10 +382,12 @@ HAND_OFF = """(() => {
 def test_the_module_hands_over_its_parts_frozen_as_a_global_nothing_can_replace_once_defined(
     loaded,
 ):
-    """inventory_matcher_on_demand: the module's one way to the page (58-matcher.js) is a
-    global that, once defined, can't be written, deleted, redefined or listed, holding a frozen
-    object of exactly the two parts; nothing can be added to it. Before it is defined, Data
-    refuses whatever else holds the name (test_a_tff_matcher_*)."""
+    """inventory_matcher_on_demand: run with no page asking for it (no setter of Data's under
+    the name), the module defines its one way to the page (58-matcher.js) itself: a global that
+    can't be written, deleted, redefined or listed, holding a frozen object of exactly the two
+    parts, to which nothing can be added. A page that asks later refuses it
+    (test_a_module_run_before_data_asked_*); through Data, the name is Data's setter
+    (test_once_taken_*)."""
     assert loaded.run(HAND_OFF) == {
         "keys": ["OwnedParse", "OwnedMatch"],
         "frozen": True,
@@ -1125,15 +1131,17 @@ def test_load_match_is_never_called_by_loading_the_index(data_page):
 
 # ---------------------------------------------------------------- Data.loadMatcher
 
-# A module that runs but hands over nothing usable, by kind.
+# A module that runs but gives Data's setter no single usable value, by kind: none, a global it
+# defines itself (Data's name can't be redefined, so the module throws), an object that isn't
+# frozen or holds no matcher, the real hand-off twice, or none since it threw first.
 NO_HAND_OFF = {
     "no global": "export {};\n",
-    "a writable global": "globalThis.tffMatcher = Object.freeze({ OwnedParse: { parse() {} },"
-    " OwnedMatch: { table() {}, match() {} } });\n",
-    "an unfrozen object": "Object.defineProperty(globalThis, 'tffMatcher', { value: {"
-    " OwnedParse: { parse() {} }, OwnedMatch: { table() {}, match() {} } } });\n",
-    "no matcher in it": "Object.defineProperty(globalThis, 'tffMatcher',"
-    " { value: Object.freeze({ OwnedParse: { parse() {} } }) });\n",
+    "a global of its own": "Object.defineProperty(globalThis, 'tffMatcher', { value:"
+    " Object.freeze({ OwnedParse: { parse() {} }, OwnedMatch: { table() {}, match() {} } }) });\n",
+    "an unfrozen object": "globalThis.tffMatcher = {"
+    " OwnedParse: { parse() {} }, OwnedMatch: { table() {}, match() {} } };\n",
+    "no matcher in it": "globalThis.tffMatcher = Object.freeze({ OwnedParse: { parse() {} } });\n",
+    "two hand-offs": MATCHER + f"\n{assets.MATCHER_START}\n",
     "a module that throws first": "throw new Error('x');\n" + MATCHER,
 }
 MATCHER_CASES: dict[str, tuple[Answer | str, list[Any]]] = {
@@ -1166,7 +1174,7 @@ def test_load_matcher_loads_the_list_s_matcher_module_once_and_takes_its_hand_of
     """inventory_matcher_on_demand: one <script type="module"> for #list[data-matcher], a
     plain GET; its hand-off, frozen, memoised. A module that fails to load is a MatchError
     'load' (a script's error event doesn't tell a 404 from a network error), and one that runs
-    but hands over nothing usable is 'handoff'. Both are kept, since a browser may keep a
+    but gives Data's setter no single usable value is 'handoff'. Both are kept, since a browser may keep a
     module's failed fetch for the page (Chromium does), so the second call asks for nothing
     and adds no script."""
     answer, want = MATCHER_CASES[label]
@@ -1207,28 +1215,50 @@ def test_a_module_that_failed_to_load_needs_a_reload(data_pages):
 
 
 # What another script might leave under the hand-off's name: frozen and read-only like the
-# real one, read-only but configurable, writable, or a getter.
-IMPOSTORS = ("read-only", "configurable", "writable", "a getter")
-# In the page: a stand-in matcher that answers every list with a fake result, defined as told.
-IMPOSTOR = """(kind) => {
-  const fake = Object.freeze({
-    OwnedParse: Object.freeze({ parse: () => ({ fake: true }) }),
-    OwnedMatch: Object.freeze({ table: () => ({}), match: () => ({ fake: true }) }),
-  });
+# module's own, read-only but configurable, writable, a getter, or a permanent setter like
+# Data's.
+IMPOSTORS = ("read-only", "configurable", "writable", "a getter", "a permanent setter")
+# In the page: a stand-in matcher, globalThis.__tffFake, that answers every list with a fake
+# result, and IMPOSTOR, which defines the name as told and says whether that worked.
+FAKE = """
+globalThis.__tffFake = globalThis.__tffFake || Object.freeze({
+  OwnedParse: Object.freeze({ parse: () => ({ fake: true }) }),
+  OwnedMatch: Object.freeze({ table: () => ({}), match: () => ({ fake: true }) }),
+});
+"""
+IMPOSTOR = (
+    """(kind) => {"""
+    + FAKE
+    + """
+  const fake = globalThis.__tffFake;
   const descriptor = {
     'read-only': { value: fake },
     configurable: { value: fake, configurable: true },
     writable: { value: fake, writable: true, configurable: true, enumerable: true },
     'a getter': { get: () => fake, configurable: true },
+    'a permanent setter': { get: () => fake, set: () => {} },
   }[kind];
-  Object.defineProperty(globalThis, 'tffMatcher', descriptor);
+  try {
+    Object.defineProperty(globalThis, 'tffMatcher', descriptor);
+    return 'defined';
+  } catch (error) {
+    return error.name;
+  }
 }"""
+)
 # In the page: loadMatcher's outcome, twice, and whether it ever handed over the stand-in.
 TAKEN = """async () => {
   const d = globalThis.__tffData;
   const once = () => d.loadMatcher().then(
-    (api) => (api.OwnedMatch.match().fake ? 'impostor' : 'ok'), (e) => e.code);
+    (api) => (api.OwnedParse.parse('Inter').fake ? 'impostor' : 'ok'), (e) => e.code);
   return [await once(), await once()];
+}"""
+# In the page: the name's slot, as [configurable, enumerable, has a setter, holds the stand-in].
+SLOT = """() => {
+  const slot = Object.getOwnPropertyDescriptor(globalThis, 'tffMatcher');
+  const value = 'value' in slot ? slot.value : globalThis.tffMatcher;
+  return [slot.configurable, slot.enumerable, typeof slot.set === 'function',
+    value === globalThis.__tffFake];
 }"""
 
 
@@ -1237,27 +1267,195 @@ def test_a_tff_matcher_defined_before_the_module_is_refused_without_a_request(da
     """Something that defines the hand-off's name before Data adds the module's script: Data
     takes nothing and asks for nothing ('handoff', kept)."""
     page = data_pages.open(f'data-match="{MATCH_PATH}"', (200, DOC))
-    page.evaluate(IMPOSTOR, kind)
+    assert page.evaluate(IMPOSTOR, kind) == "defined"
     assert page.evaluate(TAKEN) == ["handoff", "handoff"]
     assert [r.url for r in data_pages.requests] == [f"{ORIGIN}/"]
     assert page.evaluate(HEAD_SCRIPTS) == []
 
 
+# In the page: what another script might do to have Data take __tffFake, by route, as (before
+# Data is asked, while the module downloads, what the route wants of loadMatcher once the
+# module has run). Each gives the stand-in as __tffGive does: defined as told where it can be,
+# else assigned. Routes
+# A, B and C were found against the hand-off of fe85f21, where the module defined the name
+# itself, and each made Data take the stand-in there.
+GIVE = """
+globalThis.__tffGive = (descriptor) => {
+  try {
+    Object.defineProperty(globalThis, 'tffMatcher', { value: globalThis.__tffFake, ...descriptor });
+  } catch (error) {
+    globalThis.tffMatcher = globalThis.__tffFake;
+  }
+};
+"""
+ROUTES = {
+    # A: a read-only stand-in, then a load event dispatched at the added script before the
+    # module runs
+    "a stand-in and a dispatched load": (
+        "",
+        """__tffGive({});
+        document.head.querySelector('script').dispatchEvent(new Event('load'));""",
+        "handoff",
+    ),
+    # A's event alone: Data ignores it, and takes the module's hand-off once it has run
+    "a dispatched load alone": (
+        "",
+        "document.head.querySelector('script').dispatchEvent(new Event('load'));",
+        "ok",
+    ),
+    # B: a window error listener, added before Data is asked, that hides the module's errors,
+    # and a read-only stand-in
+    "a stand-in and hidden errors": (
+        """addEventListener('error', (e) => {
+          if (String(e.filename).includes('/assets/matcher.')) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+          }
+        });""",
+        "__tffGive({});",
+        "handoff",
+    ),
+    # C: a configurable stand-in, then a capture listener on the document, which runs before
+    # Data's on the script, that makes it permanent once the module has run
+    "a stand-in made permanent as the load arrives": (
+        "",
+        """__tffGive({ configurable: true });
+        document.addEventListener('load', () => {
+          __tffGive({ writable: false, configurable: false });
+        }, true);""",
+        "handoff",
+    ),
+}
+
+
 @pytest.mark.parametrize("kind", IMPOSTORS)
-def test_a_tff_matcher_defined_while_the_module_loads_is_refused(data_pages, kind):
-    """Something that defines the name while the module downloads: the real module then fails
-    to define its own (a read-only name it can't redefine), reported with its URL, or redefines
-    the value of a configurable one, which stays configurable or writable. Data never takes
-    the stand-in: 'handoff', kept."""
+def test_while_the_module_loads_the_name_is_data_s_and_can_t_be_redefined(data_pages, kind):
+    """Once Data has added the module's script, the name is its permanent setter: no other
+    script can define, redefine or delete it, so the module's hand-off reaches Data."""
     page = data_pages.open(f'data-match="{MATCH_PATH}"', (200, DOC), matcher=HOLD)
     page.evaluate(CALL)
     page.wait_for_function("() => document.scripts.length === 2")
-    page.evaluate(IMPOSTOR, kind)
+    assert page.evaluate(IMPOSTOR, kind) == "TypeError"
+    assert page.evaluate("() => Reflect.deleteProperty(globalThis, 'tffMatcher')") is False
+    assert page.evaluate(SLOT) == [False, False, True, False]
     data_pages.held.pop().fulfill(status=200, content_type="text/javascript", body=MATCHER)
-    assert page.evaluate("() => globalThis.__tffCall") == ["MatchError", "handoff"]
-    assert page.evaluate(TAKEN) == ["handoff", "handoff"]
+    assert page.evaluate("() => globalThis.__tffCall") == ["ok", None]
+    assert page.evaluate(TAKEN) == ["ok", "ok"]
+
+
+@pytest.mark.parametrize("route", ROUTES)
+def test_a_value_from_another_script_is_never_taken(data_pages, route):
+    """The module assigns its API to Data's setter once, and Data takes a value only on the
+    script's own load event (one the browser fired), once the module has run, and only if
+    exactly one came. So a stand-in given by another script makes two values ('handoff',
+    kept), never the stand-in, whatever the other script does to the events; and a load event
+    a script dispatches is no load."""
+    before, during, want = ROUTES[route]
+    page = data_pages.open(f'data-match="{MATCH_PATH}"', (200, DOC), matcher=HOLD)
+    page.evaluate(f"() => {{ {FAKE} {GIVE} {before} }}")
+    page.evaluate(CALL)
+    page.wait_for_function("() => document.scripts.length === 2")
+    page.evaluate(f"() => {{ {during} }}")
+    assert page.evaluate(WAITING) == "waiting"
+    data_pages.held.pop().fulfill(status=200, content_type="text/javascript", body=MATCHER)
+    outcome = ["ok", None] if want == "ok" else ["MatchError", want]
+    assert page.evaluate("() => globalThis.__tffCall") == outcome
+    assert page.evaluate(TAKEN) == [want, want]
+    assert page.evaluate(SLOT) == [False, False, True, False]
     assert len(_sent(data_pages.requests, MATCHER_PATH)) == 1
     assert page.evaluate(HEAD_SCRIPTS) == ADDED
+
+
+def test_a_script_that_hides_the_load_can_only_make_the_hand_off_time_out(data_pages):
+    """A capture listener that stops the script's load event before Data's listener: Data
+    never hears it, so the call times out ('timeout'), and a stand-in given then is never
+    taken either."""
+    page = data_pages.open(f'data-match="{MATCH_PATH}"', (200, DOC), matcher=HOLD, clock=True)
+    page.evaluate(CALL)
+    page.wait_for_function("() => document.scripts.length === 2")
+    hide = """() => document.addEventListener('load', (e) => {
+      globalThis.__tffHidden = true;
+      e.stopImmediatePropagation();
+    }, true)"""
+    page.evaluate(hide)
+    data_pages.held.pop().fulfill(status=200, content_type="text/javascript", body=MATCHER)
+    page.wait_for_function("() => globalThis.__tffHidden === true")
+    page.evaluate(f"() => {{ {FAKE} globalThis.tffMatcher = globalThis.__tffFake; }}")
+    timeout = page.evaluate("() => globalThis.__tffData.MATCHER_TIMEOUT_MS")
+    page.clock.run_for(timeout + 1)
+    assert page.evaluate("() => globalThis.__tffCall") == ["MatchError", "timeout"]
+    assert page.evaluate("() => globalThis.tffMatcher") is None
+
+
+# In the page: run the matcher module as another script would, before Data is asked, after
+# defining the name as IMPOSTOR does (or not at all), and wait for it to run.
+RUN_FIRST = """async ([kind, path]) => {
+  if (kind !== 'nothing') (IMPOSTOR)(kind);
+  const script = document.createElement('script');
+  script.type = 'module';
+  script.src = path;
+  await new Promise((resolve) => {
+    script.addEventListener('load', resolve);
+    document.head.append(script);
+  });
+  return Reflect.deleteProperty(globalThis, 'tffMatcher');
+}""".replace("IMPOSTOR", IMPOSTOR)
+
+
+@pytest.mark.parametrize("kind", ["nothing", *IMPOSTORS])
+def test_a_module_run_before_data_asked_leaves_the_name_defined_for_good(data_pages, kind):
+    """Another script that runs the module itself, before any list, over whatever it left
+    under the name: the module finds no setter of Data's, so it defines the name itself,
+    read-only and permanent (over a configurable stand-in too), or hands over into a
+    permanent setter that was there, and either way the name is there for good. Data then
+    refuses it ('handoff', kept) and asks for nothing: a module runs once in a page, so the
+    stand-in could otherwise be given to Data's setter as the only value."""
+    page = data_pages.open(f'data-match="{MATCH_PATH}"', (200, DOC))
+    assert page.evaluate(RUN_FIRST, [kind, MATCHER_PATH]) is False
+    slot = page.evaluate(SLOT)
+    assert slot[0] is False
+    assert page.evaluate(TAKEN) == ["handoff", "handoff"]
+    assert len(_sent(data_pages.requests, MATCHER_PATH)) == 1
+    assert len(page.evaluate(HEAD_SCRIPTS)) == 1
+
+
+# In the page: the name once Data has taken the hand-off, and attempts to replace it.
+TAKEN_SLOT = """async () => {"""
+TAKEN_SLOT += FAKE
+TAKEN_SLOT += """
+  const api = await globalThis.__tffData.loadMatcher();
+  const slot = Object.getOwnPropertyDescriptor(globalThis, 'tffMatcher');
+  globalThis.tffMatcher = globalThis.__tffFake;
+  const deleted = Reflect.deleteProperty(globalThis, 'tffMatcher');
+  let redefined = true;
+  try {
+    Object.defineProperty(globalThis, 'tffMatcher', { value: globalThis.__tffFake });
+  } catch (error) {
+    redefined = false;
+  }
+  return {
+    slot: [slot.configurable, slot.enumerable, typeof slot.get, typeof slot.set],
+    same: globalThis.tffMatcher === api && (await globalThis.__tffData.loadMatcher()) === api,
+    frozen: [api, api.OwnedParse, api.OwnedMatch].every(Object.isFrozen),
+    keys: Object.keys(api), listed: Object.keys(globalThis).includes('tffMatcher'),
+    deleted, redefined,
+  };
+}"""
+
+
+def test_once_taken_the_hand_off_reads_as_the_api_and_nothing_replaces_it(data_pages):
+    """After the hand-off, the name is still Data's permanent accessor: it reads as the API
+    Data took, unlisted; assigning to it does nothing, and it can't be deleted or redefined."""
+    page = data_pages.open(f'data-match="{MATCH_PATH}"', (200, DOC))
+    assert page.evaluate(TAKEN_SLOT) == {
+        "slot": [False, False, "function", "function"],
+        "same": True,
+        "frozen": True,
+        "keys": ["OwnedParse", "OwnedMatch"],
+        "listed": False,
+        "deleted": False,
+        "redefined": False,
+    }
 
 
 @pytest.mark.parametrize(

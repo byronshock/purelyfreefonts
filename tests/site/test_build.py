@@ -178,8 +178,8 @@ JS = {
         """,
     "58-matcher.js": """\
         // 58-matcher: fixture part, the matcher module's hand-off.
-        const Matcher = Object.freeze({});
-        Object.defineProperty(globalThis, 'tffMatcher', { value: Matcher });
+        const Matcher = Object.freeze({ handOver: () => {} });
+        Matcher.handOver('tffMatcher');
         """,
 }
 CSS = {

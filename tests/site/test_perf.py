@@ -683,7 +683,8 @@ REFERENCE_JS = """(rounds) => {
   return { ms: performance.now() - t0, check: ((h >>> 0) + seen.size) >>> 0 };
 }"""
 # The matcher module as the build writes it (inventory_matcher_on_demand), inline; the timed
-# code takes its hand-off, as Data.loadMatcher does. Loading it is not timed.
+# code takes its API from globalThis.tffMatcher, which the module defines itself when no page
+# has asked for it (58-matcher.js). Loading it is not timed.
 HOPPER_PAGE = (
     "<!doctype html><html lang=en><meta charset=utf-8><title>hopper</title>"
     "<script type=module>\n{module}\n</script>"

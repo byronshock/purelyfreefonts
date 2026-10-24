@@ -7,8 +7,9 @@ page's, ``/assets/app.<h>.js`` (``JS_PARTS``), and the hopper's matcher,
 visitor's list arrives (the owner's ruling of 2026-10-23, ``inventory_matcher_on_demand``).
 Modules share no top-level names, so the matcher holds its own copy of the lower parts it
 uses (``05-keys.js`` is in both lists), and hands its API to the page in one way: its last
-line, ``MATCHER_START``, defines ``globalThis.tffMatcher``. ``site/css/*.css`` is
-concatenated the same way into ``/assets/style.<h>.css``.
+line, ``MATCHER_START``, gives it to ``globalThis.tffMatcher``, which ``Data`` has defined as
+a permanent setter. ``site/css/*.css`` is concatenated the same way into
+``/assets/style.<h>.css``.
 
 Each JS part declares exactly one top-level ``const``, named in its list (a part in both lists
 has the same name in each). The lint refuses extra top-level declarations and statements (only
@@ -138,16 +139,19 @@ MATCHER_JS: tuple[str, ...] = (
     "Math.random",
 )
 # The one top-level statement besides the declarations in each module: the last line of its
-# last part. The matcher's defines globalThis.tffMatcher, read-only and permanent (the
-# defaults of defineProperty), as Matcher, a frozen { OwnedParse, OwnedMatch }.
+# last part. The matcher's assigns its API, a frozen { OwnedParse, OwnedMatch }, to
+# globalThis.tffMatcher, the permanent setter Data defined before it added the module's
+# script; with no such setter, it defines the name itself, read-only and permanent, so Data
+# refuses it (site/js/58-matcher.js).
 MAIN_PART = "90-main.js"
 MAIN_START = "Main.start();"
 MATCHER_PART = "58-matcher.js"
 MATCHER_GLOBAL = "tffMatcher"
-MATCHER_START = f"Object.defineProperty(globalThis, '{MATCHER_GLOBAL}', {{ value: Matcher }});"
+MATCHER_START = f"Matcher.handOver('{MATCHER_GLOBAL}');"
 _STARTS = {MAIN_PART: MAIN_START, MATCHER_PART: MATCHER_START}
-# The only code lines that name the hand-off: Data's constant, which loadMatcher reads it by,
-# and the matcher's last line, which defines it (section 5; no other part may touch it).
+# The only code lines that name the hand-off: Data's constant, which loadMatcher defines it
+# by, and the matcher's last line, which hands over through it (section 5; no other part may
+# touch it).
 MATCHER_GLOBAL_LINES = {
     DATA_PART: f"  const MATCHER_GLOBAL = '{MATCHER_GLOBAL}';",
     MATCHER_PART: MATCHER_START,
