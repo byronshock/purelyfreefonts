@@ -13,8 +13,9 @@ screen at a time until every specimen has been requested. ``findings()`` then re
 tests fail on:
 
 - a request to another origin, or to ``/cdn-cgi/``, or a WebSocket;
-- a request for the hopper's match file (``/assets/match.<h>.json``): the sweep never gives the
-  hopper a list, and the file loads only once one arrives (M3-D7 a, site/CONTRACT.md section 11);
+- a request for the hopper's match file (``/assets/match.<h>.json``) or its matcher module
+  (``/assets/matcher.<h>.js``): the sweep never gives the hopper a list, and both load only once
+  one arrives (M3-D7 a, ``inventory_matcher_on_demand``, site/CONTRACT.md section 11);
 - a request to Stripe (the sweep never clicks the tip link);
 - a cookie in the context, or a ``Set-Cookie`` on any response;
 - anything in ``storage_state(indexed_db=True)``, or anything the recorders saw: storage and
@@ -43,8 +44,11 @@ stay on this site too; the built files point nowhere else and the script names n
 the sweep visits every page the build writes; the sweep and the live checks
 (``tests/live/checks.py``) catch what they are for (a planted cookie, storage write, CSP
 violation, prefetch link, foreign request, match-file request, injected beacon, inline script,
-page error, bad headers and bad payloads); the list never fetches the hopper's match file without
-a list; and the live checks pass against this build.
+page error, bad headers and bad payloads); the list never asks for the hopper's match file or
+matcher module without a list, and once ``Data``'s two loaders run (a list's arrival, until the
+hopper's interface calls them), exactly two new requests are made, plain same-origin GETs of
+the two hashed URLs, whose parser and matcher then work under the site's CSP and ask for
+nothing more; and the live checks pass against this build.
 """
 
 import hashlib
@@ -445,6 +449,10 @@ class Sweep:
             "requests for the match file without a list",
             [r.url for r in web if urlsplit(r.url).path.startswith(checks.MATCH_PREFIX)],
         )
+        add(
+            "requests for the matcher module without a list",
+            [r.url for r in web if urlsplit(r.url).path.startswith(checks.MATCHER_PREFIX)],
+        )
         add("WebSockets", list(self.websockets))
         add("responses that set a cookie", g.cookie_responses())
         add("cookies in the browser", g.context.cookies())
@@ -786,22 +794,103 @@ def test_every_page_rank_filter_and_panel_stays_on_this_site(
     print(f"privacy sweep: {dict(sorted(done.items()))}")
 
 
-def test_the_list_page_never_fetches_the_match_file_without_a_list(
+def test_the_list_page_never_loads_the_hopper_s_files_without_a_list(
     guarded_context: Any, site_dir: Path
 ) -> None:
-    """M3-D7 (a): the list names the hopper's match file in ``#list[data-match]``, and loading
-    the page, scrolling every specimen into view and opening a panel never request it."""
+    """M3-D7 (a), inventory_matcher_on_demand: the list names the hopper's match file in
+    ``#list[data-match]`` and its matcher module in ``#list[data-matcher]``, and loading the
+    page, scrolling every specimen into view and opening a panel request neither."""
     sweep = Sweep(guarded_context(viewport=WIDE), csp=expected_csp())
     page = sweep.open_list()
-    url = page.get_attribute("#list", "data-match")
-    assert url
-    assert re.fullmatch(r"/assets/match\.[0-9a-f]{10}\.json", url)
-    assert (site_dir / url.lstrip("/")).is_file()
+    urls = [page.get_attribute("#list", name) for name in ("data-match", "data-matcher")]
+    assert re.fullmatch(r"/assets/match\.[0-9a-f]{10}\.json", urls[0] or "")
+    assert re.fullmatch(r"/assets/matcher\.[0-9a-f]{10}\.js", urls[1] or "")
+    for url in urls:
+        assert (site_dir / url.lstrip("/")).is_file()
     sweep.scroll_specimens(page)
     page.locator(".details-toggle").first.click()
     page.wait_for_load_state("networkidle")
-    assert [r.url for r in sweep.requests if urlsplit(r.url).path == url] == []
+    assert [r.url for r in sweep.requests if urlsplit(r.url).path in urls] == []
+    assert page.evaluate("() => document.scripts.length") == 1
+    assert page.evaluate("() => 'tffMatcher' in globalThis") is False
     assert sweep.findings() == {}
+
+
+# In the page: a list's arrival as the hopper's interface will handle it, through Data's two
+# loaders, then the parser and matcher they hand over; and a second list.
+LIST_ARRIVES_JS = """async (text) => {
+  const data = globalThis.__tffData;
+  const [api, doc] = await Promise.all([data.loadMatcher(), data.loadMatch()]);
+  const { OwnedParse, OwnedMatch } = api;
+  const slot = Object.getOwnPropertyDescriptor(globalThis, 'tffMatcher');
+  return {
+    result: JSON.stringify(OwnedMatch.match(OwnedParse.parse(text), OwnedMatch.table(doc))),
+    handOff: [api === slot.value, slot.writable, slot.configurable, slot.enumerable,
+      [api, OwnedParse, OwnedMatch].every(Object.isFrozen)],
+    again: (await data.loadMatcher()) === api && (await data.loadMatch()) === doc,
+  };
+}"""
+
+
+def _expose_data(route: Any) -> None:
+    """Answer the page's script as served, with one line more that exposes its ``Data`` (a
+    module's consts are not global), standing in for the hopper's interface (PR 4)."""
+    from tests.site.conftest import fetch_unencoded
+
+    response = fetch_unencoded(route)
+    headers = {k: v for k, v in response.headers.items() if k.lower() != "content-length"}
+    body = response.text() + "\nglobalThis.__tffData = Data;\n"
+    route.fulfill(status=response.status, headers=headers, body=body)
+
+
+def test_a_list_makes_exactly_two_requests_both_fixed_same_origin_gets(
+    guarded_context: Any, site_dir: Path, privacy_data: Path
+) -> None:
+    """inventory_matcher_on_demand, amending Milestone 3 step 9: nothing loads the hopper's
+    files with the page; once a list arrives, Data.loadMatcher and Data.loadMatch make exactly
+    two new requests, GETs of the hashed URLs on #list with no query string and no body, so
+    nothing of the list goes in them. Under the site's CSP the module's script loads (script-src
+    'self'), its hand-off is frozen and read-only, the parser and matcher match a list as
+    Python does, and a second list asks for nothing."""
+    from tff_catalog import owned
+
+    guarded = guarded_context(viewport=WIDE)
+    sweep = Sweep(guarded, csp=expected_csp())
+    page = guarded.new_page()
+    page.route("**/assets/app.*.js", _expose_data)
+    page.goto("/")
+    sweep.pages.append(("/", page))
+    wait_until(page, "globalThis.__tffData !== undefined", "the list's script to start")
+    page.wait_for_load_state("networkidle")
+    match, matcher = (page.get_attribute("#list", a) for a in ("data-match", "data-matcher"))
+    assert match
+    assert matcher
+    before = len(sweep.requests)
+    assert [r for r in sweep.requests if urlsplit(r.url).path in (match, matcher)] == []
+    families = [f["family"] for f in json.loads(privacy_data.read_bytes())["fonts"][:5]]
+    text = "\n".join([*families, f"{families[0]} Bold", "Zzz Unknown Grotesk"])
+    got = page.evaluate(LIST_ARRIVES_JS, text)
+    page.wait_for_load_state("networkidle")
+    new = sweep.requests[before:]
+    assert sorted(r.url for r in new) == sorted(sweep.origin + url for url in (match, matcher))
+    for request in new:
+        assert (request.method, request.post_data) == ("GET", None)
+        assert urlsplit(request.url).query == ""
+        response = request.response()
+        assert response is not None
+        assert response.status == 200
+    assert {r.resource_type for r in new} == {"script", "fetch"}
+    table = owned.Table.from_document(json.loads((site_dir / match.lstrip("/")).read_bytes()))
+    assert json.loads(got["result"]) == owned.match(owned.parse(text), table).to_json()
+    assert got["handOff"] == [True, False, False, False, True]
+    assert got["again"] is True
+    page.evaluate(LIST_ARRIVES_JS, "Some Other Font\n")
+    page.wait_for_load_state("networkidle")
+    assert len(sweep.requests) == before + 2
+    assert sweep.findings() == {
+        "requests for the match file without a list": [sweep.origin + match],
+        "requests for the matcher module without a list": [sweep.origin + matcher],
+    }
 
 
 def test_the_tip_link_is_the_only_way_to_stripe(guarded_context: Any, tip_url: str) -> None:
@@ -961,6 +1050,10 @@ def test_the_sweep_catches_what_it_is_for(
               await fetch('/planted');
               await fetch('/cdn-cgi/rum');
               await fetch('/assets/match.0123456789.json');
+              const module = document.createElement('script');
+              module.type = 'module';
+              module.src = '/assets/matcher.0123456789.js';
+              document.head.append(module);
               setTimeout(() => { throw new Error('tff-probe'); }, 0);
             }"""
         )
@@ -977,6 +1070,7 @@ def test_the_sweep_catches_what_it_is_for(
         "requests to /cdn-cgi/",
         "requests to Stripe",
         "requests for the match file without a list",
+        "requests for the matcher module without a list",
         "responses that set a cookie",
         "cookies in the browser",
         "browser storage",
@@ -1032,9 +1126,12 @@ def test_the_live_checks_pass_against_this_build(site_url: str, site_dir: Path) 
     assert checks.header_problems(fetched, expected, staging=False) == []
     assert checks.html_problems(fetched) == []
     assert checks.payload_problems(fetched) == []
-    assert [f.path for f in fetched if f.path.startswith(checks.MATCH_PREFIX)] == [
-        next(a["data-match"] for t, a in checks.tags(by_path["/"].body) if a.get("id") == "list")
+    (ol,) = [a for t, a in checks.tags(by_path["/"].body) if a.get("id") == "list"]
+    assert [f.path for f in fetched if f.path.startswith(checks.MATCH_PREFIX)] == [ol["data-match"]]
+    assert [f.path for f in fetched if f.path.startswith(checks.MATCHER_PREFIX)] == [
+        ol["data-matcher"]
     ]
+    assert by_path[ol["data-matcher"]].kind == "js"
     built_robots = (site_dir / "robots.txt").read_bytes()
     assert checks.robots_problems(by_path["/robots.txt"], built_robots) == []
     version = by_path["/version.txt"].body.decode()
@@ -1055,7 +1152,8 @@ def test_the_live_checks_catch_what_they_are_for() -> None:
         '<script type="module" src="/assets/app.0123456789.js"></script>'
         '<ol id="list" data-index="/assets/list.0123456789.json"'
         ' data-details="/assets/d.0123456789.json"'
-        f' data-match="/assets/match.0123456789.json"></ol>{beacon}'
+        ' data-match="/assets/match.0123456789.json"'
+        f' data-matcher="/assets/matcher.0123456789.js"></ol>{beacon}'
     )
     sitemap = (
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
@@ -1107,11 +1205,18 @@ def test_the_live_checks_catch_what_they_are_for() -> None:
     ]
     # Every payload must be on this site, the match file too (M3-D7 a): never fetched from
     # another, by URL or protocol-relative URL.
-    served["/"] = home.replace(
-        'data-details="/assets/d.0123456789.json"', 'data-details="https://x.test/d.json"'
-    ).replace(
-        'data-match="/assets/match.0123456789.json"',
-        'data-match="//x.test/assets/match.0123456789.json"',
+    served["/"] = (
+        home.replace(
+            'data-details="/assets/d.0123456789.json"', 'data-details="https://x.test/d.json"'
+        )
+        .replace(
+            'data-match="/assets/match.0123456789.json"',
+            'data-match="//x.test/assets/match.0123456789.json"',
+        )
+        .replace(
+            'data-matcher="/assets/matcher.0123456789.js"',
+            'data-matcher="https://x.test/assets/matcher.0123456789.js"',
+        )
     )
     with checks.client("https://example.test", transport=transport) as http:
         elsewhere, foreign = checks.crawl(http)
@@ -1119,8 +1224,11 @@ def test_the_live_checks_catch_what_they_are_for() -> None:
         *problems,
         "/ names 'https://x.test/d.json' (json), which is not a path on this site",
         "/ names '//x.test/assets/match.0123456789.json' (json), which is not a path on this site",
+        "/ names 'https://x.test/assets/matcher.0123456789.js' (js), which is not a path on this "
+        "site",
     ]
     assert not any(f.path.startswith(checks.MATCH_PREFIX) for f in elsewhere)
+    assert not any(f.path.startswith(checks.MATCHER_PREFIX) for f in elsewhere)
     payloads = checks.payload_problems(fetched)
     assert len(payloads) == 3
     assert payloads[0] == "/assets/list.0123456789.json (200): a JSON list, not an object"

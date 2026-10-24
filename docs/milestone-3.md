@@ -169,9 +169,9 @@ Each code pull request is built in its own worktree, reviewed adversarially befo
 
 ### Step 9: Privacy verification
 **Who:** Claude. **Depends on:** 6–8; M2 step 9. Must pass on the live site before step 11.
-- [ ] A static check: the check's modules have no `fetch`, `XMLHttpRequest`, `sendBeacon`, `WebSocket`, `EventSource`, dynamic `import()` or element `src` assignment, except one fetch of the match file's fixed URL under M3-D7's default.
+- [ ] A static check: the check's modules have no `fetch`, `XMLHttpRequest`, `sendBeacon`, `WebSocket`, `EventSource`, dynamic `import()` or element `src` assignment, except one fetch of the match file's fixed URL under M3-D7's default, and one module script for the matcher's fixed URL (*amended 2026-10-23*, `inventory_matcher_on_demand`: the parser and matcher are a file of their own, `Data.loadMatcher`; the site build's lint keeps the script element to `10-data.js`, site/CONTRACT.md section 5).
 - [ ] M2's privacy test gains a case, in Chromium, Firefox and WebKit: once a list is loaded, matching every fixture, the stubbed button, switching views and filters, scrolling every view and clearing the list make no request, except:
-  - under M3-D7's default, exactly one same-origin request for the hashed match file as the comparison starts, with no query string or body, and the same URL for every list;
+  - under M3-D7's default, exactly two same-origin requests as the comparison starts, for the hashed match file and the hashed matcher module, with no query string or body, and the same URLs for every list (*amended 2026-10-23*, `inventory_matcher_on_demand`; it was one request, for the match file);
   - after a click on "Load previews" or "Type your own text" (M2-D5), or on a report, download or tip link.
 - [ ] It also checks that the check works offline once the match file has loaded, sets no cookie, and stores nothing M3-D13 doesn't allow.
 - [ ] After each deploy it runs on the live site through Cloudflare, re-verifying M2's headers and Cloudflare privacy settings and step 6's headers.

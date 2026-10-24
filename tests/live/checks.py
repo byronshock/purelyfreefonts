@@ -5,8 +5,8 @@ a local build (``tests/site/test_privacy.py``) run the same code:
 
 - ``crawl(client)`` fetches every kind of file the site serves: the sitemap's pages, a missing
   page (404), the stylesheet, the script, the three JSON payloads (the list index, the details
-  and the hopper's match file: the checker's fetch, not a page's, so M3-D7 doesn't apply), a
-  specimen (or ``favicon.svg``),
+  and the hopper's match file) and the hopper's matcher module (the checker's fetches, not a
+  page's, so M3-D7 doesn't apply), a specimen (or ``favicon.svg``),
   ``robots.txt``, ``sitemap.xml`` and ``version.txt``. Every request sends ``Accept: text/html``,
   because Cloudflare injects its beacon only into responses to requests that accept HTML
   (ops/SERVER.md section G).
@@ -78,6 +78,8 @@ VERSION_PATTERNS = {
 }
 MATCH_PREFIX = "/assets/match."
 MATCH_FORMAT = "tff-match"
+# The hopper's parser and matcher, a module of their own (inventory_matcher_on_demand).
+MATCHER_PREFIX = "/assets/matcher."
 # Where Cloudflare's Web Analytics doesn't inject by default: the EU, the EEA, the UK and
 # Switzerland (ops/SERVER.md section G).
 NO_BEACON_LOCATIONS = frozenset(
@@ -182,6 +184,7 @@ def crawl(http: httpx.Client) -> tuple[list[Fetched], list[str]]:
             (ol.get(attribute, ""), "json")
             for attribute in ("data-index", "data-details", "data-match")
         ]
+        wanted.append((ol.get("data-matcher", ""), "js"))
     wanted += [(path, "svg") for path in specimens[:1]]
     wanted += [("/favicon.svg", "svg"), ("/robots.txt", "txt"), ("/version.txt", "txt")]
     sitemap = get(http, "/sitemap.xml", "xml")
