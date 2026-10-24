@@ -383,10 +383,11 @@ def _covered(recode: matchfile.Recode) -> bool:
 
 def test_the_committed_recodes_citing_a_recode_ruling_are_ones_it_covers():
     """An entry citing hopper_hackgen_related is HackGen, or a name that reaches HackGen's
-    key, on hack, as related. A refresh that adds such a name (the build asks for its recode),
-    or drops HackGen or a build of it, waits for the owner's review (ops/MONTHLY.md step 5);
-    then the list gains an entry citing this ruling, or loses one, and this test needs no edit.
-    A recode of anything else cites the ruling that reviews it."""
+    key, on hack, as related. A refresh that adds such a name to hack (the build asks for its
+    recode) gains an entry citing this ruling, with no new question; one that drops HackGen
+    changes the HackGen known answers, a question for the owner first, then loses the entry
+    (ops/MONTHLY.md step 5). Either way this test needs no edit. A recode of anything else,
+    or of HackGen as anything else, cites the ruling that reviews it."""
     beyond = [
         recode
         for recode in COMMITTED_REVIEWED.recodes.values()
