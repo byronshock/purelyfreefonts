@@ -4159,6 +4159,11 @@
     "first_seen": "2026-09-26",
     "minted_from": "FirgeNerd"
   },
+  "firjar": {
+    "family": "Firjar",
+    "first_seen": "2026-10-17",
+    "minted_from": "Firjar"
+  },
   "fixedsys-excelsior": {
     "family": "Fixedsys Excelsior",
     "first_seen": "2026-09-26",
@@ -6379,6 +6384,11 @@
     "first_seen": "2026-09-26",
     "minted_from": "Ioskeley Mono"
   },
+  "ioskeley-mono-term-nerd-font": {
+    "family": "Ioskeley Mono Term Nerd Font",
+    "first_seen": "2026-10-17",
+    "minted_from": "Ioskeley Mono Term Nerd Font"
+  },
   "ipa-fonts": {
     "family": "IPA Fonts",
     "first_seen": "2026-09-26",
@@ -7474,6 +7484,11 @@
     "first_seen": "2026-09-26",
     "minted_from": "Lexend Zetta"
   },
+  "lexica-ultralegible": {
+    "family": "Lexica Ultralegible",
+    "first_seen": "2026-10-17",
+    "minted_from": "Lexica Ultralegible"
+  },
   "lextrall": {
     "family": "Lextrall",
     "first_seen": "2026-09-26",
@@ -8484,6 +8499,11 @@
     "first_seen": "2026-09-26",
     "minted_from": "Micro 5 Charted"
   },
+  "microsoft-aptos-font-family": {
+    "family": "Microsoft Aptos font family",
+    "first_seen": "2026-10-17",
+    "minted_from": "Microsoft Aptos font family"
+  },
   "microsoft-himalaya": {
     "family": "Microsoft Himalaya",
     "first_seen": "2026-09-26",
@@ -8505,7 +8525,7 @@
     "minted_from": "Microsoft Sans Serif"
   },
   "microsoft-selawik": {
-    "family": "Microsoft Selawik",
+    "family": "Selawik",
     "first_seen": "2026-09-26",
     "minted_from": "Microsoft Selawik"
   },
