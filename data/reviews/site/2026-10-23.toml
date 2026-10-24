@@ -7,3 +7,17 @@ recommended = true
 value = "near_match_only"
 ruling = "In the hopper, HackGen (Hack merged with a CJK typeface) is only a near-match of Hack: someone who has HackGen installed still sees Hack listed (M3-D5 a, derived families never owned). A small reviewed list beside names.json recodes it as related in the match file; the alias row that folds HackGen into Hack as a build (leftover_cica_hackgen, 2026-09-28) stays, so the ranking and its scores don't change."
 reason = "Found while prototyping the matcher: names.json carries HackGen as a build of Hack, which M3-D4 would count as owned. Of (a) a near-match only, through the hopper's own list, (b) changing the alias row, which moves Hack's scores and would wait for the next live refresh, and (c) counting Hack as owned, the owner took Claude's recommendation."
+
+[inventory_ambiguous_names]
+choice = "a"
+recommended = true
+value = "accept_five"
+ruling = "Five names that are a family of their own and also, with a style word dropped, a catalog family's weight are the hopper's reviewed ambiguous set: Archivo Black (or Archivo), Bungee Hairline (or Bungee), Gentium Book (or Gentium; Gentium Plus on the October data), Gentium Plus Book (or Gentium Plus) and Syne Italic (or Syne). From a registry or a plain list they give a near-match; only a trusted name counts as owned (fc-list's first family, a macOS family, or a PostScript name's part before its hyphen, as ArchivoBlack-Regular owns Archivo Black). The site build compares this set with names.json every month and fails on any new, changed or dropped name until the owner has reviewed it."
+reason = "Found by the match file's collision check (Milestone 3 step 3 had named only Archivo Black). Of (a) accepting these five and (b) the owner looking at each first, the owner took Claude's recommendation."
+
+[inventory_matcher_on_demand]
+choice = "a"
+recommended = true
+value = "matcher_loaded_when_a_list_arrives"
+ruling = "The hopper's parser and matcher are not part of the list page's script: they are a separate same-origin file, fetched with the match file only when a list arrives, so a list makes exactly two new requests, both to fixed hashed URLs that carry nothing from the list. The list page stays near its weight before the hopper. This amends Milestone 3 step 9 (\"exactly one new request\") and site/CONTRACT.md section 5 (one script module)."
+reason = "Measured, the two parts cost about 14 KB gzipped, not the 3 to 4 KB estimated: the list page would grow from 74 to 88 KB on main and 92 KB on the October data, of a 100 KB budget, before the hopper's interface (about 6 to 7 KB). Of (a) loading them on demand, (b) accepting the size, (c) a JavaScript minifier and (d) raising the page budget, the owner took Claude's recommendation."

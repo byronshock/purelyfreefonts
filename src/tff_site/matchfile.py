@@ -4,15 +4,18 @@ The owner's ruling of 2026-10-22, ``inventory_match_data_site_build``, amends Mi
 step 3: the site build, not a pipeline stage, makes the match file with
 ``tff_catalog.owned.match_document`` from the committed ``build/names.json`` and
 ``catalog-site.json``, and publishes it as ``/assets/match.<h>.json`` (site/CONTRACT.md
-section 11). ``match_file`` first refuses, listing every problem at once:
+section 11). ``match_file`` first refuses, listing every problem:
 
-- a names file of another run, or of the wrong shape (``names_errors``);
-- a reviewed list that is malformed, or whose recodes name no alias of the family they
-  say (``load_reviewed``, ``recode_errors``);
-- what Milestone 3 step 3's collision check finds (``check_errors`` over
-  ``owned.check_document``), including an ambiguous set other than the reviewed one, so a
-  refresh that adds or changes an ambiguous name fails until the owner has reviewed it
-  ("the owner reviews flagged collisions");
+- a names file that can't be read, of another run, or of the wrong shape (``names_errors``),
+  and a reviewed list that is malformed (``load_reviewed``), together; the checks below read
+  both, so these stop the build before them;
+- recodes that name no alias of the family they say, or that change nothing
+  (``refused_recodes``), or that another name of the family bypasses (``owned.RecodeError``),
+  together with what Milestone 3 step 3's collision check finds without them (``check_errors``
+  over ``owned.check_document``), including an ambiguous set other than the reviewed one, so
+  a refresh that changes the ambiguous set, moves a recoded alias, or both, fails once,
+  naming all of it, until the owner has reviewed it ("the owner reviews flagged
+  collisions");
 - a match file that the hopper's reader, ``owned.Table.from_document``, which the page
   mirrors, refuses.
 
@@ -156,6 +159,8 @@ def load_reviewed(path: Path) -> tuple[Reviewed, bytes]:
         doc = tomllib.loads(blob.decode("utf-8"))
     except (UnicodeDecodeError, tomllib.TOMLDecodeError) as exc:
         raise MatchFileError([f"{path}: {exc}"]) from exc
+    except RecursionError:  # tomllib recurses: an array or inline table some 400 levels deep
+        raise MatchFileError([f"{path}: nested too deeply to read"]) from None
     errors = [
         f"{path}: unknown key {key!r}" for key in sorted(doc.keys() - {"ambiguous", "recode"})
     ]
@@ -311,26 +316,38 @@ def names_errors(doc: Mapping[str, Any], names: Any) -> list[str]:
     return errors
 
 
-def recode_errors(names: Mapping[str, Any], reviewed: Reviewed) -> list[str]:
-    """Recodes whose key isn't an alias of exactly the family they name.
+def refused_recodes(names: Mapping[str, Any], reviewed: Reviewed) -> dict[str, str]:
+    """Why each refused recode is, by its key: one whose key isn't an alias of exactly the
+    family it names, or whose aliases names.json already gives no owned relation
+    (``owned.OWNED_RELATIONS``). Empty when every recode is one that ``owned`` takes.
 
     A recode works by ``match_key`` on every alias row at that key (``owned``), so the review
     of one family's alias would silently recode another's, or recode nothing once a refresh
-    moves the alias (a stale entry).
+    moves the alias or makes it a near-match itself (a stale entry). ``owned`` refuses what
+    remains, a recode that another name of its family bypasses (``owned.RecodeError``).
     """
     holders: dict[str, set[str]] = defaultdict(set)
+    relations: dict[str, set[str]] = defaultdict(set)
     for fam in names["families"]:
         for item in fam["names"]:
             holders[match_key(item["name"])].add(fam["id"])
-    errors: list[str] = []
+            relations[match_key(item["name"])].add(item["relation"])
+    refused: dict[str, str] = {}
     for key, recode in sorted(reviewed.recodes.items()):
         found = sorted(holders.get(key, ()))
         if found != [recode.family]:
-            errors.append(
+            refused[key] = (
                 f"{recode.name!r} is reviewed as an alias of {recode.family} ({recode.ruling}), "
                 f"but names.json's aliases at its key {key!r} are of {', '.join(found) or 'none'}"
             )
-    return errors
+        elif not relations[key] & owned.OWNED_RELATIONS:
+            refused[key] = (
+                f"{recode.name!r} is reviewed ({recode.ruling}) as an owned alias of "
+                f"{recode.family} that the hopper makes {recode.relation}, but names.json's "
+                f"aliases at its key {key!r} are already {', '.join(sorted(relations[key]))}, "
+                "so the recode changes nothing; once the owner has reviewed the change, remove it"
+            )
+    return refused
 
 
 def check_errors(
@@ -378,7 +395,8 @@ def check_errors(
                 f"({seen.ruling}) as one of {', '.join(seen.families)}; the owner reviews the change"
             )
     errors += [
-        f"{seen.name!r} is reviewed as ambiguous in {reviewed_path}, but no longer is; remove it"
+        f"{seen.name!r} is reviewed as ambiguous in {reviewed_path}, but no longer is; once "
+        "the owner has reviewed the drop, remove it"
         for key, seen in sorted(reviewed.ambiguous.items())
         if key not in check.amb
     ]
@@ -405,36 +423,59 @@ def match_file(doc: Mapping[str, Any], names_path: Path) -> MatchFile:
     matches a built site as ``catalog_sha256`` does, and ``reviewed_sha256`` the reviewed
     list's (of no bytes when there is none), since its recodes change the match file too. The
     match file's own ``names_sha256`` hashes the canonical form (``owned.match_document``).
-    Raises ``MatchFileError`` with every problem.
+    Raises ``MatchFileError`` with every problem, in two rounds at most: the two files' own
+    problems (unreadable, of another run, of the wrong shape, malformed) stop it before the
+    checks, which read both; past them, the refused recodes and the collision check's
+    findings come together, the check running without the refused recodes.
     """
     names_path = Path(names_path)
+    reviewed_path = default_reviewed_path(names_path)
+    errors: list[str] = []
+    names: Any = None
+    blob = b""
     try:
         blob = names_path.read_bytes()
         names = data.loads(blob)
     except FileNotFoundError:
-        raise MatchFileError(
-            [f"{names_path}: not found; the build needs the names file of the catalog's run"]
-        ) from None
+        errors.append(
+            f"{names_path}: not found; the build needs the names file of the catalog's run"
+        )
     except (OSError, ValueError) as exc:  # ValueError: bad UTF-8 or JSON, or too deep
-        raise MatchFileError([f"{names_path}: {exc}"]) from exc
-    errors = names_errors(doc, names)
-    if errors:
-        raise MatchFileError([f"{names_path}: {error}" for error in errors])
-    reviewed_path = default_reviewed_path(names_path)
-    reviewed, reviewed_blob = load_reviewed(reviewed_path)
-    errors = recode_errors(names, reviewed)
-    if errors:
-        raise MatchFileError([f"{reviewed_path}: {error}" for error in errors])
-    ids = [font["id"] for font in doc["fonts"]]
-    recodes = reviewed.relations()
+        errors.append(f"{names_path}: {exc}")
+    else:
+        errors += [f"{names_path}: {error}" for error in names_errors(doc, names)]
+    reviewed, reviewed_blob = Reviewed(), b""
     try:
-        check = owned.check_document(names, ids, recodes=recodes)
+        reviewed, reviewed_blob = load_reviewed(reviewed_path)
+    except MatchFileError as exc:
+        errors += exc.errors
+    if errors:
+        raise MatchFileError(errors)
+    refused = refused_recodes(names, reviewed)
+    errors = [f"{reviewed_path}: {error}" for _, error in sorted(refused.items())]
+    ids = [font["id"] for font in doc["fonts"]]
+    recodes = {r.name: r.relation for key, r in reviewed.recodes.items() if key not in refused}
+    while True:
+        try:
+            check = owned.check_document(names, ids, recodes=recodes)
+            break
+        except owned.RecodeError as exc:  # another name bypasses it: check the rest without it
+            kept = {name: rel for name, rel in recodes.items() if match_key(name) != exc.key}
+            if len(kept) == len(recodes):  # not a recode of ours: never loop
+                raise MatchFileError([*errors, f"{names_path}: {exc}"]) from exc
+            errors.append(f"{reviewed_path}: {exc}")
+            recodes = kept
+        except ValueError as exc:  # what owned refuses that the checks above let through
+            raise MatchFileError([*errors, f"{names_path}: {exc}"]) from exc
+    errors += [
+        f"{names_path}: {error}" for error in check_errors(check, names, reviewed, reviewed_path)
+    ]
+    if errors:
+        raise MatchFileError(errors)
+    try:
         match = owned.match_document(names, ids, doc["run"]["date"], recodes=recodes)
     except ValueError as exc:  # what owned refuses that the checks above let through
         raise MatchFileError([f"{names_path}: {exc}"]) from exc
-    errors = check_errors(check, names, reviewed, reviewed_path)
-    if errors:
-        raise MatchFileError([f"{names_path}: {error}" for error in errors])
     out = jsonio.canonical_bytes(match)
     try:
         owned.Table.from_document(json.loads(out))

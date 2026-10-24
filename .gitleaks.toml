@@ -14,3 +14,12 @@ useDefault = true
 description = "specimen render index: sha256 cache keys"
 targetRules = ["generic-api-key"]
 paths = ['''^build/specimens/index\.json$''']
+
+# Reviewed false positive (2026-10-23): the hopper's parser vectors give each name's match key
+# (the font name lower-cased with its spaces and punctuation removed, such as "fira9lttmcn") in
+# a field named "key", which the generic-api-key rule reads as a secret when the name is long
+# and mixed. The file holds only synthetic and public font names.
+[[allowlists]]
+description = "hopper parser vectors: match keys of font names"
+targetRules = ["generic-api-key"]
+paths = ['''^tests/vectors/owned-[a-z-]+\.json$''']

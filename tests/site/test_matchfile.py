@@ -264,6 +264,11 @@ MALFORMED_NAMES = [
         id="list-relation",
     ),
     pytest.param(
+        lambda n: n["families"][0]["names"][0].update(relation="renamed"),
+        "/families/0/names/0/relation is 'renamed', not a relation of schemas/names.schema.json",
+        id="unknown-relation",
+    ),
+    pytest.param(
         _wide_build,
         "/families/0/names/0/detail is 'wide', not a build detail of schemas/names.schema.json",
         id="unknown-detail",
@@ -506,7 +511,8 @@ def test_a_reviewed_name_that_is_no_longer_ambiguous_is_refused(tmp_path):
     path = write(tmp_path, reviewed=stale)
     assert errors_of(path) == [
         f"{path}: 'Sample Serif 04 Light' is reviewed as ambiguous in "
-        f"{tmp_path / 'names.reviewed.toml'}, but no longer is; remove it"
+        f"{tmp_path / 'names.reviewed.toml'}, but no longer is; once the owner has reviewed "
+        "the drop, remove it"
     ]
 
 
@@ -538,6 +544,14 @@ def test_a_missing_reviewed_list_is_an_empty_one(tmp_path):
     ("text", "problem"),
     [
         pytest.param("[[ambiguous]\n", "Expected ']]'", id="bad-toml"),
+        pytest.param(
+            "a = " + "[" * 5_000 + "]" * 5_000 + "\n", "nested too deeply to read", id="deep-array"
+        ),
+        pytest.param(
+            "a = " + "{b = " * 5_000 + "1" + "}" * 5_000 + "\n",
+            "nested too deeply to read",
+            id="deep-inline-table",
+        ),
         pytest.param("version = 1\n" + REVIEWED, "unknown key 'version'", id="unknown-key"),
         pytest.param(
             REVIEWED.replace('ruling = "synthetic"\n', 'ruling = "synthetic"\nnote = "x"\n', 1),
@@ -609,6 +623,26 @@ def test_a_recode_must_name_an_alias_of_the_family_it_names(tmp_path):
     ]
 
 
+def test_a_recode_whose_alias_another_family_also_holds_is_refused(tmp_path):
+    """A recode works on every alias row at its key, so the review of sample-mono-20's alias
+    would silently recode sample-mono-02's too: the build refuses it, and the check, run
+    without it, finds the key that two catalog families now own."""
+
+    def shared(names: dict[str, Any]) -> None:
+        family(names, "sample-mono-02")["names"].append(
+            {"name": "Sample Mono 20 Gen", "relation": "build", "detail": ""}
+        )
+
+    path = write(tmp_path, names_with(shared))
+    assert errors_of(path) == [
+        f"{tmp_path / 'names.reviewed.toml'}: 'Sample Mono 20 Gen' is reviewed as an alias of "
+        "sample-mono-20 (synthetic), but names.json's aliases at its key 'samplemono20gen' are "
+        "of sample-mono-02, sample-mono-20",
+        f"{path}: key 'samplemono20gen' is owned by several catalog families "
+        "(sample-mono-02, sample-mono-20), outside the ambiguous set",
+    ]
+
+
 def test_a_recode_whose_alias_is_gone_is_refused(tmp_path):
     """A refresh that drops or moves the alias leaves a stale recode, which recodes nothing."""
 
@@ -623,6 +657,28 @@ def test_a_recode_whose_alias_is_gone_is_refused(tmp_path):
     ]
 
 
+@pytest.mark.parametrize(("relation", "code"), [("related", "x"), ("sibling", "s")])
+def test_a_recode_whose_alias_is_already_a_near_match_is_refused(tmp_path, relation, code):
+    """A refresh that makes the alias a near-match itself leaves a recode that changes
+    nothing, a stale entry too."""
+
+    def near(names: dict[str, Any]) -> None:
+        family(names, "sample-mono-20")["names"] = [
+            {"name": "Sample Mono 20 Gen", "relation": relation}
+        ]
+
+    path = write(tmp_path, names_with(near))
+    assert errors_of(path) == [
+        f"{tmp_path / 'names.reviewed.toml'}: 'Sample Mono 20 Gen' is reviewed (synthetic) as an "
+        "owned alias of sample-mono-20 that the hopper makes related, but names.json's aliases "
+        f"at its key 'samplemono20gen' are already {relation}, so the recode changes nothing; "
+        "once the owner has reviewed the change, remove it"
+    ]
+    (tmp_path / "names.reviewed.toml").write_text(AMBIGUOUS_06, encoding="utf-8")
+    doc = json.loads(matchfile.match_file(SAMPLE, path).blob)
+    assert doc["k"]["samplemono20gen"] == f"{doc['ids'].index('sample-mono-20')}{code}"
+
+
 def test_a_recode_that_another_alias_bypasses_is_refused(tmp_path):
     """A patched build of the recoded alias would own the family again (``owned``'s check):
     the reviewed list must recode it too (``hopper_hackgen_related``: "HackGen NF")."""
@@ -634,20 +690,94 @@ def test_a_recode_that_another_alias_bypasses_is_refused(tmp_path):
 
     path = write(tmp_path, names_with(patched))
     (error,) = errors_of(path)
-    assert error.startswith(f"{path}: recode 'samplemono20gen': ")
+    assert error.startswith(f"{tmp_path / 'names.reviewed.toml'}: recode 'samplemono20gen': ")
     assert "'Sample Mono 20 Gen NF' reaches it and still counts as owned" in error
     both = REVIEWED + RECODE_20.replace("Sample Mono 20 Gen", "Sample Mono 20 Gen NF")
     doc = json.loads(matchfile.match_file(SAMPLE, write(tmp_path, names_with(patched), both)).blob)
     assert doc["k"]["samplemono20gennf"] == f"{doc['ids'].index('sample-mono-20')}x"
 
 
+def test_a_recode_of_any_owned_relation_is_taken(tmp_path):
+    """A PostScript name and a rename count a family as owned (``owned.OWNED_RELATIONS``), so
+    the build takes a recode of either, as of a build."""
+    recodes = RECODE_20.replace("Sample Mono 20 Gen", "SampleSans01-Regular").replace(
+        "sample-mono-20", "sample-sans-01"
+    ).replace("related", "sibling") + RECODE_20.replace(
+        "Sample Mono 20 Gen", "Sample Sans Classic"
+    ).replace("sample-mono-20", "sample-sans-05").replace("related", "bundle")
+    doc = json.loads(
+        matchfile.match_file(SAMPLE, write(tmp_path, reviewed=REVIEWED + recodes)).blob
+    )
+    assert doc["k"]["samplesans01regular"] == f"{doc['ids'].index('sample-sans-01')}s"
+    assert doc["k"]["samplesansclassic"] == f"{doc['ids'].index('sample-sans-05')}u"
+    assert doc["k"]["samplemono20gen"] == f"{doc['ids'].index('sample-mono-20')}x"
+
+
+# ---------------------------------------------------------------------- every problem in one pass
+
+
+def _unreviewed_and_stale(names: dict[str, Any]) -> tuple[dict[str, Any], str]:
+    """The sample's names with the recoded alias gone, and a reviewed list that misses
+    Sample Sans 06 Black and lists Sample Serif 04 Light, which isn't ambiguous."""
+    family(names, "sample-mono-20")["names"] = [
+        n for n in family(names, "sample-mono-20")["names"] if n["name"] != "Sample Mono 20 Gen"
+    ]
+    reviewed = (
+        '[[ambiguous]]\nname = "Sample Serif 04 Light"\nfamilies = ["sample-serif-04"]\n'
+        'ruling = "synthetic"\n\n' + RECODE_20
+    )
+    return names, reviewed
+
+
+def test_a_refused_recode_and_the_check_s_findings_are_listed_together(tmp_path):
+    """A refresh that moves a recoded alias and changes the ambiguous set fails once, naming
+    all of it, so the owner is asked once (ops/MONTHLY.md step 5): the check runs without the
+    refused recode."""
+    names, reviewed = _unreviewed_and_stale(copy.deepcopy(NAMES))
+    path = write(tmp_path, names, reviewed)
+    listed = tmp_path / "names.reviewed.toml"
+    assert errors_of(path) == [
+        f"{listed}: 'Sample Mono 20 Gen' is reviewed as an alias of sample-mono-20 (synthetic), "
+        "but names.json's aliases at its key 'samplemono20gen' are of none",
+        f"{path}: 'Sample Sans 06 Black' may be a weight of sample-sans-06: an ambiguous name "
+        f"nobody has reviewed; once the owner has, list it in {listed}",
+        f"{path}: 'Sample Serif 04 Light' is reviewed as ambiguous in {listed}, but no longer "
+        "is; once the owner has reviewed the drop, remove it",
+    ]
+
+
+def test_a_bypassed_recode_and_the_check_s_findings_are_listed_together(tmp_path):
+    """``owned.RecodeError`` names the bypassed recode, so the check runs on without it."""
+
+    def patched(names: dict[str, Any]) -> None:
+        family(names, "sample-mono-20")["names"].append(
+            {"name": "Sample Mono 20 Gen NF", "relation": "build", "detail": "nf"}
+        )
+
+    path = write(tmp_path, names_with(patched), RECODE_20)
+    listed = tmp_path / "names.reviewed.toml"
+    bypass, unreviewed = errors_of(path)
+    assert bypass.startswith(f"{listed}: recode 'samplemono20gen': ")
+    assert unreviewed.startswith(f"{path}: 'Sample Sans 06 Black' may be a weight of ")
+
+
+def test_a_names_file_and_a_reviewed_list_with_problems_are_listed_together(tmp_path):
+    names = names_with(lambda n: n["run"].update(date="2026-01-02"))
+    path = write(tmp_path, names, "[[ambiguous]]\nname = 1\n")
+    names_error, reviewed_error = errors_of(path)
+    assert names_error.startswith(f"{path}: run.date is 2026-01-02")
+    assert reviewed_error.startswith(f"{tmp_path / 'names.reviewed.toml'}: ambiguous[0]: ")
+
+
 # ---------------------------------------------------------------------- the committed files
 
 
 def test_the_committed_names_give_a_match_file_within_budget():
-    """build/names.json with build/names.reviewed.toml: the reviewed ambiguous names (a
-    refresh that changes them edits only the list, ops/MONTHLY.md step 5), HackGen only related
-    to Hack, and the file within ``budgets.MATCH_MAX``."""
+    """build/names.json with build/names.reviewed.toml, the file within ``budgets.MATCH_MAX``:
+    its ``amb`` is the reviewed ambiguous names, and each reviewed recode's alias has the code
+    its relation gives (HackGen only related to Hack, ``hopper_hackgen_related``). Both are read
+    from the list, so a refresh that changes either edits the list, not this test
+    (ops/MONTHLY.md step 5)."""
     doc = data.load(COMMITTED_DATA)
     names_path = matchfile.default_names_path(COMMITTED_DATA)
     made = matchfile.match_file(doc, names_path)
@@ -656,9 +786,12 @@ def test_the_committed_names_give_a_match_file_within_budget():
     reviewed, _ = matchfile.load_reviewed(matchfile.default_reviewed_path(names_path))
     amb = {key: [match["ids"][n] for n in at] for key, at in match["amb"].items()}
     assert amb == {key: list(a.families) for key, a in reviewed.ambiguous.items()}
-    assert match["k"]["hackgen"] == f"{match['ids'].index('hack')}x"
-    assert reviewed.relations() == {"HackGen": "related"}
-    assert {r.family for r in reviewed.recodes.values()} == {"hack"}
+    letters = {"related": "x", "sibling": "s", "bundle": "u"}
+    assert letters.keys() == owned.RECODE_RELATIONS
+    for key, recode in reviewed.recodes.items():
+        if recode.family in match["ids"]:
+            code = f"{match['ids'].index(recode.family)}{letters[recode.relation]}"
+            assert code in match["k"][key].split(",")
 
 
 def test_the_large_catalog_needs_no_reviewed_list(tmp_path):

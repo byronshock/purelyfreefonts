@@ -15,7 +15,7 @@ from jinja2 import ChoiceLoader, DictLoader, Environment, FileSystemLoader, Stri
 from jsonschema import Draft202012Validator
 
 from tff_catalog import owned, reviews
-from tff_catalog.keys import search_key
+from tff_catalog.keys import match_key, search_key
 from tff_catalog.paths import Paths
 from tff_site import assets, data, fonts, matchfile
 from tff_site.cli import COMMANDS, main
@@ -344,10 +344,9 @@ RECORDED_RULINGS = frozenset(
 )
 COMMITTED_REVIEWED, _ = matchfile.load_reviewed(matchfile.default_reviewed_path(COMMITTED_NAMES))
 # Cited before the owner has ruled: the lead asks the question, then records the answer in
-# data/reviews/ and drops the id from here (the strict xfail fails once it is recorded).
-RULINGS_PENDING = {
-    "inventory_ambiguous_names": "the owner's review of the five ambiguous names is to be asked",
-}
+# data/reviews/ and drops the id from here (the strict xfail fails once it is recorded). None is
+# pending: the five ambiguous names' review, inventory_ambiguous_names, was recorded 2026-10-23.
+RULINGS_PENDING: dict[str, str] = {}
 
 
 @pytest.mark.parametrize(
@@ -369,15 +368,68 @@ def test_the_committed_reviewed_list_cites_recorded_rulings(ruling):
     assert ruling in RECORDED_RULINGS
 
 
-def test_the_committed_reviewed_list_recodes_hackgen_per_its_ruling():
-    (recode,) = COMMITTED_REVIEWED.recodes.values()
-    assert (recode.name, recode.family, recode.relation, recode.ruling) == (
-        "HackGen",
-        "hack",
-        "related",
-        "hopper_hackgen_related",
+# hopper_hackgen_related (2026-10-23): "In the hopper, HackGen ... is only a near-match of
+# Hack", recoded as related. By ruling, the family and relation its entries have, and the name
+# each entry's name must reach (owned.candidates): HackGen itself, or a build or weight of it
+# such as "HackGen NF", which the build makes the list recode too (owned._check_recodes).
+RECODES_RULED = {"hopper_hackgen_related": ("hack", "related", "HackGen")}
+
+
+def _covered(recode: matchfile.Recode) -> bool:
+    family, relation, name = RECODES_RULED[recode.ruling]
+    reached = {c.key for c in owned.candidates(recode.name)}
+    return (recode.family, recode.relation) == (family, relation) and match_key(name) in reached
+
+
+def test_the_committed_recodes_citing_a_recode_ruling_are_ones_it_covers():
+    """An entry citing hopper_hackgen_related is HackGen, or a name that reaches HackGen's
+    key, on hack, as related. A refresh that adds such a name to hack (the build asks for its
+    recode) gains an entry citing this ruling, with no new question; one that drops HackGen
+    changes the HackGen known answers, a question for the owner first, then loses the entry
+    (ops/MONTHLY.md step 5). Either way this test needs no edit. A recode of anything else,
+    or of HackGen as anything else, cites the ruling that reviews it."""
+    beyond = [
+        recode
+        for recode in COMMITTED_REVIEWED.recodes.values()
+        if recode.ruling in RECODES_RULED and not _covered(recode)
+    ]
+    assert beyond == [], (
+        f"build/names.reviewed.toml cites a recode ruling for {beyond}, which it doesn't "
+        "cover: ask the owner, record the ruling, and cite that (ops/MONTHLY.md step 5)"
     )
-    assert recode.relation in owned.RECODE_RELATIONS
+
+
+# inventory_ambiguous_names (2026-10-23) reviewed these five, each with the families it names:
+# "Gentium Book (or Gentium; Gentium Plus on the October data)". The build fails on any new,
+# changed or dropped name "until the owner has reviewed it", a drop too: once the owner has, a
+# dropped name's entry is removed, and a new or changed one cites the ruling that reviews it.
+AMBIGUOUS_RULED = {
+    "Archivo Black": {("archivo",)},
+    "Bungee Hairline": {("bungee",)},
+    "Gentium Book": {("gentium",), ("gentium-plus",)},
+    "Gentium Plus Book": {("gentium-plus",)},
+    "Syne Italic": {("syne",)},
+}
+
+
+def test_the_committed_ambiguous_names_citing_the_ruling_are_among_the_five_it_names():
+    """An entry citing inventory_ambiguous_names is one of its five, with the families it names.
+    A refresh that drops one of them, adds a sixth name or gives one of the five another
+    family waits for the owner's review (ops/MONTHLY.md step 5). Then a drop removes the
+    entry, and a sixth name or a new family cites the ruling that reviews it instead, so this
+    test needs no edit either way."""
+    cited = {
+        entry.name: entry.families
+        for entry in COMMITTED_REVIEWED.ambiguous.values()
+        if entry.ruling == "inventory_ambiguous_names"
+    }
+    beyond = {
+        name: fids for name, fids in cited.items() if fids not in AMBIGUOUS_RULED.get(name, ())
+    }
+    assert beyond == {}, (
+        f"build/names.reviewed.toml cites inventory_ambiguous_names for {beyond}, which it doesn't "
+        "cover: ask the owner, record the ruling, and cite that (ops/MONTHLY.md step 5)"
+    )
 
 
 MATCH_SECTION = section(CONTRACT, "11. Match JSON")
