@@ -89,14 +89,15 @@ const Data = (() => {
     return deepFreeze(index);
   };
 
-  // Memoise a loader. A failed load is forgotten, so a later call can retry after a network
-  // error; a Stale page stays stale until it is reloaded, so that failure is kept.
-  const memo = (load) => {
+  // Memoise a loader. A failure that a later call can't mend is kept, as kept(error) says; by
+  // default a Stale page, which stays stale until it is reloaded. Any other failure is
+  // forgotten, so a later call can retry after a network error.
+  const memo = (load, kept = (error) => error instanceof Stale) => {
     let promise = null;
     return () => {
       if (!promise) {
         promise = load().catch((error) => {
-          if (!(error instanceof Stale)) promise = null;
+          if (!kept(error)) promise = null;
           throw error;
         });
       }
@@ -183,51 +184,80 @@ const Data = (() => {
     return usable ? api : null;
   };
 
+  // The page's one matcher script, added on first use: a promise that resolves once the
+  // module has run, or rejects with 'load' (the script's error event) or 'handoff' (an error
+  // thrown as the module ran, reported with its URL: it defines its global last, so it
+  // handed nothing over, or something else had already taken the name).
+  let matcherRun = null;
+  const addMatcher = (url) =>
+    new Promise((resolve, reject) => {
+      const href = new URL(url, location.href).href;
+      const script = document.createElement('script');
+      const done = (error) => {
+        globalThis.removeEventListener('error', thrown);
+        if (error) reject(error);
+        else resolve();
+      };
+      const thrown = (event) => {
+        if (event.filename === href) done(new MatchError('handoff', `${url} failed as it ran`));
+      };
+      globalThis.addEventListener('error', thrown);
+      script.addEventListener('load', () => done(null));
+      script.addEventListener('error', () =>
+        done(new MatchError('load', `${url} could not be loaded`)),
+      );
+      script.type = 'module';
+      script.src = url;
+      document.head.append(script);
+    });
+
   // Promise of the hopper's parser and matcher, { OwnedParse, OwnedMatch }, frozen (section
   // 11): the module in #list[data-matcher], loaded by one <script type="module"> added to the
   // head, a GET of that path with no query string and no body; script-src 'self' allows it, and
   // no inline script runs. It waits for the module's hand-off, at most MATCHER_TIMEOUT_MS, and
-  // rejects only with a Data.MatchError: 'url', 'load' (the script's error event: a network
+  // rejects only with a Data.MatchError: 'url'; 'load' (the script's error event: a network
   // error or a status other than 2xx, which the event can't tell apart, so a stale page shows
-  // through loadMatch's Data.Stale), 'handoff' (the module ran but handed over nothing usable)
-  // or 'timeout'. A failure is forgotten, so a later call can try again; one that finds the
-  // hand-off of an earlier call's module, which ran after its timeout, adds no script.
-  const loadMatcher = memo(async () => {
-    let url;
-    try {
-      url = urlOf('matcher');
-    } catch (error) {
-      throw new MatchError('url', error.message);
-    }
-    if (url.includes('?') || url.includes('#')) throw new MatchError('url', `${url} has a query`);
-    if (!handedOver()) {
-      await new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        let settled = false;
-        const settle = (error) => {
-          if (settled) return;
-          settled = true;
-          clearTimeout(timer);
-          if (error) reject(error);
-          else resolve();
-        };
-        const timer = setTimeout(
-          () => settle(new MatchError('timeout', `${url} did not load in time`)),
+  // through loadMatch's Data.Stale); 'handoff' (the module ran but handed over nothing usable,
+  // or a tffMatcher was there before its script was added, or the module threw as it ran); or
+  // 'timeout'. The page adds the script once, ever: a browser keeps a module's failed fetch
+  // for the page (Chromium does), so 'load' and 'handoff' are kept and need a reload, like
+  // Data.Stale. Only a 'timeout' is forgotten: a later call waits on the same script again,
+  // adding none, and takes its hand-off if it has run since.
+  const loadMatcher = memo(
+    async () => {
+      let url;
+      try {
+        url = urlOf('matcher');
+      } catch (error) {
+        throw new MatchError('url', error.message);
+      }
+      if (url.includes('?') || url.includes('#')) {
+        throw new MatchError('url', `${url} has a query`);
+      }
+      if (!matcherRun) {
+        if (Object.getOwnPropertyDescriptor(globalThis, MATCHER_GLOBAL)) {
+          throw new MatchError('handoff', `${MATCHER_GLOBAL} was defined before ${url} loaded`);
+        }
+        matcherRun = addMatcher(url);
+      }
+      let timer;
+      const late = new Promise((resolve, reject) => {
+        timer = setTimeout(
+          () => reject(new MatchError('timeout', `${url} did not load in time`)),
           MATCHER_TIMEOUT_MS,
         );
-        script.addEventListener('load', () => settle(null));
-        script.addEventListener('error', () =>
-          settle(new MatchError('load', `${url} could not be loaded`)),
-        );
-        script.type = 'module';
-        script.src = url;
-        document.head.append(script);
       });
-    }
-    const api = handedOver();
-    if (!api) throw new MatchError('handoff', `${url} handed over no matcher`);
-    return api;
-  });
+      try {
+        await Promise.race([matcherRun, late]);
+      } finally {
+        clearTimeout(timer);
+      }
+      const api = handedOver();
+      if (!api) throw new MatchError('handoff', `${url} handed over no matcher`);
+      return api;
+    },
+    (error) => !(error instanceof MatchError && error.code === 'timeout'),
+  );
 
   return Object.freeze({
     loadIndex, loadDetails, loadMatch, loadMatcher, Stale, MatchError, STALE_MESSAGE,

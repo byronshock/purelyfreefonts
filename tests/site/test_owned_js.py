@@ -25,8 +25,8 @@ Firefox):
   randomness API; no such global is read while they load and run, and they make no request;
   a table keeps nothing of the lists matched against it, and once parse, match or candidates
   returns, the engine's legacy RegExp statics hold nothing of the list;
-- the module hands over exactly ``{ OwnedParse, OwnedMatch }``, frozen, as a global that can't
-  be written, deleted or listed.
+- the module hands over exactly ``{ OwnedParse, OwnedMatch }``, frozen, as a global that, once
+  defined, can't be written, deleted or listed.
 
 How fast they are (Milestone 3 steps 4 and 5) is test_perf.py's to measure, in CI's site-perf
 job.
@@ -37,8 +37,11 @@ routed page with a stub list: one GET of the path in ``#list[data-match]``, memo
 ``Data.MatchError`` and its code; one ``<script type="module">`` for the path in
 ``#list[data-matcher]``, memoised, resolving with the module's hand-off, and each way it can
 fail (no load, no usable hand-off, no answer in ``MATCHER_TIMEOUT_MS``, on Playwright's clock) a
-``Data.MatchError`` with its code; a URL off the page's origin is never requested; and the
-parser and matcher that loadMatcher hands over match a list on loadMatch's file as Python does.
+``Data.MatchError`` with its code; the page adds that script once, ever, so a failure to load
+or hand over is kept until a reload, and a retry after a timeout waits on the same script; a
+``tffMatcher`` that something else defines before or while the module loads is refused, never
+taken; a URL off the page's origin is never requested; and the parser and matcher that
+loadMatcher hands over match a list on loadMatch's file as Python does.
 
 A parse input reaches the page as the vector file spells it (``owned_vectors.spelled``): a lone
 surrogate can't cross to the page as a string, so a text that holds one goes as UTF-16 code
@@ -372,10 +375,13 @@ HAND_OFF = """(() => {
 })()"""
 
 
-def test_the_module_hands_over_its_parts_frozen_as_a_global_nothing_can_replace(loaded):
+def test_the_module_hands_over_its_parts_frozen_as_a_global_nothing_can_replace_once_defined(
+    loaded,
+):
     """inventory_matcher_on_demand: the module's one way to the page (58-matcher.js) is a
-    global that can't be written, deleted, redefined or listed, holding a frozen object of
-    exactly the two parts; nothing can be added to it."""
+    global that, once defined, can't be written, deleted, redefined or listed, holding a frozen
+    object of exactly the two parts; nothing can be added to it. Before it is defined, Data
+    refuses whatever else holds the name (test_a_tff_matcher_*)."""
     assert loaded.run(HAND_OFF) == {
         "keys": ["OwnedParse", "OwnedMatch"],
         "frozen": True,
@@ -1130,17 +1136,27 @@ NO_HAND_OFF = {
     " { value: Object.freeze({ OwnedParse: { parse() {} } }) });\n",
     "a module that throws first": "throw new Error('x');\n" + MATCHER,
 }
-MATCHER_CASES: dict[str, tuple[Answer | str, list[Any], tuple[int, int]]] = {
-    # label: (the module's answer, both calls' outcome, (fewest, most) requests for it)
-    "ok": ((200, MATCHER), ["ok", True], (1, 1)),
-    "gone": ((404, ""), ["MatchError", "load"], (1, 2)),
-    "gone for good": ((410, ""), ["MatchError", "load"], (1, 2)),
-    "a server error": ((500, ""), ["MatchError", "load"], (1, 2)),
-    "a network error": (None, ["MatchError", "load"], (1, 2)),
-    "served as JSON": ((200, MATCHER, "application/json"), ["MatchError", "load"], (1, 2)),
-    "not JavaScript": ((200, "<!doctype html><title>x</title>"), ["MatchError", "handoff"], (1, 1)),
-    **{label: ((200, js), ["MatchError", "handoff"], (1, 1)) for label, js in NO_HAND_OFF.items()},
+MATCHER_CASES: dict[str, tuple[Answer | str, list[Any]]] = {
+    # label: (the module's answer, both calls' outcome)
+    "ok": ((200, MATCHER), ["ok", True]),
+    "gone": ((404, ""), ["MatchError", "load"]),
+    "gone for good": ((410, ""), ["MatchError", "load"]),
+    "a server error": ((500, ""), ["MatchError", "load"]),
+    "a network error": (None, ["MatchError", "load"]),
+    "served as JSON": ((200, MATCHER, "application/json"), ["MatchError", "load"]),
+    "not JavaScript": ((200, "<!doctype html><title>x</title>"), ["MatchError", "handoff"]),
+    **{label: ((200, js), ["MatchError", "handoff"]) for label, js in NO_HAND_OFF.items()},
 }  # fmt: skip
+# In the page: the scripts in the head, as [type, src, text].
+HEAD_SCRIPTS = (
+    "() => [...document.head.querySelectorAll('script')].map((s) => [s.type, s.src, s.text])"
+)
+ADDED = [["module", f"{ORIGIN}{MATCHER_PATH}", ""]]
+# In the page: start a loadMatcher call, kept as globalThis.__tffCall, and see whether it is
+# still waiting.
+CALL = """() => { globalThis.__tffCall = globalThis.__tffData.loadMatcher()
+  .then(() => ['ok', null], (e) => [e.name, e.code]); }"""
+WAITING = "() => Promise.race([globalThis.__tffCall, 'waiting'])"
 
 
 @pytest.mark.parametrize("label", MATCHER_CASES)
@@ -1150,21 +1166,98 @@ def test_load_matcher_loads_the_list_s_matcher_module_once_and_takes_its_hand_of
     """inventory_matcher_on_demand: one <script type="module"> for #list[data-matcher], a
     plain GET; its hand-off, frozen, memoised. A module that fails to load is a MatchError
     'load' (a script's error event doesn't tell a 404 from a network error), and one that runs
-    but hands over nothing usable is 'handoff'. A failure is forgotten, but a browser may keep
-    a module's failed fetch for the page, so the second try may ask again or not."""
-    answer, want, (fewest, most) = MATCHER_CASES[label]
+    but hands over nothing usable is 'handoff'. Both are kept, since a browser may keep a
+    module's failed fetch for the page (Chromium does), so the second call asks for nothing
+    and adds no script."""
+    answer, want = MATCHER_CASES[label]
     page = data_pages.open(f'data-match="{MATCH_PATH}"', (200, DOC), matcher=answer)
     assert page.evaluate(OUTCOME, "loadMatcher") == [want, want]
     sent = _sent(data_pages.requests, MATCHER_PATH)
-    assert fewest <= len(sent) <= most
-    assert {(r.method, r.post_data, r.resource_type) for r in sent} == {("GET", None, "script")}
+    assert [(r.method, r.post_data, r.resource_type) for r in sent] == [("GET", None, "script")]
     assert _sent(data_pages.requests, MATCH_PATH) == _sent(data_pages.requests, "/i.json") == []
-    added = page.evaluate(
-        "() => [...document.head.querySelectorAll('script')].map((s) => [s.type, s.src, s.text])"
-    )
-    assert added == [["module", f"{ORIGIN}{MATCHER_PATH}", ""]] * len(added)
-    assert 1 <= len(added) <= 2
-    assert page.evaluate("() => document.scripts.length") == len(added) + 1
+    assert page.evaluate(HEAD_SCRIPTS) == ADDED
+    assert page.evaluate("() => document.scripts.length") == 2
+
+
+def test_a_module_that_failed_to_load_needs_a_reload(data_pages):
+    """A network blip on the module's one request: Chromium keeps the failed fetch in the
+    page's module map, so another script for it would fail at once without a request, while
+    Firefox would ask again. Data keeps the 'load' in both, adding no script, and the hopper
+    asks for a reload (section 11), which loads it."""
+    page = data_pages.open(f'data-match="{MATCH_PATH}"', (200, DOC), matcher=HOLD)
+    page.evaluate(CALL)
+    page.wait_for_function("() => document.scripts.length === 2")
+    data_pages.held.pop().abort()
+    assert page.evaluate("() => globalThis.__tffCall") == ["MatchError", "load"]
+    retries = """async () => {
+      const r = [];
+      for (let i = 0; i < 3; i++) r.push(await globalThis.__tffData.loadMatcher().then(
+        () => 'ok', (e) => e.code));
+      return r;
+    }"""
+    assert page.evaluate(retries) == ["load"] * 3
+    assert len(_sent(data_pages.requests, MATCHER_PATH)) == 1
+    assert page.evaluate(HEAD_SCRIPTS) == ADDED
+    page.reload()
+    page.evaluate(CALL)
+    page.wait_for_function("() => document.scripts.length === 2")
+    data_pages.held.pop().fulfill(status=200, content_type="text/javascript", body=MATCHER)
+    assert page.evaluate("() => globalThis.__tffCall") == ["ok", None]
+    assert len(_sent(data_pages.requests, MATCHER_PATH)) == 2
+
+
+# What another script might leave under the hand-off's name: frozen and read-only like the
+# real one, read-only but configurable, writable, or a getter.
+IMPOSTORS = ("read-only", "configurable", "writable", "a getter")
+# In the page: a stand-in matcher that answers every list with a fake result, defined as told.
+IMPOSTOR = """(kind) => {
+  const fake = Object.freeze({
+    OwnedParse: Object.freeze({ parse: () => ({ fake: true }) }),
+    OwnedMatch: Object.freeze({ table: () => ({}), match: () => ({ fake: true }) }),
+  });
+  const descriptor = {
+    'read-only': { value: fake },
+    configurable: { value: fake, configurable: true },
+    writable: { value: fake, writable: true, configurable: true, enumerable: true },
+    'a getter': { get: () => fake, configurable: true },
+  }[kind];
+  Object.defineProperty(globalThis, 'tffMatcher', descriptor);
+}"""
+# In the page: loadMatcher's outcome, twice, and whether it ever handed over the stand-in.
+TAKEN = """async () => {
+  const d = globalThis.__tffData;
+  const once = () => d.loadMatcher().then(
+    (api) => (api.OwnedMatch.match().fake ? 'impostor' : 'ok'), (e) => e.code);
+  return [await once(), await once()];
+}"""
+
+
+@pytest.mark.parametrize("kind", IMPOSTORS)
+def test_a_tff_matcher_defined_before_the_module_is_refused_without_a_request(data_pages, kind):
+    """Something that defines the hand-off's name before Data adds the module's script: Data
+    takes nothing and asks for nothing ('handoff', kept)."""
+    page = data_pages.open(f'data-match="{MATCH_PATH}"', (200, DOC))
+    page.evaluate(IMPOSTOR, kind)
+    assert page.evaluate(TAKEN) == ["handoff", "handoff"]
+    assert [r.url for r in data_pages.requests] == [f"{ORIGIN}/"]
+    assert page.evaluate(HEAD_SCRIPTS) == []
+
+
+@pytest.mark.parametrize("kind", IMPOSTORS)
+def test_a_tff_matcher_defined_while_the_module_loads_is_refused(data_pages, kind):
+    """Something that defines the name while the module downloads: the real module then fails
+    to define its own (a read-only name it can't redefine), reported with its URL, or redefines
+    the value of a configurable one, which stays configurable or writable. Data never takes
+    the stand-in: 'handoff', kept."""
+    page = data_pages.open(f'data-match="{MATCH_PATH}"', (200, DOC), matcher=HOLD)
+    page.evaluate(CALL)
+    page.wait_for_function("() => document.scripts.length === 2")
+    page.evaluate(IMPOSTOR, kind)
+    data_pages.held.pop().fulfill(status=200, content_type="text/javascript", body=MATCHER)
+    assert page.evaluate("() => globalThis.__tffCall") == ["MatchError", "handoff"]
+    assert page.evaluate(TAKEN) == ["handoff", "handoff"]
+    assert len(_sent(data_pages.requests, MATCHER_PATH)) == 1
+    assert page.evaluate(HEAD_SCRIPTS) == ADDED
 
 
 @pytest.mark.parametrize(
@@ -1180,29 +1273,41 @@ def test_load_matcher_refuses_a_missing_or_foreign_url_without_a_request(data_pa
     assert page.evaluate("() => document.scripts.length") == 1
 
 
-def test_load_matcher_gives_up_after_its_timeout_and_takes_a_late_hand_off(data_pages):
+@pytest.mark.parametrize("late", ["runs", "fails"])
+def test_load_matcher_gives_up_after_its_timeout_and_a_retry_waits_on_the_same_script(
+    data_pages, late
+):
     """A module that doesn't answer is a MatchError 'timeout' after MATCHER_TIMEOUT_MS (on
-    Playwright's clock); once it has run after all, the next call takes its hand-off without
-    another script or request."""
+    Playwright's clock), and is forgotten: a retry adds no script and asks for nothing, but
+    waits on the same one, its own MATCHER_TIMEOUT_MS. Once that script has run after all, the
+    next call takes its hand-off; if it fails instead, the next call is a 'load', kept."""
     page = data_pages.open(f'data-match="{MATCH_PATH}"', (200, DOC), matcher=HOLD, clock=True)
-    page.evaluate(
-        "() => { globalThis.__tffFirst = globalThis.__tffData.loadMatcher()"
-        ".then(() => ['ok', null], (e) => [e.name, e.code]); }"
-    )
+    page.evaluate(CALL)
     page.wait_for_function("() => document.scripts.length === 2")
     timeout = page.evaluate("() => globalThis.__tffData.MATCHER_TIMEOUT_MS")
     assert timeout == 30_000
     page.clock.run_for(timeout - 1)
-    assert page.evaluate("() => Promise.race([globalThis.__tffFirst, 'waiting'])") == "waiting"
+    assert page.evaluate(WAITING) == "waiting"
     page.clock.run_for(2)
-    assert page.evaluate("() => globalThis.__tffFirst") == ["MatchError", "timeout"]
+    assert page.evaluate("() => globalThis.__tffCall") == ["MatchError", "timeout"]
+    page.evaluate(CALL)
+    page.clock.run_for(timeout - 1)
+    assert page.evaluate(WAITING) == "waiting"
+    page.clock.run_for(2)
+    assert page.evaluate("() => globalThis.__tffCall") == ["MatchError", "timeout"]
+    assert page.evaluate(HEAD_SCRIPTS) == ADDED
     (held,) = data_pages.held
-    held.fulfill(status=200, content_type="text/javascript", body=MATCHER)
+    if late == "runs":
+        held.fulfill(status=200, content_type="text/javascript", body=MATCHER)
+        page.wait_for_function("() => globalThis.tffMatcher !== undefined")
+        want = [["ok", True], ["ok", True]]
+    else:
+        held.abort()
+        want = [["MatchError", "load"], ["MatchError", "load"]]
     data_pages.held.clear()
-    page.wait_for_function("() => globalThis.tffMatcher !== undefined")
-    assert page.evaluate(OUTCOME, "loadMatcher") == [["ok", True], ["ok", True]]
+    assert page.evaluate(OUTCOME, "loadMatcher") == want
     assert len(_sent(data_pages.requests, MATCHER_PATH)) == 1
-    assert page.evaluate("() => document.scripts.length") == 2
+    assert page.evaluate(HEAD_SCRIPTS) == ADDED
 
 
 def test_the_list_s_two_loaders_make_two_requests_and_match_as_python_does(data_pages):
