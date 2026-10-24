@@ -1215,9 +1215,14 @@ def test_a_module_that_failed_to_load_needs_a_reload(data_pages):
 
 
 # What another script might leave under the hand-off's name: frozen and read-only like the
-# module's own, read-only but configurable, writable, a getter, or a permanent setter like
-# Data's.
-IMPOSTORS = ("read-only", "configurable", "writable", "a getter", "a permanent setter")
+# module's own, read-only but configurable, writable, writable but permanent, a getter, a
+# permanent setter like Data's, or a setter like Data's but configurable, which the module
+# must not hand into, since the script that defined it could then delete the name (handOver's
+# `!slot.configurable`).
+IMPOSTORS = (
+    "read-only", "configurable", "writable", "a permanent writable", "a getter",
+    "a permanent setter", "a configurable setter",
+)  # fmt: skip
 # In the page: a stand-in matcher, globalThis.__tffFake, that answers every list with a fake
 # result, and IMPOSTOR, which defines the name as told and says whether that worked.
 FAKE = """
@@ -1235,8 +1240,10 @@ IMPOSTOR = (
     'read-only': { value: fake },
     configurable: { value: fake, configurable: true },
     writable: { value: fake, writable: true, configurable: true, enumerable: true },
+    'a permanent writable': { value: fake, writable: true },
     'a getter': { get: () => fake, configurable: true },
     'a permanent setter': { get: () => fake, set: () => {} },
+    'a configurable setter': { get: () => fake, set: () => {}, configurable: true },
   }[kind];
   try {
     Object.defineProperty(globalThis, 'tffMatcher', descriptor);
@@ -1301,6 +1308,12 @@ ROUTES = {
     "a dispatched load alone": (
         "",
         "document.head.querySelector('script').dispatchEvent(new Event('load'));",
+        "ok",
+    ),
+    # an error event dispatched the same way: no failure either
+    "a dispatched error alone": (
+        "",
+        "document.head.querySelector('script').dispatchEvent(new Event('error'));",
         "ok",
     ),
     # B: a window error listener, added before Data is asked, that hides the module's errors,
@@ -1400,20 +1413,38 @@ RUN_FIRST = """async ([kind, path]) => {
   });
   return Reflect.deleteProperty(globalThis, 'tffMatcher');
 }""".replace("IMPOSTOR", IMPOSTOR)
+# In the page: route E's last step, after RUN_FIRST has tried to delete the name. The moment a
+# script is added to the head (Data's, if the name was free), give the stand-in as GIVE does:
+# the module has run already, so it would be the only value Data's setter heard.
+GIVE_ON_ADD = (
+    "() => {"
+    + FAKE
+    + GIVE
+    + """
+  new MutationObserver(() => __tffGive({})).observe(document.head, { childList: true });
+}"""
+)
 
 
 @pytest.mark.parametrize("kind", ["nothing", *IMPOSTORS])
 def test_a_module_run_before_data_asked_leaves_the_name_defined_for_good(data_pages, kind):
     """Another script that runs the module itself, before any list, over whatever it left
-    under the name: the module finds no setter of Data's, so it defines the name itself,
-    read-only and permanent (over a configurable stand-in too), or hands over into a
-    permanent setter that was there, and either way the name is there for good. Data then
-    refuses it ('handoff', kept) and asks for nothing: a module runs once in a page, so the
-    stand-in could otherwise be given to Data's setter as the only value."""
+    under the name, then deletes the name and waits to give a stand-in as Data adds its
+    script (route E): the module finds no permanent setter, so it defines the name itself,
+    read-only and permanent (over a configurable stand-in or setter, or a writable one, too),
+    or hands over into a permanent setter that was there, and either way the name is there
+    for good. Data then refuses it ('handoff', kept) and asks for nothing: a module runs once
+    in a page, so the stand-in could otherwise be given to Data's setter as the only value.
+    Route E was found against f196d50 with handOver's `!slot.configurable` taken out: there
+    the module handed into the configurable setter, the delete worked, and Data took the
+    stand-in."""
     page = data_pages.open(f'data-match="{MATCH_PATH}"', (200, DOC))
     assert page.evaluate(RUN_FIRST, [kind, MATCHER_PATH]) is False
     slot = page.evaluate(SLOT)
     assert slot[0] is False
+    writable = "() => Object.getOwnPropertyDescriptor(globalThis, 'tffMatcher').writable"
+    assert page.evaluate(writable) is not True
+    page.evaluate(GIVE_ON_ADD)
     assert page.evaluate(TAKEN) == ["handoff", "handoff"]
     assert len(_sent(data_pages.requests, MATCHER_PATH)) == 1
     assert len(page.evaluate(HEAD_SCRIPTS)) == 1
