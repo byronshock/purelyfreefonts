@@ -26,16 +26,23 @@ every size budget and the CSP lint, and each check fails on a site made to break
   second (step 4). Without a slowdown, as Lighthouse's desktop setting runs (the hopper needs a
   computer), parsing and matching together must take under 200 ms. Each is the median of five
   runs, with one more set when it fails. These need no built site.
-- The list past ASCII takes the port's slower road on every line, its worst case, and CI's
-  runners are about three times slower than the machine these budgets were set on (the
-  refilter budget's CI failure of 2026-10-06), where it took 74 ms of the 200 under the
-  slowdown, but 223 ms slowed 12x, and 167 ms of the 200 without a slowdown when slowed 3x.
-  So it is held to the ASCII fc-list's time instead, the two run in turn in the same job: at
-  most ``PAST_ASCII_MATCH_RATIO`` times its median under the slowdown (1.6 to 1.8 there, at
-  4x and 12x) and ``PAST_ASCII_WAIT_RATIO`` times without one (1.5 to 1.6, at 1x and 3x). A
-  slower machine slows both alike, while a regression on the road past ASCII, which made such
-  lists 3 to 6 times slower before 2026-10-23, still fails; the ASCII lists keep step 5's 200
-  ms, so a slowdown of both fails there.
+- Those budgets are for the machine they were set on, where Lighthouse's 4x slowdown stands
+  for a mid-range phone. CI's runners are about three times slower (the refilter budget's CI
+  failure of 2026-10-06), so 4x there is a phone three times slower again, and the list past
+  ASCII, which takes the port's slower road on every line, took 223 ms slowed 12x here. So
+  each hopper run is paired with a run of ``REFERENCE_JS``, a fixed workload that shares no
+  code with the site, cold and at the same slowdown, and the budget is scaled by how much
+  slower the machine runs it than ``REFERENCE_MS`` (the machine the budgets were set on), as
+  Lighthouse's benchmark index adjusts its CPU multiplier. The budget is never scaled below
+  step 5's, and a machine more than ``FACTOR_MAX`` times slower fails rather than stretch it
+  further. Here the factor is 1, and the four lists take at most 74 ms of the 200 under the
+  slowdown, so each keeps a margin of at least 2.7 on any machine the factor reads right.
+- The list past ASCII is also held to the ASCII fc-list's time, the two run in turn: at most
+  ``PAST_ASCII_MATCH_RATIO`` times its median under the slowdown (1.6 to 1.8 here, at 4x and
+  12x) and ``PAST_ASCII_WAIT_RATIO`` times without one (1.5 to 1.6, at 1x and 3x). That is a
+  guard against a regression on the road past ASCII alone, which made such lists 3 to 6
+  times slower before 2026-10-23, and which the scaled budget would let pass up to 2.7 times;
+  it is no budget of its own.
 
 The site is ``TFF_PERF_SITE_DIR`` when that is set (CI's 540-font build, or a real
 catalog's build), else a 540-font site this module builds from make_large_catalog. It is
@@ -648,12 +655,33 @@ def test_no_specimen_loads_far_below_the_screen(
 
 HOPPER_MS = 200  # Milestone 3 step 5: 10,000 names match in under 200 ms
 PROFILER_MS = 1000  # step 4: 5 MB of system_profiler -json parses in under a second
-# The list past ASCII against the ASCII fc-list, run for run (the module docstring says why).
+# The machine's speed against the one the budgets were set on (the module docstring says why):
+# REFERENCE_JS's median ms there, cold, by CPU slowdown, the sum it must return, and the most
+# a budget may be scaled.
+REFERENCE_MS = {1: 35.0, 4: 128.0}
+REFERENCE_ROUNDS = 150_000
+REFERENCE_CHECK = 2047583474
+FACTOR_MAX = 5.0
+# The list past ASCII against the ASCII fc-list, run for run: a regression guard.
 PAST_ASCII = "fc-list, past ASCII"
 ASCII_BASE = "fc-list"
 PAST_ASCII_MATCH_RATIO = 2.5
 PAST_ASCII_WAIT_RATIO = 2.2
-ABSOLUTE_LABELS = tuple(label for label in hopper_lists.LABELS if label != PAST_ASCII)
+# A fixed workload of the kind the matcher does (template strings, toLowerCase, a regex
+# replace, charCodeAt and a Map), sharing no code with the site, so a slower site can't slow
+# it; its sum proves every round ran.
+REFERENCE_JS = """(rounds) => {
+  const t0 = performance.now();
+  const seen = new Map();
+  let h = 0x811c9dc5;
+  for (let i = 0; i < rounds; i++) {
+    const name = `Sample ${(i * 7919) % 1009} Bold Italic ${i % 13}`;
+    const key = name.toLowerCase().replace(/[ _-]+/g, '');
+    for (let j = 0; j < key.length; j++) h = Math.imul(h ^ key.charCodeAt(j), 0x01000193);
+    seen.set(key, (seen.get(key) || 0) + 1);
+  }
+  return { ms: performance.now() - t0, check: ((h >>> 0) + seen.size) >>> 0 };
+}"""
 # The matcher module as the build writes it (inventory_matcher_on_demand), inline; the timed
 # code takes its hand-off, as Data.loadMatcher does. Loading it is not timed.
 HOPPER_PAGE = (
@@ -710,9 +738,31 @@ def _hopper_run(browser: Any, text: str, slowdown: int) -> dict[str, Any]:
         context.close()
 
 
-def _checked_runs(browser: Any, text: str, slowdown: int) -> list[dict[str, Any]]:
-    """RUNS cold runs of ``text``, each read and matched as Python does."""
-    return [_checked_run(browser, text, slowdown) for _ in range(RUNS)]
+def _reference_ms(browser: Any, slowdown: int) -> float:
+    """One cold run of REFERENCE_JS, as _hopper_run runs a list: a context of its own, the CPU
+    slowed ``slowdown`` times from the start."""
+    context = browser.new_context()
+    try:
+        page = context.new_page()
+        cdp = context.new_cdp_session(page)
+        cdp.send("Emulation.setCPUThrottlingRate", {"rate": slowdown})
+        page.set_content("<!doctype html><title>reference</title>", wait_until="load")
+        run = page.evaluate(REFERENCE_JS, REFERENCE_ROUNDS)
+        assert run["check"] == REFERENCE_CHECK, run
+        return float(run["ms"])
+    finally:
+        context.close()
+
+
+def _factor(reference_ms: list[float], slowdown: int) -> float:
+    """How much slower this machine ran REFERENCE_JS than the one the budgets were set on,
+    never below 1; more than FACTOR_MAX fails, rather than stretch a budget that far."""
+    factor = max(1.0, statistics.median(reference_ms) / REFERENCE_MS[slowdown])
+    assert factor <= FACTOR_MAX, (
+        f"this machine ran the reference workload {factor:.1f} times slower than the one the"
+        f" hopper's budgets were set on, past FACTOR_MAX ({FACTOR_MAX})"
+    )
+    return factor
 
 
 def _checked_run(browser: Any, text: str, slowdown: int) -> dict[str, Any]:
@@ -729,38 +779,46 @@ def _python(text: str) -> tuple[dict[str, Any], list[Any]]:
     return parsed.to_json(), owned.match(parsed, _hopper()["table"]).to_json()["owned"]
 
 
-def _summary(field: str, slowdown: int, runs: list[dict[str, Any]]) -> dict[str, Any]:
-    return {
-        "hopper": field,
-        "cpu_slowdown": slowdown,
-        "median_ms": round(statistics.median(run[field] for run in runs)),
-        "runs_ms": [round(run[field]) for run in runs],
-        "parse_ms": [round(run["parse_ms"]) for run in runs],
-        "match_ms": [round(run["match_ms"]) for run in runs],
-    }
-
-
 def _assert_hopper_budget(
     browser: Any, text: str, field: str, budget_ms: float, slowdown: int
 ) -> None:
-    """The median of ``field`` over RUNS cold runs is under ``budget_ms``, and every run reads
-    and matches ``text`` as Python does."""
+    """The median of ``field`` over RUNS cold runs is under ``budget_ms`` scaled by this
+    machine's factor (``_factor``, from a reference run before each), and every run reads and
+    matches ``text`` as Python does."""
     summary: dict[str, Any] = {}
-    median = float("inf")
+    median, budget = float("inf"), budget_ms
     # Shared CI runners are noisy: a failing median gets one more set of runs (design-m2 §9).
     for _attempt in range(2):
-        runs = _checked_runs(browser, text, slowdown)
-        summary = _summary(field, slowdown, runs)
-        median = summary["median_ms"]
+        pairs = [
+            (_reference_ms(browser, slowdown), _checked_run(browser, text, slowdown))
+            for _ in range(RUNS)
+        ]
+        runs = [run for _, run in pairs]
+        factor = _factor([ms for ms, _ in pairs], slowdown)
+        median = statistics.median(run[field] for run in runs)
+        budget = budget_ms * factor
+        summary = {
+            "hopper": field,
+            "cpu_slowdown": slowdown,
+            "median_ms": round(median),
+            "factor": round(factor, 2),
+            "budget_ms": round(budget),
+            "margin": round(budget / median, 2),
+            "runs_ms": [round(run[field]) for run in runs],
+            "parse_ms": [round(run["parse_ms"]) for run in runs],
+            "match_ms": [round(run["match_ms"]) for run in runs],
+            "reference_ms": [round(ms) for ms, _ in pairs],
+        }
         print(json.dumps(summary))
-        if median < budget_ms:
+        if median < budget:
             break
-    assert median < budget_ms, summary
+    assert median < budget, summary
 
 
 def _assert_past_ascii_ratio(browser: Any, field: str, ratio: float, slowdown: int) -> None:
     """The list past ASCII's median ``field`` is at most ``ratio`` times the ASCII fc-list's,
-    the two run in turn, cold, RUNS times each, so both meet the same machine and load."""
+    the two run in turn, cold, RUNS times each, so both meet the same machine and load. A
+    regression guard: the budget of each is _assert_hopper_budget's."""
     lists = _hopper()["lists"]
     summary: dict[str, Any] = {}
     found = float("inf")
@@ -787,19 +845,20 @@ def _assert_past_ascii_ratio(browser: Any, field: str, ratio: float, slowdown: i
     assert found <= ratio, summary
 
 
-@pytest.mark.parametrize("label", ABSOLUTE_LABELS)
+@pytest.mark.parametrize("label", hopper_lists.LABELS)
 def test_the_hopper_matches_10000_fonts_within_200_ms(
     browser: Any, browser_name: str, label: str
 ) -> None:
     """Step 5's budget, under the list page's CPU slowdown: reading the match file, readying
-    its table and matching a parsed list of 10,000 fonts."""
+    its table and matching a parsed list of 10,000 fonts, the list past ASCII included (the
+    budget scaled for a slower machine, as the module docstring says)."""
     _chromium(browser_name)
     text = _hopper()["lists"][label]
     assert owned.parse(text).counts["entries"] > 8000
     _assert_hopper_budget(browser, text, "match_ms", HOPPER_MS, CPU_SLOWDOWN)
 
 
-@pytest.mark.parametrize("label", ABSOLUTE_LABELS)
+@pytest.mark.parametrize("label", hopper_lists.LABELS)
 def test_the_hopper_parses_and_matches_10000_fonts_within_200_ms_without_a_slowdown(
     browser: Any, browser_name: str, label: str
 ) -> None:
@@ -812,8 +871,8 @@ def test_the_hopper_parses_and_matches_10000_fonts_within_200_ms_without_a_slowd
 def test_names_past_ascii_match_within_2_5_times_ascii_ones(
     browser: Any, browser_name: str
 ) -> None:
-    """Step 5's walk on the list past ASCII, under the slowdown, against the ASCII fc-list's
-    (the module docstring says why it is held to a ratio)."""
+    """A regression guard on the road past ASCII, under the slowdown: the list past ASCII
+    against the ASCII fc-list, run for run. Its budget is step 5's, above."""
     _chromium(browser_name)
     assert owned.parse(_hopper()["lists"][PAST_ASCII]).counts["entries"] > 8000
     _assert_past_ascii_ratio(browser, "match_ms", PAST_ASCII_MATCH_RATIO, CPU_SLOWDOWN)
@@ -822,21 +881,35 @@ def test_names_past_ascii_match_within_2_5_times_ascii_ones(
 def test_names_past_ascii_parse_and_match_within_2_2_times_ascii_ones_without_a_slowdown(
     browser: Any, browser_name: str
 ) -> None:
-    """The visitor's whole wait on the list past ASCII, without a slowdown, against the ASCII
-    fc-list's."""
+    """The same guard on the visitor's whole wait, without a slowdown."""
     _chromium(browser_name)
     _assert_past_ascii_ratio(browser, "ms", PAST_ASCII_WAIT_RATIO, 1)
 
 
-def test_the_past_ascii_budget_is_a_ratio_to_an_ascii_list_held_to_step_5() -> None:
-    """The ratio is to a list that keeps step 5's 200 ms, so a machine-wide slowdown still
-    fails there, and the ratios leave the list past ASCII less than step 5's 200 ms on the
-    machine they were set on (74 and 64 ms; the ASCII fc-list 42 and 44)."""
-    assert PAST_ASCII in hopper_lists.LABELS
-    assert ASCII_BASE in ABSOLUTE_LABELS
-    assert PAST_ASCII not in ABSOLUTE_LABELS
-    assert 42 * PAST_ASCII_MATCH_RATIO < HOPPER_MS
-    assert 44 * PAST_ASCII_WAIT_RATIO < HOPPER_MS
+@pytest.mark.parametrize(
+    ("reference_ms", "slowdown", "factor"),
+    [([30.0, 35.0, 99.0], 1, 1.0), ([120.0, 128.0, 140.0], 4, 1.0), ([60.0] * 3, 4, 1.0),
+     ([256.0] * 5, 4, 2.0), ([90.0, 105.0, 400.0], 1, 3.0), ([640.0] * 3, 4, 5.0)],
+)  # fmt: skip
+def test_a_hopper_budget_scales_with_the_reference_run_only_up(
+    reference_ms: list[float], slowdown: int, factor: float
+) -> None:
+    """The median reference run against the machine's the budgets were set on: a faster
+    machine keeps step 5's budget, a slower one gets it scaled by how much slower it is."""
+    assert _factor(reference_ms, slowdown) == pytest.approx(factor)
+
+
+def test_a_machine_too_slow_for_the_hopper_s_budgets_fails() -> None:
+    with pytest.raises(AssertionError, match="past FACTOR_MAX"):
+        _factor([REFERENCE_MS[4] * FACTOR_MAX + 1] * 5, 4)
+
+
+def test_the_reference_is_set_where_each_budget_runs() -> None:
+    """A reference for each slowdown the hopper is timed at, the list page's and none, slower
+    with the slowdown."""
+    assert set(REFERENCE_MS) == {1, CPU_SLOWDOWN}
+    assert REFERENCE_MS[1] * 2 < REFERENCE_MS[CPU_SLOWDOWN]
+    assert FACTOR_MAX > 1
 
 
 def test_the_hopper_parses_5_mb_of_system_profiler_json_within_a_second(
