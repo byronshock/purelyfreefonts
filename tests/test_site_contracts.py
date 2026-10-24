@@ -501,6 +501,20 @@ def test_the_contract_names_the_match_file():
     assert set(keys) == set(json.loads(matchfile.match_file(SAMPLE, NAMES_SAMPLE_PATH).blob))
 
 
+def test_the_contract_names_the_matcher_module():
+    """inventory_matcher_on_demand (2026-10-23): the parser and matcher are a file of their own,
+    named on #list beside the match file, and a list makes exactly two new requests."""
+    assert "| `assets/matcher.<h>.js` |" in section(CONTRACT, "2. Build output")
+    assert "`matcher_url`" in section(CONTRACT, "3. Templates")
+    dom = section(CONTRACT, "4. DOM")
+    assert 'data-matcher="/assets/matcher.<h>.js"' in dom
+    assert "`#list[data-matcher]` its matcher module" in dom
+    loading = next(line for line in MATCH_SECTION.splitlines() if line.startswith("**Loading**"))
+    assert "`inventory_matcher_on_demand`" in loading
+    assert "exactly two new requests" in loading
+    assert "`Data.loadMatch()` and `Data.loadMatcher()`" in loading
+
+
 def _font(doc: dict, font_id: str) -> dict:
     return next(f for f in doc["fonts"] if f["id"] == font_id)
 
@@ -878,19 +892,31 @@ def test_each_command_has_help(command, capsys):
 
 def lint_part(filename: str, const: str, source: str) -> list[str]:
     """The parts rule (site/CONTRACT.md section 5): the build's own lint, so a part that
-    passes this test also passes the build. ``const`` must be the table's name for it."""
-    assert dict(assets.JS_PARTS).get(filename) == const, (filename, const)
+    passes this test also passes the build. ``const`` must be the tables' name for it."""
+    names = dict(assets.JS_PARTS) | dict(assets.MATCHER_PARTS)
+    assert names.get(filename) == const, (filename, const)
     return assets.lint_js_part(filename, source)
 
 
-JS_TABLE = table_after(section(CONTRACT, "5. JS parts"), "| File | Const |")
+JS_SECTION = section(CONTRACT, "5. JS parts")
+JS_TABLE = table_after(JS_SECTION, "| File | Const |")
+MATCHER_TABLE = table_after(JS_SECTION, "| Matcher part | Const |")
+ALL_PARTS = sorted(set(assets.JS_PARTS) | set(assets.MATCHER_PARTS))
 
 
 def test_js_parts_table_matches_the_build():
     assert [(row[0], row[1]) for row in JS_TABLE] == list(assets.JS_PARTS)
 
 
-@pytest.mark.parametrize("row", JS_TABLE, ids=[row[0] for row in JS_TABLE])
+def test_the_matcher_parts_table_matches_the_build():
+    """inventory_matcher_on_demand (2026-10-23): the parser and matcher are a module of their
+    own, with their own copy of Keys, which the page's table describes."""
+    assert [(row[0], row[1]) for row in MATCHER_TABLE] == list(assets.MATCHER_PARTS)
+    keys = next(row for row in MATCHER_TABLE if row[0] == "05-keys.js")
+    assert "the page's part, unchanged" in keys[4]
+
+
+@pytest.mark.parametrize("row", JS_TABLE + MATCHER_TABLE, ids=lambda row: row[0])
 def test_js_part_exists_or_is_pending(row):
     filename, _const, _owner, status, _what = row
     exists = (JS_DIR / filename).is_file()
@@ -898,13 +924,13 @@ def test_js_part_exists_or_is_pending(row):
     assert (status == "written") == exists, f"{filename}: status says {status!r}"
 
 
-def test_no_js_file_outside_the_table():
-    assert {p.name for p in JS_DIR.glob("*.js")} <= {name for name, _ in assets.JS_PARTS}
+def test_no_js_file_outside_the_tables():
+    assert {p.name for p in JS_DIR.glob("*.js")} <= {name for name, _ in ALL_PARTS}
 
 
 @pytest.mark.parametrize(
     ("filename", "const"),
-    [(n, c) for n, c in assets.JS_PARTS if (JS_DIR / n).is_file()],
+    [(n, c) for n, c in ALL_PARTS if (JS_DIR / n).is_file()],
 )
 def test_js_part_follows_the_rule(filename, const):
     assert lint_part(filename, const, (JS_DIR / filename).read_text(encoding="utf-8")) == []
@@ -920,19 +946,34 @@ def test_the_hopper_parts_rows_name_every_member(filename):
     found = _EXPORTS.search((JS_DIR / filename).read_text(encoding="utf-8"))
     assert found is not None, filename
     members = [name.strip() for name in found.group(1).split(",") if name.strip()]
-    row = next(row for row in JS_TABLE if row[0] == filename)
+    row = next(row for row in MATCHER_TABLE if row[0] == filename)
     cell = "`" + row[4]  # table_after strips the cell's own first backtick
     assert members
     assert [name for name in members if f"`{name}" not in cell] == []
 
 
+def test_the_hand_off_is_the_one_the_contract_names():
+    """The matcher module's last line, as section 5 spells it, and the object Data takes."""
+    assert f"`{assets.MATCHER_START}`" in JS_SECTION
+    assert f"`globalThis.{assets.MATCHER_GLOBAL}`" in JS_SECTION
+    data = (JS_DIR / "10-data.js").read_text(encoding="utf-8")
+    assert f"const MATCHER_GLOBAL = '{assets.MATCHER_GLOBAL}';" in data
+    hand_off = (JS_DIR / assets.MATCHER_PART).read_text(encoding="utf-8")
+    assert "const Matcher = Object.freeze({ OwnedParse, OwnedMatch });\n" in hand_off
+
+
 def test_the_fetch_rule_names_every_attribute_data_reads_a_url_from():
-    """Section 5's fetch rule names each #list attribute that 10-data.js fetches from."""
-    lines = section(CONTRACT, "5. JS parts").splitlines()
+    """Section 5's fetch rule names each #list attribute that 10-data.js fetches from, and its
+    script rule the one it loads a module from."""
+    lines = JS_SECTION.splitlines()
     rule = next(line for line in lines if line.startswith("- `fetch()`"))
+    scripts = next(line for line in lines if line.startswith("- A script element"))
     names = set(re.findall(r"urlOf\('([a-z]+)'\)", (JS_DIR / "10-data.js").read_text("utf-8")))
-    assert names == {"details", "index", "match"}
-    assert sorted(name for name in names if f"`#list[data-{name}]`" not in rule) == []
+    assert names == {"details", "index", "match", "matcher"}
+    fetched = names - {"matcher"}
+    assert sorted(name for name in fetched if f"`#list[data-{name}]`" not in rule) == []
+    assert "`#list[data-matcher]`" in scripts
+    assert "`#list[data-matcher]`" not in rule
 
 
 # One example per refusal in site/CONTRACT.md sections 5 and 6.
@@ -954,6 +995,12 @@ BAD_JS = [
     ("90-main.js", "const Main = 1;\n"),
     ("90-main.js", "const Main = 1;\nMain.start();\nMain.start();\n"),
     ("90-main.js", "Main.start();\nconst Main = 1;\n"),
+    ("58-matcher.js", "const Matcher = 1;\n"),
+    ("58-matcher.js", f"{assets.MATCHER_START}\nconst Matcher = 1;\n"),
+    ("52-owned-parse.js", "const OwnedParse = (() => {\n  fetch('/x');\n})();\n"),
+    ("54-owned-match.js", "const OwnedMatch = (() => {\n  document.title;\n})();\n"),
+    ("05-keys.js", "const Keys = (() => {\n  setTimeout(f);\n})();\n"),
+    ("20-view.js", "const View = (() => {\n  document.createElement('script');\n})();\n"),
 ]
 BAD_CSS = [
     "@import url(other.css);\n",
@@ -966,7 +1013,8 @@ BAD_CSS = [
 
 @pytest.mark.parametrize(("filename", "source"), BAD_JS)
 def test_the_parts_lint_catches(filename, source):
-    assert lint_part(filename, dict(assets.JS_PARTS)[filename], source) != []
+    names = dict(assets.JS_PARTS) | dict(assets.MATCHER_PARTS)
+    assert lint_part(filename, names[filename], source) != []
 
 
 @pytest.mark.parametrize("name", assets.CSS_PARTS)

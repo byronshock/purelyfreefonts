@@ -1,10 +1,11 @@
-// 10-data: the JSON payloads (site/CONTRACT.md sections 5, 7, 8 and 11). Every URL comes from
-// the list's data- attributes and must be a path on this page's own origin, so every request
-// stays on this site (connect-src 'self' enforces the same). The list index is preloaded by
-// the page's <link rel="preload" as="fetch" crossorigin>; a plain fetch() of the same URL
-// (mode cors, credentials same-origin) reuses that response. Details load on first use only,
-// and the hopper's match file only once a visitor's list arrives (M3-D7 a). Each loader is
-// memoised: every caller shares one promise.
+// 10-data: the JSON payloads and the hopper's matcher module (site/CONTRACT.md sections 5, 7, 8
+// and 11). Every URL comes from the list's data- attributes and must be a path on this page's
+// own origin, so every request stays on this site (connect-src and script-src 'self' enforce
+// the same). The list index is preloaded by the page's <link rel="preload" as="fetch"
+// crossorigin>; a plain fetch() of the same URL (mode cors, credentials same-origin) reuses
+// that response. Details load on first use only, and the hopper's match file and matcher only
+// once a visitor's list arrives (M3-D7 a, inventory_matcher_on_demand): two requests, both to
+// fixed hashed URLs. Each loader is memoised: every caller shares one promise.
 const Data = (() => {
   const STALE_MESSAGE = 'The list was updated. Reload to see details.';
 
@@ -109,10 +110,11 @@ const Data = (() => {
   // Promise of the details payload (section 8), frozen. Rejects with Data.Stale on a 404.
   const loadDetails = memo(async () => deepFreeze(await getJSON(urlOf('details'))));
 
-  // A match file this page can't use. code: 'url' (#list names none, one with a query, or
-  // one off this origin), 'index' (the list index failed, so the run can't be checked),
-  // 'network', 'status', 'json', 'format' (not tff-match version 1) or 'run_date' (another
-  // run than the list's).
+  // A match file or matcher module this page can't use. code: 'url' (#list names none, one
+  // with a query, or one off this origin); for the match file, 'index' (the list index failed,
+  // so the run can't be checked), 'network', 'status', 'json', 'format' (not tff-match version
+  // 1) or 'run_date' (another run than the list's); for the matcher, 'load', 'handoff' or
+  // 'timeout' (loadMatcher).
   class MatchError extends Error {
     constructor(code, message) {
       super(`Data: ${message}`);
@@ -163,5 +165,72 @@ const Data = (() => {
     return deepFreeze(doc);
   });
 
-  return Object.freeze({ loadIndex, loadDetails, loadMatch, Stale, MatchError, STALE_MESSAGE });
+  // The matcher module's hand-off (58-matcher.js): globalThis.tffMatcher, read-only and
+  // permanent, a frozen object of the parser and the matcher. Anything else is no hand-off.
+  const MATCHER_GLOBAL = 'tffMatcher';
+  const MATCHER_TIMEOUT_MS = 30000;
+  const handedOver = () => {
+    const slot = Object.getOwnPropertyDescriptor(globalThis, MATCHER_GLOBAL);
+    const api = slot && !slot.writable && !slot.configurable ? slot.value : null;
+    const usable =
+      Boolean(api) &&
+      Object.isFrozen(api) &&
+      Boolean(api.OwnedParse) &&
+      typeof api.OwnedParse.parse === 'function' &&
+      Boolean(api.OwnedMatch) &&
+      typeof api.OwnedMatch.table === 'function' &&
+      typeof api.OwnedMatch.match === 'function';
+    return usable ? api : null;
+  };
+
+  // Promise of the hopper's parser and matcher, { OwnedParse, OwnedMatch }, frozen (section
+  // 11): the module in #list[data-matcher], loaded by one <script type="module"> added to the
+  // head, a GET of that path with no query string and no body; script-src 'self' allows it, and
+  // no inline script runs. It waits for the module's hand-off, at most MATCHER_TIMEOUT_MS, and
+  // rejects only with a Data.MatchError: 'url', 'load' (the script's error event: a network
+  // error or a status other than 2xx, which the event can't tell apart, so a stale page shows
+  // through loadMatch's Data.Stale), 'handoff' (the module ran but handed over nothing usable)
+  // or 'timeout'. A failure is forgotten, so a later call can try again; one that finds the
+  // hand-off of an earlier call's module, which ran after its timeout, adds no script.
+  const loadMatcher = memo(async () => {
+    let url;
+    try {
+      url = urlOf('matcher');
+    } catch (error) {
+      throw new MatchError('url', error.message);
+    }
+    if (url.includes('?') || url.includes('#')) throw new MatchError('url', `${url} has a query`);
+    if (!handedOver()) {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        let settled = false;
+        const settle = (error) => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          if (error) reject(error);
+          else resolve();
+        };
+        const timer = setTimeout(
+          () => settle(new MatchError('timeout', `${url} did not load in time`)),
+          MATCHER_TIMEOUT_MS,
+        );
+        script.addEventListener('load', () => settle(null));
+        script.addEventListener('error', () =>
+          settle(new MatchError('load', `${url} could not be loaded`)),
+        );
+        script.type = 'module';
+        script.src = url;
+        document.head.append(script);
+      });
+    }
+    const api = handedOver();
+    if (!api) throw new MatchError('handoff', `${url} handed over no matcher`);
+    return api;
+  });
+
+  return Object.freeze({
+    loadIndex, loadDetails, loadMatch, loadMatcher, Stale, MatchError, STALE_MESSAGE,
+    MATCHER_TIMEOUT_MS,
+  });
 })();

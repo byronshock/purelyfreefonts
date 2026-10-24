@@ -8,7 +8,9 @@ and retired views from ``config/site.toml`` (``tff_site.views``: the owner's sit
 2026-10-07, ``view_labels_short``, and 2026-09-30, ``default_rank_project`` and
 ``overall_retired``; until a refresh carries them into the catalog, the page shows config's);
 concatenate and hash the JS and CSS parts
-(``tff_site.assets``); write the list-index and details JSON; derive the hopper's match file
+(``tff_site.assets``): the page's script, the hopper's matcher module (named on ``#list`` but
+never preloaded or loaded with the page: ``inventory_matcher_on_demand``) and the stylesheet;
+write the list-index and details JSON; derive the hopper's match file
 from ``names.json`` (``tff_site.matchfile``: the owner's ruling of 2026-10-22,
 ``inventory_match_data_site_build``) and write it as ``/assets/match.<h>.json``, named on
 ``#list`` but never preloaded; serve each ``preview`` SVG from
@@ -420,7 +422,12 @@ def _write_site(
 ) -> None:
     commit = version["commit"]
     urls = assets.AssetManifest().urls
-    urls["app.js"] = assets.write_hashed(out, "app.js", assets.concat_js(site_dir / "js").encode())
+    js_dir = site_dir / "js"
+    urls["app.js"] = assets.write_hashed(out, "app.js", assets.concat_js(js_dir).encode())
+    # The hopper's parser and matcher: a module of their own, loaded only once a visitor's
+    # list arrives (inventory_matcher_on_demand, 2026-10-23; site/CONTRACT.md section 5).
+    matcher = assets.concat_js(js_dir, assets.MATCHER_PARTS).encode()
+    urls["matcher.js"] = assets.write_hashed(out, "matcher.js", matcher)
     ui_fonts = _copy_ui_fonts(out, site_dir / "static" / "fonts")
     faces = [(ui_fonts[name], style) for name, style in UI_FONTS]
     css = assets.font_faces(UI_FONT_FAMILY, faces, UI_FONT_WEIGHTS)
@@ -478,8 +485,10 @@ def _list_context(
         "score_words": data.SCORE_WORDS,
         "index_url": urls["list.json"],
         "details_url": urls["details.json"],
-        # The hopper's match file: named on #list, never preloaded (M3-D7 a).
+        # The hopper's match file and matcher module: named on #list, never preloaded, and
+        # loaded only once a visitor's list arrives (M3-D7 a, inventory_matcher_on_demand).
         "match_url": urls["match.json"],
+        "matcher_url": urls["matcher.js"],
         "rows": rows,
         "held_shown": any(row["held"] for row in rows),
     }

@@ -1,9 +1,12 @@
 """site/js/52-owned-parse.js and 54-owned-match.js against the Python reference, tff_catalog.owned.
 
 The hopper's parser and matcher (Milestone 3, slice 1; site/CONTRACT.md sections 5 and 11) are
-loaded with 05-keys.js, which they use, as one inline ES module, as test_keys_js.py loads Keys,
-into a page on a routed origin that answers only that page. In each engine given with
-``--browser`` (CI runs Chromium and Firefox):
+a module of their own, ``/assets/matcher.<h>.js`` (the owner's ruling of 2026-10-23,
+``inventory_matcher_on_demand``): ``assets.concat_js`` of the matcher's parts, 05-keys.js among
+them, as the build writes it. A page on a routed origin, which answers only the page and that
+file, loads it with ``<script type="module" src>`` and the tests take its hand-off,
+``globalThis.tffMatcher``. In each engine given with ``--browser`` (CI runs Chromium and
+Firefox):
 
 - their constants equal Python's, which ``tests/vectors/owned-fonts.json``'s ``spec`` records;
 - every parse, candidates and match vector in that file gives its expected result, and every
@@ -21,15 +24,21 @@ into a page on a routed origin that answers only that page. In each engine given
 - the parts are pure code: they name no network, page, frame, worker, storage, clock or
   randomness API; no such global is read while they load and run, and they make no request;
   a table keeps nothing of the lists matched against it, and once parse, match or candidates
-  returns, the engine's legacy RegExp statics hold nothing of the list.
+  returns, the engine's legacy RegExp statics hold nothing of the list;
+- the module hands over exactly ``{ OwnedParse, OwnedMatch }``, frozen, as a global that can't
+  be written, deleted or listed.
 
 How fast they are (Milestone 3 steps 4 and 5) is test_perf.py's to measure, in CI's site-perf
 job.
 
-``Data.loadMatch`` (site/js/10-data.js) is tested here too, on a routed page with a stub list:
-one GET of the path in ``#list[data-match]``, memoised; a 404 or 410 of it or of the list
-index rejects with ``Data.Stale``, and any other failure with a ``Data.MatchError`` and its
-code; a URL off the page's origin is never requested.
+``Data.loadMatch`` and ``Data.loadMatcher`` (site/js/10-data.js) are tested here too, on a
+routed page with a stub list: one GET of the path in ``#list[data-match]``, memoised; a 404 or
+410 of it or of the list index rejects with ``Data.Stale``, and any other failure with a
+``Data.MatchError`` and its code; one ``<script type="module">`` for the path in
+``#list[data-matcher]``, memoised, resolving with the module's hand-off, and each way it can
+fail (no load, no usable hand-off, no answer in ``MATCHER_TIMEOUT_MS``, on Playwright's clock) a
+``Data.MatchError`` with its code; a URL off the page's origin is never requested; and the
+parser and matcher that loadMatcher hands over match a list on loadMatch's file as Python does.
 
 A parse input reaches the page as the vector file spells it (``owned_vectors.spelled``): a lone
 surrogate can't cross to the page as a string, so a text that holds one goes as UTF-16 code
@@ -37,6 +46,7 @@ units, and a text that holds a high and a low surrogate side by side, which Pyth
 code points and JavaScript as one character, is refused. These tests need no built site.
 """
 
+import contextlib
 import functools
 import json
 import re
@@ -52,12 +62,15 @@ from tests.fixtures import hopper_lists
 from tests.helpers import owned_vectors as ov
 
 from tff_catalog import owned
-from tff_site import matchfile
+from tff_site import assets, matchfile
 
 ROOT = Path(__file__).resolve().parents[2]
 JS = ROOT / "site" / "js"
 PARTS = (JS / "05-keys.js", JS / "52-owned-parse.js", JS / "54-owned-match.js")
 DATA_PART = JS / "10-data.js"
+# The matcher module as the build writes it, at the path the build would give it.
+MATCHER = assets.concat_js(JS, assets.MATCHER_PARTS)
+MATCHER_PATH = "/assets/" + assets.hashed_name("matcher.js", MATCHER.encode())
 VECTORS = json.loads(ov.VECTORS.read_text(encoding="utf-8"))
 KNOWN = json.loads(ov.KNOWN.read_text(encoding="utf-8"))
 NAMES = ROOT / "build" / "names.json"
@@ -66,12 +79,12 @@ LINEAR_MS = 1000
 # A routed origin, as test_list.py uses (port 9 is one browsers refuse to load).
 ORIGIN = "http://127.0.0.1:59999"
 
-# The parts, then one line that hands their consts to the tests (a module's consts are not
-# global), and one that ends the watch WATCH_JS starts.
+# The matcher module, then a module that ends the watch WATCH_JS starts (modules run in
+# document order).
 PAGE = (
     "<!doctype html><html lang=en><meta charset=utf-8><title>owned</title>"
-    "<script type=module>\n{parts}\nglobalThis.__tffOwned = {{ OwnedParse, OwnedMatch }};\n"
-    "globalThis.__tffWatch = false;\n</script>"
+    f'<script type=module src="{MATCHER_PATH}"></script>'
+    "<script type=module>globalThis.__tffWatch = false;</script>"
 )
 # test_keys_js.py's rule, wider: no network, page, frame, worker, storage, clock or
 # randomness name outside comments.
@@ -162,23 +175,22 @@ class Loaded:
     def run(self, body: str, arg: Any = None) -> Any:
         """Evaluate ``(P, M, arg) => body`` in the page, with ``P`` OwnedParse and ``M`` OwnedMatch."""
         return self.page.evaluate(
-            f"(arg) => {{ {HELPERS} const o = globalThis.__tffOwned;"
+            f"(arg) => {{ {HELPERS} const o = globalThis.tffMatcher;"
             f" return ((P, M, arg) => {body})(o.OwnedParse, o.OwnedMatch, arg); }}",
             arg,
         )
 
 
 def _load(browser: Any, *, watch: bool = False) -> tuple[Any, Loaded]:
-    """A new context and a page in it at ORIGIN with Keys, OwnedParse and OwnedMatch loaded.
-    The route answers the page and nothing else (404), so no request leaves the test; with
-    ``watch``, WATCH_JS runs first."""
-    parts = "\n".join(path.read_text(encoding="utf-8") for path in PARTS)
-    assert "</script" not in parts.lower()
-    html = PAGE.format(parts=parts)
+    """A new context and a page in it at ORIGIN with the matcher module loaded. The route
+    answers the page and the module and nothing else (404), so no request leaves the test;
+    with ``watch``, WATCH_JS runs first."""
 
     def answer(route: Any) -> None:
         if route.request.url == f"{ORIGIN}/":
-            route.fulfill(status=200, content_type="text/html", body=html)
+            route.fulfill(status=200, content_type="text/html", body=PAGE)
+        elif route.request.url == f"{ORIGIN}{MATCHER_PATH}":
+            route.fulfill(status=200, content_type="text/javascript", body=MATCHER)
         else:
             route.fulfill(status=404, body="")
 
@@ -267,9 +279,10 @@ CANDIDATES = VECTORS["candidates"]
 MATCH = VECTORS["match"]
 
 
-def test_parts_load_as_one_module_without_errors(loaded):
+def test_the_matcher_module_loads_without_errors(loaded):
     assert loaded.errors == []
     assert loaded.run("[typeof P, typeof M]") == ["object", "object"]
+    assert MATCHER.count("\nconst ") + MATCHER.startswith("const ") == len(assets.MATCHER_PARTS)
 
 
 def test_parts_name_no_environment_api():
@@ -321,7 +334,7 @@ def test_parts_read_no_environment_global_and_make_no_request(browser):
         context.close()
     assert touched == []
     assert set(watched) == set(WATCHED) - UNFORGEABLE
-    assert page.requests == [f"{ORIGIN}/"]
+    assert page.requests == [f"{ORIGIN}/", f"{ORIGIN}{MATCHER_PATH}"]
     assert page.errors == []
 
 
@@ -335,6 +348,44 @@ def test_parts_expose_exactly_their_members_frozen(loaded):
     ]  # fmt: skip
     frozen = "[P, M, ...Object.values(P), ...Object.values(M)].filter((v) => typeof v === 'object')"
     assert loaded.run(f"{frozen}.every((v) => Object.isFrozen(v))") is True
+
+
+# In the page: the hand-off, then attempts to replace, delete and redefine it.
+HAND_OFF = """(() => {
+  const api = globalThis.tffMatcher;
+  const slot = Object.getOwnPropertyDescriptor(globalThis, 'tffMatcher');
+  globalThis.tffMatcher = { OwnedParse: null };
+  const deleted = delete globalThis.tffMatcher;
+  let redefined = true;
+  try {
+    Object.defineProperty(globalThis, 'tffMatcher', { value: {} });
+  } catch (error) {
+    redefined = false;
+  }
+  api.extra = 1;
+  return {
+    keys: Object.keys(api), frozen: Object.isFrozen(api), added: 'extra' in api,
+    slot: [slot.writable, slot.enumerable, slot.configurable, 'get' in slot],
+    listed: Object.keys(globalThis).includes('tffMatcher'),
+    same: globalThis.tffMatcher === api, deleted, redefined,
+  };
+})()"""
+
+
+def test_the_module_hands_over_its_parts_frozen_as_a_global_nothing_can_replace(loaded):
+    """inventory_matcher_on_demand: the module's one way to the page (58-matcher.js) is a
+    global that can't be written, deleted, redefined or listed, holding a frozen object of
+    exactly the two parts; nothing can be added to it."""
+    assert loaded.run(HAND_OFF) == {
+        "keys": ["OwnedParse", "OwnedMatch"],
+        "frozen": True,
+        "slot": [False, False, False, False],
+        "listed": False,
+        "same": True,
+        "deleted": False,
+        "redefined": False,
+        "added": False,
+    }
 
 
 def test_a_table_keeps_nothing_of_the_lists_matched_against_it(loaded):
@@ -880,8 +931,8 @@ DOC = {"format": "tff-match", "v": 1, "run_date": "2026-01-01", "ids": [], "k": 
        "reasons": [], "words": {}}  # fmt: skip
 DATA_PAGE = (
     '<!doctype html><html lang=en><meta charset=utf-8><title>data</title><ol id="list"'
-    ' data-index="{index}" data-details="/d.json" {match}></ol><script type=module>\n{part}\n'
-    "globalThis.__tffData = Data;\n</script>"
+    ' data-index="{index}" data-details="/d.json" {match} {matcher}></ol><script type=module>\n'
+    "{part}\nglobalThis.__tffData = Data;\n</script>"
 )
 OUTCOME = """async (load) => {
   const outcome = async () => {
@@ -894,49 +945,85 @@ OUTCOME = """async (load) => {
   };
   return [await outcome(), await outcome()];
 }"""
-Answer = tuple[int, Any] | None  # (status, body), or None for a network error
+# (status, body) or (status, body, content type), or None for a network error
+Answer = tuple[int, Any] | tuple[int, Any, str] | None
+HOLD = "hold"  # an answer that never comes, until the test gives it (data_page's held)
+MATCHER_ATTR = f'data-matcher="{MATCHER_PATH}"'
 
 
-@pytest.fixture
-def data_page(browser: Any) -> Iterator[Any]:
-    """A page factory: ``open_page(match_attr, match, index=..., index_url=...)`` loads
-    10-data.js under a routed origin that answers the list index and the match file as told,
-    and returns the page; the factory's second item is every request made."""
-    context = browser.new_context()
-    requests: list[Any] = []
-    context.on("request", lambda request: requests.append(request))
+@dataclass
+class DataPages:
+    """``open(match_attr, match, ...)`` loads 10-data.js under a routed origin that answers
+    the list index, the match file and the matcher module as told, and returns the page;
+    ``requests`` holds every request made, and ``held`` the routes answered with HOLD."""
 
-    def open_page(
-        match_attr: str, match: Answer, index: Answer = (200, INDEX), index_url: str = "/i.json"
+    context: Any
+    requests: list[Any] = field(default_factory=list)
+    held: list[Any] = field(default_factory=list)
+
+    def open(
+        self,
+        match_attr: str,
+        match: Answer,
+        index: Answer = (200, INDEX),
+        index_url: str = "/i.json",
+        matcher_attr: str = MATCHER_ATTR,
+        matcher: Answer | str = (200, MATCHER),
+        clock: bool = False,
     ) -> Any:
         html = DATA_PAGE.format(
-            part=DATA_PART.read_text(encoding="utf-8"), match=match_attr, index=index_url
+            part=DATA_PART.read_text(encoding="utf-8"),
+            match=match_attr,
+            matcher=matcher_attr,
+            index=index_url,
         )
 
-        def answer(route: Any, what: Answer) -> None:
+        def answer(route: Any, what: Answer | str, content_type: str) -> None:
+            if what == HOLD:
+                self.held.append(route)
+                return
             if what is None:
                 route.abort()
                 return
-            status, body = what
+            status, body, *served_as = what
             text = body if isinstance(body, str) else json.dumps(body)
-            route.fulfill(status=status, content_type="application/json", body=text)
+            route.fulfill(status=status, content_type=(*served_as, content_type)[0], body=text)
 
         def handle(route: Any) -> None:
             path = route.request.url[len(ORIGIN) :]
             if path == "/":
                 route.fulfill(status=200, content_type="text/html", body=html)
             elif path == "/i.json":
-                answer(route, index)
+                answer(route, index, "application/json")
+            elif path == MATCHER_PATH:
+                answer(route, matcher, "text/javascript")
             else:
-                answer(route, match)
+                answer(route, match, "application/json")
 
-        context.route(f"{ORIGIN}/**", handle)
-        page = context.new_page()
+        self.context.route(f"{ORIGIN}/**", handle)
+        page = self.context.new_page()
+        if clock:
+            page.clock.install()
         page.goto(f"{ORIGIN}/")
         return page
 
-    yield open_page, requests
+
+@pytest.fixture
+def data_pages(browser: Any) -> Iterator[DataPages]:
+    context = browser.new_context()
+    pages = DataPages(context)
+    context.on("request", lambda request: pages.requests.append(request))
+    yield pages
+    for route in pages.held:
+        with contextlib.suppress(Exception):
+            route.abort()
     context.close()
+
+
+@pytest.fixture
+def data_page(data_pages: DataPages) -> tuple[Any, list[Any]]:
+    """The factory as the loadMatch tests use it: ``(open_page, requests)``."""
+    return data_pages.open, data_pages.requests
 
 
 def _sent(requests: list[Any], path: str) -> list[Any]:
@@ -1028,3 +1115,122 @@ def test_load_match_is_never_called_by_loading_the_index(data_page):
     page = open_page(f'data-match="{MATCH_PATH}"', (200, DOC))
     page.evaluate("() => globalThis.__tffData.loadIndex().then(() => true)")
     assert _sent(requests, MATCH_PATH) == []
+
+
+# ---------------------------------------------------------------- Data.loadMatcher
+
+# A module that runs but hands over nothing usable, by kind.
+NO_HAND_OFF = {
+    "no global": "export {};\n",
+    "a writable global": "globalThis.tffMatcher = Object.freeze({ OwnedParse: { parse() {} },"
+    " OwnedMatch: { table() {}, match() {} } });\n",
+    "an unfrozen object": "Object.defineProperty(globalThis, 'tffMatcher', { value: {"
+    " OwnedParse: { parse() {} }, OwnedMatch: { table() {}, match() {} } } });\n",
+    "no matcher in it": "Object.defineProperty(globalThis, 'tffMatcher',"
+    " { value: Object.freeze({ OwnedParse: { parse() {} } }) });\n",
+    "a module that throws first": "throw new Error('x');\n" + MATCHER,
+}
+MATCHER_CASES: dict[str, tuple[Answer | str, list[Any], tuple[int, int]]] = {
+    # label: (the module's answer, both calls' outcome, (fewest, most) requests for it)
+    "ok": ((200, MATCHER), ["ok", True], (1, 1)),
+    "gone": ((404, ""), ["MatchError", "load"], (1, 2)),
+    "gone for good": ((410, ""), ["MatchError", "load"], (1, 2)),
+    "a server error": ((500, ""), ["MatchError", "load"], (1, 2)),
+    "a network error": (None, ["MatchError", "load"], (1, 2)),
+    "served as JSON": ((200, MATCHER, "application/json"), ["MatchError", "load"], (1, 2)),
+    "not JavaScript": ((200, "<!doctype html><title>x</title>"), ["MatchError", "handoff"], (1, 1)),
+    **{label: ((200, js), ["MatchError", "handoff"], (1, 1)) for label, js in NO_HAND_OFF.items()},
+}  # fmt: skip
+
+
+@pytest.mark.parametrize("label", MATCHER_CASES)
+def test_load_matcher_loads_the_list_s_matcher_module_once_and_takes_its_hand_off(
+    data_pages, label
+):
+    """inventory_matcher_on_demand: one <script type="module"> for #list[data-matcher], a
+    plain GET; its hand-off, frozen, memoised. A module that fails to load is a MatchError
+    'load' (a script's error event doesn't tell a 404 from a network error), and one that runs
+    but hands over nothing usable is 'handoff'. A failure is forgotten, but a browser may keep
+    a module's failed fetch for the page, so the second try may ask again or not."""
+    answer, want, (fewest, most) = MATCHER_CASES[label]
+    page = data_pages.open(f'data-match="{MATCH_PATH}"', (200, DOC), matcher=answer)
+    assert page.evaluate(OUTCOME, "loadMatcher") == [want, want]
+    sent = _sent(data_pages.requests, MATCHER_PATH)
+    assert fewest <= len(sent) <= most
+    assert {(r.method, r.post_data, r.resource_type) for r in sent} == {("GET", None, "script")}
+    assert _sent(data_pages.requests, MATCH_PATH) == _sent(data_pages.requests, "/i.json") == []
+    added = page.evaluate(
+        "() => [...document.head.querySelectorAll('script')].map((s) => [s.type, s.src, s.text])"
+    )
+    assert added == [["module", f"{ORIGIN}{MATCHER_PATH}", ""]] * len(added)
+    assert 1 <= len(added) <= 2
+    assert page.evaluate("() => document.scripts.length") == len(added) + 1
+
+
+@pytest.mark.parametrize(
+    "attr",
+    ["", f'data-matcher="{MATCHER_PATH}?x=1"', f'data-matcher="{MATCHER_PATH}#x"',
+     'data-matcher="https://example.com/m.js"', 'data-matcher="//example.com/m.js"',
+     'data-matcher="/\\example.com/m.js"', 'data-matcher="assets/matcher.js"'],
+)  # fmt: skip
+def test_load_matcher_refuses_a_missing_or_foreign_url_without_a_request(data_pages, attr):
+    page = data_pages.open(f'data-match="{MATCH_PATH}"', (200, DOC), matcher_attr=attr)
+    assert page.evaluate(OUTCOME, "loadMatcher") == [["MatchError", "url"]] * 2
+    assert [r.url for r in data_pages.requests] == [f"{ORIGIN}/"]
+    assert page.evaluate("() => document.scripts.length") == 1
+
+
+def test_load_matcher_gives_up_after_its_timeout_and_takes_a_late_hand_off(data_pages):
+    """A module that doesn't answer is a MatchError 'timeout' after MATCHER_TIMEOUT_MS (on
+    Playwright's clock); once it has run after all, the next call takes its hand-off without
+    another script or request."""
+    page = data_pages.open(f'data-match="{MATCH_PATH}"', (200, DOC), matcher=HOLD, clock=True)
+    page.evaluate(
+        "() => { globalThis.__tffFirst = globalThis.__tffData.loadMatcher()"
+        ".then(() => ['ok', null], (e) => [e.name, e.code]); }"
+    )
+    page.wait_for_function("() => document.scripts.length === 2")
+    timeout = page.evaluate("() => globalThis.__tffData.MATCHER_TIMEOUT_MS")
+    assert timeout == 30_000
+    page.clock.run_for(timeout - 1)
+    assert page.evaluate("() => Promise.race([globalThis.__tffFirst, 'waiting'])") == "waiting"
+    page.clock.run_for(2)
+    assert page.evaluate("() => globalThis.__tffFirst") == ["MatchError", "timeout"]
+    (held,) = data_pages.held
+    held.fulfill(status=200, content_type="text/javascript", body=MATCHER)
+    data_pages.held.clear()
+    page.wait_for_function("() => globalThis.tffMatcher !== undefined")
+    assert page.evaluate(OUTCOME, "loadMatcher") == [["ok", True], ["ok", True]]
+    assert len(_sent(data_pages.requests, MATCHER_PATH)) == 1
+    assert page.evaluate("() => document.scripts.length") == 2
+
+
+def test_the_list_s_two_loaders_make_two_requests_and_match_as_python_does(data_pages):
+    """A list's arrival as the hopper will handle it: loadMatch and loadMatcher together ask
+    for the match file and the matcher module once each (and the list index, which the page
+    has loaded by then), and the parser and matcher handed over read a list against the
+    file loadMatch checked as Python does. A second list asks for nothing."""
+    doc = real()[0]
+    index = {**INDEX, "run_date": doc["run_date"]}
+    page = data_pages.open(f'data-match="{MATCH_PATH}"', (200, doc), index=(200, index))
+    text = "Inter\nFira Code Bold\nHackGen\nSource Sans Pro\nZzz Unknown Grotesk\n"
+    run = """async (text) => {
+      const [api, doc] = await Promise.all([
+        globalThis.__tffData.loadMatcher(), globalThis.__tffData.loadMatch()]);
+      const { OwnedParse, OwnedMatch } = api;
+      return JSON.stringify(OwnedMatch.match(OwnedParse.parse(text), OwnedMatch.table(doc)));
+    }"""
+    got = json.loads(page.evaluate(run, text))
+    want = owned.match(owned.parse(text), real()[1]).to_json()
+    assert got == want
+    assert got["owned"]
+    paths = [r.url[len(ORIGIN) :] for r in data_pages.requests]
+    assert sorted(paths) == sorted(["/", "/i.json", MATCH_PATH, MATCHER_PATH])
+    assert (
+        json.loads(page.evaluate(run, "Inter Bold\n"))
+        == owned.match(owned.parse("Inter Bold\n"), real()[1]).to_json()
+    )
+    assert len(data_pages.requests) == 4
+    for request in data_pages.requests[1:]:
+        assert (request.method, request.post_data) == ("GET", None)
+        assert "?" not in request.url

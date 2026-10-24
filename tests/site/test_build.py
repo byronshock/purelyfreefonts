@@ -112,7 +112,7 @@ INDEX = """\
 <p id="count" class="count">Showing {{ list.total }} of {{ list.total }} fonts</p>
 <ol id="list" class="font-list" data-index="{{ list.index_url }}"
     data-details="{{ list.details_url }}" data-match="{{ list.match_url }}"
-    data-run-date="{{ build.run_date }}">
+    data-matcher="{{ list.matcher_url }}" data-run-date="{{ build.run_date }}">
 {% for row in list.rows %}
 <li class="font" id="font-{{ row.id }}" data-id="{{ row.id }}">
 <span class="rank">{{ row.label }}</span>
@@ -175,6 +175,11 @@ JS = {
           return Object.freeze({ start });
         })();
         Main.start();
+        """,
+    "58-matcher.js": """\
+        // 58-matcher: fixture part, the matcher module's hand-off.
+        const Matcher = Object.freeze({});
+        Object.defineProperty(globalThis, 'tffMatcher', { value: Matcher });
         """,
 }
 CSS = {
@@ -411,7 +416,7 @@ def test_output_layout(tmp_path, catalog, mini_site):
     exts = {f["id"]: f["font_file"]["format"] for f in SAMPLE["fonts"] if f["font_file"]}
     assert kinds == (
         {"assets/app.js", "assets/style.css", "assets/list.json", "assets/details.json"}
-        | {"assets/match.json"}
+        | {"assets/match.json", "assets/matcher.js"}
         | {f"assets/specimens/{i}.svg" for i in SPECIMEN_IDS}
         | {f"assets/fonts/{i}.{exts[i]}" for i in with_files}
         | {f"assets/ui/{name}" for name, _ in build.UI_FONTS}
@@ -529,7 +534,13 @@ def test_js_and_css_are_the_parts_in_filename_order(tmp_path, catalog, mini_site
     js = asset(out, next(a["src"] for t, a in index.tags if t == "script")).read_text()
     css = asset(out, next(a["href"] for t, a in index.tags if a.get("rel") == "stylesheet"))
     strip_js, strip_css = assets.strip_js_comments, assets.strip_css_comments
-    assert js == "\n".join(strip_js(textwrap.dedent(JS[n])).strip("\n") + "\n" for n in sorted(JS))
+
+    def joined(module: tuple[tuple[str, str], ...]) -> str:
+        names = sorted(n for n in JS if n in dict(module))
+        return "\n".join(strip_js(textwrap.dedent(JS[n])).strip("\n") + "\n" for n in names)
+
+    assert js == joined(assets.JS_PARTS)
+    assert asset(out, match_url(out, "data-matcher")).read_text() == joined(assets.MATCHER_PARTS)
     # The interface font's @font-face rules come first, then the parts.
     faces = [(ui_font_url(out, name), style) for name, style in build.UI_FONTS]
     head = assets.font_faces(build.UI_FONT_FAMILY, faces, build.UI_FONT_WEIGHTS)
@@ -993,9 +1004,9 @@ def write_names(catalog: tuple[Path, Path], names: dict) -> Path:
     return path
 
 
-def match_url(out: Path) -> str:
+def match_url(out: Path, attribute: str = "data-match") -> str:
     page = parse((out / "index.html").read_text(encoding="utf-8"))
-    return next(a for t, a in page.tags if t == "ol" and a.get("id") == "list")["data-match"]
+    return next(a for t, a in page.tags if t == "ol" and a.get("id") == "list")[attribute]
 
 
 def test_the_match_file_is_derived_from_names_json_and_named_on_the_list(
@@ -1114,19 +1125,45 @@ def test_the_names_file_s_folder_is_never_replaced(tmp_path, catalog, mini_site)
         run_build(catalog, other, mini_site, names_path=other / "names.json")
 
 
-def test_no_page_preloads_or_names_the_match_file_but_the_list(tmp_path, catalog, real_site):
-    """M3-D7 (a): the match file loads only once a visitor's list arrives. Only ``#list``'s
-    ``data-match`` names it: no preload, no other page, and neither the script nor a payload."""
+@pytest.mark.parametrize("attribute", ["data-match", "data-matcher"])
+def test_no_page_preloads_or_names_the_hopper_s_files_but_the_list(
+    tmp_path, catalog, real_site, attribute
+):
+    """M3-D7 (a), inventory_matcher_on_demand: the match file and the matcher module load only
+    once a visitor's list arrives. Only ``#list``'s ``data-match`` and ``data-matcher`` name
+    them: no preload, no script element, no other page, and neither script nor a payload."""
     out = tmp_path / "out"
     run_build(catalog, out, real_site)
-    url = match_url(out)
+    url = match_url(out, attribute)
     name = url.rsplit("/", 1)[1]
     for path, blob in tree(out).items():
         if path == url.lstrip("/"):
             continue
         assert blob.count(name.encode()) == (1 if path == "index.html" else 0), path
     tags = parse((out / "index.html").read_text(encoding="utf-8")).tags
-    assert [a for t, a in tags if t == "link" and url in a.values()] == []
+    assert [a for t, a in tags if t in ("link", "script") and url in a.values()] == []
+
+
+def test_the_matcher_is_a_module_of_its_own_beside_the_page_s(tmp_path, catalog, real_site):
+    """inventory_matcher_on_demand: the parser and matcher leave the page's script for
+    ``/assets/matcher.<h>.js``, the matcher parts joined, which the page names on
+    ``#list[data-matcher]`` and loads with no script element of its own; Keys is in both."""
+    out = tmp_path / "out"
+    run_build(catalog, out, real_site)
+    url = match_url(out, "data-matcher")
+    assert re.fullmatch(r"/assets/matcher\.[0-9a-f]{10}\.js", url)
+    matcher = asset(out, url).read_text(encoding="utf-8")
+    assert matcher == assets.concat_js(real_site / "js", assets.MATCHER_PARTS)
+    tags = parse((out / "index.html").read_text(encoding="utf-8")).tags
+    (script,) = [a for t, a in tags if t == "script"]
+    app = asset(out, script["src"]).read_text(encoding="utf-8")
+    assert app == assets.concat_js(real_site / "js")
+    tops = re.compile(r"^const (\w+) =", re.MULTILINE)
+    assert tops.findall(matcher) == ["Keys", "OwnedParse", "OwnedMatch", "Matcher"]
+    assert "OwnedParse" not in tops.findall(app)
+    assert "Keys" in tops.findall(app)
+    assert matcher.rstrip("\n").endswith(assets.MATCHER_START)
+    assert app.rstrip("\n").endswith(assets.MAIN_START)
 
 
 # ------------------------------------------------------------------------- version.txt
@@ -1835,6 +1872,41 @@ GOOD_PART = "// 20-view: test.\nconst View = (() => {\n  const x = 1;\n  return 
             "const View = (() => {\n  n.setAttribute('style', s);\n})();\n",
             "setAttribute('style'",
         ),
+        # the matcher module (inventory_matcher_on_demand): its hand-off, last and once
+        ("58-matcher.js", "const Matcher = 1;\n", assets.MATCHER_START),
+        ("58-matcher.js", f"{assets.MATCHER_START}\nconst Matcher = 1;\n", "last top-level"),
+        ("58-matcher.js", f"const Matcher = 1;\n{assets.MATCHER_START}\n" * 2, "top-level"),
+        (
+            "58-matcher.js",
+            f"const Matcher = 1;\n{assets.MATCHER_START}\n{assets.MATCHER_START}\n",
+            "once",
+        ),
+        ("58-matcher.js", "const Matcher = 1;\nMain.start();\n", "top-level statement"),
+        ("90-main.js", f"const Main = 1;\n{assets.MATCHER_START}\nMain.start();\n", "top-level"),
+        ("20-view.js", f"const View = 1;\n{assets.MATCHER_START}\n", "top-level statement"),
+        ("58-matcher.js", "const Other = 1;\n", "want one: const Matcher"),
+        # ... pure code: no request, page, timer, clock or randomness, Keys included
+        ("52-owned-parse.js", "const OwnedParse = (() => {\n  fetch(u);\n})();\n", "fetch("),
+        ("54-owned-match.js", "const OwnedMatch = (() => {\n  document.title;\n})();\n", "pure"),
+        ("54-owned-match.js", "const OwnedMatch = (() => {\n  window.x;\n})();\n", "pure"),
+        ("54-owned-match.js", "const OwnedMatch = (() => {\n  setTimeout(f);\n})();\n", "pure"),
+        ("52-owned-parse.js", "const OwnedParse = (() => {\n  Date.now();\n})();\n", "pure"),
+        ("52-owned-parse.js", "const OwnedParse = (() => {\n  Math.random();\n})();\n", "pure"),
+        ("05-keys.js", "const Keys = (() => {\n  navigator.language;\n})();\n", "pure"),
+        ("05-keys.js", "const Keys = (() => {\n  location.href;\n})();\n", "pure"),
+        # a script element: only Data.loadMatcher adds one, once
+        (
+            "20-view.js",
+            "const View = (() => {\n  document.createElement('script');\n})();\n",
+            "a script element",
+        ),
+        ("40-details.js", "const Details = (() => {\n  Core.el('script', {});\n})();\n", "script"),
+        (
+            "10-data.js",
+            "const Data = (() => {\n  document.createElement('script');\n"
+            '  document.createElement("script");\n})();\n',
+            "once",
+        ),
     ],
 )
 def test_the_js_lint_catches(filename, source, problem):
@@ -1850,6 +1922,10 @@ def test_the_js_lint_passes_good_parts():
         "const Data = (() => {\n  const get = (url) => fetch(url);\n  return { get };\n})();\n"
     )
     assert assets.lint_js_part("10-data.js", fetching) == []
+    loading = "const Data = (() => {\n  const s = document.createElement('script');\n})();\n"
+    assert assets.lint_js_part("10-data.js", loading) == []
+    handing = f"const Matcher = Object.freeze({{}});\n{assets.MATCHER_START}\n"
+    assert assets.lint_js_part("58-matcher.js", handing) == []
     for closer in ("})(Core);", "}); // end of State", "}", "}).call(globalThis);"):
         source = f"const State = (() => {{\n  const a = 1;\n{closer}\n"
         assert assets.lint_js_part("15-state.js", source) == [], closer
@@ -1894,6 +1970,61 @@ def test_concatenation_reports_every_bad_part(tmp_path):
     assert assets.concat_js(tmp_path) == "const Core = 1;\n"
     with pytest.raises(assets.AssetError, match="no"):
         assets.concat_css(tmp_path)
+
+
+def test_each_module_takes_its_own_parts_and_every_part_is_linted(tmp_path):
+    """The page's module and the matcher's (inventory_matcher_on_demand) come from one folder:
+    each takes the parts its list names, 05-keys.js both, and the lint reads every file in it,
+    whichever module is being made."""
+    parts = {
+        "00-core.js": "const Core = 1;\n",
+        "05-keys.js": "// the name keys\nconst Keys = 2;\n",
+        "58-matcher.js": f"const Matcher = Object.freeze({{}});\n{assets.MATCHER_START}\n",
+        "90-main.js": "const Main = 3;\nMain.start();\n",
+    }
+    for name, text in parts.items():
+        (tmp_path / name).write_text(text, encoding="utf-8")
+    assert (
+        assets.concat_js(tmp_path) == "const Core = 1;\n\nconst Keys = 2;\n\n" + parts["90-main.js"]
+    )
+    assert assets.concat_js(tmp_path, assets.MATCHER_PARTS) == (
+        "const Keys = 2;\n\n" + parts["58-matcher.js"]
+    )
+    (tmp_path / "52-owned-parse.js").write_text(
+        "const OwnedParse = (() => {\n  fetch('/x');\n})();\n", encoding="utf-8"
+    )
+    for module in (assets.JS_PARTS, assets.MATCHER_PARTS):
+        with pytest.raises(assets.AssetError) as caught:
+            assets.concat_js(tmp_path, module)
+        assert caught.value.problems == [
+            "52-owned-parse.js:2: not in the matcher module (pure code): fetch("
+        ]
+    (tmp_path / "52-owned-parse.js").unlink()
+    (tmp_path / "05-keys.js").unlink()
+    (tmp_path / "58-matcher.js").unlink()
+    with pytest.raises(assets.AssetError, match="no"):
+        assets.concat_js(tmp_path, assets.MATCHER_PARTS)
+
+
+def test_the_two_modules_lists_agree_and_are_in_filename_order():
+    """A part of both modules has one name; each list is in filename order, as the build joins
+    them; each module ends with its one statement's part; and the matcher's parts use only
+    lower-numbered parts of its own list (modules share no top-level names)."""
+    page, matcher = dict(assets.JS_PARTS), dict(assets.MATCHER_PARTS)
+    assert {name: page[name] for name in page.keys() & matcher.keys()} == {"05-keys.js": "Keys"}
+    for parts in (assets.JS_PARTS, assets.MATCHER_PARTS):
+        names = [name for name, _ in parts]
+        assert names == sorted(names)
+        assert len(set(names)) == len(names)
+    assert assets.JS_PARTS[-1][0] == assets.MAIN_PART
+    assert assets.MATCHER_PARTS[-1][0] == assets.MATCHER_PART
+    consts = [const for _, const in assets.MATCHER_PARTS]
+    for k, (name, const) in enumerate(assets.MATCHER_PARTS):
+        code = assets.strip_js_comments((ROOT / "site" / "js" / name).read_text(encoding="utf-8"))
+        used = {c for c in consts if c != const and re.search(rf"\b{c}\b", code)}
+        assert used <= set(consts[:k]), (name, used)
+        others = {c for c in page.values() if c not in consts and re.search(rf"\b{c}\.", code)}
+        assert others == set(), (name, others)
 
 
 # --------------------------------------------------------------------- the real site

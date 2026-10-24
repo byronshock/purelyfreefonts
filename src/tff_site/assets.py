@@ -1,17 +1,28 @@
-"""Concatenate the JS and CSS parts into one script and one stylesheet, and hash asset names.
+"""Concatenate the JS and CSS parts into two scripts and one stylesheet, and hash asset names.
 
-The parts rule (site/CONTRACT.md, "JS parts"): the build concatenates ``site/js/*.js`` in
-filename order into one ES module, ``/assets/app.<h>.js``, and ``site/css/*.css`` the same
-way into ``/assets/style.<h>.css``. Each JS part declares exactly one top-level ``const``,
-named in ``JS_PARTS``. The lint refuses extra top-level declarations and statements (only
-``Main.start();``, once, as the last line of ``90-main.js``), ``import``/``export`` (dynamic
-``import(`` too), HTML-string APIs, ``eval``, ``Function(``, ``document.write``, browser
-storage APIs, request APIs other than ``fetch`` (``OTHER_JS``), ``setAttribute('style'`` and
-absolute URLs in ``fetch``; a file outside ``JS_PARTS`` is refused.
-The CSS lint refuses files outside ``CSS_PARTS``, ``@import``, ``@font-face`` and ``url()``
-with a scheme or another host. Both report every problem at once (``AssetError``). The
-interface font's ``@font-face`` rules come from ``font_faces``, which the build puts ahead of
-the parts, so no part declares a font.
+The parts rule (site/CONTRACT.md section 5, "JS parts"): the build concatenates the parts in
+``site/js/`` in filename order into two ES modules, each with the parts its list names: the
+page's, ``/assets/app.<h>.js`` (``JS_PARTS``), and the hopper's matcher,
+``/assets/matcher.<h>.js`` (``MATCHER_PARTS``), which the list page loads only once a
+visitor's list arrives (the owner's ruling of 2026-10-23, ``inventory_matcher_on_demand``).
+Modules share no top-level names, so the matcher holds its own copy of the lower parts it
+uses (``05-keys.js`` is in both lists), and hands its API to the page in one way: its last
+line, ``MATCHER_START``, defines ``globalThis.tffMatcher``. ``site/css/*.css`` is
+concatenated the same way into ``/assets/style.<h>.css``.
+
+Each JS part declares exactly one top-level ``const``, named in its list (a part in both lists
+has the same name in each). The lint refuses extra top-level declarations and statements (only
+``Main.start();``, once, as the last line of ``90-main.js``, and ``MATCHER_START``, once, as
+the last line of ``58-matcher.js``), ``import``/``export`` (dynamic ``import(`` too),
+HTML-string APIs, ``eval``, ``Function(``, ``document.write``, browser storage APIs, request
+APIs other than ``fetch`` (``OTHER_JS``), ``setAttribute('style'`` and absolute URLs in
+``fetch``; a script element anywhere but ``10-data.js`` (``SCRIPT_JS``), and there only once;
+and in a part of the matcher, any request, page, timer, clock or randomness API
+(``MATCHER_JS``). A file in neither list is refused, and a part of both follows the rules of
+both. The CSS lint refuses files outside ``CSS_PARTS``, ``@import``, ``@font-face`` and
+``url()`` with a scheme or another host. Both report every problem at once (``AssetError``).
+The interface font's ``@font-face`` rules come from ``font_faces``, which the build puts ahead
+of the parts, so no part declares a font.
 
 Every file under ``/assets/`` is named ``<stem>.<h>.<ext>``, where ``<h>`` is the first
 ``HASH_LEN`` hex digits of the sha256 of its bytes, so it can be cached as immutable.
@@ -25,7 +36,8 @@ from pathlib import Path
 
 HASH_LEN = 10
 
-# (file, top-level const) in concatenation order; must match site/CONTRACT.md.
+# (file, top-level const) in concatenation order; must match site/CONTRACT.md section 5. The
+# page's module, /assets/app.<h>.js, which every page loads.
 JS_PARTS: tuple[tuple[str, str], ...] = (
     ("00-core.js", "Core"),
     ("05-keys.js", "Keys"),
@@ -38,9 +50,16 @@ JS_PARTS: tuple[tuple[str, str], ...] = (
     ("40-details.js", "Details"),
     ("45-specimens.js", "Specimens"),
     ("50-ext.js", "Ext"),
+    ("90-main.js", "Main"),
+)
+# The hopper's matcher module, /assets/matcher.<h>.js: the parser and the matcher, loaded only
+# once a visitor's list arrives (Data.loadMatcher; inventory_matcher_on_demand, 2026-10-23),
+# with its own copy of Keys, which they use.
+MATCHER_PARTS: tuple[tuple[str, str], ...] = (
+    ("05-keys.js", "Keys"),
     ("52-owned-parse.js", "OwnedParse"),
     ("54-owned-match.js", "OwnedMatch"),
-    ("90-main.js", "Main"),
+    ("58-matcher.js", "Matcher"),
 )
 CSS_PARTS: tuple[str, ...] = (
     "00-tokens.css",
@@ -81,11 +100,44 @@ OTHER_JS: tuple[str, ...] = (
     "setAttribute('style'",
     'setAttribute("style"',
 )
-# The one top-level statement besides the declarations: the last line of the last part.
+# A script element: only Data.loadMatcher adds one, for #list[data-matcher] (section 11).
+SCRIPT_JS: tuple[str, ...] = (
+    "createElement('script'",
+    'createElement("script"',
+    "createElement(`script`",
+    "el('script'",
+    'el("script"',
+    "el(`script`",
+)
+DATA_PART = "10-data.js"
+# Refused in a part of the matcher module, comments included: it is pure code, making no
+# request and touching no page, timer, clock or randomness (tests/site/test_owned_js.py checks
+# a wider list as the parts run). Its one global is the hand-off, MATCHER_START.
+MATCHER_JS: tuple[str, ...] = (
+    "fetch(",
+    "document.",
+    "window.",
+    "navigator.",
+    "location.",
+    "createElement",
+    "setTimeout(",
+    "setInterval(",
+    "Date.",
+    "Date(",
+    "Math.random",
+)
+# The one top-level statement besides the declarations in each module: the last line of its
+# last part. The matcher's defines globalThis.tffMatcher, read-only and permanent (the
+# defaults of defineProperty), as Matcher, a frozen { OwnedParse, OwnedMatch }.
 MAIN_PART = "90-main.js"
 MAIN_START = "Main.start();"
+MATCHER_PART = "58-matcher.js"
+MATCHER_GLOBAL = "tffMatcher"
+MATCHER_START = f"Object.defineProperty(globalThis, '{MATCHER_GLOBAL}', {{ value: Matcher }});"
+_STARTS = {MAIN_PART: MAIN_START, MATCHER_PART: MATCHER_START}
 
-_CONSTS = dict(JS_PARTS)
+_PAGE_CONSTS = dict(JS_PARTS)
+_MATCHER_CONSTS = dict(MATCHER_PARTS)
 _TOP_DECLARATION = re.compile(
     r"^(?:export\s+)?(const|let|var|class|function\*?|async\s+function)\s+([A-Za-z_$][\w$]*)",
     re.MULTILINE,
@@ -145,16 +197,19 @@ def hashed_name(name: str, data: bytes) -> str:
 
 
 def lint_js_part(filename: str, source: str) -> list[str]:
-    """Return parts-rule violations in one JS part; an empty list means it passes."""
-    const = _CONSTS.get(filename)
-    if const is None:
+    """Return parts-rule violations in one JS part; an empty list means it passes. A part of
+    both modules (``JS_PARTS`` and ``MATCHER_PARTS``) is held to the rules of both."""
+    in_page, in_matcher = filename in _PAGE_CONSTS, filename in _MATCHER_CONSTS
+    if not (in_page or in_matcher):
         return [f"{filename}: not a JS part in site/CONTRACT.md section 5"]
+    const = _PAGE_CONSTS.get(filename) or _MATCHER_CONSTS[filename]
     problems: list[str] = []
     declarations = _TOP_DECLARATION.findall(source)
     if declarations != [("const", const)]:
         found = ", ".join(f"{kind} {name}" for kind, name in declarations) or "none"
         problems.append(f"{filename}: top-level declarations ({found}); want one: const {const}")
     declaration = re.compile(rf"^const\s+{re.escape(const)}\s*=")
+    start = _STARTS.get(filename)
     significant: list[tuple[int, str]] = []
     for lineno, line in enumerate(source.splitlines(), 1):
         if not line.strip() or line[0].isspace():
@@ -164,13 +219,13 @@ def lint_js_part(filename: str, source: str) -> list[str]:
         significant.append((lineno, line.rstrip()))
         if declaration.match(line) or _CLOSER.match(line):
             continue
-        if filename == MAIN_PART and line.rstrip() == MAIN_START:
+        if start is not None and line.rstrip() == start:
             continue
         problems.append(f"{filename}:{lineno}: top-level statement: {line[:60]}")
-    if filename == MAIN_PART:
-        starts = [n for n, line in significant if line == MAIN_START]
-        if len(starts) != 1 or significant[-1][1] != MAIN_START:
-            problems.append(f"{filename}: {MAIN_START} must be the last top-level line, once")
+    if start is not None:
+        starts = [n for n, line in significant if line == start]
+        if len(starts) != 1 or significant[-1][1] != start:
+            problems.append(f"{filename}: {start} must be the last top-level line, once")
     problems += [
         f"{filename}:{_line_of(source, m.start())}: import or export"
         for m in _IMPORT_EXPORT.finditer(source)
@@ -183,6 +238,17 @@ def lint_js_part(filename: str, source: str) -> list[str]:
         problems += [f"{filename}:{n}: forbidden: {needle}" for n in _lines_with(source, needle)]
     for match in _ABSOLUTE_FETCH.finditer(source):
         problems.append(f"{filename}:{_line_of(source, match.start())}: fetch of an absolute URL")
+    scripts = [n for needle in SCRIPT_JS for n in _lines_with(source, needle)]
+    if filename != DATA_PART or len(scripts) > 1:
+        problems += [
+            f"{filename}:{n}: a script element (only {DATA_PART} adds one, once)" for n in scripts
+        ]
+    if in_matcher:
+        for needle in MATCHER_JS:
+            problems += [
+                f"{filename}:{n}: not in the matcher module (pure code): {needle}"
+                for n in _lines_with(source, needle)
+            ]
     return problems
 
 
@@ -198,10 +264,12 @@ def lint_css_part(filename: str, source: str) -> list[str]:
     ]
 
 
-def concat_js(parts_dir: Path) -> str:
-    """Lint and concatenate ``parts_dir/*.js`` in filename order into one ES module, without
-    whole-line comments (``strip_js_comments``)."""
-    return _concat(Path(parts_dir), "*.js", lint_js_part, strip_js_comments)
+def concat_js(parts_dir: Path, parts: tuple[tuple[str, str], ...] = JS_PARTS) -> str:
+    """Lint every ``parts_dir/*.js`` and concatenate those ``parts`` names (``JS_PARTS``, the
+    page's module, or ``MATCHER_PARTS``, the matcher's) in filename order into one ES module,
+    without whole-line comments (``strip_js_comments``)."""
+    names = {name for name, _ in parts}
+    return _concat(Path(parts_dir), "*.js", lint_js_part, strip_js_comments, names.__contains__)
 
 
 def strip_js_comments(source: str) -> str:
@@ -268,17 +336,20 @@ def _concat(
     pattern: str,
     lint: Callable[[str, str], list[str]],
     strip: Callable[[str], str],
+    keep: Callable[[str], bool] = lambda name: True,
 ) -> str:
+    """Lint every file matching ``pattern`` and join those ``keep`` takes, in filename order."""
     paths = sorted(parts_dir.glob(pattern), key=lambda p: p.name)
-    if not paths:
-        raise AssetError([f"{parts_dir}: no {pattern} parts"])
     problems: list[str] = []
     texts: list[str] = []
     for path in paths:
         # utf-8-sig drops a byte-order mark, which would land mid-file once concatenated.
         source = path.read_text(encoding="utf-8-sig").replace("\r\n", "\n")
         problems += lint(path.name, source)
-        texts.append(strip(source).strip("\n") + "\n")
+        if keep(path.name):
+            texts.append(strip(source).strip("\n") + "\n")
+    if not texts:
+        problems.append(f"{parts_dir}: no {pattern} parts")
     if problems:
         raise AssetError(problems)
     return "\n".join(texts)
