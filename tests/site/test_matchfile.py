@@ -264,6 +264,11 @@ MALFORMED_NAMES = [
         id="list-relation",
     ),
     pytest.param(
+        lambda n: n["families"][0]["names"][0].update(relation="renamed"),
+        "/families/0/names/0/relation is 'renamed', not a relation of schemas/names.schema.json",
+        id="unknown-relation",
+    ),
+    pytest.param(
         _wide_build,
         "/families/0/names/0/detail is 'wide', not a build detail of schemas/names.schema.json",
         id="unknown-detail",
@@ -614,6 +619,26 @@ def test_a_recode_must_name_an_alias_of_the_family_it_names(tmp_path):
         f"{tmp_path / 'names.reviewed.toml'}: 'Sample Mono 20 Gen' is reviewed as an alias of "
         "sample-mono-23 (synthetic), but names.json's aliases at its key 'samplemono20gen' are "
         "of sample-mono-20"
+    ]
+
+
+def test_a_recode_whose_alias_another_family_also_holds_is_refused(tmp_path):
+    """A recode works on every alias row at its key, so the review of sample-mono-20's alias
+    would silently recode sample-mono-02's too: the build refuses it, and the check, run
+    without it, finds the key that two catalog families now own."""
+
+    def shared(names: dict[str, Any]) -> None:
+        family(names, "sample-mono-02")["names"].append(
+            {"name": "Sample Mono 20 Gen", "relation": "build", "detail": ""}
+        )
+
+    path = write(tmp_path, names_with(shared))
+    assert errors_of(path) == [
+        f"{tmp_path / 'names.reviewed.toml'}: 'Sample Mono 20 Gen' is reviewed as an alias of "
+        "sample-mono-20 (synthetic), but names.json's aliases at its key 'samplemono20gen' are "
+        "of sample-mono-02, sample-mono-20",
+        f"{path}: key 'samplemono20gen' is owned by several catalog families "
+        "(sample-mono-02, sample-mono-20), outside the ambiguous set",
     ]
 
 
