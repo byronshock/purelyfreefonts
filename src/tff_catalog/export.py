@@ -93,7 +93,18 @@ How the per-font fields are made (``docs/catalog-schema.md`` says it for readers
   are Fonts Over Time's is unranked there, with no score, and its reason is ``no_evidence``
   (owner ruling of 2026-10-20, fot_only_needs_another_source; ``CatalogBuilder.reasons``).
 - **Sources listed** are the enabled engine sources, less any the parse stage
-  dropped (no snapshot inside the stale window).
+  dropped (no snapshot inside the stale window), and in ``catalog.json`` only, the
+  gate-only ones with terms this run (``ranking.toml`` ``gate_only``: GitHub and Nerd
+  Fonts while deferred, owner ruling of 2026-10-23, deferred_sources_count_for_gate), so
+  a reader can see the evidence that gave a font a group for the two-group gate. Such a
+  source has ``weight`` 0, no ``ruler_overlap``, and per font only its ``state``,
+  ``reason`` and ``group``: the independence group an observed term gives the gate (the
+  term's, so ``homebrew`` for a GitHub repository the font's cask downloads, gate M5,
+  which adds no group to a font Homebrew observes), null unless observed; no
+  ``rank_in_source``, ``z``, ``weight_used`` or ``value``, since none of its numbers
+  reach a score, and ``abstains_in`` empty. Only these entries carry ``group``. Its flags
+  stay off the font, and ``catalog-site.json`` leaves it out, so the site shows only the
+  sources that score.
 - **The Nerd Font link** (``links.nerd``) is stage "links"' choice, except that a link
   that failed the check recorded for the run's date (``Links.nerd_problem``) is left
   out, null, until a later check passes (owner ruling of 2026-09-29); the font stays.
@@ -577,11 +588,12 @@ def survey_view(src: SourceBase) -> str:
 
 
 def published_sources(cfg: Config, inputs: Inputs) -> tuple[str, ...]:
-    """Enabled engine sources, in ``ranking.toml`` order, less those parse dropped."""
+    """Enabled engine sources, in ``ranking.toml`` order, less those parse dropped, and the
+    gate-only ones that have terms in their base view this run (module docstring)."""
     snapshots, stale = inputs.snapshots, inputs.stale
     out = []
     for name, src in cfg.ranking.sources.all().items():
-        if not src.enabled:
+        if not src.enabled and not (src.gate_only and name in inputs.terms.get(base_view(src), {})):
             continue
         dropped = src.collector in stale and stale[src.collector].dropped
         if dropped or (snapshots is not None and src.collector not in snapshots):
@@ -864,6 +876,7 @@ class CatalogBuilder:
         self.changed = changed  # ranks new under their method (methods.changed_since_last_run)
         self.sources = published_sources(cfg, inputs)
         self.src = cfg.ranking.sources.all()
+        self.gate_only = cfg.ranking.sources.gate_only()
         from tff_catalog.surveys import FOT
 
         failed = inputs.l3_failed
@@ -986,7 +999,8 @@ class CatalogBuilder:
             "data_date": (snap.data_date or snap.snapshot).isoformat() if snap else None,
             "fetched_at": snap.fetched_at if snap else None,
             "stale": bool(snap.stale) if snap else src.collector in self.inputs.stale,
-            "ruler_overlap": scores.overlaps.get(s) if scores else None,
+            # A gate-only source has no ruler role (deferred_sources_count_for_gate).
+            "ruler_overlap": scores.overlaps.get(s) if scores and s not in self.gate_only else None,
         }
 
     # -- one font --
@@ -1120,6 +1134,17 @@ class CatalogBuilder:
         src, view = self.src[s], self.base[s]
         term = view.terms.get(fid)
         shown = publish_rank(self.cfg, s)
+        if s in self.gate_only:  # its state and gate group only: no number reaches a score
+            state, reason = state_reason(term, src)
+            return {
+                "state": state,
+                "reason": reason,
+                "group": term.group if term is not None and state == "observed" else None,
+                "rank_in_source": None,
+                "z": None,
+                "weight_used": None,
+                "abstains_in": [],
+            }
         if self.modelled(src):
             state, reason, rank, z, weight = self.model_source(s, fid, term)
         else:
@@ -1200,7 +1225,9 @@ class CatalogBuilder:
         """Tags' and terms' flags, plus gate_held and too_new from the rank entries."""
         flags = set(tags.flags) if tags else set()
         for by_source in self.inputs.terms.values():
-            for by_id in by_source.values():
+            for s, by_id in by_source.items():
+                if s in self.gate_only:  # its terms make no score, so they flag nothing
+                    continue
                 term = by_id.get(fid)
                 if term is not None:
                     flags.update(term.flags)
@@ -1454,7 +1481,10 @@ def site_document(
     its rank entries but is listed with ``available`` false (owner ruling of 2026-09-30,
     overall_retired). ``pages``: readable license pages by family id (``license_pages``)."""
     site = cfg.site
-    shown = [s for s in catalog["sources"] if s["data_date"] is not None]
+    gate_only = cfg.ranking.sources.gate_only()  # catalog.json only (module docstring)
+    shown = [
+        s for s in catalog["sources"] if s["data_date"] is not None and s["id"] not in gate_only
+    ]
     offered = frozenset(v.key for v in site.views if v.key in views and not v.retired)
     return {
         "schema_version": SITE_SCHEMA_VERSION,

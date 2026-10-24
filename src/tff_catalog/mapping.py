@@ -27,11 +27,11 @@ from every records file, baselines (``<source>@<date>.jsonl``) included, in
 pulls the object in) is resolved with ``resolve`` where a stage needs it; the
 frames below use both ends.
 
-**Frames** (methodology §3, design-m1 gap G11). ``frames`` gives each enabled
-engine source the eligible families it could have shown. The stage does not
-write them: stage "correct" still derives its own frame, and ``frames.json``
-becomes a stage file (``stageio.STAGE_FILES``) only once it reads these
-through ``frames`` and ``evidence_state`` instead:
+**Frames** (methodology §3, design-m1 gap G11). ``frames`` gives each reported
+engine source (``reported``: enabled or gate-only) the eligible families it could
+have shown. The stage does not write them: stage "correct" still derives its own
+frame, and ``frames.json`` becomes a stage file (``stageio.STAGE_FILES``) only once
+it reads these through ``frames`` and ``evidence_state`` instead:
 
 - ``packaged`` sources (Homebrew, Arch, Debian, GitHub, Nerd, npm, ecosyste.ms,
   jsDelivr): families with a key in the source's namespaces (and npm scopes)
@@ -51,29 +51,32 @@ through ``frames`` and ``evidence_state`` instead:
 value into one of the four evidence states, which ``terms.json`` carries (stage
 "correct" writes that file).
 
-**The report** (``unmatched.md`` and ``map --check-unmatched N``). For each
-enabled engine source, ``engine_observations`` selects the rows the engine
-reads (its collector, series, npm scopes, Nerd's excluded assets, FOT's
-methods, no prereleases, with Google's fallback when the main series is
-missing) and ``volumes`` turns them into one number per key in the source's
-``rate`` units, counted by the source's ``counting`` as methodology §3 and §5
-say: a rate over the window, never scaled up for a young key (a lifetime counter:
-over the days since the asset's creation); a share (count / ``samples`` when the
-row is a count); Arch's installs pooled over the window's system-months; the mean
-of the last month's weekly values (a missing week counts 0); or the value as it
-is. Debian reads only packages in the release's main archive (debian_frame).
-Only font keys take a rank (``font_key_filter``): not reverse dependents
-(``dependents``: packages that only pull fonts in and whose names are not font
-package names), nor unresolved distro packages with no font package name and
-no font signal in the package data (glibc and firefox in pkgstats). A key is
-listed when it does not resolve, is not a bundle key (``bundle_rows``: a
-``bundle`` row of ``data/aliases.csv``, which stage "correct" credits to each
-of its families, so fonts-urw-base35 counts as matched), and its volume is
-positive and at least ``floor + censor_below`` (the line under which the
-engine censors it). Its rank is its
-position among the source's font keys (1 = largest; ties share the better
-rank). ``--check-unmatched N`` flags every unmatched key ranked N or better,
-under the floor too (milestone-1 step 9, "Done when").
+**The report** (``unmatched.md`` and ``map --check-unmatched N``). For each reported
+engine source (``reported``: an enabled one, or a gate-only one, GitHub and Nerd
+Fonts while deferred, since a key of theirs that resolves to no family costs that
+font the source's group for the two-group gate: owner ruling of 2026-10-23,
+deferred_sources_count_for_gate), ``engine_observations`` selects the rows the
+engine reads (its collector, series, npm scopes, Nerd's excluded assets, FOT's
+methods, no prereleases, with Google's fallback when the main series is missing) and
+``volumes`` turns them into one number per key in the source's ``rate`` units,
+counted by the source's ``counting`` as methodology §3 and §5 say: a rate over the
+window, never scaled up for a young key (a lifetime counter, from one snapshot: its
+total over the days since the asset's creation, which only orders the keys here,
+since the engine counts growth since a baseline); a share (count / ``samples`` when
+the row is a count); Arch's installs pooled over the window's system-months; the
+mean of the last month's weekly values (a missing week counts 0); or the value as it
+is. Debian reads only packages in the release's main archive (debian_frame). Only
+font keys take a rank (``font_key_filter``): not reverse dependents (``dependents``:
+packages that only pull fonts in and whose names are not font package names), nor
+unresolved distro packages with no font package name and no font signal in the
+package data (glibc and firefox in pkgstats). A key is listed when it does not
+resolve, is not a bundle key (``bundle_rows``: a ``bundle`` row of
+``data/aliases.csv``, which stage "correct" credits to each of its families, so
+fonts-urw-base35 counts as matched), and its volume is positive and at least
+``floor + censor_below`` (the line under which the engine censors it). Its rank is its
+position among the source's font keys (1 = largest; ties share the better rank).
+``--check-unmatched N`` flags every unmatched key ranked N or better, under the
+floor too (milestone-1 step 9, "Done when").
 """
 
 import dataclasses
@@ -417,7 +420,7 @@ def volumes(src: SourceBase, rows: Iterable[Observation]) -> dict[SourceKey, flo
             return _pooled(rows, getattr(src, "months", 12))
         case "weekly_mean":
             return _weekly_mean(rows, src.rate)
-        case "snapshot_delta":  # the report reads one snapshot: the first-run rule
+        case "snapshot_delta":  # one snapshot: total over days, to order keys (no score)
             return _totals((o.key, rate_value(o, src.rate, lifetime=True)) for o in rows)
         case _:
             return _totals((o.key, rate_value(o, src.rate)) for o in rows)
@@ -518,6 +521,12 @@ def ranks(vols: Mapping[SourceKey, float]) -> dict[SourceKey, int]:
     return {key: bisect_left(desc, -v) + 1 for key, v in vols.items()}
 
 
+def reported(src: SourceBase) -> bool:
+    """Whether the report and the frames cover a source: an enabled one, or a gate-only one
+    (``SourceBase.gate_only``), whose evidence counts toward the two-group gate."""
+    return src.enabled or src.gate_only
+
+
 def threshold(src: SourceBase) -> float:
     """The volume under which the engine censors a key: ``floor + censor_below``."""
     return src.floor + src.censor_below
@@ -545,13 +554,13 @@ def report_rows(
 ) -> tuple[list[Unmatched], dict[str, float]]:
     """The report's rows (one per unmatched key at or above its source's floor;
     with ``under_floor``, every ranked unmatched key) and ``{engine source:
-    floor}`` for every enabled source that has rows to read. A key whose
+    floor}`` for every reported source that has rows to read. A key whose
     ``(ns, match_key)`` is in ``bundles`` (``bundle_rows``) counts as matched."""
     is_font_key = font_key_filter(_relations(recs), idx)
     rows: list[Unmatched] = []
     floors: dict[str, float] = {}
     for name, src in sources.items():
-        if not src.enabled:
+        if not reported(src):
             continue
         _, obs = engine_observations(src, recs)
         if not obs:
@@ -612,12 +621,12 @@ def frame_basis(src: SourceBase) -> FrameBasis:
 def frames(
     sources: Mapping[str, SourceBase], universe: Universe, recs: RecordsBy, idx: AliasIndex
 ) -> dict[str, Frame]:
-    """``{engine source: Frame}`` for every enabled source with rows to read."""
+    """``{engine source: Frame}`` for every reported source with rows to read."""
     eligible = {fid: fam.keys for fid, fam in universe.families.items() if fam.drop is None}
     relations = _relations(recs)
     out: dict[str, Frame] = {}
     for name, src in sources.items():
-        if not src.enabled:
+        if not reported(src):
             continue
         collector, obs = engine_observations(src, recs)
         if not obs:
@@ -706,6 +715,12 @@ the owner reviews them at gate U.
 Rank is the key's position among the font keys its source reports (1 is the
 largest). Google and Fonts Over Time show ranks only, never values (rulings T2
 and T4). The floor is the volume under which the engine censors a key.
+
+A lifetime counter (GitHub, Nerd Fonts) shows each asset's lifetime total over
+the days since it was created, which only orders the keys: the engine counts their
+growth since a baseline. While the two are deferred they are in no score, and
+they are listed because their evidence counts toward the two-group gate (owner
+ruling of 2026-10-23).
 """
 
 

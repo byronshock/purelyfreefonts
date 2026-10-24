@@ -43,9 +43,10 @@ SOURCES = RANKING.sources.all()
 DESKTOP = tuple(sorted(RANKING.surveys.desktop.weights))
 PROJECT = tuple(sorted(RANKING.surveys.project.weights))
 LINUX = frozenset(name for name, src in SOURCES.items() if src.linux)
-# GitHub and Nerd Fonts are off in every rank (owner rulings of 2026-09-30, g1_github_deferred
+# GitHub and Nerd Fonts are off in every score (owner rulings of 2026-09-30, g1_github_deferred
 # and g2_nerd_deferred); the synthetic data still draws their terms, so the other sources'
-# terms are the same as before, and then leaves them out.
+# terms are the same as before, and then leaves them out. They count toward the two-group
+# gate only (deferred_sources_count_for_gate, 2026-10-23): the gate-only tests below add them.
 DEFERRED = frozenset({"github", "nerd"})
 ENABLED_DESKTOP = tuple(s for s in DESKTOP if SOURCES[s].enabled)
 ABSTAIN = frozenset({"fam-003", "fam-010", "fam-021", "fam-042"})
@@ -325,6 +326,175 @@ def test_the_two_group_gate_holds_single_group_fonts_out_of_the_top() -> None:
     assert placement.band == "101-250"
     for fid, p in scores.placements.items():
         assert p.gate_held == (len(scores.fused[fid].groups) < 2), fid
+
+
+# --- gate-only sources (owner ruling of 2026-10-23, deferred_sources_count_for_gate) -------------
+
+GATED = "fam-006"  # a monospace synthetic family, so Coding ranks it too
+GATE_KEYS = ("desktop_chosen", "desktop_installed", "coding")
+
+
+def _homebrew_only(fid: str = GATED) -> Synth:
+    """``synth()`` with ``fid`` seen by Homebrew alone, far ahead of every other font: one
+    group, so the two-group gate holds it in every rank Coding and the desktop views."""
+    s = synth()
+    for key in ("desktop_chosen", "desktop_installed"):
+        for source in ENABLED_DESKTOP:
+            s.terms[key][source].pop(fid, None)
+        s.terms[key]["homebrew"][fid] = _term(1e6, "homebrew")
+    s.terms["project"]["npm_fontsource"].pop(fid, None)  # Coding weighs Fontsource npm too
+    s.counts[fid] = 1e7
+    return s
+
+
+def _gated(s: Synth, gate: dict[str, dict[str, Term]]) -> Synth:
+    """``s`` with gate-only terms ({source: {id: Term}}) in both desktop views, where stage
+    "correct" puts them (Coding takes them from most chosen, as it takes Arch)."""
+    terms = {key: dict(by_source) for key, by_source in s.terms.items()}
+    for key in ("desktop_chosen", "desktop_installed"):
+        terms[key].update({source: dict(by_id) for source, by_id in gate.items()})
+    return dataclasses.replace(s, terms=terms)
+
+
+def test_github_and_nerd_fonts_are_the_gate_only_sources() -> None:
+    assert RANKING.sources.gate_only() == DEFERRED
+    assert all(not SOURCES[s].enabled for s in DEFERRED)
+    w = surveys.effective_weights(RANKING, "coding", FULL, frozenset(), {})
+    assert (w["github"], w["nerd"]) == (0.0, 0.0)  # no weight anywhere
+
+
+def test_a_gate_only_observation_lifts_the_gate_and_leaves_the_score() -> None:
+    """Hack in October: Homebrew is its only group, so the gate held it; an observed Nerd
+    Fonts term gives it a second group for the gate, with no term in its score."""
+    s = _homebrew_only()
+    before = surveys.views(inputs_of(s), RANKING)
+    nerd = {GATED: Term(5_000.0, "observed", "nerd")}
+    after = surveys.views(inputs_of(_gated(s, {"nerd": nerd})), RANKING)
+    for key in GATE_KEYS:
+        held, lifted = before[key].placements[GATED], after[key].placements[GATED]
+        assert (held.gate_held, held.rank) == (True, None), key
+        assert lifted.rank is not None, key
+        assert not lifted.gate_held, key
+        old, new = before[key].fused[GATED], after[key].fused[GATED]
+        assert (new.score, new.weight, new.terms, new.observed) == (
+            old.score,
+            old.weight,
+            old.terms,
+            old.observed,
+        )
+        assert (new.groups, new.gate_groups) == (("homebrew",), ("nerd",))
+        assert surveys.gate_count(new) == 2
+
+
+@pytest.mark.parametrize(
+    ("group", "passes"),
+    [("homebrew", False), ("github_counters", True)],
+    ids=["cask-downloads-the-repo", "own-group"],
+)
+def test_m5_a_github_term_in_homebrews_group_adds_no_gate_group(group: str, passes: bool) -> None:
+    """Gate M5: a GitHub release count whose repository the font's cask downloads is in
+    Homebrew's group (stage "correct" sets it), so it adds nothing for a font Homebrew sees."""
+    s = _gated(_homebrew_only(), {"github": {GATED: Term(800.0, "observed", group)}})
+    scores = surveys.views(inputs_of(s), RANKING)
+    for key in GATE_KEYS:
+        assert scores[key].placements[GATED].gate_held is not passes, key
+        assert scores[key].fused[GATED].gate_groups == (() if group == "homebrew" else (group,))
+
+
+@pytest.mark.parametrize("state", ["censored", "too_new", "not_covered"])
+def test_only_an_observed_gate_only_term_counts(state: str) -> None:
+    """Under the floor, too new or not covered: no evidence above the noise floor."""
+    value = 0.0 if state == "censored" else None
+    term = Term(value, state, "nerd", "below_floor" if state == "censored" else None)  # type: ignore[arg-type]
+    scores = surveys.views(inputs_of(_gated(_homebrew_only(), {"nerd": {GATED: term}})), RANKING)
+    for key in GATE_KEYS:
+        assert scores[key].placements[GATED].gate_held, key
+        assert scores[key].fused[GATED].gate_groups == ()
+
+
+def test_a_stale_dropped_gate_only_source_counts_for_nothing() -> None:
+    s = _gated(_homebrew_only(), {"nerd": {GATED: Term(5_000.0, "observed", "nerd")}})
+    scores = surveys.views(inputs_of(s, stale=frozenset({"nerd"})), RANKING)
+    assert scores["desktop_chosen"].placements[GATED].gate_held
+
+
+def test_a_font_with_only_gate_only_terms_is_unranked_with_no_evidence() -> None:
+    """No term in any score: the font is not ranked, and a too-new gate-only term is no
+    reason ("too_new" belongs to the sources that score)."""
+    s = synth()
+    s.names["nerd-only"] = "Nerd Only"
+    s.names["nerd-young"] = "Nerd Young"
+    gate = {
+        "nerd": {
+            "nerd-only": Term(9e6, "observed", "nerd"),
+            "nerd-young": Term(None, "too_new", "nerd"),
+        }
+    }
+    gated = _gated(s, gate)
+    scores = surveys.views(inputs_of(gated), RANKING)
+    for key in GATE_KEYS:
+        assert "nerd-only" not in scores[key].placements
+        assert "nerd-only" not in scores[key].fused
+    members = {"desktop_chosen": ["nerd-only", "nerd-young"]}
+    why = surveys.unranked(gated.terms, scores, RANKING, members)["desktop_chosen"]
+    assert why == {"nerd-only": "no_evidence", "nerd-young": "no_evidence"}
+
+
+def _small_top(exact_top: int) -> RankingConfig:
+    bands = ((exact_top + 1, 250), (251, 500))
+    display = dataclasses.replace(RANKING.display, exact_top=exact_top, bands=bands)
+    return dataclasses.replace(RANKING, display=display)
+
+
+@pytest.mark.parametrize("exact_top", [100, 20])
+@pytest.mark.parametrize("seed", [3, 11, 29])
+def test_gate_only_terms_never_move_a_score_or_the_order_of_fonts_that_passed(
+    seed: int, exact_top: int
+) -> None:
+    """Random GitHub and Nerd Fonts terms change no score, weight or scored group in any
+    rank, rank no new font, and keep the order of the fonts that passed the gate without
+    them: they can only let a held font in among them, in the ranks that list them (here
+    overall too, the D12 mix of most chosen and Projects). Projects, Developers & apps and
+    Rising don't move at all."""
+    cfg = _small_top(exact_top)
+    s = synth(seed)
+    for key in ("desktop_chosen", "desktop_installed"):  # some one-group fonts to lift
+        for fid in sorted(s.names)[:12:2]:
+            for source in ENABLED_DESKTOP:
+                if source != "homebrew":
+                    s.terms[key][source].pop(fid, None)
+    rng = np.random.default_rng(seed)
+    gate: dict[str, dict[str, Term]] = {}
+    for source in sorted(DEFERRED):
+        group = SOURCES[source].group
+        gate[source] = {}
+        for fid in sorted(s.names):
+            draw = rng.random()
+            if draw < 0.4:
+                gate[source][fid] = Term(float(rng.lognormal(6, 2)), "observed", group)
+            elif draw < 0.5:
+                gate[source][fid] = Term(0.0, "censored", group, "below_floor")
+    before = surveys.views(inputs_of(s, cfg), cfg)
+    after = surveys.views(inputs_of(_gated(s, gate), cfg), cfg)
+    lifted = 0
+    for key in surveys.RANK_KEYS:
+        b, a = before[key], after[key]
+        assert set(a.placements) == set(b.placements), key
+        assert set(a.fused) == set(b.fused), key
+        for fid, f in b.fused.items():
+            g = a.fused[fid]
+            assert (g.score, g.weight, g.groups, g.guard) == (f.score, f.weight, f.groups, f.guard)
+        passed = [f for f, p in sorted(b.placements.items(), key=lambda kv: kv[1].order) if p.rank]
+        kept = set(passed)
+        order = [
+            f for f, p in sorted(a.placements.items(), key=lambda kv: kv[1].order) if f in kept
+        ]
+        assert order == passed, key
+        if key in (*GATE_KEYS, "overall"):
+            lifted += sum(1 for f, p in a.placements.items() if p.rank and f not in kept)
+        else:
+            assert canonical(a.placements) == canonical(b.placements), key
+    assert lifted > 0
 
 
 def test_score_survey_on_its_own_matches_views() -> None:

@@ -49,6 +49,8 @@ baselines of lifetime counters); the ``bundle`` rows of ``data/aliases.csv``
    h3_young_casks_not_scaled and b8a_no_scaling_any_source; its ``first_seen``
    still gives the 60-day grace, b8b_grace_kept);
    a window within a few days of a year or a month counts as exactly one;
+   a lifetime counter (GitHub, Nerd) counts its growth since the baseline
+   snapshot, 28 days to 12 months older, and has no value without one;
    for the crawls, keys that differ only in case count once, at the larger
    value (the Almanac's case duplicates: max, not sum);
 3. subtract the key-level floors, before any credit (``key_floors``): gate M3
@@ -61,6 +63,14 @@ baselines of lifetime counters); the ``bundle`` rows of ``data/aliases.csv``
    frame with no value is censored (``no_value``); exposure under
    ``min_exposure_days`` makes the term ``too_new``;
 6. set the group (gate M5), flags and factor (Almanac parent merge).
+
+**Gate-only sources** (``gate_only = true``, disabled: GitHub and Nerd Fonts under the
+owner's ruling of 2026-10-23, deferred_sources_count_for_gate) go through the same steps
+(``gate_source``), their lifetime counters counted as an enabled source's are, except
+that the baseline needs no minimum gap. Their terms join the views that list them, where
+no weight reaches them, so stage "rank" counts them toward the two-group gate only. They
+make no tags and write no ``first_seen`` dates, and the report gives them a section of
+their own.
 
 The frame of a source is every eligible family with a key in it, or with a
 universe key in the same namespace (a Homebrew cask with no analytics row);
@@ -232,6 +242,7 @@ _YEAR = 365.0
 _MONTH = 365.0 / 12
 _MIN_BASELINE_GAP = timedelta(days=28)  # a baseline must be about a month older ...
 _MAX_BASELINE_GAP = timedelta(days=372)  # ... and at most 12 months older (methodology §5)
+_GATE_MIN_BASELINE_GAP = timedelta(days=1)  # for the gate, any older one (gate_source)
 
 
 @dataclass(frozen=True, slots=True)
@@ -246,7 +257,8 @@ class Term:
       (``nerd``) always keep their own group, ``nerd``, even for a family whose
       Nerd cask downloads the Nerd release, because Homebrew's Nerd casks are a
       small share of Nerd's downloads (owner ruling of 2026-09-29, gate R round 1).
-      The 2-group gate and tier A count distinct groups among observed terms.
+      The 2-group gate and tier A count distinct groups among observed terms; the gate
+      also counts a gate-only source's (deferred_sources_count_for_gate), tier A doesn't.
     - ``factor``: a weight multiplier for this family. The engine uses
       w' = w_eff * factor * guard factor. The Almanac parent merge ("flagged and
       halved", methodology §5) is ``factor = almanac.parent_merge_factor`` plus
@@ -410,6 +422,7 @@ class SourceResult:
     key_starts: dict[SourceKey, date | None] = field(default_factory=dict)  # counted starts
     shrunk: tuple[SourceKey, ...] = ()  # lifetime counters below their baseline (clamped to 0)
     window: str = ""  # the series read, or its latest period (Rising's recent window)
+    baseline: date | None = None  # a lifetime counter's baseline data date, when it had one
 
 
 # --- small helpers -----------------------------------------------------------------------------
@@ -848,8 +861,8 @@ def count_keys(
     """One value per source key, by the source's ``counting`` (module docstring, step 2).
 
     ``baseline`` is the earlier snapshot of a lifetime counter
-    (``snapshot_delta``); without one, the first-run rule applies: lifetime
-    total over the days since the asset was created.
+    (``snapshot_delta``), which counts only growth since it: without one there is
+    nothing to count, and it gives no value (``_count_delta``).
     """
     match src.counting:
         case "window":
@@ -982,32 +995,34 @@ def _count_delta(
 ) -> dict[SourceKey, KeyValue]:
     """GitHub and Nerd lifetime counters (methodology §5): growth between snapshots.
 
-    With a baseline, a (key, release) pair present in both snapshots counts its
-    growth, and a negative difference counts as 0. An asset created after the
-    baseline's data date counts its whole count over the days since that date (its
-    baseline is 0: the owner's ruling of 2026-09-26, new_release_assets); an older
-    asset the baseline lacks is ignored. Without a baseline: lifetime total over the
-    days since each asset was created.
+    A (key, release) pair present in both snapshots counts its growth, and a
+    negative difference counts as 0. An asset created after the baseline's data
+    date counts its whole count over the days since that date (its baseline is 0:
+    the owner's ruling of 2026-09-26, new_release_assets); an older asset the
+    baseline lacks is ignored. A key's value is the sum over its releases, in
+    ``rate`` units. Without a baseline there is no growth to count, so nothing is
+    returned: the first-run rule, lifetime total over the days since each asset was
+    created, retired with b8a_no_scaling_any_source (owner ruling of 2026-09-30),
+    and ``correct_source`` and ``gate_source`` give such a source no terms.
     """
+    if not baseline:
+        return {}
     period = _MONTH if rate == "per_month" else _YEAR
     now = _instances(obs)
-    then = _instances(baseline) if baseline else {}
-    base_day = max(o.end for o in baseline) if then else None
+    then = _instances(baseline)
+    base_day = max(o.end for o in baseline)
     values: dict[SourceKey, list[float]] = defaultdict(list)
     created: dict[SourceKey, list[date]] = defaultdict(list)
     ends: dict[SourceKey, list[date]] = defaultdict(list)
     for (key, release), (total, made, end) in now.items():
         created[key].append(made)
         ends[key].append(end)
-        if then:
-            before = then.get((key, release))
-            if before is not None:
-                days = max(1, (end - before[2]).days)
-                values[key].append(max(0.0, total - before[0]) * period / days)
-            elif base_day is not None and made > base_day:
-                values[key].append(total * period / max(1, (end - base_day).days))
-        else:
-            values[key].append(total * period / max(1, (end - made).days))
+        before = then.get((key, release))
+        if before is not None:
+            days = max(1, (end - before[2]).days)
+            values[key].append(max(0.0, total - before[0]) * period / days)
+        elif made > base_day:
+            values[key].append(total * period / max(1, (end - base_day).days))
     return {
         key: KeyValue(
             math.fsum(values[key]) if values.get(key) else None, min(created[key]), max(ends[key])
@@ -1100,7 +1115,8 @@ def key_floors(
       those members' shares; newer members keep theirs. ``flat`` takes
       ``nerd_group_flat_floor`` from every member. ``tenure`` gives each key's
       first month when ``values`` covers too short a window to tell (Rising).
-    - Nerd releases: every asset loses the ``floor_quantile`` of all assets.
+    - Nerd releases: every key (a font's folder: all its files, summed over every release)
+      loses the ``floor_quantile`` of every key's value.
 
     Quantiles are taken over positive values only; values never go below 0;
     keys without a value are left alone.
@@ -1244,14 +1260,19 @@ def _observations(src: SourceBase, inp: Inputs) -> tuple[list[Observation], Sour
     return fallback, replace(src, counting="current")
 
 
-def _baseline(src: SourceBase, inp: Inputs, obs: Sequence[Observation]) -> list[Observation]:
-    """The oldest baseline snapshot 1 to 12 months before this one."""
+def _baseline(
+    src: SourceBase,
+    inp: Inputs,
+    obs: Sequence[Observation],
+    min_gap: timedelta = _MIN_BASELINE_GAP,
+) -> list[Observation]:
+    """The oldest baseline snapshot ``min_gap`` (about a month) to 12 months before this one."""
     if src.counting != "snapshot_delta" or not obs:
         return []
     end = max(o.end for o in obs)
     for _, recs in sorted(inp.baselines.get(src.collector, ()), key=lambda b: b[0]):
         chosen = select(src, recs)
-        if chosen and _MIN_BASELINE_GAP <= end - max(o.end for o in chosen) <= _MAX_BASELINE_GAP:
+        if chosen and min_gap <= end - max(o.end for o in chosen) <= _MAX_BASELINE_GAP:
             return chosen
     return []
 
@@ -1380,11 +1401,67 @@ def _shrunk(obs: Sequence[Observation], baseline: Sequence[Observation]) -> tupl
 def correct_source(
     name: str, src: SourceBase, inp: Inputs, cfg: RankingConfig, availability: Mapping[str, date]
 ) -> SourceResult | None:
-    """Steps 1-6 of the module docstring for one engine source; None when it has no data."""
+    """Steps 1-6 of the module docstring for one engine source; None when it has no data.
+
+    A lifetime counter (``snapshot_delta``) counts its growth since the baseline snapshot
+    (``_baseline``: the oldest 28 days to 12 months before this one), and has no data
+    without one: the first-run rule, lifetime total over days listed, retired with
+    b8a_no_scaling_any_source (``_count_delta``).
+    """
+    return _counted(name, src, inp, cfg, availability, _MIN_BASELINE_GAP)
+
+
+def gate_source(
+    name: str, src: SourceBase, inp: Inputs, cfg: RankingConfig, availability: Mapping[str, date]
+) -> SourceResult | None:
+    """A gate-only source's terms (``SourceBase.gate_only``), or None when it gives no evidence.
+
+    Owner ruling of 2026-10-23, deferred_sources_count_for_gate: while GitHub and Nerd Fonts
+    stay out of every score, a font with an observed term from one of them, "observed above
+    that source's noise floor as the source would count it", gets that source's group for
+    the two-group gate. So the terms are the ones ``correct_source`` makes, by the source's
+    own rules: its selection (Nerd's ``exclude_assets`` drop Symbols Only; prereleases only
+    in ``prerelease_repos``; ``release_history``), the key floors (Nerd's: each key, a
+    font's folder with all its files summed over every release, loses the 10th percentile
+    of every key's growth), the Nerd credit to the original font, ``floor`` and
+    ``censor_below``, the 60-day grace from each asset's creation, and the group (M5's merge
+    into ``homebrew`` for a cask's own repository, Nerd Fonts' own group).
+
+    A lifetime counter (``snapshot_delta``) counts as it will when it returns: the growth
+    since the baseline that stage "parse" took from ``run_history`` (the earliest merged
+    run's snapshot within 12 months), an asset created since then counting in full and one
+    that shrank counting 0, and no evidence without a baseline (``_count_delta``), as on
+    the first run. One difference: the 28-day minimum gap of ``correct_source`` is waived
+    (any older snapshot will do), since the first two monthly snapshots, 2026-09-26 and
+    2026-10-17, are 21 days apart. The gate asks only whether a font's growth clears the
+    floor, and the short gap can only make that harder for GitHub and leaves it about the
+    same for Nerd: GitHub's floor is 0, so a font is observed when it grew at all, and a
+    shorter gap can only find less growth; Nerd's floor is a quantile of every font's growth
+    over the same gap, so it moves with the fonts' growth.
+    """
+    return _counted(name, src, inp, cfg, availability, _GATE_MIN_BASELINE_GAP)
+
+
+def _counted(
+    name: str,
+    src: SourceBase,
+    inp: Inputs,
+    cfg: RankingConfig,
+    availability: Mapping[str, date],
+    min_gap: timedelta,
+) -> SourceResult | None:
+    """``_correct`` on the source's observations, a lifetime counter's against its baseline
+    at least ``min_gap`` older; None with no observations or no such baseline."""
     obs, counting_src = _observations(src, inp)
     if not obs:
         return None
-    return _correct(name, src, counting_src, obs, _baseline(src, inp, obs), inp, cfg, availability)
+    if src.counting != "snapshot_delta":
+        return _correct(name, src, counting_src, obs, (), inp, cfg, availability)
+    baseline = _baseline(src, inp, obs, min_gap)
+    if not baseline:
+        return None
+    res = _correct(name, src, counting_src, obs, baseline, inp, cfg, availability)
+    return replace(res, baseline=max(o.end for o in baseline))
 
 
 def _correct(
@@ -1904,10 +1981,11 @@ def resolve_names(
 
 
 def _collectors_read(cfg: RankingConfig) -> set[str]:
-    """Collectors whose observations an enabled engine source reads (Google's fallback too)."""
+    """Collectors whose observations an enabled or gate-only engine source reads (Google's
+    fallback too)."""
     out = set()
     for src in cfg.sources.all().values():
-        if src.enabled:
+        if src.enabled or src.gate_only:
             out.add(src.collector)
             if isinstance(src, GoogleSource):
                 out.add(src.fallback.partition(":")[0])
@@ -2111,11 +2189,13 @@ def render_report(
     *,
     recent: Mapping[str, SourceResult] | None = None,
     rising: Sequence[str] = (),
+    gated: Mapping[str, SourceResult] | None = None,
 ) -> str:
     """``build/corrections.md``: floors, gate-X cases (new ones marked), unresolved
     preinstalled names, per-font corrections, lifetime counters that went down,
-    evidence counts and Rising's recent windows. Sources whose ``publish_raw`` is
-    false show ranks, never values."""
+    evidence counts, Rising's recent windows and the gate-only sources (``gated``,
+    ``gate_results``: their baseline, floors and evidence counts). Sources whose
+    ``publish_raw`` is false show ranks, never values."""
     new = [c for c in cases if c.status == "new"]
     lines = [
         "# Corrections report",
@@ -2139,7 +2219,38 @@ def render_report(
     lines += _report_shrunk(results)
     lines += _report_states(results, views, cases)
     lines += _report_rising(results, recent or {}, rising)
+    lines += _report_gated(gated or {})
     return "\n".join(lines).rstrip() + "\n"
+
+
+def _report_gated(gated: Mapping[str, SourceResult]) -> list[str]:
+    if not gated:
+        return []
+    lines = [
+        "## Gate-only sources",
+        "",
+        "Owner ruling of 2026-10-23 (deferred_sources_count_for_gate): no term in any score; a "
+        "font with an observed term gets the source's group for the two-group gate. Counted "
+        "as growth since the baseline snapshot.",
+        "",
+        "| Source | Baseline | Data date | Floors | Observed | Censored | Too new |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    for name, res in sorted(gated.items()):
+        states = [t.state for t in res.terms.values()]
+        floors = "; ".join(
+            f"{note.what}: {_fmt(note.value, res.src)}{_unit(res.src)}"
+            if res.src.publish_raw
+            else f"{note.what}: (not published)"
+            for note in res.floors
+        )
+        base = res.baseline.isoformat() if res.baseline else "none"
+        lines.append(
+            f"| {name} | {base} | {res.data_date.isoformat()} | {floors or 'none'} "
+            f"| {states.count('observed')} | {states.count('censored')} "
+            f"| {states.count('too_new')} |"
+        )
+    return [*lines, ""]
 
 
 def _report_shrunk(results: Mapping[str, SourceResult]) -> list[str]:
@@ -2337,6 +2448,38 @@ def questions(cases: Iterable[Case], families: Mapping[str, Family]) -> list[dic
 # --- the stage ---------------------------------------------------------------------------------
 
 
+def gate_results(
+    cfg: RankingConfig, inp: Inputs, availability: Mapping[str, date], log: logging.Logger
+) -> dict[str, SourceResult]:
+    """Every gate-only source with evidence this run (``gate_source``). Their terms go into
+    the views that list them, like any source's, and carry no weight there (they are not
+    enabled), so they reach no score; stage "rank" counts their observed terms' groups for
+    the two-group gate only. They write no ``first_seen`` dates and make no tags."""
+    sources = cfg.sources.all()
+    out: dict[str, SourceResult] = {}
+    for name in sorted(cfg.sources.gate_only()):
+        res = gate_source(name, sources[name], inp, cfg, availability)
+        if res is None:
+            log.info(
+                "gate-only source %s: no observations or no baseline snapshot this run; "
+                "no evidence for the two-group gate",
+                name,
+            )
+        else:
+            out[name] = res
+    return out
+
+
+def without_sources(
+    views: Mapping[str, Mapping[str, Mapping[str, Term]]], left_out: frozenset[str]
+) -> dict[str, dict[str, Mapping[str, Term]]]:
+    """``views`` without the terms of ``left_out`` (the gate-only sources)."""
+    return {
+        view: {s: terms for s, terms in by_source.items() if s not in left_out}
+        for view, by_source in views.items()
+    }
+
+
 def run(ctx: StageContext) -> None:
     """Stage "correct"."""
     paths, cfg = ctx.paths, ctx.config.ranking
@@ -2347,7 +2490,9 @@ def run(ctx: StageContext) -> None:
     for name, src in sources.items():
         res = correct_source(name, src, inp, cfg, avail)
         if res is None:
-            ctx.log.warning("engine source %s has no observations this run", name)
+            ctx.log.warning(
+                "engine source %s has no observations (or no baseline snapshot) this run", name
+            )
         else:
             results[name] = res
     recent: dict[str, SourceResult] = {}
@@ -2356,6 +2501,7 @@ def run(ctx: StageContext) -> None:
         got = recent_source(name, full.src, inp, cfg, avail, full) if full else None
         if got is not None:
             recent[name] = got
+    gated = gate_results(cfg, inp, avail, ctx.log)
     linux = [res for res in results.values() if res.src.linux]
     counts = {res.name: res.counts for res in linux}
     fams = package_families(inp, linux)
@@ -2363,7 +2509,7 @@ def run(ctx: StageContext) -> None:
     shares = dependency_shares(inp.relations, counts, corr, families=fams)
     found = abstentions(inp.relations, counts, ctx.config.preinstalled, corr, families=fams)
     cases = build_cases(results, found, shares, corr, load_rulings(paths))
-    views = build_views(cfg, results, cases, recent)
+    views = build_views(cfg, {**results, **gated}, cases, recent)
     preinstalled_on: dict[str, set[str]] = defaultdict(set)
     unresolved = []
     for sid, system in sorted(ctx.config.preinstalled.systems.items()):
@@ -2372,7 +2518,9 @@ def run(ctx: StageContext) -> None:
                 preinstalled_on[inp.names[name]].add(sid)
             elif name not in inp.ineligible_names:
                 unresolved.append((sid, name))
-    tags = build_tags(preinstalled_on, pulled_in_by(shares, cases, corr), views, cases)
+    # A gate-only term is no desktop evidence of deliberate installs: it has no score.
+    scored = without_sources(views, frozenset(gated))
+    tags = build_tags(preinstalled_on, pulled_in_by(shares, cases, corr), scored, cases)
     ruler = results.get(cfg.engine.ruler)  # its frame is every family with a cask
     counts_out = ruler_counts(ruler.unfloored, sorted(ruler.terms)) if ruler else {}
     stageio.dump_stage(paths, "terms", views)
@@ -2384,9 +2532,10 @@ def run(ctx: StageContext) -> None:
         cases,
         inp.families,
         unresolved,
-        views,
+        scored,
         recent=recent,
         rising=cfg.ranks.rising.sources,
+        gated=gated,
     )
     jsonio.atomic_write(paths.build / REPORT, report.encode("utf-8"))
     jsonio.dump(questions(cases, inp.families), paths.queues / QUEUE)
@@ -2395,8 +2544,9 @@ def run(ctx: StageContext) -> None:
     )
     new = sum(c.status == "new" for c in cases)
     ctx.log.info(
-        "%d sources corrected; %d gate-X cases (%d new); %d tagged families",
+        "%d sources corrected (and %d gate-only); %d gate-X cases (%d new); %d tagged families",
         len(results),
+        len(gated),
         len(cases),
         new,
         len(tags),

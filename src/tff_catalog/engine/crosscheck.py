@@ -187,10 +187,18 @@ def rrf_orders(
     ``sort_key``, ``gate`` and ``place``), so the 2-group gate holds the same
     fonts out of the exact top and only the scoring differs. A term with no
     weight (its source's weight or its factor is 0) gives no observed term or
-    group, as in fusion. ``among`` (usually the published order's ids) limits
-    the fonts placed, so both orders count the same fonts.
+    group, as in fusion. The gate also counts the gate-only sources' groups, as the
+    published order does (``surveys.gate_groups``, deferred_sources_count_for_gate); their
+    terms have no weight, so RRF never scores them. ``among`` (usually the published order's
+    ids) limits the fonts placed, so both orders count the same fonts.
     """
+    from tff_catalog import surveys  # imported here: surveys may import this module
+
     terms, weights = rrf_inputs(inputs, key, cfg)
+    extra: dict[str, set[str]] = {}
+    for k in sorted(cfg.ranks.overall.mix) if key == "overall" else [key]:
+        for fid, groups in surveys.gate_groups(inputs.terms.get(k, {}), cfg).items():
+            extra.setdefault(fid, set()).update(groups)
     factors = {
         s: {fid: t.factor for fid, t in by_id.items() if t.factor != 1.0}
         for s, by_id in terms.items()
@@ -204,7 +212,10 @@ def rrf_orders(
     )
     keep = set(scores) if among is None else set(scores).intersection(among)
     live = sorted(s for s in terms if weights.get(s, 0.0) > 0)
-    scored = [_scored(fid, scores[fid], terms, weights, live, inputs) for fid in keep]
+    scored = [
+        _scored(fid, scores[fid], terms, weights, live, inputs, extra.get(fid, set()))
+        for fid in keep
+    ]
     scored = sorted(
         (f for f in scored if order.ranked(f, cfg.engine.min_observed_terms)), key=order.sort_key
     )
@@ -221,6 +232,7 @@ def _scored(
     weights: Mapping[str, float],
     live: list[str],
     inputs: RankInputs,
+    gate_only: set[str],
 ) -> order.Scored:
     covering = [
         s
@@ -237,7 +249,7 @@ def _scored(
         weight=math.fsum(weights[s] * terms[s][fid].factor for s in covering),
         ruler_z=inputs.ruler.get(fid),
         observed=len(observed),
-        groups=len({terms[s][fid].group for s in observed}),
+        groups=len({terms[s][fid].group for s in observed} | gate_only),
     )
 
 
