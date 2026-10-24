@@ -1132,15 +1132,26 @@ def test_load_match_is_never_called_by_loading_the_index(data_page):
 # ---------------------------------------------------------------- Data.loadMatcher
 
 # A module that runs but gives Data's setter no single usable value, by kind: none, a global it
-# defines itself (Data's name can't be redefined, so the module throws), an object that isn't
-# frozen or holds no matcher, the real hand-off twice, or none since it threw first.
+# defines itself (Data's name can't be redefined, so the module throws), null, an object that
+# isn't frozen, a frozen one that lacks one of the four things Data checks (usable), the real
+# hand-off twice, or none since it threw first.
 NO_HAND_OFF = {
     "no global": "export {};\n",
     "a global of its own": "Object.defineProperty(globalThis, 'tffMatcher', { value:"
     " Object.freeze({ OwnedParse: { parse() {} }, OwnedMatch: { table() {}, match() {} } }) });\n",
+    "null": "globalThis.tffMatcher = null;\n",
     "an unfrozen object": "globalThis.tffMatcher = {"
     " OwnedParse: { parse() {} }, OwnedMatch: { table() {}, match() {} } };\n",
-    "no matcher in it": "globalThis.tffMatcher = Object.freeze({ OwnedParse: { parse() {} } });\n",
+    **{
+        f"no {what} in it": f"globalThis.tffMatcher = Object.freeze({{ {api} }});\n"
+        for what, api in (
+            ("parser", "OwnedMatch: { table() {}, match() {} }"),
+            ("parse", "OwnedParse: {}, OwnedMatch: { table() {}, match() {} }"),
+            ("matcher", "OwnedParse: { parse() {} }"),
+            ("table", "OwnedParse: { parse() {} }, OwnedMatch: { match() {} }"),
+            ("match", "OwnedParse: { parse() {} }, OwnedMatch: { table() {} }"),
+        )
+    },
     "two hand-offs": MATCHER + f"\n{assets.MATCHER_START}\n",
     "a module that throws first": "throw new Error('x');\n" + MATCHER,
 }

@@ -171,7 +171,7 @@ const Data = (() => {
   // Data defines that name itself, just before it adds the module's script: a permanent
   // accessor (not configurable, so nothing can redefine or delete it) whose setter counts the
   // values assigned to it, from any script. Data takes a value only on that script's own load
-  // event (one the browser fired, at that element), which comes once the module has run, and
+  // event (one the browser fired: isTrusted), which comes once the module has run, and
   // only if exactly one value came, a usable one. The module assigns once, so a value from any
   // other script makes two. A module that ran before Data asked (only another script could
   // have added it) left the name defined for good, and Data refuses a name already there. Once
@@ -198,17 +198,15 @@ const Data = (() => {
     if (Object.getOwnPropertyDescriptor(globalThis, MATCHER_GLOBAL)) {
       return refused(`${MATCHER_GLOBAL} was defined before ${url} loaded`);
     }
-    let open = true;
     let count = 0;
-    let first;
+    let given;
     let taken;
     try {
       Object.defineProperty(globalThis, MATCHER_GLOBAL, {
         get: () => taken,
         set: (value) => {
-          if (!open) return;
           count += 1;
-          if (count === 1) first = value;
+          given = value;
         },
       });
     } catch (error) {
@@ -216,22 +214,20 @@ const Data = (() => {
     }
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      // An event the browser fired at this script: no event a script dispatches is trusted.
-      const own = (event) => open && event.isTrusted && event.target === script;
+      // Only an event the browser fired counts (isTrusted): no event a script dispatches is
+      // trusted, and the browser fires one load or error at this script, neither of which
+      // bubbles, so a trusted one here is this script's own, and comes once.
       script.addEventListener('load', (event) => {
-        if (!own(event)) return;
-        open = false;
-        if (count === 1 && usable(first)) {
-          taken = first;
+        if (!event.isTrusted) return;
+        if (count === 1 && usable(given)) {
+          taken = given;
           resolve(taken);
         } else {
           reject(new MatchError('handoff', `${url} gave ${count} values, not one matcher`));
         }
       });
       script.addEventListener('error', (event) => {
-        if (!own(event)) return;
-        open = false;
-        reject(new MatchError('load', `${url} could not be loaded`));
+        if (event.isTrusted) reject(new MatchError('load', `${url} could not be loaded`));
       });
       script.type = 'module';
       script.src = url;
