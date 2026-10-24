@@ -479,10 +479,21 @@ NAMES_JSON = ROOT / "build" / "names.json"
 CATALOG = ROOT / "build" / "catalog-site.json"
 # The reviewed list, as the site build reads it from build/names.reviewed.toml
 # (tff_site.matchfile): its ambiguous names, and its recodes (owner ruling
-# hopper_hackgen_related, 2026-10-23). A refresh that changes the ambiguous set edits the
-# list, not these tests (ops/MONTHLY.md step 5).
+# hopper_hackgen_related, 2026-10-23). These tests read both from it, so a refresh that
+# changes the ambiguous set or the recodes edits the list, not these tests (ops/MONTHLY.md
+# step 5); which recodes a ruling covers is tests/test_site_contracts.py's check.
 REVIEWED = matchfile.load_reviewed(matchfile.default_reviewed_path(NAMES_JSON))[0]
 RECODES = REVIEWED.relations()
+# The letter a recode gives its alias in the match file (site/CONTRACT.md section 11), and
+# the letters of an owned code.
+RECODE_LETTERS = {"related": "x", "sibling": "s", "bundle": "u"}
+OWNED_LETTERS = frozenset({"", "p", "b", "r", "n"})
+
+
+def letters_at(match: dict[str, Any], key: str) -> dict[str, str]:
+    """The catalog families coded at ``key`` in a match document, each with its letter."""
+    found = (re.fullmatch(r"([0-9]+)([a-z]?)", code) for code in match["k"][key].split(","))
+    return {match["ids"][int(m[1])]: m[2] for m in found if m}
 
 
 def _schema(name: str) -> Draft202012Validator:
@@ -708,8 +719,18 @@ def test_the_check_reports_shared_owned_keys():
     }
 
 
-def test_the_reviewed_recodes_are_hackgen_s():
-    assert RECODES == {"HackGen": "related"}
+def test_each_reviewed_recode_makes_its_alias_a_near_match_in_the_real_match_document():
+    """Each recode of the list, of a catalog family, changes its alias's code from an owned
+    one to the near-match its relation gives: HackGen's, a build of Hack in names.json, to
+    related (hopper_hackgen_related)."""
+    assert RECODE_LETTERS.keys() == owned.RECODE_RELATIONS
+    doc, ids = real()
+    built = owned.match_document(doc, ids, doc["run"]["date"], recodes=RECODES)
+    unrecoded = owned.match_document(doc, ids, doc["run"]["date"])
+    for key, recode in REVIEWED.recodes.items():
+        if recode.family in ids:
+            assert letters_at(built, key)[recode.family] == RECODE_LETTERS[recode.relation]
+            assert letters_at(unrecoded, key)[recode.family] in OWNED_LETTERS
 
 
 def test_the_real_names_json_s_ambiguous_keys_are_the_reviewed_ones_and_nothing_meets():
@@ -736,9 +757,6 @@ def test_the_real_match_document_is_valid_and_its_codes_name_every_alias():
     }
     every |= {row["name"] for row in doc["ineligible"]}
     assert {names.match_key(n) for n in every} - {""} == set(built["k"])
-    assert built["k"]["hackgen"] == f"{built['ids'].index('hack')}x"
-    unrecoded = owned.match_document(doc, ids, doc["run"]["date"])
-    assert unrecoded["k"]["hackgen"] == f"{built['ids'].index('hack')}b"
 
 
 # ---------------------------------------------------------------- parsing
@@ -1245,11 +1263,19 @@ def test_known_answer_holds_on_the_real_names_json(case):
     assert _holds(case, result.to_json())
 
 
-def test_without_its_recode_hackgen_is_a_build_of_hack():
-    """The alias row that folds HackGen into Hack for the ranking stays (leftover_cica_hackgen);
-    only the hopper's recode makes it a near-match."""
-    result = owned.match([E(("HackGen",), trusted=True)], real_table(recoded=False))
-    assert result.owned == {"hack": {"as": "HackGen", "how": "build"}}
+def test_without_its_recode_each_recoded_alias_owns_its_family():
+    """The alias rows stay in names.json for the ranking (HackGen's folds it into Hack as a
+    build, leftover_cica_hackgen); only the hopper's recodes make them near-matches."""
+    recoded, unrecoded = real_table(), real_table(recoded=False)
+    _, ids = real()
+    for recode in REVIEWED.recodes.values():
+        if recode.family not in ids:
+            continue
+        entry = [E((recode.name,), trusted=True)]
+        assert recode.family in owned.match(entry, unrecoded).owned
+        result = owned.match(entry, recoded)
+        assert recode.family not in result.owned
+        assert result.near[recode.family]["why"] == recode.relation
 
 
 # ---------------------------------------------------------------- speed and imports

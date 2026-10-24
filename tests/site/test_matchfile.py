@@ -773,9 +773,11 @@ def test_a_names_file_and_a_reviewed_list_with_problems_are_listed_together(tmp_
 
 
 def test_the_committed_names_give_a_match_file_within_budget():
-    """build/names.json with build/names.reviewed.toml: the reviewed ambiguous names (a
-    refresh that changes them edits only the list, ops/MONTHLY.md step 5), HackGen only related
-    to Hack, and the file within ``budgets.MATCH_MAX``."""
+    """build/names.json with build/names.reviewed.toml, the file within ``budgets.MATCH_MAX``:
+    its ``amb`` is the reviewed ambiguous names, and each reviewed recode's alias has the code
+    its relation gives (HackGen only related to Hack, ``hopper_hackgen_related``). Both are read
+    from the list, so a refresh that changes either edits the list, not this test
+    (ops/MONTHLY.md step 5)."""
     doc = data.load(COMMITTED_DATA)
     names_path = matchfile.default_names_path(COMMITTED_DATA)
     made = matchfile.match_file(doc, names_path)
@@ -784,9 +786,12 @@ def test_the_committed_names_give_a_match_file_within_budget():
     reviewed, _ = matchfile.load_reviewed(matchfile.default_reviewed_path(names_path))
     amb = {key: [match["ids"][n] for n in at] for key, at in match["amb"].items()}
     assert amb == {key: list(a.families) for key, a in reviewed.ambiguous.items()}
-    assert match["k"]["hackgen"] == f"{match['ids'].index('hack')}x"
-    assert reviewed.relations() == {"HackGen": "related"}
-    assert {r.family for r in reviewed.recodes.values()} == {"hack"}
+    letters = {"related": "x", "sibling": "s", "bundle": "u"}
+    assert letters.keys() == owned.RECODE_RELATIONS
+    for key, recode in reviewed.recodes.items():
+        if recode.family in match["ids"]:
+            code = f"{match['ids'].index(recode.family)}{letters[recode.relation]}"
+            assert code in match["k"][key].split(",")
 
 
 def test_the_large_catalog_needs_no_reviewed_list(tmp_path):

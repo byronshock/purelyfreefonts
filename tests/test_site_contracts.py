@@ -15,7 +15,7 @@ from jinja2 import ChoiceLoader, DictLoader, Environment, FileSystemLoader, Stri
 from jsonschema import Draft202012Validator
 
 from tff_catalog import owned, reviews
-from tff_catalog.keys import search_key
+from tff_catalog.keys import match_key, search_key
 from tff_catalog.paths import Paths
 from tff_site import assets, data, fonts, matchfile
 from tff_site.cli import COMMANDS, main
@@ -368,15 +368,34 @@ def test_the_committed_reviewed_list_cites_recorded_rulings(ruling):
     assert ruling in RECORDED_RULINGS
 
 
-def test_the_committed_reviewed_list_recodes_hackgen_per_its_ruling():
-    (recode,) = COMMITTED_REVIEWED.recodes.values()
-    assert (recode.name, recode.family, recode.relation, recode.ruling) == (
-        "HackGen",
-        "hack",
-        "related",
-        "hopper_hackgen_related",
+# hopper_hackgen_related (2026-10-23): "In the hopper, HackGen ... is only a near-match of
+# Hack", recoded as related. By ruling, the family and relation its entries have, and the name
+# each entry's name must reach (owned.candidates): HackGen itself, or a build or weight of it
+# such as "HackGen NF", which the build makes the list recode too (owned._check_recodes).
+RECODES_RULED = {"hopper_hackgen_related": ("hack", "related", "HackGen")}
+
+
+def _covered(recode: matchfile.Recode) -> bool:
+    family, relation, name = RECODES_RULED[recode.ruling]
+    reached = {c.key for c in owned.candidates(recode.name)}
+    return (recode.family, recode.relation) == (family, relation) and match_key(name) in reached
+
+
+def test_the_committed_recodes_citing_a_recode_ruling_are_ones_it_covers():
+    """An entry citing hopper_hackgen_related is HackGen, or a name that reaches HackGen's
+    key, on hack, as related. A refresh that adds such a name (the build asks for its recode),
+    or drops HackGen or a build of it, waits for the owner's review (ops/MONTHLY.md step 5);
+    then the list gains an entry citing this ruling, or loses one, and this test needs no edit.
+    A recode of anything else cites the ruling that reviews it."""
+    beyond = [
+        recode
+        for recode in COMMITTED_REVIEWED.recodes.values()
+        if recode.ruling in RECODES_RULED and not _covered(recode)
+    ]
+    assert beyond == [], (
+        f"build/names.reviewed.toml cites a recode ruling for {beyond}, which it doesn't "
+        "cover: ask the owner, record the ruling, and cite that (ops/MONTHLY.md step 5)"
     )
-    assert recode.relation in owned.RECODE_RELATIONS
 
 
 # inventory_ambiguous_names (2026-10-23) reviewed these five, each with the families it names:
