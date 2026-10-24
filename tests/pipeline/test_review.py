@@ -392,6 +392,19 @@ def test_term_flags_list_fonts_best_first_and_cut_long_lists() -> None:
     assert [f.family_id for f in flags] == ["b", None]
 
 
+def test_the_pack_marks_a_group_only_a_gate_only_source_gives() -> None:
+    """deferred_sources_count_for_gate: Hack's Nerd Fonts group counts toward the two-group
+    gate, not its score; the pack's Groups column says so."""
+    from tff_catalog.engine.fuse import Fused
+
+    fused = Fused(2.04, 1.0, 1, 1, ("homebrew",), gate_groups=("nerd",))
+    scores = {"desktop_chosen": surveys.SurveyScores("desktop_chosen", {"hack": fused}, {}, {}, {})}
+    assert review._groups(scores, "desktop_chosen", "hack") == "homebrew, nerd (gate only)"
+    plain = dataclasses.replace(fused, gate_groups=())
+    scores["desktop_chosen"] = dataclasses.replace(scores["desktop_chosen"], fused={"hack": plain})
+    assert review._groups(scores, "desktop_chosen", "hack") == "homebrew"
+
+
 # --- per-source statistics --------------------------------------------------------------------
 
 

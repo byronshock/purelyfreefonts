@@ -38,6 +38,14 @@ Which terms each rank key ranks on (``view_terms``):
 Before any key ranks on them, Fonts Over Time's observed values are replaced
 by its EWMA-smoothed z (``smooth``, methodology §6).
 
+**Gate-only sources** (``SourceBase.gate_only``: GitHub and Nerd Fonts while deferred, owner
+ruling of 2026-10-23, deferred_sources_count_for_gate) have terms in the views that list
+them, but no weight, since they are not enabled, so they reach no score, no ruler overlap's
+weight and no guard. The two-group gate (D14) counts the groups of their observed terms
+besides the score's own (``gate_groups``, kept in ``Fused.gate_groups``): a font with an
+observed Nerd Fonts term and a Homebrew one passes. They never make a font ranked, nor
+give it an unranked reason. A stale-dropped one counts for nothing.
+
 The rest of the other stage files it reads: ``universe.json`` (names, for the
 tie order), ``facts.json`` (monospace), ``l3.json`` when present (families that
 failed L3 are removed before the ruler is built, so they shift nothing), the
@@ -367,6 +375,9 @@ def rank_inputs(
     phasing = phasing if phasing is not None else {}
     keys = [k for k in RANK_KEYS if k not in ("overall", "rising")]
     terms: dict[str, Terms] = {k: view_terms(terms_all, k, cfg, monospace) for k in keys}
+    gone = stale & cfg.sources.gate_only()  # a stale-dropped gate-only source counts for nothing
+    if gone:
+        terms = {k: {s: t for s, t in ts.items() if s not in gone} for k, ts in terms.items()}
     weights: dict[str, Mapping[str, float]] = {
         k: effective_weights(cfg, k, overlaps(terms[k], ruler), stale, phasing) for k in keys
     }
@@ -425,12 +436,14 @@ def _part(
 def _fused(
     part: _Part, terms: Terms, weights: Mapping[str, float], cfg: RankingConfig
 ) -> dict[str, Fused]:
-    """S per family, with W_g = Σ weights and the part's guard factors."""
+    """S per family, with W_g = Σ weights and the part's guard factors, and the groups the
+    gate counts besides (``gate_groups``)."""
     w_total = math.fsum(weights.values())
+    extra = gate_groups(terms, cfg)
     out: dict[str, Fused] = {}
     for fid, zf in part.z.items():
         ts = {s: terms[s][fid] for s in zf}
-        out[fid] = fusion.fuse(
+        fused = fusion.fuse(
             zf,
             {s: weights[s] * t.factor for s, t in ts.items()},
             w_total,
@@ -440,7 +453,28 @@ def _fused(
             {s: t.group for s, t in ts.items()},
             frozenset(s for s, t in ts.items() if t.state == "observed"),
         )
+        more = extra.get(fid, frozenset()) - set(fused.groups)
+        out[fid] = replace(fused, gate_groups=tuple(sorted(more))) if more else fused
     return out
+
+
+def gate_groups(terms: Terms, cfg: RankingConfig) -> dict[str, frozenset[str]]:
+    """{family: groups} of the gate-only sources' observed terms among ``terms`` (one rank
+    key's): the evidence the two-group gate counts with no term in the score (owner ruling
+    of 2026-10-23, deferred_sources_count_for_gate). A censored or too-new term gives none,
+    and neither does any other source's term."""
+    out: dict[str, set[str]] = {}
+    for s in sorted(set(terms) & cfg.sources.gate_only()):
+        for fid, t in terms[s].items():
+            if t.state == "observed":
+                out.setdefault(fid, set()).add(t.group)
+    return {fid: frozenset(groups) for fid, groups in sorted(out.items())}
+
+
+def gate_count(f: Fused) -> int:
+    """The independence groups the two-group gate counts for one font: the score's own and
+    the gate-only sources' (``Fused.gate_groups``)."""
+    return len(set(f.groups) | set(f.gate_groups))
 
 
 def _place(
@@ -452,7 +486,7 @@ def _place(
     """Keep the ranked fonts, sort them deterministically, gate and band them."""
     scored = [
         Scored(
-            fid, names.get(fid, fid), f.score, f.weight, ruler.get(fid), f.observed, len(f.groups)
+            fid, names.get(fid, fid), f.score, f.weight, ruler.get(fid), f.observed, gate_count(f)
         )
         for fid, f in sorted(fused.items())
     ]
@@ -794,17 +828,19 @@ def unranked(
     - ``no_deliberate_evidence``: a source of the key (weight > 0) has an
       observed term for it in ``desktop_installed`` but none in the key: a
       Linux source abstained (D8), so the font is listed with its tag;
-    - ``too_new``: otherwise, when one of its terms in the key is too new;
+    - ``too_new``: otherwise, when one of its terms in the key is too new (a gate-only
+      source's never counts: it has no term in the score);
     - ``no_evidence``: everything else.
 
     Rising is skipped: a font that does not rise is not "unranked" there.
     """
     installed = terms_all.get(INSTALLED, {})
+    gate = cfg.sources.gate_only()  # no term in the key: never a reason
     out: dict[str, dict[str, Unranked]] = {}
     for key in sorted(members):
         if key == "rising":
             continue
-        view = view_terms(terms_all, key, cfg)
+        view = {s: ts for s, ts in view_terms(terms_all, key, cfg).items() if s not in gate}
         sc = scores.get(key)
         placed = sc.placements if sc is not None else {}
         live = sorted(s for s, w in (sc.weights if sc is not None else {}).items() if w > 0)

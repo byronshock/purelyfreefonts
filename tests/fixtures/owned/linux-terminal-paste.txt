@@ -1,0 +1,9 @@
+user@host ~ $ fc-list : family | sort
+Adwaita Sans
+Archivo,Archivo Black
+Cantarell
+DejaVu Sans
+Fira Code
+Inter
+Roboto
+user@host ~ $

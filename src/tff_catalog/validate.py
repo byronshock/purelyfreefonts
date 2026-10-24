@@ -52,7 +52,7 @@ How each check reads the run (``CHECKS``, in order; ``docs/catalog-schema.md``):
   least another's, and one higher, never scores lower. A font whose Fonts Over
   Time z is smoothed with an earlier month's is skipped (its z depends on the
   history), and so is Rising (shares, not counts); the engine's property tests
-  cover both.
+  cover both. A gate-only source's terms are left out: they reach no score.
 - ``desktop_views_differ``: most chosen's terms equal most installed's, except
   Linux sources' missing ones; with no abstention at all the orders match.
 - ``abstention_leak``: a family a Linux source abstains for in most chosen has
@@ -412,6 +412,7 @@ def check_monotone(run: Run) -> Iterator[Failure]:
     history = frozenset(smoothing.get("fot_ewma_base") or ())
     inputs = run.inputs
     models = run.cfg.ranking.model.views  # the model views have their own scan
+    gate_only = run.cfg.ranking.sources.gate_only()  # no term in any score
     for key in export.RANK_KEYS:
         terms = export.view_terms(inputs.terms, key)
         scores = inputs.scores.get(key)
@@ -424,7 +425,11 @@ def check_monotone(run: Run) -> Iterator[Failure]:
         for fid, fused in sorted(scores.fused.items()):
             if fused.guard:
                 continue
-            counted = [(s, by_id[fid]) for s, by_id in sorted(terms.items()) if fid in by_id]
+            counted = [
+                (s, by_id[fid])
+                for s, by_id in sorted(terms.items())
+                if fid in by_id and s not in gate_only
+            ]
             counted = [(s, t) for s, t in counted if t.state in export.COUNTED]
             if not counted or any(
                 s in SMOOTHED_SOURCES and t.state == "observed" and fid in history

@@ -1,0 +1,9 @@
+Arial
+Archivo Black
+Cambria
+Cambria Math
+Inter
+Inter Tight
+Segoe UI
+Segoe UI Emoji
+Source Sans Pro

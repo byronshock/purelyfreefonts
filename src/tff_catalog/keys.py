@@ -21,9 +21,10 @@ to "ss" and final sigma to medial sigma.
 import unicodedata
 
 # Whitespace, hyphens and dashes, underscores and invisible joiners. Entries are
-# hex code points or inclusive ranges, in the same order as the vector file's
-# spec.drop_codepoints; a test asserts the two are equal.
-DROP_CODEPOINTS: tuple[str, ...] = (
+# hex code points or inclusive ranges. The four groups are public because the
+# hopper (``owned``, Milestone 3) treats them differently before it takes keys:
+# white space separates words, a dash is read as "-", joiners are removed.
+WHITESPACE_CODEPOINTS: tuple[str, ...] = (
     "0009-000D",
     "0020",
     "0085",
@@ -35,16 +36,14 @@ DROP_CODEPOINTS: tuple[str, ...] = (
     "202F",
     "205F",
     "3000",
-    "002D",
-    "00AD",
-    "2010-2014",
-    "2212",
-    "FE63",
-    "FF0D",
-    "005F",
-    "200B-200D",
-    "2060",
-    "FEFF",
+)
+DASH_CODEPOINTS: tuple[str, ...] = ("002D", "00AD", "2010-2014", "2212", "FE63", "FF0D")
+UNDERSCORE_CODEPOINTS: tuple[str, ...] = ("005F",)
+JOINER_CODEPOINTS: tuple[str, ...] = ("200B-200D", "2060", "FEFF")
+# Their concatenation, in the same order as the vector file's spec.drop_codepoints;
+# a test asserts the two are equal.
+DROP_CODEPOINTS: tuple[str, ...] = (
+    WHITESPACE_CODEPOINTS + DASH_CODEPOINTS + UNDERSCORE_CODEPOINTS + JOINER_CODEPOINTS
 )
 
 

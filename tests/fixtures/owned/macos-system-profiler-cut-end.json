@@ -1,0 +1,68 @@
+{
+  "SPFontsDataType": [
+    {
+      "_name": "Archivo-Black.ttf",
+      "enabled": "yes",
+      "path": "/Library/Fonts/Archivo-Black.ttf",
+      "type": "truetype",
+      "typefaces": [
+        {
+          "_name": "ArchivoBlack-Regular",
+          "copyright": "Copyright 2026 Sample Authors",
+          "enabled": "yes",
+          "family": "Archivo Black",
+          "fullname": "Archivo Black",
+          "outline": "yes",
+          "style": "Regular",
+          "valid": "yes",
+          "vendor": "Sample Foundry",
+          "version": "Version 1.000"
+        }
+      ],
+      "valid": "yes"
+    },
+    {
+      "_name": "SFNS.ttf",
+      "enabled": "yes",
+      "path": "/System/Library/Fonts/SFNS.ttf",
+      "type": "truetype",
+      "typefaces": [
+        {
+          "_name": ".SFNS-Regular",
+          "copyright": "Copyright 2026 Sample Authors",
+          "enabled": "yes",
+          "family": ".SF NS",
+          "fullname": "System Font Regular",
+          "outline": "yes",
+          "style": "Regular",
+          "valid": "yes",
+          "vendor": "Sample Foundry",
+          "version": "Version 1.000"
+        }
+      ],
+      "valid": "yes"
+    },
+    {
+      "_name": "Inter.ttc",
+      "enabled": "yes",
+      "path": "/Library/Fonts/Inter.ttc",
+      "type": "truetype",
+      "typefaces": [
+        {
+          "_name": "Inter-Regular",
+          "copyright": "Copyright 2026 Sample Authors",
+          "enabled": "yes",
+          "family": "Inter",
+          "fullname": "Inter Regular",
+          "outline": "yes",
+          "style": "Regular",
+          "valid": "yes",
+          "vendor": "Sample Foundry",
+          "version": "Version 1.000"
+        },
+        {
+          "_name": "Inter-Bold",
+          "copyright": "Copyright 2026 Sample Authors",
+          "enabled": "yes",
+          "family": "Inter",
+          "fullname": "Inter

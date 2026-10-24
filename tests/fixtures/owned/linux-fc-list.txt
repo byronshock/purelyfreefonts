@@ -1,0 +1,27 @@
+Adwaita Mono
+Adwaita Sans
+Archivo,Archivo Black
+Archivo,Archivo SemiBold
+Cantarell
+DejaVu Sans
+DejaVu Sans Mono
+DejaVu Sans,DejaVu Sans Condensed
+DejaVu Serif
+FiraCode Nerd Font
+FiraCode Nerd Font Mono
+FiraCode Nerd Font Propo
+icomoon\-feather
+Inter
+Inter Display
+Inter Tight
+Inter Variable
+JetBrains Mono
+JetBrains Mono NL
+Maple Mono NF CN
+Noto Color Emoji
+Noto Sans
+Noto Sans CJK JP,Noto Sans CJK JP Bold
+Noto Sans JP
+Roboto Slab
+Sarasa UI J,更紗ゴシック UI J
+Source Code Pro

@@ -1,0 +1,9 @@
+/usr/share/fonts/adwaita-sans-fonts/AdwaitaSans-Regular.ttf: Adwaita Sans:style=Regular
+/usr/share/fonts/TTF/DejaVuSans.ttf: DejaVu Sans:style=Book
+/usr/share/fonts/TTF/DejaVuSans-Bold.ttf: DejaVu Sans:style=Bold
+/usr/share/fonts/TTF/DejaVuSansCondensed.ttf: DejaVu Sans,DejaVu Sans Condensed:style=Condensed,Book
+/usr/share/fonts/TTF/Archivo-Black.ttf: Archivo,Archivo Black:style=Black,Regular
+/usr/share/fonts/TTF/FiraCodeNerdFont-Regular.ttf: FiraCode Nerd Font:style=Regular
+/usr/share/fonts/inter/InterVariable.ttf: Inter Variable:style=Regular
+/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc: Noto Sans CJK JP,Noto Sans CJK JP Regular:style=Regular
+/usr/share/fonts/misc/icomoon-feather.ttf: icomoon\-feather:style=Regular

@@ -1,0 +1,82 @@
+"_name": "Inter-Bold",
+          "copyright": "Copyright 2026 Sample Authors",
+          "enabled": "yes",
+          "family": "Inter",
+          "fullname": "Inter Bold",
+          "outline": "yes",
+          "style": "Bold",
+          "valid": "yes",
+          "vendor": "Sample Foundry",
+          "version": "Version 1.000"
+        },
+        {
+          "_name": "InterDisplay-Black",
+          "copyright": "Copyright 2026 Sample Authors",
+          "enabled": "yes",
+          "family": "Inter Display",
+          "fullname": "Inter Display Black",
+          "outline": "yes",
+          "style": "Black",
+          "valid": "yes",
+          "vendor": "Sample Foundry",
+          "version": "Version 1.000"
+        }
+      ],
+      "valid": "yes"
+    },
+    {
+      "_name": "SourceSans3-Regular.otf",
+      "enabled": "yes",
+      "path": "/Library/Fonts/SourceSans3-Regular.otf",
+      "type": "opentype",
+      "typefaces": [
+        {
+          "_name": "SourceSans3-Regular",
+          "copyright": "Copyright 2026 Sample Authors",
+          "enabled": "yes",
+          "family": "Source Sans 3",
+          "fullname": "Source Sans 3",
+          "outline": "yes",
+          "style": "Regular",
+          "valid": "yes",
+          "vendor": "Sample Foundry",
+          "version": "Version 1.000"
+        }
+      ],
+      "valid": "yes"
+    },
+    {
+      "_name": "Helvetica.ttc",
+      "enabled": "yes",
+      "path": "/System/Library/Fonts/Helvetica.ttc",
+      "type": "truetype",
+      "typefaces": [
+        {
+          "_name": "Helvetica",
+          "copyright": "Copyright 2026 Sample Authors",
+          "enabled": "yes",
+          "family": "Helvetica",
+          "fullname": "Helvetica",
+          "outline": "yes",
+          "style": "Regular",
+          "valid": "yes",
+          "vendor": "Sample Foundry",
+          "version": "Version 1.000"
+        },
+        {
+          "_name": "Helvetica-Bold",
+          "copyright": "Copyright 2026 Sample Authors",
+          "enabled": "yes",
+          "family": "Helvetica",
+          "fullname": "Helvetica Bold",
+          "outline": "yes",
+          "style": "Bold",
+          "valid": "yes",
+          "vendor": "Sample Foundry",
+          "version": "Version 1.000"
+        }
+      ],
+      "valid": "yes"
+    }
+  ]
+}
