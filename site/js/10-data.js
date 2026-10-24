@@ -5,7 +5,8 @@
 // crossorigin>; a plain fetch() of the same URL (mode cors, credentials same-origin) reuses
 // that response. Details load on first use only, and the hopper's match file and matcher only
 // once a visitor's list arrives (M3-D7 a, inventory_matcher_on_demand): two requests, both to
-// fixed hashed URLs. Each loader is memoised: every caller shares one promise.
+// fixed hashed URLs, and a third, for the list index, only if it failed to load with the page
+// (loadMatch). Each loader is memoised: every caller shares one promise.
 const Data = (() => {
   const STALE_MESSAGE = 'The list was updated. Reload to see details.';
 
@@ -126,8 +127,11 @@ const Data = (() => {
 
   // Promise of the hopper's match file (section 11), frozen: one GET of the path in
   // #list[data-match], with no query string and no body, so nothing from a list goes in it.
-  // Rejects with Data.Stale when it or the list index answers 404 or 410, and otherwise only
-  // with a Data.MatchError, so the hopper has exactly two failures to tell apart.
+  // It needs the list index's run_date, so if the index failed to load with the page (a
+  // failure loadIndex forgets), it asks for the index again first: a third request, to
+  // another fixed URL, and once more for each list while the index still fails. Rejects with
+  // Data.Stale when it or the list index answers 404 or 410, and otherwise only with a
+  // Data.MatchError, so the hopper has exactly two failures to tell apart.
   const loadMatch = memo(async () => {
     let url;
     try {

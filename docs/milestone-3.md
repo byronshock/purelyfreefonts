@@ -36,7 +36,7 @@ The owner, 2026-10-21: "a single tool that is more or less universal: The user g
 - **Show:** fonts you don't have (the default), all fonts with yours marked, or only fonts you have.
 - **Match data:** built by the site build from the committed `build/names.json` (`inventory_match_data_site_build`, amending step 3).
 - **Ambiguous names:** a reviewed set of five, checked by the site build every month (`inventory_ambiguous_names`).
-- **Loading:** the parser and matcher come as a separate file with the match file, only when a list arrives: two fixed requests (`inventory_matcher_on_demand`, amending step 9).
+- **Loading:** the parser and matcher come as a separate file with the match file, only when a list arrives: two fixed requests (`inventory_matcher_on_demand`, amending step 9), and a third, for the list index, only if it failed to load with the page (site/CONTRACT.md section 11).
 
 Each code pull request is built in its own worktree, reviewed adversarially before it opens, and merged by the owner.
 
@@ -50,7 +50,7 @@ Each code pull request is built in its own worktree, reviewed adversarially befo
 - [ ] **PR 4, the hopper on the list** (steps 6, 8 and 9):
   - [ ] Drop, choose or paste; a summary; the Show menu; "Forget this list"; each OS's command with a copy button.
   - [ ] Owned fonts leave every view, "Showing N of M" counts them out, and changes are announced.
-  - [ ] Privacy tests: no request until a list arrives, then exactly two, for the matcher and the match file; nothing in the address, history or storage; it works offline.
+  - [ ] Privacy tests: no request until a list arrives, then exactly two, for the matcher and the match file (and the list index, if it failed to load with the page); nothing in the address, history or storage; it works offline.
   - [ ] Accessibility and keyboard tests, and the page within its budget.
 - [ ] **PR 5, the words**, after the owner's rulings: the early-version line ("Coming next: free font inventory tools."), privacy.md's "Coming next" section, and about.md's "hiding the fonts you already have".
 - [ ] **On staging:** `preview/2026-10-17` rebased on main and deployed; the owner tries his own Linux list in Chromium and Firefox, watching the Network tab.
@@ -171,7 +171,7 @@ Each code pull request is built in its own worktree, reviewed adversarially befo
 **Who:** Claude. **Depends on:** 6–8; M2 step 9. Must pass on the live site before step 11.
 - [ ] A static check: the check's modules have no `fetch`, `XMLHttpRequest`, `sendBeacon`, `WebSocket`, `EventSource`, dynamic `import()` or element `src` assignment, except one fetch of the match file's fixed URL under M3-D7's default, and one module script for the matcher's fixed URL (*amended 2026-10-23*, `inventory_matcher_on_demand`: the parser and matcher are a file of their own, `Data.loadMatcher`; the site build's lint keeps the script element to `10-data.js`, site/CONTRACT.md section 5).
 - [ ] M2's privacy test gains a case, in Chromium, Firefox and WebKit: once a list is loaded, matching every fixture, the stubbed button, switching views and filters, scrolling every view and clearing the list make no request, except:
-  - under M3-D7's default, exactly two same-origin requests as the comparison starts, for the hashed match file and the hashed matcher module, with no query string or body, and the same URLs for every list (*amended 2026-10-23*, `inventory_matcher_on_demand`; it was one request, for the match file);
+  - under M3-D7's default, exactly two same-origin requests as the comparison starts, for the hashed match file and the hashed matcher module, with no query string or body, and the same URLs for every list (*amended 2026-10-23*, `inventory_matcher_on_demand`; it was one request, for the match file), and a third, for the hashed list index, only if it failed to load with the page (site/CONTRACT.md section 11);
   - after a click on "Load previews" or "Type your own text" (M2-D5), or on a report, download or tip link.
 - [ ] It also checks that the check works offline once the match file has loaded, sets no cookie, and stores nothing M3-D13 doesn't allow.
 - [ ] After each deploy it runs on the live site through Cloudflare, re-verifying M2's headers and Cloudflare privacy settings and step 6's headers.

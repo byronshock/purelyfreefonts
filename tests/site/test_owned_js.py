@@ -979,12 +979,14 @@ class DataPages:
         self,
         match_attr: str,
         match: Answer,
-        index: Answer = (200, INDEX),
+        index: Answer | list[Answer] = (200, INDEX),
         index_url: str = "/i.json",
         matcher_attr: str = MATCHER_ATTR,
         matcher: Answer | str = (200, MATCHER),
         clock: bool = False,
     ) -> Any:
+        # A list of answers is given in turn, the last one from then on.
+        indexes = index if isinstance(index, list) else [index]
         html = DATA_PAGE.format(
             part=DATA_PART.read_text(encoding="utf-8"),
             match=match_attr,
@@ -1008,7 +1010,9 @@ class DataPages:
             if path == "/":
                 route.fulfill(status=200, content_type="text/html", body=html)
             elif path == "/i.json":
-                answer(route, index, "application/json")
+                answer(
+                    route, indexes.pop(0) if len(indexes) > 1 else indexes[0], "application/json"
+                )
             elif path == MATCHER_PATH:
                 answer(route, matcher, "text/javascript")
             else:
@@ -1555,7 +1559,7 @@ def test_load_matcher_gives_up_after_its_timeout_and_a_retry_waits_on_the_same_s
 def test_the_list_s_two_loaders_make_two_requests_and_match_as_python_does(data_pages):
     """A list's arrival as the hopper will handle it: loadMatch and loadMatcher together ask
     for the match file and the matcher module once each (and the list index, which the page
-    has loaded by then), and the parser and matcher handed over read a list against the
+    has loaded by then; test_after_the_list_index_failed_* has the page where it failed), and the parser and matcher handed over read a list against the
     file loadMatch checked as Python does. A second list asks for nothing."""
     doc = real()[0]
     index = {**INDEX, "run_date": doc["run_date"]}
@@ -1581,3 +1585,37 @@ def test_the_list_s_two_loaders_make_two_requests_and_match_as_python_does(data_
     for request in data_pages.requests[1:]:
         assert (request.method, request.post_data) == ("GET", None)
         assert "?" not in request.url
+
+
+# In the page: a list's arrival, as the outcome of each of Data's two loaders.
+ARRIVES = """async () => {
+  const d = globalThis.__tffData;
+  const code = (p) => p.then(() => 'ok', (e) => e.code);
+  return Promise.all([code(d.loadMatcher()), code(d.loadMatch())]);
+}"""
+
+
+@pytest.mark.parametrize("then", ["loads", "fails again"])
+def test_after_the_list_index_failed_a_list_asks_for_it_again_as_a_third_request(data_pages, then):
+    """site/CONTRACT.md section 11: the two requests become three when the list index failed
+    to load with the page. loadMatch needs its run_date, and loadIndex forgets any failure but
+    Data.Stale, so a list asks for the index again: a plain GET of #list[data-index], a fixed
+    URL like the other two, so nothing of the list goes in it either. Once it has loaded, a
+    second list asks for nothing; while it still fails, each list asks for it once more, and
+    for nothing else."""
+    second = (200, INDEX) if then == "loads" else (500, "")
+    page = data_pages.open(f'data-match="{MATCH_PATH}"', (200, DOC), index=[(500, ""), second])
+    failed = "() => globalThis.__tffData.loadIndex().then(() => 'ok', (e) => e.name)"
+    assert page.evaluate(failed) == "Error"
+    before = len(data_pages.requests)
+    want = ["ok", "ok"] if then == "loads" else ["ok", "index"]
+    assert page.evaluate(ARRIVES) == want
+    new = data_pages.requests[before:]
+    paths = ["/i.json", MATCHER_PATH, *([MATCH_PATH] if then == "loads" else [])]
+    assert sorted(r.url[len(ORIGIN) :] for r in new) == sorted(paths)
+    for request in new:
+        assert (request.method, request.post_data) == ("GET", None)
+        assert "?" not in request.url
+    assert page.evaluate(ARRIVES) == want
+    again = [r.url[len(ORIGIN) :] for r in data_pages.requests[before + len(paths) :]]
+    assert again == ([] if then == "loads" else ["/i.json"])

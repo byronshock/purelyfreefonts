@@ -46,8 +46,8 @@ the sweep visits every page the build writes; the sweep and the live checks
 violation, prefetch link, foreign request, match-file request, injected beacon, inline script,
 page error, bad headers and bad payloads); the list never asks for the hopper's match file or
 matcher module without a list, and once ``Data``'s two loaders run (a list's arrival, until the
-hopper's interface calls them), exactly two new requests are made, plain same-origin GETs of
-the two hashed URLs, whose parser and matcher then work under the site's CSP and ask for
+hopper's interface calls them) with the list index loaded, exactly two new requests are made,
+plain same-origin GETs of the two hashed URLs, whose parser and matcher then work under the site's CSP and ask for
 nothing more; and the live checks pass against this build.
 """
 
@@ -853,8 +853,9 @@ def test_a_list_makes_exactly_two_requests_both_fixed_same_origin_gets(
     guarded_context: Any, site_dir: Path, privacy_data: Path
 ) -> None:
     """inventory_matcher_on_demand, amending Milestone 3 step 9: nothing loads the hopper's
-    files with the page; once a list arrives, Data.loadMatcher and Data.loadMatch make exactly
-    two new requests, GETs of the hashed URLs on #list with no query string and no body, so
+    files with the page; once a list arrives, the list index loaded, Data.loadMatcher and
+    Data.loadMatch make exactly two new requests (a third, for the index, only if it failed:
+    test_owned_js.py's test_after_the_list_index_failed_*), GETs of the hashed URLs on #list with no query string and no body, so
     nothing of the list goes in them. Under the site's CSP the module's script loads (script-src
     'self'), its hand-off is frozen, the name it came through is Data's permanent accessor, the
     parser and matcher match a list as Python does, and a second list asks for nothing."""
