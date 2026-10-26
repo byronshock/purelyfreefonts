@@ -530,6 +530,39 @@ def test_no_entry_in_the_reviewed_list_clears_a_collision_outside_the_ambiguous_
     assert error.endswith(UNLISTABLE)
 
 
+def _meet_at_an_alias(names: dict[str, Any]) -> None:
+    """Sample Sans 01 Tight, made distinct from Sample Sans 05 too, gets a name that reaches
+    only Sample Sans 05's alias "Sample Sans Classic", a rename, not its family name."""
+    tight = family(names, "sample-sans-01-tight")
+    tight["names"].append({"name": "Sample Sans Classic Bold", "relation": "related"})
+    tight["distinct_from"] = sorted({*tight["distinct_from"], "sample-sans-05"})
+
+
+def test_a_meeting_at_an_alias_of_one_catalog_family_names_the_recode_that_clears_it(tmp_path):
+    """A meeting needs an owned code at its key, so where one catalog family holds the key
+    alone, through aliases, a recode the owner rules on ends it: the message says so. Where
+    the key is a family's name (``_meet``), no recode can (``owned.RecodeError``)."""
+    names = names_with(_meet_at_an_alias)
+    path = write(tmp_path, names)
+    assert errors_of(path)[0] == (
+        f"{path}: sample-sans-01-tight: its name 'Sample Sans Classic Bold' reaches "
+        "sample-sans-05 at key 'samplesansclassic', and the two are distinct_from each other; "
+        "the owner rules: a [[recode]] making sample-sans-05's alias at that key a near-match "
+        "clears this, and otherwise an alias row (Milestone 1's review) or a change to the "
+        "build carries it out (ops/MONTHLY.md step 5)"
+    )
+    reviewed = (
+        REVIEWED
+        + '[[ambiguous]]\nname = "Sample Sans Classic Bold"\nfamilies = ["sample-sans-05"]\n'
+        'ruling = "synthetic"\n\n'
+        + RECODE_20.replace("Sample Mono 20 Gen", "Sample Sans Classic")
+        .replace("sample-mono-20", "sample-sans-05")
+        .replace("related", "bundle")
+    )
+    doc = json.loads(matchfile.match_file(SAMPLE, write(tmp_path, names, reviewed)).blob)
+    assert doc["k"]["samplesansclassic"] == f"{doc['ids'].index('sample-sans-05')}u"
+
+
 @pytest.mark.parametrize("reviewed", [None, "", RECODE_20])
 def test_an_ambiguous_name_nobody_reviewed_is_refused(tmp_path, reviewed):
     """A missing or empty reviewed list reviews nothing: the build fails closed."""

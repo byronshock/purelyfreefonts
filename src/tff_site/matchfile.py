@@ -68,6 +68,13 @@ UNLISTABLE = (
     "; no entry in the reviewed list clears this: the owner rules, and an alias row "
     "(Milestone 1's review) or a change to the build carries it out (ops/MONTHLY.md step 5)"
 )
+# The end of a meeting at a key that a catalog family holds alone, through aliases only: a
+# meeting needs an owned code there, so a [[recode]] of those aliases ends it.
+RECODABLE = (
+    "; the owner rules: a [[recode]] making {other}'s alias at that key a near-match clears "
+    "this, and otherwise an alias row (Milestone 1's review) or a change to the build carries "
+    "it out (ops/MONTHLY.md step 5)"
+)
 
 
 class MatchFileError(ValueError):
@@ -367,6 +374,23 @@ def refused_recodes(names: Mapping[str, Any], reviewed: Reviewed) -> dict[str, s
     return refused
 
 
+def _recodable_keys(names: Mapping[str, Any]) -> dict[str, str]:
+    """The keys a recode could take, each with its family: held by one catalog family alone,
+    through its aliases, and no family's name (``refused_recodes``, ``owned.RecodeError``)."""
+    holders: dict[str, set[str]] = defaultdict(set)
+    family_keys = set()
+    for fam in names["families"]:
+        family_keys.add(match_key(fam["family"]))
+        for item in fam["names"]:
+            holders[match_key(item["name"])].add(fam["id"])
+    in_catalog = {fam["id"] for fam in names["families"] if fam["in_catalog"]}
+    return {
+        key: next(iter(fids))
+        for key, fids in holders.items()
+        if len(fids) == 1 and fids <= in_catalog and key not in family_keys
+    }
+
+
 def check_errors(
     check: owned.Check,
     names: Mapping[str, Any],
@@ -385,14 +409,19 @@ def check_errors(
     it doubts is the owner's call. A collision that starts from no catalog name and reaches no
     catalog family changes no result, and is only reported.
 
-    Only the ambiguous set's problems are cleared by editing the reviewed list. The other three
-    end with ``UNLISTABLE``: the reviewed list holds no exception for them (step 3 fails them
-    "outside the ambiguous set"), so the owner's ruling is carried out by an alias row or a
-    change to the build (ops/MONTHLY.md step 5).
+    Editing the reviewed list clears the ambiguous set's problems. It holds no exception for
+    the other three (step 3 fails them "outside the ambiguous set"), so they end with
+    ``UNLISTABLE``: the owner's ruling is carried out by an alias row or a change to the build
+    (ops/MONTHLY.md step 5). A recode can't clear a shared key (``refused_recodes`` refuses a
+    key two families hold) or a collision (the stripping reads no relation), and clears a
+    meeting only at a key that one catalog family holds alone, through aliases (a family name
+    can't be recoded): that one ends with ``RECODABLE``, naming the recode the owner may rule.
     """
+    recodable = _recodable_keys(names)
     errors = [
         f"{m.family}: its name {m.name!r} reaches {m.other} at key {m.key!r}, "
-        f"and the two are distinct_from each other{UNLISTABLE}"
+        "and the two are distinct_from each other"
+        + (RECODABLE.format(other=m.other) if recodable.get(m.key) == m.other else UNLISTABLE)
         for m in check.meetings
     ]
     errors += [
