@@ -471,6 +471,24 @@ def test_each_committed_entry_cites_a_ruling_of_its_own_kind():
     )
 
 
+def test_each_ruling_the_committed_list_cites_is_named_here_by_its_kind():
+    """So the test above holds for every ruling, not only the first two: each recorded ruling
+    an entry cites is in AMBIGUOUS_RULINGS or RECODES_RULED (with what it covers), by the kind
+    of entry it reviews. A new ruling is added to one once recorded (ops/MONTHLY.md step 5);
+    one still pending (RULINGS_PENDING) waits for its record."""
+    unnamed = sorted(
+        COMMITTED_REVIEWED.rulings()
+        - AMBIGUOUS_RULINGS
+        - RECODES_RULED.keys()
+        - RULINGS_PENDING.keys()
+    )
+    assert unnamed == [], (
+        f"build/names.reviewed.toml cites {unnamed}: add each to AMBIGUOUS_RULINGS or "
+        "RECODES_RULED in tests/test_site_contracts.py, by the kind of entry it reviews "
+        "(ops/MONTHLY.md step 5)"
+    )
+
+
 MATCH_SECTION = section(CONTRACT, "11. Match JSON")
 
 
