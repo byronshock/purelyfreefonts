@@ -20,7 +20,8 @@ every size budget and the CSP lint, and each check fails on a site made to break
   change is judged by its median over the three: every median must be at most 200 ms. One
   stall of a shared runner can't move a median, a change that is really slow is slow in
   every set, and a page that is slower overall is slow at every change. Planted slowdowns
-  prove the rule in the browser.
+  show the rule at work in the browser: a stall planted in the first set alone is outvoted
+  by the two sets after it, and a change made slow in every set fails, named.
 - Specimens: at load, no specimen is requested for a row more than 1000 px below the screen.
 
 The site is ``TFF_PERF_SITE_DIR`` when that is set (CI's 540-font build, or a real
@@ -550,16 +551,12 @@ def _refilter_sets(measure: Callable[[int], list[float]]) -> list[list[float]]:
     return sets
 
 
-def _assert_refilter_budget(
+def _measure_refilter(
     browser: Any, url: str, rows: int, extra_js: Sequence[str] = ()
 ) -> tuple[list[tuple[str, str, str | None]], list[list[float]]]:
-    """Measure the refilter budget and fail if it is broken; return the steps and each set's
-    timings. ``extra_js`` is an extra init script for each set in turn (the planted tests'
-    slowdowns); the real tests pass none."""
-    # Shared CI runners are noisy and stall now and then (design-m2 §9). A first set with
-    # every change within budget passes. If a change is over, two more sets are measured and
-    # each change is judged by its median over the three: one stall can't move a median, but
-    # a change that is really slow is slow in every set.
+    """Measure the sets ``_refilter_sets`` asks for, check every set's records, print every
+    set's timings, and return the steps and each set's timings (ms). ``extra_js`` is an extra
+    init script for each set in turn (the planted tests' slowdowns); the real tests pass none."""
     first: list[tuple[str, str, str | None]] = []
 
     def measure(n: int) -> list[float]:
@@ -579,7 +576,14 @@ def _assert_refilter_budget(
         return [t["ms"] for t in timings]
 
     sets = _refilter_sets(measure)
-    labels = [_step_label(k, step) for k, step in enumerate(first, start=1)]
+    return first, sets
+
+
+def _assert_refilter_verdict(
+    steps: list[tuple[str, str, str | None]], sets: list[list[float]]
+) -> None:
+    """Fail if the sets break the budget, naming each step over it by its number and change."""
+    labels = [_step_label(k, step) for k, step in enumerate(steps, start=1)]
     passed, medians, failures = _refilter_verdict(sets, labels)
     if len(sets) > 1:
         print(json.dumps({"refilter_median_ms": [round(m) for m in medians]}))
@@ -587,7 +591,17 @@ def _assert_refilter_budget(
         f"over the {REFILTER_MAX_MS} ms budget at the median of {len(sets)} sets: "
         + "; ".join(failures)
     )
-    return first, sets
+
+
+def _assert_refilter_budget(
+    browser: Any, url: str, rows: int, extra_js: Sequence[str] = ()
+) -> None:
+    """Measure the refilter budget and fail if it is broken."""
+    # Shared CI runners are noisy and stall now and then (design-m2 §9). A first set with
+    # every change within budget passes. If a change is over, two more sets are measured and
+    # each change is judged by its median over the three: one stall can't move a median, but
+    # a change that is really slow is slow in every set.
+    _assert_refilter_verdict(*_measure_refilter(browser, url, rows, extra_js))
 
 
 def test_rank_and_filter_changes_redraw_within_200_ms(
@@ -598,42 +612,56 @@ def test_rank_and_filter_changes_redraw_within_200_ms(
 
 
 # Planted before the page's own script, after REFILTER_JS: a capture-phase listener that holds
-# the main thread for STALL_MS on the change to PLANTED_STEP (made once per set), as a stall
-# or a slow redraw would.
+# the main thread on the change to PLANTED_STEP (made once per set), as a stall or a slow
+# redraw would. PLANTED_STALL_MS is far past any stall a runner has shown (406 ms at most),
+# so a set it reached can't be mistaken for one it didn't.
 PLANTED_STEP = "#f-hide-limited"
-STALL_MS = 300
-STALL_JS = """
+PLANTED_STALL_MS = 1500
+PLANTED_SLOW_MS = 300
+
+
+def _planted_js(ms: int) -> str:
+    """An init script that holds the main thread for ``ms`` on the change to PLANTED_STEP."""
+    return """
 (() => {
   let held = false;
   document.addEventListener('change', (e) => {
     if (held || e.target.id !== 'PLANTED_ID') return;
     held = true;
     const t0 = performance.now();
-    while (performance.now() - t0 < STALL_MS) { /* hold the main thread */ }
+    while (performance.now() - t0 < HOLD_MS) { /* hold the main thread */ }
   }, true);
 })();
-""".replace("STALL_MS", str(STALL_MS)).replace("PLANTED_ID", PLANTED_STEP[1:])
+""".replace("HOLD_MS", str(ms)).replace("PLANTED_ID", PLANTED_STEP[1:])
 
 
-def test_one_planted_stall_in_the_first_set_passes(
+def test_one_planted_stall_in_the_first_set_is_outvoted(
     browser: Any, browser_name: str, large_url: str, large_rows: int
 ) -> None:
-    # The first set fails at the planted step, so two more are measured; that step's median
-    # over the three is one of the two unplanted sets, within budget.
+    # The first set fails at the planted step, so two more are measured, and that step's
+    # median is a timing from an unplanted set. Only that is asserted, not the budget: the
+    # real test judges the budget, and a natural stall at the planted step in set 2 or 3
+    # would fail it here.
     _chromium(browser_name)
-    steps, sets = _assert_refilter_budget(browser, large_url, large_rows, extra_js=[STALL_JS])
+    steps, sets = _measure_refilter(browser, large_url, large_rows, [_planted_js(PLANTED_STALL_MS)])
     k = [selector for _, selector, _ in steps].index(PLANTED_STEP)
-    assert len(sets) == REFILTER_SETS
-    assert sets[0][k] >= STALL_MS, sets[0]
+    assert len(sets) == REFILTER_SETS, sets
+    assert sets[0][k] >= PLANTED_STALL_MS, sets[0]
+    assert max(sets[1][k], sets[2][k]) < PLANTED_STALL_MS, sets  # the plant stayed in set 1
+    assert _refilter_verdict(sets)[1][k] == max(sets[1][k], sets[2][k])
 
 
 def test_the_same_slow_step_in_every_set_fails(
     browser: Any, browser_name: str, large_url: str, large_rows: int
 ) -> None:
     _chromium(browser_name)
+    planted = [_planted_js(PLANTED_SLOW_MS)] * REFILTER_SETS
+    steps, sets = _measure_refilter(browser, large_url, large_rows, planted)
+    k = [selector for _, selector, _ in steps].index(PLANTED_STEP)
+    assert len(sets) == REFILTER_SETS, sets
     with pytest.raises(AssertionError, match="budget at the median of 3 sets") as caught:
-        _assert_refilter_budget(browser, large_url, large_rows, extra_js=[STALL_JS] * REFILTER_SETS)
-    assert f"(check {PLANTED_STEP}): " in str(caught.value), caught.value
+        _assert_refilter_verdict(steps, sets)
+    assert f"step {k + 1} (check {PLANTED_STEP}): " in str(caught.value), caught.value
 
 
 # The rule without a browser. Sets of timings in ms: PR #96's two sets on CI (run
