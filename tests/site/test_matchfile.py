@@ -299,9 +299,19 @@ MALFORMED_NAMES = [
         id="string-name",
     ),
     pytest.param(
+        lambda n: n["families"][0]["names"].__setitem__(0, {"name": 7, "relation": "related"}),
+        "/families/0/names/0 is not an object with a name string",
+        id="number-name",
+    ),
+    pytest.param(
         lambda n: n["families"][0].update(distinct_from=None),
         "/families/0/distinct_from is missing or not a list of family ids",
         id="null-distinct-from",
+    ),
+    pytest.param(
+        lambda n: n["families"][0].update(distinct_from=[["x"]]),
+        "/families/0/distinct_from is missing or not a list of family ids",
+        id="nested-distinct-from",
     ),
     pytest.param(
         lambda n: n["families"][0].update(names="x"),
@@ -312,6 +322,11 @@ MALFORMED_NAMES = [
         lambda n: n["ineligible"][0].update(reason=7),
         "/ineligible/0 is not a name and a reason, both strings",
         id="number-reason",
+    ),
+    pytest.param(
+        lambda n: n["ineligible"].__setitem__(0, "x"),
+        "/ineligible/0 is not a name and a reason, both strings",
+        id="string-ineligible",
     ),
     pytest.param(
         lambda n: n["families"][0]["names"][0].update(relation=[]),
@@ -456,6 +471,24 @@ def test_a_value_nested_deeply_anywhere_is_refused_without_a_traceback(
     (tmp_path / "names.reviewed.toml").write_text(REVIEWED, encoding="utf-8")
     deep = f"nested too deeply to read (more than {data.MAX_DEPTH} levels)"
     assert errors_of(path) == [f"{path}: {deep if depth >= data.MAX_DEPTH else shallow}"]
+
+
+def test_a_names_file_or_a_reviewed_list_that_is_a_directory_is_refused(tmp_path):
+    """An ``OSError`` other than a missing file, such as a directory where the file should be
+    (or one that can't be read), is a message saying where, not a traceback."""
+    names = tmp_path / "names.json"
+    names.mkdir()
+    (error,) = errors_of(names)
+    assert error.startswith(f"{names}: ")
+    assert "Is a directory" in error
+    beside = tmp_path / "x"
+    beside.mkdir()
+    path = write(beside, reviewed=None)
+    listed = beside / "names.reviewed.toml"
+    listed.mkdir()
+    (error,) = errors_of(path)
+    assert error.startswith(f"{listed}: ")
+    assert "Is a directory" in error
 
 
 def test_a_names_file_that_is_no_object_is_refused(tmp_path):
@@ -992,6 +1025,21 @@ def test_a_missing_reviewed_list_is_an_empty_one(tmp_path):
             id="name-without-a-key",
         ),
         pytest.param('ambiguous = "x"\n', "ambiguous is not an array of tables", id="not-an-array"),
+        pytest.param(
+            'ambiguous = ["x"]\n',
+            "ambiguous[0]: needs exactly families, name and ruling",
+            id="array-of-strings",
+        ),
+        pytest.param(
+            REVIEWED.replace('name = "Sample Sans 06 Black"', "name = 6"),
+            "ambiguous[0]: the name and the ruling must be non-empty strings",
+            id="number-name",
+        ),
+        pytest.param(
+            REVIEWED.replace('families = ["sample-sans-06"]', "families = [6]"),
+            "ambiguous[0]: families must be catalog ids, sorted, without repeats",
+            id="number-family-id",
+        ),
         pytest.param(
             REVIEWED.replace('relation = "related"', 'relation = "build"'),
             "recode[0]: relation 'build' is not one of ['bundle', 'related', 'sibling']: "
