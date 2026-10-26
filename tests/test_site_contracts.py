@@ -442,8 +442,8 @@ AMBIGUOUS_RULED = {
 
 
 def test_the_committed_ambiguous_names_citing_the_ruling_are_among_the_five_it_names():
-    """An entry citing inventory_ambiguous_names is one of its five, with the families and the
-    owners it names. A refresh that drops one of them, adds a sixth name or gives one of the
+    """An entry citing inventory_ambiguous_names is one of its five, with the families it names
+    and the owners read from it (each name's own family: the ruling names no owners). A refresh that drops one of them, adds a sixth name or gives one of the
     five another family or owner waits for the owner's review (ops/MONTHLY.md step 5). Then a
     drop removes the entry, and a sixth name or a new family or owner cites the ruling that
     reviews it instead, so this test needs no edit either way."""
