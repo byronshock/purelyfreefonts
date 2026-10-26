@@ -581,6 +581,22 @@ def test_the_contract_lists_every_kind_of_file_tff_site_check_reads_for_the_two_
     assert set(re.findall(r"`(\.[a-z]+)`", line)) == budgets.TEXT_SUFFIXES
 
 
+def test_budgets_describes_the_scan_for_the_two_names_as_section_4_does():
+    """``tff_site.budgets``' module docstring, in its item on the hopper's two files, and
+    ``_mentions``' name the same kinds of file as section 4, and the item names each of
+    ``TEXT_SUFFIXES`` by its suffix, so the scan is never described two ways."""
+    kinds = "script, payload, stylesheet, text file, SVG or XML file"
+    dom = section(CONTRACT, "4. DOM")
+    line = next(s for s in dom.splitlines() if s.startswith("- `#list[data-match]` names"))
+    assert f"no {kinds}" in line
+    items = (budgets.__doc__ or "").split("\n- ")
+    item = next(s for s in items if s.startswith("the hopper's match file")).split("\n\n")[0]
+    item = " ".join(item.split())
+    assert f"no {kinds}" in item
+    assert set(re.findall(r"``(\.[a-z]+)``", item)) == budgets.TEXT_SUFFIXES
+    assert f"(a {kinds})" in " ".join((budgets._mentions.__doc__ or "").split())
+
+
 def _font(doc: dict, font_id: str) -> dict:
     return next(f for f in doc["fonts"] if f["id"] == font_id)
 

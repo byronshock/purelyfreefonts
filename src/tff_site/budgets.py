@@ -18,8 +18,10 @@ Sizes are gzip level 9 (``gzip_size``), in decimal kilobytes:
   Both load only once a visitor's list arrives (M3-D7 a; the owner's ruling of 2026-10-23,
   ``inventory_matcher_on_demand``), so they are outside the page budget, and only the list
   page's ``#list[data-match]`` and ``#list[data-matcher]`` may name them, once each: no other
-  page, no ``<script src>``, preload, modulepreload, prefetch or other link, and no script or
-  payload (``TEXT_SUFFIXES`` files are searched for their names).
+  page, no ``<script src>``, preload, modulepreload, prefetch or other link, and no script,
+  payload, stylesheet, text file, SVG or XML file. Every file of those kinds is searched for
+  both names (``TEXT_SUFFIXES``: ``.html``, ``.js``, ``.json``, ``.css``, ``.txt``, ``.svg``
+  and ``.xml``).
 
 The files come from the list page itself: ``<link rel="stylesheet" href>``,
 ``<script src>`` and ``#list``'s ``data-index``, ``data-details``, ``data-match`` and
@@ -290,7 +292,7 @@ def _mentions(
 ) -> list[Problem]:
     """Files that name the hopper's file ``name`` beyond the list page's one ``attribute``: a
     ``<script src>``, preload, prefetch or link on any page, or its URL in any other text file
-    (a script, payload, stylesheet, text file, SVG or sitemap). The name alone is searched
+    (a script, payload, stylesheet, text file, SVG or XML file). The name alone is searched
     for, so a relative URL counts too."""
     needle = name.encode()
     problems: list[Problem] = []
