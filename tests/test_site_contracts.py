@@ -17,7 +17,7 @@ from jsonschema import Draft202012Validator
 from tff_catalog import owned, reviews
 from tff_catalog.keys import match_key, search_key
 from tff_catalog.paths import Paths
-from tff_site import assets, data, fonts, matchfile
+from tff_site import assets, budgets, data, fonts, matchfile
 from tff_site.cli import COMMANDS, main
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -570,6 +570,15 @@ def test_the_contract_names_the_matcher_module():
     assert "`inventory_matcher_on_demand`" in loading
     assert "exactly two new requests" in loading
     assert "`Data.loadMatch()` and `Data.loadMatcher()`" in loading
+
+
+def test_the_contract_lists_every_kind_of_file_tff_site_check_reads_for_the_two_names():
+    """Section 4 says what may not name the match file or the matcher module in the kinds of
+    file ``tff-site check`` reads for them, ``budgets.TEXT_SUFFIXES``, each by its suffix."""
+    dom = section(CONTRACT, "4. DOM")
+    line = next(s for s in dom.splitlines() if s.startswith("- `#list[data-match]` names"))
+    assert "`budgets.TEXT_SUFFIXES`" in line
+    assert set(re.findall(r"`(\.[a-z]+)`", line)) == budgets.TEXT_SUFFIXES
 
 
 def _font(doc: dict, font_id: str) -> dict:

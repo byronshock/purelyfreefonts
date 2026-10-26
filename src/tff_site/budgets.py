@@ -289,8 +289,9 @@ def _mentions(
     files: Iterable[tuple[str, bytes]], name: str, what: str, attribute: str
 ) -> list[Problem]:
     """Files that name the hopper's file ``name`` beyond the list page's one ``attribute``: a
-    ``<script src>``, preload, prefetch or link on any page, or its URL in a script or payload.
-    The name alone is searched for, so a relative URL counts too."""
+    ``<script src>``, preload, prefetch or link on any page, or its URL in any other text file
+    (a script, payload, stylesheet, text file, SVG or sitemap). The name alone is searched
+    for, so a relative URL counts too."""
     needle = name.encode()
     problems: list[Problem] = []
     for rel, blob in files:
