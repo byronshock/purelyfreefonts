@@ -208,6 +208,19 @@ def test_another_schema_version_is_refused_before_anything_else(tmp_path):
     assert errors_of(path) == [f"{path}: schema_version is '0.2.0', not '0.1.0-draft'"]
 
 
+def test_a_names_file_of_the_wrong_shape_is_refused_before_its_run_is_read(tmp_path):
+    """The stages of site/CONTRACT.md section 1: the shape's problems stop it before the run's."""
+
+    def both(names: dict[str, Any]) -> None:
+        names["run"].update(date="2026-01-02")
+        names["families"][0].update(superfamily_id=5)
+
+    path = write(tmp_path, names_with(both))
+    assert errors_of(path) == [
+        f"{path}: /families/0/superfamily_id is missing or not null or a string"
+    ]
+
+
 def test_every_problem_of_another_run_is_reported_at_once(tmp_path):
     names = copy.deepcopy(NAMES)
     for p in NAMES_OF_ANOTHER_RUN:

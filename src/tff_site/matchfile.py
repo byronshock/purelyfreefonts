@@ -6,9 +6,10 @@ step 3: the site build, not a pipeline stage, makes the match file with
 ``catalog-site.json``, and publishes it as ``/assets/match.<h>.json`` (site/CONTRACT.md
 section 11). ``match_file`` first refuses, listing every problem:
 
-- a names file that can't be read, of another run, or of the wrong shape (``names_errors``),
-  and a reviewed list that is malformed (``load_reviewed``), together; the checks below read
-  both, so these stop the build before them;
+- a names file that can't be read, of another run, or of the wrong shape (``names_errors``,
+  in stages: its schema version, then its shape, then its run), and a reviewed list that is
+  malformed (``load_reviewed``), together; the checks below read both, so these stop the
+  build before them;
 - recodes that name no alias of the family they say, or that change nothing, an alias
   already a near-match or of a family outside the catalog (``refused_recodes``), or that
   another name of the family bypasses (``owned.RecodeError``),
@@ -292,6 +293,10 @@ def names_errors(doc: Mapping[str, Any], names: Any) -> list[str]:
     2026-10-17 did under the method of 2026-10-20), no family listed twice, its
     ``in_catalog`` families exactly the catalog's fonts, each under the catalog's family name
     and holding every alias the catalog gives the font, with its relation.
+
+    In stages, each returning before the next: another schema version is the one problem
+    listed, then the shape's problems (``names_shape_errors``), then the run's and the
+    families'.
     """
     if not isinstance(names, dict):
         return [f"/ is a {type(names).__name__}, not an object"]
@@ -485,10 +490,12 @@ def match_file(doc: Mapping[str, Any], names_path: Path) -> MatchFile:
     matches a built site as ``catalog_sha256`` does, and ``reviewed_sha256`` the reviewed
     list's (of no bytes when there is none), since its recodes change the match file too. The
     match file's own ``names_sha256`` hashes the canonical form (``owned.match_document``).
-    Raises ``MatchFileError`` with every problem, in two rounds at most: the two files' own
-    problems (unreadable, of another run, of the wrong shape, malformed) stop it before the
-    checks, which read both; past them, the refused recodes and the collision check's
-    findings come together, the check running without the refused recodes.
+    Raises ``MatchFileError`` with every problem of its stage: the two files' own problems
+    (unreadable, of another run, of the wrong shape, malformed) stop it before the checks,
+    which read both, and the names file's come in stages of their own (``names_errors``: its
+    schema version, then its shape, then its run, each stopping it before the next); past
+    them, the refused recodes and the collision check's findings come together, the check
+    running without the refused recodes.
     """
     names_path = Path(names_path)
     reviewed_path = default_reviewed_path(names_path)
