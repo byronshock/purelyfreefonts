@@ -572,11 +572,11 @@ def match_file(doc: Mapping[str, Any], names_path: Path) -> MatchFile:
         try:
             check = owned.check_document(names, ids, recodes=recodes)
             break
-        except owned.RecodeError as exc:  # another name bypasses it: check the rest without it
-            kept = {name: rel for name, rel in recodes.items() if match_key(name) != exc.key}
-            if len(kept) == len(recodes):  # not a recode of ours: never loop
+        except owned.RecodeError as exc:  # other names bypass them: check the rest without them
+            kept = {name: rel for name, rel in recodes.items() if match_key(name) not in exc.keys}
+            if len(kept) == len(recodes):  # not recodes of ours: never loop
                 raise MatchFileError([*errors, f"{names_path}: {exc}"]) from exc
-            errors.append(f"{reviewed_path}: {exc}")
+            errors += [f"{reviewed_path}: {message}" for _, message in exc.problems]
             recodes = kept
         except ValueError as exc:  # what owned refuses that the checks above let through
             raise MatchFileError([*errors, f"{names_path}: {exc}"]) from exc

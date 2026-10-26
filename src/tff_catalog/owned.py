@@ -404,12 +404,14 @@ OWNED_RELATIONS = frozenset(
 
 
 class RecodeError(ValueError):
-    """A recode that another name of its family bypasses (``_check_recodes``): ``key`` is the
-    recoded key, so a caller can leave that recode out and check the rest."""
+    """Recodes that other names of their families bypass (``_check_recodes``): ``problems``
+    holds each one's recoded key and message, every one that a pass finds, and ``keys`` those
+    keys, so a caller can leave those recodes out and check the rest."""
 
-    def __init__(self, key: str, message: str) -> None:
-        super().__init__(message)
-        self.key = key
+    def __init__(self, problems: Iterable[tuple[str, str]]) -> None:
+        self.problems = tuple(problems)
+        self.keys = frozenset(key for key, _ in self.problems)
+        super().__init__("\n".join(message for _, message in self.problems))
 
 
 def _recodes(names_doc: Mapping[str, Any], recodes: Mapping[str, str] | None) -> dict[str, str]:
@@ -514,17 +516,21 @@ def _holders(
 def _check_recodes(
     names_doc: Mapping[str, Any], holders: Mapping[str, _Holders], recoded: Mapping[str, set[str]]
 ) -> None:
-    """``RecodeError`` when a recoded family could still be owned through a recoded name.
+    """``RecodeError`` when a recoded family could still be owned through a recoded name,
+    listing every such recode and name at once.
 
     That is when its own family name has the recoded key, or when another of its names
     keeps an owned code at its own key while its candidates reach the recoded one: an alias
     "HackGen NF" as a patched build of Hack would make a list's "HackGen NF" own Hack again,
-    so it needs a recode of its own (``hopper_hackgen_related``).
+    so it needs a recode of its own (``hopper_hackgen_related``), and so would a "HackGen Nerd
+    Font" beside it.
     """
-    for key, fids in sorted(recoded.items()):
-        for fid in sorted(fids):
-            if holders[key].owns(fid):
-                raise RecodeError(key, f"recode {key!r}: the family name of {fid} has that key")
+    problems = [
+        (key, f"recode {key!r}: the family name of {fid} has that key")
+        for key, fids in sorted(recoded.items())
+        for fid in sorted(fids)
+        if holders[key].owns(fid)
+    ]
     by_family: dict[str, set[str]] = defaultdict(set)
     for key, fids in recoded.items():
         for fid in fids:
@@ -536,12 +542,18 @@ def _check_recodes(
         for name in (fam["family"], *(item["name"] for item in fam["names"])):
             chain = candidates(name)
             reached = sorted(keys_here & {c.key for c in chain[1:]})
-            if reached and holders[chain[0].key].owns(fam["id"]):
-                raise RecodeError(
-                    reached[0],
-                    f"recode {reached[0]!r}: {fam['id']}'s name {name!r} reaches it and still "
-                    "counts as owned; recode that name too",
+            if not (reached and holders[chain[0].key].owns(fam["id"])):
+                continue
+            problems += [
+                (
+                    key,
+                    f"recode {key!r}: {fam['id']}'s name {name!r} reaches it and still counts "
+                    "as owned; recode that name too",
                 )
+                for key in reached
+            ]
+    if problems:
+        raise RecodeError(problems)
 
 
 @dataclass(frozen=True, slots=True)

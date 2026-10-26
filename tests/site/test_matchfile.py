@@ -1267,6 +1267,37 @@ def test_a_bypassed_recode_and_the_check_s_findings_are_listed_together(tmp_path
     assert unreviewed.startswith(f"{path}: 'Sample Sans 06 Black' may be a weight of ")
 
 
+def test_every_name_that_bypasses_a_recode_is_named_in_one_run(tmp_path):
+    """Two patched builds of the recoded alias, as HackGen NF and HackGen Nerd Font would be
+    of Hack: the build names both at once, so one edit of the list clears them
+    (ops/MONTHLY.md step 5)."""
+
+    def patched(names: dict[str, Any]) -> None:
+        family(names, "sample-mono-20")["names"] += [
+            {"name": "Sample Mono 20 Gen NF", "relation": "build", "detail": "nf"},
+            {"name": "Sample Mono 20 Gen Nerd Font", "relation": "build", "detail": "nerd"},
+        ]
+
+    names = names_with(patched)
+    listed = tmp_path / "names.reviewed.toml"
+    path = write(tmp_path, names)
+    assert errors_of(path) == [
+        f"{listed}: recode 'samplemono20gen': sample-mono-20's name '{name}' reaches it and "
+        "still counts as owned; recode that name too"
+        for name in ("Sample Mono 20 Gen NF", "Sample Mono 20 Gen Nerd Font")
+    ]
+    every = REVIEWED + "".join(
+        recode_entry(name, "sample-mono-20", "related")
+        for name in ("Sample Mono 20 Gen NF", "Sample Mono 20 Gen Nerd Font")
+    )
+    doc = json.loads(matchfile.match_file(SAMPLE, write(tmp_path, names, every)).blob)
+    at = doc["ids"].index("sample-mono-20")
+    assert [doc["k"][key] for key in ("samplemono20gennf", "samplemono20gennerdfont")] == [
+        f"{at}x",
+        f"{at}x",
+    ]
+
+
 def test_a_names_file_and_a_reviewed_list_with_problems_are_listed_together(tmp_path):
     names = names_with(lambda n: n["run"].update(date="2026-01-02"))
     path = write(tmp_path, names, "[[ambiguous]]\nname = 1\n")
