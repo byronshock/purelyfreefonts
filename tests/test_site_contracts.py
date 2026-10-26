@@ -399,6 +399,30 @@ def test_the_committed_recodes_citing_a_recode_ruling_are_ones_it_covers():
     )
 
 
+def test_the_committed_recodes_of_a_ruled_name_cite_a_ruling_that_covers_them():
+    """The other way round: a recode whose name reaches a name RECODES_RULED names (HackGen,
+    or a build of it such as HackGen NF) cites a ruling there that covers it, so HackGen's
+    recode can't change relation, or cite another ruling, unreviewed. A new ruling on HackGen
+    is cited while it is pending (RULINGS_PENDING); once it is recorded, RECODES_RULED gains
+    what it covers. Covered refreshes, a HackGen NF recode or HackGen's drop, need no edit."""
+    ruled: dict[str, set[str]] = {}
+    for ruling, (_, _, name) in RECODES_RULED.items():
+        ruled.setdefault(match_key(name), set()).add(ruling)
+    beyond = []
+    for recode in COMMITTED_REVIEWED.recodes.values():
+        reached = {c.key for c in owned.candidates(recode.name)} & ruled.keys()
+        rulings = set().union(*(ruled[key] for key in reached))
+        if not rulings or recode.ruling in RULINGS_PENDING:
+            continue
+        if recode.ruling not in rulings or not _covered(recode):
+            beyond.append(recode)
+    assert beyond == [], (
+        f"build/names.reviewed.toml recodes {beyond}, which a recode ruling names, without "
+        "citing one that covers it: ask the owner, record the ruling, and cite that "
+        "(ops/MONTHLY.md step 5)"
+    )
+
+
 # inventory_ambiguous_names (2026-10-23) reviewed these five, each with the families it names:
 # "Gentium Book (or Gentium; Gentium Plus on the October data)". The build fails on any new,
 # changed or dropped name "until the owner has reviewed it", a drop too: once the owner has, a
@@ -429,6 +453,21 @@ def test_the_committed_ambiguous_names_citing_the_ruling_are_among_the_five_it_n
     assert beyond == {}, (
         f"build/names.reviewed.toml cites inventory_ambiguous_names for {beyond}, which it doesn't "
         "cover: ask the owner, record the ruling, and cite that (ops/MONTHLY.md step 5)"
+    )
+
+
+# The rulings that review one kind of entry, so neither kind cites the other's.
+AMBIGUOUS_RULINGS = frozenset({"inventory_ambiguous_names"})
+
+
+def test_each_committed_entry_cites_a_ruling_of_its_own_kind():
+    """An ambiguous name's review is no recode's, and a recode's no ambiguous name's."""
+    assert not AMBIGUOUS_RULINGS & RECODES_RULED.keys()
+    wrong = [r for r in COMMITTED_REVIEWED.recodes.values() if r.ruling in AMBIGUOUS_RULINGS]
+    wrong += [a for a in COMMITTED_REVIEWED.ambiguous.values() if a.ruling in RECODES_RULED]
+    assert wrong == [], (
+        f"build/names.reviewed.toml cites a ruling of the other kind of entry for {wrong} "
+        "(ops/MONTHLY.md step 5)"
     )
 
 
