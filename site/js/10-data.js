@@ -131,7 +131,8 @@ const Data = (() => {
   // failure loadIndex forgets), it asks for the index again first: a third request, to
   // another fixed URL, and once more for each list while the index still fails. Rejects with
   // Data.Stale when it or the list index answers 404 or 410, and otherwise only with a
-  // Data.MatchError, so the hopper has exactly two failures to tell apart.
+  // Data.MatchError, so the hopper has exactly two failures to tell apart. Every MatchError
+  // is forgotten, so a later call asks again; section 11 says which codes a retry can mend.
   const loadMatch = memo(async () => {
     let url;
     try {
