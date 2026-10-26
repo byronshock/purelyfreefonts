@@ -6,7 +6,7 @@ Each monthly run writes three JSON files to `build/`. This page says what is in 
 |---|---|---|---|
 | `catalog.json` | stage `export` | `schemas/catalog.schema.json` | the specimens stage, the monthly review, anyone who wants the full data |
 | `catalog-site.json` | stage `export-site` | `schemas/catalog-site.schema.json` | `tff-site build` (Milestone 2) |
-| `names.json` | stage `export-site` | `schemas/names.schema.json` | owned-font matching (Milestone 3) |
+| `names.json` | stage `export-site` | `schemas/names.schema.json` | owned-font matching (Milestone 3): `tff-site build` derives the hopper's match file from it |
 
 All three are public and committed. Their data license is CC BY-SA 4.0 (D17, final since ruling T5).
 
@@ -170,6 +170,23 @@ The names Milestone 3 needs to recognise installed fonts. It covers the whole un
   - `icon`: icon, emoji, symbol, barcode, math and music fonts;
   - `cjk` and `latin`: fonts that fail the Latin gate;
   - `license`: fonts whose license is excluded or failed the license check.
+
+The site build derives the hopper's match file, `/assets/match.<h>.json`, from this file and `catalog-site.json` (`tff_site.matchfile`, with `tff_catalog.owned.match_document`; site/CONTRACT.md section 11), and fails unless the two are of one run: the same `run.date` and `run.method_version`, the catalog's fonts exactly the `in_catalog` families under the same names, and every catalog alias among the family's `names` with its relation (the owner's ruling of 2026-10-22, `inventory_match_data_site_build`). It also fails on what Milestone 3 step 3's collision check finds: two families that `distinct_from` keeps apart meeting (a name of one reaching a key at which the other, a catalog family, could count as owned), a key a catalog family owns with another family, in the catalog or not, in the ambiguous set or outside it (in it, a trusted name counts each as owned), a catalog name that strips to the key of a family outside the catalog, or an ambiguous set other than the reviewed one (a name nobody has reviewed, a reviewed one whose families or key's owners changed, or one that is no longer ambiguous); and on a recode that is stale or bypassed. site/CONTRACT.md section 11 lists every case, and how the build lists them together. Editing the reviewed list below clears the ambiguous set and the recodes. The other three collisions need the owner's ruling, carried out by an alias row through Milestone 1's review or by a change to the build, or, for a meeting or a shared key whose owned code comes from aliases of one catalog family alone, not at its own name, by a recode of them, with one of each other name of the family that would bypass it, which the message then names ([ops/MONTHLY.md](../ops/MONTHLY.md) step 5). `version.txt` records the file's sha256 as `names_sha256`.
+
+`build/names.reviewed.toml` sits beside it, but no stage writes it. It is the owner's review, edited by hand, each entry citing its ruling: the names the match file treats as ambiguous (`[[ambiguous]]`), and the aliases the hopper codes as near-matches only (`[[recode]]`: HackGen, a build of Hack here, is only related to Hack in the hopper, `hopper_hackgen_related`). A refresh that changes the ambiguous set, moves a recoded alias, makes it a near-match itself, takes its family out of the catalog, or adds a name that reaches it (a HackGen NF build of Hack), fails the site build until the owner has reviewed it and the list is updated on the refresh pull request; the tests read both parts from the list, so they need no edit for either, except that a newly recorded ruling an entry cites is also named in `tests/test_site_contracts.py` (`AMBIGUOUS_RULINGS` or `RECODES_RULED`, by the kind of entry it reviews). One that drops a family the hopper's known answers name fails `tests/test_owned.py` until those cases are edited there too ([ops/MONTHLY.md](../ops/MONTHLY.md) step 5).
+
+## The hopper's match file
+
+`/assets/match.<h>.json` is not a run output and is not committed: `tff-site build` makes it from `names.json`, the ids in `catalog-site.json` and `build/names.reviewed.toml`, and publishes it with the site, named by a hash of its bytes. Its schema is `schemas/match.schema.json` (`format` `tff-match`, `v` 1); [site/CONTRACT.md](../site/CONTRACT.md) section 11 lists its keys and codes and works an example. It holds:
+
+- `run_date` and `names_sha256`: the run, and the sha256 of the canonical `names.json` it came from;
+- `ids`: the catalog's font ids, sorted;
+- `k`: every known name's match key (the name in NFKC, case-folded, with no spaces, hyphens or underscores; `tff_catalog.keys.match_key`), with what it is: a catalog family itself, its PostScript name, a build of the same font, an old name or a patched build (all of which count as owned), or a sibling, related family, bundle or package of one (a near-match only, M3-D5 a); a known family outside the catalog; or an ineligible name with its reason;
+- `amb`: the ambiguous names, each with the catalog families it may be a weight of;
+- `reasons`: the ineligible reasons in use;
+- `words`: the style words, Nerd suffixes and separators the hopper strips from an installed font's name before it looks the name up.
+
+The schema gives the shape. The hopper's reader, `tff_catalog.owned.Table.from_document`, which the page's script mirrors, also refuses an index out of range and malformed words, and the build refuses any file that reader refuses. `tests/test_schemas.py` checks that the schema is valid 2020-12, like every schema in `schemas/`, and the tests validate the sample's match file and the committed run's against it.
 
 ## Validation
 

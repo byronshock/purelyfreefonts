@@ -1,0 +1,61 @@
+# The hopper's reviewed list for build/names.json (Milestone 3, slice 1; site/CONTRACT.md
+# section 11). Not a pipeline output: edited by hand, one entry per reviewed name, each citing
+# the ruling in data/reviews/ that records the owner's review. The site build reads it
+# (tff_site.matchfile) and fails unless it agrees with names.json, so a refresh that adds,
+# changes or drops one of these names fails until the owner has reviewed it.
+#
+# [[ambiguous]]: a family of its own that is also, with a style word stripped, a catalog
+# family's weight (Milestone 3 step 3). The hopper treats it with doubt (tff_catalog.owned.match):
+# only a trusted name (fc-list's first family, a macOS family, or a PostScript name's part
+# before its hyphen) counts as owned; from a plain list it is a near-match. `families` are the
+# catalog families the name may be a weight of; `owners` are the families that own its key,
+# which a trusted name counts as owned (each name's own family: the lead's reading, 2026-10-26,
+# of the ruling's "a family of their own"; the ruling names no owners). The
+# build derives both and fails unless they are exactly these. These five were found by the
+# collision check on the run of 2026-09-26; the owner reviewed them as a set on 2026-10-23
+# (inventory_ambiguous_names). The ruling covers Gentium Book as a weight of gentium-plus too,
+# as on the run of 2026-10-17: that refresh sets its families to ["gentium-plus"] and its
+# owners to ["gentium-book-plus"] (Gentium Book is that family's old name there, as Gentium
+# Plus Book is here) and cites the same ruling, with no new question.
+#
+# [[recode]]: an alias that the hopper codes as a near-match only, though names.json gives it an
+# owned relation. The match file changes; names.json, its alias rows and the ranking don't.
+
+[[ambiguous]]
+name = "Archivo Black"
+families = ["archivo"]
+owners = ["archivo-black"]
+ruling = "inventory_ambiguous_names"
+
+[[ambiguous]]
+name = "Bungee Hairline"
+families = ["bungee"]
+owners = ["bungee-hairline"]
+ruling = "inventory_ambiguous_names"
+
+[[ambiguous]]
+name = "Gentium Book"
+families = ["gentium"]
+owners = ["gentium-book"]
+ruling = "inventory_ambiguous_names"
+
+[[ambiguous]]
+name = "Gentium Plus Book"
+families = ["gentium-plus"]
+owners = ["gentium-book-plus"]
+ruling = "inventory_ambiguous_names"
+
+[[ambiguous]]
+name = "Syne Italic"
+families = ["syne"]
+owners = ["syne-italic"]
+ruling = "inventory_ambiguous_names"
+
+# HackGen (Hack merged with a CJK typeface) is a build of Hack in names.json, through the alias
+# row leftover_cica_hackgen (2026-09-28), which the ranking keeps. In the hopper it is only
+# related to Hack: someone who has HackGen still sees Hack listed (M3-D5 a).
+[[recode]]
+name = "HackGen"
+family = "hack"
+relation = "related"
+ruling = "hopper_hackgen_related"

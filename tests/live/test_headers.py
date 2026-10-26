@@ -1,10 +1,11 @@
 """The live site's headers and HTML (Milestone 2 step 9; design-m2 §6, "Live only").
 
 Over plain HTTP with ``Accept: text/html`` (``tests/live/checks.py``): site.caddy's CSP and other
-security headers on HTML, JS, JSON, SVG and 404 responses; no ``Set-Cookie``, ``NEL`` or
-``Report-To``; ``X-Robots-Tag`` only on the test site; site.caddy's ``Cache-Control``; no
-Cloudflare code in any HTML; ``robots.txt`` equal to the built file; and a vantage point where
-Cloudflare would inject its beacon if a setting let it.
+security headers on HTML, JS, JSON, SVG and 404 responses; the JSON payloads parse, the match
+file as a ``tff-match`` document; no ``Set-Cookie``, ``NEL`` or ``Report-To``; ``X-Robots-Tag``
+only on the test site; site.caddy's ``Cache-Control``; no Cloudflare code in any HTML;
+``robots.txt`` equal to the built file; and a vantage point where Cloudflare would inject its
+beacon if a setting let it.
 """
 
 from typing import Any
@@ -29,6 +30,13 @@ def test_every_response_has_the_site_headers_and_none_that_track(
 def test_the_html_has_no_cloudflare_code(crawled: tuple[list[Any], list[str]]) -> None:
     fetched, _ = crawled
     assert checks.html_problems(fetched) == []
+
+
+def test_the_json_payloads_are_json(crawled: tuple[list[Any], list[str]]) -> None:
+    """The list index, the details and the hopper's match file, as served."""
+    fetched, _ = crawled
+    assert [f.path for f in fetched if f.path.startswith(checks.MATCH_PREFIX)]
+    assert checks.payload_problems(fetched) == []
 
 
 def test_robots_txt_is_the_built_file(

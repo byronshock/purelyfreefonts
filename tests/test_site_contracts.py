@@ -14,13 +14,17 @@ import pytest
 from jinja2 import ChoiceLoader, DictLoader, Environment, FileSystemLoader, StrictUndefined, nodes
 from jsonschema import Draft202012Validator
 
-from tff_catalog.keys import search_key
-from tff_site import assets, data, fonts
+from tff_catalog import owned, reviews
+from tff_catalog.keys import match_key, search_key
+from tff_catalog.paths import Paths
+from tff_site import assets, data, fonts, matchfile
 from tff_site.cli import COMMANDS, main
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMAS = ROOT / "schemas"
 SAMPLE_PATH = ROOT / "tests" / "fixtures" / "catalog-site.sample.json"
+NAMES_SAMPLE_PATH = ROOT / "tests" / "fixtures" / "names.sample.json"
+COMMITTED_NAMES = ROOT / "build" / "names.json"
 SPECIMEN_FONTS = ROOT / "tests" / "fixtures" / "specimen-fonts.toml"
 SPECIMENS_DIR = SAMPLE_PATH.parent / "specimens"
 VECTORS = ROOT / "tests" / "vectors" / "name-keys.json"
@@ -66,7 +70,10 @@ def section(text: str, heading: str) -> str:
 # ---------------------------------------------------------------- schemas and the sample
 
 
-@pytest.mark.parametrize("name", ["catalog-site.schema.json", "name-keys.schema.json"])
+@pytest.mark.parametrize(
+    "name",
+    ["catalog-site.schema.json", "match.schema.json", "name-keys.schema.json", "names.schema.json"],
+)
 def test_schema_is_valid_2020_12(name):
     schema = load_schema(name)
     assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
@@ -283,6 +290,277 @@ def test_sample_previews_match_specimens_or_are_placeholders():
             assert font["preview"]["sha256"] == fonts.file_sha256(svg), font["id"]
         else:
             assert font["preview"]["sha256"] == data.PLACEHOLDER_SHA256, font["id"]
+
+
+# ---------------------------------------------------------------- the names sample
+
+
+NAMES_SAMPLE = json.loads(NAMES_SAMPLE_PATH.read_text(encoding="utf-8"))
+# The codes of a match file (site/CONTRACT.md section 11), by kind: "" a family, then its
+# letters, "-" a known family outside the catalog, "!" an ineligible name.
+MATCH_CODES = {"", "p", "b", "r", "n", "s", "x", "u", "-", "!"}
+
+
+def code_kinds(match: dict) -> set[str]:
+    return {
+        "-" if code == "-" else "!" if code.startswith("!") else code.lstrip("0123456789")
+        for codes in match["k"].values()
+        for code in codes.split(",")
+    }
+
+
+def test_names_sample_validates_and_is_of_the_sample_s_run():
+    errors = Draft202012Validator(load_schema("names.schema.json")).iter_errors(NAMES_SAMPLE)
+    assert [e.message for e in errors] == []
+    assert matchfile.names_errors(SAMPLE, NAMES_SAMPLE) == []
+    assert matchfile.default_names_path(SAMPLE_PATH) == NAMES_SAMPLE_PATH
+
+
+def test_names_sample_is_synthetic():
+    """The names schema allows no ``synthetic`` key, so the ids and names say it (the home-path
+    guard over the file is tests/test_owned.py's)."""
+    for fam in NAMES_SAMPLE["families"]:
+        assert fam["id"].startswith("sample-")
+        assert fam["family"].startswith("Sample ")
+        assert all(n["name"].startswith(("Sample", "SMono")) for n in fam["names"])
+    assert all(row["name"].startswith("Sample ") for row in NAMES_SAMPLE["ineligible"])
+
+
+def test_the_sample_match_file_uses_every_code():
+    """So the browser port's tests (PR 3) meet every case, an ambiguous key and a recode too."""
+    made = matchfile.match_file(SAMPLE, NAMES_SAMPLE_PATH)
+    match = json.loads(made.blob)
+    assert code_kinds(match) == MATCH_CODES
+    assert match["amb"]
+    reviewed, _ = matchfile.load_reviewed(matchfile.default_reviewed_path(NAMES_SAMPLE_PATH))
+    assert reviewed.recodes
+    assert reviewed.rulings() == {"synthetic"}
+    errors = Draft202012Validator(load_schema("match.schema.json")).iter_errors(match)
+    assert [e.message for e in errors] == []
+
+
+RECORDED_RULINGS = frozenset(
+    answer.id for ruling in reviews.load_rulings(Paths.for_root(ROOT)) for answer in ruling.answers
+)
+COMMITTED_REVIEWED, _ = matchfile.load_reviewed(matchfile.default_reviewed_path(COMMITTED_NAMES))
+# Cited before the owner has ruled: the lead asks the question, then records the answer in
+# data/reviews/ and drops the id from here (the strict xfail fails once it is recorded). None is
+# pending: the five ambiguous names' review, inventory_ambiguous_names, was recorded 2026-10-23.
+RULINGS_PENDING: dict[str, str] = {}
+
+
+@pytest.mark.parametrize(
+    "ruling",
+    [
+        pytest.param(
+            ruling,
+            marks=[pytest.mark.xfail(strict=True, reason=RULINGS_PENDING[ruling])]
+            if ruling in RULINGS_PENDING
+            else [],
+        )
+        for ruling in sorted(COMMITTED_REVIEWED.rulings())
+    ],
+)
+def test_the_committed_reviewed_list_cites_recorded_rulings(ruling):
+    """Every entry of build/names.reviewed.toml cites a ruling in data/reviews/, so no entry
+    goes in without the owner's review (Milestone 3 step 3, "the owner reviews flagged
+    collisions"; ``hopper_hackgen_related``)."""
+    assert ruling in RECORDED_RULINGS
+
+
+# hopper_hackgen_related (2026-10-23): "In the hopper, HackGen ... is only a near-match of
+# Hack", recoded as related. By ruling, the family and relation its entries have, and the name
+# each entry's name must reach (owned.candidates): HackGen itself, or a build or weight of it
+# such as "HackGen NF", which the build makes the list recode too (owned._check_recodes).
+RECODES_RULED = {"hopper_hackgen_related": ("hack", "related", "HackGen")}
+
+
+def _covered(recode: matchfile.Recode) -> bool:
+    family, relation, name = RECODES_RULED[recode.ruling]
+    reached = {c.key for c in owned.candidates(recode.name)}
+    return (recode.family, recode.relation) == (family, relation) and match_key(name) in reached
+
+
+def test_the_committed_recodes_citing_a_recode_ruling_are_ones_it_covers():
+    """An entry citing hopper_hackgen_related is HackGen, or a name that reaches HackGen's
+    key, on hack, as related. A refresh that adds such a name to hack (the build asks for its
+    recode) gains an entry citing this ruling, with no new question; one that drops HackGen
+    changes the HackGen known answers, a question for the owner first, then loses the entry
+    (ops/MONTHLY.md step 5). Either way this test needs no edit. A recode of anything else,
+    or of HackGen as anything else, cites the ruling that reviews it."""
+    beyond = [
+        recode
+        for recode in COMMITTED_REVIEWED.recodes.values()
+        if recode.ruling in RECODES_RULED and not _covered(recode)
+    ]
+    assert beyond == [], (
+        f"build/names.reviewed.toml cites a recode ruling for {beyond}, which it doesn't "
+        "cover: ask the owner, record the ruling, and cite that (ops/MONTHLY.md step 5)"
+    )
+
+
+def test_the_committed_recodes_of_a_ruled_name_cite_a_ruling_that_covers_them():
+    """The other way round: a recode whose name reaches a name RECODES_RULED names (HackGen,
+    or a build of it such as HackGen NF) cites a ruling there that covers it, so HackGen's
+    recode can't change relation, or cite another ruling, unreviewed. A new ruling on HackGen
+    is cited while it is pending (RULINGS_PENDING); once it is recorded, RECODES_RULED gains
+    what it covers. Covered refreshes, a HackGen NF recode or HackGen's drop, need no edit."""
+    ruled: dict[str, set[str]] = {}
+    for ruling, (_, _, name) in RECODES_RULED.items():
+        ruled.setdefault(match_key(name), set()).add(ruling)
+    beyond = []
+    for recode in COMMITTED_REVIEWED.recodes.values():
+        reached = {c.key for c in owned.candidates(recode.name)} & ruled.keys()
+        rulings = set().union(*(ruled[key] for key in reached))
+        if not rulings or recode.ruling in RULINGS_PENDING:
+            continue
+        if recode.ruling not in rulings or not _covered(recode):
+            beyond.append(recode)
+    assert beyond == [], (
+        f"build/names.reviewed.toml recodes {beyond}, which a recode ruling names, without "
+        "citing one that covers it: ask the owner, record the ruling, and cite that "
+        "(ops/MONTHLY.md step 5)"
+    )
+
+
+# inventory_ambiguous_names (2026-10-23) reviewed these five, each with the families it names:
+# "Gentium Book (or Gentium; Gentium Plus on the October data)", and its key's owners, each
+# name's own family, "a family of their own" (on the October data Gentium Book is an old name
+# of gentium-book-plus, as Gentium Plus Book is on both). The build fails on any new, changed
+# or dropped name "until the owner has reviewed it", a drop too: once the owner has, a dropped
+# name's entry is removed, and a new or changed one cites the ruling that reviews it.
+AMBIGUOUS_RULED = {
+    "Archivo Black": {(("archivo",), ("archivo-black",))},
+    "Bungee Hairline": {(("bungee",), ("bungee-hairline",))},
+    "Gentium Book": {
+        (("gentium",), ("gentium-book",)),
+        (("gentium-plus",), ("gentium-book-plus",)),
+    },
+    "Gentium Plus Book": {(("gentium-plus",), ("gentium-book-plus",))},
+    "Syne Italic": {(("syne",), ("syne-italic",))},
+}
+
+
+def test_the_committed_ambiguous_names_citing_the_ruling_are_among_the_five_it_names():
+    """An entry citing inventory_ambiguous_names is one of its five, with the families it names
+    and the owners read from it (each name's own family: the ruling names no owners). A refresh that drops one of them, adds a sixth name or gives one of the
+    five another family or owner waits for the owner's review (ops/MONTHLY.md step 5). Then a
+    drop removes the entry, and a sixth name or a new family or owner cites the ruling that
+    reviews it instead, so this test needs no edit either way."""
+    cited = {
+        entry.name: (entry.families, entry.owners)
+        for entry in COMMITTED_REVIEWED.ambiguous.values()
+        if entry.ruling == "inventory_ambiguous_names"
+    }
+    beyond = {
+        name: fids for name, fids in cited.items() if fids not in AMBIGUOUS_RULED.get(name, ())
+    }
+    assert beyond == {}, (
+        f"build/names.reviewed.toml cites inventory_ambiguous_names for {beyond}, which it doesn't "
+        "cover: ask the owner, record the ruling, and cite that (ops/MONTHLY.md step 5)"
+    )
+
+
+# The rulings that review one kind of entry, so neither kind cites the other's.
+AMBIGUOUS_RULINGS = frozenset({"inventory_ambiguous_names"})
+
+
+def test_each_committed_entry_cites_a_ruling_of_its_own_kind():
+    """An ambiguous name's review is no recode's, and a recode's no ambiguous name's."""
+    assert not AMBIGUOUS_RULINGS & RECODES_RULED.keys()
+    wrong = [r for r in COMMITTED_REVIEWED.recodes.values() if r.ruling in AMBIGUOUS_RULINGS]
+    wrong += [a for a in COMMITTED_REVIEWED.ambiguous.values() if a.ruling in RECODES_RULED]
+    assert wrong == [], (
+        f"build/names.reviewed.toml cites a ruling of the other kind of entry for {wrong} "
+        "(ops/MONTHLY.md step 5)"
+    )
+
+
+def test_each_ruling_the_committed_list_cites_is_named_here_by_its_kind():
+    """So the test above holds for every ruling, not only the first two: each recorded ruling
+    an entry cites is in AMBIGUOUS_RULINGS or RECODES_RULED (with what it covers), by the kind
+    of entry it reviews. A new ruling is added to one once recorded (ops/MONTHLY.md step 5);
+    one still pending (RULINGS_PENDING) waits for its record."""
+    unnamed = sorted(
+        COMMITTED_REVIEWED.rulings()
+        - AMBIGUOUS_RULINGS
+        - RECODES_RULED.keys()
+        - RULINGS_PENDING.keys()
+    )
+    assert unnamed == [], (
+        f"build/names.reviewed.toml cites {unnamed}: add each to AMBIGUOUS_RULINGS or "
+        "RECODES_RULED in tests/test_site_contracts.py, by the kind of entry it reviews "
+        "(ops/MONTHLY.md step 5)"
+    )
+
+
+MATCH_SECTION = section(CONTRACT, "11. Match JSON")
+
+
+def _blocks(text: str, language: str) -> list[str]:
+    return re.findall(rf"```{language}\n(.*?)\n```", text, re.DOTALL)
+
+
+def test_the_contract_s_match_example_is_what_the_code_gives(tmp_path):
+    """Section 11's worked example: its names.json and reviewed list, through the build's
+    ``matchfile.match_file``, give its match file (``names_sha256`` and ``words`` aside)."""
+    names_text, match_text = _blocks(MATCH_SECTION, "json")
+    (reviewed_text,) = _blocks(MATCH_SECTION, "toml")
+    names = json.loads(names_text)
+    (tmp_path / "names.json").write_text(names_text, encoding="utf-8")
+    (tmp_path / "names.reviewed.toml").write_text(reviewed_text, encoding="utf-8")
+    catalog = {
+        "run": names["run"],
+        "fonts": [
+            {"id": f["id"], "family": f["family"], "aliases": []}
+            for f in names["families"]
+            if f["in_catalog"]
+        ],
+    }
+    made = json.loads(matchfile.match_file(catalog, tmp_path / "names.json").blob)
+    want = json.loads(match_text)
+    assert {key: made[key] for key in want} == want
+    assert set(made) - set(want) == {"names_sha256", "words"}
+    assert code_kinds(made) == MATCH_CODES
+
+
+def test_the_contract_s_code_table_lists_every_code():
+    # table_after would drop the "-" row, which looks like a separator row.
+    table = MATCH_SECTION[MATCH_SECTION.index("**Codes**") : MATCH_SECTION.index("**A worked")]
+    codes = re.findall(r"^\| `([^`]+)` \|", table, re.MULTILINE)
+    kinds = {
+        "-" if code == "-" else "!" if code.startswith("!") else code.removeprefix("<i>")
+        for code in codes
+    }
+    assert len(codes) == len(kinds) == len(MATCH_CODES)
+    assert kinds == MATCH_CODES
+
+
+def test_the_contract_names_the_match_file():
+    output = section(CONTRACT, "2. Build output")
+    assert "| `assets/match.<h>.json` |" in output
+    assert "`names_sha256=`" in output
+    assert "`reviewed_sha256=`" in output
+    dom = section(CONTRACT, "4. DOM")
+    assert 'data-match="/assets/match.<h>.json"' in dom
+    assert "`#list[data-match]` names the hopper's match file" in dom
+    assert "`#list[data-match]`, fetched only once a visitor's list arrives" in section(
+        CONTRACT, "5. JS parts"
+    )
+    assert "`match_url`" in section(CONTRACT, "3. Templates")
+    keys = [row[0] for row in table_after(MATCH_SECTION, "| Key |")]
+    assert keys == [
+        "format",
+        "v",
+        "run_date",
+        "names_sha256",
+        "ids",
+        "k",
+        "amb",
+        "reasons",
+        "words",
+    ]
+    assert set(keys) == set(json.loads(matchfile.match_file(SAMPLE, NAMES_SAMPLE_PATH).blob))
 
 
 def _font(doc: dict, font_id: str) -> dict:
@@ -613,6 +891,27 @@ def test_validate_command_rejects_a_non_json_file(tmp_path, capsys):
     path.write_text("{", encoding="utf-8")
     assert main(["validate", str(path)]) == 1
     assert "invalid" in capsys.readouterr().err
+
+
+def test_validate_command_rejects_a_catalog_nested_too_deeply(tmp_path, capsys):
+    path = tmp_path / "deep.json"
+    path.write_text("[" * 200_000, encoding="utf-8")
+    assert main(["validate", str(path)]) == 1
+    err = capsys.readouterr().err
+    assert "nested too deeply to read" in err
+    assert "Traceback" not in err
+
+
+def test_loads_reads_max_depth_levels_and_refuses_one_more():
+    """``data.loads`` caps nesting at ``MAX_DEPTH`` levels wherever they are, far below where
+    the serialisers and validators that walk a document recurse too deeply."""
+    deep = data.MAX_DEPTH
+    assert data.loads(("[" * deep + "]" * deep).encode()) == json.loads("[" * deep + "]" * deep)
+    nested = '{"a": ' * (deep - 1) + "[]" + "}" * (deep - 1)
+    assert data.loads(nested.encode())
+    for text in ("[" * (deep + 1) + "]" * (deep + 1), '{"a": [1, {"b": [' + nested + "]}]}"):
+        with pytest.raises(ValueError, match=f"nested too deeply to read .more than {deep} "):
+            data.loads(text.encode())
 
 
 def test_a_failed_build_prints_its_problems_not_a_traceback(tmp_path, capsys):

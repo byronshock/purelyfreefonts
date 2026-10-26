@@ -8,7 +8,10 @@ and retired views from ``config/site.toml`` (``tff_site.views``: the owner's sit
 2026-10-07, ``view_labels_short``, and 2026-09-30, ``default_rank_project`` and
 ``overall_retired``; until a refresh carries them into the catalog, the page shows config's);
 concatenate and hash the JS and CSS parts
-(``tff_site.assets``); write the list-index and details JSON; serve each ``preview`` SVG from
+(``tff_site.assets``); write the list-index and details JSON; derive the hopper's match file
+from ``names.json`` (``tff_site.matchfile``: the owner's ruling of 2026-10-22,
+``inventory_match_data_site_build``) and write it as ``/assets/match.<h>.json``, named on
+``#list`` but never preloaded; serve each ``preview`` SVG from
 ``specimens/`` next to the data file as ``/assets/specimens/<id>.<h>.svg``, checking its
 sha256 and trimming it to the family's name (below); copy each ``font_file`` from the font
 cache to ``/assets/fonts/<id>.<h>.<ext>``, and the interface font (``UI_FONTS``, from
@@ -66,7 +69,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from tff_catalog import jsonio
-from tff_site import assets, blog, data, fonts, pages, trim, views
+from tff_site import assets, blog, data, fonts, matchfile, pages, trim, views
 
 if TYPE_CHECKING:
     import jinja2
@@ -168,6 +171,7 @@ def build(
     data_path: Path = DEFAULT_DATA,
     out_dir: Path = DEFAULT_OUT,
     *,
+    names_path: Path | None = None,
     fonts_dir: Path = fonts.DEFAULT_CACHE,
     commit: str | None = None,
     allow_dirty: bool = False,
@@ -187,10 +191,20 @@ def build(
     Blog posts come from ``blog_dir`` (default ``site_dir/content/blog``); ``drafts``
     publishes posts marked ``draft: true`` too (the staging deploy). The views' labels and
     measures lines come from ``site_config`` (``tff_site.views``); a view it names that the
-    catalog lacks, or the other way round, is an error.
+    catalog lacks, or the other way round, is an error. The hopper's match file comes from
+    ``names_path``, by default the names file beside the catalog
+    (``matchfile.default_names_path``), which must be of the catalog's run, and from the
+    reviewed list beside it (``matchfile.match_file``).
     """
     data_path, out_dir, site_dir, fonts_dir = map(Path, (data_path, out_dir, site_dir, fonts_dir))
     doc, catalog_sha256 = _load_valid(data_path)
+    if names_path is None:
+        names_path = matchfile.default_names_path(data_path)
+    names_path = Path(names_path)
+    try:
+        match = matchfile.match_file(doc, names_path)
+    except matchfile.MatchFileError as exc:
+        raise BuildError(exc.errors) from exc
     try:
         doc = views.apply(doc, views.load(site_config))
     except views.ConfigError as exc:
@@ -202,14 +216,24 @@ def build(
         commit = git_commit(REPO_ROOT, allow_dirty=allow_dirty)
     elif not COMMIT_PATTERN.fullmatch(commit):
         raise BuildError([f"commit {commit!r} is not 40 lowercase hex digits (optionally -dirty)"])
-    target = _check_out_dir(out_dir, protected=(REPO_ROOT, site_dir, data_path.parent, fonts_dir))
+    target = _check_out_dir(
+        out_dir, protected=(REPO_ROOT, site_dir, data_path.parent, names_path.parent, fonts_dir)
+    )
     # A build without font files serves a catalog in which no font has one.
     site_doc = doc if font_files else {**doc, "fonts": [_no_file(f) for f in doc["fonts"]]}
 
-    version = version_fields(commit, doc, catalog_sha256=catalog_sha256)
+    version = version_fields(
+        commit,
+        doc,
+        catalog_sha256=catalog_sha256,
+        names_sha256=match.names_sha256,
+        reviewed_sha256=match.reviewed_sha256,
+    )
     stage = _staging_dir(target)
     try:
-        _write_site(stage, doc, site_doc, data_path.parent, fonts_dir, version, site_dir, posts)
+        _write_site(
+            stage, doc, site_doc, data_path.parent, fonts_dir, version, site_dir, posts, match.blob
+        )
         files = _check_tree(stage)
         _swap(stage, target)
     except BaseException:
@@ -232,32 +256,62 @@ def git_commit(repo_root: Path = REPO_ROOT, *, allow_dirty: bool = False) -> str
     return sha
 
 
-def version_txt(commit: str, doc: dict, *, catalog_sha256: str | None = None) -> str:
-    """Return ``version.txt``: commit, run_date, method_version, catalog_sha256, schema.
+def version_txt(
+    commit: str,
+    doc: dict,
+    *,
+    names_sha256: str,
+    reviewed_sha256: str,
+    catalog_sha256: str | None = None,
+) -> str:
+    """Return ``version.txt``: commit, run_date, method_version, catalog_sha256, names_sha256,
+    reviewed_sha256, schema.
 
     It never contains a build time, so rebuilding the same commit gives the same bytes.
     ``catalog_sha256`` is the sha256 of the ``catalog-site.json`` file, so
     ``sha256sum build/catalog-site.json`` matches the live site (design-m2 §5); the build
     passes the hash of the bytes it read. Without it, the hash of ``doc`` in the form
     Milestone 1's export writes (``jsonio.pretty_bytes``, as ``jsonio.dump``) is used.
+    ``names_sha256`` and ``reviewed_sha256`` are the sha256 of the bytes of the names file and
+    of the reviewed list beside it (of no bytes when there is none), from which the match file
+    comes (``matchfile.match_file``; site/CONTRACT.md section 11).
     """
-    return _version_text(version_fields(commit, doc, catalog_sha256=catalog_sha256))
+    return _version_text(
+        version_fields(
+            commit,
+            doc,
+            catalog_sha256=catalog_sha256,
+            names_sha256=names_sha256,
+            reviewed_sha256=reviewed_sha256,
+        )
+    )
 
 
 def version_fields(
-    commit: str, doc: Mapping[str, Any], *, catalog_sha256: str | None = None
+    commit: str,
+    doc: Mapping[str, Any],
+    *,
+    names_sha256: str,
+    reviewed_sha256: str,
+    catalog_sha256: str | None = None,
 ) -> dict[str, str]:
     """Return the ``version.txt`` fields, in file order (see ``version_txt``)."""
     if catalog_sha256 is None:
         catalog_sha256 = hashlib.sha256(jsonio.pretty_bytes(doc)).hexdigest()
-    elif not re.fullmatch(r"[0-9a-f]{64}", catalog_sha256):
-        raise ValueError(f"catalog_sha256 {catalog_sha256!r} is not 64 hex digits")
+    hashes = {
+        "catalog_sha256": catalog_sha256,
+        "names_sha256": names_sha256,
+        "reviewed_sha256": reviewed_sha256,
+    }
+    for name, value in hashes.items():
+        if not re.fullmatch(r"[0-9a-f]{64}", value):
+            raise ValueError(f"{name} {value!r} is not 64 hex digits")
     major = str(doc["schema_version"]).split(".", 1)[0]
     return {
         "commit": commit,
         "run_date": doc["run"]["date"],
         "method_version": doc["run"]["method_version"],
-        "catalog_sha256": catalog_sha256,
+        **hashes,
         "schema": f"catalog-site/{major}",
     }
 
@@ -362,6 +416,7 @@ def _write_site(
     version: Mapping[str, str],
     site_dir: Path,
     posts: list[blog.Post],
+    match: bytes,
 ) -> None:
     commit = version["commit"]
     urls = assets.AssetManifest().urls
@@ -382,6 +437,7 @@ def _write_site(
     urls["list.json"] = assets.write_hashed(out, "list.json", jsonio.canonical_bytes(index))
     payload = data.details(site_doc, font_assets=font_assets)
     urls["details.json"] = assets.write_hashed(out, "details.json", jsonio.canonical_bytes(payload))
+    urls["match.json"] = assets.write_hashed(out, "match.json", match)
 
     blog.write_images(out, posts)
     common = {
@@ -422,6 +478,8 @@ def _list_context(
         "score_words": data.SCORE_WORDS,
         "index_url": urls["list.json"],
         "details_url": urls["details.json"],
+        # The hopper's match file: named on #list, never preloaded (M3-D7 a).
+        "match_url": urls["match.json"],
         "rows": rows,
         "held_shown": any(row["held"] for row in rows),
     }

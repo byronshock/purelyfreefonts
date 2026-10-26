@@ -17,6 +17,7 @@ from pathlib import Path
 
 import pytest
 
+import tff_site
 from tff_site import data, views
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -172,3 +173,20 @@ def test_the_reader_keeps_to_light_imports():
     )
     out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True)
     assert json.loads(out.stdout.replace("'", '"')) == []
+
+
+def test_every_site_module_keeps_to_light_imports():
+    """The tff_site package docstring: every module together loads only
+    ``LIGHT_CATALOG_MODULES`` of tff_catalog (``owned`` among them, for the match file) and no
+    numpy."""
+    package = Path(tff_site.__file__).parent
+    modules = sorted(f"tff_site.{p.stem}" for p in package.glob("*.py") if p.stem != "__init__")
+    assert "tff_site.matchfile" in modules
+    code = (
+        f"import importlib, sys; [importlib.import_module(m) for m in {modules!r}]; "
+        "print(sorted(m for m in sys.modules if m.startswith('tff_catalog') or m == 'numpy'))"
+    )
+    out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True)
+    loaded = set(json.loads(out.stdout.replace("'", '"')))
+    assert "tff_catalog.owned" in loaded
+    assert loaded <= tff_site.LIGHT_CATALOG_MODULES

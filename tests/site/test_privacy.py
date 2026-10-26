@@ -13,6 +13,8 @@ screen at a time until every specimen has been requested. ``findings()`` then re
 tests fail on:
 
 - a request to another origin, or to ``/cdn-cgi/``, or a WebSocket;
+- a request for the hopper's match file (``/assets/match.<h>.json``): the sweep never gives the
+  hopper a list, and the file loads only once one arrives (M3-D7 a, site/CONTRACT.md section 11);
 - a request to Stripe (the sweep never clicks the tip link);
 - a cookie in the context, or a ``Set-Cookie`` on any response;
 - anything in ``storage_state(indexed_db=True)``, or anything the recorders saw: storage and
@@ -40,8 +42,9 @@ Also here: the tip link is a plain link and the only way to Stripe; without Java
 stay on this site too; the built files point nowhere else and the script names no storage API;
 the sweep visits every page the build writes; the sweep and the live checks
 (``tests/live/checks.py``) catch what they are for (a planted cookie, storage write, CSP
-violation, prefetch link, foreign request, injected beacon, inline script, page error and bad
-headers); and the live checks pass against this build.
+violation, prefetch link, foreign request, match-file request, injected beacon, inline script,
+page error, bad headers and bad payloads); the list never fetches the hopper's match file without
+a list; and the live checks pass against this build.
 """
 
 import hashlib
@@ -63,6 +66,7 @@ from urllib.parse import urlsplit
 
 import httpx
 import pytest
+from tests.helpers.names_files import copy_names
 from tests.live import checks
 
 from tff_site import serve
@@ -437,6 +441,10 @@ class Sweep:
             [r.url for r in web if urlsplit(r.url).path.startswith("/cdn-cgi/")],
         )
         add("requests to Stripe", self.stripe_requests())
+        add(
+            "requests for the match file without a list",
+            [r.url for r in web if urlsplit(r.url).path.startswith(checks.MATCH_PREFIX)],
+        )
         add("WebSockets", list(self.websockets))
         add("responses that set a cookie", g.cookie_responses())
         add("cookies in the browser", g.context.cookies())
@@ -616,6 +624,7 @@ def privacy_data(site_data: Path, tmp_path_factory: pytest.TempPathFactory) -> P
             fonts.cache_path(font_file["sha256"], font_dir).write_bytes(blob)
     path = dest / "catalog-site.json"
     path.write_text(json.dumps(doc, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    copy_names(site_data, path)
     return path
 
 
@@ -777,6 +786,24 @@ def test_every_page_rank_filter_and_panel_stays_on_this_site(
     print(f"privacy sweep: {dict(sorted(done.items()))}")
 
 
+def test_the_list_page_never_fetches_the_match_file_without_a_list(
+    guarded_context: Any, site_dir: Path
+) -> None:
+    """M3-D7 (a): the list names the hopper's match file in ``#list[data-match]``, and loading
+    the page, scrolling every specimen into view and opening a panel never request it."""
+    sweep = Sweep(guarded_context(viewport=WIDE), csp=expected_csp())
+    page = sweep.open_list()
+    url = page.get_attribute("#list", "data-match")
+    assert url
+    assert re.fullmatch(r"/assets/match\.[0-9a-f]{10}\.json", url)
+    assert (site_dir / url.lstrip("/")).is_file()
+    sweep.scroll_specimens(page)
+    page.locator(".details-toggle").first.click()
+    page.wait_for_load_state("networkidle")
+    assert [r.url for r in sweep.requests if urlsplit(r.url).path == url] == []
+    assert sweep.findings() == {}
+
+
 def test_the_tip_link_is_the_only_way_to_stripe(guarded_context: Any, tip_url: str) -> None:
     guarded = guarded_context(viewport=WIDE)
     sweep = Sweep(guarded, csp=expected_csp())
@@ -821,6 +848,7 @@ def test_the_build_caddy_serves_stays_on_this_site(browser: Any) -> None:
     by_path = {f.path: f for f in fetched}
     problems += checks.header_problems(fetched, expected, staging=False)
     problems += checks.html_problems(fetched)
+    problems += checks.payload_problems(fetched)
     problems += checks.robots_problems(
         by_path["/robots.txt"], Path(site, "robots.txt").read_bytes()
     )
@@ -932,6 +960,7 @@ def test_the_sweep_catches_what_it_is_for(
               document.body.append(img);
               await fetch('/planted');
               await fetch('/cdn-cgi/rum');
+              await fetch('/assets/match.0123456789.json');
               setTimeout(() => { throw new Error('tff-probe'); }, 0);
             }"""
         )
@@ -947,6 +976,7 @@ def test_the_sweep_catches_what_it_is_for(
         "requests to another origin",
         "requests to /cdn-cgi/",
         "requests to Stripe",
+        "requests for the match file without a list",
         "responses that set a cookie",
         "cookies in the browser",
         "browser storage",
@@ -1001,6 +1031,10 @@ def test_the_live_checks_pass_against_this_build(site_url: str, site_dir: Path) 
     assert {f.kind for f in fetched} >= checks.CSP_KINDS | {"css", "txt", "xml"}
     assert checks.header_problems(fetched, expected, staging=False) == []
     assert checks.html_problems(fetched) == []
+    assert checks.payload_problems(fetched) == []
+    assert [f.path for f in fetched if f.path.startswith(checks.MATCH_PREFIX)] == [
+        next(a["data-match"] for t, a in checks.tags(by_path["/"].body) if a.get("id") == "list")
+    ]
     built_robots = (site_dir / "robots.txt").read_bytes()
     assert checks.robots_problems(by_path["/robots.txt"], built_robots) == []
     version = by_path["/version.txt"].body.decode()
@@ -1019,14 +1053,17 @@ def test_the_live_checks_catch_what_they_are_for() -> None:
         '<!doctype html><link rel="stylesheet" href="/assets/style.0123456789.css">'
         '<link rel="preconnect" href="https://example.com">'
         '<script type="module" src="/assets/app.0123456789.js"></script>'
-        f'<ol id="list" data-index="/assets/list.0123456789.json" data-details="https://x.test/d.json">'
-        f"</ol>{beacon}"
+        '<ol id="list" data-index="/assets/list.0123456789.json"'
+        ' data-details="/assets/d.0123456789.json"'
+        f' data-match="/assets/match.0123456789.json"></ol>{beacon}'
     )
     sitemap = (
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
         "<url><loc>https://purelyfreefonts.com/</loc></url></urlset>"
     )
     version = "commit=" + "1" * 40 + "\nrun_date=2026-09-25\n"
+    # The list page each crawl gets: this one first, then one whose payloads are elsewhere.
+    served = {"/": home}
 
     def handler(request: httpx.Request) -> httpx.Response:
         path = request.url.path
@@ -1036,13 +1073,19 @@ def test_the_live_checks_catch_what_they_are_for() -> None:
         body: str = "x"
         status = 200
         if path == "/":
-            body = home
+            body = served["/"]
             headers["Set-Cookie"] = "__cf_bm=1"
             headers["X-Robots-Tag"] = "noindex"
         elif path == "/sitemap.xml":
             body = sitemap
         elif path == "/version.txt":
             body = version
+        elif path.startswith("/assets/d."):
+            body = "not json"
+        elif path.startswith("/assets/match."):
+            body = '{"format": "tff-list"}'
+        elif path.startswith("/assets/list."):
+            body = "[]"
         elif path == "/robots.txt":
             body = "User-agent: *\nAllow: /\n# Content-Signal: search=yes\n"
         elif path.startswith("/assets/app."):
@@ -1061,8 +1104,30 @@ def test_the_live_checks_catch_what_they_are_for() -> None:
     assert problems == [
         "/ names 'https://static.cloudflareinsights.com/beacon.min.js' (js), which is not a path "
         "on this site",
-        "/ names 'https://x.test/d.json' (json), which is not a path on this site",
     ]
+    # Every payload must be on this site, the match file too (M3-D7 a): never fetched from
+    # another, by URL or protocol-relative URL.
+    served["/"] = home.replace(
+        'data-details="/assets/d.0123456789.json"', 'data-details="https://x.test/d.json"'
+    ).replace(
+        'data-match="/assets/match.0123456789.json"',
+        'data-match="//x.test/assets/match.0123456789.json"',
+    )
+    with checks.client("https://example.test", transport=transport) as http:
+        elsewhere, foreign = checks.crawl(http)
+    assert foreign == [
+        *problems,
+        "/ names 'https://x.test/d.json' (json), which is not a path on this site",
+        "/ names '//x.test/assets/match.0123456789.json' (json), which is not a path on this site",
+    ]
+    assert not any(f.path.startswith(checks.MATCH_PREFIX) for f in elsewhere)
+    payloads = checks.payload_problems(fetched)
+    assert len(payloads) == 3
+    assert payloads[0] == "/assets/list.0123456789.json (200): a JSON list, not an object"
+    assert payloads[1].startswith("/assets/d.0123456789.json (200): not JSON (")
+    assert payloads[2] == (
+        "/assets/match.0123456789.json (200): format 'tff-list', not 'tff-match'"
+    )
     headers = "\n".join(checks.header_problems(fetched, expected, staging=False))
     assert "/ (200): sends set-cookie" in headers
     assert "X-Robots-Tag 'noindex' outside the test site" in headers
@@ -1083,6 +1148,7 @@ def test_the_live_checks_catch_what_they_are_for() -> None:
     index = {"commit": "2" * 40, "run_date": "2026-09-25"}
     wrong = checks.version_problems(version, expect_commit="3" * 40, index=index)
     assert len(wrong) == 3  # missing fields, another commit, and the index disagrees
+    assert "names_sha256" in wrong[0]
     challenge = httpx.MockTransport(
         lambda request: httpx.Response(403, headers={"cf-mitigated": "challenge"}, text="x")
     )

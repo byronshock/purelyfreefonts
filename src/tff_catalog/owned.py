@@ -397,12 +397,30 @@ _OWNED_LETTERS = frozenset({"", "p", "b", "r", "n"})
 # What a reviewed recode may make of a names.json alias: a near-match relation only
 # (hopper_hackgen_related: HackGen, a build of Hack in names.json, is related here).
 RECODE_RELATIONS = frozenset({"related", "sibling", "bundle"})
+# The names.json relations whose aliases count a family as owned, the ones a recode is for.
+OWNED_RELATIONS = frozenset(
+    {"build"} | {relation for relation, letter in _LETTERS.items() if letter in _OWNED_LETTERS}
+)
+
+
+class RecodeError(ValueError):
+    """Recodes that other names of their families bypass (``_check_recodes``): ``problems``
+    holds each one's recoded key, message and ``via``, the own key of the name that bypasses
+    it (None when the family's name has the recoded key), every one that a pass finds, and
+    ``keys`` those recoded keys, so a caller can leave those recodes out and check the rest,
+    and tell a bypass that only a recode it left out makes (by ``via``)."""
+
+    def __init__(self, problems: Iterable[tuple[str, str, str | None]]) -> None:
+        self.problems = tuple(problems)
+        self.keys = frozenset(key for key, _, _ in self.problems)
+        super().__init__("\n".join(message for _, message, _ in self.problems))
 
 
 def _recodes(names_doc: Mapping[str, Any], recodes: Mapping[str, str] | None) -> dict[str, str]:
     """``recodes`` by ``match_key``, checked: each relation one of ``RECODE_RELATIONS``, one
-    relation per key, and each key one that an alias of ``names_doc`` has; else ValueError,
-    so a stale entry is caught.
+    relation per key, and each key one that an alias of ``names_doc`` has with an owned
+    relation (``OWNED_RELATIONS``); else ValueError, so a stale entry is caught, whether a
+    refresh drops the alias or makes it a near-match itself (then the recode changes nothing).
 
     By key, as the hopper matches: a recode of "HackGen" recodes an alias spelled "Hack Gen"
     too, which would otherwise keep Hack owned at the same key.
@@ -420,6 +438,17 @@ def _recodes(names_doc: Mapping[str, Any], recodes: Mapping[str, str] | None) ->
     stale = sorted(name for name in recodes or {} if match_key(name) not in listed - {""})
     if stale:
         raise ValueError(f"recodes name no alias of names.json: {stale}")
+    owning = {
+        match_key(row["name"])
+        for fam in names_doc["families"]
+        for row in fam["names"]
+        if row["relation"] in OWNED_RELATIONS
+    }
+    idle = sorted(name for name in recodes or {} if match_key(name) not in owning)
+    if idle:
+        raise ValueError(
+            f"recodes change nothing, names.json's aliases there are near-matches: {idle}"
+        )
     return out
 
 
@@ -489,33 +518,67 @@ def _holders(
 def _check_recodes(
     names_doc: Mapping[str, Any], holders: Mapping[str, _Holders], recoded: Mapping[str, set[str]]
 ) -> None:
-    """ValueError when a recoded family could still be owned through a recoded name.
+    """``RecodeError`` when a recoded family could still be owned through a recoded name,
+    listing every such recode and name at once.
 
     That is when its own family name has the recoded key, or when another of its names
     keeps an owned code at its own key while its candidates reach the recoded one: an alias
     "HackGen NF" as a patched build of Hack would make a list's "HackGen NF" own Hack again,
-    so it needs a recode of its own (``hopper_hackgen_related``).
+    so it needs a recode of its own (``hopper_hackgen_related``), and so would a "HackGen Nerd
+    Font" beside it. A name the site build can't recode is named saying why, never asking for
+    its recode: one at its family name's key, which no recode touches, or at a key that another
+    family's alias also has, where a recode would recode both, so the build refuses it
+    (``tff_site.matchfile.refused_recodes``). A key that its family name has is named for that
+    alone, as no recode of a name that reaches it could save it. Each bypass names the
+    bypassing name's own key as its ``via`` (``RecodeError``), so a caller that left a listed
+    recode out can tell the bypasses that only that makes.
     """
-    for key, fids in sorted(recoded.items()):
-        for fid in sorted(fids):
-            if holders[key].owns(fid):
-                raise ValueError(f"recode {key!r}: the family name of {fid} has that key")
+    problems: list[tuple[str, str, str | None]] = [
+        (key, f"recode {key!r}: the family name of {fid} has that key", None)
+        for key, fids in sorted(recoded.items())
+        for fid in sorted(fids)
+        if holders[key].owns(fid)
+    ]
+    named = {key for key, _, _ in problems}
     by_family: dict[str, set[str]] = defaultdict(set)
     for key, fids in recoded.items():
         for fid in fids:
             by_family[fid].add(key)
+    aliased: dict[str, set[str]] = defaultdict(set)  # key -> the families with an alias there
+    if by_family:
+        for fam in names_doc["families"]:
+            for item in fam["names"]:
+                aliased[match_key(item["name"])].add(fam["id"])
     for fam in names_doc["families"]:
         keys_here = by_family.get(fam["id"])
         if not keys_here:
             continue
         for name in (fam["family"], *(item["name"] for item in fam["names"])):
             chain = candidates(name)
-            reached = sorted(keys_here & {c.key for c in chain[1:]})
-            if reached and holders[chain[0].key].owns(fam["id"]):
-                raise ValueError(
-                    f"recode {reached[0]!r}: {fam['id']}'s name {name!r} reaches it and still "
-                    "counts as owned; recode that name too"
+            reached = sorted((keys_here - named) & {c.key for c in chain[1:]})
+            if not (reached and holders[chain[0].key].owns(fam["id"])):
+                continue
+            others = sorted(aliased[chain[0].key] - {fam["id"]})
+            if chain[0].key == match_key(fam["family"]):  # no recode can make it a near-match
+                fix = ", at its family name's key, which no recode touches"
+            elif others:  # the site build refuses a recode that would recode them too
+                fix = (
+                    f", at a key that an alias of {', '.join(others)} also has, which the "
+                    "build won't recode"
                 )
+            else:
+                fix = "; recode that name too"
+            problems += [
+                (
+                    key,
+                    f"recode {key!r}: {fam['id']}'s name {name!r} reaches it and still counts "
+                    f"as owned{fix}",
+                    chain[0].key,
+                )
+                for key in reached
+            ]
+    if problems:
+        raise RecodeError(problems)
 
 
 @dataclass(frozen=True, slots=True)
@@ -546,7 +609,8 @@ class Check:
     collisions: tuple[Collision, ...]
     amb: Mapping[str, tuple[str, ...]]  # key -> catalog ids its name may be a weight of
     meetings: tuple[Meeting, ...]
-    shared: Mapping[str, tuple[str, ...]]  # keys that several catalog families own
+    # keys that a catalog family owns with another family, in the catalog or not -> the owners
+    shared: Mapping[str, tuple[str, ...]]
 
 
 def check_document(
@@ -564,8 +628,11 @@ def check_document(
     families among them make the name's key ambiguous ("Archivo Black" may be
     Archivo's Black weight). For every ``distinct_from`` pair, in both
     directions, no candidate of any name of one family may be a key at which the
-    other holds a code that could count it as owned (Inter Tight never reaches
-    Inter; a bundle name both share, such as "Libertinus", only gives near-matches).
+    other, a catalog family, holds a code that could count it as owned (Inter Tight
+    never reaches Inter; a bundle name both share, such as "Libertinus", only gives
+    near-matches; a family outside the catalog is never owned, coded ``-``). A key
+    is ``shared`` when a catalog family owns it and another family does too, in the
+    catalog or not: a list's name there would count the catalog family as owned.
     ``recodes`` as in ``match_document``.
     """
     catalog = frozenset(catalog_ids)
@@ -590,18 +657,20 @@ def check_document(
     meetings: list[Meeting] = []
     for fid, other in sorted(pairs | {(b, a) for a, b in pairs}):
         fam = by_id.get(fid)
-        if fam is None:
+        if fam is None or other not in catalog:  # outside the catalog, never owned
             continue
         for name in (fam["family"], *(n["name"] for n in fam["names"])):
             for cand in candidates(name):
                 found = holders.get(cand.key)
                 if found is not None and found.owns(other):
                     meetings.append(Meeting(fid, other, name, cand.key))
-    shared = {
-        key: tuple(sorted(fid for fid, letter in h.ids.items() if letter in _OWNED_LETTERS))
-        for key, h in sorted(holders.items())
-        if sum(letter in _OWNED_LETTERS for letter in h.ids.values()) > 1
-    }
+    shared: dict[str, tuple[str, ...]] = {}
+    for key, h in sorted(holders.items()):
+        owners = sorted(
+            f for f, letter in (*h.ids.items(), *h.others.items()) if letter in _OWNED_LETTERS
+        )
+        if len(owners) > 1 and catalog.intersection(owners):
+            shared[key] = tuple(owners)
     return Check(
         tuple(collisions),
         {key: tuple(sorted(ids)) for key, ids in sorted(amb.items()) if ids},
@@ -658,8 +727,9 @@ def match_document(
     a near-match of Hack while the alias row, and the ranking, stay). A recode
     works by ``match_key``, on every alias row of every family at that key, however
     names.json spells it. A ValueError, so that a stale or bypassed recode is caught:
-    a key no alias has, a relation outside ``RECODE_RELATIONS``, two relations for one
-    key, or a recoded family still owned through it (``_check_recodes``).
+    a key no alias has, or only near-match aliases (``OWNED_RELATIONS``), a relation
+    outside ``RECODE_RELATIONS``, two relations for one key, or a recoded family still
+    owned through it (``_check_recodes``).
     """
     ids = _catalog_ids(names_doc, catalog_ids, run_date)
     index = {fid: n for n, fid in enumerate(ids)}

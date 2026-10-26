@@ -4,7 +4,9 @@ Plain functions over HTTP responses, so the live tests (``tests/live``) and an o
 a local build (``tests/site/test_privacy.py``) run the same code:
 
 - ``crawl(client)`` fetches every kind of file the site serves: the sitemap's pages, a missing
-  page (404), the stylesheet, the script, both JSON payloads, a specimen (or ``favicon.svg``),
+  page (404), the stylesheet, the script, the three JSON payloads (the list index, the details
+  and the hopper's match file: the checker's fetch, not a page's, so M3-D7 doesn't apply), a
+  specimen (or ``favicon.svg``),
   ``robots.txt``, ``sitemap.xml`` and ``version.txt``. Every request sends ``Accept: text/html``,
   because Cloudflare injects its beacon only into responses to requests that accept HTML
   (ops/SERVER.md section G).
@@ -15,6 +17,8 @@ a local build (``tests/site/test_privacy.py``) run the same code:
   preconnects, and ``X-Robots-Tag: noindex`` on the test site's pages only.
 - ``html_problems`` wants no ``cloudflareinsights``, ``data-cf-beacon`` or ``/cdn-cgi/`` in any
   HTML, no script but the site's own module, and no ``<link>`` that prefetches or preconnects.
+- ``payload_problems`` wants every JSON payload that answered 200 to be a JSON object, and the
+  match file's ``format`` to be ``tff-match`` (site/CONTRACT.md section 11).
 - ``robots_problems`` wants ``robots.txt`` byte-equal to the built file (Cloudflare's managed
   robots.txt would add lines); ``version_problems`` wants ``version.txt`` in the contract's
   format, naming the expected commit, and agreeing with the list index.
@@ -26,6 +30,7 @@ blocked the test client, which is its own kind of failure (design-m2 §9, item 1
 """
 
 import difflib
+import json
 import re
 import xml.etree.ElementTree as ET
 from collections.abc import Iterable, Mapping
@@ -53,14 +58,26 @@ PREFETCH_LINK_HEADER = re.compile(r"rel\s*=\s*\"?[^\";,]*\b(" + "|".join(PREFETC
 # Loader, challenge scripts) lives under /cdn-cgi/.
 BEACON = re.compile(r"cloudflareinsights|data-cf-beacon|/cdn-cgi/", re.IGNORECASE)
 SCRIPT_SRC = re.compile(r"^/assets/app\.[0-9a-f]{10}\.js$")
-VERSION_FIELDS = ("commit", "run_date", "method_version", "catalog_sha256", "schema")
+VERSION_FIELDS = (
+    "commit",
+    "run_date",
+    "method_version",
+    "catalog_sha256",
+    "names_sha256",
+    "reviewed_sha256",
+    "schema",
+)
 VERSION_PATTERNS = {
     "commit": re.compile(r"[0-9a-f]{40}"),
     "run_date": re.compile(r"\d{4}-\d{2}-\d{2}"),
     "method_version": re.compile(r"\S+"),
     "catalog_sha256": re.compile(r"[0-9a-f]{64}"),
+    "names_sha256": re.compile(r"[0-9a-f]{64}"),
+    "reviewed_sha256": re.compile(r"[0-9a-f]{64}"),
     "schema": re.compile(r"catalog-site/\d+"),
 }
+MATCH_PREFIX = "/assets/match."
+MATCH_FORMAT = "tff-match"
 # Where Cloudflare's Web Analytics doesn't inject by default: the EU, the EEA, the UK and
 # Switzerland (ops/SERVER.md section G).
 NO_BEACON_LOCATIONS = frozenset(
@@ -161,7 +178,10 @@ def crawl(http: httpx.Client) -> tuple[list[Fetched], list[str]]:
         problems.append("/ has no #list: this isn't the list page")
     wanted = [(path, "css") for path in stylesheets] + [(path, "js") for path in scripts]
     for ol in lists[:1]:
-        wanted += [(ol.get("data-index", ""), "json"), (ol.get("data-details", ""), "json")]
+        wanted += [
+            (ol.get(attribute, ""), "json")
+            for attribute in ("data-index", "data-details", "data-match")
+        ]
     wanted += [(path, "svg") for path in specimens[:1]]
     wanted += [("/favicon.svg", "svg"), ("/robots.txt", "txt"), ("/version.txt", "txt")]
     sitemap = get(http, "/sitemap.xml", "xml")
@@ -231,6 +251,25 @@ def html_problems(fetched: Iterable[Fetched]) -> list[str]:
                 problems.append(f"{f.where}: a script that isn't the site's: {attrs}")
             if tag == "link" and PREFETCH_RELS & set(attrs.get("rel", "").lower().split()):
                 problems.append(f"{f.where}: a link that prefetches or preconnects: {attrs}")
+    return problems
+
+
+def payload_problems(fetched: Iterable[Fetched]) -> list[str]:
+    """Every JSON payload that answered 200 must be a JSON object, and the match file a
+    ``tff-match`` document (its other parts are the build's to check)."""
+    problems: list[str] = []
+    for f in fetched:
+        if f.kind != "json" or f.status != 200:
+            continue
+        try:
+            doc = json.loads(f.body)
+        except ValueError as exc:
+            problems.append(f"{f.where}: not JSON ({exc})")
+            continue
+        if not isinstance(doc, dict):
+            problems.append(f"{f.where}: a JSON {type(doc).__name__}, not an object")
+        elif f.path.startswith(MATCH_PREFIX) and doc.get("format") != MATCH_FORMAT:
+            problems.append(f"{f.where}: format {doc.get('format')!r}, not {MATCH_FORMAT!r}")
     return problems
 
 

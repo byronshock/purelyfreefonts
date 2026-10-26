@@ -50,6 +50,7 @@ from typing import Any
 from urllib.parse import urlsplit
 
 import pytest
+from tests.helpers.names_files import copy_names
 from tests.site.conftest import fetch_unencoded
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -131,6 +132,7 @@ def loader_data(site_data: Path, tmp_path_factory: pytest.TempPathFactory) -> Pa
         preview["sha256"] = hashlib.sha256(blob).hexdigest()
     path = dest / "catalog-site.json"
     path.write_text(json.dumps(doc, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    copy_names(site_data, path)
     return path
 
 

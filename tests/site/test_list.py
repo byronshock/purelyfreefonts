@@ -31,8 +31,9 @@ from typing import Any
 import pytest
 from tests.fixtures import make_large_catalog
 
+from tff_catalog import jsonio
 from tff_catalog.keys import search_key
-from tff_site import data
+from tff_site import data, matchfile
 from tff_site import views as site_views
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -1819,6 +1820,11 @@ def test_large_catalog_is_deterministic_valid_and_complete(tmp_path: Path) -> No
     path = make_large_catalog.write(tmp_path / "large", fonts=60, seed=7)
     written = data.load(path)
     assert data.validate(written).fonts == 60
+    # names.json beside it, of the same run, so the build can make the hopper's match file
+    names = path.parent / make_large_catalog.NAMES_NAME
+    assert matchfile.default_names_path(path) == names
+    assert matchfile.names_errors(written, data.load(names)) == []
+    assert jsonio.pretty_bytes(make_large_catalog.make_names(written)) == names.read_bytes()
     for font in written["fonts"]:
         if font["preview"]:
             blob = (path.parent / font["preview"]["path"]).read_bytes()

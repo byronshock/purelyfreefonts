@@ -1035,14 +1035,26 @@ def _noise(size: int, seed: int = 7) -> bytes:
     return np.random.default_rng(seed).integers(0, 256, size, dtype=np.uint8).tobytes()
 
 
+MATCH = "assets/match.0123456789.json"
+
+
 def _fake_site(root: Path, *, html_extra: str = "", sizes: dict[str, int] | None = None) -> Path:
-    """A minimal built site: the list page and its four assets, with incompressible filler."""
-    sizes = {"css": 1000, "js": 1000, "list": 1000, "details": 1000, "font": 1000, **(sizes or {})}
+    """A minimal built site: the list page and its five assets, with incompressible filler."""
+    sizes = {
+        "css": 1000,
+        "js": 1000,
+        "list": 1000,
+        "details": 1000,
+        "match": 1000,
+        "font": 1000,
+        **(sizes or {}),
+    }
     files = {
         "assets/style.0123456789.css": sizes["css"],
         "assets/app.0123456789.js": sizes["js"],
         "assets/list.0123456789.json": sizes["list"],
         "assets/details.0123456789.json": sizes["details"],
+        MATCH: sizes["match"],
         "assets/ui/arimo.0123456789.woff2": sizes["font"],
     }
     for k, (rel, size) in enumerate(files.items()):
@@ -1058,7 +1070,8 @@ def _fake_site(root: Path, *, html_extra: str = "", sizes: dict[str, int] | None
         '<link rel="preload" href="/assets/list.0123456789.json" as="fetch" crossorigin>'
         f"</head><body>{html_extra}<main id=main><ol id=list class=font-list"
         ' data-index="/assets/list.0123456789.json"'
-        ' data-details="/assets/details.0123456789.json"></ol></main></body></html>\n',
+        ' data-details="/assets/details.0123456789.json"'
+        f' data-match="/{MATCH}"></ol></main></body></html>\n',
         encoding="utf-8",
     )
     return root
@@ -1075,6 +1088,7 @@ def test_a_small_site_passes(tmp_path: Path) -> None:
         ({"css": 60_000, "js": 45_000}, "index.html", "HTML + CSS + JS"),
         ({"list": 101_000}, "assets/list.0123456789.json", "list index"),
         ({"details": 151_000}, "assets/details.0123456789.json", "details payload"),
+        ({"match": 51_000}, MATCH, "match file"),
         ({"font": 31_000}, "assets/ui/arimo.0123456789.woff2", "interface font"),
     ],
 )
@@ -1107,11 +1121,101 @@ def test_missing_assets_are_problems(tmp_path: Path) -> None:
     site = _fake_site(tmp_path)
     (site / "assets" / "app.0123456789.js").unlink()
     (site / "assets" / "list.0123456789.json").unlink()
+    (site / MATCH).unlink()
     messages = [p.message for p in budgets.check(site)]
     assert any("app.0123456789.js" in m and "not in the site" in m for m in messages)
     assert any("list index" in m and "not in the site" in m for m in messages)
+    assert f"/{MATCH}: the match file is referenced, but not in the site" in messages
     (site / "index.html").unlink()
     assert [p.path for p in budgets.check(site)] == ["index.html"]
+
+
+def test_a_list_without_data_match_is_a_problem(tmp_path: Path) -> None:
+    site = _fake_site(tmp_path)
+    page = site / "index.html"
+    page.write_text(page.read_text().replace(f' data-match="/{MATCH}"', ""), encoding="utf-8")
+    assert [(p.path, p.message) for p in budgets.check(site)] == [
+        ("index.html", "#list has no data-match: can't find the match file")
+    ]
+
+
+@pytest.mark.parametrize(
+    "url", [f"https://x.test/{MATCH}", f"//x.test/{MATCH}", f"/../{MATCH}", f"{MATCH}"]
+)
+def test_a_match_file_off_this_site_is_a_problem(tmp_path: Path, url: str) -> None:
+    """M3-D7 (a): the hopper's match file is a same-site asset, so ``data-match`` that names
+    another site (or no site path) is flagged, though the site holds the file."""
+    site = _fake_site(tmp_path)
+    page = site / "index.html"
+    page.write_text(page.read_text().replace(f'data-match="/{MATCH}"', f'data-match="{url}"'))
+    assert [(p.path, p.message) for p in budgets.check(site)] == [
+        ("index.html", f"{url}: the match file is referenced, but not in the site")
+    ]
+
+
+NAME = MATCH.rsplit("/", 1)[1]
+# Where the match file may not be named: a case for each of budgets.TEXT_SUFFIXES.
+MENTIONS = [
+    pytest.param(
+        "index.html",
+        None,
+        f"names the match file {NAME} 2 times; only the list page's #list[data-match] "
+        "may, once (M3-D7 a)",
+        id="preload-on-the-list-page",
+    ),
+    pytest.param(
+        "about/index.html",
+        f'<!doctype html><title>t</title><link rel="help" href="/{MATCH}">',
+        None,
+        id="link-on-another-page",
+    ),
+    pytest.param("assets/app.0123456789.js", f'fetch("/{MATCH}");', None, id="url-in-the-script"),
+    pytest.param(
+        "404.html",
+        f'<!doctype html><title>t</title><a href="{MATCH}">x</a>',
+        None,
+        id="relative",
+    ),
+    pytest.param("sitemap.xml", f"<loc>https://x.test/{MATCH}</loc>", None, id="sitemap"),
+    pytest.param("assets/details.0123456789.json", f'{{"next": "/{MATCH}"}}', None, id="payload"),
+    pytest.param(
+        "assets/style.0123456789.css",
+        f"body{{background:url(/{MATCH})}}",
+        None,
+        id="stylesheet",
+    ),
+    pytest.param("robots.txt", f"User-agent: *\nAllow: /{MATCH}\n", None, id="text"),
+    pytest.param(
+        "favicon.svg",
+        f'<svg xmlns="http://www.w3.org/2000/svg"><image href="/{MATCH}"/></svg>',
+        None,
+        id="svg",
+    ),
+]
+
+
+def test_the_mention_cases_cover_every_text_suffix() -> None:
+    assert {Path(case.values[0]).suffix for case in MENTIONS} == budgets.TEXT_SUFFIXES
+
+
+@pytest.mark.parametrize(("path", "text", "problem"), MENTIONS)
+def test_only_the_list_s_data_match_may_name_the_match_file(
+    tmp_path: Path, path: str, text: str | None, problem: str | None
+) -> None:
+    """M3-D7 (a): the match file loads only once a visitor's list arrives, so nothing but
+    ``#list[data-match]`` names it: no preload, no other page, script, payload, stylesheet,
+    text file, image or sitemap (each of ``budgets.TEXT_SUFFIXES`` has a case here)."""
+    preload = f'<link rel="preload" as="fetch" crossorigin href="/{MATCH}">'
+    site = _fake_site(tmp_path, html_extra=preload if text is None else "")
+    if text is not None:
+        target = site / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(text, encoding="utf-8")
+    want = (
+        problem
+        or f"names the match file {NAME}; only the list page's #list[data-match] may, once (M3-D7 a)"
+    )
+    assert [(p.path, p.message) for p in budgets.check(site)] == [(path, want)]
 
 
 def test_specimen_budget(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
