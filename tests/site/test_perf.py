@@ -769,6 +769,88 @@ def test_refilter_verdict_refuses_malformed_sets(
         _refilter_verdict(sets, labels)
 
 
+# The wiring around the rule, with a fake page. Five ranks, as the list page offers, so
+# #f-hide-limited is step 14 here too.
+FAKE_RANKS = [data.DEFAULT_VIEW, "r1", "r2", "r3", "r4"]
+
+
+def _records(steps: list[tuple[str, str, str | None]], ms: Sequence[float]) -> list[dict]:
+    """What REFILTER_JS records for ``steps`` on a page that redraws each one: a new view
+    each time, and a list that shows what the count says."""
+    return [
+        {
+            "ms": t,
+            "target": selector[1:],
+            "count": "Showing 9 of 540",
+            "rows": 9,
+            "hash": f"#rank=r{k}",
+        }
+        for k, ((_, selector, _), t) in enumerate(zip(steps, ms, strict=True))
+    ]
+
+
+def _fake_refilter_once(monkeypatch: pytest.MonkeyPatch) -> list[str]:
+    """Stand in for ``_refilter_once``. Each set's extra init script names what its fake page
+    does: "" redraws every change within budget, "slow" takes 250 ms at step 2 and 300 ms at
+    step 14, "other steps" offers a rank fewer, and "bad records" shows a list the count
+    doesn't match. Returns the scripts the sets were given, in order."""
+    calls: list[str] = []
+
+    def once(
+        browser: Any, url: str, want_rows: int, extra_js: str = ""
+    ) -> tuple[list[tuple[str, str, str | None]], list[dict]]:
+        calls.append(extra_js)
+        steps = _refilter_steps(FAKE_RANKS[:-1] if extra_js == "other steps" else FAKE_RANKS)
+        records = _records(steps, _set_with({2: 250, 14: 300} if extra_js == "slow" else {}))
+        if extra_js == "bad records":
+            records[5]["rows"] += 1
+        return steps, records
+
+    monkeypatch.setitem(globals(), "_refilter_once", once)
+    return calls
+
+
+def test_the_budget_judges_the_sets_it_measured_naming_each_step(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls = _fake_refilter_once(monkeypatch)
+    _assert_refilter_budget(None, "", 0)
+    _assert_refilter_budget(None, "", 0, ["slow"])  # outvoted by the two sets after it
+    assert calls == ["", "slow", "", ""]
+    calls.clear()
+    with pytest.raises(AssertionError) as caught:
+        _assert_refilter_budget(None, "", 0, ["slow"] * REFILTER_SETS)
+    assert calls == ["slow"] * REFILTER_SETS
+    assert (
+        "over the 200 ms budget at the median of 3 sets: "
+        "step 2 (select #f-rank r2): 250.0, 250.0, 250.0 ms, median 250.0 ms; "
+        "step 14 (check #f-hide-limited): 300.0, 300.0, 300.0 ms, median 300.0 ms"
+    ) in str(caught.value)
+
+
+@pytest.mark.parametrize(
+    ("n", "fault", "words"),
+    [
+        (0, "bad records", "count and list differ"),
+        (1, "bad records", "count and list differ"),
+        (2, "bad records", "count and list differ"),
+        (1, "other steps", "set 2 made other changes"),
+        (2, "other steps", "set 3 made other changes"),
+    ],
+)
+def test_every_set_is_checked_and_makes_the_same_changes(
+    monkeypatch: pytest.MonkeyPatch, n: int, fault: str, words: str
+) -> None:
+    # A median per step is fair only if every set made the same changes, and each set's
+    # records must show a redraw, as the first set's do.
+    calls = _fake_refilter_once(monkeypatch)
+    planted = ["slow", "", ""]  # the first set fails, so sets 2 and 3 are measured
+    planted[n] = fault
+    with pytest.raises(AssertionError, match=words):
+        _assert_refilter_budget(None, "", 0, planted)
+    assert calls == planted[: n + 1]
+
+
 # A fixed piece of work; the fastest of three runs, so the JIT has warmed up.
 BUSY_JS = """
 () => {
