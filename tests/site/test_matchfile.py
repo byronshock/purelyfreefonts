@@ -16,6 +16,7 @@ from typing import Any
 import pytest
 
 from tff_catalog import jsonio, owned
+from tff_catalog.keys import match_key
 from tff_site import budgets, data, matchfile
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -36,6 +37,29 @@ RECODE_20 = (
     '[[recode]]\nname = "Sample Mono 20 Gen"\nfamily = "sample-mono-20"\nrelation = "related"\n'
     'ruling = "synthetic"\n'
 )
+# How a collision problem that no edit to the reviewed list clears ends (ops/MONTHLY.md step 5).
+UNLISTABLE = (
+    "; no entry in the reviewed list clears this: the owner rules, and an alias row "
+    "(Milestone 1's review) or a change to the build carries it out (ops/MONTHLY.md step 5)"
+)
+
+
+def recodable(family_id: str) -> str:
+    """How a collision problem that a recode of ``family_id``'s alias would end ends."""
+    return (
+        f"; the owner rules: a [[recode]] making {family_id}'s alias at that key a near-match "
+        "clears this, and otherwise an alias row (Milestone 1's review) or a change to the build "
+        "carries it out (ops/MONTHLY.md step 5)"
+    )
+
+
+def recode_entry(name: str, family_id: str, relation: str) -> str:
+    """A reviewed list's [[recode]] entry, citing the sample's "synthetic"."""
+    return (
+        RECODE_20.replace("Sample Mono 20 Gen", name)
+        .replace("sample-mono-20", family_id)
+        .replace('"related"', f'"{relation}"')
+    )
 
 
 def write(tmp_path: Path, names: Any = None, reviewed: str | None = REVIEWED) -> Path:
@@ -203,6 +227,19 @@ def test_another_schema_version_is_refused_before_anything_else(tmp_path):
     assert errors_of(path) == [f"{path}: schema_version is '0.2.0', not '0.1.0-draft'"]
 
 
+def test_a_names_file_of_the_wrong_shape_is_refused_before_its_run_is_read(tmp_path):
+    """The stages of site/CONTRACT.md section 1: the shape's problems stop it before the run's."""
+
+    def both(names: dict[str, Any]) -> None:
+        names["run"].update(date="2026-01-02")
+        names["families"][0].update(superfamily_id=5)
+
+    path = write(tmp_path, names_with(both))
+    assert errors_of(path) == [
+        f"{path}: /families/0/superfamily_id is missing or not null or a string"
+    ]
+
+
 def test_every_problem_of_another_run_is_reported_at_once(tmp_path):
     names = copy.deepcopy(NAMES)
     for p in NAMES_OF_ANOTHER_RUN:
@@ -244,9 +281,37 @@ MALFORMED_NAMES = [
         lambda n: n.pop("ineligible"), "/ineligible is missing or not a list", id="no-ineligible"
     ),
     pytest.param(
+        lambda n: n.pop("families"), "/families is missing or not a list", id="no-families"
+    ),
+    pytest.param(
+        lambda n: n["families"][0].pop("id"),
+        "/families/0/id is missing or not a string",
+        id="no-id",
+    ),
+    pytest.param(
+        lambda n: n["families"][0].update(family=7),
+        "/families/0/family is missing or not a string",
+        id="number-family",
+    ),
+    pytest.param(
+        lambda n: n["families"][0]["names"].__setitem__(0, "x"),
+        "/families/0/names/0 is not an object with a name string",
+        id="string-name",
+    ),
+    pytest.param(
+        lambda n: n["families"][0]["names"].__setitem__(0, {"name": 7, "relation": "related"}),
+        "/families/0/names/0 is not an object with a name string",
+        id="number-name",
+    ),
+    pytest.param(
         lambda n: n["families"][0].update(distinct_from=None),
         "/families/0/distinct_from is missing or not a list of family ids",
         id="null-distinct-from",
+    ),
+    pytest.param(
+        lambda n: n["families"][0].update(distinct_from=[["x"]]),
+        "/families/0/distinct_from is missing or not a list of family ids",
+        id="nested-distinct-from",
     ),
     pytest.param(
         lambda n: n["families"][0].update(names="x"),
@@ -257,6 +322,11 @@ MALFORMED_NAMES = [
         lambda n: n["ineligible"][0].update(reason=7),
         "/ineligible/0 is not a name and a reason, both strings",
         id="number-reason",
+    ),
+    pytest.param(
+        lambda n: n["ineligible"].__setitem__(0, "x"),
+        "/ineligible/0 is not a name and a reason, both strings",
+        id="string-ineligible",
     ),
     pytest.param(
         lambda n: n["families"][0]["names"][0].update(relation=[]),
@@ -403,6 +473,24 @@ def test_a_value_nested_deeply_anywhere_is_refused_without_a_traceback(
     assert errors_of(path) == [f"{path}: {deep if depth >= data.MAX_DEPTH else shallow}"]
 
 
+def test_a_names_file_or_a_reviewed_list_that_is_a_directory_is_refused(tmp_path):
+    """An ``OSError`` other than a missing file, such as a directory where the file should be
+    (or one that can't be read), is a message saying where, not a traceback."""
+    names = tmp_path / "names.json"
+    names.mkdir()
+    (error,) = errors_of(names)
+    assert error.startswith(f"{names}: ")
+    assert "Is a directory" in error
+    beside = tmp_path / "x"
+    beside.mkdir()
+    path = write(beside, reviewed=None)
+    listed = beside / "names.reviewed.toml"
+    listed.mkdir()
+    (error,) = errors_of(path)
+    assert error.startswith(f"{listed}: ")
+    assert "Is a directory" in error
+
+
 def test_a_names_file_that_is_no_object_is_refused(tmp_path):
     path = tmp_path / "names.json"
     path.write_text("[]", encoding="utf-8")
@@ -455,25 +543,89 @@ def _strip_out(names: dict[str, Any]) -> None:
     )
 
 
+def _share_aliases(names: dict[str, Any]) -> None:
+    """Sample Sans 03 gets Sample Sans 05's rename: two families' aliases at one key."""
+    family(names, "sample-sans-03")["names"].append(
+        {"name": "Sample Sans Classic", "relation": "rename"}
+    )
+
+
+def _meet_at_two_families_aliases(names: dict[str, Any]) -> None:
+    """Sample Sans 01 Tight, made distinct from Sample Sans 03 and 05, reaches the rename that
+    both now have (``_share_aliases``)."""
+    _share_aliases(names)
+    tight = family(names, "sample-sans-01-tight")
+    tight["names"].append({"name": "Sample Sans Classic Bold", "relation": "related"})
+    tight["distinct_from"] = sorted({*tight["distinct_from"], "sample-sans-03", "sample-sans-05"})
+
+
+def _meet_at_a_name_an_alias_spells(names: dict[str, Any]) -> None:
+    """``_meet``, and Sample Sans 01 has an alias at its own name's key, "SampleSans01"."""
+    _meet(names)
+    family(names, "sample-sans-01")["names"].append({"name": "SampleSans01", "relation": "rename"})
+
+
+def outside_family(family_id: str, name: str) -> dict[str, Any]:
+    """A names.json family outside the catalog, with no aliases."""
+    return {
+        "id": family_id,
+        "family": name,
+        "superfamily_id": None,
+        "in_catalog": False,
+        "names": [],
+        "distinct_from": [],
+    }
+
+
+def _share_outside(names: dict[str, Any]) -> None:
+    """Sample Sans 03 gets the rename "Sample Held 41", the name of a family outside the
+    catalog: a list naming that family would count Sample Sans 03 as owned."""
+    family(names, "sample-sans-03")["names"].append(
+        {"name": "Sample Held 41", "relation": "rename"}
+    )
+
+
+def _share_outside_by_an_alias(names: dict[str, Any]) -> None:
+    """Sample Held 41, outside the catalog, gets the rename "Sample Sans 03": a recode of a
+    family outside the catalog changes nothing, and Sample Sans 03's own name is no alias."""
+    family(names, "sample-held-41")["names"].append(
+        {"name": "Sample Sans 03", "relation": "rename"}
+    )
+
+
+def _share_outside_twice(names: dict[str, Any]) -> None:
+    """``_share_outside``, and another family outside the catalog is named "Sample Held 41":
+    a recode of Sample Sans 03's alias leaves only families outside the catalog at the key."""
+    _share_outside(names)
+    names["families"].append(outside_family("sample-held-41-old", "Sample Held 41"))
+
+
+def _share_with_a_name_outside(names: dict[str, Any]) -> None:
+    """``_share``, and a family outside the catalog is named "Sample Sans 01" too: a recode of
+    Sample Sans 03's alias leaves Sample Sans 01 sharing the key with it."""
+    _share(names)
+    names["families"].append(outside_family("sample-sans-01-old", "Sample Sans 01"))
+
+
 @pytest.mark.parametrize(
     ("mutate", "message"),
     [
         pytest.param(
             _meet,
             "sample-sans-01-tight: its name 'Sample Sans 01 Bold' reaches sample-sans-01 at key "
-            "'samplesans01', and the two are distinct_from each other",
+            f"'samplesans01', and the two are distinct_from each other{UNLISTABLE}",
             id="distinct-from-meets",
         ),
         pytest.param(
             _share,
             "key 'samplesans01' is owned by several catalog families (sample-sans-01, "
-            "sample-sans-03), outside the ambiguous set",
+            f"sample-sans-03), outside the ambiguous set{recodable('sample-sans-03')}",
             id="shared-key",
         ),
         pytest.param(
             _strip_out,
             "'Sample Held 41 Bold', a catalog name, strips to the key 'sampleheld41' of "
-            "sample-held-41, outside the catalog, which the ambiguous set can't hold",
+            f"sample-held-41, outside the catalog, which the ambiguous set can't hold{UNLISTABLE}",
             id="catalog-name-to-another-family",
         ),
     ],
@@ -483,6 +635,272 @@ def test_names_that_would_count_a_family_as_owned_wrongly_are_refused(tmp_path, 
     The planted name also makes a new ambiguous key, reported after it."""
     path = write(tmp_path, names_with(mutate))
     assert errors_of(path)[0] == f"{path}: {message}"
+
+
+def every_ambiguous_name(names: dict[str, Any]) -> str:
+    """Reviewed-list entries for every ambiguous name the build finds in ``names``."""
+    check = owned.check_document(names, [f["id"] for f in SAMPLE["fonts"]], recodes=SAMPLE_RECODES)
+    first: dict[str, str] = {}
+    for c in check.collisions:
+        first.setdefault(c.key, c.name)
+    return "".join(
+        f'[[ambiguous]]\nname = "{first[key]}"\nfamilies = {json.dumps(list(fids))}\n'
+        'ruling = "synthetic"\n\n'
+        for key, fids in check.amb.items()
+    )
+
+
+@pytest.mark.parametrize(
+    ("mutate", "count"),
+    [
+        pytest.param(_meet, 1, id="meeting-at-a-family-name"),
+        pytest.param(_meet_at_a_name_an_alias_spells, 1, id="meeting-at-its-own-name-s-alias"),
+        pytest.param(_meet_at_two_families_aliases, 3, id="meeting-at-two-families-aliases"),
+        pytest.param(_share_aliases, 1, id="key-two-families-aliases-hold"),
+        pytest.param(_share_outside_by_an_alias, 2, id="key-an-outside-alias-holds"),
+        pytest.param(_share_with_a_name_outside, 1, id="key-two-names-and-an-alias-hold"),
+        pytest.param(_strip_out, 1, id="catalog-name-to-another-family"),
+    ],
+)
+def test_no_entry_in_the_reviewed_list_clears_a_collision_outside_the_ambiguous_set(
+    tmp_path, mutate, count
+):
+    """Listing every ambiguous name the build finds leaves the problems the list can't hold,
+    which say so and how they are cleared instead (ops/MONTHLY.md step 5): where the owned code
+    is a family's own name, or aliases that two families hold, no recode the build takes
+    ends it (``matchfile.recodable_keys``), nor any recode a stripped name."""
+    names = names_with(mutate)
+    path = write(tmp_path, names, every_ambiguous_name(names) + RECODE_20)
+    errors = errors_of(path)
+    assert len(errors) == count
+    for error in errors:
+        assert error.startswith(f"{path}: ")
+        assert error.endswith(UNLISTABLE)
+
+
+def _meet_at_an_alias(names: dict[str, Any]) -> None:
+    """Sample Sans 01 Tight, made distinct from Sample Sans 05 too, gets a name that reaches
+    only Sample Sans 05's alias "Sample Sans Classic", a rename, not its family name."""
+    tight = family(names, "sample-sans-01-tight")
+    tight["names"].append({"name": "Sample Sans Classic Bold", "relation": "related"})
+    tight["distinct_from"] = sorted({*tight["distinct_from"], "sample-sans-05"})
+
+
+def _meet_at_an_alias_another_family_is_named(names: dict[str, Any]) -> None:
+    """``_meet_at_an_alias``, and a family outside the catalog is named "Sample Sans Classic":
+    a name at the key, which no recode touches, so the recode of 05's alias still ends it."""
+    _meet_at_an_alias(names)
+    names["families"].append(outside_family("sample-sans-classic", "Sample Sans Classic"))
+
+
+MEETING_AT_05 = (
+    "sample-sans-01-tight: its name 'Sample Sans Classic Bold' reaches sample-sans-05 at key "
+    "'samplesansclassic', and the two are distinct_from each other"
+)
+
+
+@pytest.mark.parametrize(
+    ("mutate", "problems", "recode", "key", "codes"),
+    [
+        pytest.param(
+            _meet_at_an_alias,
+            [MEETING_AT_05],
+            ("Sample Sans Classic", "sample-sans-05", "bundle"),
+            "samplesansclassic",
+            [("sample-sans-05", "u")],
+            id="meeting-at-an-alias",
+        ),
+        pytest.param(
+            _meet_at_an_alias_another_family_is_named,
+            [
+                MEETING_AT_05,
+                "key 'samplesansclassic' is owned by several families (sample-sans-05 in the "
+                "catalog, sample-sans-classic not), outside the ambiguous set",
+            ],
+            ("Sample Sans Classic", "sample-sans-05", "bundle"),
+            "samplesansclassic",
+            [("sample-sans-05", "u"), ("-", "")],
+            id="meeting-at-an-alias-another-family-is-named",
+        ),
+        pytest.param(
+            _share,
+            [
+                "key 'samplesans01' is owned by several catalog families (sample-sans-01, "
+                "sample-sans-03), outside the ambiguous set"
+            ],
+            ("Sample Sans 01", "sample-sans-03", "related"),
+            "samplesans01",
+            [("sample-sans-01", ""), ("sample-sans-03", "x")],
+            id="key-a-name-and-an-alias-hold",
+        ),
+        pytest.param(
+            _share_outside,
+            [
+                "key 'sampleheld41' is owned by several families (sample-sans-03 in the "
+                "catalog, sample-held-41 not), outside the ambiguous set"
+            ],
+            ("Sample Held 41", "sample-sans-03", "related"),
+            "sampleheld41",
+            [("sample-sans-03", "x"), ("-", "")],
+            id="key-an-alias-and-an-outside-name-hold",
+        ),
+        pytest.param(
+            _share_outside_twice,
+            [
+                "key 'sampleheld41' is owned by several families (sample-sans-03 in the "
+                "catalog, sample-held-41, sample-held-41-old not), outside the ambiguous set"
+            ],
+            ("Sample Held 41", "sample-sans-03", "related"),
+            "sampleheld41",
+            [("sample-sans-03", "x"), ("-", "")],
+            id="key-an-alias-and-two-outside-names-hold",
+        ),
+    ],
+)
+def test_a_collision_that_a_recode_ends_names_it_and_the_recode_clears_it(
+    tmp_path, mutate, problems, recode, key, codes
+):
+    """A meeting or a shared key needs an owned code at its key, so where the build takes a
+    recode there (``matchfile.recodable_keys``: one catalog family's aliases alone, not at its
+    own name) of the family whose code it is, the recode the owner may rule ends it, and the
+    message says so; another family's name at the key doesn't stop it. Once listed, with the
+    ambiguous names the build also finds, the build passes, the alias a near-match."""
+    names = names_with(mutate)
+    listed = every_ambiguous_name(names) + RECODE_20
+    path = write(tmp_path, names, listed)
+    assert errors_of(path) == [f"{path}: {problem}{recodable(recode[1])}" for problem in problems]
+    doc = json.loads(
+        matchfile.match_file(SAMPLE, write(tmp_path, names, listed + recode_entry(*recode))).blob
+    )
+    want = [f"{doc['ids'].index(fid)}{letter}" if fid != "-" else "-" for fid, letter in codes]
+    assert doc["k"][key] == ",".join(want)
+
+
+def test_a_recode_ends_only_the_problem_whose_owned_code_it_takes(tmp_path):
+    """Sample Sans 01 Tight reaches Sample Sans 01's name at a key where Sample Sans 03 now
+    has an alias too (``_meet``, ``_share``): a recode of 03's alias ends the shared key, not
+    the meeting, which is at 01's own name."""
+
+    def both(names: dict[str, Any]) -> None:
+        _meet(names)
+        _share(names)
+
+    names = names_with(both)
+    listed = every_ambiguous_name(names) + RECODE_20
+    path = write(tmp_path, names, listed)
+    meeting = (
+        "sample-sans-01-tight: its name 'Sample Sans 01 Bold' reaches sample-sans-01 at key "
+        "'samplesans01', and the two are distinct_from each other"
+    )
+    shared = (
+        "key 'samplesans01' is owned by several catalog families (sample-sans-01, "
+        "sample-sans-03), outside the ambiguous set"
+    )
+    assert errors_of(path) == [
+        f"{path}: {meeting}{UNLISTABLE}",
+        f"{path}: {shared}{recodable('sample-sans-03')}",
+    ]
+    path = write(
+        tmp_path, names, listed + recode_entry("Sample Sans 01", "sample-sans-03", "related")
+    )
+    assert errors_of(path) == [f"{path}: {meeting}{UNLISTABLE}"]
+
+
+def test_a_key_that_only_families_outside_the_catalog_share_passes(tmp_path):
+    """No catalog family owns it, so no list's name there hides a listed font: like a
+    collision that reaches no catalog family, it changes no result (``check_errors``)."""
+
+    def renamed(names: dict[str, Any]) -> None:
+        family(names, "sample-sans-06-black")["names"].append(
+            {"name": "Sample Held 41", "relation": "rename"}
+        )
+
+    doc = json.loads(matchfile.match_file(SAMPLE, write(tmp_path, names_with(renamed))).blob)
+    assert doc["k"]["sampleheld41"] == "-"
+
+
+def test_a_key_in_the_ambiguous_set_may_be_shared(tmp_path):
+    """Step 3 fails a shared key "outside the ambiguous set": inside it, the hopper doubts the
+    name's owned codes (``owned.match``). Sample Sans 03 and 05 get the rename "Sample Sans 06
+    Black", the reviewed ambiguous name, which its own family, outside the catalog, holds too:
+    the build passes, its ambiguous set unchanged."""
+
+    def renamed(names: dict[str, Any]) -> None:
+        for fid in ("sample-sans-03", "sample-sans-05"):
+            family(names, fid)["names"].append(
+                {"name": "Sample Sans 06 Black", "relation": "rename"}
+            )
+
+    names = names_with(renamed)
+    check = owned.check_document(names, [f["id"] for f in SAMPLE["fonts"]], recodes=SAMPLE_RECODES)
+    assert check.shared["samplesans06black"] == (
+        "sample-sans-03",
+        "sample-sans-05",
+        "sample-sans-06-black",
+    )
+    doc = json.loads(matchfile.match_file(SAMPLE, write(tmp_path, names)).blob)
+    assert doc["amb"] == {"samplesans06black": [doc["ids"].index("sample-sans-06")]}
+
+
+def test_recodable_keys_are_those_at_which_the_build_takes_a_recode():
+    """``recodable_keys`` decides as the build does, so the messages above can't offer a recode
+    the build refuses, or miss one it takes. On the sample with planted aliases (at a key that
+    two families' aliases hold, at the family's own name's key, of a family outside the
+    catalog, and at another family's name), every alias with an owned relation is tried alone:
+    the build takes it unless ``refused_recodes`` or ``owned`` refuses it."""
+
+    def plant(names: dict[str, Any]) -> None:
+        _share_aliases(names)
+        family(names, "sample-sans-01")["names"].append(
+            {"name": "SampleSans01", "relation": "rename"}
+        )
+        family(names, "sample-held-41")["names"].append(
+            {"name": "Sample Held 41 Gen", "relation": "build", "detail": ""}
+        )
+        family(names, "sample-sans-06")["names"].append(
+            {"name": "Sample Sans 08", "relation": "rename"}
+        )
+
+    names = names_with(plant)
+    ids = [f["id"] for f in SAMPLE["fonts"]]
+    taken: dict[str, str] = {}
+    for fam in names["families"]:
+        for item in fam["names"]:
+            if item["relation"] not in owned.OWNED_RELATIONS:
+                continue
+            key = match_key(item["name"])
+            entry = matchfile.Recode(item["name"], fam["id"], "related", "synthetic")
+            if matchfile.refused_recodes(names, matchfile.Reviewed(recodes={key: entry})):
+                continue
+            try:
+                owned.check_document(names, ids, recodes={item["name"]: "related"})
+            except owned.RecodeError:
+                continue
+            taken[key] = fam["id"]
+    assert matchfile.recodable_keys(names) == taken
+    assert taken["samplesans08"] == "sample-sans-06"
+    assert taken["samplemono20gen"] == "sample-mono-20"
+    assert not {"samplesansclassic", "samplesans01", "sampleheld41gen"} & taken.keys()
+
+
+def test_a_meeting_at_a_family_outside_the_catalog_passes_changing_nothing(tmp_path):
+    """Two families outside the catalog made distinct_from each other, a name of one reaching
+    the other: the other is coded ``-`` and never owned, so the name hides no listed font, and
+    the build makes the match file it makes without the pair."""
+
+    def apart(names: dict[str, Any]) -> None:
+        black = family(names, "sample-sans-06-black")
+        black["names"].append({"name": "Sample Held 41 Bold", "relation": "related"})
+        black["distinct_from"] = ["sample-held-41"]
+        family(names, "sample-held-41")["distinct_from"] = ["sample-sans-06-black"]
+
+    names = names_with(apart)
+    made = json.loads(matchfile.match_file(SAMPLE, write(tmp_path, names)).blob)
+    for fid in ("sample-sans-06-black", "sample-held-41"):
+        family(names, fid)["distinct_from"] = []
+    plain = json.loads(matchfile.match_file(SAMPLE, write(tmp_path, names)).blob)
+    assert made["names_sha256"] != plain["names_sha256"]
+    assert {**made, "names_sha256": ""} == {**plain, "names_sha256": ""}
 
 
 @pytest.mark.parametrize("reviewed", [None, "", RECODE_20])
@@ -513,6 +931,24 @@ def test_a_reviewed_name_that_is_no_longer_ambiguous_is_refused(tmp_path):
         f"{path}: 'Sample Serif 04 Light' is reviewed as ambiguous in "
         f"{tmp_path / 'names.reviewed.toml'}, but no longer is; once the owner has reviewed "
         "the drop, remove it"
+    ]
+
+
+def test_a_reviewed_name_whose_other_family_left_the_catalog_is_one_question(tmp_path):
+    """As when Archivo leaves the catalog and Archivo Black stays: the name drops out of the
+    ambiguous set only because the family it may be a weight of left, so removing its entry
+    would leave the collision that no entry clears; the build says the two go together."""
+    listed = tmp_path / "names.reviewed.toml"
+    was = (
+        '[[ambiguous]]\nname = "Sample Held 41 Bold"\nfamilies = ["sample-held-41"]\n'
+        'ruling = "synthetic"\n'
+    )
+    path = write(tmp_path, names_with(_strip_out), REVIEWED + was)
+    assert errors_of(path) == [
+        f"{path}: 'Sample Held 41 Bold' is reviewed as ambiguous in {listed}, but now strips "
+        "only to a family outside the catalog; the owner reviews it with that collision, below",
+        f"{path}: 'Sample Held 41 Bold', a catalog name, strips to the key 'sampleheld41' of "
+        f"sample-held-41, outside the catalog, which the ambiguous set can't hold{UNLISTABLE}",
     ]
 
 
@@ -590,6 +1026,21 @@ def test_a_missing_reviewed_list_is_an_empty_one(tmp_path):
         ),
         pytest.param('ambiguous = "x"\n', "ambiguous is not an array of tables", id="not-an-array"),
         pytest.param(
+            'ambiguous = ["x"]\n',
+            "ambiguous[0]: needs exactly families, name and ruling",
+            id="array-of-strings",
+        ),
+        pytest.param(
+            REVIEWED.replace('name = "Sample Sans 06 Black"', "name = 6"),
+            "ambiguous[0]: the name and the ruling must be non-empty strings",
+            id="number-name",
+        ),
+        pytest.param(
+            REVIEWED.replace('families = ["sample-sans-06"]', "families = [6]"),
+            "ambiguous[0]: families must be catalog ids, sorted, without repeats",
+            id="number-family-id",
+        ),
+        pytest.param(
             REVIEWED.replace('relation = "related"', 'relation = "build"'),
             "recode[0]: relation 'build' is not one of ['bundle', 'related', 'sibling']: "
             "a recode can only make an alias a near-match",
@@ -639,7 +1090,7 @@ def test_a_recode_whose_alias_another_family_also_holds_is_refused(tmp_path):
         "sample-mono-20 (synthetic), but names.json's aliases at its key 'samplemono20gen' are "
         "of sample-mono-02, sample-mono-20",
         f"{path}: key 'samplemono20gen' is owned by several catalog families "
-        "(sample-mono-02, sample-mono-20), outside the ambiguous set",
+        f"(sample-mono-02, sample-mono-20), outside the ambiguous set{UNLISTABLE}",
     ]
 
 
@@ -677,6 +1128,29 @@ def test_a_recode_whose_alias_is_already_a_near_match_is_refused(tmp_path, relat
     (tmp_path / "names.reviewed.toml").write_text(AMBIGUOUS_06, encoding="utf-8")
     doc = json.loads(matchfile.match_file(SAMPLE, path).blob)
     assert doc["k"]["samplemono20gen"] == f"{doc['ids'].index('sample-mono-20')}{code}"
+
+
+def test_a_recode_of_a_family_outside_the_catalog_is_refused(tmp_path):
+    """A refresh that takes a recoded family out of the catalog, while names.json keeps it
+    with the alias row, leaves a recode that changes nothing: the match file codes a family
+    outside the catalog ``-`` whatever its alias's relation. A stale entry too."""
+
+    def held(names: dict[str, Any]) -> None:
+        family(names, "sample-held-41")["names"].append(
+            {"name": "Sample Held 41 Gen", "relation": "build", "detail": ""}
+        )
+
+    recode = RECODE_20.replace("Sample Mono 20 Gen", "Sample Held 41 Gen").replace(
+        "sample-mono-20", "sample-held-41"
+    )
+    path = write(tmp_path, names_with(held), REVIEWED + recode)
+    assert errors_of(path) == [
+        f"{tmp_path / 'names.reviewed.toml'}: 'Sample Held 41 Gen' is reviewed (synthetic) as an "
+        "alias of sample-held-41, which names.json has outside the catalog, so the recode "
+        "changes nothing in the match file; once the owner has reviewed the change, remove it"
+    ]
+    without = matchfile.match_file(SAMPLE, write(tmp_path, names_with(held)))
+    assert json.loads(without.blob)["k"]["sampleheld41gen"] == "-"
 
 
 def test_a_recode_that_another_alias_bypasses_is_refused(tmp_path):
@@ -789,9 +1263,8 @@ def test_the_committed_names_give_a_match_file_within_budget():
     letters = {"related": "x", "sibling": "s", "bundle": "u"}
     assert letters.keys() == owned.RECODE_RELATIONS
     for key, recode in reviewed.recodes.items():
-        if recode.family in match["ids"]:
-            code = f"{match['ids'].index(recode.family)}{letters[recode.relation]}"
-            assert code in match["k"][key].split(",")
+        code = f"{match['ids'].index(recode.family)}{letters[recode.relation]}"
+        assert code in match["k"][key].split(",")
 
 
 def test_the_large_catalog_needs_no_reviewed_list(tmp_path):

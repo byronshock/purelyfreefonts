@@ -574,7 +574,8 @@ class Check:
     collisions: tuple[Collision, ...]
     amb: Mapping[str, tuple[str, ...]]  # key -> catalog ids its name may be a weight of
     meetings: tuple[Meeting, ...]
-    shared: Mapping[str, tuple[str, ...]]  # keys that several catalog families own
+    # keys that a catalog family owns with another family, in the catalog or not -> the owners
+    shared: Mapping[str, tuple[str, ...]]
 
 
 def check_document(
@@ -592,8 +593,11 @@ def check_document(
     families among them make the name's key ambiguous ("Archivo Black" may be
     Archivo's Black weight). For every ``distinct_from`` pair, in both
     directions, no candidate of any name of one family may be a key at which the
-    other holds a code that could count it as owned (Inter Tight never reaches
-    Inter; a bundle name both share, such as "Libertinus", only gives near-matches).
+    other, a catalog family, holds a code that could count it as owned (Inter Tight
+    never reaches Inter; a bundle name both share, such as "Libertinus", only gives
+    near-matches; a family outside the catalog is never owned, coded ``-``). A key
+    is ``shared`` when a catalog family owns it and another family does too, in the
+    catalog or not: a list's name there would count the catalog family as owned.
     ``recodes`` as in ``match_document``.
     """
     catalog = frozenset(catalog_ids)
@@ -618,18 +622,20 @@ def check_document(
     meetings: list[Meeting] = []
     for fid, other in sorted(pairs | {(b, a) for a, b in pairs}):
         fam = by_id.get(fid)
-        if fam is None:
+        if fam is None or other not in catalog:  # outside the catalog, never owned
             continue
         for name in (fam["family"], *(n["name"] for n in fam["names"])):
             for cand in candidates(name):
                 found = holders.get(cand.key)
                 if found is not None and found.owns(other):
                     meetings.append(Meeting(fid, other, name, cand.key))
-    shared = {
-        key: tuple(sorted(fid for fid, letter in h.ids.items() if letter in _OWNED_LETTERS))
-        for key, h in sorted(holders.items())
-        if sum(letter in _OWNED_LETTERS for letter in h.ids.values()) > 1
-    }
+    shared: dict[str, tuple[str, ...]] = {}
+    for key, h in sorted(holders.items()):
+        owners = sorted(
+            f for f, letter in (*h.ids.items(), *h.others.items()) if letter in _OWNED_LETTERS
+        )
+        if len(owners) > 1 and catalog.intersection(owners):
+            shared[key] = tuple(owners)
     return Check(
         tuple(collisions),
         {key: tuple(sorted(ids)) for key, ids in sorted(amb.items()) if ids},

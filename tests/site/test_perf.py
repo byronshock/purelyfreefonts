@@ -1136,6 +1136,44 @@ def test_a_match_file_off_this_site_is_a_problem(tmp_path: Path, url: str) -> No
 
 
 NAME = MATCH.rsplit("/", 1)[1]
+# Where the match file may not be named: a case for each of budgets.TEXT_SUFFIXES.
+MENTIONS = [
+    pytest.param(
+        "index.html",
+        None,
+        f"names the match file {NAME} 2 times; only the list page's #list[data-match] "
+        "may, once (M3-D7 a)",
+        id="preload-on-the-list-page",
+    ),
+    pytest.param(
+        "about/index.html",
+        f'<!doctype html><title>t</title><link rel="help" href="/{MATCH}">',
+        None,
+        id="link-on-another-page",
+    ),
+    pytest.param("assets/app.0123456789.js", f'fetch("/{MATCH}");', None, id="url-in-the-script"),
+    pytest.param(
+        "404.html",
+        f'<!doctype html><title>t</title><a href="{MATCH}">x</a>',
+        None,
+        id="relative",
+    ),
+    pytest.param("sitemap.xml", f"<loc>https://x.test/{MATCH}</loc>", None, id="sitemap"),
+    pytest.param("assets/details.0123456789.json", f'{{"next": "/{MATCH}"}}', None, id="payload"),
+    pytest.param(
+        "assets/style.0123456789.css",
+        f"body{{background:url(/{MATCH})}}",
+        None,
+        id="stylesheet",
+    ),
+    pytest.param("robots.txt", f"User-agent: *\nAllow: /{MATCH}\n", None, id="text"),
+    pytest.param(
+        "favicon.svg",
+        f'<svg xmlns="http://www.w3.org/2000/svg"><image href="/{MATCH}"/></svg>',
+        None,
+        id="svg",
+    ),
+]
 
 
 MATCHER_NAME = MATCHER.rsplit("/", 1)[1]
@@ -1198,39 +1236,17 @@ def test_only_the_list_s_data_matcher_may_name_the_matcher_module(
     )
 
 
-@pytest.mark.parametrize(
-    ("path", "text", "problem"),
-    [
-        pytest.param(
-            "index.html",
-            None,
-            f"names the match file {NAME} 2 times; only the list page's #list[data-match] "
-            "may, once (M3-D7 a)",
-            id="preload-on-the-list-page",
-        ),
-        pytest.param(
-            "about/index.html",
-            f'<!doctype html><title>t</title><link rel="help" href="/{MATCH}">',
-            None,
-            id="link-on-another-page",
-        ),
-        pytest.param(
-            "assets/app.0123456789.js", f'fetch("/{MATCH}");', None, id="url-in-the-script"
-        ),
-        pytest.param(
-            "404.html",
-            f'<!doctype html><title>t</title><a href="{MATCH}">x</a>',
-            None,
-            id="relative",
-        ),
-        pytest.param("sitemap.xml", f"<loc>https://x.test/{MATCH}</loc>", None, id="sitemap"),
-    ],
-)
+def test_the_mention_cases_cover_every_text_suffix() -> None:
+    assert {Path(case.values[0]).suffix for case in MENTIONS} == budgets.TEXT_SUFFIXES
+
+
+@pytest.mark.parametrize(("path", "text", "problem"), MENTIONS)
 def test_only_the_list_s_data_match_may_name_the_match_file(
     tmp_path: Path, path: str, text: str | None, problem: str | None
 ) -> None:
     """M3-D7 (a): the match file loads only once a visitor's list arrives, so nothing but
-    ``#list[data-match]`` names it: no preload, no other page, script, payload or sitemap."""
+    ``#list[data-match]`` names it: no preload, no other page, script, payload, stylesheet,
+    text file, image or sitemap (each of ``budgets.TEXT_SUFFIXES`` has a case here)."""
     preload = f'<link rel="preload" as="fetch" crossorigin href="/{MATCH}">'
     site = _fake_site(tmp_path, html_extra=preload if text is None else "")
     if text is not None:

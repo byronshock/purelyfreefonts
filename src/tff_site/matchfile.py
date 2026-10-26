@@ -6,11 +6,13 @@ step 3: the site build, not a pipeline stage, makes the match file with
 ``catalog-site.json``, and publishes it as ``/assets/match.<h>.json`` (site/CONTRACT.md
 section 11). ``match_file`` first refuses, listing every problem:
 
-- a names file that can't be read, of another run, or of the wrong shape (``names_errors``),
-  and a reviewed list that is malformed (``load_reviewed``), together; the checks below read
-  both, so these stop the build before them;
-- recodes that name no alias of the family they say, or that change nothing
-  (``refused_recodes``), or that another name of the family bypasses (``owned.RecodeError``),
+- a names file that can't be read, of another run, or of the wrong shape (``names_errors``,
+  in stages: its schema version, then its shape, then its run), and a reviewed list that is
+  malformed (``load_reviewed``), together; the checks below read both, so these stop the
+  build before them;
+- recodes that name no alias of the family they say, or that change nothing, an alias
+  already a near-match or of a family outside the catalog (``refused_recodes``), or that
+  another name of the family bypasses (``owned.RecodeError``),
   together with what Milestone 3 step 3's collision check finds without them (``check_errors``
   over ``owned.check_document``), including an ambiguous set other than the reviewed one, so
   a refresh that changes the ambiguous set, moves a recoded alias, or both, fails once,
@@ -61,6 +63,21 @@ NAME_KEYS = frozenset({"name", "relation", "detail"})
 INELIGIBLE_KEYS = frozenset({"name", "reason"})
 AMBIGUOUS_FIELDS = frozenset({"name", "families", "ruling"})
 RECODE_FIELDS = frozenset({"name", "family", "relation", "ruling"})
+# The end of each collision problem that no edit to the reviewed list can clear: a meeting or a
+# shared key that no recode the build takes would end, a catalog name reaching a family outside
+# the catalog (ops/MONTHLY.md step 5).
+UNLISTABLE = (
+    "; no entry in the reviewed list clears this: the owner rules, and an alias row "
+    "(Milestone 1's review) or a change to the build carries it out (ops/MONTHLY.md step 5)"
+)
+# The end of a meeting or a shared key that one recode the build takes would end: the owned
+# code there is a catalog family's, through aliases that a [[recode]] can make near-matches
+# (``recodable_keys``).
+RECODABLE = (
+    "; the owner rules: a [[recode]] making {family}'s alias at that key a near-match clears "
+    "this, and otherwise an alias row (Milestone 1's review) or a change to the build carries "
+    "it out (ops/MONTHLY.md step 5)"
+)
 
 
 class MatchFileError(ValueError):
@@ -278,6 +295,10 @@ def names_errors(doc: Mapping[str, Any], names: Any) -> list[str]:
     2026-10-17 did under the method of 2026-10-20), no family listed twice, its
     ``in_catalog`` families exactly the catalog's fonts, each under the catalog's family name
     and holding every alias the catalog gives the font, with its relation.
+
+    In stages, each returning before the next: another schema version is the one problem
+    listed, then the shape's problems (``names_shape_errors``), then the run's and the
+    families'.
     """
     if not isinstance(names, dict):
         return [f"/ is a {type(names).__name__}, not an object"]
@@ -318,20 +339,19 @@ def names_errors(doc: Mapping[str, Any], names: Any) -> list[str]:
 
 def refused_recodes(names: Mapping[str, Any], reviewed: Reviewed) -> dict[str, str]:
     """Why each refused recode is, by its key: one whose key isn't an alias of exactly the
-    family it names, or whose aliases names.json already gives no owned relation
-    (``owned.OWNED_RELATIONS``). Empty when every recode is one that ``owned`` takes.
+    family it names, whose family is outside the catalog, or whose aliases names.json already
+    gives no owned relation (``owned.OWNED_RELATIONS``). Empty when every recode is one that
+    ``owned`` takes.
 
     A recode works by ``match_key`` on every alias row at that key (``owned``), so the review
     of one family's alias would silently recode another's, or recode nothing once a refresh
-    moves the alias or makes it a near-match itself (a stale entry). ``owned`` refuses what
-    remains, a recode that another name of its family bypasses (``owned.RecodeError``).
+    moves the alias, takes its family out of the catalog (the match file codes a family
+    outside it ``-`` whatever its relation) or makes the alias a near-match itself (a stale
+    entry). ``owned`` refuses what remains, a recode that another name of its family bypasses
+    (``owned.RecodeError``).
     """
-    holders: dict[str, set[str]] = defaultdict(set)
-    relations: dict[str, set[str]] = defaultdict(set)
-    for fam in names["families"]:
-        for item in fam["names"]:
-            holders[match_key(item["name"])].add(fam["id"])
-            relations[match_key(item["name"])].add(item["relation"])
+    holders, relations = _alias_holders(names)
+    in_catalog = {fam["id"] for fam in names["families"] if fam["in_catalog"]}
     refused: dict[str, str] = {}
     for key, recode in sorted(reviewed.recodes.items()):
         found = sorted(holders.get(key, ()))
@@ -339,6 +359,12 @@ def refused_recodes(names: Mapping[str, Any], reviewed: Reviewed) -> dict[str, s
             refused[key] = (
                 f"{recode.name!r} is reviewed as an alias of {recode.family} ({recode.ruling}), "
                 f"but names.json's aliases at its key {key!r} are of {', '.join(found) or 'none'}"
+            )
+        elif recode.family not in in_catalog:
+            refused[key] = (
+                f"{recode.name!r} is reviewed ({recode.ruling}) as an alias of {recode.family}, "
+                "which names.json has outside the catalog, so the recode changes nothing in the "
+                "match file; once the owner has reviewed the change, remove it"
             )
         elif not relations[key] & owned.OWNED_RELATIONS:
             refused[key] = (
@@ -348,6 +374,40 @@ def refused_recodes(names: Mapping[str, Any], reviewed: Reviewed) -> dict[str, s
                 "so the recode changes nothing; once the owner has reviewed the change, remove it"
             )
     return refused
+
+
+def _alias_holders(names: Mapping[str, Any]) -> tuple[dict[str, set[str]], dict[str, set[str]]]:
+    """By ``match_key``, the families with an alias row there, and those rows' relations."""
+    holders: dict[str, set[str]] = defaultdict(set)
+    relations: dict[str, set[str]] = defaultdict(set)
+    for fam in names["families"]:
+        for item in fam["names"]:
+            holders[match_key(item["name"])].add(fam["id"])
+            relations[match_key(item["name"])].add(item["relation"])
+    return holders, relations
+
+
+def recodable_keys(names: Mapping[str, Any]) -> dict[str, str]:
+    """The keys at which the build takes a ``[[recode]]``, each with the family it names.
+
+    As the build decides it: the aliases at the key are of that family alone, which is in the
+    catalog, and some have an owned relation (``refused_recodes``); the family's own name has
+    another key (``owned._check_recodes``). Another family may hold the key by its name, which
+    no recode touches. A recode makes those aliases near-matches, so it ends a meeting or a
+    shared key whose owned code there is that family's (``check_errors``). ``owned`` can still
+    find another name of the family that reaches the key and bypasses the recode, as a
+    HackGen NF build would bypass HackGen's, and then asks for that name's recode too.
+    """
+    holders, relations = _alias_holders(names)
+    by_id = {fam["id"]: fam for fam in names["families"]}
+    out: dict[str, str] = {}
+    for key, fids in sorted(holders.items()):
+        if not key or len(fids) != 1 or not relations[key] & owned.OWNED_RELATIONS:
+            continue
+        (fid,) = fids
+        if by_id[fid]["in_catalog"] and match_key(by_id[fid]["family"]) != key:
+            out[key] = fid
+    return out
 
 
 def check_errors(
@@ -361,24 +421,57 @@ def check_errors(
     Step 3: "CI fails if, outside the ambiguous set, two families share a match_key or
     stripping style words from a catalog name yields another family's key", and "the owner
     reviews flagged collisions". So the build fails on a ``distinct_from`` pair that meets
-    (Inter Tight reaching Inter, M3-D5 a), a key that several catalog families own outside the
-    ambiguous set, a catalog name whose stripped key only families outside the catalog hold
-    (the ambiguous set holds catalog families only, so it can't take one), and an ambiguous set
-    other than the reviewed one: the hopper doubts those names (``owned.match``), so which ones
-    it doubts is the owner's call. A collision that starts from no catalog name and reaches no
-    catalog family changes no result, and is only reported.
+    (Inter Tight reaching Inter, M3-D5 a; only at a catalog family, since one outside the
+    catalog is never owned: ``owned.check_document``), a key that a catalog family owns with
+    another family, in the catalog or not, outside the ambiguous set (a list's name there
+    counts the catalog family as owned), a catalog name whose stripped key only families
+    outside the catalog hold (the ambiguous set holds catalog families only, so it can't take
+    one), and an ambiguous set other than the reviewed one: the hopper doubts those names
+    (``owned.match``), so which ones it doubts is the owner's call. A collision that starts
+    from no catalog name and reaches no catalog family changes no result, and is only reported.
+
+    Editing the reviewed list clears the ambiguous set's problems. Its ``[[ambiguous]]``
+    entries hold no exception for the other three (step 3 fails them "outside the ambiguous
+    set"). A ``[[recode]]`` clears a meeting or a shared key when the build takes a recode at
+    the key (``recodable_keys``) and the family it names is the one whose owned code there
+    makes the problem: the meeting's other family, or a catalog family sharing the key with one
+    other family, or with families outside the catalog only. A recode makes that family's
+    aliases at the key near-matches, which may share a key as a bundle does, so that problem
+    ends with ``RECODABLE``, naming the family. The rest end with ``UNLISTABLE``, carried out
+    by an alias row or a change to the build (ops/MONTHLY.md step 5): an owned code through a
+    family's own name, or through aliases that two families hold, which the build refuses to
+    recode, and every stripped catalog name (stripping reads no relation).
     """
+    recodable = recodable_keys(names)
+    in_catalog = {fam["id"] for fam in names["families"] if fam["in_catalog"]}
+
+    def ending(key: str, owners: list[str]) -> str:
+        """RECODABLE when the family that ``recodable`` gives at ``key`` is one of the
+        ``owners`` there, and a recode of it leaves no catalog family sharing the key."""
+        fid = recodable.get(key)
+        rest = [other for other in owners if other != fid]
+        if fid in owners and (len(rest) <= 1 or not in_catalog.intersection(rest)):
+            return RECODABLE.format(family=fid)
+        return UNLISTABLE
+
     errors = [
         f"{m.family}: its name {m.name!r} reaches {m.other} at key {m.key!r}, "
-        "and the two are distinct_from each other"
+        f"and the two are distinct_from each other{ending(m.key, [m.other])}"
         for m in check.meetings
     ]
-    errors += [
-        f"key {key!r} is owned by several catalog families ({', '.join(fids)}), "
-        "outside the ambiguous set"
-        for key, fids in check.shared.items()
-        if key not in check.amb
-    ]
+    for key, fids in check.shared.items():
+        if key in check.amb:
+            continue
+        inside = [fid for fid in fids if fid in in_catalog]
+        outside = [fid for fid in fids if fid not in in_catalog]
+        who = (
+            f"several families ({', '.join(inside)} in the catalog, {', '.join(outside)} not)"
+            if outside
+            else f"several catalog families ({', '.join(inside)})"
+        )
+        errors.append(
+            f"key {key!r} is owned by {who}, outside the ambiguous set{ending(key, list(fids))}"
+        )
     first_name: dict[str, str] = {}
     for c in check.collisions:
         first_name.setdefault(c.key, c.name)
@@ -394,23 +487,34 @@ def check_errors(
                 f"{first_name[key]!r} may be a weight of {', '.join(fids)}, but was reviewed "
                 f"({seen.ruling}) as one of {', '.join(seen.families)}; the owner reviews the change"
             )
-    errors += [
-        f"{seen.name!r} is reviewed as ambiguous in {reviewed_path}, but no longer is; once "
-        "the owner has reviewed the drop, remove it"
-        for key, seen in sorted(reviewed.ambiguous.items())
-        if key not in check.amb
-    ]
     catalog_keys = {
         match_key(name)
         for fam in names["families"]
         if fam["in_catalog"]
         for name in (fam["family"], *(n["name"] for n in fam["names"]))
     }
+    outside = [
+        c
+        for c in check.collisions
+        if not c.catalog and c.key in catalog_keys and c.key not in check.amb
+    ]
+    # Archivo leaving while Archivo Black stays: the name drops out of the ambiguous set
+    # because its other family left, so removing the entry clears nothing (UNLISTABLE below).
+    left = {c.key for c in outside}
+    errors += [
+        f"{seen.name!r} is reviewed as ambiguous in {reviewed_path}, but now strips only to a "
+        "family outside the catalog; the owner reviews it with that collision, below"
+        if key in left
+        else f"{seen.name!r} is reviewed as ambiguous in {reviewed_path}, but no longer is; "
+        "once the owner has reviewed the drop, remove it"
+        for key, seen in sorted(reviewed.ambiguous.items())
+        if key not in check.amb
+    ]
     errors += [
         f"{c.name!r}, a catalog name, strips to the key {c.reached!r} of "
         f"{', '.join(c.families)}, outside the catalog, which the ambiguous set can't hold"
-        for c in check.collisions
-        if not c.catalog and c.key in catalog_keys and c.key not in check.amb
+        f"{UNLISTABLE}"
+        for c in outside
     ]
     return errors
 
@@ -423,10 +527,12 @@ def match_file(doc: Mapping[str, Any], names_path: Path) -> MatchFile:
     matches a built site as ``catalog_sha256`` does, and ``reviewed_sha256`` the reviewed
     list's (of no bytes when there is none), since its recodes change the match file too. The
     match file's own ``names_sha256`` hashes the canonical form (``owned.match_document``).
-    Raises ``MatchFileError`` with every problem, in two rounds at most: the two files' own
-    problems (unreadable, of another run, of the wrong shape, malformed) stop it before the
-    checks, which read both; past them, the refused recodes and the collision check's
-    findings come together, the check running without the refused recodes.
+    Raises ``MatchFileError`` with every problem of its stage: the two files' own problems
+    (unreadable, of another run, of the wrong shape, malformed) stop it before the checks,
+    which read both, and the names file's come in stages of their own (``names_errors``: its
+    schema version, then its shape, then its run, each stopping it before the next); past
+    them, the refused recodes and the collision check's findings come together, the check
+    running without the refused recodes.
     """
     names_path = Path(names_path)
     reviewed_path = default_reviewed_path(names_path)

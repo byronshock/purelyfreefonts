@@ -711,6 +711,22 @@ def test_the_check_finds_a_planted_meeting_of_distinct_families():
     ]
 
 
+def test_the_check_finds_a_meeting_only_at_a_catalog_family():
+    """A family outside the catalog is coded ``-``, never owned, so a name that reaches it
+    hides no listed font: Bar Serif reaching Foo Sans Hairline, outside, is no meeting. A name
+    of Foo Sans Hairline reaching Foo Sans, in the catalog, is."""
+    doc = json.loads(json.dumps(ov.NAMES))
+    doc["families"][0]["names"].append({"name": "Foo Hairline Bold", "relation": "related"})
+    doc["families"][0]["distinct_from"] = ["foo-sans-hairline"]
+    assert "foo-sans-hairline" not in ov.CATALOG_IDS
+    assert owned.check_document(doc, ov.CATALOG_IDS).meetings == ()
+    doc["families"][3]["distinct_from"] = ["foo-sans"]
+    meetings = owned.check_document(doc, ov.CATALOG_IDS).meetings
+    assert [(m.family, m.other, m.name, m.key) for m in meetings] == [
+        ("foo-sans-hairline", "foo-sans", "Foo Sans Hairline", "foosans")
+    ]
+
+
 def test_the_check_reports_shared_owned_keys():
     shared = json.loads(json.dumps(ov.NAMES))
     shared["families"][0]["names"].append({"name": "Foo Sans Pro", "relation": "rename"})
@@ -720,17 +736,18 @@ def test_the_check_reports_shared_owned_keys():
 
 
 def test_each_reviewed_recode_makes_its_alias_a_near_match_in_the_real_match_document():
-    """Each recode of the list, of a catalog family, changes its alias's code from an owned
-    one to the near-match its relation gives: HackGen's, a build of Hack in names.json, to
-    related (hopper_hackgen_related)."""
+    """Each recode of the list changes its alias's code from an owned one to the near-match
+    its relation gives: HackGen's, a build of Hack in names.json, to related
+    (hopper_hackgen_related). A recode of a family outside the catalog changes nothing, a
+    stale entry the build refuses too (``matchfile.refused_recodes``)."""
     assert RECODE_LETTERS.keys() == owned.RECODE_RELATIONS
     doc, ids = real()
     built = owned.match_document(doc, ids, doc["run"]["date"], recodes=RECODES)
     unrecoded = owned.match_document(doc, ids, doc["run"]["date"])
     for key, recode in REVIEWED.recodes.items():
-        if recode.family in ids:
-            assert letters_at(built, key)[recode.family] == RECODE_LETTERS[recode.relation]
-            assert letters_at(unrecoded, key)[recode.family] in OWNED_LETTERS
+        assert recode.family in ids, f"{recode.name}: {recode.family} is outside the catalog"
+        assert letters_at(built, key)[recode.family] == RECODE_LETTERS[recode.relation]
+        assert letters_at(unrecoded, key)[recode.family] in OWNED_LETTERS
 
 
 def test_the_real_names_json_s_ambiguous_keys_are_the_reviewed_ones_and_nothing_meets():
@@ -1429,8 +1446,7 @@ def test_without_its_recode_each_recoded_alias_owns_its_family():
     recoded, unrecoded = real_table(), real_table(recoded=False)
     _, ids = real()
     for recode in REVIEWED.recodes.values():
-        if recode.family not in ids:
-            continue
+        assert recode.family in ids, f"{recode.name}: {recode.family} is outside the catalog"
         entry = [E((recode.name,), trusted=True)]
         assert recode.family in owned.match(entry, unrecoded).owned
         result = owned.match(entry, recoded)
