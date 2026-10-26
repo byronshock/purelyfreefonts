@@ -727,6 +727,20 @@ def test_the_check_finds_a_meeting_only_at_a_catalog_family():
     ]
 
 
+def test_a_pair_written_on_one_side_is_checked_in_both_directions():
+    """names.json may write a ``distinct_from`` pair on one family only, as it does for
+    noto-sans and noto-sans-jp. Written on Foo Sans alone, the pair's written direction is
+    to Foo Sans Hairline, outside the catalog and never owned, so only the other direction
+    finds Foo Sans Hairline's name reaching Foo Sans."""
+    doc = json.loads(json.dumps(ov.NAMES))
+    doc["families"][1]["distinct_from"] = ["foo-sans-hairline", "foo-sans-tight"]
+    assert doc["families"][3]["distinct_from"] == []
+    meetings = owned.check_document(doc, ov.CATALOG_IDS).meetings
+    assert [(m.family, m.other, m.name, m.key) for m in meetings] == [
+        ("foo-sans-hairline", "foo-sans", "Foo Sans Hairline", "foosans")
+    ]
+
+
 def test_the_check_reports_shared_owned_keys():
     shared = json.loads(json.dumps(ov.NAMES))
     shared["families"][0]["names"].append({"name": "Foo Sans Pro", "relation": "rename"})
