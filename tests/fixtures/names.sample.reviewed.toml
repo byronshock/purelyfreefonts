@@ -5,6 +5,7 @@
 [[ambiguous]]
 name = "Sample Sans 06 Black"
 families = ["sample-sans-06"]
+owners = ["sample-sans-06-black"]
 ruling = "synthetic"
 
 # As build/names.reviewed.toml recodes HackGen: a build of Sample Mono 20 in names.json,

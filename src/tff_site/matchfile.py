@@ -34,7 +34,7 @@ import hashlib
 import json
 import tomllib
 from collections import Counter, defaultdict
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -61,7 +61,7 @@ RUN_KEYS = frozenset({"date", "method_version"})
 FAMILY_KEYS = frozenset({"id", "family", "superfamily_id", "in_catalog", "names", "distinct_from"})
 NAME_KEYS = frozenset({"name", "relation", "detail"})
 INELIGIBLE_KEYS = frozenset({"name", "reason"})
-AMBIGUOUS_FIELDS = frozenset({"name", "families", "ruling"})
+AMBIGUOUS_FIELDS = frozenset({"name", "families", "owners", "ruling"})
 RECODE_FIELDS = frozenset({"name", "family", "relation", "ruling"})
 # The end of each collision problem that no edit to the reviewed list can clear: a meeting or a
 # shared key that no recode the build takes would end, a catalog name reaching a family outside
@@ -92,10 +92,12 @@ class MatchFileError(ValueError):
 
 @dataclass(frozen=True, slots=True)
 class Ambiguous:
-    """A reviewed ambiguous name: the catalog ids it may be a weight of."""
+    """A reviewed ambiguous name: the catalog ids it may be a weight of, and the family ids
+    that own its key in names.json (``key_owners``)."""
 
     name: str
     families: tuple[str, ...]
+    owners: tuple[str, ...]
     ruling: str
 
 
@@ -171,7 +173,8 @@ def load_reviewed(path: Path) -> tuple[Reviewed, bytes]:
     the file is missing.
 
     ``[[ambiguous]]`` entries have exactly a ``name``, its ``families`` (catalog ids,
-    sorted, no repeats) and the ``ruling`` id that records the owner's review.
+    sorted, no repeats), its key's ``owners`` (family ids, sorted, no repeats, none when no
+    family owns the key) and the ``ruling`` id that records the owner's review.
     ``[[recode]]`` entries have exactly a ``name`` (an alias in names.json), the ``family``
     whose alias it is, the ``relation`` the hopper gives it instead (``owned.RECODE_RELATIONS``)
     and the ``ruling``. No two entries of one kind may share a key. A missing file reviews
@@ -217,7 +220,12 @@ def load_reviewed(path: Path) -> tuple[Reviewed, bytes]:
                 errors.append(f"{where}: {entry['name']!r} has the key of {out[key].name!r}")
                 continue
             if kind == "ambiguous":
-                ambiguous[key] = Ambiguous(entry["name"], tuple(entry["families"]), entry["ruling"])
+                ambiguous[key] = Ambiguous(
+                    entry["name"],
+                    tuple(entry["families"]),
+                    tuple(entry["owners"]),
+                    entry["ruling"],
+                )
             else:
                 recodes[key] = Recode(**entry)
     if errors:
@@ -227,6 +235,10 @@ def load_reviewed(path: Path) -> tuple[Reviewed, bytes]:
 
 def _and(words: list[str]) -> str:
     return ", ".join(words[:-1]) + f" and {words[-1]}"
+
+
+def _owned_by(owners: tuple[str, ...]) -> str:
+    return ", ".join(owners) or "no family"
 
 
 def _entry_problem(kind: str, entry: Mapping[str, Any]) -> str | None:
@@ -239,6 +251,9 @@ def _entry_problem(kind: str, entry: Mapping[str, Any]) -> str | None:
             families != sorted(set(families))
         ):
             return "families must be catalog ids, sorted, without repeats"
+        owners = entry["owners"]
+        if not (isinstance(owners, list) and _strings(*owners)) or owners != sorted(set(owners)):
+            return "owners must be family ids, sorted, without repeats"
         return None
     if not (isinstance(entry["family"], str) and entry["family"]):
         return "the family must be a family id"
@@ -453,6 +468,22 @@ def recodable_keys(names: Mapping[str, Any]) -> dict[str, Recodable]:
     return out
 
 
+def key_owners(names: Mapping[str, Any], keys: Iterable[str]) -> dict[str, tuple[str, ...]]:
+    """By each of ``keys``, the families that ``names`` gives an owned code there, in the
+    catalog or not, sorted: its family name, or an alias with an owned relation
+    (``owned.OWNED_RELATIONS``). Recodes aside: a ``[[recode]]`` is reviewed in its own entry,
+    so an ambiguous entry's ``owners`` follow names.json alone, and a recode that a pass of the
+    build leaves out doesn't change them."""
+    out: dict[str, set[str]] = {key: set() for key in keys}
+    for fam in names["families"]:
+        rows = [(fam["family"], "")] + [(item["name"], item["relation"]) for item in fam["names"]]
+        for name, relation in rows:
+            key = match_key(name)
+            if key in out and (not relation or relation in owned.OWNED_RELATIONS):
+                out[key].add(fam["id"])
+    return {key: tuple(sorted(fids)) for key, fids in out.items()}
+
+
 def check_errors(
     check: owned.Check,
     names: Mapping[str, Any],
@@ -475,11 +506,14 @@ def check_errors(
 
     A shared key fails in the ambiguous set too. The hopper doubts only an untrusted name there:
     a trusted one (fc-list's first family, a macOS family, a PostScript name's family part)
-    counts every owned code at the key. A family that gains a name at a reviewed ambiguous key
-    leaves the entry's families as they were, so without this a changed name would pass
-    unreviewed, which ``inventory_ambiguous_names`` fails ("on any new, changed or dropped name
-    until the owner has reviewed it"). A one-for-one change of the key's owner still passes, as
-    the entry records no owners: that is a question for the owner (site/CONTRACT.md section 11).
+    counts every owned code at the key. So an entry records the families that own its key in
+    names.json (``owners``, ``key_owners``) as well as the families its name may be a weight
+    of, and the build fails on any change to them, as ``inventory_ambiguous_names`` asks ("on
+    any new, changed or dropped name until the owner has reviewed it"): a family that gains a
+    name at a reviewed ambiguous key leaves the entry's families as they were, and so does a
+    one-for-one change of the key's owner (one family leaving names.json in the run in which
+    another gains the name). A gain that makes a shared key fails twice, saying what clears the
+    shared key and what the owners became.
 
     Editing the reviewed list clears the ambiguous set's problems. Its ``[[ambiguous]]``
     entries hold no exception for the other three. A ``[[recode]]`` clears a meeting or a
@@ -533,17 +567,27 @@ def check_errors(
     first_name: dict[str, str] = {}
     for c in check.collisions:
         first_name.setdefault(c.key, c.name)
+    owning = key_owners(names, check.amb)
     for key, fids in check.amb.items():
         seen = reviewed.ambiguous.get(key)
+        owners = owning[key]
         if seen is None:
             errors.append(
-                f"{first_name[key]!r} may be a weight of {', '.join(fids)}: an ambiguous name "
-                f"nobody has reviewed; once the owner has, list it in {reviewed_path}"
+                f"{first_name[key]!r} may be a weight of {', '.join(fids)}, its key {key!r} "
+                f"owned by {_owned_by(owners)}: an ambiguous name nobody has reviewed; once the "
+                f"owner has, list it in {reviewed_path}"
             )
-        elif seen.families != tuple(fids):
+            continue
+        if seen.families != tuple(fids):
             errors.append(
                 f"{first_name[key]!r} may be a weight of {', '.join(fids)}, but was reviewed "
                 f"({seen.ruling}) as one of {', '.join(seen.families)}; the owner reviews the change"
+            )
+        if seen.owners != owners:
+            errors.append(
+                f"the key {key!r} of {first_name[key]!r} is owned by {_owned_by(owners)}, but was "
+                f"reviewed ({seen.ruling}) as owned by {_owned_by(seen.owners)}; the owner reviews "
+                "the change"
             )
     catalog_keys = {
         match_key(name)
@@ -619,6 +663,7 @@ def match_file(doc: Mapping[str, Any], names_path: Path) -> MatchFile:
     errors = [f"{reviewed_path}: {error}" for _, error in sorted(refused.items())]
     ids = [font["id"] for font in doc["fonts"]]
     recodes = {r.name: r.relation for key, r in reviewed.recodes.items() if key not in refused}
+    dropped: set[str] = set()  # the keys of listed recodes that an earlier pass left out
     while True:
         try:
             check = owned.check_document(names, ids, recodes=recodes)
@@ -627,7 +672,14 @@ def match_file(doc: Mapping[str, Any], names_path: Path) -> MatchFile:
             kept = {name: rel for name, rel in recodes.items() if match_key(name) not in exc.keys}
             if len(kept) == len(recodes):  # not recodes of ours: never loop
                 raise MatchFileError([*errors, f"{names_path}: {exc}"]) from exc
-            errors += [f"{reviewed_path}: {message}" for _, message in exc.problems]
+            # A name whose own listed recode a pass left out bypasses only for that: the
+            # message about its key stands, and asking for its recode again would be wrong.
+            errors += [
+                f"{reviewed_path}: {message}"
+                for _, message, via in exc.problems
+                if via not in dropped
+            ]
+            dropped |= exc.keys
             recodes = kept
         except ValueError as exc:  # what owned refuses that the checks above let through
             raise MatchFileError([*errors, f"{names_path}: {exc}"]) from exc

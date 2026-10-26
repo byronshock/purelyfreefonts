@@ -765,14 +765,18 @@ def test_each_reviewed_recode_makes_its_alias_a_near_match_in_the_real_match_doc
 
 
 def test_the_real_names_json_s_ambiguous_keys_are_the_reviewed_ones_and_nothing_meets():
-    """The ambiguous set (Archivo Black and its like) is the reviewed list's, so a run that
-    changes it edits only the list. Each collision that reaches a catalog family makes
-    one of them, no ``distinct_from`` pair meets, and no key is owned twice, in them or outside: the
-    same rules the build holds (``matchfile.check_errors``), with no count that a refresh
-    moves."""
+    """The ambiguous set (Archivo Black and its like) is read from the reviewed list, so a run
+    that changes it edits the list, not this test (an entry citing a newly recorded ruling also
+    names it in tests/test_site_contracts.py, by its kind: ``AMBIGUOUS_RULINGS``). Each
+    collision that reaches a catalog family makes one of them, no ``distinct_from`` pair meets,
+    and no key is owned twice, in them or outside: the same rules the build holds
+    (``matchfile.check_errors``), with no count that a refresh moves."""
     doc, ids = real()
     check = owned.check_document(doc, ids, recodes=RECODES)
     assert check.amb == {key: entry.families for key, entry in REVIEWED.ambiguous.items()}
+    assert matchfile.key_owners(doc, check.amb) == {
+        key: entry.owners for key, entry in REVIEWED.ambiguous.items()
+    }
     assert {c.key for c in check.collisions if c.catalog} == check.amb.keys()
     assert check.meetings == ()
     assert check.shared == {}

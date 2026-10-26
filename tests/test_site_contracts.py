@@ -424,26 +424,31 @@ def test_the_committed_recodes_of_a_ruled_name_cite_a_ruling_that_covers_them():
 
 
 # inventory_ambiguous_names (2026-10-23) reviewed these five, each with the families it names:
-# "Gentium Book (or Gentium; Gentium Plus on the October data)". The build fails on any new,
-# changed or dropped name "until the owner has reviewed it", a drop too: once the owner has, a
-# dropped name's entry is removed, and a new or changed one cites the ruling that reviews it.
+# "Gentium Book (or Gentium; Gentium Plus on the October data)", and its key's owners, each
+# name's own family, "a family of their own" (on the October data Gentium Book is an old name
+# of gentium-book-plus, as Gentium Plus Book is on both). The build fails on any new, changed
+# or dropped name "until the owner has reviewed it", a drop too: once the owner has, a dropped
+# name's entry is removed, and a new or changed one cites the ruling that reviews it.
 AMBIGUOUS_RULED = {
-    "Archivo Black": {("archivo",)},
-    "Bungee Hairline": {("bungee",)},
-    "Gentium Book": {("gentium",), ("gentium-plus",)},
-    "Gentium Plus Book": {("gentium-plus",)},
-    "Syne Italic": {("syne",)},
+    "Archivo Black": {(("archivo",), ("archivo-black",))},
+    "Bungee Hairline": {(("bungee",), ("bungee-hairline",))},
+    "Gentium Book": {
+        (("gentium",), ("gentium-book",)),
+        (("gentium-plus",), ("gentium-book-plus",)),
+    },
+    "Gentium Plus Book": {(("gentium-plus",), ("gentium-book-plus",))},
+    "Syne Italic": {(("syne",), ("syne-italic",))},
 }
 
 
 def test_the_committed_ambiguous_names_citing_the_ruling_are_among_the_five_it_names():
-    """An entry citing inventory_ambiguous_names is one of its five, with the families it names.
-    A refresh that drops one of them, adds a sixth name or gives one of the five another
-    family waits for the owner's review (ops/MONTHLY.md step 5). Then a drop removes the
-    entry, and a sixth name or a new family cites the ruling that reviews it instead, so this
-    test needs no edit either way."""
+    """An entry citing inventory_ambiguous_names is one of its five, with the families and the
+    owners it names. A refresh that drops one of them, adds a sixth name or gives one of the
+    five another family or owner waits for the owner's review (ops/MONTHLY.md step 5). Then a
+    drop removes the entry, and a sixth name or a new family or owner cites the ruling that
+    reviews it instead, so this test needs no edit either way."""
     cited = {
-        entry.name: entry.families
+        entry.name: (entry.families, entry.owners)
         for entry in COMMITTED_REVIEWED.ambiguous.values()
         if entry.ruling == "inventory_ambiguous_names"
     }

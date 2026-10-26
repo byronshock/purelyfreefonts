@@ -407,13 +407,15 @@ OWNED_RELATIONS = frozenset(
 
 class RecodeError(ValueError):
     """Recodes that other names of their families bypass (``_check_recodes``): ``problems``
-    holds each one's recoded key and message, every one that a pass finds, and ``keys`` those
-    keys, so a caller can leave those recodes out and check the rest."""
+    holds each one's recoded key, message and ``via``, the own key of the name that bypasses
+    it (None when the family's name has the recoded key), every one that a pass finds, and
+    ``keys`` those recoded keys, so a caller can leave those recodes out and check the rest,
+    and tell a bypass that only a recode it left out makes (by ``via``)."""
 
-    def __init__(self, problems: Iterable[tuple[str, str]]) -> None:
+    def __init__(self, problems: Iterable[tuple[str, str, str | None]]) -> None:
         self.problems = tuple(problems)
-        self.keys = frozenset(key for key, _ in self.problems)
-        super().__init__("\n".join(message for _, message in self.problems))
+        self.keys = frozenset(key for key, _, _ in self.problems)
+        super().__init__("\n".join(message for _, message, _ in self.problems))
 
 
 def _recodes(names_doc: Mapping[str, Any], recodes: Mapping[str, str] | None) -> dict[str, str]:
@@ -525,30 +527,47 @@ def _check_recodes(
     keeps an owned code at its own key while its candidates reach the recoded one: an alias
     "HackGen NF" as a patched build of Hack would make a list's "HackGen NF" own Hack again,
     so it needs a recode of its own (``hopper_hackgen_related``), and so would a "HackGen Nerd
-    Font" beside it. A name at its family name's key, which no recode touches, can't be: the
-    message says so, never asking for a recode the build would refuse.
+    Font" beside it. A name the site build can't recode is named saying why, never asking for
+    its recode: one at its family name's key, which no recode touches, or at a key that another
+    family's alias also has, where a recode would recode both, so the build refuses it
+    (``tff_site.matchfile.refused_recodes``). A key that its family name has is named for that
+    alone, as no recode of a name that reaches it could save it. Each bypass names the
+    bypassing name's own key as its ``via`` (``RecodeError``), so a caller that left a listed
+    recode out can tell the bypasses that only that makes.
     """
-    problems = [
-        (key, f"recode {key!r}: the family name of {fid} has that key")
+    problems: list[tuple[str, str, str | None]] = [
+        (key, f"recode {key!r}: the family name of {fid} has that key", None)
         for key, fids in sorted(recoded.items())
         for fid in sorted(fids)
         if holders[key].owns(fid)
     ]
+    named = {key for key, _, _ in problems}
     by_family: dict[str, set[str]] = defaultdict(set)
     for key, fids in recoded.items():
         for fid in fids:
             by_family[fid].add(key)
+    aliased: dict[str, set[str]] = defaultdict(set)  # key -> the families with an alias there
+    if by_family:
+        for fam in names_doc["families"]:
+            for item in fam["names"]:
+                aliased[match_key(item["name"])].add(fam["id"])
     for fam in names_doc["families"]:
         keys_here = by_family.get(fam["id"])
         if not keys_here:
             continue
         for name in (fam["family"], *(item["name"] for item in fam["names"])):
             chain = candidates(name)
-            reached = sorted(keys_here & {c.key for c in chain[1:]})
+            reached = sorted((keys_here - named) & {c.key for c in chain[1:]})
             if not (reached and holders[chain[0].key].owns(fam["id"])):
                 continue
+            others = sorted(aliased[chain[0].key] - {fam["id"]})
             if chain[0].key == match_key(fam["family"]):  # no recode can make it a near-match
                 fix = ", at its family name's key, which no recode touches"
+            elif others:  # the site build refuses a recode that would recode them too
+                fix = (
+                    f", at a key that an alias of {', '.join(others)} also has, which the "
+                    "build won't recode"
+                )
             else:
                 fix = "; recode that name too"
             problems += [
@@ -556,6 +575,7 @@ def _check_recodes(
                     key,
                     f"recode {key!r}: {fam['id']}'s name {name!r} reaches it and still counts "
                     f"as owned{fix}",
+                    chain[0].key,
                 )
                 for key in reached
             ]
