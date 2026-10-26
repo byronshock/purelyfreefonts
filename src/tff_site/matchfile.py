@@ -619,6 +619,7 @@ def match_file(doc: Mapping[str, Any], names_path: Path) -> MatchFile:
     errors = [f"{reviewed_path}: {error}" for _, error in sorted(refused.items())]
     ids = [font["id"] for font in doc["fonts"]]
     recodes = {r.name: r.relation for key, r in reviewed.recodes.items() if key not in refused}
+    dropped: set[str] = set()  # the keys of listed recodes that an earlier pass left out
     while True:
         try:
             check = owned.check_document(names, ids, recodes=recodes)
@@ -627,7 +628,14 @@ def match_file(doc: Mapping[str, Any], names_path: Path) -> MatchFile:
             kept = {name: rel for name, rel in recodes.items() if match_key(name) not in exc.keys}
             if len(kept) == len(recodes):  # not recodes of ours: never loop
                 raise MatchFileError([*errors, f"{names_path}: {exc}"]) from exc
-            errors += [f"{reviewed_path}: {message}" for _, message in exc.problems]
+            # A name whose own listed recode a pass left out bypasses only for that: the
+            # message about its key stands, and asking for its recode again would be wrong.
+            errors += [
+                f"{reviewed_path}: {message}"
+                for _, message, via in exc.problems
+                if via not in dropped
+            ]
+            dropped |= exc.keys
             recodes = kept
         except ValueError as exc:  # what owned refuses that the checks above let through
             raise MatchFileError([*errors, f"{names_path}: {exc}"]) from exc

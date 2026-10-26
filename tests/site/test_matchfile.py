@@ -1463,6 +1463,63 @@ def test_every_name_that_bypasses_a_recode_is_named_in_one_run(tmp_path):
     ]
 
 
+def test_a_recode_its_family_name_refuses_is_named_once_for_that(tmp_path):
+    """Sample Mono 20's rename "SampleMono20", listed as a recode, has its family name's key,
+    which no recode touches, so the build refuses it for that alone: the patched build "Sample
+    Mono 20 NF", which reaches the key too, is not asked for as well, as no recode of it could
+    save this one (and a recode of it, once listed, would make a valid owned alias a near-match
+    for nothing)."""
+
+    def renamed(names: dict[str, Any]) -> None:
+        family(names, "sample-mono-20")["names"] += [
+            {"name": "SampleMono20", "relation": "rename"},
+            {"name": "Sample Mono 20 NF", "relation": "build", "detail": "nf"},
+        ]
+
+    path = write(
+        tmp_path,
+        names_with(renamed),
+        REVIEWED + recode_entry("SampleMono20", "sample-mono-20", "related"),
+    )
+    assert errors_of(path) == [
+        f"{tmp_path / 'names.reviewed.toml'}: recode 'samplemono20': the family name of "
+        "sample-mono-20 has that key"
+    ]
+
+
+def test_a_bypass_that_only_a_dropped_listed_recode_makes_is_not_asked_for(tmp_path):
+    """Sample Sans 03 gets the rename "Sample Sans 01", its PostScript name "SampleSans01-Bold"
+    and the rename "Sample Sans01Bold Italic", which reaches the PostScript name's key only;
+    the first two are listed. The third bypasses the second's recode, which the build leaves
+    out; the second then bypasses the first's, but its recode is listed already, so the build
+    doesn't ask for it again: listing the third clears both."""
+
+    def renamed(names: dict[str, Any]) -> None:
+        family(names, "sample-sans-03")["names"] += [
+            {"name": "Sample Sans 01", "relation": "rename"},
+            {"name": "SampleSans01-Bold", "relation": "postscript"},
+            {"name": "Sample Sans01Bold Italic", "relation": "rename"},
+        ]
+
+    names = names_with(renamed)
+    listed = tmp_path / "names.reviewed.toml"
+    recodes = "".join(
+        recode_entry(name, "sample-sans-03", "related")
+        for name in ("Sample Sans 01", "SampleSans01-Bold")
+    )
+    path = write(tmp_path, names, every_ambiguous_name(names) + RECODE_20 + recodes)
+    assert [e for e in errors_of(path) if e.startswith(f"{listed}: ")] == [
+        f"{listed}: recode 'samplesans01bold': sample-sans-03's name 'Sample Sans01Bold Italic' "
+        "reaches it and still counts as owned; recode that name too"
+    ]
+    every = recodes + recode_entry("Sample Sans01Bold Italic", "sample-sans-03", "related")
+    path = write(tmp_path, names, every_ambiguous_name(names) + RECODE_20 + every)
+    doc = json.loads(matchfile.match_file(SAMPLE, path).blob)
+    assert doc["k"]["samplesans01"] == (
+        f"{doc['ids'].index('sample-sans-01')},{doc['ids'].index('sample-sans-03')}x"
+    )
+
+
 def test_a_names_file_and_a_reviewed_list_with_problems_are_listed_together(tmp_path):
     names = names_with(lambda n: n["run"].update(date="2026-01-02"))
     path = write(tmp_path, names, "[[ambiguous]]\nname = 1\n")
