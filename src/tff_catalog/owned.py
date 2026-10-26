@@ -523,7 +523,8 @@ def _check_recodes(
     keeps an owned code at its own key while its candidates reach the recoded one: an alias
     "HackGen NF" as a patched build of Hack would make a list's "HackGen NF" own Hack again,
     so it needs a recode of its own (``hopper_hackgen_related``), and so would a "HackGen Nerd
-    Font" beside it.
+    Font" beside it. A name at its family name's key, which no recode touches, can't be: the
+    message says so, never asking for a recode the build would refuse.
     """
     problems = [
         (key, f"recode {key!r}: the family name of {fid} has that key")
@@ -544,11 +545,15 @@ def _check_recodes(
             reached = sorted(keys_here & {c.key for c in chain[1:]})
             if not (reached and holders[chain[0].key].owns(fam["id"])):
                 continue
+            if chain[0].key == match_key(fam["family"]):  # no recode can make it a near-match
+                fix = ", at its family name's key, which no recode touches"
+            else:
+                fix = "; recode that name too"
             problems += [
                 (
                     key,
                     f"recode {key!r}: {fam['id']}'s name {name!r} reaches it and still counts "
-                    "as owned; recode that name too",
+                    f"as owned{fix}",
                 )
                 for key in reached
             ]
