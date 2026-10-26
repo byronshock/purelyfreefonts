@@ -532,6 +532,48 @@ def _meet_at_a_name_an_alias_spells(names: dict[str, Any]) -> None:
     family(names, "sample-sans-01")["names"].append({"name": "SampleSans01", "relation": "rename"})
 
 
+def outside_family(family_id: str, name: str) -> dict[str, Any]:
+    """A names.json family outside the catalog, with no aliases."""
+    return {
+        "id": family_id,
+        "family": name,
+        "superfamily_id": None,
+        "in_catalog": False,
+        "names": [],
+        "distinct_from": [],
+    }
+
+
+def _share_outside(names: dict[str, Any]) -> None:
+    """Sample Sans 03 gets the rename "Sample Held 41", the name of a family outside the
+    catalog: a list naming that family would count Sample Sans 03 as owned."""
+    family(names, "sample-sans-03")["names"].append(
+        {"name": "Sample Held 41", "relation": "rename"}
+    )
+
+
+def _share_outside_by_an_alias(names: dict[str, Any]) -> None:
+    """Sample Held 41, outside the catalog, gets the rename "Sample Sans 03": a recode of a
+    family outside the catalog changes nothing, and Sample Sans 03's own name is no alias."""
+    family(names, "sample-held-41")["names"].append(
+        {"name": "Sample Sans 03", "relation": "rename"}
+    )
+
+
+def _share_outside_twice(names: dict[str, Any]) -> None:
+    """``_share_outside``, and another family outside the catalog is named "Sample Held 41":
+    a recode of Sample Sans 03's alias leaves only families outside the catalog at the key."""
+    _share_outside(names)
+    names["families"].append(outside_family("sample-held-41-old", "Sample Held 41"))
+
+
+def _share_with_a_name_outside(names: dict[str, Any]) -> None:
+    """``_share``, and a family outside the catalog is named "Sample Sans 01" too: a recode of
+    Sample Sans 03's alias leaves Sample Sans 01 sharing the key with it."""
+    _share(names)
+    names["families"].append(outside_family("sample-sans-01-old", "Sample Sans 01"))
+
+
 @pytest.mark.parametrize(
     ("mutate", "message"),
     [
@@ -582,6 +624,8 @@ def every_ambiguous_name(names: dict[str, Any]) -> str:
         pytest.param(_meet_at_a_name_an_alias_spells, 1, id="meeting-at-its-own-name-s-alias"),
         pytest.param(_meet_at_two_families_aliases, 3, id="meeting-at-two-families-aliases"),
         pytest.param(_share_aliases, 1, id="key-two-families-aliases-hold"),
+        pytest.param(_share_outside_by_an_alias, 2, id="key-an-outside-alias-holds"),
+        pytest.param(_share_with_a_name_outside, 1, id="key-two-names-and-an-alias-hold"),
         pytest.param(_strip_out, 1, id="catalog-name-to-another-family"),
     ],
 )
@@ -613,16 +657,7 @@ def _meet_at_an_alias_another_family_is_named(names: dict[str, Any]) -> None:
     """``_meet_at_an_alias``, and a family outside the catalog is named "Sample Sans Classic":
     a name at the key, which no recode touches, so the recode of 05's alias still ends it."""
     _meet_at_an_alias(names)
-    names["families"].append(
-        {
-            "id": "sample-sans-classic",
-            "family": "Sample Sans Classic",
-            "superfamily_id": None,
-            "in_catalog": False,
-            "names": [],
-            "distinct_from": [],
-        }
-    )
+    names["families"].append(outside_family("sample-sans-classic", "Sample Sans Classic"))
 
 
 MEETING_AT_05 = (
@@ -632,11 +667,11 @@ MEETING_AT_05 = (
 
 
 @pytest.mark.parametrize(
-    ("mutate", "problem", "recode", "key", "codes"),
+    ("mutate", "problems", "recode", "key", "codes"),
     [
         pytest.param(
             _meet_at_an_alias,
-            MEETING_AT_05,
+            [MEETING_AT_05],
             ("Sample Sans Classic", "sample-sans-05", "bundle"),
             "samplesansclassic",
             [("sample-sans-05", "u")],
@@ -644,7 +679,11 @@ MEETING_AT_05 = (
         ),
         pytest.param(
             _meet_at_an_alias_another_family_is_named,
-            MEETING_AT_05,
+            [
+                MEETING_AT_05,
+                "key 'samplesansclassic' is owned by several families (sample-sans-05 in the "
+                "catalog, sample-sans-classic not), outside the ambiguous set",
+            ],
             ("Sample Sans Classic", "sample-sans-05", "bundle"),
             "samplesansclassic",
             [("sample-sans-05", "u"), ("-", "")],
@@ -652,17 +691,41 @@ MEETING_AT_05 = (
         ),
         pytest.param(
             _share,
-            "key 'samplesans01' is owned by several catalog families (sample-sans-01, "
-            "sample-sans-03), outside the ambiguous set",
+            [
+                "key 'samplesans01' is owned by several catalog families (sample-sans-01, "
+                "sample-sans-03), outside the ambiguous set"
+            ],
             ("Sample Sans 01", "sample-sans-03", "related"),
             "samplesans01",
             [("sample-sans-01", ""), ("sample-sans-03", "x")],
             id="key-a-name-and-an-alias-hold",
         ),
+        pytest.param(
+            _share_outside,
+            [
+                "key 'sampleheld41' is owned by several families (sample-sans-03 in the "
+                "catalog, sample-held-41 not), outside the ambiguous set"
+            ],
+            ("Sample Held 41", "sample-sans-03", "related"),
+            "sampleheld41",
+            [("sample-sans-03", "x"), ("-", "")],
+            id="key-an-alias-and-an-outside-name-hold",
+        ),
+        pytest.param(
+            _share_outside_twice,
+            [
+                "key 'sampleheld41' is owned by several families (sample-sans-03 in the "
+                "catalog, sample-held-41, sample-held-41-old not), outside the ambiguous set"
+            ],
+            ("Sample Held 41", "sample-sans-03", "related"),
+            "sampleheld41",
+            [("sample-sans-03", "x"), ("-", "")],
+            id="key-an-alias-and-two-outside-names-hold",
+        ),
     ],
 )
 def test_a_collision_that_a_recode_ends_names_it_and_the_recode_clears_it(
-    tmp_path, mutate, problem, recode, key, codes
+    tmp_path, mutate, problems, recode, key, codes
 ):
     """A meeting or a shared key needs an owned code at its key, so where the build takes a
     recode there (``matchfile.recodable_keys``: one catalog family's aliases alone, not at its
@@ -672,7 +735,7 @@ def test_a_collision_that_a_recode_ends_names_it_and_the_recode_clears_it(
     names = names_with(mutate)
     listed = every_ambiguous_name(names) + RECODE_20
     path = write(tmp_path, names, listed)
-    assert errors_of(path) == [f"{path}: {problem}{recodable(recode[1])}"]
+    assert errors_of(path) == [f"{path}: {problem}{recodable(recode[1])}" for problem in problems]
     doc = json.loads(
         matchfile.match_file(SAMPLE, write(tmp_path, names, listed + recode_entry(*recode))).blob
     )
@@ -708,6 +771,42 @@ def test_a_recode_ends_only_the_problem_whose_owned_code_it_takes(tmp_path):
         tmp_path, names, listed + recode_entry("Sample Sans 01", "sample-sans-03", "related")
     )
     assert errors_of(path) == [f"{path}: {meeting}{UNLISTABLE}"]
+
+
+def test_a_key_that_only_families_outside_the_catalog_share_passes(tmp_path):
+    """No catalog family owns it, so no list's name there hides a listed font: like a
+    collision that reaches no catalog family, it changes no result (``check_errors``)."""
+
+    def renamed(names: dict[str, Any]) -> None:
+        family(names, "sample-sans-06-black")["names"].append(
+            {"name": "Sample Held 41", "relation": "rename"}
+        )
+
+    doc = json.loads(matchfile.match_file(SAMPLE, write(tmp_path, names_with(renamed))).blob)
+    assert doc["k"]["sampleheld41"] == "-"
+
+
+def test_a_key_in_the_ambiguous_set_may_be_shared(tmp_path):
+    """Step 3 fails a shared key "outside the ambiguous set": inside it, the hopper doubts the
+    name's owned codes (``owned.match``). Sample Sans 03 and 05 get the rename "Sample Sans 06
+    Black", the reviewed ambiguous name, which its own family, outside the catalog, holds too:
+    the build passes, its ambiguous set unchanged."""
+
+    def renamed(names: dict[str, Any]) -> None:
+        for fid in ("sample-sans-03", "sample-sans-05"):
+            family(names, fid)["names"].append(
+                {"name": "Sample Sans 06 Black", "relation": "rename"}
+            )
+
+    names = names_with(renamed)
+    check = owned.check_document(names, [f["id"] for f in SAMPLE["fonts"]], recodes=SAMPLE_RECODES)
+    assert check.shared["samplesans06black"] == (
+        "sample-sans-03",
+        "sample-sans-05",
+        "sample-sans-06-black",
+    )
+    doc = json.loads(matchfile.match_file(SAMPLE, write(tmp_path, names)).blob)
+    assert doc["amb"] == {"samplesans06black": [doc["ids"].index("sample-sans-06")]}
 
 
 def test_recodable_keys_are_those_at_which_the_build_takes_a_recode():

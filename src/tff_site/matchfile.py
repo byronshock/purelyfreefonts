@@ -422,24 +422,25 @@ def check_errors(
     stripping style words from a catalog name yields another family's key", and "the owner
     reviews flagged collisions". So the build fails on a ``distinct_from`` pair that meets
     (Inter Tight reaching Inter, M3-D5 a; only at a catalog family, since one outside the
-    catalog is never owned: ``owned.check_document``), a key that several catalog families own
-    outside the ambiguous set, a catalog name whose stripped key only families outside the
-    catalog hold (the ambiguous set holds catalog families only, so it can't take one), and an
-    ambiguous set other than the reviewed one: the hopper doubts those names (``owned.match``),
-    so which ones it doubts is the owner's call. A collision that starts from no catalog name
-    and reaches no catalog family changes no result, and is only reported.
+    catalog is never owned: ``owned.check_document``), a key that a catalog family owns with
+    another family, in the catalog or not, outside the ambiguous set (a list's name there
+    counts the catalog family as owned), a catalog name whose stripped key only families
+    outside the catalog hold (the ambiguous set holds catalog families only, so it can't take
+    one), and an ambiguous set other than the reviewed one: the hopper doubts those names
+    (``owned.match``), so which ones it doubts is the owner's call. A collision that starts
+    from no catalog name and reaches no catalog family changes no result, and is only reported.
 
     Editing the reviewed list clears the ambiguous set's problems. Its ``[[ambiguous]]``
     entries hold no exception for the other three (step 3 fails them "outside the ambiguous
     set"). A ``[[recode]]`` clears a meeting or a shared key when the build takes a recode at
     the key (``recodable_keys``) and the family it names is the one whose owned code there
-    makes the problem: the meeting's other family, or one of two families sharing the key. A
-    recode makes that family's aliases at the key near-matches, which may share a key as a
-    bundle does, so that problem ends with ``RECODABLE``, naming the family. The rest end with
-    ``UNLISTABLE``, carried out by an alias row or a change to the build (ops/MONTHLY.md step
-    5): an owned code through a family's own name, or through aliases that two families hold,
-    which the build refuses to recode, and every stripped catalog name (stripping reads no
-    relation).
+    makes the problem: the meeting's other family, or a catalog family sharing the key with one
+    other family, or with families outside the catalog only. A recode makes that family's
+    aliases at the key near-matches, which may share a key as a bundle does, so that problem
+    ends with ``RECODABLE``, naming the family. The rest end with ``UNLISTABLE``, carried out
+    by an alias row or a change to the build (ops/MONTHLY.md step 5): an owned code through a
+    family's own name, or through aliases that two families hold, which the build refuses to
+    recode, and every stripped catalog name (stripping reads no relation).
     """
     recodable = recodable_keys(names)
     in_catalog = {fam["id"] for fam in names["families"] if fam["in_catalog"]}
@@ -458,12 +459,19 @@ def check_errors(
         f"and the two are distinct_from each other{ending(m.key, [m.other])}"
         for m in check.meetings
     ]
-    errors += [
-        f"key {key!r} is owned by several catalog families ({', '.join(fids)}), "
-        f"outside the ambiguous set{ending(key, list(fids))}"
-        for key, fids in check.shared.items()
-        if key not in check.amb
-    ]
+    for key, fids in check.shared.items():
+        if key in check.amb:
+            continue
+        inside = [fid for fid in fids if fid in in_catalog]
+        outside = [fid for fid in fids if fid not in in_catalog]
+        who = (
+            f"several families ({', '.join(inside)} in the catalog, {', '.join(outside)} not)"
+            if outside
+            else f"several catalog families ({', '.join(inside)})"
+        )
+        errors.append(
+            f"key {key!r} is owned by {who}, outside the ambiguous set{ending(key, list(fids))}"
+        )
     first_name: dict[str, str] = {}
     for c in check.collisions:
         first_name.setdefault(c.key, c.name)
