@@ -945,7 +945,8 @@ def test_a_hopper_budget_that_fails_gets_one_more_set_of_runs(
     ("sets", "problem"),
     [([(SLOW, 50.0)] * 2, "past FACTOR_MAX"), ([(NORMAL, 50.0), (SLOW, 50.0)], None),
      ([(NORMAL, 250.0)] * 2, "'median_ms': 250"), ([(SLOW, 50.0), (NORMAL, 250.0)], "250")],
-    ids=["slow-twice", "never-a-third-set", "over-budget-twice", "noisy-then-over-budget"],
+    ids=["slow-twice", "a-good-first-set-is-the-last", "over-budget-twice",
+         "noisy-then-over-budget"],
 )  # fmt: skip
 def test_a_hopper_budget_fails_when_its_second_set_fails_too(
     monkeypatch: pytest.MonkeyPatch, sets: list[tuple[float, float]], problem: str | None
