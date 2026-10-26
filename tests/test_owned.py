@@ -1103,7 +1103,7 @@ def test_parse_vectors_reach_javascript_as_python_reads_them():
 
 
 def test_every_fixture_is_a_parse_vector_too():
-    """PR 3 checks the port against the vectors only, so each fixture is one of them."""
+    """test_owned_js.py checks the port against the vectors only, so each fixture is one."""
     by_label = {c["label"]: c for c in PARSE}
     for path in ov.fixture_files():
         case = by_label[f"fixture {path.name}"]
@@ -1133,6 +1133,83 @@ def test_the_registry_vectors_say_what_their_labels_say():
     ]
 
 
+# Each edge vector's (format, error), so a regenerated file that moved an edge shows here.
+EDGES = {
+    "a JSON member that ends at code point 4,096 is sniffed": ("macos-json", None),
+    "one code point later it isn't": (None, "no_names"),
+    "<html> that ends at code point 1,024 is sniffed": (None, "html"),
+    "one code point later it isn't sniffed": (None, "no_names"),
+    "UTF-16LE without a BOM at nine NULs in ten": ("lines", None),
+    "UTF-16LE without a BOM below nine in ten is binary": (None, "binary"),
+    "UTF-16BE without a BOM at nine NULs in ten": ("lines", None),
+    "UTF-16BE without a BOM below nine in ten is binary": (None, "binary"),
+    "one NUL byte is no UTF-16": (None, "binary"),
+    "two NUL bytes on one side are UTF-16": ("lines", None),
+    "the UTF-16 guess reads the first 4,096 bytes only": ("lines", None),
+    "registry suffixes in any case": ("windows-registry", None),
+    "one written line in 20 is fc-list": ("fc-list", None),
+    "one written line in 21 is not": ("lines", None),
+    "two written lines in 40 are fc-list": ("fc-list", None),
+    "two written lines in 41 are not": ("lines", None),
+    "500 sorted names pasted are cut off": ("lines", None),
+    "499 are not": ("lines", None),
+    "names sorted nine in ten are cut off": ("lines", None),
+    "names sorted below nine in ten are not": ("lines", None),
+    "HTML in upper case": (None, "html"),
+    "Sudo and a command": ("lines", None),
+    "20 JSON lines in the first 50 are no JSON": ("fc-list", None),
+    "JSON lines after 70 blank ones": ("json-list", None),
+    "a font magic number with a NUL at byte 12": (None, "font_file"),
+    "a NUL at byte 13 is no font": (None, "binary"),
+    "a registry name starting Fonts and one space": ("windows-registry", None),
+    "a one-letter registry name": ("windows-registry", None),
+    "a JSON family of joiners only": ("macos-json", None),
+    "a JSON string holding U+001F": (None, "no_names"),
+    "two dashes are no table rule": ("lines", None),
+    "a header of two words over a rule of one": ("lines", None),
+    "MAX_BYTES bytes are not too big": (None, "no_names"),
+}
+CUT_OFF = {
+    "500 sorted names pasted are cut off": True,
+    "499 are not": False,
+    "names sorted nine in ten are cut off": True,
+    "names sorted below nine in ten are not": False,
+}
+
+
+def test_the_edge_vectors_say_what_their_labels_say():
+    """Each threshold met and missed by one (ov._edge_parse_cases): the port must count as
+    Python does, in code points, bytes and lines, or a vector fails in the browser."""
+    by_label = {c["label"]: c["expect"] for c in PARSE}
+    assert {
+        label: (by_label[label]["format"], by_label[label]["error"]) for label in EDGES
+    } == EDGES
+    registry = by_label["registry suffixes in any case"]["entries"]
+    assert [e["full"] for e in registry] == ["Arial", "Courier New", "Symbol", "Modern", "Marlett"]
+    window = by_label["the UTF-16 guess reads the first 4,096 bytes only"]["entries"]
+    assert [e["families"] for e in window] == [["Foo Sans"], ["Bar Mono"]]
+    assert {label: "cut_off" in by_label[label]["warnings"] for label in CUT_OFF} == CUT_OFF
+    names = {
+        label: [e["families"] or [e["full"]] for e in by_label[label]["entries"]]
+        for label in (
+            "Sudo and a command",
+            "a registry name starting Fonts and one space",
+            "a one-letter registry name",
+            "a JSON family of joiners only",
+            "two dashes are no table rule",
+            "a header of two words over a rule of one",
+        )
+    }
+    assert names == {
+        "Sudo and a command": [["Archivo"], ["Inter"]],
+        "a registry name starting Fonts and one space": [["Fonts Display"], ["Arial"]],
+        "a one-letter registry name": [["X"], ["Arial"]],
+        "a JSON family of joiners only": [["Inter"]],
+        "two dashes are no table rule": [["Name"], ["--"], ["Arial"]],
+        "a header of two words over a rule of one": [["Name Property"], ["Arial"]],
+    }
+
+
 @pytest.mark.parametrize("case", CANDIDATES, ids=[repr(c["name"]) for c in CANDIDATES])
 def test_candidates_vector(case):
     got = [
@@ -1145,9 +1222,92 @@ def test_candidates_vector(case):
 
 @pytest.mark.parametrize("case", MATCH, ids=[c["label"] for c in MATCH])
 def test_match_vector(case):
+    """On the file's document, or on the case's own (a hand-made one)."""
     entries = [ov.entry_of(e) for e in case["entries"]]
-    got = owned.match(entries, vector_table(), patched=case["patched"]).to_json()
+    table = owned.Table.from_document(case["document"]) if "document" in case else vector_table()
+    got = owned.match(entries, table, patched=case["patched"]).to_json()
     assert got == case["expect"]
+
+
+def test_the_object_prototype_vectors_say_what_their_labels_say():
+    """Ids and reasons named "__proto__" and "constructor" are kept as keys like any other."""
+    by_label = {c["label"]: c["expect"] for c in MATCH}
+    owned_case = by_label["ids and reasons named after Object.prototype's keys"]
+    assert owned_case["owned"] == {
+        "__proto__": {"as": "Foo", "how": "family"},
+        "constructor": {"as": "Qux", "how": "family"},
+    }
+    assert owned_case["near"] == {"plain": {"as": "Qux", "why": "bundle"}}
+    assert owned_case["counts"]["reasons"] == {"__proto__": 1, "toString": 1}
+    near_case = by_label["near-matches named after Object.prototype's keys"]
+    assert near_case["near"] == {"__proto__": {"as": "Baz", "why": "related"}}
+    assert set(by_label["ambiguous ids named after Object.prototype's keys"]["near"]) == {
+        "__proto__", "constructor", "plain"
+    }  # fmt: skip
+
+
+def test_the_hand_document_vectors_say_what_their_labels_say():
+    """The hand-made file's other cases (ov.HAND_DOCUMENT), and a trusted entry's second
+    family, which is no more trusted than any other."""
+    by_label = {c["label"]: c["expect"] for c in MATCH}
+    known_too = by_label["an ambiguous key that names a known family too, trusted"]
+    assert (known_too["owned"], known_too["near"]) == (
+        {"plain": {"as": "Amb2", "how": "family"}},
+        {},
+    )
+    assert by_label["a reason given twice counts once"]["counts"]["reasons"] == {"__proto__": 1}
+    shared = by_label["keys that share a hash"]
+    assert {fid: v["as"] for fid, v in shared["owned"].items()} == {
+        "__proto__": "Abcxyz", "constructor": "Abdxyz"
+    }  # fmt: skip
+    assert shared["counts"]["unknown"] == 1
+    second = by_label["a trusted entry's second family is untrusted"]
+    assert second["owned"] == {}
+    assert set(second["near"]) == {"foo-sans", "foo-sans-black"}
+
+
+def test_an_ambiguous_key_s_ambiguous_replaces_the_reason_a_family_s_own_code_gives():
+    """ov.AMBIGUOUS_DOCUMENT: on an untrusted entry, an ambiguous key's families are near-matches
+    as "ambiguous", even where the family's own code there gives another near reason (patched
+    with patched off, sibling, related, bundle); a trusted entry keeps the code's reason."""
+    by_label = {c["label"]: c["expect"] for c in MATCH}
+
+    def why(label: str) -> dict[str, str]:
+        assert by_label[label]["owned"] == {}, label
+        return {fid: v["why"] for fid, v in by_label[label]["near"].items()}
+
+    stem = "an ambiguous key's own"
+    for off in ("", ", patched off"):
+        assert why(f"{stem} build, patched, untrusted{off}") == {"foo": "ambiguous"}
+        assert why(f"{stem} sibling, untrusted{off}") == {"foo": "ambiguous"}
+        assert why(f"{stem} sibling, trusted{off}") == {"foo": "sibling"}
+        untrusted = why(f"{stem} related and bundle names, untrusted{off}")
+        assert untrusted == {"foo": "ambiguous", "bar": "ambiguous"}
+        trusted = why(f"{stem} related and bundle names, trusted{off}")
+        assert trusted == {"foo": "related", "bar": "bundle"}
+    # Without the ambiguous key, the patched build with patched off is "patched".
+    table = owned.Table.from_document({**ov.AMBIGUOUS_DOCUMENT, "amb": {}})
+    entries = [owned.Entry((), "Foo Black NF", None, False)]
+    got = owned.match(entries, table, patched=False).to_json()["near"]
+    assert got == {"foo": {"as": "Foo Black NF", "why": "patched"}}
+
+
+def test_the_past_ascii_vectors_say_what_their_labels_say():
+    """ov.PAST_ASCII_DOCUMENT's keys past ASCII are found after strips, through NFC, and apart
+    where they share the port's hash; the candidates pin keys that only NFC joins."""
+    by_label = {c["label"]: c["expect"] for c in MATCH}
+    found = by_label["names past ASCII found after strips"]
+    assert (set(found["owned"]), found["counts"]["owned"]) == ({"ecriture"}, 2)
+    joined = by_label["a name past ASCII found where only NFC joins its key"]["owned"]
+    assert joined == {"foo-ga": {"as": "Foo \u1100 \u1161 Bold Italic", "how": "family"}}
+    shared = by_label["keys past ASCII that share a hash"]
+    assert {fid: v["as"] for fid, v in shared["owned"].items()} == {
+        "hash-a": "\u00c9axyz Bold", "hash-b": "\u00c9bxyz Italic"
+    }  # fmt: skip
+    assert shared["counts"]["unknown"] == 1
+    keys = {c["name"]: [k["key"] for k in c["expect"]] for c in CANDIDATES}
+    assert keys["Foo \u1100 \u1161 Bold Italic"][-1] == "foo\uac00"
+    assert keys["Foo e \u0301x Bold Italic"][-1] == "foo\u00e9x"
 
 
 @pytest.mark.parametrize("case", MALFORMED, ids=[c["label"] for c in MALFORMED])

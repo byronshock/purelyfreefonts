@@ -27,6 +27,9 @@
   a pass-through route.
 - ``no_network``: fails any connection or name lookup that isn't the loopback interface.
 - ``fetch_unencoded(route)``: ``route.fetch()`` for a route handler that reads the body.
+- **Order:** every test of one browser runs before any of the next, and within a browser one
+  module's before the next's (``one_browser_and_module_at_a_time``), so each browser launches
+  once and each module's fixtures are built once per browser.
 """
 
 import contextlib
@@ -68,10 +71,14 @@ BROWSER_FIXTURES = frozenset(
 )
 
 
-@pytest.hookimpl(tryfirst=True)
-def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
+@pytest.hookimpl(wrapper=True)
+def pytest_collection_modifyitems(
+    config: pytest.Config, items: list[pytest.Item]
+) -> Iterator[None]:
     """Mark tests under tests/site that use a Playwright fixture with ``browser``, and the
-    parameters a ``real_catalog`` mark leaves out with ``sample_only``."""
+    parameters a ``real_catalog`` mark leaves out with ``sample_only``, before ``-m`` deselects
+    any; then, once pytest has deselected and reordered the rest, run them one browser and one
+    module at a time (``one_browser_and_module_at_a_time``)."""
     for item in items:
         if HERE not in Path(item.path).resolve().parents:
             continue
@@ -84,6 +91,34 @@ def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item
             assert not unknown, f"{item.nodeid}: real_catalog names no parameter {unknown}"
             if any(params[name] != value for name, value in keep.kwargs.items()):
                 item.add_marker(pytest.mark.sample_only)
+    yield
+    one_browser_and_module_at_a_time(config.getoption("browser", default=None) or [], items)
+
+
+def one_browser_and_module_at_a_time(browsers: list[str], items: list[pytest.Item]) -> None:
+    """Sort ``items`` so that every test of the first of ``browsers`` (``--browser``'s order)
+    runs before any of the next, and within one browser every test of a module before any of
+    the next; within a module, in pytest's order. A test without a browser runs with the first.
+
+    pytest keys pytest-playwright's ``browser_name``, a direct parameter of session scope, by
+    the call's position in its function's parametrization, so wherever tests are parametrized
+    further, keys of different functions and modules meet, and pytest's reordering, meant to
+    group them, interleaves them instead. In one browser, test_owned_js.py and test_keys_js.py
+    took turns 92 times, each turn building their module fixtures again (the parts' page, and
+    every parse vector parsed); with both browsers, as deploy.yml runs tests/site, each switch
+    also closed one browser and launched the other: test_owned_js.py alone switched 692 times
+    and took 20 minutes instead of half of one. ``browser_name`` is the only parameter above
+    function scope here, so this order sets each fixture up as few times as any can.
+    """
+    first: dict[Path, int] = {}
+    for item in items:
+        first.setdefault(item.path, len(first))
+
+    def rank(item: pytest.Item) -> tuple[int, int]:
+        name = getattr(getattr(item, "callspec", None), "params", {}).get("browser_name")
+        return (browsers.index(name) if name in browsers else 0, first[item.path])
+
+    items.sort(key=rank)
 
 
 @pytest.fixture(scope="session")

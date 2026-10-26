@@ -93,6 +93,7 @@ def make_site(path: Path, commit: str, *, variant: str | None = None, shared: by
     index = hashed("list", "json", json.dumps({"v": 1, "commit": commit}).encode())
     details = hashed("details", "json", json.dumps({"v": 1, "x": variant}).encode())
     match = hashed("match", "json", json.dumps({"format": "tff-match", "x": variant}).encode())
+    matcher = hashed("matcher", "js", f"const Matcher = {{v: '{variant}'}};\n".encode())
     font = hashed("fonts/sample-sans-01", "ttf", b"\x00\x01\x00\x00font" + shared)
     spec = hashed("specimens/sample-sans-01", "svg", b"<svg xmlns='http://www.w3.org/2000/svg'/>")
     html = (
@@ -101,7 +102,7 @@ def make_site(path: Path, commit: str, *, variant: str | None = None, shared: by
         f'<link rel="preload" as="fetch" crossorigin href="{index}">'
         '<link rel="icon" href="/favicon.svg"></head><body>'
         f'<ol id="list" data-index="{index}" data-details="{details}" data-match="{match}"'
-        f' data-font="{font}"></ol>'
+        f' data-matcher="{matcher}" data-font="{font}"></ol>'
         f'<noscript><img src="{spec}" alt=""></noscript></body></html>\n'
     )
     files["index.html"] = html.encode()
@@ -927,7 +928,7 @@ def test_deploy_loop_single_probes(tmp_path: Path) -> None:
         loop = deploy_loop.Loop(url, extras=10)
         loop.probe()
         assert (loop.stats.errors, loop.stats.mixed, loop.stats.versions) == (0, 0, [A])
-        assert loop.stats.requests == 10  # page, 5 core files, 2 extras, version.txt, page
+        assert loop.stats.requests == 11  # page, 6 core files, 2 extras, version.txt, page
 
         (site / "version.txt").write_text(f"commit={B}\n")  # server says B, page says A
         loop.probe()
@@ -958,6 +959,20 @@ def test_deploy_loop_single_probes(tmp_path: Path) -> None:
         loop.probe()
         assert loop.stats.errors == 2
         assert f"{match.name}: HTTP 404" in loop.stats.samples[-1]
+
+        # So is its matcher module (inventory_matcher_on_demand).
+        (site / "assets" / match.name).write_bytes(
+            json.dumps({"format": "tff-match", "x": A}).encode()
+        )
+        matcher = next((site / "assets").glob("matcher.*.js"))
+        matcher.write_bytes(b"const Matcher = {v: 'other'};\n")
+        loop.probe()
+        assert loop.stats.mixed == 4
+        assert f"{matcher.name}: bytes don't match" in loop.stats.samples[-1]
+        matcher.unlink()
+        loop.probe()
+        assert loop.stats.errors == 3
+        assert f"{matcher.name}: HTTP 404" in loop.stats.samples[-1]
         loop.client.close()
 
 

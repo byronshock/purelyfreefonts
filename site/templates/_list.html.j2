@@ -14,8 +14,9 @@
   sort_words_most_least), which fit on the button's second line. On phones the "Fonts" heading is hidden from sight, though screen
   readers and headings navigation keep it, and the count sits in the sort row
   (mobile_first_screen_two_fonts, 2026-10-06; 20-list.css). data-match names the hopper's
-  match file, which no page preloads: the script fetches it only once a visitor's list
-  arrives (M3-D7 a, inventory_slice_1_defaults; site/CONTRACT.md section 11).
+  match file and data-matcher its parser and matcher, a script module of their own. No page
+  preloads either: the script loads both only once a visitor's list arrives (M3-D7 a,
+  inventory_slice_1_defaults, inventory_matcher_on_demand; site/CONTRACT.md section 11).
 -#}
 <div class="layout">
 {% include "_filters.html.j2" %}
@@ -35,7 +36,7 @@
 <button type="button" class="sort-btn" id="sort-rank" data-sort="rank" data-asc="most popular" data-desc="least popular" data-asc-spoken="most popular" data-desc-spoken="least popular" aria-pressed="true" data-dir="asc" title="Show least popular instead"><span class="visually-hidden">Sort by </span><span class="sort-label">Popularity</span> <span class="sort-arrow" aria-hidden="true"></span> <span class="sort-dir"><span aria-hidden="true">most popular</span><span class="visually-hidden"> most popular; select to show least popular</span></span></button>
 <button type="button" class="sort-btn" id="sort-name" data-sort="name" data-asc="A&#x2013;Z" data-desc="Z&#x2013;A" data-asc-spoken="A to Z" data-desc-spoken="Z to A" aria-pressed="false" title="Sort by name"><span class="visually-hidden">Sort by </span><span class="sort-label">Name</span> <span class="sort-arrow" aria-hidden="true"></span> <span class="sort-dir"></span></button>
 </div>
-<ol id="list" class="font-list" role="list" data-index="{{ list.index_url }}" data-details="{{ list.details_url }}" data-match="{{ list.match_url }}" data-run-date="{{ build.run_date }}">
+<ol id="list" class="font-list" role="list" data-index="{{ list.index_url }}" data-details="{{ list.details_url }}" data-match="{{ list.match_url }}" data-matcher="{{ list.matcher_url }}" data-run-date="{{ build.run_date }}">
 {% for row in list.rows %}
 {% include "_row.html.j2" %}
 {% endfor %}

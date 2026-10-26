@@ -11,10 +11,10 @@ never stretch the interval:
 
 1. GET the page with ``Accept: text/html``, as a browser sends it.
 2. GET every same-origin file the page's script depends on: script, stylesheet, preloads,
-   and the list, details and match JSON (``#list[data-index]``, ``[data-details]`` and
-   ``[data-match]``, the hopper's, which open tabs load from the release they came with,
-   site/CONTRACT.md section 11); then ``--extras`` of its other files (specimen images,
-   icons), taken in turn across probes.
+   the list, details and match JSON (``#list[data-index]``, ``[data-details]`` and
+   ``[data-match]``) and the hopper's matcher module (``[data-matcher]``), the last two of
+   which open tabs load from the release they came with (site/CONTRACT.md section 11); then
+   ``--extras`` of its other files (specimen images, icons), taken in turn across probes.
 3. GET ``/version.txt``, then the page again.
 
 It counts:
@@ -83,7 +83,7 @@ class _Refs(HTMLParser):
         if "data-index" in a:
             self.index = a["data-index"]
             self.core.append(a["data-index"])
-        for payload in ("data-details", "data-match"):
+        for payload in ("data-details", "data-match", "data-matcher"):
             if payload in a:
                 self.core.append(a[payload])
 

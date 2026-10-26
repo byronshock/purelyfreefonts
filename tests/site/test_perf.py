@@ -27,6 +27,32 @@ every size budget and the CSP lint, and each check fails on a site made to break
   over 200 ms is the page at its limit there; and a page that is slow on one change per
   visit, at a different change each time, passes, since no change's median moves.
 - Specimens: at load, no specimen is requested for a row more than 1000 px below the screen.
+- The hopper (Milestone 3 steps 4 and 5), each run in a fresh context (nothing compiled yet,
+  as for a visitor's first list), the matcher module as the build writes it, with the match
+  file the site build makes from the committed ``build/names.json`` and four realistic lists
+  of 10,000 fonts, one with a name past ASCII on every line (``tests/fixtures/hopper_lists.py``).
+  Under the same CPU slowdown, reading the match file, readying its table and matching must
+  take under 200 ms (step 5), and parsing 5 MB of ``system_profiler -json`` cut short under a
+  second (step 4). Without a slowdown, as Lighthouse's desktop setting runs (the hopper needs a
+  computer), parsing and matching together must take under 200 ms. Each is the median of five
+  runs, with one more set when it fails. These need no built site.
+- Those budgets are for the machine they were set on, where Lighthouse's 4x slowdown stands
+  for a mid-range phone. CI's runners are about three times slower (the refilter budget's CI
+  failure of 2026-10-06), so 4x there is a phone three times slower again, and the list past
+  ASCII, which takes the port's slower road on every line, took 223 ms slowed 12x here. So
+  each hopper run is paired with a run of ``REFERENCE_JS``, a fixed workload that shares no
+  code with the site, cold and at the same slowdown, and the budget is scaled by how much
+  slower the machine runs it than ``REFERENCE_MS`` (the machine the budgets were set on), as
+  Lighthouse's benchmark index adjusts its CPU multiplier. The budget is never scaled below
+  step 5's, and a machine more than ``FACTOR_MAX`` times slower fails rather than stretch it
+  further. Here the factor is 1, and the four lists take at most 74 ms of the 200 under the
+  slowdown, so each keeps a margin of at least 2.7 on any machine the factor reads right.
+- The list past ASCII is also held to the ASCII fc-list's time, the two run in turn: at most
+  ``PAST_ASCII_MATCH_RATIO`` times its median under the slowdown (1.6 to 1.8 here, at 4x and
+  12x) and ``PAST_ASCII_WAIT_RATIO`` times without one (1.5 to 1.6, at 1x and 3x). That is a
+  guard against a regression on the road past ASCII alone, which made such lists 3 to 6
+  times slower before 2026-10-23, and which the scaled budget would let pass up to 2.7 times;
+  it is no budget of its own.
 
 The site is ``TFF_PERF_SITE_DIR`` when that is set (CI's 540-font build, or a real
 catalog's build), else a 540-font site this module builds from make_large_catalog. It is
@@ -45,12 +71,14 @@ without ``TFF_PERF_URL``, which no CI job sets::
         tests/site/test_perf.py -k deployed --browser chromium -s
 """
 
+import functools
 import gzip
 import json
 import math
 import os
 import re
 import statistics
+import sys
 import threading
 from collections.abc import Callable, Iterator, Sequence
 from dataclasses import dataclass
@@ -63,9 +91,12 @@ from urllib.parse import unquote, urlsplit
 
 import numpy as np
 import pytest
+from tests.fixtures import hopper_lists
 
-from tff_site import budgets, cli, data
+from tff_catalog import owned
+from tff_site import assets, budgets, cli, data, matchfile
 
+ROOT = Path(__file__).resolve().parents[2]
 FAKE_COMMIT = "0" * 40
 CI_CADDY_URL = "http://127.0.0.1:8080"
 LARGE_FONTS = 540
@@ -963,6 +994,335 @@ def test_no_specimen_loads_far_below_the_screen(
     assert far == [], f"specimens requested for rows far below the screen: {far[:10]}"
 
 
+# ------------------------------------------------------------- the hopper (Milestone 3)
+
+HOPPER_MS = 200  # Milestone 3 step 5: 10,000 names match in under 200 ms
+PROFILER_MS = 1000  # step 4: 5 MB of system_profiler -json parses in under a second
+# The machine's speed against the one the budgets were set on (the module docstring says why):
+# REFERENCE_JS's median ms there, cold, by CPU slowdown, the sum it must return, and the most
+# a budget may be scaled.
+REFERENCE_MS = {1: 35.0, 4: 128.0}
+REFERENCE_ROUNDS = 150_000
+REFERENCE_CHECK = 2047583474
+FACTOR_MAX = 5.0
+# The list past ASCII against the ASCII fc-list, run for run: a regression guard.
+PAST_ASCII = "fc-list, past ASCII"
+ASCII_BASE = "fc-list"
+PAST_ASCII_MATCH_RATIO = 2.5
+PAST_ASCII_WAIT_RATIO = 2.2
+# A fixed workload of the kind the matcher does (template strings, toLowerCase, a regex
+# replace, charCodeAt and a Map), sharing no code with the site, so a slower site can't slow
+# it; its sum proves every round ran.
+REFERENCE_JS = """(rounds) => {
+  const t0 = performance.now();
+  const seen = new Map();
+  let h = 0x811c9dc5;
+  for (let i = 0; i < rounds; i++) {
+    const name = `Sample ${(i * 7919) % 1009} Bold Italic ${i % 13}`;
+    const key = name.toLowerCase().replace(/[ _-]+/g, '');
+    for (let j = 0; j < key.length; j++) h = Math.imul(h ^ key.charCodeAt(j), 0x01000193);
+    seen.set(key, (seen.get(key) || 0) + 1);
+  }
+  return { ms: performance.now() - t0, check: ((h >>> 0) + seen.size) >>> 0 };
+}"""
+# The matcher module as the build writes it (inventory_matcher_on_demand), inline; the timed
+# code takes its API from globalThis.tffMatcher, which the module defines itself when no page
+# has asked for it (58-matcher.js). Loading it is not timed.
+HOPPER_PAGE = (
+    "<!doctype html><html lang=en><meta charset=utf-8><title>hopper</title>"
+    "<script type=module>\n{module}\n</script>"
+)
+# A visitor's list: parsing it (``parse_ms``), then reading the match file, readying its table
+# and matching (``match_ms``, step 5's "match"); ``ms`` is both.
+HOPPER_RUN_JS = """(arg) => {
+  const { OwnedParse, OwnedMatch } = globalThis.tffMatcher;
+  const t0 = performance.now();
+  const parsed = OwnedParse.parse(arg.text);
+  const t1 = performance.now();
+  const result = OwnedMatch.match(parsed, OwnedMatch.table(JSON.parse(arg.doc)));
+  const t2 = performance.now();
+  return {
+    parse_ms: t1 - t0, match_ms: t2 - t1, ms: t2 - t0,
+    entries: parsed.entries.length, warnings: parsed.warnings, owned: result.owned,
+  };
+}"""
+
+
+@functools.cache
+def _hopper() -> dict[str, Any]:
+    """The matcher module's page, the match file the site build makes from the committed
+    build/names.json, as its text and its Python table, the four lists of 10,000 fonts, and
+    the 5 MB paste."""
+    module = assets.concat_js(ROOT / "site" / "js", assets.MATCHER_PARTS)
+    assert "</script" not in module.lower()
+    names_path = ROOT / "build" / "names.json"
+    names = json.loads(names_path.read_text(encoding="utf-8"))
+    catalog = json.loads((ROOT / "build" / "catalog-site.json").read_text(encoding="utf-8"))
+    text = matchfile.match_file(catalog, names_path).blob.decode("utf-8")
+    return {
+        "page": HOPPER_PAGE.format(module=module),
+        "doc": text,
+        "table": owned.Table.from_document(json.loads(text)),
+        "lists": hopper_lists.lists(names),
+        "profiler": hopper_lists.system_profiler_cut(),
+    }
+
+
+def _hopper_run(browser: Any, text: str, slowdown: int) -> dict[str, Any]:
+    """One run of HOPPER_RUN_JS on ``text``, in a context of its own with the CPU slowed
+    ``slowdown`` times from the start."""
+    context = browser.new_context()
+    try:
+        page = context.new_page()
+        cdp = context.new_cdp_session(page)
+        cdp.send("Emulation.setCPUThrottlingRate", {"rate": slowdown})
+        page.set_content(_hopper()["page"], wait_until="load")
+        return page.evaluate(HOPPER_RUN_JS, {"doc": _hopper()["doc"], "text": text})
+    finally:
+        context.close()
+
+
+def _reference_ms(browser: Any, slowdown: int) -> float:
+    """One cold run of REFERENCE_JS, as _hopper_run runs a list: a context of its own, the CPU
+    slowed ``slowdown`` times from the start."""
+    context = browser.new_context()
+    try:
+        page = context.new_page()
+        cdp = context.new_cdp_session(page)
+        cdp.send("Emulation.setCPUThrottlingRate", {"rate": slowdown})
+        page.set_content("<!doctype html><title>reference</title>", wait_until="load")
+        run = page.evaluate(REFERENCE_JS, REFERENCE_ROUNDS)
+        assert run["check"] == REFERENCE_CHECK, run
+        return float(run["ms"])
+    finally:
+        context.close()
+
+
+def _factor(reference_ms: list[float], slowdown: int) -> float:
+    """How much slower this machine ran REFERENCE_JS than the one the budgets were set on,
+    never below 1 (_assert_hopper_budget fails one past FACTOR_MAX, rather than stretch a
+    budget that far)."""
+    return max(1.0, statistics.median(reference_ms) / REFERENCE_MS[slowdown])
+
+
+def _checked_run(browser: Any, text: str, slowdown: int) -> dict[str, Any]:
+    want, want_owned = _python(text)
+    run = _hopper_run(browser, text, slowdown)
+    assert (run["entries"], run["warnings"]) == (len(want["entries"]), want["warnings"])
+    assert run["owned"] == want_owned
+    return run
+
+
+@functools.cache
+def _python(text: str) -> tuple[dict[str, Any], list[Any]]:
+    parsed = owned.parse(text)
+    return parsed.to_json(), owned.match(parsed, _hopper()["table"]).to_json()["owned"]
+
+
+def _assert_hopper_budget(
+    browser: Any, text: str, field: str, budget_ms: float, slowdown: int
+) -> None:
+    """The median of ``field`` over RUNS cold runs is under ``budget_ms`` scaled by this
+    machine's factor (``_factor``, from a reference run before each), at most FACTOR_MAX, and
+    every run reads and matches ``text`` as Python does."""
+    summary: dict[str, Any] = {}
+    median, budget, factor = float("inf"), budget_ms, 1.0
+    # Shared CI runners are noisy: a failing set, by its median or by a factor past FACTOR_MAX,
+    # gets one more set of runs (design-m2 §9).
+    for _attempt in range(2):
+        pairs = [
+            (_reference_ms(browser, slowdown), _checked_run(browser, text, slowdown))
+            for _ in range(RUNS)
+        ]
+        runs = [run for _, run in pairs]
+        factor = _factor([ms for ms, _ in pairs], slowdown)
+        median = statistics.median(run[field] for run in runs)
+        budget = budget_ms * factor
+        summary = {
+            "hopper": field,
+            "cpu_slowdown": slowdown,
+            "median_ms": round(median),
+            "factor": round(factor, 2),
+            "budget_ms": round(budget),
+            "margin": round(budget / median, 2),
+            "runs_ms": [round(run[field]) for run in runs],
+            "parse_ms": [round(run["parse_ms"]) for run in runs],
+            "match_ms": [round(run["match_ms"]) for run in runs],
+            "reference_ms": [round(ms) for ms, _ in pairs],
+        }
+        print(json.dumps(summary))
+        if factor <= FACTOR_MAX and median < budget:
+            break
+    assert factor <= FACTOR_MAX, (
+        f"this machine ran the reference workload {factor:.1f} times slower than the one the"
+        f" hopper's budgets were set on, past FACTOR_MAX ({FACTOR_MAX}): {summary}"
+    )
+    assert median < budget, summary
+
+
+def _assert_past_ascii_ratio(browser: Any, field: str, ratio: float, slowdown: int) -> None:
+    """The list past ASCII's median ``field`` is at most ``ratio`` times the ASCII fc-list's,
+    the two run in turn, cold, RUNS times each, so both meet the same machine and load. A
+    regression guard: the budget of each is _assert_hopper_budget's."""
+    lists = _hopper()["lists"]
+    summary: dict[str, Any] = {}
+    found = float("inf")
+    for _attempt in range(2):
+        pairs = [
+            (_checked_run(browser, lists[ASCII_BASE], slowdown),
+             _checked_run(browser, lists[PAST_ASCII], slowdown))
+            for _ in range(RUNS)
+        ]  # fmt: skip
+        base = statistics.median(b[field] for b, _ in pairs)
+        past = statistics.median(p[field] for _, p in pairs)
+        found = past / base
+        summary = {
+            "hopper": f"{field}, past ASCII over ASCII",
+            "cpu_slowdown": slowdown,
+            "ratio": round(found, 2),
+            "budget": ratio,
+            "past_ascii_ms": [round(p[field]) for _, p in pairs],
+            "ascii_ms": [round(b[field]) for b, _ in pairs],
+        }
+        print(json.dumps(summary))
+        if found <= ratio:
+            break
+    assert found <= ratio, summary
+
+
+@pytest.mark.parametrize("label", hopper_lists.LABELS)
+def test_the_hopper_matches_10000_fonts_within_200_ms(
+    browser: Any, browser_name: str, label: str
+) -> None:
+    """Step 5's budget, under the list page's CPU slowdown: reading the match file, readying
+    its table and matching a parsed list of 10,000 fonts, the list past ASCII included (the
+    budget scaled for a slower machine, as the module docstring says)."""
+    _chromium(browser_name)
+    text = _hopper()["lists"][label]
+    assert owned.parse(text).counts["entries"] > 8000
+    _assert_hopper_budget(browser, text, "match_ms", HOPPER_MS, CPU_SLOWDOWN)
+
+
+@pytest.mark.parametrize("label", hopper_lists.LABELS)
+def test_the_hopper_parses_and_matches_10000_fonts_within_200_ms_without_a_slowdown(
+    browser: Any, browser_name: str, label: str
+) -> None:
+    """The whole of a visitor's wait, on a computer: the hopper needs one (step 6 tells phones
+    so), and Lighthouse's desktop setting slows no CPU."""
+    _chromium(browser_name)
+    _assert_hopper_budget(browser, _hopper()["lists"][label], "ms", HOPPER_MS, 1)
+
+
+def test_names_past_ascii_match_within_2_5_times_ascii_ones(
+    browser: Any, browser_name: str
+) -> None:
+    """A regression guard on the road past ASCII, under the slowdown: the list past ASCII
+    against the ASCII fc-list, run for run. Its budget is step 5's, above."""
+    _chromium(browser_name)
+    assert owned.parse(_hopper()["lists"][PAST_ASCII]).counts["entries"] > 8000
+    _assert_past_ascii_ratio(browser, "match_ms", PAST_ASCII_MATCH_RATIO, CPU_SLOWDOWN)
+
+
+def test_names_past_ascii_parse_and_match_within_2_2_times_ascii_ones_without_a_slowdown(
+    browser: Any, browser_name: str
+) -> None:
+    """The same guard on the visitor's whole wait, without a slowdown."""
+    _chromium(browser_name)
+    _assert_past_ascii_ratio(browser, "ms", PAST_ASCII_WAIT_RATIO, 1)
+
+
+@pytest.mark.parametrize(
+    ("reference_ms", "slowdown", "factor"),
+    [([30.0, 35.0, 99.0], 1, 1.0), ([120.0, 128.0, 140.0], 4, 1.0), ([60.0] * 3, 4, 1.0),
+     ([256.0] * 5, 4, 2.0), ([90.0, 105.0, 400.0], 1, 3.0), ([640.0] * 3, 4, 5.0)],
+)  # fmt: skip
+def test_a_hopper_budget_scales_with_the_reference_run_only_up(
+    reference_ms: list[float], slowdown: int, factor: float
+) -> None:
+    """The median reference run against the machine's the budgets were set on: a faster
+    machine keeps step 5's budget, a slower one gets it scaled by how much slower it is."""
+    assert _factor(reference_ms, slowdown) == pytest.approx(factor)
+
+
+def _fake_sets(monkeypatch: pytest.MonkeyPatch, sets: list[tuple[float, float]]) -> list[int]:
+    """_assert_hopper_budget's runs, faked, set by set: each ``(reference ms, list ms)`` is
+    every run of that set, at CPU_SLOWDOWN. Returns the count of reference runs made."""
+    made = [0]
+
+    def reference(_browser: Any, slowdown: int) -> float:
+        assert slowdown == CPU_SLOWDOWN
+        made[0] += 1
+        return sets[(made[0] - 1) // RUNS][0]
+
+    def run(_browser: Any, _text: str, _slowdown: int) -> dict[str, Any]:
+        ms = sets[(made[0] - 1) // RUNS][1]
+        return {"match_ms": ms, "parse_ms": 0.0, "ms": ms}
+
+    module = sys.modules[__name__]
+    monkeypatch.setattr(module, "_reference_ms", reference)
+    monkeypatch.setattr(module, "_checked_run", run)
+    return made
+
+
+SLOW = REFERENCE_MS[CPU_SLOWDOWN] * (FACTOR_MAX + 1)  # a reference run past FACTOR_MAX
+NORMAL = REFERENCE_MS[CPU_SLOWDOWN]
+
+
+@pytest.mark.parametrize(
+    "sets",
+    [[(NORMAL, 50.0)], [(NORMAL, 250.0), (NORMAL, 50.0)], [(SLOW, 50.0), (NORMAL, 50.0)]],
+    ids=["first-set", "a-slow-median-then-a-good-one", "a-noisy-factor-then-a-good-one"],
+)
+def test_a_hopper_budget_that_fails_gets_one_more_set_of_runs(
+    monkeypatch: pytest.MonkeyPatch, sets: list[tuple[float, float]]
+) -> None:
+    """As the module docstring says, a set that fails, by its median or by a factor past
+    FACTOR_MAX (a noisy spell on a shared runner), gets one more set before the test fails."""
+    made = _fake_sets(monkeypatch, sets)
+    _assert_hopper_budget(None, "", "match_ms", HOPPER_MS, CPU_SLOWDOWN)
+    assert made[0] == RUNS * len(sets)
+
+
+@pytest.mark.parametrize(
+    ("sets", "problem"),
+    [([(SLOW, 50.0)] * 2, "past FACTOR_MAX"), ([(NORMAL, 50.0), (SLOW, 50.0)], None),
+     ([(NORMAL, 250.0)] * 2, "'median_ms': 250"), ([(SLOW, 50.0), (NORMAL, 250.0)], "250")],
+    ids=["slow-twice", "a-good-first-set-is-the-last", "over-budget-twice",
+         "noisy-then-over-budget"],
+)  # fmt: skip
+def test_a_hopper_budget_fails_when_its_second_set_fails_too(
+    monkeypatch: pytest.MonkeyPatch, sets: list[tuple[float, float]], problem: str | None
+) -> None:
+    """A machine too slow for the budgets fails past FACTOR_MAX rather than stretch them, and
+    a median over its budget fails, each only once the second set fails as well; a first set
+    that passes is the last."""
+    made = _fake_sets(monkeypatch, sets)
+    if problem is None:
+        _assert_hopper_budget(None, "", "match_ms", HOPPER_MS, CPU_SLOWDOWN)
+        assert made[0] == RUNS
+        return
+    with pytest.raises(AssertionError, match=problem):
+        _assert_hopper_budget(None, "", "match_ms", HOPPER_MS, CPU_SLOWDOWN)
+    assert made[0] == RUNS * 2
+
+
+def test_the_reference_is_set_where_each_budget_runs() -> None:
+    """A reference for each slowdown the hopper is timed at, the list page's and none, slower
+    with the slowdown."""
+    assert set(REFERENCE_MS) == {1, CPU_SLOWDOWN}
+    assert REFERENCE_MS[1] * 2 < REFERENCE_MS[CPU_SLOWDOWN]
+    assert FACTOR_MAX > 1
+
+
+def test_the_hopper_parses_5_mb_of_system_profiler_json_within_a_second(
+    browser: Any, browser_name: str
+) -> None:
+    """Step 4's budget, under the list page's CPU slowdown: a paste cut at 5 MB, so the text
+    ends inside a string."""
+    _chromium(browser_name)
+    _assert_hopper_budget(browser, _hopper()["profiler"], "parse_ms", PROFILER_MS, CPU_SLOWDOWN)
+
+
 # ------------------------------------------------------------ a deployed site (by hand)
 
 
@@ -1036,16 +1396,18 @@ def _noise(size: int, seed: int = 7) -> bytes:
 
 
 MATCH = "assets/match.0123456789.json"
+MATCHER = "assets/matcher.0123456789.js"
 
 
 def _fake_site(root: Path, *, html_extra: str = "", sizes: dict[str, int] | None = None) -> Path:
-    """A minimal built site: the list page and its five assets, with incompressible filler."""
+    """A minimal built site: the list page and its six assets, with incompressible filler."""
     sizes = {
         "css": 1000,
         "js": 1000,
         "list": 1000,
         "details": 1000,
         "match": 1000,
+        "matcher": 1000,
         "font": 1000,
         **(sizes or {}),
     }
@@ -1055,6 +1417,7 @@ def _fake_site(root: Path, *, html_extra: str = "", sizes: dict[str, int] | None
         "assets/list.0123456789.json": sizes["list"],
         "assets/details.0123456789.json": sizes["details"],
         MATCH: sizes["match"],
+        MATCHER: sizes["matcher"],
         "assets/ui/arimo.0123456789.woff2": sizes["font"],
     }
     for k, (rel, size) in enumerate(files.items()):
@@ -1071,7 +1434,7 @@ def _fake_site(root: Path, *, html_extra: str = "", sizes: dict[str, int] | None
         f"</head><body>{html_extra}<main id=main><ol id=list class=font-list"
         ' data-index="/assets/list.0123456789.json"'
         ' data-details="/assets/details.0123456789.json"'
-        f' data-match="/{MATCH}"></ol></main></body></html>\n',
+        f' data-match="/{MATCH}" data-matcher="/{MATCHER}"></ol></main></body></html>\n',
         encoding="utf-8",
     )
     return root
@@ -1089,6 +1452,7 @@ def test_a_small_site_passes(tmp_path: Path) -> None:
         ({"list": 101_000}, "assets/list.0123456789.json", "list index"),
         ({"details": 151_000}, "assets/details.0123456789.json", "details payload"),
         ({"match": 51_000}, MATCH, "match file"),
+        ({"matcher": 26_000}, MATCHER, "matcher module"),
         ({"font": 31_000}, "assets/ui/arimo.0123456789.woff2", "interface font"),
     ],
 )
@@ -1130,13 +1494,32 @@ def test_missing_assets_are_problems(tmp_path: Path) -> None:
     assert [p.path for p in budgets.check(site)] == ["index.html"]
 
 
-def test_a_list_without_data_match_is_a_problem(tmp_path: Path) -> None:
+@pytest.mark.parametrize(
+    ("attribute", "path", "what"),
+    [("data-match", MATCH, "match file"), ("data-matcher", MATCHER, "matcher module")],
+)
+def test_a_list_without_one_of_the_hopper_s_files_is_a_problem(
+    tmp_path: Path, attribute: str, path: str, what: str
+) -> None:
     site = _fake_site(tmp_path)
     page = site / "index.html"
-    page.write_text(page.read_text().replace(f' data-match="/{MATCH}"', ""), encoding="utf-8")
+    page.write_text(page.read_text().replace(f' {attribute}="/{path}"', ""), encoding="utf-8")
     assert [(p.path, p.message) for p in budgets.check(site)] == [
-        ("index.html", "#list has no data-match: can't find the match file")
+        ("index.html", f"#list has no {attribute}: can't find the {what}")
     ]
+    _fake_site(tmp_path)
+    (site / path).unlink()
+    assert [(p.path, p.message) for p in budgets.check(site)] == [
+        ("index.html", f"/{path}: the {what} is referenced, but not in the site")
+    ]
+
+
+def test_the_matcher_module_is_held_to_its_own_budget_outside_the_page_s() -> None:
+    """inventory_matcher_on_demand: the parser and matcher left the page's script, so the page
+    keeps its budget, and the module has one of its own, as the match file does."""
+    assert budgets.PAGE_MAX == 100 * budgets.KB
+    assert budgets.MATCHER_MAX == 25 * budgets.KB
+    assert budgets.MATCH_MAX == 50 * budgets.KB
 
 
 @pytest.mark.parametrize(
@@ -1194,8 +1577,87 @@ MENTIONS = [
 ]
 
 
-def test_the_mention_cases_cover_every_text_suffix() -> None:
-    assert {Path(case.values[0]).suffix for case in MENTIONS} == budgets.TEXT_SUFFIXES
+MATCHER_NAME = MATCHER.rsplit("/", 1)[1]
+ONLY_DATA_MATCHER = (
+    f"names the matcher module {MATCHER_NAME}; only the list page's #list[data-matcher] may, "
+    "once (M3-D7 a)"
+)
+
+
+# Where the matcher module may not be named: a case for each of budgets.TEXT_SUFFIXES too.
+MATCHER_MENTIONS = [
+    pytest.param(
+        "index.html",
+        f'<script type="module" src="/{MATCHER}"></script>',
+        f"names the matcher module {MATCHER_NAME} 2 times; only the list page's "
+        "#list[data-matcher] may, once (M3-D7 a)",
+        id="script-on-the-list-page",
+    ),
+    pytest.param(
+        "index.html",
+        f'<link rel="modulepreload" href="/{MATCHER}">',
+        None,
+        id="modulepreload-on-the-list-page",
+    ),
+    pytest.param(
+        "about/index.html",
+        f'<!doctype html><title>t</title><script type="module" src="/{MATCHER}"></script>',
+        ONLY_DATA_MATCHER,
+        id="script-on-another-page",
+    ),
+    pytest.param(
+        "assets/app.0123456789.js", f"import('/{MATCHER}');", ONLY_DATA_MATCHER, id="script"
+    ),
+    pytest.param(
+        "assets/list.0123456789.json", f'{{"m": "/{MATCHER}"}}', ONLY_DATA_MATCHER, id="payload"
+    ),
+    pytest.param(
+        "assets/style.0123456789.css",
+        f"body{{background:url(/{MATCHER})}}",
+        ONLY_DATA_MATCHER,
+        id="stylesheet",
+    ),
+    pytest.param(
+        "sitemap.xml", f"<loc>https://x.test/{MATCHER}</loc>", ONLY_DATA_MATCHER, id="sitemap"
+    ),
+    pytest.param("robots.txt", f"User-agent: *\nAllow: /{MATCHER}\n", ONLY_DATA_MATCHER, id="text"),
+    pytest.param(
+        "favicon.svg",
+        f'<svg xmlns="http://www.w3.org/2000/svg"><script href="/{MATCHER}"/></svg>',
+        ONLY_DATA_MATCHER,
+        id="svg",
+    ),
+]
+
+
+@pytest.mark.parametrize(("path", "text", "problem"), MATCHER_MENTIONS)
+def test_only_the_list_s_data_matcher_may_name_the_matcher_module(
+    tmp_path: Path, path: str, text: str, problem: str | None
+) -> None:
+    """inventory_matcher_on_demand: the matcher module loads only once a visitor's list
+    arrives, so nothing but ``#list[data-matcher]`` names it: no script element or
+    modulepreload, no other page, script, payload, stylesheet, text file, image or sitemap
+    (each of ``budgets.TEXT_SUFFIXES`` has a case here)."""
+    on_page = path == "index.html"
+    site = _fake_site(tmp_path, html_extra=text if on_page else "")
+    if not on_page:
+        target = site / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(text, encoding="utf-8")
+    want = problem or (
+        f"names the matcher module {MATCHER_NAME} 2 times; only the list page's "
+        "#list[data-matcher] may, once (M3-D7 a)"
+    )
+    problems = [(p.path, p.message) for p in budgets.check(site)]
+    assert (path, want) in problems
+    assert [p for p in problems if p[0] != path or "names the" not in p[1]] == (
+        [] if not on_page or "modulepreload" in text else [p for p in problems if p[0] != path]
+    )
+
+
+@pytest.mark.parametrize("cases", [MENTIONS, MATCHER_MENTIONS], ids=["match", "matcher"])
+def test_the_mention_cases_cover_every_text_suffix(cases: list[Any]) -> None:
+    assert {Path(case.values[0]).suffix for case in cases} == budgets.TEXT_SUFFIXES
 
 
 @pytest.mark.parametrize(("path", "text", "problem"), MENTIONS)
