@@ -751,6 +751,26 @@ def test_recodable_keys_are_those_at_which_the_build_takes_a_recode():
     assert not {"samplesansclassic", "samplesans01", "sampleheld41gen"} & taken.keys()
 
 
+def test_a_meeting_at_a_family_outside_the_catalog_passes_changing_nothing(tmp_path):
+    """Two families outside the catalog made distinct_from each other, a name of one reaching
+    the other: the other is coded ``-`` and never owned, so the name hides no listed font, and
+    the build makes the match file it makes without the pair."""
+
+    def apart(names: dict[str, Any]) -> None:
+        black = family(names, "sample-sans-06-black")
+        black["names"].append({"name": "Sample Held 41 Bold", "relation": "related"})
+        black["distinct_from"] = ["sample-held-41"]
+        family(names, "sample-held-41")["distinct_from"] = ["sample-sans-06-black"]
+
+    names = names_with(apart)
+    made = json.loads(matchfile.match_file(SAMPLE, write(tmp_path, names)).blob)
+    for fid in ("sample-sans-06-black", "sample-held-41"):
+        family(names, fid)["distinct_from"] = []
+    plain = json.loads(matchfile.match_file(SAMPLE, write(tmp_path, names)).blob)
+    assert made["names_sha256"] != plain["names_sha256"]
+    assert {**made, "names_sha256": ""} == {**plain, "names_sha256": ""}
+
+
 @pytest.mark.parametrize("reviewed", [None, "", RECODE_20])
 def test_an_ambiguous_name_nobody_reviewed_is_refused(tmp_path, reviewed):
     """A missing or empty reviewed list reviews nothing: the build fails closed."""

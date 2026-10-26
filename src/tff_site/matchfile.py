@@ -421,12 +421,13 @@ def check_errors(
     Step 3: "CI fails if, outside the ambiguous set, two families share a match_key or
     stripping style words from a catalog name yields another family's key", and "the owner
     reviews flagged collisions". So the build fails on a ``distinct_from`` pair that meets
-    (Inter Tight reaching Inter, M3-D5 a), a key that several catalog families own outside the
-    ambiguous set, a catalog name whose stripped key only families outside the catalog hold
-    (the ambiguous set holds catalog families only, so it can't take one), and an ambiguous set
-    other than the reviewed one: the hopper doubts those names (``owned.match``), so which ones
-    it doubts is the owner's call. A collision that starts from no catalog name and reaches no
-    catalog family changes no result, and is only reported.
+    (Inter Tight reaching Inter, M3-D5 a; only at a catalog family, since one outside the
+    catalog is never owned: ``owned.check_document``), a key that several catalog families own
+    outside the ambiguous set, a catalog name whose stripped key only families outside the
+    catalog hold (the ambiguous set holds catalog families only, so it can't take one), and an
+    ambiguous set other than the reviewed one: the hopper doubts those names (``owned.match``),
+    so which ones it doubts is the owner's call. A collision that starts from no catalog name
+    and reaches no catalog family changes no result, and is only reported.
 
     Editing the reviewed list clears the ambiguous set's problems. Its ``[[ambiguous]]``
     entries hold no exception for the other three (step 3 fails them "outside the ambiguous

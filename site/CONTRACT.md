@@ -520,7 +520,7 @@ document.dispatchEvent(new CustomEvent('tff:list-ready', { detail: globalThis.tf
 **What the build refuses**, listing every problem (`tff_site.matchfile.match_file`). A names file it can't read, of another run or of the wrong shape (in the stages of section 1), and a malformed reviewed list, are listed together and stop it first, since the checks read both. Past them, a refused recode and what the collision check finds come together, the check running without the refused recodes: a refresh that moves a recoded alias and changes the ambiguous set fails once, naming all of it, so the owner is asked once (ops/MONTHLY.md step 5). It refuses:
 
 - a names file of another run, or of the wrong shape (section 1), or a reviewed list that is malformed;
-- a `distinct_from` pair that meets (a name of one family that, stripped, is a key at which the other could count as owned: Inter Tight never reaches Inter, M3-D5 a);
+- a `distinct_from` pair that meets (a name of one family that, stripped, is a key at which the other could count as owned: Inter Tight never reaches Inter, M3-D5 a). Only a catalog family can: one outside the catalog is coded `-` and never owned, so a name that reaches it hides nothing, and the build lets it pass;
 - a key that two catalog families own outside the ambiguous set;
 - a catalog name that strips to the key of a family outside the catalog;
 - an ambiguous set other than the reviewed one: an ambiguous name nobody has reviewed, a reviewed one whose families changed, or one that is no longer ambiguous;

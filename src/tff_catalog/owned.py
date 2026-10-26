@@ -590,8 +590,9 @@ def check_document(
     families among them make the name's key ambiguous ("Archivo Black" may be
     Archivo's Black weight). For every ``distinct_from`` pair, in both
     directions, no candidate of any name of one family may be a key at which the
-    other holds a code that could count it as owned (Inter Tight never reaches
-    Inter; a bundle name both share, such as "Libertinus", only gives near-matches).
+    other, a catalog family, holds a code that could count it as owned (Inter Tight
+    never reaches Inter; a bundle name both share, such as "Libertinus", only gives
+    near-matches; a family outside the catalog is never owned, coded ``-``).
     ``recodes`` as in ``match_document``.
     """
     catalog = frozenset(catalog_ids)
@@ -616,7 +617,7 @@ def check_document(
     meetings: list[Meeting] = []
     for fid, other in sorted(pairs | {(b, a) for a, b in pairs}):
         fam = by_id.get(fid)
-        if fam is None:
+        if fam is None or other not in catalog:  # outside the catalog, never owned
             continue
         for name in (fam["family"], *(n["name"] for n in fam["names"])):
             for cand in candidates(name):

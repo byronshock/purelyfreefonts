@@ -711,6 +711,22 @@ def test_the_check_finds_a_planted_meeting_of_distinct_families():
     ]
 
 
+def test_the_check_finds_a_meeting_only_at_a_catalog_family():
+    """A family outside the catalog is coded ``-``, never owned, so a name that reaches it
+    hides no listed font: Bar Serif reaching Foo Sans Hairline, outside, is no meeting. A name
+    of Foo Sans Hairline reaching Foo Sans, in the catalog, is."""
+    doc = json.loads(json.dumps(ov.NAMES))
+    doc["families"][0]["names"].append({"name": "Foo Hairline Bold", "relation": "related"})
+    doc["families"][0]["distinct_from"] = ["foo-sans-hairline"]
+    assert "foo-sans-hairline" not in ov.CATALOG_IDS
+    assert owned.check_document(doc, ov.CATALOG_IDS).meetings == ()
+    doc["families"][3]["distinct_from"] = ["foo-sans"]
+    meetings = owned.check_document(doc, ov.CATALOG_IDS).meetings
+    assert [(m.family, m.other, m.name, m.key) for m in meetings] == [
+        ("foo-sans-hairline", "foo-sans", "Foo Sans Hairline", "foosans")
+    ]
+
+
 def test_the_check_reports_shared_owned_keys():
     shared = json.loads(json.dumps(ov.NAMES))
     shared["families"][0]["names"].append({"name": "Foo Sans Pro", "relation": "rename"})
