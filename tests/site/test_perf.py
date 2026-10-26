@@ -1241,42 +1241,60 @@ ONLY_DATA_MATCHER = (
 )
 
 
-@pytest.mark.parametrize(
-    ("path", "text", "problem"),
-    [
-        pytest.param(
-            "index.html",
-            f'<script type="module" src="/{MATCHER}"></script>',
-            f"names the matcher module {MATCHER_NAME} 2 times; only the list page's "
-            "#list[data-matcher] may, once (M3-D7 a)",
-            id="script-on-the-list-page",
-        ),
-        pytest.param(
-            "index.html",
-            f'<link rel="modulepreload" href="/{MATCHER}">',
-            None,
-            id="modulepreload-on-the-list-page",
-        ),
-        pytest.param(
-            "about/index.html",
-            f'<!doctype html><title>t</title><script type="module" src="/{MATCHER}"></script>',
-            ONLY_DATA_MATCHER,
-            id="script-on-another-page",
-        ),
-        pytest.param(
-            "assets/app.0123456789.js", f"import('/{MATCHER}');", ONLY_DATA_MATCHER, id="script"
-        ),
-        pytest.param(
-            "assets/list.0123456789.json", f'{{"m": "/{MATCHER}"}}', ONLY_DATA_MATCHER, id="payload"
-        ),
-    ],
-)
+# Where the matcher module may not be named: a case for each of budgets.TEXT_SUFFIXES too.
+MATCHER_MENTIONS = [
+    pytest.param(
+        "index.html",
+        f'<script type="module" src="/{MATCHER}"></script>',
+        f"names the matcher module {MATCHER_NAME} 2 times; only the list page's "
+        "#list[data-matcher] may, once (M3-D7 a)",
+        id="script-on-the-list-page",
+    ),
+    pytest.param(
+        "index.html",
+        f'<link rel="modulepreload" href="/{MATCHER}">',
+        None,
+        id="modulepreload-on-the-list-page",
+    ),
+    pytest.param(
+        "about/index.html",
+        f'<!doctype html><title>t</title><script type="module" src="/{MATCHER}"></script>',
+        ONLY_DATA_MATCHER,
+        id="script-on-another-page",
+    ),
+    pytest.param(
+        "assets/app.0123456789.js", f"import('/{MATCHER}');", ONLY_DATA_MATCHER, id="script"
+    ),
+    pytest.param(
+        "assets/list.0123456789.json", f'{{"m": "/{MATCHER}"}}', ONLY_DATA_MATCHER, id="payload"
+    ),
+    pytest.param(
+        "assets/style.0123456789.css",
+        f"body{{background:url(/{MATCHER})}}",
+        ONLY_DATA_MATCHER,
+        id="stylesheet",
+    ),
+    pytest.param(
+        "sitemap.xml", f"<loc>https://x.test/{MATCHER}</loc>", ONLY_DATA_MATCHER, id="sitemap"
+    ),
+    pytest.param("robots.txt", f"User-agent: *\nAllow: /{MATCHER}\n", ONLY_DATA_MATCHER, id="text"),
+    pytest.param(
+        "favicon.svg",
+        f'<svg xmlns="http://www.w3.org/2000/svg"><script href="/{MATCHER}"/></svg>',
+        ONLY_DATA_MATCHER,
+        id="svg",
+    ),
+]
+
+
+@pytest.mark.parametrize(("path", "text", "problem"), MATCHER_MENTIONS)
 def test_only_the_list_s_data_matcher_may_name_the_matcher_module(
     tmp_path: Path, path: str, text: str, problem: str | None
 ) -> None:
     """inventory_matcher_on_demand: the matcher module loads only once a visitor's list
     arrives, so nothing but ``#list[data-matcher]`` names it: no script element or
-    modulepreload, no other page, script or payload."""
+    modulepreload, no other page, script, payload, stylesheet, text file, image or sitemap
+    (each of ``budgets.TEXT_SUFFIXES`` has a case here)."""
     on_page = path == "index.html"
     site = _fake_site(tmp_path, html_extra=text if on_page else "")
     if not on_page:
@@ -1294,8 +1312,9 @@ def test_only_the_list_s_data_matcher_may_name_the_matcher_module(
     )
 
 
-def test_the_mention_cases_cover_every_text_suffix() -> None:
-    assert {Path(case.values[0]).suffix for case in MENTIONS} == budgets.TEXT_SUFFIXES
+@pytest.mark.parametrize("cases", [MENTIONS, MATCHER_MENTIONS], ids=["match", "matcher"])
+def test_the_mention_cases_cover_every_text_suffix(cases: list[Any]) -> None:
+    assert {Path(case.values[0]).suffix for case in cases} == budgets.TEXT_SUFFIXES
 
 
 @pytest.mark.parametrize(("path", "text", "problem"), MENTIONS)
