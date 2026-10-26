@@ -67,6 +67,7 @@ import json
 import os
 import re
 import statistics
+import sys
 import threading
 from collections.abc import Iterator
 from dataclasses import dataclass
@@ -757,13 +758,9 @@ def _reference_ms(browser: Any, slowdown: int) -> float:
 
 def _factor(reference_ms: list[float], slowdown: int) -> float:
     """How much slower this machine ran REFERENCE_JS than the one the budgets were set on,
-    never below 1; more than FACTOR_MAX fails, rather than stretch a budget that far."""
-    factor = max(1.0, statistics.median(reference_ms) / REFERENCE_MS[slowdown])
-    assert factor <= FACTOR_MAX, (
-        f"this machine ran the reference workload {factor:.1f} times slower than the one the"
-        f" hopper's budgets were set on, past FACTOR_MAX ({FACTOR_MAX})"
-    )
-    return factor
+    never below 1 (_assert_hopper_budget fails one past FACTOR_MAX, rather than stretch a
+    budget that far)."""
+    return max(1.0, statistics.median(reference_ms) / REFERENCE_MS[slowdown])
 
 
 def _checked_run(browser: Any, text: str, slowdown: int) -> dict[str, Any]:
@@ -784,11 +781,12 @@ def _assert_hopper_budget(
     browser: Any, text: str, field: str, budget_ms: float, slowdown: int
 ) -> None:
     """The median of ``field`` over RUNS cold runs is under ``budget_ms`` scaled by this
-    machine's factor (``_factor``, from a reference run before each), and every run reads and
-    matches ``text`` as Python does."""
+    machine's factor (``_factor``, from a reference run before each), at most FACTOR_MAX, and
+    every run reads and matches ``text`` as Python does."""
     summary: dict[str, Any] = {}
-    median, budget = float("inf"), budget_ms
-    # Shared CI runners are noisy: a failing median gets one more set of runs (design-m2 §9).
+    median, budget, factor = float("inf"), budget_ms, 1.0
+    # Shared CI runners are noisy: a failing set, by its median or by a factor past FACTOR_MAX,
+    # gets one more set of runs (design-m2 §9).
     for _attempt in range(2):
         pairs = [
             (_reference_ms(browser, slowdown), _checked_run(browser, text, slowdown))
@@ -811,8 +809,12 @@ def _assert_hopper_budget(
             "reference_ms": [round(ms) for ms, _ in pairs],
         }
         print(json.dumps(summary))
-        if median < budget:
+        if factor <= FACTOR_MAX and median < budget:
             break
+    assert factor <= FACTOR_MAX, (
+        f"this machine ran the reference workload {factor:.1f} times slower than the one the"
+        f" hopper's budgets were set on, past FACTOR_MAX ({FACTOR_MAX}): {summary}"
+    )
     assert median < budget, summary
 
 
@@ -900,9 +902,65 @@ def test_a_hopper_budget_scales_with_the_reference_run_only_up(
     assert _factor(reference_ms, slowdown) == pytest.approx(factor)
 
 
-def test_a_machine_too_slow_for_the_hopper_s_budgets_fails() -> None:
-    with pytest.raises(AssertionError, match="past FACTOR_MAX"):
-        _factor([REFERENCE_MS[4] * FACTOR_MAX + 1] * 5, 4)
+def _fake_sets(monkeypatch: pytest.MonkeyPatch, sets: list[tuple[float, float]]) -> list[int]:
+    """_assert_hopper_budget's runs, faked, set by set: each ``(reference ms, list ms)`` is
+    every run of that set, at CPU_SLOWDOWN. Returns the count of reference runs made."""
+    made = [0]
+
+    def reference(_browser: Any, slowdown: int) -> float:
+        assert slowdown == CPU_SLOWDOWN
+        made[0] += 1
+        return sets[(made[0] - 1) // RUNS][0]
+
+    def run(_browser: Any, _text: str, _slowdown: int) -> dict[str, Any]:
+        ms = sets[(made[0] - 1) // RUNS][1]
+        return {"match_ms": ms, "parse_ms": 0.0, "ms": ms}
+
+    module = sys.modules[__name__]
+    monkeypatch.setattr(module, "_reference_ms", reference)
+    monkeypatch.setattr(module, "_checked_run", run)
+    return made
+
+
+SLOW = REFERENCE_MS[CPU_SLOWDOWN] * (FACTOR_MAX + 1)  # a reference run past FACTOR_MAX
+NORMAL = REFERENCE_MS[CPU_SLOWDOWN]
+
+
+@pytest.mark.parametrize(
+    "sets",
+    [[(NORMAL, 50.0)], [(NORMAL, 250.0), (NORMAL, 50.0)], [(SLOW, 50.0), (NORMAL, 50.0)]],
+    ids=["first-set", "a-slow-median-then-a-good-one", "a-noisy-factor-then-a-good-one"],
+)
+def test_a_hopper_budget_that_fails_gets_one_more_set_of_runs(
+    monkeypatch: pytest.MonkeyPatch, sets: list[tuple[float, float]]
+) -> None:
+    """As the module docstring says, a set that fails, by its median or by a factor past
+    FACTOR_MAX (a noisy spell on a shared runner), gets one more set before the test fails."""
+    made = _fake_sets(monkeypatch, sets)
+    _assert_hopper_budget(None, "", "match_ms", HOPPER_MS, CPU_SLOWDOWN)
+    assert made[0] == RUNS * len(sets)
+
+
+@pytest.mark.parametrize(
+    ("sets", "problem"),
+    [([(SLOW, 50.0)] * 2, "past FACTOR_MAX"), ([(NORMAL, 50.0), (SLOW, 50.0)], None),
+     ([(NORMAL, 250.0)] * 2, "'median_ms': 250"), ([(SLOW, 50.0), (NORMAL, 250.0)], "250")],
+    ids=["slow-twice", "never-a-third-set", "over-budget-twice", "noisy-then-over-budget"],
+)  # fmt: skip
+def test_a_hopper_budget_fails_when_its_second_set_fails_too(
+    monkeypatch: pytest.MonkeyPatch, sets: list[tuple[float, float]], problem: str | None
+) -> None:
+    """A machine too slow for the budgets fails past FACTOR_MAX rather than stretch them, and
+    a median over its budget fails, each only once the second set fails as well; a first set
+    that passes is the last."""
+    made = _fake_sets(monkeypatch, sets)
+    if problem is None:
+        _assert_hopper_budget(None, "", "match_ms", HOPPER_MS, CPU_SLOWDOWN)
+        assert made[0] == RUNS
+        return
+    with pytest.raises(AssertionError, match=problem):
+        _assert_hopper_budget(None, "", "match_ms", HOPPER_MS, CPU_SLOWDOWN)
+    assert made[0] == RUNS * 2
 
 
 def test_the_reference_is_set_where_each_budget_runs() -> None:
