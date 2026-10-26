@@ -742,6 +742,29 @@ def test_a_recode_whose_alias_is_already_a_near_match_is_refused(tmp_path, relat
     assert doc["k"]["samplemono20gen"] == f"{doc['ids'].index('sample-mono-20')}{code}"
 
 
+def test_a_recode_of_a_family_outside_the_catalog_is_refused(tmp_path):
+    """A refresh that takes a recoded family out of the catalog, while names.json keeps it
+    with the alias row, leaves a recode that changes nothing: the match file codes a family
+    outside the catalog ``-`` whatever its alias's relation. A stale entry too."""
+
+    def held(names: dict[str, Any]) -> None:
+        family(names, "sample-held-41")["names"].append(
+            {"name": "Sample Held 41 Gen", "relation": "build", "detail": ""}
+        )
+
+    recode = RECODE_20.replace("Sample Mono 20 Gen", "Sample Held 41 Gen").replace(
+        "sample-mono-20", "sample-held-41"
+    )
+    path = write(tmp_path, names_with(held), REVIEWED + recode)
+    assert errors_of(path) == [
+        f"{tmp_path / 'names.reviewed.toml'}: 'Sample Held 41 Gen' is reviewed (synthetic) as an "
+        "alias of sample-held-41, which names.json has outside the catalog, so the recode "
+        "changes nothing in the match file; once the owner has reviewed the change, remove it"
+    ]
+    without = matchfile.match_file(SAMPLE, write(tmp_path, names_with(held)))
+    assert json.loads(without.blob)["k"]["sampleheld41gen"] == "-"
+
+
 def test_a_recode_that_another_alias_bypasses_is_refused(tmp_path):
     """A patched build of the recoded alias would own the family again (``owned``'s check):
     the reviewed list must recode it too (``hopper_hackgen_related``: "HackGen NF")."""
@@ -852,9 +875,8 @@ def test_the_committed_names_give_a_match_file_within_budget():
     letters = {"related": "x", "sibling": "s", "bundle": "u"}
     assert letters.keys() == owned.RECODE_RELATIONS
     for key, recode in reviewed.recodes.items():
-        if recode.family in match["ids"]:
-            code = f"{match['ids'].index(recode.family)}{letters[recode.relation]}"
-            assert code in match["k"][key].split(",")
+        code = f"{match['ids'].index(recode.family)}{letters[recode.relation]}"
+        assert code in match["k"][key].split(",")
 
 
 def test_the_large_catalog_needs_no_reviewed_list(tmp_path):

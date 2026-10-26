@@ -9,8 +9,9 @@ section 11). ``match_file`` first refuses, listing every problem:
 - a names file that can't be read, of another run, or of the wrong shape (``names_errors``),
   and a reviewed list that is malformed (``load_reviewed``), together; the checks below read
   both, so these stop the build before them;
-- recodes that name no alias of the family they say, or that change nothing
-  (``refused_recodes``), or that another name of the family bypasses (``owned.RecodeError``),
+- recodes that name no alias of the family they say, or that change nothing, an alias
+  already a near-match or of a family outside the catalog (``refused_recodes``), or that
+  another name of the family bypasses (``owned.RecodeError``),
   together with what Milestone 3 step 3's collision check finds without them (``check_errors``
   over ``owned.check_document``), including an ambiguous set other than the reviewed one, so
   a refresh that changes the ambiguous set, moves a recoded alias, or both, fails once,
@@ -324,13 +325,16 @@ def names_errors(doc: Mapping[str, Any], names: Any) -> list[str]:
 
 def refused_recodes(names: Mapping[str, Any], reviewed: Reviewed) -> dict[str, str]:
     """Why each refused recode is, by its key: one whose key isn't an alias of exactly the
-    family it names, or whose aliases names.json already gives no owned relation
-    (``owned.OWNED_RELATIONS``). Empty when every recode is one that ``owned`` takes.
+    family it names, whose family is outside the catalog, or whose aliases names.json already
+    gives no owned relation (``owned.OWNED_RELATIONS``). Empty when every recode is one that
+    ``owned`` takes.
 
     A recode works by ``match_key`` on every alias row at that key (``owned``), so the review
     of one family's alias would silently recode another's, or recode nothing once a refresh
-    moves the alias or makes it a near-match itself (a stale entry). ``owned`` refuses what
-    remains, a recode that another name of its family bypasses (``owned.RecodeError``).
+    moves the alias, takes its family out of the catalog (the match file codes a family
+    outside it ``-`` whatever its relation) or makes the alias a near-match itself (a stale
+    entry). ``owned`` refuses what remains, a recode that another name of its family bypasses
+    (``owned.RecodeError``).
     """
     holders: dict[str, set[str]] = defaultdict(set)
     relations: dict[str, set[str]] = defaultdict(set)
@@ -338,6 +342,7 @@ def refused_recodes(names: Mapping[str, Any], reviewed: Reviewed) -> dict[str, s
         for item in fam["names"]:
             holders[match_key(item["name"])].add(fam["id"])
             relations[match_key(item["name"])].add(item["relation"])
+    in_catalog = {fam["id"] for fam in names["families"] if fam["in_catalog"]}
     refused: dict[str, str] = {}
     for key, recode in sorted(reviewed.recodes.items()):
         found = sorted(holders.get(key, ()))
@@ -345,6 +350,12 @@ def refused_recodes(names: Mapping[str, Any], reviewed: Reviewed) -> dict[str, s
             refused[key] = (
                 f"{recode.name!r} is reviewed as an alias of {recode.family} ({recode.ruling}), "
                 f"but names.json's aliases at its key {key!r} are of {', '.join(found) or 'none'}"
+            )
+        elif recode.family not in in_catalog:
+            refused[key] = (
+                f"{recode.name!r} is reviewed ({recode.ruling}) as an alias of {recode.family}, "
+                "which names.json has outside the catalog, so the recode changes nothing in the "
+                "match file; once the owner has reviewed the change, remove it"
             )
         elif not relations[key] & owned.OWNED_RELATIONS:
             refused[key] = (
