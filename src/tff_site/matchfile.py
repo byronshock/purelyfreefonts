@@ -478,7 +478,8 @@ def check_errors(
     counts every owned code at the key. A family that gains a name at a reviewed ambiguous key
     leaves the entry's families as they were, so without this a changed name would pass
     unreviewed, which ``inventory_ambiguous_names`` fails ("on any new, changed or dropped name
-    until the owner has reviewed it").
+    until the owner has reviewed it"). A one-for-one change of the key's owner still passes, as
+    the entry records no owners: that is a question for the owner (site/CONTRACT.md section 11).
 
     Editing the reviewed list clears the ambiguous set's problems. Its ``[[ambiguous]]``
     entries hold no exception for the other three. A ``[[recode]]`` clears a meeting or a
