@@ -900,14 +900,36 @@ def _bypassed_by_its_family_name(names: dict[str, Any]) -> None:
     forty["names"].append({"name": "Sample Sans 11", "relation": "rename"})
 
 
+def _bypassed_in_two_steps(names: dict[str, Any]) -> None:
+    """Sample Serif 04 gets the rename "Sample Kilo", its PostScript name "SampleKilo-Bold",
+    which reaches it, and the rename "Sample KiloBold Italic", which reaches the PostScript
+    name's key only: a recode of the first needs both others, the second through the first."""
+    family(names, "sample-serif-04")["names"] += [
+        {"name": "Sample Kilo", "relation": "rename"},
+        {"name": "SampleKilo-Bold", "relation": "postscript"},
+        {"name": "Sample KiloBold Italic", "relation": "rename"},
+    ]
+
+
+def _reached_by_a_near_match(names: dict[str, Any]) -> None:
+    """Sample Serif 09 gets the rename "Sample Lima" and the related name "Sample Lima Bold",
+    which reaches it but, a near-match at its own key, can't bypass its recode."""
+    family(names, "sample-serif-09")["names"] += [
+        {"name": "Sample Lima", "relation": "rename"},
+        {"name": "Sample Lima Bold", "relation": "related"},
+    ]
+
+
 def test_recodable_keys_are_those_at_which_the_build_takes_a_recode():
     """``recodable_keys`` decides as the build does, so the messages above can't offer a recode
     the build refuses, or miss one it takes, or the recodes it needs with it. On the sample with
     planted aliases (at a key that two families' aliases hold, at the family's own name's key,
-    of a family outside the catalog, at another family's name, and bypassed by another alias or
-    by the family's own name), every set of each family's aliases with an owned relation is
-    tried: a key is recodable when some set the build takes holds it (``refused_recodes`` and
-    ``owned`` refuse none), and ``also`` is what the smallest such set adds."""
+    of a family outside the catalog, at another family's name, bypassed by another alias, by
+    a name that another alias bypasses in turn, or by the family's own name, and reached by a
+    near-match alias, which bypasses nothing), every set of each family's aliases with an owned
+    relation is tried: a key is recodable when some set the build takes holds it
+    (``refused_recodes`` and ``owned`` refuse none), and ``also`` is what the smallest such set
+    adds."""
 
     def plant(names: dict[str, Any]) -> None:
         _share_aliases(names)
@@ -922,6 +944,8 @@ def test_recodable_keys_are_those_at_which_the_build_takes_a_recode():
         )
         _bypassed_by_an_alias(names)
         _bypassed_by_its_family_name(names)
+        _bypassed_in_two_steps(names)
+        _reached_by_a_near_match(names)
 
     names = names_with(plant)
     ids = [f["id"] for f in SAMPLE["fonts"]]
@@ -958,6 +982,10 @@ def test_recodable_keys_are_those_at_which_the_build_takes_a_recode():
     assert want["samplemono20gen"] == matchfile.Recodable("sample-mono-20")
     assert want["samplegrot"] == matchfile.Recodable("sample-sans-03", ("Sample Grot NF",))
     assert want["samplegrotnf"] == matchfile.Recodable("sample-sans-03")
+    assert want["samplekilo"] == matchfile.Recodable(
+        "sample-serif-04", ("SampleKilo-Bold", "Sample KiloBold Italic")
+    )
+    assert want["samplelima"] == matchfile.Recodable("sample-serif-09")
     assert (
         not {"samplesansclassic", "samplesans01", "sampleheld41gen", "samplesans11"} & want.keys()
     )
