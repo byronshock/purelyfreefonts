@@ -1912,6 +1912,21 @@ GOOD_PART = "// 20-view: test.\nconst View = (() => {\n  const x = 1;\n  return 
         ("52-owned-parse.js", "const OwnedParse = (() => {\n  Math.random();\n})();\n", "pure"),
         ("05-keys.js", "const Keys = (() => {\n  navigator.language;\n})();\n", "pure"),
         ("05-keys.js", "const Keys = (() => {\n  location.href;\n})();\n", "pure"),
+        # ... each of MATCHER_JS's names on its own, where no other rule finds it, comments
+        # included: an element (not a script) made off any document, a timer and a clock
+        *(
+            (part, source, f"not in the matcher module (pure code): {needle}")
+            for part, const in (("52-owned-parse.js", "OwnedParse"), ("05-keys.js", "Keys"))
+            for needle, call in (
+                ("createElement", "doc.createElement('b')"),
+                ("setInterval(", "setInterval(f, 1)"),
+                ("Date(", "new Date()"),
+            )
+            for source in (
+                f"const {const} = (() => {{\n  {call};\n}})();\n",
+                f"// not {call}\nconst {const} = 1;\n",
+            )
+        ),
         # a script element: only Data.loadMatcher adds one, once
         (
             "20-view.js",
@@ -1948,6 +1963,15 @@ GOOD_PART = "// 20-view: test.\nconst View = (() => {\n  const x = 1;\n  return 
         ("50-ext.js", "const Ext = (() => {\n  frame.srcdoc = s;\n})();\n", "srcdoc"),
         ("50-ext.js", "const Ext = (() => {\n  new Worker('/w.js');\n})();\n", "Worker("),
         ("50-ext.js", "const Ext = (() => {\n  new SharedWorker(u);\n})();\n", "Worker("),
+        # ... and a worker's own way to run another script, in either module, comments included
+        *(
+            (part, source, "forbidden: importScripts")
+            for part, const in (("50-ext.js", "Ext"), ("54-owned-match.js", "OwnedMatch"))
+            for source in (
+                f"const {const} = (() => {{\n  importScripts('/w.js');\n}})();\n",
+                f"// self.importScripts(u) runs a script\nconst {const} = 1;\n",
+            )
+        ),
         # the hand-off's name: only Data's constant and the matcher's last line
         ("50-ext.js", "const Ext = (() => {\n  globalThis.tffMatcher;\n})();\n", "tffMatcher"),
         (
