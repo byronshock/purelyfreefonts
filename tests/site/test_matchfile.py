@@ -1463,6 +1463,39 @@ def test_every_name_that_bypasses_a_recode_is_named_in_one_run(tmp_path):
     ]
 
 
+def test_a_bypass_at_a_key_another_family_s_alias_holds_asks_for_no_recode(tmp_path):
+    """Sample Mono 20's patched build "Sample Mono 20 Gen NF" bypasses the recode of "Sample Mono
+    20 Gen", and Sample Mono 02 has the same name as a related one, as Roboto Mono could have
+    "HackGen NF": the build refuses a recode at a key two families' aliases hold, which would
+    recode both, so the message says so instead of asking for one, before and after one is
+    listed anyway. No shared key comes of it (Sample Mono 02's code there is a near-match), so
+    no other line says what clears it either."""
+
+    def patched(names: dict[str, Any]) -> None:
+        family(names, "sample-mono-20")["names"].append(
+            {"name": "Sample Mono 20 Gen NF", "relation": "build", "detail": "nf"}
+        )
+        family(names, "sample-mono-02")["names"].append(
+            {"name": "Sample Mono 20 Gen NF", "relation": "related"}
+        )
+
+    names = names_with(patched)
+    listed = tmp_path / "names.reviewed.toml"
+    bypass = (
+        f"{listed}: recode 'samplemono20gen': sample-mono-20's name 'Sample Mono 20 Gen NF' "
+        "reaches it and still counts as owned, at a key that an alias of sample-mono-02 also "
+        "has, which the build won't recode"
+    )
+    assert errors_of(write(tmp_path, names)) == [bypass]
+    anyway = REVIEWED + recode_entry("Sample Mono 20 Gen NF", "sample-mono-20", "related")
+    assert errors_of(write(tmp_path, names, anyway)) == [
+        f"{listed}: 'Sample Mono 20 Gen NF' is reviewed as an alias of sample-mono-20 "
+        "(synthetic), but names.json's aliases at its key 'samplemono20gennf' are of "
+        "sample-mono-02, sample-mono-20",
+        bypass,
+    ]
+
+
 def test_a_recode_its_family_name_refuses_is_named_once_for_that(tmp_path):
     """Sample Mono 20's rename "SampleMono20", listed as a recode, has its family name's key,
     which no recode touches, so the build refuses it for that alone: the patched build "Sample
