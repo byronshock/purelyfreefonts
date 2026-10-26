@@ -21,7 +21,11 @@ every size budget and the CSP lint, and each check fails on a site made to break
   stall of a shared runner can't move a median, a change that is really slow is slow in
   every set, and a page that is slower overall is slow at every change. Planted slowdowns
   show the rule at work in the browser: a stall planted in the first set alone is outvoted
-  by the two sets after it, and a change made slow in every set fails, named.
+  by the two sets after it, and a change made slow in every set fails, named. What the rule
+  gives up, knowingly: a change that sits at the budget on a slow runner (over in about half
+  its sets) fails a little more often than under the old rule of two sets, since a median
+  over 200 ms is the page at its limit there; and a page that is slow on one change per
+  visit, at a different change each time, passes, since no change's median moves.
 - Specimens: at load, no specimen is requested for a row more than 1000 px below the screen.
 
 The site is ``TFF_PERF_SITE_DIR`` when that is set (CI's 540-font build, or a real
