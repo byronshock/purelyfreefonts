@@ -512,8 +512,8 @@ def check_errors(
     any new, changed or dropped name until the owner has reviewed it"): a family that gains a
     name at a reviewed ambiguous key leaves the entry's families as they were, and so does a
     one-for-one change of the key's owner (one family leaving names.json in the run in which
-    another gains the name). A gain is a shared key too, so it fails twice, saying what clears
-    the shared key and what the owners became.
+    another gains the name). A gain that makes a shared key fails twice, saying what clears the
+    shared key and what the owners became.
 
     Editing the reviewed list clears the ambiguous set's problems. Its ``[[ambiguous]]``
     entries hold no exception for the other three. A ``[[recode]]`` clears a meeting or a
