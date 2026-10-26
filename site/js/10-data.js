@@ -205,17 +205,15 @@ const Data = (() => {
     let count = 0;
     let given;
     let taken;
-    try {
-      Object.defineProperty(globalThis, MATCHER_GLOBAL, {
-        get: () => taken,
-        set: (value) => {
-          count += 1;
-          given = value;
-        },
-      });
-    } catch (error) {
-      return refused(`${MATCHER_GLOBAL} could not be defined`);
-    }
+    // With the built-ins unchanged this can't throw: the name is free, and the global object
+    // can't be made non-extensible.
+    Object.defineProperty(globalThis, MATCHER_GLOBAL, {
+      get: () => taken,
+      set: (value) => {
+        count += 1;
+        given = value;
+      },
+    });
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
       // Only an event the browser fired counts (isTrusted): no event a script dispatches is
