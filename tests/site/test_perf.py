@@ -13,9 +13,13 @@ every size budget and the CSP lint, and each check fails on a site made to break
   PerformanceObservers that an init script starts before the page's own script; TBT is the
   time past 50 ms of each long task after first contentful paint, counted until the page
   has been quiet for two seconds after load.
-- Refilter: 20 rank and filter changes made as a visitor would, under the same slowdown,
-  each timed from its change event to the second animation frame after it; every one must
-  take at most 200 ms, and the list must then show what the count says.
+- Refilter: 20 rank and filter changes made as a visitor would, the same ones in the same
+  order every time, under the same slowdown, each timed from its change event to the second
+  animation frame after it; the list must then show what the count says. A set in which
+  every change takes at most 200 ms passes. Otherwise two more sets are measured, and each
+  change is judged by its median over the three: every median must be at most 200 ms. One
+  stall of a shared runner can't move a median, a change that is really slow is slow in
+  every set, and a page that is slower overall is slow at every change.
 - Specimens: at load, no specimen is requested for a row more than 1000 px below the screen.
 
 The site is ``TFF_PERF_SITE_DIR`` when that is set (CI's 540-font build, or a real
@@ -37,11 +41,12 @@ without ``TFF_PERF_URL``, which no CI job sets::
 
 import gzip
 import json
+import math
 import os
 import re
 import statistics
 import threading
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator, Sequence
 from dataclasses import dataclass
 from functools import partial
 from http import HTTPStatus
@@ -67,6 +72,7 @@ CLS_MAX = 0.1
 TBT_MAX_MS = 200
 REFILTER_MAX_MS = 200
 REFILTER_STEPS = 20
+REFILTER_SETS = 3  # when the first set has a change over budget: that set and two more
 FAR_BELOW_PX = 1000
 QUIET_MS = 2000
 LOAD_TIMEOUT_MS = 60_000
@@ -492,18 +498,90 @@ def _check_refilter_records(steps: list[tuple[str, str, str | None]], timings: l
     assert timings[-1]["hash"].startswith("#rank="), timings[-1]
 
 
-def _assert_refilter_budget(browser: Any, url: str, rows: int) -> None:
-    worst: dict[str, Any] = {}
-    # The budget is on the slowest of 20 changes; on a noisy runner a slow one gets one more
-    # full set (design-m2 §9).
-    for _attempt in range(2):
+def _step_label(k: int, step: tuple[str, str, str | None]) -> str:
+    """A step as a failure names it: ``step 9 (check #f-hide-limited)``."""
+    action, selector, value = step
+    return f"step {k} ({action} {selector}{f' {value}' if value is not None else ''})"
+
+
+def _refilter_verdict(
+    sets: Sequence[Sequence[float]], labels: Sequence[str] | None = None
+) -> tuple[bool, list[float], list[str]]:
+    """Judge sets of refilter timings (ms per step, the same steps in the same order in every
+    set): whether they pass, each step's median over the sets, and a line for each step whose
+    median is over REFILTER_MAX_MS, naming it (by ``labels`` if given) with its timings.
+
+    A first set alone passes only if every step is within budget; three sets pass if every
+    step's median is. Any other number of sets, sets of different lengths, or a timing that
+    is not a finite number of at least 0 is a mistake in the caller, and raises ValueError.
+    """
+    if len(sets) not in (1, REFILTER_SETS):
+        raise ValueError(f"{len(sets)} sets: judge a first set alone or {REFILTER_SETS} sets")
+    steps = len(sets[0])
+    if steps == 0 or any(len(s) != steps for s in sets):
+        raise ValueError(f"sets of different lengths, or empty: {[len(s) for s in sets]}")
+    if labels is not None and len(labels) != steps:
+        raise ValueError(f"{len(labels)} labels for {steps} steps")
+    for s in sets:
+        for ms in s:
+            if isinstance(ms, bool) or not isinstance(ms, int | float) or not math.isfinite(ms):
+                raise ValueError(f"not a timing: {ms!r}")
+            if ms < 0:
+                raise ValueError(f"a negative timing: {ms!r}")
+    medians = [float(statistics.median(column)) for column in zip(*sets, strict=True)]
+    failures = [
+        f"{labels[k] if labels else f'step {k + 1}'}: "
+        f"{', '.join(f'{ms:.1f}' for ms in column)} ms, median {median:.1f} ms"
+        for k, (column, median) in enumerate(zip(zip(*sets, strict=True), medians, strict=True))
+        if median > REFILTER_MAX_MS
+    ]
+    return not failures, medians, failures
+
+
+def _refilter_sets(measure: Callable[[int], list[float]]) -> list[list[float]]:
+    """``measure(0)``, the first set, and if any step of it is over budget, two more sets
+    (``measure(1)``, ``measure(2)``): the sets ``_refilter_verdict`` then judges."""
+    sets = [measure(0)]
+    if not _refilter_verdict(sets)[0]:
+        sets += [measure(k) for k in range(1, REFILTER_SETS)]
+    return sets
+
+
+def _assert_refilter_budget(
+    browser: Any, url: str, rows: int
+) -> tuple[list[tuple[str, str, str | None]], list[list[float]]]:
+    """Measure the refilter budget and fail if it is broken; return the steps and each set's
+    timings."""
+    # Shared CI runners are noisy and stall now and then (design-m2 §9). A first set with
+    # every change within budget passes. If a change is over, two more sets are measured and
+    # each change is judged by its median over the three: one stall can't move a median, but
+    # a change that is really slow is slow in every set.
+    first: list[tuple[str, str, str | None]] = []
+
+    def measure(n: int) -> list[float]:
         steps, timings = _refilter_once(browser, url, rows)
         _check_refilter_records(steps, timings)
+        # Medians per step are fair only if every set makes the same changes.
+        assert not first or steps == first, f"set {n + 1} made other changes: {steps}"
+        first[:] = steps
         worst = max(timings, key=lambda t: t["ms"])
-        print(json.dumps({"refilter_ms": [round(t["ms"]) for t in timings], "worst": worst}))
-        if worst["ms"] <= REFILTER_MAX_MS:
-            break
-    assert worst["ms"] <= REFILTER_MAX_MS, f"slowest change took {worst['ms']:.0f} ms: {worst}"
+        print(
+            json.dumps(
+                {"set": n + 1, "refilter_ms": [round(t["ms"]) for t in timings], "worst": worst}
+            )
+        )
+        return [t["ms"] for t in timings]
+
+    sets = _refilter_sets(measure)
+    labels = [_step_label(k, step) for k, step in enumerate(first, start=1)]
+    passed, medians, failures = _refilter_verdict(sets, labels)
+    if len(sets) > 1:
+        print(json.dumps({"refilter_median_ms": [round(m) for m in medians]}))
+    assert passed, (
+        f"over the {REFILTER_MAX_MS} ms budget at the median of {len(sets)} sets: "
+        + "; ".join(failures)
+    )
+    return first, sets
 
 
 def test_rank_and_filter_changes_redraw_within_200_ms(
@@ -511,6 +589,111 @@ def test_rank_and_filter_changes_redraw_within_200_ms(
 ) -> None:
     _chromium(browser_name)
     _assert_refilter_budget(browser, large_url, large_rows)
+
+
+# The rule without a browser. Sets of timings in ms: PR #96's two sets on CI (run
+# 40281855328), each failed by one stall at a different step, and a third without a stall,
+# the faster of the two at each step.
+CI_SET_1 = [101, 86, 47, 79, 87, 54, 71, 70, 49, 35, 68, 406, 106, 116, 48, 37, 42, 38, 34, 34]
+CI_SET_2 = [99, 82, 46, 74, 96, 53, 85, 75, 53, 34, 74, 70, 76, 69, 39, 30, 43, 38, 309, 30]
+QUIET_SET = [min(a, b) for a, b in zip(CI_SET_1, CI_SET_2, strict=True)]
+
+
+def _set_with(slow: dict[int, float], base: float = 50.0) -> list[float]:
+    """A set of REFILTER_STEPS timings of ``base`` ms, except the 1-based steps in ``slow``."""
+    return [slow.get(k, base) for k in range(1, REFILTER_STEPS + 1)]
+
+
+def test_refilter_verdict_one_stall_passes() -> None:
+    # Either CI set alone fails, and names its stall; with a third set, neither stall moves
+    # its step's median.
+    assert _refilter_verdict([CI_SET_1]) == (
+        False,
+        [float(ms) for ms in CI_SET_1],
+        ["step 12: 406.0 ms, median 406.0 ms"],
+    )
+    assert _refilter_verdict([CI_SET_2])[2] == ["step 19: 309.0 ms, median 309.0 ms"]
+    passed, medians, failures = _refilter_verdict([CI_SET_1, CI_SET_2, QUIET_SET])
+    assert (passed, failures) == (True, [])
+    assert (medians[11], medians[18]) == (70, 34)
+    # One stall anywhere among the three sets passes, at any step and in any set.
+    for k in range(1, REFILTER_STEPS + 1):
+        for n in range(REFILTER_SETS):
+            sets = [_set_with({k: 5000} if m == n else {}) for m in range(REFILTER_SETS)]
+            assert _refilter_verdict(sets)[0], (k, n)
+
+
+def test_refilter_verdict_the_same_slow_step_in_two_or_three_sets_fails() -> None:
+    labels = [f"step {k} (change {k})" for k in range(1, REFILTER_STEPS + 1)]
+    two = [_set_with({7: 300}), _set_with({7: 250}), _set_with({})]
+    assert _refilter_verdict(two, labels) == (
+        False,
+        _set_with({7: 250}),
+        ["step 7 (change 7): 300.0, 250.0, 50.0 ms, median 250.0 ms"],
+    )
+    three = [_set_with({7: 300, 2: 900}), _set_with({7: 210}), _set_with({7: 205})]
+    passed, medians, failures = _refilter_verdict(three, labels)
+    assert (passed, medians[6], medians[1]) == (False, 210, 50)
+    assert failures == ["step 7 (change 7): 300.0, 210.0, 205.0 ms, median 210.0 ms"]
+    # Two stalls at different steps pass; at the same step they fail, as a slow change does.
+    assert _refilter_verdict([_set_with({3: 400}), _set_with({4: 400}), _set_with({})])[0]
+
+
+def test_refilter_verdict_everything_slower_fails_every_step() -> None:
+    slow = [_set_with({}, base=201), _set_with({}, base=260), _set_with({}, base=230)]
+    passed, medians, failures = _refilter_verdict(slow)
+    assert not passed
+    assert medians == [230.0] * REFILTER_STEPS
+    assert len(failures) == REFILTER_STEPS
+    assert failures[0] == "step 1: 201.0, 260.0, 230.0 ms, median 230.0 ms"
+    # The budget itself passes: "within 200 ms" is at most 200.
+    assert _refilter_verdict([_set_with({}, base=REFILTER_MAX_MS)])[0]
+    assert _refilter_verdict([_set_with({5: REFILTER_MAX_MS + 0.1})])[2] == [
+        "step 5: 200.1 ms, median 200.1 ms"
+    ]
+
+
+def test_refilter_sets_measures_more_only_after_a_slow_first_set() -> None:
+    def measuring(results: list[list[float]]) -> tuple[Callable[[int], list[float]], list]:
+        calls: list[int] = []
+
+        def measure(n: int) -> list[float]:
+            calls.append(n)
+            return results[n]
+
+        return measure, calls
+
+    measure, calls = measuring([_set_with({})])
+    assert _refilter_sets(measure) == [_set_with({})]
+    assert calls == [0]  # a passing first set needs no more
+    results = [_set_with({12: 406}), _set_with({}), _set_with({})]
+    measure, calls = measuring(results)
+    assert _refilter_sets(measure) == results
+    assert calls == [0, 1, 2]
+    assert _refilter_verdict(results)[0]
+
+
+@pytest.mark.parametrize(
+    ("sets", "labels", "words"),
+    [
+        ([], None, "0 sets"),
+        ([_set_with({}), _set_with({})], None, "2 sets"),
+        ([_set_with({})] * 4, None, "4 sets"),
+        ([[]], None, "empty"),
+        ([_set_with({}), _set_with({}), _set_with({})[:-1]], None, "different lengths"),
+        ([_set_with({1: math.nan})], None, "not a timing"),
+        ([_set_with({1: math.inf})], None, "not a timing"),
+        ([_set_with({1: "50"})], None, "not a timing"),  # type: ignore[dict-item]
+        ([_set_with({1: True})], None, "not a timing"),
+        ([_set_with({1: -1})], None, "negative"),
+        ([_set_with({})], ["step 1"], "1 labels for 20 steps"),
+    ],
+)
+def test_refilter_verdict_refuses_malformed_sets(
+    sets: list, labels: list | None, words: str
+) -> None:
+    with pytest.raises(ValueError, match=words):
+        _refilter_verdict(sets, labels)
 
 
 # A fixed piece of work; the fastest of three runs, so the JIT has warmed up.
