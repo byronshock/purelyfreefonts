@@ -9,7 +9,8 @@
 # only a trusted name (fc-list's first family, a macOS family, or a PostScript name's part
 # before its hyphen) counts as owned; from a plain list it is a near-match. `families` are the
 # catalog families the name may be a weight of; `owners` are the families that own its key,
-# which a trusted name counts as owned (each name's own family: "a family of their own"). The
+# which a trusted name counts as owned (each name's own family: the lead's reading, 2026-10-26,
+# of the ruling's "a family of their own"; the ruling names no owners). The
 # build derives both and fails unless they are exactly these. These five were found by the
 # collision check on the run of 2026-09-26; the owner reviewed them as a set on 2026-10-23
 # (inventory_ambiguous_names). The ruling covers Gentium Book as a weight of gentium-plus too,
