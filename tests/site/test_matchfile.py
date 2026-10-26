@@ -16,6 +16,7 @@ from typing import Any
 import pytest
 
 from tff_catalog import jsonio, owned
+from tff_catalog.keys import match_key
 from tff_site import budgets, data, matchfile
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -41,6 +42,24 @@ UNLISTABLE = (
     "; no entry in the reviewed list clears this: the owner rules, and an alias row "
     "(Milestone 1's review) or a change to the build carries it out (ops/MONTHLY.md step 5)"
 )
+
+
+def recodable(family_id: str) -> str:
+    """How a collision problem that a recode of ``family_id``'s alias would end ends."""
+    return (
+        f"; the owner rules: a [[recode]] making {family_id}'s alias at that key a near-match "
+        "clears this, and otherwise an alias row (Milestone 1's review) or a change to the build "
+        "carries it out (ops/MONTHLY.md step 5)"
+    )
+
+
+def recode_entry(name: str, family_id: str, relation: str) -> str:
+    """A reviewed list's [[recode]] entry, citing the sample's "synthetic"."""
+    return (
+        RECODE_20.replace("Sample Mono 20 Gen", name)
+        .replace("sample-mono-20", family_id)
+        .replace('"related"', f'"{relation}"')
+    )
 
 
 def write(tmp_path: Path, names: Any = None, reviewed: str | None = REVIEWED) -> Path:
@@ -491,6 +510,28 @@ def _strip_out(names: dict[str, Any]) -> None:
     )
 
 
+def _share_aliases(names: dict[str, Any]) -> None:
+    """Sample Sans 03 gets Sample Sans 05's rename: two families' aliases at one key."""
+    family(names, "sample-sans-03")["names"].append(
+        {"name": "Sample Sans Classic", "relation": "rename"}
+    )
+
+
+def _meet_at_two_families_aliases(names: dict[str, Any]) -> None:
+    """Sample Sans 01 Tight, made distinct from Sample Sans 03 and 05, reaches the rename that
+    both now have (``_share_aliases``)."""
+    _share_aliases(names)
+    tight = family(names, "sample-sans-01-tight")
+    tight["names"].append({"name": "Sample Sans Classic Bold", "relation": "related"})
+    tight["distinct_from"] = sorted({*tight["distinct_from"], "sample-sans-03", "sample-sans-05"})
+
+
+def _meet_at_a_name_an_alias_spells(names: dict[str, Any]) -> None:
+    """``_meet``, and Sample Sans 01 has an alias at its own name's key, "SampleSans01"."""
+    _meet(names)
+    family(names, "sample-sans-01")["names"].append({"name": "SampleSans01", "relation": "rename"})
+
+
 @pytest.mark.parametrize(
     ("mutate", "message"),
     [
@@ -503,7 +544,7 @@ def _strip_out(names: dict[str, Any]) -> None:
         pytest.param(
             _share,
             "key 'samplesans01' is owned by several catalog families (sample-sans-01, "
-            f"sample-sans-03), outside the ambiguous set{UNLISTABLE}",
+            f"sample-sans-03), outside the ambiguous set{recodable('sample-sans-03')}",
             id="shared-key",
         ),
         pytest.param(
@@ -521,26 +562,43 @@ def test_names_that_would_count_a_family_as_owned_wrongly_are_refused(tmp_path, 
     assert errors_of(path)[0] == f"{path}: {message}"
 
 
-@pytest.mark.parametrize("mutate", [_meet, _share, _strip_out])
-def test_no_entry_in_the_reviewed_list_clears_a_collision_outside_the_ambiguous_set(
-    tmp_path, mutate
-):
-    """Listing every ambiguous name the build finds leaves the problem the list can't hold,
-    which says so and how it is cleared instead (ops/MONTHLY.md step 5)."""
-    names = names_with(mutate)
+def every_ambiguous_name(names: dict[str, Any]) -> str:
+    """Reviewed-list entries for every ambiguous name the build finds in ``names``."""
     check = owned.check_document(names, [f["id"] for f in SAMPLE["fonts"]], recodes=SAMPLE_RECODES)
     first: dict[str, str] = {}
     for c in check.collisions:
         first.setdefault(c.key, c.name)
-    listed = "".join(
+    return "".join(
         f'[[ambiguous]]\nname = "{first[key]}"\nfamilies = {json.dumps(list(fids))}\n'
         'ruling = "synthetic"\n\n'
         for key, fids in check.amb.items()
     )
-    path = write(tmp_path, names, listed + RECODE_20)
-    (error,) = errors_of(path)
-    assert error.startswith(f"{path}: ")
-    assert error.endswith(UNLISTABLE)
+
+
+@pytest.mark.parametrize(
+    ("mutate", "count"),
+    [
+        pytest.param(_meet, 1, id="meeting-at-a-family-name"),
+        pytest.param(_meet_at_a_name_an_alias_spells, 1, id="meeting-at-its-own-name-s-alias"),
+        pytest.param(_meet_at_two_families_aliases, 3, id="meeting-at-two-families-aliases"),
+        pytest.param(_share_aliases, 1, id="key-two-families-aliases-hold"),
+        pytest.param(_strip_out, 1, id="catalog-name-to-another-family"),
+    ],
+)
+def test_no_entry_in_the_reviewed_list_clears_a_collision_outside_the_ambiguous_set(
+    tmp_path, mutate, count
+):
+    """Listing every ambiguous name the build finds leaves the problems the list can't hold,
+    which say so and how they are cleared instead (ops/MONTHLY.md step 5): where the owned code
+    is a family's own name, or aliases that two families hold, no recode the build takes
+    ends it (``matchfile.recodable_keys``), nor any recode a stripped name."""
+    names = names_with(mutate)
+    path = write(tmp_path, names, every_ambiguous_name(names) + RECODE_20)
+    errors = errors_of(path)
+    assert len(errors) == count
+    for error in errors:
+        assert error.startswith(f"{path}: ")
+        assert error.endswith(UNLISTABLE)
 
 
 def _meet_at_an_alias(names: dict[str, Any]) -> None:
@@ -551,29 +609,146 @@ def _meet_at_an_alias(names: dict[str, Any]) -> None:
     tight["distinct_from"] = sorted({*tight["distinct_from"], "sample-sans-05"})
 
 
-def test_a_meeting_at_an_alias_of_one_catalog_family_names_the_recode_that_clears_it(tmp_path):
-    """A meeting needs an owned code at its key, so where one catalog family holds the key
-    alone, through aliases, a recode the owner rules on ends it: the message says so. Where
-    the key is a family's name (``_meet``), no recode can (``owned.RecodeError``)."""
-    names = names_with(_meet_at_an_alias)
-    path = write(tmp_path, names)
-    assert errors_of(path)[0] == (
-        f"{path}: sample-sans-01-tight: its name 'Sample Sans Classic Bold' reaches "
-        "sample-sans-05 at key 'samplesansclassic', and the two are distinct_from each other; "
-        "the owner rules: a [[recode]] making sample-sans-05's alias at that key a near-match "
-        "clears this, and otherwise an alias row (Milestone 1's review) or a change to the "
-        "build carries it out (ops/MONTHLY.md step 5)"
+def _meet_at_an_alias_another_family_is_named(names: dict[str, Any]) -> None:
+    """``_meet_at_an_alias``, and a family outside the catalog is named "Sample Sans Classic":
+    a name at the key, which no recode touches, so the recode of 05's alias still ends it."""
+    _meet_at_an_alias(names)
+    names["families"].append(
+        {
+            "id": "sample-sans-classic",
+            "family": "Sample Sans Classic",
+            "superfamily_id": None,
+            "in_catalog": False,
+            "names": [],
+            "distinct_from": [],
+        }
     )
-    reviewed = (
-        REVIEWED
-        + '[[ambiguous]]\nname = "Sample Sans Classic Bold"\nfamilies = ["sample-sans-05"]\n'
-        'ruling = "synthetic"\n\n'
-        + RECODE_20.replace("Sample Mono 20 Gen", "Sample Sans Classic")
-        .replace("sample-mono-20", "sample-sans-05")
-        .replace("related", "bundle")
+
+
+MEETING_AT_05 = (
+    "sample-sans-01-tight: its name 'Sample Sans Classic Bold' reaches sample-sans-05 at key "
+    "'samplesansclassic', and the two are distinct_from each other"
+)
+
+
+@pytest.mark.parametrize(
+    ("mutate", "problem", "recode", "key", "codes"),
+    [
+        pytest.param(
+            _meet_at_an_alias,
+            MEETING_AT_05,
+            ("Sample Sans Classic", "sample-sans-05", "bundle"),
+            "samplesansclassic",
+            [("sample-sans-05", "u")],
+            id="meeting-at-an-alias",
+        ),
+        pytest.param(
+            _meet_at_an_alias_another_family_is_named,
+            MEETING_AT_05,
+            ("Sample Sans Classic", "sample-sans-05", "bundle"),
+            "samplesansclassic",
+            [("sample-sans-05", "u"), ("-", "")],
+            id="meeting-at-an-alias-another-family-is-named",
+        ),
+        pytest.param(
+            _share,
+            "key 'samplesans01' is owned by several catalog families (sample-sans-01, "
+            "sample-sans-03), outside the ambiguous set",
+            ("Sample Sans 01", "sample-sans-03", "related"),
+            "samplesans01",
+            [("sample-sans-01", ""), ("sample-sans-03", "x")],
+            id="key-a-name-and-an-alias-hold",
+        ),
+    ],
+)
+def test_a_collision_that_a_recode_ends_names_it_and_the_recode_clears_it(
+    tmp_path, mutate, problem, recode, key, codes
+):
+    """A meeting or a shared key needs an owned code at its key, so where the build takes a
+    recode there (``matchfile.recodable_keys``: one catalog family's aliases alone, not at its
+    own name) of the family whose code it is, the recode the owner may rule ends it, and the
+    message says so; another family's name at the key doesn't stop it. Once listed, with the
+    ambiguous names the build also finds, the build passes, the alias a near-match."""
+    names = names_with(mutate)
+    listed = every_ambiguous_name(names) + RECODE_20
+    path = write(tmp_path, names, listed)
+    assert errors_of(path) == [f"{path}: {problem}{recodable(recode[1])}"]
+    doc = json.loads(
+        matchfile.match_file(SAMPLE, write(tmp_path, names, listed + recode_entry(*recode))).blob
     )
-    doc = json.loads(matchfile.match_file(SAMPLE, write(tmp_path, names, reviewed)).blob)
-    assert doc["k"]["samplesansclassic"] == f"{doc['ids'].index('sample-sans-05')}u"
+    want = [f"{doc['ids'].index(fid)}{letter}" if fid != "-" else "-" for fid, letter in codes]
+    assert doc["k"][key] == ",".join(want)
+
+
+def test_a_recode_ends_only_the_problem_whose_owned_code_it_takes(tmp_path):
+    """Sample Sans 01 Tight reaches Sample Sans 01's name at a key where Sample Sans 03 now
+    has an alias too (``_meet``, ``_share``): a recode of 03's alias ends the shared key, not
+    the meeting, which is at 01's own name."""
+
+    def both(names: dict[str, Any]) -> None:
+        _meet(names)
+        _share(names)
+
+    names = names_with(both)
+    listed = every_ambiguous_name(names) + RECODE_20
+    path = write(tmp_path, names, listed)
+    meeting = (
+        "sample-sans-01-tight: its name 'Sample Sans 01 Bold' reaches sample-sans-01 at key "
+        "'samplesans01', and the two are distinct_from each other"
+    )
+    shared = (
+        "key 'samplesans01' is owned by several catalog families (sample-sans-01, "
+        "sample-sans-03), outside the ambiguous set"
+    )
+    assert errors_of(path) == [
+        f"{path}: {meeting}{UNLISTABLE}",
+        f"{path}: {shared}{recodable('sample-sans-03')}",
+    ]
+    path = write(
+        tmp_path, names, listed + recode_entry("Sample Sans 01", "sample-sans-03", "related")
+    )
+    assert errors_of(path) == [f"{path}: {meeting}{UNLISTABLE}"]
+
+
+def test_recodable_keys_are_those_at_which_the_build_takes_a_recode():
+    """``recodable_keys`` decides as the build does, so the messages above can't offer a recode
+    the build refuses, or miss one it takes. On the sample with planted aliases (at a key that
+    two families' aliases hold, at the family's own name's key, of a family outside the
+    catalog, and at another family's name), every alias with an owned relation is tried alone:
+    the build takes it unless ``refused_recodes`` or ``owned`` refuses it."""
+
+    def plant(names: dict[str, Any]) -> None:
+        _share_aliases(names)
+        family(names, "sample-sans-01")["names"].append(
+            {"name": "SampleSans01", "relation": "rename"}
+        )
+        family(names, "sample-held-41")["names"].append(
+            {"name": "Sample Held 41 Gen", "relation": "build", "detail": ""}
+        )
+        family(names, "sample-sans-06")["names"].append(
+            {"name": "Sample Sans 08", "relation": "rename"}
+        )
+
+    names = names_with(plant)
+    ids = [f["id"] for f in SAMPLE["fonts"]]
+    taken: dict[str, str] = {}
+    for fam in names["families"]:
+        for item in fam["names"]:
+            if item["relation"] not in owned.OWNED_RELATIONS:
+                continue
+            key = match_key(item["name"])
+            entry = matchfile.Recode(item["name"], fam["id"], "related", "synthetic")
+            if matchfile.refused_recodes(names, matchfile.Reviewed(recodes={key: entry})):
+                continue
+            try:
+                owned.check_document(names, ids, recodes={item["name"]: "related"})
+            except owned.RecodeError:
+                continue
+            taken[key] = fam["id"]
+    assert matchfile.recodable_keys(names) == taken
+    assert taken["samplesans08"] == "sample-sans-06"
+    assert taken["samplemono20gen"] == "sample-mono-20"
+    assert not {"samplesansclassic", "samplesans01", "sampleheld41gen"} & taken.keys()
 
 
 @pytest.mark.parametrize("reviewed", [None, "", RECODE_20])

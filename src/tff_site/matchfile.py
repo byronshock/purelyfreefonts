@@ -63,16 +63,18 @@ NAME_KEYS = frozenset({"name", "relation", "detail"})
 INELIGIBLE_KEYS = frozenset({"name", "reason"})
 AMBIGUOUS_FIELDS = frozenset({"name", "families", "ruling"})
 RECODE_FIELDS = frozenset({"name", "family", "relation", "ruling"})
-# The end of each collision problem that no edit to the reviewed list can clear: a meeting, a
-# shared key, a catalog name reaching a family outside the catalog (ops/MONTHLY.md step 5).
+# The end of each collision problem that no edit to the reviewed list can clear: a meeting or a
+# shared key that no recode the build takes would end, a catalog name reaching a family outside
+# the catalog (ops/MONTHLY.md step 5).
 UNLISTABLE = (
     "; no entry in the reviewed list clears this: the owner rules, and an alias row "
     "(Milestone 1's review) or a change to the build carries it out (ops/MONTHLY.md step 5)"
 )
-# The end of a meeting at a key that a catalog family holds alone, through aliases only: a
-# meeting needs an owned code there, so a [[recode]] of those aliases ends it.
+# The end of a meeting or a shared key that one recode the build takes would end: the owned
+# code there is a catalog family's, through aliases that a [[recode]] can make near-matches
+# (``recodable_keys``).
 RECODABLE = (
-    "; the owner rules: a [[recode]] making {other}'s alias at that key a near-match clears "
+    "; the owner rules: a [[recode]] making {family}'s alias at that key a near-match clears "
     "this, and otherwise an alias row (Milestone 1's review) or a change to the build carries "
     "it out (ops/MONTHLY.md step 5)"
 )
@@ -348,12 +350,7 @@ def refused_recodes(names: Mapping[str, Any], reviewed: Reviewed) -> dict[str, s
     entry). ``owned`` refuses what remains, a recode that another name of its family bypasses
     (``owned.RecodeError``).
     """
-    holders: dict[str, set[str]] = defaultdict(set)
-    relations: dict[str, set[str]] = defaultdict(set)
-    for fam in names["families"]:
-        for item in fam["names"]:
-            holders[match_key(item["name"])].add(fam["id"])
-            relations[match_key(item["name"])].add(item["relation"])
+    holders, relations = _alias_holders(names)
     in_catalog = {fam["id"] for fam in names["families"] if fam["in_catalog"]}
     refused: dict[str, str] = {}
     for key, recode in sorted(reviewed.recodes.items()):
@@ -379,21 +376,38 @@ def refused_recodes(names: Mapping[str, Any], reviewed: Reviewed) -> dict[str, s
     return refused
 
 
-def _recodable_keys(names: Mapping[str, Any]) -> dict[str, str]:
-    """The keys a recode could take, each with its family: held by one catalog family alone,
-    through its aliases, and no family's name (``refused_recodes``, ``owned.RecodeError``)."""
+def _alias_holders(names: Mapping[str, Any]) -> tuple[dict[str, set[str]], dict[str, set[str]]]:
+    """By ``match_key``, the families with an alias row there, and those rows' relations."""
     holders: dict[str, set[str]] = defaultdict(set)
-    family_keys = set()
+    relations: dict[str, set[str]] = defaultdict(set)
     for fam in names["families"]:
-        family_keys.add(match_key(fam["family"]))
         for item in fam["names"]:
             holders[match_key(item["name"])].add(fam["id"])
-    in_catalog = {fam["id"] for fam in names["families"] if fam["in_catalog"]}
-    return {
-        key: next(iter(fids))
-        for key, fids in holders.items()
-        if len(fids) == 1 and fids <= in_catalog and key not in family_keys
-    }
+            relations[match_key(item["name"])].add(item["relation"])
+    return holders, relations
+
+
+def recodable_keys(names: Mapping[str, Any]) -> dict[str, str]:
+    """The keys at which the build takes a ``[[recode]]``, each with the family it names.
+
+    As the build decides it: the aliases at the key are of that family alone, which is in the
+    catalog, and some have an owned relation (``refused_recodes``); the family's own name has
+    another key (``owned._check_recodes``). Another family may hold the key by its name, which
+    no recode touches. A recode makes those aliases near-matches, so it ends a meeting or a
+    shared key whose owned code there is that family's (``check_errors``). ``owned`` can still
+    find another name of the family that reaches the key and bypasses the recode, as a
+    HackGen NF build would bypass HackGen's, and then asks for that name's recode too.
+    """
+    holders, relations = _alias_holders(names)
+    by_id = {fam["id"]: fam for fam in names["families"]}
+    out: dict[str, str] = {}
+    for key, fids in sorted(holders.items()):
+        if not key or len(fids) != 1 or not relations[key] & owned.OWNED_RELATIONS:
+            continue
+        (fid,) = fids
+        if by_id[fid]["in_catalog"] and match_key(by_id[fid]["family"]) != key:
+            out[key] = fid
+    return out
 
 
 def check_errors(
@@ -414,24 +428,38 @@ def check_errors(
     it doubts is the owner's call. A collision that starts from no catalog name and reaches no
     catalog family changes no result, and is only reported.
 
-    Editing the reviewed list clears the ambiguous set's problems. It holds no exception for
-    the other three (step 3 fails them "outside the ambiguous set"), so they end with
-    ``UNLISTABLE``: the owner's ruling is carried out by an alias row or a change to the build
-    (ops/MONTHLY.md step 5). A recode can't clear a shared key (``refused_recodes`` refuses a
-    key two families hold) or a collision (the stripping reads no relation), and clears a
-    meeting only at a key that one catalog family holds alone, through aliases (a family name
-    can't be recoded): that one ends with ``RECODABLE``, naming the recode the owner may rule.
+    Editing the reviewed list clears the ambiguous set's problems. Its ``[[ambiguous]]``
+    entries hold no exception for the other three (step 3 fails them "outside the ambiguous
+    set"). A ``[[recode]]`` clears a meeting or a shared key when the build takes a recode at
+    the key (``recodable_keys``) and the family it names is the one whose owned code there
+    makes the problem: the meeting's other family, or one of two families sharing the key. A
+    recode makes that family's aliases at the key near-matches, which may share a key as a
+    bundle does, so that problem ends with ``RECODABLE``, naming the family. The rest end with
+    ``UNLISTABLE``, carried out by an alias row or a change to the build (ops/MONTHLY.md step
+    5): an owned code through a family's own name, or through aliases that two families hold,
+    which the build refuses to recode, and every stripped catalog name (stripping reads no
+    relation).
     """
-    recodable = _recodable_keys(names)
+    recodable = recodable_keys(names)
+    in_catalog = {fam["id"] for fam in names["families"] if fam["in_catalog"]}
+
+    def ending(key: str, owners: list[str]) -> str:
+        """RECODABLE when the family that ``recodable`` gives at ``key`` is one of the
+        ``owners`` there, and a recode of it leaves no catalog family sharing the key."""
+        fid = recodable.get(key)
+        rest = [other for other in owners if other != fid]
+        if fid in owners and (len(rest) <= 1 or not in_catalog.intersection(rest)):
+            return RECODABLE.format(family=fid)
+        return UNLISTABLE
+
     errors = [
         f"{m.family}: its name {m.name!r} reaches {m.other} at key {m.key!r}, "
-        "and the two are distinct_from each other"
-        + (RECODABLE.format(other=m.other) if recodable.get(m.key) == m.other else UNLISTABLE)
+        f"and the two are distinct_from each other{ending(m.key, [m.other])}"
         for m in check.meetings
     ]
     errors += [
         f"key {key!r} is owned by several catalog families ({', '.join(fids)}), "
-        f"outside the ambiguous set{UNLISTABLE}"
+        f"outside the ambiguous set{ending(key, list(fids))}"
         for key, fids in check.shared.items()
         if key not in check.amb
     ]
