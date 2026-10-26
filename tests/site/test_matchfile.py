@@ -1406,7 +1406,7 @@ def test_a_bypassed_recode_and_the_check_s_findings_are_listed_together(tmp_path
 
 def test_every_name_that_bypasses_a_recode_is_named_in_one_run(tmp_path):
     """Two patched builds of the recoded alias, as HackGen NF and HackGen Nerd Font would be
-    of Hack: the build names both at once, so one edit of the list clears them
+    of Hack: the build names both at once, so one round of review clears them
     (ops/MONTHLY.md step 5)."""
 
     def patched(names: dict[str, Any]) -> None:
