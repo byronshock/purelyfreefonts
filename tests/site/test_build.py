@@ -1058,8 +1058,9 @@ def test_an_unreviewed_ambiguous_name_fails_the_build(tmp_path, catalog, mini_si
     with pytest.raises(build.BuildError) as caught:
         run_build(catalog, tmp_path / "site", mini_site)
     assert caught.value.errors == [
-        f"{path}: 'Sample Sans 06 Black' may be a weight of sample-sans-06: an ambiguous name "
-        f"nobody has reviewed; once the owner has, list it in {reviewed}"
+        f"{path}: 'Sample Sans 06 Black' may be a weight of sample-sans-06, its key "
+        "'samplesans06black' owned by sample-sans-06-black: an ambiguous name nobody has "
+        f"reviewed; once the owner has, list it in {reviewed}"
     ]
 
 

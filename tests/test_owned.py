@@ -774,6 +774,9 @@ def test_the_real_names_json_s_ambiguous_keys_are_the_reviewed_ones_and_nothing_
     doc, ids = real()
     check = owned.check_document(doc, ids, recodes=RECODES)
     assert check.amb == {key: entry.families for key, entry in REVIEWED.ambiguous.items()}
+    assert matchfile.key_owners(doc, check.amb) == {
+        key: entry.owners for key, entry in REVIEWED.ambiguous.items()
+    }
     assert {c.key for c in check.collisions if c.catalog} == check.amb.keys()
     assert check.meetings == ()
     assert check.shared == {}
