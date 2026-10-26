@@ -57,6 +57,7 @@ import contextlib
 import functools
 import json
 import re
+import time
 from collections.abc import Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -969,13 +970,15 @@ MATCHER_ATTR = f'data-matcher="{MATCHER_PATH}"'
 # busy machine; paused, only run_for moves it.
 CLOCK_START = 1_767_225_600_000  # 2026-01-01T00:00:00Z, in ms
 CLOCK_PAUSED = CLOCK_START + 3_600_000
+HELD_WAIT_S = 10  # the longest DataPages.take waits for a held route to reach the test
 
 
 @dataclass
 class DataPages:
     """``open(match_attr, match, ...)`` loads 10-data.js under a routed origin that answers
     the list index, the match file and the matcher module as told, and returns the page;
-    ``requests`` holds every request made, and ``held`` the routes answered with HOLD."""
+    ``requests`` holds every request made, and ``held`` the routes answered with HOLD, which
+    ``take`` hands to a test."""
 
     context: Any
     requests: list[Any] = field(default_factory=list)
@@ -1032,6 +1035,18 @@ class DataPages:
         if clock:
             page.clock.pause_at(CLOCK_PAUSED)
         return page
+
+    def take(self, page: Any) -> Any:
+        """The route held last, once Playwright has delivered it. The page has the script
+        element before the test has its route: a test that took the route as soon as the
+        element was there found none once in 960 runs on a busy machine. Playwright's
+        wait_for_timeout runs on its own timer, which the page's clock (``clock``) doesn't
+        hold, and lets the route's handler run meanwhile."""
+        deadline = time.monotonic() + HELD_WAIT_S
+        while not self.held:
+            assert time.monotonic() < deadline, f"no request held within {HELD_WAIT_S} s"
+            page.wait_for_timeout(10)
+        return self.held.pop()
 
 
 @pytest.fixture
@@ -1220,7 +1235,7 @@ def test_a_module_that_failed_to_load_needs_a_reload(data_pages):
     page = data_pages.open(f'data-match="{MATCH_PATH}"', (200, DOC), matcher=HOLD)
     page.evaluate(CALL)
     page.wait_for_function("() => document.scripts.length === 2")
-    data_pages.held.pop().abort()
+    data_pages.take(page).abort()
     assert page.evaluate("() => globalThis.__tffCall") == ["MatchError", "load"]
     retries = """async () => {
       const r = [];
@@ -1234,7 +1249,7 @@ def test_a_module_that_failed_to_load_needs_a_reload(data_pages):
     page.reload()
     page.evaluate(CALL)
     page.wait_for_function("() => document.scripts.length === 2")
-    data_pages.held.pop().fulfill(status=200, content_type="text/javascript", body=MATCHER)
+    data_pages.take(page).fulfill(status=200, content_type="text/javascript", body=MATCHER)
     assert page.evaluate("() => globalThis.__tffCall") == ["ok", None]
     assert len(_sent(data_pages.requests, MATCHER_PATH)) == 2
 
@@ -1376,7 +1391,7 @@ def test_while_the_module_loads_the_name_is_data_s_and_can_t_be_redefined(data_p
     assert page.evaluate(IMPOSTOR, kind) == "TypeError"
     assert page.evaluate("() => Reflect.deleteProperty(globalThis, 'tffMatcher')") is False
     assert page.evaluate(SLOT) == [False, False, True, False]
-    data_pages.held.pop().fulfill(status=200, content_type="text/javascript", body=MATCHER)
+    data_pages.take(page).fulfill(status=200, content_type="text/javascript", body=MATCHER)
     assert page.evaluate("() => globalThis.__tffCall") == ["ok", None]
     assert page.evaluate(TAKEN) == ["ok", "ok"]
 
@@ -1395,7 +1410,7 @@ def test_a_value_from_another_script_is_never_taken(data_pages, route):
     page.wait_for_function("() => document.scripts.length === 2")
     page.evaluate(f"() => {{ {during} }}")
     assert page.evaluate(WAITING) == "waiting"
-    data_pages.held.pop().fulfill(status=200, content_type="text/javascript", body=MATCHER)
+    data_pages.take(page).fulfill(status=200, content_type="text/javascript", body=MATCHER)
     outcome = ["ok", None] if want == "ok" else ["MatchError", want]
     assert page.evaluate("() => globalThis.__tffCall") == outcome
     assert page.evaluate(TAKEN) == [want, want]
@@ -1416,7 +1431,7 @@ def test_a_script_that_hides_the_load_can_only_make_the_hand_off_time_out(data_p
       e.stopImmediatePropagation();
     }, true)"""
     page.evaluate(hide)
-    data_pages.held.pop().fulfill(status=200, content_type="text/javascript", body=MATCHER)
+    data_pages.take(page).fulfill(status=200, content_type="text/javascript", body=MATCHER)
     page.wait_for_function("() => globalThis.__tffHidden === true")
     page.evaluate(f"() => {{ {FAKE} globalThis.tffMatcher = globalThis.__tffFake; }}")
     timeout = page.evaluate("() => globalThis.__tffData.MATCHER_TIMEOUT_MS")
@@ -1550,7 +1565,8 @@ def test_load_matcher_gives_up_after_its_timeout_and_a_retry_waits_on_the_same_s
     page.clock.run_for(2)
     assert page.evaluate("() => globalThis.__tffCall") == ["MatchError", "timeout"]
     assert page.evaluate(HEAD_SCRIPTS) == ADDED
-    (held,) = data_pages.held
+    held = data_pages.take(page)
+    assert data_pages.held == []
     if late == "runs":
         held.fulfill(status=200, content_type="text/javascript", body=MATCHER)
         page.wait_for_function("() => globalThis.tffMatcher !== undefined")
@@ -1558,7 +1574,6 @@ def test_load_matcher_gives_up_after_its_timeout_and_a_retry_waits_on_the_same_s
     else:
         held.abort()
         want = [["MatchError", "load"], ["MatchError", "load"]]
-    data_pages.held.clear()
     assert page.evaluate(OUTCOME, "loadMatcher") == want
     assert len(_sent(data_pages.requests, MATCHER_PATH)) == 1
     assert page.evaluate(HEAD_SCRIPTS) == ADDED
