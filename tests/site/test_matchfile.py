@@ -819,27 +819,59 @@ def test_a_key_that_only_families_outside_the_catalog_share_passes(tmp_path):
     assert doc["k"]["sampleheld41"] == "-"
 
 
-def test_a_key_in_the_ambiguous_set_may_be_shared(tmp_path):
-    """Step 3 fails a shared key "outside the ambiguous set": inside it, the hopper doubts the
-    name's owned codes (``owned.match``). Sample Sans 03 and 05 get the rename "Sample Sans 06
-    Black", the reviewed ambiguous name, which its own family, outside the catalog, holds too:
-    the build passes, its ambiguous set unchanged."""
+def _share_ambiguous(names: dict[str, Any]) -> None:
+    """Sample Sans 03 gets the rename "Sample Sans 06 Black", the reviewed ambiguous name, which
+    its own family, outside the catalog, holds: the name's families stay sample-sans-06."""
+    family(names, "sample-sans-03")["names"].append(
+        {"name": "Sample Sans 06 Black", "relation": "rename"}
+    )
+
+
+SHARED_AMBIGUOUS = (
+    "key 'samplesans06black' is owned by several families (sample-sans-03 in the catalog, "
+    "sample-sans-06-black not), in the ambiguous set, where a trusted name counts each as owned"
+)
+
+
+def test_a_key_in_the_ambiguous_set_that_gains_an_owner_is_refused(tmp_path):
+    """The hopper doubts an ambiguous key's owned codes only for an untrusted name: fc-list's
+    first family and a PostScript name's family part count every one (``owned.match``). So a
+    family that gains a name at a reviewed ambiguous key is a changed name, which
+    ``inventory_ambiguous_names`` fails until the owner has reviewed it, though the entry's
+    families, all it records, stay the same; a recode of the alias, once ruled, clears it."""
+    names = names_with(_share_ambiguous)
+    ids = [f["id"] for f in SAMPLE["fonts"]]
+    unchecked = owned.match_document(names, ids, SAMPLE["run"]["date"], recodes=SAMPLE_RECODES)
+    table = owned.Table.from_document(json.loads(json.dumps(unchecked)))
+    for line in (
+        "/usr/share/fonts/a.ttf: Sample Sans 06 Black:style=Regular",
+        "SampleSans06Black-Bold",
+    ):
+        assert owned.match(owned.parse(line), table).owned.keys() == {"sample-sans-03"}
+    path = write(tmp_path, names)
+    assert errors_of(path) == [f"{path}: {SHARED_AMBIGUOUS}{recodable('sample-sans-03')}"]
+    recode = recode_entry("Sample Sans 06 Black", "sample-sans-03", "related")
+    doc = json.loads(matchfile.match_file(SAMPLE, write(tmp_path, names, REVIEWED + recode)).blob)
+    assert doc["amb"] == {"samplesans06black": [doc["ids"].index("sample-sans-06")]}
+    assert doc["k"]["samplesans06black"] == f"{doc['ids'].index('sample-sans-03')}x,-"
+
+
+def test_a_key_in_the_ambiguous_set_that_two_families_aliases_gain_is_unlistable(tmp_path):
+    """Sample Sans 03 and 05 both get the rename: the build recodes neither alias, which
+    would recode both, so no entry in the reviewed list clears the shared key."""
 
     def renamed(names: dict[str, Any]) -> None:
-        for fid in ("sample-sans-03", "sample-sans-05"):
-            family(names, fid)["names"].append(
-                {"name": "Sample Sans 06 Black", "relation": "rename"}
-            )
+        _share_ambiguous(names)
+        family(names, "sample-sans-05")["names"].append(
+            {"name": "Sample Sans 06 Black", "relation": "rename"}
+        )
 
-    names = names_with(renamed)
-    check = owned.check_document(names, [f["id"] for f in SAMPLE["fonts"]], recodes=SAMPLE_RECODES)
-    assert check.shared["samplesans06black"] == (
-        "sample-sans-03",
-        "sample-sans-05",
-        "sample-sans-06-black",
-    )
-    doc = json.loads(matchfile.match_file(SAMPLE, write(tmp_path, names)).blob)
-    assert doc["amb"] == {"samplesans06black": [doc["ids"].index("sample-sans-06")]}
+    path = write(tmp_path, names_with(renamed))
+    assert errors_of(path) == [
+        f"{path}: key 'samplesans06black' is owned by several families (sample-sans-03, "
+        "sample-sans-05 in the catalog, sample-sans-06-black not), in the ambiguous set, where "
+        f"a trusted name counts each as owned{UNLISTABLE}"
+    ]
 
 
 def test_recodable_keys_are_those_at_which_the_build_takes_a_recode():
