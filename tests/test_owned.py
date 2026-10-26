@@ -727,6 +727,20 @@ def test_the_check_finds_a_meeting_only_at_a_catalog_family():
     ]
 
 
+def test_a_pair_written_on_one_side_is_checked_in_both_directions():
+    """names.json may write a ``distinct_from`` pair on one family only, as it does for
+    noto-sans and noto-sans-jp. Written on Foo Sans alone, the pair's written direction is
+    to Foo Sans Hairline, outside the catalog and never owned, so only the other direction
+    finds Foo Sans Hairline's name reaching Foo Sans."""
+    doc = json.loads(json.dumps(ov.NAMES))
+    doc["families"][1]["distinct_from"] = ["foo-sans-hairline", "foo-sans-tight"]
+    assert doc["families"][3]["distinct_from"] == []
+    meetings = owned.check_document(doc, ov.CATALOG_IDS).meetings
+    assert [(m.family, m.other, m.name, m.key) for m in meetings] == [
+        ("foo-sans-hairline", "foo-sans", "Foo Sans Hairline", "foosans")
+    ]
+
+
 def test_the_check_reports_shared_owned_keys():
     shared = json.loads(json.dumps(ov.NAMES))
     shared["families"][0]["names"].append({"name": "Foo Sans Pro", "relation": "rename"})
@@ -753,7 +767,7 @@ def test_each_reviewed_recode_makes_its_alias_a_near_match_in_the_real_match_doc
 def test_the_real_names_json_s_ambiguous_keys_are_the_reviewed_ones_and_nothing_meets():
     """The ambiguous set (Archivo Black and its like) is the reviewed list's, so a run that
     changes it edits only the list. Each collision that reaches a catalog family makes
-    one of them, no ``distinct_from`` pair meets, and no key is owned twice outside them: the
+    one of them, no ``distinct_from`` pair meets, and no key is owned twice, in them or outside: the
     same rules the build holds (``matchfile.check_errors``), with no count that a refresh
     moves."""
     doc, ids = real()
@@ -761,7 +775,7 @@ def test_the_real_names_json_s_ambiguous_keys_are_the_reviewed_ones_and_nothing_
     assert check.amb == {key: entry.families for key, entry in REVIEWED.ambiguous.items()}
     assert {c.key for c in check.collisions if c.catalog} == check.amb.keys()
     assert check.meetings == ()
-    assert not check.shared.keys() - check.amb.keys()
+    assert check.shared == {}
 
 
 def test_the_real_match_document_is_valid_and_its_codes_name_every_alias():

@@ -9,6 +9,7 @@ into ``tmp_path``. The build's use of the module (the hashed file, ``#list[data-
 
 import copy
 import hashlib
+import itertools
 import json
 from pathlib import Path
 from typing import Any
@@ -44,12 +45,19 @@ UNLISTABLE = (
 )
 
 
-def recodable(family_id: str) -> str:
-    """How a collision problem that a recode of ``family_id``'s alias would end ends."""
+def recodable(family_id: str, *also: str) -> str:
+    """How a collision problem that a recode of ``family_id``'s alias would end ends, with the
+    recodes of ``also``, the family's names that would bypass it."""
+    together = (
+        f", together with a [[recode]] of each of its names that would bypass it "
+        f"({', '.join(map(repr, also))})"
+        if also
+        else ""
+    )
     return (
         f"; the owner rules: a [[recode]] making {family_id}'s alias at that key a near-match "
-        "clears this, and otherwise an alias row (Milestone 1's review) or a change to the build "
-        "carries it out (ops/MONTHLY.md step 5)"
+        f"clears this{together}, and otherwise an alias row (Milestone 1's review) or a change "
+        "to the build carries it out (ops/MONTHLY.md step 5)"
     )
 
 
@@ -819,35 +827,87 @@ def test_a_key_that_only_families_outside_the_catalog_share_passes(tmp_path):
     assert doc["k"]["sampleheld41"] == "-"
 
 
-def test_a_key_in_the_ambiguous_set_may_be_shared(tmp_path):
-    """Step 3 fails a shared key "outside the ambiguous set": inside it, the hopper doubts the
-    name's owned codes (``owned.match``). Sample Sans 03 and 05 get the rename "Sample Sans 06
-    Black", the reviewed ambiguous name, which its own family, outside the catalog, holds too:
-    the build passes, its ambiguous set unchanged."""
+def _share_ambiguous(names: dict[str, Any]) -> None:
+    """Sample Sans 03 gets the rename "Sample Sans 06 Black", the reviewed ambiguous name, which
+    its own family, outside the catalog, holds: the name's families stay sample-sans-06."""
+    family(names, "sample-sans-03")["names"].append(
+        {"name": "Sample Sans 06 Black", "relation": "rename"}
+    )
+
+
+SHARED_AMBIGUOUS = (
+    "key 'samplesans06black' is owned by several families (sample-sans-03 in the catalog, "
+    "sample-sans-06-black not), in the ambiguous set, where a trusted name counts each as owned"
+)
+
+
+def test_a_key_in_the_ambiguous_set_that_gains_an_owner_is_refused(tmp_path):
+    """The hopper doubts an ambiguous key's owned codes only for an untrusted name: fc-list's
+    first family and a PostScript name's family part count every one (``owned.match``). So a
+    family that gains a name at a reviewed ambiguous key is a changed name, which
+    ``inventory_ambiguous_names`` fails until the owner has reviewed it, though the entry's
+    families, all it records, stay the same; a recode of the alias, once ruled, clears it."""
+    names = names_with(_share_ambiguous)
+    ids = [f["id"] for f in SAMPLE["fonts"]]
+    unchecked = owned.match_document(names, ids, SAMPLE["run"]["date"], recodes=SAMPLE_RECODES)
+    table = owned.Table.from_document(json.loads(json.dumps(unchecked)))
+    for line in (
+        "/usr/share/fonts/a.ttf: Sample Sans 06 Black:style=Regular",
+        "SampleSans06Black-Bold",
+    ):
+        assert owned.match(owned.parse(line), table).owned.keys() == {"sample-sans-03"}
+    path = write(tmp_path, names)
+    assert errors_of(path) == [f"{path}: {SHARED_AMBIGUOUS}{recodable('sample-sans-03')}"]
+    recode = recode_entry("Sample Sans 06 Black", "sample-sans-03", "related")
+    doc = json.loads(matchfile.match_file(SAMPLE, write(tmp_path, names, REVIEWED + recode)).blob)
+    assert doc["amb"] == {"samplesans06black": [doc["ids"].index("sample-sans-06")]}
+    assert doc["k"]["samplesans06black"] == f"{doc['ids'].index('sample-sans-03')}x,-"
+
+
+def test_a_key_in_the_ambiguous_set_that_two_families_aliases_gain_is_unlistable(tmp_path):
+    """Sample Sans 03 and 05 both get the rename: the build recodes neither alias, which
+    would recode both, so no entry in the reviewed list clears the shared key."""
 
     def renamed(names: dict[str, Any]) -> None:
-        for fid in ("sample-sans-03", "sample-sans-05"):
-            family(names, fid)["names"].append(
-                {"name": "Sample Sans 06 Black", "relation": "rename"}
-            )
+        _share_ambiguous(names)
+        family(names, "sample-sans-05")["names"].append(
+            {"name": "Sample Sans 06 Black", "relation": "rename"}
+        )
 
-    names = names_with(renamed)
-    check = owned.check_document(names, [f["id"] for f in SAMPLE["fonts"]], recodes=SAMPLE_RECODES)
-    assert check.shared["samplesans06black"] == (
-        "sample-sans-03",
-        "sample-sans-05",
-        "sample-sans-06-black",
-    )
-    doc = json.loads(matchfile.match_file(SAMPLE, write(tmp_path, names)).blob)
-    assert doc["amb"] == {"samplesans06black": [doc["ids"].index("sample-sans-06")]}
+    path = write(tmp_path, names_with(renamed))
+    assert errors_of(path) == [
+        f"{path}: key 'samplesans06black' is owned by several families (sample-sans-03, "
+        "sample-sans-05 in the catalog, sample-sans-06-black not), in the ambiguous set, where "
+        f"a trusted name counts each as owned{UNLISTABLE}"
+    ]
+
+
+def _bypassed_by_an_alias(names: dict[str, Any]) -> None:
+    """Sample Sans 03 gets the rename "Sample Grot" and its patched build "Sample Grot NF",
+    which reaches the rename's key and would bypass its recode, as HackGen NF would HackGen's."""
+    family(names, "sample-sans-03")["names"] += [
+        {"name": "Sample Grot", "relation": "rename"},
+        {"name": "Sample Grot NF", "relation": "build", "detail": "nf"},
+    ]
+
+
+def _bypassed_by_its_family_name(names: dict[str, Any]) -> None:
+    """Sample Sans 40 is renamed "Sample Sans 11 Bold", its old name "Sample Sans 11" kept as a
+    rename: the family name reaches the old name's key, Sample Sans 11's, and no recode
+    touches a family's name."""
+    forty = family(names, "sample-sans-40")
+    forty["family"] = "Sample Sans 11 Bold"
+    forty["names"].append({"name": "Sample Sans 11", "relation": "rename"})
 
 
 def test_recodable_keys_are_those_at_which_the_build_takes_a_recode():
     """``recodable_keys`` decides as the build does, so the messages above can't offer a recode
-    the build refuses, or miss one it takes. On the sample with planted aliases (at a key that
-    two families' aliases hold, at the family's own name's key, of a family outside the
-    catalog, and at another family's name), every alias with an owned relation is tried alone:
-    the build takes it unless ``refused_recodes`` or ``owned`` refuses it."""
+    the build refuses, or miss one it takes, or the recodes it needs with it. On the sample with
+    planted aliases (at a key that two families' aliases hold, at the family's own name's key,
+    of a family outside the catalog, at another family's name, and bypassed by another alias or
+    by the family's own name), every set of each family's aliases with an owned relation is
+    tried: a key is recodable when some set the build takes holds it (``refused_recodes`` and
+    ``owned`` refuse none), and ``also`` is what the smallest such set adds."""
 
     def plant(names: dict[str, Any]) -> None:
         _share_aliases(names)
@@ -860,27 +920,136 @@ def test_recodable_keys_are_those_at_which_the_build_takes_a_recode():
         family(names, "sample-sans-06")["names"].append(
             {"name": "Sample Sans 08", "relation": "rename"}
         )
+        _bypassed_by_an_alias(names)
+        _bypassed_by_its_family_name(names)
 
     names = names_with(plant)
     ids = [f["id"] for f in SAMPLE["fonts"]]
-    taken: dict[str, str] = {}
+    want: dict[str, matchfile.Recodable] = {}
     for fam in names["families"]:
+        aliases: dict[str, str] = {}
         for item in fam["names"]:
-            if item["relation"] not in owned.OWNED_RELATIONS:
-                continue
-            key = match_key(item["name"])
-            entry = matchfile.Recode(item["name"], fam["id"], "related", "synthetic")
-            if matchfile.refused_recodes(names, matchfile.Reviewed(recodes={key: entry})):
-                continue
-            try:
-                owned.check_document(names, ids, recodes={item["name"]: "related"})
-            except owned.RecodeError:
-                continue
-            taken[key] = fam["id"]
-    assert matchfile.recodable_keys(names) == taken
-    assert taken["samplesans08"] == "sample-sans-06"
-    assert taken["samplemono20gen"] == "sample-mono-20"
-    assert not {"samplesansclassic", "samplesans01", "sampleheld41gen"} & taken.keys()
+            if item["relation"] in owned.OWNED_RELATIONS:
+                aliases.setdefault(match_key(item["name"]), item["name"])
+        taken: list[set[str]] = []
+        for size in range(1, len(aliases) + 1):
+            for keys in itertools.combinations(sorted(aliases), size):
+                entries = {
+                    key: matchfile.Recode(aliases[key], fam["id"], "related", "synthetic")
+                    for key in keys
+                }
+                if matchfile.refused_recodes(names, matchfile.Reviewed(recodes=entries)):
+                    continue
+                try:
+                    owned.check_document(
+                        names, ids, recodes={aliases[key]: "related" for key in keys}
+                    )
+                except owned.RecodeError:
+                    continue
+                taken.append(set(keys))
+        for key in aliases:
+            sets = [keys for keys in taken if key in keys]
+            if sets:
+                smallest = min(sets, key=len)
+                also = tuple(aliases[other] for other in sorted(smallest - {key}))
+                want[key] = matchfile.Recodable(fam["id"], also)
+    assert matchfile.recodable_keys(names) == want
+    assert want["samplesans08"] == matchfile.Recodable("sample-sans-06")
+    assert want["samplemono20gen"] == matchfile.Recodable("sample-mono-20")
+    assert want["samplegrot"] == matchfile.Recodable("sample-sans-03", ("Sample Grot NF",))
+    assert want["samplegrotnf"] == matchfile.Recodable("sample-sans-03")
+    assert (
+        not {"samplesansclassic", "samplesans01", "sampleheld41gen", "samplesans11"} & want.keys()
+    )
+
+
+def _meet_at_a_bypassed_alias(names: dict[str, Any]) -> None:
+    """``_bypassed_by_an_alias``, and Sample Sans 01 Tight, made distinct from Sample Sans 03,
+    gets a name that reaches "Sample Grot"."""
+    _bypassed_by_an_alias(names)
+    tight = family(names, "sample-sans-01-tight")
+    tight["names"].append({"name": "Sample Grot Bold", "relation": "related"})
+    tight["distinct_from"] = sorted({*tight["distinct_from"], "sample-sans-03"})
+
+
+def _share_a_bypassed_alias(names: dict[str, Any]) -> None:
+    """``_share``, and Sample Sans 03 also gets "Sample Sans 01 NF", a patched build that
+    reaches the shared key and would bypass a recode of the rename there."""
+    _share(names)
+    family(names, "sample-sans-03")["names"].append(
+        {"name": "Sample Sans 01 NF", "relation": "build", "detail": "nf"}
+    )
+
+
+@pytest.mark.parametrize(
+    ("mutate", "problem", "first", "second"),
+    [
+        pytest.param(
+            _meet_at_a_bypassed_alias,
+            "sample-sans-01-tight: its name 'Sample Grot Bold' reaches sample-sans-03 at key "
+            "'samplegrot', and the two are distinct_from each other",
+            "Sample Grot",
+            "Sample Grot NF",
+            id="meeting",
+        ),
+        pytest.param(
+            _share_a_bypassed_alias,
+            "key 'samplesans01' is owned by several catalog families (sample-sans-01, "
+            "sample-sans-03), outside the ambiguous set",
+            "Sample Sans 01",
+            "Sample Sans 01 NF",
+            id="shared-key",
+        ),
+    ],
+)
+def test_a_collision_whose_recode_another_name_bypasses_names_both_recodes(
+    tmp_path, mutate, problem, first, second
+):
+    """The recode that ends the problem would be bypassed by another name of the family, so the
+    message names that name's recode too, before and after the first is listed, and with both
+    listed the build passes: one round of the refresh's review, not two."""
+    names = names_with(mutate)
+    listed = every_ambiguous_name(names) + RECODE_20
+    ending = recodable("sample-sans-03", second)
+    path = write(tmp_path, names, listed)
+    assert [e for e in errors_of(path) if "may be a weight of" not in e] == [
+        f"{path}: {problem}{ending}"
+    ]
+    key = match_key(first)
+    path = write(tmp_path, names, listed + recode_entry(first, "sample-sans-03", "related"))
+    assert errors_of(path) == [
+        f"{tmp_path / 'names.reviewed.toml'}: recode {key!r}: sample-sans-03's name {second!r} "
+        "reaches it and still counts as owned; recode that name too",
+        f"{path}: {problem}{ending}",
+    ]
+    both = listed + "".join(recode_entry(n, "sample-sans-03", "related") for n in (first, second))
+    doc = json.loads(matchfile.match_file(SAMPLE, write(tmp_path, names, both)).blob)
+    assert doc["k"][match_key(second)] == f"{doc['ids'].index('sample-sans-03')}x"
+
+
+def test_a_shared_key_whose_recode_its_family_name_bypasses_is_unlistable(tmp_path):
+    """Sample Sans 40, renamed "Sample Sans 11 Bold" in both files, shares its old name's key
+    with Sample Sans 11. A recode of the old name would be bypassed by the family name, which
+    no recode touches, so the message offers none, and a recode listed anyway is refused
+    saying why, never asking for a recode of the family name."""
+    names = names_with(_bypassed_by_its_family_name)
+    doc = copy.deepcopy(SAMPLE)
+    next(f for f in doc["fonts"] if f["id"] == "sample-sans-40")["family"] = "Sample Sans 11 Bold"
+    listed = every_ambiguous_name(names) + RECODE_20
+    shared = (
+        "key 'samplesans11' is owned by several catalog families (sample-sans-11, "
+        f"sample-sans-40), outside the ambiguous set{UNLISTABLE}"
+    )
+    path = write(tmp_path, names, listed)
+    assert errors_of(path, doc) == [f"{path}: {shared}"]
+    recode = recode_entry("Sample Sans 11", "sample-sans-40", "related")
+    path = write(tmp_path, names, listed + recode)
+    assert errors_of(path, doc) == [
+        f"{tmp_path / 'names.reviewed.toml'}: recode 'samplesans11': sample-sans-40's name "
+        "'Sample Sans 11 Bold' reaches it and still counts as owned, at its family name's key, "
+        "which no recode touches",
+        f"{path}: {shared}",
+    ]
 
 
 def test_a_meeting_at_a_family_outside_the_catalog_passes_changing_nothing(tmp_path):
@@ -1233,6 +1402,37 @@ def test_a_bypassed_recode_and_the_check_s_findings_are_listed_together(tmp_path
     bypass, unreviewed = errors_of(path)
     assert bypass.startswith(f"{listed}: recode 'samplemono20gen': ")
     assert unreviewed.startswith(f"{path}: 'Sample Sans 06 Black' may be a weight of ")
+
+
+def test_every_name_that_bypasses_a_recode_is_named_in_one_run(tmp_path):
+    """Two patched builds of the recoded alias, as HackGen NF and HackGen Nerd Font would be
+    of Hack: the build names both at once, so one round of review clears them
+    (ops/MONTHLY.md step 5)."""
+
+    def patched(names: dict[str, Any]) -> None:
+        family(names, "sample-mono-20")["names"] += [
+            {"name": "Sample Mono 20 Gen NF", "relation": "build", "detail": "nf"},
+            {"name": "Sample Mono 20 Gen Nerd Font", "relation": "build", "detail": "nerd"},
+        ]
+
+    names = names_with(patched)
+    listed = tmp_path / "names.reviewed.toml"
+    path = write(tmp_path, names)
+    assert errors_of(path) == [
+        f"{listed}: recode 'samplemono20gen': sample-mono-20's name '{name}' reaches it and "
+        "still counts as owned; recode that name too"
+        for name in ("Sample Mono 20 Gen NF", "Sample Mono 20 Gen Nerd Font")
+    ]
+    every = REVIEWED + "".join(
+        recode_entry(name, "sample-mono-20", "related")
+        for name in ("Sample Mono 20 Gen NF", "Sample Mono 20 Gen Nerd Font")
+    )
+    doc = json.loads(matchfile.match_file(SAMPLE, write(tmp_path, names, every)).blob)
+    at = doc["ids"].index("sample-mono-20")
+    assert [doc["k"][key] for key in ("samplemono20gennf", "samplemono20gennerdfont")] == [
+        f"{at}x",
+        f"{at}x",
+    ]
 
 
 def test_a_names_file_and_a_reviewed_list_with_problems_are_listed_together(tmp_path):
