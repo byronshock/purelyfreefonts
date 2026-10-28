@@ -169,8 +169,9 @@ def families(doc: dict[str, Any]) -> list[str]:
 
 @pytest.fixture(scope="module")
 def near_names(site_data: Path, table: owned.Table) -> list[str]:
-    """Three names that are only near matches of three catalog fonts (a sibling, a related
-    family or a bundle in the names file beside the catalog), each owning none."""
+    """Two or three names that are only near matches, each of another catalog font (a
+    sibling, a related family or a bundle in the names file beside the catalog), owning none.
+    (The real catalog's names file has two such on 2026-09-26.)"""
     path = site_data.with_name(site_data.name.replace("catalog-site", "names"))
     found: dict[str, str] = {}  # font id -> the name near it
     for family in json.loads(path.read_bytes())["families"]:
@@ -179,7 +180,7 @@ def near_names(site_data: Path, table: owned.Table) -> list[str]:
                 result = owned.match(owned.parse(alias["name"] + "\n"), table).to_json()
                 if len(result["near"]) == 1 and not result["owned"]:
                     found.setdefault(next(iter(result["near"])), alias["name"])
-    assert len(found) == 3, "the names file should have near matches"
+    assert len(found) >= 2, "the names file should have near matches"
     return list(found.values())
 
 
@@ -572,7 +573,8 @@ def test_near_matches_are_counted_and_a_list_cut_off_at_the_top_is_warned_of(
         lines.append(line)
     assert lines == [
         "1 more font here is only a near match, so it isn\u2019t counted as yours.",
-        "3 more fonts here are only near matches, so they aren\u2019t counted as yours.",
+        f"{len(near_names)} more fonts here are only near matches, so they aren\u2019t counted as "
+        "yours.",
     ]
     late = [f for f in families if owned.search_key(f)[:1] >= "d"]
     cut = "\n".join(
