@@ -227,5 +227,14 @@ const FiltersUI = (() => {
     if (sortBar) Core.setHidden(sortBar, false);
   };
 
-  return Object.freeze({ init, reflect, describe, activeCount, show, sortSaid });
+  // Open #f-more where #f-toggle has it closed (below 60rem), as a click on the toggle would:
+  // the hopper's, for a list dropped while the panel is closed. Works before init too.
+  const openPanel = () => {
+    const toggle = document.getElementById('f-toggle');
+    if (toggle && toggle.getAttribute('aria-expanded') === 'false') {
+      toggle.setAttribute('aria-expanded', 'true');
+    }
+  };
+
+  return Object.freeze({ init, reflect, describe, activeCount, show, open: openPanel, sortSaid });
 })();

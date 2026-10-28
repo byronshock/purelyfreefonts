@@ -19,10 +19,13 @@
 // the index fails to load.
 //
 // The hopper's side (55-mine.js): Mine.filter() is its built-in filter while a list is
-// loaded, which View.compute runs ahead of Milestone 3's, so the count, the announcement, the
-// no-results text and the phone button all see it; Mine.extras() names it for FiltersUI, and
-// Mine.reset() is "Clear filters" setting its Show menu back. It calls host.changed({ lead })
-// when its list or its menu changes: Main redraws and announces, its summary first.
+// loaded, which Main passes to View.compute ahead of Milestone 3's (View runs a hook filter
+// that renumbers first, then the rest in order: section 5), so the count, the announcement,
+// the no-results text and the phone button all see it; Mine.extras() names it for FiltersUI,
+// and Mine.reset() is "Clear filters" setting its Show menu back. Its host: changed({ lead })
+// when its list or its menu changes (Main redraws and announces, its summary first); open(),
+// which opens the Filters panel below 60rem so that what a list brings is seen; and blocked(),
+// which refuses a list while the load note shows, saying the note again.
 //
 // Ext's side (50-ext.js): Ext.filters() lists Milestone 3's filters for View.compute, and
 // Ext.start(host) runs once. host = { refresh(), onChange(fn), ready, getState(),
@@ -190,6 +193,17 @@ const Main = (() => {
     refresh({ announce: true, lead });
   };
 
+  // The hopper can't leave anything out while the load note shows (the list index failed, or
+  // doesn't match the rows), so it takes no list: the note is said again and brought into
+  // view, so a file dropped on the page is never met with silence. True then.
+  const refuseList = () => {
+    const note = document.getElementById('load-note');
+    if (!note) return false;
+    note.scrollIntoView({ block: 'nearest' });
+    Announce.say(note.textContent);
+    return true;
+  };
+
   // "Clear filters": the hash's filters, and the hopper's Show menu back to its default (its
   // list stays). A change of the menu alone redraws here, since the state is the same.
   const clearFilters = () => {
@@ -290,7 +304,10 @@ const Main = (() => {
     list = document.getElementById('list');
     if (!list) return;
     Core.on(list, 'click', 'button.ext-action', onAction);
-    startPart(minePart(), Object.freeze({ changed: onMine }));
+    startPart(
+      minePart(),
+      Object.freeze({ changed: onMine, open: () => FiltersUI.open(), blocked: refuseList }),
+    );
     const clear = document.getElementById('no-results-clear');
     if (clear) clear.addEventListener('click', clearFilters);
     if (State.changesList(location.hash)) {

@@ -43,6 +43,24 @@ PASTE_JS = """(text) => {
 }"""
 STATUS_JS = "() => document.getElementById('status').textContent"
 BUSY_JS = "() => document.getElementById('mine-busy').hidden"
+# Whether the element ``selector`` matches is shown and wholly inside the window.
+IN_VIEW_JS = """(selector) => {
+  const el = document.querySelector(selector);
+  if (!el || !el.getClientRects().length || getComputedStyle(el).visibility !== 'visible') {
+    return false;
+  }
+  const r = el.getBoundingClientRect();
+  return r.top >= 0 && r.left >= 0 && r.bottom <= innerHeight && r.right <= innerWidth;
+}"""
+
+
+def arm(page: Any) -> None:
+    """Have Playwright take every file chooser this page opens, from now on (see the top)."""
+    page.on("filechooser", lambda _chooser: None)
+
+
+def in_view(page: Any, selector: str) -> bool:
+    return page.evaluate(IN_VIEW_JS, selector)
 
 
 def wait_taken(page: Any, before: str, timeout_s: float = 20.0) -> None:

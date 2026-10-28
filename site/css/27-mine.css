@@ -126,6 +126,17 @@
   background: var(--c-bg);
 }
 
+/* And a ring round the whole window, since the drop zone may be out of sight: behind Filters
+   below 60rem, or below the fold. It takes no pointer events, so the drop reaches the page. */
+html[data-dropping] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  border: 3px solid var(--c-accent);
+  pointer-events: none;
+}
+
 #mine-paste {
   display: block;
   box-sizing: border-box;

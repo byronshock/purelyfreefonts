@@ -54,10 +54,11 @@ matcher module without a list; once a list arrives through the hopper (``site/js
 with the list index loaded, exactly two new requests are made, plain same-origin GETs of the two
 hashed URLs, whose parser and matcher then work under the site's CSP and leave out what Python's
 reference finds; nothing more is asked for across the views, the Show modes, scrolling, Forget
-and later lists, and once both files have loaded it works offline; a third request, for the list
-index, comes only when the index failed to load with the page; and the live checks pass against
-this build. tests/site/test_mine.py has the rest of the hopper (the address, history, title and
-storage among it).
+and later lists, and under each Show mode no preview is asked for (M3-D10 a); once both files
+have loaded it works offline; while the list index has failed to load with the page, a dropped
+list asks for nothing at all; and the live checks pass against this build.
+tests/site/test_mine.py has the rest of the hopper (the address, history, title and storage
+among it).
 """
 
 import hashlib
@@ -990,13 +991,51 @@ def test_a_list_makes_exactly_two_requests_and_nothing_after_it(
     assert sweep.findings() == {}
 
 
-def test_a_list_asks_for_the_list_index_too_only_when_it_failed_with_the_page(
-    guarded_context: Any,
-) -> None:
-    """site/CONTRACT.md section 11: the two requests are three when the list index failed to
-    load with the page (Data.loadMatch needs its run date): a GET of #list[data-index], another
-    fixed hashed URL. Its filters never showed, so the list comes by a drop on the page, which
-    the page takes and never opens."""
+def test_bringing_the_hopper_into_sight_asks_for_no_preview(guarded_context: Any) -> None:
+    """A list dropped while the hopper is below the fold (a short window): the page scrolls to
+    "Checking your list…" as the list arrives, and the previews pause first, so the rows that
+    come near the screen ask for nothing while the match file is on its way (held here until
+    the page has settled), nor after: the two requests are all."""
+    guarded = guarded_context(viewport={"width": 1280, "height": 400})
+    sweep = Sweep(guarded, csp=expected_csp())
+    page = sweep.open_list()
+    page.wait_for_load_state("networkidle")
+    wait_until(page, SPECIMENS_SETTLED, "the previews near the screen")
+    page.wait_for_load_state("networkidle")
+    match, matcher = _hopper_urls(page)
+    names = page.evaluate(NAMES_JS)
+    held: list[Any] = []
+    page.route(f"**{match}", lambda route: held.append(route))
+    before = len(sweep.requests)
+    assert page.evaluate("() => scrollY") == 0
+    prevented = page.evaluate(hopper_page.DROP_JS, ["#list", "\n".join(names), None, 0, "a"])
+    assert prevented == {"enter": True, "over": True, "drop": True}
+    wait_until(page, "!document.getElementById('mine-busy').hidden", "the hopper to start")
+    assert page.evaluate("() => scrollY") > 0, "the page scrolled to the hopper"
+    deadline = time.monotonic() + 10
+    while not held:
+        assert time.monotonic() < deadline, "the match file was never asked for"
+        page.wait_for_timeout(20)
+    for _ in range(3):
+        page.evaluate(SETTLE_JS)
+    page.wait_for_timeout(200)
+    held[0].continue_()
+    wait_until(page, "!document.getElementById('mine-result').hidden", "the list's result")
+    page.evaluate(SETTLE_JS)
+    page.wait_for_load_state("networkidle")
+    new = sweep.requests[before:]
+    assert sorted(urlsplit(r.url).path for r in new) == sorted([match, matcher])
+    sweep.listed.update(id(r) for r in new)
+    assert sweep.findings() == {}
+
+
+def test_while_the_list_index_has_failed_a_list_asks_for_nothing(guarded_context: Any) -> None:
+    """site/CONTRACT.md sections 4 and 11: while the list index has failed to load with the
+    page, its filters never showed and the hopper can leave nothing out, so a file dropped on
+    the page is taken (never opened) and asks for nothing at all, even once the index could
+    load: not the matcher, nor the match file, nor the index again (which Data.loadMatch would
+    ask for: test_owned_js.py's test_after_the_list_index_failed_*). test_mine.py checks that
+    the page's note is said instead."""
     guarded = guarded_context(viewport=WIDE)
     sweep = Sweep(guarded, csp=expected_csp())
     failing = [True]
@@ -1014,18 +1053,24 @@ def test_a_list_asks_for_the_list_index_too_only_when_it_failed_with_the_page(
     page.wait_for_selector("#load-note")
     page.wait_for_load_state("networkidle")
     url = page.url
-    match, matcher = _hopper_urls(page)
-    listed = page.get_attribute("#list", "data-index")
+    note = page.text_content("#load-note")
     failing[0] = False
     before = len(sweep.requests)
-    prevented = page.evaluate(hopper_page.DROP_JS, ["#list", "Zzz Unknown Grotesk\n", None, 0, "a"])
-    assert prevented == {"enter": True, "over": True, "drop": True}
-    wait_until(page, "document.getElementById('mine-busy').hidden", "the hopper to finish")
+    for again in ("", "\u00a0"):
+        prevented = page.evaluate(
+            hopper_page.DROP_JS, ["#list", "Zzz Unknown Grotesk\n", None, 0, "a"]
+        )
+        assert prevented == {"enter": True, "over": True, "drop": True}
+        wait_until(
+            page,
+            f"document.getElementById('status').textContent === {json.dumps(note + again)}",
+            "the page's note",
+        )
+    page.evaluate(SETTLE_JS)
+    page.wait_for_timeout(200)
     page.wait_for_load_state("networkidle")
-    new = sweep.requests[before:]
-    assert sorted(urlsplit(r.url).path for r in new) == sorted([listed, match, matcher])
-    _assert_plain_gets(new)
-    sweep.listed.update(id(r) for r in new)
+    assert sweep.requests[before:] == []
+    assert page.evaluate("() => 'tffMatcher' in globalThis") is False
     assert page.url == url
     found = sweep.findings()
     assert found.pop("page errors"), "the index's failure still reaches the console"

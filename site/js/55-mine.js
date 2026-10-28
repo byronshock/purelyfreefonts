@@ -10,24 +10,35 @@
 // counts: nothing is stored, and nothing enters the address, the history or the title (M3-D13
 // a). A pasted list leaves the paste box once it has been matched.
 //
-// Mine gives View one built-in filter, which Main puts ahead of the public hook's, so "Showing
-// N of M" counts the fonts a list has as filtered out, the change is announced, and the phone
-// Filters button counts it (FiltersUI's extras). The Show menu chooses what it does: fonts you
+// What a list brings is always in sight, wherever it was dropped: as it arrives, and again
+// when its result or its error shows, the Filters panel opens if it is closed (below 60rem)
+// and the page scrolls as little as it can to the hopper (bring). So previews pause as soon as
+// a list arrives, before that scroll (a list that fails while none has loaded lets them go on
+// again), and once a list loads, previews that haven't loaded stay off until a reload
+// (Specimens.pause, M3-D10 a): a request for one would tell the server which rows a list left
+// on the screen. While a file is dragged over the page, html[data-dropping] rings the window.
+//
+// Mine gives View one built-in filter, which Main puts ahead of the public hook's (View runs
+// those that renumber first, section 5), so "Showing N of M" counts the fonts a list has as
+// filtered out, the change is announced, and the phone Filters button counts it (FiltersUI's
+// extras, while the menu leaves some font out). The Show menu chooses what it does: fonts you
 // don't have (the default), all fonts with yours marked (a badge in the row's Milestone 3
 // slot), or only fonts you have. "Clear filters" sets the menu back to its default and keeps
-// the list (reset); "Forget this list" drops it. Once a list loads, previews that haven't
-// loaded stay off until a reload (Specimens.pause, M3-D10 a): a request for one would tell the
-// server which rows a list left on the screen. Near-matches are only counted (M3-D9 waits),
-// and so are the names a list has that the catalog doesn't (the line counting them waits).
+// the list (reset); "Forget this list" drops it, and the summary's words with it. Near-matches
+// are only counted (M3-D9 waits), and so are the names a list has that the catalog doesn't
+// (the line counting them waits).
 //
 // Failures follow section 11's Loading paragraph: a stale page (Data.Stale) asks for a reload;
 // so does a matcher module whose script failed to load or to hand over ('load', 'handoff'),
 // since the page adds its script once, ever; a network error, another status, a body that
-// isn't JSON, a list index that failed or a timeout ('network', 'status', 'json', 'index',
-// 'timeout') offers "Try again", with the same list; anything else (a 'url', a 'format' or
-// 'run_date' of another file, a file the matcher refuses) says the check can't run here. No
-// result is shown that couldn't be computed, and never an empty one in its place: a failed
-// list leaves the last one as it was. A list the parser refuses gets its reason in plain words.
+// isn't JSON or a timeout ('network', 'status', 'json', 'timeout') offers "Try again", with the
+// same list; anything else (a 'url', a 'format' or 'run_date' of another file, a file the
+// matcher refuses) says the check can't run here. While the page's own list index has failed
+// (Main's note above the count says so, and the filters never showed), no list is taken: the
+// note is said again and brought into view (host.blocked), and a list on its way when the
+// index fails (its 'index') ends the same way. No result is shown that couldn't be computed,
+// and never an empty one in its place: a failed list leaves the last one as it was. A list the
+// parser refuses gets its reason in plain words.
 const Mine = (() => {
   // Page wording (Milestone 3, slice 1; the owner reviews it with the screens). The summary
   // follows the plan's example, and the owner's ruling of 2026-09-29, site_status_line: fonts
@@ -69,13 +80,14 @@ const Mine = (() => {
   });
   const MODES = Object.freeze(['missing', 'all', 'only']);
   const DEFAULT_MODE = MODES[0];
-  // Data's failure codes a retry can mend, and those that need a reload (section 11).
-  const RETRY = new Set(['network', 'status', 'json', 'index', 'timeout']);
+  // Data's failure codes a retry can mend, and those that need a reload (section 11). An
+  // 'index' never gets here: the page's own list failed, so Main's note answers it (blocked).
+  const RETRY = new Set(['network', 'status', 'json', 'timeout']);
   const RELOAD = new Set(['load', 'handoff']);
   const FILES = 'Files';
 
   let root = null; // #mine
-  let host = null; // Main's { changed({ lead }) }
+  let host = null; // Main's { changed({ lead }), open(), blocked() }
   let owned = null; // the ids of the fonts the list has, while one is loaded
   let found = null; // that list's counts: { names, system, have, near, cutOff, total }
   let mode = DEFAULT_MODE;
@@ -83,6 +95,8 @@ const Mine = (() => {
   let pending = null; // while "Try again" shows, the list it takes again: { file } or { text }
   let table = null; // the match file read by the matcher (it holds only the file)
   let tableDoc = null;
+  let held = false; // a list has loaded: previews stay off until a reload (M3-D10 a)
+  let holding = false; // Mine paused the previews for a list on its way, which may yet fail
 
   const node = (id) => document.getElementById(id);
   const textOf = (element) => (element ? element.textContent.replace(/\s+/g, ' ').trim() : '');
@@ -142,6 +156,34 @@ const Mine = (() => {
 
   // ---- the panel
 
+  // Whether the page's own list failed to load, so that no list can be taken; Main then says
+  // its note again and brings it into view.
+  const blocked = () => Boolean(host && typeof host.blocked === 'function' && host.blocked());
+
+  // Bring `target` into sight: below 60rem the Filters panel opens if it is closed (#mine has
+  // no box then), and the page scrolls as little as it can. A dropped file is the hopper's main
+  // way in, from anywhere on the page, so what it brings is never told to screen readers alone.
+  const bring = (target) => {
+    if (!root || !target || target.hidden) return;
+    if (!root.getClientRects().length && host && typeof host.open === 'function') host.open();
+    target.scrollIntoView({ block: 'nearest' });
+  };
+
+  // Previews pause as a list arrives, before bring scrolls the page: a row that came near the
+  // screen meanwhile would ask for its preview. A list that fails, while none has loaded, lets
+  // them go on again; a pause that wasn't Mine's is left as it is.
+  const hold = () => {
+    if (Specimens.paused) return;
+    Specimens.pause();
+    holding = true;
+  };
+
+  const release = () => {
+    if (!holding || held) return;
+    holding = false;
+    Specimens.resume();
+  };
+
   // Hide `target`, first moving the focus out of it to a control that stays: the Show menu
   // while a list's summary shows (and isn't what goes), else Choose file.
   const hide = (target) => {
@@ -173,6 +215,7 @@ const Mine = (() => {
     if (retry) Core.setHidden(again, false);
     else hide(again);
     Core.setHidden(box, false);
+    bring(box);
     Announce.say(text);
   };
 
@@ -241,7 +284,10 @@ const Mine = (() => {
       cutOff: parsed.warnings.includes('cut_off'),
       total,
     });
-    // Before the list redraws, so no row the list leaves on the screen asks for its preview.
+    // Before the list redraws, so no row the list leaves on the screen asks for its preview
+    // (hold paused them as the list arrived, unless they were paused already).
+    held = true;
+    holding = false;
     Specimens.pause();
     if (source.text !== undefined) {
       const paste = node('mine-paste');
@@ -249,25 +295,42 @@ const Mine = (() => {
     }
     draw();
     changed(said());
+    bring(node('mine-result'));
   };
 
-  // Take a list: { file } (dropped or chosen) or { text } (pasted).
+  // Take a list: { file } (dropped or chosen) or { text } (pasted). None is taken while the
+  // page's own list failed to load (blocked).
   const take = async (source) => {
+    if (blocked()) return;
     run += 1;
     const mine = run;
     const current = () => mine === run;
     pending = null;
     showError('');
+    hold();
     setBusy(true);
+    bring(node('mine-busy'));
     // Both requests go now, together; neither failure is left unhandled while the other waits.
     const tool = settle(Data.loadMatcher());
     const file = settle(Data.loadMatch());
-    const fail = (error, fileError = null) => {
+    // The list ends with no result, `text` its error, if it is still the latest.
+    const stop = (text, retry = false) => {
       if (!current()) return;
-      const { text, retry } = failure(error, fileError);
       pending = retry ? source : null;
       setBusy(false);
+      release();
       showError(text, retry);
+    };
+    const fail = (error, fileError = null) => {
+      if (!current()) return;
+      // The list index failed while the list was on its way: Main's note answers.
+      if (blocked()) {
+        setBusy(false);
+        release();
+        return;
+      }
+      const { text, retry } = failure(error, fileError);
+      stop(text, retry);
     };
     const got = await tool;
     if (!current()) return;
@@ -281,17 +344,14 @@ const Mine = (() => {
     try {
       if (source.file) input = await readBytes(source.file, limits.max_bytes);
     } catch {
-      if (!current()) return;
-      setBusy(false);
-      showError(WORDS.unreadable);
+      stop(WORDS.unreadable);
       return;
     }
     if (!current()) return;
     const parsed = api.OwnedParse.parse(input);
     input = null;
     if (parsed.error) {
-      setBusy(false);
-      showError(refusal(parsed.error, limits));
+      stop(refusal(parsed.error, limits));
       return;
     }
     const answer = await file;
@@ -401,8 +461,11 @@ const Mine = (() => {
   const hasFiles = (event) =>
     Boolean(event.dataTransfer) && Array.from(event.dataTransfer.types || []).includes(FILES);
 
+  // The drop zone, and a ring round the window (27-mine.css), since the zone may be out of
+  // sight.
   const dragging = (on) => {
     if (root) root.classList.toggle('is-dropping', on);
+    document.documentElement.toggleAttribute('data-dropping', on);
   };
 
   const over = (event) => {
@@ -422,11 +485,13 @@ const Mine = (() => {
     dragging(false);
     const file = event.dataTransfer.files[0];
     if (file) take({ file });
-    else showError(WORDS.unreadable);
+    else if (!blocked()) showError(WORDS.unreadable);
   };
 
-  // Bind to #mine, once; given Main's { changed({ lead }) }, which redraws and announces the
-  // list. A page without #mine takes no list.
+  // Bind to #mine, once; given Main's { changed({ lead }), open(), blocked() }: changed redraws
+  // and announces the list, open opens the Filters panel below 60rem, and blocked, while the
+  // page's list failed to load, says its note again, brings it into view and returns true. A
+  // page without #mine takes no list.
   const start = (given) => {
     if (root) return;
     root = node('mine');
