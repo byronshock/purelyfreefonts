@@ -15,7 +15,8 @@ What a visitor does and sees (site/CONTRACT.md sections 4, 5 and 11; the owner's
   the top, the count line and the announcement say so, and a second list replaces the first.
 - **In sight**: what a dropped list brings ("Checking your list…", the summary, the Show menu
   and Forget, or its error) comes into view, the Filters panel opening if it is closed, and a
-  ring round the window shows while a file is dragged over the page.
+  ring round the window shows while a file is dragged over the page; "Checking your list…" is
+  said once a list has been on its way for a second, never sooner or after it settles.
 - **The Show menu**: fonts you don't have (the default), all fonts with yours marked, or only
   fonts you have, in **every view**: each rank, and the filters, against the same view with no
   list.
@@ -73,6 +74,7 @@ RELOAD = "The font check didn\u2019t load. Check your connection, then reload th
 RETRY = "The font check didn\u2019t load. Check your connection, then try again."
 BROKEN = "The font check can\u2019t run on this page, so nothing was left out of the list."
 UNREADABLE = "That file couldn\u2019t be read. Try choosing it again."
+BUSY = "Checking your list\u2026"
 REFUSALS = {
     "empty": "That list is empty.",
     "too_big": "That\u2019s too big for a list of font names: over 10 MB.",
@@ -1122,6 +1124,53 @@ def test_a_matcher_that_never_answers_offers_try_again(
     poll(page, "() => typeof globalThis.tffMatcher === 'object'", "the matcher's hand-off")
     try_again(page)
     assert_left_out(page, before, set(reference(first, table)[1]["owned"]), "missing")
+    guarded.assert_clean(page)
+
+
+def test_a_list_still_on_its_way_after_a_second_is_said_to_be_checked(
+    guarded_context: Any, doc: dict[str, Any], table: owned.Table, first: str, second: str
+) -> None:
+    """The busy line, "Checking your list…", is said once a list has been on its way for a
+    second (the matcher held, on Playwright's clock), not before; its result follows, and no
+    stale "Checking" after it. A list that settles sooner (both files loaded by then) is
+    announced by its result alone."""
+    guarded, page = open_list(guarded_context, clock=True)
+    total = len(doc["fonts"])
+    held = held_routes(page, "**/assets/matcher.*.js")
+    said = status(page)
+    page.evaluate(hopper_page.PASTE_JS, first)
+    wait_held(page, held)
+    page.clock.run_for(999)
+    assert status(page) == said, "not said yet"
+    page.clock.run_for(2)
+    busy_said = f"() => document.getElementById('status').textContent === {json.dumps(BUSY)}"
+    poll(page, busy_said, "the busy line said")
+    held[0].continue_()
+    hopper_page.wait_taken(page, BUSY)
+    parsed, result = reference(first, table)
+    settled = status(page)
+    assert settled.startswith(summary(parsed, result, total, "missing"))
+    page.clock.run_for(5_000)
+    assert status(page) == settled, "nothing said after the result"
+    # Both files loaded: the next list settles at once.
+    hopper_page.paste(page, second, by_script=True)
+    settled = status(page)
+    page.clock.run_for(5_000)
+    assert status(page) == settled
+    guarded.assert_clean(page)
+
+
+def test_a_list_that_settles_within_a_second_is_never_said_to_be_checked(
+    guarded_context: Any, first: str
+) -> None:
+    """On a fresh page, on Playwright's clock (paused, so the list settles first), the list's
+    two requests answered at once: once it settles, no "Checking your list…" follows."""
+    guarded, page = open_list(guarded_context, clock=True)
+    hopper_page.paste(page, first, by_script=True)
+    settled = status(page)
+    assert settled.startswith("Found ")
+    page.clock.run_for(5_000)
+    assert status(page) == settled
     guarded.assert_clean(page)
 
 

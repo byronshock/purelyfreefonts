@@ -85,6 +85,7 @@ const Mine = (() => {
   const RETRY = new Set(['network', 'status', 'json', 'timeout']);
   const RELOAD = new Set(['load', 'handoff']);
   const FILES = 'Files';
+  const BUSY_SAID_MS = 1000;
 
   let root = null; // #mine
   let host = null; // Main's { changed({ lead }), open(), blocked() }
@@ -97,6 +98,7 @@ const Mine = (() => {
   let tableDoc = null;
   let held = false; // a list has loaded: previews stay off until a reload (M3-D10 a)
   let holding = false; // Mine paused the previews for a list on its way, which may yet fail
+  let busyTimer = 0; // says "Checking your list…" if the list is still on its way (setBusy)
 
   const node = (id) => document.getElementById(id);
   const textOf = (element) => (element ? element.textContent.replace(/\s+/g, ' ').trim() : '');
@@ -197,9 +199,15 @@ const Mine = (() => {
     Core.setHidden(target, true);
   };
 
+  // "Checking your list…" shows while a list is on its way, and is said once the list has been
+  // on its way for BUSY_SAID_MS: a list that settles sooner is announced by its outcome alone,
+  // and one that settles later never has a stale "Checking" said after its outcome.
   const setBusy = (on) => {
+    clearTimeout(busyTimer);
     const busy = node('mine-busy');
-    if (busy) Core.setHidden(busy, !on);
+    if (!busy) return;
+    Core.setHidden(busy, !on);
+    if (on) busyTimer = setTimeout(() => Announce.say(textOf(busy)), BUSY_SAID_MS);
   };
 
   // Show `text` as the hopper's error, with "Try again" if `retry`, and announce it; '' hides it.
