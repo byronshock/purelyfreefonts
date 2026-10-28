@@ -196,6 +196,7 @@ const Mine = (() => {
     if (!target || target.hidden) return;
     if (target.contains(document.activeElement)) {
       const result = node('mine-result');
+      // A guard: once a list loads Data keeps both answers, so no "Try again" shows over it.
       const keep = result && !result.hidden && !target.contains(result);
       const next = node(keep ? 'mine-show' : 'mine-choose');
       if (next) next.focus();

@@ -1244,11 +1244,12 @@ def try_again(page: Any) -> None:
 def test_an_error_that_hides_with_the_focus_in_it_over_a_result_gives_it_to_the_show_menu(
     guarded_context: Any, table: owned.Table, first: str, second: str
 ) -> None:
-    """Section 4: when the error hides with the focus in it, the focus goes to #mine-show while
-    a result shows (else to Choose file, above). A loaded list keeps both of Data's answers, so
-    no failure that "Try again" mends can follow one: the test shows the error and its button
-    over the result, as such a failure would, and tabs to the button from Forget; a list
-    checked meanwhile hides the error."""
+    """hide()'s guard in 55-mine.js: when the error hides with the focus in it while a result
+    shows, the focus goes to #mine-show (else to Choose file, above). No state Data gives
+    today reaches it: a loaded list keeps both of Data's answers, so no failure that "Try
+    again" mends can follow one. So the test shows the error and its button over the result,
+    as such a failure would, and tabs to the button from Forget; a list checked meanwhile
+    hides the error."""
     guarded, page = open_list(guarded_context)
     before = shown(page)
     hopper_page.paste(page, first)
