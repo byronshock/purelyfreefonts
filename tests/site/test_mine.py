@@ -1662,35 +1662,55 @@ WRITES_JS = """() => {
 }"""
 
 
-def test_a_list_told_as_a_link_s_view_goes_live_is_said_once_the_results_show(
-    guarded_context: Any, doc: dict[str, Any], table: owned.Table, first: str
-) -> None:
-    """A link with a filter in it keeps #results, and #status, the live region in it, out of
-    sight and out of the accessibility tree until its first render shows
-    (html[data-list-pending]). A list that settled before that render (begin held, and the
-    page's clock paused, so the results don't show after 3 seconds anyway) is told as the
-    list goes live: its summary is written to #status once, after the results show, where a
-    screen reader hears it, not while they are hidden."""
-    guarded = guarded_context()
+def open_link_late(make: Callable[..., Any], hash_: str = "#cat=serif") -> Any:
+    """A guarded page on a link with a filter in it (``hash_``), on Playwright's clock, paused
+    before the page loads (so the results don't show after 3 seconds anyway), whose begin
+    waits in an idle callback until IDLE_RUN_JS runs it."""
+    guarded = make()
     guarded.context.add_init_script(RECORDER_JS)
     page = guarded.new_page()
     page.clock.install(time=CLOCK_START)
     page.add_init_script(IDLE_HELD_JS)
     page.clock.pause_at(CLOCK_PAUSED)
-    page.goto("/#cat=serif")
+    page.goto(f"/{hash_}")
     poll(page, "() => document.documentElement.hasAttribute('data-js')", "the page's script")
-    page.evaluate(WRITES_JS)
-    page.evaluate(hopper_page.DROP_JS, ["#list", first, None, 0, "fonts.txt"])
-    poll(
-        page,
-        "() => !document.getElementById('mine-result').hidden"
-        " && document.getElementById('mine-busy').hidden",
-        "the list's result",
+    return guarded, page
+
+
+def settled(part: str) -> str:
+    """Whether a list has settled with ``part`` showing (``mine-result`` or ``mine-error``), as
+    a function's source for ``poll``, which the page's clock doesn't hold."""
+    return (
+        f"() => !document.getElementById('{part}').hidden"
+        " && document.getElementById('mine-busy').hidden"
     )
+
+
+@pytest.mark.parametrize("case", ["settled", "checked"])
+def test_a_list_told_as_a_link_s_view_goes_live_is_said_once_the_results_show(
+    guarded_context: Any, doc: dict[str, Any], table: owned.Table, first: str, case: str
+) -> None:
+    """A link with a filter in it keeps #results, and #status, the live region in it, out of
+    sight and out of the accessibility tree until its first render shows
+    (html[data-list-pending]). A list that settled before that render (begin held) is told as
+    the list goes live: its summary is written to #status once, after the results show, where
+    a screen reader hears it, not while they are hidden. Announce keeps the last message only:
+    with the matcher held past a second ("checked"), "Checking your list…" is said, and kept,
+    before the list settles, and the one write is still the summary."""
+    guarded, page = open_link_late(guarded_context)
+    page.evaluate(WRITES_JS)
+    held = held_routes(page, "**/assets/matcher.*.js") if case == "checked" else []
+    page.evaluate(hopper_page.DROP_JS, ["#list", first, None, 0, "fonts.txt"])
+    if case == "checked":
+        wait_held(page, held)
+        page.clock.run_for(1_001)  # the busy line is said, and kept
+        held[0].continue_()
+    poll(page, settled("mine-result"), "the list's result")
     assert page.evaluate("() => document.documentElement.getAttribute('data-list-pending')") == ""
+    assert page.evaluate("() => window.__tffWrites") == [], "nothing written while out of sight"
     poll(page, "() => window.__tffIdle.length > 0", "begin to wait")
     page.evaluate(IDLE_RUN_JS)
-    page.clock.run_for(100)  # the two frames before the results show
+    page.clock.run_for(300)  # the frames before the results show, and the write after
     poll(page, "() => window.__tffReady >= 1", "the list to go live")
     parsed, result = reference(first, table)
     said = summary(parsed, result, len(doc["fonts"]), "missing")
