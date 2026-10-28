@@ -1546,6 +1546,33 @@ def test_nothing_from_a_list_reaches_the_address_history_title_or_storage(
     guarded.assert_clean(page)
 
 
+def test_none_of_a_list_s_names_is_written_into_the_page(
+    guarded_context: Any, first: str, second: str
+) -> None:
+    """The page keeps the ids of the fonts a list has, nothing of its names: after a pasted
+    list and a dropped one, under each Show mode, and after Forget, no name the list has that
+    the catalog doesn't, nor its key, is anywhere in the document's HTML, attributes included
+    (a list's names must not reach the page, hidden or not)."""
+    guarded, page = open_list(guarded_context)
+    words = [w for name in UNKNOWN for w in (name, keys.match_key(name))]
+
+    def assert_none() -> None:
+        html = page.evaluate("() => document.documentElement.outerHTML").casefold()
+        for word in words:
+            assert word.casefold() not in html, word
+
+    assert_none()
+    hopper_page.paste(page, first)
+    assert_none()
+    hopper_page.drop(page, second)
+    for mode in ("all", "only", "missing"):
+        show(page, mode)
+        assert_none()
+    changed(page, lambda: page.click("#mine-forget"))
+    assert_none()
+    guarded.assert_clean(page)
+
+
 # ------------------------------------------------------------------------------ previews
 
 
@@ -1598,31 +1625,4 @@ def test_a_failed_list_never_lifts_the_hook_s_pause(guarded_context: Any, first:
     assert page.evaluate(PAUSED_JS) is False
     page.evaluate(TO_THE_LAST_JS)
     page.wait_for_function(LAST_ASKED_JS)
-    guarded.assert_clean(page)
-
-
-def test_none_of_a_list_s_names_is_written_into_the_page(
-    guarded_context: Any, first: str, second: str
-) -> None:
-    """The page keeps the ids of the fonts a list has, nothing of its names: after a pasted
-    list and a dropped one, under each Show mode, and after Forget, no name the list has that
-    the catalog doesn't, nor its key, is anywhere in the document's HTML, attributes included
-    (a list's names must not reach the page, hidden or not)."""
-    guarded, page = open_list(guarded_context)
-    words = [w for name in UNKNOWN for w in (name, keys.match_key(name))]
-
-    def assert_none() -> None:
-        html = page.evaluate("() => document.documentElement.outerHTML").casefold()
-        for word in words:
-            assert word.casefold() not in html, word
-
-    assert_none()
-    hopper_page.paste(page, first)
-    assert_none()
-    hopper_page.drop(page, second)
-    for mode in ("all", "only", "missing"):
-        show(page, mode)
-        assert_none()
-    changed(page, lambda: page.click("#mine-forget"))
-    assert_none()
     guarded.assert_clean(page)
