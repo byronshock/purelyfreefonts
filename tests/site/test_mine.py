@@ -556,6 +556,75 @@ def test_a_second_list_replaces_the_first_and_forget_drops_it(
     guarded.assert_clean(page)
 
 
+# Every file the page reads from now on waits at its read until the test opens the gate
+# (OPENED_JS); window.__tffRead is the last read the page started.
+GATED_READ_JS = """() => {
+  let open;
+  const gate = new Promise((done) => { open = done; });
+  window.__tffOpen = open;
+  const slice = Blob.prototype.slice;
+  Blob.prototype.slice = function gated(...args) {
+    const part = slice.apply(this, args);
+    return { arrayBuffer: () => (window.__tffRead = gate.then(() => part.arrayBuffer())) };
+  };
+}"""
+# Open the gate, and wait until the read and all it set going in the page have run.
+OPENED_JS = """async () => {
+  window.__tffOpen();
+  await window.__tffRead;
+  await new Promise((done) => setTimeout(done, 0));
+}"""
+READING_JS = "() => window.__tffRead !== undefined"
+
+
+def test_a_list_that_arrives_later_wins_over_one_still_on_its_way(
+    guarded_context: Any, doc: dict[str, Any], table: owned.Table, first: str, second: str
+) -> None:
+    """A file dropped first, held at its read, then a list pasted: the paste's result shows,
+    and the file's, read after it, never lands."""
+    guarded, page = open_list(guarded_context)
+    before = shown(page)
+    page.evaluate(GATED_READ_JS)
+    page.evaluate(hopper_page.DROP_JS, ["#list", first, None, 0, "fonts.txt"])
+    poll(page, READING_JS, "the file's read")
+    hopper_page.paste(page, second, by_script=True)
+    parsed, result = reference(second, table)
+    said = summary(parsed, result, len(doc["fonts"]), "missing")
+    assert text_of(page, "#mine-summary") == said
+    page.evaluate(OPENED_JS)
+    assert text_of(page, "#mine-summary") == said
+    assert status(page).startswith(said)
+    assert_left_out(page, before, set(result["owned"]), "missing")
+    guarded.assert_clean(page)
+
+
+def test_forget_drops_a_list_still_on_its_way_and_the_error_showing(
+    guarded_context: Any, doc: dict[str, Any], first: str, second: str
+) -> None:
+    """With a list loaded, a refused list's error shows: Forget hides it. A file dropped after
+    a list loaded, held at its read: Forget drops it too, and once read it lands nowhere."""
+    guarded, page = open_list(guarded_context)
+    before = shown(page)
+    forgotten = f"{FORGOTTEN} {count_line(len(before), len(doc['fonts']))}"
+    hopper_page.paste(page, first)
+    hopper_page.paste(page, PASTED_REFUSALS["command"])
+    assert page.is_visible("#mine-error")
+    changed(page, lambda: page.click("#mine-forget"))
+    assert page.is_hidden("#mine-error"), "Forget leaves no error showing"
+    assert page.is_hidden("#mine-result")
+    hopper_page.paste(page, first)
+    page.evaluate(GATED_READ_JS)
+    page.evaluate(hopper_page.DROP_JS, ["#list", second, None, 0, "fonts.txt"])
+    poll(page, READING_JS, "the file's read")
+    changed(page, lambda: page.click("#mine-forget"))
+    assert page.is_hidden("#mine-busy")
+    page.evaluate(OPENED_JS)
+    assert page.is_hidden("#mine-result"), "the dropped list landed after Forget"
+    assert shown(page) == before
+    assert status(page) == forgotten
+    guarded.assert_clean(page)
+
+
 def test_near_matches_are_counted_and_a_list_cut_off_at_the_top_is_warned_of(
     guarded_context: Any,
     doc: dict[str, Any],
@@ -1300,6 +1369,10 @@ def test_a_list_on_its_way_when_the_list_index_fails_gets_the_page_s_note(
     assert status(page) == LOAD_FAILED
     for part in ("mine-error", "mine-result"):
         assert page.evaluate(HIDDEN_JS, part) is True, part
+    # No list loaded, so the previews the list paused go on: a row scrolled to asks for its.
+    assert page.evaluate(LAST_ASKED_JS) is False
+    page.evaluate(TO_THE_LAST_JS)
+    page.wait_for_function(LAST_ASKED_JS, timeout=10_000)
     assert guarded.errors, "the index's failure reaches the console"
     guarded.errors.clear()
     guarded.assert_clean(page)
@@ -1471,6 +1544,9 @@ def test_nothing_from_a_list_reaches_the_address_history_title_or_storage(
     )
     assert names == [], "a named control could reach the address"
     guarded.assert_clean(page)
+
+
+# ------------------------------------------------------------------------------ previews
 
 
 # The last row with a preview: whether it has asked for it (its span's data-state).
