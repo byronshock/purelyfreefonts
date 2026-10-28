@@ -1305,6 +1305,112 @@ def test_a_list_on_its_way_when_the_list_index_fails_gets_the_page_s_note(
     guarded.assert_clean(page)
 
 
+# Run before the page's own script: Core.idle's requestIdleCallback holds each callback until
+# the test runs it (IDLE_RUN_JS), so Main's begin, which makes the list live, comes late.
+IDLE_HELD_JS = """(() => {
+  window.__tffIdle = [];
+  window.requestIdleCallback = (fn) => window.__tffIdle.push(fn);
+})();"""
+IDLE_RUN_JS = """() => {
+  for (const fn of window.__tffIdle.splice(0)) fn({ didTimeout: true, timeRemaining: () => 0 });
+}"""
+
+
+def open_late(make: Callable[..., Any], index: Callable[[Any], None], **kwargs: Any) -> Any:
+    """A guarded page on the list whose list index ``index`` answers (a route handler), and
+    whose begin waits in an idle callback until IDLE_RUN_JS runs it."""
+    guarded = make(**kwargs)
+    guarded.context.add_init_script(RECORDER_JS)
+    guarded.context.add_init_script(IDLE_HELD_JS)
+    page = guarded.new_page()
+    page.route("**/assets/list.*.json", index)
+    page.goto("/")
+    poll(page, "() => document.documentElement.hasAttribute('data-js')", "the page's script")
+    return guarded, page
+
+
+@pytest.mark.parametrize(
+    "viewport",
+    [{"width": 900, "height": 900}, {"width": 1440, "height": 900}],
+    ids=["panel-closed", "sidebar-below-the-fold"],
+)
+def test_a_list_that_settles_before_the_list_is_live_is_told_once_it_is(
+    guarded_context: Any, doc: dict[str, Any], table: owned.Table, first: str, viewport: Any
+) -> None:
+    """A list dropped while the list index is on its way, which settles before Main's begin
+    makes the list live (its idle callback late): Main can't redraw or announce it then, and
+    the hopper is in a panel not yet shown. Once the list is live, its summary is said before
+    the first count line, and the result is in view, the page at its foot meanwhile."""
+    held: list[Any] = []
+    guarded, page = open_late(guarded_context, lambda route: held.append(route), viewport=viewport)
+    wait_held(page, held)
+    before = shown(page)
+    page.evaluate(hopper_page.DROP_JS, ["#list", first, None, 0, "fonts.txt"])
+    poll(page, "() => !document.getElementById('mine-busy').hidden", "the hopper to start")
+    held[0].continue_()
+    poll(page, "() => !document.getElementById('mine-result').hidden", "the list's result")
+    poll(page, "() => document.getElementById('mine-busy').hidden", "the list to settle")
+    assert page.evaluate("() => window.__tffReady") == 0, "the list isn't live yet"
+    assert "Found" not in status(page)
+    # The visitor has scrolled on meanwhile, away from where the hopper will show.
+    page.evaluate("() => window.scrollTo(0, document.documentElement.scrollHeight)")
+    page.evaluate(IDLE_RUN_JS)
+    page.wait_for_function("() => window.__tffReady >= 1")
+    parsed, result = reference(first, table)
+    have = set(result["owned"])
+    said = summary(parsed, result, len(doc["fonts"]), "missing")
+    line = count_line(len(before) - len(have & set(before)), universe(page))
+    assert status(page) == " ".join(filter(None, [said, near_line(result), line]))
+    for part in ("#mine-result", "#mine-summary", "#mine-show", "#mine-forget"):
+        assert hopper_page.in_view(page, part), part
+    assert_left_out(page, before, have, "missing")
+    guarded.assert_clean(page)
+
+
+@pytest.mark.parametrize("when", ["settled", "on-its-way"])
+def test_a_list_taken_when_the_rows_do_not_match_the_index_gets_the_page_s_note(
+    guarded_context: Any, site_dir: Path, first: str, when: str
+) -> None:
+    """The list index loads but doesn't match the page's rows, so begin shows the load note
+    and the list never goes live: a list that settled before then, or that was still on its
+    way (the match file held), gets the note, said and brought into view, as while the index
+    has failed; and no result."""
+    html = (site_dir / "index.html").read_text(encoding="utf-8")
+    url = re.search(r'data-index="/assets/(list\.[0-9a-f]+\.json)"', html)
+    assert url
+    index = json.loads((site_dir / "assets" / url.group(1)).read_bytes())
+    index["ids"][0] = "zz-not-on-this-page"
+    body = json.dumps(index)
+    guarded, page = open_late(
+        guarded_context,
+        lambda route: route.fulfill(status=200, content_type="application/json", body=body),
+        viewport={"width": 1440, "height": 900},
+    )
+    on_its_way = when == "on-its-way"
+    match = held_routes(page, "**/assets/match.*.json") if on_its_way else []
+    page.evaluate(hopper_page.DROP_JS, ["#list", first, None, 0, "fonts.txt"])
+    if on_its_way:
+        wait_held(page, match)
+    else:
+        poll(page, "() => !document.getElementById('mine-result').hidden", "the list's result")
+    page.evaluate("() => window.scrollTo(0, document.documentElement.scrollHeight)")
+    said = status(page)
+    page.evaluate(IDLE_RUN_JS)
+    page.wait_for_selector("#load-note")
+    if on_its_way:
+        assert not hopper_page.in_view(page, "#load-note")
+        match[0].continue_()
+    hopper_page.wait_taken(page, said)
+    assert status(page) == LOAD_FAILED
+    assert hopper_page.in_view(page, "#load-note")
+    if on_its_way:
+        assert page.evaluate(HIDDEN_JS, "mine-result") is True, "no result"
+    assert page.evaluate(HIDDEN_JS, "mine-error") is True
+    assert guarded.errors, "the mismatch reaches the console"
+    guarded.errors.clear()
+    guarded.assert_clean(page)
+
+
 def test_a_file_that_cannot_be_read_says_so(guarded_context: Any) -> None:
     guarded, page = open_list(guarded_context)
     page.evaluate(UNREADABLE_JS)

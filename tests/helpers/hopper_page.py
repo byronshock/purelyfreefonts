@@ -48,14 +48,16 @@ PASTE_JS = """(text) => {
 }"""
 STATUS_JS = "() => document.getElementById('status').textContent"
 BUSY_JS = "() => document.getElementById('mine-busy').hidden"
-# Whether the element ``selector`` matches is shown and wholly inside the window.
+# Whether the element ``selector`` matches is shown and wholly inside the window, give or take
+# a pixel: Chromium scrolls by whole pixels, so a box at a fraction of one, scrolled into view,
+# may end a fraction outside.
 IN_VIEW_JS = """(selector) => {
   const el = document.querySelector(selector);
   if (!el || !el.getClientRects().length || getComputedStyle(el).visibility !== 'visible') {
     return false;
   }
   const r = el.getBoundingClientRect();
-  return r.top >= 0 && r.left >= 0 && r.bottom <= innerHeight && r.right <= innerWidth;
+  return r.top > -1 && r.left > -1 && r.bottom < innerHeight + 1 && r.right < innerWidth + 1;
 }"""
 
 

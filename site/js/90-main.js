@@ -25,7 +25,8 @@
 // and Mine.reset() is "Clear filters" setting its Show menu back. Its host: changed({ lead })
 // when its list or its menu changes (Main redraws and announces, its summary first); open(),
 // which opens the Filters panel below 60rem so that what a list brings is seen; and blocked(),
-// which refuses a list while the load note shows, saying the note again.
+// which refuses a list while the load note shows, saying the note again. Once begin has run,
+// Mine.begun() tells a list that finished before the list went live, which onMine couldn't.
 //
 // Ext's side (50-ext.js): Ext.filters() lists Milestone 3's filters for View.compute, and
 // Ext.start(host) runs once. host = { refresh(), onChange(fn), ready, getState(),
@@ -188,7 +189,8 @@ const Main = (() => {
   };
 
   // The hopper changed what it leaves out: redraw, announce (its summary first) and recount
-  // the phone button. Before the list is live, the first render takes the hopper in anyway.
+  // the phone button. Before the list is live, the first render takes the hopper in anyway,
+  // and begin has Mine say what it missed (Mine.begun).
   const onMine = ({ lead = '' } = {}) => {
     if (!live) return;
     FiltersUI.reflect(State.get());
@@ -269,12 +271,19 @@ const Main = (() => {
     return rows.every(Boolean) && byId.size === index.n ? rows : null;
   };
 
+  // A list the hopper took before begin ran gets its summary now, or the load note.
+  const mineBegun = () => {
+    const mine = minePart();
+    if (mine && typeof mine.begun === 'function') mine.begun();
+  };
+
   const begin = () => {
     const rows = mapRows();
     if (!rows) {
       const error = new Error('Main: the list index does not match the rows on the page');
       showLoadNote(error);
       report(error);
+      mineBegun();
       return;
     }
     State.configure(index);
@@ -292,6 +301,9 @@ const Main = (() => {
     FiltersUI.show();
     State.subscribe(onState);
     markReady();
+    // After show(), so the hopper's result can come into view; in this task, so a list that
+    // settles from now on is told by onMine, and none twice.
+    mineBegun();
     // 'tff:list-ready' waits until the results are in sight: an invisible row can't take
     // focus, and Details focuses a #font= link's heading then.
     reveal().then(publish);

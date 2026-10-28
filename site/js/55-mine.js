@@ -38,7 +38,10 @@
 // matcher refuses) says the check can't run here. While the page's own list index has failed
 // (Main's note above the count says so, and the filters never showed), no list is taken: the
 // note is said again and brought into view (host.blocked), and a list on its way when the
-// index fails (its 'index') ends the same way. No result is shown that couldn't be computed,
+// index fails (its 'index'), or when the page's rows turn out not to match it, ends the same
+// way. A list that finished before the page's list went live, which Main couldn't redraw or
+// announce and whose result was brought into a panel not yet shown, is told once it does
+// (begun): its summary before the first count line, the result in view, or Main's note. No result is shown that couldn't be computed,
 // and never an empty one in its place: a failed list leaves the last one as it was. A list the
 // parser refuses gets its reason in plain words.
 const Mine = (() => {
@@ -282,6 +285,12 @@ const Mine = (() => {
   // At most one byte past the parser's limit, which it then refuses as too big.
   const readBytes = (file, limit) => file.slice(0, limit + 1).arrayBuffer();
 
+  // Say the list's summary before the count line (Main redraws), and bring the result into view.
+  const tell = () => {
+    changed(said());
+    bring(node('mine-result'));
+  };
+
   const apply = (source, parsed, result, total) => {
     owned = new Set(Object.keys(result.owned));
     found = Object.freeze({
@@ -301,8 +310,7 @@ const Mine = (() => {
       if (paste) paste.value = '';
     }
     draw();
-    changed(said());
-    bring(node('mine-result'));
+    tell();
   };
 
   // Take a list: { file } (dropped or chosen) or { text } (pasted). None is taken while the
@@ -328,14 +336,16 @@ const Mine = (() => {
       release();
       showError(text, retry);
     };
+    // The list index failed while the list was on its way, or the page's rows don't match it:
+    // Main's note answers, and the list ends with nothing. True then.
+    const noted = () => {
+      if (!blocked()) return false;
+      setBusy(false);
+      release();
+      return true;
+    };
     const fail = (error, fileError = null) => {
-      if (!current()) return;
-      // The list index failed while the list was on its way: Main's note answers.
-      if (blocked()) {
-        setBusy(false);
-        release();
-        return;
-      }
+      if (!current() || noted()) return;
       const { text, retry } = failure(error, fileError);
       stop(text, retry);
     };
@@ -378,8 +388,19 @@ const Mine = (() => {
       fail(error);
       return;
     }
+    if (noted()) return;
     setBusy(false);
     apply(source, parsed, result, answer.value.ids.length);
+  };
+
+  // Main's begin has run, the list index loaded meanwhile: the page's list went live, or its
+  // rows didn't match the index (Main's note shows). A list that finished before then was
+  // announced to no one (Main redraws nothing before the list is live) and brought into a
+  // panel not yet shown: its summary is now said before the first count line and the result
+  // comes into view, or, where the rows didn't match, Main's note is said and brought into
+  // view instead (blocked).
+  const begun = () => {
+    if (found && !blocked()) tell();
   };
 
   // ---- the controls
@@ -522,5 +543,5 @@ const Mine = (() => {
     });
   };
 
-  return Object.freeze({ start, filter: builtIn, extras, reset, WORDS, MODES });
+  return Object.freeze({ start, begun, filter: builtIn, extras, reset, WORDS, MODES });
 })();
