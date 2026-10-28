@@ -1777,12 +1777,17 @@ def test_an_error_shown_before_the_list_is_live_comes_into_view_once_it_is(
     assert page.is_hidden("#mine-error"), "in the filters, not yet shown"
     assert page.evaluate("() => window.__tffReady") == 0, "the list isn't live yet"
     page.evaluate("() => window.scrollTo(0, document.documentElement.scrollHeight)")
+    page.evaluate(WRITES_JS)
     held[0].continue_()
     poll(page, "() => window.__tffIdle.length > 0", "begin to wait")
     page.evaluate(IDLE_RUN_JS)
     page.wait_for_function("() => window.__tffReady >= 1")
     assert_error(page, REFUSALS["command"], retry=False)
     assert hopper_page.in_view(page, "#mine-error")
+    # Nothing more is said: no write at all, so no repeat (which Announce would mark with a
+    # no-break space, and assert_error doesn't see).
+    assert page.evaluate("() => window.__tffWrites") == [], "said again once the list is live"
+    assert status(page) == REFUSALS["command"]
     guarded.assert_clean(page)
 
 
