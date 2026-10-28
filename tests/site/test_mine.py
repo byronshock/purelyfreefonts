@@ -238,7 +238,9 @@ def changed(page: Any, action: Callable[[], Any]) -> None:
 
 
 def show(page: Any, mode: str) -> None:
+    """Choose a Show mode: the list redraws, and the previews stay paused (M3-D10 a)."""
     changed(page, lambda: page.select_option("#mine-show", mode))
+    assert page.evaluate(PAUSED_JS) is True, f"previews went on under {mode}"
 
 
 def universe(page: Any) -> int:

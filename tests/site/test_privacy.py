@@ -166,6 +166,20 @@ AT_BOTTOM_JS = "() => innerHeight + scrollY >= document.documentElement.scrollHe
 # The list's own first font names, which a list made from them owns.
 NAMES_JS = """() => Array.from(document.querySelectorAll('#list > li.font .font-name'),
   (h) => h.textContent.trim()).slice(0, 5)"""
+# The last five rows of the list whose previews haven't been asked for, as [id, name]: under
+# "Only fonts you have" a list of them brings them to the top of the screen.
+UNLOADED_JS = """() => Array.from(document.querySelectorAll('#list > li.font'))
+  .filter((li) => {
+    const span = li.querySelector('span.spec[data-src]');
+    return span && !span.dataset.state;
+  })
+  .map((li) => [li.dataset.id, li.querySelector('.font-name').textContent.trim()])
+  .slice(-5)"""
+# Which of the rows ``ids`` on the page have had their previews asked for (Specimens sets
+# data-state as it asks). A row the view leaves out is detached, and can't ask.
+ASKED_JS = """(ids) => ids.filter((id) =>
+  document.querySelector(`#font-${id} span.spec[data-state]`) !== null)"""
+PAUSED_JS = "() => globalThis.tff.list.specimens.paused"
 RANKS_JS = "() => Array.from(document.querySelectorAll('#f-rank option'), (o) => o.value)"
 SHOWN_JS = "() => Array.from(document.querySelectorAll('#list > li.font'), (li) => li.dataset.id)"
 TYPE_OWN_BIT = 64  # list index bits (site/CONTRACT.md section 7)
@@ -932,7 +946,9 @@ def test_a_list_makes_exactly_two_requests_and_nothing_after_it(
     module's script loads (script-src 'self'), its hand-off is frozen, the name it came through
     is Data's permanent accessor, and the page leaves out what Python's reference finds. Then
     no view, Show mode, scroll through the whole list, Forget or later list (dropped, chosen)
-    asks for anything, and once both files have loaded the hopper works offline."""
+    asks for anything, and once both files have loaded the hopper works offline. The list is
+    of fonts whose previews haven't loaded, far down the list: "Only fonts you have" brings
+    them to the screen, where previews that went on again (M3-D10 a) would be asked for."""
     from tff_catalog import owned
 
     guarded = guarded_context(viewport=WIDE)
@@ -945,7 +961,9 @@ def test_a_list_makes_exactly_two_requests_and_nothing_after_it(
     assert [r for r in sweep.requests if urlsplit(r.url).path in (match, matcher)] == []
     assert page.evaluate("() => 'tffMatcher' in globalThis") is False
     before = len(sweep.requests)
-    names = page.evaluate(NAMES_JS)
+    unloaded = page.evaluate(UNLOADED_JS)
+    assert len(unloaded) == 5, "the list should have rows whose previews haven't loaded"
+    names = [name for _, name in unloaded]
     text = "\n".join([*names, f"{names[0]} Bold", "Zzz Unknown Grotesk"])
     hopper_page.paste(page, text, by_script=True)
     page.wait_for_load_state("networkidle")
@@ -958,12 +976,20 @@ def test_a_list_makes_exactly_two_requests_and_nothing_after_it(
     table = owned.Table.from_document(json.loads((site_dir / match.lstrip("/")).read_bytes()))
     want = owned.match(owned.parse(text), table).to_json()["owned"]
     index = page.evaluate(INDEX_JS)
-    assert want
+    assert {font for font, _ in unloaded} <= set(want)
     assert set(index["ids"]) - set(page.evaluate(SHOWN_JS)) == set(want)
-    # Every view and Show mode, the whole list scrolled, Forget and two more lists: nothing.
+    # Each Show mode, settled and scrolled through: no preview asked for, nothing requested.
     after = len(sweep.requests)
-    for mode in ("all", "only", "missing"):
+    ids = [font for font, _ in unloaded]
+    for mode in ("only", "all", "missing"):
         sweep._change(page, partial(page.select_option, "#mine-show", mode))
+        page.evaluate(SETTLE_JS)
+        assert page.evaluate(PAUSED_JS) is True, mode
+        assert page.evaluate(ASKED_JS, ids) == [], f"a preview asked for under {mode}"
+        sweep.scroll_to_bottom(page)
+        assert page.evaluate(ASKED_JS, ids) == [], f"a preview asked for under {mode}, scrolled"
+        assert sweep.requests[after:] == [], mode
+    # Every view, the whole list scrolled, Forget and two more lists: nothing.
     ranks = page.evaluate(RANKS_JS)
     for rank in [*ranks[1:], ranks[0]]:
         sweep._change(page, partial(page.select_option, "#f-rank", rank))
@@ -974,6 +1000,7 @@ def test_a_list_makes_exactly_two_requests_and_nothing_after_it(
     sweep.scroll_to_bottom(page)
     page.wait_for_load_state("networkidle")
     assert sweep.requests[after:] == []
+    assert page.evaluate(ASKED_JS, ids) == []
     # Offline, the page has all it needs.
     guarded.context.set_offline(True)
     try:
