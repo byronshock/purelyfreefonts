@@ -1744,7 +1744,8 @@ def test_a_list_taken_when_the_rows_do_not_match_the_index_gets_the_page_s_note(
     or one still on its way (the match file held, or the file held at its read, then refused
     by the parser or failing to be read), ends as it would while the index has failed: the
     note is said and brought into view, the page at its foot meanwhile, and no result or
-    error is left in the filters, which never show."""
+    error is left in the filters, which never show. The previews stay off where a list had
+    loaded (M3-D10 a), and go on where none had."""
     html = (site_dir / "index.html").read_text(encoding="utf-8")
     url = re.search(r'data-index="/assets/(list\.[0-9a-f]+\.json)"', html)
     assert url
@@ -1787,6 +1788,15 @@ def test_a_list_taken_when_the_rows_do_not_match_the_index_gets_the_page_s_note(
     assert page.evaluate(HIDDEN_JS, "mine-result") is True, "no result"
     assert text_of(page, "#mine-summary") == ""
     assert page.evaluate(HIDDEN_JS, "mine-error") is True
+    # A list that had loaded keeps the previews off (M3-D10 a: a list did load), though its
+    # result is gone; one that never loaded lets them go on. The last row with a preview,
+    # scrolled into view, tells which (the hook isn't published: the list never went live).
+    page.evaluate(TO_THE_LAST_JS)
+    if when == "settled":
+        page.evaluate(TO_THE_LAST_JS)
+        assert page.evaluate(LAST_ASKED_JS) is False, "a list loaded, so previews stay off"
+    else:
+        page.wait_for_function(LAST_ASKED_JS, timeout=10_000)
     assert guarded.errors, "the mismatch reaches the console"
     guarded.errors.clear()
     guarded.assert_clean(page)
