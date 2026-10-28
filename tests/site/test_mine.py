@@ -956,6 +956,12 @@ SLICES_JS = """() => {
     return slice.apply(this, args);
   };
 }"""
+# Every file the page reads from now on fails to be read, as one deleted after it was chosen.
+UNREADABLE_JS = """() => {
+  Blob.prototype.slice = function slice() {
+    return { arrayBuffer: () => Promise.reject(new DOMException('gone', 'NotFoundError')) };
+  };
+}"""
 FILE_REFUSALS = {
     "font_file": b"\x00\x01\x00\x00" + bytes(60),
     "binary": b"\x89PNG\r\n\x1a\n" + bytes(60),
@@ -1010,6 +1016,13 @@ def test_a_refused_list_leaves_the_last_one_as_it_was(
     assert_error(page, REFUSALS["command"], retry=False)
     assert text_of(page, "#mine-summary") == summary(parsed, result, len(doc["fonts"]), "missing")
     assert_left_out(page, before, set(result["owned"]), "missing")
+    assert page.evaluate(PAUSED_JS) is True, "a list loaded, so previews stay off (M3-D10 a)"
+    # A file that can't be read fails too (no request can: both files are loaded, and kept).
+    page.evaluate(UNREADABLE_JS)
+    hopper_page.drop(page, "Inter\n")
+    assert_error(page, UNREADABLE, retry=False)
+    assert_left_out(page, before, set(result["owned"]), "missing")
+    assert page.evaluate(PAUSED_JS) is True
     # The next list that works takes the error away.
     hopper_page.paste(page, first)
     assert page.is_hidden("#mine-error")
@@ -1294,13 +1307,7 @@ def test_a_list_on_its_way_when_the_list_index_fails_gets_the_page_s_note(
 
 def test_a_file_that_cannot_be_read_says_so(guarded_context: Any) -> None:
     guarded, page = open_list(guarded_context)
-    page.evaluate(
-        """() => {
-          Blob.prototype.slice = function slice() {
-            return { arrayBuffer: () => Promise.reject(new DOMException('gone', 'NotFoundError')) };
-          };
-        }"""
-    )
+    page.evaluate(UNREADABLE_JS)
     hopper_page.drop(page, "Inter\n")
     assert_error(page, UNREADABLE, retry=False)
     assert page.is_hidden("#mine-result")
