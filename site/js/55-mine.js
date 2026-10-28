@@ -41,9 +41,9 @@
 // index fails (its 'index'), or when the page's rows turn out not to match it, ends the same
 // way. A list that finished before the page's list went live, which Main couldn't redraw or
 // announce and whose result was brought into a panel not yet shown, is told once it does
-// (begun): its summary before the first count line, the result in view, or Main's note. No result is shown that couldn't be computed,
-// and never an empty one in its place: a failed list leaves the last one as it was. A list the
-// parser refuses gets its reason in plain words.
+// (begun): its summary before the first count line, the result in view, or Main's note. No
+// result is shown that couldn't be computed, and never an empty one in its place: a failed
+// list leaves the last one as it was. A list the parser refuses gets its reason in plain words.
 const Mine = (() => {
   // Page wording (Milestone 3, slice 1; the owner reviews it with the screens). The summary
   // follows the plan's example, and the owner's ruling of 2026-09-29, site_status_line: fonts
