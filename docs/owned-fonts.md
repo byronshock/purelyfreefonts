@@ -34,6 +34,7 @@ Add-Type -AssemblyName System.Drawing; (New-Object System.Drawing.Text.Installed
 - Windows PowerShell 5.1's `-Encoding UTF8` writes a byte-order mark and PowerShell 7's doesn't; the parser takes either, and UTF-16 too.
 - The Windows command gives GDI+'s family names, one per line, which the parser reads as a plain list, so the page's summary names no system for it. GDI+'s gaps (below) are for step 1 to check.
 - A terminal's scrollback can cut a long pasted list at the top; the page warns when a sorted paste seems to start late, and the file has no such limit.
+- The clipboard can leave the machine too, as the Desktop can: Windows' clipboard history with "Sync across your devices" and Apple's Universal Clipboard send what is copied to the visitor's other devices. The file is the way that keeps the list on the machine.
 
 ## Linux (fontconfig)
 
