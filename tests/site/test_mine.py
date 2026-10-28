@@ -546,6 +546,12 @@ def test_a_second_list_replaces_the_first_and_forget_drops_it(
         assert page.text_content(line) == "", line
     # Previews that haven't loaded stay off until a reload (M3-D10 a), the list gone or not.
     assert page.evaluate(PAUSED_JS) is True
+    # Forget set the Show menu back too: the next list opens with fonts you don't have.
+    parsed, result = reference(first, table)
+    hopper_page.paste(page, first)
+    assert page.input_value("#mine-show") == "missing"
+    assert text_of(page, "#mine-summary") == summary(parsed, result, total, "missing")
+    assert_left_out(page, before, set(result["owned"]), "missing")
     assert_untouched(page, where)
     guarded.assert_clean(page)
 
@@ -1100,6 +1106,31 @@ def try_again(page: Any) -> None:
     hopper_page.wait_taken(page, said)
     assert page.is_hidden("#mine-error")
     assert page.evaluate("() => document.activeElement.id") == "mine-choose"
+
+
+def test_an_error_that_hides_with_the_focus_in_it_over_a_result_gives_it_to_the_show_menu(
+    guarded_context: Any, table: owned.Table, first: str, second: str
+) -> None:
+    """Section 4: when the error hides with the focus in it, the focus goes to #mine-show while
+    a result shows (else to Choose file, above). A loaded list keeps both of Data's answers, so
+    no failure that "Try again" mends can follow one: the test shows the error and its button
+    over the result, as such a failure would, and tabs to the button from Forget; a list
+    checked meanwhile hides the error."""
+    guarded, page = open_list(guarded_context)
+    before = shown(page)
+    hopper_page.paste(page, first)
+    page.evaluate(
+        "() => { for (const id of ['mine-error', 'mine-retry']) "
+        "document.getElementById(id).hidden = false; }"
+    )
+    page.locator("#mine-forget").focus()
+    page.keyboard.press("Tab")
+    assert page.evaluate("() => document.activeElement.id") == "mine-retry"
+    hopper_page.paste(page, second, by_script=True)
+    assert page.is_hidden("#mine-error")
+    assert page.evaluate("() => document.activeElement.id") == "mine-show"
+    assert_left_out(page, before, set(reference(second, table)[1]["owned"]), "missing")
+    guarded.assert_clean(page)
 
 
 def test_a_matcher_that_never_answers_offers_try_again(
