@@ -1075,7 +1075,12 @@ def test_a_link_to_a_view_applies_it_without_a_push_from_the_page(
     page.wait_for_function("() => document.getElementById('f-cat-serif').checked")
     assert rows(page) == expected_rows(doc, {"cat": "serif"})
     ids, _, total = oracle(doc, {"cat": "serif"})
-    assert status(page).rstrip("\u00a0") == count_line(len(ids), total)
+    # Said a moment after the first view showed, as anything said then is (Announce.flush
+    # waits a frame and 100 ms, so #status is in the accessibility tree before it changes).
+    page.wait_for_function(
+        "(said) => document.getElementById('status').textContent.replace(/\\u00a0$/, '') === said",
+        arg=count_line(len(ids), total),
+    )
     assert entries(page) == 0  # the page itself pushed nothing
     page.go_back()
     page.wait_for_function("() => location.hash === '#os=linux'")
