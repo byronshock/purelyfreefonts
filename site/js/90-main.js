@@ -16,7 +16,8 @@
 // so a link with a view or filters in it never paints the server's list only to change it,
 // which would move the rows into place and the footer up the screen (layout shift; on phones
 // the list starts on the first screen). They show anyway after PENDING_MAX_MS, or as soon as
-// the index fails to load.
+// the index fails to load. #status, the live region, is in the results, so Announce keeps
+// what is said meanwhile (the hopper's) until they show (Announce.flush).
 //
 // The hopper's side (55-mine.js): Mine.filter() is its built-in filter while a list is
 // loaded, which Main passes to View.compute ahead of Milestone 3's (View runs a hook filter
@@ -67,7 +68,10 @@ const Main = (() => {
     const root = document.documentElement;
     if (root.getAttribute('data-list-pending') !== '') return shown;
     root.setAttribute('data-list-pending', 'settling');
-    shown = Core.painted().then(() => root.removeAttribute('data-list-pending'));
+    shown = Core.painted().then(() => {
+      root.removeAttribute('data-list-pending');
+      Announce.flush();
+    });
     return shown;
   };
 

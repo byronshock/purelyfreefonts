@@ -1549,6 +1549,59 @@ def test_a_list_that_settles_before_the_list_is_live_is_told_once_it_is(
     guarded.assert_clean(page)
 
 
+# Records each text #status is given, and whether a screen reader could hear it then: shown,
+# so in the accessibility tree (html[data-list-pending] takes #results, around it, out of it).
+WRITES_JS = """() => {
+  window.__tffWrites = [];
+  const status = document.getElementById('status');
+  new MutationObserver(() => {
+    const heard = status.getClientRects().length > 0
+      && getComputedStyle(status).visibility === 'visible';
+    window.__tffWrites.push([status.textContent, heard]);
+  }).observe(status, { childList: true, characterData: true, subtree: true });
+}"""
+
+
+def test_a_list_told_as_a_link_s_view_goes_live_is_said_once_the_results_show(
+    guarded_context: Any, doc: dict[str, Any], table: owned.Table, first: str
+) -> None:
+    """A link with a filter in it keeps #results, and #status, the live region in it, out of
+    sight and out of the accessibility tree until its first render shows
+    (html[data-list-pending]). A list that settled before that render (begin held, and the
+    page's clock paused, so the results don't show after 3 seconds anyway) is told as the
+    list goes live: its summary is written to #status once, after the results show, where a
+    screen reader hears it, not while they are hidden."""
+    guarded = guarded_context()
+    guarded.context.add_init_script(RECORDER_JS)
+    page = guarded.new_page()
+    page.clock.install(time=CLOCK_START)
+    page.add_init_script(IDLE_HELD_JS)
+    page.clock.pause_at(CLOCK_PAUSED)
+    page.goto("/#cat=serif")
+    poll(page, "() => document.documentElement.hasAttribute('data-js')", "the page's script")
+    page.evaluate(WRITES_JS)
+    page.evaluate(hopper_page.DROP_JS, ["#list", first, None, 0, "fonts.txt"])
+    poll(
+        page,
+        "() => !document.getElementById('mine-result').hidden"
+        " && document.getElementById('mine-busy').hidden",
+        "the list's result",
+    )
+    assert page.evaluate("() => document.documentElement.getAttribute('data-list-pending')") == ""
+    poll(page, "() => window.__tffIdle.length > 0", "begin to wait")
+    page.evaluate(IDLE_RUN_JS)
+    page.clock.run_for(100)  # the two frames before the results show
+    poll(page, "() => window.__tffReady >= 1", "the list to go live")
+    parsed, result = reference(first, table)
+    said = summary(parsed, result, len(doc["fonts"]), "missing")
+    writes = page.evaluate("() => window.__tffWrites")
+    assert len(writes) == 1, writes
+    assert writes[0][0].startswith(f"{said} "), writes
+    assert writes[0][1] is True, "written while #status couldn't be heard"
+    assert status(page) == writes[0][0]
+    guarded.assert_clean(page)
+
+
 @pytest.mark.parametrize(
     "viewport",
     [{"width": 900, "height": 900}, {"width": 1440, "height": 900}],

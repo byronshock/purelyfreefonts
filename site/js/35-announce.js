@@ -3,11 +3,17 @@
 // several in one task become one message (the last). Typing in the search is announced 500 ms
 // after the last key, so a screen reader isn't talked over. Nothing is announced until the
 // first say(): Main stays silent on the first load. Focus is never moved from here.
+//
+// #status is inside #results, which html[data-list-pending] takes out of sight, and so out of
+// the accessibility tree, while a link's view waits for its first render (90-main.js): a
+// message written then would never be heard. So it is kept, the last one only, and written
+// once Main has shown the results (flush).
 const Announce = (() => {
   const TYPING_MS = 500;
   const NBSP = '\u00A0';
   let queued = null;
   let scheduled = false;
+  let kept = null; // the last message said while #status couldn't be heard
 
   const region = () => document.getElementById('status');
 
@@ -16,6 +22,11 @@ const Announce = (() => {
   const write = (message) => {
     const node = region();
     if (!node) return;
+    if (document.documentElement.hasAttribute('data-list-pending')) {
+      kept = message;
+      return;
+    }
+    kept = null;
     node.textContent = message === node.textContent ? `${message}${NBSP}` : message;
   };
 
@@ -46,7 +57,15 @@ const Announce = (() => {
   const cancel = () => {
     later.cancel();
     queued = null;
+    kept = null;
   };
 
-  return Object.freeze({ say, typing, cancel });
+  // Main has shown the results: write the message kept meanwhile, if any.
+  const flush = () => {
+    const message = kept;
+    kept = null;
+    if (message !== null) write(message);
+  };
+
+  return Object.freeze({ say, typing, cancel, flush });
 })();
