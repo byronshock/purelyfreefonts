@@ -44,8 +44,8 @@ ruling = "inventory_ambiguous_names"
 
 [[ambiguous]]
 name = "Gentium Book"
-families = ["gentium"]
-owners = ["gentium-book"]
+families = ["gentium-plus"]
+owners = ["gentium-book-plus"]
 ruling = "inventory_ambiguous_names"
 
 [[ambiguous]]
