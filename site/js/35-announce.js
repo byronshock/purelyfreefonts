@@ -9,7 +9,8 @@
 // message written then would never be heard. So it is kept, the last one only, and written
 // once Main has shown the results (flush), though not at once: a live region that comes into
 // the tree with its text already in it is often not announced, so #status is in the tree,
-// still empty, for a frame and HEARD_MS first, and what is said meanwhile is kept too.
+// still empty, for a frame and HEARD_MS first, and what is said meanwhile is kept too. With
+// nothing kept, nothing waits.
 const Announce = (() => {
   const TYPING_MS = 500;
   // Main removes the attribute in an animation frame's callback, before that frame's style and
@@ -72,7 +73,7 @@ const Announce = (() => {
   // Main has shown the results: once #status has been in the accessibility tree for a frame
   // and HEARD_MS, write the message kept meanwhile, if any (the last said, until then).
   const flush = () => {
-    if (waiting) return;
+    if (waiting || kept === null) return;
     waiting = true;
     requestAnimationFrame(() => {
       setTimeout(() => {
