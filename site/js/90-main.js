@@ -277,7 +277,8 @@ const Main = (() => {
   };
 
   // A list the hopper took before begin ran gets its summary now, or the load note; and so,
-  // where the list index failed, does one that settled before then (a refusal needs no index).
+  // where the list index failed, does one that settled before then (a refusal, or a file that
+  // can't be read, needs no index).
   const mineBegun = () => {
     const mine = minePart();
     if (mine && typeof mine.begun === 'function') mine.begun();
