@@ -1722,6 +1722,39 @@ def test_a_list_told_as_a_link_s_view_goes_live_is_said_once_the_results_show(
     guarded.assert_clean(page)
 
 
+@pytest.mark.parametrize("hash_", ["", "#cat=serif"], ids=["no-view", "link-with-a-filter"])
+def test_an_error_after_a_result_both_before_the_list_is_live_is_what_is_heard(
+    guarded_context: Any, doc: dict[str, Any], table: owned.Table, first: str, hash_: str
+) -> None:
+    """A list settles with a result before the list goes live (begin held), then a later list
+    is refused, before it too. The refusal settled last, so it is what is heard: once the list
+    is live (on a link with a filter in it, once the results show), #status holds exactly the
+    refusal, and the result's summary is never said over it. Without a view the refusal was
+    heard as it showed, and nothing is written after it; on a link it was kept while the
+    results were out of sight, and is the one write. The error is in view, and the result it
+    came after still shows."""
+    guarded, page = open_link_late(guarded_context, hash_)
+    page.evaluate(hopper_page.DROP_JS, ["#list", first, None, 0, "fonts.txt"])
+    poll(page, settled("mine-result"), "the first list's result")
+    refused = PASTED_REFUSALS["command"]
+    page.evaluate(hopper_page.DROP_JS, ["#list", refused, None, 0, "fonts.txt"])
+    poll(page, settled("mine-error"), "the refusal")
+    assert page.evaluate("() => window.__tffReady") == 0, "the list isn't live yet"
+    page.evaluate(WRITES_JS)
+    poll(page, "() => window.__tffIdle.length > 0", "begin to wait")
+    page.evaluate(IDLE_RUN_JS)
+    page.clock.run_for(300)  # the frames before the results show, and the write after
+    poll(page, "() => window.__tffReady >= 1", "the list to go live")
+    writes = page.evaluate("() => window.__tffWrites")
+    assert writes == ([[REFUSALS["command"], True]] if hash_ else []), writes
+    assert status(page) == REFUSALS["command"]
+    assert hopper_page.in_view(page, "#mine-error")
+    parsed, result = reference(first, table)
+    assert page.is_visible("#mine-result")
+    assert text_of(page, "#mine-summary") == summary(parsed, result, len(doc["fonts"]), "missing")
+    guarded.assert_clean(page)
+
+
 @pytest.mark.parametrize(
     "viewport",
     [{"width": 900, "height": 900}, {"width": 1440, "height": 900}],

@@ -42,9 +42,9 @@
 // would have loaded or failed (Data's 'index', a refusal or a file that can't be read). A list
 // that settled before the page's list went live, which Main couldn't redraw or announce and
 // whose result or error showed in filters not yet shown, is told once it does (begun): its
-// summary before the first count line and the result in view, or its error in view again; or,
-// where the rows don't match the index or it failed, Main's note, and no result or error is
-// left. No result is shown that couldn't be computed, and never an empty one in its place: a
+// summary before the first count line and the result in view, or, where an error shows (it
+// settled last), that error in view again and nothing more said; or, where the rows don't
+// match the index or it failed, Main's note, and no result or error is left. No result is shown that couldn't be computed, and never an empty one in its place: a
 // failed list leaves the last one as it was. A list the parser refuses gets its reason in
 // plain words.
 const Mine = (() => {
@@ -416,9 +416,12 @@ const Mine = (() => {
   // A list that settled before then showed in the filters while they were hidden, which keep
   // their box, so the visitor may have scrolled away since; and its result was announced to
   // no one (Main redraws nothing before the list is live). Now the result is said before the
-  // first count line and comes into view, and an error comes into view again (it was said as
-  // it showed). Where the note shows, the list ends as one on its way does then: no result and
-  // no error, and Main's note said and brought into view (blocked).
+  // first count line and comes into view. An error that shows comes into view again, with the
+  // result it came after, if any, and nothing more is said: it was said as it showed, and it
+  // settled last (a list hides any error as it starts), so the result's summary would talk
+  // over it, or, while a link's view is out of sight, take its place (Announce keeps the last
+  // message only). Where the note shows, the list ends as one on its way does then: no result
+  // and no error, and Main's note said and brought into view (blocked).
   const begun = () => {
     const error = node('mine-error');
     const erred = Boolean(error && !error.hidden);
@@ -427,8 +430,12 @@ const Mine = (() => {
       unload();
       return;
     }
-    if (found) tell();
-    if (erred) bring(error);
+    if (!erred) {
+      tell();
+      return;
+    }
+    if (found) bring(node('mine-result'));
+    bring(error);
   };
 
   // ---- the controls
