@@ -15,7 +15,9 @@ ruling of 2026-09-30): it tests the templates and CSS, which are the same in eve
   violations, on ``/``, ``/methodology/``, ``/privacy/``, ``/about/`` and a missing page
   (the 404), in light and dark, at 375 x 812 and 1280 x 900. The list page is also checked with
   filters on, with the phone filters open (375 only), with a details panel open and in the
-  no-results state. Text whose contrast axe leaves unmeasured (rows far down the list skip
+  no-results state; and with the hopper's list loaded (Milestone 3, slice 1): its summary shown
+  under each Show mode (all fonts with yours marked puts a badge in the rows), and an error
+  shown with every command open. Text whose contrast axe leaves unmeasured (rows far down the list skip
   rendering) is measured again once scrolled into view, and must pass. The one exception is
   the heading of a row whose specimen shows: its text is transparent (name_once), which axe
   can only call a 1:1 contrast, and WCAG 1.4.3 sets no contrast for text that is visible to
@@ -328,6 +330,38 @@ def list_state(page: Any, state: str) -> None:
         wait_for(page, "!document.getElementById('no-results').hidden")
 
 
+def hopper_state(page: Any, state: str) -> None:
+    """Give the list page (open at ``/``) to the hopper, as ``state`` says: a list of the page's
+    own first font names, under a Show mode ("mine-missing", "mine-all", "mine-only"), or a
+    pasted command, which the parser refuses, with every command open ("mine-error")."""
+    from tests.helpers import hopper_page
+
+    if page.locator("#f-toggle").is_visible():
+        list_state(page, "filters-open")
+    if state == "mine-error":
+        hopper_page.paste(page, "fc-list : family | sort > ~/fonts.txt\n")
+        assert page.locator("#mine-error").is_visible()
+        page.evaluate(
+            "() => document.querySelectorAll('#mine details').forEach((d) => { d.open = true; })"
+        )
+        return
+    names = page.evaluate(
+        "() => Array.from(document.querySelectorAll('#list > li.font .font-name'),"
+        " (h) => h.textContent.trim()).slice(0, 4)"
+    )
+    hopper_page.paste(page, "\n".join(names))
+    assert page.locator("#mine-summary").is_visible()
+    mode = state.removeprefix("mine-")
+    if page.input_value("#mine-show") != mode:
+        page.select_option("#mine-show", mode)
+    wait_for(page, f"document.getElementById('mine-show').value === '{mode}'")
+    if mode == "all":
+        wait_for(page, "document.querySelector('#list .ext[data-filter=\"mine\"] .ext-badge')")
+
+
+HOPPER_STATES = ["mine-missing", "mine-all", "mine-only", "mine-error"]
+
+
 LIST_STATES = {
     "filters": f"/{FILTERS_HASH}",
     "filters-open": f"/{FILTERS_HASH}",
@@ -612,6 +646,19 @@ def test_axe_list_states(guarded_context: Any, state: str, scheme: str, viewport
         guarded_context, LIST_STATES[state], color_scheme=scheme, viewport=VIEWPORTS[viewport]
     )
     list_state(page, state)
+    assert_axe_clean(page, f"list {state} {scheme} {viewport}")
+    guarded.assert_clean(page)
+
+
+@pytest.mark.real_catalog(state="mine-all", viewport="1280")
+@pytest.mark.parametrize("viewport", VIEWPORTS)
+@pytest.mark.parametrize("scheme", SCHEMES)
+@pytest.mark.parametrize("state", HOPPER_STATES)
+def test_axe_hopper_states(guarded_context: Any, state: str, scheme: str, viewport: str) -> None:
+    guarded, page = open_page(
+        guarded_context, "/", color_scheme=scheme, viewport=VIEWPORTS[viewport]
+    )
+    hopper_state(page, state)
     assert_axe_clean(page, f"list {state} {scheme} {viewport}")
     guarded.assert_clean(page)
 

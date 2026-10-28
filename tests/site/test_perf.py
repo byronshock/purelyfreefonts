@@ -1379,6 +1379,40 @@ def test_large_site_meets_every_budget(large_site: Path) -> None:
     assert budgets.check(large_site) == []
 
 
+def list_page_size(site: Path) -> dict[str, int]:
+    """The list page's HTML, CSS and JS, gzip -9, as ``tff-site check`` counts them: the page
+    and every stylesheet and script it references (the hopper's matcher module and match file,
+    which load only once a list arrives, are not among them)."""
+    page = (site / budgets.LIST_PAGE).read_text(encoding="utf-8")
+    sizes = {"HTML": budgets.gzip_size(page.encode())}
+    for kind, pattern in (
+        ("CSS", r'<link rel="stylesheet" href="([^"]+)"'),
+        ("JS", r'<script[^>]* src="([^"]+)"'),
+    ):
+        urls = re.findall(pattern, page)
+        assert urls, kind
+        sizes[kind] = sum(budgets.gzip_size((site / u.lstrip("/")).read_bytes()) for u in urls)
+    return sizes
+
+
+def test_the_list_page_with_the_hopper_stays_within_its_budget(large_site: Path) -> None:
+    """Milestone 3, slice 1 (PR 4): the hopper's interface, its markup in the filter panel,
+    27-mine.css and 55-mine.js, is part of the list page and counts toward its budget, while its
+    parser, matcher and match file stay outside it (inventory_matcher_on_demand). The size is
+    printed, for the pull request (``-s``)."""
+    page = (large_site / budgets.LIST_PAGE).read_text(encoding="utf-8")
+    assert '<fieldset id="mine" class="mine">' in page
+    sizes = list_page_size(large_site)
+    script = re.search(r'<script[^>]* src="([^"]+)"', page)
+    assert script
+    assert "const Mine = (() => {" in (large_site / script.group(1).lstrip("/")).read_text("utf-8")
+    assert "const OwnedMatch" not in (large_site / script.group(1).lstrip("/")).read_text("utf-8")
+    total = sum(sizes.values())
+    split = ", ".join(f"{kind} {size / 1000:.1f}" for kind, size in sizes.items())
+    print(f"list page: {total / 1000:.1f} KB gzip -9 ({split}) of {budgets.PAGE_MAX // 1000} KB")
+    assert total <= budgets.PAGE_MAX
+
+
 def test_sample_site_meets_every_budget(site_dir: Path) -> None:
     assert budgets.check(site_dir) == []
 

@@ -326,6 +326,8 @@ def test_filters_ship_hidden_inside_search(dom):
     assert dom.find("form") is None
     for control in search.find_all("input") + search.find_all("select"):
         cid = control.attrs.get("id")
+        if "hidden" in control.attrs:
+            continue  # the hopper's file input: its button opens it (test_the_hopper_s_markup)
         wrapped = control.parent.tag == "label"
         labelled = cid and dom.find("label", for_=cid) is not None
         assert wrapped or labelled, f"{cid} has no label"
@@ -334,6 +336,82 @@ def test_filters_ship_hidden_inside_search(dom):
     note = dom.find("noscript")
     assert note is not None
     assert "Filters and search need JavaScript" in note.text
+
+
+def test_the_hopper_s_markup(dom):
+    """The hopper, "Fonts you have" (Milestone 3, slice 1; site/CONTRACT.md section 4): a
+    fieldset in the panel after "Hide fonts that come with" (inventory_on_list_page), with no
+    form and no named control, so nothing in it reaches the address; a paste box the browser
+    leaves alone; and one closed <details> per system, its command exactly as data.MINE_COMMANDS
+    has it, "(not yet tested)" on macOS and Windows (inventory_linux_tested_only)."""
+    more = dom.find("div", id="f-more")
+    order = [n.attrs.get("id") for n in more.elements()]
+    assert order[-3:] == ["f-system", "mine", "f-clear"]
+    mine = dom.find("fieldset", id="mine")
+    assert mine.elements()[0].tag == "legend"
+    assert squash(mine.elements()[0].text) == "Fonts you have"
+    assert [n.attrs["id"] for n in mine.iter() if "name" in n.attrs] == []
+    assert mine.find("form") is None
+    assert squash(mine.find("p", class_="mine-phone").text) == "Make the list on a computer."
+    # Shown once a list loads: the summary, the Show menu and "Forget this list".
+    result = mine.find("div", id="mine-result")
+    assert "hidden" in result.attrs
+    assert squash(dom.find("label", for_="mine-show").text) == "Show"
+    options = mine.find("select", id="mine-show").find_all("option")
+    assert [(o.attrs["value"], squash(o.text), "selected" in o.attrs) for o in options] == [
+        ("missing", "Fonts you don't have", True),
+        ("all", "All fonts, yours marked", False),
+        ("only", "Only fonts you have", False),
+    ]
+    assert squash(mine.find("button", id="mine-forget").text) == "Forget this list"
+    for hidden in ("mine-busy", "mine-error", "mine-retry", "mine-near", "mine-warning"):
+        assert "hidden" in mine.find(id=hidden).attrs, hidden
+    # The ways in: a file, chosen with a button (its input is hidden), dropped, or pasted.
+    choose = mine.find("button", id="mine-choose")
+    assert (choose.attrs["type"], squash(choose.text)) == ("button", "Choose file")
+    file = mine.find("input", id="mine-file")
+    assert (file.attrs["type"], "hidden" in file.attrs) == ("file", True)
+    paste = mine.find("textarea", id="mine-paste")
+    assert squash(dom.find("label", for_="mine-paste").text) == "Or paste the list"
+    assert {k: paste.attrs.get(k) for k in ("spellcheck", "autocomplete")} == {
+        "spellcheck": "false",
+        "autocomplete": "off",
+    }
+    assert {k: paste.attrs.get(k) for k in ("autocorrect", "autocapitalize")} == {
+        "autocorrect": "off",
+        "autocapitalize": "off",
+    }
+    assert squash(mine.find("button", id="mine-check").text) == "Check"
+    # How to make the list: one details per system, closed, each with a copy button.
+    group = mine.find("div", class_="mine-oses")
+    assert (group.attrs["role"], group.attrs["aria-labelledby"]) == ("group", "mine-how")
+    assert squash(dom.find(id="mine-how").text) == "How to make the list"
+    details = group.find_all("details")
+    assert [d.attrs["id"] for d in details] == [f"mine-os-{c['os']}" for c in data.MINE_COMMANDS]
+    for box, command in zip(details, data.MINE_COMMANDS, strict=True):
+        assert "open" not in box.attrs
+        summary = squash(box.find("summary").text)
+        tested = command["os"] == "linux"
+        assert summary == command["label"] + ("" if tested else " (not yet tested)")
+        assert command["tested"] is tested
+        code = box.find("code", id=f"mine-cmd-{command['os']}")
+        assert code.text == command["command"]
+        assert "fonts.txt" in code.text
+        assert "Desktop" not in code.text  # synced off the machine by iCloud and OneDrive
+        button = box.find("button", class_="mine-copy")
+        assert button.attrs["data-command"] == code.attrs["id"]
+        assert squash(button.text) == f"Copy the {command['label']} command"
+        assert button.find("span", class_="visually-hidden") is not None
+    commands = [c["command"] for c in data.MINE_COMMANDS]
+    assert commands == [
+        "fc-list : family | sort > ~/fonts.txt",
+        "system_profiler SPFontsDataType | grep 'Family:' | sort -u > ~/fonts.txt",
+        "Add-Type -AssemblyName System.Drawing; (New-Object System.Drawing.Text."
+        'InstalledFontCollection).Families.Name | Set-Content -Encoding UTF8 "$HOME\\fonts.txt"',
+    ]
+    # site_status_line (2026-09-29): fonts are "left out of the list", never hidden.
+    assert "hidden" not in squash(mine.text).lower()
+    assert "left out of the list" in squash(mine.text)
 
 
 def radios(search: Node, name: str) -> list[tuple[str, str, bool, str]]:
@@ -631,6 +709,62 @@ def test_showing_the_filters_does_not_move_the_list(browser, site_url, width):
         assert page.evaluate(where) == before
         assert page.is_visible("#f-q")
         assert page.is_visible("#f-rank")
+    finally:
+        context.close()
+
+
+# Every part of the hopper shown at once, as a script would show them, and every command open.
+OPEN_HOPPER = """() => {
+  for (const id of ['mine-result', 'mine-near', 'mine-warning', 'mine-busy', 'mine-error',
+      'mine-retry']) document.getElementById(id).hidden = false;
+  document.getElementById('mine-summary').textContent =
+    'Found 4,332 font names in a Linux list. You have 81 of the 540 fonts here, left out of the list.';
+  document.getElementById('mine-error-text').textContent =
+    'The font check didn\u2019t load. Check your connection, then try again.';
+  for (const box of document.querySelectorAll('#mine details')) box.open = true;
+  for (const note of document.querySelectorAll('#mine .mine-copied')) {
+    note.hidden = false;
+    note.textContent = 'Copied.';
+  }
+}"""
+# What of the hopper sticks out of the filter block, or out of its own box.
+HOPPER_OVERFLOW = """() => {
+  const edge = document.getElementById('filters').getBoundingClientRect();
+  const bad = [];
+  for (const el of document.querySelectorAll('#mine, #mine *')) {
+    const r = el.getBoundingClientRect();
+    if (!r.width) continue;
+    if (r.left < edge.left - 0.5 || r.right > edge.right + 0.5) bad.push(el.id || el.className || el.tagName);
+    if (el.matches('pre, textarea, select, p') && el.scrollWidth > el.clientWidth + 1) bad.push(el.id || el.tagName);
+  }
+  return bad;
+}"""
+
+
+@pytest.mark.parametrize("width", [320, 375, 800, 1280])
+@pytest.mark.parametrize("scheme", ["light", "dark"])
+def test_the_hopper_fits_its_panel_at_every_width(browser, site_url, width, scheme):
+    """Opened in full (a summary, an error, every command), the hopper scrolls nothing
+    sideways, stays inside the filter block (the Windows command wraps), and every target is
+    at least 24 px; below 60rem it takes the panel's whole width."""
+    context, page = open_page(browser, site_url, width, color_scheme=scheme)
+    try:
+        page.evaluate(OPEN_PANEL, True)
+        page.evaluate(OPEN_HOPPER)
+        assert page.is_visible("#mine")
+        assert page.evaluate(SCROLL_WIDTH) <= width
+        assert page.evaluate(HOPPER_OVERFLOW) == []
+        assert page.evaluate(TARGETS) == []
+        summaries = page.evaluate(
+            "() => Array.from(document.querySelectorAll('#mine summary'),"
+            " (s) => s.getBoundingClientRect().height)"
+        )
+        assert min(summaries) >= 24
+        if width < 960:
+            mine = page.locator("#mine").bounding_box()
+            more = page.locator("#f-more").bounding_box()
+            # the panel's padding (--space-4) and border on each side; at most 40rem
+            assert mine["width"] >= min(more["width"] - 2 * (16 + 1), 640) - 1
     finally:
         context.close()
 
