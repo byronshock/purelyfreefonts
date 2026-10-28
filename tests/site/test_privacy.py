@@ -277,8 +277,10 @@ class Sweep:
             page.wait_for_load_state("networkidle")
 
     def visit(self, path: str) -> Any:
-        """Open ``path`` in a new tab and wait for its load event."""
+        """Open ``path`` in a new tab and wait for its load event. Playwright takes any file
+        chooser it opens (the hopper's Choose file: hopper_page.arm)."""
         page = self.guarded.new_page()
+        hopper_page.arm(page)
         page.goto(path)
         page.wait_for_load_state("load")
         self.pages.append((path, page))

@@ -5,6 +5,11 @@ taken it, a summary or an error.
 Every way in ends in an announcement in ``#status``, the page's one live region (an error, or
 the summary and the count line), and the "Checking your list…" line hides again, so a list has
 been taken once both have happened. Used by tests/site/test_mine.py and test_privacy.py.
+
+A page that ``choose`` is used on is ``arm``-ed first, before it loads: Playwright turns on its
+file-chooser interception asynchronously, and a key pressed on Choose file just after
+``expect_file_chooser`` could reach the browser first, which then opened no chooser for the
+test (3 runs in 195 under load).
 """
 
 import time
@@ -103,7 +108,8 @@ def drop(
 
 
 def choose(page: Any, data: bytes, *, name: str = "fonts.txt", key: str | None = None) -> None:
-    """Choose a file with Choose file: a click, or ``key`` pressed on the focused button."""
+    """Choose a file with Choose file: a click, or ``key`` pressed on the focused button. The
+    page is ``arm``-ed (see the top)."""
     before = page.evaluate(STATUS_JS)
     with page.expect_file_chooser() as chooser:
         if key is None:
