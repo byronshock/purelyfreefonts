@@ -40,11 +40,12 @@
 // note is said again and brought into view (host.blocked), and a list on its way when the
 // index fails, or when the page's rows turn out not to match it, ends the same way, whether it
 // would have loaded or failed (Data's 'index', a refusal or a file that can't be read). A list
-// that finished before the page's list went live, which Main couldn't redraw or announce and
-// whose result was brought into a panel not yet shown, is told once it does (begun): its
-// summary before the first count line, the result in view, or Main's note. No result is shown
-// that couldn't be computed, and never an empty one in its place: a failed list leaves the
-// last one as it was. A list the parser refuses gets its reason in plain words.
+// that settled before the page's list went live, which Main couldn't redraw or announce and
+// whose result or error showed in filters not yet shown, is told once it does (begun): its
+// summary before the first count line and the result in view, or its error in view again; or,
+// where the rows don't match the index, Main's note, and no result or error is left. No result
+// is shown that couldn't be computed, and never an empty one in its place: a failed list
+// leaves the last one as it was. A list the parser refuses gets its reason in plain words.
 const Mine = (() => {
   // Page wording (Milestone 3, slice 1; the owner reviews it with the screens). The summary
   // follows the plan's example, and the owner's ruling of 2026-09-29, site_status_line: fonts
@@ -397,14 +398,35 @@ const Mine = (() => {
     apply(source, parsed, result, answer.value.ids.length);
   };
 
+  // No list is loaded or shown: its result goes, and any error. Its words go too: nothing of
+  // the list stays in the page, hidden or not.
+  const unload = () => {
+    owned = null;
+    found = null;
+    pending = null;
+    showError('');
+    hide(node('mine-result'));
+    for (const id of ['mine-summary', 'mine-near', 'mine-warning']) Core.text(node(id), '');
+  };
+
   // Main's begin has run, the list index loaded meanwhile: the page's list went live, or its
-  // rows didn't match the index (Main's note shows). A list that finished before then was
-  // announced to no one (Main redraws nothing before the list is live) and brought into a
-  // panel not yet shown: its summary is now said before the first count line and the result
-  // comes into view, or, where the rows didn't match, Main's note is said and brought into
-  // view instead (blocked).
+  // rows didn't match the index (Main's note shows). A list that settled before then showed
+  // in the filters while they were hidden, which keep their box, so the visitor may have
+  // scrolled away since; and its result was announced to no one (Main redraws nothing before
+  // the list is live). Now the result is said before the first count line and comes into view,
+  // and an error comes into view again (it was said as it showed). Where the rows didn't match,
+  // the list ends as one on its way does then: no result and no error, and Main's note said and
+  // brought into view (blocked).
   const begun = () => {
-    if (found && !blocked()) tell();
+    const error = node('mine-error');
+    const erred = Boolean(error && !error.hidden);
+    if (!found && !erred) return;
+    if (blocked()) {
+      unload();
+      return;
+    }
+    if (found) tell();
+    if (erred) bring(error);
   };
 
   // ---- the controls
@@ -440,19 +462,13 @@ const Mine = (() => {
 
   const forget = () => {
     run += 1; // a list still on its way is dropped too
-    owned = null;
-    found = null;
-    pending = null;
+    unload();
     mode = DEFAULT_MODE;
     const paste = node('mine-paste');
     if (paste) paste.value = '';
     const show = node('mine-show');
     if (show) show.value = DEFAULT_MODE;
     setBusy(false);
-    showError('');
-    hide(node('mine-result'));
-    // Its words go too: nothing of the list stays in the page, hidden or not.
-    for (const id of ['mine-summary', 'mine-near', 'mine-warning']) Core.text(node(id), '');
     changed(WORDS.forgotten);
   };
 

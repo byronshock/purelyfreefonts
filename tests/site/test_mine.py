@@ -1543,16 +1543,48 @@ def test_a_list_that_settles_before_the_list_is_live_is_told_once_it_is(
 
 
 @pytest.mark.parametrize(
-    "when", ["settled", "on-its-way", "refused-on-its-way", "unreadable-on-its-way"]
+    "viewport",
+    [{"width": 900, "height": 900}, {"width": 1440, "height": 900}],
+    ids=["panel-closed", "sidebar-below-the-fold"],
+)
+def test_an_error_shown_before_the_list_is_live_comes_into_view_once_it_is(
+    guarded_context: Any, viewport: Any
+) -> None:
+    """A list the parser refuses needs no list index, so its error can show while the index
+    is still on its way: it is said then, in filters not yet shown. The visitor scrolls to the
+    page's foot meanwhile; once the list is live, the error is in view, and nothing more is
+    said (the first view is silent)."""
+    held: list[Any] = []
+    guarded, page = open_late(guarded_context, lambda route: held.append(route), viewport=viewport)
+    wait_held(page, held)
+    hopper_page.drop(page, PASTED_REFUSALS["command"])
+    assert status(page) == REFUSALS["command"]
+    assert text_of(page, "#mine-error-text") == REFUSALS["command"]
+    assert page.evaluate(HIDDEN_JS, "mine-error") is False
+    assert page.is_hidden("#mine-error"), "in the filters, not yet shown"
+    assert page.evaluate("() => window.__tffReady") == 0, "the list isn't live yet"
+    page.evaluate("() => window.scrollTo(0, document.documentElement.scrollHeight)")
+    held[0].continue_()
+    poll(page, "() => window.__tffIdle.length > 0", "begin to wait")
+    page.evaluate(IDLE_RUN_JS)
+    page.wait_for_function("() => window.__tffReady >= 1")
+    assert_error(page, REFUSALS["command"], retry=False)
+    assert hopper_page.in_view(page, "#mine-error")
+    guarded.assert_clean(page)
+
+
+@pytest.mark.parametrize(
+    "when", ["settled", "refused", "on-its-way", "refused-on-its-way", "unreadable-on-its-way"]
 )
 def test_a_list_taken_when_the_rows_do_not_match_the_index_gets_the_page_s_note(
     guarded_context: Any, site_dir: Path, first: str, when: str
 ) -> None:
     """The list index loads but doesn't match the page's rows, so begin shows the load note
-    and the list never goes live: a list that settled before then, or one still on its way
-    (the match file held, or the file held at its read, then refused by the parser or failing
-    to be read), gets the note, said and brought into view, the page at its foot meanwhile,
-    and no error."""
+    and the list never goes live. A list that settled before then, with a result or refused,
+    or one still on its way (the match file held, or the file held at its read, then refused
+    by the parser or failing to be read), ends as it would while the index has failed: the
+    note is said and brought into view, the page at its foot meanwhile, and no result or
+    error is left in the filters, which never show."""
     html = (site_dir / "index.html").read_text(encoding="utf-8")
     url = re.search(r'data-index="/assets/(list\.[0-9a-f]+\.json)"', html)
     assert url
@@ -1577,7 +1609,8 @@ def test_a_list_taken_when_the_rows_do_not_match_the_index_gets_the_page_s_note(
     elif held_read:
         poll(page, READING_JS, "the file's read")
     else:
-        poll(page, "() => !document.getElementById('mine-result').hidden", "the list's result")
+        part = "mine-error" if when == "refused" else "mine-result"
+        poll(page, f"() => !document.getElementById('{part}').hidden", "the list to settle")
     page.evaluate("() => window.scrollTo(0, document.documentElement.scrollHeight)")
     said = status(page)
     page.evaluate(IDLE_RUN_JS)
@@ -1591,8 +1624,8 @@ def test_a_list_taken_when_the_rows_do_not_match_the_index_gets_the_page_s_note(
     hopper_page.wait_taken(page, said)
     assert status(page) == LOAD_FAILED
     assert hopper_page.in_view(page, "#load-note")
-    if on_its_way:
-        assert page.evaluate(HIDDEN_JS, "mine-result") is True, "no result"
+    assert page.evaluate(HIDDEN_JS, "mine-result") is True, "no result"
+    assert text_of(page, "#mine-summary") == ""
     assert page.evaluate(HIDDEN_JS, "mine-error") is True
     assert guarded.errors, "the mismatch reaches the console"
     guarded.errors.clear()
