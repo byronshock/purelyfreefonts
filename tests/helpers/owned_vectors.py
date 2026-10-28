@@ -1172,7 +1172,7 @@ def known_answers() -> list[dict[str, Any]]:
             "Gentium Book, trusted, owns no Gentium",
             _e(("Gentium Book",), trusted=t),
             {},
-            ("gentium", "gentium-plus"),
+            ("gentium-plus",),
         ),
         k(
             "Syne Italic in the registry is only near Syne",
@@ -1375,7 +1375,7 @@ def known_answers() -> list[dict[str, Any]]:
             "Gentium BookItalic in the registry owns no Gentium",
             _e(full="Gentium BookItalic"),
             {},
-            ("gentium", "gentium-plus"),
+            ("gentium-plus",),
             outcome="near",
         ),
         k(
