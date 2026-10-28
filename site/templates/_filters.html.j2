@@ -16,6 +16,15 @@
   credit, and the operating systems are one select. "Nerd Font available" follows the ruling
   of 2026-09-29 (nerd_filter); the rows it keeps carry the tag of the same name (nerd_tag,
   2026-10-05). Sort sits in the list's header (_list.html.j2).
+
+  #mine, "Fonts you have", is the hopper (Milestone 3, slice 1; owner rulings of 2026-10-21
+  to 2026-10-23, inventory_on_list_page and inventory_slice_1_defaults): a visitor's list,
+  dropped anywhere on the page, chosen or pasted, takes the fonts they have out of every view
+  (55-mine.js). None of its controls has a name, so none reaches the address, and its paste
+  box asks the browser not to spell-check, autocomplete, correct or capitalise what it holds.
+  "How to make the list" gives each system's command (data.MINE_COMMANDS), with "(not yet
+  tested)" where nobody has run it yet (inventory_linux_tested_only). Its words follow the
+  ruling site_status_line (2026-09-29): fonts are "left out of the list", never hidden.
 -#}
 <search id="filters" class="filters" aria-label="Filter fonts" hidden>
 <div class="filters-bar">
@@ -59,6 +68,48 @@
 {% endfor %}
 </select>
 </div>
+<fieldset id="mine" class="mine">
+<legend>Fonts you have</legend>
+<p class="mine-lead">Give this page a list of the fonts on your computer, and those you have are left out of the list. Your list stays in this tab: nothing is sent or saved.</p>
+<p class="mine-phone">Make the list on a computer.</p>
+<div id="mine-result" class="mine-result" hidden>
+<p id="mine-summary" class="mine-summary"></p>
+<p id="mine-near" class="mine-more" hidden></p>
+<p id="mine-warning" class="mine-more" hidden></p>
+<label for="mine-show">Show</label>
+<select id="mine-show">
+<option value="missing" selected>Fonts you don't have</option>
+<option value="all">All fonts, yours marked</option>
+<option value="only">Only fonts you have</option>
+</select>
+<button type="button" id="mine-forget">Forget this list</button>
+</div>
+<p id="mine-busy" class="mine-busy" hidden>Checking your list…</p>
+<div id="mine-error" class="mine-error" hidden>
+<p id="mine-error-text"></p>
+<button type="button" id="mine-retry" hidden>Try again</button>
+</div>
+<div id="mine-drop" class="mine-drop">
+<p>Drop fonts.txt here</p>
+<button type="button" id="mine-choose">Choose file</button>
+<input type="file" id="mine-file" hidden>
+</div>
+<label for="mine-paste">Or paste the list</label>
+<textarea id="mine-paste" rows="3" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
+<button type="button" id="mine-check">Check</button>
+<p id="mine-how" class="mine-how">How to make the list</p>
+<div class="mine-oses" role="group" aria-labelledby="mine-how">
+{% for cmd in list.mine_commands %}
+<details class="mine-os" id="mine-os-{{ cmd.os }}">
+<summary>{{ cmd.label }}{% if not cmd.tested %} (not yet tested){% endif %}</summary>
+<p>{{ cmd.where }}</p>
+<pre class="mine-cmd"><code id="mine-cmd-{{ cmd.os }}">{{ cmd.command }}</code></pre>
+<p class="mine-copy-row"><button type="button" class="mine-copy" data-command="mine-cmd-{{ cmd.os }}">Copy<span class="visually-hidden"> the {{ cmd.label }} command</span></button> <span class="mine-copied" hidden></span></p>
+<p>{{ cmd.after }}</p>
+</details>
+{% endfor %}
+</div>
+</fieldset>
 <button type="button" id="f-clear">Clear filters</button>
 </div>
 </search>
