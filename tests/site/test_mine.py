@@ -1776,15 +1776,19 @@ def test_an_error_after_a_result_both_before_the_list_is_live_is_what_is_heard(
     is live (on a link with a filter in it, once the results show), #status holds exactly the
     refusal, and the result's summary is never said over it. Without a view the refusal was
     heard as it showed, and nothing is written after it; on a link it was kept while the
-    results were out of sight, and is the one write. The error is in view, and the result it
-    came after still shows."""
-    guarded, page = open_link_late(guarded_context, hash_)
+    results were out of sight, and is the one write. The visitor scrolls to the page's foot
+    meanwhile; once the list is live, the error is in view, and so is the result it came after,
+    which sits above it (at a size where both fit, in the sidebar)."""
+    guarded, page = open_link_late(
+        lambda: guarded_context(viewport={"width": 1440, "height": 900}), hash_
+    )
     page.evaluate(hopper_page.DROP_JS, ["#list", first, None, 0, "fonts.txt"])
     poll(page, settled("mine-result"), "the first list's result")
     refused = PASTED_REFUSALS["command"]
     page.evaluate(hopper_page.DROP_JS, ["#list", refused, None, 0, "fonts.txt"])
     poll(page, settled("mine-error"), "the refusal")
     assert page.evaluate("() => window.__tffReady") == 0, "the list isn't live yet"
+    page.evaluate("() => window.scrollTo(0, document.documentElement.scrollHeight)")
     page.evaluate(WRITES_JS)
     poll(page, "() => window.__tffIdle.length > 0", "begin to wait")
     page.evaluate(IDLE_RUN_JS)
@@ -1795,7 +1799,7 @@ def test_an_error_after_a_result_both_before_the_list_is_live_is_what_is_heard(
     assert status(page) == REFUSALS["command"]
     assert hopper_page.in_view(page, "#mine-error")
     parsed, result = reference(first, table)
-    assert page.is_visible("#mine-result")
+    assert hopper_page.in_view(page, "#mine-result")
     assert text_of(page, "#mine-summary") == summary(parsed, result, len(doc["fonts"]), "missing")
     guarded.assert_clean(page)
 
