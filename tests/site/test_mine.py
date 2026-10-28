@@ -172,19 +172,31 @@ def families(doc: dict[str, Any]) -> list[str]:
 
 @pytest.fixture(scope="module")
 def near_names(site_data: Path, table: owned.Table) -> list[str]:
-    """Two or three names that are only near matches, each of another catalog font (a
-    sibling, a related family or a bundle in the names file beside the catalog), owning none.
-    (The real catalog's names file has two such on 2026-09-26.)"""
+    """Names from the names file beside the catalog that are only near matches, owning none:
+    the first is near one catalog font alone, and one or two more bring the fonts they are
+    near to two or more. Any name will do (a sibling, a related family, a bundle, a build),
+    since the test takes its counts from the reference. (On 2026-10-17 one name is near one
+    font alone, and the bundles are each near three or five.)"""
     path = site_data.with_name(site_data.name.replace("catalog-site", "names"))
-    found: dict[str, str] = {}  # font id -> the name near it
+    near: dict[str, set[str]] = {}  # name -> the fonts it is near, in the file's order
     for family in json.loads(path.read_bytes())["families"]:
-        for alias in family["names"] if family["in_catalog"] else []:
-            if alias["relation"] in ("sibling", "related", "bundle") and len(found) < 3:
-                result = owned.match(owned.parse(alias["name"] + "\n"), table).to_json()
-                if len(result["near"]) == 1 and not result["owned"]:
-                    found.setdefault(next(iter(result["near"])), alias["name"])
-    assert len(found) >= 2, "the names file should have near matches"
-    return list(found.values())
+        for alias in family["names"]:
+            result = owned.match(owned.parse(alias["name"] + "\n"), table).to_json()
+            if result["near"] and not result["owned"]:
+                near.setdefault(alias["name"], set(result["near"]))
+    assert near, "the names file should have near matches"
+    single = next((name for name, fonts in near.items() if len(fonts) == 1), None)
+    if single is None:
+        pytest.skip("no name in this data is a near match of one font alone")
+    names, fonts = [single], set(near[single])
+    for name, more in near.items():
+        if len(fonts) >= 2 or len(names) == 3:
+            break
+        if not more <= fonts:
+            names.append(name)
+            fonts |= more
+    assert len(fonts) >= 2, "the names file should have near matches of two fonts or more"
+    return names
 
 
 def linux_list(names: list[str]) -> str:
@@ -664,10 +676,11 @@ def test_near_matches_are_counted_and_a_list_cut_off_at_the_top_is_warned_of(
         said = summary(parsed, result, total, "missing")
         assert status(page).startswith(f"{said} {line} Showing ")
         lines.append(line)
+    both = len(reference(plain_list(near_names), table)[1]["near"])
+    assert both >= 2
     assert lines == [
         "1 more font here is only a near match, so it isn\u2019t counted as yours.",
-        f"{len(near_names)} more fonts here are only near matches, so they aren\u2019t counted as "
-        "yours.",
+        f"{both:,} more fonts here are only near matches, so they aren\u2019t counted as yours.",
     ]
     late = [f for f in families if owned.search_key(f)[:1] >= "d"]
     cut = "\n".join(
