@@ -307,8 +307,8 @@ const Main = (() => {
     FiltersUI.show();
     State.subscribe(onState);
     markReady();
-    // After show(), so the hopper's result can come into view; in this task, so a list that
-    // settles from now on is told by onMine, and none twice.
+    // Once the list is live, so what Mine tells is redrawn and announced (onMine); in this
+    // task, so a list that settles from now on is told by onMine, and none twice.
     mineBegun();
     // 'tff:list-ready' waits until the results are in sight: an invisible row can't take
     // focus, and Details focuses a #font= link's heading then.

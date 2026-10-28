@@ -88,7 +88,7 @@ const Mine = (() => {
   const MODES = Object.freeze(['missing', 'all', 'only']);
   const DEFAULT_MODE = MODES[0];
   // Data's failure codes a retry can mend, and those that need a reload (section 11). An
-  // 'index' never gets here: the page's own list failed, so Main's note answers it (blocked).
+  // 'index' is never shown: the page's own list failed, so Main's note answers it (noted).
   const RETRY = new Set(['network', 'status', 'json', 'timeout']);
   const RELOAD = new Set(['load', 'handoff']);
   const FILES = 'Files';
