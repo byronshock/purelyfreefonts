@@ -26,7 +26,8 @@
 // when its list or its menu changes (Main redraws and announces, its summary first); open(),
 // which opens the Filters panel below 60rem so that what a list brings is seen; and blocked(),
 // which refuses a list while the load note shows, saying the note again. Once begin has run,
-// Mine.begun() tells a list that finished before the list went live, which onMine couldn't.
+// or the list index failed, Mine.begun() tells a list that settled before then, which onMine
+// couldn't.
 //
 // Ext's side (50-ext.js): Ext.filters() lists Milestone 3's filters for View.compute, and
 // Ext.start(host) runs once. host = { refresh(), onChange(fn), ready, getState(),
@@ -271,7 +272,8 @@ const Main = (() => {
     return rows.every(Boolean) && byId.size === index.n ? rows : null;
   };
 
-  // A list the hopper took before begin ran gets its summary now, or the load note.
+  // A list the hopper took before begin ran gets its summary now, or the load note; and so,
+  // where the list index failed, does one that settled before then (a refusal needs no index).
   const mineBegun = () => {
     const mine = minePart();
     if (mine && typeof mine.begun === 'function') mine.begun();
@@ -336,6 +338,7 @@ const Main = (() => {
       (error) => {
         showLoadNote(error);
         report(error);
+        mineBegun();
       },
     );
   };

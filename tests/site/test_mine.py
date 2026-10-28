@@ -1449,27 +1449,34 @@ def test_a_list_on_its_way_when_the_list_index_fails_gets_the_page_s_note(
     guarded.assert_clean(page)
 
 
-@pytest.mark.parametrize("outcome", ["refused", "unreadable"])
-def test_a_refusal_on_its_way_when_the_list_index_fails_gets_the_page_s_note(
-    guarded_context: Any, first: str, outcome: str
+@pytest.mark.parametrize("when", ["refused", "refused-on-its-way", "unreadable-on-its-way"])
+def test_a_refusal_when_the_list_index_fails_gets_the_page_s_note(
+    guarded_context: Any, first: str, when: str
 ) -> None:
-    """A list the parser refuses, or a file that can't be read, still on its way (held at its
-    read) when the list index fails: the page's note answers it, said and brought into view,
-    the page at its foot meanwhile, and no error is left in the filters, which never show."""
+    """A list the parser refuses needs no list index, so it can settle, or still be on its
+    way (the file held at its read, then refused or failing to be read), when the index
+    fails: the page's note answers it, said and brought into view, the page at its foot
+    meanwhile, and no error is left in the filters, which never show."""
     guarded, page, index = open_failing_index(
         guarded_context, now=False, viewport={"width": 1440, "height": 900}
     )
     wait_held(page, index.held)
-    page.evaluate(GATED_READ_JS)
-    given = PASTED_REFUSALS["command"] if outcome == "refused" else first
-    page.evaluate(hopper_page.DROP_JS, ["#list", given, None, 0, "fonts.txt"])
-    poll(page, READING_JS, "the file's read")
+    on_its_way = when.endswith("on-its-way")
+    given = PASTED_REFUSALS["command"] if when.startswith("refused") else first
+    if on_its_way:
+        page.evaluate(GATED_READ_JS)
+        page.evaluate(hopper_page.DROP_JS, ["#list", given, None, 0, "fonts.txt"])
+        poll(page, READING_JS, "the file's read")
+    else:
+        hopper_page.drop(page, given)
+        assert status(page) == REFUSALS["command"]
     page.evaluate("() => window.scrollTo(0, document.documentElement.scrollHeight)")
+    said = status(page)
     index.fail()
     page.wait_for_selector("#load-note")
-    assert not hopper_page.in_view(page, "#load-note")
-    said = status(page)
-    page.evaluate(OPENED_JS, "fail" if outcome == "unreadable" else "read")
+    if on_its_way:
+        assert not hopper_page.in_view(page, "#load-note")
+        page.evaluate(OPENED_JS, "fail" if when.startswith("unreadable") else "read")
     hopper_page.wait_taken(page, said)
     assert status(page) == LOAD_FAILED
     assert hopper_page.in_view(page, "#load-note")

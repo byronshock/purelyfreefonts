@@ -410,13 +410,13 @@ const Mine = (() => {
   };
 
   // Main's begin has run, the list index loaded meanwhile: the page's list went live, or its
-  // rows didn't match the index (Main's note shows). A list that settled before then showed
-  // in the filters while they were hidden, which keep their box, so the visitor may have
-  // scrolled away since; and its result was announced to no one (Main redraws nothing before
-  // the list is live). Now the result is said before the first count line and comes into view,
-  // and an error comes into view again (it was said as it showed). Where the rows didn't match,
-  // the list ends as one on its way does then: no result and no error, and Main's note said and
-  // brought into view (blocked).
+  // rows didn't match the index (Main's note shows); or the index failed (the note shows too).
+  // A list that settled before then showed in the filters while they were hidden, which keep
+  // their box, so the visitor may have scrolled away since; and its result was announced to
+  // no one (Main redraws nothing before the list is live). Now the result is said before the
+  // first count line and comes into view, and an error comes into view again (it was said as
+  // it showed). Where the note shows, the list ends as one on its way does then: no result and
+  // no error, and Main's note said and brought into view (blocked).
   const begun = () => {
     const error = node('mine-error');
     const erred = Boolean(error && !error.hidden);
