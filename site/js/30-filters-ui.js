@@ -9,6 +9,10 @@
 // The hide key has checkboxes (limited, attr) and one select (#f-os, the operating
 // systems), which offers one system at a time.
 //
+// Filters that aren't in the hash count too: init's `extras` names them, as they should be
+// named in describe ("Show: Only fonts you have", the hopper's, 55-mine.js), and each counts
+// once on the phone button. Their controls have no name, so reading a change skips them.
+//
 // Sorting (owner ruling of 2026-09-30, sort_header): a button over each column, Popularity
 // and Name. Clicking the one in use reverses its order; clicking the other sorts by it, in its
 // usual order (most popular first, name A to Z). The words for each order are the button's own
@@ -20,6 +24,7 @@ const FiltersUI = (() => {
   let views = [];
   let onChange = () => {};
   let onClear = () => {};
+  let extras = () => []; // the names of the filters that are on outside the hash
   let current = null; // the state last shown, for the sort buttons
 
   const byName = (name) => (root ? Core.$$(`[name="${name}"]`, root) : []);
@@ -58,10 +63,15 @@ const FiltersUI = (() => {
     }
   };
 
-  // How many filters are on, for the phone button: each chosen option or box counts once.
-  // The search, rank and sort order are outside #f-more, or not filters, so they don't count.
+  // How many filters are on, for the phone button: each chosen option or box counts once, and
+  // so does each of the extras (the hopper's Show menu, while it leaves fonts out). The search,
+  // rank and sort order are outside #f-more, or not filters, so they don't count.
   const activeCount = (state) =>
-    (state.cat ? 1 : 0) + (state.var ? 1 : 0) + (state.nerd ? 1 : 0) + state.hide.length;
+    (state.cat ? 1 : 0) +
+    (state.var ? 1 : 0) +
+    (state.nerd ? 1 : 0) +
+    state.hide.length +
+    extras().length;
 
   const setChecked = (input, checked) => {
     if (input.checked !== checked) input.checked = checked;
@@ -151,7 +161,7 @@ const FiltersUI = (() => {
 
   // The filters that are on, named as the controls name them, in the order they appear:
   // "Category: Serif", "Adjustable weight (variable font)", "Hide fonts that come with Windows",
-  // "Search: “inter”".
+  // the extras ("Show: Fonts you don't have"), "Search: “inter”".
   const describe = (state) => {
     if (!root) return [];
     const names = [];
@@ -168,6 +178,7 @@ const FiltersUI = (() => {
     const os = Core.$('#f-os', root);
     const system = os && [...os.options].find((o) => o.value && state.hide.includes(o.value));
     if (system) names.push(`${labelOf(os)} ${textOf(system)}`);
+    names.push(...extras());
     // A search of spaces, hyphens or underscores only matches every font (View): not named.
     const search = textOf(Core.$('label[for="f-q"]', root));
     if (Keys.searchKey(state.q)) names.push(`${search}: “${state.q.trim()}”`);
@@ -186,7 +197,8 @@ const FiltersUI = (() => {
 
   // Bind to #filters and #list-sort. `index` gives the views' measures lines;
   // `handlers.change(partial, { typing })` runs for every change a visitor makes,
-  // `handlers.clear()` for #f-clear.
+  // `handlers.clear()` for #f-clear, and `handlers.extras()`, if given, names the filters that
+  // are on outside the hash.
   const init = (index, handlers) => {
     root = document.getElementById('filters');
     if (!root) return false;
@@ -194,6 +206,7 @@ const FiltersUI = (() => {
     views = index.views;
     onChange = handlers.change;
     onClear = handlers.clear;
+    if (typeof handlers.extras === 'function') extras = handlers.extras;
     root.addEventListener('change', handle);
     root.addEventListener('input', handle);
     if (sortBar) {

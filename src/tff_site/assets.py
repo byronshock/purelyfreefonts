@@ -56,6 +56,7 @@ JS_PARTS: tuple[tuple[str, str], ...] = (
     ("40-details.js", "Details"),
     ("45-specimens.js", "Specimens"),
     ("50-ext.js", "Ext"),
+    ("55-mine.js", "Mine"),
     ("90-main.js", "Main"),
 )
 # The hopper's matcher module, /assets/matcher.<h>.js: the parser and the matcher, loaded only
