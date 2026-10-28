@@ -105,7 +105,9 @@ const Main = (() => {
     return Array.isArray(found) ? found : [];
   };
 
-  // Every filter View runs besides the hash's: the hopper's first, then Milestone 3's.
+  // Every filter View runs besides the hash's: the hopper's first, then Milestone 3's. View
+  // runs those with affectsNumbering first (step 3), so the hopper's, which keeps the
+  // numbering, runs ahead of every hook filter that keeps it too (step 6).
   const filters = () => {
     const mine = minePart();
     const own = mine ? mine.filter() : null;

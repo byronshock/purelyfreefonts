@@ -242,7 +242,7 @@ const Mine = (() => {
     if (host && typeof host.changed === 'function') host.changed({ lead });
   };
 
-  // ---- the filter View runs, ahead of Milestone 3's
+  // ---- the filter View runs, ahead of Milestone 3's that keep the numbering
 
   const MARK = Object.freeze({ badge: WORDS.mark });
   const filter = Object.freeze({
