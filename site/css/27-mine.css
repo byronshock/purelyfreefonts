@@ -1,0 +1,188 @@
+/* 27-mine: the hopper, "Fonts you have" (Milestone 3, slice 1; site/CONTRACT.md section 4). It
+   sits in the filter panel after "Hide fonts that come with": in the sidebar from 60rem, and
+   across the whole panel below that, behind the Filters button. Before a list: a line on what
+   it does, the drop zone with Choose file, the paste box with Check, and "How to make the list",
+   one closed <details> per system. Once a list loads, its summary, the Show menu and "Forget
+   this list" come first, in a box of their own. Colours come only from the tokens. */
+
+.filters-more .mine {
+  margin-bottom: var(--space-5);
+}
+
+.mine p {
+  margin: 0 0 var(--space-2);
+}
+
+.mine-lead,
+.mine-phone,
+.mine-busy,
+.mine-more,
+.mine-os p,
+.mine-copied {
+  font-size: var(--fs-small);
+}
+
+.mine-lead,
+.mine-busy {
+  color: var(--c-muted);
+}
+
+/* "Make the list on a computer": phones and tablets only (a coarse pointer, or a phone-sized
+   screen). Choosing a file and pasting work there too. */
+.mine-phone {
+  display: none;
+  font-weight: 600;
+}
+
+@media (pointer: coarse), not all and (min-width: 40rem) {
+  .mine-phone {
+    display: block;
+  }
+}
+
+.mine button {
+  min-width: var(--target-min);
+  min-height: var(--target-min);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-bg);
+  color: var(--c-fg);
+  font: inherit;
+  line-height: var(--lh-tight);
+  cursor: pointer;
+}
+
+.mine button:hover {
+  background: var(--c-surface);
+}
+
+/* The labels over the paste box and the Show menu, like the panel's other labels. */
+.mine > label,
+.mine-result > label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-weight: 600;
+}
+
+/* ---- once a list loads */
+
+.mine-result {
+  margin: 0 0 var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-bg);
+}
+
+#mine-show {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 2.5rem;
+  margin: 0 0 var(--space-3);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-bg);
+  color: var(--c-fg);
+  font: inherit;
+}
+
+/* An error, or a list the parser refused. The border is transparent, so forced colours, which
+   drop the fill, still draw the box. */
+.mine-error {
+  margin: 0 0 var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: var(--c-warn-bg);
+  color: var(--c-warn-fg);
+}
+
+.mine-error p {
+  margin: 0;
+}
+
+.mine-error button {
+  margin-top: var(--space-2);
+}
+
+/* ---- the list's way in */
+
+/* A file dropped anywhere on the page is taken; while one is dragged over it, the drop zone
+   says so with a solid accent border. */
+.mine-drop {
+  margin: 0 0 var(--space-3);
+  padding: var(--space-3);
+  border: 2px dashed var(--c-border);
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+.mine.is-dropping .mine-drop {
+  border-style: solid;
+  border-color: var(--c-accent);
+  background: var(--c-bg);
+}
+
+#mine-paste {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 4.5rem;
+  margin: 0 0 var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-bg);
+  color: var(--c-fg);
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  resize: vertical;
+}
+
+/* ---- "How to make the list" */
+
+.mine p.mine-how {
+  margin-top: var(--space-4);
+  font-weight: 600;
+}
+
+.mine-os > summary {
+  min-height: var(--target-min);
+  padding-block: var(--space-1);
+  cursor: pointer;
+}
+
+.mine-os[open] {
+  padding-bottom: var(--space-2);
+}
+
+/* The command wraps (10-base.css's pre), so the sidebar never scrolls sideways; a copy of it,
+   or of its selected text, has no line breaks. */
+.mine-cmd {
+  margin: 0 0 var(--space-2);
+  padding: var(--space-2);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-bg);
+  color: var(--c-fg);
+  font-size: var(--fs-small);
+}
+
+.mine-copy-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Below 60rem the panel is a grid of columns; the hopper takes the whole width, at a length
+   that reads well. */
+@media not all and (min-width: 60rem) {
+  .filters-more .mine {
+    grid-column: 1 / -1;
+    max-width: 40rem;
+  }
+}

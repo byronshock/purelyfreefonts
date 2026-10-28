@@ -73,6 +73,7 @@ CSS_PARTS: tuple[str, ...] = (
     "10-base.css",
     "20-list.css",
     "25-filters.css",
+    "27-mine.css",
     "30-details.css",
     "35-specimens.css",
     "40-pages.css",
