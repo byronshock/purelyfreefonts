@@ -1295,9 +1295,10 @@ def test_a_list_still_on_its_way_after_a_second_is_said_to_be_checked(
     guarded_context: Any, doc: dict[str, Any], table: owned.Table, first: str, second: str
 ) -> None:
     """The busy line, "Checking your list…", is said once a list has been on its way for a
-    second (the matcher held, on Playwright's clock), not before; its result follows, and no
-    stale "Checking" after it. A list that settles sooner (both files loaded by then) is
-    announced by its result alone."""
+    second (the matcher held, on Playwright's clock), not before, and only once however long
+    the list waits (Announce would add a no-break space to a second saying); its result
+    follows, and no stale "Checking" after it. A list that settles sooner (both files loaded
+    by then) is announced by its result alone."""
     guarded, page = open_list(guarded_context, clock=True)
     total = len(doc["fonts"])
     held = held_routes(page, "**/assets/matcher.*.js")
@@ -1309,6 +1310,9 @@ def test_a_list_still_on_its_way_after_a_second_is_said_to_be_checked(
     page.clock.run_for(2)
     busy_said = f"() => document.getElementById('status').textContent === {json.dumps(BUSY)}"
     poll(page, busy_said, "the busy line said")
+    for _ in range(5):
+        page.clock.run_for(1_000)
+        assert status(page) == BUSY, "the busy line was said again"
     held[0].continue_()
     hopper_page.wait_taken(page, BUSY)
     parsed, result = reference(first, table)
@@ -1325,16 +1329,32 @@ def test_a_list_still_on_its_way_after_a_second_is_said_to_be_checked(
 
 
 def test_a_list_that_settles_within_a_second_is_never_said_to_be_checked(
-    guarded_context: Any, first: str
+    guarded_context: Any, doc: dict[str, Any], first: str, second: str
 ) -> None:
     """On a fresh page, on Playwright's clock (paused, so the list settles first), the list's
-    two requests answered at once: once it settles, no "Checking your list…" follows."""
+    two requests answered at once: once it settles, no "Checking your list…" follows. Nor
+    once a list is refused at once, nor once Forget drops a file still on its way (held at
+    its read): the refusal, and "The list is forgotten.", stay the last things said."""
     guarded, page = open_list(guarded_context, clock=True)
+    before = shown(page)
     hopper_page.paste(page, first, by_script=True)
     settled = status(page)
     assert settled.startswith("Found ")
     page.clock.run_for(5_000)
     assert status(page) == settled
+    hopper_page.paste(page, PASTED_REFUSALS["command"], by_script=True)
+    assert_error(page, REFUSALS["command"], retry=False)
+    settled = status(page)
+    page.clock.run_for(5_000)
+    assert status(page) == settled, "said after the refusal"
+    page.evaluate(GATED_READ_JS)
+    page.evaluate(hopper_page.DROP_JS, ["#list", second, None, 0, "fonts.txt"])
+    poll(page, READING_JS, "the file's read")
+    changed(page, lambda: page.evaluate("() => document.getElementById('mine-forget').click()"))
+    forgotten = f"{FORGOTTEN} {count_line(len(before), len(doc['fonts']))}"
+    assert status(page) == forgotten
+    page.clock.run_for(5_000)
+    assert status(page) == forgotten, "said after Forget"
     guarded.assert_clean(page)
 
 
