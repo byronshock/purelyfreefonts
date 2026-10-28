@@ -626,6 +626,63 @@ def test_a_list_that_arrives_later_wins_over_one_still_on_its_way(
     guarded.assert_clean(page)
 
 
+# From now on, the promise of the match file's body, as the page reads it
+# (window.__tffMatchRead).
+MATCH_READ_JS = """() => {
+  const json = Response.prototype.json;
+  Response.prototype.json = function read(...args) {
+    const body = json.apply(this, args);
+    if (new URL(this.url).pathname.startsWith('/assets/match.')) window.__tffMatchRead = body;
+    return body;
+  };
+}"""
+# Wait until the match file's body has been read and all it set going in the page has run.
+MATCH_SETTLED_JS = """async () => {
+  await window.__tffMatchRead;
+  await new Promise((done) => setTimeout(done, 0));
+}"""
+
+
+def test_a_list_waiting_on_the_match_file_loses_to_a_later_one_still_at_its_read(
+    guarded_context: Any,
+    doc: dict[str, Any],
+    table: owned.Table,
+    first: str,
+    second: str,
+) -> None:
+    """A pasted list waits on the match file (held), the matcher in; a later list, a dropped
+    file, is still at its read when the match file comes. The earlier list, the match file
+    now in, is no longer the latest: its result is never shown or said, and the busy line
+    stays, the later list still on its way. Once the file is read, the later list's result
+    is what shows and is said."""
+    guarded, page = open_list(guarded_context)
+    before = shown(page)
+    held = held_routes(page, "**/assets/match.*.json")
+    page.evaluate(MATCH_READ_JS)
+    page.evaluate(hopper_page.PASTE_JS, first)
+    wait_held(page, held)
+    poll(page, "() => typeof globalThis.tffMatcher === 'object'", "the matcher's hand-off")
+    page.evaluate(GATED_READ_JS)
+    page.evaluate(hopper_page.DROP_JS, ["#list", second, None, 0, "fonts.txt"])
+    poll(page, READING_JS, "the later file's read")
+    held[0].continue_()
+    poll(page, "() => window.__tffMatchRead !== undefined", "the match file's body")
+    page.evaluate(MATCH_SETTLED_JS)
+    assert page.evaluate(HIDDEN_JS, "mine-result") is True, "the earlier list's result showed"
+    assert "Found" not in status(page), "the earlier list's result was said"
+    assert page.evaluate(HIDDEN_JS, "mine-busy") is False, "the later list is on its way"
+    assert page.evaluate(HIDDEN_JS, "mine-error") is True
+    assert shown(page) == before
+    page.evaluate(OPENED_JS)
+    parsed, result = reference(second, table)
+    said = summary(parsed, result, len(doc["fonts"]), "missing")
+    assert text_of(page, "#mine-summary") == said
+    assert status(page).startswith(said)
+    assert page.evaluate(HIDDEN_JS, "mine-busy") is True
+    assert_left_out(page, before, set(result["owned"]), "missing")
+    guarded.assert_clean(page)
+
+
 def test_forget_drops_a_list_still_on_its_way_and_the_error_showing(
     guarded_context: Any, doc: dict[str, Any], first: str, second: str
 ) -> None:
