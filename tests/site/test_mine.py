@@ -566,35 +566,50 @@ GATED_READ_JS = """() => {
   const slice = Blob.prototype.slice;
   Blob.prototype.slice = function gated(...args) {
     const part = slice.apply(this, args);
-    return { arrayBuffer: () => (window.__tffRead = gate.then(() => part.arrayBuffer())) };
+    const read = (how) =>
+      how === 'fail' ? Promise.reject(new DOMException('gone', 'NotFoundError')) : part.arrayBuffer();
+    return { arrayBuffer: () => (window.__tffRead = gate.then(read)) };
   };
 }"""
-# Open the gate, and wait until the read and all it set going in the page have run.
-OPENED_JS = """async () => {
-  window.__tffOpen();
-  await window.__tffRead;
+# Open the gate, the read then failing if ``how`` is "fail" (a file deleted after it was
+# dropped), and wait until the read and all it set going in the page have run.
+OPENED_JS = """async (how) => {
+  window.__tffOpen(how);
+  await window.__tffRead.catch(() => null);
   await new Promise((done) => setTimeout(done, 0));
 }"""
 READING_JS = "() => window.__tffRead !== undefined"
 
 
+@pytest.mark.parametrize("outcome", ["result", "unreadable", "refused"])
 def test_a_list_that_arrives_later_wins_over_one_still_on_its_way(
-    guarded_context: Any, doc: dict[str, Any], table: owned.Table, first: str, second: str
+    guarded_context: Any,
+    doc: dict[str, Any],
+    table: owned.Table,
+    first: str,
+    second: str,
+    outcome: str,
 ) -> None:
     """A file dropped first, held at its read, then a list pasted: the paste's result shows,
-    and the file's, read after it, never lands."""
+    and the file's outcome, after it, never lands, whether a result, a read that fails or a
+    list the parser refuses. No error shows or is said: the paste's result and its
+    announcement stay."""
     guarded, page = open_list(guarded_context)
     before = shown(page)
     page.evaluate(GATED_READ_JS)
-    page.evaluate(hopper_page.DROP_JS, ["#list", first, None, 0, "fonts.txt"])
+    given = PASTED_REFUSALS["command"] if outcome == "refused" else first
+    page.evaluate(hopper_page.DROP_JS, ["#list", given, None, 0, "fonts.txt"])
     poll(page, READING_JS, "the file's read")
     hopper_page.paste(page, second, by_script=True)
     parsed, result = reference(second, table)
     said = summary(parsed, result, len(doc["fonts"]), "missing")
     assert text_of(page, "#mine-summary") == said
-    page.evaluate(OPENED_JS)
+    announced = status(page)
+    assert announced.startswith(said)
+    page.evaluate(OPENED_JS, "fail" if outcome == "unreadable" else "read")
     assert text_of(page, "#mine-summary") == said
-    assert status(page).startswith(said)
+    assert status(page) == announced, "the earlier list's outcome was said"
+    assert page.is_hidden("#mine-error")
     assert_left_out(page, before, set(result["owned"]), "missing")
     guarded.assert_clean(page)
 
