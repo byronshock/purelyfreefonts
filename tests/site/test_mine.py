@@ -1365,3 +1365,55 @@ def test_nothing_from_a_list_reaches_the_address_history_title_or_storage(
     )
     assert names == [], "a named control could reach the address"
     guarded.assert_clean(page)
+
+
+# The last row with a preview: whether it has asked for it (its span's data-state).
+LAST_ASKED_JS = """() => {
+  const spans = document.querySelectorAll('#list > li.font span.spec[data-src]');
+  return 'state' in spans[spans.length - 1].dataset;
+}"""
+# Scroll that row into view, then wait two frames, so the observer has seen it.
+TO_THE_LAST_JS = """() => {
+  const spans = document.querySelectorAll('#list > li.font span.spec[data-src]');
+  spans[spans.length - 1].closest('li').scrollIntoView();
+  return new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done)));
+}"""
+
+
+def test_the_hook_s_resume_never_lifts_the_hopper_s_pause(guarded_context: Any, first: str) -> None:
+    """Section 10: the hook's pause and resume are one holder of the previews' pause, and the
+    hopper's another. Once a list loads, previews stay off until a reload (M3-D10 a), whatever
+    the hook does: its resume(), alone or after its own pause(), leaves them paused, and the
+    last row with a preview, scrolled into view, doesn't ask for it."""
+    guarded, page = open_list(guarded_context)
+    assert page.evaluate(LAST_ASKED_JS) is False
+    hopper_page.paste(page, first, by_script=True)
+    assert page.evaluate(PAUSED_JS) is True
+    page.evaluate("() => globalThis.tff.list.specimens.resume()")
+    assert page.evaluate(PAUSED_JS) is True, "the hook's resume lifted the hopper's pause"
+    page.evaluate("() => { tff.list.specimens.pause(); tff.list.specimens.resume(); }")
+    assert page.evaluate(PAUSED_JS) is True
+    page.evaluate(TO_THE_LAST_JS)
+    assert page.evaluate(LAST_ASKED_JS) is False, "a preview was asked for"
+    guarded.assert_clean(page)
+
+
+def test_a_failed_list_never_lifts_the_hook_s_pause(guarded_context: Any, first: str) -> None:
+    """The reverse: the hook pauses the previews while a list is on its way (the match file
+    held), and the list fails ("Try again"); the hopper lets go of its own pause only, so the
+    previews stay paused until the hook resumes them, and then go on (no list loaded)."""
+    guarded, page = open_list(guarded_context)
+    held = held_routes(page, "**/assets/match.*.json")
+    said = status(page)
+    page.evaluate(hopper_page.PASTE_JS, first)
+    wait_held(page, held)
+    page.evaluate("() => globalThis.tff.list.specimens.pause()")
+    held[0].fulfill(status=500, body="busy")
+    hopper_page.wait_taken(page, said)
+    assert_error(page, RETRY, retry=True)
+    assert page.evaluate(PAUSED_JS) is True, "the failed list lifted the hook's pause"
+    page.evaluate("() => globalThis.tff.list.specimens.resume()")
+    assert page.evaluate(PAUSED_JS) is False
+    page.evaluate(TO_THE_LAST_JS)
+    page.wait_for_function(LAST_ASKED_JS)
+    guarded.assert_clean(page)

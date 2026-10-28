@@ -16,7 +16,9 @@
 // a list arrives, before that scroll (a list that fails while none has loaded lets them go on
 // again), and once a list loads, previews that haven't loaded stay off until a reload
 // (Specimens.pause, M3-D10 a): a request for one would tell the server which rows a list left
-// on the screen. While a file is dragged over the page, html[data-dropping] rings the window.
+// on the screen. Mine holds that pause as its own holder, which only it can lift, so the hook's
+// resume() never lifts it, nor its release the hook's pause. While a file is dragged over the
+// page, html[data-dropping] rings the window.
 //
 // Mine gives View one built-in filter, which Main puts ahead of the public hook's (View runs
 // those that renumber first, section 5), so "Showing N of M" counts the fonts a list has as
@@ -97,7 +99,6 @@ const Mine = (() => {
   let table = null; // the match file read by the matcher (it holds only the file)
   let tableDoc = null;
   let held = false; // a list has loaded: previews stay off until a reload (M3-D10 a)
-  let holding = false; // Mine paused the previews for a list on its way, which may yet fail
   let busyTimer = 0; // says "Checking your list…" if the list is still on its way (setBusy)
 
   const node = (id) => document.getElementById(id);
@@ -173,17 +174,15 @@ const Mine = (() => {
 
   // Previews pause as a list arrives, before bring scrolls the page: a row that came near the
   // screen meanwhile would ask for its preview. A list that fails, while none has loaded, lets
-  // them go on again; a pause that wasn't Mine's is left as it is.
+  // them go on again. Mine's pause is its own holder of Specimens' (HOLDER, which nothing else
+  // has), so it lifts no pause of the hook's, and the hook lifts none of Mine's.
+  const HOLDER = Symbol('Mine');
   const hold = () => {
-    if (Specimens.paused) return;
-    Specimens.pause();
-    holding = true;
+    Specimens.pause(HOLDER);
   };
 
   const release = () => {
-    if (!holding || held) return;
-    holding = false;
-    Specimens.resume();
+    if (!held) Specimens.resume(HOLDER);
   };
 
   // Hide `target`, first moving the focus out of it to a control that stays: the Show menu
@@ -294,10 +293,9 @@ const Mine = (() => {
       total,
     });
     // Before the list redraws, so no row the list leaves on the screen asks for its preview
-    // (hold paused them as the list arrived, unless they were paused already).
+    // (hold paused them as the list arrived); from now on Mine never lets go (release).
     held = true;
-    holding = false;
-    Specimens.pause();
+    Specimens.pause(HOLDER);
     if (source.text !== undefined) {
       const paste = node('mine-paste');
       if (paste) paste.value = '';
