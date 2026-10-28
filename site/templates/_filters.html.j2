@@ -22,6 +22,9 @@
   dropped anywhere on the page, chosen or pasted, takes the fonts they have out of every view
   (55-mine.js). None of its controls has a name, so none reaches the address, and its paste
   box asks the browser not to spell-check, autocomplete, correct or capitalise what it holds.
+  The paste box and the Show menu have autocomplete="off", so a reload or Back never restores
+  what they held (Firefox restores a form control's value on reload, and both engines on
+  Back, where the page isn't kept whole).
   "How to make the list" gives each system's command (data.MINE_COMMANDS), with "(not yet
   tested)" where nobody has run it yet (inventory_linux_tested_only). Its words follow the
   ruling site_status_line (2026-09-29): fonts are "left out of the list", never hidden.
@@ -77,7 +80,7 @@
 <p id="mine-near" class="mine-more" hidden></p>
 <p id="mine-warning" class="mine-more" hidden></p>
 <label for="mine-show">Show</label>
-<select id="mine-show">
+<select id="mine-show" autocomplete="off">
 <option value="missing" selected>Fonts you don't have</option>
 <option value="all">All fonts, yours marked</option>
 <option value="only">Only fonts you have</option>

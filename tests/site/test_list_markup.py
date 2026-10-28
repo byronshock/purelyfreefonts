@@ -357,6 +357,8 @@ def test_the_hopper_s_markup(dom):
     result = mine.find("div", id="mine-result")
     assert "hidden" in result.attrs
     assert squash(dom.find("label", for_="mine-show").text) == "Show"
+    # Not restored by a reload or Back (test_mine.py): nothing of a list is kept.
+    assert mine.find("select", id="mine-show").attrs.get("autocomplete") == "off"
     options = mine.find("select", id="mine-show").find_all("option")
     assert [(o.attrs["value"], squash(o.text), "selected" in o.attrs) for o in options] == [
         ("missing", "Fonts you don't have", True),
