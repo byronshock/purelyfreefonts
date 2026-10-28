@@ -9,6 +9,32 @@
 - The default output carries no file paths, because paths contain the username. If paths appear, the parser drops them at once.
 - Whatever M3-D1 picks, the parser accepts every alternative below.
 
+## The commands on the site
+
+The hopper ([Milestone 3](milestone-3.md#slice-1-the-hopper), slice 1) shows one command per system under "How to make the list", from `tff_site.data.MINE_COMMANDS`, each with a Copy button. Each writes `fonts.txt` in the home folder, which the visitor then chooses or drops on the list page: not the Desktop, which iCloud (macOS) and OneDrive (Windows) can sync off the machine. Only the Linux command has run on a real machine; the others show "(not yet tested)" until step 1 runs them (`inventory_linux_tested_only`, 2026-10-21).
+
+| System | Command | Tested |
+|---|---|---|
+| Linux | `fc-list : family \| sort > ~/fonts.txt` | yes (the owner's CachyOS) |
+| macOS | `system_profiler SPFontsDataType \| grep 'Family:' \| sort -u > ~/fonts.txt` (about 13 s) | not yet |
+| Windows (PowerShell) | `Add-Type -AssemblyName System.Drawing; (New-Object System.Drawing.Text.InstalledFontCollection).Families.Name \| Set-Content -Encoding UTF8 "$HOME\fonts.txt"` | not yet |
+
+To paste the list instead (`inventory_file_or_paste`), the same commands can copy it to the clipboard:
+
+```sh
+fc-list : family | sort | wl-copy                                     # Linux, Wayland
+fc-list : family | sort | xclip -selection clipboard                  # Linux, X11
+system_profiler SPFontsDataType | grep 'Family:' | sort -u | pbcopy   # macOS
+```
+
+```powershell
+Add-Type -AssemblyName System.Drawing; (New-Object System.Drawing.Text.InstalledFontCollection).Families.Name | Set-Clipboard
+```
+
+- Windows PowerShell 5.1's `-Encoding UTF8` writes a byte-order mark and PowerShell 7's doesn't; the parser takes either, and UTF-16 too.
+- The Windows command gives GDI+'s family names, one per line, which the parser reads as a plain list, so the page's summary names no system for it. GDI+'s gaps (below) are for step 1 to check.
+- A terminal's scrollback can cut a long pasted list at the top; the page warns when a sorted paste seems to start late, and the file has no such limit.
+
 ## Linux (fontconfig)
 
 Measured with fontconfig 2.18.3 on the owner's CachyOS machine (8,672 faces).

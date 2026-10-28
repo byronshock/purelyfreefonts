@@ -409,6 +409,11 @@ def test_the_hopper_s_markup(dom):
         "Add-Type -AssemblyName System.Drawing; (New-Object System.Drawing.Text."
         'InstalledFontCollection).Families.Name | Set-Content -Encoding UTF8 "$HOME\\fonts.txt"',
     ]
+    # docs/owned-fonts.md gives the same commands, in its table (a "|" escaped there).
+    docs = (ROOT / "docs" / "owned-fonts.md").read_text(encoding="utf-8")
+    section = docs.split("## The commands on the site", 1)[1].split("\n## ", 1)[0]
+    for command in data.MINE_COMMANDS:
+        assert f"`{command['command'].replace('|', '\\|')}`" in section, command["os"]
     # site_status_line (2026-09-29): fonts are "left out of the list", never hidden.
     assert "hidden" not in squash(mine.text).lower()
     assert "left out of the list" in squash(mine.text)
