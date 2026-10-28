@@ -11,8 +11,9 @@ What a visitor does and sees (site/CONTRACT.md sections 4, 5 and 11; the owner's
   PowerShell 5.1 writes one, and without one) or **dropped** anywhere on the page, which never
   opens it, leaves out of the list exactly the fonts that Python's reference
   (``tff_catalog.owned``) finds, on the match file the build wrote; the summary (naming the
-  system that wrote the list), the near-matches it counts, the warning for a list cut off at
-  the top, the count line and the announcement say so, and a second list replaces the first.
+  system that wrote the list), the near-matches it counts, the warning for a pasted list cut
+  off at the top (none for a file), the count line and the announcement say so, and a second
+  list replaces the first.
 - **In sight**: what a dropped list brings ("Checking your list…", the summary, the Show menu
   and Forget, or its error) comes into view, the Filters panel opening if it is closed, and a
   ring round the window shows while a file is dragged over the page; "Checking your list…" is
@@ -663,6 +664,41 @@ def test_near_matches_are_counted_and_a_list_cut_off_at_the_top_is_warned_of(
     assert page.is_visible("#mine-warning")
     assert text_of(page, "#mine-warning") == CUT_OFF
     assert page.is_hidden("#mine-near") == (near_line(result) == "")
+    said = summary(parsed, result, total, "missing")
+    assert status(page).startswith(" ".join(filter(None, [said, near_line(result), CUT_OFF])))
+    guarded.assert_clean(page)
+
+
+def test_a_file_cut_off_gets_no_warning_and_the_same_list_pasted_does(
+    guarded_context: Any, doc: dict[str, Any], table: owned.Table, families: list[str]
+) -> None:
+    """The cut-off warning's words are for a paste ("copy all of it, or use the file"), so a
+    file the parser finds cut off (a system_profiler -json document cut short, its only
+    cut_off for a file) gets no such line, in the summary or the announcement; the same text
+    pasted still does."""
+    guarded, page = open_list(guarded_context)
+    total = len(doc["fonts"])
+    names = families[::4]
+    entries = [
+        {"_name": f"Font{i}.ttf", "typefaces": [{"_name": f"Font{i}-Regular", "family": name}]}
+        for i, name in enumerate(names)
+    ]
+    whole = json.dumps({"SPFontsDataType": entries}, indent=2)
+    cut = whole[: whole.rindex('"family"')]
+    parsed, result = reference(cut.encode(), table)
+    assert parsed["format"] == "macos-json"
+    assert "cut_off" in parsed["warnings"]
+    assert len(result["owned"]) >= 2
+    hopper_page.drop(page, cut)
+    assert text_of(page, "#mine-summary") == summary(parsed, result, total, "missing")
+    assert page.is_hidden("#mine-warning")
+    assert page.text_content("#mine-warning") == ""
+    assert CUT_OFF not in status(page)
+    parsed, result = reference(cut, table)
+    assert "cut_off" in parsed["warnings"]
+    hopper_page.paste(page, cut)
+    assert page.is_visible("#mine-warning")
+    assert text_of(page, "#mine-warning") == CUT_OFF
     said = summary(parsed, result, total, "missing")
     assert status(page).startswith(" ".join(filter(None, [said, near_line(result), CUT_OFF])))
     guarded.assert_clean(page)

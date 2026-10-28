@@ -298,7 +298,10 @@ const Mine = (() => {
       system: SYSTEMS[parsed.format] || '',
       have: owned.size,
       near: Object.keys(result.near).length,
-      cutOff: parsed.warnings.includes('cut_off'),
+      // The warning's words are for a paste ("copy all of it, or use the file"): a file the
+      // parser finds cut off (a JSON document cut short) gets no line until its own words are
+      // ruled on.
+      cutOff: source.text !== undefined && parsed.warnings.includes('cut_off'),
       total,
     });
     // Before the list redraws, so no row the list leaves on the screen asks for its preview
