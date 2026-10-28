@@ -43,9 +43,10 @@
 // that settled before the page's list went live, which Main couldn't redraw or announce and
 // whose result or error showed in filters not yet shown, is told once it does (begun): its
 // summary before the first count line and the result in view, or its error in view again; or,
-// where the rows don't match the index, Main's note, and no result or error is left. No result
-// is shown that couldn't be computed, and never an empty one in its place: a failed list
-// leaves the last one as it was. A list the parser refuses gets its reason in plain words.
+// where the rows don't match the index or it failed, Main's note, and no result or error is
+// left. No result is shown that couldn't be computed, and never an empty one in its place: a
+// failed list leaves the last one as it was. A list the parser refuses gets its reason in
+// plain words.
 const Mine = (() => {
   // Page wording (Milestone 3, slice 1; the owner reviews it with the screens). The summary
   // follows the plan's example, and the owner's ruling of 2026-09-29, site_status_line: fonts
