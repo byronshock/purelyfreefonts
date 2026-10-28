@@ -1391,11 +1391,16 @@ class FailingIndex:
             route.abort()
 
 
-def open_failing_index(make: Callable[..., Any], *, now: bool = True, **kwargs: Any) -> Any:
+def open_failing_index(
+    make: Callable[..., Any], *, now: bool = True, clock: bool = False, **kwargs: Any
+) -> Any:
     """A guarded page on the list whose list index fails (``FailingIndex``), its script
-    started."""
+    started (``clock``: on Playwright's clock, paused before the page loads)."""
     guarded = make(**kwargs)
     page = guarded.new_page()
+    if clock:
+        page.clock.install(time=CLOCK_START)
+        page.clock.pause_at(CLOCK_PAUSED)
     index = FailingIndex(now=now)
     page.route("**/assets/list.*.json", index)
     page.goto("/")
@@ -1458,6 +1463,30 @@ def test_a_list_on_its_way_when_the_list_index_fails_gets_the_page_s_note(
     assert page.evaluate(LAST_ASKED_JS) is False
     page.evaluate(TO_THE_LAST_JS)
     page.wait_for_function(LAST_ASKED_JS, timeout=10_000)
+    assert guarded.errors, "the index's failure reaches the console"
+    guarded.errors.clear()
+    guarded.assert_clean(page)
+
+
+def test_a_list_the_page_s_note_answers_is_never_said_to_be_checked_after_it(
+    guarded_context: Any, first: str
+) -> None:
+    """On Playwright's clock (paused): a list dropped while the list index is held, which
+    fails before the list has been on its way a second. The page's note answers the list, and
+    five seconds on it is still the last thing said: the note's branch (noted) clears the busy
+    line's timer, not only the line, so no stale "Checking your list…" follows."""
+    guarded, page, index = open_failing_index(guarded_context, now=False, clock=True)
+    wait_held(page, index.held)
+    said = status(page)
+    page.evaluate(hopper_page.DROP_JS, ["#list", first, None, 0, "fonts.txt"])
+    poll(page, "() => !document.getElementById('mine-busy').hidden", "the hopper to start")
+    poll(page, "() => typeof globalThis.tffMatcher === 'object'", "the matcher's hand-off")
+    index.fail()
+    hopper_page.wait_taken(page, said)
+    assert status(page) == LOAD_FAILED
+    page.clock.run_for(5_000)
+    assert status(page) == LOAD_FAILED, "the busy line was said after the note"
+    assert page.evaluate(HIDDEN_JS, "mine-busy") is True
     assert guarded.errors, "the index's failure reaches the console"
     guarded.errors.clear()
     guarded.assert_clean(page)
