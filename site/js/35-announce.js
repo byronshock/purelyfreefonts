@@ -7,13 +7,22 @@
 // #status is inside #results, which html[data-list-pending] takes out of sight, and so out of
 // the accessibility tree, while a link's view waits for its first render (90-main.js): a
 // message written then would never be heard. So it is kept, the last one only, and written
-// once Main has shown the results (flush).
+// once Main has shown the results (flush), though not at once: a live region that comes into
+// the tree with its text already in it is often not announced, so #status is in the tree,
+// still empty, for a frame and HEARD_MS first, and what is said meanwhile is kept too.
 const Announce = (() => {
   const TYPING_MS = 500;
+  // Main removes the attribute in an animation frame's callback, before that frame's style and
+  // layout, after which #status is in the accessibility tree; the next frame comes after them.
+  // The browser then hands the tree to the screen reader from another process, in its own
+  // time, so the reader learns of the region a moment later: HEARD_MS gives it that moment, and
+  // is too short to notice after the list shows.
+  const HEARD_MS = 100;
   const NBSP = '\u00A0';
   let queued = null;
   let scheduled = false;
   let kept = null; // the last message said while #status couldn't be heard
+  let waiting = false; // the results have shown, and #status has only just come into the tree
 
   const region = () => document.getElementById('status');
 
@@ -22,7 +31,7 @@ const Announce = (() => {
   const write = (message) => {
     const node = region();
     if (!node) return;
-    if (document.documentElement.hasAttribute('data-list-pending')) {
+    if (waiting || document.documentElement.hasAttribute('data-list-pending')) {
       kept = message;
       return;
     }
@@ -60,11 +69,19 @@ const Announce = (() => {
     kept = null;
   };
 
-  // Main has shown the results: write the message kept meanwhile, if any.
+  // Main has shown the results: once #status has been in the accessibility tree for a frame
+  // and HEARD_MS, write the message kept meanwhile, if any (the last said, until then).
   const flush = () => {
-    const message = kept;
-    kept = null;
-    if (message !== null) write(message);
+    if (waiting) return;
+    waiting = true;
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        waiting = false;
+        const message = kept;
+        kept = null;
+        if (message !== null) write(message);
+      }, HEARD_MS);
+    });
   };
 
   return Object.freeze({ say, typing, cancel, flush });

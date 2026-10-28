@@ -1686,7 +1686,31 @@ def settled(part: str) -> str:
     )
 
 
-@pytest.mark.parametrize("case", ["settled", "checked"])
+# Records each task in which html[data-list-pending] went or #status's text changed (a
+# MutationObserver's callback comes once per microtask checkpoint, so two in one task come
+# together): the page's clock, whether the attribute went then, whether #status was written,
+# its text, and whether a screen reader could hear it (shown, so in the accessibility tree).
+TASKS_JS = """() => {
+  window.__tffTasks = [];
+  const root = document.documentElement;
+  const status = document.getElementById('status');
+  const observer = new MutationObserver((records) => {
+    window.__tffTasks.push({
+      at: performance.now(),
+      shown: records.some((r) => r.target === root) && !root.hasAttribute('data-list-pending'),
+      written: records.some((r) => r.target !== root),
+      text: status.textContent,
+      heard: status.getClientRects().length > 0 && getComputedStyle(status).visibility === 'visible',
+    });
+  });
+  observer.observe(root, { attributes: true, attributeFilter: ['data-list-pending'] });
+  observer.observe(status, { childList: true, characterData: true, subtree: true });
+}"""
+SORTED_BY_NAME = "Sorted by name, A to Z"
+PENDING_JS = "() => document.documentElement.hasAttribute('data-list-pending')"
+
+
+@pytest.mark.parametrize("case", ["settled", "checked", "sorted"])
 def test_a_list_told_as_a_link_s_view_goes_live_is_said_once_the_results_show(
     guarded_context: Any, doc: dict[str, Any], table: owned.Table, first: str, case: str
 ) -> None:
@@ -1694,11 +1718,14 @@ def test_a_list_told_as_a_link_s_view_goes_live_is_said_once_the_results_show(
     sight and out of the accessibility tree until its first render shows
     (html[data-list-pending]). A list that settled before that render (begin held) is told as
     the list goes live: its summary is written to #status once, after the results show, where
-    a screen reader hears it, not while they are hidden. Announce keeps the last message only:
-    with the matcher held past a second ("checked"), "Checking your list…" is said, and kept,
-    before the list settles, and the one write is still the summary."""
+    a screen reader hears it, not while they are hidden; and not in the task that shows them,
+    but a frame and 100 ms on (the page's clock), #status in the tree, empty, meanwhile, so a
+    screen reader has it before its text changes. Announce keeps the last message only: with
+    the matcher held past a second ("checked"), "Checking your list…" is said, and kept,
+    before the list settles, and the one write is still the summary; and a sort by name in
+    that moment after the results show ("sorted") is kept too, and is then the one write."""
     guarded, page = open_link_late(guarded_context)
-    page.evaluate(WRITES_JS)
+    page.evaluate(TASKS_JS)
     held = held_routes(page, "**/assets/matcher.*.js") if case == "checked" else []
     page.evaluate(hopper_page.DROP_JS, ["#list", first, None, 0, "fonts.txt"])
     if case == "checked":
@@ -1707,18 +1734,36 @@ def test_a_list_told_as_a_link_s_view_goes_live_is_said_once_the_results_show(
         held[0].continue_()
     poll(page, settled("mine-result"), "the list's result")
     assert page.evaluate("() => document.documentElement.getAttribute('data-list-pending')") == ""
-    assert page.evaluate("() => window.__tffWrites") == [], "nothing written while out of sight"
+    assert page.evaluate("() => window.__tffTasks") == [], "nothing written while out of sight"
     poll(page, "() => window.__tffIdle.length > 0", "begin to wait")
     page.evaluate(IDLE_RUN_JS)
-    page.clock.run_for(300)  # the frames before the results show, and the write after
+    # Two frames (16 ms apart on the clock) and the results show; the write is due a frame and
+    # 100 ms after.
+    page.clock.run_for(40)
+    assert page.evaluate(PENDING_JS) is False, "the results haven't shown"
+    if case == "sorted":
+        page.evaluate("() => document.getElementById('sort-name').click()")
+    page.clock.run_for(300)
     poll(page, "() => window.__tffReady >= 1", "the list to go live")
-    parsed, result = reference(first, table)
-    said = summary(parsed, result, len(doc["fonts"]), "missing")
-    writes = page.evaluate("() => window.__tffWrites")
-    assert len(writes) == 1, writes
-    assert writes[0][0].startswith(f"{said} "), writes
-    assert writes[0][1] is True, "written while #status couldn't be heard"
-    assert status(page) == writes[0][0]
+    tasks = page.evaluate("() => window.__tffTasks")
+    shown = [task for task in tasks if task["shown"]]
+    written = [task for task in tasks if task["written"]]
+    assert len(shown) == 1, tasks
+    assert len(written) == 1, f"one write, nothing said in between: {tasks}"
+    assert not shown[0]["written"], "written in the task that showed the results"
+    assert shown[0]["heard"] is True, "#status out of the tree once the results show"
+    assert shown[0]["text"] == ""
+    assert tasks.index(written[0]) > tasks.index(shown[0])
+    assert written[0]["at"] - shown[0]["at"] >= 100, tasks
+    assert written[0]["heard"] is True, "written while #status couldn't be heard"
+    if case == "sorted":
+        assert written[0]["text"].startswith("Showing "), tasks
+        assert written[0]["text"].endswith(f". {SORTED_BY_NAME}."), tasks
+    else:
+        parsed, result = reference(first, table)
+        said = summary(parsed, result, len(doc["fonts"]), "missing")
+        assert written[0]["text"].startswith(f"{said} "), tasks
+    assert status(page) == written[0]["text"]
     guarded.assert_clean(page)
 
 
