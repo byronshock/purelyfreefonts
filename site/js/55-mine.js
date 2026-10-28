@@ -259,10 +259,11 @@ const Mine = (() => {
   const builtIn = () => (owned ? filter : null);
 
   // The hopper as a filter that is on, named as its controls name it ("Show: Only fonts you
-  // have"), for FiltersUI's describe and activeCount; none while it leaves every font in.
+  // have"), for FiltersUI's describe and activeCount; none while it leaves every font in (all
+  // fonts shown, or a list that has none of them and the fonts you don't have shown).
   const extras = () => {
     const show = node('mine-show');
-    if (!owned || mode === 'all' || !show) return [];
+    if (!owned || !show || mode === 'all' || (mode === 'missing' && !owned.size)) return [];
     const label = textOf(Core.$('label[for="mine-show"]'));
     return [`${label}: ${textOf(show.selectedOptions[0])}`];
   };
@@ -419,6 +420,8 @@ const Mine = (() => {
     setBusy(false);
     showError('');
     hide(node('mine-result'));
+    // Its words go too: nothing of the list stays in the page, hidden or not.
+    for (const id of ['mine-summary', 'mine-near', 'mine-warning']) Core.text(node(id), '');
     changed(WORDS.forgotten);
   };
 
