@@ -38,12 +38,13 @@
 // matcher refuses) says the check can't run here. While the page's own list index has failed
 // (Main's note above the count says so, and the filters never showed), no list is taken: the
 // note is said again and brought into view (host.blocked), and a list on its way when the
-// index fails (its 'index'), or when the page's rows turn out not to match it, ends the same
-// way. A list that finished before the page's list went live, which Main couldn't redraw or
-// announce and whose result was brought into a panel not yet shown, is told once it does
-// (begun): its summary before the first count line, the result in view, or Main's note. No
-// result is shown that couldn't be computed, and never an empty one in its place: a failed
-// list leaves the last one as it was. A list the parser refuses gets its reason in plain words.
+// index fails, or when the page's rows turn out not to match it, ends the same way, whether it
+// would have loaded or failed (Data's 'index', a refusal or a file that can't be read). A list
+// that finished before the page's list went live, which Main couldn't redraw or announce and
+// whose result was brought into a panel not yet shown, is told once it does (begun): its
+// summary before the first count line, the result in view, or Main's note. No result is shown
+// that couldn't be computed, and never an empty one in its place: a failed list leaves the
+// last one as it was. A list the parser refuses gets its reason in plain words.
 const Mine = (() => {
   // Page wording (Milestone 3, slice 1; the owner reviews it with the screens). The summary
   // follows the plan's example, and the owner's ruling of 2026-09-29, site_status_line: fonts
@@ -331,14 +332,6 @@ const Mine = (() => {
     // Both requests go now, together; neither failure is left unhandled while the other waits.
     const tool = settle(Data.loadMatcher());
     const file = settle(Data.loadMatch());
-    // The list ends with no result, `text` its error, if it is still the latest.
-    const stop = (text, retry = false) => {
-      if (!current()) return;
-      pending = retry ? source : null;
-      setBusy(false);
-      release();
-      showError(text, retry);
-    };
     // The list index failed while the list was on its way, or the page's rows don't match it:
     // Main's note answers, and the list ends with nothing. True then.
     const noted = () => {
@@ -347,8 +340,16 @@ const Mine = (() => {
       release();
       return true;
     };
-    const fail = (error, fileError = null) => {
+    // The list ends with no result, `text` its error, if it is still the latest; or, where
+    // Main's note shows by then, with the note (noted), not an error in the hidden filters.
+    const stop = (text, retry = false) => {
       if (!current() || noted()) return;
+      pending = retry ? source : null;
+      setBusy(false);
+      release();
+      showError(text, retry);
+    };
+    const fail = (error, fileError = null) => {
       const { text, retry } = failure(error, fileError);
       stop(text, retry);
     };

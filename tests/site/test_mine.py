@@ -1449,6 +1449,37 @@ def test_a_list_on_its_way_when_the_list_index_fails_gets_the_page_s_note(
     guarded.assert_clean(page)
 
 
+@pytest.mark.parametrize("outcome", ["refused", "unreadable"])
+def test_a_refusal_on_its_way_when_the_list_index_fails_gets_the_page_s_note(
+    guarded_context: Any, first: str, outcome: str
+) -> None:
+    """A list the parser refuses, or a file that can't be read, still on its way (held at its
+    read) when the list index fails: the page's note answers it, said and brought into view,
+    the page at its foot meanwhile, and no error is left in the filters, which never show."""
+    guarded, page, index = open_failing_index(
+        guarded_context, now=False, viewport={"width": 1440, "height": 900}
+    )
+    wait_held(page, index.held)
+    page.evaluate(GATED_READ_JS)
+    given = PASTED_REFUSALS["command"] if outcome == "refused" else first
+    page.evaluate(hopper_page.DROP_JS, ["#list", given, None, 0, "fonts.txt"])
+    poll(page, READING_JS, "the file's read")
+    page.evaluate("() => window.scrollTo(0, document.documentElement.scrollHeight)")
+    index.fail()
+    page.wait_for_selector("#load-note")
+    assert not hopper_page.in_view(page, "#load-note")
+    said = status(page)
+    page.evaluate(OPENED_JS, "fail" if outcome == "unreadable" else "read")
+    hopper_page.wait_taken(page, said)
+    assert status(page) == LOAD_FAILED
+    assert hopper_page.in_view(page, "#load-note")
+    for part in ("mine-error", "mine-result", "mine-busy"):
+        assert page.evaluate(HIDDEN_JS, part) is True, part
+    assert guarded.errors, "the index's failure reaches the console"
+    guarded.errors.clear()
+    guarded.assert_clean(page)
+
+
 # Run before the page's own script: Core.idle's requestIdleCallback holds each callback until
 # the test runs it (IDLE_RUN_JS), so Main's begin, which makes the list live, comes late.
 IDLE_HELD_JS = """(() => {
@@ -1511,14 +1542,17 @@ def test_a_list_that_settles_before_the_list_is_live_is_told_once_it_is(
     guarded.assert_clean(page)
 
 
-@pytest.mark.parametrize("when", ["settled", "on-its-way"])
+@pytest.mark.parametrize(
+    "when", ["settled", "on-its-way", "refused-on-its-way", "unreadable-on-its-way"]
+)
 def test_a_list_taken_when_the_rows_do_not_match_the_index_gets_the_page_s_note(
     guarded_context: Any, site_dir: Path, first: str, when: str
 ) -> None:
     """The list index loads but doesn't match the page's rows, so begin shows the load note
-    and the list never goes live: a list that settled before then, or that was still on its
-    way (the match file held), gets the note, said and brought into view, as while the index
-    has failed; and no result."""
+    and the list never goes live: a list that settled before then, or one still on its way
+    (the match file held, or the file held at its read, then refused by the parser or failing
+    to be read), gets the note, said and brought into view, the page at its foot meanwhile,
+    and no error."""
     html = (site_dir / "index.html").read_text(encoding="utf-8")
     url = re.search(r'data-index="/assets/(list\.[0-9a-f]+\.json)"', html)
     assert url
@@ -1530,11 +1564,18 @@ def test_a_list_taken_when_the_rows_do_not_match_the_index_gets_the_page_s_note(
         lambda route: route.fulfill(status=200, content_type="application/json", body=body),
         viewport={"width": 1440, "height": 900},
     )
-    on_its_way = when == "on-its-way"
-    match = held_routes(page, "**/assets/match.*.json") if on_its_way else []
-    page.evaluate(hopper_page.DROP_JS, ["#list", first, None, 0, "fonts.txt"])
-    if on_its_way:
+    on_its_way = when.endswith("on-its-way")
+    held_match = when == "on-its-way"
+    held_read = on_its_way and not held_match
+    match = held_routes(page, "**/assets/match.*.json") if held_match else []
+    if held_read:
+        page.evaluate(GATED_READ_JS)
+    given = PASTED_REFUSALS["command"] if when.startswith("refused") else first
+    page.evaluate(hopper_page.DROP_JS, ["#list", given, None, 0, "fonts.txt"])
+    if held_match:
         wait_held(page, match)
+    elif held_read:
+        poll(page, READING_JS, "the file's read")
     else:
         poll(page, "() => !document.getElementById('mine-result').hidden", "the list's result")
     page.evaluate("() => window.scrollTo(0, document.documentElement.scrollHeight)")
@@ -1543,7 +1584,10 @@ def test_a_list_taken_when_the_rows_do_not_match_the_index_gets_the_page_s_note(
     page.wait_for_selector("#load-note")
     if on_its_way:
         assert not hopper_page.in_view(page, "#load-note")
+    if held_match:
         match[0].continue_()
+    elif held_read:
+        page.evaluate(OPENED_JS, "fail" if when.startswith("unreadable") else "read")
     hopper_page.wait_taken(page, said)
     assert status(page) == LOAD_FAILED
     assert hopper_page.in_view(page, "#load-note")
