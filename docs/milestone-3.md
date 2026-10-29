@@ -51,7 +51,7 @@ Each code pull request is built in its own worktree, reviewed adversarially befo
   - [x] `[[name]]` entries in the reviewed list. The site build adds them to the match file, and refuses an entry whose key `names.json` already has.
   - [x] Meslo LG, ProFont, iA Writer Mono, Duo and Quattro, Cozette and ET Book, from their own files. Latin Modern's 33 LM names (`hopper_latin_modern_lm`). The sweep's Nerd names for 8 more families (`hopper_nerd_sweep`). *(75 entries in all, each read from its evidence file.)*
   - [x] Rec Mono only near Recursive, with its RecMono and Recursive Code aliases recoded (`hopper_rec_mono_near`).
-  - [x] Known answers and shared vectors for each pattern, with exact-key guards, holding on the real names of `main` and of `preview/2026-10-17`. *(All 82 installed names from the CachyOS list now resolve on both: 70 owned, Rec Mono's 12 near. Of every name `names.json` knows, only the 8 recoded Rec Mono names change outcome.)*
+  - [x] Known answers and shared vectors for each pattern, with exact-key guards, holding on the real names of `main` and of `preview/2026-10-17`. *(All 81 installed names from the CachyOS list now resolve on both: 69 owned, Rec Mono's 12 near. Of every name `names.json` knows, only the 8 recoded Rec Mono names change outcome.)*
 - [ ] **PR 4, the hopper on the list** (steps 6, 8 and 9):
   - [ ] Drop, choose or paste; a summary; the Show menu; "Forget this list"; each OS's command with a copy button.
   - [ ] Owned fonts leave every view, "Showing N of M" counts them out, and changes are announced.
