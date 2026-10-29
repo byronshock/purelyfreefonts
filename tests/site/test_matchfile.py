@@ -28,6 +28,9 @@ NAMES = json.loads(NAMES_PATH.read_text(encoding="utf-8"))
 REVIEWED_PATH = ROOT / "tests" / "fixtures" / "names.sample.reviewed.toml"
 REVIEWED = REVIEWED_PATH.read_text(encoding="utf-8")
 SAMPLE_RECODES = {"Sample Mono 20 Gen": "related"}
+SAMPLE_EXTRA = [
+    {"name": "Sample Sans 03 L", "family": "sample-sans-03", "relation": "build", "detail": ""}
+]
 COMMITTED_DATA = ROOT / "build" / "catalog-site.json"
 # What a reviewed list must say for the sample's one ambiguous name, as a TOML table.
 AMBIGUOUS_06 = (
@@ -45,15 +48,21 @@ UNLISTABLE = (
 )
 
 
-def recodable(family_id: str, *also: str) -> str:
+def recodable(family_id: str, *also: str, reviewed: tuple[str, ...] = ()) -> str:
     """How a collision problem that a recode of ``family_id``'s alias would end ends, with the
-    recodes of ``also``, the family's names that would bypass it."""
+    recodes of ``also``, the family's names that would bypass it, and ``reviewed``, its
+    reviewed names that would, which their own entries make near-matches."""
     together = (
         f", together with a [[recode]] of each of its names that would bypass it "
         f"({', '.join(map(repr, also))})"
         if also
         else ""
     )
+    if reviewed:
+        together += (
+            ", with each of its reviewed names that would bypass it made a near-match in its "
+            f"[[name]] entry ({', '.join(map(repr, reviewed))})"
+        )
     return (
         f"; the owner rules: a [[recode]] making {family_id}'s alias at that key a near-match "
         f"clears this{together}, and otherwise an alias row (Milestone 1's review) or a change "
@@ -103,7 +112,9 @@ def test_the_sample_gives_owned_s_match_document_with_its_recodes(tmp_path):
     path = write(tmp_path)
     made = matchfile.match_file(SAMPLE, path)
     ids = [f["id"] for f in SAMPLE["fonts"]]
-    want = owned.match_document(NAMES, ids, SAMPLE["run"]["date"], recodes=SAMPLE_RECODES)
+    want = owned.match_document(
+        NAMES, ids, SAMPLE["run"]["date"], recodes=SAMPLE_RECODES, extra=SAMPLE_EXTRA
+    )
     assert made.blob == jsonio.canonical_bytes(want)
     assert made.names_sha256 == hashlib.sha256(path.read_bytes()).hexdigest()
     assert made.reviewed_sha256 == hashlib.sha256(REVIEWED.encode()).hexdigest()
@@ -111,6 +122,7 @@ def test_the_sample_gives_owned_s_match_document_with_its_recodes(tmp_path):
     assert (doc["format"], doc["v"], doc["run_date"]) == ("tff-match", 1, SAMPLE["run"]["date"])
     assert doc["amb"] == {"samplesans06black": [doc["ids"].index("sample-sans-06")]}
     assert doc["k"]["samplemono20gen"] == f"{doc['ids'].index('sample-mono-20')}x"
+    assert doc["k"]["samplesans03l"] == f"{doc['ids'].index('sample-sans-03')}b"
 
 
 def test_the_sample_s_files_are_found_beside_it(tmp_path):
@@ -1279,6 +1291,18 @@ def test_the_sample_s_reviewed_list_loads():
         )
     }
     assert reviewed.relations() == SAMPLE_RECODES
+    assert reviewed.names == {
+        "samplesans03l": matchfile.Name(
+            "Sample Sans 03 L",
+            "sample-sans-03",
+            "build",
+            "",
+            "https://example.org/sample/SampleSans03L-Regular.ttf",
+            "synthetic",
+        )
+    }
+    assert reviewed.extra() == SAMPLE_EXTRA
+    assert reviewed.extra(leave_out={"samplesans03l"}) == []
     assert reviewed.rulings() == {"synthetic"}
 
 
@@ -1692,6 +1716,266 @@ def test_a_bypass_that_only_a_dropped_listed_recode_makes_is_not_asked_for(tmp_p
     )
 
 
+# ---------------------------------------------------------------------- reviewed names
+
+
+NAME_03L = (
+    '[[name]]\nname = "Sample Sans 03 L"\nfamily = "sample-sans-03"\nrelation = "build"\n'
+    'detail = ""\nevidence = "https://example.org/sample/SampleSans03L-Regular.ttf"\n'
+    'ruling = "synthetic"\n'
+)
+WITHOUT_03L = REVIEWED.replace(NAME_03L, "")
+
+
+def name_entry(name: str, family_id: str, relation: str = "build", detail: str = "") -> str:
+    """A reviewed list's [[name]] entry, citing the sample's "synthetic"."""
+    return (
+        NAME_03L.replace("Sample Sans 03 L", name)
+        .replace("sample-sans-03", family_id)
+        .replace('"build"', f'"{relation}"')
+        .replace('detail = ""', f'detail = "{detail}"')
+    )
+
+
+def test_a_reviewed_name_adds_its_key_and_a_nerd_build_of_it_follows(tmp_path):
+    """hopper_installed_names: a name a font installs under that names.json lacks, as Meslo LG
+    L DZ is Meslo LG's. The hopper's suffix rule reaches it from a Nerd Fonts build, and
+    nothing reaches it by prefix; without the entry, the name is unknown."""
+    assert NAME_03L in REVIEWED
+    want = {
+        "SampleSans03L Nerd Font Mono": "patched",
+        "Sample Sans 03 L": "build",
+        "Sample Sans 03 L Variable": "build",
+        "Sample Sans 03 LX": None,
+    }
+    path = write(tmp_path)
+    with_name = owned.Table.from_document(json.loads(matchfile.match_file(SAMPLE, path).blob))
+    path = write(tmp_path, reviewed=WITHOUT_03L)
+    without = owned.Table.from_document(json.loads(matchfile.match_file(SAMPLE, path).blob))
+    for line, how in want.items():
+        got = owned.match(owned.parse(line + "\n"), with_name).owned
+        assert got == ({"sample-sans-03": {"as": line, "how": how}} if how else {}), line
+        assert owned.match(owned.parse(line + "\n"), without).counts["unknown"] == 1, line
+
+
+def test_a_reviewed_name_may_be_a_near_match(tmp_path):
+    """hopper_rec_mono_near: Rec Mono Casual is only a sibling of Recursive."""
+    path = write(
+        tmp_path,
+        reviewed=REVIEWED + "\n" + name_entry("Sample Half 03", "sample-sans-03", "sibling"),
+    )
+    table = owned.Table.from_document(json.loads(matchfile.match_file(SAMPLE, path).blob))
+    result = owned.match(owned.parse("SampleHalf03 NF\n"), table)
+    assert (result.owned, result.near) == (
+        {},
+        {"sample-sans-03": {"as": "SampleHalf03 NF", "why": "sibling"}},
+    )
+
+
+def test_a_reviewed_name_whose_key_names_json_has_now_is_refused_as_stale(tmp_path):
+    """A refresh that brings the name into names.json retires the entry: the data has caught
+    up. The match file it would make keeps names.json's row."""
+
+    def caught_up(names: dict[str, Any]) -> None:
+        family(names, "sample-sans-03")["names"].append(
+            {"name": "SampleSans03L", "relation": "build", "detail": "static"}
+        )
+
+    path = write(tmp_path, names_with(caught_up))
+    assert errors_of(path) == [
+        f"{tmp_path / 'names.reviewed.toml'}: 'Sample Sans 03 L' is reviewed (synthetic) as a "
+        "build of sample-sans-03, but names.json has its key 'samplesans03l' now, as a build of "
+        "sample-sans-03: remove the entry, or make it a [[recode]] if the hopper's relation "
+        "differs"
+    ]
+    doc = json.loads(
+        matchfile.match_file(SAMPLE, write(tmp_path, names_with(caught_up), WITHOUT_03L)).blob
+    )
+    assert doc["k"]["samplesans03l"] == f"{doc['ids'].index('sample-sans-03')}b"
+
+
+@pytest.mark.parametrize(
+    ("mutate", "whose"),
+    [
+        (
+            lambda n: family(n, "sample-sans-05")["names"].append(
+                {"name": "SampleSans03-L", "relation": "rename"}
+            ),
+            "sample-sans-05 (a rename)",
+        ),
+        (
+            lambda n: n["ineligible"].append({"name": "Sample Sans 03 L", "reason": "icon"}),
+            "an ineligible name (icon)",
+        ),
+        (
+            lambda n: family(n, "sample-held-41").update(family="Sample Sans 03 L"),
+            "sample-held-41 (its family name)",
+        ),
+    ],
+)
+def test_a_reviewed_name_whose_key_names_json_gives_another_is_refused(tmp_path, mutate, whose):
+    """A collision is the owner's to rule on, never the list's to override."""
+    path = write(tmp_path, names_with(mutate))
+    assert errors_of(path) == [
+        f"{tmp_path / 'names.reviewed.toml'}: 'Sample Sans 03 L' is reviewed (synthetic) as a "
+        f"build of sample-sans-03, but names.json gives its key 'samplesans03l' to {whose}: the "
+        "owner rules on the collision (ops/MONTHLY.md step 5)"
+    ]
+    # The refused name stays out of the match file: without it, the build passes.
+    matchfile.match_file(SAMPLE, write(tmp_path, names_with(mutate), WITHOUT_03L))
+
+
+@pytest.mark.parametrize(
+    ("family_id", "why"),
+    [
+        ("sample-held-41", "which names.json has outside the catalog, so the entry changes "
+         "nothing in the match file a visitor sees; once the owner has reviewed it, remove it"),
+        ("sample-sans-99", "a family names.json lacks"),
+    ],
+)  # fmt: skip
+def test_a_reviewed_name_of_a_family_outside_the_catalog_is_refused(tmp_path, family_id, why):
+    text = REVIEWED.replace(NAME_03L, name_entry("Sample Sans 03 L", family_id))
+    assert errors_of(write(tmp_path, reviewed=text)) == [
+        f"{tmp_path / 'names.reviewed.toml'}: 'Sample Sans 03 L' is reviewed (synthetic) as a "
+        f"build of {family_id}, {why}"
+    ]
+
+
+def test_a_reviewed_name_that_strips_to_a_catalog_family_is_a_new_ambiguous_name(tmp_path):
+    """The collision check reads reviewed names as names: "Sample Sans 08 Bold" given to Sample
+    Sans 03 may be Sample Sans 08's Bold weight, so the build fails until the owner reviews
+    it, naming the key's owner, the reviewed name's family."""
+    text = REVIEWED + "\n" + name_entry("Sample Sans 08 Bold", "sample-sans-03")
+    path = write(tmp_path, reviewed=text)
+    assert errors_of(path) == [
+        f"{path}: 'Sample Sans 08 Bold' may be a weight of sample-sans-08, its key "
+        "'samplesans08bold' owned by sample-sans-03: an ambiguous name nobody has reviewed; once "
+        f"the owner has, list it in {tmp_path / 'names.reviewed.toml'}"
+    ]
+
+
+def test_a_reviewed_name_that_bypasses_a_recode_is_refused(tmp_path):
+    """A reviewed name is checked as an alias: one that reaches a recoded key while it owns its
+    family there would own it again, so it must be a near-match itself."""
+    text = REVIEWED + "\n" + name_entry("Sample Mono 20 Gen NF", "sample-mono-20", "build", "nf")
+    path = write(tmp_path, reviewed=text)
+    (error,) = errors_of(path)
+    assert error.startswith(
+        f"{tmp_path / 'names.reviewed.toml'}: recode 'samplemono20gen': sample-mono-20's name "
+        "'Sample Mono 20 Gen NF' reaches it and still counts as owned"
+    )
+    assert error.endswith("; it is a reviewed name: make it a near-match")
+    fixed = REVIEWED + "\n" + name_entry("Sample Mono 20 Gen NF", "sample-mono-20", "related")
+    doc = json.loads(matchfile.match_file(SAMPLE, write(tmp_path, reviewed=fixed)).blob)
+    assert doc["k"]["samplemono20gennf"] == f"{doc['ids'].index('sample-mono-20')}x"
+
+
+def test_a_shared_key_whose_recode_a_reviewed_name_would_bypass_names_it_at_once(tmp_path):
+    """Sample Sans 03 gets the rename "Sample Sans 01", Sample Sans 01's name, and the reviewed
+    name "Sample Sans 01 NF", a patched build that reaches it. The shared key's ending names the
+    recode and the reviewed name to make a near-match in one run, as it names an alias of
+    names.json that would bypass the recode, so the owner is asked once. Following both clears
+    the key."""
+
+    def renamed(names: dict[str, Any]) -> None:
+        family(names, "sample-sans-03")["names"].append(
+            {"name": "Sample Sans 01", "relation": "rename"}
+        )
+
+    names = names_with(renamed)
+    nf = name_entry("Sample Sans 01 NF", "sample-sans-03", "build", "nf")
+    path = write(tmp_path, names, REVIEWED + "\n" + nf)
+    shared = (
+        f"{path}: key 'samplesans01' is owned by several catalog families (sample-sans-01, "
+        f"sample-sans-03), outside the ambiguous set"
+    )
+    assert shared + recodable("sample-sans-03", reviewed=("Sample Sans 01 NF",)) in errors_of(path)
+    near = name_entry("Sample Sans 01 NF", "sample-sans-03", "related")
+    recode = recode_entry("Sample Sans 01", "sample-sans-03", "related")
+    path = write(tmp_path, names, REVIEWED + "\n" + near + "\n" + recode)
+    assert not [e for e in errors_of(path) if "samplesans01'" in e or "bypass" in e]
+
+
+def test_a_meeting_at_a_reviewed_name_s_key_ends_naming_its_entry(tmp_path):
+    """Sample Sans 01 Tight, made distinct from Sample Sans 03, gets the related alias "Sample
+    Grot Bold", which reaches the reviewed name "Sample Grot", a build of Sample Sans 03: the
+    entry makes the meeting, so the message says that editing it clears it, not that no entry
+    can."""
+
+    def distinct(names: dict[str, Any]) -> None:
+        tight = family(names, "sample-sans-01-tight")
+        tight["distinct_from"] = sorted({*tight["distinct_from"], "sample-sans-03"})
+        tight["names"].append({"name": "Sample Grot Bold", "relation": "related"})
+        family(names, "sample-sans-03")["distinct_from"] = ["sample-sans-01-tight"]
+
+    grot = name_entry("Sample Grot", "sample-sans-03")
+    path = write(tmp_path, names_with(distinct), REVIEWED + "\n" + grot)
+    assert (
+        f"{path}: sample-sans-01-tight: its name 'Sample Grot Bold' reaches sample-sans-03 at key "
+        "'samplegrot', and the two are distinct_from each other; the reviewed name 'Sample Grot' "
+        "([[name]]) makes this: the owner rules, and making it a near-match or removing its entry "
+        "clears it (ops/MONTHLY.md step 5)"
+    ) in errors_of(path)
+    near = name_entry("Sample Grot", "sample-sans-03", "related")
+    path = write(tmp_path, names_with(distinct), REVIEWED + "\n" + near)
+    assert not [e for e in errors_of(path) if "distinct_from" in e]
+
+
+def test_a_reviewed_catalog_name_that_strips_outside_the_catalog_ends_naming_its_entry(tmp_path):
+    """The reviewed name "Sample Held 41 Bold", given to Sample Sans 03, strips to Sample Held
+    41, outside the catalog: removing the entry clears it (stripping reads no relation)."""
+    held = name_entry("Sample Held 41 Bold", "sample-sans-03")
+    path = write(tmp_path, reviewed=REVIEWED + "\n" + held)
+    assert errors_of(path) == [
+        f"{path}: 'Sample Held 41 Bold', a catalog name, strips to the key 'sampleheld41' of "
+        "sample-held-41, outside the catalog, which the ambiguous set can't hold; the reviewed "
+        "name 'Sample Held 41 Bold' ([[name]]) makes this: the owner rules, and removing its "
+        "entry clears it (ops/MONTHLY.md step 5)"
+    ]
+
+
+def test_a_stale_reviewed_name_at_its_family_s_own_name_asks_for_no_recode():
+    """No recode takes a family's own name, so a reviewed name that names.json now has as the
+    family's name is only removed."""
+
+    def renamed(names: dict[str, Any]) -> None:
+        family(names, "sample-sans-03")["family"] = "SampleSans03L"
+
+    reviewed, _ = matchfile.load_reviewed(REVIEWED_PATH)
+    assert matchfile.refused_names(names_with(renamed), reviewed) == {
+        "samplesans03l": "'Sample Sans 03 L' is reviewed (synthetic) as a build of "
+        "sample-sans-03, but names.json has its key 'samplesans03l' now, as its family name of "
+        "sample-sans-03: remove the entry"
+    }
+
+
+@pytest.mark.parametrize(
+    ("old", "new", "problem"),
+    [
+        ('relation = "build"', 'relation = "package"', "name[0]: relation 'package' is not one of"),
+        ('detail = ""', 'detail = "wide"', "name[0]: a build's detail 'wide' is none"),
+        ('relation = "build"\ndetail = ""', 'relation = "sibling"\ndetail = "nerd"',
+         "name[0]: only a build has a detail, not sibling"),
+        ('"https://example.org', '"http://example.org', "name[0]: the evidence must be an https URL"),
+        ('evidence = "https://example.org/sample/SampleSans03L-Regular.ttf"\n', "",
+         "name[0]: needs exactly detail, evidence, family, name, relation and ruling"),
+        ('detail = ""', "detail = 0", "name[0]: the detail must be a string"),
+    ],
+)  # fmt: skip
+def test_a_malformed_reviewed_name_is_refused_saying_where(tmp_path, old, new, problem):
+    assert old in NAME_03L
+    path = write(tmp_path, reviewed=REVIEWED.replace(NAME_03L, NAME_03L.replace(old, new)))
+    (error,) = errors_of(path)
+    assert error.startswith(f"{tmp_path / 'names.reviewed.toml'}: ")
+    assert problem in error
+
+
+def test_two_reviewed_names_at_one_key_are_refused(tmp_path):
+    path = write(tmp_path, reviewed=REVIEWED + "\n" + name_entry("SampleSans03L", "sample-sans-03"))
+    (error,) = errors_of(path)
+    assert error.endswith("name[1]: 'SampleSans03L' has the key of 'Sample Sans 03 L'")
+
+
 def test_a_names_file_and_a_reviewed_list_with_problems_are_listed_together(tmp_path):
     names = names_with(lambda n: n["run"].update(date="2026-01-02"))
     path = write(tmp_path, names, "[[ambiguous]]\nname = 1\n")
@@ -1722,6 +2006,11 @@ def test_the_committed_names_give_a_match_file_within_budget():
     for key, recode in reviewed.recodes.items():
         code = f"{match['ids'].index(recode.family)}{letters[recode.relation]}"
         assert code in match["k"][key].split(",")
+    owning = {"rename": "r", "postscript": "p"}
+    for key, name in reviewed.names.items():  # hopper_installed_names: each its family's alone
+        letter = letters.get(name.relation) or owning.get(name.relation)
+        letter = letter or ("n" if name.detail in owned.PATCHED_DETAILS else "b")
+        assert match["k"][key] == f"{match['ids'].index(name.family)}{letter}"
 
 
 def test_the_large_catalog_needs_no_reviewed_list(tmp_path):

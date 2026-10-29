@@ -43,7 +43,10 @@ jobs:
         with:
           enable-cache: true
       - run: uv sync --locked
-      - run: uv run --locked pytest -m "not network and not store and not browser" -n auto
+      # worksteal, not xdist's default (load): load sends each worker runs of consecutive
+      # tests, so the model's three full fits (tests/engine/test_measure.py, marked slow) queued
+      # on one worker and ran in turn while the others sat idle. Idle workers now take them.
+      - run: uv run --locked pytest -m "not network and not store and not browser" -n auto --dist worksteal
 
   secrets:
     name: secrets

@@ -1,0 +1,31 @@
+# Owner rulings of 2026-10-28 on the hopper (Milestone 3, slice 1), asked in chat as one batch of single-select questions.
+# Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md (Inventory tools) and docs/milestone-3.md (Slice 1).
+# Found when a real CachyOS `fc-list : family` list was matched against the October data (preview/2026-10-17): 7 of the 120 families it left as "you don't have" were installed, and staging found 3 more, under names the match data didn't know. Each name below was read from a font file: a file the catalog pins, the designer's release, or Nerd Fonts v3.5.1 (commit b894ea7803af6aade63d60a4381e006098ec9c4d).
+
+[hopper_installed_names]
+choice = "a"
+recommended = true
+value = "reviewed_list_only"
+ruling = "The names fonts install under that names.json lacks are entries of the hopper's reviewed list, build/names.reviewed.toml ([[name]]): each an exact name, the family whose name it is, its relation (a build, with its detail, or a near-match), the file it was read from, and the ruling. The site build adds them to the match file; names.json, the ranking and each font's \"Also known as\" don't change, and build/ is not rebuilt. The build refuses an entry whose key names.json already has, so a later change that brings the name into names.json retires it. Matching stays exact: no prefix, size-letter or digit rule. The clear cases are builds of one family each, read from that family's own files: Meslo LG S, M and L, with and without DZ, and the same six for Powerline (Meslo LG); ProFontIIx and ProFontWindows (ProFont); iA Writer Mono S and V, Duo S and V, Quattro S and V, and Nerd Fonts' iMWritingMono, iMWritingDuo and iMWritingQuat (each its own iA Writer family; the bundle rows for iA Writer and iMWriting stay); CozetteVector, CozetteVectorBold, CozetteCrossedSeven, CozetteCrossedSevenVector and CozetteCrossedSevenVectorBold (Cozette); ETBembo (ET Book). A Nerd Fonts build of any of them follows by the hopper's existing suffix rule (MesloLGLDZ Nerd Font Mono is Meslo LG L DZ's)."
+reason = "Of (a) the reviewed list only, (b) the list now plus alias rows in data/aliases.csv that bring the names into names.json at the first live refresh, and (c) alias rows only, the owner took Claude's recommendation. Option (b) would also have listed every name under \"Also known as\" (33 for Latin Modern), and (c) would have shipped nothing before that refresh. The cause, found by Claude: the nerd miner builds names from fonts.json's patchedName stem (MesloLG) only, while Nerd Fonts names each build after its source font's family, and the name_tables miner takes a file's name only when it is the family's own name plus build words, logging ETBembo, LMMono10 and CozetteCrossedSevenVector as left out by design."
+
+[hopper_rec_mono_near]
+choice = "a"
+recommended = true
+value = "near_match_only"
+ruling = "In the hopper, Rec Mono (Arrow Type's Rec Mono Linear, Casual, Semicasual and Duotone, and their Nerd Fonts builds, such as RecMonoSmCasual Nerd Font) is only a near-match of Recursive, as a sibling: someone who has it still sees Recursive listed. The names.json aliases that make Rec Mono a build of Recursive (RecMono and its Nerd Fonts suffixes, Recursive Code) are recoded as sibling too, so RecMono Nerd Font, the build Recursive's Nerd Font link names, also leaves Recursive listed. The ranking credit (D7, gate A's fold of Recursive Code, 2026-09-28) is unchanged."
+reason = "Rec Mono has only Recursive's monospaced half (the MONO axis at 1, four fixed Casual settings), with no Sans and no variable axes, as HackGen is only near Hack (hopper_hackgen_related). Of (a) a near-match only and (b) owned as a build, consistent with gate A's fold and the RecMono Nerd Font rows of today, the owner took Claude's recommendation."
+
+[hopper_latin_modern_lm]
+choice = "a"
+recommended = true
+value = "all_33_own"
+ruling = "Each of the 33 families in GUST's Latin Modern release (Latin_Modern-otf-2_007, the archive the catalog pins), as Arch's otf-latin-modern and Debian's fonts-lmodern install them, owns Latin Modern as a build: LMRoman5, 6, 7, 8, 9, 10, 12 and 17, LMRomanCaps10, LMRomanDemi10, LMRomanDunh10, LMRomanSlant8, 9, 10 and 12, LMRomanUnsl10, LMSans8, 9, 10, 12 and 17, LMSansDemiCond10, LMSansQuot8, LMMono8, 9, 10 and 12, LMMonoCaps10, LMMonoLt10, LMMonoLtCond10, LMMonoProp10, LMMonoPropLt10 and LMMonoSlant10. Latin Modern Math stays ineligible."
+reason = "GUST ships Roman, Sans and Mono as one family, one package installs them together, and the catalog's file is lmmono10-regular.otf. Of (a) all 33 owning it and (b) only the 16 LMRoman names, with LMSans and LMMono near-matches, the owner took Claude's recommendation."
+
+[hopper_nerd_sweep]
+choice = "a"
+recommended = true
+value = "include_now"
+ruling = "Nerd Fonts' builds of 8 more catalog families, which the match data didn't know either, are reviewed-list entries too, each a patched build of its family: LiterationSans (Liberation Sans), LiterationSerif (Liberation Serif), NotoSansM (Noto Sans Mono), OverpassM (Overpass Mono), MonaspiceAr (Monaspace Argon), MonaspiceKr (Monaspace Krypton), MonaspiceRn (Monaspace Radon) and MonaspiceXe (Monaspace Xenon). OpenDyslexic's OpenDyslexicAlt and OpenDyslexicM wait: an alternate and a monospaced version, they raise Recursive's question again."
+reason = "Found by Claude's sweep of every Nerd Fonts v3.5.1 folder against the October match file: the same cause as Meslo LG's. Of (a) including them now and (b) only the 10 families found on the CachyOS list and on staging, the owner took Claude's recommendation."

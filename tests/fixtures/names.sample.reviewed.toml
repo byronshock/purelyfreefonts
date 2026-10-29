@@ -15,3 +15,13 @@ name = "Sample Mono 20 Gen"
 family = "sample-mono-20"
 relation = "related"
 ruling = "synthetic"
+
+# As build/names.reviewed.toml adds Meslo LG L: a name a font installs under that the sample's
+# names lack, so a list's "SampleSans03L Nerd Font" is a patched build of Sample Sans 03.
+[[name]]
+name = "Sample Sans 03 L"
+family = "sample-sans-03"
+relation = "build"
+detail = ""
+evidence = "https://example.org/sample/SampleSans03L-Regular.ttf"
+ruling = "synthetic"

@@ -140,6 +140,12 @@ NAMES = {
     ],
 }
 CATALOG_IDS = ["bar-serif", "foo-sans", "foo-sans-black", "foo-sans-tight"]
+# Reviewed names that NAMES lacks, as build/names.reviewed.toml's [[name]] entries give them:
+# a line-gap cut, as Meslo LG L DZ is Meslo LG's, and a near-match, as Rec Mono is Recursive's.
+EXTRA = [
+    {"name": "FooSansWD", "family": "foo-sans", "relation": "build", "detail": ""},
+    {"name": "Foo Sans Duo", "family": "foo-sans", "relation": "sibling", "detail": ""},
+]
 
 
 def _e(
@@ -274,7 +280,16 @@ def own_document_cases() -> list[tuple[str, dict[str, Any], tuple[owned.Entry, .
     hand = HAND_DOCUMENT
     amb = AMBIGUOUS_DOCUMENT
     past = PAST_ASCII_DOCUMENT
+    # Reviewed names that names.json lacks (hopper_installed_names), as the site build adds them.
+    extra = json.loads(json.dumps(owned.match_document(NAMES, CATALOG_IDS, RUN_DATE, extra=EXTRA)))
     return [
+        (
+            "a reviewed name and a Nerd Fonts build of it",
+            extra,
+            (_e(("FooSansWD Nerd Font Mono",), trusted=True), _e(full="FooSansWD Bold")),
+        ),
+        ("a reviewed near-match name, patched", extra, (_e(("Foo Sans Duo NF",)),)),
+        ("no prefix of a reviewed name", extra, (_e(("FooSansWDX",), trusted=True),)),
         (
             "ids and reasons named after Object.prototype's keys",
             hand,
@@ -342,6 +357,11 @@ CANDIDATE_NAMES = [
     "Foo bold-italic", "Foo BOLDItalic", "Foo Extra BoldItalic", "Foo Sans BlackItalic NF",
     "Archivo-Black-Bold", "Archivo-Black", "ArchivoBlackNF-Regular", "Foo-Bold-NF", "A-B-C-Bold",
     "Foo SemiItalic", "Foo Extra SemiItalic", "Foo BoldExtraLight", "Foo S_B", "Foo Bd_",
+    # Names fonts install under that names.json lacked (hopper_installed_names, 2026-10-28).
+    "MesloLGLDZ Nerd Font Mono", "Meslo LG L DZ for Powerline", "ProFont IIx Nerd Font Propo",
+    "iMWritingQuat Nerd Font Propo", "iA Writer Mono V", "RecMonoSmCasual Nerd Font",
+    "CozetteCrossedSevenVectorBold", "ETBembo-RomanLF", "LMRomanSlant12", "LMRoman10-Regular",
+    "MonaspiceAr NF", "NotoSansM Nerd Font Mono",
     # Names past ASCII, whose keys the port works out once, in pieces cut before each ASCII
     # character: a tab and an ideographic space the tables swap, a mark after an ASCII letter,
     # pieces whose keys join only through NFC (a mark, jamo), a key that NFKC makes longer than
@@ -520,6 +540,12 @@ def _hand_parse_cases() -> list[tuple[str, bytes | str]]:
         (
             "fc-list with commas, escapes and a hidden name",
             "Archivo,Archivo Black\nicomoon\\-feather\nSarasa UI J,更紗ゴシック UI J\nFoo\\,Bar,Baz\n.Hidden Sans\nDejaVu Sans\n",
+        ),
+        (
+            "fc-list of names fonts install under (hopper_installed_names)",
+            "CozetteCrossedSevenVectorBold\nETBembo\niMWritingQuat Nerd Font Propo\nLMMonoLtCond10\n"
+            "LMRoman10\nLMSans17\nMesloLGLDZ Nerd Font Mono\nMonaspiceXe Nerd Font,MonaspiceXe NF\n"
+            "NotoSansM Nerd Font,NotoSansM NF\nProFont IIx Nerd Font\nRecMonoSmCasual Nerd Font\n",
         ),
         ("one stray ', ' stays one name", "\n".join([*NAMES30, "Foo, Bar", "Archivo Black"])),
         (
@@ -1386,6 +1412,131 @@ def known_answers() -> list[dict[str, Any]]:
             ("hack",),
             ("hack",),
             "near",
+        ),
+        # The names fonts install under that names.json lacked, found on a CachyOS list and on
+        # staging (hopper_installed_names and its sister rulings, 2026-10-28).
+        k(
+            "MesloLGLDZ Nerd Font Mono is a patched Meslo LG (hopper_installed_names)",
+            _e(("MesloLGLDZ Nerd Font Mono",), trusted=t),
+            {"meslo-lg": "patched"},
+            outcome="owned",
+        ),
+        k("Meslo LG S is Meslo LG", _e(("Meslo LG S",), trusted=t), {"meslo-lg": "build"}),
+        k(
+            "Meslo LG M for Powerline is a patched Meslo LG",
+            _e(("Meslo LG M for Powerline",), trusted=t),
+            {"meslo-lg": "patched"},
+        ),
+        k(
+            "ProFont IIx Nerd Font is a patched ProFont",
+            _e(("ProFont IIx Nerd Font",), trusted=t),
+            {"profont": "patched"},
+        ),
+        k("ProFontWindows is ProFont", _e(("ProFontWindows",), trusted=t), {"profont": "build"}),
+        k(
+            "iMWritingQuat Nerd Font Propo is a patched iA Writer Quattro only",
+            _e(("iMWritingQuat Nerd Font Propo",), trusted=t),
+            {"ia-writer-quattro": "patched"},
+            ("ia-writer-duo", "ia-writer-mono"),
+        ),
+        k(
+            "iA Writer Mono V is iA Writer Mono only",
+            _e(("iA Writer Mono V",), trusted=t),
+            {"ia-writer-mono": "build"},
+            ("ia-writer-duo", "ia-writer-quattro"),
+        ),
+        k(
+            "RecMonoSmCasual Nerd Font is only near Recursive (hopper_rec_mono_near)",
+            _e(("RecMonoSmCasual Nerd Font",), trusted=t),
+            {},
+            ("recursive",),
+            ("recursive",),
+            "near",
+        ),
+        k(
+            "Rec Mono Casual is only near Recursive",
+            _e(("Rec Mono Casual",), trusted=t),
+            {},
+            ("recursive",),
+            ("recursive",),
+            "near",
+        ),
+        k(
+            "RecMono Nerd Font is only near Recursive too",
+            _e(("RecMono Nerd Font",), trusted=t),
+            {},
+            ("recursive",),
+            ("recursive",),
+            "near",
+        ),
+        k("Recursive is still Recursive", _e(("Recursive",), trusted=t), {"recursive": "family"}),
+        k(
+            "LMSans10 is Latin Modern (hopper_latin_modern_lm)",
+            _e(("LMSans10",), trusted=t),
+            {"latin-modern": "build"},
+        ),
+        k(
+            "LMMonoLtCond10 is Latin Modern",
+            _e(("LMMonoLtCond10",), trusted=t),
+            {"latin-modern": "build"},
+        ),
+        k(
+            "LMRoman10-Regular in the registry is Latin Modern",
+            _e(full="LMRoman10-Regular"),
+            {"latin-modern": "build"},
+            outcome="owned",
+        ),
+        k(
+            "Latin Modern Math is still ineligible",
+            _e(("Latin Modern Math",), trusted=t),
+            {},
+            ("latin-modern",),
+            outcome="ineligible",
+        ),
+        k(
+            "CozetteCrossedSevenVectorBold is Cozette",
+            _e(("CozetteCrossedSevenVectorBold",), trusted=t),
+            {"cozette": "build"},
+        ),
+        k("ETBembo is ET Book", _e(("ETBembo",), trusted=t), {"et-book": "build"}),
+        k(
+            "LiterationSans Nerd Font is a patched Liberation Sans, not Liberation Mono "
+            "(hopper_nerd_sweep)",
+            _e(("LiterationSans Nerd Font",), trusted=t),
+            {"liberation-sans": "patched"},
+            ("liberation-mono",),
+        ),
+        k(
+            "NotoSansM Nerd Font Mono is a patched Noto Sans Mono, not Noto Sans",
+            _e(("NotoSansM Nerd Font Mono",), trusted=t),
+            {"noto-sans-mono": "patched"},
+            ("noto-sans",),
+        ),
+        k(
+            "OverpassM Nerd Font Propo is a patched Overpass Mono, not Overpass",
+            _e(("OverpassM Nerd Font Propo",), trusted=t),
+            {"overpass-mono": "patched"},
+            ("overpass",),
+        ),
+        k(
+            "MonaspiceXe Nerd Font is a patched Monaspace Xenon",
+            _e(("MonaspiceXe Nerd Font",), trusted=t),
+            {"monaspace-xenon": "patched"},
+            ("monaspace-neon",),
+        ),
+        k(
+            "MesloLGXL Nerd Font is unknown: no prefix of a known name matches",
+            _e(("MesloLGXL Nerd Font",), trusted=t),
+            {},
+            ("meslo-lg",),
+            outcome="unknown",
+        ),
+        k(
+            "LMRoman11 is unknown: no size GUST doesn't make",
+            _e(("LMRoman11",), trusted=t),
+            {},
+            ("latin-modern",),
+            outcome="unknown",
         ),
         k(
             "DejaVu Sans Mono for Powerline is a patched DejaVu Sans Mono",

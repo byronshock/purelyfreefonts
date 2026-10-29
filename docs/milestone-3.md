@@ -45,8 +45,13 @@ Each code pull request is built in its own worktree, reviewed adversarially befo
   - [x] `src/tff_catalog/owned.py`: the match document, the parser and the matcher, with the style and suffix words taken from `names.py`, whose pipeline behaviour stays the same and is pinned by tests.
   - [x] Shared vectors (`tests/vectors/owned-fonts.json`, `owned-known-answers.json`) and synthetic fixtures for every format in `tests/fixtures/owned/`. CI fails on any real path in them.
   - [x] The known answers pass on the real `build/names.json` of main and of `preview/2026-10-17`: Source Sans Pro → Source Sans 3, FiraCode NF → Fira Code, Roboto Slab ≠ Roboto, Inter Tight ≠ Inter, Noto Sans JP ≠ Noto Sans, and Adwaita Sans never Inter. *(On the October data Gentium Book's answers name Gentium Plus, as `inventory_ambiguous_names` foresees; that refresh edits them.)*
-- [ ] **PR 2, the match file in the site build** (step 3, amended): a hashed `/assets/match.<h>.json`, checked against `catalog-site.json` (same run, same ids, every alias), within a 50 KB budget, and named on the list page. CONTRACT.md and `docs/catalog-schema.md` describe it.
-- [ ] **PR 3, the parser and matcher in the browser** (steps 4 and 5): a separate script, loaded only when a list arrives, that agrees with Python on every vector in Chromium and Firefox and matches 10,000 names in under 200 ms.
+- [x] **PR 2, the match file in the site build** (step 3, amended; #95): a hashed `/assets/match.<h>.json`, checked against `catalog-site.json` (same run, same ids, every alias), within a 50 KB budget, and named on the list page. CONTRACT.md and `docs/catalog-schema.md` describe it.
+- [x] **PR 3, the parser and matcher in the browser** (steps 4 and 5; #96): a separate script, loaded only when a list arrives, that agrees with Python on every vector in Chromium and Firefox and matches 10,000 names in under 200 ms.
+- [x] **PR 3b, the names fonts install under** (step 5; owner rulings of 2026-10-28, `hopper_installed_names`; #102). On a real CachyOS list, 7 of 120 "you don't have" families were installed. Staging found 3 more. Each was installed under a name the match data lacked.
+  - [x] `[[name]]` entries in the reviewed list. The site build adds them to the match file, and refuses an entry whose key `names.json` already has.
+  - [x] Meslo LG, ProFont, iA Writer Mono, Duo and Quattro, Cozette and ET Book, from their own files. Latin Modern's 33 LM names (`hopper_latin_modern_lm`). The sweep's Nerd names for 8 more families (`hopper_nerd_sweep`). *(75 entries in all, each read from its evidence file.)*
+  - [x] Rec Mono only near Recursive, with its RecMono and Recursive Code aliases recoded (`hopper_rec_mono_near`).
+  - [x] Known answers and shared vectors for each pattern, with exact-key guards, holding on the real names of `main` and of `preview/2026-10-17`. *(All 81 installed names from the CachyOS list now resolve on both: 69 owned, Rec Mono's 12 near. Of every name `names.json` knows, only the 8 recoded Rec Mono names change outcome.)*
 - [ ] **PR 4, the hopper on the list** (steps 6, 8 and 9):
   - [ ] Drop, choose or paste; a summary; the Show menu; "Forget this list"; each OS's command with a copy button.
   - [ ] Owned fonts leave every view, "Showing N of M" counts them out, and changes are announced.
@@ -202,6 +207,10 @@ Each code pull request is built in its own worktree, reviewed adversarially befo
 **Who:** Claude. **Depends on:** 3, 10; M1 steps 18–19.
 - [ ] The refresh pull request regenerates the match file and runs the known answers and public fixtures; a drop in accuracy fails it.
 - [ ] `review.md` lists new aliases that change what counts as owned, such as new Nerd builds and renames.
+- [ ] The alias miners find the names fonts install under, which the hopper's reviewed list holds by hand until then (`hopper_installed_names`, 2026-10-28):
+  - Miner `nerd` reads each folder's family names from the Nerd Fonts release's file list, not only `fonts.json`'s `patchedName`. Examples: MesloLGLDZ, RecMonoSmCasual and MonaspiceAr.
+  - Miner `name_tables` reads every file of a pinned archive, and its "left out" names reach gate A instead of a log line. Examples: ETBembo, LMSans10 and CozetteVectorBold.
+  - How such names stay out of a font's "Also known as" is part of that work.
 - [ ] The private corpus reruns before the owner merges: in the private repository's CI if D15 is (a), otherwise locally.
 
 **Done when:** a manually dispatched refresh pull request includes the match file and passes these checks.

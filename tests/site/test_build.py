@@ -44,6 +44,8 @@ NAMES = json.loads(NAMES_PATH.read_text(encoding="utf-8"))
 REVIEWED_PATH = matchfile.default_reviewed_path(NAMES_PATH)
 COMMIT = "0123456789abcdef0123456789abcdef01234567"
 HASHED = re.compile(r"^(?P<stem>.+)\.(?P<h>[0-9a-f]{10})\.(?P<ext>[a-z0-9]+)$")
+# A line http.server's handlers log to stderr (BaseHTTPRequestHandler.log_message).
+SERVER_LOG_LINE = re.compile(r"\S+ - - \[[^\]]+\] ")
 SPECIMEN_IDS = ("sample-sans-01", "sample-mono-02", "sample-display-25")
 BANDS = [b["label"] for b in SAMPLE["bands"]]  # "101-250", "251-500", "501+" with en dashes
 REAL_PAGE_CONTEXTS = pages.page_contexts  # before the autouse fixture below replaces it
@@ -1017,16 +1019,22 @@ def test_the_match_file_is_derived_from_names_json_and_named_on_the_list(
 ):
     """The hopper's match data (the owner's ruling of 2026-10-22,
     ``inventory_match_data_site_build``): ``owned.match_document`` of the names file beside the
-    catalog, with the reviewed list's recodes, as canonical JSON at a hashed URL that
-    ``#list[data-match]`` names."""
+    catalog, with the reviewed list's recodes and names (``hopper_installed_names``), as
+    canonical JSON at a hashed URL that ``#list[data-match]`` names."""
     out = tmp_path / "site"
     run_build(catalog, out, mini_site)
     url = match_url(out)
     assert re.fullmatch(r"/assets/match\.[0-9a-f]{10}\.json", url)
     blob = asset(out, url).read_bytes()
     ids = [f["id"] for f in SAMPLE["fonts"]]
-    recodes = matchfile.load_reviewed(REVIEWED_PATH)[0].relations()
-    want = owned.match_document(NAMES, ids, SAMPLE["run"]["date"], recodes=recodes)
+    reviewed = matchfile.load_reviewed(REVIEWED_PATH)[0]
+    want = owned.match_document(
+        NAMES,
+        ids,
+        SAMPLE["run"]["date"],
+        recodes=reviewed.relations(),
+        extra=reviewed.extra(),
+    )
     assert blob == jsonio.canonical_bytes(want)
     doc = json.loads(blob)
     assert (doc["format"], doc["v"], doc["run_date"]) == ("tff-match", 1, SAMPLE["run"]["date"])
@@ -1115,7 +1123,11 @@ def test_a_names_file_nested_deeply_fails_the_command_line_in_a_line(
     err = capsys.readouterr().err
     assert "Traceback" not in err
     assert f"{names}: nested too deeply to read" in err
-    assert len(err.splitlines()) < 5
+    # capsys takes every thread's stderr: in site-real, the live site server's thread may log an
+    # idle keep-alive connection's "Request timed out" meanwhile (http.server's "<address> - -
+    # [<date>] ..." lines), which the build didn't print.
+    printed = [line for line in err.splitlines() if not SERVER_LOG_LINE.match(line)]
+    assert len(printed) < 5
     assert not out.exists()
 
 

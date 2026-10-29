@@ -414,7 +414,8 @@ def test_the_required_checks_are_untouched():
         ],
         "test": [
             "uv sync --locked",
-            'uv run --locked pytest -m "not network and not store and not browser" -n auto',
+            'uv run --locked pytest -m "not network and not store and not browser" -n auto'
+            " --dist worksteal",
         ],
     }
     assert jobs["secrets"]["env"]["GITLEAKS_VERSION"] == "8.30.1"
