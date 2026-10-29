@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://trulyfreefonts.com/schemas/match/1",
   "title": "The hopper's match file",
-  "description": "What the hopper (Milestone 3, slice 1) matches a visitor's font list against, in the browser: tff_catalog.owned.match_document, built by the site build from build/names.json, the catalog's ids and the reviewed recodes (owner rulings inventory_match_data_site_build of 2026-10-22 and hopper_hackgen_related of 2026-10-23). Compact: one map from every known name's match_key to its codes. The schema gives the shape; Table.from_document, like the port's reader, also refuses an index out of range, a code-point range that runs down or names a surrogate, and words that are not printable ASCII.",
+  "description": "What the hopper (Milestone 3, slice 1) matches a visitor's font list against, in the browser: tff_catalog.owned.match_document, built by the site build from build/names.json, the catalog's ids and the reviewed recodes and names (owner rulings inventory_match_data_site_build of 2026-10-22, hopper_hackgen_related of 2026-10-23 and hopper_installed_names of 2026-10-28). Compact: one map from every known name's match_key to its codes. The schema gives the shape; Table.from_document, like the port's reader, also refuses an index out of range, a code-point range that runs down or names a surrogate, and words that are not printable ASCII.",
   "type": "object",
   "additionalProperties": false,
   "required": [

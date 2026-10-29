@@ -20,6 +20,15 @@
 #
 # [[recode]]: an alias that the hopper codes as a near-match only, though names.json gives it an
 # owned relation. The match file changes; names.json, its alias rows and the ranking don't.
+#
+# [[name]]: a name that fonts install under and names.json lacks, read from a file that carries
+# it (`evidence`, an https URL; an archive's member after the #), with the family it belongs to
+# and the relation the hopper gives it: a build, with its detail, or a near-match. The match file
+# gains its key; names.json, the ranking and each font's "Also known as" don't change
+# (hopper_installed_names, 2026-10-28). The hopper's suffix rule reaches it from a Nerd Fonts
+# build ("MesloLGLDZ Nerd Font Mono" from "Meslo LG L DZ"); nothing reaches it by prefix. The
+# build refuses an entry whose key names.json has already, so a refresh that brings the name
+# into names.json retires it (ops/MONTHLY.md step 5).
 
 [[ambiguous]]
 name = "Archivo Black"
@@ -59,3 +68,666 @@ name = "HackGen"
 family = "hack"
 relation = "related"
 ruling = "hopper_hackgen_related"
+
+# Rec Mono (Arrow Type's monospaced cuts of Recursive) is a build of Recursive in names.json, as
+# RecMono and its Nerd Fonts names and Recursive Code; the ranking keeps those rows. In the hopper
+# they are only a sibling of Recursive, which keeps Recursive listed: Rec Mono is its Mono half
+# alone, with no Sans and no variable axes (hopper_rec_mono_near, 2026-10-28).
+[[recode]]
+name = "RecMono"
+family = "recursive"
+relation = "sibling"
+ruling = "hopper_rec_mono_near"
+
+[[recode]]
+name = "RecMono Nerd Font"
+family = "recursive"
+relation = "sibling"
+ruling = "hopper_rec_mono_near"
+
+[[recode]]
+name = "RecMono Nerd Font Mono"
+family = "recursive"
+relation = "sibling"
+ruling = "hopper_rec_mono_near"
+
+[[recode]]
+name = "RecMono Nerd Font Propo"
+family = "recursive"
+relation = "sibling"
+ruling = "hopper_rec_mono_near"
+
+[[recode]]
+name = "RecMono NF"
+family = "recursive"
+relation = "sibling"
+ruling = "hopper_rec_mono_near"
+
+[[recode]]
+name = "RecMono NFM"
+family = "recursive"
+relation = "sibling"
+ruling = "hopper_rec_mono_near"
+
+[[recode]]
+name = "RecMono NFP"
+family = "recursive"
+relation = "sibling"
+ruling = "hopper_rec_mono_near"
+
+[[recode]]
+name = "Recursive Code"
+family = "recursive"
+relation = "sibling"
+ruling = "hopper_rec_mono_near"
+
+# Meslo LG: the designer's six line-gap cuts (S, M and L, each with a dotted zero, DZ), and the
+# Powerline builds Nerd Fonts patches. MesloLGLDZ Nerd Font Mono is Meslo LG L DZ's patched build.
+[[name]]
+name = "Meslo LG S"
+family = "meslo-lg"
+relation = "build"
+detail = ""
+evidence = "https://raw.githubusercontent.com/andreberg/Meslo-Font/c7ee3ce8fa43de2a9c99e94677ea9d1c46e56f26/dist/v1.2.1/Meslo%20LG%20v1.2.1.zip#Meslo LG v1.2.1/MesloLGS-Regular.ttf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "Meslo LG M"
+family = "meslo-lg"
+relation = "build"
+detail = ""
+evidence = "https://raw.githubusercontent.com/andreberg/Meslo-Font/c7ee3ce8fa43de2a9c99e94677ea9d1c46e56f26/dist/v1.2.1/Meslo%20LG%20v1.2.1.zip#Meslo LG v1.2.1/MesloLGM-Regular.ttf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "Meslo LG L"
+family = "meslo-lg"
+relation = "build"
+detail = ""
+evidence = "https://raw.githubusercontent.com/andreberg/Meslo-Font/c7ee3ce8fa43de2a9c99e94677ea9d1c46e56f26/dist/v1.2.1/Meslo%20LG%20v1.2.1.zip#Meslo LG v1.2.1/MesloLGL-Regular.ttf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "Meslo LG S DZ"
+family = "meslo-lg"
+relation = "build"
+detail = ""
+evidence = "https://raw.githubusercontent.com/andreberg/Meslo-Font/c7ee3ce8fa43de2a9c99e94677ea9d1c46e56f26/dist/v1.2.1/Meslo%20LG%20DZ%20v1.2.1.zip#Meslo LG DZ v1.2.1/MesloLGSDZ-Regular.ttf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "Meslo LG M DZ"
+family = "meslo-lg"
+relation = "build"
+detail = ""
+evidence = "https://raw.githubusercontent.com/andreberg/Meslo-Font/c7ee3ce8fa43de2a9c99e94677ea9d1c46e56f26/dist/v1.2.1/Meslo%20LG%20DZ%20v1.2.1.zip#Meslo LG DZ v1.2.1/MesloLGMDZ-Regular.ttf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "Meslo LG L DZ"
+family = "meslo-lg"
+relation = "build"
+detail = ""
+evidence = "https://raw.githubusercontent.com/andreberg/Meslo-Font/c7ee3ce8fa43de2a9c99e94677ea9d1c46e56f26/dist/v1.2.1/Meslo%20LG%20DZ%20v1.2.1.zip#Meslo LG DZ v1.2.1/MesloLGLDZ-Regular.ttf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "Meslo LG S for Powerline"
+family = "meslo-lg"
+relation = "build"
+detail = "powerline"
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/src/unpatched-fonts/Meslo/S/Meslo%20LG%20S%20Regular%20for%20Powerline.ttf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "Meslo LG S DZ for Powerline"
+family = "meslo-lg"
+relation = "build"
+detail = "powerline"
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/src/unpatched-fonts/Meslo/S-DZ/Meslo%20LG%20S%20DZ%20Regular%20for%20Powerline.ttf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "Meslo LG M for Powerline"
+family = "meslo-lg"
+relation = "build"
+detail = "powerline"
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/src/unpatched-fonts/Meslo/M/Meslo%20LG%20M%20Regular%20for%20Powerline.ttf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "Meslo LG M DZ for Powerline"
+family = "meslo-lg"
+relation = "build"
+detail = "powerline"
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/src/unpatched-fonts/Meslo/M-DZ/Meslo%20LG%20M%20DZ%20Regular%20for%20Powerline.ttf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "Meslo LG L for Powerline"
+family = "meslo-lg"
+relation = "build"
+detail = "powerline"
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/src/unpatched-fonts/Meslo/L/Meslo%20LG%20L%20Regular%20for%20Powerline.ttf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "Meslo LG L DZ for Powerline"
+family = "meslo-lg"
+relation = "build"
+detail = "powerline"
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/src/unpatched-fonts/Meslo/L-DZ/Meslo%20LG%20L%20DZ%20Regular%20for%20Powerline.ttf"
+ruling = "hopper_installed_names"
+
+# ProFont: the two files Nerd Fonts patches (ProFont IIx Nerd Font, ProFontWindows Nerd Font).
+[[name]]
+name = "ProFontIIx"
+family = "profont"
+relation = "build"
+detail = ""
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/src/unpatched-fonts/ProFont/profontiix/ProFontIIx.ttf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "ProFontWindows"
+family = "profont"
+relation = "build"
+detail = ""
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/src/unpatched-fonts/ProFont/ProFontWinTweaked/ProFontWindows.ttf"
+ruling = "hopper_installed_names"
+
+# iA Writer Mono, Duo and Quattro: each family's static (S) and variable (V) files, and Nerd Fonts'
+# builds, renamed for iA's reserved font name. The bundle rows iA Writer and iMWriting stay.
+[[name]]
+name = "iA Writer Mono S"
+family = "ia-writer-mono"
+relation = "build"
+detail = "static"
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/src/unpatched-fonts/iA-Writer/Mono/iAWriterMonoS-Regular.ttf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "iA Writer Mono V"
+family = "ia-writer-mono"
+relation = "build"
+detail = "variable"
+evidence = "https://raw.githubusercontent.com/fontsource/font-files/0a4ca74c3548ab47d03eb7e9af398b41a86a31ac/sources/ia-writer-mono/files/iAWriterMonoV.ttf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "iMWritingMono"
+family = "ia-writer-mono"
+relation = "build"
+detail = "nerd"
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/patched-fonts/iA-Writer/Mono/iMWritingMonoNerdFont-Regular.ttf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "iA Writer Duo S"
+family = "ia-writer-duo"
+relation = "build"
+detail = "static"
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/src/unpatched-fonts/iA-Writer/Duo/iAWriterDuoS-Regular.ttf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "iA Writer Duo V"
+family = "ia-writer-duo"
+relation = "build"
+detail = "variable"
+evidence = "https://raw.githubusercontent.com/fontsource/font-files/0a4ca74c3548ab47d03eb7e9af398b41a86a31ac/sources/ia-writer-duo/files/iAWriterDuoV.ttf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "iMWritingDuo"
+family = "ia-writer-duo"
+relation = "build"
+detail = "nerd"
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/patched-fonts/iA-Writer/Duo/iMWritingDuoNerdFont-Regular.ttf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "iA Writer Quattro S"
+family = "ia-writer-quattro"
+relation = "build"
+detail = "static"
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/src/unpatched-fonts/iA-Writer/Quattro/iAWriterQuattroS-Regular.ttf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "iA Writer Quattro V"
+family = "ia-writer-quattro"
+relation = "build"
+detail = "variable"
+evidence = "https://raw.githubusercontent.com/fontsource/font-files/0a4ca74c3548ab47d03eb7e9af398b41a86a31ac/sources/ia-writer-quattro/files/iAWriterQuattroV.ttf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "iMWritingQuat"
+family = "ia-writer-quattro"
+relation = "build"
+detail = "nerd"
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/patched-fonts/iA-Writer/Quattro/iMWritingQuatNerdFont-Regular.ttf"
+ruling = "hopper_installed_names"
+
+# Cozette: its vector and crossed-seven cuts, each a family name of its own.
+[[name]]
+name = "CozetteVector"
+family = "cozette"
+relation = "build"
+detail = ""
+evidence = "https://github.com/slavfox/Cozette/releases/download/v.1.30.0/CozetteFonts-v-1-30-0.zip#CozetteFonts/CozetteVector.otf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "CozetteVectorBold"
+family = "cozette"
+relation = "build"
+detail = ""
+evidence = "https://github.com/slavfox/Cozette/releases/download/v.1.30.0/CozetteFonts-v-1-30-0.zip#CozetteFonts/CozetteVectorBold.otf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "CozetteCrossedSeven"
+family = "cozette"
+relation = "build"
+detail = ""
+evidence = "https://github.com/slavfox/Cozette/releases/download/v.1.30.0/CozetteFonts-v-1-30-0.zip#CozetteFonts/cozettecrossedseven.otb"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "CozetteCrossedSevenVector"
+family = "cozette"
+relation = "build"
+detail = ""
+evidence = "https://github.com/slavfox/Cozette/releases/download/v.1.30.0/CozetteFonts-v-1-30-0.zip#CozetteFonts/CozetteCrossedSevenVector.otf"
+ruling = "hopper_installed_names"
+
+[[name]]
+name = "CozetteCrossedSevenVectorBold"
+family = "cozette"
+relation = "build"
+detail = ""
+evidence = "https://github.com/slavfox/Cozette/releases/download/v.1.30.0/CozetteFonts-v-1-30-0.zip#CozetteFonts/CozetteCrossedSevenVectorBold.otf"
+ruling = "hopper_installed_names"
+
+# ET Book: every file's family name.
+[[name]]
+name = "ETBembo"
+family = "et-book"
+relation = "build"
+detail = ""
+evidence = "https://raw.githubusercontent.com/edwardtufte/et-book/24d3a3bbfc880095d3df2b9e9d60d05819138e89/et-book/et-book-roman-line-figures/et-book-roman-line-figures.ttf"
+ruling = "hopper_installed_names"
+
+# Latin Modern: the 33 families of GUST's release, the archive the catalog pins.
+[[name]]
+name = "LMMono10"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmmono10-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMMono12"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmmono12-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMMono8"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmmono8-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMMono9"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmmono9-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMMonoCaps10"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmmonocaps10-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMMonoLt10"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmmonolt10-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMMonoLtCond10"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmmonoltcond10-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMMonoProp10"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmmonoprop10-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMMonoPropLt10"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmmonoproplt10-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMMonoSlant10"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmmonoslant10-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMRoman10"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmroman10-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMRoman12"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmroman12-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMRoman17"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmroman17-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMRoman5"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmroman5-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMRoman6"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmroman6-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMRoman7"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmroman7-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMRoman8"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmroman8-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMRoman9"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmroman9-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMRomanCaps10"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmromancaps10-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMRomanDemi10"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmromandemi10-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMRomanDunh10"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmromandunh10-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMRomanSlant10"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmromanslant10-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMRomanSlant12"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmromanslant12-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMRomanSlant8"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmromanslant8-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMRomanSlant9"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmromanslant9-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMRomanUnsl10"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmromanunsl10-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMSans10"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmsans10-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMSans12"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmsans12-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMSans17"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmsans17-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMSans8"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmsans8-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMSans9"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmsans9-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMSansDemiCond10"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmsansdemicond10-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+[[name]]
+name = "LMSansQuot8"
+family = "latin-modern"
+relation = "build"
+detail = ""
+evidence = "https://www.gust.org.pl/projects/e-foundry/latin-modern/download/Latin_Modern-otf-2_007-31_03_2026.zip#lmsansquot8-regular.otf"
+ruling = "hopper_latin_modern_lm"
+
+# Rec Mono: Arrow Type's monospaced cuts of Recursive, and Nerd Fonts' short name for one,
+# only near Recursive (its Nerd Fonts builds follow, RecMonoCasual Nerd Font among them).
+[[name]]
+name = "Rec Mono Linear"
+family = "recursive"
+relation = "sibling"
+detail = ""
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/src/unpatched-fonts/Recursive/RecMonoLinear/RecMonoLinear-Regular-1.085.ttf"
+ruling = "hopper_rec_mono_near"
+
+[[name]]
+name = "Rec Mono Casual"
+family = "recursive"
+relation = "sibling"
+detail = ""
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/src/unpatched-fonts/Recursive/RecMonoCasual/RecMonoCasual-Regular-1.085.ttf"
+ruling = "hopper_rec_mono_near"
+
+[[name]]
+name = "Rec Mono Semicasual"
+family = "recursive"
+relation = "sibling"
+detail = ""
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/src/unpatched-fonts/Recursive/RecMonoSemicasual/RecMonoSemicasual-Regular-1.085.ttf"
+ruling = "hopper_rec_mono_near"
+
+[[name]]
+name = "Rec Mono Duotone"
+family = "recursive"
+relation = "sibling"
+detail = ""
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/src/unpatched-fonts/Recursive/RecMonoDuotone/RecMonoDuotone-Regular-1.085.ttf"
+ruling = "hopper_rec_mono_near"
+
+[[name]]
+name = "RecMonoSmCasual"
+family = "recursive"
+relation = "sibling"
+detail = ""
+evidence = "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.5.1/Recursive.zip#RecMonoSmCasualNerdFont-Regular.ttf"
+ruling = "hopper_rec_mono_near"
+
+# Nerd Fonts' builds of 8 more families, named apart from their fonts.json stems.
+[[name]]
+name = "LiterationSans"
+family = "liberation-sans"
+relation = "build"
+detail = "nerd"
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/patched-fonts/LiberationMono/LiterationSansNerdFont-Regular.ttf"
+ruling = "hopper_nerd_sweep"
+
+[[name]]
+name = "LiterationSerif"
+family = "liberation-serif"
+relation = "build"
+detail = "nerd"
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/patched-fonts/LiberationMono/LiterationSerifNerdFont-Regular.ttf"
+ruling = "hopper_nerd_sweep"
+
+[[name]]
+name = "NotoSansM"
+family = "noto-sans-mono"
+relation = "build"
+detail = "nerd"
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/patched-fonts/Noto/Sans-Mono/NotoSansMNerdFont-Regular.ttf"
+ruling = "hopper_nerd_sweep"
+
+[[name]]
+name = "OverpassM"
+family = "overpass-mono"
+relation = "build"
+detail = "nerd"
+evidence = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/b894ea7803af6aade63d60a4381e006098ec9c4d/patched-fonts/Overpass/Mono/OverpassMNerdFont-Regular.otf"
+ruling = "hopper_nerd_sweep"
+
+[[name]]
+name = "MonaspiceAr"
+family = "monaspace-argon"
+relation = "build"
+detail = "nerd"
+evidence = "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.5.1/Monaspace.zip#MonaspiceArNerdFont-Regular.otf"
+ruling = "hopper_nerd_sweep"
+
+[[name]]
+name = "MonaspiceKr"
+family = "monaspace-krypton"
+relation = "build"
+detail = "nerd"
+evidence = "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.5.1/Monaspace.zip#MonaspiceKrNerdFont-Regular.otf"
+ruling = "hopper_nerd_sweep"
+
+[[name]]
+name = "MonaspiceRn"
+family = "monaspace-radon"
+relation = "build"
+detail = "nerd"
+evidence = "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.5.1/Monaspace.zip#MonaspiceRnNerdFont-Regular.otf"
+ruling = "hopper_nerd_sweep"
+
+[[name]]
+name = "MonaspiceXe"
+family = "monaspace-xenon"
+relation = "build"
+detail = "nerd"
+evidence = "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.5.1/Monaspace.zip#MonaspiceXeNerdFont-Regular.otf"
+ruling = "hopper_nerd_sweep"

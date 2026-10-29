@@ -369,16 +369,30 @@ def test_the_committed_reviewed_list_cites_recorded_rulings(ruling):
 
 
 # hopper_hackgen_related (2026-10-23): "In the hopper, HackGen ... is only a near-match of
-# Hack", recoded as related. By ruling, the family and relation its entries have, and the name
-# each entry's name must reach (owned.candidates): HackGen itself, or a build or weight of it
-# such as "HackGen NF", which the build makes the list recode too (owned._check_recodes).
-RECODES_RULED = {"hopper_hackgen_related": ("hack", "related", "HackGen")}
+# Hack", recoded as related. hopper_rec_mono_near (2026-10-28): Rec Mono "is only a near-match of
+# Recursive, as a sibling", and so are the aliases "RecMono and its Nerd Fonts suffixes, Recursive
+# Code". By ruling, the family and relation its entries have, and the names one of which each
+# entry's name must reach (owned.candidates): the name itself, or a build or weight of it such as
+# "HackGen NF" or "RecMono Nerd Font", which the build makes the list recode too
+# (owned._check_recodes).
+REC_MONO_NAMES = (
+    "RecMono", "Recursive Code", "Rec Mono Linear", "Rec Mono Casual", "Rec Mono Semicasual",
+    "Rec Mono Duotone", "RecMonoSmCasual",
+)  # fmt: skip
+RECODES_RULED = {
+    "hopper_hackgen_related": ("hack", "related", ("HackGen",)),
+    # Its [[name]] entries too, which a refresh that brings them into names.json turns into
+    # recodes citing it (ops/MONTHLY.md step 5).
+    "hopper_rec_mono_near": ("recursive", "sibling", REC_MONO_NAMES),
+}
 
 
 def _covered(recode: matchfile.Recode) -> bool:
-    family, relation, name = RECODES_RULED[recode.ruling]
+    family, relation, ruled = RECODES_RULED[recode.ruling]
     reached = {c.key for c in owned.candidates(recode.name)}
-    return (recode.family, recode.relation) == (family, relation) and match_key(name) in reached
+    return (recode.family, recode.relation) == (family, relation) and any(
+        match_key(name) in reached for name in ruled
+    )
 
 
 def test_the_committed_recodes_citing_a_recode_ruling_are_ones_it_covers():
@@ -406,8 +420,9 @@ def test_the_committed_recodes_of_a_ruled_name_cite_a_ruling_that_covers_them():
     is cited while it is pending (RULINGS_PENDING); once it is recorded, RECODES_RULED gains
     what it covers. Covered refreshes, a HackGen NF recode or HackGen's drop, need no edit."""
     ruled: dict[str, set[str]] = {}
-    for ruling, (_, _, name) in RECODES_RULED.items():
-        ruled.setdefault(match_key(name), set()).add(ruling)
+    for ruling, (_, _, ruled_names) in RECODES_RULED.items():
+        for name in ruled_names:
+            ruled.setdefault(match_key(name), set()).add(ruling)
     beyond = []
     for recode in COMMITTED_REVIEWED.recodes.values():
         reached = {c.key for c in owned.candidates(recode.name)} & ruled.keys()
@@ -461,15 +476,93 @@ def test_the_committed_ambiguous_names_citing_the_ruling_are_among_the_five_it_n
     )
 
 
-# The rulings that review one kind of entry, so neither kind cites the other's.
+# The rulings of 2026-10-28 on names that fonts install under and names.json lacks: by ruling,
+# the families its [[name]] entries may belong to and the relations they may have. The ruling's
+# record names the fonts; each entry's evidence is a file that carries its name.
+NAMES_RULED = {
+    "hopper_installed_names": (
+        frozenset(
+            {
+                "meslo-lg",
+                "profont",
+                "ia-writer-mono",
+                "ia-writer-duo",
+                "ia-writer-quattro",
+                "cozette",
+                "et-book",
+            }
+        ),
+        frozenset({"build"}),
+    ),
+    "hopper_latin_modern_lm": (frozenset({"latin-modern"}), frozenset({"build"})),
+    "hopper_rec_mono_near": (frozenset({"recursive"}), frozenset({"sibling"})),
+    "hopper_nerd_sweep": (
+        frozenset(
+            {
+                "liberation-sans",
+                "liberation-serif",
+                "noto-sans-mono",
+                "overpass-mono",
+                "monaspace-argon",
+                "monaspace-krypton",
+                "monaspace-radon",
+                "monaspace-xenon",
+            }
+        ),
+        frozenset({"build"}),
+    ),
+}
+
+
+def test_the_committed_names_citing_a_names_ruling_are_ones_it_covers():
+    """A [[name]] entry citing one of the rulings of 2026-10-28 belongs to a family that ruling
+    covers, with a relation it gives: Rec Mono's are siblings of Recursive, the rest builds of
+    their families. A name of any other family, or another relation, cites the ruling that
+    reviews it (ops/MONTHLY.md step 5)."""
+    beyond = [
+        entry
+        for entry in COMMITTED_REVIEWED.names.values()
+        if entry.ruling in NAMES_RULED
+        and (
+            entry.family not in NAMES_RULED[entry.ruling][0]
+            or entry.relation not in NAMES_RULED[entry.ruling][1]
+        )
+    ]
+    assert beyond == [], (
+        f"build/names.reviewed.toml cites a names ruling for {beyond}, which it doesn't cover: "
+        "ask the owner, record the ruling, and cite that (ops/MONTHLY.md step 5)"
+    )
+
+
+# The rulings that review one kind of entry, so neither kind cites the other's. A recode and a
+# reviewed name both give a name the hopper's relation, so one ruling may review both
+# (hopper_rec_mono_near); an ambiguous name's review is neither's.
 AMBIGUOUS_RULINGS = frozenset({"inventory_ambiguous_names"})
 
 
 def test_each_committed_entry_cites_a_ruling_of_its_own_kind():
-    """An ambiguous name's review is no recode's, and a recode's no ambiguous name's."""
-    assert not AMBIGUOUS_RULINGS & RECODES_RULED.keys()
-    wrong = [r for r in COMMITTED_REVIEWED.recodes.values() if r.ruling in AMBIGUOUS_RULINGS]
-    wrong += [a for a in COMMITTED_REVIEWED.ambiguous.values() if a.ruling in RECODES_RULED]
+    """An ambiguous name's review is no recode's or reviewed name's, and theirs no ambiguous
+    name's; a recode cites a recode ruling, and a reviewed name a names ruling."""
+    assert not AMBIGUOUS_RULINGS & (RECODES_RULED.keys() | NAMES_RULED.keys())
+    wrong: list[Any] = [
+        r for r in COMMITTED_REVIEWED.recodes.values() if r.ruling in AMBIGUOUS_RULINGS
+    ]
+    wrong += [n for n in COMMITTED_REVIEWED.names.values() if n.ruling in AMBIGUOUS_RULINGS]
+    wrong += [
+        a
+        for a in COMMITTED_REVIEWED.ambiguous.values()
+        if a.ruling in RECODES_RULED or a.ruling in NAMES_RULED
+    ]
+    wrong += [
+        r
+        for r in COMMITTED_REVIEWED.recodes.values()
+        if r.ruling in NAMES_RULED and r.ruling not in RECODES_RULED
+    ]
+    wrong += [
+        n
+        for n in COMMITTED_REVIEWED.names.values()
+        if n.ruling in RECODES_RULED and n.ruling not in NAMES_RULED
+    ]
     assert wrong == [], (
         f"build/names.reviewed.toml cites a ruling of the other kind of entry for {wrong} "
         "(ops/MONTHLY.md step 5)"
@@ -478,19 +571,20 @@ def test_each_committed_entry_cites_a_ruling_of_its_own_kind():
 
 def test_each_ruling_the_committed_list_cites_is_named_here_by_its_kind():
     """So the test above holds for every ruling, not only the first two: each recorded ruling
-    an entry cites is in AMBIGUOUS_RULINGS or RECODES_RULED (with what it covers), by the kind
-    of entry it reviews. A new ruling is added to one once recorded (ops/MONTHLY.md step 5);
-    one still pending (RULINGS_PENDING) waits for its record."""
+    an entry cites is in AMBIGUOUS_RULINGS, RECODES_RULED or NAMES_RULED (with what it covers),
+    by the kind of entry it reviews. A new ruling is added to one once recorded (ops/MONTHLY.md
+    step 5); one still pending (RULINGS_PENDING) waits for its record."""
     unnamed = sorted(
         COMMITTED_REVIEWED.rulings()
         - AMBIGUOUS_RULINGS
         - RECODES_RULED.keys()
+        - NAMES_RULED.keys()
         - RULINGS_PENDING.keys()
     )
     assert unnamed == [], (
-        f"build/names.reviewed.toml cites {unnamed}: add each to AMBIGUOUS_RULINGS or "
-        "RECODES_RULED in tests/test_site_contracts.py, by the kind of entry it reviews "
-        "(ops/MONTHLY.md step 5)"
+        f"build/names.reviewed.toml cites {unnamed}: add each to AMBIGUOUS_RULINGS, "
+        "RECODES_RULED or NAMES_RULED in tests/test_site_contracts.py, by the kind of entry it "
+        "reviews (ops/MONTHLY.md step 5)"
     )
 
 

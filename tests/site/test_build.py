@@ -1017,16 +1017,22 @@ def test_the_match_file_is_derived_from_names_json_and_named_on_the_list(
 ):
     """The hopper's match data (the owner's ruling of 2026-10-22,
     ``inventory_match_data_site_build``): ``owned.match_document`` of the names file beside the
-    catalog, with the reviewed list's recodes, as canonical JSON at a hashed URL that
-    ``#list[data-match]`` names."""
+    catalog, with the reviewed list's recodes and names (``hopper_installed_names``), as
+    canonical JSON at a hashed URL that ``#list[data-match]`` names."""
     out = tmp_path / "site"
     run_build(catalog, out, mini_site)
     url = match_url(out)
     assert re.fullmatch(r"/assets/match\.[0-9a-f]{10}\.json", url)
     blob = asset(out, url).read_bytes()
     ids = [f["id"] for f in SAMPLE["fonts"]]
-    recodes = matchfile.load_reviewed(REVIEWED_PATH)[0].relations()
-    want = owned.match_document(NAMES, ids, SAMPLE["run"]["date"], recodes=recodes)
+    reviewed = matchfile.load_reviewed(REVIEWED_PATH)[0]
+    want = owned.match_document(
+        NAMES,
+        ids,
+        SAMPLE["run"]["date"],
+        recodes=reviewed.relations(),
+        extra=reviewed.extra(),
+    )
     assert blob == jsonio.canonical_bytes(want)
     doc = json.loads(blob)
     assert (doc["format"], doc["v"], doc["run_date"]) == ("tff-match", 1, SAMPLE["run"]["date"])
