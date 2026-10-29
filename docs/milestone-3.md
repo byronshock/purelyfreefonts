@@ -45,8 +45,8 @@ Each code pull request is built in its own worktree, reviewed adversarially befo
   - [x] `src/tff_catalog/owned.py`: the match document, the parser and the matcher, with the style and suffix words taken from `names.py`, whose pipeline behaviour stays the same and is pinned by tests.
   - [x] Shared vectors (`tests/vectors/owned-fonts.json`, `owned-known-answers.json`) and synthetic fixtures for every format in `tests/fixtures/owned/`. CI fails on any real path in them.
   - [x] The known answers pass on the real `build/names.json` of main and of `preview/2026-10-17`: Source Sans Pro → Source Sans 3, FiraCode NF → Fira Code, Roboto Slab ≠ Roboto, Inter Tight ≠ Inter, Noto Sans JP ≠ Noto Sans, and Adwaita Sans never Inter. *(On the October data Gentium Book's answers name Gentium Plus, as `inventory_ambiguous_names` foresees; that refresh edits them.)*
-- [ ] **PR 2, the match file in the site build** (step 3, amended): a hashed `/assets/match.<h>.json`, checked against `catalog-site.json` (same run, same ids, every alias), within a 50 KB budget, and named on the list page. CONTRACT.md and `docs/catalog-schema.md` describe it.
-- [ ] **PR 3, the parser and matcher in the browser** (steps 4 and 5): a separate script, loaded only when a list arrives, that agrees with Python on every vector in Chromium and Firefox and matches 10,000 names in under 200 ms.
+- [x] **PR 2, the match file in the site build** (step 3, amended; #95): a hashed `/assets/match.<h>.json`, checked against `catalog-site.json` (same run, same ids, every alias), within a 50 KB budget, and named on the list page. CONTRACT.md and `docs/catalog-schema.md` describe it.
+- [x] **PR 3, the parser and matcher in the browser** (steps 4 and 5; #96): a separate script, loaded only when a list arrives, that agrees with Python on every vector in Chromium and Firefox and matches 10,000 names in under 200 ms.
 - [ ] **PR 4, the hopper on the list** (steps 6, 8 and 9):
   - [ ] Drop, choose or paste; a summary; the Show menu; "Forget this list"; each OS's command with a copy button.
   - [ ] Owned fonts leave every view, "Showing N of M" counts them out, and changes are announced.
