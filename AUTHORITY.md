@@ -441,8 +441,13 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
   - **Match data:** built by the site build from the committed `build/names.json` and `catalog-site.json`, not by the pipeline's `match` stage (`inventory_match_data_site_build`, amending step 3).
   - **Ambiguous names:** Archivo Black, Bungee Hairline, Gentium Book, Gentium Plus Book and Syne Italic are a reviewed set: from a plain list they give only a near-match, and the site build fails on any change to the set until the owner reviews it (`inventory_ambiguous_names`, 2026-10-23).
   - **On demand:** the parser and matcher load as a separate file with the match file, only when a list arrives: two fixed requests, and the list page keeps its weight (`inventory_matcher_on_demand`, 2026-10-23, amending step 9 and CONTRACT §5).
+  - **Installed names (2026-10-28):** fonts that install under names `names.json` lacks are entries of the hopper's reviewed list, `[[name]]` in `build/names.reviewed.toml`. Each is an exact name read from a font file, its family and its relation. The site build adds them to the match file, while `names.json`, the ranking and "Also known as" stay as they are (`hopper_installed_names`).
+    - The first entries are Meslo LG's line-gap and DZ cuts, ProFont's IIx and Windows, iA Writer's S and V and Nerd Fonts' iMWriting names, Cozette's vector and crossed-seven cuts, and ET Book's ETBembo. Each is found on a real list or on staging. A Nerd Fonts build of each follows by the suffix rule.
+    - All 33 LM names of GUST's Latin Modern release own Latin Modern (`hopper_latin_modern_lm`).
+    - Rec Mono and its Nerd Fonts builds are only a near-match of Recursive, as a sibling; Recursive Code and RecMono Nerd Font are recoded to match (`hopper_rec_mono_near`).
+    - Nerd Fonts' names for Liberation Sans and Serif, Noto Sans Mono, Overpass Mono and four Monaspace families are added too (`hopper_nerd_sweep`).
 
-  *(2026-10-21 to 2026-10-23, `data/reviews/site/`)*
+  *(2026-10-21 to 2026-10-28, `data/reviews/site/`)*
 
 ## Infrastructure
 

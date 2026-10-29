@@ -18,7 +18,9 @@ reads real lists only in tests.
   nothing matches by prefix.
 - ``match_document``: the compact match file that the site build publishes
   from ``build/names.json`` and the catalog's ids, with the reviewed recodes
-  (``hopper_hackgen_related``: HackGen is only related to Hack here).
+  (``hopper_hackgen_related``: HackGen is only related to Hack here) and the
+  reviewed names that fonts install under and names.json lacks (``extra``,
+  ``hopper_installed_names``: ETBembo is ET Book's).
 - ``check_document``: the collision check (Milestone 3 step 3): names that
   stripping turns into another family's key (the ``amb`` set), and
   ``distinct_from`` pairs that must never meet.
@@ -403,6 +405,10 @@ RECODE_RELATIONS = frozenset({"related", "sibling", "bundle"})
 OWNED_RELATIONS = frozenset(
     {"build"} | {relation for relation, letter in _LETTERS.items() if letter in _OWNED_LETTERS}
 )
+# What a reviewed name that names.json lacks (``extra``) may be: an owned relation, or a
+# near-match (hopper_installed_names: "MesloLGL" is a build of Meslo LG; hopper_rec_mono_near:
+# "Rec Mono Casual" a sibling of Recursive). Not a package, a name only a package has.
+EXTRA_RELATIONS = OWNED_RELATIONS | RECODE_RELATIONS
 
 
 class RecodeError(ValueError):
@@ -454,6 +460,82 @@ def _recodes(names_doc: Mapping[str, Any], recodes: Mapping[str, str] | None) ->
     return out
 
 
+def _extra_rows(
+    names_doc: Mapping[str, Any], extra: Iterable[Mapping[str, Any]] | None
+) -> dict[str, list[dict[str, str]]]:
+    """``extra``'s names as names.json alias rows, by family id, checked; else ValueError.
+
+    Each is ``{"name", "family", "relation", "detail"}``: a name with a non-empty
+    ``match_key``, of a family ``names_doc`` lists, with a relation of ``EXTRA_RELATIONS``; a
+    build has a detail the match file knows (``SAME_FONT_DETAILS``, ``PATCHED_DETAILS``), any
+    other relation the detail "" or none. Two may not share a key, and no key may be one that
+    ``names_doc`` has already, as a family's name or alias or an ineligible name: a name the
+    data has caught up with is a stale entry (its own family's), or a collision (another's).
+    """
+    if not extra:
+        return {}
+    ids = {fam["id"] for fam in names_doc["families"]}
+    held: dict[str, str] = {}
+    for fam in names_doc["families"]:
+        for name in (fam["family"], *(item["name"] for item in fam["names"])):
+            held.setdefault(match_key(name), f"a name of {fam['id']}")
+    for row in names_doc["ineligible"]:
+        held.setdefault(match_key(row["name"]), f"an ineligible name ({row['reason']})")
+    rows: dict[str, list[dict[str, str]]] = defaultdict(list)
+    seen: dict[str, str] = {}
+    for item in extra:
+        name, fid, relation = item.get("name"), item.get("family"), item.get("relation")
+        detail = item.get("detail") or ""
+        key = match_key(name) if isinstance(name, str) else ""
+        if not key:
+            raise ValueError(f"extra name {name!r} has no key")
+        if not all(isinstance(value, str) for value in (fid, relation, detail)):
+            raise ValueError(f"extra name {name!r}: its family, relation and detail are strings")
+        if fid not in ids:
+            raise ValueError(f"extra name {name!r}: names.json has no family {fid!r}")
+        if relation not in EXTRA_RELATIONS:
+            raise ValueError(
+                f"extra name {name!r}: {relation!r} is not one of {sorted(EXTRA_RELATIONS)}"
+            )
+        if relation == "build" and detail not in SAME_FONT_DETAILS | PATCHED_DETAILS:
+            raise ValueError(f"extra name {name!r}: a build with an unknown detail {detail!r}")
+        if relation != "build" and detail:
+            raise ValueError(f"extra name {name!r}: only a build has a detail, not {relation}")
+        if key in held:
+            raise ValueError(
+                f"extra name {name!r}: names.json has its key {key!r} already, as {held[key]}"
+            )
+        if key in seen:
+            raise ValueError(f"extra names {seen[key]!r} and {name!r} share the key {key!r}")
+        seen[key] = name
+        row = {"name": name, "relation": relation}
+        if relation == "build":
+            row["detail"] = detail
+        rows[fid].append(row)
+    return dict(rows)
+
+
+def _extra_keys(extra: Iterable[Mapping[str, Any]] | None) -> frozenset[str]:
+    return frozenset(match_key(item["name"]) for item in extra or ())
+
+
+def with_extra(
+    names_doc: Mapping[str, Any], extra: Iterable[Mapping[str, Any]] | None
+) -> Mapping[str, Any]:
+    """``names_doc`` with ``extra``'s names (``_extra_rows``) after its families' own aliases,
+    as the match file reads them; ``names_doc`` itself when there are none."""
+    rows = _extra_rows(names_doc, extra)
+    if not rows:
+        return names_doc
+    return {
+        **names_doc,
+        "families": [
+            {**fam, "names": [*fam["names"], *rows[fam["id"]]]} if fam["id"] in rows else fam
+            for fam in names_doc["families"]
+        ],
+    }
+
+
 def _letter(item: Mapping[str, Any], key: str, recodes: Mapping[str, str]) -> str:
     relation = recodes.get(key, item["relation"])
     if relation == "build":
@@ -483,12 +565,16 @@ class _Holders:
 
 
 def _holders(
-    names_doc: Mapping[str, Any], catalog: frozenset[str], recodes: Mapping[str, str]
+    names_doc: Mapping[str, Any],
+    catalog: frozenset[str],
+    recodes: Mapping[str, str],
+    extra_keys: frozenset[str] = frozenset(),
 ) -> tuple[dict[str, _Holders], list[str]]:
     """Every known name's key with its holders, and the known names in document order.
 
     ``recodes`` (by key, ``_recodes``) apply to every alias row at their keys.
     ``_check_recodes`` then refuses a recode that leaves its family owned there.
+    ``extra_keys`` are the keys of reviewed names among the rows (``with_extra``).
     """
     out: dict[str, _Holders] = defaultdict(_Holders)
     seen: dict[str, None] = {}
@@ -513,12 +599,15 @@ def _holders(
         if key:
             seen.setdefault(row["name"])
             out[key].reasons.add(row["reason"])
-    _check_recodes(names_doc, out, recoded)
+    _check_recodes(names_doc, out, recoded, extra_keys)
     return dict(out), list(seen)
 
 
 def _check_recodes(
-    names_doc: Mapping[str, Any], holders: Mapping[str, _Holders], recoded: Mapping[str, set[str]]
+    names_doc: Mapping[str, Any],
+    holders: Mapping[str, _Holders],
+    recoded: Mapping[str, set[str]],
+    extra_keys: frozenset[str] = frozenset(),
 ) -> None:
     """``RecodeError`` when a recoded family could still be owned through a recoded name,
     listing every such recode and name at once.
@@ -531,7 +620,9 @@ def _check_recodes(
     its recode: one at its family name's key, which no recode touches, or at a key that another
     family's alias also has, where a recode would recode both, so the build refuses it
     (``tff_site.matchfile.refused_recodes``). A key that its family name has is named for that
-    alone, as no recode of a name that reaches it could save it. Each bypass names the
+    alone, as no recode of a name that reaches it could save it. A reviewed name
+    (``extra_keys``) is named asking for a near-match relation of its own, since a recode names
+    an alias of names.json. Each bypass names the
     bypassing name's own key as its ``via`` (``RecodeError``), so a caller that left a listed
     recode out can tell the bypasses that only that makes.
     """
@@ -563,6 +654,8 @@ def _check_recodes(
             others = sorted(aliased[chain[0].key] - {fam["id"]})
             if chain[0].key == match_key(fam["family"]):  # no recode can make it a near-match
                 fix = ", at its family name's key, which no recode touches"
+            elif chain[0].key in extra_keys:  # its entry gives its relation, not a recode
+                fix = "; it is a reviewed name: make it a near-match"
             elif others:  # the site build refuses a recode that would recode them too
                 fix = (
                     f", at a key that an alias of {', '.join(others)} also has, which the "
@@ -620,6 +713,7 @@ def check_document(
     catalog_ids: Iterable[str],
     *,
     recodes: Mapping[str, str] | None = None,
+    extra: Iterable[Mapping[str, Any]] | None = None,
 ) -> Check:
     """The collision check of Milestone 3 step 3, on ``names.json`` and the catalog's ids.
 
@@ -635,10 +729,13 @@ def check_document(
     near-matches; a family outside the catalog is never owned, coded ``-``). A key
     is ``shared`` when a catalog family owns it and another family does too, in the
     catalog or not: a list's name there would count the catalog family as owned.
-    ``recodes`` as in ``match_document``.
+    ``recodes`` and ``extra`` as in ``match_document``: an extra name is checked as an alias.
     """
     catalog = frozenset(catalog_ids)
-    holders, names = _holders(names_doc, catalog, _recodes(names_doc, recodes))
+    recoded = _recodes(names_doc, recodes)
+    extra = tuple(extra or ())  # read twice
+    names_doc = with_extra(names_doc, extra)
+    holders, names = _holders(names_doc, catalog, recoded, _extra_keys(extra))
     collisions: list[Collision] = []
     amb: dict[str, set[str]] = defaultdict(set)
     for name in names:
@@ -708,6 +805,7 @@ def match_document(
     run_date: str,
     *,
     recodes: Mapping[str, str] | None = None,
+    extra: Iterable[Mapping[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """The hopper's match file, compact and canonical, from ``names.json`` and the catalog ids.
 
@@ -732,10 +830,20 @@ def match_document(
     a key no alias has, or only near-match aliases (``OWNED_RELATIONS``), a relation
     outside ``RECODE_RELATIONS``, two relations for one key, or a recoded family still
     owned through it (``_check_recodes``).
+
+    ``extra`` holds the reviewed names that fonts install under and names.json lacks
+    (``hopper_installed_names``: "Meslo LG L DZ" is a build of Meslo LG, so "MesloLGLDZ Nerd
+    Font Mono" is a patched one), each ``{"name", "family", "relation", "detail"}``. They join
+    their families as alias rows (``with_extra``), coded as names.json's are, and a recode
+    never touches them. A ValueError for a name whose key names.json has already
+    (``_extra_rows``). ``names_sha256`` stays names.json's.
     """
     ids = _catalog_ids(names_doc, catalog_ids, run_date)
     index = {fid: n for n, fid in enumerate(ids)}
-    holders, _ = _holders(names_doc, frozenset(ids), _recodes(names_doc, recodes))
+    recoded = _recodes(names_doc, recodes)
+    extra = tuple(extra or ())  # read three times
+    full = with_extra(names_doc, extra)
+    holders, _ = _holders(full, frozenset(ids), recoded, _extra_keys(extra))
     reasons = sorted({row["reason"] for row in names_doc["ineligible"]})
     rindex = {reason: n for n, reason in enumerate(reasons)}
     k: dict[str, str] = {}
@@ -745,7 +853,7 @@ def match_document(
         codes += ["-"] * bool(h.others)
         codes += [f"!{rindex[r]}" for r in sorted(h.reasons, key=rindex.__getitem__)]
         k[key] = ",".join(codes)
-    check = check_document(names_doc, ids, recodes=recodes)
+    check = check_document(names_doc, ids, recodes=recodes, extra=extra)
     return {
         "format": FORMAT,
         "v": VERSION,

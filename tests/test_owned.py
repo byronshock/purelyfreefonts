@@ -484,6 +484,8 @@ CATALOG = ROOT / "build" / "catalog-site.json"
 # step 5); which recodes a ruling covers is tests/test_site_contracts.py's check.
 REVIEWED = matchfile.load_reviewed(matchfile.default_reviewed_path(NAMES_JSON))[0]
 RECODES = REVIEWED.relations()
+# Its names that fonts install under and names.json lacks (hopper_installed_names, 2026-10-28).
+EXTRA = REVIEWED.extra()
 # The letter a recode gives its alias in the match file (site/CONTRACT.md section 11), and
 # the letters of an owned code.
 RECODE_LETTERS = {"related": "x", "sibling": "s", "bundle": "u"}
@@ -772,9 +774,9 @@ def test_the_real_names_json_s_ambiguous_keys_are_the_reviewed_ones_and_nothing_
     and no key is owned twice, in them or outside: the same rules the build holds
     (``matchfile.check_errors``), with no count that a refresh moves."""
     doc, ids = real()
-    check = owned.check_document(doc, ids, recodes=RECODES)
+    check = owned.check_document(doc, ids, recodes=RECODES, extra=EXTRA)
     assert check.amb == {key: entry.families for key, entry in REVIEWED.ambiguous.items()}
-    assert matchfile.key_owners(doc, check.amb) == {
+    assert matchfile.key_owners(owned.with_extra(doc, EXTRA), check.amb) == {
         key: entry.owners for key, entry in REVIEWED.ambiguous.items()
     }
     assert {c.key for c in check.collisions if c.catalog} == check.amb.keys()
@@ -784,14 +786,124 @@ def test_the_real_names_json_s_ambiguous_keys_are_the_reviewed_ones_and_nothing_
 
 def test_the_real_match_document_is_valid_and_its_codes_name_every_alias():
     doc, ids = real()
-    built = owned.match_document(doc, ids, doc["run"]["date"], recodes=RECODES)
+    built = owned.match_document(doc, ids, doc["run"]["date"], recodes=RECODES, extra=EXTRA)
     assert list(_schema("match").iter_errors(json.loads(json.dumps(built)))) == []
     assert built["ids"] == sorted(ids)
     every = {f["family"] for f in doc["families"]} | {
         n["name"] for f in doc["families"] for n in f["names"]
     }
-    every |= {row["name"] for row in doc["ineligible"]}
+    every |= {row["name"] for row in doc["ineligible"]} | {item["name"] for item in EXTRA}
     assert {names.match_key(n) for n in every} - {""} == set(built["k"])
+
+
+def test_each_reviewed_name_is_new_to_names_json_and_its_family_s_alone():
+    """hopper_installed_names: a reviewed name adds a key that names.json lacks, holding only
+    its family, with the letter its relation gives; the rest of the match file stays as
+    names.json and the recodes make it. A refresh that brings the name into names.json fails
+    the build until the entry goes (``matchfile.refused_names``, ops/MONTHLY.md step 5)."""
+    doc, ids = real()
+    plain = owned.match_document(doc, ids, doc["run"]["date"], recodes=RECODES)
+    built = owned.match_document(doc, ids, doc["run"]["date"], recodes=RECODES, extra=EXTRA)
+    assert built["names_sha256"] == plain["names_sha256"]
+    added = {key: built["k"][key] for key in built["k"].keys() - plain["k"].keys()}
+    assert {key: codes for key, codes in built["k"].items() if key not in added} == plain["k"]
+    assert added.keys() == REVIEWED.names.keys()
+    for key, entry in REVIEWED.names.items():
+        letter = RECODE_LETTERS.get(entry.relation) or {"rename": "r", "postscript": "p"}.get(
+            entry.relation, "n" if entry.detail in owned.PATCHED_DETAILS else "b"
+        )
+        assert added[key] == f"{built['ids'].index(entry.family)}{letter}", entry.name
+    assert built["amb"] == plain["amb"]
+
+
+def _extra(name: str, family: str = "foo-sans", relation: str = "build", detail: str = ""):
+    return {"name": name, "family": family, "relation": relation, "detail": detail}
+
+
+def test_an_extra_name_joins_its_family_as_an_alias_row():
+    """A reviewed name that names.json lacks, as "Meslo LG L DZ" is Meslo LG's: coded as an
+    alias of its relation, and reached from a Nerd Fonts build by the suffix rule, never by
+    prefix. ``names_sha256`` stays names.json's."""
+    extra = [_extra("FooSansWD"), _extra("Foo Sans Duo", relation="sibling")]
+    doc = owned.match_document(ov.NAMES, ov.CATALOG_IDS, ov.RUN_DATE, extra=extra)
+    plain = synthetic()
+    assert (doc["k"]["foosanswd"], doc["k"]["foosansduo"]) == ("1b", "1s")
+    assert {k: v for k, v in doc["k"].items() if k not in {"foosanswd", "foosansduo"}} == plain["k"]
+    assert doc["names_sha256"] == plain["names_sha256"]
+    table = owned.Table.from_document(doc)
+    for line, owned_how, near_why in [
+        ("FooSansWD Nerd Font Mono", "patched", None),
+        ("FooSansWD", "build", None),
+        ("Foo Sans Duo NF", None, "sibling"),
+        ("FooSansWDX", None, None),
+    ]:
+        result = owned.match(owned.parse(line + "\n"), table)
+        assert result.owned.get("foo-sans", {}).get("how") == owned_how, line
+        assert result.near.get("foo-sans", {}).get("why") == near_why, line
+
+
+@pytest.mark.parametrize(
+    ("extra", "message"),
+    [
+        ([_extra("Foo Sans Text")], "has its key 'foosanstext' already, as a name of foo-sans"),
+        ([_extra("Bar Serif", "foo-sans")], "as a name of bar-serif"),
+        ([_extra("Foo Sans JP")], r"as an ineligible name \(cjk\)"),
+        ([_extra("Foo Wide", "foo-sans-99")], "has no family 'foo-sans-99'"),
+        ([_extra("Foo Wide", relation="package")], "'package' is not one of"),
+        ([_extra("Foo Wide", detail="wide")], "a build with an unknown detail 'wide'"),
+        ([_extra("Foo Wide", relation="related", detail="nf")], "only a build has a detail"),
+        ([_extra("-")], "has no key"),
+        ([_extra("Foo Wide"), _extra("FooWide", "bar-serif")], "share the key 'foowide'"),
+    ],
+)
+def test_an_extra_name_must_be_new_to_names_json_and_well_formed(extra, message):
+    with pytest.raises(ValueError, match=message):
+        owned.match_document(ov.NAMES, ov.CATALOG_IDS, ov.RUN_DATE, extra=extra)
+    with pytest.raises(ValueError, match=message):
+        owned.check_document(ov.NAMES, ov.CATALOG_IDS, extra=extra)
+
+
+def test_the_check_reads_extra_names_as_names():
+    """An extra name is checked as an alias: one of Foo Sans Tight that reaches Foo Sans, from
+    which it is distinct, is a meeting; one that reaches a recoded key while it owns its family
+    there bypasses the recode, and is named asking for a near-match of its own."""
+    meeting = owned.check_document(
+        ov.NAMES, ov.CATALOG_IDS, extra=[_extra("Foo Sans Bold Wide", "foo-sans-tight")]
+    )
+    assert meeting.meetings == ()
+    meeting = owned.check_document(
+        ov.NAMES, ov.CATALOG_IDS, extra=[_extra("Foo Sans Bold", "foo-sans-tight", "related")]
+    )
+    assert [(m.family, m.other, m.name) for m in meeting.meetings] == [
+        ("foo-sans-tight", "foo-sans", "Foo Sans Bold")
+    ]
+    with pytest.raises(owned.RecodeError, match="reviewed name: make it a near-match"):
+        owned.check_document(
+            ov.NAMES,
+            ov.CATALOG_IDS,
+            recodes={"Foo Sans Text": "related"},
+            extra=[_extra("Foo Sans Text NF", detail="nf")],
+        )
+    taken = owned.match_document(
+        ov.NAMES,
+        ov.CATALOG_IDS,
+        ov.RUN_DATE,
+        recodes={"Foo Sans Text": "related"},
+        extra=[_extra("Foo Sans Text NF", relation="related")],
+    )
+    assert taken["k"]["foosanstextnf"] == "1x"
+
+
+def test_extra_names_may_come_from_a_one_shot_iterable():
+    """``extra`` is read several times (the rows, the recode check, the collision check that
+    gives ``amb``), so a generator gives what a list does, the ambiguous key an extra name
+    makes too: "Foo Sans Bold", given to Bar Serif, may be Foo Sans's Bold weight."""
+    rows = [_extra("FooSansWD"), _extra("Foo Sans Bold", "bar-serif")]
+    built = owned.match_document(ov.NAMES, ov.CATALOG_IDS, ov.RUN_DATE, extra=iter(rows))
+    assert built == owned.match_document(ov.NAMES, ov.CATALOG_IDS, ov.RUN_DATE, extra=rows)
+    assert built["amb"]["foosansbold"] == [ov.CATALOG_IDS.index("foo-sans")]
+    check = owned.check_document(ov.NAMES, ov.CATALOG_IDS, extra=iter(rows))
+    assert check.amb["foosansbold"] == ("foo-sans",)
 
 
 # ---------------------------------------------------------------- parsing
@@ -1393,8 +1505,8 @@ KNOWN = json.loads(ov.KNOWN.read_text(encoding="utf-8"))
 def real_table(recoded: bool = True) -> owned.Table:
     """The table of the real match document, read back from its JSON as the page reads it."""
     doc, ids = real()
-    recodes = RECODES if recoded else None
-    built = owned.match_document(doc, ids, doc["run"]["date"], recodes=recodes)
+    recodes, extra = (RECODES, EXTRA) if recoded else (None, None)
+    built = owned.match_document(doc, ids, doc["run"]["date"], recodes=recodes, extra=extra)
     return owned.Table.from_document(json.loads(jsonio.canonical_bytes(built)))
 
 

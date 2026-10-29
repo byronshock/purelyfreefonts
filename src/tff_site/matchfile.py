@@ -12,7 +12,9 @@ section 11). ``match_file`` first refuses, listing every problem:
   build before them;
 - recodes that name no alias of the family they say, or that change nothing, an alias
   already a near-match or of a family outside the catalog (``refused_recodes``), or that
-  another name of the family bypasses (``owned.RecodeError``),
+  another name of the family bypasses (``owned.RecodeError``), and reviewed names whose
+  family names.json lacks or has outside the catalog, or whose key names.json has already
+  (``refused_names``),
   together with what Milestone 3 step 3's collision check finds without them (``check_errors``
   over ``owned.check_document``), including an ambiguous set other than the reviewed one, so
   a refresh that changes the ambiguous set, moves a recoded alias, or both, fails once,
@@ -27,7 +29,10 @@ ambiguous names, which only pass or fail the build (the match file's ``amb`` is 
 they change none of its bytes), and the reviewed recodes, which change an alias's code in the
 match file and nothing in ``names.json`` (``hopper_hackgen_related``, 2026-10-23: HackGen, a
 build of Hack in names.json, is only related to Hack in the hopper, so the ranking keeps its
-alias row). It is read with ``tomllib``, as ``tff_site.views`` reads ``config/site.toml``.
+alias row), and the reviewed names that fonts install under and names.json lacks, which add
+keys to the match file and nothing to ``names.json`` (``hopper_installed_names``, 2026-10-28:
+ETBembo is ET Book's, and "Meslo LG L DZ", a build of Meslo LG, makes "MesloLGLDZ Nerd Font"
+a patched one). It is read with ``tomllib``, as ``tff_site.views`` reads ``config/site.toml``.
 """
 
 import hashlib
@@ -63,6 +68,9 @@ NAME_KEYS = frozenset({"name", "relation", "detail"})
 INELIGIBLE_KEYS = frozenset({"name", "reason"})
 AMBIGUOUS_FIELDS = frozenset({"name", "families", "owners", "ruling"})
 RECODE_FIELDS = frozenset({"name", "family", "relation", "ruling"})
+NAME_FIELDS = frozenset({"name", "family", "relation", "detail", "evidence", "ruling"})
+# The kinds of entry a reviewed list holds, as its TOML arrays of tables.
+REVIEWED_KINDS = ("ambiguous", "recode", "name")
 # The end of each collision problem that no edit to the reviewed list can clear: a meeting or a
 # shared key that no recode the build takes would end, a catalog name reaching a family outside
 # the catalog (ops/MONTHLY.md step 5).
@@ -80,6 +88,22 @@ RECODABLE = (
     "carries it out (ops/MONTHLY.md step 5)"
 )
 RECODABLE_ALSO = ", together with a [[recode]] of each of its names that would bypass it ({names})"
+# The same for its reviewed names (``[[name]]``) that would bypass the recode: no recode takes a
+# reviewed name, which gives its own relation.
+RECODABLE_REVIEWED = (
+    ", with each of its reviewed names that would bypass it made a near-match in its [[name]] "
+    "entry ({names})"
+)
+# The end of a meeting at a reviewed name's key, or of a reviewed catalog name that strips to a
+# family outside the catalog: the [[name]] entry makes it, so editing it clears it.
+REVIEWED_NEAR = (
+    "; the reviewed name {name!r} ([[name]]) makes this: the owner rules, and making it a "
+    "near-match or removing its entry clears it (ops/MONTHLY.md step 5)"
+)
+REVIEWED_GONE = (
+    "; the reviewed name {name!r} ([[name]]) makes this: the owner rules, and removing its entry "
+    "clears it (ops/MONTHLY.md step 5)"
+)
 
 
 class MatchFileError(ValueError):
@@ -112,13 +136,29 @@ class Recode:
 
 
 @dataclass(frozen=True, slots=True)
+class Name:
+    """A reviewed name that fonts install under and names.json lacks: ``name`` is a
+    ``relation`` (with its ``detail``) of ``family`` in the hopper, as read from ``evidence``,
+    a file that carries it."""
+
+    name: str
+    family: str
+    relation: str
+    detail: str
+    evidence: str
+    ruling: str
+
+
+@dataclass(frozen=True, slots=True)
 class Recodable:
     """A key at which the build takes a ``[[recode]]`` (``recodable_keys``): the family whose
-    aliases there it recodes, and ``also``, one alias name at each other key that the build
-    needs recoded with it, by key."""
+    aliases there it recodes, ``also``, one alias name at each other key that the build needs
+    recoded with it, by key, and ``reviewed``, the family's reviewed names (``[[name]]``) that
+    would bypass it, which their own entries make near-matches instead."""
 
     family: str
     also: tuple[str, ...] = ()
+    reviewed: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -127,14 +167,26 @@ class Reviewed:
 
     ambiguous: Mapping[str, Ambiguous] = field(default_factory=dict)
     recodes: Mapping[str, Recode] = field(default_factory=dict)
+    names: Mapping[str, Name] = field(default_factory=dict)
 
     def relations(self) -> dict[str, str]:
         """The recodes as ``owned.match_document`` takes them: alias name -> relation."""
         return {recode.name: recode.relation for recode in self.recodes.values()}
 
+    def extra(self, leave_out: Iterable[str] = ()) -> list[dict[str, str]]:
+        """The names as ``owned.match_document`` takes them (``extra``), but those whose keys
+        are in ``leave_out``."""
+        skip = set(leave_out)
+        return [
+            {"name": n.name, "family": n.family, "relation": n.relation, "detail": n.detail}
+            for key, n in self.names.items()
+            if key not in skip
+        ]
+
     def rulings(self) -> set[str]:
         """The ruling ids the entries cite."""
-        return {e.ruling for e in (*self.ambiguous.values(), *self.recodes.values())}
+        entries = (*self.ambiguous.values(), *self.recodes.values(), *self.names.values())
+        return {e.ruling for e in entries}
 
 
 @dataclass(frozen=True, slots=True)
@@ -177,8 +229,11 @@ def load_reviewed(path: Path) -> tuple[Reviewed, bytes]:
     family owns the key) and the ``ruling`` id that records the owner's review.
     ``[[recode]]`` entries have exactly a ``name`` (an alias in names.json), the ``family``
     whose alias it is, the ``relation`` the hopper gives it instead (``owned.RECODE_RELATIONS``)
-    and the ``ruling``. No two entries of one kind may share a key. A missing file reviews
-    nothing, so every ambiguous name fails the build.
+    and the ``ruling``. ``[[name]]`` entries have exactly a ``name`` that fonts install under
+    and names.json lacks, its ``family``, its ``relation`` (``owned.EXTRA_RELATIONS``) and
+    ``detail`` (a build's, else ""), the ``evidence`` (an https URL of a file that carries the
+    name) and the ``ruling``. No two entries of one kind may share a key. A missing file
+    reviews nothing, so every ambiguous name fails the build.
     """
     path = Path(path)
     try:
@@ -193,14 +248,14 @@ def load_reviewed(path: Path) -> tuple[Reviewed, bytes]:
         raise MatchFileError([f"{path}: {exc}"]) from exc
     except RecursionError:  # tomllib recurses: an array or inline table some 400 levels deep
         raise MatchFileError([f"{path}: nested too deeply to read"]) from None
-    errors = [
-        f"{path}: unknown key {key!r}" for key in sorted(doc.keys() - {"ambiguous", "recode"})
-    ]
+    errors = [f"{path}: unknown key {key!r}" for key in sorted(doc.keys() - set(REVIEWED_KINDS))]
     ambiguous: dict[str, Ambiguous] = {}
     recodes: dict[str, Recode] = {}
+    names: dict[str, Name] = {}
     for kind, fields, out in (
         ("ambiguous", AMBIGUOUS_FIELDS, ambiguous),
         ("recode", RECODE_FIELDS, recodes),
+        ("name", NAME_FIELDS, names),
     ):
         entries = doc.get(kind, [])
         if not isinstance(entries, list):
@@ -226,11 +281,13 @@ def load_reviewed(path: Path) -> tuple[Reviewed, bytes]:
                     tuple(entry["owners"]),
                     entry["ruling"],
                 )
-            else:
+            elif kind == "recode":
                 recodes[key] = Recode(**entry)
+            else:
+                names[key] = Name(**entry)
     if errors:
         raise MatchFileError(errors)
-    return Reviewed(ambiguous, recodes), blob
+    return Reviewed(ambiguous, recodes, names), blob
 
 
 def _and(words: list[str]) -> str:
@@ -258,11 +315,28 @@ def _entry_problem(kind: str, entry: Mapping[str, Any]) -> str | None:
     if not (isinstance(entry["family"], str) and entry["family"]):
         return "the family must be a family id"
     relation = entry["relation"]
+    if kind == "name":
+        return _name_problem(entry)
     if not (isinstance(relation, str) and relation in owned.RECODE_RELATIONS):
         return (
             f"relation {relation!r} is not one of {sorted(owned.RECODE_RELATIONS)}: "
             "a recode can only make an alias a near-match"
         )
+    return None
+
+
+def _name_problem(entry: Mapping[str, Any]) -> str | None:
+    relation, detail, evidence = entry["relation"], entry["detail"], entry["evidence"]
+    if not (isinstance(relation, str) and relation in owned.EXTRA_RELATIONS):
+        return f"relation {relation!r} is not one of {sorted(owned.EXTRA_RELATIONS)}"
+    if not isinstance(detail, str):
+        return "the detail must be a string"
+    if relation == "build" and detail not in owned.SAME_FONT_DETAILS | owned.PATCHED_DETAILS:
+        return f"a build's detail {detail!r} is none the match file knows"
+    if relation != "build" and detail:
+        return f"only a build has a detail, not {relation}"
+    if not (isinstance(evidence, str) and evidence.startswith("https://")):
+        return "the evidence must be an https URL of a file that carries the name"
     return None
 
 
@@ -403,6 +477,59 @@ def refused_recodes(names: Mapping[str, Any], reviewed: Reviewed) -> dict[str, s
     return refused
 
 
+def refused_names(names: Mapping[str, Any], reviewed: Reviewed) -> dict[str, str]:
+    """Why each refused ``[[name]]`` is, by its key: one whose family names.json lacks, or has
+    outside the catalog (the entry would change nothing a visitor sees), or whose key
+    names.json has already. Its own family's name there is a stale entry: the data has caught
+    up, so the entry goes, or turns into a ``[[recode]]`` where the relations differ. Another
+    family's, or an ineligible name's, is a collision for the owner. Empty when ``owned``
+    takes every entry (``owned.with_extra``)."""
+    families = {fam["id"]: fam for fam in names["families"]}
+    held: dict[str, dict[str, set[str]]] = defaultdict(lambda: defaultdict(set))
+    for fam in names["families"]:
+        held[match_key(fam["family"])][fam["id"]].add("its family name")
+        for item in fam["names"]:
+            held[match_key(item["name"])][fam["id"]].add(f"a {item['relation']}")
+    ineligible: dict[str, set[str]] = defaultdict(set)
+    for row in names["ineligible"]:
+        ineligible[match_key(row["name"])].add(row["reason"])
+    refused: dict[str, str] = {}
+    for key, entry in sorted(reviewed.names.items()):
+        said = (
+            f"{entry.name!r} is reviewed ({entry.ruling}) as a {entry.relation} of {entry.family}"
+        )
+        fam = families.get(entry.family)
+        if fam is None:
+            refused[key] = f"{said}, a family names.json lacks"
+        elif not fam["in_catalog"]:
+            refused[key] = (
+                f"{said}, which names.json has outside the catalog, so the entry changes nothing "
+                "in the match file a visitor sees; once the owner has reviewed it, remove it"
+            )
+        elif set(held.get(key, {})) == {entry.family} and key not in ineligible:
+            how = " and ".join(sorted(held[key][entry.family]))
+            # A recode takes an alias at a key of one family alone, never a family's name.
+            recode = (
+                ", or make it a [[recode]] if the hopper's relation differs"
+                if "its family name" not in held[key][entry.family]
+                else ""
+            )
+            refused[key] = (
+                f"{said}, but names.json has its key {key!r} now, as {how} of {entry.family}: "
+                f"remove the entry{recode}"
+            )
+        elif key in held or key in ineligible:
+            whose = [f"{fid} ({' and '.join(sorted(h))})" for fid, h in sorted(held[key].items())]
+            whose += [
+                f"an ineligible name ({reason})" for reason in sorted(ineligible.get(key, ()))
+            ]
+            refused[key] = (
+                f"{said}, but names.json gives its key {key!r} to {', '.join(whose)}: the owner "
+                "rules on the collision (ops/MONTHLY.md step 5)"
+            )
+    return refused
+
+
 def _alias_holders(names: Mapping[str, Any]) -> tuple[dict[str, set[str]], dict[str, set[str]]]:
     """By ``match_key``, the families with an alias row there, and those rows' relations."""
     holders: dict[str, set[str]] = defaultdict(set)
@@ -414,7 +541,9 @@ def _alias_holders(names: Mapping[str, Any]) -> tuple[dict[str, set[str]], dict[
     return holders, relations
 
 
-def recodable_keys(names: Mapping[str, Any]) -> dict[str, Recodable]:
+def recodable_keys(
+    names: Mapping[str, Any], extra_keys: Iterable[str] = ()
+) -> dict[str, Recodable]:
     """The keys at which the build takes a ``[[recode]]``, each with the family it names and
     the other recodes it needs (``Recodable``).
 
@@ -429,12 +558,19 @@ def recodable_keys(names: Mapping[str, Any]) -> dict[str, Recodable]:
     on: the key is taken with those recodes (``also``) when each is itself a candidate, and is
     not taken at all when one isn't, such as the family's own name ("Sample Sans 08 Bold",
     renamed from its alias "Sample Sans 08").
+
+    ``names`` may hold the reviewed names (``owned.with_extra``), whose keys are ``extra_keys``:
+    no recode takes one, but one that would bypass a recode is named (``reviewed``), since its
+    own entry can make it a near-match, so the owner is asked once.
     """
+    extra_keys = frozenset(extra_keys)
     holders, relations = _alias_holders(names)
     by_id = {fam["id"]: fam for fam in names["families"]}
     basic: dict[str, str] = {}
     for key, fids in sorted(holders.items()):
-        if not key or len(fids) != 1 or not relations[key] & owned.OWNED_RELATIONS:
+        if not key or key in extra_keys or len(fids) != 1:
+            continue
+        if not relations[key] & owned.OWNED_RELATIONS:
             continue
         (fid,) = fids
         if by_id[fid]["in_catalog"] and match_key(by_id[fid]["family"]) != key:
@@ -463,8 +599,13 @@ def recodable_keys(names: Mapping[str, Any]) -> dict[str, Recodable]:
             new = {own for own, reached in reach[fid] if at in reached and own in owning[fid]}
             todo += sorted(new - need)
             need |= new
-        if all(basic.get(k) == fid for k in need):
-            out[key] = Recodable(fid, tuple(first[fid][k] for k in sorted(need - {key})))
+        if all(basic.get(k) == fid or k in extra_keys for k in need):
+            rest = sorted(need - {key})
+            out[key] = Recodable(
+                fid,
+                tuple(first[fid][k] for k in rest if k not in extra_keys),
+                tuple(first[fid][k] for k in rest if k in extra_keys),
+            )
     return out
 
 
@@ -489,6 +630,8 @@ def check_errors(
     names: Mapping[str, Any],
     reviewed: Reviewed,
     reviewed_path: Path,
+    *,
+    extra: Iterable[Mapping[str, Any]] = (),
 ) -> list[str]:
     """What in ``owned.check_document``'s findings fails the build (Milestone 3 step 3).
 
@@ -529,13 +672,26 @@ def check_errors(
     recode, or through aliases that a name the build can't recode would bypass (the family's
     own name, or an alias two families hold), and every stripped catalog name (stripping reads
     no relation).
+
+    ``extra``, the reviewed names the check ran with, count as their families' names wherever
+    the check reads names, but never as aliases a ``[[recode]]`` could take: a recode names an
+    alias of names.json. A reviewed name that would bypass a recode is named with it
+    (``RECODABLE_REVIEWED``), and a meeting at a reviewed name's key, or a reviewed catalog name
+    that strips to a family outside the catalog, ends naming its entry (``REVIEWED_NEAR``,
+    ``REVIEWED_GONE``), which the owner's ruling edits.
     """
-    recodable = recodable_keys(names)
+    extra = list(extra)
+    reviewed_at = {match_key(item["name"]): item["name"] for item in extra}
+    names = owned.with_extra(names, extra)
+    recodable = recodable_keys(names, reviewed_at)
     in_catalog = {fam["id"] for fam in names["families"] if fam["in_catalog"]}
 
     def ending(key: str, owners: list[str]) -> str:
-        """RECODABLE when the family that ``recodable`` gives at ``key`` is one of the
-        ``owners`` there, and a recode of it leaves no catalog family sharing the key."""
+        """REVIEWED_NEAR at a reviewed name's key; RECODABLE when the family that
+        ``recodable`` gives at ``key`` is one of the ``owners`` there, and a recode of it leaves
+        no catalog family sharing the key."""
+        if key in reviewed_at:
+            return REVIEWED_NEAR.format(name=reviewed_at[key])
         taken = recodable.get(key)
         if taken is None or taken.family not in owners:
             return UNLISTABLE
@@ -543,6 +699,8 @@ def check_errors(
         if len(rest) > 1 and in_catalog.intersection(rest):
             return UNLISTABLE
         also = RECODABLE_ALSO.format(names=", ".join(map(repr, taken.also))) if taken.also else ""
+        if taken.reviewed:
+            also += RECODABLE_REVIEWED.format(names=", ".join(map(repr, taken.reviewed)))
         return RECODABLE.format(family=taken.family, also=also)
 
     errors = [
@@ -615,7 +773,7 @@ def check_errors(
     errors += [
         f"{c.name!r}, a catalog name, strips to the key {c.reached!r} of "
         f"{', '.join(c.families)}, outside the catalog, which the ambiguous set can't hold"
-        f"{UNLISTABLE}"
+        f"{REVIEWED_GONE.format(name=c.name) if c.key in reviewed_at else UNLISTABLE}"
         for c in outside
     ]
     return errors
@@ -660,13 +818,16 @@ def match_file(doc: Mapping[str, Any], names_path: Path) -> MatchFile:
     if errors:
         raise MatchFileError(errors)
     refused = refused_recodes(names, reviewed)
+    refused_extra = refused_names(names, reviewed)
     errors = [f"{reviewed_path}: {error}" for _, error in sorted(refused.items())]
+    errors += [f"{reviewed_path}: {error}" for _, error in sorted(refused_extra.items())]
     ids = [font["id"] for font in doc["fonts"]]
     recodes = {r.name: r.relation for key, r in reviewed.recodes.items() if key not in refused}
+    extra = reviewed.extra(leave_out=refused_extra)
     dropped: set[str] = set()  # the keys of listed recodes that an earlier pass left out
     while True:
         try:
-            check = owned.check_document(names, ids, recodes=recodes)
+            check = owned.check_document(names, ids, recodes=recodes, extra=extra)
             break
         except owned.RecodeError as exc:  # other names bypass them: check the rest without them
             kept = {name: rel for name, rel in recodes.items() if match_key(name) not in exc.keys}
@@ -684,12 +845,13 @@ def match_file(doc: Mapping[str, Any], names_path: Path) -> MatchFile:
         except ValueError as exc:  # what owned refuses that the checks above let through
             raise MatchFileError([*errors, f"{names_path}: {exc}"]) from exc
     errors += [
-        f"{names_path}: {error}" for error in check_errors(check, names, reviewed, reviewed_path)
+        f"{names_path}: {error}"
+        for error in check_errors(check, names, reviewed, reviewed_path, extra=extra)
     ]
     if errors:
         raise MatchFileError(errors)
     try:
-        match = owned.match_document(names, ids, doc["run"]["date"], recodes=recodes)
+        match = owned.match_document(names, ids, doc["run"]["date"], recodes=recodes, extra=extra)
     except ValueError as exc:  # what owned refuses that the checks above let through
         raise MatchFileError([f"{names_path}: {exc}"]) from exc
     out = jsonio.canonical_bytes(match)
