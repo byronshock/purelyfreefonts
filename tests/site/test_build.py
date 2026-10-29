@@ -44,6 +44,8 @@ NAMES = json.loads(NAMES_PATH.read_text(encoding="utf-8"))
 REVIEWED_PATH = matchfile.default_reviewed_path(NAMES_PATH)
 COMMIT = "0123456789abcdef0123456789abcdef01234567"
 HASHED = re.compile(r"^(?P<stem>.+)\.(?P<h>[0-9a-f]{10})\.(?P<ext>[a-z0-9]+)$")
+# A line http.server's handlers log to stderr (BaseHTTPRequestHandler.log_message).
+SERVER_LOG_LINE = re.compile(r"\S+ - - \[[^\]]+\] ")
 SPECIMEN_IDS = ("sample-sans-01", "sample-mono-02", "sample-display-25")
 BANDS = [b["label"] for b in SAMPLE["bands"]]  # "101-250", "251-500", "501+" with en dashes
 REAL_PAGE_CONTEXTS = pages.page_contexts  # before the autouse fixture below replaces it
@@ -1121,7 +1123,11 @@ def test_a_names_file_nested_deeply_fails_the_command_line_in_a_line(
     err = capsys.readouterr().err
     assert "Traceback" not in err
     assert f"{names}: nested too deeply to read" in err
-    assert len(err.splitlines()) < 5
+    # capsys takes every thread's stderr: in site-real, the live site server's thread may log an
+    # idle keep-alive connection's "Request timed out" meanwhile (http.server's "<address> - -
+    # [<date>] ..." lines), which the build didn't print.
+    printed = [line for line in err.splitlines() if not SERVER_LOG_LINE.match(line)]
+    assert len(printed) < 5
     assert not out.exists()
 
 
