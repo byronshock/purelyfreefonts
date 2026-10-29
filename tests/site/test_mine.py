@@ -175,8 +175,8 @@ def near_names(site_data: Path, table: owned.Table) -> list[str]:
     """Names from the names file beside the catalog that are only near matches, owning none:
     the first is near one catalog font alone, and one or two more bring the fonts they are
     near to two or more. Any name will do (a sibling, a related family, a bundle, a build),
-    since the test takes its counts from the reference. (On 2026-10-17 one name is near one
-    font alone, and the bundles are each near three or five.)"""
+    since the test takes its counts from the reference. (On 2026-10-17 the first is HackGen,
+    near Hack alone, and the bundles are each near three or five.)"""
     path = site_data.with_name(site_data.name.replace("catalog-site", "names"))
     near: dict[str, set[str]] = {}  # name -> the fonts it is near, in the file's order
     for family in json.loads(path.read_bytes())["families"]:
