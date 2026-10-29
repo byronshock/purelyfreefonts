@@ -8,8 +8,11 @@
 // unmasked (data-state "failed") and the heading in view. The observer watches the li, not
 // the span: rows use content-visibility: auto, and a span in a skipped row has no box to
 // observe.
-// pause() stops new requests for Milestone 3 (M3-D10: a request for a specimen would reveal
-// which rows a comparison left on screen); resume() loads the rows that are near by then.
+// pause(holder) stops new requests (M3-D10: a request for a specimen would reveal which rows a
+// comparison left on screen) until every holder has resumed; resume(holder) lets go, and once
+// none holds, loads the rows that are near by then. The hook's pause and resume are one holder
+// (Ext's) and the hopper's another (Mine's), so neither lifts the other's: the hopper's, once a
+// list has loaded, holds until a reload.
 const Specimens = (() => {
   // Top and bottom only: rows span the list's width.
   const MARGIN = '600px 0px';
@@ -24,7 +27,8 @@ const Specimens = (() => {
   const rows = Core.$$('li.font').filter((row) => spanOf(row) !== null);
 
   let observer = null;
-  let paused = false;
+  // Who holds the previews paused: any value, given to pause and again to resume.
+  const holders = new Set();
   // Rows that came near the screen while paused and haven't been seen leaving.
   const near = new Set();
 
@@ -55,7 +59,7 @@ const Specimens = (() => {
   const seen = (entries) => {
     for (const { target, isIntersecting } of entries) {
       if (!isIntersecting) near.delete(target);
-      else if (paused) near.add(target);
+      else if (holders.size) near.add(target);
       else load(target);
     }
   };
@@ -71,17 +75,17 @@ const Specimens = (() => {
     }
   };
 
-  // Request no more specimens until resume(). Masks already set stay.
-  const pause = () => {
-    paused = true;
+  // Request no more specimens until `holder`, and every other holder, has resumed. Masks
+  // already set stay.
+  const pause = (holder) => {
+    holders.add(holder);
   };
 
-  // Load the rows near the screen now; the rest load as they come near. Each queued row is
-  // observed afresh, so the observer reports where it is now (it may have left, or been
-  // detached, since it was queued) rather than where it was.
-  const resume = () => {
-    if (!paused) return;
-    paused = false;
+  // `holder` lets go. Once none holds, load the rows near the screen now; the rest load as they
+  // come near. Each queued row is observed afresh, so the observer reports where it is now (it
+  // may have left, or been detached, since it was queued) rather than where it was.
+  const resume = (holder) => {
+    if (!holders.delete(holder) || holders.size) return;
     const queued = [...near];
     near.clear();
     if (!observer) return;
@@ -96,7 +100,7 @@ const Specimens = (() => {
     pause,
     resume,
     get paused() {
-      return paused;
+      return holders.size > 0;
     },
   });
 })();

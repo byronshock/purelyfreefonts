@@ -3,7 +3,8 @@
 // waits for it.
 //
 // Order on the list page: mark html[data-js]; start the specimen loader and Details; attach
-// the delegated listeners on #list; if the hash asks for another list than the server's, mark
+// the delegated listeners on #list and start the hopper (Mine, which takes a list dropped on
+// the page from then on); if the hash asks for another list than the server's, mark
 // html[data-list-pending]; fetch the list index (preloaded by the page); then, in an idle
 // callback, map the rows, read the hash, render the first view without announcing it, show
 // the filters, and once data-list-pending is gone start Ext, which publishes globalThis.tff
@@ -15,7 +16,19 @@
 // so a link with a view or filters in it never paints the server's list only to change it,
 // which would move the rows into place and the footer up the screen (layout shift; on phones
 // the list starts on the first screen). They show anyway after PENDING_MAX_MS, or as soon as
-// the index fails to load.
+// the index fails to load. #status, the live region, is in the results, so Announce keeps
+// what is said meanwhile (the hopper's) until a moment after they show (Announce.flush).
+//
+// The hopper's side (55-mine.js): Mine.filter() is its built-in filter while a list is
+// loaded, which Main passes to View.compute ahead of Milestone 3's (View runs a hook filter
+// that renumbers first, then the rest in order: section 5), so the count, the announcement,
+// the no-results text and the phone button all see it; Mine.extras() names it for FiltersUI,
+// and Mine.reset() is "Clear filters" setting its Show menu back. Its host: changed({ lead })
+// when its list or its menu changes (Main redraws and announces, its summary first); open(),
+// which opens the Filters panel below 60rem so that what a list brings is seen; and blocked(),
+// which refuses a list while the load note shows, saying the note again. Once begin has run,
+// or the list index failed, Mine.begun() tells a list that settled before then, which onMine
+// couldn't.
 //
 // Ext's side (50-ext.js): Ext.filters() lists Milestone 3's filters for View.compute, and
 // Ext.start(host) runs once. host = { refresh(), onChange(fn), ready, getState(),
@@ -32,6 +45,7 @@ const Main = (() => {
   const PENDING_MAX_MS = 3000;
 
   let started = false;
+  let live = false; // the list is drawn by the script (begin ran)
   let index = null;
   let list = null;
   let result = null;
@@ -54,7 +68,10 @@ const Main = (() => {
     const root = document.documentElement;
     if (root.getAttribute('data-list-pending') !== '') return shown;
     root.setAttribute('data-list-pending', 'settling');
-    shown = Core.painted().then(() => root.removeAttribute('data-list-pending'));
+    shown = Core.painted().then(() => {
+      root.removeAttribute('data-list-pending');
+      Announce.flush();
+    });
     return shown;
   };
 
@@ -71,6 +88,7 @@ const Main = (() => {
 
   // Parts written by others may be absent from a build (typeof is safe for those).
   const extPart = () => (typeof Ext === 'object' && Ext ? Ext : null);
+  const minePart = () => (typeof Mine === 'object' && Mine ? Mine : null);
 
   // Call a part's start function (start, else publish, else init), if it has one.
   const startPart = (part, ...args) => {
@@ -91,6 +109,15 @@ const Main = (() => {
     if (!ext) return [];
     const found = typeof ext.filters === 'function' ? ext.filters() : ext.filters;
     return Array.isArray(found) ? found : [];
+  };
+
+  // Every filter View runs besides the hash's: the hopper's first, then Milestone 3's. View
+  // runs those with affectsNumbering first (step 3), so the hopper's, which keeps the
+  // numbering, runs ahead of every hook filter that keeps it too (step 6).
+  const filters = () => {
+    const mine = minePart();
+    const own = mine ? mine.filter() : null;
+    return own ? [own, ...extFilters()] : extFilters();
   };
 
   // "a", "a and b", "a; b and c" (names may hold commas)
@@ -136,16 +163,18 @@ const Main = (() => {
     return () => listeners.delete(fn);
   };
 
-  // Recompute the view from the state, the index and the external filters, and redraw.
+  // Recompute the view from the state, the index and the other filters, and redraw.
   // `announce`: false (silent), true (at once) or 'typing' (after a pause). `note` follows
-  // the count line in the announcement ("Sorted by name, Z to A").
-  const refresh = ({ announce = false, note = '' } = {}) => {
+  // the count line in the announcement ("Sorted by name, Z to A"); `lead`, sentences of its
+  // own, comes before it (the hopper's summary).
+  const refresh = ({ announce = false, note = '', lead = '' } = {}) => {
     if (!index) return null;
     const state = State.get();
-    result = View.compute(state, index, extFilters());
+    result = View.compute(state, index, filters());
     const message = result.shown === 0 ? noResultsText(state) : '';
     const line = Render.apply(result, { message });
-    const said = message || (note ? `${line}. ${note}.` : line);
+    const body = message || (note ? `${line}. ${note}.` : line);
+    const said = lead ? `${lead} ${body}` : body;
     if (announce === 'typing') Announce.typing(said);
     else if (announce) Announce.say(said);
     emit(state);
@@ -164,8 +193,32 @@ const Main = (() => {
     refresh({ announce: info.source === 'typing' ? 'typing' : true, note });
   };
 
+  // The hopper changed what it leaves out: redraw, announce (its summary first) and recount
+  // the phone button. Before the list is live, the first render takes the hopper in anyway,
+  // and begin has Mine say what it missed (Mine.begun).
+  const onMine = ({ lead = '' } = {}) => {
+    if (!live) return;
+    FiltersUI.reflect(State.get());
+    refresh({ announce: true, lead });
+  };
+
+  // The hopper can't leave anything out while the load note shows (the list index failed, or
+  // doesn't match the rows), so it takes no list: the note is said again and brought into
+  // view, so a file dropped on the page is never met with silence. True then.
+  const refuseList = () => {
+    const note = document.getElementById('load-note');
+    if (!note) return false;
+    note.scrollIntoView({ block: 'nearest' });
+    Announce.say(note.textContent);
+    return true;
+  };
+
+  // "Clear filters": the hash's filters, and the hopper's Show menu back to its default (its
+  // list stays). A change of the menu alone redraws here, since the state is the same.
   const clearFilters = () => {
-    State.set(State.cleared(State.get()));
+    const mine = minePart();
+    const reset = mine ? mine.reset() : false;
+    if (!State.set(State.cleared(State.get())) && reset) onMine();
   };
 
   // A click on a Milestone 3 action button in a row: tell whoever added it.
@@ -223,12 +276,21 @@ const Main = (() => {
     return rows.every(Boolean) && byId.size === index.n ? rows : null;
   };
 
+  // A list the hopper took before begin ran gets its summary now, or the load note; and so,
+  // where the list index failed, does one that settled before then (a refusal, or a file that
+  // can't be read, needs no index).
+  const mineBegun = () => {
+    const mine = minePart();
+    if (mine && typeof mine.begun === 'function') mine.begun();
+  };
+
   const begin = () => {
     const rows = mapRows();
     if (!rows) {
       const error = new Error('Main: the list index does not match the rows on the page');
       showLoadNote(error);
       report(error);
+      mineBegun();
       return;
     }
     State.configure(index);
@@ -236,14 +298,19 @@ const Main = (() => {
     FiltersUI.init(index, {
       change: (partial, { typing }) => State.set(partial, { typing }),
       clear: clearFilters,
+      extras: () => (minePart() ? minePart().extras() : []),
     });
     FiltersUI.reflect(state);
     Render.init(list, rows);
+    live = true;
     // The first view is silent: the page has only just loaded (WCAG 4.1.3 is about changes).
     refresh({ announce: false });
     FiltersUI.show();
     State.subscribe(onState);
     markReady();
+    // Once the list is live, so what Mine tells is redrawn and announced (onMine); in this
+    // task, so a list that settles from now on is told by onMine, and none twice.
+    mineBegun();
     // 'tff:list-ready' waits until the results are in sight: an invisible row can't take
     // focus, and Details focuses a #font= link's heading then.
     reveal().then(publish);
@@ -258,6 +325,10 @@ const Main = (() => {
     list = document.getElementById('list');
     if (!list) return;
     Core.on(list, 'click', 'button.ext-action', onAction);
+    startPart(
+      minePart(),
+      Object.freeze({ changed: onMine, open: () => FiltersUI.open(), blocked: refuseList }),
+    );
     const clear = document.getElementById('no-results-clear');
     if (clear) clear.addEventListener('click', clearFilters);
     if (State.changesList(location.hash)) {
@@ -272,6 +343,7 @@ const Main = (() => {
       (error) => {
         showLoadNote(error);
         report(error);
+        mineBegun();
       },
     );
   };

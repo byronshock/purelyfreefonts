@@ -96,6 +96,41 @@ CATEGORY_LABELS = {
 CATEGORIES = tuple(CATEGORY_LABELS)
 # Operating-system families for "Hide fonts that come with …", with their page labels.
 OS_LABELS = {"windows": "Windows", "macos": "macOS", "linux": "Linux", "android": "Android"}
+# The hopper's "How to make the list" (Milestone 3, slice 1; docs/owned-fonts.md, "The commands
+# on the site"): one command per system, each writing fonts.txt in the home folder, not the
+# Desktop, which iCloud and OneDrive sync off the machine. Only Linux's has run on a real
+# machine; the others show "(not yet tested)" until someone runs them (owner ruling of
+# 2026-10-21, inventory_linux_tested_only). ``where`` says where to run it, ``after`` what it
+# does. The page copies ``command`` exactly as written.
+MINE_COMMANDS = (
+    {
+        "os": "linux",
+        "label": "Linux",
+        "tested": True,
+        "where": "In a terminal, run:",
+        "command": "fc-list : family | sort > ~/fonts.txt",
+        "after": "It writes fonts.txt in your home folder, and changes nothing else.",
+    },
+    {
+        "os": "macos",
+        "label": "macOS",
+        "tested": False,
+        "where": "In Terminal, run:",
+        "command": "system_profiler SPFontsDataType | grep 'Family:' | sort -u > ~/fonts.txt",
+        "after": "It takes about 13 seconds, then writes fonts.txt in your home folder, and "
+        "changes nothing else.",
+    },
+    {
+        "os": "windows",
+        "label": "Windows",
+        "tested": False,
+        "where": "In PowerShell, run:",
+        "command": "Add-Type -AssemblyName System.Drawing; "
+        "(New-Object System.Drawing.Text.InstalledFontCollection).Families.Name"
+        ' | Set-Content -Encoding UTF8 "$HOME\\fonts.txt"',
+        "after": "It writes fonts.txt in your home folder, and changes nothing else.",
+    },
+)
 
 # List-index ``bits`` (site/CONTRACT.md section 7).
 BIT_MONOSPACE = 1

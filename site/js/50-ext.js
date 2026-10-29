@@ -252,12 +252,15 @@ const Ext = (() => {
     Core.setHidden(node, value === '');
   };
 
+  // The hook's pause is one holder of Specimens', whoever calls it: its resume() lifts only the
+  // hook's own pause, never the hopper's (section 10).
+  const HOOK = Symbol('tff.list.specimens');
   const specimens = Object.freeze({
     pause: () => {
-      Specimens.pause();
+      Specimens.pause(HOOK);
     },
     resume: () => {
-      Specimens.resume();
+      Specimens.resume(HOOK);
     },
     get paused() {
       return Boolean(Specimens.paused);

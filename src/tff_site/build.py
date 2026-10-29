@@ -479,6 +479,8 @@ def _list_context(
         # "No credit required" shows only while some font needs credit (license_filter).
         "credit_filter": any(f["license"]["attribution_required"] for f in doc["fonts"]),
         "systems_os": [{"value": k, "label": v} for k, v in data.OS_LABELS.items()],
+        # The hopper's commands, one per system ("How to make the list").
+        "mine_commands": data.MINE_COMMANDS,
         "total": len(doc["fonts"]),
         # The hollow bar's legend, shown by the script while the view has held fonts.
         "held_legend": data.HELD_LEGEND,
