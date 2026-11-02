@@ -7,7 +7,7 @@ The reviewers:
 - **O:** the owner, from a screenshot of the filter panel.
 - **C:** Claude, measuring on staging and suggesting changes, as the owner asked, from UI design principles and psychophysics.
 
-**Status (2026-11-01):** four findings from the owner (F1–F4) and nine suggestions from Claude (S1–S9). Four independent reviews checked this file against the code before it went to the owner. The owner answered Q1–Q3 the same day, each as Claude recommended: the receipt, all nine suggestions, and staging showing #100. Step 1 records the rulings; step 2 is next.
+**Status (2026-11-01):** four findings from the owner (F1–F4) and nine suggestions from Claude (S1–S9). Four independent reviews checked this file against the code before it went to the owner. The owner answered Q1–Q3 the same day, each as Claude recommended: the receipt, all nine suggestions, and staging showing #100. Step 1 recorded the rulings (#103, merged). Step 2 is built in #104, stacked on #100. Its CI and the WebKit triage are open (below), and so is #100's description; step 3 comes next, in the same pull request.
 
 **How to read each step:** **Who**, **Depends on** and **Done when**, as in PLAN-REVIEWERS-1.md. Tick each item as soon as it is done and verified. Checklists nest: a parent is ticked only when every item under it is.
 
@@ -77,6 +77,33 @@ The subheadings are styled exactly like the title. The spacing doesn't separate 
 - between the hopper's own parts: 12 px (drop zone to "Or paste the list") and 16 px (Check to "How to make the list").
 
 So one of the hopper's parts sits as far from the next as one filter group sits from another.
+
+### Measured for step 2 (C)
+
+Local builds of #100's head (`7e7ec1d`) and of step 2's pull request, in Chromium, with a five-name `fonts.txt` dropped by script on the list's first row, the page at its top. Tops are in px from the top of the window; at load, the hopper's title starts at 925 px at 1280 px wide in both builds, below a laptop screen's fold.
+
+| Viewport | Box open | Build | Page scrolls | Title | Drop zone | Result | List's first row |
+|---|---|---|---|---|---|---|---|
+| 1280 × 800 | none | #100 | 460 | 465 | 812, out of view, "Drop fonts.txt here" | 585–800 | −74 |
+| 1280 × 800 | none | step 2 | 867 | 58 | 344, the receipt | 588–800 | −481 |
+| 1280 × 800 | Linux | #100 | 460 | 465 | 812, out of view | 585–800 | −74 |
+| 1280 × 800 | Linux | step 2 | 1057 | −132 | 344, the receipt | 588–800 | −671 |
+| 1280 × 1800 | none | #100 | 0 | 925 | 1272, moved down 227 | 1045–1260 | 386 |
+| 1280 × 1800 | none | step 2 | 0 | 925 | 1211, unmoved, the receipt | 1455–1667 | 386 |
+| 1280 × 1800 | Linux | #100 | 0 | 925 | 1272, moved down 227 | 1045–1260 | 386 |
+| 1280 × 1800 | Linux | step 2 | 57 | 868 | 1344, the receipt | 1588–1800 | 329 |
+| 768 × 1024 | none | #100 | 0 | 733 | 990, mostly out of view | 811–978 | below the panel |
+| 768 × 1024 | none | step 2 | 361 | 372 | 616, the receipt | 860–1024 | below the panel |
+| 375 × 812 | none | #100 | 270 | 448 | 824, out of view | 597–812 | below the panel |
+| 375 × 812 | none | step 2 | 677 | 41 | 356, the receipt | 600–812 | below the panel |
+
+- In #100's build the drop zone ends out of view at every size but 1280 × 1800, and where it shows, it still asks for a file (F2). In step 2's, the receipt and the result are in view together at every size.
+- With a box open, "Make the list" is taller, so the title scrolls off at 1280 × 800; the receipt and the result stay in view.
+- The page scrolls further in step 2's build, since the result now follows the steps, and on a laptop-height screen the list's first rows scroll out of view in both builds. S4 (fold "Make the list" once a list loads) and S6's shorter lead shorten it; S8 and S9 add height above the hopper, so step 3 measures again.
+- F4's spacing for the hopper was wrong. The select over it keeps 12 px of margin under it inside its group: a select is inline-level, so that margin doesn't collapse. So in the sidebar the hopper's title has always sat 28 px under "Hide fonts that come with", not 16.
+  - In the panel's grid below 60rem, the title sits 16 px under the tallest group in the row above, or 28 px where that group is "Hide fonts that come with". The 16 px case comes from 786 to 959 px, where the panel has three columns.
+  - Step 2 keeps that, and #100's 24 px below. Adding the planned 24 px above would have made 36 px in the sidebar and 52 px in the grid, where margins don't collapse.
+  - S7 and S9 set this spacing in step 3.
 
 ---
 
@@ -187,12 +214,12 @@ Whatever the answer, step 2 checks whether a browser's session restore writes th
 **Who:** Claude builds; the lead merges it into #100; the owner merges #100 to `main`. **Depends on:** step 1's Q1.
 - **Branch:** in its own worktree, stacked on `claude/hopper-ui`, with that branch as the pull request's base, so it lands in #100. It is reviewed adversarially before it opens (docs/milestone-3.md, Slice 1). Nothing is pushed to #100 directly, and the lead is told when it's ready.
 
-- [ ] **Measure first,** at 1280 × 800 as well as 1280 × 1800, before and after the change:
+- [x] **Measure first,** at 1280 × 800 as well as 1280 × 1800, before and after the change:
   - where the hopper's title, the drop zone and the result start after a drop;
   - with no `<details>` open, and with one open.
 
-  A laptop-height screen shows how far `bring()` scrolls the page, and whether the list's first rows scroll away. The numbers go in this plan, in a section after F4.
-- [ ] **The order** (`site/templates/_filters.html.j2`), top to bottom:
+  A laptop-height screen shows how far `bring()` scrolls the page, and whether the list's first rows scroll away. The numbers go in this plan, in a section after F4. *(Done 2026-11-01: "Measured for step 2", above, with 768 × 1024 and 375 × 812 too.)*
+- [x] **The order** (`site/templates/_filters.html.j2`), top to bottom:
   - the title and the lead;
   - `<ol class="mine-steps">`, two items:
     1. "Make the list": the existing `p#mine-how`, its text changed, first in the first `<li>`. "Make the list on a computer." (phones), then `.mine-oses`, which keeps its `role="group"` and `aria-labelledby="mine-how"`;
@@ -200,23 +227,35 @@ Whatever the answer, step 2 checks whether a browser's session restore writes th
   - "Checking your list…", the error and the result, after the list.
 
   Neither `<li>` takes a role, so the `<ol>` stays a list of two items, for the eye and for a screen reader. No existing id changes or goes, so `Mine`'s lookups and `hide()`'s focus moves work as they do.
-- [ ] **What a list brings into view:** `bring()` shows the drop zone and the result together where they fit, the result first where they don't.
-- [ ] **The title:** "Fonts you don't have".
-- [ ] **The hierarchy** (`site/css/27-mine.css`):
+- [x] **What a list brings into view:** `bring()` shows the drop zone and the result together where they fit, the result first where they don't. *(It measures what shows of the window, the visual viewport, so a phone zoomed in or with its keyboard up counts as shorter.)*
+- [x] **The title:** "Fonts you don't have".
+- [x] **The hierarchy** (`site/css/27-mine.css`):
   - the title keeps the panel's group-title style (16 px, 600, `25-filters.css`), so it stays a peer of Category and Features;
   - step headings: 14 px (`--fs-small`), 600, under the list's indent, with the number as a styled `::marker`. The size is 12.5% smaller, easy to miss alone, so the indent and the number carry the step down with it;
   - field labels, "Or paste the list" and "Show": 14 px, 400. `.mine > label` no longer reaches the paste label inside the `<ol>`, so its rule moves with it;
   - notes: the lead as now; "Make the list on a computer." goes to 14 px, 400, so it doesn't read as a second heading under "Make the list";
-  - spacing: 8 px inside a step, 12 px between the two steps, 24 px above and below the section. With the panel's groups 16 px apart, the steps then sit closer than the groups. S9, if chosen, sets the whole rhythm.
-- [ ] **The receipt** (Q1 (a)): `#mine-drop` gets a receipt line and the class `is-read` once a list loads from a file. The receipt and the button change as Q1 (a) says, with the text set by `Core.text`, and change back as it says. A matched paste still leaves the box.
-- [ ] **The session-restore check,** since a paste that is refused or not yet checked already stays in the box: does Firefox's or Chromium's session restore write a `textarea`'s text to disk when it has `autocomplete="off"`? Record the finding in docs/owned-fonts.md. If either does, M3-D13 a ("nothing is stored") is at stake today; bring it to the owner before anything else.
+  - spacing: 8 px inside a step, 12 px between the two steps, 24 px above and below the section. With the panel's groups 16 px apart, the steps then sit closer than the groups. S9, if chosen, sets the whole rhythm. *(Built with #100's 28 px above, not 24: the select over the hopper keeps a 12 px margin that can't collapse, so 24 more made 36 px in the sidebar and 52 px in the grid. See "Measured for step 2".)*
+- [x] **The receipt** (Q1 (a)): `#mine-drop` gets a receipt line and the class `is-read` once a list loads from a file. The receipt and the button change as Q1 (a) says, with the text set by `Core.text`, and change back as it says. A matched paste still leaves the box.
+- [ ] **The session-restore check,** since a paste that is refused or not yet checked already stays in the box: does Firefox's or Chromium's session restore write a `textarea`'s text to disk when it has `autocomplete="off"`? Record the finding in docs/owned-fonts.md. If either does, M3-D13 a ("nothing is stored") is at stake today; bring it to the owner before anything else. *(Done 2026-11-01: neither Firefox nor Chromium writes it, nor the Show menu's choice, read in their main branches; recorded in docs/owned-fonts.md. WebKit does keep both: see the WebKit item below, brought to the owner the same day.)*
 - [ ] **Records:**
   - `site/CONTRACT.md`: section 3 (the `mine_commands` row); section 4 (`#mine`'s title, its order, the step headings, the result after the steps, the receipt). Sections 5 and 11 stand: the receipt's count is one the page already keeps;
   - the comments in `_filters.html.j2`, `27-mine.css`, `55-mine.js`, `src/tff_site/data.py` and `src/tff_site/build.py`, docs/owned-fonts.md and the #100 description, wherever they say "Fonts you have", "How to make the list" or the old order.
-- [ ] **Tests:**
+
+  *(All done in #104 but #100's description, which is the lead's: #104's description drafts the changes.)*
+- [x] **Tests:**
   - `tests/site/test_list_markup.py::test_the_hopper_s_markup`: the title; `ol.mine-steps` with its two headings and groups; busy, error and result after the list;
   - `tests/site/test_mine.py`: the two empty-box assertions stay. A new test checks the receipt after a drop on the zone, a drop on the list and a choice, and that a paste that loads puts back "Drop fonts.txt here". It also checks that the receipt stays after a failed list and goes after "Forget this list";
   - `tests/site/test_a11y.py`: axe on the new structure, in both themes and in forced colours.
+
+  *(Built with more besides, from the reviews before #104 opened: bring()'s drop-zone scroll with the page scrolled past the hopper and in a window too short for both; the levels of text, computed; the receipt in the fit check at every width; the tick in forced colours.)*
+- [ ] **WebKit** (the owner, 2026-11-01: WebKit tests, definitely): the browser suites in Playwright's WebKit 26.6, run locally, since CI has Chromium and Firefox only. *(On #104: 492 passed, 14 failed. The same 14 fail on #100's head, so none comes from step 2, and every test step 2 adds or changes passes. Triage of the 14 is under way.)*
+  - [x] Triage (2026-11-01: five investigators and a skeptic each; probes under the session's scratchpad):
+    - **Harness, 7:** Playwright's WebKit screenshots insert `<style>body {}</style>`, which the site's CSP blocks (6 in `test_a11y.py`; 6 more in `test_specimens_loader.py`, not run); WebKit's "Blocked by Web Inspector" isn't in a regex (1 in `test_privacy.py`). No visitor sees either.
+    - **The list index downloaded twice, 5:** WebKit never lets the script's plain `fetch()` reuse the `crossorigin` preload, so the index is fetched twice: every time in Private Browsing, and on slow connections. Fix: a preload and a fetch of the same kind (no `crossorigin`; `no-cors`, credentials `include`).
+    - **Back gives back the hopper's controls, 1:** WebKit (Safari's engine) ignores `autocomplete="off"` on a `textarea` or `select` unless their `<form>` has it. A pasted list not yet matched, or one refused, comes back in the paste box on a Back that loads the page again, and sits in WebKit's session history. Against CONTRACT sections 4 and 11 and M3-D13 a.
+    - **WebKit's cap on history writes, 1:** 100 in 10 s; on the next, `State.set` has already changed its state but notifies nothing. Low; holding Enter on a sort button reaches it.
+  - [ ] The owner rules on the hopper's controls in WebKit (above).
+  - [ ] The other fixes, and the suites passing in WebKit: a task of their own.
 
 **Done when:**
 - the hopper reads "Make the list", then "Drop or paste it", then the result;
