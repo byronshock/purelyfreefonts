@@ -6,7 +6,8 @@
 // fetch must match to reuse a preload's response. A crossorigin preload and a plain fetch()
 // matched in Chromium and Firefox, but in WebKit the preload carried an Origin header the
 // same-origin fetch didn't, and the index was downloaded twice. A no-cors response is
-// readable when its URL is on the page's own origin, which every URL here is (ownPath).
+// readable when its URL is on the page's own origin, which every URL here is (ownPath). In
+// WebKit the page's load event now waits for the index too; nothing here waits on it.
 // Details load on first use only, and the hopper's match file and matcher only once a
 // visitor's list arrives (M3-D7 a, inventory_matcher_on_demand): two requests, both to fixed
 // hashed URLs, and a third, for the list index, only if it failed to load with the page
