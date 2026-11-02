@@ -29,7 +29,8 @@ The files come from the list page itself: ``<link rel="stylesheet" href>``,
 too, and so is a ``<link rel="preload" as="font">`` that does.
 
 The CSP lint fails on an inline ``<script>`` without ``src``, a ``<style>`` element, any
-``style=`` or ``on*=`` attribute, a ``<form>``, and ``rel=prefetch``. Under the same policy
+``style=`` or ``on*=`` attribute, a ``<form>`` (all but the hopper's, ``HOPPER_FORM``), and
+``rel=prefetch``. Under the same policy
 (``ops/caddy/site.caddy``) it also fails on a ``<base>`` element (``base-uri 'none'``), a
 ``javascript:`` URL, a frame, plugin or media element (``default-src 'none'`` leaves no
 ``frame-src``, ``object-src`` or ``media-src``), ``rel=prerender``, and a script,
@@ -99,6 +100,11 @@ _FETCHING_RELS = frozenset(
 )
 # <link rel> values that load pages the visitor never asked for.
 _SPECULATIVE_RELS = frozenset({"prefetch", "prerender"})
+# The one <form> a page may have, exactly as written: the hopper's, on the list page. It never
+# submits (no action, no submit button, a submit cancelled, and form-action 'none' would block
+# one); it is there for autocomplete="off", which WebKit honours on a textarea or select only
+# through their form (owner's site ruling of 2026-11-01, hopper_form_autocomplete_off).
+HOPPER_FORM = {"id": "mine-form", "class": "mine-form", "autocomplete": "off"}
 # Attributes that take a URL a visitor or the browser may follow (for the javascript: check).
 _URL_ATTRS = frozenset(
     {"href", "src", "action", "formaction", "data", "poster", "cite", "background", "xlink:href"}
@@ -402,7 +408,7 @@ class _Lint(HTMLParser):
             self._add("inline <script> (script-src 'self' allows only <script src>)")
         elif tag == "style":
             self._add("<style> element (style-src 'self' allows only stylesheet files)")
-        elif tag == "form":
+        elif tag == "form" and a != HOPPER_FORM:
             self._add("<form> (form-action 'none'; use <search> and fieldsets)")
         elif tag == "base":
             self._add("<base> element (base-uri 'none')")

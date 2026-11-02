@@ -1,5 +1,5 @@
-// 55-mine: the hopper, "Fonts you have" (Milestone 3, slice 1; site/CONTRACT.md sections 4, 5
-// and 11; the owner's rulings of 2026-10-21 to 2026-10-23). A visitor drops a list of their
+// 55-mine: the hopper, "Fonts you don't have" (Milestone 3, slice 1; site/CONTRACT.md sections
+// 4, 5 and 11; the owner's rulings of 2026-10-21 to 2026-11-01). A visitor drops a list of their
 // fonts anywhere on the page, chooses it with a button or pastes it, and every font they have
 // leaves every view of the list. Only once a list arrives does Mine ask Data for the parser
 // and matcher module and for the match file (Data.loadMatcher and Data.loadMatch: two GETs of
@@ -8,11 +8,14 @@
 // the parser's limit, so a huge file is refused without being read whole. What the matcher
 // finds is kept in this page's memory only, as the set of font ids the list has and a few
 // counts: nothing is stored, and nothing enters the address, the history or the title (M3-D13
-// a). A pasted list leaves the paste box once it has been matched.
+// a). A pasted list leaves the paste box once it has been matched. A file's list that loads
+// leaves a receipt in the drop zone instead, "File read: 4,332 font names." (hopper_file_shown,
+// 2026-11-01): a count the summary gives anyway, so the page keeps nothing more of the list.
 //
 // What a list brings is always in sight, wherever it was dropped: as it arrives, and again
 // when its result or its error shows, the Filters panel opens if it is closed (below 60rem)
-// and the page scrolls as little as it can to the hopper (bring). So previews pause as soon as
+// and the page scrolls as little as it can to the hopper, the drop zone in sight too where
+// both fit (bring). So previews pause as soon as
 // a list arrives, before that scroll (a list that fails while none has loaded lets them go on
 // again), and once a list loads, previews that haven't loaded stay off until a reload
 // (Specimens.pause, M3-D10 a): a request for one would tell the server which rows a list left
@@ -64,6 +67,7 @@ const Mine = (() => {
     reload: 'The font check didn’t load. Check your connection, then reload the page.',
     retry: 'The font check didn’t load. Check your connection, then try again.',
     broken: 'The font check can’t run on this page, so nothing was left out of the list.',
+    chooseAgain: 'Choose another file',
   });
   // The parser's refusals (its ERRORS), in plain words; too_big names the parser's own limit.
   const REFUSALS = Object.freeze({
@@ -106,6 +110,7 @@ const Mine = (() => {
   let tableDoc = null;
   let held = false; // a list has loaded: previews stay off until a reload (M3-D10 a)
   let busyTimer = 0; // says "Checking your list…" if the list is still on its way (setBusy)
+  let invite = null; // the drop zone's own words, { drop, choose }, which receipt puts back
 
   const node = (id) => document.getElementById(id);
   const textOf = (element) => (element ? element.textContent.replace(/\s+/g, ' ').trim() : '');
@@ -169,13 +174,38 @@ const Mine = (() => {
   // its note again and brings it into view.
   const blocked = () => Boolean(host && typeof host.blocked === 'function' && host.blocked());
 
-  // Bring `target` into sight: below 60rem the Filters panel opens if it is closed (#mine has
-  // no box then), and the page scrolls as little as it can. A dropped file is the hopper's main
-  // way in, from anywhere on the page, so what it brings is never told to screen readers alone.
+  // Bring `target` (the busy line, the error or the result, which follow the steps) into sight:
+  // below 60rem the Filters panel opens if it is closed (#mine has no box then), and the page
+  // scrolls as little as it can. Where the drop zone and `target` fit what shows of the window
+  // together (less than the window's height on a phone zoomed in, or with its keyboard up), the
+  // zone comes into sight too, so the receipt shows where the file was given; where they
+  // don't, `target` alone. A dropped file is the hopper's main way in, from anywhere on the
+  // page, so what it brings is never told to screen readers alone.
   const bring = (target) => {
     if (!root || !target || target.hidden) return;
     if (!root.getClientRects().length && host && typeof host.open === 'function') host.open();
     target.scrollIntoView({ block: 'nearest' });
+    const drop = node('mine-drop');
+    if (!drop) return;
+    const span = target.getBoundingClientRect().bottom - drop.getBoundingClientRect().top;
+    const shown = document.documentElement.clientHeight;
+    const seen = window.visualViewport ? Math.min(shown, window.visualViewport.height) : shown;
+    if (span <= seen) drop.scrollIntoView({ block: 'nearest' });
+  };
+
+  // The drop zone's receipt (hopper_file_shown): `names`, the count a file's list read, once it
+  // loads; null puts back the zone's own words, as a pasted list that loads does, and so does
+  // no list (unload). A failed list leaves it, as it leaves the result.
+  const receipt = (names) => {
+    const drop = node('mine-drop');
+    if (!drop || !invite) return;
+    const read = names !== null;
+    drop.classList.toggle('is-read', read);
+    Core.text(
+      node('mine-drop-text'),
+      read ? `File read: ${Core.plural(names, 'font name', 'font names')}.` : invite.drop
+    );
+    Core.text(node('mine-choose'), read ? WORDS.chooseAgain : invite.choose);
   };
 
   // Previews pause as a list arrives, before bring scrolls the page: a row that came near the
@@ -289,7 +319,8 @@ const Mine = (() => {
   // At most one byte past the parser's limit, which it then refuses as too big.
   const readBytes = (file, limit) => file.slice(0, limit + 1).arrayBuffer();
 
-  // Say the list's summary before the count line (Main redraws), and bring the result into view.
+  // Say the list's summary before the count line (Main redraws), and bring the result into
+  // view, with the drop zone where both fit.
   const tell = () => {
     changed(said());
     bring(node('mine-result'));
@@ -316,6 +347,7 @@ const Mine = (() => {
       const paste = node('mine-paste');
       if (paste) paste.value = '';
     }
+    receipt(source.text === undefined ? found.names : null);
     draw();
     tell();
   };
@@ -400,12 +432,14 @@ const Mine = (() => {
     apply(source, parsed, result, answer.value.ids.length);
   };
 
-  // No list is loaded or shown: its result goes, and any error. Its words go too: nothing of
-  // the list stays in the page, hidden or not.
+  // No list is loaded or shown: its result goes, and any error. Its words go too, the receipt's
+  // count among them: nothing of the list stays in the page, hidden or not. The receipt goes
+  // first, so a focus that hide moves to Choose file finds it named as it stays.
   const unload = () => {
     owned = null;
     found = null;
     pending = null;
+    receipt(null);
     showError('');
     hide(node('mine-result'));
     for (const id of ['mine-summary', 'mine-near', 'mine-warning']) Core.text(node(id), '');
@@ -556,6 +590,11 @@ const Mine = (() => {
     root = node('mine');
     if (!root) return;
     host = given || null;
+    invite = { drop: textOf(node('mine-drop-text')), choose: textOf(node('mine-choose')) };
+    // The hopper's form is there for autocomplete="off" (hopper_form_autocomplete_off) and
+    // never submits; a submit, which nothing in it should start, is cancelled before the CSP
+    // (form-action 'none') would have to refuse it.
+    if (root.form) root.form.addEventListener('submit', (event) => event.preventDefault());
     for (const type of ['dragenter', 'dragover']) document.addEventListener(type, over, true);
     document.addEventListener('dragleave', left, true);
     document.addEventListener('drop', dropped, true);

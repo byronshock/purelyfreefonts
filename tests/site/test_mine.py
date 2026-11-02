@@ -5,7 +5,7 @@ also ends with no page error, no CSP violation, no cookie and nothing stored
 (``Guarded.assert_clean``).
 
 What a visitor does and sees (site/CONTRACT.md sections 4, 5 and 11; the owner's rulings of
-2026-10-21 to 2026-10-23 in data/reviews/site/):
+2026-10-21 to 2026-11-01 in data/reviews/site/):
 
 - A list **pasted** and checked, a file **chosen** (UTF-16 with a byte-order mark, as Windows
   PowerShell 5.1 writes one, and without one) or **dropped** anywhere on the page, which never
@@ -15,9 +15,11 @@ What a visitor does and sees (site/CONTRACT.md sections 4, 5 and 11; the owner's
   off at the top (none for a file), the count line and the announcement say so, and a second
   list replaces the first.
 - **In sight**: what a dropped list brings ("Checking your list…", the summary, the Show menu
-  and Forget, or its error) comes into view, the Filters panel opening if it is closed, and a
-  ring round the window shows while a file is dragged over the page; "Checking your list…" is
-  said once a list has been on its way for a second, never sooner or after it settles.
+  and Forget, or its error) comes into view, with the drop zone, the Filters panel opening if
+  it is closed, and a ring round the window shows while a file is dragged over the page;
+  "Checking your list…" is said once a list has been on its way for a second, never sooner or
+  after it settles. A file's list that loads leaves a **receipt** in the drop zone, its count
+  of names (2026-11-01, hopper_file_shown), until a paste loads or the list is forgotten.
 - **The Show menu**: fonts you don't have (the default), all fonts with yours marked, or only
   fonts you have, in **every view**: each rank, and the filters, against the same view with no
   list.
@@ -500,7 +502,8 @@ def test_what_a_dropped_list_brings_comes_into_sight(
     """A file dropped on the list, the hopper out of sight (below 60rem behind the closed
     Filters button; from 60rem in the sidebar below the fold), with the page at its top:
     "Checking your list…", then the summary, the Show menu and Forget, or the error, come into
-    view, the panel opening where it was closed."""
+    view, the panel opening where it was closed; and the drop zone with them, which fits the
+    window with each, so its receipt shows where a file is given (hopper_file_shown)."""
     guarded, page = open_list(guarded_context, viewport=viewport)
     narrow = viewport["width"] < 960
     assert page.evaluate("() => scrollY") == 0
@@ -511,7 +514,8 @@ def test_what_a_dropped_list_brings_comes_into_sight(
     said = status(page)
     page.evaluate(hopper_page.DROP_JS, ["#list", first, None, 0, "fonts.txt"])
     wait_held(page, held)
-    assert hopper_page.in_view(page, "#mine-busy")
+    for part in ("#mine-busy", "#mine-drop"):
+        assert hopper_page.in_view(page, part), part
     assert text_of(page, "#mine-busy") == "Checking your list\u2026"
     if narrow:
         assert page.get_attribute("#f-toggle", "aria-expanded") == "true"
@@ -519,8 +523,9 @@ def test_what_a_dropped_list_brings_comes_into_sight(
     hopper_page.wait_taken(page, said)
     parsed, result = reference(first, table)
     assert text_of(page, "#mine-summary") == summary(parsed, result, len(doc["fonts"]), "missing")
-    for part in ("#mine-result", "#mine-summary", "#mine-show", "#mine-forget"):
+    for part in ("#mine-result", "#mine-summary", "#mine-show", "#mine-forget", "#mine-drop"):
         assert hopper_page.in_view(page, part), part
+    assert page.evaluate(RECEIPT_JS) == receipt(first, table)
     # Back at the top, the panel closed again: a refused file's error comes into view too.
     page.evaluate("() => window.scrollTo(0, 0)")
     if narrow:
@@ -528,7 +533,94 @@ def test_what_a_dropped_list_brings_comes_into_sight(
         assert page.is_hidden("#mine")
     hopper_page.drop(page, PASTED_REFUSALS["command"])
     assert_error(page, REFUSALS["command"], retry=False)
-    assert hopper_page.in_view(page, "#mine-error")
+    for part in ("#mine-error", "#mine-drop"):
+        assert hopper_page.in_view(page, part), part
+    guarded.assert_clean(page)
+
+
+@pytest.mark.parametrize(
+    ("viewport", "together"),
+    [({"width": 1440, "height": 900}, True), ({"width": 1280, "height": 400}, False)],
+    ids=["both-fit", "window-too-short-for-both"],
+)
+def test_the_drop_zone_comes_into_sight_with_the_result_where_both_fit(
+    guarded_context: Any, first: str, viewport: Any, together: bool
+) -> None:
+    """bring() in 55-mine.js, the page scrolled past the hopper, so the result comes into view
+    at the window's top and the drop zone above it would stay out of sight: where both fit
+    the window, the zone comes into sight with the result, its receipt with it; where the
+    window is too short for both, the result alone."""
+    guarded, page = open_list(guarded_context, viewport=viewport)
+    page.evaluate(
+        "() => window.scrollTo(0, scrollY + 400 +"
+        " document.getElementById('mine').getBoundingClientRect().bottom)"
+    )
+    assert not hopper_page.in_view(page, "#mine")
+    hopper_page.drop(page, first)
+    assert hopper_page.in_view(page, "#mine-result")
+    assert hopper_page.in_view(page, "#mine-drop") is together
+    guarded.assert_clean(page)
+
+
+# The drop zone: whether it shows its receipt (is-read), its words, and its button's.
+RECEIPT_JS = """() => [
+  document.getElementById('mine-drop').classList.contains('is-read'),
+  document.getElementById('mine-drop-text').textContent,
+  document.getElementById('mine-choose').textContent,
+]"""
+INVITE = [False, "Drop fonts.txt here", "Choose file"]
+# The receipt's tick: what its ::before holds (nothing a screen reader reads), its border, and
+# whether that border is the text's own colour.
+TICK_JS = """() => {
+  const text = document.getElementById('mine-drop-text');
+  const tick = getComputedStyle(text, '::before');
+  return [tick.content, tick.borderRightStyle, tick.borderBottomStyle,
+    tick.borderRightColor === getComputedStyle(text).color];
+}"""
+
+
+def receipt(given: str | bytes, table: owned.Table) -> list[Any]:
+    """The drop zone once a file holding ``given`` has loaded: the summary's count of names."""
+    names = reference(given, table)[0]["counts"]["entries"]
+    read = f"File read: {names:,} font {'name' if names == 1 else 'names'}."
+    return [True, read, "Choose another file"]
+
+
+def test_a_file_s_list_leaves_a_receipt_in_the_drop_zone(
+    guarded_context: Any, table: owned.Table, families: list[str], first: str, second: str
+) -> None:
+    """Q1 (a) of PLAN-hopper.md (hopper_file_shown, 2026-11-01): once a file's list loads, the
+    drop zone says how many names it read, the summary's own count, and its button offers
+    another file, however the file came: dropped on the zone or on the list, or chosen. A
+    pasted list that loads puts back the zone's own words; a failed list, a file or a paste,
+    leaves the receipt, as it leaves the result; Forget takes it away with the list. The tick
+    is drawn with borders, so a screen reader has no character to read."""
+    guarded, page = open_list(guarded_context)
+    assert page.evaluate(RECEIPT_JS) == INVITE
+    assert page.evaluate(TICK_JS)[0] == "none"
+    # Three lists of three sizes, so each receipt is the latest list's.
+    on_list, chosen = plain_list(families[:4]), linux_list(families[:8])
+    counts = {reference(given, table)[0]["counts"]["entries"] for given in (first, on_list, chosen)}
+    assert len(counts) == 3
+    hopper_page.drop(page, first, selector="#mine-drop")
+    assert page.evaluate(RECEIPT_JS) == receipt(first, table)
+    assert page.evaluate(TICK_JS) == ['""', "solid", "solid", True]
+    hopper_page.paste(page, second)
+    assert page.evaluate(RECEIPT_JS) == INVITE
+    hopper_page.drop(page, on_list)
+    assert page.evaluate(RECEIPT_JS) == receipt(on_list, table)
+    hopper_page.choose(page, chosen.encode())
+    assert page.evaluate(RECEIPT_JS) == receipt(chosen, table)
+    hopper_page.drop(page, PASTED_REFUSALS["command"])
+    assert_error(page, REFUSALS["command"], retry=False)
+    assert page.evaluate(RECEIPT_JS) == receipt(chosen, table)
+    hopper_page.paste(page, PASTED_REFUSALS["not_found"])
+    assert_error(page, REFUSALS["not_found"], retry=False)
+    assert page.evaluate(RECEIPT_JS) == receipt(chosen, table)
+    page.locator("#mine-forget").focus()
+    changed(page, lambda: page.keyboard.press("Enter"))
+    assert page.evaluate(RECEIPT_JS) == INVITE
+    assert page.evaluate(TICK_JS)[0] == "none"
     guarded.assert_clean(page)
 
 
@@ -1302,7 +1394,8 @@ def test_each_failure_to_load_says_what_section_11_says(
 
 def try_again(page: Any) -> None:
     """Press "Try again" by keyboard: once the list is taken, the error has gone and the focus,
-    which was in it, is on Choose file (the hopper's first control that stays), not lost."""
+    which was in it, is on Choose file (hide's fallback, a control that always shows), not
+    lost."""
     page.locator("#mine-retry").focus()
     said = status(page)
     page.keyboard.press("Enter")
@@ -1317,9 +1410,9 @@ def test_an_error_that_hides_with_the_focus_in_it_over_a_result_gives_it_to_the_
     """hide()'s guard in 55-mine.js: when the error hides with the focus in it while a result
     shows, the focus goes to #mine-show (else to Choose file, above). No state Data gives
     today reaches it: a loaded list keeps both of Data's answers, so no failure that "Try
-    again" mends can follow one. So the test shows the error and its button over the result,
-    as such a failure would, and tabs to the button from Forget; a list checked meanwhile
-    hides the error."""
+    again" mends can follow one. So the test shows the error and its button with the result,
+    as such a failure would, and tabs back to the button from the Show menu, since the error
+    comes first (hopper_steps_in_order); a list checked meanwhile hides the error."""
     guarded, page = open_list(guarded_context)
     before = shown(page)
     hopper_page.paste(page, first)
@@ -1327,8 +1420,8 @@ def test_an_error_that_hides_with_the_focus_in_it_over_a_result_gives_it_to_the_
         "() => { for (const id of ['mine-error', 'mine-retry']) "
         "document.getElementById(id).hidden = false; }"
     )
-    page.locator("#mine-forget").focus()
-    page.keyboard.press("Tab")
+    page.locator("#mine-show").focus()
+    page.keyboard.press("Shift+Tab")
     assert page.evaluate("() => document.activeElement.id") == "mine-retry"
     hopper_page.paste(page, second, by_script=True)
     assert page.is_hidden("#mine-error")
@@ -1778,7 +1871,7 @@ def test_an_error_after_a_result_both_before_the_list_is_live_is_what_is_heard(
     heard as it showed, and nothing is written after it; on a link it was kept while the
     results were out of sight, and is the one write. The visitor scrolls to the page's foot
     meanwhile; once the list is live, the error is in view, and so is the result it came after,
-    which sits above it (at a size where both fit, in the sidebar)."""
+    which sits below it (at a size where both fit, in the sidebar)."""
     guarded, page = open_link_late(
         lambda: guarded_context(viewport={"width": 1440, "height": 900}), hash_
     )
@@ -1895,6 +1988,8 @@ def test_a_list_taken_when_the_rows_do_not_match_the_index_gets_the_page_s_note(
     assert page.evaluate(HIDDEN_JS, "mine-result") is True, "no result"
     assert text_of(page, "#mine-summary") == ""
     assert page.evaluate(HIDDEN_JS, "mine-error") is True
+    # Nor the receipt: a file's list that had loaded took its count with it (unload).
+    assert page.evaluate(RECEIPT_JS) == INVITE
     # A list that had loaded keeps the previews off (M3-D10 a: a list did load), though its
     # result is gone; one that never loaded lets them go on. The last row with a preview,
     # scrolled into view, tells which (the hook isn't published: the list never went live).
@@ -1924,10 +2019,11 @@ def test_a_file_that_cannot_be_read_says_so(guarded_context: Any) -> None:
 def test_a_reload_or_back_restores_no_list_and_no_show_menu(
     guarded_context: Any, first: str
 ) -> None:
-    """Nothing is kept, a reload's or Back's included: the Show menu has autocomplete="off", so
-    Firefox doesn't restore it on reload, nor either engine on Back, where the page is loaded
-    again (a page the back/forward cache kept whole keeps its list in memory, and its menu
-    with it)."""
+    """Nothing is kept, a reload's or Back's included. The Show menu and the paste box have
+    autocomplete="off", and so does the form they sit in, so Firefox doesn't restore them on
+    reload, nor any engine on Back, where the page is loaded again: WebKit heeds the attribute
+    on a textarea or select only through their form (hopper_form_autocomplete_off). A page the
+    back/forward cache kept whole keeps its list in memory, and its menu and box with them."""
     guarded, page = open_list(guarded_context)
     hopper_page.paste(page, first)
     show(page, "only")
@@ -1943,6 +2039,16 @@ def test_a_reload_or_back_restores_no_list_and_no_show_menu(
     page.wait_for_function("() => window.__tffReady >= 1")
     kept = page.evaluate("() => !document.getElementById('mine-result').hidden")
     assert page.input_value("#mine-show") == ("only" if kept else "missing")
+    # A list pasted but never checked stays in the box, to be checked or mended; a Back that
+    # loads the page again doesn't give it back. A marker left in the page tells a page kept
+    # whole from one loaded again.
+    page.fill("#mine-paste", first)
+    page.evaluate("() => { window.__tffLeft = true; }")
+    page.goto("/about/")
+    page.go_back()
+    page.wait_for_function("() => window.__tffReady >= 1")
+    kept = page.evaluate("() => window.__tffLeft === true")
+    assert page.input_value("#mine-paste") == (first if kept else "")
     assert page.evaluate(STORED_JS) == [0, 0, ""]
     guarded.assert_clean(page)
 

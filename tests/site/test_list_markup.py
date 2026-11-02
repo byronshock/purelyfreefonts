@@ -101,6 +101,10 @@ class TreeBuilder(HTMLParser):
         self.current.children.append(text)
 
 
+# The hopper's form, exactly as the template writes it.
+HOPPER_FORM = {"id": "mine-form", "class": "mine-form", "autocomplete": "off"}
+
+
 def squash(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
@@ -158,7 +162,9 @@ def test_ids_are_unique_and_every_reference_resolves(dom):
 
 
 def test_no_inline_code_and_no_form(html):
-    assert "<form" not in html
+    # No form but the hopper's, there for autocomplete="off" (hopper_form_autocomplete_off).
+    assert html.count("<form") == 1
+    assert '<form id="mine-form" class="mine-form" autocomplete="off">' in html
     assert "<style" not in html
     assert not re.search(r"<script(?![^>]*\bsrc=)", html)
     assert not re.search(r"\sstyle\s*=", html)
@@ -323,7 +329,7 @@ def test_filters_ship_hidden_inside_search(dom):
     assert search is not None
     assert "hidden" in search.attrs
     assert search.attrs["aria-label"]
-    assert dom.find("form") is None
+    assert [f.attrs for f in dom.find_all("form")] == [HOPPER_FORM]
     for control in search.find_all("input") + search.find_all("select"):
         cid = control.attrs.get("id")
         if "hidden" in control.attrs:
@@ -339,20 +345,62 @@ def test_filters_ship_hidden_inside_search(dom):
 
 
 def test_the_hopper_s_markup(dom):
-    """The hopper, "Fonts you have" (Milestone 3, slice 1; site/CONTRACT.md section 4): a
+    """The hopper, "Fonts you don't have" (Milestone 3, slice 1; site/CONTRACT.md section 4): a
     fieldset in the panel after "Hide fonts that come with" (inventory_on_list_page), with no
-    form and no named control, so nothing in it reaches the address; a paste box the browser
-    leaves alone; and one closed <details> per system, its command exactly as data.MINE_COMMANDS
-    has it, "(not yet tested)" on macOS and Windows (inventory_linux_tested_only)."""
+    form and no named control, so nothing in it reaches the address; read from top to bottom
+    (hopper_steps_in_order, 2026-11-01), two numbered steps, each heading naming its group,
+    then what a list brings; a paste box the browser leaves alone; and one closed <details>
+    per system, its command exactly as data.MINE_COMMANDS has it, "(not yet tested)" on macOS
+    and Windows (inventory_linux_tested_only)."""
     more = dom.find("div", id="f-more")
     order = [n.attrs.get("id") for n in more.elements()]
-    assert order[-3:] == ["f-system", "mine", "f-clear"]
+    assert order[-3:] == ["f-system", "mine-form", "f-clear"]
+    # The hopper sits in a form of its own that never submits: no action, no submit button.
+    # It is there for autocomplete="off", which WebKit honours on a textarea or select only
+    # through their form (hopper_form_autocomplete_off, 2026-11-01).
+    form = dom.find("form", id="mine-form")
+    assert form.attrs == HOPPER_FORM
+    assert [n.attrs.get("id") for n in form.elements()] == ["mine"]
+    assert all(b.attrs.get("type") == "button" for b in form.find_all("button"))
+    assert form.find("input", type="submit") is None
     mine = dom.find("fieldset", id="mine")
     assert mine.elements()[0].tag == "legend"
-    assert squash(mine.elements()[0].text) == "Fonts you have"
+    assert squash(mine.elements()[0].text) == "Fonts you don't have"
     assert [n.attrs["id"] for n in mine.iter() if "name" in n.attrs] == []
     assert mine.find("form") is None
-    assert squash(mine.find("p", class_="mine-phone").text) == "Make the list on a computer."
+    # Top to bottom: the lead, the two steps, then "Checking your list…", the error, the result.
+    parts = [(n.tag, n.attrs.get("id") or n.classes[0]) for n in mine.elements()[1:]]
+    assert parts == [
+        ("p", "mine-lead"),
+        ("ol", "mine-steps"),
+        ("p", "mine-busy"),
+        ("div", "mine-error"),
+        ("div", "mine-result"),
+    ]
+    # Each step a list item with no role, so the list stays a list of two; its heading first,
+    # naming the step's group (hopper_subheadings).
+    steps = mine.find("ol", class_="mine-steps").elements()
+    assert [(li.tag, "role" in li.attrs) for li in steps] == [("li", False), ("li", False)]
+    headings = [li.elements()[0] for li in steps]
+    assert [(h.tag, h.attrs["id"], h.classes, squash(h.text)) for h in headings] == [
+        ("p", "mine-how", ["mine-step"], "Make the list"),
+        ("p", "mine-give", ["mine-step"], "Drop or paste it"),
+    ]
+    make, give = (li.elements()[1:] for li in steps)
+    assert [n.classes[0] for n in make] == ["mine-phone", "mine-oses"]
+    assert squash(make[0].text) == "Make the list on a computer."
+    assert [n.classes[0] for n in give] == ["mine-give"]
+    assert (give[0].attrs["role"], give[0].attrs["aria-labelledby"]) == ("group", "mine-give")
+    inputs = [(n.tag, n.attrs.get("id") or n.attrs["for"]) for n in give[0].elements()]
+    assert inputs == [
+        ("div", "mine-drop"),
+        ("label", "mine-paste"),
+        ("textarea", "mine-paste"),
+        ("button", "mine-check"),
+    ]
+    drop = mine.find("div", id="mine-drop")
+    assert squash(drop.find("p", id="mine-drop-text").text) == "Drop fonts.txt here"
+    assert "is-read" not in drop.classes, "the receipt shows only once a file's list loads"
     # Shown once a list loads: the summary, the Show menu and "Forget this list".
     result = mine.find("div", id="mine-result")
     assert "hidden" in result.attrs
@@ -384,10 +432,9 @@ def test_the_hopper_s_markup(dom):
         "autocapitalize": "off",
     }
     assert squash(mine.find("button", id="mine-check").text) == "Check"
-    # How to make the list: one details per system, closed, each with a copy button.
+    # Make the list: one details per system, closed, each with a copy button.
     group = mine.find("div", class_="mine-oses")
     assert (group.attrs["role"], group.attrs["aria-labelledby"]) == ("group", "mine-how")
-    assert squash(dom.find(id="mine-how").text) == "How to make the list"
     details = group.find_all("details")
     assert [d.attrs["id"] for d in details] == [f"mine-os-{c['os']}" for c in data.MINE_COMMANDS]
     for box, command in zip(details, data.MINE_COMMANDS, strict=True):
@@ -720,10 +767,14 @@ def test_showing_the_filters_does_not_move_the_list(browser, site_url, width):
         context.close()
 
 
-# Every part of the hopper shown at once, as a script would show them, and every command open.
+# Every part of the hopper shown at once, as a script would show them, the drop zone's receipt
+# among them, and every command open.
 OPEN_HOPPER = """() => {
   for (const id of ['mine-result', 'mine-near', 'mine-warning', 'mine-busy', 'mine-error',
       'mine-retry']) document.getElementById(id).hidden = false;
+  document.getElementById('mine-drop').classList.add('is-read');
+  document.getElementById('mine-drop-text').textContent = 'File read: 4,332 font names.';
+  document.getElementById('mine-choose').textContent = 'Choose another file';
   document.getElementById('mine-summary').textContent =
     'Found 4,332 font names in a Linux list. You have 81 of the 540 fonts here, left out of the list.';
   document.getElementById('mine-error-text').textContent =
@@ -751,9 +802,9 @@ HOPPER_OVERFLOW = """() => {
 @pytest.mark.parametrize("width", [320, 375, 800, 1280])
 @pytest.mark.parametrize("scheme", ["light", "dark"])
 def test_the_hopper_fits_its_panel_at_every_width(browser, site_url, width, scheme):
-    """Opened in full (a summary, an error, every command), the hopper scrolls nothing
-    sideways, stays inside the filter block (the Windows command wraps), and every target is
-    at least 24 px; below 60rem it takes the panel's whole width."""
+    """Opened in full (a summary, an error, the receipt, every command), the hopper scrolls
+    nothing sideways, stays inside the filter block (the Windows command wraps), and every
+    target is at least 24 px; below 60rem it takes the panel's whole width."""
     context, page = open_page(browser, site_url, width, color_scheme=scheme)
     try:
         page.evaluate(OPEN_PANEL, True)
@@ -772,6 +823,52 @@ def test_the_hopper_fits_its_panel_at_every_width(browser, site_url, width, sche
             more = page.locator("#f-more").bounding_box()
             # the panel's padding (--space-4) and border on each side; at most 40rem
             assert mine["width"] >= min(more["width"] - 2 * (16 + 1), 640) - 1
+    finally:
+        context.close()
+
+
+# The hopper's levels of text: each part's computed size and weight, and the left edges of
+# the title and the step headings.
+HOPPER_TEXT = """() => {
+  const font = (el, pseudo) => {
+    const style = getComputedStyle(el, pseudo);
+    return [style.fontSize, style.fontWeight];
+  };
+  const q = (s) => document.querySelector(s);
+  return {
+    title: font(q('#mine > legend')),
+    peer: font(q('#f-cat > legend')),
+    steps: Array.from(document.querySelectorAll('.mine-steps > li'), (li) =>
+      [font(li.querySelector('.mine-step')), font(li, '::marker')]),
+    labels: [font(q('label[for="mine-paste"]')), font(q('label[for="mine-show"]'))],
+    notes: [font(q('.mine-lead')), font(q('.mine-phone'))],
+    indent: q('#mine-how').getBoundingClientRect().left - q('#mine > legend').getBoundingClientRect().left,
+    // A marker's style is computed even where none is drawn: the list's own style says whether
+    // the numbers show, and where.
+    numbers: [getComputedStyle(q('.mine-steps')).listStyleType,
+      getComputedStyle(q('.mine-steps')).listStylePosition,
+      ...Array.from(document.querySelectorAll('.mine-steps > li'), (li) => getComputedStyle(li).display)],
+  };
+}"""
+
+
+@pytest.mark.parametrize("width", [375, 1280])
+def test_the_hopper_s_levels_of_text(browser, site_url, width):
+    """The owner's ruling of 2026-11-01 (hopper_subheadings): the title a group title like the
+    panel's others, 16 px, 600; the step headings a level under it, 14 px, 600, indented, after
+    their number (the li's marker, 14 px, 600); the field labels and the notes 14 px, 400. A
+    rule that stopped matching its element after a move would show here."""
+    context, page = open_page(browser, site_url, width)
+    try:
+        page.evaluate(OPEN_PANEL, True)
+        page.evaluate(OPEN_HOPPER)
+        text = page.evaluate(HOPPER_TEXT)
+        assert text["title"] == text["peer"] == ["16px", "600"]
+        assert text["steps"] == [[["14px", "600"], ["14px", "600"]]] * 2
+        assert text["labels"] == [["14px", "400"]] * 2
+        assert text["notes"] == [["14px", "400"]] * 2
+        assert text["indent"] >= 16, "the step headings sit under the title, indented"
+        assert text["numbers"] == ["decimal", "outside", "list-item", "list-item"]
     finally:
         context.close()
 
