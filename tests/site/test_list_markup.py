@@ -339,20 +339,54 @@ def test_filters_ship_hidden_inside_search(dom):
 
 
 def test_the_hopper_s_markup(dom):
-    """The hopper, "Fonts you have" (Milestone 3, slice 1; site/CONTRACT.md section 4): a
+    """The hopper, "Fonts you don't have" (Milestone 3, slice 1; site/CONTRACT.md section 4): a
     fieldset in the panel after "Hide fonts that come with" (inventory_on_list_page), with no
-    form and no named control, so nothing in it reaches the address; a paste box the browser
-    leaves alone; and one closed <details> per system, its command exactly as data.MINE_COMMANDS
-    has it, "(not yet tested)" on macOS and Windows (inventory_linux_tested_only)."""
+    form and no named control, so nothing in it reaches the address; read from top to bottom
+    (hopper_steps_in_order, 2026-11-01), two numbered steps, each heading naming its group,
+    then what a list brings; a paste box the browser leaves alone; and one closed <details>
+    per system, its command exactly as data.MINE_COMMANDS has it, "(not yet tested)" on macOS
+    and Windows (inventory_linux_tested_only)."""
     more = dom.find("div", id="f-more")
     order = [n.attrs.get("id") for n in more.elements()]
     assert order[-3:] == ["f-system", "mine", "f-clear"]
     mine = dom.find("fieldset", id="mine")
     assert mine.elements()[0].tag == "legend"
-    assert squash(mine.elements()[0].text) == "Fonts you have"
+    assert squash(mine.elements()[0].text) == "Fonts you don't have"
     assert [n.attrs["id"] for n in mine.iter() if "name" in n.attrs] == []
     assert mine.find("form") is None
-    assert squash(mine.find("p", class_="mine-phone").text) == "Make the list on a computer."
+    # Top to bottom: the lead, the two steps, then "Checking your list…", the error, the result.
+    parts = [(n.tag, n.attrs.get("id") or n.classes[0]) for n in mine.elements()[1:]]
+    assert parts == [
+        ("p", "mine-lead"),
+        ("ol", "mine-steps"),
+        ("p", "mine-busy"),
+        ("div", "mine-error"),
+        ("div", "mine-result"),
+    ]
+    # Each step a list item with no role, so the list stays a list of two; its heading first,
+    # naming the step's group (hopper_subheadings).
+    steps = mine.find("ol", class_="mine-steps").elements()
+    assert [(li.tag, "role" in li.attrs) for li in steps] == [("li", False), ("li", False)]
+    headings = [li.elements()[0] for li in steps]
+    assert [(h.tag, h.attrs["id"], h.classes, squash(h.text)) for h in headings] == [
+        ("p", "mine-how", ["mine-step"], "Make the list"),
+        ("p", "mine-give", ["mine-step"], "Drop or paste it"),
+    ]
+    make, give = (li.elements()[1:] for li in steps)
+    assert [n.classes[0] for n in make] == ["mine-phone", "mine-oses"]
+    assert squash(make[0].text) == "Make the list on a computer."
+    assert [n.classes[0] for n in give] == ["mine-give"]
+    assert (give[0].attrs["role"], give[0].attrs["aria-labelledby"]) == ("group", "mine-give")
+    inputs = [(n.tag, n.attrs.get("id") or n.attrs["for"]) for n in give[0].elements()]
+    assert inputs == [
+        ("div", "mine-drop"),
+        ("label", "mine-paste"),
+        ("textarea", "mine-paste"),
+        ("button", "mine-check"),
+    ]
+    drop = mine.find("div", id="mine-drop")
+    assert squash(drop.find("p", id="mine-drop-text").text) == "Drop fonts.txt here"
+    assert "is-read" not in drop.classes, "the receipt shows only once a file's list loads"
     # Shown once a list loads: the summary, the Show menu and "Forget this list".
     result = mine.find("div", id="mine-result")
     assert "hidden" in result.attrs
@@ -384,10 +418,9 @@ def test_the_hopper_s_markup(dom):
         "autocapitalize": "off",
     }
     assert squash(mine.find("button", id="mine-check").text) == "Check"
-    # How to make the list: one details per system, closed, each with a copy button.
+    # Make the list: one details per system, closed, each with a copy button.
     group = mine.find("div", class_="mine-oses")
     assert (group.attrs["role"], group.attrs["aria-labelledby"]) == ("group", "mine-how")
-    assert squash(dom.find(id="mine-how").text) == "How to make the list"
     details = group.find_all("details")
     assert [d.attrs["id"] for d in details] == [f"mine-os-{c['os']}" for c in data.MINE_COMMANDS]
     for box, command in zip(details, data.MINE_COMMANDS, strict=True):

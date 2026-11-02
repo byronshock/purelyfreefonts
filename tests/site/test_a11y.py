@@ -16,8 +16,8 @@ ruling of 2026-09-30): it tests the templates and CSS, which are the same in eve
   (the 404), in light and dark, at 375 x 812 and 1280 x 900. The list page is also checked with
   filters on, with the phone filters open (375 only), with a details panel open and in the
   no-results state; and with the hopper's list loaded (Milestone 3, slice 1): its summary shown
-  under each Show mode (all fonts with yours marked puts a badge in the rows), and an error
-  shown with every command open. Text whose contrast axe leaves unmeasured (rows far down the list skip
+  under each Show mode (all fonts with yours marked puts a badge in the rows), a dropped file's
+  receipt in the drop zone, and an error shown with every command open. Text whose contrast axe leaves unmeasured (rows far down the list skip
   rendering) is measured again once scrolled into view, and must pass. The one exception is
   the heading of a row whose specimen shows: its text is transparent (name_once), which axe
   can only call a 1:1 contrast, and WCAG 1.4.3 sets no contrast for text that is visible to
@@ -27,7 +27,8 @@ ruling of 2026-09-30): it tests the templates and CSS, which are the same in eve
 - **Consistent help** (3.2.6): the feedback spot has the same place and links on every page.
 - **Themes:** light or dark follows the system on every page.
 - **Forced colours** (design-m2 §6 asks for Chromium; Playwright emulates them in Firefox
-  too, where the palette is always the light one): axe on every page, and pixel checks
+  too, where the palette is always the light one): axe on every page and on the hopper with a
+  dropped file's receipt and with an error, and pixel checks
   that a specimen's outlines and a focus ring are visible, and that a row's Download and
   Details buttons keep a border and show their text (in the normal themes too). The sample
   catalog has no rendered specimens yet, so specimen checks use a small site built from
@@ -332,8 +333,9 @@ def list_state(page: Any, state: str) -> None:
 
 def hopper_state(page: Any, state: str) -> None:
     """Give the list page (open at ``/``) to the hopper, as ``state`` says: a list of the page's
-    own first font names, under a Show mode ("mine-missing", "mine-all", "mine-only"), or a
-    pasted command, which the parser refuses, with every command open ("mine-error")."""
+    own first font names, pasted, under a Show mode ("mine-missing", "mine-all", "mine-only"),
+    or dropped as a file, so the drop zone shows its receipt ("mine-file"); or a pasted
+    command, which the parser refuses, with every command open ("mine-error")."""
     from tests.helpers import hopper_page
 
     if page.locator("#f-toggle").is_visible():
@@ -349,6 +351,11 @@ def hopper_state(page: Any, state: str) -> None:
         "() => Array.from(document.querySelectorAll('#list > li.font .font-name'),"
         " (h) => h.textContent.trim()).slice(0, 4)"
     )
+    if state == "mine-file":
+        hopper_page.drop(page, "\n".join(names))
+        assert page.locator("#mine-drop.is-read").is_visible()
+        assert page.locator("#mine-summary").is_visible()
+        return
     hopper_page.paste(page, "\n".join(names))
     assert page.locator("#mine-summary").is_visible()
     mode = state.removeprefix("mine-")
@@ -359,7 +366,7 @@ def hopper_state(page: Any, state: str) -> None:
         wait_for(page, "document.querySelector('#list .ext[data-filter=\"mine\"] .ext-badge')")
 
 
-HOPPER_STATES = ["mine-missing", "mine-all", "mine-only", "mine-error"]
+HOPPER_STATES = ["mine-missing", "mine-all", "mine-only", "mine-file", "mine-error"]
 
 
 LIST_STATES = {
@@ -826,6 +833,18 @@ def test_forced_colors_axe(guarded_context: Any, name: str, scheme: str) -> None
     if name == "list":
         list_state(page, "details")
     assert_axe_clean(page, f"{PAGES[name]} forced colours {scheme}")
+    guarded.assert_clean(page)
+
+
+@pytest.mark.sample_only
+@pytest.mark.parametrize("scheme", SCHEMES)
+@pytest.mark.parametrize("state", ["mine-file", "mine-error"])
+def test_forced_colors_axe_hopper(guarded_context: Any, state: str, scheme: str) -> None:
+    """The hopper's steps, its receipt and its error in forced colours (2026-11-01)."""
+    guarded, page = open_page(guarded_context, "/", forced_colors="active", color_scheme=scheme)
+    assert page.evaluate("matchMedia('(forced-colors: active)').matches")
+    hopper_state(page, state)
+    assert_axe_clean(page, f"list {state} forced colours {scheme}")
     guarded.assert_clean(page)
 
 

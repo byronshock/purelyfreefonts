@@ -11,7 +11,7 @@
 
 ## The commands on the site
 
-The hopper ([Milestone 3](milestone-3.md#slice-1-the-hopper), slice 1) shows one command per system under "How to make the list", from `tff_site.data.MINE_COMMANDS`, each with a Copy button. Each writes `fonts.txt` in the home folder, which the visitor then chooses or drops on the list page: not the Desktop, which iCloud (macOS) and OneDrive (Windows) can sync off the machine. Only the Linux command has run on a real machine; the others show "(not yet tested)" until step 1 runs them (`inventory_linux_tested_only`, 2026-10-21).
+The hopper ([Milestone 3](milestone-3.md#slice-1-the-hopper), slice 1) shows one command per system under "Make the list", the first of its two steps, from `tff_site.data.MINE_COMMANDS`, each with a Copy button. Each writes `fonts.txt` in the home folder, which the visitor then chooses or drops on the list page: not the Desktop, which iCloud (macOS) and OneDrive (Windows) can sync off the machine. Only the Linux command has run on a real machine; the others show "(not yet tested)" until step 1 runs them (`inventory_linux_tested_only`, 2026-10-21).
 
 | System | Command | Tested |
 |---|---|---|
@@ -114,6 +114,15 @@ Add-Type -AssemblyName System.Drawing; (New-Object System.Drawing.Text.Installed
 - **The Windows registry** gives full names, so matching needs style stripping and the ambiguous rule (Archivo Black).
 - **The button** gives all three names. The family comes first, and the PostScript name settles the ambiguous cases.
 
+## The paste box and session restore
+
+A pasted list stays in the hopper's paste box until it is matched, and so does one the parser refuses, so it can be mended. Checked on 2026-11-01 (`PLAN-hopper.md`, step 2): neither engine's session restore writes that text to disk, because the box has `autocomplete="off"`. So M3-D13 a ("nothing is stored") holds for it.
+
+- **Firefox:** session restore collects form fields' values into its session file, but `SessionStoreUtils::CollectFromTextAreaElement` skips a `textarea` whose `autocomplete` is `off`.
+- **Chromium:** session restore saves each tab's page state, which holds the form controls' state. `HTMLFormControlElementWithState::ShouldSaveAndRestoreFormControlState()` returns false for `autocomplete="off"`, so the box's text is never in it. That is also why Back never restores it (`tests/site/test_mine.py`).
+
+The Show menu has `autocomplete="off"` too, so the same holds for it. Both checks read the engines' main branches on 2026-11-01; a test can't reach either session file, so a change there would go unseen.
+
 ## Cloudflare
 
 Cloudflare's settings and the site's headers belong to [Milestone 2](milestone-2.md) (step 9); the check's privacy test re-verifies them after each deploy. Seen on trulyfreefonts.com on 2026-09-25: plain `curl` got the stub unchanged, but a request sending a browser's `Accept: text/html` header got the Web Analytics beacon injected (`static.cloudflareinsights.com`), so checks must send that header. Cloudflare's Network Error Logging (`NEL` and `Report-To` headers, which ask browsers to report connection failures to `a.nel.cloudflare.com`) was on; it was turned off on all three zones the same day ([ops/SERVER.md](../ops/SERVER.md) section F). Free-plan zones have had the Web Analytics beacon on by default since October 2025, and Bot Fight Mode injects a script under `/cdn-cgi/challenge-platform/`; Milestone 2 step 9 turns both off.
@@ -159,3 +168,4 @@ Step 1 fills in one row per command and OS; step 7 adds the browser rows.
 - Apple's documentation for `NSFontManager.availableFontFamilies`.
 - Microsoft's documentation on per-user font installation, DirectWrite's system font collection, WPF `Fonts.SystemFontFamilies` and GDI+ font support.
 - Nerd Fonts' `fonts.json`.
+- Firefox's `toolkit/components/sessionstore/SessionStoreUtils.cpp` and Chromium's `third_party/blink/renderer/core/html/forms/html_form_control_element_with_state.cc`, for what session restore keeps of a form control (main branches, read 2026-11-01).

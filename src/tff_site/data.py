@@ -96,7 +96,7 @@ CATEGORY_LABELS = {
 CATEGORIES = tuple(CATEGORY_LABELS)
 # Operating-system families for "Hide fonts that come with …", with their page labels.
 OS_LABELS = {"windows": "Windows", "macos": "macOS", "linux": "Linux", "android": "Android"}
-# The hopper's "How to make the list" (Milestone 3, slice 1; docs/owned-fonts.md, "The commands
+# The hopper's "Make the list" (Milestone 3, slice 1; docs/owned-fonts.md, "The commands
 # on the site"): one command per system, each writing fonts.txt in the home folder, not the
 # Desktop, which iCloud and OneDrive sync off the machine. Only Linux's has run on a real
 # machine; the others show "(not yet tested)" until someone runs them (owner ruling of

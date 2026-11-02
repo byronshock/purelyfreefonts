@@ -1,10 +1,17 @@
-/* 27-mine: the hopper, "Fonts you have" (Milestone 3, slice 1; site/CONTRACT.md section 4). It
-   sits in the filter panel after "Hide fonts that come with": in the sidebar from 60rem, and
-   across the whole panel below that, behind the Filters button. Before a list: a line on what
-   it does, the drop zone with Choose file, the paste box with Check, and "How to make the list",
-   one closed <details> per system. Once a list loads, its summary, the Show menu and "Forget
-   this list" come first, in a box of their own. Colours come only from the tokens. */
+/* 27-mine: the hopper, "Fonts you don't have" (Milestone 3, slice 1; site/CONTRACT.md section
+   4). It sits in the filter panel after "Hide fonts that come with": in the sidebar from 60rem,
+   and across the whole panel below that, behind the Filters button. It reads from top to
+   bottom (owner's site rulings of 2026-11-01, hopper_steps_in_order): a line on what it does;
+   two numbered steps, "Make the list" (one closed <details> per system) and "Drop or paste it"
+   (the drop zone with Choose file, the paste box with Check); then what a list brings,
+   "Checking your list…", an error, or its summary with the Show menu and "Forget this list" in
+   a box of their own. Its levels of text (hopper_subheadings): the title is a group title like
+   the panel's others (16 px, 600: 25-filters.css); the step headings sit under it, 14 px, 600,
+   numbered and indented; the field labels and the notes are 14 px, 400. Colours come only from
+   the tokens. */
 
+/* 24 px below, and 28 px above (the select over it keeps 12 px under it, and its group 16):
+   more than the 16 px between the panel's other groups. */
 .filters-more .mine {
   margin-bottom: var(--space-5);
 }
@@ -28,10 +35,9 @@
 }
 
 /* "Make the list on a computer": phones and tablets only (a coarse pointer, or a phone-sized
-   screen). Choosing a file and pasting work there too. */
+   screen). Choosing a file and pasting work there too. A note, not a second heading. */
 .mine-phone {
   display: none;
-  font-weight: 600;
 }
 
 @media (pointer: coarse), not all and (min-width: 40rem) {
@@ -57,18 +63,50 @@
   background: var(--c-surface);
 }
 
-/* The labels over the paste box and the Show menu, like the panel's other labels. */
-.mine > label,
-.mine-result > label {
-  display: block;
-  margin-bottom: var(--space-1);
+/* ---- the two steps: a numbered list, so their order is heard as well as seen */
+
+/* The indent puts the steps under the title, and their numbers stand in it. */
+.mine-steps {
+  margin: 0;
+  padding: 0 0 0 var(--space-5);
+}
+
+.mine-steps > li + li {
+  margin-top: var(--space-3);
+}
+
+/* The step headings, "Make the list" and "Drop or paste it": a level below the title, 14 px
+   against its 16 px. The size alone is easy to miss, so the indent and the number carry the
+   step down with it. 8 px inside a step, 12 px between the two. */
+.mine p.mine-step {
+  margin-bottom: var(--space-2);
+  font-size: var(--fs-small);
   font-weight: 600;
 }
 
-/* ---- once a list loads */
+.mine-steps > li::marker {
+  font-size: var(--fs-small);
+  font-weight: 600;
+}
+
+/* The field labels, over the paste box and the Show menu: 14 px, 400, a level below the step
+   headings. */
+.mine-give > label,
+.mine-result > label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: var(--fs-small);
+}
+
+/* ---- what a list brings, after the steps: "Checking your list…", an error, the result */
+
+.mine > .mine-busy,
+.mine > .mine-error,
+.mine > .mine-result {
+  margin: var(--space-3) 0 0;
+}
 
 .mine-result {
-  margin: 0 0 var(--space-3);
   padding: var(--space-3);
   border: 1px solid var(--c-border);
   border-radius: var(--radius);
@@ -92,7 +130,6 @@
 /* An error, or a list the parser refused. The border is transparent, so forced colours, which
    drop the fill, still draw the box. */
 .mine-error {
-  margin: 0 0 var(--space-3);
   padding: var(--space-2) var(--space-3);
   border: 1px solid transparent;
   border-radius: var(--radius);
@@ -108,16 +145,30 @@
   margin-top: var(--space-2);
 }
 
-/* ---- the list's way in */
+/* ---- "Drop or paste it" */
 
 /* A file dropped anywhere on the page is taken; while one is dragged over it, the drop zone
    says so with a solid accent border. */
 .mine-drop {
-  margin: 0 0 var(--space-3);
+  margin: 0 0 var(--space-2);
   padding: var(--space-3);
   border: 2px dashed var(--c-border);
   border-radius: var(--radius);
   text-align: center;
+}
+
+/* Once a file's list loads, the drop zone says how many names it read (hopper_file_shown,
+   2026-11-01), after a tick drawn with borders, as the chosen pills draw theirs: it follows the
+   text colour in every theme, and a screen reader has no character to read out. */
+.mine-drop.is-read > p::before {
+  content: "";
+  display: inline-block;
+  width: 0.3em;
+  height: 0.6em;
+  margin: 0 0.6em 0.15em 0;
+  border-right: 2px solid;
+  border-bottom: 2px solid;
+  transform: rotate(45deg);
 }
 
 .mine.is-dropping .mine-drop {
@@ -153,12 +204,7 @@ html[data-dropping] body::after {
   resize: vertical;
 }
 
-/* ---- "How to make the list" */
-
-.mine p.mine-how {
-  margin-top: var(--space-4);
-  font-weight: 600;
-}
+/* ---- "Make the list" */
 
 .mine-os > summary {
   min-height: var(--target-min);
