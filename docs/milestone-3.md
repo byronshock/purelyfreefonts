@@ -53,12 +53,13 @@ Each code pull request is built in its own worktree, reviewed adversarially befo
   - [x] Rec Mono only near Recursive, with its RecMono and Recursive Code aliases recoded (`hopper_rec_mono_near`).
   - [x] Known answers and shared vectors for each pattern, with exact-key guards, holding on the real names of `main` and of `preview/2026-10-17`. *(All 81 installed names from the CachyOS list now resolve on both: 69 owned, Rec Mono's 12 near. Of every name `names.json` knows, only the 8 recoded Rec Mono names change outcome.)*
 - [ ] **PR 4, the hopper on the list** (steps 6, 8 and 9):
+  - [ ] The owner's review of its layout on staging (2026-11-01): [PLAN-hopper.md](../PLAN-hopper.md) steps 2 to 4, the owner's four points and Claude's nine suggestions, built into #100.
   - [ ] Drop, choose or paste; a summary; the Show menu; "Forget this list"; each OS's command with a copy button.
   - [ ] Owned fonts leave every view, "Showing N of M" counts them out, and changes are announced.
   - [ ] Privacy tests: no request until a list arrives, then exactly two, for the matcher and the match file (and the list index, if it failed to load with the page); nothing in the address, history or storage; it works offline.
   - [ ] Accessibility and keyboard tests, and the page within its budget.
 - [ ] **PR 5, the words**, after the owner's rulings: the early-version line ("Coming next: free font inventory tools."), privacy.md's "Coming next" section, and about.md's "hiding the fonts you already have".
-- [ ] **On staging:** `preview/2026-10-17` rebased on main and deployed; the owner tries his own Linux list in Chromium and Firefox, watching the Network tab.
+- [ ] **On staging:** `preview/2026-10-17` rebased on main and deployed; the owner tries his own Linux list in Chromium and Firefox, watching the Network tab. *Amended 2026-11-01:* while #100 is open, staging may show the preview rebased on #100's head instead (`hopper_on_staging`).
 
 **Left for the rest of Milestone 3:** the macOS and Windows test runs (step 1), the consented corpus and accuracy targets (steps 2 and 10), the Chromium button (step 7), near-match badges and "Wrong match?" links (M3-D9), the line counting a visitor's fonts that aren't listed (it waits for `names.json`'s reasons cleanup), the patched-build switch and "Load previews" button, usability rounds (step 11) and the monthly refresh of the match file (step 12).
 

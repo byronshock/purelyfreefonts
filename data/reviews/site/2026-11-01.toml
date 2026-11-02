@@ -1,0 +1,37 @@
+# Owner rulings of 2026-11-01 on the hopper's layout (Milestone 3, slice 1, PR 4), from the owner's review of staging (preview/2026-10-17 at a8ad402,
+# which carries #100 at 7e7ec1d), asked in chat as single-select questions. Ruled by the owner, Byron Shock; recorded by Claude.
+# Also in AUTHORITY.md (Inventory tools; Filters (2026-09-30)) and PLAN-hopper.md, which holds the findings, the measurements and the suggestions.
+
+[hopper_title_dont_have]
+value = "Fonts you don't have"
+ruling = "The hopper's section is titled \"Fonts you don't have\", replacing \"Fonts you have\". With hopper_layout_suggestions' S7 the title is the legend of the group that holds \"Hide fonts that come with\" and the hopper. The Show menu keeps its three choices and their words."
+reason = "The owner, reviewing the hopper on staging: \"I want the section called \\\"Fonts you don't have\\\".\" Claude noted that the Show menu's default then repeats the title, and that its other two choices show what the title leaves out; the owner looks at that on staging (PLAN-hopper.md F3)."
+
+[hopper_steps_in_order]
+value = "steps_then_result"
+ruling = "The hopper reads from top to bottom: the title and the lead; then a numbered list of two steps, \"Make the list\" (each system's command, until now \"How to make the list\" at the end) and \"Drop or paste it\" (the drop zone with Choose file, \"Or paste the list\", the paste box and Check); then \"Checking your list…\", the error and the result (the summary, the Show menu and \"Forget this list\"), which until now came first once a list loaded."
+reason = "The owner: \"Does not flow from top to bottom--the instructions are on the bottom.\" Moving the result below the inputs is Claude's addition, from the same finding and F2: what a list brings shows after the place the visitor acted (PLAN-hopper.md F1 and F2, in the plan the owner took up the same day)."
+
+[hopper_subheadings]
+value = "title_16_600_steps_14_600_fields_14_400"
+ruling = "Inside the hopper, the title keeps the filter panel's group-title style (16 px, weight 600), a peer of Category and Features. The step headings, \"Make the list\" and \"Drop or paste it\", sit below it: 14 px, weight 600, numbered and indented by the list. The field labels, \"Or paste the list\" and \"Show\", and the note \"Make the list on a computer.\" are 14 px, weight 400. Spacing follows S9 of hopper_layout_suggestions."
+reason = "The owner: \"Please make the headings under \\\"Fonts you don't have\\\" subheadings below the title in the hierarchy.\" Measured on staging, \"Or paste the list\" and \"How to make the list\" were 16 px, weight 600, exactly the title's style, and the hopper's parts were 12 to 16 px apart, as far as the panel's groups (PLAN-hopper.md F4). The styles are Claude's proposal in the plan."
+
+[hopper_file_shown]
+choice = "a"
+recommended = true
+value = "receipt_in_drop_zone"
+ruling = "Once a list loads from a file, dropped anywhere on the page or chosen, the drop zone reads \"File read: <n> font names.\", after a tick drawn with CSS borders, and its button reads \"Choose another file\". <n> is the summary's own count of font names, so the page keeps nothing new about the list and site/CONTRACT.md section 11 stands: the file's name is not shown. A list that loads (a file or a paste) or \"Forget this list\" changes the receipt; a failed list leaves it, as it leaves the result. A matched paste still leaves the paste box."
+reason = "The owner: \"When you upload fonts.txt, it does not populate the pasted list, so you can't tell that it did anything.\" Measured on staging, the result box took the drop zone's place, and the drop zone, pushed 179 to 227 px down, still read \"Drop fonts.txt here\" (PLAN-hopper.md F2). Of (a) a receipt in the drop zone, (b) the file's text in the paste box until \"Forget this list\", the owner's first idea, which would keep the list's text in the page, and (c) both, the owner took Claude's recommendation."
+
+[hopper_layout_suggestions]
+choice = "a"
+recommended = true
+value = "s1_to_s9"
+ruling = "All nine of Claude's suggestions (PLAN-hopper.md) go into the hopper's layout work, in the same pull request as the owner's four points. S1: the visitor's own system's commands open on load, none on phones, tablets or an iPad; nothing is sent or stored, and nothing enters the address. S2: Choose file takes the filled lapis style until a list loads. S3: a click anywhere in the drop zone opens the file chooser. S4: \"Make the list\" folds behind \"How to make the list\" once a list loads, and opens again on \"Forget this list\". S5: the result box shows a fading tint whenever the summary is written. S6: the lead becomes \"Fonts already on your computer are left out of the list. Your list stays in this tab: nothing is sent or saved.\" S7: \"Hide fonts that come with\" joins \"Fonts you don't have\": a fieldset with that title holds #f-system, then fieldset#mine, whose own legend, \"Your own list\", is visually hidden. S8: \"Clear filters\" moves to the top of the filter panel, first in #f-more at every width, and always shows. S9: one spacing rhythm, 4 px inside a control, 8 px inside a step, 16 px between the hopper's steps and 24 px between the panel's groups, with a hairline above \"Fonts you don't have\". S7 and S8 amend filters_layout (2026-09-30); S7 amends inventory_on_list_page only in form, since the select and the hopper stay together."
+reason = "The owner: \"I'd like you to suggest other changes to the filter bar based on UI design principles and psychophysics.\" Four independent reviews checked the suggestions against the code before they were put to the owner. Of (a) all nine, (b) the hopper only (S1 to S6) and (c) only the owner's four points, the owner took Claude's recommendation."
+
+[hopper_layout_plan]
+value = "PLAN-hopper.md"
+ruling = "The owner's review of the hopper's layout has its own working checklist, PLAN-hopper.md, tracked like PLAN-REVIEWERS-2.md. Its build work is part of docs/milestone-3.md's PR 4."
+reason = "The owner, 2026-11-01: \"Please make this into PLAN-hopper.md.\""
