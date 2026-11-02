@@ -87,11 +87,11 @@ Local builds of #100's head (`7e7ec1d`) and of step 2's pull request, in Chromiu
 | 1280 × 800 | none | #100 | 460 | 465 | 812, out of view, "Drop fonts.txt here" | 585–800 | −74 |
 | 1280 × 800 | none | step 2 | 867 | 58 | 344, the receipt | 588–800 | −481 |
 | 1280 × 800 | Linux | #100 | 460 | 465 | 812, out of view | 585–800 | −74 |
-| 1280 × 800 | Linux | step 2 | 1057 | −132 | 344, the receipt | 588–800 | −671 |
+| 1280 × 800 | Linux | step 2 | 1049 | −124 | 344, the receipt | 588–800 | −663 |
 | 1280 × 1800 | none | #100 | 0 | 925 | 1272, moved down 227 | 1045–1260 | 386 |
 | 1280 × 1800 | none | step 2 | 0 | 925 | 1211, unmoved, the receipt | 1455–1667 | 386 |
 | 1280 × 1800 | Linux | #100 | 0 | 925 | 1272, moved down 227 | 1045–1260 | 386 |
-| 1280 × 1800 | Linux | step 2 | 57 | 868 | 1344, the receipt | 1588–1800 | 329 |
+| 1280 × 1800 | Linux | step 2 | 49 | 876 | 1344, the receipt | 1588–1800 | 337 |
 | 768 × 1024 | none | #100 | 0 | 733 | 990, mostly out of view | 811–978 | below the panel |
 | 768 × 1024 | none | step 2 | 361 | 372 | 616, the receipt | 860–1024 | below the panel |
 | 375 × 812 | none | #100 | 270 | 448 | 824, out of view | 597–812 | below the panel |
