@@ -1165,25 +1165,42 @@ def test_the_phone_line_shows_on_phones_and_touch_screens_only(
 OPEN_BOXES_JS = "() => Array.from(document.querySelectorAll('#mine .mine-os[open]'), (d) => d.id)"
 
 
+# Firefox on Android says its platform is Linux; only its user agent names Android.
+ANDROID_FIREFOX = "Mozilla/5.0 (Android 14; Mobile; rv:131.0) Gecko/131.0 Firefox/131.0"
+
+
 @pytest.mark.parametrize(
-    ("platform", "touches", "data", "viewport", "opened"),
+    ("platform", "touches", "data", "context", "opened"),
     [
-        ("Linux x86_64", 0, None, None, ["mine-os-linux"]),
-        ("MacIntel", 0, None, None, ["mine-os-macos"]),
-        ("Win32", 0, None, None, ["mine-os-windows"]),
-        ("Linux x86_64", 0, "Windows", None, ["mine-os-windows"]),  # userAgentData first
-        (NO_SYSTEM, 0, None, None, []),
-        ("Linux armv8l", 5, None, {"width": 375, "height": 812}, []),  # Firefox, Android phone
-        ("MacIntel", 5, None, {"width": 1024, "height": 1366}, []),  # Safari on an iPad
+        ("Linux x86_64", 0, None, {}, ["mine-os-linux"]),
+        ("MacIntel", 0, None, {}, ["mine-os-macos"]),
+        ("Win32", 0, None, {}, ["mine-os-windows"]),
+        ("Linux x86_64", 0, "Windows", {}, ["mine-os-windows"]),  # userAgentData first
+        (NO_SYSTEM, 0, None, {}, []),
+        ("Linux armv8l", 5, None, {"viewport": {"width": 375, "height": 812}}, []),
+        ("Linux armv8l", 0, None, {"user_agent": ANDROID_FIREFOX}, []),  # a wide Android
+        ("MacIntel", 5, None, {"viewport": {"width": 1024, "height": 1366}}, []),  # an iPad
+        ("Win32", 5, None, {"has_touch": True}, []),  # a coarse pointer, a wide window
     ],
-    ids=["linux", "macos", "windows", "user-agent-data", "unknown", "android-phone", "ipad"],
+    ids=[
+        "linux",
+        "macos",
+        "windows",
+        "user-agent-data",
+        "unknown",
+        "android-phone",
+        "android-wide",
+        "ipad",
+        "touch-screen",
+    ],
 )
 def test_the_visitor_s_own_system_s_box_opens_as_the_page_starts(
     guarded_context: Any,
+    site_url: str,
     platform: str,
     touches: int,
     data: str | None,
-    viewport: Any,
+    context: dict[str, Any],
     opened: list[str],
 ) -> None:
     """S1: the box of the system the browser says it runs on opens, read from the browser
@@ -1191,13 +1208,14 @@ def test_the_visitor_s_own_system_s_box_opens_as_the_page_starts(
     where "Make the list on a computer." shows (a phone), on an iPad (it says "MacIntel" but
     takes touches), or for a system none of the commands is for. The server's HTML keeps every
     box closed (test_the_hopper_s_markup)."""
-    kwargs = {"viewport": viewport} if viewport else {}
     guarded, page = open_list(
-        guarded_context, platform=platform, touches=touches, data_platform=data, **kwargs
+        guarded_context, platform=platform, touches=touches, data_platform=data, **context
     )
-    where = page.evaluate(WHERE_JS)
     assert page.evaluate(OPEN_BOXES_JS) == opened
-    assert_untouched(page, where)
+    # The address is the one opened, and nothing wrote to the history (RECORDER_JS counts from
+    # before the page's script) or to storage.
+    assert page.evaluate("() => [location.href, window.__tffHistory]") == [site_url + "/", 0]
+    assert page.evaluate(STORED_JS) == [0, 0, ""]
     guarded.assert_clean(page)
 
 
@@ -1260,6 +1278,12 @@ def test_make_the_list_folds_once_a_list_loads(guarded_context: Any, first: str)
     page.click("#mine-make > summary")
     assert page.evaluate(FOLD_JS) == [True, True]
     assert page.evaluate(LINUX_SHOWS_JS) is True
+    # A later list folds the step again; the focus, on the fold's own summary, which stays in
+    # sight, stays there.
+    page.locator("#mine-make > summary").focus()
+    hopper_page.drop(page, first)
+    assert page.evaluate(FOLD_JS) == [False, True]
+    assert page.evaluate("() => document.activeElement.matches('#mine-make > summary')")
     page.locator("#mine-forget").focus()
     changed(page, lambda: page.keyboard.press("Enter"))
     assert page.evaluate(FOLD_JS) == [True, False]
@@ -1288,10 +1312,13 @@ def test_choose_file_is_filled_until_a_list_loads(guarded_context: Any, first: s
     guarded.assert_clean(page)
 
 
-# Records each time the result gets or loses is-fresh, and when (window.__tffTint).
+# Records each time the result gets or loses is-fresh, and when (window.__tffTint); the test
+# notes the time just before each action (window.__tffStart), since the tint's timer starts
+# before the redraw the observer waits on.
 TINT_JS = """() => {
   const result = document.getElementById('mine-result');
   window.__tffTint = [];
+  window.__tffStarts = [];
   let was = result.classList.contains('is-fresh');
   new MutationObserver(() => {
     const now = result.classList.contains('is-fresh');
@@ -1299,16 +1326,16 @@ TINT_JS = """() => {
     was = now;
   }).observe(result, { attributes: true, attributeFilter: ['class'] });
 }"""
-# The tint's ons and how long each lasted, in ms, once it has gone and no fade runs.
+# How long each tint lasted, in ms from just before its action, once it has gone and no fade
+# runs.
 TINTED_JS = """() => {
   const result = document.getElementById('mine-result');
   if (result.classList.contains('is-fresh') || result.getAnimations().length) return null;
-  const spans = [];
-  for (let i = 0; i + 1 < window.__tffTint.length; i += 2) {
-    spans.push(window.__tffTint[i + 1][1] - window.__tffTint[i][1]);
-  }
-  return spans;
+  const offs = window.__tffTint.filter(([on]) => !on).map(([, at]) => at);
+  if (offs.length < window.__tffStarts.length) return null;
+  return offs.map((at, i) => at - window.__tffStarts[i]);
 }"""
+STARTED_JS = "() => { window.__tffStarts.push(performance.now()); }"
 
 
 @pytest.mark.parametrize("motion", ["no-preference", "reduce"])
@@ -1320,16 +1347,19 @@ def test_a_summary_just_written_is_tinted_for_a_moment(
     reduced motion, still for a second with no fade. Nothing moves."""
     guarded, page = open_list(guarded_context, reduced_motion=motion)
     page.evaluate(TINT_JS)
+    page.evaluate(STARTED_JS)
     hopper_page.paste(page, first)
     box = page.locator("#mine-result").bounding_box()
     poll(page, TINTED_JS, "the tint after the first list")
+    page.evaluate(STARTED_JS)
     show(page, "all")
     poll(page, TINTED_JS, "the tint after the Show menu")
+    page.evaluate(STARTED_JS)
     hopper_page.paste(page, second)
     poll(page, TINTED_JS, "the tint after a later list")
     spans = page.evaluate(TINTED_JS)
     assert len(spans) == 3, spans
-    low = 950 if motion == "reduce" else 350
+    low = 995 if motion == "reduce" else 395  # the timer's 1000 or 400 ms, to the millisecond
     assert all(low <= span < 5000 for span in spans), spans
     fade = page.evaluate(
         "() => getComputedStyle(document.getElementById('mine-result')).transitionDuration"
@@ -1409,7 +1439,7 @@ def test_copy_puts_each_command_on_the_clipboard_exactly(
 def test_where_the_clipboard_is_refused_the_command_is_selected(
     guarded_context: Any, clipboard: str
 ) -> None:
-    guarded, page = open_list(guarded_context)
+    guarded, page = open_list(guarded_context, platform=NO_SYSTEM)
     page.evaluate(CLIPBOARD_JS, clipboard)
     command = data.MINE_COMMANDS[2]
     page.click(f"#mine-os-{command['os']} > summary")

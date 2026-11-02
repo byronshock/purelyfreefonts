@@ -874,6 +874,13 @@ def test_forced_colors_axe_hopper(guarded_context: Any, state: str, scheme: str)
             " return [s.fontWeight, s.borderTopWidth, s.borderTopStyle]; }"
         )
         assert choose == ["600", "2px", "solid"]
+        # Hovered too: the accent's hover fill would be ButtonText under CanvasText there.
+        page.hover("#mine-choose")
+        hovered = page.evaluate(
+            "() => { const s = getComputedStyle(document.getElementById('mine-choose'));"
+            " return [s.backgroundColor !== s.color, s.borderTopWidth]; }"
+        )
+        assert hovered == [True, "2px"]
     # A fresh summary's tint is an outline here, since forced colours drop backgrounds (S5).
     outline = page.evaluate(
         "() => { const r = document.getElementById('mine-result'); r.classList.add('is-fresh');"

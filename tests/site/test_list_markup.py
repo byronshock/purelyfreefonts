@@ -891,6 +891,22 @@ def test_clear_filters_comes_first_and_the_panel_keeps_one_rhythm(browser, site_
         context.close()
 
 
+def test_the_own_system_check_reads_the_phone_line_s_query():
+    """S1 opens no system's box where "Make the list on a computer." shows: 55-mine.js tests the
+    very media query 27-mine.css shows that line under, a coarse pointer or a phone's width."""
+    js = (ROOT / "site" / "js" / "55-mine.js").read_text(encoding="utf-8")
+    css = (ROOT / "site" / "css" / "27-mine.css").read_text(encoding="utf-8")
+    query = re.search(r"const PHONE = '([^']+)';", js)
+    shown = re.search(r"@media ([^{]+)\{\s*\.mine-phone \{\s*display: block;", css)
+    assert query
+    assert shown
+    assert (
+        query.group(1)
+        == shown.group(1).strip()
+        == ("(pointer: coarse), not all and (min-width: 40rem)")
+    )
+
+
 # The hopper's levels of text: each part's computed size and weight, and the left edges of
 # the title and the step headings.
 HOPPER_TEXT = """() => {

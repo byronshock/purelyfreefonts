@@ -1,5 +1,6 @@
-// 55-mine: the hopper, "Fonts you don't have" (Milestone 3, slice 1; site/CONTRACT.md sections
-// 4, 5 and 11; the owner's rulings of 2026-10-21 to 2026-11-01). A visitor drops a list of their
+// 55-mine: the hopper, "Your own list", in the panel's group "Fonts you don't have" (Milestone 3,
+// slice 1; site/CONTRACT.md sections 4, 5 and 11; the owner's rulings of 2026-10-21 to
+// 2026-11-01). A visitor drops a list of their
 // fonts anywhere on the page, chooses it with a button or pastes it, and every font they have
 // leaves every view of the list. Only once a list arrives does Mine ask Data for the parser
 // and matcher module and for the match file (Data.loadMatcher and Data.loadMatch: two GETs of
@@ -270,23 +271,26 @@ const Mine = (() => {
   };
 
   // The summary just written is tinted (S5; 27-mine.css, is-fresh): the tint comes on at once,
-  // and goes after 400 ms, from which it fades; under reduced motion, where nothing fades, it
-  // stays the whole second.
+  // and goes after 400 ms, from which it fades. Where nothing fades it stays the whole second:
+  // under reduced motion, and in forced colours, where an outline stands in for the tint.
   const freshen = (result) => {
     clearTimeout(freshTimer);
     result.classList.add('is-fresh');
-    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const still = matchMedia('(prefers-reduced-motion: reduce), (forced-colors: active)').matches;
     freshTimer = setTimeout(() => result.classList.remove('is-fresh'), still ? 1000 : 400);
   };
 
   // A list loaded (`on`) or none: once one has, "Make the list" folds to one closed
   // disclosure (S4) and the hopper is marked has-list, so Choose file is no longer filled
   // (S2); with none, the step opens again, since its summary then doesn't show. A fold that
-  // would hide the focus (on a system's summary or Copy) first moves it to the Show menu.
+  // would hide the focus (on a system's summary or Copy, not the fold's own summary, which
+  // stays) first moves it to the Show menu.
   const loaded = (on) => {
     if (!root) return;
     const make = node('mine-make');
-    if (on && make && make.open && make.contains(document.activeElement)) {
+    const focus = document.activeElement;
+    const head = make && make.querySelector(':scope > summary');
+    if (on && make && make.open && make.contains(focus) && focus !== head) {
       const show = node('mine-show');
       if (show) show.focus();
     }
@@ -590,8 +594,10 @@ const Mine = (() => {
 
   // The system whose box opens as the page starts, read from the browser alone: nothing is
   // sent or stored, and nothing enters the address (M3-D13 a). None opens where "Make the list
-  // on a computer." shows (27-mine.css: a coarse pointer, or a phone's width), nor on an iPad,
-  // which says it is a Mac but takes touches, nor for a system none of the commands is for.
+  // on a computer." shows (27-mine.css: a coarse pointer, or a phone's width; the same query,
+  // which a test holds to the CSS's), nor on an iPad, which says it is a Mac but takes
+  // touches, nor on Android, whose Firefox says "Linux" (only its user agent names Android),
+  // nor for a system none of the commands is for.
   const PHONE = '(pointer: coarse), not all and (min-width: 40rem)';
   const ownSystem = () => {
     if (matchMedia(PHONE).matches) return '';
@@ -599,7 +605,7 @@ const Mine = (() => {
     const platform = String((data && data.platform) || navigator.platform || '');
     if (/^mac/i.test(platform)) return navigator.maxTouchPoints > 1 ? '' : 'macos';
     if (/^win/i.test(platform)) return 'windows';
-    if (/^linux/i.test(platform) && !/android/i.test(platform)) return 'linux';
+    if (/^linux/i.test(platform) && !/android/i.test(navigator.userAgent)) return 'linux';
     return '';
   };
 

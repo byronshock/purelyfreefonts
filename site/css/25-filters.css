@@ -279,7 +279,8 @@
   }
 }
 
-/* "Hide fonts that come with": a label over one select, like the rank's. */
+/* "Hide fonts that come with": a label over one select, like the rank's. Inside "Fonts you don't
+   have" (below) its margin and its label's weight give way to the group's. */
 .filters-select {
   margin: 0 0 var(--space-5);
 }
@@ -301,6 +302,7 @@
    visitor has, set off by a hairline. A fieldset draws its legend in its top border, through
    the line, so this one floats: an ordinary box under the line, still the group's name. */
 .filters-more .filters-have {
+  margin-bottom: 0;
   padding-top: var(--space-5);
   border-top: 1px solid var(--c-divider);
 }
