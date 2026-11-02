@@ -1430,7 +1430,7 @@ def _fake_site(root: Path, *, html_extra: str = "", sizes: dict[str, int] | None
         ' type="font/woff2" crossorigin>'
         '<link rel="stylesheet" href="/assets/style.0123456789.css">'
         '<script type="module" src="/assets/app.0123456789.js"></script>'
-        '<link rel="preload" href="/assets/list.0123456789.json" as="fetch" crossorigin>'
+        '<link rel="preload" href="/assets/list.0123456789.json" as="fetch">'
         f"</head><body>{html_extra}<main id=main><ol id=list class=font-list"
         ' data-index="/assets/list.0123456789.json"'
         ' data-details="/assets/details.0123456789.json"'
@@ -1667,7 +1667,7 @@ def test_only_the_list_s_data_match_may_name_the_match_file(
     """M3-D7 (a): the match file loads only once a visitor's list arrives, so nothing but
     ``#list[data-match]`` names it: no preload, no other page, script, payload, stylesheet,
     text file, image or sitemap (each of ``budgets.TEXT_SUFFIXES`` has a case here)."""
-    preload = f'<link rel="preload" as="fetch" crossorigin href="/{MATCH}">'
+    preload = f'<link rel="preload" as="fetch" href="/{MATCH}">'
     site = _fake_site(tmp_path, html_extra=preload if text is None else "")
     if text is not None:
         target = site / path
@@ -1766,7 +1766,7 @@ def test_lint_accepts_what_the_site_uses() -> None:
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/style.0123456789.css">
 <script type="module" src="/assets/app.0123456789.js"></script>
-<link rel="preload" href="/assets/list.0123456789.json" as="fetch" crossorigin>
+<link rel="preload" href="/assets/list.0123456789.json" as="fetch">
 </head><body><a class="skip-link" href="#main">Skip</a>
 <search id="filters" hidden><input id="f-q" name="q" type="search"></search>
 <noscript><img class="spec-img" src="/assets/specimens/a.0123456789.svg" alt=""

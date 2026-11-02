@@ -5,7 +5,8 @@
 // that order, with defaults left out, then every extension pair (a key this page doesn't own,
 // such as Milestone 3's os=linux) exactly as written, in its original order. Discrete changes
 // push a history entry; search typing replaces the current one after 300 ms of quiet.
-// popstate and hashchange apply the hash without pushing.
+// popstate and hashchange apply the hash without pushing. A write the browser refuses leaves
+// the URL behind the state for a while, never the page (write).
 //
 // Retired keys (owner rulings of 2026-09-30): spacing, lic and redist are read once and
 // dropped from the URL, so old links still open. spacing=monospaced becomes cat=monospace
@@ -31,6 +32,8 @@ const State = (() => {
   const SORTS = Object.freeze(['rank', 'rank-desc', 'name', 'name-desc']);
   const MAX_Q = 100;
   const TYPING_MS = 300;
+  // How long after a refused history write (write, below) the URL is brought back in step.
+  const RETRY_MS = 1000;
   // Font ids, as the schema allows them.
   const ID = /^[a-z0-9-]+$/;
 
@@ -57,6 +60,8 @@ const State = (() => {
   let current = DEFAULTS;
   // The extension pairs as last read or written, for when the hash is an in-page anchor.
   let lastExt = [];
+  // True while the URL is behind the state: the last history write was refused (write).
+  let behind = false;
   let listening = false;
   const listeners = new Set();
 
@@ -230,9 +235,24 @@ const State = (() => {
   // The empty hash is written as the page's own URL; a query string, never read here, stays.
   const urlOf = (hash) => hash || `${location.pathname}${location.search}`;
 
+  // WebKit refuses a page's history writes once it has made 100 in 10 seconds, with a
+  // SecurityError (holding Enter on a sort button gets there); Chromium and Firefox took 260
+  // in a row on 2026-11-01. A refused write leaves the URL behind the state, never the page:
+  // the change stands and the listeners still run. The URL catches up with one replace
+  // RETRY_MS after the last refusal (catchUp), or with the next write the browser takes, so
+  // the entries the refused pushes would have added are not made, and Back skips them.
   const write = (hash, push) => {
-    if (push) history.pushState(null, '', urlOf(hash));
-    else history.replaceState(null, '', urlOf(hash));
+    try {
+      if (push) history.pushState(null, '', urlOf(hash));
+      else history.replaceState(null, '', urlOf(hash));
+    } catch (error) {
+      if (error.name !== 'SecurityError') throw error;
+      behind = true;
+      catchUp();
+      return;
+    }
+    behind = false;
+    catchUp.cancel();
   };
 
   // True when the address bar still ends in a bare "#" (location.hash is then "").
@@ -241,7 +261,10 @@ const State = (() => {
   const writeNow = (push) => {
     const hash = serialize(current, extNow());
     if (push || hash !== location.hash || bareHash()) write(hash, push);
+    else behind = false;
   };
+
+  const catchUp = Core.debounce(() => writeNow(false), RETRY_MS);
 
   let typingPending = false;
   const replaceLater = Core.debounce(() => {
@@ -282,6 +305,9 @@ const State = (() => {
     const hash = location.hash;
     replaceLater.cancel();
     typingPending = false;
+    // The visitor moved in the history or edited the URL, which is now the state's to follow.
+    catchUp.cancel();
+    behind = false;
     if (isAnchor(hash)) {
       // The skip link or another in-page link: keep the view, and put it back in the URL
       // so a copied link still reproduces it.
@@ -319,9 +345,10 @@ const State = (() => {
 
   // Details may write the font pair itself (before the Milestone 3 hook is up), and such a
   // write fires no event. Take the URL's font as the state's, silently, so the next write
-  // keeps it. Every other key only changes through this part.
+  // keeps it. Every other key only changes through this part. A URL behind the state (a
+  // refused write) holds an older font than the state's, so it isn't read then.
   const adoptFont = () => {
-    if (!listening || isAnchor(location.hash)) return;
+    if (!listening || behind || isAnchor(location.hash)) return;
     const { font } = parse(location.hash).state;
     if (font !== current.font) current = coerce({ font }, current);
   };
@@ -334,8 +361,9 @@ const State = (() => {
 
   // Change some keys, validated like the hash. A discrete change pushes a history entry
   // (push: false replaces the current one) before the listeners run, so they see the URL
-  // and the state agree; typing: true replaces the entry after 300 ms of quiet. Listeners
-  // run at once either way. Returns true when the state changed.
+  // and the state agree, unless the browser refuses the write (write); typing: true replaces
+  // the entry after 300 ms of quiet. Listeners run at once either way. Returns true when the
+  // state changed.
   const set = (partial, { push = true, typing = false } = {}) => {
     adoptFont();
     const next = coerce(partial, current);
