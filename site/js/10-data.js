@@ -1,14 +1,21 @@
 // 10-data: the JSON payloads and the hopper's matcher module (site/CONTRACT.md sections 5, 7, 8
 // and 11). Every URL comes from the list's data- attributes and must be a path on this page's
 // own origin, so every request stays on this site (connect-src and script-src 'self' enforce
-// the same). The list index is preloaded by the page's <link rel="preload" as="fetch"
-// crossorigin>; a plain fetch() of the same URL (mode cors, credentials same-origin) reuses
-// that response. Details load on first use only, and the hopper's match file and matcher only
-// once a visitor's list arrives (M3-D7 a, inventory_matcher_on_demand): two requests, both to
-// fixed hashed URLs, and a third, for the list index, only if it failed to load with the page
+// the same). The list index is preloaded by the page's <link rel="preload" as="fetch">, with
+// no crossorigin, and fetched in that preload's mode and credentials (PRELOADED), which a
+// fetch must match to reuse a preload's response. A crossorigin preload and a plain fetch()
+// matched in Chromium and Firefox, but in WebKit the preload carried an Origin header the
+// same-origin fetch didn't, and the index was downloaded twice. A no-cors response is
+// readable when its URL is on the page's own origin, which every URL here is (ownPath). In
+// WebKit the page's load event now waits for the index too; nothing here waits on it.
+// Details load on first use only, and the hopper's match file and matcher only once a
+// visitor's list arrives (M3-D7 a, inventory_matcher_on_demand): two requests, both to fixed
+// hashed URLs, and a third, for the list index, only if it failed to load with the page
 // (loadMatch). Each loader is memoised: every caller shares one promise.
 const Data = (() => {
   const STALE_MESSAGE = 'The list was updated. Reload to see details.';
+  // The request a preload without crossorigin makes (see the top).
+  const PRELOADED = Object.freeze({ mode: 'no-cors', credentials: 'include' });
 
   // A payload named by this page no longer exists on the server: the page is more than one
   // deploy old (the receiver keeps one generation of assets for open tabs).
@@ -41,8 +48,8 @@ const Data = (() => {
     return url;
   };
 
-  const getJSON = async (url) => {
-    const response = await fetch(url);
+  const getJSON = async (url, init = undefined) => {
+    const response = await fetch(url, init);
     if (response.status === 404 || response.status === 410) throw new Stale(url);
     if (!response.ok) throw new Error(`Data: ${url} answered ${response.status}`);
     return response.json();
@@ -106,8 +113,9 @@ const Data = (() => {
     };
   };
 
-  // Promise of the list index (section 7), frozen.
-  const loadIndex = memo(async () => checkIndex(await getJSON(urlOf('index'))));
+  // Promise of the list index (section 7), frozen. Fetched as the page's preload asks for it
+  // (see the top).
+  const loadIndex = memo(async () => checkIndex(await getJSON(urlOf('index'), PRELOADED)));
 
   // Promise of the details payload (section 8), frozen. Rejects with Data.Stale on a 404.
   const loadDetails = memo(async () => deepFreeze(await getJSON(urlOf('details'))));

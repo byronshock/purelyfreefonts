@@ -150,6 +150,13 @@ STORED_JS = """async () => {
 SETTLE_JS = """() => new Promise((resolve) =>
   requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve, 30))))"""
 AT_BOTTOM_JS = "() => innerHeight + scrollY >= document.documentElement.scrollHeight - 1"
+# True while the list is sorted otherwise than by popularity, most popular first, as its sort
+# buttons show. The sweep reads the page, not the URL: it makes more history writes than
+# WebKit takes (100 in 10 s), so there the URL is behind the page for a while (15-state.js).
+RESORTED_JS = (
+    "() => { const rank = document.getElementById('sort-rank');"
+    " return rank.getAttribute('aria-pressed') !== 'true' || rank.dataset.dir !== 'asc'; }"
+)
 TYPE_OWN_BIT = 64  # list index bits (site/CONTRACT.md section 7)
 # The filter controls' names, which are the hash keys (site/CONTRACT.md sections 4 and 9).
 FILTER_NAMES = frozenset({"cat", "var", "nerd", "hide", "sort"})
@@ -348,9 +355,9 @@ class Sweep:
             # Each button twice: its column, then reversed; then back to the default order.
             self._change(page, partial(page.click, selector))
             self._change(page, partial(page.click, selector))
-            if page.evaluate("() => location.hash.includes('sort=')"):
+            if page.evaluate(RESORTED_JS):
                 self._change(page, partial(page.click, "#sort-rank"))
-                if page.evaluate("() => location.hash.includes('sort=')"):
+                if page.evaluate(RESORTED_JS):
                     self._change(page, partial(page.click, "#sort-rank"))
         elif control["type"] == "select":
             for value in control["options"]:
@@ -375,7 +382,7 @@ class Sweep:
     def _clear(self, page: Any) -> None:
         self._change(page, partial(page.check, "#f-var"))
         self._change(page, partial(page.click, "#f-clear"))
-        while page.evaluate("() => location.hash.includes('sort=')"):
+        while page.evaluate(RESORTED_JS):
             self._change(page, partial(page.click, "#sort-rank"))
 
     def _phone(self, page: Any) -> None:
@@ -390,11 +397,22 @@ class Sweep:
         page.set_viewport_size(WIDE)
         page.evaluate(SETTLE_JS)
 
+    def _open_details(self, page: Any, font_id: str) -> None:
+        """Click a row's Details button once the rows its scroll brings near have their own
+        heights. Rows use content-visibility, so a row first drawn takes its height in place of
+        an estimate; at the page's end that moves the rest, as the page grows or shrinks. In
+        WebKit a row's height changes a frame after the scroll that brought it near, where
+        Playwright's click, aimed in the scroll's frame, can then land beside the button."""
+        toggle = page.locator(f"#font-{font_id} .details-toggle")
+        toggle.scroll_into_view_if_needed()
+        page.evaluate(SETTLE_JS)
+        toggle.click()
+
     def _details(self, page: Any, index: dict[str, Any]) -> None:
         ids = index["ids"]
         step = max(1, math.ceil(len(ids) / self.max_details))
         for font_id in ids[::step]:
-            page.click(f"#font-{font_id} .details-toggle")
+            self._open_details(page, font_id)
             page.wait_for_selector(f"#details-{font_id}[data-state='ready']", state="attached")
             self.done["details"] += 1
         page.keyboard.press("Escape")
@@ -407,7 +425,7 @@ class Sweep:
         for font_id in own[: self.max_type_own]:
             panel = f"#details-{font_id}"
             if page.get_attribute(panel, "hidden") is not None:
-                page.click(f"#font-{font_id} .details-toggle")
+                self._open_details(page, font_id)
             page.wait_for_selector(f"{panel}[data-state='ready']", state="attached")
             url = page.get_attribute(f"{panel} button.typeown-load", "data-url") or ""
             page.click(f"{panel} button.typeown-load")
@@ -1066,7 +1084,9 @@ def test_the_sweep_catches_what_it_is_for(
         )
         sweep.visit("/beacon")
         other = guarded.new_page()
-        with pytest.raises(Exception, match=r"ERR_FAILED|NS_ERROR|net::"):
+        # The route aborts it: Chromium's and Firefox's errors name a net:: or NS_ERROR code,
+        # and WebKit's says "Blocked by Web Inspector" (Playwright routes through it there).
+        with pytest.raises(Exception, match=r"ERR_FAILED|NS_ERROR|net::|Blocked by Web Inspector"):
             other.goto("https://buy.stripe.com/test_probe")
         page.wait_for_timeout(200)
         found = sweep.findings()

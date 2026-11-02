@@ -99,7 +99,7 @@ def make_site(path: Path, commit: str, *, variant: str | None = None, shared: by
     html = (
         '<!doctype html><html lang="en"><head><meta charset="utf-8">'
         f'<link rel="stylesheet" href="{css}"><script type="module" src="{js}"></script>'
-        f'<link rel="preload" as="fetch" crossorigin href="{index}">'
+        f'<link rel="preload" as="fetch" href="{index}">'
         '<link rel="icon" href="/favicon.svg"></head><body>'
         f'<ol id="list" data-index="{index}" data-details="{details}" data-match="{match}"'
         f' data-matcher="{matcher}" data-font="{font}"></ol>'

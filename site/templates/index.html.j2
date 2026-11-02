@@ -13,7 +13,8 @@
 -#}
 {% extends "base.html.j2" %}
 {% block head %}
-<link rel="preload" href="{{ list.index_url }}" as="fetch" crossorigin>
+{# No crossorigin: Data.loadIndex fetches the index in this preload's own mode, so every browser reuses it (10-data.js). #}
+<link rel="preload" href="{{ list.index_url }}" as="fetch">
 {% endblock %}
 {% block main %}
 <h1 class="list-title">The most popular purely free fonts</h1>
