@@ -176,7 +176,8 @@ const Mine = (() => {
 
   // Bring `target` (the busy line, the error or the result, which follow the steps) into sight:
   // below 60rem the Filters panel opens if it is closed (#mine has no box then), and the page
-  // scrolls as little as it can. Where the drop zone and `target` fit the window together, the
+  // scrolls as little as it can. Where the drop zone and `target` fit what shows of the window
+  // together (less than the window's height on a phone zoomed in, or with its keyboard up), the
   // zone comes into sight too, so the receipt shows where the file was given; where they
   // don't, `target` alone. A dropped file is the hopper's main way in, from anywhere on the
   // page, so what it brings is never told to screen readers alone.
@@ -187,7 +188,9 @@ const Mine = (() => {
     const drop = node('mine-drop');
     if (!drop) return;
     const span = target.getBoundingClientRect().bottom - drop.getBoundingClientRect().top;
-    if (span <= document.documentElement.clientHeight) drop.scrollIntoView({ block: 'nearest' });
+    const shown = document.documentElement.clientHeight;
+    const seen = window.visualViewport ? Math.min(shown, window.visualViewport.height) : shown;
+    if (span <= seen) drop.scrollIntoView({ block: 'nearest' });
   };
 
   // The drop zone's receipt (hopper_file_shown): `names`, the count a file's list read, once it
@@ -430,15 +433,16 @@ const Mine = (() => {
   };
 
   // No list is loaded or shown: its result goes, and any error. Its words go too, the receipt's
-  // count among them: nothing of the list stays in the page, hidden or not.
+  // count among them: nothing of the list stays in the page, hidden or not. The receipt goes
+  // first, so a focus that hide moves to Choose file finds it named as it stays.
   const unload = () => {
     owned = null;
     found = null;
     pending = null;
+    receipt(null);
     showError('');
     hide(node('mine-result'));
     for (const id of ['mine-summary', 'mine-near', 'mine-warning']) Core.text(node(id), '');
-    receipt(null);
   };
 
   // Main's begin has run, the list index loaded meanwhile: the page's list went live, or its

@@ -753,10 +753,14 @@ def test_showing_the_filters_does_not_move_the_list(browser, site_url, width):
         context.close()
 
 
-# Every part of the hopper shown at once, as a script would show them, and every command open.
+# Every part of the hopper shown at once, as a script would show them, the drop zone's receipt
+# among them, and every command open.
 OPEN_HOPPER = """() => {
   for (const id of ['mine-result', 'mine-near', 'mine-warning', 'mine-busy', 'mine-error',
       'mine-retry']) document.getElementById(id).hidden = false;
+  document.getElementById('mine-drop').classList.add('is-read');
+  document.getElementById('mine-drop-text').textContent = 'File read: 4,332 font names.';
+  document.getElementById('mine-choose').textContent = 'Choose another file';
   document.getElementById('mine-summary').textContent =
     'Found 4,332 font names in a Linux list. You have 81 of the 540 fonts here, left out of the list.';
   document.getElementById('mine-error-text').textContent =
@@ -784,9 +788,9 @@ HOPPER_OVERFLOW = """() => {
 @pytest.mark.parametrize("width", [320, 375, 800, 1280])
 @pytest.mark.parametrize("scheme", ["light", "dark"])
 def test_the_hopper_fits_its_panel_at_every_width(browser, site_url, width, scheme):
-    """Opened in full (a summary, an error, every command), the hopper scrolls nothing
-    sideways, stays inside the filter block (the Windows command wraps), and every target is
-    at least 24 px; below 60rem it takes the panel's whole width."""
+    """Opened in full (a summary, an error, the receipt, every command), the hopper scrolls
+    nothing sideways, stays inside the filter block (the Windows command wraps), and every
+    target is at least 24 px; below 60rem it takes the panel's whole width."""
     context, page = open_page(browser, site_url, width, color_scheme=scheme)
     try:
         page.evaluate(OPEN_PANEL, True)
@@ -805,6 +809,46 @@ def test_the_hopper_fits_its_panel_at_every_width(browser, site_url, width, sche
             more = page.locator("#f-more").bounding_box()
             # the panel's padding (--space-4) and border on each side; at most 40rem
             assert mine["width"] >= min(more["width"] - 2 * (16 + 1), 640) - 1
+    finally:
+        context.close()
+
+
+# The hopper's levels of text: each part's computed size and weight, and the left edges of
+# the title and the step headings.
+HOPPER_TEXT = """() => {
+  const font = (el, pseudo) => {
+    const style = getComputedStyle(el, pseudo);
+    return [style.fontSize, style.fontWeight];
+  };
+  const q = (s) => document.querySelector(s);
+  return {
+    title: font(q('#mine > legend')),
+    peer: font(q('#f-cat > legend')),
+    steps: Array.from(document.querySelectorAll('.mine-steps > li'), (li) =>
+      [font(li.querySelector('.mine-step')), font(li, '::marker')]),
+    labels: [font(q('label[for="mine-paste"]')), font(q('label[for="mine-show"]'))],
+    notes: [font(q('.mine-lead')), font(q('.mine-phone'))],
+    indent: q('#mine-how').getBoundingClientRect().left - q('#mine > legend').getBoundingClientRect().left,
+  };
+}"""
+
+
+@pytest.mark.parametrize("width", [375, 1280])
+def test_the_hopper_s_levels_of_text(browser, site_url, width):
+    """The owner's ruling of 2026-11-01 (hopper_subheadings): the title a group title like the
+    panel's others, 16 px, 600; the step headings a level under it, 14 px, 600, indented, after
+    their number (the li's marker, 14 px, 600); the field labels and the notes 14 px, 400. A
+    rule that stopped matching its element after a move would show here."""
+    context, page = open_page(browser, site_url, width)
+    try:
+        page.evaluate(OPEN_PANEL, True)
+        page.evaluate(OPEN_HOPPER)
+        text = page.evaluate(HOPPER_TEXT)
+        assert text["title"] == text["peer"] == ["16px", "600"]
+        assert text["steps"] == [[["14px", "600"], ["14px", "600"]]] * 2
+        assert text["labels"] == [["14px", "400"]] * 2
+        assert text["notes"] == [["14px", "400"]] * 2
+        assert text["indent"] >= 16, "the step headings sit under the title, indented"
     finally:
         context.close()
 

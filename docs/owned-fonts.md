@@ -116,12 +116,12 @@ Add-Type -AssemblyName System.Drawing; (New-Object System.Drawing.Text.Installed
 
 ## The paste box and session restore
 
-A pasted list stays in the hopper's paste box until it is matched, and so does one the parser refuses, so it can be mended. Checked on 2026-11-01 (`PLAN-hopper.md`, step 2): neither engine's session restore writes that text to disk, because the box has `autocomplete="off"`. So M3-D13 a ("nothing is stored") holds for it.
+A pasted list stays in the hopper's paste box until it is matched, and so does one the parser refuses, so it can be mended. Read in the engines' main branches on 2026-11-01 (`PLAN-hopper.md`, step 2): neither Firefox's nor Chromium's session restore writes that text to disk, because the box has `autocomplete="off"`; nor the Show menu's choice, which has it too. So, as far as session restore goes, M3-D13 a ("nothing is stored") holds for both.
 
-- **Firefox:** session restore collects form fields' values into its session file, but `SessionStoreUtils::CollectFromTextAreaElement` skips a `textarea` whose `autocomplete` is `off`.
-- **Chromium:** session restore saves each tab's page state, which holds the form controls' state. `HTMLFormControlElementWithState::ShouldSaveAndRestoreFormControlState()` returns false for `autocomplete="off"`, so the box's text is never in it. That is also why Back never restores it (`tests/site/test_mine.py`).
+- **Firefox:** session restore collects form fields' values into its session file. `SessionStoreUtils::CollectFromTextAreaElement` skips a `textarea` whose `autocomplete` is `off`, and `CollectFromSelectElement` skips a `select` whose `AutocompleteInfo` can't be kept (`mCanAutomaticallyPersist`), which `off` makes it.
+- **Chromium:** session restore saves each tab's page state, which holds its form controls' state. `HTMLFormControlElementWithState::ShouldSaveAndRestoreFormControlState()` returns false for `autocomplete="off"`, for the box and the menu alike, so neither is in it. The same state serves a Back that loads the page again, so that Back restores neither. A Back served whole from the back-forward cache shows the page as it was left, the box's text included, from memory.
 
-The Show menu has `autocomplete="off"` too, so the same holds for it. Both checks read the engines' main branches on 2026-11-01; a test can't reach either session file, so a change there would go unseen.
+No test can reach either session file, so a change in either engine would go unseen.
 
 ## Cloudflare
 

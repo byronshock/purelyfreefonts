@@ -538,6 +538,30 @@ def test_what_a_dropped_list_brings_comes_into_sight(
     guarded.assert_clean(page)
 
 
+@pytest.mark.parametrize(
+    ("viewport", "together"),
+    [({"width": 1440, "height": 900}, True), ({"width": 1280, "height": 400}, False)],
+    ids=["both-fit", "window-too-short-for-both"],
+)
+def test_the_drop_zone_comes_into_sight_with_the_result_where_both_fit(
+    guarded_context: Any, first: str, viewport: Any, together: bool
+) -> None:
+    """bring() in 55-mine.js, the page scrolled past the hopper, so the result comes into view
+    at the window's top and the drop zone above it would stay out of sight: where both fit
+    the window, the zone comes into sight with the result, its receipt with it; where the
+    window is too short for both, the result alone."""
+    guarded, page = open_list(guarded_context, viewport=viewport)
+    page.evaluate(
+        "() => window.scrollTo(0, scrollY + 400 +"
+        " document.getElementById('mine').getBoundingClientRect().bottom)"
+    )
+    assert not hopper_page.in_view(page, "#mine")
+    hopper_page.drop(page, first)
+    assert hopper_page.in_view(page, "#mine-result")
+    assert hopper_page.in_view(page, "#mine-drop") is together
+    guarded.assert_clean(page)
+
+
 # The drop zone: whether it shows its receipt (is-read), its words, and its button's.
 RECEIPT_JS = """() => [
   document.getElementById('mine-drop').classList.contains('is-read'),
@@ -1367,7 +1391,8 @@ def test_each_failure_to_load_says_what_section_11_says(
 
 def try_again(page: Any) -> None:
     """Press "Try again" by keyboard: once the list is taken, the error has gone and the focus,
-    which was in it, is on Choose file (the hopper's first control that stays), not lost."""
+    which was in it, is on Choose file (hide's fallback, a control that always shows), not
+    lost."""
     page.locator("#mine-retry").focus()
     said = status(page)
     page.keyboard.press("Enter")

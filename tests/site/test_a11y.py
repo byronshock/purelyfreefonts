@@ -840,11 +840,23 @@ def test_forced_colors_axe(guarded_context: Any, name: str, scheme: str) -> None
 @pytest.mark.parametrize("scheme", SCHEMES)
 @pytest.mark.parametrize("state", ["mine-file", "mine-error"])
 def test_forced_colors_axe_hopper(guarded_context: Any, state: str, scheme: str) -> None:
-    """The hopper's steps, its receipt and its error in forced colours (2026-11-01)."""
+    """The hopper's steps, its receipt and its error in forced colours (2026-11-01). axe can't
+    see the receipt's tick, a ::before drawn with borders, so the test checks that it is drawn
+    in the text's own colour, which forced colours keep visible."""
     guarded, page = open_page(guarded_context, "/", forced_colors="active", color_scheme=scheme)
     assert page.evaluate("matchMedia('(forced-colors: active)').matches")
     hopper_state(page, state)
     assert_axe_clean(page, f"list {state} forced colours {scheme}")
+    if state == "mine-file":
+        tick = page.evaluate(
+            """() => {
+              const text = document.getElementById('mine-drop-text');
+              const tick = getComputedStyle(text, '::before');
+              return [tick.borderRightWidth, tick.borderBottomWidth, tick.borderRightStyle,
+                tick.borderRightColor === getComputedStyle(text).color];
+            }"""
+        )
+        assert tick == ["2px", "2px", "solid", True]
     guarded.assert_clean(page)
 
 
