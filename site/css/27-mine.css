@@ -249,9 +249,9 @@ html[data-dropping] body::after {
 }
 
 /* Below 60rem the panel is a grid of columns; the hopper takes the whole width, at a length
-   that reads well. */
+   that reads well. Its form (#mine-form, there for autocomplete="off") is the grid's item. */
 @media not all and (min-width: 60rem) {
-  .filters-more .mine {
+  .filters-more .mine-form {
     grid-column: 1 / -1;
     max-width: 40rem;
   }

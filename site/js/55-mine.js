@@ -591,6 +591,10 @@ const Mine = (() => {
     if (!root) return;
     host = given || null;
     invite = { drop: textOf(node('mine-drop-text')), choose: textOf(node('mine-choose')) };
+    // The hopper's form is there for autocomplete="off" (hopper_form_autocomplete_off) and
+    // never submits; a submit, which nothing in it should start, is cancelled before the CSP
+    // (form-action 'none') would have to refuse it.
+    if (root.form) root.form.addEventListener('submit', (event) => event.preventDefault());
     for (const type of ['dragenter', 'dragover']) document.addEventListener(type, over, true);
     document.addEventListener('dragleave', left, true);
     document.addEventListener('drop', dropped, true);

@@ -116,12 +116,13 @@ Add-Type -AssemblyName System.Drawing; (New-Object System.Drawing.Text.Installed
 
 ## The paste box and session restore
 
-A pasted list stays in the hopper's paste box until it is matched, and so does one the parser refuses, so it can be mended. Read in the engines' main branches on 2026-11-01 (`PLAN-hopper.md`, step 2): neither Firefox's nor Chromium's session restore writes that text to disk, because the box has `autocomplete="off"`; nor the Show menu's choice, which has it too. So, as far as session restore goes, M3-D13 a ("nothing is stored") holds for both.
+A pasted list stays in the hopper's paste box until it is matched, and so does one the parser refuses, so it can be mended. Read in the engines' main branches on 2026-11-01 (`PLAN-hopper.md`, step 2): neither Firefox's nor Chromium's session restore writes that text to disk, because the box has `autocomplete="off"`; nor the Show menu's choice, which has it too. WebKit, Safari's engine, did keep both, until the hopper's controls went into a form with `autocomplete="off"` (below). So, as far as session restore goes, M3-D13 a ("nothing is stored") holds for both, in all three engines.
 
 - **Firefox:** session restore collects form fields' values into its session file. `SessionStoreUtils::CollectFromTextAreaElement` skips a `textarea` whose `autocomplete` is `off`, and `CollectFromSelectElement` skips a `select` whose `AutocompleteInfo` can't be kept (`mCanAutomaticallyPersist`), which `off` makes it.
 - **Chromium:** session restore saves each tab's page state, which holds its form controls' state. `HTMLFormControlElementWithState::ShouldSaveAndRestoreFormControlState()` returns false for `autocomplete="off"`, for the box and the menu alike, so neither is in it. The same state serves a Back that loads the page again, so that Back restores neither. A Back served whole from the back-forward cache shows the page as it was left, the box's text included, from memory.
+- **WebKit** (found by running the browser suites in Playwright's WebKit 26.6, 2026-11-01): its `FormController` keeps a page's form state in the page's session-history entry, and gives it back on a Back that loads the page again. For a `textarea` or `select` it heeds `autocomplete="off"` only through their form, not on the control itself, so a list pasted but never matched came back in the box, and sat in that entry. Whether Safari also writes those entries to disk, for its session restore, wasn't checked. The owner's ruling `hopper_form_autocomplete_off` (2026-11-01) puts the hopper's controls in `form#mine-form autocomplete="off"`, which never submits. With it, WebKit saves neither control, and Back gives back neither: checked in WebKit, Chromium and Firefox.
 
-No test can reach either session file, so a change in either engine would go unseen.
+No test reads a session file. `test_mine.py`'s reload-or-Back test checks what comes back, in WebKit too when the browser suites run there locally. CI runs Chromium and Firefox only, so a change in any engine's session file would go unseen.
 
 ## Cloudflare
 

@@ -1,7 +1,7 @@
 {#-
   _filters.html.j2: the filter controls (M2-D4; site/CONTRACT.md, "The list page"). Native,
   labelled controls in fieldsets inside <search>, never a <form> (the CSP has form-action
-  'none'). Each control's name is its hash key and its value the key's value (CONTRACT
+  'none'), but for the hopper's, below. Each control's name is its hash key and its value the key's value (CONTRACT
   section 9). The block ships with `hidden`; the script removes it, and 25-filters.css
   reserves its space so that doesn't move the list. Below 60rem everything but search and
   rank sits behind #f-toggle, whose aria-expanded drives the disclosure. On phones (below
@@ -26,9 +26,13 @@
   or paste it", each heading naming its group, then what the list brings: "Checking your
   list…", an error, the result. None of its controls has a name, so none reaches the address,
   and its paste box asks the browser not to spell-check, autocomplete, correct or capitalise
-  what it holds. The paste box and the Show menu have autocomplete="off", so a reload or Back
-  never restores what they held (Firefox restores a form control's value on reload, and both
-  engines on Back, where the page isn't kept whole).
+  what it holds. The paste box and the Show menu have autocomplete="off", and so does the form
+  they sit in, #mine-form, so a reload or Back never restores what they held, and WebKit keeps
+  neither in its session history: Firefox restores a form control's value on reload, and all
+  three engines on Back, where the page isn't kept whole; Chromium and Firefox heed the
+  control's own autocomplete="off", WebKit only its form's on a textarea or select (owner's
+  site ruling of 2026-11-01, hopper_form_autocomplete_off). The form never submits: it has no
+  action and no submit button, Mine cancels a submit, and the CSP would block one.
   "Make the list" gives each system's command (data.MINE_COMMANDS), with "(not yet tested)"
   where nobody has run it yet (inventory_linux_tested_only). Once a file's list loads, the drop
   zone says how many names it read (hopper_file_shown). Its words follow the ruling
@@ -76,6 +80,7 @@
 {% endfor %}
 </select>
 </div>
+<form id="mine-form" class="mine-form" autocomplete="off">
 <fieldset id="mine" class="mine">
 <legend>Fonts you don't have</legend>
 <p class="mine-lead">Give this page a list of the fonts on your computer, and those you have are left out of the list. Your list stays in this tab: nothing is sent or saved.</p>
@@ -127,6 +132,7 @@
 <button type="button" id="mine-forget">Forget this list</button>
 </div>
 </fieldset>
+</form>
 <button type="button" id="f-clear">Clear filters</button>
 </div>
 </search>

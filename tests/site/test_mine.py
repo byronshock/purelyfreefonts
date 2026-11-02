@@ -2019,10 +2019,11 @@ def test_a_file_that_cannot_be_read_says_so(guarded_context: Any) -> None:
 def test_a_reload_or_back_restores_no_list_and_no_show_menu(
     guarded_context: Any, first: str
 ) -> None:
-    """Nothing is kept, a reload's or Back's included: the Show menu has autocomplete="off", so
-    Firefox doesn't restore it on reload, nor either engine on Back, where the page is loaded
-    again (a page the back/forward cache kept whole keeps its list in memory, and its menu
-    with it)."""
+    """Nothing is kept, a reload's or Back's included. The Show menu and the paste box have
+    autocomplete="off", and so does the form they sit in, so Firefox doesn't restore them on
+    reload, nor any engine on Back, where the page is loaded again: WebKit heeds the attribute
+    on a textarea or select only through their form (hopper_form_autocomplete_off). A page the
+    back/forward cache kept whole keeps its list in memory, and its menu and box with them."""
     guarded, page = open_list(guarded_context)
     hopper_page.paste(page, first)
     show(page, "only")
@@ -2038,6 +2039,16 @@ def test_a_reload_or_back_restores_no_list_and_no_show_menu(
     page.wait_for_function("() => window.__tffReady >= 1")
     kept = page.evaluate("() => !document.getElementById('mine-result').hidden")
     assert page.input_value("#mine-show") == ("only" if kept else "missing")
+    # A list pasted but never checked stays in the box, to be checked or mended; a Back that
+    # loads the page again doesn't give it back. A marker left in the page tells a page kept
+    # whole from one loaded again.
+    page.fill("#mine-paste", first)
+    page.evaluate("() => { window.__tffLeft = true; }")
+    page.goto("/about/")
+    page.go_back()
+    page.wait_for_function("() => window.__tffReady >= 1")
+    kept = page.evaluate("() => window.__tffLeft === true")
+    assert page.input_value("#mine-paste") == (first if kept else "")
     assert page.evaluate(STORED_JS) == [0, 0, ""]
     guarded.assert_clean(page)
 

@@ -101,6 +101,10 @@ class TreeBuilder(HTMLParser):
         self.current.children.append(text)
 
 
+# The hopper's form, exactly as the template writes it.
+HOPPER_FORM = {"id": "mine-form", "class": "mine-form", "autocomplete": "off"}
+
+
 def squash(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
@@ -158,7 +162,9 @@ def test_ids_are_unique_and_every_reference_resolves(dom):
 
 
 def test_no_inline_code_and_no_form(html):
-    assert "<form" not in html
+    # No form but the hopper's, there for autocomplete="off" (hopper_form_autocomplete_off).
+    assert html.count("<form") == 1
+    assert '<form id="mine-form" class="mine-form" autocomplete="off">' in html
     assert "<style" not in html
     assert not re.search(r"<script(?![^>]*\bsrc=)", html)
     assert not re.search(r"\sstyle\s*=", html)
@@ -323,7 +329,7 @@ def test_filters_ship_hidden_inside_search(dom):
     assert search is not None
     assert "hidden" in search.attrs
     assert search.attrs["aria-label"]
-    assert dom.find("form") is None
+    assert [f.attrs for f in dom.find_all("form")] == [HOPPER_FORM]
     for control in search.find_all("input") + search.find_all("select"):
         cid = control.attrs.get("id")
         if "hidden" in control.attrs:
@@ -348,7 +354,15 @@ def test_the_hopper_s_markup(dom):
     and Windows (inventory_linux_tested_only)."""
     more = dom.find("div", id="f-more")
     order = [n.attrs.get("id") for n in more.elements()]
-    assert order[-3:] == ["f-system", "mine", "f-clear"]
+    assert order[-3:] == ["f-system", "mine-form", "f-clear"]
+    # The hopper sits in a form of its own that never submits: no action, no submit button.
+    # It is there for autocomplete="off", which WebKit honours on a textarea or select only
+    # through their form (hopper_form_autocomplete_off, 2026-11-01).
+    form = dom.find("form", id="mine-form")
+    assert form.attrs == HOPPER_FORM
+    assert [n.attrs.get("id") for n in form.elements()] == ["mine"]
+    assert all(b.attrs.get("type") == "button" for b in form.find_all("button"))
+    assert form.find("input", type="submit") is None
     mine = dom.find("fieldset", id="mine")
     assert mine.elements()[0].tag == "legend"
     assert squash(mine.elements()[0].text) == "Fonts you don't have"

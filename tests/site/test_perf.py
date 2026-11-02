@@ -1763,6 +1763,10 @@ def test_check_lints_every_html_file(tmp_path: Path) -> None:
         ("<img src=/a.png alt='' onerror='x()'>", "onerror attribute"),
         ("<button type=button onclick=go()>Go</button>", "onclick attribute"),
         ("<form action=/x><input name=q></form>", "<form>"),
+        # Only the hopper's form passes, exactly as written (hopper_form_autocomplete_off).
+        ("<form id=mine-form class=mine-form></form>", "<form>"),
+        ("<form id=mine-form class=mine-form autocomplete=off action=/x></form>", "<form>"),
+        ("<form id=other class=mine-form autocomplete=off></form>", "<form>"),
         ("<link rel=prefetch href=/next/>", 'rel="prefetch"'),
         ("<link rel='dns-prefetch prefetch' href=/x>", 'rel="prefetch"'),
         ("<base href=/>", "<base> element"),
@@ -1802,7 +1806,9 @@ def test_lint_accepts_what_the_site_uses() -> None:
 <script type="module" src="/assets/app.0123456789.js"></script>
 <link rel="preload" href="/assets/list.0123456789.json" as="fetch" crossorigin>
 </head><body><a class="skip-link" href="#main">Skip</a>
-<search id="filters" hidden><input id="f-q" name="q" type="search"></search>
+<search id="filters" hidden><input id="f-q" name="q" type="search">
+<form id="mine-form" class="mine-form" autocomplete="off"><fieldset id="mine"></fieldset></form>
+</search>
 <noscript><img class="spec-img" src="/assets/specimens/a.0123456789.svg" alt=""
   width="10" height="10" loading="lazy"></noscript>
 <a href="https://github.com/rsms/inter">GitHub: rsms/inter</a>
