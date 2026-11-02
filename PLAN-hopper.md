@@ -254,7 +254,8 @@ Whatever the answer, step 2 checks whether a browser's session restore writes th
     - **The list index downloaded twice, 5:** WebKit never lets the script's plain `fetch()` reuse the `crossorigin` preload, so the index is fetched twice: every time in Private Browsing, and on slow connections. Fix: a preload and a fetch of the same kind (no `crossorigin`; `no-cors`, credentials `include`).
     - **Back gives back the hopper's controls, 1:** WebKit (Safari's engine) ignores `autocomplete="off"` on a `textarea` or `select` unless their `<form>` has it. A pasted list not yet matched, or one refused, comes back in the paste box on a Back that loads the page again, and sits in WebKit's session history. Against CONTRACT sections 4 and 11 and M3-D13 a.
     - **WebKit's cap on history writes, 1:** 100 in 10 s; on the next, `State.set` has already changed its state but notifies nothing. Low; holding Enter on a sort button reaches it.
-  - [ ] The owner rules on the hopper's controls in WebKit (above).
+  - [x] The owner rules on the hopper's controls in WebKit (above). *(2026-11-01: a `<form autocomplete="off">` that never submits, Claude's recommendation over emptying both controls as the page starts, `hopper_form_autocomplete_off`.)*
+  - [ ] The form, built in #104, with a test that Back gives back neither control.
   - [ ] The other fixes, and the suites passing in WebKit: a task of their own.
 
 **Done when:**

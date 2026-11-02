@@ -453,7 +453,8 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
     - it reads from top to bottom: "Make the list", then "Drop or paste it", then the result (`hopper_steps_in_order`);
     - its step headings sit below the title: 14 px against the title's 16 px, numbered and indented (`hopper_subheadings`);
     - once a file's list loads, the drop zone says "File read: <n> font names.", a count the page already keeps. The file's name isn't shown, and a matched paste still leaves the paste box. The owner took Claude's receipt over the file's text in the paste box (`hopper_file_shown`);
-    - Claude's nine suggestions go in too (`hopper_layout_suggestions`). Among them: the visitor's own system's commands open first, "Hide fonts that come with" joins the section, and "Clear filters" moves to the top of the panel.
+    - Claude's nine suggestions go in too (`hopper_layout_suggestions`). Among them: the visitor's own system's commands open first, "Hide fonts that come with" joins the section, and "Clear filters" moves to the top of the panel;
+    - the hopper's controls sit in a `<form autocomplete="off">` that never submits, so WebKit, Safari's engine, keeps neither the paste box's text nor the Show menu's choice in session history. It's the one exception to "filters never in a `<form>`" (`hopper_form_autocomplete_off`).
 
   *(2026-10-21 to 2026-11-01, `data/reviews/site/`)*
 
