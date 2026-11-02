@@ -1545,7 +1545,9 @@ def open_failing_index(
     make: Callable[..., Any], *, now: bool = True, clock: bool = False, **kwargs: Any
 ) -> Any:
     """A guarded page on the list whose list index fails (``FailingIndex``), its script
-    started (``clock``: on Playwright's clock, paused before the page loads)."""
+    started (``clock``: on Playwright's clock, paused before the page loads). It waits for
+    DOMContentLoaded only: in WebKit a held index holds the load event (site/CONTRACT.md
+    section 7)."""
     guarded = make(**kwargs)
     page = guarded.new_page()
     if clock:
@@ -1553,7 +1555,7 @@ def open_failing_index(
         page.clock.pause_at(CLOCK_PAUSED)
     index = FailingIndex(now=now)
     page.route("**/assets/list.*.json", index)
-    page.goto("/")
+    page.goto("/", wait_until="domcontentloaded")
     poll(page, "() => document.documentElement.hasAttribute('data-js')", "the page's script")
     return guarded, page, index
 
@@ -1693,13 +1695,14 @@ IDLE_RUN_JS = """() => {
 
 def open_late(make: Callable[..., Any], index: Callable[[Any], None], **kwargs: Any) -> Any:
     """A guarded page on the list whose list index ``index`` answers (a route handler), and
-    whose begin waits in an idle callback until IDLE_RUN_JS runs it."""
+    whose begin waits in an idle callback until IDLE_RUN_JS runs it. Like open_failing_index,
+    it waits for DOMContentLoaded only, since ``index`` may hold the index."""
     guarded = make(**kwargs)
     guarded.context.add_init_script(RECORDER_JS)
     guarded.context.add_init_script(IDLE_HELD_JS)
     page = guarded.new_page()
     page.route("**/assets/list.*.json", index)
-    page.goto("/")
+    page.goto("/", wait_until="domcontentloaded")
     poll(page, "() => document.documentElement.hasAttribute('data-js')", "the page's script")
     return guarded, page
 
