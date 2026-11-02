@@ -7,7 +7,7 @@ The reviewers:
 - **O:** the owner, from a screenshot of the filter panel.
 - **C:** Claude, measuring on staging and suggesting changes, as the owner asked, from UI design principles and psychophysics.
 
-**Status (2026-11-01):** four findings from the owner (F1–F4) and nine suggestions from Claude (S1–S9). Four independent reviews checked this file against the code before it went to the owner. The owner answered Q1–Q3 the same day, each as Claude recommended: the receipt, all nine suggestions, and staging showing #100. Step 1 recorded the rulings (#103, merged). Step 2 is built in #104, stacked on #100. Its CI and the WebKit triage are open (below), and so is #100's description; step 3 comes next, in the same pull request.
+**Status (2026-11-01):** four findings from the owner (F1–F4) and nine suggestions from Claude (S1–S9). Four independent reviews checked this file against the code before it went to the owner. The owner answered Q1–Q3 the same day, each as Claude recommended: the receipt, all nine suggestions, and staging showing #100. Step 1 recorded the rulings (#103, merged). Step 2 is built in #104, merged into #100. Step 3 is built in #107, stacked on #100 in the same way, since #104 had merged; its CI runs. #100's description stays open (the lead's).
 
 **How to read each step:** **Who**, **Depends on** and **Done when**, as in PLAN-REVIEWERS-1.md. Tick each item as soon as it is done and verified. Checklists nest: a parent is ticked only when every item under it is.
 
@@ -104,6 +104,18 @@ Local builds of #100's head (`7e7ec1d`) and of step 2's pull request, in Chromiu
   - In the panel's grid below 60rem, the title sits 16 px under the tallest group in the row above, or 28 px where that group is "Hide fonts that come with". The 16 px case comes from 786 to 959 px, where the panel has three columns.
   - Step 2 keeps that, and #100's 24 px below. Adding the planned 24 px above would have made 36 px in the sidebar and 52 px in the grid, where margins don't collapse.
   - S7 and S9 set this spacing in step 3.
+
+**And after step 3** (#107, `cfcbb90`; on Linux S1 opens the Linux box as the page starts, so "as loaded" has it open):
+
+| Viewport | Boxes | Page scrolls | Title | Drop zone | Result |
+|---|---|---|---|---|---|
+| 1280 × 800 | as loaded | 916 | −1 | 285, the receipt | 533–745 |
+| 1280 × 800 | all closed | 862 | 53 | 339, the receipt | 587–799 |
+| 1280 × 1800 | either | 0 | 915 | 1201, the receipt | 1449–1661 |
+| 768 × 1024 | as loaded | 429 | 286 | 551, the receipt | 799–963 |
+| 375 × 812 | as loaded | 643 | 65 | 351, the receipt | 599–811 |
+
+S7's group adds its title and the select above the hopper, and S4's fold takes back about as much once a list loads: with every box closed, 1280 × 800 is within 5 px of step 2's. The panel now runs 24 px between groups and ends at its own padding.
 
 ---
 
@@ -267,22 +279,22 @@ Whatever the answer, step 2 checks whether a browser's session restore writes th
 - CI passes on the pull request (`gh pr checks`).
 
 ### Step 3: Claude's suggestions, S1–S9 (Q2: all nine)
-**Who:** Claude builds, in the same pull request as step 2; the lead merges it into #100. **Depends on:** step 1's Q2; step 2.
-- [ ] S1: the visitor's system's `<details>` opens on load; none on phones, tablets or an iPad. Tests:
+**Who:** Claude builds, in the same pull request as step 2 (in #107 instead, since #104 had merged into #100 by then); the lead merges it into #100. **Depends on:** step 1's Q2; step 2.
+- [x] S1: the visitor's system's `<details>` opens on load; none on phones, tablets or an iPad. Tests:
   - one per system, one for an unknown system, one each for Firefox on an Android phone and Safari on an iPad;
   - CI runs on Linux, where the Linux box would open, so `test_the_hopper_works_by_keyboard`, `test_copy_puts_each_command_on_the_clipboard_exactly` and `test_nothing_from_a_list_reaches_the_address_history_title_or_storage` set an unknown platform by init script before they use a summary;
   - the server's HTML keeps every box closed (`test_the_hopper_s_markup`), and CONTRACT section 4 says which box opens;
   - nothing new in the address, storage or requests (`test_privacy.py`);
-  - tick docs/milestone-3.md step 6's "preselected" part, noting that "kept in the URL" was ruled out.
-- [ ] S2: Choose file filled until a list loads; contrast checked in both themes; weight 600 and a 2 px `--c-border` border in forced colours.
-- [ ] S3: a click in the drop zone opens the chooser, and clicks from inside a button or input are left to them. A test counts `filechooser` events: one for a click on Choose file, one for a click on the zone's text. The zone is no extra stop for the keyboard.
-- [ ] S4: "Make the list" folds once a list loads and opens again on "Forget this list"; "Drop or paste it" stays. The focus moves to the Show menu if the fold would hide it. Tests that use a system's summary after a list loads open the fold first, and a test checks the focus after Copy, then a drop.
-- [ ] S5: the tint whenever the summary is written: a first list, a later one, a change of the Show menu. It shows still under reduced motion, and as an outline in forced colours, with no layout shift. Tests check it after the fade, so axe never reads the summary mid-fade, and `test_reduced_motion_stops_every_transition` loads a list.
-- [ ] S6: the shorter lead; `test_the_hopper_s_markup`'s "left out of the list" check still passes.
-- [ ] S7: `fieldset#f-have` with the title, `#f-system` and `fieldset#mine`, as S7 says. These follow: `test_filters_ship_hidden_inside_search`, `test_the_hopper_s_markup`'s legend and order checks (`order[-3:]`), `test_the_hopper_fits_its_panel_at_every_width`, and CONTRACT section 4's sketch and "after `#f-system`".
-- [ ] S8: `#f-clear` first in `#f-more`, with `25-filters.css`'s `#f-clear` rules. These follow: `test_the_hopper_s_markup`'s order check, `test_list.py`'s "Clear filters" tests, and CONTRACT section 4's sketch and "before `#f-clear`".
-- [ ] S9: the spacing rhythm and the hairline; the measurements in step 2 taken again.
-- [ ] Records and tests as in step 2, for each item built.
+  - tick docs/milestone-3.md step 6's "preselected" part, noting that "kept in the URL" was ruled out. *(A note, not a tick: that item is the old hidden page's and covers more.)*
+- [x] S2: Choose file filled until a list loads; contrast checked in both themes; weight 600 and a 2 px `--c-border` border in forced colours.
+- [x] S3: a click in the drop zone opens the chooser, and clicks from inside a button or input are left to them. A test counts `filechooser` events: one for a click on Choose file, one for a click on the zone's text. The zone is no extra stop for the keyboard.
+- [x] S4: "Make the list" folds once a list loads and opens again on "Forget this list"; "Drop or paste it" stays. The focus moves to the Show menu if the fold would hide it. Tests that use a system's summary after a list loads open the fold first, and a test checks the focus after Copy, then a drop.
+- [x] S5: the tint whenever the summary is written: a first list, a later one, a change of the Show menu. It shows still under reduced motion, and as an outline in forced colours, with no layout shift. Tests check it after the fade, so axe never reads the summary mid-fade, and `test_reduced_motion_stops_every_transition` loads a list.
+- [x] S6: the shorter lead; `test_the_hopper_s_markup`'s "left out of the list" check still passes.
+- [x] S7: `fieldset#f-have` with the title, `#f-system` and `fieldset#mine`, as S7 says. These follow: `test_filters_ship_hidden_inside_search`, `test_the_hopper_s_markup`'s legend and order checks (`order[-3:]`), `test_the_hopper_fits_its_panel_at_every_width`, and CONTRACT section 4's sketch and "after `#f-system`".
+- [x] S8: `#f-clear` first in `#f-more`, with `25-filters.css`'s `#f-clear` rules. These follow: `test_the_hopper_s_markup`'s order check, `test_list.py`'s "Clear filters" tests, and CONTRACT section 4's sketch and "before `#f-clear`".
+- [x] S9: the spacing rhythm and the hairline; the measurements in step 2 taken again. *("And after step 3", under "Measured for step 2".)*
+- [x] Records and tests as in step 2, for each item built. *(2026-11-02, #107, `cfcbb90`: tests for each item, a review workflow's 13 findings fixed, among them a forced-colours hover that hid Choose file's label; Chromium 441 and Firefox 527 passed, WebKit too but for 9 tests that fail on #100 merged with `main` alone.)*
 
 **Done when:** each chosen item is built and tested, and step 2's checks pass again.
 
