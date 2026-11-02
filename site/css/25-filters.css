@@ -2,7 +2,11 @@
    and rank stay visible and the rest (#f-more) opens from #f-toggle; the disclosure follows
    the toggle's aria-expanded, so the script only has to flip that attribute. Below 40rem the
    three share one row. From 60rem the block is a sidebar with everything shown and no toggle.
-   Colours come only from the tokens. */
+   The panel's order (owner's site rulings of 2026-11-01, hopper_layout_suggestions, S7 to S9;
+   it amends filters_layout): "Clear filters" first, on a line of its own at the right; then
+   Category, Features and License; then "Fonts you don't have", which holds "Hide fonts that
+   come with" and the hopper (27-mine.css), under a hairline. One spacing rhythm: 4 px from a
+   label to its box, 24 px between the panel's groups. Colours come only from the tokens. */
 
 /* <search> is new; older browsers treat it as an unknown inline element. */
 .filters {
@@ -175,7 +179,7 @@
 
 .filters-more fieldset {
   min-width: 0;
-  margin: 0 0 var(--space-4);
+  margin: 0 0 var(--space-5);
   padding: 0;
   border: 0;
 }
@@ -277,13 +281,53 @@
 
 /* "Hide fonts that come with": a label over one select, like the rank's. */
 .filters-select {
-  margin: 0 0 var(--space-4);
+  margin: 0 0 var(--space-5);
 }
 
 .filters-select > label {
   display: block;
   margin-bottom: var(--space-1);
   font-weight: 600;
+}
+
+/* "Clear filters" comes first, on a line of its own at the right, and always shows, so nothing
+   moves under the pointer as a filter goes on or off (S8). */
+#f-clear {
+  display: block;
+  margin: 0 0 var(--space-4) auto;
+}
+
+/* "Fonts you don't have" (S7): the panel's last group, the two ways to leave out the fonts a
+   visitor has, set off by a hairline. A fieldset draws its legend in its top border, through
+   the line, so this one floats: an ordinary box under the line, still the group's name. */
+.filters-more .filters-have {
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--c-divider);
+}
+
+.filters-have > legend {
+  float: left;
+  width: 100%;
+  padding: 0;
+}
+
+.filters-have > legend + * {
+  clear: left;
+}
+
+/* Inside it, "Hide fonts that come with" is a field label (14 px, 400), like the hopper's own,
+   and the select sits 16 px over the hopper. */
+.filters-have > .filters-select {
+  margin: 0;
+}
+
+.filters-have .filters-select > label {
+  font-size: var(--fs-small);
+  font-weight: 400;
+}
+
+.filters-have #f-os {
+  margin-bottom: var(--space-4);
 }
 
 /* Below 60rem: #f-more is a panel under the bar, closed until #f-toggle opens it. */
@@ -310,7 +354,14 @@
 
   #f-clear {
     grid-column: 1 / -1;
-    justify-self: start;
+    justify-self: end;
+    margin: 0 0 var(--space-4);
+  }
+
+  /* "Fonts you don't have" takes the whole width, at a length that reads well. */
+  .filters-more .filters-have {
+    grid-column: 1 / -1;
+    max-width: 40rem;
   }
 }
 

@@ -331,6 +331,13 @@ def list_state(page: Any, state: str) -> None:
         wait_for(page, "!document.getElementById('no-results').hidden")
 
 
+# The hopper's tint (S5) is gone and its fade done, so axe never measures a summary mid-fade.
+TINT_DONE_JS = """() => {
+  const result = document.getElementById('mine-result');
+  return !result.classList.contains('is-fresh') && result.getAnimations().length === 0;
+}"""
+
+
 def hopper_state(page: Any, state: str) -> None:
     """Give the list page (open at ``/``) to the hopper, as ``state`` says: a list of the page's
     own first font names, pasted, under a Show mode ("mine-missing", "mine-all", "mine-only"),
@@ -355,6 +362,7 @@ def hopper_state(page: Any, state: str) -> None:
         hopper_page.drop(page, "\n".join(names))
         assert page.locator("#mine-drop.is-read").is_visible()
         assert page.locator("#mine-summary").is_visible()
+        wait_for(page, f"({TINT_DONE_JS})()")
         return
     hopper_page.paste(page, "\n".join(names))
     assert page.locator("#mine-summary").is_visible()
@@ -362,6 +370,7 @@ def hopper_state(page: Any, state: str) -> None:
     if page.input_value("#mine-show") != mode:
         page.select_option("#mine-show", mode)
     wait_for(page, f"document.getElementById('mine-show').value === '{mode}'")
+    wait_for(page, f"({TINT_DONE_JS})()")
     if mode == "all":
         wait_for(page, "document.querySelector('#list .ext[data-filter=\"mine\"] .ext-badge')")
 
@@ -857,6 +866,21 @@ def test_forced_colors_axe_hopper(guarded_context: Any, state: str, scheme: str)
             }"""
         )
         assert tick == ["2px", "2px", "solid", True]
+    else:
+        # No list loaded: Choose file keeps its weight and a 2 px border where forced colours
+        # drop its fill (S2).
+        choose = page.evaluate(
+            "() => { const s = getComputedStyle(document.getElementById('mine-choose'));"
+            " return [s.fontWeight, s.borderTopWidth, s.borderTopStyle]; }"
+        )
+        assert choose == ["600", "2px", "solid"]
+    # A fresh summary's tint is an outline here, since forced colours drop backgrounds (S5).
+    outline = page.evaluate(
+        "() => { const r = document.getElementById('mine-result'); r.classList.add('is-fresh');"
+        " const s = getComputedStyle(r); const out = [s.outlineStyle, s.outlineWidth];"
+        " r.classList.remove('is-fresh'); return out; }"
+    )
+    assert outline == ["solid", "2px"]
     guarded.assert_clean(page)
 
 
@@ -980,6 +1004,16 @@ def test_reduced_motion_stops_every_transition(guarded_context: Any) -> None:
     assert page.evaluate("matchMedia('(prefers-reduced-motion: reduce)').matches")
     list_state(page, "filters-open")
     list_state(page, "details")
+    # A list loaded, so the hopper's tint (S5) runs too: under reduced motion it shows still
+    # and goes, with no fade.
+    from tests.helpers import hopper_page
+
+    names = page.evaluate(
+        "() => Array.from(document.querySelectorAll('#list > li.font .font-name'),"
+        " (h) => h.textContent.trim()).slice(0, 4)"
+    )
+    hopper_page.paste(page, "\n".join(names))
+    assert page.locator("#mine-summary").is_visible()
     motion = page.evaluate(MOTION_JS, MOTIONLESS_S)
     assert motion["duration"] in {"0ms", "0s", "0"}, f"--duration is {motion['duration']}"
     assert motion["scroll"] != "smooth"
