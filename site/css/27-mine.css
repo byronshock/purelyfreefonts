@@ -10,8 +10,10 @@
    numbered and indented; the field labels and the notes are 14 px, 400. Colours come only from
    the tokens. */
 
-/* 24 px below, and 28 px above (the select over it keeps 12 px under it, and its group 16):
-   more than the 16 px between the panel's other groups. */
+/* 24 px below. Above, what the group over it leaves: in the sidebar 28 px under "Hide fonts
+   that come with" (its select keeps 12 px under it, its group 16), more than the 16 px between
+   the panel's other groups; in the panel's grid below 60rem, 16 px under the tallest group of
+   the row above, 28 px where that is "Hide fonts that come with". Step 3 (S7, S9) sets it. */
 .filters-more .mine {
   margin-bottom: var(--space-5);
 }
@@ -157,6 +159,12 @@
   text-align: center;
 }
 
+/* Its words wrap evenly where they can: in the sidebar the receipt takes two lines, and would
+   leave "names." alone on the second. */
+.mine-drop > p {
+  text-wrap: balance;
+}
+
 /* Once a file's list loads, the drop zone says how many names it read (hopper_file_shown,
    2026-11-01), after a tick drawn with borders, as the chosen pills draw theirs: it follows the
    text colour in every theme, and a screen reader has no character to read out. */
@@ -212,8 +220,13 @@ html[data-dropping] body::after {
   cursor: pointer;
 }
 
+/* An open box ends 8 px under its last line, like any part of a step. */
 .mine-os[open] {
   padding-bottom: var(--space-2);
+}
+
+.mine-os[open] > p:last-child {
+  margin-bottom: 0;
 }
 
 /* The command wraps (10-base.css's pre), so the sidebar never scrolls sideways; a copy of it,

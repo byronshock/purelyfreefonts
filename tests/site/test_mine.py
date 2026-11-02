@@ -5,7 +5,7 @@ also ends with no page error, no CSP violation, no cookie and nothing stored
 (``Guarded.assert_clean``).
 
 What a visitor does and sees (site/CONTRACT.md sections 4, 5 and 11; the owner's rulings of
-2026-10-21 to 2026-10-23 in data/reviews/site/):
+2026-10-21 to 2026-11-01 in data/reviews/site/):
 
 - A list **pasted** and checked, a file **chosen** (UTF-16 with a byte-order mark, as Windows
   PowerShell 5.1 writes one, and without one) or **dropped** anywhere on the page, which never
@@ -569,10 +569,13 @@ RECEIPT_JS = """() => [
   document.getElementById('mine-choose').textContent,
 ]"""
 INVITE = [False, "Drop fonts.txt here", "Choose file"]
-# The receipt's tick: what its ::before holds (nothing a screen reader reads) and its border.
+# The receipt's tick: what its ::before holds (nothing a screen reader reads), its border, and
+# whether that border is the text's own colour.
 TICK_JS = """() => {
-  const tick = getComputedStyle(document.getElementById('mine-drop-text'), '::before');
-  return [tick.content, tick.borderRightStyle, tick.borderBottomStyle];
+  const text = document.getElementById('mine-drop-text');
+  const tick = getComputedStyle(text, '::before');
+  return [tick.content, tick.borderRightStyle, tick.borderBottomStyle,
+    tick.borderRightColor === getComputedStyle(text).color];
 }"""
 
 
@@ -601,7 +604,7 @@ def test_a_file_s_list_leaves_a_receipt_in_the_drop_zone(
     assert len(counts) == 3
     hopper_page.drop(page, first, selector="#mine-drop")
     assert page.evaluate(RECEIPT_JS) == receipt(first, table)
-    assert page.evaluate(TICK_JS) == ['""', "solid", "solid"]
+    assert page.evaluate(TICK_JS) == ['""', "solid", "solid", True]
     hopper_page.paste(page, second)
     assert page.evaluate(RECEIPT_JS) == INVITE
     hopper_page.drop(page, on_list)
@@ -1868,7 +1871,7 @@ def test_an_error_after_a_result_both_before_the_list_is_live_is_what_is_heard(
     heard as it showed, and nothing is written after it; on a link it was kept while the
     results were out of sight, and is the one write. The visitor scrolls to the page's foot
     meanwhile; once the list is live, the error is in view, and so is the result it came after,
-    which sits above it (at a size where both fit, in the sidebar)."""
+    which sits below it (at a size where both fit, in the sidebar)."""
     guarded, page = open_link_late(
         lambda: guarded_context(viewport={"width": 1440, "height": 900}), hash_
     )
@@ -1985,6 +1988,8 @@ def test_a_list_taken_when_the_rows_do_not_match_the_index_gets_the_page_s_note(
     assert page.evaluate(HIDDEN_JS, "mine-result") is True, "no result"
     assert text_of(page, "#mine-summary") == ""
     assert page.evaluate(HIDDEN_JS, "mine-error") is True
+    # Nor the receipt: a file's list that had loaded took its count with it (unload).
+    assert page.evaluate(RECEIPT_JS) == INVITE
     # A list that had loaded keeps the previews off (M3-D10 a: a list did load), though its
     # result is gone; one that never loaded lets them go on. The last row with a preview,
     # scrolled into view, tells which (the hook isn't published: the list never went live).

@@ -829,6 +829,11 @@ HOPPER_TEXT = """() => {
     labels: [font(q('label[for="mine-paste"]')), font(q('label[for="mine-show"]'))],
     notes: [font(q('.mine-lead')), font(q('.mine-phone'))],
     indent: q('#mine-how').getBoundingClientRect().left - q('#mine > legend').getBoundingClientRect().left,
+    // A marker's style is computed even where none is drawn: the list's own style says whether
+    // the numbers show, and where.
+    numbers: [getComputedStyle(q('.mine-steps')).listStyleType,
+      getComputedStyle(q('.mine-steps')).listStylePosition,
+      ...Array.from(document.querySelectorAll('.mine-steps > li'), (li) => getComputedStyle(li).display)],
   };
 }"""
 
@@ -849,6 +854,7 @@ def test_the_hopper_s_levels_of_text(browser, site_url, width):
         assert text["labels"] == [["14px", "400"]] * 2
         assert text["notes"] == [["14px", "400"]] * 2
         assert text["indent"] >= 16, "the step headings sit under the title, indented"
+        assert text["numbers"] == ["decimal", "outside", "list-item", "list-item"]
     finally:
         context.close()
 
