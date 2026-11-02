@@ -253,13 +253,45 @@ def near_line(result: dict[str, Any]) -> str:
 # ------------------------------------------------------------------------------- the page
 
 
+# A system none of the hopper's commands is for, so no box opens as the page starts (S1): for
+# the tests that open and close the boxes themselves, which CI runs on Linux.
+NO_SYSTEM = "SunOS i86pc"
+
+
+def platform_js(platform: str, touches: int = 0, data: str | None = None) -> str:
+    """An init script by which the browser says it runs on ``platform`` (navigator.platform),
+    with ``touches`` touch points, and ``data`` as navigator.userAgentData's platform (None: no
+    userAgentData, as Firefox and Safari have none)."""
+    return (
+        "(() => {"
+        f" const platform = {json.dumps(platform)}, touches = {touches};"
+        f" const data = {json.dumps(data)};"
+        " const define = (name, get) =>"
+        "   Object.defineProperty(Navigator.prototype, name, { get, configurable: true });"
+        " define('platform', () => platform);"
+        " define('maxTouchPoints', () => touches);"
+        " define('userAgentData', () => (data === null ? undefined : { platform: data }));"
+        "})();"
+    )
+
+
 def open_list(
-    make: Callable[..., Any], hash_: str = "", *, clock: bool = False, **kwargs: Any
+    make: Callable[..., Any],
+    hash_: str = "",
+    *,
+    clock: bool = False,
+    platform: str | None = None,
+    touches: int = 0,
+    data_platform: str | None = None,
+    **kwargs: Any,
 ) -> tuple[Any, Any]:
     """A guarded context and a page on the list, once the list is live (``clock``: on
-    Playwright's clock, paused once it is)."""
+    Playwright's clock, paused once it is; ``platform``: the system the browser says it runs
+    on, see platform_js)."""
     guarded = make(**kwargs)
     guarded.context.add_init_script(RECORDER_JS)
+    if platform is not None:
+        guarded.context.add_init_script(platform_js(platform, touches, data_platform))
     page = guarded.new_page()
     hopper_page.arm(page)
     if clock:
@@ -1128,10 +1160,219 @@ def test_the_phone_line_shows_on_phones_and_touch_screens_only(
 # ------------------------------------------------------------------------------ keyboard
 
 
+# ------------------------------------------------- Claude's suggestions (S1 to S5, 2026-11-01)
+
+OPEN_BOXES_JS = "() => Array.from(document.querySelectorAll('#mine .mine-os[open]'), (d) => d.id)"
+
+
+# Firefox on Android says its platform is Linux; only its user agent names Android.
+ANDROID_FIREFOX = "Mozilla/5.0 (Android 14; Mobile; rv:131.0) Gecko/131.0 Firefox/131.0"
+
+
+@pytest.mark.parametrize(
+    ("platform", "touches", "data", "context", "opened"),
+    [
+        ("Linux x86_64", 0, None, {}, ["mine-os-linux"]),
+        ("MacIntel", 0, None, {}, ["mine-os-macos"]),
+        ("Win32", 0, None, {}, ["mine-os-windows"]),
+        ("Linux x86_64", 0, "Windows", {}, ["mine-os-windows"]),  # userAgentData first
+        (NO_SYSTEM, 0, None, {}, []),
+        ("Linux armv8l", 5, None, {"viewport": {"width": 375, "height": 812}}, []),
+        ("Linux armv8l", 0, None, {"user_agent": ANDROID_FIREFOX}, []),  # a wide Android
+        ("MacIntel", 5, None, {"viewport": {"width": 1024, "height": 1366}}, []),  # an iPad
+        ("Win32", 5, None, {"has_touch": True}, []),  # a coarse pointer, a wide window
+    ],
+    ids=[
+        "linux",
+        "macos",
+        "windows",
+        "user-agent-data",
+        "unknown",
+        "android-phone",
+        "android-wide",
+        "ipad",
+        "touch-screen",
+    ],
+)
+def test_the_visitor_s_own_system_s_box_opens_as_the_page_starts(
+    guarded_context: Any,
+    site_url: str,
+    platform: str,
+    touches: int,
+    data: str | None,
+    context: dict[str, Any],
+    opened: list[str],
+) -> None:
+    """S1: the box of the system the browser says it runs on opens, read from the browser
+    alone, so nothing is sent or stored and nothing enters the address (M3-D13 a). None opens
+    where "Make the list on a computer." shows (a phone), on an iPad (it says "MacIntel" but
+    takes touches), or for a system none of the commands is for. The server's HTML keeps every
+    box closed (test_the_hopper_s_markup)."""
+    guarded, page = open_list(
+        guarded_context, platform=platform, touches=touches, data_platform=data, **context
+    )
+    assert page.evaluate(OPEN_BOXES_JS) == opened
+    # The address is the one opened, and nothing wrote to the history (RECORDER_JS counts from
+    # before the page's script) or to storage.
+    assert page.evaluate("() => [location.href, window.__tffHistory]") == [site_url + "/", 0]
+    assert page.evaluate(STORED_JS) == [0, 0, ""]
+    guarded.assert_clean(page)
+
+
+# A click on ``selector`` (at ``position`` in it, if given) and the file choosers it opens.
+def choosers_opened(page: Any, selector: str, position: Any = None) -> int:
+    opened: list[Any] = []
+
+    def record(chooser: Any) -> None:
+        opened.append(chooser)
+
+    page.on("filechooser", record)
+    try:
+        with page.expect_file_chooser():
+            page.click(selector, position=position)
+        page.wait_for_timeout(300)  # time for a second chooser, if one were coming
+    finally:
+        page.remove_listener("filechooser", record)
+    return len(opened)
+
+
+def test_a_click_anywhere_in_the_drop_zone_opens_the_chooser_once(guarded_context: Any) -> None:
+    """S3: a click on Choose file opens one chooser, and so does a click on the zone's words
+    or its padding (Core.on matches with closest(), so a click on the button reaches the
+    zone's handler too, which leaves it alone). The button stays the zone's one stop for the
+    keyboard."""
+    guarded, page = open_list(guarded_context)
+    assert choosers_opened(page, "#mine-choose") == 1
+    assert choosers_opened(page, "#mine-drop-text") == 1
+    assert choosers_opened(page, "#mine-drop", position={"x": 4, "y": 4}) == 1
+    stops = page.evaluate(
+        "() => Array.from(document.querySelectorAll('#mine-drop, #mine-drop *'))"
+        ".filter((el) => el.tabIndex >= 0 && el.getClientRects().length).map((el) => el.id)"
+    )
+    assert stops == ["mine-choose"]
+    guarded.assert_clean(page)
+
+
+# Whether "Make the list" is open, and whether its summary, "How to make the list", shows.
+# Whether the Linux box's summary shows, asked of the browser (checkVisibility): Playwright's
+# own check in WebKit counts a box inside a closed <details> as visible, though WebKit draws
+# none of it.
+LINUX_SHOWS_JS = "() => document.querySelector('#mine-os-linux > summary').checkVisibility()"
+FOLD_JS = """() => {
+  const make = document.getElementById('mine-make');
+  return [make.open, getComputedStyle(make.querySelector('summary')).display !== 'none'];
+}"""
+
+
+def test_make_the_list_folds_once_a_list_loads(guarded_context: Any, first: str) -> None:
+    """S4: once a list loads, "Make the list" folds to one closed disclosure, "How to make the
+    list", which opens again; "Forget this list" opens the step and its summary goes. A fold
+    that would hide the focus (here on Copy) moves it to the Show menu first."""
+    guarded, page = open_list(guarded_context, platform="Linux x86_64")
+    assert page.evaluate(FOLD_JS) == [True, False]
+    page.locator("#mine-os-linux .mine-copy").focus()
+    hopper_page.drop(page, first)
+    assert page.evaluate(FOLD_JS) == [False, True]
+    assert page.evaluate("() => document.activeElement.id") == "mine-show"
+    assert page.evaluate(LINUX_SHOWS_JS) is False
+    page.click("#mine-make > summary")
+    assert page.evaluate(FOLD_JS) == [True, True]
+    assert page.evaluate(LINUX_SHOWS_JS) is True
+    # A later list folds the step again; the focus, on the fold's own summary, which stays in
+    # sight, stays there.
+    page.locator("#mine-make > summary").focus()
+    hopper_page.drop(page, first)
+    assert page.evaluate(FOLD_JS) == [False, True]
+    assert page.evaluate("() => document.activeElement.matches('#mine-make > summary')")
+    page.locator("#mine-forget").focus()
+    changed(page, lambda: page.keyboard.press("Enter"))
+    assert page.evaluate(FOLD_JS) == [True, False]
+    guarded.assert_clean(page)
+
+
+# Choose file's fill and weight, and the fill of a row's Download link, the same token's.
+FILL_JS = """() => {
+  const choose = getComputedStyle(document.getElementById('mine-choose'));
+  const download = getComputedStyle(document.querySelector('#list .download'));
+  return [choose.backgroundColor === download.backgroundColor, choose.fontWeight];
+}"""
+
+
+def test_choose_file_is_filled_until_a_list_loads(guarded_context: Any, first: str) -> None:
+    """S2: until a list loads, Choose file is the hopper's one filled button, in the rows'
+    Download fill and weight 600; once one has, no hopper button is filled; after "Forget this
+    list" it is again."""
+    guarded, page = open_list(guarded_context)
+    assert page.evaluate(FILL_JS) == [True, "600"]
+    hopper_page.paste(page, first)
+    assert page.evaluate(FILL_JS) == [False, "400"]
+    page.locator("#mine-forget").focus()
+    changed(page, lambda: page.keyboard.press("Enter"))
+    assert page.evaluate(FILL_JS) == [True, "600"]
+    guarded.assert_clean(page)
+
+
+# Records each time the result gets or loses is-fresh, and when (window.__tffTint); the test
+# notes the time just before each action (window.__tffStart), since the tint's timer starts
+# before the redraw the observer waits on.
+TINT_JS = """() => {
+  const result = document.getElementById('mine-result');
+  window.__tffTint = [];
+  window.__tffStarts = [];
+  let was = result.classList.contains('is-fresh');
+  new MutationObserver(() => {
+    const now = result.classList.contains('is-fresh');
+    if (now !== was) window.__tffTint.push([now, performance.now()]);
+    was = now;
+  }).observe(result, { attributes: true, attributeFilter: ['class'] });
+}"""
+# How long each tint lasted, in ms from just before its action, once it has gone and no fade
+# runs.
+TINTED_JS = """() => {
+  const result = document.getElementById('mine-result');
+  if (result.classList.contains('is-fresh') || result.getAnimations().length) return null;
+  const offs = window.__tffTint.filter(([on]) => !on).map(([, at]) => at);
+  if (offs.length < window.__tffStarts.length) return null;
+  return offs.map((at, i) => at - window.__tffStarts[i]);
+}"""
+STARTED_JS = "() => { window.__tffStarts.push(performance.now()); }"
+
+
+@pytest.mark.parametrize("motion", ["no-preference", "reduce"])
+def test_a_summary_just_written_is_tinted_for_a_moment(
+    guarded_context: Any, first: str, second: str, motion: str
+) -> None:
+    """S5: whenever the summary is written (a first list, a change of the Show menu, a later
+    list) the result is tinted: on at once, gone after 400 ms with a 600 ms fade, or, under
+    reduced motion, still for a second with no fade. Nothing moves."""
+    guarded, page = open_list(guarded_context, reduced_motion=motion)
+    page.evaluate(TINT_JS)
+    page.evaluate(STARTED_JS)
+    hopper_page.paste(page, first)
+    box = page.locator("#mine-result").bounding_box()
+    poll(page, TINTED_JS, "the tint after the first list")
+    page.evaluate(STARTED_JS)
+    show(page, "all")
+    poll(page, TINTED_JS, "the tint after the Show menu")
+    page.evaluate(STARTED_JS)
+    hopper_page.paste(page, second)
+    poll(page, TINTED_JS, "the tint after a later list")
+    spans = page.evaluate(TINTED_JS)
+    assert len(spans) == 3, spans
+    low = 995 if motion == "reduce" else 395  # the timer's 1000 or 400 ms, to the millisecond
+    assert all(low <= span < 5000 for span in spans), spans
+    fade = page.evaluate(
+        "() => getComputedStyle(document.getElementById('mine-result')).transitionDuration"
+    )
+    assert (fade == "0.6s") == (motion != "reduce"), fade
+    assert page.locator("#mine-result").bounding_box()["width"] == box["width"]
+    guarded.assert_clean(page)
+
+
 def test_the_hopper_works_by_keyboard(
     guarded_context: Any, table: owned.Table, families: list[str], first: str
 ) -> None:
-    guarded, page = open_list(guarded_context)
+    guarded, page = open_list(guarded_context, platform=NO_SYSTEM)
     before = shown(page)
     page.locator("#mine-choose").focus()
     blob = linux_list(families[1:5]).encode()
@@ -1179,7 +1420,7 @@ def test_the_hopper_works_by_keyboard(
 def test_copy_puts_each_command_on_the_clipboard_exactly(
     guarded_context: Any, command: dict[str, Any]
 ) -> None:
-    guarded, page = open_list(guarded_context)
+    guarded, page = open_list(guarded_context, platform=NO_SYSTEM)
     page.evaluate(CLIPBOARD_JS, "take")
     page.click(f"#mine-os-{command['os']} > summary")
     shown_command = page.text_content(f"#mine-cmd-{command['os']}")
@@ -1198,7 +1439,7 @@ def test_copy_puts_each_command_on_the_clipboard_exactly(
 def test_where_the_clipboard_is_refused_the_command_is_selected(
     guarded_context: Any, clipboard: str
 ) -> None:
-    guarded, page = open_list(guarded_context)
+    guarded, page = open_list(guarded_context, platform=NO_SYSTEM)
     page.evaluate(CLIPBOARD_JS, clipboard)
     command = data.MINE_COMMANDS[2]
     page.click(f"#mine-os-{command['os']} > summary")
@@ -2059,7 +2300,7 @@ def test_a_reload_or_back_restores_no_list_and_no_show_menu(
 def test_nothing_from_a_list_reaches_the_address_history_title_or_storage(
     guarded_context: Any, first: str, second: str
 ) -> None:
-    guarded, page = open_list(guarded_context)
+    guarded, page = open_list(guarded_context, platform=NO_SYSTEM)
     where = page.evaluate(WHERE_JS)
     hopper_page.paste(page, first)
     for mode in ("all", "only", "missing"):
@@ -2067,6 +2308,7 @@ def test_nothing_from_a_list_reaches_the_address_history_title_or_storage(
     hopper_page.drop(page, second)
     hopper_page.choose(page, first.encode())
     page.evaluate(CLIPBOARD_JS, "take")
+    page.click("#mine-make > summary")  # a list loaded, so "Make the list" is folded (S4)
     page.click("#mine-os-linux > summary")
     page.click("#mine-os-linux .mine-copy")
     hopper_page.paste(page, PASTED_REFUSALS["command"])

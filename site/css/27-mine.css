@@ -1,21 +1,22 @@
-/* 27-mine: the hopper, "Fonts you don't have" (Milestone 3, slice 1; site/CONTRACT.md section
-   4). It sits in the filter panel after "Hide fonts that come with": in the sidebar from 60rem,
-   and across the whole panel below that, behind the Filters button. It reads from top to
-   bottom (owner's site rulings of 2026-11-01, hopper_steps_in_order): a line on what it does;
-   two numbered steps, "Make the list" (one closed <details> per system) and "Drop or paste it"
+/* 27-mine: the hopper, "Your own list" (Milestone 3, slice 1; site/CONTRACT.md section 4). It
+   sits in the filter panel's last group, "Fonts you don't have" (25-filters.css), after "Hide
+   fonts that come with": in the sidebar from 60rem, and across the whole panel below that,
+   behind the Filters button. It reads from top to bottom (owner's site rulings of 2026-11-01,
+   hopper_steps_in_order; Claude's suggestions S1 to S9, hopper_layout_suggestions): a line on
+   what it does;
+   two numbered steps, "Make the list" (one <details> per system, in details#mine-make, the
+   visitor's own system's opened by the script) and "Drop or paste it"
    (the drop zone with Choose file, the paste box with Check); then what a list brings,
    "Checking your list…", an error, or its summary with the Show menu and "Forget this list" in
-   a box of their own. Its levels of text (hopper_subheadings): the title is a group title like
+   a box of their own. Its levels of text (hopper_subheadings): the title is its group's, like
    the panel's others (16 px, 600: 25-filters.css); the step headings sit under it, 14 px, 600,
-   numbered and indented; the field labels and the notes are 14 px, 400. Colours come only from
-   the tokens. */
+   numbered and indented; the field labels and the notes are 14 px, 400. Once a list loads,
+   "Make the list" folds to one disclosure (S4), Choose file is no longer filled (S2) and the
+   result is tinted for a second (S5). Colours come only from the tokens. */
 
-/* 24 px below. Above, what the group over it leaves: in the sidebar 28 px under "Hide fonts
-   that come with" (its select keeps 12 px under it, its group 16), more than the 16 px between
-   the panel's other groups; in the panel's grid below 60rem, 16 px under the tallest group of
-   the row above, 28 px where that is "Hide fonts that come with". Step 3 (S7, S9) sets it. */
+/* Its group, "Fonts you don't have", ends the panel, whose own padding closes it (S9). */
 .filters-more .mine {
-  margin-bottom: var(--space-5);
+  margin: 0;
 }
 
 .mine p {
@@ -74,12 +75,12 @@
 }
 
 .mine-steps > li + li {
-  margin-top: var(--space-3);
+  margin-top: var(--space-4);
 }
 
 /* The step headings, "Make the list" and "Drop or paste it": a level below the title, 14 px
    against its 16 px. The size alone is easy to miss, so the indent and the number carry the
-   step down with it. 8 px inside a step, 12 px between the two. */
+   step down with it. 8 px inside a step, 16 px between the two (S9). */
 .mine p.mine-step {
   margin-bottom: var(--space-2);
   font-size: var(--fs-small);
@@ -105,7 +106,29 @@
 .mine > .mine-busy,
 .mine > .mine-error,
 .mine > .mine-result {
-  margin: var(--space-3) 0 0;
+  margin: var(--space-4) 0 0;
+}
+
+/* A summary just written (a first list, a later one, the Show menu changed) is tinted, and the
+   tint fades over about a second (S5), so a change in place isn't missed: Mine adds is-fresh,
+   which comes on at once, and takes it away after 400 ms, from which the fade runs. Under
+   reduced motion (10-base.css) nothing fades: the tint shows still for that second, then goes.
+   Forced colours drop backgrounds, so an outline stands in, for the second too. Neither moves
+   anything. */
+.mine-result {
+  transition: background-color 600ms ease-out;
+}
+
+.mine-result.is-fresh {
+  background: color-mix(in srgb, var(--c-accent) 12%, var(--c-bg));
+  transition: none;
+}
+
+@media (forced-colors: active) {
+  .mine-result.is-fresh {
+    outline: 2px solid;
+    outline-offset: 2px;
+  }
 }
 
 .mine-result {
@@ -150,13 +173,41 @@
 /* ---- "Drop or paste it" */
 
 /* A file dropped anywhere on the page is taken; while one is dragged over it, the drop zone
-   says so with a solid accent border. */
+   says so with a solid accent border. A click anywhere in it opens the file chooser (S3), as
+   Choose file does; the button stays the keyboard's way in. */
 .mine-drop {
   margin: 0 0 var(--space-2);
   padding: var(--space-3);
   border: 2px dashed var(--c-border);
   border-radius: var(--radius);
   text-align: center;
+  cursor: pointer;
+}
+
+/* Until a list loads, Choose file is the hopper's one filled button, like the rows' Download
+   (S2): the main action, found at once. Once one has, the next is the Show menu, and no hopper
+   button is filled. Forced colours drop the fill (Chromium's backplate hid such text, as
+   20-list.css found for Download), so there it keeps its weight and a 2 px border instead. */
+.mine:not(.has-list) #mine-choose {
+  border-color: var(--c-accent);
+  background: var(--c-accent);
+  color: var(--c-accent-fg);
+  font-weight: 600;
+}
+
+.mine:not(.has-list) #mine-choose:hover {
+  background: var(--c-accent);
+  text-decoration: underline;
+}
+
+/* Hovered too: the accent there is ButtonText, which forced colours keep, under CanvasText. */
+@media (forced-colors: active) {
+  .mine:not(.has-list) #mine-choose,
+  .mine:not(.has-list) #mine-choose:hover {
+    border: 2px solid var(--c-border);
+    background: var(--c-bg);
+    color: var(--c-fg);
+  }
 }
 
 /* Its words wrap evenly where they can: in the sidebar the receipt takes two lines, and would
@@ -214,6 +265,18 @@ html[data-dropping] body::after {
 
 /* ---- "Make the list" */
 
+/* Once a list loads, the step folds to one closed disclosure, "How to make the list" (S4), so
+   the result sits closer to the title; "Forget this list" opens it again. Until then its
+   summary doesn't show, and the step reads as before. */
+.mine-make > summary {
+  display: none;
+}
+
+.mine.has-list .mine-make > summary {
+  display: revert;
+}
+
+.mine-make > summary,
 .mine-os > summary {
   min-height: var(--target-min);
   padding-block: var(--space-1);
@@ -246,13 +309,4 @@ html[data-dropping] body::after {
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
-}
-
-/* Below 60rem the panel is a grid of columns; the hopper takes the whole width, at a length
-   that reads well. Its form (#mine-form, there for autocomplete="off") is the grid's item. */
-@media not all and (min-width: 60rem) {
-  .filters-more .mine-form {
-    grid-column: 1 / -1;
-    max-width: 40rem;
-  }
 }
