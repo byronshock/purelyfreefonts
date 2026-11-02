@@ -4,11 +4,8 @@
   ``browser``, ``guarded_context`` and so on). They get the ``browser`` marker at collection,
   so ``-m "not browser"`` deselects them before any fixture runs, and this module imports no
   Playwright code at import time. Browsers come from pytest-playwright's ``--browser``;
-  locally, ``TFF_CHROMIUM=/usr/bin/chromium`` swaps in a system Chromium. On a machine with
-  NVIDIA's driver, Playwright's WebKit (WPE) crashes now and then in its EGL library: "Page
-  crashed", or a new page that closes at once, with a core dump in libnvidia-eglcore.
-  ``__EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/50_mesa.json`` gives it
-  Mesa's EGL instead (seen on 2026-11-01).
+  locally, ``TFF_CHROMIUM=/usr/bin/chromium`` swaps in a system Chromium. Where NVIDIA's EGL
+  is installed, WebKit runs on Mesa's (``browser_type_launch_args``).
 - **The real catalog** (site-real in CI and deploy.yml, ``TFF_SITE_DATA=build/catalog-site.json``)
   runs with ``-m "not sample_only"``. A test marked ``sample_only`` runs on the sample catalog
   only; one marked ``real_catalog(name=value, ...)`` runs every parameter on the sample but only
@@ -57,6 +54,13 @@ GUARDS_JS = HERE / "guards.js"
 CI_CADDY_URL = "http://127.0.0.1:8080"
 FAKE_COMMIT = "0" * 40
 LOOPBACK = frozenset({"127.0.0.1", "::1", "localhost"})
+# Playwright's WebKit (WPE) draws through EGL, and glvnd picks the vendor library. NVIDIA's
+# crashes WebKit's page process now and then (a core dump in libnvidia-eglcore; "Page
+# crashed", or a page or context that closes at once, "Target page, context or browser has
+# been closed"): 4 of 5 runs of a few a11y and privacy tests on 2026-11-02, none of 6 on
+# Mesa's. So where both are installed, WebKit gets Mesa's, unless EGL_VENDOR is already set.
+EGL_VENDORS = Path("/usr/share/glvnd/egl_vendor.d")
+EGL_VENDOR = "__EGL_VENDOR_LIBRARY_FILENAMES"
 # Chromium: "... violates the following Content Security Policy directive ..." or "Refused to
 # load ..."; Firefox: "Content-Security-Policy: The page's settings blocked ..."; WebKit:
 # "Refused to apply a stylesheet ...".
@@ -239,10 +243,21 @@ def browser(browser: Any, browser_name: str) -> Any:
 
 @pytest.fixture(scope="session")
 def browser_type_launch_args(browser_type_launch_args: dict, browser_name: str) -> dict:
-    """Use ``TFF_CHROMIUM`` as the Chromium executable when it is set."""
+    """Use ``TFF_CHROMIUM`` as the Chromium executable when it is set; give WebKit Mesa's EGL
+    where NVIDIA's is installed too (``EGL_VENDOR``)."""
     executable = os.environ.get("TFF_CHROMIUM")
     if executable and browser_name == "chromium":
         return {**browser_type_launch_args, "executable_path": executable}
+    mesa = EGL_VENDORS / "50_mesa.json"
+    if (
+        browser_name == "webkit"
+        and EGL_VENDOR not in os.environ
+        and mesa.is_file()
+        and any(EGL_VENDORS.glob("*nvidia*.json"))
+    ):
+        # A launch's env replaces the browser's whole environment, so it starts from ours.
+        env = {**os.environ, **browser_type_launch_args.get("env", {}), EGL_VENDOR: str(mesa)}
+        return {**browser_type_launch_args, "env": env}
     return browser_type_launch_args
 
 
