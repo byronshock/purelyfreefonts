@@ -900,12 +900,12 @@ def test_forced_colors_focus_ring_is_visible(guarded_context: Any, scheme: str) 
     page.mouse.move(0, 0)
     # Nothing focused before, so the only change is the button's own ring (a ring leaving the
     # link next to it can't count).
-    before = png_pixels(page.screenshot(clip=clip, animations="disabled"))
+    before = png_pixels(guarded.screenshot(page, clip=clip, animations="disabled"))
     row.locator(".download").focus()
     page.keyboard.press("Tab")
     assert page.evaluate("document.activeElement.classList.contains('details-toggle')")
     page.evaluate(FRAMES_JS)
-    after = png_pixels(page.screenshot(clip=clip, animations="disabled"))
+    after = png_pixels(guarded.screenshot(page, clip=clip, animations="disabled"))
     lb, la = pixel_luminance(before), pixel_luminance(after)
     ratio = (np.maximum(la, lb) + 0.05) / (np.minimum(la, lb) + 0.05)
     changed = int((ratio >= MIN_FORCED_RING_CHANGE).sum())
@@ -965,7 +965,7 @@ def test_row_actions_keep_their_text_and_border(guarded_context: Any, mode: str)
         assert colour is not None, action
         assert contrast(colour[:3], back[:3]) >= 3, (action, got)
     for action in got["actions"]:
-        pixels = png_pixels(page.screenshot(clip=action["text"], animations="disabled"))
+        pixels = png_pixels(guarded.screenshot(page, clip=action["text"], animations="disabled"))
         share = ink_share(pixels)
         assert share > 0.05, f"{mode}: {action['sel']} shows almost no text ({share:.2%} ink)"
     guarded.assert_clean(page)

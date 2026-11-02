@@ -328,13 +328,13 @@ def ink(pixels: list[tuple[int, int, int]]) -> tuple[tuple[int, int, int], float
     return darkest, contrast(darkest, background), share
 
 
-def outlines(page: Any, span: Any) -> list[tuple[int, int, int]]:
+def outlines(guarded: Any, page: Any, span: Any) -> list[tuple[int, int, int]]:
     """The specimen box's pixels once its outlines have been painted and two screenshots in a
     row agree (up to 5 s after its mask is set), or as they are by then."""
     deadline = time.monotonic() + 5
     last: list[tuple[int, int, int]] = []
     while True:
-        pixels = png_pixels(span.screenshot())
+        pixels = png_pixels(guarded.screenshot(span))
         if ink(pixels)[2] > 0.01 and last and not changed(last, pixels):
             return pixels
         if time.monotonic() > deadline:
@@ -572,19 +572,26 @@ def test_a_specimen_that_has_not_arrived_leaves_the_box_empty_and_the_name_in_vi
 
     A slow network holds a specimen back (``pending``); a tab left open across a deploy can
     ask for one that is gone (``missing``). Neither may show a solid bar or lose the name.
+
+    The page loads first, its first specimens with it, and then a row far below comes near,
+    whose specimen is the one held back or missing. A screenshot waits for
+    ``document.fonts.ready``, which WebKit settles only once the page's load event has fired,
+    and a specimen held back from the start would hold that event back too.
     """
     guarded = guarded_context(viewport=WIDE)
-    page = guarded.new_page()
+    page = open_list(guarded)
+    target = far_rows(page, WIDE)[0]["id"]  # not requested yet (the first test here)
     held: list[Any] = []
     if failure == "pending":
         page.route(f"**{SPEC_PREFIX}*", lambda route: held.append(route))
     else:
         page.route(f"**{SPEC_PREFIX}*", lambda route: route.fulfill(status=404, body="Not found"))
     try:
-        page.goto("/", wait_until="domcontentloaded")  # "load" waits for the held images
-        page.wait_for_selector(f'span.spec[data-state="{state}"]', state="attached")
+        page.evaluate(SCROLL_JS, target)
+        page.wait_for_selector(f'#font-{target} span.spec[data-state="{state}"]', state="attached")
         settle(page)
-        first = next(h for h in page.evaluate(HEADINGS_JS) if h["state"] == state)
+        first = next(h for h in page.evaluate(HEADINGS_JS) if h["id"] == target)
+        assert first["state"] == state
         src = row(page, first["id"])["src"]
         wait_for_requests(page, guarded, {src})
         settle(page)
@@ -595,7 +602,7 @@ def test_a_specimen_that_has_not_arrived_leaves_the_box_empty_and_the_name_in_vi
         # The heading lies over the box: set it aside (CSSOM) to see the box alone.
         heading = page.locator(f"#font-{first['id']} h3.font-name")
         heading.evaluate("(h) => h.style.setProperty('visibility', 'hidden')")
-        pixels = png_pixels(page.locator(f"#font-{first['id']} span.spec").screenshot())
+        pixels = png_pixels(guarded.screenshot(page.locator(f"#font-{first['id']} span.spec")))
         heading.evaluate("(h) => h.style.removeProperty('visibility')")
         assert len(set(pixels)) == 1, "the box shows something before its specimen arrived"
         assert not first["drawn"]
@@ -650,12 +657,12 @@ def test_a_selection_of_the_hidden_heading_shows_over_the_drawn_name(
     span = page.locator(f"#font-{first['id']} span.spec")
     heading = page.locator(f"#font-{first['id']} h3.font-name")
     span.evaluate("(s) => s.scrollIntoView({ block: 'center' })")
-    before = outlines(page, span)
+    before = outlines(guarded, page, span)
     heading.evaluate("(h) => getSelection().selectAllChildren(h)")
     assert page.evaluate("() => getSelection().toString().trim()") == first["text"]
-    selected = png_pixels(span.screenshot())
+    selected = png_pixels(guarded.screenshot(span))
     page.evaluate("() => getSelection().removeAllRanges()")
-    after = png_pixels(span.screenshot())
+    after = png_pixels(guarded.screenshot(span))
     # Once the selection is gone, the box looks as it did: a CI runner repaints a few edge
     # pixels differently (10 of about 25,000 seen), so up to 0.1% may differ, against the
     # more than 1% a selection changes.
@@ -687,7 +694,7 @@ def test_specimens_are_visible_in_every_theme(
     # Centred first: a box flush with the window's edge makes each screenshot scroll it a
     # little and repaint a few edge pixels, which this exact comparison would count.
     span.evaluate("(s) => s.scrollIntoView({ block: 'center' })")
-    shown = outlines(page, span)
+    shown = outlines(guarded, page, span)
     colour, ratio, share = ink(shown)
     assert share > 0.01, "no outlines in the specimen box"
     assert ratio >= 4.5, f"outlines {colour} have contrast {ratio:.2f} with the background"
@@ -699,7 +706,7 @@ def test_specimens_are_visible_in_every_theme(
     # colours, with the list higher up the page since 2026-10-07), so 0.5% may differ.
     heading = page.locator(f"#font-{first['id']} h3.font-name")
     heading.evaluate("(h) => h.style.setProperty('visibility', 'hidden')")
-    alone = png_pixels(span.screenshot())
+    alone = png_pixels(guarded.screenshot(span))
     heading.evaluate("(h) => h.style.removeProperty('visibility')")
     assert changed(shown, alone) <= len(shown) // 200, (
         "the hidden heading is painted over the drawn name"
@@ -707,11 +714,15 @@ def test_specimens_are_visible_in_every_theme(
     if forced == "active":
         style = page.evaluate(
             "() => { const s = getComputedStyle(document.querySelector('span.spec'));"
-            " return [s.forcedColorAdjust, s.backgroundColor,"
-            " getComputedStyle(document.body).color]; }"
+            " return [CSS.supports('forced-color-adjust', 'none'), s.forcedColorAdjust,"
+            " s.backgroundColor, getComputedStyle(document.body).color]; }"
         )
-        adjust, fill, canvas_text = style
-        assert adjust == "none"
+        known, adjust, fill, canvas_text = style
+        # WebKit has no forced-color-adjust: it matches the forced-colors query Playwright
+        # emulates, so the site's own forced-colours rules apply, but it repaints nothing
+        # itself, so there is nothing to opt out of (the pixels above show the heading adds
+        # nothing). A browser that knows the property must have it off.
+        assert adjust == ("none" if known else None)
         assert fill == canvas_text
     guarded.assert_clean(page)
 

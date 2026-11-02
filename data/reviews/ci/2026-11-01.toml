@@ -1,0 +1,10 @@
+# Owner ruling of 2026-11-01 on what staging shows while the hopper's pull request #100 is open, asked in chat as a single-select question
+# with the hopper's layout rulings (data/reviews/site/2026-11-01.toml). Ruled by the owner, Byron Shock; recorded by Claude.
+# Also in AUTHORITY.md (Monthly data refresh, Held runs on staging) and PLAN-hopper.md (Q3).
+
+[hopper_on_staging]
+choice = "a"
+recommended = true
+value = "preview_rebased_on_pr_100"
+ruling = "Amends staging_previews_held_runs (2026-10-19): while the hopper's pull request #100 is open, staging may show the preview branch rebased on #100's head instead of main, so the owner judges the hopper's work there before it merges. Staging's a8ad402 already sits on #100's 7e7ec1d. Once #100 merges, staging deploys come again from the preview rebased on main."
+reason = "staging_previews_held_runs says every staging deploy comes from the preview branch rebased on main, and no ruling covered the deploy that put #100 on staging, where the owner reviewed the hopper. Of (a) yes, while #100 is open, and (b) no, staging back to main until #100 merges, the owner took Claude's recommendation."

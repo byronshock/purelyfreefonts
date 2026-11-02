@@ -4,7 +4,8 @@
   ``browser``, ``guarded_context`` and so on). They get the ``browser`` marker at collection,
   so ``-m "not browser"`` deselects them before any fixture runs, and this module imports no
   Playwright code at import time. Browsers come from pytest-playwright's ``--browser``;
-  locally, ``TFF_CHROMIUM=/usr/bin/chromium`` swaps in a system Chromium.
+  locally, ``TFF_CHROMIUM=/usr/bin/chromium`` swaps in a system Chromium. Where NVIDIA's EGL
+  is installed, WebKit runs on Mesa's (``browser_type_launch_args``).
 - **The real catalog** (site-real in CI and deploy.yml, ``TFF_SITE_DATA=build/catalog-site.json``)
   runs with ``-m "not sample_only"``. A test marked ``sample_only`` runs on the sample catalog
   only; one marked ``real_catalog(name=value, ...)`` runs every parameter on the sample but only
@@ -22,7 +23,8 @@
   script, record every request, abort requests to any other origin and collect console
   messages and page errors. Routing turns off the HTTP cache, so performance tests use plain
   contexts instead (in Chromium: see ``browser``). A page it opens keeps the context's
-  ``color_scheme`` (``keep_scheme``).
+  ``color_scheme`` (``keep_scheme``). Screenshots in such a context go through
+  ``Guarded.screenshot``, which takes out the inline style Playwright's WebKit adds for each.
 - ``browser`` (session): pytest-playwright's, except that in Firefox every new context gets
   a pass-through route.
 - ``no_network``: fails any connection or name lookup that isn't the loopback interface.
@@ -52,9 +54,50 @@ GUARDS_JS = HERE / "guards.js"
 CI_CADDY_URL = "http://127.0.0.1:8080"
 FAKE_COMMIT = "0" * 40
 LOOPBACK = frozenset({"127.0.0.1", "::1", "localhost"})
+# Playwright's WebKit (WPE) draws through EGL, and glvnd picks the vendor library. NVIDIA's
+# crashes WebKit's page process now and then (a core dump in libnvidia-eglcore; "Page
+# crashed", or a page or context that closes at once, "Target page, context or browser has
+# been closed"): 4 of 5 runs of a few a11y and privacy tests on 2026-11-02, none of 6 on
+# Mesa's. So where both are installed, WebKit gets Mesa's, unless EGL_VENDOR is already set.
+EGL_VENDORS = Path("/usr/share/glvnd/egl_vendor.d")
+EGL_VENDOR = "__EGL_VENDOR_LIBRARY_FILENAMES"
 # Chromium: "... violates the following Content Security Policy directive ..." or "Refused to
-# load ..."; Firefox: "Content-Security-Policy: The page's settings blocked ...".
+# load ..."; Firefox: "Content-Security-Policy: The page's settings blocked ..."; WebKit:
+# "Refused to apply a stylesheet ...".
 CSP_MESSAGE = re.compile(r"content[- ]security[- ]policy|refused to", re.IGNORECASE)
+# What each screenshot in Playwright's WebKit adds (Guarded.screenshot): to sync animations it
+# appends <style>body {}</style> to the page from its utility world (the driver's
+# inPagePrepareForScreenshots, with shouldToggleStyleSheetToSyncAnimations true in WebKit
+# only), and the site's style-src 'self' refuses it. guards.js records the violation below,
+# its line the one in Playwright's function, and WebKit logs the console line below. Chromium
+# and Firefox add nothing a page's CSP sees.
+WEBKIT_SHOT_VIOLATION = {
+    "directive": "style-src-elem",
+    "blocked": "inline",
+    "source": "",
+    "line": 5,
+    "sample": "",
+}
+WEBKIT_SHOT_MESSAGE = (
+    "Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline'"
+)
+# In the page: take out of guards.js's violations the first entry at or after `start` equal to
+# `entry`, waiting up to 1 s for it (the event is queued), and return how many went (0 or 1).
+DROP_SHOT_VIOLATION_JS = """async ([start, entry]) => {
+  const list = window.__tffGuards.violations;
+  const keys = Object.keys(entry);
+  const same = (v) => Object.keys(v).length === keys.length && keys.every((k) => v[k] === entry[k]);
+  const deadline = performance.now() + 1000;
+  for (;;) {
+    const at = list.findIndex((v, i) => i >= start && same(v));
+    if (at >= 0) {
+      list.splice(at, 1);
+      return 1;
+    }
+    if (performance.now() > deadline) return 0;
+    await new Promise((resolve) => setTimeout(resolve, 10));
+  }
+}"""
 SCHEME_JS = "(dark) => matchMedia('(prefers-color-scheme: dark)').matches === dark"
 
 # Requesting any of these makes a test a browser test.
@@ -200,10 +243,21 @@ def browser(browser: Any, browser_name: str) -> Any:
 
 @pytest.fixture(scope="session")
 def browser_type_launch_args(browser_type_launch_args: dict, browser_name: str) -> dict:
-    """Use ``TFF_CHROMIUM`` as the Chromium executable when it is set."""
+    """Use ``TFF_CHROMIUM`` as the Chromium executable when it is set; give WebKit Mesa's EGL
+    where NVIDIA's is installed too (``EGL_VENDOR``)."""
     executable = os.environ.get("TFF_CHROMIUM")
     if executable and browser_name == "chromium":
         return {**browser_type_launch_args, "executable_path": executable}
+    mesa = EGL_VENDORS / "50_mesa.json"
+    if (
+        browser_name == "webkit"
+        and EGL_VENDOR not in os.environ
+        and mesa.is_file()
+        and any(EGL_VENDORS.glob("*nvidia*.json"))
+    ):
+        # A launch's env replaces the browser's whole environment, so it starts from ours.
+        env = {**os.environ, **browser_type_launch_args.get("env", {}), EGL_VENDOR: str(mesa)}
+        return {**browser_type_launch_args, "env": env}
     return browser_type_launch_args
 
 
@@ -219,6 +273,7 @@ class Guarded:
     responses: list[Any] = field(default_factory=list)
     console: list[tuple[str, str]] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)
+    shot_refusals: int = 0  # WebKit's own screenshot <style> refusals taken out (screenshot)
     _pages: set[int] = field(default_factory=set)
 
     def attach(self) -> None:
@@ -245,8 +300,30 @@ class Guarded:
         return page.evaluate("() => JSON.parse(JSON.stringify(window.__tffGuards))")
 
     def csp_messages(self) -> list[str]:
-        """Console messages that report a CSP violation, in Chromium's or Firefox's wording."""
-        return [text for _, text in self.console if CSP_MESSAGE.search(text)]
+        """Console messages that report a CSP violation, in any browser's wording, less one of
+        WebKit's ``WEBKIT_SHOT_MESSAGE`` lines for each refusal ``screenshot`` took out."""
+        found = []
+        discount = self.shot_refusals
+        for _, text in self.console:
+            if discount and text.startswith(WEBKIT_SHOT_MESSAGE):
+                discount -= 1
+            elif CSP_MESSAGE.search(text):
+                found.append(text)
+        return found
+
+    def screenshot(self, target: Any, **kwargs: Any) -> bytes:
+        """``target.screenshot(**kwargs)``, for a page or locator of this context, less what
+        the screenshot itself adds in WebKit: the one ``WEBKIT_SHOT_VIOLATION`` entry that
+        appears in guards.js's record during the call, and one ``WEBKIT_SHOT_MESSAGE`` console
+        line (``csp_messages``). Any other violation stays, so ``assert_clean`` still sees the
+        site's own. Taking pixels in a guarded context goes through here."""
+        if self.context.browser.browser_type.name != "webkit":
+            return target.screenshot(**kwargs)
+        page = getattr(target, "page", target)  # a locator's page, or the page itself
+        start = page.evaluate("() => window.__tffGuards.violations.length")
+        shot = target.screenshot(**kwargs)
+        self.shot_refusals += page.evaluate(DROP_SHOT_VIOLATION_JS, [start, WEBKIT_SHOT_VIOLATION])
+        return shot
 
     def cookie_responses(self) -> list[str]:
         """URLs whose response set a cookie."""

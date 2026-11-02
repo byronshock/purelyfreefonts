@@ -91,7 +91,7 @@ BASE = """\
 INDEX = """\
 {% extends "base.html.j2" %}
 {% block head %}
-<link rel="preload" as="fetch" crossorigin href="{{ list.index_url }}">
+<link rel="preload" as="fetch" href="{{ list.index_url }}">
 {% endblock %}
 {% block main %}
 <h1>Fonts</h1>
@@ -2230,7 +2230,9 @@ def test_real_templates_render_the_list_contract(tmp_path, catalog, real_site):
     (preload,) = [a for a in preloads if a.get("as") == "fetch"]  # never the match file
     assert (preload["href"], preload["as"]) == (ol["data-index"], "fetch")
     assert load_json(out, ol["data-match"])["format"] == "tff-match"
-    assert "crossorigin" in preload
+    # No crossorigin: the script fetches the index in the preload's own mode, and with it a
+    # crossorigin preload made WebKit download the index twice (10-data.js).
+    assert "crossorigin" not in preload
     assert ol["data-run-date"] == SAMPLE["run"]["date"]
     lis = [a for t, a in tags if t == "li" and "font" in (a.get("class") or "").split()]
     rows = [a["data-id"] for a in lis]

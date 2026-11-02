@@ -1122,6 +1122,90 @@ def test_search_writes_the_url_after_300_ms_and_speaks_after_500_ms(
     guarded.assert_clean(page)
 
 
+# Refuse the page's history writes while window.__tffRefuse is true, as WebKit does once a page
+# has made 100 in 10 seconds (15-state.js, write), and count the refusals. Installed over
+# RECORDER's count, so a refused push adds no entry.
+REFUSE_JS = """() => {
+  window.__tffRefuse = true;
+  window.__tffRefused = 0;
+  for (const name of ['pushState', 'replaceState']) {
+    const write = History.prototype[name];
+    History.prototype[name] = function refusing(...args) {
+      if (window.__tffRefuse) {
+        window.__tffRefused += 1;
+        throw new DOMException(`history.${name}() more than 100 times`, 'SecurityError');
+      }
+      return write.apply(this, args);
+    };
+  }
+}"""
+
+
+def test_a_refused_history_write_keeps_the_change_and_the_url_catches_up(
+    guarded_context: Any, sample: dict[str, Any]
+) -> None:
+    """site/CONTRACT.md section 9, a refused write: the change shows and nothing throws, a
+    panel opened meanwhile stays open through the next change (the URL's older font isn't
+    adopted), and one replace brings the URL back in step a second after the last refusal.
+    The refusal is WebKit's, made in any browser here; the next test meets WebKit's own."""
+    guarded, page = open_list(guarded_context, "#os=linux")
+    # Page time stands still from here, and moves only when the test says so.
+    page.clock.install()
+    page.clock.pause_at(page.evaluate("Date.now()") + 1000)
+    page.evaluate(REFUSE_JS)
+    page.check("#f-cat-serif")
+    first = page.evaluate("document.querySelector('#list > li.font').dataset.id")
+    page.click(f"#font-{first} .details-toggle")
+    page.wait_for_selector(f"#details-{first}[data-state='ready']", state="attached")
+    page.click("#sort-name")
+    assert rows(page) == expected_rows(sample, {"cat": "serif", "sort": "name"})
+    assert page.get_attribute(f"#font-{first} .details-toggle", "aria-expanded") == "true"
+    assert page.get_attribute("#sort-name", "aria-pressed") == "true"
+    assert hash_of(page) == "#os=linux"  # the URL is behind
+    assert page.evaluate("window.__tffRefused") == 3
+    page.clock.run_for(999)
+    assert page.evaluate("window.__tffRefused") == 3
+    page.clock.run_for(2)
+    assert page.evaluate("window.__tffRefused") == 4  # the catch-up, refused too
+    page.evaluate("window.__tffRefuse = false")
+    page.clock.run_for(1001)
+    caught_up = f"#cat=serif&sort=name&font={first}&os=linux"
+    assert hash_of(page) == caught_up
+    assert entries(page) == 0  # replaced, not pushed: Back skips the refused entries
+    # From here every write goes through: one entry per change.
+    page.click("#sort-rank")
+    assert hash_of(page) == f"#cat=serif&font={first}&os=linux"
+    assert entries(page) == 1
+    page.go_back()
+    page.wait_for_function(f"() => location.hash === '{caught_up}'")
+    page.wait_for_function(
+        "() => document.getElementById('sort-name').getAttribute('aria-pressed') === 'true'"
+    )
+    assert rows(page) == expected_rows(sample, {"cat": "serif", "sort": "name"})
+    assert page.evaluate("window.__tffRefused") == 4
+    guarded.assert_clean(page)
+
+
+def test_holding_a_sort_button_down_keeps_the_page_in_step(
+    guarded_context: Any, doc: dict[str, Any]
+) -> None:
+    """A key held on a sort button: 121 clicks at once, more history writes than WebKit takes
+    in 10 seconds (100). In every browser the list and the button show the last click's order
+    and nothing throws; the URL names that order at once in Chromium and Firefox, and in
+    WebKit once its 10 seconds are up (15-state.js, write)."""
+    guarded, page = open_list(guarded_context)
+    page.evaluate(
+        "() => { const button = document.getElementById('sort-name');"
+        " for (let i = 0; i < 121; i += 1) button.click(); }"
+    )
+    assert page.get_attribute("#sort-name", "aria-pressed") == "true"
+    assert page.get_attribute("#sort-name", "data-dir") == "asc"  # odd clicks: A to Z
+    assert rows(page) == expected_rows(doc, {"sort": "name"})
+    page.wait_for_function("() => location.hash === '#sort=name'", timeout=15_000)
+    assert rows(page) == expected_rows(doc, {"sort": "name"})
+    guarded.assert_clean(page)
+
+
 def test_rows_are_the_server_rendered_nodes_moved_not_rebuilt(
     guarded_context: Any, views: list[str]
 ) -> None:
