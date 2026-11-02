@@ -255,7 +255,7 @@ Whatever the answer, step 2 checks whether a browser's session restore writes th
     - **Back gives back the hopper's controls, 1:** WebKit (Safari's engine) ignores `autocomplete="off"` on a `textarea` or `select` unless their `<form>` has it. A pasted list not yet matched, or one refused, comes back in the paste box on a Back that loads the page again, and sits in WebKit's session history. Against CONTRACT sections 4 and 11 and M3-D13 a.
     - **WebKit's cap on history writes, 1:** 100 in 10 s; on the next, `State.set` has already changed its state but notifies nothing. Low; holding Enter on a sort button reaches it.
   - [x] The owner rules on the hopper's controls in WebKit (above). *(2026-11-01: a `<form autocomplete="off">` that never submits, Claude's recommendation over emptying both controls as the page starts, `hopper_form_autocomplete_off`.)*
-  - [ ] The form, built in #104, with a test that Back gives back neither control.
+  - [x] The form, built in #104, with a test that Back gives back neither control. *(`4d69a5e`. In WebKit the Back test passes, and fails without the form's `autocomplete="off"`; a probe found the paste box empty after Back in all three engines. The layout measures the same.)*
   - [ ] The other fixes, and the suites passing in WebKit: a task of their own.
 
 **Done when:**
