@@ -202,26 +202,49 @@ def test_every_code_point_matches_python(keys):
     The engine and Python may ship different Unicode versions, so a code point is compared
     only when both call it assigned. Surrogates are left out (see the test above); private
     use is kept, since icon fonts put it in names.
+
+    One engine can hold two versions. WebKit builds its regex tables from its own copy of
+    the Unicode data (17.0 in Playwright's 26.6), but toLowerCase and normalize use the
+    system's ICU: 74 (Unicode 15.1) on this machine, as on Ubuntu 24.04 and in Safari on
+    macOS 14 and 15.0 to 15.3. There the keys leave Unicode 16's new capitals as they are, as
+    the engine must. So the engine calls a code point assigned only when its ICU knows it too:
+    ICU's root collation sorts a code point it doesn't know as unassigned, at or after the
+    first unassigned one. In Chromium and Firefox, which carry their own ICU, that leaves out
+    nothing more; in WebKit on ICU 74 it leaves out the 9,988 code points of Unicode 16 and 17
+    (owner ruling of 2026-11-02, ``keys_engine_icu``).
     """
     body = """(() => {
         const skip = /[\\p{Cn}\\p{Cs}]/u;
+        // ICU's order: U+FFFD sorts after everything on purpose, and private use sorts as
+        // unassigned, though every version assigns it.
+        const order = new Intl.Collator('und');
+        let first = 0;
+        while (!/\\p{Cn}/u.test(String.fromCodePoint(first))) first += 1;
+        const floor = String.fromCodePoint(first);
+        const unknown = (ch) =>
+          ch !== '\\uFFFD' && !/\\p{Co}/u.test(ch) && order.compare(ch, floor) >= 0;
         const changed = [];
         const unassigned = [];
+        const notInIcu = [];
         for (let cp = 0; cp <= 0x10FFFF; cp++) {
           const ch = String.fromCodePoint(cp);
           if (skip.test(ch)) {
             if (/\\p{Cn}/u.test(ch)) unassigned.push(cp);
             continue;
           }
+          if (unknown(ch)) {
+            notInIcu.push(cp);
+            continue;
+          }
           const m = K.matchKey(ch);
           const s = K.searchKey(ch);
           if (m !== ch || s !== ch) changed.push([cp, m, s]);
         }
-        return { changed, unassigned };
+        return { changed, unassigned, notInIcu };
     })()"""
     got = keys.run(body)
     changed = {cp: (m, s) for cp, m, s in got["changed"]}
-    engine_unassigned = set(got["unassigned"])
+    engine_unassigned = set(got["unassigned"]) | set(got["notInIcu"])
     compared = 0
     mismatches = []
     for cp in range(sys.maxunicode + 1):
