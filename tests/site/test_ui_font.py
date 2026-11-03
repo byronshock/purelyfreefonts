@@ -8,7 +8,9 @@ Runs in each engine given with ``--browser`` against the built site of tests/sit
   files held back until it has laid out in the fallback, then they are let through: once
   Arimo has loaded, every box on the first two screens is where it was, at the same size.
   (Arimo and Liberation Sans share their widths but not all their kerning, so a font swapped
-  in late could move a line break; ``swap`` did, by up to 72 px.)
+  in late could move a line break; ``swap`` did, by up to 72 px.) In Playwright's WebKit on
+  Linux, regular and bold text lays out the same in both fonts, so there only the list page's
+  semi-bold text would show a late swap.
 """
 
 import time
@@ -123,7 +125,12 @@ def test_a_late_font_moves_nothing(guarded_context: Any, path: str, width: int) 
 
 
 def test_the_check_sees_a_swapped_font_move_text(guarded_context: Any) -> None:
-    # The harness itself: with font-display: swap the late font is swapped in, and a line
-    # on the methodology page breaks elsewhere.
+    # The harness itself: with font-display: swap the late font is swapped in, and text on
+    # the list page moves. Its semi-bold (600) text, the sort buttons, the filters' headings
+    # and the download buttons, is Arimo's own weight (400 to 700) but Liberation Sans's
+    # bold, so the swap narrows it, the sort buttons by 2.5 to 3.25 px in all three engines.
+    # This check opened /methodology/ until 2026-11-02, but that page has only regular and
+    # bold text, which Playwright's WebKit lays out the same in both fonts on Linux (a
+    # 32 px line of kerned pairs measured 422.08 px in each), so nothing moved there.
     guarded = guarded_context(viewport={"width": 1280, "height": 900})
-    assert moved_boxes(guarded, "/methodology/", swap=True) != []
+    assert moved_boxes(guarded, "/", swap=True) != []

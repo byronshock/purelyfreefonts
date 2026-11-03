@@ -225,11 +225,25 @@ const Data = (() => {
     });
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
+      // A module that doesn't parse (a page served in its place, a cut download) never hands
+      // over. Chromium and Firefox report its SyntaxError at the window, then fire load at the
+      // script; WebKit (Safari's engine) reports it but fires neither load nor error, which
+      // would leave the call to time out, and a retry to wait on the same script again. So an
+      // error the browser reports for this module's URL before any hand-off is a 'handoff'
+      // at once, as the load would be. After a hand-off, the load decides.
+      const failed = (event) => {
+        if (!event.isTrusted || event.filename !== script.src || count !== 0) return;
+        settled();
+        reject(new MatchError('handoff', `${url} failed before it handed over`));
+      };
+      const settled = () => removeEventListener('error', failed);
+      addEventListener('error', failed);
       // Only an event the browser fired counts (isTrusted): no event a script dispatches is
       // trusted, and the browser fires one load or error at this script, neither of which
       // bubbles, so a trusted one here is this script's own, and comes once.
       script.addEventListener('load', (event) => {
         if (!event.isTrusted) return;
+        settled();
         if (count === 1 && usable(given)) {
           taken = given;
           resolve(taken);
@@ -238,7 +252,9 @@ const Data = (() => {
         }
       });
       script.addEventListener('error', (event) => {
-        if (event.isTrusted) reject(new MatchError('load', `${url} could not be loaded`));
+        if (!event.isTrusted) return;
+        settled();
+        reject(new MatchError('load', `${url} could not be loaded`));
       });
       script.type = 'module';
       script.src = url;
