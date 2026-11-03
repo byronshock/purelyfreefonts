@@ -300,7 +300,7 @@ Whatever the answer, step 2 checks whether a browser's session restore writes th
 
 ### Step 4: The owner looks on staging
 **Who:** the lead deploys; the owner looks. **Depends on:** steps 2 and 3 merged into #100; Q3.
-- [ ] The lead rebases `preview/2026-10-17` on #100's new head (`hopper_on_staging`) and deploys it with `ops/deploy.sh staging`.
+- [x] The lead rebases `preview/2026-10-17` on #100's new head (`hopper_on_staging`) and deploys it with `ops/deploy.sh staging`. *(2026-11-03: `ba2f627`, the four October commits on #100's `28aae7c`, which adds the previews' fix: once a list has loaded, Chromium no longer fetches previews again (the a8ad402 deploy's live privacy test had failed on that). The deploy passed: 4,951 site tests, then the live tests.)*
 - [ ] The owner drops, chooses and pastes a real list in Chromium and Firefox, and rules on the screens, F3's Show menu included. Further findings go here as F5, F6, …
 
 **Done when:** the owner has looked, and any new findings are recorded.
