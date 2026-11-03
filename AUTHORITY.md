@@ -453,7 +453,8 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
     - it reads from top to bottom: "Make the list", then "Drop or paste it", then the result (`hopper_steps_in_order`);
     - its step headings sit below the title: 14 px against the title's 16 px, numbered and indented (`hopper_subheadings`);
     - once a file's list loads, the drop zone says "File read: <n> font names.", a count the page already keeps. The file's name isn't shown, and a matched paste still leaves the paste box. The owner took Claude's receipt over the file's text in the paste box (`hopper_file_shown`);
-    - Claude's nine suggestions go in too (`hopper_layout_suggestions`). Among them: the visitor's own system's commands open first, "Hide fonts that come with" joins the section, and "Clear filters" moves to the top of the panel.
+    - Claude's nine suggestions go in too (`hopper_layout_suggestions`). Among them: the visitor's own system's commands open first, "Hide fonts that come with" joins the section, and "Clear filters" moves to the top of the panel;
+    - the hopper's controls sit in a `<form autocomplete="off">` that never submits, so WebKit, Safari's engine, keeps neither the paste box's text nor the Show menu's choice in session history. It's the one exception to "filters never in a `<form>`" (`hopper_form_autocomplete_off`).
 
   *(2026-10-21 to 2026-11-01, `data/reviews/site/`)*
 
@@ -522,6 +523,7 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
   - **On the real catalog:** axe on every page in both themes at desktop width, axe with a details panel open, reflow at 320 px, and every test that depends on the data (list, details, specimens, privacy, serving).
   - **On the sample catalog only** (`site-browser`, marked `sample_only`): the rest of the accessibility grid, which covers every width, filter state, forced colours, text spacing, focus and the keyboard paths. It tests the templates and CSS, which are the same in every row, and on the real catalog it ran past CI's 45-minute limit.
   - Milestone 2 step 6's axe requirement is met by the sample run. Recorded in `data/reviews/ci/2026-09-30.toml`.
+- **Site tests in WebKit (2026-11-02).** The browser suites run locally in Playwright's WebKit too; CI runs Chromium and Firefox (the owner, 2026-11-01: "WebKit tests, definitely"). An engine can hold two Unicode versions: WebKit's regex tables are its own (Unicode 17), but its case mapping and normalization use the system's ICU (74, Unicode 15.1, here, on Ubuntu 24.04 and in Safari on macOS 14 and 15.0 to 15.3). So `tests/site/test_keys_js.py` compares a code point with Python's keys only when the engine's ICU knows it too, asked through `Intl.Collator`'s root order. That changes nothing in Chromium or Firefox, and in WebKit on ICU 74 it leaves out Unicode 16 and 17. The owner took Claude's recommendation over an xfail in WebKit. Recorded in `data/reviews/ci/2026-11-02.toml` (`keys_engine_icu`).
 - **Backlog.** *(2026-09-25)*
   - **Tool.** [Backlog.md](https://github.com/MrLesk/Backlog.md) keeps its tasks in `backlog/`, committed to the public repository.
   - **What goes in it.** Only loose items: ideas, bugs and later work that no milestone checklist covers. The milestone checklists stay the plan, and decisions stay in this file, never in `backlog/decisions/`.

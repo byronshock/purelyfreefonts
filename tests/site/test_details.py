@@ -269,6 +269,31 @@ def _wait_ready(page: Any, font_id: str) -> None:
     page.wait_for_selector(f"#details-{font_id}[data-state='ready']")
 
 
+FRAMES_JS = "() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))"
+
+
+def _settle(page: Any, locator: Any) -> None:
+    """Scroll ``locator`` to the middle of the screen until it stops moving.
+
+    Rows use content-visibility (site/css/20-list.css): a row drawn for the first time grows
+    from ``--row-est-h`` to its own height a frame later, and so do the rows above it on the
+    screen, which moves everything below them (at 320 px the sample's rows are 207 to 298 px,
+    not 161). Playwright's click scrolls and presses within that frame. In WebKit the press
+    came down on a row's Details button, the button moved 144 px down, and the press came up
+    on the row's name, so the click went to the row and the panel never opened; Chromium and
+    Firefox move just after their click. A visitor clicks what has stopped moving, so the
+    test does too."""
+    last = None
+    for _ in range(5):
+        locator.evaluate("(el) => el.scrollIntoView({ block: 'center' })")
+        page.evaluate(FRAMES_JS)
+        box = locator.bounding_box()
+        if box == last:
+            return
+        last = box
+    raise AssertionError(f"still moving after 5 scrolls: {box}")
+
+
 def _font_requests(guarded: Any) -> list[str]:
     return [url for url in guarded.requests if "/assets/fonts/" in url]
 
@@ -659,6 +684,8 @@ def test_panel_reflows_at_320_px(guarded_context):
         shown = data.server_order(DOC)[:40]
         ids = (max(shown, key=lambda f: len(f["family"]))["id"], shown[0]["id"])
     for font_id in ids:
+        # The first row is far down at 320 px, among rows not drawn yet (_settle).
+        _settle(page, _toggle(page, font_id))
         _toggle(page, font_id).click()
         _wait_ready(page, font_id)
         _panel(page, font_id).locator("summary.details-evidence-toggle").click()  # unfold

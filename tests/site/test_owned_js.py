@@ -37,9 +37,10 @@ routed page with a stub list: one GET of the path in ``#list[data-match]``, memo
 410 of it or of the list index rejects with ``Data.Stale``, and any other failure with a
 ``Data.MatchError`` and its code; one ``<script type="module">`` for the path in
 ``#list[data-matcher]``, memoised, resolving with the module's hand-off, and each way it can
-fail (no load, no usable hand-off, no answer in ``MATCHER_TIMEOUT_MS``, on Playwright's clock) a
-``Data.MatchError`` with its code; the page adds that script once, ever, so a failure to load
-or hand over is kept until a reload, and a retry after a timeout waits on the same script;
+fail (no load, no parse, no usable hand-off, no answer in ``MATCHER_TIMEOUT_MS``, on
+Playwright's clock) a ``Data.MatchError`` with its code, at once, in WebKit too, which fires no
+load at a module that doesn't parse; the page adds that script once, ever, so a failure to
+load or hand over is kept until a reload, and a retry after a timeout waits on the same script;
 the name is Data's permanent setter from just before it adds the script, and a stand-in that
 another script gives is never taken, however it does so (before or during the download, with a
 dispatched load event, with the module's errors hidden, as the load arrives, or after running
@@ -1192,7 +1193,12 @@ MATCHER_CASES: dict[str, tuple[Answer | str, list[Any]]] = {
     "a server error": ((500, ""), ["MatchError", "load"]),
     "a network error": (None, ["MatchError", "load"]),
     "served as JSON": ((200, MATCHER, "application/json"), ["MatchError", "load"]),
+    # A module that doesn't parse never runs: WebKit fires no load at its script, only the
+    # window's error event, which Data reads (10-data.js, addMatcher).
     "not JavaScript": ((200, "<!doctype html><title>x</title>"), ["MatchError", "handoff"]),
+    "a hand-off that doesn't parse": ((200, MATCHER + "\n)\n"), ["MatchError", "handoff"]),
+    # A module that throws once it has handed over: the load decides, as before.
+    "a throw after the hand-off": ((200, MATCHER + "\nthrow new Error('x');\n"), ["ok", True]),
     **{label: ((200, js), ["MatchError", "handoff"]) for label, js in NO_HAND_OFF.items()},
 }  # fmt: skip
 # In the page: the scripts in the head, as [type, src, text].
@@ -1213,10 +1219,10 @@ def test_load_matcher_loads_the_list_s_matcher_module_once_and_takes_its_hand_of
 ):
     """inventory_matcher_on_demand: one <script type="module"> for #list[data-matcher], a
     plain GET; its hand-off, frozen, memoised. A module that fails to load is a MatchError
-    'load' (a script's error event doesn't tell a 404 from a network error), and one that runs
-    but gives Data's setter no single usable value is 'handoff'. Both are kept, since a browser may keep a
-    module's failed fetch for the page (Chromium does), so the second call asks for nothing
-    and adds no script."""
+    'load' (a script's error event doesn't tell a 404 from a network error), and one that
+    doesn't parse, or runs but gives Data's setter no single usable value, is 'handoff'. Both
+    are kept, since a browser may keep a module's failed fetch for the page (Chromium does), so
+    the second call asks for nothing and adds no script."""
     answer, want = MATCHER_CASES[label]
     page = data_pages.open(f'data-match="{MATCH_PATH}"', (200, DOC), matcher=answer)
     assert page.evaluate(OUTCOME, "loadMatcher") == [want, want]
@@ -1354,6 +1360,14 @@ ROUTES = {
     "a dispatched error alone": (
         "",
         "document.head.querySelector('script').dispatchEvent(new Event('error'));",
+        "ok",
+    ),
+    # nor one dispatched at the window as the module's, which Data reads for a module that
+    # doesn't parse
+    "a dispatched window error alone": (
+        "",
+        """dispatchEvent(new ErrorEvent('error', {
+          filename: document.head.querySelector('script').src, message: 'SyntaxError' }));""",
         "ok",
     ),
     # B: a window error listener, added before Data is asked, that hides the module's errors,

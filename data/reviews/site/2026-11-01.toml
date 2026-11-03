@@ -35,3 +35,10 @@ reason = "The owner: \"I'd like you to suggest other changes to the filter bar b
 value = "PLAN-hopper.md"
 ruling = "The owner's review of the hopper's layout has its own working checklist, PLAN-hopper.md, tracked like PLAN-REVIEWERS-2.md. Its build work is part of docs/milestone-3.md's PR 4."
 reason = "The owner, 2026-11-01: \"Please make this into PLAN-hopper.md.\""
+
+[hopper_form_autocomplete_off]
+choice = "a"
+recommended = true
+value = "form_autocomplete_off"
+ruling = "The hopper's controls sit in a <form autocomplete=\"off\"> that never submits: it has no action and no submit button, a submit is cancelled, and the CSP's form-action 'none' would block one anyway. So WebKit, Safari's engine, saves neither the paste box's text nor the Show menu's choice in session history: it honours autocomplete=\"off\" on a textarea or select only through their form, where Chromium and Firefox honour it on the control. This amends the site's rule that filters live in <search> and fieldsets, never in a <form> (site/CONTRACT.md section 4, and the CSP lint in src/tff_site/budgets.py): the hopper's form is the one exception, and no control in it has a name."
+reason = "The WebKit triage of 2026-11-01 (PLAN-hopper.md, step 2's WebKit item): in Playwright's WebKit 26.6, a list typed or pasted into the hopper but not matched came back in the paste box on a Back that loads the page again, and both values sat in WebKit's session-history entry, against site/CONTRACT.md sections 4 and 11 and M3-D13 a. Claude offered (a) the form, which keeps both out of WebKit's history, and (b) emptying both controls as the page starts, which fixes what a visitor sees but leaves the text in that history entry. The owner chose (a), Claude's recommendation."

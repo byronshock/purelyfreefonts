@@ -792,8 +792,11 @@ def test_the_hook_drives_the_built_list(page):
     assert page.locator(f"#list > #font-{hidden}").count() == 0
     assert "is-dim" in page.locator(f"#font-{dimmed}").get_attribute("class")
     slot = page.locator(f'#font-{noted} .ext[data-filter="t"]')
-    assert slot.locator(".ext-badge").inner_text() == "Yours"
-    assert slot.locator(".ext-note").inner_text() == "Installed"
+    # textContent, not innerText: hiding a row re-inserts every row (Render's replaceChildren),
+    # and Chromium and WebKit give a content-visibility: auto row just inserted an empty
+    # innerText until their next frame, which CI's run 41567661033 read once.
+    assert slot.locator(".ext-badge").text_content() == "Yours"
+    assert slot.locator(".ext-note").text_content() == "Installed"
     assert slot.locator("a.ext-link").evaluate_all("links => links.map((a) => a.href)") == [
         page.url.split("#")[0].rstrip("/") + "/methodology/"
     ]

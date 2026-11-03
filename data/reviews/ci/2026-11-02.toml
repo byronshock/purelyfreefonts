@@ -1,0 +1,10 @@
+# Owner ruling of 2026-11-02 on how the site's tests treat a browser engine whose Unicode tables differ, asked in chat as a single-select
+# question while the browser suites were made to pass in Playwright's WebKit 26.6. Ruled by the owner, Byron Shock; recorded by Claude.
+# Also in AUTHORITY.md (Repository and workflow, Site tests in WebKit) and in tests/site/test_keys_js.py.
+
+[keys_engine_icu]
+choice = "a"
+recommended = true
+value = "compare_what_the_engine_s_icu_knows"
+ruling = "tests/site/test_keys_js.py's every-code-point test compares a code point with Python's keys only when the engine calls it assigned in its regex tables and its ICU knows it too: ICU's root collation (Intl.Collator('und')) sorts a code point it doesn't know as unassigned, at or after the first unassigned one. In Chromium and Firefox, which carry their own ICU, that leaves out nothing more than before. In WebKit on the system's ICU 74 it leaves out the 9,988 code points of Unicode 16 and 17, among them the 66 whose keys Python changes and the engine can't."
+reason = "In Playwright's WebKit 26.6 the test found 66 code points that differ, such as U+1C89 CYRILLIC CAPITAL LETTER TJE, which Python 3.14 (Unicode 16.0) lowercases and the engine leaves as it is. WebKit builds its regex tables from its own copy of the Unicode data (17.0), so \\p{Cn} called them assigned, but toLowerCase and normalize use the system's ICU: 74 (Unicode 15.1) on this machine, as on Ubuntu 24.04 and in Safari on macOS 14 and 15.0 to 15.3 (macOS 15.4 and 26 ship ICU 76). The site's keys are right, being only as new as the engine's tables, and no catalog name or match-file name holds a non-ASCII character newer than Unicode 1.1. Of (a) asking ICU too, (b) xfail in WebKit when its ICU is older than Python's Unicode and (c) leaving it failing, the owner took Claude's recommendation."
