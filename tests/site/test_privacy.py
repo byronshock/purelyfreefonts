@@ -14,13 +14,16 @@ requested. Then, where the page has the hopper, **the list step** (``give_list``
 the page's own first font names is pasted, every Show mode and every rank is chosen, the whole
 list is scrolled, the list is forgotten, a second one dropped on the page and forgotten too; it
 may make exactly two requests, GETs of ``#list[data-matcher]`` and ``#list[data-match]`` with no
-query string and no body, and nothing else. ``findings()`` then reports, and the tests fail on:
+query string and no body, and, as the first list loads, one for each preview not yet asked for
+(hopper_previews_all_at_once), and nothing else. ``findings()`` then reports, and the tests fail
+on:
 
 - a request to another origin, or to ``/cdn-cgi/``, or a WebSocket;
 - a request for the hopper's match file (``/assets/match.<h>.json``) or its matcher module
   (``/assets/matcher.<h>.js``) but the list step's two: both load only once a list arrives (M3-D7
   a, ``inventory_matcher_on_demand``, site/CONTRACT.md section 11);
-- anything else the page asked for during the list step, or either request made another way;
+- anything else the page asked for during the list step (a preview asked for again, or after
+  the first list's, among them), or either request made another way;
 - a request to Stripe (the sweep never clicks the tip link);
 - a cookie in the context, or a ``Set-Cookie`` on any response;
 - anything in ``storage_state(indexed_db=True)``, or anything the recorders saw: storage and
@@ -51,11 +54,12 @@ the sweep visits every page the build writes; the sweep and the live checks
 violation, prefetch link, foreign request, match-file request, injected beacon, inline script,
 page error, bad headers and bad payloads); the list never asks for the hopper's match file or
 matcher module without a list; once a list arrives through the hopper (``site/js/55-mine.js``),
-with the list index loaded, exactly two new requests are made, plain same-origin GETs of the two
-hashed URLs, whose parser and matcher then work under the site's CSP and leave out what Python's
-reference finds; nothing more is asked for across the views, the Show modes, scrolling, Forget
-and later lists, and under each Show mode no preview is asked for (M3-D10 a); once both files
-have loaded it works offline; while the list index has failed to load with the page, a dropped
+with the list index loaded, exactly two new requests are made for it, plain same-origin GETs of
+the two hashed URLs, whose parser and matcher then work under the site's CSP and leave out what
+Python's reference finds; as it loads it asks for every preview not yet asked for, once, the
+same files whatever the list holds (hopper_previews_all_at_once, 2026-11-03, amending M3-D10 a),
+and nothing more is asked for across the views, the Show modes, scrolling, Forget and later
+lists, with every row's preview drawn; once both files have loaded it works offline; while the list index has failed to load with the page, a dropped
 list asks for nothing at all; and the live checks pass against this build.
 tests/site/test_mine.py has the rest of the hopper (the address, history, title and storage
 among it).
@@ -83,6 +87,7 @@ import pytest
 from tests.helpers import hopper_page
 from tests.helpers.names_files import copy_names
 from tests.live import checks
+from tests.site.test_specimens_loader import collect_garbage
 
 from tff_site import serve
 
@@ -106,6 +111,19 @@ PREFETCH_RELS = checks.PREFETCH_RELS
 LOADING_RELS = frozenset(
     {"stylesheet", "icon", "apple-touch-icon", "preload", "modulepreload", "manifest", "mask-icon"}
 )
+PREVIEW_PREFIX = "/assets/specimens/"
+# Every specimen's source on the page, in the list's order: the rows a view leaves out are
+# detached, so with no filter on and no list, every font's.
+SOURCES_JS = """() => Array.from(document.querySelectorAll('#list span.spec[data-src]'),
+  (span) => span.dataset.src)"""
+# Keeps every specimen span in the list (window.__tffSpans), so that once a view or a list
+# leaves their rows out, detached, a test can still see whether their files have arrived.
+KEEP_SPANS_JS = """() => {
+  window.__tffSpans = Array.from(document.querySelectorAll('#list span.spec[data-src]'));
+}"""
+# A JS expression: no kept span is waiting for its file. (A list's previews arrive after the
+# network has gone quiet once, so waiting for "networkidle" doesn't wait for them.)
+SPANS_ARRIVED = "window.__tffSpans.every((span) => span.dataset.state !== 'loading')"
 # A JS expression: every specimen box in the list has its mask.
 SPECS_SET = (
     "Array.from(document.querySelectorAll('#list span.spec[data-src]'))"
@@ -166,6 +184,9 @@ AT_BOTTOM_JS = "() => innerHeight + scrollY >= document.documentElement.scrollHe
 # The list's own first font names, which a list made from them owns.
 NAMES_JS = """() => Array.from(document.querySelectorAll('#list > li.font .font-name'),
   (h) => h.textContent.trim()).slice(0, 5)"""
+# Every row's font name, in the list's order.
+ALL_NAMES_JS = """() => Array.from(document.querySelectorAll('#list > li.font .font-name'),
+  (h) => h.textContent.trim())"""
 # The last five rows of the list whose previews haven't been asked for, as [id, name]: under
 # "Only fonts you have" a list of them brings them to the top of the screen.
 UNLOADED_JS = """() => Array.from(document.querySelectorAll('#list > li.font'))
@@ -176,8 +197,7 @@ UNLOADED_JS = """() => Array.from(document.querySelectorAll('#list > li.font'))
   .map((li) => [li.dataset.id, li.querySelector('.font-name').textContent.trim()])
   .slice(-5)"""
 # Which of the rows ``ids`` on the page have had their previews asked for (Specimens sets
-# data-state as it asks, and takes it away again from a row detached as its file arrives,
-# which the request lists still show). A row the view leaves out is detached, and can't ask.
+# data-state as it asks). A row the view leaves out is detached, and isn't found.
 ASKED_JS = """(ids) => ids.filter((id) =>
   document.querySelector(`#font-${id} span.spec[data-state]`) !== null)"""
 PAUSED_JS = "() => globalThis.tff.list.specimens.paused"
@@ -378,14 +398,26 @@ class Sweep:
         mode and each rank is chosen, the whole list scrolled, the list forgotten, a second list
         dropped on the page, and forgotten too. Its two requests are allowed (``listed``) if
         they are GETs of ``#list[data-matcher]`` and ``#list[data-match]``, with no query string
-        and no body; anything else this page asked for meanwhile is a finding (``hopper``)."""
+        and no body. As the first list loads it may ask for each preview this page hasn't asked
+        for yet, once (hopper_previews_all_at_once): the same files for every list. Anything
+        else this page asked for meanwhile is a finding (``hopper``), a preview asked for again
+        or after that first list's among them."""
         if not page.locator("#mine").count():
             return
         page.wait_for_load_state("networkidle")
         start = len(self.requests)
+        asked = {r.url for r in self.requests if _page_of(r) is page and _is_preview(r)}
         names = page.evaluate(NAMES_JS)
         text = "\n".join([*names, "Zzz Unknown Grotesk"])
+        page.evaluate(KEEP_SPANS_JS)
         self._change(page, partial(hopper_page.paste, page, text, by_script=True))
+        wait_until(page, SPANS_ARRIVED, "the list's previews", timeout_s=60)
+        page.wait_for_load_state("networkidle")
+        loaded = len(self.requests)
+        first = [r for r in self.requests[start:loaded] if _page_of(r) is page and _is_preview(r)]
+        counts = Counter(r.url for r in first)
+        for url in sorted(url for url, n in counts.items() if n > 1 or url in asked):
+            self.hopper.append(f"a list asked again for the preview {url}")
         for mode in ("all", "only", "missing"):
             self._change(page, partial(page.select_option, "#mine-show", mode))
             self.done["hopper modes"] += 1
@@ -399,7 +431,8 @@ class Sweep:
         self._change(page, partial(page.click, "#mine-forget"))
         page.wait_for_load_state("networkidle")
         self.done["hopper lists"] += 2
-        made = [r for r in self.requests[start:] if _page_of(r) is page]
+        self.done["hopper previews"] += len(first)
+        made = [r for r in self.requests[start:] if _page_of(r) is page and r not in first]
         want = sorted(page.get_attribute("#list", a) or "" for a in ("data-matcher", "data-match"))
         if sorted(urlsplit(r.url).path for r in made) != want:
             self.hopper.append(f"a list made {sorted(r.url for r in made)}, not {want}")
@@ -669,6 +702,11 @@ def _page_of(request: Any) -> Any:
         return request.frame.page
     except Exception:
         return None
+
+
+def _is_preview(request: Any) -> bool:
+    """Whether ``request`` is for a specimen, a font's preview (site/CONTRACT.md section 5)."""
+    return urlsplit(request.url).path.startswith(PREVIEW_PREFIX)
 
 
 # --- this module's site -----------------------------------------------------------------------
@@ -957,19 +995,22 @@ def _assert_plain_gets(requests: list[Any]) -> None:
         assert response.status == 200
 
 
-def test_a_list_makes_exactly_two_requests_and_nothing_after_it(
-    guarded_context: Any, site_dir: Path
+def test_a_list_makes_two_requests_and_asks_for_every_preview_then_nothing(
+    guarded_context: Any, site_dir: Path, browser_name: str
 ) -> None:
     """inventory_matcher_on_demand, amending Milestone 3 step 9: nothing loads the hopper's
     files with the page; once a list arrives through the hopper (pasted and checked), the list
-    index loaded, exactly two new requests are made, GETs of the hashed URLs on #list with no
-    query string and no body, so nothing of the list goes in them. Under the site's CSP the
-    module's script loads (script-src 'self'), its hand-off is frozen, the name it came through
-    is Data's permanent accessor, and the page leaves out what Python's reference finds. Then
-    no view, Show mode, scroll through the whole list, Forget or later list (dropped, chosen)
-    asks for anything, and once both files have loaded the hopper works offline. The list is
-    of fonts whose previews haven't loaded, far down the list: "Only fonts you have" brings
-    them to the screen, where previews that went on again (M3-D10 a) would be asked for."""
+    index loaded, exactly two new requests are made for it, GETs of the hashed URLs on #list
+    with no query string and no body, so nothing of the list goes in them. Under the site's CSP
+    the module's script loads (script-src 'self'), its hand-off is frozen, the name it came
+    through is Data's permanent accessor, and the page leaves out what Python's reference
+    finds. As the list loads it asks for every preview not yet asked for, each once
+    (hopper_previews_all_at_once, 2026-11-03, amending M3-D10 a): the same files for every
+    list. Then, in Chromium with the caches emptied and garbage collected, no view, Show mode,
+    scroll through the whole list, Forget or later list (dropped, chosen) asks for anything,
+    every row shown has its preview, and once both files have loaded the hopper works offline.
+    The list is of fonts whose previews hadn't loaded, far down the list, so the list leaves
+    their rows off the page as their files arrive, and "Only fonts you have" brings them back."""
     from tff_catalog import owned
 
     guarded = guarded_context(viewport=WIDE)
@@ -981,34 +1022,46 @@ def test_a_list_makes_exactly_two_requests_and_nothing_after_it(
     match, matcher = _hopper_urls(page)
     assert [r for r in sweep.requests if urlsplit(r.url).path in (match, matcher)] == []
     assert page.evaluate("() => 'tffMatcher' in globalThis") is False
+    every = set(page.evaluate(SOURCES_JS))
+    asked = {urlsplit(r.url).path for r in sweep.requests if _is_preview(r)}
+    assert asked < every, "the list should have previews not yet asked for"
     before = len(sweep.requests)
     unloaded = page.evaluate(UNLOADED_JS)
     assert len(unloaded) == 5, "the list should have rows whose previews haven't loaded"
     names = [name for _, name in unloaded]
     text = "\n".join([*names, f"{names[0]} Bold", "Zzz Unknown Grotesk"])
+    page.evaluate(KEEP_SPANS_JS)
     hopper_page.paste(page, text, by_script=True)
+    wait_until(page, SPANS_ARRIVED, "the list's previews")
     page.wait_for_load_state("networkidle")
-    new = sweep.requests[before:]
+    new = [r for r in sweep.requests[before:] if not _is_preview(r)]
     assert sorted(r.url for r in new) == sorted(sweep.origin + url for url in (match, matcher))
     _assert_plain_gets(new)
     assert {r.resource_type for r in new} == {"script", "fetch"}
     sweep.listed.update(id(r) for r in new)
+    previews = [r for r in sweep.requests[before:] if _is_preview(r)]
+    assert sorted(urlsplit(r.url).path for r in previews) == sorted(every - asked)
+    _assert_plain_gets(previews)
     assert page.evaluate(HAND_OFF_JS) == ["function", "function", False, False, True]
     table = owned.Table.from_document(json.loads((site_dir / match.lstrip("/")).read_bytes()))
     want = owned.match(owned.parse(text), table).to_json()["owned"]
     index = page.evaluate(INDEX_JS)
     assert {font for font, _ in unloaded} <= set(want)
     assert set(index["ids"]) - set(page.evaluate(SHOWN_JS)) == set(want)
-    # Each Show mode, settled and scrolled through: no preview asked for, nothing requested.
+    # Each Show mode, settled and scrolled through: every row shown has its preview, and
+    # nothing is requested, the caches emptied first in Chromium, so that a mask left
+    # unresolved would be fetched from the server again as its row is drawn.
+    cdp = collect_garbage(guarded.context, page) if browser_name == "chromium" else None
     after = len(sweep.requests)
     ids = [font for font, _ in unloaded]
     for mode in ("only", "all", "missing"):
         sweep._change(page, partial(page.select_option, "#mine-show", mode))
         page.evaluate(SETTLE_JS)
         assert page.evaluate(PAUSED_JS) is True, mode
-        assert page.evaluate(ASKED_JS, ids) == [], f"a preview asked for under {mode}"
+        if mode == "only":
+            assert sorted(page.evaluate(ASKED_JS, ids)) == sorted(ids)
         sweep.scroll_to_bottom(page)
-        assert page.evaluate(ASKED_JS, ids) == [], f"a preview asked for under {mode}, scrolled"
+        assert page.evaluate(SPECS_SET) is True, f"a row without its preview under {mode}"
         assert sweep.requests[after:] == [], mode
     # Every view, the whole list scrolled, Forget and two more lists: nothing.
     ranks = page.evaluate(RANKS_JS)
@@ -1021,7 +1074,7 @@ def test_a_list_makes_exactly_two_requests_and_nothing_after_it(
     sweep.scroll_to_bottom(page)
     page.wait_for_load_state("networkidle")
     assert sweep.requests[after:] == []
-    assert page.evaluate(ASKED_JS, ids) == []
+    assert page.evaluate(SPECS_SET) is True
     # Offline, the page has all it needs.
     guarded.context.set_offline(True)
     try:
@@ -1036,14 +1089,56 @@ def test_a_list_makes_exactly_two_requests_and_nothing_after_it(
         guarded.context.set_offline(False)
     page.wait_for_load_state("networkidle")
     assert sweep.requests[after:] == []
+    if cdp is not None:
+        cdp.detach()
     assert sweep.findings() == {}
 
 
-def test_bringing_the_hopper_into_sight_asks_for_no_preview(guarded_context: Any) -> None:
+def test_two_lists_ask_for_the_same_previews(guarded_context: Any) -> None:
+    """hopper_previews_all_at_once: what a list asks for tells nothing of it. Two visitors do
+    the same before their lists (the list opened, then a search for a far font's name, which
+    leaves its row alone on the page), then paste different lists, one of the list's first
+    fonts and one of its last: each asks for every preview not yet asked for, once, the same
+    files for both, though nearly every row is off the page as they arrive."""
+    asked_for: list[list[str]] = []
+    for pick in (slice(0, 5), slice(-5, None)):
+        guarded = guarded_context(viewport=WIDE)
+        sweep = Sweep(guarded, csp=expected_csp())
+        page = sweep.open_list()
+        page.wait_for_load_state("networkidle")
+        wait_until(page, SPECIMENS_SETTLED, "the previews near the screen")
+        every = set(page.evaluate(SOURCES_JS))
+        names = page.evaluate(ALL_NAMES_JS)
+        far, name = page.evaluate(UNLOADED_JS)[-1]
+        sweep._change(page, partial(page.fill, "#f-q", name))
+        wait_until(
+            page,
+            f"document.querySelector('#font-{far} span.spec[data-state=\"set\"]')",
+            "the far row's preview",
+        )
+        page.wait_for_load_state("networkidle")
+        before = len(sweep.requests)
+        asked = {urlsplit(r.url).path for r in sweep.requests if _is_preview(r)}
+        page.evaluate(KEEP_SPANS_JS)
+        hopper_page.paste(page, "\n".join(names[pick]), by_script=True)
+        wait_until(page, SPANS_ARRIVED, "the list's previews")
+        page.wait_for_load_state("networkidle")
+        sweep.listed.update(id(r) for r in sweep.requests[before:] if not _is_preview(r))
+        previews = sorted(urlsplit(r.url).path for r in sweep.requests[before:] if _is_preview(r))
+        assert previews == sorted(every - asked), "not every preview not yet asked for, once"
+        asked_for.append(previews)
+        assert sweep.findings() == {}
+    assert asked_for[0] == asked_for[1]
+
+
+def test_bringing_the_hopper_into_sight_asks_for_no_preview_until_the_list_loads(
+    guarded_context: Any,
+) -> None:
     """A list dropped while the hopper is below the fold (a short window): the page scrolls to
     "Checking your list…" as the list arrives, and the previews pause first, so the rows that
     come near the screen ask for nothing while the match file is on its way (held here until
-    the page has settled), nor after: the two requests are all."""
+    the page has settled). Once the list loads, it asks for every preview not yet asked for
+    (hopper_previews_all_at_once), and nothing more."""
     guarded = guarded_context(viewport={"width": 1280, "height": 400})
     sweep = Sweep(guarded, csp=expected_csp())
     page = sweep.open_list()
@@ -1052,9 +1147,12 @@ def test_bringing_the_hopper_into_sight_asks_for_no_preview(guarded_context: Any
     page.wait_for_load_state("networkidle")
     match, matcher = _hopper_urls(page)
     names = page.evaluate(NAMES_JS)
+    every = set(page.evaluate(SOURCES_JS))
+    page.evaluate(KEEP_SPANS_JS)
     held: list[Any] = []
     page.route(f"**{match}", lambda route: held.append(route))
     before = len(sweep.requests)
+    asked = {urlsplit(r.url).path for r in sweep.requests if _is_preview(r)}
     assert page.evaluate("() => scrollY") == 0
     prevented = page.evaluate(hopper_page.DROP_JS, ["#list", "\n".join(names), None, 0, "a"])
     assert prevented == {"enter": True, "over": True, "drop": True}
@@ -1067,13 +1165,17 @@ def test_bringing_the_hopper_into_sight_asks_for_no_preview(guarded_context: Any
     for _ in range(3):
         page.evaluate(SETTLE_JS)
     page.wait_for_timeout(200)
+    assert [r.url for r in sweep.requests[before:] if _is_preview(r)] == []
     held[0].continue_()
     wait_until(page, "!document.getElementById('mine-result').hidden", "the list's result")
+    wait_until(page, SPANS_ARRIVED, "the list's previews")
     page.evaluate(SETTLE_JS)
     page.wait_for_load_state("networkidle")
-    new = sweep.requests[before:]
+    new = [r for r in sweep.requests[before:] if not _is_preview(r)]
     assert sorted(urlsplit(r.url).path for r in new) == sorted([match, matcher])
     sweep.listed.update(id(r) for r in new)
+    previews = [urlsplit(r.url).path for r in sweep.requests[before:] if _is_preview(r)]
+    assert sorted(previews) == sorted(every - asked)
     assert sweep.findings() == {}
 
 

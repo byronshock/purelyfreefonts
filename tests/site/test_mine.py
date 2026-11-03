@@ -33,9 +33,12 @@ What a visitor does and sees (site/CONTRACT.md sections 4, 5 and 11; the owner's
   as section 11 says (a reload, a "Try again" that works, focus kept, or a check that can't
   run here), the matcher's timeout among them, with the list left as it was; and while the
   list index has failed, the page's own note in place of a list.
-- **Privacy**: the address, the history and the title never change, nothing is stored, a
-  reload or Back restores no Show menu, and the previews stay paused once a list loads, under
-  every Show mode (M3-D10 a). test_privacy.py counts the requests.
+- **Privacy**: the address, the history and the title never change, nothing is stored, and a
+  reload or Back restores no Show menu. Once a list loads, every preview not yet loaded is asked
+  for at once, whatever holds the previews, and every row gets its preview; the previews stay
+  paused under every Show mode until Forget lifts the hopper's pause
+  (hopper_previews_all_at_once, 2026-11-03, amending M3-D10 a). test_privacy.py counts the
+  requests.
 
 The lists are synthetic: the catalog's own family names, and names no catalog has.
 """
@@ -350,7 +353,8 @@ def changed(page: Any, action: Callable[[], Any]) -> None:
 
 
 def show(page: Any, mode: str) -> None:
-    """Choose a Show mode: the list redraws, and the previews stay paused (M3-D10 a)."""
+    """Choose a Show mode: the list redraws, and the previews stay paused until Forget
+    (hopper_previews_all_at_once)."""
     changed(page, lambda: page.select_option("#mine-show", mode))
     assert page.evaluate(PAUSED_JS) is True, f"previews went on under {mode}"
 
@@ -409,7 +413,7 @@ def test_a_pasted_list_leaves_out_the_fonts_it_has(
     line = count_line(len(before) - len(have & set(before)), universe(page))
     assert status(page) == " ".join(filter(None, [said, near_line(result), line]))
     assert page.input_value("#mine-paste") == "", "the paste box keeps no list"
-    assert page.evaluate(PAUSED_JS) is True, "previews stay off once a list loads (M3-D10 a)"
+    assert page.evaluate(PAUSED_JS) is True, "the hopper holds the previews once a list loads"
     assert page.is_hidden("#mine-error")
     assert_untouched(page, where)
     guarded.assert_clean(page)
@@ -681,8 +685,8 @@ def test_a_second_list_replaces_the_first_and_forget_drops_it(
     # Nothing of the list stays in the page, hidden or not.
     for line in ("#mine-summary", "#mine-near", "#mine-warning"):
         assert page.text_content(line) == "", line
-    # Previews that haven't loaded stay off until a reload (M3-D10 a), the list gone or not.
-    assert page.evaluate(PAUSED_JS) is True
+    # Forget lifts the hopper's pause (hopper_previews_all_at_once): no reload is needed.
+    assert page.evaluate(PAUSED_JS) is False
     # Forget set the Show menu back too: the next list opens with fonts you don't have.
     parsed, result = reference(first, table)
     hopper_page.paste(page, first)
@@ -1539,7 +1543,7 @@ def test_a_refused_list_leaves_the_last_one_as_it_was(
     assert_error(page, REFUSALS["command"], retry=False)
     assert text_of(page, "#mine-summary") == summary(parsed, result, len(doc["fonts"]), "missing")
     assert_left_out(page, before, set(result["owned"]), "missing")
-    assert page.evaluate(PAUSED_JS) is True, "a list loaded, so previews stay off (M3-D10 a)"
+    assert page.evaluate(PAUSED_JS) is True, "a list loaded, so the hopper holds the previews"
     # A file that can't be read fails too (no request can: both files are loaded, and kept).
     page.evaluate(UNREADABLE_JS)
     hopper_page.drop(page, "Inter\n")
@@ -2188,8 +2192,8 @@ def test_a_list_taken_when_the_rows_do_not_match_the_index_gets_the_page_s_note(
     or one still on its way (the match file held, or the file held at its read, then refused
     by the parser or failing to be read), ends as it would while the index has failed: the
     note is said and brought into view, the page at its foot meanwhile, and no result or
-    error is left in the filters, which never show. The previews stay off where a list had
-    loaded (M3-D10 a), and go on where none had."""
+    error is left in the filters, which never show. Where a list had loaded, it asked for
+    every preview at once (hopper_previews_all_at_once); where none had, the previews go on."""
     html = (site_dir / "index.html").read_text(encoding="utf-8")
     url = re.search(r'data-index="/assets/(list\.[0-9a-f]+\.json)"', html)
     assert url
@@ -2234,15 +2238,13 @@ def test_a_list_taken_when_the_rows_do_not_match_the_index_gets_the_page_s_note(
     assert page.evaluate(HIDDEN_JS, "mine-error") is True
     # Nor the receipt: a file's list that had loaded took its count with it (unload).
     assert page.evaluate(RECEIPT_JS) == INVITE
-    # A list that had loaded keeps the previews off (M3-D10 a: a list did load), though its
-    # result is gone; one that never loaded lets them go on. The last row with a preview,
-    # scrolled into view, tells which (the hook isn't published: the list never went live).
-    page.evaluate(TO_THE_LAST_JS)
+    # A list that had loaded asked for every preview as it loaded (hopper_previews_all_at_once),
+    # though its result is gone; one that never loaded lets them go on. Either way the last
+    # row with a preview asks for it (the hook isn't published: the list never went live).
     if when == "settled":
-        page.evaluate(TO_THE_LAST_JS)
-        assert page.evaluate(LAST_ASKED_JS) is False, "a list loaded, so previews stay off"
-    else:
         page.wait_for_function(LAST_ASKED_JS, timeout=10_000)
+    page.evaluate(TO_THE_LAST_JS)
+    page.wait_for_function(LAST_ASKED_JS, timeout=10_000)
     assert guarded.errors, "the mismatch reaches the console"
     guarded.errors.clear()
     guarded.assert_clean(page)
@@ -2352,8 +2354,8 @@ def test_none_of_a_list_s_names_is_written_into_the_page(
 # ------------------------------------------------------------------------------ previews
 
 
-# The last row with a preview: whether it has asked for it (its span's data-state, which a
-# row detached as its file arrives loses again; no test here hides that row).
+# The last row with a preview: whether it has asked for it (its span's data-state; no test
+# here hides that row).
 LAST_ASKED_JS = """() => {
   const spans = document.querySelectorAll('#list > li.font span.spec[data-src]');
   return 'state' in spans[spans.length - 1].dataset;
@@ -2368,19 +2370,78 @@ TO_THE_LAST_JS = """() => {
 
 def test_the_hook_s_resume_never_lifts_the_hopper_s_pause(guarded_context: Any, first: str) -> None:
     """Section 10: the hook's pause and resume are one holder of the previews' pause, and the
-    hopper's another. Once a list loads, previews stay off until a reload (M3-D10 a), whatever
-    the hook does: its resume(), alone or after its own pause(), leaves them paused, and the
-    last row with a preview, scrolled into view, doesn't ask for it."""
+    hopper's another. A list that loads asks for every preview at once, whatever holds them
+    (hopper_previews_all_at_once): the last row with a preview, far below the screen, asks for
+    its while the hook holds its own pause. The hopper's pause then holds until Forget,
+    whatever the hook does: its resume(), alone or after its own pause(), leaves it."""
     guarded, page = open_list(guarded_context)
     assert page.evaluate(LAST_ASKED_JS) is False
+    page.evaluate("() => globalThis.tff.list.specimens.pause()")
     hopper_page.paste(page, first, by_script=True)
     assert page.evaluate(PAUSED_JS) is True
+    page.wait_for_function(LAST_ASKED_JS, timeout=10_000)
     page.evaluate("() => globalThis.tff.list.specimens.resume()")
     assert page.evaluate(PAUSED_JS) is True, "the hook's resume lifted the hopper's pause"
     page.evaluate("() => { tff.list.specimens.pause(); tff.list.specimens.resume(); }")
     assert page.evaluate(PAUSED_JS) is True
-    page.evaluate(TO_THE_LAST_JS)
-    assert page.evaluate(LAST_ASKED_JS) is False, "a preview was asked for"
+    guarded.assert_clean(page)
+
+
+def test_forget_lifts_the_hopper_s_pause_and_never_the_hook_s(
+    guarded_context: Any, first: str, second: str
+) -> None:
+    """Forget lifts the hopper's pause (hopper_previews_all_at_once), with a list loaded and
+    another on its way (a file dropped, held at its read), which then lands nowhere and holds
+    nothing; with the hook's own pause held too, the previews stay paused until the hook
+    resumes."""
+    guarded, page = open_list(guarded_context)
+    hopper_page.paste(page, first, by_script=True)
+    assert page.evaluate(PAUSED_JS) is True
+    page.evaluate(GATED_READ_JS)
+    page.evaluate(hopper_page.DROP_JS, ["#list", second, None, 0, "fonts.txt"])
+    poll(page, READING_JS, "the file's read")
+    changed(page, lambda: page.click("#mine-forget"))
+    assert page.evaluate(PAUSED_JS) is False, "Forget left the hopper's pause"
+    page.evaluate(OPENED_JS)
+    assert page.is_hidden("#mine-result"), "the forgotten list landed"
+    assert page.evaluate(PAUSED_JS) is False
+
+    hopper_page.paste(page, first, by_script=True)
+    assert page.evaluate(PAUSED_JS) is True
+    page.evaluate("() => globalThis.tff.list.specimens.pause()")
+    changed(page, lambda: page.click("#mine-forget"))
+    assert page.evaluate(PAUSED_JS) is True, "Forget lifted the hook's pause"
+    page.evaluate("() => globalThis.tff.list.specimens.resume()")
+    assert page.evaluate(PAUSED_JS) is False
+    guarded.assert_clean(page)
+
+
+# The name of the last row in the list whose preview hasn't been asked for.
+UNASKED_NAME_JS = """() => {
+  const spans = Array.from(document.querySelectorAll('#list > li.font span.spec[data-src]'))
+    .filter((span) => !span.dataset.state);
+  return spans[spans.length - 1].closest('li').querySelector('.font-name').textContent.trim();
+}"""
+# Every row in the list has its preview drawn.
+ALL_DRAWN_JS = """() => Array.from(document.querySelectorAll('#list > li.font span.spec[data-src]'))
+  .every((span) => span.dataset.state === 'set'
+    && span.closest('.font-title').classList.contains('is-drawn'))"""
+
+
+def test_after_a_list_every_row_gets_its_preview(guarded_context: Any, first: str) -> None:
+    """The owner's staging try of 2026-11-03: a file chosen, then a search, and rows far down
+    showed their text heading until a reload. Now a list asks for every preview at once
+    (hopper_previews_all_at_once): with a search leaving one far row on the page as the list
+    loads, and every other row detached, every row has its preview once the search is cleared
+    and the Show menu shows all fonts, with yours marked."""
+    guarded, page = open_list(guarded_context)
+    name = page.evaluate(UNASKED_NAME_JS)
+    changed(page, lambda: page.fill("#f-q", name))
+    hopper_page.choose(page, first.encode())
+    changed(page, lambda: page.fill("#f-q", ""))
+    changed(page, lambda: page.select_option("#mine-show", "all"))
+    page.wait_for_function(ALL_DRAWN_JS, timeout=20_000)
+    assert page.evaluate(PAUSED_JS) is True
     guarded.assert_clean(page)
 
 

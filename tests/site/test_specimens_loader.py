@@ -22,8 +22,8 @@ Checked here:
 - each mask is resolved as it is set, so a row that content-visibility skipped when its file
   arrived is drawn later without another request, with the caches emptied and garbage
   collected (Chromium; Firefox and WebKit ask for none again in the same fling, and WebKit's
-  garbage can't be collected from a test); a row detached while its file loads
-  gets no mask, asks for nothing while paused, and loads once it is near again;
+  garbage can't be collected from a test); a row detached while its file loads gets its mask
+  too, read back in the document for that moment, and is drawn later without another request;
 - a ``data-src`` outside ``/assets/specimens/`` is never loaded, even on a row on screen;
 - the box is 64 px high (48 px on phones), unfilled until its mask is set, empty (never a solid
   bar) while its specimen downloads or if it never arrives, and the row keeps its height when
@@ -631,13 +631,16 @@ def test_masks_set_while_their_rows_are_skipped_are_drawn_without_another_reques
     guarded.assert_clean(page)
 
 
-def test_a_row_detached_while_its_file_loads_gets_no_mask_and_loads_again_when_near(
+def test_a_row_detached_while_its_file_loads_gets_its_mask_and_drawing_it_asks_for_nothing(
     guarded_context: Any, browser_name: str
 ) -> None:
-    """A row that Render detaches while its file is on its way gets no mask: off the document
-    its style can't be resolved, so drawing it later would ask again. It loads once it is near
-    the screen with nothing holding the previews, and while they are paused it asks for nothing
-    (M3-D10 a: a list holds them until a reload)."""
+    """A row that Render detaches while its file is on its way gets its mask all the same, and
+    drawing it later asks for nothing (hopper_previews_all_at_once, 2026-11-03: a list asks for
+    every preview at once, while the visitor's own filters leave most rows off the page).
+    Chromium resolves no style off the document, so the loader reads the mask back with the
+    span in the document for that moment, then puts it back where it was. The row is drawn
+    with the previews paused, as a list holds them, and in Chromium with the caches emptied
+    and garbage collected, so a mask left unresolved would be fetched from the server."""
     guarded = guarded_context(viewport=WIDE)
     page = open_list(guarded, hook=True)
     target = far_rows(page, WIDE)[-1]
@@ -649,6 +652,10 @@ def test_a_row_detached_while_its_file_loads_gets_no_mask_and_loads_again_when_n
         wait_for(page, lambda: held.routes, "the request held back")
         specimens(page, "pause()")
         page.evaluate(DETACH_JS, target["id"])
+        place = page.evaluate(
+            f"() => {{ const span = ({span_js})();"
+            " return Array.from(span.parentElement.children).indexOf(span); }"
+        )
         held.release()
         wait_for(
             page,
@@ -658,26 +665,25 @@ def test_a_row_detached_while_its_file_loads_gets_no_mask_and_loads_again_when_n
         state = page.evaluate(
             f"""() => {{ const span = ({span_js})();
                 return [span.dataset.state ?? null, span.style.getPropertyValue('mask-image'),
-                        span.closest('.font-title').classList.contains('is-drawn')]; }}"""
+                        span.closest('.font-title').classList.contains('is-drawn'),
+                        Array.from(span.parentElement.children).indexOf(span),
+                        span.isConnected]; }}"""
         )
-        assert state == [None, "", False], "a row detached as its file arrived got its mask"
+        assert state[0] == "set", "a row detached as its file arrived got no mask"
+        assert src in state[1]
+        assert state[2:] == [True, place, False], "the span isn't back where it was"
         assert requested(guarded).count(src) == 1
 
         cdp = collect_garbage(guarded.context, page) if browser_name == "chromium" else None
         page.evaluate("() => { document.getElementById('list').prepend(window.__held); }")
         page.evaluate("() => window.scrollTo(0, 0)")
         settle(page)
-        page.wait_for_timeout(300)
-        assert requested(guarded).count(src) == 1, "a paused row asked for its specimen"
-        assert not row(page, target["id"])["set"]
-
-        specimens(page, "resume()")
-        wait_set(page, target["id"])
-        settle(page)
-        # It asks again; Firefox's image cache may answer without a request.
-        again = requested(guarded).count(src)
-        assert again == 2 if browser_name == "chromium" else again in (1, 2)
+        assert row(page, target["id"])["set"]
         assert src in row(page, target["id"])["mask"]
+        pixels = outlines(guarded, page, page.locator(f"#font-{target['id']} span.spec"))
+        assert ink(pixels)[2] > 0.01, "the specimen isn't drawn"
+        page.wait_for_timeout(300)
+        assert requested(guarded).count(src) == 1, "drawing the row asked for its specimen again"
         if cdp is not None:
             cdp.detach()
     finally:

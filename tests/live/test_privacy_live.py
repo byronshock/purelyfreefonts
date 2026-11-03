@@ -59,7 +59,8 @@ def test_previews_set_far_from_the_screen_are_never_fetched_after_a_list(
     back at the top, so most masks are set on rows content-visibility skips. The caches are
     then emptied and garbage collected, as DevTools' "Disable cache" and a long visit would,
     and the sweep's list step (a pasted list, every Show mode and rank, the whole list
-    scrolled, Forget, a dropped list) may make only the hopper's two requests."""
+    scrolled, Forget, a dropped list) may make only the hopper's two requests, and none for a
+    preview already asked for (hopper_previews_all_at_once)."""
     if browser_name != "chromium":
         pytest.skip("of the tested browsers, Chromium alone puts a skipped row's style off")
     guarded = live_guarded(viewport=WIDE)
