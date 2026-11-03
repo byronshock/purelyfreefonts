@@ -5,12 +5,26 @@ The browser's own page requests accept HTML (a test below checks it), which is w
 Cloudflare inject its beacon when a setting lets it. On a long real list the sweep opens an even
 spread of 20 details panels and loads "Type your own text" for 2 fonts, to keep the load on the
 server small.
+
+Once a list has loaded, drawing a row asks for nothing, also a row whose preview arrived while
+content-visibility skipped it (M3-D10; site/CONTRACT.md section 4): a test below makes most of
+the real list's previews arrive that way, in Chromium, the browser that puts their style off.
 """
 
 from typing import Any
 
+import pytest
 from tests.live import checks
-from tests.site.test_privacy import FILTER_NAMES, Sweep, expected_csp, page_paths
+from tests.site.test_privacy import FILTER_NAMES, SETTLE_JS, Sweep, expected_csp, page_paths
+from tests.site.test_specimens_loader import (
+    FLING_JS,
+    LOADING_JS,
+    SKIPPED_SETS_JS,
+    SPEC_PREFIX,
+    Hold,
+    collect_garbage,
+    wait_for,
+)
 
 WIDE = {"width": 1280, "height": 900}
 
@@ -35,6 +49,41 @@ def test_the_live_site_loads_only_its_own_files_and_stores_nothing(
     assert done["phone filters"] == 1
     assert done["type-own loaded"] == min(done["type-own fonts"], sweep.max_type_own)
     print(f"live privacy sweep: {dict(sorted(done.items()))}")
+
+
+def test_previews_set_far_from_the_screen_are_never_fetched_after_a_list(
+    live_guarded: Any, browser_name: str
+) -> None:
+    """A fling passes every row while the previews are held back; they arrive with the page
+    back at the top, so most masks are set on rows content-visibility skips. The caches are
+    then emptied and garbage collected, as DevTools' "Disable cache" and a long visit would,
+    and the sweep's list step (a pasted list, every Show mode and rank, the whole list
+    scrolled, Forget, a dropped list) may make only the hopper's two requests."""
+    if browser_name != "chromium":
+        pytest.skip("Chromium alone puts a skipped row's style off; the GC uses its protocol")
+    guarded = live_guarded(viewport=WIDE)
+    sweep = Sweep(guarded, csp=expected_csp())
+    page = sweep.open_list()
+    if not page.locator("#mine").count():
+        pytest.skip("no hopper on this site yet")
+    held = Hold(page, lambda path: path.startswith(SPEC_PREFIX))
+    try:
+        page.evaluate(SKIPPED_SETS_JS)
+        page.evaluate(FLING_JS)
+        page.evaluate("() => window.scrollTo(0, 0)")
+        for _ in range(3):
+            page.evaluate(SETTLE_JS)
+        assert held.routes, "the fling asked for no preview"
+    finally:
+        held.release()
+    wait_for(page, lambda: not page.evaluate(LOADING_JS), "the previews to arrive", timeout_s=60)
+    skipped = page.evaluate("() => window.__tffSkippedSets")
+    assert skipped >= 50, f"only {skipped} previews arrived on skipped rows: nothing to test"
+    cdp = collect_garbage(guarded.context, page)
+    sweep.give_list(page)
+    assert sweep.done["hopper lists"] == 2
+    assert sweep.findings() == {}
+    cdp.detach()
 
 
 def test_the_live_tip_link_is_the_only_way_to_stripe(live_guarded: Any) -> None:
