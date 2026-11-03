@@ -2352,7 +2352,8 @@ def test_none_of_a_list_s_names_is_written_into_the_page(
 # ------------------------------------------------------------------------------ previews
 
 
-# The last row with a preview: whether it has asked for it (its span's data-state).
+# The last row with a preview: whether it has asked for it (its span's data-state, which a
+# row detached as its file arrives loses again; it is shown and near whenever this is read).
 LAST_ASKED_JS = """() => {
   const spans = document.querySelectorAll('#list > li.font span.spec[data-src]');
   return 'state' in spans[spans.length - 1].dataset;

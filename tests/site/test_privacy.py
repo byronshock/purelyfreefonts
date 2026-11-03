@@ -176,7 +176,8 @@ UNLOADED_JS = """() => Array.from(document.querySelectorAll('#list > li.font'))
   .map((li) => [li.dataset.id, li.querySelector('.font-name').textContent.trim()])
   .slice(-5)"""
 # Which of the rows ``ids`` on the page have had their previews asked for (Specimens sets
-# data-state as it asks). A row the view leaves out is detached, and can't ask.
+# data-state as it asks, and takes it away again from a row detached as its file arrives,
+# which the request lists still show). A row the view leaves out is detached, and can't ask.
 ASKED_JS = """(ids) => ids.filter((id) =>
   document.querySelector(`#font-${id} span.spec[data-state]`) !== null)"""
 PAUSED_JS = "() => globalThis.tff.list.specimens.paused"
