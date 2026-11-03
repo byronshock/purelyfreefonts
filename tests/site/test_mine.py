@@ -2448,7 +2448,9 @@ def test_after_a_list_every_row_gets_its_preview(guarded_context: Any, first: st
 def test_a_failed_list_never_lifts_the_hook_s_pause(guarded_context: Any, first: str) -> None:
     """The reverse: the hook pauses the previews while a list is on its way (the match file
     held), and the list fails ("Try again"); the hopper lets go of its own pause only, so the
-    previews stay paused until the hook resumes them, and then go on (no list loaded)."""
+    previews stay paused until the hook resumes them, and then go on (no list loaded). The
+    failed list asks for no previews: the last row's, far below the screen, waits for its row
+    to come near."""
     guarded, page = open_list(guarded_context)
     held = held_routes(page, "**/assets/match.*.json")
     said = status(page)
@@ -2459,6 +2461,8 @@ def test_a_failed_list_never_lifts_the_hook_s_pause(guarded_context: Any, first:
     hopper_page.wait_taken(page, said)
     assert_error(page, RETRY, retry=True)
     assert page.evaluate(PAUSED_JS) is True, "the failed list lifted the hook's pause"
+    # A list that failed asks for no previews (only a list that loads asks for them all).
+    assert page.evaluate(LAST_ASKED_JS) is False, "a failed list asked for the previews"
     page.evaluate("() => globalThis.tff.list.specimens.resume()")
     assert page.evaluate(PAUSED_JS) is False
     page.evaluate(TO_THE_LAST_JS)

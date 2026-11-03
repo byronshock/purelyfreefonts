@@ -9,14 +9,35 @@ server small.
 Once a list has loaded, drawing a row asks for nothing, also a row whose preview arrived while
 content-visibility skipped it (M3-D10; site/CONTRACT.md sections 4 and 5): a test below makes
 most of the real list's previews arrive that way, in Chromium, the tested browser that puts
-their style off.
+their style off. A list asks for every preview not yet asked for, once, in the server's order,
+and nothing after (hopper_previews_all_at_once): another test pastes one that leaves many rows
+out while their previews arrive, with Chromium's caches emptied.
 """
 
+from functools import partial
 from typing import Any
+from urllib.parse import urlsplit
 
 import pytest
+from tests.helpers import hopper_page
 from tests.live import checks
-from tests.site.test_privacy import FILTER_NAMES, SETTLE_JS, Sweep, expected_csp, page_paths
+from tests.site.test_privacy import (
+    ALL_NAMES_JS,
+    FILTER_NAMES,
+    PROBES_JS,
+    RANKS_JS,
+    SETTLE_JS,
+    SPANS_ARRIVED,
+    SPECIMENS_SETTLED,
+    SPECS_SET,
+    UNASKED_JS,
+    Sweep,
+    _hopper_urls,
+    _is_preview,
+    expected_csp,
+    page_paths,
+    wait_until,
+)
 from tests.site.test_specimens_loader import (
     FLING_JS,
     LOADING_JS,
@@ -86,6 +107,61 @@ def test_previews_set_far_from_the_screen_are_never_fetched_after_a_list(
     assert sweep.done["hopper lists"] == 2
     assert sweep.findings() == {}
     cdp.detach()
+
+
+def test_a_list_asks_for_every_preview_once_in_the_server_s_order(
+    live_guarded: Any, browser_name: str
+) -> None:
+    """hopper_previews_all_at_once (2026-11-03), through Cloudflare: with the page at the top,
+    only its first rows' previews asked for, and in Chromium the caches emptied and garbage
+    collected as DevTools' "Disable cache" would, a list owning every third font of the list
+    is pasted, so Render leaves many rows out while their previews arrive. The list asks for
+    every preview not yet asked for, each once, in the server's order; then no Show mode,
+    rank, scroll through the whole list, Forget or later list asks for any preview, and every
+    row has its own."""
+    guarded = live_guarded(viewport=WIDE)
+    sweep = Sweep(guarded, csp=expected_csp())
+    page = sweep.open_list()
+    if not page.locator("#mine").count():
+        pytest.skip("no hopper on this site yet")
+    page.wait_for_load_state("networkidle")
+    wait_until(page, SPECIMENS_SETTLED, "the previews near the screen")
+    unasked = page.evaluate(UNASKED_JS)
+    assert unasked, "every preview was asked for already: nothing to test"
+    probes = len(page.evaluate(PROBES_JS))
+    asked = {urlsplit(r.url).path for r in sweep.requests if _is_preview(r)}
+    cdp = collect_garbage(guarded.context, page) if browser_name == "chromium" else None
+    names = page.evaluate(ALL_NAMES_JS)
+    start = len(sweep.requests)
+    owned = "\n".join([*names[::3], "Zzz Unknown Grotesk"])
+    sweep._change(page, partial(hopper_page.paste, page, owned, by_script=True))
+    wait_until(page, SPANS_ARRIVED, "the list's previews", timeout_s=120)
+    page.wait_for_load_state("networkidle")
+    assert page.evaluate(PROBES_JS)[probes:] == unasked, "not the previews not yet asked for"
+    batch = len(sweep.requests)
+    previews = [urlsplit(r.url).path for r in sweep.requests[start:batch] if _is_preview(r)]
+    assert len(previews) == len(set(previews)), "a preview was asked for twice"
+    assert not set(previews) & asked, "a preview was asked for again"
+    for mode in ("all", "only", "missing"):
+        sweep._change(page, partial(page.select_option, "#mine-show", mode))
+    ranks = page.evaluate(RANKS_JS)
+    for rank in [*ranks[1:], ranks[0]]:
+        sweep._change(page, partial(page.select_option, "#f-rank", rank))
+    sweep.scroll_to_bottom(page)
+    sweep._change(page, partial(page.click, "#mine-forget"))
+    sweep._change(page, partial(hopper_page.drop, page, "\n".join(names[1::3]) + "\n"))
+    sweep.scroll_to_bottom(page)
+    sweep._change(page, partial(page.click, "#mine-forget"))
+    page.wait_for_load_state("networkidle")
+    later = [r.url for r in sweep.requests[batch:] if _is_preview(r)]
+    assert later == [], f"{len(later)} previews asked for after the list's, e.g. {later[:3]}"
+    assert len(page.evaluate(PROBES_JS)) == probes + len(unasked)
+    assert page.evaluate(SPECS_SET) is True, "a row without its preview"
+    hopper = set(_hopper_urls(page))
+    sweep.listed.update(id(r) for r in sweep.requests if urlsplit(r.url).path in hopper)
+    assert sweep.findings() == {}
+    if cdp is not None:
+        cdp.detach()
 
 
 def test_the_live_tip_link_is_the_only_way_to_stripe(live_guarded: Any) -> None:
