@@ -14,14 +14,15 @@ Checked here:
 
 - at load, once the page has finished starting and the network is quiet, no specimen is
   requested for a row more than 1000 px below the viewport; every row on screen or within most
-  of the 600 px margin has its mask, and every mask set has been fetched (so nothing is left
-  to fetch later, while paused);
+  of the 600 px margin has its mask, and every mask set has been fetched by its probe (and is
+  resolved as it is set, below, so nothing is left to fetch later, while paused);
 - scrolling loads the rows that come near; rows a jump skipped over stay unloaded;
 - ``tff.list.specimens.pause()`` stops new requests, and ``resume()`` loads only the rows still
   near the screen (M3-D10); rows that Render detaches and moves still load when near;
 - each mask is resolved as it is set, so a row that content-visibility skipped when its file
   arrived is drawn later without another request, with the caches emptied and garbage
-  collected (Chromium, which alone puts that style off); a row detached while its file loads
+  collected (Chromium; Firefox and WebKit ask for none again in the same fling, and WebKit's
+  garbage can't be collected from a test); a row detached while its file loads
   gets no mask, asks for nothing while paused, and loads once it is near again;
 - a ``data-src`` outside ``/assets/specimens/`` is never loaded, even on a row on screen;
 - the box is 64 px high (48 px on phones), unfilled until its mask is set, empty (never a solid
@@ -469,8 +470,9 @@ def test_nothing_is_requested_for_rows_far_below_the_viewport_at_load(
     assert near
     assert [r["id"] for r in near if not r["set"]] == []
     # Every mask set is fetched now, not when its row is first painted (rows use
-    # content-visibility): pause() relies on this, since a fetch put off until the row
-    # scrolls into view could happen while paused (M3-D10).
+    # content-visibility): pause() relies on this, and on each mask being resolved as it is set
+    # (test_masks_set_while_their_rows_are_skipped_...), since a fetch put off until the row is
+    # drawn could happen while paused (M3-D10).
     wait_for_requests(page, guarded, {r["src"] for r in listed if r["set"]})
     # Nothing else is requested: no no-script image, nothing without its mask set.
     assert set(requested(guarded)) <= {r["src"] for r in listed if r["set"]}

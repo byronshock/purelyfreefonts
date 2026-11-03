@@ -7,8 +7,9 @@ spread of 20 details panels and loads "Type your own text" for 2 fonts, to keep 
 server small.
 
 Once a list has loaded, drawing a row asks for nothing, also a row whose preview arrived while
-content-visibility skipped it (M3-D10; site/CONTRACT.md section 4): a test below makes most of
-the real list's previews arrive that way, in Chromium, the browser that puts their style off.
+content-visibility skipped it (M3-D10; site/CONTRACT.md sections 4 and 5): a test below makes
+most of the real list's previews arrive that way, in Chromium, the tested browser that puts
+their style off.
 """
 
 from typing import Any
@@ -60,7 +61,7 @@ def test_previews_set_far_from_the_screen_are_never_fetched_after_a_list(
     and the sweep's list step (a pasted list, every Show mode and rank, the whole list
     scrolled, Forget, a dropped list) may make only the hopper's two requests."""
     if browser_name != "chromium":
-        pytest.skip("Chromium alone puts a skipped row's style off; the GC uses its protocol")
+        pytest.skip("of the tested browsers, Chromium alone puts a skipped row's style off")
     guarded = live_guarded(viewport=WIDE)
     sweep = Sweep(guarded, csp=expected_csp())
     page = sweep.open_list()

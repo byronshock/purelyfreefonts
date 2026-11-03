@@ -12,8 +12,8 @@
 // comparison left on screen) until every holder has resumed; resume(holder) lets go, and once
 // none holds, loads the rows that are near by then. The hook's pause and resume are one holder
 // (Ext's) and the hopper's another (Mine's), so neither lifts the other's: the hopper's, once a
-// list has loaded, holds until a reload. Pausing stops the probes; the mask's own fetch is
-// made safe as the mask is set (load), so drawing a row later asks for nothing either.
+// list has loaded, holds until a reload. Pausing stops new probes, and each mask is resolved
+// as it is set (load), so drawing a row later asks for nothing either.
 const Specimens = (() => {
   // Top and bottom only: rows span the list's width.
   const MARGIN = '600px 0px';
@@ -36,12 +36,15 @@ const Specimens = (() => {
   // A CSS mask reports neither load nor error, so an image loads the file first, and the mask
   // takes the file the image holds. crossOrigin matches the mask's own (CORS) request.
   // Chromium puts off the style of a row content-visibility skips (about a screen and a half
-  // away), so a mask set there would be resolved only when the row is drawn, by when the image
-  // may be gone and the file with it: drawing the row would fetch it again, and with the cache
-  // off (DevTools' "Disable cache") from the server, also while paused. So onload reads the
-  // mask back, which resolves it while the image still holds the file. A span detached as its
-  // file arrives (Render took its row out) can't be resolved: it gets no mask, and loads again
-  // once its row is near and nothing holds the previews.
+  // away), so a mask set there would be resolved only when the row is drawn, by when the file
+  // may have left the browser's memory (the image collected, or DevTools' "Disable cache"
+  // switched on, which keeping the image doesn't survive): drawing the row would fetch it
+  // again, and with the cache off from the server, also while paused. So onload reads the
+  // mask back, which resolves it while the image still holds the file. It reads the prefixed
+  // name, which every engine with masks knows (Chromium before 120 knows no other, and reading
+  // a name an engine doesn't know resolves nothing). A span detached as its file arrives
+  // (Render took its row out) can't be resolved: it gets no mask, and loads again once its row
+  // is near and nothing holds the previews.
   const load = (row) => {
     near.delete(row);
     if (observer) observer.unobserve(row);
@@ -62,7 +65,7 @@ const Specimens = (() => {
       span.style.setProperty('mask-image', value);
       span.dataset.state = 'set';
       span.closest('.font-title')?.classList.add('is-drawn');
-      getComputedStyle(span).getPropertyValue('mask-image');
+      getComputedStyle(span).getPropertyValue('-webkit-mask-image');
     };
     probe.onerror = () => {
       span.dataset.state = 'failed';
