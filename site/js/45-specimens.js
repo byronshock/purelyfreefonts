@@ -12,8 +12,11 @@
 // comparison left on screen) until every holder has resumed; resume(holder) lets go, and once
 // none holds, loads the rows that are near by then. The hook's pause and resume are one holder
 // (Ext's) and the hopper's another (Mine's), so neither lifts the other's: the hopper's, once a
-// list has loaded, holds until a reload. Pausing stops new probes, and each mask is resolved
-// as it is set (load), so drawing a row later asks for nothing either.
+// list has loaded, holds until Forget. loadAll() asks for every preview not yet asked for,
+// whatever holds them: the hopper's list does, as it loads, so every row has its preview and
+// the requests are the same for every list (hopper_previews_all_at_once, 2026-11-03, amending
+// M3-D10 a). Pausing stops new probes, and each mask is resolved as it is set (load), so
+// drawing a row later asks for nothing either.
 const Specimens = (() => {
   // Top and bottom only: rows span the list's width.
   const MARGIN = '600px 0px';
@@ -42,9 +45,23 @@ const Specimens = (() => {
   // again, and with the cache off from the server, also while paused. So onload reads the
   // mask back, which resolves it while the image still holds the file. It reads the prefixed
   // name, which every engine with masks knows (Chromium before 120 knows no other, and reading
-  // a name an engine doesn't know resolves nothing). A span detached as its file arrives
-  // (Render took its row out) can't be resolved: it gets no mask, and loads again once its row
-  // is near and nothing holds the previews.
+  // a name an engine doesn't know resolves nothing). Chromium resolves no style off the
+  // document, so a span detached as its file arrives (Render took its row out, as a view or a
+  // list does) is read in the document, at the end of the body, for that moment, then put
+  // back where it was: nothing is drawn or announced in between.
+  const resolve = (span) => {
+    const read = () => getComputedStyle(span).getPropertyValue('-webkit-mask-image');
+    if (span.isConnected) {
+      read();
+      return;
+    }
+    const parent = span.parentNode;
+    const next = span.nextSibling;
+    document.body.append(span);
+    read();
+    parent.insertBefore(span, next);
+  };
+
   const load = (row) => {
     near.delete(row);
     if (observer) observer.unobserve(row);
@@ -55,17 +72,12 @@ const Specimens = (() => {
     const probe = new Image();
     probe.crossOrigin = 'anonymous';
     probe.onload = () => {
-      if (!span.isConnected) {
-        delete span.dataset.state;
-        if (observer) observer.observe(row);
-        return;
-      }
       const value = `url("${src}")`;
       span.style.setProperty('-webkit-mask-image', value);
       span.style.setProperty('mask-image', value);
       span.dataset.state = 'set';
       span.closest('.font-title')?.classList.add('is-drawn');
-      getComputedStyle(span).getPropertyValue('-webkit-mask-image');
+      resolve(span);
     };
     probe.onerror = () => {
       span.dataset.state = 'failed';
@@ -112,10 +124,19 @@ const Specimens = (() => {
     }
   };
 
+  // Load every preview not yet asked for, whatever holds the previews and wherever its row is
+  // (a list that loads: hopper_previews_all_at_once). The rows go in the server's own order,
+  // taken as the script ran, so the requests are the same whatever the list or the view
+  // holds, and tell nothing of either. A row that failed isn't asked for again.
+  const loadAll = () => {
+    for (const row of rows) load(row);
+  };
+
   return Object.freeze({
     start,
     pause,
     resume,
+    loadAll,
     get paused() {
       return holders.size > 0;
     },

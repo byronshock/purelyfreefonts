@@ -438,7 +438,11 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
   - **Input:** a file, dropped or chosen, or a paste (`inventory_file_or_paste`, the owner's choice; Claude had recommended a file only).
   - **Testing:** only the Linux command has run on a real machine; the macOS and Windows commands show "not yet tested" until someone runs them (`inventory_linux_tested_only`).
   - **Matching:** an old name counts as owned (M3-D3 a), and so does a patched build (M3-D4 a; its switch comes later); derived and related families never do (M3-D5 a). HackGen, which merges Hack with a CJK typeface, is only a near-match of Hack in the hopper; the alias row that credits its installs to Hack stays (`hopper_hackgen_related`, 2026-10-23).
-  - **Privacy:** the match data loads only when a list arrives (M3-D7 a); after that, previews that haven't loaded stay off (M3-D10 a); nothing is stored, and nothing from the list, nor the operating system's tab, enters the address (M3-D13 a, amended; `inventory_additions`' address test).
+  - **Privacy:** the match data loads only when a list arrives (M3-D7 a); nothing is stored, and nothing from the list, nor the operating system's tab, enters the address (M3-D13 a, amended; `inventory_additions`' address test).
+  - **Previews after a list (2026-11-03, `hopper_previews_all_at_once`, amending M3-D10 a):** the owner, after a staging try in which previews stayed off after a list until a reload: "I don't think users should have to reload."
+    - Once a list loads, every preview not yet loaded is asked for at once, in the page's own order: the same files for every list, so they tell nothing of it, and every row has its preview (558 files, about 1.5 MB compressed).
+    - "Forget this list" lifts the hopper's pause on previews.
+    - M3-D10 (a)'s "until the page is reloaded" and its later "Load previews" button go.
   - **Show:** fonts you don't have (the default), all fonts with yours marked, or only fonts you have (`inventory_additions`' "Show only mine").
   - **Match data:** built by the site build from the committed `build/names.json` and `catalog-site.json`, not by the pipeline's `match` stage (`inventory_match_data_site_build`, amending step 3).
   - **Ambiguous names:** Archivo Black, Bungee Hairline, Gentium Book, Gentium Plus Book and Syne Italic are a reviewed set: from a plain list they give only a near-match, and the site build fails on any change to the set until the owner reviews it (`inventory_ambiguous_names`, 2026-10-23).

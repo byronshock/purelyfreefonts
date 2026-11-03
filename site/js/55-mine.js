@@ -23,10 +23,12 @@
 // and the page scrolls as little as it can to the hopper, the drop zone in sight too where
 // both fit (bring). So previews pause as soon as
 // a list arrives, before that scroll (a list that fails while none has loaded lets them go on
-// again), and once a list loads, previews that haven't loaded stay off until a reload
-// (Specimens.pause, M3-D10 a): a request for one would tell the server which rows a list left
-// on the screen. Mine holds that pause as its own holder, which only it can lift, so the hook's
-// resume() never lifts it, nor its release the hook's pause. While a file is dragged over the
+// again): a request for one would tell the server which rows a list left on the screen
+// (Specimens.pause, M3-D10). Once a list loads, every preview not yet asked for is asked for at
+// once, in the page's own order, the same files for every list, so every row has its preview,
+// and the pause holds until "Forget this list" (hopper_previews_all_at_once, 2026-11-03,
+// amending M3-D10 a). Mine holds that pause as its own holder, which only it can lift, so the
+// hook's resume() never lifts it, nor its release the hook's pause. While a file is dragged over the
 // page, html[data-dropping] rings the window.
 //
 // Mine gives View one built-in filter, which Main puts ahead of the public hook's (View runs
@@ -114,7 +116,7 @@ const Mine = (() => {
   let pending = null; // while "Try again" shows, the list it takes again: { file } or { text }
   let table = null; // the match file read by the matcher (it holds only the file)
   let tableDoc = null;
-  let held = false; // a list has loaded: previews stay off until a reload (M3-D10 a)
+  let held = false; // a list has loaded: the previews stay paused until Forget
   let busyTimer = 0; // says "Checking your list…" if the list is still on its way (setBusy)
   let invite = null; // the drop zone's own words, { drop, choose }, which receipt puts back
   let freshTimer = 0; // takes the result's tint away (freshen)
@@ -376,9 +378,12 @@ const Mine = (() => {
       total,
     });
     // Before the list redraws, so no row the list leaves on the screen asks for its preview
-    // (hold paused them as the list arrived); from now on Mine never lets go (release).
+    // (hold paused them as the list arrived), and Mine lets go only on Forget (release). Every
+    // preview not yet asked for is asked for now, in the page's own order, so every row has
+    // its preview and the requests are the same for every list (hopper_previews_all_at_once).
     held = true;
     Specimens.pause(HOLDER);
+    Specimens.loadAll();
     if (source.text !== undefined) {
       const paste = node('mine-paste');
       if (paste) paste.value = '';
@@ -544,8 +549,12 @@ const Mine = (() => {
     changed('');
   };
 
+  // Forget lifts the hopper's pause (hopper_previews_all_at_once): with no list, what comes
+  // near the screen tells nothing of one. A pause the hook holds stays.
   const forget = () => {
     run += 1; // a list still on its way is dropped too
+    held = false;
+    Specimens.resume(HOLDER);
     unload();
     mode = DEFAULT_MODE;
     const paste = node('mine-paste');
