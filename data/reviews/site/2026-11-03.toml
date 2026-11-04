@@ -1,6 +1,14 @@
-# Owner rulings of 2026-11-03 on the wordmark, asked as single-select questions: wordmark_brush_102 and wordmark_size_brush_102
-# in the session in his typeface tools (penleft) that wrote the plate, wordmark_breakpoint_scrollbar in the session that put it
-# on the site (#114). Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md (Headline font).
+# Owner rulings of 2026-11-03, ruled by the owner, Byron Shock; recorded by Claude.
+# held_legend_to_tag: on the list's held marker, from the owner's look at staging (preview/2026-10-17 at f2f8c1c), asked in chat as a
+# single-select question. Also in AUTHORITY.md (Site (Milestone 2), "Scores instead of numbers").
+# On the wordmark, asked as single-select questions: wordmark_brush_102 and wordmark_size_brush_102 in the session in his typeface
+# tools (penleft) that wrote the plate, wordmark_breakpoint_scrollbar in the session that put it on the site (#114). Also in
+# AUTHORITY.md (Headline font).
+
+[held_legend_to_tag]
+value = "tag_in_place_of_legend"
+ruling = "The legend line above the list (\"Hollow bar: this score rests on one kind of source, so it may move more.\", held_marker_style) goes. A font the two-source rule holds back keeps its hollow bar and its words for screen readers (\", from one kind of source\"), and its row's tags end with \"Score from one kind of source\". The tag follows the view, as the bar does, and is hidden from screen readers, which hear the same words in the score. Developers & apps still marks no row (held_marker_dev_apps)."
+reason = "The owner, on the legend: \"This legend text seems superfluous. I don't even see any hollow bars in the full list.\" Measured on staging, held fonts are few and far down: Projects, the default view, had one (Charter, row 80), Chosen 9 (the first at row 33), Installed 4 (the first at row 39) and Coding 5 (rows 77 to 84). Of dropping the legend and keeping the bar (Claude's recommendation), dropping both, or keeping both, the owner chose to drop the legend, keep the bar, and \"add a tag to indicate score was from a single source\". The tag's words are Claude's, those of the score's words for screen readers and of the font's details."
 
 [wordmark_brush_102]
 choice = "a"

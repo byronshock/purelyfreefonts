@@ -480,8 +480,6 @@ def _list_context(
         "credit_filter": any(f["license"]["attribution_required"] for f in doc["fonts"]),
         "systems_os": [{"value": k, "label": v} for k, v in data.OS_LABELS.items()],
         "total": len(doc["fonts"]),
-        # The hollow bar's legend, shown by the script while the view has held fonts.
-        "held_legend": data.HELD_LEGEND,
         "score_words": data.SCORE_WORDS,
         "index_url": urls["list.json"],
         "details_url": urls["details.json"],
@@ -490,7 +488,6 @@ def _list_context(
         "match_url": urls["match.json"],
         "matcher_url": urls["matcher.js"],
         "rows": rows,
-        "held_shown": any(row["held"] for row in rows),
     }
 
 

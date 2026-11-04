@@ -30,6 +30,7 @@ from typing import Any
 
 import pytest
 from tests.fixtures import make_large_catalog
+from tests.site.conftest import fetch_unencoded
 
 from tff_catalog import jsonio
 from tff_catalog.keys import search_key
@@ -78,6 +79,7 @@ SAMPLE_ONLY = "names fonts of the sample catalog"
 FAILED_NOTE = "Filters and search didn\u2019t load. Check your connection, then reload the page."
 NOT_RANKED = "Not ranked: "
 HELD = ", from one kind of source"
+HELD_TAG = "Score from one kind of source"
 
 
 # ---------------------------------------------------------------------------- the oracle
@@ -762,11 +764,12 @@ def test_first_load_shows_the_server_list_silently(
         document.addEventListener('readystatechange', () => {
           if (document.readyState !== 'interactive') return;
           const list = document.getElementById('list');
-          // What Render may change: the rows in #list, a row's class or hidden, .rank text.
+          // What Render may change: the rows in #list, a row's class or hidden, .rank text,
+          // the held tag and the tag list it may need.
           const note = (records) => {
             for (const r of records) {
               const node = r.target.nodeType === Node.ELEMENT_NODE ? r.target : r.target.parentElement;
-              if (node === list || node.matches('li.font') || node.closest('.rank')) {
+              if (node === list || node.matches('li.font, .font-row') || node.closest('.rank, .badges')) {
                 window.__listChanges.push(`${r.type} ${node.id || node.className}`);
               }
             }
@@ -1480,7 +1483,13 @@ BARS_JS = """() => Array.from(document.querySelectorAll('#list > li.font'), (li)
   const cell = li.querySelector('.rank');
   const bar = cell.querySelector('.bar');
   const style = bar && getComputedStyle(bar, '::before');
+  const tags = li.querySelector('.badges');
+  const tag = li.querySelector('.badge[data-badge="held"]');
   return {
+    keys: tags ? Array.from(tags.children, (b) => b.dataset.badge) : null,
+    hidden: tags ? tags.getAttribute('aria-hidden') : null,
+    before: tags ? tags.nextElementSibling === li.querySelector('.download') : null,
+    tag: tag ? [tag.textContent, tag.getAttribute('aria-hidden')] : null,
     id: li.dataset.id,
     text: cell.textContent,
     held: cell.classList.contains('is-held'),
@@ -1491,16 +1500,29 @@ BARS_JS = """() => Array.from(document.querySelectorAll('#list > li.font'), (li)
       : null,
   };
 })"""
+# Each row's tag list as markup, or null: what the server drew, to compare with the script's.
+TAGS_JS = """() => Object.fromEntries(Array.from(document.querySelectorAll('#list > li.font'),
+  (li) => [li.dataset.id, li.querySelector('.badges')?.outerHTML.replace(/>\\s+</g, '><') ?? null]))"""
 
 
 def test_score_bars_match_the_scores_and_held_fonts_are_hollow(
     guarded_context: Any, doc: dict[str, Any], views: list[str]
 ) -> None:
     """Owner rulings of 2026-09-29 and 2026-09-30 (score_display, score_held_fonts,
-    held_marker_style, held_marker_dev_apps): each ranked row's bar is its score long, the
-    list is in score order, a held font's bar is hollow and explained by #held-legend, and
-    Developers & apps marks no row but shows its note. Filters never change a score."""
+    held_marker_style, held_marker_dev_apps) and of 2026-11-03 (held_legend_to_tag): each
+    ranked row's bar is its score long, the list is in score order, a held font's bar is
+    hollow and its row's tags end with "Score from one kind of source", hidden from screen
+    readers, which hear it in the score, and Developers & apps marks no row but shows its
+    note. The tag follows the view, its list going with it when it was the row's only tag, and
+    such a list is hidden too, before the download link as the server draws it. There is no
+    legend. Filters never change a score."""
     guarded, page = open_list(guarded_context, viewport={"width": 1280, "height": 900})
+    server = page.evaluate(TAGS_JS)
+    own = {
+        font_id: [k for k in re.findall(r'data-badge="(\w+)"', markup or "") if k != "held"]
+        for font_id, markup in server.items()
+    }
+    assert page.query_selector("#held-legend") is None
     for rank in [*views[1:], views[0]]:
         page.select_option("#f-rank", rank)
         got = page.evaluate(BARS_JS)
@@ -1515,8 +1537,13 @@ def test_score_bars_match_the_scores_and_held_fonts_are_hollow(
             assert row["fill"] == f"bar b{score}", row
             assert row["share"] == pytest.approx(score / 100, abs=0.02), row
             assert row["held"] == row["hollow"] == bool(found[2]), row
+        for row in got:
+            assert row["tag"] == ([HELD_TAG, "true"] if row["held"] else None), row
+            assert row["keys"] == ([*own[row["id"]], *["held"] * row["held"]] or None), row
+            if row["keys"]:
+                assert row["hidden"] == ("true" if row["keys"] == ["held"] else None), row
+                assert row["before"], row
         held_shown = any(r["held"] for r in got)
-        assert page.is_visible("#held-legend") == held_shown, rank
         note = data.VIEW_NOTES.get(rank)
         assert page.is_visible("#view-note") == bool(note), rank
         if note:
@@ -1529,6 +1556,74 @@ def test_score_bars_match_the_scores_and_held_fonts_are_hollow(
         assert after, rank
         assert all(before[r["id"]] == r["text"] for r in after), rank
         page.click("#f-cat-all")
+    # Back on Projects, every row's tags are drawn as the server drew them.
+    assert page.evaluate(TAGS_JS) == server
+    if "sample-mono-23" in server:
+        # The sample's sample-mono-23 is held in every marked view and has no other tag:
+        # Developers & apps took its tag list away, and Projects drew it back.
+        assert server["sample-mono-23"] is not None
+        assert own["sample-mono-23"] == []
+    guarded.assert_clean(page)
+
+
+# For each font id: whether its bar is hollow, and its tag list's keys, whether it is hidden
+# from screen readers and whether the download link follows it, or null without one.
+HELD_ROWS_JS = """(ids) => ids.map((id) => {
+  const li = document.getElementById(`font-${id}`);
+  const tags = li.querySelector('.badges');
+  return [li.querySelector('.rank').classList.contains('is-held'), tags && {
+    keys: Array.from(tags.children, (b) => b.dataset.badge),
+    hidden: tags.getAttribute('aria-hidden'),
+    before: tags.nextElementSibling === li.querySelector('.download'),
+  }];
+})"""
+
+
+def test_the_script_puts_the_held_tag_after_a_row_s_own_tags(
+    guarded_context: Any, doc: dict[str, Any]
+) -> None:
+    """Owner ruling of 2026-11-03 (held_legend_to_tag), on any catalog: a list index that holds
+    back, in Chosen, a font the server drew with tags of its own and one with none. Render ends
+    the first row's tags with the held tag; it gives the second a tag list of its own, before
+    its download link as the server places one, and hides it from screen readers, since the
+    tag is all it holds. Developers & apps takes both away again, and Projects puts back the
+    server's tags."""
+    guarded, page = open_list(guarded_context)
+    server = page.evaluate(TAGS_JS)
+    rank = "desktop_chosen"
+
+    def free(font: dict[str, Any]) -> bool:
+        entry, home = font["ranks"].get(rank), font["ranks"][data.DEFAULT_VIEW]
+        ranked = entry is not None and entry["order"] is not None and not entry["gate_held"]
+        return ranked and not home.get("gate_held")
+
+    tagged = next(f["id"] for f in doc["fonts"] if free(f) and server[f["id"]] is not None)
+    bare = next(f["id"] for f in doc["fonts"] if free(f) and server[f["id"]] is None)
+    own = re.findall(r'data-badge="(\w+)"', server[tagged])
+
+    def hold(route: Any) -> None:
+        index = fetch_unencoded(route).json()
+        held = list(index["r"][rank]["held"])
+        for font_id in (tagged, bare):
+            held[index["ids"].index(font_id)] = "1"
+        index["r"][rank]["held"] = "".join(held)
+        route.fulfill(json=index)
+
+    page.route("**/assets/list.*.json", hold)
+    page.reload()
+    page.wait_for_function("() => window.__tffReady >= 1")
+    page.select_option("#f-rank", rank)
+    assert page.evaluate(HELD_ROWS_JS, [tagged, bare]) == [
+        [True, {"keys": [*own, "held"], "hidden": None, "before": True}],
+        [True, {"keys": ["held"], "hidden": "true", "before": True}],
+    ]
+    page.select_option("#f-rank", "dev_apps")
+    assert page.evaluate(HELD_ROWS_JS, [tagged, bare]) == [
+        [False, {"keys": own, "hidden": None, "before": True}],
+        [False, None],
+    ]
+    page.select_option("#f-rank", data.DEFAULT_VIEW)
+    assert page.evaluate(TAGS_JS) == server
     guarded.assert_clean(page)
 
 
