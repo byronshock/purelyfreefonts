@@ -286,17 +286,20 @@ def test_nav_marks_only_the_current_page(path):
     assert current == ([path] if path in NAV else [])
 
 
-def test_early_version_line_is_in_the_header_of_every_page():
-    """Milestone 2 step 14: the page says it is an early version and what comes next, in the
-    owner's wording of 2026-09-29 (data/reviews/site/2026-09-29.toml, site_status_line), on
-    every page's header. Milestone 3 removes it."""
+def test_the_header_holds_only_the_wordmark_and_the_nav():
+    """The owner's site ruling of 2026-11-03 (early_line_removed): no page's header says
+    "Early version. Coming next: free font inventory tools." any more (site_status_line,
+    2026-09-29, which early_line_hidden_on_phones had already taken off phones). The header
+    holds the wordmark and the Site navigation, nothing else, and no page has the line."""
     for path in [*NAV, "/404.html"]:
-        header = dom(render(path)).find("header")
-        (status,) = [p for p in header.find_all("p") if p.attrs.get("class") == "site-status"]
-        text = " ".join(status.text.split())
-        assert text == "Early version. Coming next: free font inventory tools.", text
+        page = dom(render(path))
+        header = page.find("header")
+        kids = [(e.tag, e.attrs.get("class")) for e in header.children]
+        assert kids == [("a", "site-name"), ("nav", "site-nav")], (path, kids)
+        assert not [e for e in page.iter() if e.attrs.get("class") == "site-status"], path
+        assert "Early version" not in " ".join(page.text.split()), path
     # Every page, the blog's included, extends base.html.j2 and none replaces its header,
-    # so pages added later keep the line too.
+    # so pages added later get this header too.
     for template in TEMPLATES.glob("*.j2"):
         if template.name != "base.html.j2":
             assert "block header" not in template.read_text(encoding="utf-8"), template.name
@@ -606,20 +609,17 @@ def test_the_wordmark_is_465_px_wide_from_832_px_and_300_below(browser, site_url
             context.close()
 
 
-# The header, laid out: the wordmark's width, the nav's width and lines, whether the nav sits
-# beside the wordmark, and the lines of the early-version line (0 when it isn't shown).
+# The header, laid out: the wordmark's width, the nav's width and lines, and whether the nav
+# sits beside the wordmark.
 HEADER_JS = """() => {
   const box = (e) => e.getBoundingClientRect();
   const mid = (b) => (b.top + b.bottom) / 2;
   const mark = box(document.querySelector('.site-name-mark'));
   const links = [...document.querySelectorAll('.site-nav li')].map(box);
-  const status = document.querySelector('.site-status');
-  const lines = (e) => new Set([...e.getClientRects()].map((r) => Math.round(r.top))).size;
   return { height: Math.round(box(document.querySelector('.site-header')).height * 10) / 10,
            mark: mark.width, nav: links[links.length - 1].right - links[0].left,
            navLines: new Set(links.map((b) => Math.round(b.top))).size,
            beside: Math.abs(mid(links[0]) - mid(mark)) < 8,
-           status: getComputedStyle(status).display === 'none' ? 0 : lines(status),
            scrollWidth: document.documentElement.scrollWidth };
 }"""
 # The one-row header's parts (10-base.css): the side gutters, the gap between the wordmark and
@@ -639,10 +639,10 @@ def test_the_header_keeps_one_row_at_every_width(browser, site_url, path):
     bold. From 832 px the 465 px wordmark and the nav share one row, with room for a
     scrollbar; below it the 300 px one does, down to about 637 px, where the nav takes its own
     line under the wordmark, still one line at 320 px, where the wordmark shrinks to fit. The
-    early-version line takes one line of its own from 40rem and isn't shown on phones
-    (early_line_hidden_on_phones, 2026-10-06). Every 4 px from 320 to 1280 px, so a second row
-    is caught: the header has one height per layout. And the widest one-row headers, 16 + 465 + 24 + the nav + 16 and 16 + 300 + 24 +
-    the nav + 16, fit the breakpoint, less a scrollbar, and the phone one: a longer nav ("How
+    header has nothing else (early_line_removed, 2026-11-03). Every 4 px from 320 to 1280 px,
+    so a second row is caught: the header has one height per layout. And the widest one-row
+    headers, 16 + 465 + 24 + the nav + 16 and 16 + 300 + 24 + the nav + 16, fit the
+    breakpoint, less a scrollbar, and the phone one: a longer nav ("How
     it works", 2026-10-05, or a "Tip Jar") moves the 52rem rule and this test. So does the Blog
     link, which every build gets once a post is published (about 850 px, 867 with a
     scrollbar); a draft that only staging shows (--drafts) isn't measured here."""
@@ -674,7 +674,6 @@ def test_the_header_keeps_one_row_at_every_width(browser, site_url, path):
                 mark = min(NARROW_MARK, width - 2 * GUTTER)
             assert abs(got["mark"] - mark) < 1, where
             assert got["beside"] or layout == "phone", where
-            assert got["status"] == (0 if layout == "phone" else 1), where
             heights["shrunk" if mark < NARROW_MARK else layout].add(got["height"])
         assert [len(heights["wide"]), len(heights["middle"])] == [1, 1], heights
         assert len(heights["phone"]) <= 2, heights  # the nav beside the wordmark, or under it
@@ -840,7 +839,7 @@ OVERFLOW = """(width) => {
     if (s.overflowX !== 'visible' && e.scrollWidth > e.clientWidth + 1) bad.push('clipped ' + e.tagName);
     if (s.overflowY !== 'visible' && e.scrollHeight > e.clientHeight + 1) bad.push('clipped ' + e.tagName);
   }
-  const boxes = [...document.querySelectorAll('.site-name, .site-nav li, .site-status')]
+  const boxes = [...document.querySelectorAll('.site-name, .site-nav li')]
     .map(e => e.getBoundingClientRect());
   boxes.forEach((a, i) => boxes.slice(i + 1).forEach((b) => {
     if (a.left < b.right - 0.5 && b.left < a.right - 0.5 && a.top < b.bottom - 0.5
