@@ -273,8 +273,8 @@ def test_body_is_skip_link_header_main_footer():
     assert mark.attrs["src"] == "/wordmark.svg"
     assert mark.attrs["alt"] == "Purely Free Fonts"
     width, height = int(mark.attrs["width"]), int(mark.attrs["height"])
-    assert (width, height) == (463, 59)
-    assert abs(width / height - 9809 / 1250) < 0.01  # the wordmark's viewBox ratio
+    assert (width, height) == (465, 59)
+    assert abs(width / height - 9845 / 1250) < 0.01  # the wordmark's viewBox ratio
     assert not [i for i in header.find_all("img") if "favicon" in i.attrs.get("src", "")]
 
 
@@ -545,25 +545,25 @@ def test_favicon_svg_is_inert_outlines():
 
 
 def test_wordmark_svg_is_the_owners_inert_outlines():
-    """The header's wordmark (AUTHORITY.md, "Headline font", owner rulings of 2026-10-14): the
-    owner's file purely-free-fonts-plate.svg byte for byte, pinned by sha256, "Purely Free
-    Fonts" in the Book of his typeface: near-black outlines on a white plate that fills the
-    9809 x 1250 viewBox, with no script, style, link, text or foreign content, so it renders the
-    same under the CSP, in any browser, with no font. A new version is a new owner ruling."""
+    """The header's wordmark (AUTHORITY.md, "Headline font", owner rulings of 2026-11-03): the
+    owner's file purely-free-fonts-plate-brush102.svg byte for byte, pinned by sha256, "Purely
+    Free Fonts" in his typeface at brush 102: near-black outlines on a white plate that fills
+    the 9845 x 1250 viewBox, with no script, style, link, text or foreign content, so it renders
+    the same under the CSP, in any browser, with no font. A new version is a new owner ruling."""
     data = (STATIC / "wordmark.svg").read_bytes()
     assert hashlib.sha256(data).hexdigest() == (
-        "2e3a7fd7fcbcfb892a4e20f0f4baf793e3c5323a995b8ea37d862aeac8119743"
+        "0aa7b9e5ac1bba0c58c95508598a1de3b794cd0eb361921f7abc27725f749e56"
     )
     source = data.decode("utf-8")
     assert len(data) < 8192
     root = ET.fromstring(source)
     ns = "{http://www.w3.org/2000/svg}"
     assert root.tag == f"{ns}svg"
-    assert root.attrib["viewBox"] == "0 0 9809 1250"
+    assert root.attrib["viewBox"] == "0 0 9845 1250"
     assert [el.tag for el in root] == [f"{ns}title", f"{ns}rect", f"{ns}path"]
     assert root.find(f"{ns}title").text == "Purely Free Fonts"
     plate = root.find(f"{ns}rect").attrib
-    assert plate == {"x": "0", "y": "0", "width": "9809", "height": "1250", "fill": "#ffffff"}
+    assert plate == {"x": "0", "y": "0", "width": "9845", "height": "1250", "fill": "#ffffff"}
     assert [p.attrib["fill"] for p in root.iter(f"{ns}path")] == ["#111111"]
     for el in root.iter():
         assert el.tag in {f"{ns}svg", f"{ns}title", f"{ns}rect", f"{ns}path"}, el.tag
@@ -576,13 +576,14 @@ def test_wordmark_svg_is_the_owners_inert_outlines():
 
 @pytest.mark.parametrize(
     ("width", "want"),
-    [(1280, 463), (816, 463), (815, 300), (700, 300), (375, 300), (320, 288)],
+    [(1280, 465), (832, 465), (831, 300), (816, 300), (700, 300), (375, 300), (320, 288)],
 )
-def test_the_wordmark_is_463_px_wide_from_816_px_and_300_below(browser, site_url, width, want):
-    """Owner rulings of 2026-10-14: 463 px wide where the navigation fits beside it (816 px and
-    up) and 300 px below that (capitals about 38 and 24.5 px tall), shrinking to fit the
-    narrowest phones (288 px at 320), in the header, which is white in both themes.
-    test_the_header_keeps_one_row_at_every_width re-measures the 816."""
+def test_the_wordmark_is_465_px_wide_from_832_px_and_300_below(browser, site_url, width, want):
+    """Owner rulings of 2026-10-14 and 2026-11-03: 465 px wide where the navigation fits beside
+    it, with room for a classic scrollbar (832 px and up), and 300 px below that (capitals about
+    38 and 24.4 px tall), shrinking to fit the narrowest phones (288 px at 320), in the header,
+    which is white in both themes. test_the_header_keeps_one_row_at_every_width re-measures the
+    832."""
     for scheme in ("light", "dark"):
         context = browser.new_context(
             base_url=site_url, viewport={"width": width, "height": 800}, color_scheme=scheme
@@ -598,7 +599,7 @@ def test_the_wordmark_is_463_px_wide_from_816_px_and_300_below(browser, site_url
                             .backgroundColor]; }"""
             )
             assert abs(box[0] - want) < 1, (scheme, box)
-            assert abs(box[0] / box[1] - 9809 / 1250) < 0.02, (scheme, box)
+            assert abs(box[0] / box[1] - 9845 / 1250) < 0.02, (scheme, box)
             assert box[2], "the wordmark did not load"
             assert box[3] == "rgb(255, 255, 255)", (scheme, box)
         finally:
@@ -622,32 +623,35 @@ HEADER_JS = """() => {
            scrollWidth: document.documentElement.scrollWidth };
 }"""
 # The one-row header's parts (10-base.css): the side gutters, the gap between the wordmark and
-# the nav, the wide and narrow wordmarks, the breakpoint (51rem) from which the wide one and the
+# the nav, the wide and narrow wordmarks, the breakpoint (52rem) from which the wide one and the
 # nav share a row, and the phone breakpoint (40rem), from which the narrow one and the nav do.
-GUTTER, GAP, WIDE_MARK, NARROW_MARK, BREAKPOINT, PHONE = 16, 24, 463, 300, 816, 640
+# The wide breakpoint also leaves room for a classic scrollbar, which a min-width media query
+# counts as page width (owner ruling of 2026-11-03, wordmark_breakpoint_scrollbar).
+GUTTER, GAP, WIDE_MARK, NARROW_MARK, BREAKPOINT, PHONE = 16, 24, 465, 300, 832, 640
+SCROLLBAR = 17  # a classic scrollbar, about 15 to 17 px (Windows, some Linux setups)
 WIDTHS = sorted({*range(320, 1281, 4), PHONE - 1, PHONE, BREAKPOINT - 1, BREAKPOINT})
 
 
 @pytest.mark.parametrize("path", [*NAV, "/missing"])
 def test_the_header_keeps_one_row_at_every_width(browser, site_url, path):
     """#55's one-row rule (owner ruling of 2026-10-04, wordmark_breakpoint, kept for the Book
-    wordmark on 2026-10-14), on each page, whose own nav link is bold. From 816 px the 463 px
-    wordmark and the nav share one row; below it the 300 px one does, down to about 637 px,
-    where the nav takes its own line under the wordmark, still one line at 320 px, where the
-    wordmark shrinks to fit. The early-version line takes one line of its own from 40rem and
-    isn't shown on phones (early_line_hidden_on_phones, 2026-10-06). Every 4 px from 320 to
-    1280 px, so a second row is caught: the header has one height per layout. And the widest
-    one-row headers, 16 + 463 + 24 + the nav + 16 and 16 + 300 + 24 + the nav + 16, fit the
-    breakpoint and the phone one: a longer nav ("How it works", 2026-10-05, or a "Tip Jar")
-    moves the 51rem rule and this test. So does the Blog link, which every build gets once a
-    post is published (about 850 px); a draft that only staging shows (--drafts) isn't
-    measured here."""
+    wordmark on 2026-10-14 and brush 102 on 2026-11-03), on each page, whose own nav link is
+    bold. From 832 px the 465 px wordmark and the nav share one row, with room for a
+    scrollbar; below it the 300 px one does, down to about 637 px, where the nav takes its own
+    line under the wordmark, still one line at 320 px, where the wordmark shrinks to fit. The
+    early-version line takes one line of its own from 40rem and isn't shown on phones
+    (early_line_hidden_on_phones, 2026-10-06). Every 4 px from 320 to 1280 px, so a second row
+    is caught: the header has one height per layout. And the widest one-row headers, 16 + 465 + 24 + the nav + 16 and 16 + 300 + 24 +
+    the nav + 16, fit the breakpoint, less a scrollbar, and the phone one: a longer nav ("How
+    it works", 2026-10-05, or a "Tip Jar") moves the 52rem rule and this test. So does the Blog
+    link, which every build gets once a post is published (about 850 px, 867 with a
+    scrollbar); a draft that only staging shows (--drafts) isn't measured here."""
     context = browser.new_context(base_url=site_url, viewport={"width": 1280, "height": 800})
     try:
         page = context.new_page()
         page.goto(path)
         nav = page.evaluate(HEADER_JS)["nav"]
-        need = GUTTER + WIDE_MARK + GAP + nav + GUTTER
+        need = GUTTER + WIDE_MARK + GAP + nav + GUTTER + SCROLLBAR
         assert need <= BREAKPOINT, f"the one-row header needs {need:.1f} px: move the breakpoint"
         need = GUTTER + NARROW_MARK + GAP + nav + GUTTER
         assert need <= PHONE, f"the narrow one-row header needs {need:.1f} px: narrow its mark"
