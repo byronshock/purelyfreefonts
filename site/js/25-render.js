@@ -2,9 +2,9 @@
 // the server-rendered li.font rows: the rows to show go back into #list, in order, through
 // one DocumentFragment; the others are detached (kept here, never given `hidden`). Only the
 // .rank cell (a score and its bar, or "Not ranked: <reason>", with the is-unranked class that
-// follows it), the dim class and the Milestone 3 slots change inside a row, and only when they
-// differ, so an unchanged view costs no DOM work. Focus stays where it was, or moves to a
-// neighbouring row when its own row leaves.
+// follows it), the held tag that goes with it, the dim class and the Milestone 3 slots change
+// inside a row, and only when they differ, so an unchanged view costs no DOM work. Focus stays
+// where it was, or moves to a neighbouring row when its own row leaves.
 const Render = (() => {
   let list = null;
   let rows = [];
@@ -17,7 +17,6 @@ const Render = (() => {
   let count = null;
   let noResults = null;
   let noResultsText = null;
-  let heldLegend = null;
   let viewNote = null;
 
   // Bind to #list and the rows by font index (rows[i] is font i's li.font). The labels and
@@ -37,7 +36,6 @@ const Render = (() => {
     count = document.getElementById('count');
     noResults = document.getElementById('no-results');
     noResultsText = document.getElementById('no-results-text');
-    heldLegend = document.getElementById('held-legend');
     viewNote = document.getElementById('view-note');
   };
   // Draw a .rank cell as _row.html.j2 does: the score with its words for screen readers and
@@ -55,6 +53,39 @@ const Render = (() => {
       String(score),
       hiddenText(`${words.after}${held ? words.held : ''}`),
       Core.el('i', { class: `bar b${score}` }),
+    );
+  };
+  // A held row's tag, "Score from one kind of source" (owner ruling of 2026-11-03,
+  // held_legend_to_tag), drawn as _row.html.j2 draws it: last among the row's tags, hidden from
+  // screen readers, which hear it in the .rank cell. A row with no other tag gets its tag list
+  // with it, hidden too, as the tag is all it holds (a font's own tags never change), and loses
+  // the list again without it.
+  const drawHeldTag = (row, held, words) => {
+    const tag = row.querySelector('.badge[data-badge="held"]');
+    if (held === Boolean(tag)) return;
+    if (tag) {
+      const tags = tag.parentNode;
+      tag.remove();
+      if (!tags.children.length) tags.remove();
+      return;
+    }
+    let tags = row.querySelector('.badges');
+    if (!tags) {
+      tags = Core.el('ul', {
+        class: 'badges',
+        role: 'list',
+        'aria-label': 'Tags',
+        'aria-hidden': 'true',
+      });
+      row.querySelector('.download').before(tags);
+    }
+    tags.append(
+      Core.el('li', {
+        class: 'badge',
+        dataset: { badge: 'held' },
+        'aria-hidden': 'true',
+        text: words.tag,
+      }),
     );
   };
 
@@ -182,6 +213,7 @@ const Render = (() => {
         const score = result.scores ? result.scores[k] : -1;
         const held = Boolean(result.held && result.held[k]);
         drawRank(rankNodes[i], score, held, label, result.words);
+        drawHeldTag(rows[i], held, result.words);
         // "Not ranked: <reason>" gets a line of its own (site ruling of 2026-09-26).
         rows[i].classList.toggle('is-unranked', label.startsWith(View.NOT_RANKED));
         labelNow[i] = label;
@@ -206,8 +238,7 @@ const Render = (() => {
     }
     orderNow = result.order.slice();
 
-    // The hollow bar's legend while a held font is shown; the view's note (Developers & apps).
-    if (heldLegend) Core.setHidden(heldLegend, !(result.held || []).some(Boolean));
+    // The view's note (Developers & apps).
     if (viewNote) {
       Core.text(viewNote, result.note || '');
       Core.setHidden(viewNote, !result.note);
