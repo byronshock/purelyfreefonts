@@ -103,8 +103,9 @@ html[data-list-pending="settling"] .site-footer {
 
 /* Phones: the "Fonts" heading is hidden from sight (_list.html.j2), and the count sits in the
    sort row, after the sort buttons, at the row's end (mobile_first_screen_two_fonts). The
-   results wrap as a flex row in which everything else takes a line of its own, so the legend
-   and the notes stay above the sort row; the order moves only what is seen, and the count
+   results wrap as a flex row in which everything else takes a line of its own, so the view's
+   note and the no-results message stay above the sort row; the order moves only what is
+   seen, and the count
    isn't focusable. Beside the two-line sort button the count may take two lines; where even
    that leaves it less than about 7.5em (below 337px, with "most popular" in the sort button)
    it takes the next line. Its first line is level with the buttons' labels, so a count that
@@ -418,9 +419,10 @@ li.font.is-dim .font-name {
    score_display): the number, right-aligned, then the bar, which ends at the edge of the rank
    cell (6rem, 96px, on every screen) so the bars line up. The bar is an empty i.bar, its fill
    ::before. A font the two-source rule holds back has a hollow bar (owner ruling of
-   2026-09-30, held_marker_style), explained by #held-legend. Both are centred on the specimen
-   box (the owner's site ruling of 2026-10-05, score_centred): the cell is as tall as the box,
-   which starts level with it, at the top of the title, in every layout. */
+   2026-09-30, held_marker_style), explained by its row's tag (held_legend_to_tag,
+   2026-11-03). Both are centred on the specimen box (the owner's site ruling of 2026-10-05,
+   score_centred): the cell is as tall as the box, which starts level with it, at the top of
+   the title, in every layout. */
 li.font:not(.is-unranked) .font-row > .rank {
   display: flex;
   align-items: center;
@@ -460,7 +462,6 @@ li.font:not(.is-unranked) .font-row:has(> .font-title:not(.has-spec)) > .rank {
   background: var(--c-bg);
 }
 
-.held-legend,
 .view-note {
   margin: 0 0 var(--space-3);
   max-width: var(--measure);
@@ -468,13 +469,6 @@ li.font:not(.is-unranked) .font-row:has(> .font-title:not(.has-spec)) > .rank {
   color: var(--c-muted);
 }
 
-.held-legend .bar {
-  display: inline-block;
-  width: 3rem;
-  vertical-align: middle;
-}
-
-.held-legend[hidden],
 .view-note[hidden] {
   display: none;
 }
