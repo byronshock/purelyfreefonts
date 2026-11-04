@@ -576,13 +576,14 @@ def test_wordmark_svg_is_the_owners_inert_outlines():
 
 @pytest.mark.parametrize(
     ("width", "want"),
-    [(1280, 465), (816, 465), (815, 300), (700, 300), (375, 300), (320, 288)],
+    [(1280, 465), (832, 465), (831, 300), (816, 300), (700, 300), (375, 300), (320, 288)],
 )
-def test_the_wordmark_is_465_px_wide_from_816_px_and_300_below(browser, site_url, width, want):
-    """Owner rulings of 2026-10-14, kept on 2026-11-03: 465 px wide where the navigation fits
-    beside it (816 px and up) and 300 px below that (capitals about 38 and 24.4 px tall),
-    shrinking to fit the narrowest phones (288 px at 320), in the header, which is white in both
-    themes. test_the_header_keeps_one_row_at_every_width re-measures the 816."""
+def test_the_wordmark_is_465_px_wide_from_832_px_and_300_below(browser, site_url, width, want):
+    """Owner rulings of 2026-10-14 and 2026-11-03: 465 px wide where the navigation fits beside
+    it, with room for a classic scrollbar (832 px and up), and 300 px below that (capitals about
+    38 and 24.4 px tall), shrinking to fit the narrowest phones (288 px at 320), in the header,
+    which is white in both themes. test_the_header_keeps_one_row_at_every_width re-measures the
+    832."""
     for scheme in ("light", "dark"):
         context = browser.new_context(
             base_url=site_url, viewport={"width": width, "height": 800}, color_scheme=scheme
@@ -622,9 +623,12 @@ HEADER_JS = """() => {
            scrollWidth: document.documentElement.scrollWidth };
 }"""
 # The one-row header's parts (10-base.css): the side gutters, the gap between the wordmark and
-# the nav, the wide and narrow wordmarks, the breakpoint (51rem) from which the wide one and the
+# the nav, the wide and narrow wordmarks, the breakpoint (52rem) from which the wide one and the
 # nav share a row, and the phone breakpoint (40rem), from which the narrow one and the nav do.
-GUTTER, GAP, WIDE_MARK, NARROW_MARK, BREAKPOINT, PHONE = 16, 24, 465, 300, 816, 640
+# The wide breakpoint also leaves room for a classic scrollbar, which a min-width media query
+# counts as page width (owner ruling of 2026-11-03, wordmark_breakpoint_scrollbar).
+GUTTER, GAP, WIDE_MARK, NARROW_MARK, BREAKPOINT, PHONE = 16, 24, 465, 300, 832, 640
+SCROLLBAR = 17  # a classic scrollbar, about 15 to 17 px (Windows, some Linux setups)
 WIDTHS = sorted({*range(320, 1281, 4), PHONE - 1, PHONE, BREAKPOINT - 1, BREAKPOINT})
 
 
@@ -632,22 +636,22 @@ WIDTHS = sorted({*range(320, 1281, 4), PHONE - 1, PHONE, BREAKPOINT - 1, BREAKPO
 def test_the_header_keeps_one_row_at_every_width(browser, site_url, path):
     """#55's one-row rule (owner ruling of 2026-10-04, wordmark_breakpoint, kept for the Book
     wordmark on 2026-10-14 and brush 102 on 2026-11-03), on each page, whose own nav link is
-    bold. From 816 px the 465 px wordmark and the nav share one row; below it the 300 px one
-    does, down to about 637 px, where the nav takes its own line under the wordmark, still one
-    line at 320 px, where the wordmark shrinks to fit. The early-version line takes one line of
-    its own from 40rem and isn't shown on phones (early_line_hidden_on_phones, 2026-10-06).
-    Every 4 px from 320 to 1280 px, so a second row is caught: the header has one height per
-    layout. And the widest one-row headers, 16 + 465 + 24 + the nav + 16 and 16 + 300 + 24 +
-    the nav + 16, fit the breakpoint and the phone one: a longer nav ("How it works",
-    2026-10-05, or a "Tip Jar") moves the 51rem rule and this test. So does the Blog link,
-    which every build gets once a post is published (about 850 px); a draft that only staging
-    shows (--drafts) isn't measured here."""
+    bold. From 832 px the 465 px wordmark and the nav share one row, with room for a
+    scrollbar; below it the 300 px one does, down to about 637 px, where the nav takes its own
+    line under the wordmark, still one line at 320 px, where the wordmark shrinks to fit. The
+    early-version line takes one line of its own from 40rem and isn't shown on phones
+    (early_line_hidden_on_phones, 2026-10-06). Every 4 px from 320 to 1280 px, so a second row
+    is caught: the header has one height per layout. And the widest one-row headers, 16 + 465 + 24 + the nav + 16 and 16 + 300 + 24 +
+    the nav + 16, fit the breakpoint, less a scrollbar, and the phone one: a longer nav ("How
+    it works", 2026-10-05, or a "Tip Jar") moves the 52rem rule and this test. So does the Blog
+    link, which every build gets once a post is published (about 850 px, 867 with a
+    scrollbar); a draft that only staging shows (--drafts) isn't measured here."""
     context = browser.new_context(base_url=site_url, viewport={"width": 1280, "height": 800})
     try:
         page = context.new_page()
         page.goto(path)
         nav = page.evaluate(HEADER_JS)["nav"]
-        need = GUTTER + WIDE_MARK + GAP + nav + GUTTER
+        need = GUTTER + WIDE_MARK + GAP + nav + GUTTER + SCROLLBAR
         assert need <= BREAKPOINT, f"the one-row header needs {need:.1f} px: move the breakpoint"
         need = GUTTER + NARROW_MARK + GAP + nav + GUTTER
         assert need <= PHONE, f"the narrow one-row header needs {need:.1f} px: narrow its mark"

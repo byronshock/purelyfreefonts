@@ -238,16 +238,17 @@ input[type="radio"] {
 }
 
 /* The wordmark (site/static/wordmark.svg, the owner's 9845 x 1250 white plate at brush 102, its
-   capitals 800 tall): 465 px wide where the Site navigation fits beside it on one row (816 px
+   capitals 800 tall): 465 px wide where the Site navigation fits beside it on one row (832 px
    and up), so the capitals stand about 38 px tall, and 300 px below that, about 24.4 px (owner
-   rulings of 2026-10-14, kept on 2026-11-03). Sized by width, the height following, so it
-   scales down evenly where even 300 px won't fit (288 px at 320). The breakpoint is the widest
+   rulings of 2026-10-14 and 2026-11-03). Sized by width, the height following, so it scales
+   down evenly where even 300 px won't fit (288 px at 320). The breakpoint is the widest
    one-row header, the gutters, the wordmark, the gap and the nav: 16 + 465 + 24 + 281 + 16 =
-   802 px, with "How it works" bold on its own page (measured on 2026-11-03);
-   tests/site/test_shell.py re-measures it. Below it the 300 px wordmark keeps the nav beside
-   it down to 637 px, under the 640 px phone breakpoint; 308 px, for capitals of 25, would not.
-   That is without the Blog link: the first published post makes the nav about 329 px, and the
-   breakpoint about 850. */
+   802 px, with "How it works" bold on its own page (measured on 2026-11-03), plus room for a
+   classic scrollbar of up to about 17 px, which the media query counts as page width (so not
+   51rem, which would wrap the nav at 816 to 818 px); tests/site/test_shell.py re-measures it.
+   Below it the 300 px wordmark keeps the nav beside it down to 637 px, under the 640 px phone
+   breakpoint; 308 px, for capitals of 25, would not. That is without the Blog link: the first
+   published post makes the nav about 329 px, and the breakpoint about 867. */
 .site-name-mark {
   display: block;
   width: 29.0625rem;
@@ -255,7 +256,7 @@ input[type="radio"] {
   max-width: 100%;
 }
 
-@media not all and (min-width: 51rem) {
+@media not all and (min-width: 52rem) {
   .site-name-mark {
     width: 18.75rem;
   }
