@@ -1,0 +1,30 @@
+# Owner rulings of 2026-11-03, ruled by the owner, Byron Shock; recorded by Claude.
+# held_legend_to_tag: on the list's held marker, from the owner's look at staging (preview/2026-10-17 at f2f8c1c), asked in chat as a
+# single-select question. Also in AUTHORITY.md (Site (Milestone 2), "Scores instead of numbers").
+# On the wordmark, asked as single-select questions: wordmark_brush_102 and wordmark_size_brush_102 in the session in his typeface
+# tools (penleft) that wrote the plate, wordmark_breakpoint_scrollbar in the session that put it on the site (#114). Also in
+# AUTHORITY.md (Headline font).
+
+[held_legend_to_tag]
+value = "tag_in_place_of_legend"
+ruling = "The legend line above the list (\"Hollow bar: this score rests on one kind of source, so it may move more.\", held_marker_style) goes. A font the two-source rule holds back keeps its hollow bar and its words for screen readers (\", from one kind of source\"), and its row's tags end with \"Score from one kind of source\". The tag follows the view, as the bar does, and is hidden from screen readers, which hear the same words in the score. Developers & apps still marks no row (held_marker_dev_apps)."
+reason = "The owner, on the legend: \"This legend text seems superfluous. I don't even see any hollow bars in the full list.\" Measured on staging, held fonts are few and far down: Projects, the default view, had one (Charter, row 80), Chosen 9 (the first at row 33), Installed 4 (the first at row 39) and Coding 5 (rows 77 to 84). Of dropping the legend and keeping the bar (Claude's recommendation), dropping both, or keeping both, the owner chose to drop the legend, keep the bar, and \"add a tag to indicate score was from a single source\". The tag's words are Claude's, those of the score's words for screen readers and of the font's details."
+
+[wordmark_brush_102]
+choice = "a"
+recommended = true
+value = "pointforms build/wordmarks/purely-free-fonts-plate-brush102.svg sha256:0aa7b9e5ac1bba0c58c95508598a1de3b794cd0eb361921f7abc27725f749e56"
+ruling = "The wordmark is \"Purely Free Fonts\" in the owner's typeface Purely Constructed at brush 102: near-black (#111111) letters on a white plate that fills its 9845 x 1250 viewBox (his file purely-free-fonts-plate-brush102.svg, from his typeface project pointforms). It replaces the Book, brush 90 (wordmark_book_plate), and is made the same way: shaped by HarfBuzz with the font's kerning, outlined with fontTools, 100 units of clear space round the ink, from pointforms at 67f0158 built as a release weight is, at 102 font units. Brush 102 is not a release weight; its font is beside the plate (PConstructed-Brush102.otf). It is the heaviest brush whose s keeps the Book's round tails: from 103 up they are cut on the slant, as in the Medium the owner turned down on 2026-10-14 (the uncut limit is (9√5 − 15)/5 of pointforms' grid units, which are 100 font units each: 102.49 font units). The site serves it byte for byte as site/static/wordmark.svg, pinned by sha256 in tests/site/test_shell.py."
+reason = "The owner: \"It is coming across as too light with some very bold fonts on the same page, so I'd like to preview the SVG wordmark at various weights.\" Having seen it at the six 0.900 release weights, of (a) the Medium, brush 120 (Claude's recommendation), (b) the Demi, brush 150, (c) brushes between 90 and 150 and (d) keeping the Book, he chose (c). Brushes 90 to 150 showed the s's tails cut from 110, and he took Claude's recommendation to find where they change (brushes 101 to 109). Then, of (a) brush 102, (b) a heavier brush, 110 to 150, with the cut s, and (c) keeping the Book, he took Claude's recommendation, (a), though its strokes are only 13% heavier than the Book's, hard to tell apart at header size."
+
+[wordmark_size_brush_102]
+value = "caps_38_and_24_4_px"
+ruling = "The brush-102 wordmark keeps the Book's capital height (wordmark_size_book): about 38 px on wide screens, 465 x 59 px from the one-row breakpoint up (wordmark_breakpoint_scrollbar), the img's width and height in the plate's 9845:1250 ratio. Below that it stays 300 px wide (300 x 38, capitals about 24.4 px), shrinking to fit the narrowest phones (288 px at 320). The 300 px wordmark still keeps the navigation beside it from 637 px; 308 px, for capitals of 25 px, would push the navigation under the wordmark between 640 and 645 px."
+reason = "Not asked as a size of its own: the owner chose the capital height for the Book on 2026-10-14 (\"I imagine we will want the same cap height adjustment.\"), and the question that sent this change to its own session named the size: \"Put the brush-102 wordmark on the Purely Free Fonts site now? It's a change in truly_free_fonts: the file, its sha256 pin in the tests, the header size (465 × 59) and a ruling.\" Of (a) a session of its own (Claude's recommendation) and (b) not now, he chose (a): \"Start it\"."
+
+[wordmark_breakpoint_scrollbar]
+choice = "b"
+recommended = false
+value = "52rem"
+ruling = "The 465 px wordmark and the navigation share one row from 832 px (52rem) up, not 816 (51rem). The widest one-row header is 16 + 465 + 24 + 281 + 16 = 802 px (the nav with \"How it works\" bold on its own page, in Firefox), but a min-width media query counts a classic scrollbar (about 15 to 17 px, on Windows and some Linux setups) as page width. At 816 px Chromium's 15 px scrollbar leaves 0 px to spare (its nav is 280 px there), and with a 17 px one the nav drops to a second row at 816 to 818 px, the header growing from 113 to 153 px. From 832 px a scrollbar of up to 30 px leaves room. Between 816 and 831 px the wordmark is 300 px wide. tests/site/test_shell.py allows a 17 px scrollbar when it re-measures the breakpoint."
+reason = "Found by the lead session's review of #114: the Book had 16 px to spare over its 800 px header, brush 102 has 14. Of (a) keeping 51rem and recording that window widths of 816 to 818 px may wrap the nav with a classic scrollbar (Claude's recommendation) and (b) raising it to 52rem, so the big wordmark starts at 832 px and the nav stays beside it with any scrollbar, the owner chose (b)."

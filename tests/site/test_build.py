@@ -719,6 +719,13 @@ def test_index_is_server_rendered_in_the_default_order(tmp_path, catalog, mini_s
     assert page.ranks == expected_labels(SAMPLE)
     assert not set(BANDS) & set(page.ranks)  # no bands, and no numbers, in the list
     assert any(label.endswith(", from one kind of source") for label in page.ranks)
+    # The words the script draws a score and a held row's tag with (held_legend_to_tag).
+    assert index["score_words"] == {
+        "before": "Score ",
+        "after": " of 100",
+        "held": ", from one kind of source",
+        "tag": "Score from one kind of source",
+    }
     # The unranked fonts close the list, A to Z (no font lacks deliberate installs in projects).
     assert page.ranks[-1] == "Not ranked: no evidence in this rank"
 
@@ -2357,6 +2364,32 @@ def test_built_site_follows_the_output_contract(site_dir, site_data):
     assert match == made.blob
     assert json.loads(match)["ids"] == sorted(list_index["ids"])
     assert json.loads(match)["run_date"] == doc["run"]["date"]
+
+
+def test_built_site_puts_the_held_tag_after_a_held_row_s_own_tags(tmp_path, catalog):
+    """held_legend_to_tag (2026-11-03): the server ends a held row's tags with the held tag,
+    after the font's own, and hides a list from screen readers only when the held tag is all it
+    holds. The sample's held sample-mono-23 has no tag of its own, so here it gets one."""
+    path, cache = catalog
+    doc = json.loads(path.read_bytes())
+    for font in doc["fonts"]:
+        if font["id"] == "sample-mono-23":
+            assert font["ranks"]["project"]["gate_held"]
+            font["formats"]["variable"] = True
+    path.write_bytes(jsonio.pretty_bytes(doc))
+    out = tmp_path / "site"
+    build.build(path, out, fonts_dir=cache, commit=COMMIT, font_files=False)
+    page = parse((out / "index.html").read_text(encoding="utf-8"))
+    mine, lists, keys = False, [], []
+    for tag, attrs in page.tags:
+        if tag == "li" and attrs.get("data-id"):
+            mine = attrs["data-id"] == "sample-mono-23"
+        elif mine and tag == "ul" and attrs.get("class") == "badges":
+            lists.append(attrs)
+        elif mine and tag == "li" and attrs.get("data-badge"):
+            keys.append((attrs["data-badge"], attrs.get("aria-hidden")))
+    assert keys == [("variable", None), ("held", "true")]
+    assert [a.get("aria-hidden") for a in lists] == [None]
 
 
 def test_built_site_builds_twice_identically(tmp_path, site_data):

@@ -63,9 +63,15 @@ VIEW_NOTES = {
 }
 # The words around a row's score for screen readers ("Score 83 of 100"), and after it for a
 # font the two-source rule holds back (the hollow bar, owner ruling of 2026-09-30,
-# held_marker_style). The list index carries them, so the script holds no copy.
-SCORE_WORDS = {"before": "Score ", "after": " of 100", "held": ", from one kind of source"}
-HELD_LEGEND = "Hollow bar: this score rests on one kind of source, so it may move more."
+# held_marker_style); then the tag that ends a held row's tags, in place of the legend line
+# above the list (owner ruling of 2026-11-03, held_legend_to_tag). The list index carries
+# them, so the script holds no copy.
+SCORE_WORDS = {
+    "before": "Score ",
+    "after": " of 100",
+    "held": ", from one kind of source",
+    "tag": "Score from one kind of source",
+}
 STATE_LABELS = {
     "observed": "observed",
     "censored": "below the floor",

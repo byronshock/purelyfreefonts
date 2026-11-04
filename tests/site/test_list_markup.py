@@ -184,19 +184,34 @@ def test_rows_are_in_server_order_with_default_view_labels(dom, doc):
     )
 
 
-def test_the_held_legend_shows_when_the_server_list_has_a_held_font(dom, doc):
-    """Owner ruling of 2026-09-30 (held_marker_style): the hollow bar's legend, word for word,
-    is in the page whenever a row the server draws is held, so it explains the bar without
-    scripts too; the script then follows the view (#view-note starts hidden)."""
-    legend = dom.find("p", id="held-legend")
-    rulings = tomllib.loads((ROOT / "data/reviews/site/2026-09-30.toml").read_text())
-    assert squash(legend.text) in rulings["held_marker_style"]["ruling"]
-    held = [
-        f
-        for f in doc["fonts"]
-        if (e := f["ranks"][data.DEFAULT_VIEW])["order"] is not None and e["gate_held"]
-    ]
-    assert ("hidden" not in legend.attrs) == bool(held)
+def test_held_rows_carry_the_tag_in_the_server_view(dom, doc):
+    """Owner ruling of 2026-11-03 (held_legend_to_tag, which dropped held_marker_style's
+    legend): a row the server draws held, in the default view, ends its tags with "Score from
+    one kind of source", word for word, so the hollow bar is explained where it is, without
+    scripts too. The tag is hidden from screen readers, which hear the same words in the
+    score, and so is a list the tag is alone in, so no empty "Tags" list is announced. No
+    other row has it, and no legend is left (#view-note starts hidden)."""
+    rulings = tomllib.loads((ROOT / "data/reviews/site/2026-11-03.toml").read_text())
+    fonts = {f["id"]: f for f in doc["fonts"]}
+    tagged = 0
+    for li in dom.find("ol", id="list").elements():
+        entry = fonts[li.attrs["data-id"]]["ranks"][data.DEFAULT_VIEW]
+        held = entry["order"] is not None and entry["gate_held"]
+        tags = li.find_all("li", data_badge="held")
+        assert len(tags) == held, li.attrs["data-id"]
+        assert ("is-held" in li.find("span", class_="rank").classes) == held
+        if held:
+            tag = tags[0]
+            assert tag is tag.parent.elements()[-1]
+            assert (tag.classes, tag.attrs["aria-hidden"]) == (["badge"], "true")
+            alone = len(tag.parent.elements()) == 1
+            assert tag.parent.attrs.get("aria-hidden") == ("true" if alone else None)
+            assert squash(tag.text) == "Score from one kind of source"
+            assert f'"{squash(tag.text)}"' in rulings["held_legend_to_tag"]["ruling"]
+            tagged += 1
+    # The sample holds sample-mono-23 back in Projects, so there the check has a case to check.
+    assert tagged or "sample-mono-23" not in fonts
+    assert dom.find(id="held-legend") is None
     assert "hidden" in dom.find("p", id="view-note").attrs
 
 
@@ -209,8 +224,8 @@ def test_each_row_has_its_parts(dom, doc):
         assert li.attrs["id"] == f"font-{font_id}"
         row = li.elements()[0]
         assert row.classes == ["font-row"]
-        # rank first, then the title: Render redraws only the .rank cell, which holds the
-        # score and its bar (score_display), or the "Not ranked" text alone
+        # rank first, then the title: Render redraws the .rank cell, which holds the score
+        # and its bar (score_display), or the "Not ranked" text alone
         assert [c.classes[0] for c in row.elements()[:2]] == ["rank", "font-title"]
         cell = row.elements()[0]
         if li.classes == ["font", "is-unranked"]:
@@ -309,8 +324,13 @@ def test_badges_follow_the_contract_order(dom, doc):
         assert badges.attrs.get("role") == "list"
         assert badges.attrs["aria-label"] == "Tags"
         keys = [b.attrs["data-badge"] for b in badges.elements()]
-        assert keys == sorted(keys, key=BADGE_ORDER.index)
         assert keys, "an empty tag list is left out"
+        # A held row's tag closes the list (held_legend_to_tag), after the font's own tags; a
+        # list it is alone in is hidden from screen readers, which would find it empty.
+        assert badges.attrs.get("aria-hidden") == ("true" if keys == ["held"] else None)
+        if keys[-1] == "held":
+            keys.pop()
+        assert keys == sorted(keys, key=BADGE_ORDER.index)
         seen.update(keys)
         assert ("variable" in keys) == font["formats"]["variable"]
         assert ("attribution" in keys) == font["license"]["attribution_required"]
@@ -625,7 +645,7 @@ def test_the_nerd_font_tag_replaces_the_marker_and_legend(dom, doc):
         "results-h",
         "ext-summary",
         "count",
-        "held-legend",
+        "view-note",
     ]
     assert results[-2].attrs["id"] == "list-sort"  # the sort buttons sit right over the list
 
@@ -1321,7 +1341,7 @@ def test_wider_screens_keep_their_layout(browser, site_url, width):
 
 # Layout shifts the page makes by itself (no recent input), from the first paint, each with
 # the moved nodes and those of them above the results: not in #results (the count, the
-# legends, the sort row and the rows) nor in the footer below them.
+# view's note, the sort row and the rows) nor in the footer below them.
 SHIFTS_JS = """
 (() => {
   window.__shifts = [];
@@ -1374,8 +1394,8 @@ def test_the_phone_first_screen_does_not_shift(
     for, whose row ends up first; not the footer, which comes up the screen when few rows are
     left; and not the count, when the no-results message comes above the sort row. On a
     phone's refilter nothing above the results moves, and the count, whose length changes,
-    keeps its place in the sort row; inside the results the rows, and the legend that comes
-    or goes with the view, change as on every screen, and the footer follows them."""
+    keeps its place in the sort row; inside the results the rows, and the view's note that
+    comes or goes with the view, change as on every screen, and the footer follows them."""
     if browser_name != "chromium":
         pytest.skip("the Layout Instability API is Chromium's")
     last = squash([h for h in dom.find_all("h3") if "font-name" in h.classes][-1].text)

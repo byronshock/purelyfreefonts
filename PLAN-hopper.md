@@ -260,7 +260,7 @@ Whatever the answer, step 2 checks whether a browser's session restore writes th
   - `tests/site/test_a11y.py`: axe on the new structure, in both themes and in forced colours.
 
   *(Built with more besides, from the reviews before #104 opened: bring()'s drop-zone scroll with the page scrolled past the hopper and in a window too short for both; the levels of text, computed; the receipt in the fit check at every width; the tick in forced colours.)*
-- [ ] **WebKit** (the owner, 2026-11-01: WebKit tests, definitely): the browser suites in Playwright's WebKit 26.6, run locally, since CI has Chromium and Firefox only. *(On #104: 492 passed, 14 failed. The same 14 fail on #100's head, so none comes from step 2, and every test step 2 adds or changes passes. Triage of the 14 is under way.)*
+- [x] **WebKit** (the owner, 2026-11-01: WebKit tests, definitely): the browser suites in Playwright's WebKit 26.6, run locally, since CI has Chromium and Firefox only. *(On #104: 492 passed, 14 failed. The same 14 fail on #100's head, so none comes from step 2, and every test step 2 adds or changes passes. By 2026-11-02 all 14 were fixed, and the suites pass: below.)*
   - [x] Triage (2026-11-01: five investigators and a skeptic each; probes under the session's scratchpad):
     - **Harness, 7:** Playwright's WebKit screenshots insert `<style>body {}</style>`, which the site's CSP blocks (6 in `test_a11y.py`; 6 more in `test_specimens_loader.py`, not run); WebKit's "Blocked by Web Inspector" isn't in a regex (1 in `test_privacy.py`). No visitor sees either.
     - **The list index downloaded twice, 5:** WebKit never lets the script's plain `fetch()` reuse the `crossorigin` preload, so the index is fetched twice: every time in Private Browsing, and on slow connections. Fix: a preload and a fetch of the same kind (no `crossorigin`; `no-cors`, credentials `include`).
@@ -268,7 +268,11 @@ Whatever the answer, step 2 checks whether a browser's session restore writes th
     - **WebKit's cap on history writes, 1:** 100 in 10 s; on the next, `State.set` has already changed its state but notifies nothing. Low; holding Enter on a sort button reaches it.
   - [x] The owner rules on the hopper's controls in WebKit (above). *(2026-11-01: a `<form autocomplete="off">` that never submits, Claude's recommendation over emptying both controls as the page starts, `hopper_form_autocomplete_off`.)*
   - [x] The form, built in #104, with a test that Back gives back neither control. *(`4d69a5e`. In WebKit the Back test passes, and fails without the form's `autocomplete="off"`; a probe found the paste box empty after Back in all three engines. The layout measures the same.)*
-  - [ ] The other fixes, and the suites passing in WebKit: a task of their own.
+  - [x] The other fixes, and the suites passing in WebKit: a task of their own. *(2026-11-02:*
+    - *#106 (`e78e1f3`, on `main`) fixed the index fetched twice, the cap on history writes and the harness's WebKit limits.*
+    - *#108 (`33844d7`) brought `main` into #100 and fixed 9 `test_mine.py` tests that hold the index back: in WebKit a held index holds the load event, so their `goto` waits for DOMContentLoaded.*
+    - *On #107 merged with #100's head (`00d8ff3`, local), the six suites in "Done when" pass in WebKit, Chromium and Firefox, and so do the fast suite and ruff.*
+    - *CI's whole browser set (2,080 tests) has 4 more failures in WebKit, all outside those six suites: `test_details.py`, `test_keys_js.py`, `test_owned_js.py` and `test_ui_font.py`. They fail on `main` too, every time, so they're a task of their own.)*
 
 **Done when:**
 - the hopper reads "Make the list", then "Drop or paste it", then the result;
@@ -294,13 +298,13 @@ Whatever the answer, step 2 checks whether a browser's session restore writes th
 - [x] S7: `fieldset#f-have` with the title, `#f-system` and `fieldset#mine`, as S7 says. These follow: `test_filters_ship_hidden_inside_search`, `test_the_hopper_s_markup`'s legend and order checks (`order[-3:]`), `test_the_hopper_fits_its_panel_at_every_width`, and CONTRACT section 4's sketch and "after `#f-system`".
 - [x] S8: `#f-clear` first in `#f-more`, with `25-filters.css`'s `#f-clear` rules. These follow: `test_the_hopper_s_markup`'s order check, `test_list.py`'s "Clear filters" tests, and CONTRACT section 4's sketch and "before `#f-clear`".
 - [x] S9: the spacing rhythm and the hairline; the measurements in step 2 taken again. *("And after step 3", under "Measured for step 2".)*
-- [x] Records and tests as in step 2, for each item built. *(2026-11-02, #107, `cfcbb90`: tests for each item, a review workflow's 13 findings fixed, among them a forced-colours hover that hid Choose file's label; Chromium 441 and Firefox 527 passed, WebKit too but for 9 tests that fail on #100 merged with `main` alone.)*
+- [x] Records and tests as in step 2, for each item built. *(2026-11-02, #107, `cfcbb90`: tests for each item, a review workflow's 13 findings fixed, among them a forced-colours hover that hid Choose file's label; Chromium 441 and Firefox 527 passed, WebKit too but for 9 tests that fail on #100 merged with `main` alone. #108 fixed those 9. On #107 merged with #100's head, step 2's six suites pass in all three engines; see "WebKit" in step 2.)*
 
 **Done when:** each chosen item is built and tested, and step 2's checks pass again.
 
 ### Step 4: The owner looks on staging
 **Who:** the lead deploys; the owner looks. **Depends on:** steps 2 and 3 merged into #100; Q3.
-- [ ] The lead rebases `preview/2026-10-17` on #100's new head (`hopper_on_staging`) and deploys it with `ops/deploy.sh staging`.
+- [x] The lead rebases `preview/2026-10-17` on #100's new head (`hopper_on_staging`) and deploys it with `ops/deploy.sh staging`. *(2026-11-03: `ba2f627`, the four October commits on #100's `28aae7c`, which adds the previews' fix: once a list has loaded, Chromium no longer fetches previews again (the a8ad402 deploy's live privacy test had failed on that). The deploy passed: 4,951 site tests, then the live tests.)*
 - [ ] The owner drops, chooses and pastes a real list in Chromium and Firefox, and rules on the screens, F3's Show menu included. Further findings go here as F5, F6, …
 
 **Done when:** the owner has looked, and any new findings are recorded.
