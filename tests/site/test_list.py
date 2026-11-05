@@ -1523,6 +1523,10 @@ def test_score_bars_match_the_scores_and_held_fonts_are_hollow(
         for font_id, markup in server.items()
     }
     assert page.query_selector("#held-legend") is None
+    # Straight from the server's view to one that marks no row: every held tag the server drew
+    # goes, so the script knows which rows the server marked (the sample's sample-mono-23, below).
+    page.select_option("#f-rank", next(v for v in views if v in data.VIEW_NOTES))
+    assert page.query_selector('#list .badge[data-badge="held"]') is None
     for rank in [*views[1:], views[0]]:
         page.select_option("#f-rank", rank)
         got = page.evaluate(BARS_JS)
