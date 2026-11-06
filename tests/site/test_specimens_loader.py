@@ -14,11 +14,16 @@ Checked here:
 
 - at load, once the page has finished starting and the network is quiet, no specimen is
   requested for a row more than 1000 px below the viewport; every row on screen or within most
-  of the 600 px margin has its mask, and every mask set has been fetched (so nothing is left
-  to fetch later, while paused);
+  of the 600 px margin has its mask, and every mask set has been fetched by its probe (and is
+  resolved as it is set, below, so nothing is left to fetch later, while paused);
 - scrolling loads the rows that come near; rows a jump skipped over stay unloaded;
 - ``tff.list.specimens.pause()`` stops new requests, and ``resume()`` loads only the rows still
   near the screen (M3-D10); rows that Render detaches and moves still load when near;
+- each mask is resolved as it is set, so a row that content-visibility skipped when its file
+  arrived is drawn later without another request, with the caches emptied and garbage
+  collected (Chromium; Firefox and WebKit ask for none again in the same fling, and WebKit's
+  garbage can't be collected from a test); a row detached while its file loads gets its mask
+  too, read back in the document for that moment, and is drawn later without another request;
 - a ``data-src`` outside ``/assets/specimens/`` is never loaded, even on a row on screen;
 - the box is 64 px high (48 px on phones), unfilled until its mask is set, empty (never a solid
   bar) while its specimen downloads or if it never arrives, and the row keeps its height when
@@ -44,7 +49,7 @@ import threading
 import time
 import zlib
 from collections import Counter
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
@@ -108,6 +113,58 @@ PAINT_JS = "(e) => [getComputedStyle(e).opacity, getComputedStyle(e).color]"
 SETTLE_JS = """() => new Promise((resolve) =>
   requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve, 60))))"""
 SCROLL_JS = "(id) => document.getElementById('font-' + id).scrollIntoView({block: 'center'})"
+# Moved to the top of the list, as Render does when a filter changes the order.
+TO_TOP_JS = (
+    "(id) => { document.getElementById('list').prepend(document.getElementById('font-' + id));"
+    " window.scrollTo(0, 0); }"
+)
+# Detached into a fragment (a hidden row), as Render leaves the rows a view leaves out.
+DETACH_JS = (
+    "(id) => { window.__held = document.createDocumentFragment();"
+    " window.__held.append(document.getElementById('font-' + id)); }"
+)
+# Counts, in window.__tffSkippedSets, the masks set while content-visibility skipped their row,
+# from the browser's events and the state alone: reading a row's style or layout would resolve
+# its mask, and so do the loader's job for it.
+SKIPPED_SETS_JS = """() => {
+  window.__tffSkippedSets = 0;
+  const skipped = new WeakMap();
+  document.addEventListener('contentvisibilityautostatechange',
+    (e) => skipped.set(e.target, e.skipped), true);
+  new MutationObserver((records) => {
+    for (const { target } of records) {
+      if (target.dataset.state === 'set' && skipped.get(target.closest('li.font')) === true) {
+        window.__tffSkippedSets += 1;
+      }
+    }
+  }).observe(document.getElementById('list'),
+    { subtree: true, attributes: true, attributeFilter: ['data-state'] });
+}"""
+# Scrolls to the bottom 800 px a frame, as a fling does: rows pass the screen faster than their
+# specimens arrive, so (with the files held back) their masks are set once they are skipped.
+FLING_JS = """async () => {
+  const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
+  window.scrollTo(0, 0);
+  await frame();
+  while (innerHeight + scrollY < document.documentElement.scrollHeight - 1) {
+    window.scrollBy(0, 800);
+    await frame();
+  }
+}"""
+# Scrolls from the top to the bottom a screen at a time, letting each screen draw.
+STEP_JS = """async () => {
+  const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
+  window.scrollTo(0, 0);
+  await frame();
+  await frame();
+  while (innerHeight + scrollY < document.documentElement.scrollHeight - 1) {
+    window.scrollBy(0, innerHeight - 100);
+    await frame();
+    await frame();
+    await new Promise((resolve) => setTimeout(resolve, 30));
+  }
+}"""
+LOADING_JS = "() => document.querySelector('#list span.spec[data-state=\"loading\"]') !== null"
 
 
 # --- the site under test ---------------------------------------------------------------------
@@ -235,6 +292,50 @@ def far_rows(page: Any, viewport: dict[str, int]) -> list[dict[str, Any]]:
 
 def specimens(page: Any, method: str) -> Any:
     return page.evaluate(f"() => globalThis.tff.list.specimens.{method}")
+
+
+def wait_for(page: Any, ready: Callable[[], Any], what: str, timeout_s: float = 5.0) -> None:
+    """Poll ``ready`` (Python, or a ``page.evaluate``) until it is truthy."""
+    deadline = time.monotonic() + timeout_s
+    while not ready():
+        if time.monotonic() > deadline:
+            raise AssertionError(f"timed out waiting for {what}")
+        page.wait_for_timeout(20)
+
+
+class Hold:
+    """Hold back the requests whose path ``wanted`` accepts until ``release()``, which lets
+    them, and any later one, go on to the guarded context's own route (as test_list's index
+    hold does)."""
+
+    def __init__(self, page: Any, wanted: Callable[[str], bool]) -> None:
+        self.routes: list[Any] = []
+        self.released = False
+        # A plain function: Playwright tags each handler with an attribute (Guarded.attach).
+        page.route(lambda url: wanted(urlsplit(url).path), lambda route: self._route(route))
+
+    def _route(self, route: Any) -> None:
+        if self.released:
+            route.fallback()
+        else:
+            self.routes.append(route)
+
+    def release(self) -> None:
+        self.released = True
+        for route in self.routes:
+            route.fallback()
+
+
+def collect_garbage(context: Any, page: Any) -> Any:
+    """Chromium: empty Blink's memory cache and turn the HTTP cache off, as DevTools' "Disable
+    cache" does, then collect garbage, so nothing but what the page itself keeps holds a
+    specimen any more. Returns the DevTools session, which keeps the cache off while it lives."""
+    cdp = context.new_cdp_session(page)
+    cdp.send("Network.enable")
+    cdp.send("Network.setCacheDisabled", {"cacheDisabled": True})
+    for _ in range(3):
+        cdp.send("HeapProfiler.collectGarbage")
+    return cdp
 
 
 def png_pixels(blob: bytes) -> list[tuple[int, int, int]]:
@@ -369,8 +470,9 @@ def test_nothing_is_requested_for_rows_far_below_the_viewport_at_load(
     assert near
     assert [r["id"] for r in near if not r["set"]] == []
     # Every mask set is fetched now, not when its row is first painted (rows use
-    # content-visibility): pause() relies on this, since a fetch put off until the row
-    # scrolls into view could happen while paused (M3-D10).
+    # content-visibility): pause() relies on this, and on each mask being resolved as it is set
+    # (test_masks_set_while_their_rows_are_skipped_...), since a fetch put off until the row is
+    # drawn could happen while paused (M3-D10).
     wait_for_requests(page, guarded, {r["src"] for r in listed if r["set"]})
     # Nothing else is requested: no no-script image, nothing without its mask set.
     assert set(requested(guarded)) <= {r["src"] for r in listed if r["set"]}
@@ -441,22 +543,14 @@ def test_rows_that_render_moves_or_detaches_load_when_near(guarded_context: Any)
     page = open_list(guarded, hook=True)
     far = far_rows(page, WIDE)
     moved, held, queued = far[-1], far[-2], far[-3]
-    to_top = (
-        "(id) => { document.getElementById('list').prepend(document.getElementById('font-' + id));"
-        " window.scrollTo(0, 0); }"
-    )
 
     # Moved to the top of the list, as Render does when a filter changes the order.
-    page.evaluate(to_top, moved["id"])
+    page.evaluate(TO_TOP_JS, moved["id"])
     wait_set(page, moved["id"])
     wait_for_requests(page, guarded, {moved["src"]})
 
     # Detached into a fragment (a hidden row), then put back at the top.
-    page.evaluate(
-        "(id) => { window.__held = document.createDocumentFragment();"
-        " window.__held.append(document.getElementById('font-' + id)); }",
-        held["id"],
-    )
+    page.evaluate(DETACH_JS, held["id"])
     settle(page)
     assert held["src"] not in requested(guarded)
     page.evaluate("() => document.getElementById('list').prepend(window.__held)")
@@ -466,7 +560,7 @@ def test_rows_that_render_moves_or_detaches_load_when_near(guarded_context: Any)
     # Moved near while paused: not loaded. Hidden (detached) and resumed in one task, as a
     # Milestone 3 comparison might: still not loaded. Shown again near the top: loaded.
     specimens(page, "pause()")
-    page.evaluate(to_top, queued["id"])
+    page.evaluate(TO_TOP_JS, queued["id"])
     settle(page)
     page.wait_for_timeout(200)
     assert not row(page, queued["id"])["set"]
@@ -484,6 +578,117 @@ def test_rows_that_render_moves_or_detaches_load_when_near(guarded_context: Any)
     page.evaluate("() => document.getElementById('list').prepend(window.__held)")
     wait_set(page, queued["id"])
     wait_for_requests(page, guarded, {queued["src"]})
+    guarded.assert_clean(page)
+
+
+def test_masks_set_while_their_rows_are_skipped_are_drawn_without_another_request(
+    guarded_context: Any, browser_name: str
+) -> None:
+    """A mask is resolved as it is set, while the file is held, so drawing its row later asks
+    for nothing (M3-D10). Rows use content-visibility: auto, and Chromium puts off the style of
+    a row it skips, about a screen and a half away; a mask set there would otherwise be fetched
+    again once the row is drawn, and with the cache off (DevTools' "Disable cache", or the file
+    gone from the caches) from the server, after a list holds the previews paused.
+
+    A fling passes every row while its file is held back; the files arrive once the page is
+    back at the top, so most masks are set on skipped rows, and nothing reads their style
+    until garbage has been collected (``SKIPPED_SETS_JS`` reads only events and the state).
+    Drawing them all then asks for nothing. Firefox never asks again (measured on staging, with
+    every cache off), and garbage collection takes the Chrome DevTools Protocol."""
+    if browser_name != "chromium":
+        pytest.skip("Chromium's deferred style; collecting garbage uses the DevTools Protocol")
+    guarded = guarded_context(viewport=WIDE)
+    page = open_list(guarded, hook=True)
+    held = Hold(page, lambda path: path.startswith(SPEC_PREFIX))
+    try:
+        page.evaluate(SKIPPED_SETS_JS)
+        page.evaluate(FLING_JS)
+        settle(page)
+        page.evaluate("() => window.scrollTo(0, 0)")
+        settle(page)
+        assert held.routes, "the fling asked for no specimen"
+        specimens(page, "pause()")  # as a list would, before the files arrive
+        held.release()
+        wait_for(page, lambda: not page.evaluate(LOADING_JS), "the files to arrive", timeout_s=30)
+        skipped = page.evaluate("() => window.__tffSkippedSets")
+        assert skipped >= 5, f"only {skipped} masks were set on skipped rows: nothing to test"
+        asked = len(requested(guarded))
+
+        cdp = collect_garbage(guarded.context, page)
+        page.evaluate(STEP_JS)
+        settle(page)
+        page.wait_for_timeout(300)
+        again = requested(guarded)[asked:]
+        assert again == [], f"drawing {len(again)} rows asked for their specimens again"
+        shown = [r for r in rows(page) if r["set"] and 0 <= r["top"] < WIDE["height"] - 100]
+        assert shown, "no drawn row on the last screen"
+        pixels = outlines(guarded, page, page.locator(f"#font-{shown[-1]['id']} span.spec"))
+        assert ink(pixels)[2] > 0.01, "the specimen isn't drawn"
+        cdp.detach()
+    finally:
+        if not held.released:
+            held.release()
+    guarded.assert_clean(page)
+
+
+def test_a_row_detached_while_its_file_loads_gets_its_mask_and_drawing_it_asks_for_nothing(
+    guarded_context: Any, browser_name: str
+) -> None:
+    """A row that Render detaches while its file is on its way gets its mask all the same, and
+    drawing it later asks for nothing (hopper_previews_all_at_once, 2026-11-03: a list asks for
+    every preview at once, while the visitor's own filters leave most rows off the page).
+    Chromium resolves no style off the document, so the loader reads the mask back with the
+    span in the document for that moment, then puts it back where it was. The row is drawn
+    with the previews paused, as a list holds them, and in Chromium with the caches emptied
+    and garbage collected, so a mask left unresolved would be fetched from the server."""
+    guarded = guarded_context(viewport=WIDE)
+    page = open_list(guarded, hook=True)
+    target = far_rows(page, WIDE)[-1]
+    src = target["src"]
+    span_js = "() => window.__held.querySelector('span.spec')"
+    held = Hold(page, lambda path: path == src)
+    try:
+        page.evaluate(SCROLL_JS, target["id"])
+        wait_for(page, lambda: held.routes, "the request held back")
+        specimens(page, "pause()")
+        page.evaluate(DETACH_JS, target["id"])
+        place = page.evaluate(
+            f"() => {{ const span = ({span_js})();"
+            " return Array.from(span.parentElement.children).indexOf(span); }"
+        )
+        held.release()
+        wait_for(
+            page,
+            lambda: page.evaluate(f"() => ({span_js})().dataset.state !== 'loading'"),
+            "the file to arrive",
+        )
+        state = page.evaluate(
+            f"""() => {{ const span = ({span_js})();
+                return [span.dataset.state ?? null, span.style.getPropertyValue('mask-image'),
+                        span.closest('.font-title').classList.contains('is-drawn'),
+                        Array.from(span.parentElement.children).indexOf(span),
+                        span.isConnected]; }}"""
+        )
+        assert state[0] == "set", "a row detached as its file arrived got no mask"
+        assert src in state[1]
+        assert state[2:] == [True, place, False], "the span isn't back where it was"
+        assert requested(guarded).count(src) == 1
+
+        cdp = collect_garbage(guarded.context, page) if browser_name == "chromium" else None
+        page.evaluate("() => { document.getElementById('list').prepend(window.__held); }")
+        page.evaluate("() => window.scrollTo(0, 0)")
+        settle(page)
+        assert row(page, target["id"])["set"]
+        assert src in row(page, target["id"])["mask"]
+        pixels = outlines(guarded, page, page.locator(f"#font-{target['id']} span.spec"))
+        assert ink(pixels)[2] > 0.01, "the specimen isn't drawn"
+        page.wait_for_timeout(300)
+        assert requested(guarded).count(src) == 1, "drawing the row asked for its specimen again"
+        if cdp is not None:
+            cdp.detach()
+    finally:
+        if not held.released:
+            held.release()
     guarded.assert_clean(page)
 
 

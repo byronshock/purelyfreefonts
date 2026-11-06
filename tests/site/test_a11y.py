@@ -15,7 +15,9 @@ ruling of 2026-09-30): it tests the templates and CSS, which are the same in eve
   violations, on ``/``, ``/methodology/``, ``/privacy/``, ``/about/`` and a missing page
   (the 404), in light and dark, at 375 x 812 and 1280 x 900. The list page is also checked with
   filters on, with the phone filters open (375 only), with a details panel open and in the
-  no-results state. Text whose contrast axe leaves unmeasured (rows far down the list skip
+  no-results state; and with the hopper's list loaded (Milestone 3, slice 1): its summary shown
+  under each Show mode (all fonts with yours marked puts a badge in the rows), a dropped file's
+  receipt in the drop zone, and an error shown with every command open. Text whose contrast axe leaves unmeasured (rows far down the list skip
   rendering) is measured again once scrolled into view, and must pass. The one exception is
   the heading of a row whose specimen shows: its text is transparent (name_once), which axe
   can only call a 1:1 contrast, and WCAG 1.4.3 sets no contrast for text that is visible to
@@ -25,7 +27,8 @@ ruling of 2026-09-30): it tests the templates and CSS, which are the same in eve
 - **Consistent help** (3.2.6): the feedback spot has the same place and links on every page.
 - **Themes:** light or dark follows the system on every page.
 - **Forced colours** (design-m2 §6 asks for Chromium; Playwright emulates them in Firefox
-  too, where the palette is always the light one): axe on every page, and pixel checks
+  too, where the palette is always the light one): axe on every page and on the hopper with a
+  dropped file's receipt and with an error, and pixel checks
   that a specimen's outlines and a focus ring are visible, and that a row's Download and
   Details buttons keep a border and show their text (in the normal themes too). The sample
   catalog has no rendered specimens yet, so specimen checks use a small site built from
@@ -328,6 +331,53 @@ def list_state(page: Any, state: str) -> None:
         wait_for(page, "!document.getElementById('no-results').hidden")
 
 
+# The hopper's tint (S5) is gone and its fade done, so axe never measures a summary mid-fade.
+TINT_DONE_JS = """() => {
+  const result = document.getElementById('mine-result');
+  return !result.classList.contains('is-fresh') && result.getAnimations().length === 0;
+}"""
+
+
+def hopper_state(page: Any, state: str) -> None:
+    """Give the list page (open at ``/``) to the hopper, as ``state`` says: a list of the page's
+    own first font names, pasted, under a Show mode ("mine-missing", "mine-all", "mine-only"),
+    or dropped as a file, so the drop zone shows its receipt ("mine-file"); or a pasted
+    command, which the parser refuses, with every command open ("mine-error")."""
+    from tests.helpers import hopper_page
+
+    if page.locator("#f-toggle").is_visible():
+        list_state(page, "filters-open")
+    if state == "mine-error":
+        hopper_page.paste(page, "fc-list : family | sort > ~/fonts.txt\n")
+        assert page.locator("#mine-error").is_visible()
+        page.evaluate(
+            "() => document.querySelectorAll('#mine details').forEach((d) => { d.open = true; })"
+        )
+        return
+    names = page.evaluate(
+        "() => Array.from(document.querySelectorAll('#list > li.font .font-name'),"
+        " (h) => h.textContent.trim()).slice(0, 4)"
+    )
+    if state == "mine-file":
+        hopper_page.drop(page, "\n".join(names))
+        assert page.locator("#mine-drop.is-read").is_visible()
+        assert page.locator("#mine-summary").is_visible()
+        wait_for(page, f"({TINT_DONE_JS})()")
+        return
+    hopper_page.paste(page, "\n".join(names))
+    assert page.locator("#mine-summary").is_visible()
+    mode = state.removeprefix("mine-")
+    if page.input_value("#mine-show") != mode:
+        page.select_option("#mine-show", mode)
+    wait_for(page, f"document.getElementById('mine-show').value === '{mode}'")
+    wait_for(page, f"({TINT_DONE_JS})()")
+    if mode == "all":
+        wait_for(page, "document.querySelector('#list .ext[data-filter=\"mine\"] .ext-badge')")
+
+
+HOPPER_STATES = ["mine-missing", "mine-all", "mine-only", "mine-file", "mine-error"]
+
+
 LIST_STATES = {
     "filters": f"/{FILTERS_HASH}",
     "filters-open": f"/{FILTERS_HASH}",
@@ -616,6 +666,19 @@ def test_axe_list_states(guarded_context: Any, state: str, scheme: str, viewport
     guarded.assert_clean(page)
 
 
+@pytest.mark.real_catalog(state="mine-all", viewport="1280")
+@pytest.mark.parametrize("viewport", VIEWPORTS)
+@pytest.mark.parametrize("scheme", SCHEMES)
+@pytest.mark.parametrize("state", HOPPER_STATES)
+def test_axe_hopper_states(guarded_context: Any, state: str, scheme: str, viewport: str) -> None:
+    guarded, page = open_page(
+        guarded_context, "/", color_scheme=scheme, viewport=VIEWPORTS[viewport]
+    )
+    hopper_state(page, state)
+    assert_axe_clean(page, f"list {state} {scheme} {viewport}")
+    guarded.assert_clean(page)
+
+
 def test_axe_catches_a_planted_violation(guarded_context: Any) -> None:
     # The harness itself: an image without alt text and grey-on-grey text must be reported.
     guarded, page = open_page(guarded_context, "/")
@@ -783,6 +846,52 @@ def test_forced_colors_axe(guarded_context: Any, name: str, scheme: str) -> None
 
 
 @pytest.mark.sample_only
+@pytest.mark.parametrize("scheme", SCHEMES)
+@pytest.mark.parametrize("state", ["mine-file", "mine-error"])
+def test_forced_colors_axe_hopper(guarded_context: Any, state: str, scheme: str) -> None:
+    """The hopper's steps, its receipt and its error in forced colours (2026-11-01). axe can't
+    see the receipt's tick, a ::before drawn with borders, so the test checks that it is drawn
+    in the text's own colour, which forced colours keep visible."""
+    guarded, page = open_page(guarded_context, "/", forced_colors="active", color_scheme=scheme)
+    assert page.evaluate("matchMedia('(forced-colors: active)').matches")
+    hopper_state(page, state)
+    assert_axe_clean(page, f"list {state} forced colours {scheme}")
+    if state == "mine-file":
+        tick = page.evaluate(
+            """() => {
+              const text = document.getElementById('mine-drop-text');
+              const tick = getComputedStyle(text, '::before');
+              return [tick.borderRightWidth, tick.borderBottomWidth, tick.borderRightStyle,
+                tick.borderRightColor === getComputedStyle(text).color];
+            }"""
+        )
+        assert tick == ["2px", "2px", "solid", True]
+    else:
+        # No list loaded: Choose file keeps its weight and a 2 px border where forced colours
+        # drop its fill (S2).
+        choose = page.evaluate(
+            "() => { const s = getComputedStyle(document.getElementById('mine-choose'));"
+            " return [s.fontWeight, s.borderTopWidth, s.borderTopStyle]; }"
+        )
+        assert choose == ["600", "2px", "solid"]
+        # Hovered too: the accent's hover fill would be ButtonText under CanvasText there.
+        page.hover("#mine-choose")
+        hovered = page.evaluate(
+            "() => { const s = getComputedStyle(document.getElementById('mine-choose'));"
+            " return [s.backgroundColor !== s.color, s.borderTopWidth]; }"
+        )
+        assert hovered == [True, "2px"]
+    # A fresh summary's tint is an outline here, since forced colours drop backgrounds (S5).
+    outline = page.evaluate(
+        "() => { const r = document.getElementById('mine-result'); r.classList.add('is-fresh');"
+        " const s = getComputedStyle(r); const out = [s.outlineStyle, s.outlineWidth];"
+        " r.classList.remove('is-fresh'); return out; }"
+    )
+    assert outline == ["solid", "2px"]
+    guarded.assert_clean(page)
+
+
+@pytest.mark.sample_only
 @pytest.mark.parametrize("mode", ["light", "dark", "forced-light", "forced-dark"])
 def test_specimens_are_visible(browser: Any, specimen_site: str, mode: str) -> None:
     kwargs: dict[str, Any] = {"color_scheme": mode.removeprefix("forced-")}
@@ -902,6 +1011,16 @@ def test_reduced_motion_stops_every_transition(guarded_context: Any) -> None:
     assert page.evaluate("matchMedia('(prefers-reduced-motion: reduce)').matches")
     list_state(page, "filters-open")
     list_state(page, "details")
+    # A list loaded, so the hopper's tint (S5) runs too: under reduced motion it shows still
+    # and goes, with no fade.
+    from tests.helpers import hopper_page
+
+    names = page.evaluate(
+        "() => Array.from(document.querySelectorAll('#list > li.font .font-name'),"
+        " (h) => h.textContent.trim()).slice(0, 4)"
+    )
+    hopper_page.paste(page, "\n".join(names))
+    assert page.locator("#mine-summary").is_visible()
     motion = page.evaluate(MOTION_JS, MOTIONLESS_S)
     assert motion["duration"] in {"0ms", "0s", "0"}, f"--duration is {motion['duration']}"
     assert motion["scroll"] != "smooth"
