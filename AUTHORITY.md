@@ -460,8 +460,11 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
     - once a file's list loads, the drop zone says "File read: <n> font names.", a count the page already keeps. The file's name isn't shown, and a matched paste still leaves the paste box. The owner took Claude's receipt over the file's text in the paste box (`hopper_file_shown`);
     - Claude's nine suggestions go in too (`hopper_layout_suggestions`). Among them: the visitor's own system's commands open first, "Hide fonts that come with" joins the section, and "Clear filters" moves to the top of the panel;
     - the hopper's controls sit in a `<form autocomplete="off">` that never submits, so WebKit, Safari's engine, keeps neither the paste box's text nor the Show menu's choice in session history. It's the one exception to "filters never in a `<form>`" (`hopper_form_autocomplete_off`).
+  - **After the owner's staging try (2026-11-05):** "I noticed nothing that irked me." Two things are kept as built:
+    - "Clear filters" also sets the Show menu back to "Fonts you don't have" and keeps the list, so it always gets a visitor out of an empty list, and the no-results text stays as it is (`hopper_clear_filters_resets_show`);
+    - below 60rem a list arriving opens the Filters panel, so its result is in sight, and a ring is drawn around the window while a file is dragged over the page (`hopper_auto_open_and_drop_ring`).
 
-  *(2026-10-21 to 2026-11-01, `data/reviews/site/`)*
+  *(2026-10-21 to 2026-11-05, `data/reviews/site/`)*
 
 ## Infrastructure
 
