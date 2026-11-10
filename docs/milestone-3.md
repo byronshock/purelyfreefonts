@@ -4,6 +4,8 @@ Milestone 3 builds the tools that find the fonts a visitor already has and take 
 
 *Amended 2026-10-21:* the first slice, the hopper, is built straight onto the main list, with no hidden page ([Slice 1](#slice-1-the-hopper)).
 
+*Amended 2026-11-06 (`launch_with_hopper`):* slice 1 goes live with Milestone 2's soft launch, PR 5's words included ([PLAN-launch.md](../PLAN-launch.md)). The rest of this milestone comes before Milestone 4's announcement: the macOS and Windows test runs, whose commands stay marked "not yet tested"; the consented corpus and M3-D11's targets; WebKit in CI; near-match badges and "Wrong match?" links; and the Chromium button.
+
 **How to read each step:**
 
 - **Who:** the owner, Claude, or both.

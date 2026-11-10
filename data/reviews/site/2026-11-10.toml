@@ -1,0 +1,25 @@
+# Owner rulings of 2026-11-10 on which of PLAN-REVIEWERS-1.md's priorities land before the soft launch, asked in chat by
+# the lead session as single-select questions after an audit of its open items against main (the first asking was
+# interrupted, and the questions were asked again). Ruled by the owner, Byron Shock; recorded by Claude.
+# Also in AUTHORITY.md (Soft launch), PLAN-REVIEWERS-1.md and PLAN-launch.md.
+
+[launch_claims_first]
+choice = "a"
+recommended = true
+value = "all_of_priority_1"
+ruling = "All of PLAN-REVIEWERS-1.md's priority 1 lands before the soft launch. That is Heavy Data's license re-read and reported, and a proposed pinned license link for Charter, each for the owner's ruling. It is also About's \"with no use restrictions\", the methodology text without its \"(owner ruling of …)\" asides, and the methodology page's sentence on where the measure is chosen. And it is \"Comes with\" naming the systems (comes_with_names_systems), after rulings on Q4's two loose ends. With step 5's first part (launch_step5_first), this is the part of Milestone 2 step 12b that the soft launch still waits for, now that usability_round_1_after_launch has moved step 13 after it."
+reason = "What the site says about licenses and evidence should be right even on a quiet launch. Of (a) all of it before the launch (Claude's recommendation), (b) the license checks before and the wording after, and (c) all of it after the launch, the owner chose (a)."
+
+[launch_step5_first]
+choice = "a"
+recommended = true
+value = "step_5_before_7e_after"
+ruling = "Of PLAN-REVIEWERS-1.md's priority 2, step 5's first part lands before the soft launch. That is the Tip Jar link at the end of the header nav, with the footer's tip link removed; \"No listed font matches '…'\" when search alone finds nothing; name matches first in search (search_name_first); and About's note rewritten to end with the tip pitch (tip_jar). Step 7e, the details' sample, code and glyph lines with their budget ruling, comes after the launch. It lands before usability round 1, unless the owner rules it out of the round."
+reason = "Step 5's items are small, and the tip link is part of step 14's final checks; 7e is the biggest piece of new work and needs its own budget ruling. Of (a) step 5 before and 7e after (Claude's recommendation), (b) both before the launch, and (c) both after it, the owner chose (a)."
+
+[launch_weight_after]
+choice = "a"
+recommended = true
+value = "after_the_soft_launch"
+ruling = "PLAN-REVIEWERS-1.md's priority 3, page weight, lands after the soft launch and before the A-Z list. That is step 9a, Brotli, and step 7d, the names-only redraw. This amends the plan's \"before the inventory check joins the list page\". It also amends \"step 7d … at the latest at the first live refresh\" (PLAN-REVIEWERS-1.md, Order; docs/milestone-refresh.md step 1): the launch run takes the stopgap specimen pins instead."
+reason = "The question said that with the hopper the list page measures 85.9 KB of its 100 KB budget on October's data: #100's figure at e4a45b8, before its layout review. Staging's build at f78889f measures about 88 KB, still well within the budget. 7a's trim already serves names-only specimens. Of (a) after the launch (Claude's recommendation), (b) Brotli before and the redraw after, and (c) both before the launch, the owner chose (a)."

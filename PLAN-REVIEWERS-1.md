@@ -78,6 +78,8 @@ Step 7's list parts don't wait for it: on 2026-10-05 the owner moved them ahead 
 
 Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers see the changed site. Priority 3 lands before the A–Z list or the inventory check is added to the list page.
 
+*Amended 2026-11-10 (AUTHORITY.md **Soft launch**):* before the soft launch: all of priority 1 (`launch_claims_first`) and step 5's first part (`launch_step5_first`). After it: step 7e and step 6, both before round 1, which now follows the launch (7e unless the owner rules it out of the round), and priority 3 (`launch_weight_after`), before the A–Z list but no longer before the inventory check, which goes live with the launch (`launch_with_hopper`). Step 7d is no longer due "at the latest at the first live refresh": the launch run takes stopgap pins.
+
 ---
 
 ### Step 1: AUTHORITY.md
@@ -234,10 +236,11 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
 ### Step 4: "Popularity" and the other words
 **Built with [PLAN-REVIEWERS-2.md](PLAN-REVIEWERS-2.md) step 2** (`step4_wording_now`, 2026-10-07), ahead of the parked branch.
 **Who:** Claude. **Depends on:** Q2.
-- [ ] Update the templates, the sort header's script, `site/CONTRACT.md` §3, the nav, the methodology page's title, and their tests.
-- [ ] The nav's new "How it works" changes its width. If step 4 lands before step 5, re-measure the header's single-row breakpoint as step 5 describes.
-- [ ] Check the sort button fits its 96 px column, including at 320 px reflow.
-- [ ] Update `docs/usability-test.md` to match: the "rank" wording in tasks 5 and 6, and "Choose task 6's two fonts from the current Overall rank", since Overall retires. Unless the lead's branch already does this. *(The port does it: [docs/milestone-method.md](docs/milestone-method.md) steps 3 and 4.)*
+*Done in #65 (d025c82), as PLAN-REVIEWERS-2.md step 2; ticked on 2026-11-10 after an audit against `main`: the templates, the sort script, CONTRACT §3 and the nav; the header since re-measured (now 52rem, `test_shell.py`); the sort button's fit (`test_list.py`, and the first-screen tests at 320 px); and `docs/usability-test.md`.*
+- [x] Update the templates, the sort header's script, `site/CONTRACT.md` §3, the nav, the methodology page's title, and their tests.
+- [x] The nav's new "How it works" changes its width. If step 4 lands before step 5, re-measure the header's single-row breakpoint as step 5 describes.
+- [x] Check the sort button fits its 96 px column, including at 320 px reflow.
+- [x] Update `docs/usability-test.md` to match: the "rank" wording in tasks 5 and 6, and "Choose task 6's two fonts from the current Overall rank", since Overall retires. Unless the lead's branch already does this. *(The port does it: [docs/milestone-method.md](docs/milestone-method.md) steps 3 and 4.)*
 
 **Done when:** CI passes, and no visible "Rank" is left over the score column.
 
@@ -330,7 +333,7 @@ Long names are limited by width and grow less: about 1 phone row in 10 grows und
 - [ ] The redraw needs the lead's OK. The lead's condition ("catalog.json and catalog-site.json come out byte-identical") can't hold for a redraw in place, since both catalogs store every specimen's sha256 and `tff-site build` refuses a mismatch. The options:
   - the lead restates it as identical except the 500 `preview.sha256` values in each catalog and `run.code_commit`, with no flag changes, identical over two runs, and `validate --committed` passing;
   - or the names-only files are drawn as a new set with their own manifest, which leaves both catalogs byte-identical;
-  - otherwise it waits for the first live refresh.
+  - otherwise it waits for the first live refresh. *Amended 2026-11-10 (`launch_weight_after`):* not the launch run, which takes stopgap pins, but a refresh after the soft launch, before the A–Z list.
 - [ ] Run `tff-site build` on the redrawn outputs before committing: `validate --committed` has no specimen-hash check.
 - [ ] Once `build/specimens` is names-only, remove 7a's trim.
 

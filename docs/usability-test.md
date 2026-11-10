@@ -9,7 +9,7 @@ The test asks one question: can people find a purely free font that fits their n
 | Round | When | Site | Testers |
 |---|---|---|---|
 | Trial | before round 1 | `https://staging.purelyfreefonts.com` | 1 person, not counted; the script is fixed afterwards (step 13) |
-| 1 | before the soft launch (step 13) | `https://staging.purelyfreefonts.com`, with real data from M1 step 16 or later | 5 new people |
+| 1 | after the soft launch (step 13, moved on 2026-11-06: `usability_round_1_after_launch`; this script is rewritten for the live site and the hopper before the owner approves it) | `https://purelyfreefonts.com` | 5 new people |
 | 2 | after the soft launch (step 15) | `https://purelyfreefonts.com` | 5 new people, more of them on phones and assistive technology |
 | 3 | only if round 2 found a blocker or more than 3 majors | `https://purelyfreefonts.com` | 3 people check the fixes |
 

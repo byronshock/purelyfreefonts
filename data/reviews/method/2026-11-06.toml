@@ -1,0 +1,8 @@
+# Owner ruling of 2026-11-06 on the review of the new method's scores, part of the launch-data question asked in chat by
+# the lead session as a single-select question. Ruled by the owner, Byron Shock; recorded by Claude.
+# Also in AUTHORITY.md (The scoring method; Soft launch) and docs/milestone-method.md step 15.
+
+[october_scores_reviewed]
+value = "staging_looks_are_the_review"
+ruling = "The owner's looks at October's run on staging (preview/2026-10-17, since 2026-10-21) count as his review of the new method's scores (docs/milestone-method.md step 15), so the soft launch no longer waits for a separate score review. The owner's review of the methodology text (step 12) still stands, after its fixes reach staging."
+reason = "The launch-data option the owner chose (launch_data_october, (a)) said that his staging looks count as the score review. His staging try of 2026-11-05: \"I noticed nothing that irked me.\""

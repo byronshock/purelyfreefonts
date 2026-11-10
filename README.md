@@ -1,6 +1,6 @@
 # purelyfreefonts
 
-This project builds a ranked list of the most popular purely free Latin fonts and publishes it at [purelyfreefonts.com](https://purelyfreefonts.com). A font counts as purely free only if its license allows use in all personal and commercial projects, with no use restrictions. Display-only, personal-use-only, demo and non-commercial licenses don't qualify. The first release is the filterable list. A later release compares the list with the fonts a visitor already has and shows the ones they don't have.
+This project builds a ranked list of the most popular purely free Latin fonts and publishes it at [purelyfreefonts.com](https://purelyfreefonts.com). A font counts as purely free only if its license allows use in all personal and commercial projects, with no use restrictions. Display-only, personal-use-only, demo and non-commercial licenses don't qualify. The first release is the filterable list, with a first owned-font check, the hopper, which takes the fonts a visitor already has out of the list on their own device; later releases add the other tools. A later release compares the list with the fonts a visitor already has and shows the ones they don't have.
 
 ## Status
 

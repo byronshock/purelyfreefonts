@@ -1,5 +1,7 @@
 # Milestone 2 checklist: the filterable list goes live
 
+*Amended 2026-11-06 (`launch_with_hopper`):* the soft launch also carries Milestone 3's first slice, the hopper ([PLAN-launch.md](../PLAN-launch.md)).
+
 Milestone 2 replaces the stub on purelyfreefonts.com with Milestone 1's ranked, filterable list, plus methodology, privacy and about pages and a tip link, and starts usability testing. Comparing the list with a visitor's own fonts waits for Milestone 3. Settled decisions go in [AUTHORITY.md](../AUTHORITY.md).
 
 **How to read each step:**
@@ -22,7 +24,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - nothing has been announced (that is Milestone 4);
 - AUTHORITY.md records M2-D1 to M2-D12, and the owner has accepted the handoff.
 
-**Critical path:** 0 → 1 → 3 → 4 → 6 → 13 → 14 → 15 → 17. Steps 1–12 run on step 2's sample catalog while Milestone 1 is still building; steps 13–15 need its real data. (Step 16, the first monthly refresh on the live site, moved on 2026-09-30 to [milestone-refresh.md](milestone-refresh.md), `refresh_timing`.)
+**Critical path:** 0 → 1 → 3 → 4 → 6 → 14 → 13 → 15 → 17 *(amended 2026-11-06: round 1 follows the soft launch, `usability_round_1_after_launch`)*. Steps 1–12 run on step 2's sample catalog while Milestone 1 is still building; steps 13–15 need its real data. (Step 16, the first monthly refresh on the live site, moved on 2026-09-30 to [milestone-refresh.md](milestone-refresh.md), `refresh_timing`.)
 
 ---
 
@@ -224,10 +226,11 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 
 **Done when:** PLAN-REVIEWERS-1.md's steps 1–10 are ticked, or each open one is ruled out of usability round 1 by the owner.
 
-### Step 13: Usability round 1, before launch
-**Who:** the owner runs sessions; Claude writes up and fixes findings. **Depends on:** 3–7, 9, 11, 12, 12b; real data from M1 step 16 or later, even before the freeze.
+### Step 13: Usability round 1, after the soft launch
+**Who:** the owner runs sessions; Claude writes up and fixes findings. **Depends on:** 3–7, 9, 11, 12, 12b, 14; real data from M1 step 16 or later, even before the freeze.
+*Moved 2026-11-06 (`usability_round_1_after_launch`):* round 1 runs on the live site after the soft launch (step 14), not on the test site before it. `docs/usability-test.md` is rewritten for that, and for the hopper, before the owner approves the script.
 - [ ] A trial session checks the script; fix it.
-- [ ] 5 sessions on the test site (under M2-D7 (b), a laptop build shared on screen).
+- [ ] 5 sessions on the live site, `https://purelyfreefonts.com` (`usability_round_1_after_launch`).
 - [ ] Claude turns notes into issues grouped by theme; the owner confirms severities.
 - [ ] Every blocker and major is fixed or ruled out by the owner with a reason; revisit M2-D4 or the wording if testers stumbled there.
 
@@ -286,12 +289,17 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - Mail to admin@purelyfreefonts.com and admin@trulyfreefonts.com both arrives.
 
 ### Step 14: Soft launch: the list replaces the stub
-**Who:** Claude deploys; the owner gives the go-ahead. **Depends on:** 6, 7b, 8, 9, 10, 11, 13, 13b; M2-D8; M1 step 20 (`catalog-site.json` v1, frozen on 2026-09-30 by a rebuild of the run merged in #31); Caddy header phase B live on production (`ops/deploy/README.md`, step 6 of the move into releases), since /privacy says the server sends a CSP and production deploys refuse to run before it. Launching without the tip link needs an owner ruling in AUTHORITY.md, whose Funding section ties the link to this release. Also waits for the owner's look at the new method's scores ([milestone-method.md](milestone-method.md), `port_freeze_lifted`, 2026-10-19).
+**Who:** Claude deploys; the owner gives the go-ahead. **Depends on:** 6, 7b, 8, 9, 10, 11, 13b, and step 12b's launch part (PLAN-REVIEWERS-1's priority 1 and step 5's first part: `launch_claims_first`, `launch_step5_first`); M2-D8; M1 step 20 (`catalog-site.json` v1, frozen on 2026-09-30 by a rebuild of the run merged in #31); Caddy header phase B live on production (`ops/deploy/README.md`, step 6 of the move into releases), since /privacy says the server sends a CSP and production deploys refuse to run before it. Launching without the tip link needs an owner ruling in AUTHORITY.md, whose Funding section ties the link to this release. Also waits for the owner's look at the new method's scores ([milestone-method.md](milestone-method.md), `port_freeze_lifted`, 2026-10-19). *(Done 2026-11-06: `october_scores_reviewed`.)*
+*Amended 2026-11-06* (**Soft launch** in AUTHORITY.md; the working checklist is [PLAN-launch.md](../PLAN-launch.md)):
+- step 13 moves after this step (`usability_round_1_after_launch`);
+- the launch carries the hopper, #100 with PR 5's words (`launch_with_hopper`);
+- it carries October's run too, re-run from `main` and merged first (`launch_data_october`);
+- production deploys from Actions, set up in step 11 (`deploys_actions_first`).
 - [ ] Final checks on the test site: all CI checks, step 9's live test, step 10's numbers, the tip link.
 - [ ] Confirm each linked Nerd build's license check ([docs/nerd-fonts-link.md](nerd-fonts-link.md)) and hide the build for any failure, so it gets no tag, link or filter match (`config/nerd-hidden.toml`; owner ruling of 2026-09-29, `data/reviews/site/2026-09-29.toml`, `nerd_icon_licenses`): the base font's license and the patched icon sets. Stage "links" already leaves out a Nerd Fonts folder whose base license doesn't qualify; the rest is this check.
 - [ ] The page says it is an early version and that free font inventory tools are coming (the owner's wording of 2026-09-29, on every page's header). *(Since 2026-10-06 phones don't show it: `early_line_hidden_on_phones`, built in PLAN-REVIEWERS-2.md step 2.)*
-- [ ] Deploy to production, and remove the stub from `public/` in the repository.
-- [ ] On the live site: SERVER.md's and DONATIONS.md's Verification lines, step 9's live test, and `version.txt` matching the merged commit and run date. Tick DONATIONS.md step 12, with its deploy line changed to M2-D6's path.
+- [ ] Deploy to production: set `PRODUCTION_DEPLOYS` to on, then merge the pull request that removes the stub from `public/` (and updates SERVER.md's robots.txt check), whose push deploys `main` (`deploys_actions_first`).
+- [ ] On the live site: SERVER.md's and DONATIONS.md's Verification lines, step 9's live test and the hopper's (Milestone 3 step 9; WebKit run locally, since CI's live job runs Chromium and Firefox), and `version.txt` matching the merged commit and run date. Tick DONATIONS.md step 12, with its deploy line changed to M2-D6's path.
 - [ ] Search engines per M2-D8 (`robots.txt`, `sitemap.xml`).
 - [ ] No announcement before Milestone 4 (no Show HN, Reddit, newsletters or awesome-list pull requests); telling testers and linking from the README are fine.
 - [ ] AUTHORITY.md: the soft-launch date under Releases, and "Current step".
@@ -299,7 +307,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 **Done when:** the live site passes every check above, and the owner has checked it on a phone and a computer.
 
 ### Step 15: Usability rounds 2 and 3, on the live site
-**Who:** both. **Depends on:** 14.
+**Who:** both. **Depends on:** 13, 14.
 - [ ] Round 2: 5 new testers, same tasks, more on phones and assistive technology; fix blockers and majors.
 - [ ] Round 3, only if round 2 found a blocker or more than 3 majors: 3 testers check the fixes.
 - [ ] Review everything sent by issue form or email since the soft launch.
@@ -308,7 +316,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 **Done when:** no blocker or major is open, and the notes are in step 17's handoff.
 
 ### Step 16: The first monthly refresh reaches the live site
-*Moved on 2026-09-30.* The owner moved the first live refresh after Milestone 2 (`refresh_timing`, AUTHORITY.md). This step is now step 2 of [milestone-refresh.md](milestone-refresh.md), with its items and its done-when; until then the live site shows the 2026-09-26 catalog.
+*Moved on 2026-09-30.* The owner moved the first live refresh after Milestone 2 (`refresh_timing`, AUTHORITY.md). This step is now step 2 of [milestone-refresh.md](milestone-refresh.md), with its items and its done-when; until then the live site shows the 2026-09-26 catalog. *Amended 2026-11-06 (`launch_data_october`):* the live site launches with the 2026-10-17 run, merged before step 14, so it never shows the 2026-09-26 catalog; the first refresh to reach the live site is November's.
 
 ### Step 17: Record decisions and hand off to Milestones 3 and 4
 **Who:** both. **Depends on:** 15.
@@ -336,7 +344,7 @@ Defaults are in bold. A **[Step 0]** decision is answered before building starts
 | **M2-D4 (decided 2026-09-25): filter layout** (round 1 may change it) | **Every filter in a sidebar** on wide screens; on phones, all but search and rank behind one "Filters" button. (The other option kept only search, rank, category and "Redistributable fonts only" visible.) The filter set itself was cut down on 2026-09-30 (step 3). |
 | **M2-D5 (decided 2026-09-25): font previews.** Under D3, only `preview_ok` (redistributable) fonts get one, and no trimmed or converted font file is served. | **SVG specimens drawn at each refresh (step 5), plus "Type your own text"**, which loads the unchanged upstream file on request after showing its size. Other fonts get fallback text and their official link. (Other options were specimens only, or loading font files as rows scroll in.) |
 | **M2-D6 (decided 2026-09-25): deploy path**, also for Milestones 3 and 4, revisited at Milestone 4's two-month review | **GitHub Actions deploys each push to `main`** as a restricted `deploy` user (step 11); merged refreshes go live with no further step, and `ops/deploy.sh` from the laptop is the fallback. |
-| **M2-D7 (decided 2026-09-25): a test site before launch** | **`staging.trulyfreefonts.com`** (step 11): round 1 runs there and Milestone 3 reuses it. *Amended 2026-10-02:* the test site moves to `staging.purelyfreefonts.com`, and the old host 301s to it (AUTHORITY.md, **Name and domain**; step 13b). |
+| **M2-D7 (decided 2026-09-25): a test site before launch** | **`staging.trulyfreefonts.com`** (step 11): round 1 runs there and Milestone 3 reuses it. *Amended 2026-10-02:* the test site moves to `staging.purelyfreefonts.com`, and the old host 301s to it (AUTHORITY.md, **Name and domain**; step 13b). *Amended 2026-11-06:* round 1 runs after the soft launch, on the live site (`usability_round_1_after_launch`). |
 | **M2-D8 [later OK]: search engines during the soft launch** | **(a) Indexing allowed**; only announcements wait for Milestone 4; (b) `noindex` until Milestone 4. |
 | **M2-D9 (decided 2026-09-25): server logs.** Recorded in AUTHORITY.md (Infrastructure) and [ops/SERVER.md](../ops/SERVER.md) section F. Binding on later milestones: M4 step 3 checks the log against it, and any count Milestone 4 takes from the log runs within 14 days. | Caddy masks visitor IPs to /16 (IPv4) and /32 (IPv6) and drops the port and the `Cf-Connecting-Ip` and `X-Forwarded-For` headers; Caddy's rolling is off, and logrotate keeps 14 days, rotated daily (`ops/Caddyfile`, `ops/logrotate-caddy`). Usage totals come from Cloudflare. *Owner ruling of 2026-09-26 (`log_fields`):* the log also drops `Referer` and `User-Agent`; the same Caddyfile change drops `Cookie` and the location headers finer than the country (owner ruling of 2026-09-28, `log_extra_headers`). Deployed with SERVER.md item 25. |
 | **M2-D10 [later OK]: feedback channels** | **(a) GitHub issue forms plus an email link to the site's `admin@` address** for people without GitHub (expect some spam); (b) issues only; (c) email only. |
