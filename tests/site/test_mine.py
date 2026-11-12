@@ -974,10 +974,11 @@ def test_the_fonts_a_list_has_leave_every_view(
     def go(hash_: str) -> None:
         changed(page, lambda: page.evaluate("(h) => { location.hash = h; }", hash_))
 
-    without = {}
+    without, totals = {}, {}
     for hash_ in hashes:
         go(hash_)
         without[hash_] = shown(page)
+        totals[hash_] = universe(page)
     # A third of the catalog, as a plain list: some of each view is left out.
     given = plain_list(families[::3])
     _, result = reference(given, table)
@@ -990,6 +991,9 @@ def test_the_fonts_a_list_has_leave_every_view(
         for mode in [m for m in MODES if m != now] + [now]:
             show(page, mode)
             assert_left_out(page, without[hash_], have, mode)
+            # The list counts its fonts out of N only: M is the rank's universe, as with
+            # no list (CONTRACT section 5, View.compute's step 1).
+            assert universe(page) == totals[hash_], (hash_, mode)
     guarded.assert_clean(page)
 
 
