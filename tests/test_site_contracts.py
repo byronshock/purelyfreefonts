@@ -1291,10 +1291,7 @@ CONTRAST_PAIRS = (
         ("--c-warn-fg", "--c-warn-bg", 4.5),
     ]
     # The header, white in both themes (owner ruling of 2026-09-29).
-    + [
-        (fg, "--c-header-bg", 4.5)
-        for fg in ("--c-header-fg", "--c-header-muted", "--c-header-link")
-    ]
+    + [(fg, "--c-header-bg", 4.5) for fg in ("--c-header-fg", "--c-header-link")]
     + [("--c-header-focus", "--c-header-bg", 3.0), ("--c-header-fg", "--c-wordmark-bg", 4.5)]
 )
 
@@ -1302,7 +1299,7 @@ CONTRAST_PAIRS = (
 def test_the_header_is_white_in_both_themes():
     for values in (LIGHT, {**LIGHT, **DARK}):
         assert values["--c-header-bg"] == values["--c-wordmark-bg"] == "#ffffff"
-        assert all(values[f"--c-header-{k}"] == LIGHT[f"--c-{k}"] for k in ("fg", "muted", "link"))
+        assert all(values[f"--c-header-{k}"] == LIGHT[f"--c-{k}"] for k in ("fg", "link"))
 
 
 @pytest.mark.parametrize("theme", ["light", "dark"])

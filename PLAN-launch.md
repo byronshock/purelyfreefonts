@@ -6,19 +6,18 @@ This is the working checklist for Milestone 2's soft launch ([docs/milestone-2.m
 - production deploys from GitHub Actions, set up first (`deploys_actions_first`);
 - usability round 1 comes after the launch (`usability_round_1_after_launch`).
 
-**Status (2026-11-10):**
+**Status (2026-11-11):**
 - Production serves the "Coming soon." stub, and `main` holds September's catalog on the old method.
 - Staging shows October's run with #100 (the hopper) and #115 (no early-version line).
+- #115 (no early-version line) and #116 (the redraw budget) are merged.
 - Open drafts:
   - #88: October's run, which the launch run supersedes;
-  - #100: the hopper;
-  - #115: the early-version line;
-  - #116: the redraw budget.
+  - #100: the hopper.
 
 **How to read each step:** **Who**, **Depends on** and **Done when**, as in PLAN-hopper.md. Tick each item as soon as it is done and verified. Checklists nest: a parent is ticked only when every item under it is. If an item is only partly done, leave it unticked and note what's left.
 
 **The merge order:**
-1. #115 and #116;
+1. #115 and #116 (merged 2026-11-11);
 2. this plan's records;
 3. step 2's catalog-affecting changes;
 4. #100;

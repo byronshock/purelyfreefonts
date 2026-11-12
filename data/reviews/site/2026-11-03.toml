@@ -4,6 +4,8 @@
 # On the wordmark, asked as single-select questions: wordmark_brush_102 and wordmark_size_brush_102 in the session in his typeface
 # tools (penleft) that wrote the plate, wordmark_breakpoint_scrollbar in the session that put it on the site (#114). Also in
 # AUTHORITY.md (Headline font).
+# early_line_removed: on the header's early-version line, raised by the owner in chat; where it should go was asked as a
+# single-select question, which he answered in his own words. Also in AUTHORITY.md (Site (Milestone 2), "Early-version line").
 
 [held_legend_to_tag]
 value = "tag_in_place_of_legend"
@@ -28,3 +30,8 @@ recommended = false
 value = "52rem"
 ruling = "The 465 px wordmark and the navigation share one row from 832 px (52rem) up, not 816 (51rem). The widest one-row header is 16 + 465 + 24 + 281 + 16 = 802 px (the nav with \"How it works\" bold on its own page, in Firefox), but a min-width media query counts a classic scrollbar (about 15 to 17 px, on Windows and some Linux setups) as page width. At 816 px Chromium's 15 px scrollbar leaves 0 px to spare (its nav is 280 px there), and with a 17 px one the nav drops to a second row at 816 to 818 px, the header growing from 113 to 153 px. From 832 px a scrollbar of up to 30 px leaves room. Between 816 and 831 px the wordmark is 300 px wide. tests/site/test_shell.py allows a 17 px scrollbar when it re-measures the breakpoint."
 reason = "Found by the lead session's review of #114: the Book had 16 px to spare over its 800 px header, brush 102 has 14. Of (a) keeping 51rem and recording that window widths of 816 to 818 px may wrap the nav with a classic scrollbar (Claude's recommendation) and (b) raising it to 52rem, so the big wordmark starts at 832 px and the nav stays beside it with any scrollbar, the owner chose (b)."
+
+[early_line_removed]
+value = "removed_from_the_shared_header"
+ruling = "No page shows the early-version line, \"Early version. Coming next: free font inventory tools.\" (site_status_line, 2026-09-29), before Milestone 3 lands. It leaves the header every page shares, which now holds only the wordmark and the Site navigation, on every screen. This retires early_line_hidden_on_phones (2026-10-06), which had already taken it off phones. The privacy page's \"Coming next\" section (privacy_coming_next) and the About page's words stay for Milestone 3's PR 5."
+reason = "The owner: \"I also want to revisit the following text: 'Early version. Coming next: free font inventory tools.' This text can be removed from the front page.\" The line is in the header every page shares, so Claude asked whether it should go from every page (Claude's recommendation) or from the front page only. The owner: \"Please remove it from the shared header.\""

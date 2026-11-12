@@ -60,7 +60,7 @@ Each code pull request is built in its own worktree, reviewed adversarially befo
   - [ ] Owned fonts leave every view, "Showing N of M" counts them out, and changes are announced.
   - [ ] Privacy tests: no request until a list arrives, then exactly two, for the matcher and the match file (and the list index, if it failed to load with the page); nothing in the address, history or storage; it works offline.
   - [ ] Accessibility and keyboard tests, and the page within its budget.
-- [ ] **PR 5, the words**, after the owner's rulings: the early-version line ("Coming next: free font inventory tools."), privacy.md's "Coming next" section, and about.md's "hiding the fonts you already have".
+- [ ] **PR 5, the words**, after the owner's rulings: privacy.md's "Coming next" section and about.md's "hiding the fonts you already have". *(The early-version line, "Coming next: free font inventory tools.", left every page on 2026-11-03: `early_line_removed`.)*
 - [ ] **On staging:** `preview/2026-10-17` rebased on main and deployed; the owner tries his own Linux list in Chromium and Firefox, watching the Network tab. *Amended 2026-11-01:* while #100 is open, staging may show the preview rebased on #100's head instead (`hopper_on_staging`).
 
 **Left for the rest of Milestone 3:** the macOS and Windows test runs (step 1), the consented corpus and accuracy targets (steps 2 and 10), the Chromium button (step 7), near-match badges and "Wrong match?" links (M3-D9), the line counting a visitor's fonts that aren't listed (it waits for `names.json`'s reasons cleanup), the patched-build switch and "Load previews" button, usability rounds (step 11) and the monthly refresh of the match file (step 12).
