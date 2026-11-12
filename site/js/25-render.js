@@ -10,6 +10,9 @@ const Render = (() => {
   let rows = [];
   let rankNodes = [];
   let labelNow = [];
+  // Per font index: whether its row has the held tag, so a change of view looks up only the
+  // rows whose tag comes or goes.
+  let heldNow = [];
   let dimNow = [];
   // Per font index: the notes last drawn, as a string, or '' for none.
   let notesNow = [];
@@ -27,6 +30,9 @@ const Render = (() => {
     rows = rowsByIndex;
     rankNodes = rows.map((row) => row.querySelector('.rank'));
     labelNow = rankNodes.map((node) => (node ? node.textContent : ''));
+    // The server draws the tag exactly where it draws .rank.is-held: on a held row, which
+    // always has a score.
+    heldNow = rankNodes.map((node) => Boolean(node && node.classList.contains('is-held')));
     dimNow = rows.map((row) => row.classList.contains('is-dim'));
     notesNow = rows.map(() => '');
     const position = new Map(rows.map((row, i) => [row, i]));
@@ -213,7 +219,10 @@ const Render = (() => {
         const score = result.scores ? result.scores[k] : -1;
         const held = Boolean(result.held && result.held[k]);
         drawRank(rankNodes[i], score, held, label, result.words);
-        drawHeldTag(rows[i], held, result.words);
+        if (held !== heldNow[i]) {
+          drawHeldTag(rows[i], held, result.words);
+          heldNow[i] = held;
+        }
         // "Not ranked: <reason>" gets a line of its own (site ruling of 2026-09-26).
         rows[i].classList.toggle('is-unranked', label.startsWith(View.NOT_RANKED));
         labelNow[i] = label;
