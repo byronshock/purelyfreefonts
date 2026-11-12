@@ -35,6 +35,16 @@ After his staging try of 2026-11-05 ("I have tried it and feel that we are getti
 
 *(2026-11-06 and 2026-11-10; `data/reviews/ci/2026-11-06.toml`, `method/2026-11-06.toml`, `site/2026-11-06.toml` and `site/2026-11-10.toml`)*
 
+**The license checks before the launch (2026-11-12),** each Claude's recommendation:
+- **The Nerd Font builds** (`nerd_builds_checked`, under `nerd_icon_licenses`): all 65 of October's Nerd links stay, and `config/nerd-hidden.toml` lists none. At v3.5.1 every folder's license file, the maker builds' licenses and the 14 icon sets pass Rules 1–3. Monofur's build ships the author's 2000 freeware notice, but his 2018 email put the fonts under the OFL (`LIC-monofur`). OpenDyslexic's, Roboto Mono's and Tinos's builds ship licenses the catalog already accepts.
+- **Heavy Data** (`heavy_data_reread`): the ruling of 2026-09-28 stands. Its license text and the designer's FAQ are unchanged. It is outside October's catalog.
+- **Charter's license text** (`charter_license_text`): X.Org's COPYING for the Charter fonts, pinned at font-bitstream-type1 1.0.4, the same words as the canonical Bitstream Charter text. The License link goes to it instead of practicaltypography.com's page.
+- **Nerd folders that hold only a README** (`K-nerd-readme-folders`): those builds link to the Nerd Fonts release page at the tag, which lists their zips, instead of a folder with nothing to download. That is 12 links at v3.5.1. A maker's own build still wins.
+- **The store** (`store_topup_charter_nerd`): both changes go into the launch run. The stored 2026-10-17 snapshot gets Charter's text and the release page's check before it, as for Luciole.
+- **The owner's hopper try** (`hopper_try_in_final_try`): the rest of it folds into the final launch-candidate try on staging (PLAN-launch.md step 3), the Show menu's default under the title of the same words (F3) included.
+
+*(`data/reviews/l3/2026-11-12.toml`, `licenses/2026-11-12.toml`, `links/2026-11-12.toml`, `ci/2026-11-12.toml` and `site/2026-11-12.toml`)*
+
 ## Rules
 
 1. **Licenses.** A font qualifies only if its license allows use in **all personal and commercial projects**. A truly free font has **no use restrictions**. Display-only licenses are excluded, and so are personal-use-only, demo/trial and non-commercial licenses. *(2026-09-25)*
@@ -320,11 +330,11 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
     - **Marker:** a fixed-width **"NF"** beside the font's name. The Nerd Fonts logo may replace it once the maintainers agree (Backlog TASK-3). *Replaced on 2026-10-05:* a tag, "Nerd Font available", among the row's tags (`nerd_tag`; **First reviews of the test site**, below).
     - **Legend:** "NF: Nerd Font version available (adds developer icons, which have their own licenses)." *Replaced on 2026-10-05:* no legend; the caution moves into each font's details, beside the Nerd Font build link, after the freeze (`nerd_caution_in_details`).
     - **Filter:** a new "Nerd Font available" filter.
-    - **Before launch:** Claude confirms every linked build's license check and hides the marker for any build that fails.
+    - **Before launch:** Claude confirms every linked build's license check and hides the marker for any build that fails. *(Done on 2026-11-11: none fails, `nerd_builds_checked`, **Soft launch**, above.)*
 
     Recorded in `data/reviews/site/2026-09-29.toml`.
   - *The owner's answers after the build, 2026-09-29:*
-    - **README-only folders:** a Nerd Fonts folder that holds only a README stays linked.
+    - **README-only folders:** a Nerd Fonts folder that holds only a README stays linked. *Amended on 2026-11-12 (`K-nerd-readme-folders`, **Soft launch**, above):* the build stays linked, but to the release page at the tag, which lists its zip, since the README links no download.
     - **Hide switch:** the owner can hide a build's marker and link, with a reason, in `config/nerd-hidden.toml`. That was the owner's choice; Claude had recommended adding the switch only when a check fails.
     - **Broken link:** a Nerd link that fails its check is not shown (no marker, link or filter match) until it passes again. The font stays listed, and review.md flags it. This was the owner's own answer; Claude had recommended a warning only.
     - **Marker:** it stays at the end of the name's cell, in a column. *Moved later that day* to the end of the row's title cell, since the text name is hidden where a specimen shows (**Font names**, below). *Replaced on 2026-10-05* by the tag (`nerd_tag`).

@@ -350,8 +350,8 @@ Long names are limited by width and grow less: about 1 phone row in 10 grows und
 **Who:** Claude; the owner rules on links. **Depends on:** Q3, Q4 and Q8 (answered). This is priority 1.
 
 #### 8a: The license checks (alongside step 7, `step7_list_first`)
-- [ ] **Heavy Data:** re-read its license text (the file in the Nerd Fonts repository that its details link to) against Rules 1–3, and report to the owner. The ruling of 2026-09-28 stands unless the text says otherwise.
-- [ ] **Charter's license link** points to a web page (`practicaltypography.com/charter.html`), unlike every other font's license text. Find the license text in its download and propose a pinned URL for the owner's ruling (gate K and L3).
+- [x] **Heavy Data:** re-read its license text (the file in the Nerd Fonts repository that its details link to) against Rules 1–3, and report to the owner. The ruling of 2026-09-28 stands unless the text says otherwise. *(2026-11-11: unchanged, as is the designer's FAQ; the owner kept the ruling on 2026-11-12, `heavy_data_reread`. Heavy Data is outside October's catalog.)*
+- [x] **Charter's license link** points to a web page (`practicaltypography.com/charter.html`), unlike every other font's license text. Find the license text in its download and propose a pinned URL for the owner's ruling (gate K and L3). *(Proposed 2026-11-11: X.Org's COPYING at font-bitstream-type1 1.0.4, the same words as the canonical text. The owner took it on 2026-11-12 (`charter_license_text`), with the store topped up before the launch run; the change is PLAN-launch.md step 2A's.)*
 
 #### 8b: The wording (after the lead's branch)
 - [ ] Apply the wording of Q3 and Q8. The front-page lead's new sentence (`front_page_lead_counts`) lands with the Project default. The note's "with no use restrictions" and Q8's asides don't wait for the scoring change, but they do touch the templates.

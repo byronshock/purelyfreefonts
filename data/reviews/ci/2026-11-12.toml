@@ -1,0 +1,11 @@
+# Recorded on 2026-11-12 from the owner's rulings charter_license_text and K-nerd-readme-folders of the same day (asked in chat
+# by the lead session), which put both changes before the launch run.
+# Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md (Soft launch) and PLAN-launch.md.
+
+[store_topup_charter_nerd]
+choice = "a"
+recommended = true
+recommendation = "a"
+value = "verify_and_links_2026_10_17"
+ruling = "Before the launch run (a replay of 2026-10-17), Claude adds to the stored 2026-10-17 snapshot Charter's new license text, with `tff-catalog verify --date 2026-10-17 --refetch`, and the check of the Nerd Fonts v3.5.1 release page that 12 Nerd links now go to, with `tff-catalog links --date 2026-10-17` (links.py: a replay reads its checks from the store, and an unchecked Nerd link is dropped). Claude diffs every changed row before the store commit, stops to show the owner anything unexpected, and pushes the store commit, as for store_topup_luciole."
+reason = "The owner chose Charter's pinned text 'before launch', described as 'I add it to the stored October snapshot before the launch run, as we did for Luciole' (charter_license_text), and the release-page links landing before the launch run (K-nerd-readme-folders). Without the link check in the store, the replay would fail those 12 links as 'not checked' and publish none of them."

@@ -6,13 +6,15 @@ This is the working checklist for Milestone 2's soft launch ([docs/milestone-2.m
 - production deploys from GitHub Actions, set up first (`deploys_actions_first`);
 - usability round 1 comes after the launch (`usability_round_1_after_launch`).
 
-**Status (2026-11-11):**
+**Status (2026-11-12):**
 - Production serves the "Coming soon." stub, and `main` holds September's catalog on the old method.
 - Staging shows October's run with #100 (the hopper) and #115 (no early-version line).
 - #115 (no early-version line) and #116 (the redraw budget) are merged.
 - Open drafts:
   - #88: October's run, which the launch run supersedes;
-  - #100: the hopper.
+  - #100: the hopper;
+  - #117: this plan's records;
+  - #118: the font cache (step 2A).
 
 **How to read each step:** **Who**, **Depends on** and **Done when**, as in PLAN-hopper.md. Tick each item as soon as it is done and verified. Checklists nest: a parent is ticked only when every item under it is. If an item is only partly done, leave it unticked and note what's left.
 
@@ -57,16 +59,22 @@ Until the launch:
 
 #### 2A. Catalog-affecting changes, before the launch run
 **Who:** Claude; the owner rules on each report. **Depends on:** step 1.
-- [ ] **Nerd Font builds** (step 14's license item): confirm each linked build's license check ([docs/nerd-fonts-link.md](docs/nerd-fonts-link.md)), and hide any that fail in `config/nerd-hidden.toml`, which stage "links" reads.
-- [ ] **Heavy Data** (PLAN-REVIEWERS-1 step 8a): re-read its license text against Rules 1–3, and report to the owner.
+- [x] **Nerd Font builds** (step 14's license item): confirm each linked build's license check ([docs/nerd-fonts-link.md](docs/nerd-fonts-link.md)), and hide any that fail in `config/nerd-hidden.toml`, which stage "links" reads. *(2026-11-11, at v3.5.1: none of the 65 fails, so none is hidden; `nerd_builds_checked`, 2026-11-12.)*
+- [x] **Heavy Data** (PLAN-REVIEWERS-1 step 8a): re-read its license text against Rules 1–3, and report to the owner. *(The ruling of 2026-09-28 stands, `heavy_data_reread`, 2026-11-12. It is outside October's catalog.)*
 - [ ] **Charter** (step 8a): propose a pinned license link for the owner's ruling. Its text is in the download (`config/license-texts.toml`). A new `texts` URL needs an L3 question and a store top-up, as Luciole's did.
-- [ ] **The font cache:** fill it before a replay (milestone-method.md, "Later: from the port's adversarial review"), so the launch run draws every specimen it can, reproducibly. Merienda's stays out, flagged under Milestone 2 step 5.
+  - [x] Proposed and ruled (2026-11-12, `charter_license_text`): X.Org's COPYING at font-bitstream-type1 1.0.4, the same words as the canonical Bitstream Charter text.
+  - [ ] `config/license-texts.toml`: that URL in `texts`, and no `page`.
+- [ ] **Nerd folders that hold only a README** (`K-nerd-readme-folders`, 2026-11-12): those builds link to the release page at the tag, not the folder (`src/tff_catalog/links.py`). That is 12 links at v3.5.1.
+- [ ] **The store top-up** (`store_topup_charter_nerd`), once both changes above are on `main`: `tff-catalog verify --date 2026-10-17 --refetch` for Charter's text and `tff-catalog links --date 2026-10-17` for the release page's check, every changed row diffed before the store commit and pushed.
+- [ ] **The font cache:** fill it before a replay (milestone-method.md, "Later: from the port's adversarial review"), so the launch run draws every specimen it can, reproducibly. Merienda's stays out, flagged under Milestone 2 step 5. *(Built in #118: a replay fills the cache from its own catalog and runs again. Checked locally with an empty cache: 120 specimens lacking after the first pass, none after the second, and a clean replay identical.)*
 
 **Done when:** each is merged, or ruled unchanged.
 
 #### 2B. The hopper
 **Who:** Claude; the owner rules on the words and merges. **Depends on:** 2A for the merge.
 - [ ] **#100's PR 4 items** (docs/milestone-3.md, slice 1): verified and ticked.
+  - [x] Items 2 to 5 (2026-11-11, on #100's branch at 604ce2c): each checked against the code and tests. The count's M is now pinned with a list, and the privacy item notes `hopper_previews_all_at_once`.
+  - [ ] Item 1, the owner's layout review: its last part is his try, which folds into step 3's final try (`hopper_try_in_final_try`).
 - [ ] **#100 merged,** before the launch run, so the run's CI checks the hopper on October's data.
 - [ ] **PR 5, the words** (the owner rules on the wording):
   - [ ] privacy.md's "Coming next" becomes a section on how the check works:
@@ -143,7 +151,7 @@ Until the launch:
 ### Step 3: The launch (Milestone 2 step 14)
 **Who:** Claude deploys and checks; the owner gives the go-ahead. **Depends on:** step 2.
 - [ ] `staging` moves to `main`'s head, and Actions deploys it; the site suite and the live tests pass.
-- [ ] The owner's final try on staging, on a phone and a computer: drop, choose and paste his own list in Chromium and Firefox, with the Network tab open.
+- [ ] The owner's final try on staging, on a phone and a computer: drop, choose and paste his own list in Chromium and Firefox, with the Network tab open. It finishes PLAN-hopper.md step 4's try, F3's Show menu included (`hopper_try_in_final_try`), and then PR 4's item 1 is ticked.
 - [ ] Final checks: every CI check, step 9's live test, step 10's numbers, and the tip link with Stripe's renamed page.
 - [ ] **Go**, on the owner's word:
   - [ ] set `PRODUCTION_DEPLOYS` to on;
