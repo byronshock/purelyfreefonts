@@ -313,6 +313,28 @@ jobs:
           start=$SECONDS
           uv run --locked tff-catalog -v "${args[@]}"
           echo "Refresh of $RUN_DATE: $((SECONDS - start)) s" >> "$GITHUB_STEP_SUMMARY"
+          # A replay never downloads, so stage "specimens" draws only the fonts already in
+          # the font cache, and GitHub evicts an Actions cache after 7 days unused: the
+          # switch's replay lacked 109 specimens (milestone-method.md, "Later").
+          # So a replay fills the cache from its own build/catalog.json, each file checked
+          # against its sha256 and size, and runs again if it fetched any. A file that
+          # can't be had is flagged specimen_failed, as in a live run. The offline replay
+          # below shares the cache, so it still checks this run's bytes.
+          if [ -n "$FROM_SNAPSHOTS" ]; then
+            fill=0
+            filled=$(uv run --locked tff-site fetch-fonts --data build/catalog.json) || fill=$?
+            echo "Font cache: $filled" >> "$GITHUB_STEP_SUMMARY"
+            if [ "$fill" -ne 0 ]; then
+              echo "::warning::some font files could not be fetched for the specimens (see the log)"
+            fi
+            if [[ "$filled" =~ ^fetched\ ([0-9]+), ]] && [ "${BASH_REMATCH[1]}" -gt 0 ]; then
+              # The first pass wrote any model fit it was asked for; this one reads it back.
+              start=$SECONDS
+              uv run --locked tff-catalog -v refresh --date "$RUN_DATE" \
+                --from-snapshots "$FROM_SNAPSHOTS"
+              echo "Replay with the filled font cache: $((SECONDS - start)) s" >> "$GITHUB_STEP_SUMMARY"
+            fi
+          fi
 
       - name: Check the specimens' size budget
         if: ${{ !cancelled() && steps.refresh.outcome == 'success' }}
