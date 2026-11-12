@@ -190,13 +190,18 @@ def test_font_files_are_the_originals_pinned_to_the_commit() -> None:
     assert all(f.sha256 is None and f.size is None for f in files)
 
 
-def test_attrs_keep_cask_patched_name_and_version() -> None:
-    cascadia = universe(parse())["CascadiaCode"]
-    assert dict(cascadia.attrs) == {
+def test_attrs_keep_cask_patched_name_version_and_repo_release() -> None:
+    records = universe(parse())
+    assert dict(records["CascadiaCode"].attrs) == {
         "cask_name": "caskaydia-cove",
         "patched_name": "CaskaydiaCove",
+        "repo_release": True,
         "version": "2407.24",
     }
+    # repoRelease false: the folder at a release tag holds only a README, so stage "links"
+    # links the release page instead (K-nerd-readme-folders).
+    assert dict(records["0xProto"].attrs)["repo_release"] is False
+    assert dict(records["Recursive"].attrs)["repo_release"] is False
     assert cask_token("caskaydia-cove") == "font-caskaydia-cove-nerd-font"
     assert cask_token("m+") == "font-m+-nerd-font"
 
