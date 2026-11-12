@@ -891,7 +891,6 @@ FIRST_SCREEN = """() => {
            sort: box(q('#list-sort')), count: box(q('#count')),
            heading: box(q('#results-h')), lead: box(q('.lead')),
            hidden: Object.fromEntries(hide.map((s) => [s, unseen(q(s))])),
-           status: getComputedStyle(q('.site-status')).display,
            h1: parseFloat(getComputedStyle(q('h1')).fontSize),
            placeholder: getComputedStyle(q('#f-q'), '::placeholder').opacity };
 }"""
@@ -914,10 +913,10 @@ def first_screen(browser, site_url, width, height, hash_=""):
 @pytest.mark.parametrize(("width", "height"), FIRST_SCREENS)
 def test_fonts_fill_a_phones_first_screen(browser, site_url, width, height):
     """The owner's site rulings of 2026-10-06 (mobile_first_screen_two_fonts,
-    early_line_hidden_on_phones): on a phone the header has no early-version line, the heading
-    is smaller, the lead shows its first sentence, search, Measure and Filters share one row
-    and the count sits in the sort row, so the fonts start high enough. The heading and the
-    lead stay on the page."""
+    early_line_hidden_on_phones, whose early-version line left every screen on 2026-11-03,
+    early_line_removed): on a phone the heading is smaller, the lead shows its first
+    sentence, search, Measure and Filters share one row and the count sits in the sort row,
+    so the fonts start high enough. The heading and the lead stay on the page."""
     context, page = first_screen(browser, site_url, width, height)
     try:
         got = page.evaluate(FIRST_SCREEN)
@@ -925,7 +924,6 @@ def test_fonts_fill_a_phones_first_screen(browser, site_url, width, height):
         assert whole >= FIRST_SCREENS[(width, height)], got
         assert got["rows"][0]["top"] < got["vh"], got
         assert got["scrollWidth"] <= width
-        assert got["status"] == "none"
         assert got["h1"] == 24  # --fs-xl, not --fs-2xl
         assert all(got["hidden"].values()), got["hidden"]
         assert got["lead"]["height"] > 0  # the lead's first sentence shows
@@ -1002,12 +1000,11 @@ def test_phone_controls_keep_their_names_and_description(browser, site_url, doc)
 def test_wider_screens_keep_their_layout(browser, site_url, width):
     """From 40rem nothing is hidden from sight: the labels above the controls, the measures
     line, the "Fonts" heading with the count under it and the sort buttons below them, the
-    lead's two sentences and the early-version line; the search box shows no placeholder."""
+    lead's two sentences; the search box shows no placeholder."""
     context, page = first_screen(browser, site_url, width, 900)
     try:
         got = page.evaluate(FIRST_SCREEN)
         assert not any(got["hidden"].values()), got["hidden"]
-        assert got["status"] == "block"
         assert got["h1"] == 32  # --fs-2xl
         assert got["placeholder"] == "0"
         heading, count, sort = got["heading"], got["count"], got["sort"]

@@ -68,7 +68,6 @@
      2026-09-29, AUTHORITY.md "Headline font"), so its text keeps the light values. */
   --c-header-bg: #ffffff;
   --c-header-fg: #1b1d21;
-  --c-header-muted: #50555c;
   --c-header-link: #26619c;
   --c-header-focus: #26619c;
   --c-wordmark-bg: #ffffff;
@@ -96,7 +95,6 @@
     /* The header stays white in dark mode too (the light values, restated). */
     --c-header-bg: #ffffff;
     --c-header-fg: #1b1d21;
-    --c-header-muted: #50555c;
     --c-header-link: #26619c;
     --c-header-focus: #26619c;
     --c-wordmark-bg: #ffffff;
@@ -123,7 +121,6 @@
     --c-spec: CanvasText;
     --c-header-bg: Canvas;
     --c-header-fg: CanvasText;
-    --c-header-muted: CanvasText;
     --c-header-link: LinkText;
     --c-header-focus: Highlight;
     /* The wordmark is a black image: it keeps a white plate under any palette. */
