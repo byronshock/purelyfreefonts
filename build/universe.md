@@ -4,10 +4,10 @@ Written by `tff-catalog universe` (milestone-1 step 4). Every universe key is in
 
 | Measure | Count |
 |---|---|
-| Families | 3137 |
-| Eligible families | 2782 |
+| Families | 3123 |
+| Eligible families | 2768 |
 | Dropped families | 355 |
-| Keys in a family | 9067 |
+| Keys in a family | 9088 |
 | Keys kept out of every family | 98 |
 | Unmapped keys (must be 0) | 0 |
 
@@ -15,24 +15,24 @@ Written by `tff-catalog universe` (milestone-1 step 4). Every universe key is in
 
 | Source | Families | Eligible | Dropped |
 |---|---|---|---|
-| fontist | 618 | 331 | 287 |
-| fontsource | 2145 | 2100 | 45 |
+| fontist | 616 | 329 | 287 |
+| fontsource | 2138 | 2093 | 45 |
 | foundries | 102 | 102 | 0 |
-| google_metadata | 1946 | 1919 | 27 |
-| google_repo | 2026 | 1991 | 35 |
-| homebrew_casks | 2480 | 2418 | 62 |
+| google_metadata | 1950 | 1923 | 27 |
+| google_repo | 2022 | 1987 | 35 |
+| homebrew_casks | 2468 | 2406 | 62 |
 | nerdfonts | 65 | 64 | 1 |
 
 ## Keys per namespace
 
 | Namespace | In a family | Kept out | Unmapped |
 |---|---|---|---|
-| brew-cask | 2577 | 22 | 0 |
+| brew-cask | 2581 | 22 | 0 |
 | fontist-formula | 181 | 63 | 0 |
 | foundry-family | 102 | 0 | 0 |
-| fs-id | 2162 | 9 | 0 |
-| gf-dir | 2031 | 0 | 0 |
-| gf-family | 1946 | 0 | 0 |
+| fs-id | 2167 | 9 | 0 |
+| gf-dir | 2039 | 0 | 0 |
+| gf-family | 1950 | 0 | 0 |
 | nerd-folder | 68 | 4 | 0 |
 
 ## Drop reasons
@@ -517,14 +517,40 @@ None.
 
 ## New ids this run
 
-First run: all 3137 ids are new (build/review/universe-keys.md lists them).
+| Id | Family | Minted from |
+|---|---|---|
+| firjar | Firjar | Firjar |
+| ioskeley-mono-term-nerd-font | Ioskeley Mono Term Nerd Font | Ioskeley Mono Term Nerd Font |
+| lexica-ultralegible | Lexica Ultralegible | Lexica Ultralegible |
+| microsoft-aptos-font-family | Microsoft Aptos font family | Microsoft Aptos font family |
 
 ## Display names changed this run (record the old name in data/aliases.csv)
 
-None.
+| Id | Registry name | Current name |
+|---|---|---|
+| microsoft-selawik | Microsoft Selawik | Selawik |
 
 ## Registry ids no source listed this run
 
-None.
+| Id | Registry name |
+|---|---|
+| big-shoulders-display | Big Shoulders Display |
+| big-shoulders-inline-display | Big Shoulders Inline Display |
+| big-shoulders-inline-text | Big Shoulders Inline Text |
+| big-shoulders-stencil-display | Big Shoulders Stencil Display |
+| big-shoulders-stencil-text | Big Shoulders Stencil Text |
+| big-shoulders-text | Big Shoulders Text |
+| charis | Charis |
+| finlandica | Finlandica |
+| gentium | Gentium |
+| gentium-book | Gentium Book |
+| nosifer-caps | Nosifer Caps |
+| ofl-sorts-mill-goudy-tt | OFL Sorts Mill Goudy TT |
+| rubik-one | Rubik One |
+| sansita-one | Sansita One |
+| scheherazade | Scheherazade |
+| selawik | Selawik |
+| sn-pro-font-family | SN Pro Font Family |
+| yaldevi-colombo | Yaldevi Colombo |
 
 Every key's family is listed in build/review/universe-keys.md (not committed).
