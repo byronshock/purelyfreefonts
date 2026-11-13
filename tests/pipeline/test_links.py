@@ -217,6 +217,7 @@ def test_policy_rejects_aggregators(url: str, aggregator: str) -> None:
 # --- rule: a Nerd Fonts build folder only as a Nerd link ---------------------------------------
 
 NERD_FOLDER = "https://github.com/ryanoasis/nerd-fonts/tree/v3.5.1/patched-fonts/SourceCodePro"
+NERD_RELEASE_PAGE = "https://github.com/ryanoasis/nerd-fonts/releases/tag/v3.5.1"
 
 
 def test_a_nerd_fonts_build_folder_is_allowed_only_as_a_nerd_link() -> None:
@@ -225,6 +226,13 @@ def test_a_nerd_fonts_build_folder_is_allowed_only_as_a_nerd_link() -> None:
     assert links.policy_problems(NERD_FOLDER) == ["an aggregator (github.com/ryanoasis/nerd-fonts)"]
     assert links.policy_problems(NERD_FOLDER, nerd=True) == []
     assert links.is_nerd_folder(NERD_FOLDER)
+    # A release's page, for a build whose folder holds only a README (K-nerd-readme-folders).
+    agg = ["an aggregator (github.com/ryanoasis/nerd-fonts)"]
+    assert links.policy_problems(NERD_RELEASE_PAGE) == agg
+    assert links.policy_problems(NERD_RELEASE_PAGE, nerd=True) == []
+    assert links.is_nerd_release_page(NERD_RELEASE_PAGE)
+    assert not links.is_nerd_folder(NERD_RELEASE_PAGE)
+    assert not links.is_nerd_release_page(NERD_FOLDER)
     # A maker's own release page follows the ordinary policy either way.
     maker = "https://github.com/subframe7536/maple-font/releases"
     assert links.policy_problems(maker, nerd=True) == links.policy_problems(maker) == []
@@ -236,6 +244,11 @@ def test_a_nerd_fonts_build_folder_is_allowed_only_as_a_nerd_link() -> None:
         "https://github.com/ryanoasis/nerd-fonts",
         "https://github.com/ryanoasis/nerd-fonts/releases",
         "https://github.com/ryanoasis/nerd-fonts/releases/latest",
+        "https://github.com/ryanoasis/nerd-fonts/releases/tag/latest",
+        "https://github.com/ryanoasis/nerd-fonts/releases/tag",
+        "https://github.com/ryanoasis/nerd-fonts/releases/tag/v3.5.1/extra",
+        "https://github.com/ryanoasis/nerd-fonts/releases/tag/v3.5.1?expanded=true",
+        "http://github.com/ryanoasis/nerd-fonts/releases/tag/v3.5.1",
         "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.5.1/SourceCodePro.zip",
         "https://github.com/ryanoasis/nerd-fonts/tree/v3.5.1/patched-fonts",
         "https://github.com/ryanoasis/nerd-fonts/tree/v3.5.1/patched-fonts/Hack/Ligatures",
@@ -1570,14 +1583,19 @@ def nerd_url(folder: str, tag: str = NERD_TAG) -> str:
     return f"https://github.com/ryanoasis/nerd-fonts/tree/{tag}/patched-fonts/{folder}"
 
 
-def nerd_rec(folder: str, family: str, patched: str) -> UniverseRecord:
-    """A nerdfonts record: one fonts.json entry."""
+def nerd_rec(
+    folder: str, family: str, patched: str, repo_release: bool | None = None
+) -> UniverseRecord:
+    """A nerdfonts record: one fonts.json entry (``repo_release``: its ``repoRelease``)."""
+    found: dict[str, records.Scalar] = {"patched_name": patched}
+    if repo_release is not None:
+        found["repo_release"] = repo_release
     return UniverseRecord(
         source="nerdfonts",
         key=SourceKey("nerd-folder", folder),
         family=family,
         urls=(("homepage", "https://github.com/ryanoasis/nerd-fonts"),),
-        attrs=records.attrs(patched_name=patched),
+        attrs=records.attrs(**found),
     )
 
 
@@ -1658,7 +1676,11 @@ def nerd_world() -> tuple[Universe, list[UniverseRecord], dict[str, Links], link
         ("repository", "https://github.com/microsoft/cascadia-code"),
     )
     by_family: dict[str, list[UniverseRecord]] = {
-        "source-code-pro": [nerd_rec("SourceCodePro", "Source Code Pro", "SauceCodePro")],
+        "source-code-pro": [
+            nerd_rec("SourceCodePro", "Source Code Pro", "SauceCodePro", repo_release=True)
+        ],
+        # A folder that holds only a README at the tag (repoRelease false).
+        "geist-mono": [nerd_rec("GeistMono", "Geist Mono", "GeistMono", repo_release=False)],
         "maple-mono": [
             fontsource,
             cask("font-maple-mono-nf", "Maple Mono NF", "subframe7536/Maple-font"),
@@ -1666,9 +1688,19 @@ def nerd_world() -> tuple[Universe, list[UniverseRecord], dict[str, Links], link
         ],
         "cascadia-code": [
             google,
-            nerd_rec("CascadiaCode", "Cascadia Code", "CaskaydiaCove"),
+            nerd_rec("CascadiaCode", "Cascadia Code", "CaskaydiaCove", repo_release=True),
             cask("font-cascadia-code-nf", "Cascadia Code NF", "microsoft/cascadia-code"),
             cask("font-delugia-complete", "Delugia Code", "adam7/delugia-code"),
+        ],
+        # A maker's build and a Nerd Fonts folder that holds only a README.
+        "cascadia-mono": [
+            rec(
+                "google_metadata",
+                "Cascadia Mono",
+                ("repository", "https://github.com/microsoft/cascadia-code"),
+            ),
+            nerd_rec("CascadiaMono", "Cascadia Mono", "CaskaydiaMono", repo_release=False),
+            cask("font-cascadia-mono-nf", "Cascadia Mono NF", "microsoft/cascadia-code"),
         ],
         "iosevka": [
             nerd_rec("Iosevka", "Iosevka", "Iosevka"),
@@ -1685,8 +1717,10 @@ def nerd_world() -> tuple[Universe, list[UniverseRecord], dict[str, Links], link
     }
     names = {
         "source-code-pro": "Source Code Pro",
+        "geist-mono": "Geist Mono",
         "maple-mono": "Maple Mono",
         "cascadia-code": "Cascadia Code",
+        "cascadia-mono": "Cascadia Mono",
         "iosevka": "Iosevka",
         "noto-sans": "Noto Sans",
         "noto-serif": "Noto Serif",
@@ -1705,6 +1739,7 @@ def nerd_world() -> tuple[Universe, list[UniverseRecord], dict[str, Links], link
         alias("font-maple-mono-nf", "brew-cask", "maple-mono", detail="nf"),
         alias("font-maple-mono-nl-nf", "brew-cask", "maple-mono", detail="nf"),
         alias("font-cascadia-code-nf", "brew-cask", "cascadia-code", detail="nf"),
+        alias("font-cascadia-mono-nf", "brew-cask", "cascadia-mono", detail="nf"),
         alias("font-delugia-complete", "brew-cask", "cascadia-code"),
         alias("font-delugia-mono", "brew-cask", "delugia-only"),
         alias("IosevkaTerm", "nerd-folder", "iosevka"),
@@ -1727,13 +1762,24 @@ def nerd_world() -> tuple[Universe, list[UniverseRecord], dict[str, Links], link
     by_key: dict[SourceKey, list[UniverseRecord]] = {}
     for r in recs:
         by_key.setdefault(r.key, []).append(r)
-    folders = ("SourceCodePro", "CascadiaCode", "Iosevka", "IosevkaTerm", "Noto", "BigBlueTerminal")
+    folders = (
+        "SourceCodePro",
+        "GeistMono",
+        "CascadiaCode",
+        "CascadiaMono",
+        "Iosevka",
+        "IosevkaTerm",
+        "Noto",
+        "BigBlueTerminal",
+    )
     inputs = links.NerdInputs(
         rows=rows,
         records={k: tuple(v) for k, v in by_key.items()},
         facts={
             "SourceCodePro": nerd_fact("SourceCodePro", "OFL-1.1-RFN"),
+            "GeistMono": nerd_fact("GeistMono", "OFL-1.1-no-RFN"),
             "CascadiaCode": nerd_fact("CascadiaCode", "OFL-1.1-RFN"),
+            "CascadiaMono": nerd_fact("CascadiaMono", "OFL-1.1-RFN"),
             "Iosevka": nerd_fact("Iosevka", "OFL-1.1-no-RFN"),
             "Noto": nerd_fact("Noto", "OFL-1.1-no-RFN"),
             "BigBlueTerminal": nerd_fact("BigBlueTerminal", "CC-BY-SA-4.0"),
@@ -1762,6 +1808,7 @@ def test_the_current_release_is_the_newest_that_is_not_a_prerelease() -> None:
     assert got == links.NerdRelease(NERD_TAG, frozenset({"Hack"}))
     assert links.nerd_release([]) is None
     assert links.nerd_folder_url(NERD_TAG, "Go-Mono") == nerd_url("Go-Mono")
+    assert links.nerd_release_url(NERD_TAG) == NERD_RELEASE_PAGE
 
 
 def test_each_family_gets_its_nerd_font_builds_page() -> None:
@@ -1775,6 +1822,9 @@ def test_each_family_gets_its_nerd_font_builds_page() -> None:
             nerd_url("SourceCodePro"),
             "SauceCodePro Nerd Font",
         ),
+        # A folder that holds only a README: the release's page, which lists its zip
+        # (K-nerd-readme-folders).
+        "geist-mono": ("nerd_fonts", NERD_RELEASE_PAGE, "GeistMono Nerd Font"),
         # The folder of the family's own name, not the Term build's.
         "iosevka": ("nerd_fonts", nerd_url("Iosevka"), "Iosevka Nerd Font"),
         # A bundle folder links each of its members.
@@ -1792,6 +1842,12 @@ def test_each_family_gets_its_nerd_font_builds_page() -> None:
             "maker",
             "https://github.com/microsoft/cascadia-code/releases",
             "Cascadia Code NF",
+        ),
+        # The maker's own build wins over a folder that holds only a README too.
+        "cascadia-mono": (
+            "maker",
+            "https://github.com/microsoft/cascadia-code/releases",
+            "Cascadia Mono NF",
         ),
         # A maker's release asset with no cask: "<family> NF".
         "monaspace-neon": (

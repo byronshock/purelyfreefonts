@@ -9,6 +9,8 @@
 
 See AUTHORITY.md and `data/reviews/site/2026-09-29.toml`. The findings below stand, but their recommendation of one shared releases page does not.
 
+**Amended on 2026-11-12** (`K-nerd-readme-folders`, `data/reviews/links/2026-11-12.toml`): a Nerd Fonts build whose folder at the release tag holds only a README (`fonts.json`'s `repoRelease: false`) links that release's page, `https://github.com/ryanoasis/nerd-fonts/releases/tag/<tag>`, which lists its archive. The README names the build and its icon sets but links no download. That was 12 links at v3.5.1. The pre-launch license check of every linked build (2026-11-11, at v3.5.1) found none failing: `nerd_builds_checked`, `data/reviews/site/2026-11-12.toml`.
+
 Investigated 2026-09-28 for the owner's ruling. Question: should a catalog font
 that has a Nerd Fonts build also offer a Nerd Fonts download link beside its
 official one? Evidence: Nerd Fonts `fonts.json` (master, 2026-09-28, MIT per

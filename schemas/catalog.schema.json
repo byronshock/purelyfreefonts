@@ -630,7 +630,7 @@
                 ]
               },
               "nerd": {
-                "description": "The page of the font's Nerd Font build, or null (owner rulings of 2026-09-28 and 2026-09-29, TASK-2): the maker's own release page when the maker publishes one, else the build's folder in the Nerd Fonts repository at the current release tag. The label names the build.",
+                "description": "The page of the font's Nerd Font build, or null (owner rulings of 2026-09-28 and 2026-09-29, TASK-2): the maker's own release page when the maker publishes one, else the build's folder in the Nerd Fonts repository at the current release tag, or that release's page when the folder holds only a README (owner ruling K-nerd-readme-folders, 2026-11-12). The label names the build.",
                 "oneOf": [
                   {
                     "type": "null"

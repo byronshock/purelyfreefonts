@@ -98,7 +98,12 @@ Two kinds of build count:
   release tag, ``https://github.com/ryanoasis/nerd-fonts/tree/<tag>/patched-fonts/<folderName>``:
   the tag is the newest release that is not a prerelease in stage "parse"'s
   ``nerd_releases`` records (``nerd_release``), so each monthly refresh moves it
-  forward, and the folder must be among the ones that release ships. The label
+  forward, and the folder must be among the ones that release ships. A folder
+  that holds only a README at the tag (fonts.json ``repoRelease: false``, the
+  record's ``repo_release``) links that release's page instead,
+  ``https://github.com/ryanoasis/nerd-fonts/releases/tag/<tag>``, which lists its
+  archive: the README names the build but links no download (owner ruling
+  ``K-nerd-readme-folders``, 2026-11-12). The label
   is fonts.json's ``patchedName`` plus " Nerd Font" ("SauceCodePro Nerd Font").
   The link is made only when the build's base license, fonts.json's
   ``licenseId`` read through ``config/license-aliases.toml``, classifies as
@@ -109,12 +114,11 @@ Two kinds of build count:
 When both kinds exist, the maker's own build wins: it is the official source.
 So does a maker's build over a Nerd Fonts folder that holds only a README
 (fonts.json ``repoRelease: false``: CascadiaMono, Monaspace); without a maker's
-build, such a folder is still the build's page, since its README names the
-build, its variants and its downloads. Never a release asset or
-``/releases/latest``. Nerd Fonts' page for its own build is no aggregator for
-this link (``policy_problems(nerd=True)`` allows exactly a build folder,
-``is_nerd_folder``), while the primary link's ban on ``ryanoasis/nerd-fonts``
-and nerdfonts.com stands. A family with some sign of a Nerd build but no link
+build, such a folder's build links the release page, as above. Never a release
+asset or ``/releases/latest``. Nerd Fonts' pages for its own builds are no
+aggregator for this link (``policy_problems(nerd=True)`` allows exactly a build
+folder or a release's page, ``is_nerd_page``), while the primary link's ban on
+``ryanoasis/nerd-fonts`` and nerdfonts.com stands. A family with some sign of a Nerd build but no link
 (a distribution's package of a third party's patch, say) is listed with the
 reason in the queue's ``nerd.unlinked``.
 
@@ -357,6 +361,8 @@ NERD_NS = "nerd-folder"  # both collectors key a build by its fonts.json folderN
 NERD_SOURCE = "nerdfonts"  # fonts.json: the builds, their names and base licenses
 NERD_RELEASES = "nerd_releases"  # the releases: the current tag and the folders it ships
 NERD_FOLDER_URL = "https://github.com/" + NERD_REPO + "/tree/{tag}/patched-fonts/{folder}"
+# A folder that holds only a README at the tag links its release's page (K-nerd-readme-folders).
+NERD_RELEASE_URL = "https://github.com/" + NERD_REPO + "/releases/tag/{tag}"
 # Alias rows (data/aliases.csv) of these relations and details are Nerd Font builds.
 NERD_RELATIONS = frozenset({"build", "bundle"})
 NERD_DETAILS = frozenset({"nerd", "nf", "nfm", "nfp", "propo"})
@@ -521,10 +527,11 @@ def policy_problems(url: str, *, archived: bool = False, nerd: bool = False) -> 
     the page it shows must follow the policy apart from plain http (owner ruling of
     2026-09-29). Without ``archived``, web.archive.org is an aggregator like any other.
 
-    ``nerd``: ``url`` is a family's Nerd Font build link (``Links.nerd``). Nerd Fonts' page
-    for its own build, a build folder of its repository (``is_nerd_folder``), is no
-    aggregator for it (owner ruling of 2026-09-29); every other page of that repository,
-    and nerdfonts.com, still is, and every other rule applies.
+    ``nerd``: ``url`` is a family's Nerd Font build link (``Links.nerd``). Nerd Fonts' pages
+    for its own builds, a build folder of its repository or a release's page
+    (``is_nerd_page``), are no aggregator for it (owner rulings of 2026-09-29 and
+    2026-11-12, ``K-nerd-readme-folders``); every other page of that repository, and
+    nerdfonts.com, still is, and every other rule applies.
     """
     u = _split(url)
     if u is None:
@@ -542,7 +549,7 @@ def policy_problems(url: str, *, archived: bool = False, nerd: bool = False) -> 
     if _is_asset(u, segs):
         out.append("a release asset or file download")
     aggregator = _aggregator(u, segs)
-    if aggregator is not None and not (nerd and is_nerd_folder(url)):
+    if aggregator is not None and not (nerd and is_nerd_page(url)):
         out.append(f"an aggregator ({aggregator})")
     return out
 
@@ -550,7 +557,8 @@ def policy_problems(url: str, *, archived: bool = False, nerd: bool = False) -> 
 def is_nerd_folder(url: str) -> bool:
     """Whether ``url`` is a build folder of the Nerd Fonts repository,
     ``https://github.com/ryanoasis/nerd-fonts/tree/<ref>/patched-fonts/<folder>``, with
-    nothing after the folder: the one page of that repository a Nerd link may name."""
+    nothing after the folder: one of the two pages of that repository a Nerd link may name,
+    with a release's page (``is_nerd_page``)."""
     u = _split(url)
     if u is None or u.scheme != "https" or u.bare != "github.com" or u.query:
         return False
@@ -561,6 +569,28 @@ def is_nerd_folder(url: str) -> bool:
         and segs[2] == "tree"
         and segs[4] == "patched-fonts"
     )
+
+
+def is_nerd_release_page(url: str) -> bool:
+    """Whether ``url`` is a release's page of the Nerd Fonts repository,
+    ``https://github.com/ryanoasis/nerd-fonts/releases/tag/<tag>``, with nothing after the
+    tag: where a build whose folder holds only a README is linked (``K-nerd-readme-folders``)."""
+    u = _split(url)
+    if u is None or u.scheme != "https" or u.bare != "github.com" or u.query:
+        return False
+    segs = u.segments
+    return (
+        len(segs) == 5
+        and "/".join(segs[:2]).lower() == NERD_REPO
+        and segs[2:4] == ["releases", "tag"]
+        and segs[4].lower() != "latest"
+    )
+
+
+def is_nerd_page(url: str) -> bool:
+    """Whether ``url`` is a page of the Nerd Fonts repository that a Nerd link may name: a
+    build folder (``is_nerd_folder``) or a release's page (``is_nerd_release_page``)."""
+    return is_nerd_folder(url) or is_nerd_release_page(url)
 
 
 def wayback_original(url: str) -> str | None:
@@ -876,6 +906,11 @@ def nerd_folder_url(tag: str, folder: str) -> str:
     return NERD_FOLDER_URL.format(tag=quote(tag, safe=""), folder=quote(folder, safe=""))
 
 
+def nerd_release_url(tag: str) -> str:
+    """The page of Nerd Fonts' release ``tag``, which lists every build's archive."""
+    return NERD_RELEASE_URL.format(tag=quote(tag, safe=""))
+
+
 @dataclass(frozen=True, slots=True)
 class NerdBuild:
     """A family's Nerd Font build, as ``nerd_builds`` links it."""
@@ -1114,9 +1149,14 @@ def nerd_fonts_build(
     if problem is not None:
         return None, f"Nerd Fonts folder {folder}: {problem}"
     record = nerd.get(folder)
-    patched = dict(record.attrs).get("patched_name") if record is not None else None
+    found = dict(record.attrs) if record is not None else {}
+    patched = found.get("patched_name")
     label = NERD_LABEL.format(patched if isinstance(patched, str) and patched else folder)
-    link = Link(nerd_folder_url(release.tag, folder), label)
+    # A folder that holds only a README links the release's page (K-nerd-readme-folders).
+    if found.get("repo_release") is False:
+        link = Link(nerd_release_url(release.tag), label)
+    else:
+        link = Link(nerd_folder_url(release.tag, folder), label)
     return NerdBuild("nerd_fonts", link, (f"{NERD_NS}:{folder}",)), None
 
 
@@ -1507,7 +1547,7 @@ def to_check(row: CheckRow, *, archived: bool = False, nerd: bool = False) -> Li
     redirects, and the error when there was no answer. ``archived``: the link is an archived
     override's (``Link.archived``), so it and its redirect may be Wayback Machine captures.
     ``nerd``: the link is a Nerd Font build's (``Links.nerd``), so it and its redirect may be a
-    Nerd Fonts build folder (``policy_problems``)."""
+    Nerd Fonts build folder or release page (``policy_problems``, ``is_nerd_page``)."""
     problems = policy_problems(row.url, archived=archived, nerd=nerd)
     if row.error:
         problems.append(f"no answer: {row.error}")
@@ -1719,7 +1759,7 @@ def build_queue(
       link (question id -> why);
     - ``failed_checks``: links that failed the check, with the families using
       them ("<id>:primary", "<id>:designer", "<id>:nerd");
-    - ``nerd``: the Nerd Fonts ``release`` the build folders are linked at (null
+    - ``nerd``: the Nerd Fonts ``release`` the build folders and pages are linked at (null
       without one), and ``unlinked``: the families with some sign of a Nerd Font
       build but no link, with why (``nerd_builds``).
     """

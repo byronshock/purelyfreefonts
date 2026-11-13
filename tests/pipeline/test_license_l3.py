@@ -1521,7 +1521,6 @@ def test_load_research_without_a_file(tmp_path: Path) -> None:
 UNPINNED_UPSTREAMS = (
     "https://www.gust.org.pl/",
     "https://www.evertype.com/fonts/nko/ConakryFont.zip#",
-    "https://practicaltypography.com/fonts/Charter%20210112.zip#",
     "https://software.sil.org/downloads/r/ezra/EzraSIL-2.51.zip#",
     "https://software.sil.org/downloads/r/scheherazade/Scheherazade-2.100.zip#",
     "https://software.sil.org/downloads/r/sophianubian/SophiaNubian-1.0.zip#",
