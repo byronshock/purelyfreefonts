@@ -4,6 +4,12 @@ What the owner and Claude do by hand each month, in order. It starts from [metho
 
 **Where it stands.** No live refresh has been merged yet, and the schedule is off. Since 2026-10-16 (`refresh_collect_and_hold`) each month's live run is dispatched by hand and its pull request kept as an unmerged draft until Milestone 2's launch and the scoring-method port; the first was 2026-10-17. Its steps are steps 1 to 6 below, without the merge, and the review covers only the questions that don't depend on the method. Since 2026-10-19 (`staging_previews_held_runs`) a held run may also be previewed on staging, from a branch `preview/<date>` that is never merged ([milestone-refresh.md](../docs/milestone-refresh.md), "Collect and hold"). The first merged refresh, the schedule and the watchdog come after Milestone 2, in [docs/milestone-refresh.md](../docs/milestone-refresh.md) (`refresh_timing`). Until then `state/` holds the 2026-09-26 catalog as the published one, and staging shows it, or a held run's preview. A step marked **(after milestone-refresh.md)** doesn't exist until the step of that milestone named with it.
 
+*Amended 2026-11-06 (`launch_data_october`, AUTHORITY.md **Soft launch**):*
+- no refresh is dispatched except the launch run: 2026-10-17, run again by step 7 once the catalog-affecting changes the launch needs have landed (PLAN-launch.md step 2A);
+- the launch run merges before the soft launch, as the first merged refresh;
+- November's run starts by hand right after it merges, and its pull request is held until after the launch;
+- the schedule follows the launch.
+
 Local commands run from the project root, with the private snapshot store:
 
 ```sh

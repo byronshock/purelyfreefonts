@@ -1,0 +1,12 @@
+# Owner ruling of 2026-11-12 on Charter's license text (PLAN-REVIEWERS-1.md step 8a, priority 1; PLAN-launch.md step
+# 2A), asked in chat by the lead session as a single-select question.
+# Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md (Soft launch) and
+# config/license-texts.toml.
+
+[charter_license_text]
+choice = "a"
+recommended = true
+recommendation = "a"
+value = "xorg_copying_pinned"
+ruling = "Charter's license text is read from X.Org's font-bitstream-type1 repository at the commit of its release 1.0.4, https://gitlab.freedesktop.org/xorg/font/bitstream-type1/-/raw/ef8ad9ed09f10ad8d14eaad4350fcd14e0376871/COPYING: Bitstream's notice for the Charter Type 1 fonts it gave the X Consortium, the same words as data/license-texts/Bitstream-Charter.txt, served as plain text. The site's License link goes to it instead of practicaltypography.com/charter.html, and config/license-texts.toml's entry drops its page. Butterick's 'Charter license.txt', in the zip Homebrew installs, says his release is a copy of those fonts and quotes the same notice. The stored 2026-10-17 snapshot is topped up with it before the launch run (store_topup_charter_nerd)."
+reason = "PLAN-REVIEWERS-1.md step 8a: Charter's License link went to a web page, unlike every other font's. Of (a) X.Org's pinned file, with the stored October snapshot topped up so the launch shows it (Claude's recommendation), (b) the same file fetched by November's run, the link staying Butterick's page until then, and (c) Butterick's page kept, the owner chose (a)."

@@ -1,0 +1,12 @@
+# Owner ruling of 2026-11-12 on the Nerd Font links whose folder holds only a README (PLAN-launch.md step 2A, from the
+# pre-launch check of every linked Nerd build), asked in chat by the lead session as a single-select question.
+# Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md (Soft launch), src/tff_catalog/links.py
+# and docs/nerd-fonts-link.md.
+
+[K-nerd-readme-folders]
+choice = "a"
+recommended = true
+recommendation = "a"
+value = "release_page_at_the_tag"
+ruling = "A Nerd Fonts project build whose folder at the release tag holds only a README (fonts.json repoRelease: false) links to the release's page, https://github.com/ryanoasis/nerd-fonts/releases/tag/<tag>, which lists its zip, instead of the folder. The other Nerd Fonts builds keep their folder link, and a maker's own build still wins over a README-only folder. Never a release asset or /releases/latest. At v3.5.1 this moves 12 links (0xProto, Adwaita Mono, Annotation Mono, Atkinson Hyperlegible Mono, Commit Mono, Departure Mono, Geist Mono, Google Sans Code, Intel One Mono, Martian Mono, Recursive, Zed Mono). It lands before the launch run, with the release page's check added to the stored 2026-10-17 snapshot (store_topup_charter_nerd)."
+reason = "The pre-launch check of the 65 linked Nerd builds (2026-11-11) found that 12 folders at v3.5.1 hold only a README, which names the build and its icon sets but links no download, so the visitor lands on a page with nothing to download. Of (a) the release page for those 12 (Claude's recommendation) and (b) the folders kept, the owner chose (a). Amends nerd_builds' 'such a folder is still the build's page' (links.py)."

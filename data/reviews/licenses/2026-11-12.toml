@@ -1,0 +1,12 @@
+# Owner ruling of 2026-11-12 on the pre-launch license re-reads (PLAN-REVIEWERS-1.md step 8a, priority 1;
+# PLAN-launch.md step 2A), asked in chat by the lead session as a single-select question with the Nerd builds' check
+# (site/2026-11-12.toml).
+# Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md (Soft launch).
+
+[heavy_data_reread]
+choice = "a"
+recommended = true
+recommendation = "a"
+value = "ruling_of_2026_09_28_stands"
+ruling = "Heavy Data's ruling of 2026-09-28 (LIC-heavy-data: qualifies and redistributable) stands. Its license text, Vic Fieger License.txt in the Nerd Fonts repository at 64a084f, is unchanged (sha256 f996f987...), and so is the designer's FAQ (Wayback Machine, 2025-05-17): free fonts 'may be used by anyone for any design or artistic purpose, whether it be personal, commercial, or charitable'; the only restriction is 'Please don't sell them'; a font file shipped with commercial software is fine. Heavy Data is outside October's catalog (558 fonts), so the launch lists it only if the re-run changes that."
+reason = "Re-read against Rules 1-3, as priority 1 asks (the reviewer had mixed up its download and license links). Asked in one question with the Nerd builds' check: of (a) keep all, Heavy Data's ruling and every Nerd link (Claude's recommendation), and (b) hide Monofur's Nerd build, the owner chose (a)."

@@ -1,5 +1,7 @@
 # Milestone 4 checklist: full release and running it
 
+*Amended 2026-11-06 (`launch_with_hopper`):* Milestone 3's first slice, the hopper, is live on the main list from the soft launch, with no `/check/` page (`inventory_on_list_page`, 2026-10-21). So "switching the check on for everyone" (step 8) covers only what the rest of Milestone 3 adds, such as the Chromium button and near-match badges and "Wrong match?" links, and this milestone's Step 0 revisits steps 1 and 8.
+
 Milestone 4 switches on Milestone 3's owned-font comparison for everyone, announces the site, and sets up the monthly routine. Two months after the launch, a review decides whether to keep adding features or run on the monthly refresh alone. Throughout, Claude drafts and the owner posts (M4-D3, M4-D6), and font lists never leave the browser. Settled decisions go in [AUTHORITY.md](../AUTHORITY.md).
 
 **How to read each step:**
