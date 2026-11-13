@@ -9,3 +9,11 @@ recommendation = "a"
 value = "verify_and_links_2026_10_17"
 ruling = "Before the launch run (a replay of 2026-10-17), Claude adds to the stored 2026-10-17 snapshot Charter's new license text, with `tff-catalog verify --date 2026-10-17 --refetch`, and the check of the Nerd Fonts v3.5.1 release page that 12 Nerd links now go to, with `tff-catalog links --date 2026-10-17` (links.py: a replay reads its checks from the store, and an unchecked Nerd link is dropped). Claude diffs every changed row before the store commit, stops to show the owner anything unexpected, and pushes the store commit, as for store_topup_luciole."
 reason = "The owner chose Charter's pinned text 'before launch', described as 'I add it to the stored October snapshot before the launch run, as we did for Luciole' (charter_license_text), and the release-page links landing before the launch run (K-nerd-readme-folders). Without the link check in the store, the replay would fail those 12 links as 'not checked' and publish none of them."
+
+[store_topup_texts_rebuilt]
+choice = "a"
+recommended = true
+recommendation = "a"
+value = "accept_the_rebuilt_text_snapshot"
+ruling = "The store top-up (store_topup_charter_nerd) may rebuild the stored 2026-10-17 license texts with `tff-catalog verify --date 2026-10-17 --refetch`, although that drops 42 texts at pinned URLs that the switch's top-up had added (Luciole's and Compagnon's among them; 43 rows with Charter's old text, and the 43 matching font facts). On a scratch copy of the store, the replay after the top-up gave the identical catalog for every font apart from Charter's text and the 12 Nerd links, and a clean-checkout replay matched it. Claude runs the same commands on the real store after #117 and #119 merge, checks that the changed rows match the scratch test's, and pushes."
+reason = "The top-up ruling asks Claude to show the owner anything unexpected before the store commit; the dropped rows were. Of (a) accept the rebuilt snapshot (Claude's recommendation) and (b) keep the 42 texts, first changing stage verify so it can add a text without rebuilding the day's snapshot, which would delay the launch run, the owner chose (a)."

@@ -40,7 +40,7 @@ After his staging try of 2026-11-05 ("I have tried it and feel that we are getti
 - **Heavy Data** (`heavy_data_reread`): the ruling of 2026-09-28 stands. Its license text and the designer's FAQ are unchanged. It is outside October's catalog.
 - **Charter's license text** (`charter_license_text`): X.Org's COPYING for the Charter fonts, pinned at font-bitstream-type1 1.0.4, the same words as the canonical Bitstream Charter text. The License link goes to it instead of practicaltypography.com's page.
 - **Nerd folders that hold only a README** (`K-nerd-readme-folders`): those builds link to the Nerd Fonts release page at the tag, which lists their zips, instead of a folder with nothing to download. That is 12 links at v3.5.1. A maker's own build still wins.
-- **The store** (`store_topup_charter_nerd`): both changes go into the launch run. The stored 2026-10-17 snapshot gets Charter's text and the release page's check before it, as for Luciole.
+- **The store** (`store_topup_charter_nerd`): both changes go into the launch run. The stored 2026-10-17 snapshot gets Charter's text and the release page's check before it, as for Luciole. The rebuilt text snapshot drops 42 texts the switch's top-up had added, and the owner accepted that (`store_topup_texts_rebuilt`): on a scratch copy, the replay's catalog changed only where intended.
 - **The owner's hopper try** (`hopper_try_in_final_try`): the rest of it folds into the final launch-candidate try on staging (PLAN-launch.md step 3), the Show menu's default under the title of the same words (F3) included.
 
 *(`data/reviews/l3/2026-11-12.toml`, `licenses/2026-11-12.toml`, `links/2026-11-12.toml`, `ci/2026-11-12.toml` and `site/2026-11-12.toml`)*

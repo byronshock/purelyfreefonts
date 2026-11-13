@@ -14,7 +14,8 @@ This is the working checklist for Milestone 2's soft launch ([docs/milestone-2.m
   - #88: October's run, which the launch run supersedes;
   - #100: the hopper;
   - #117: this plan's records;
-  - #118: the font cache (step 2A).
+  - #118: the font cache (step 2A);
+  - #119: Charter's text and the README-only Nerd links (step 2A).
 
 **How to read each step:** **Who**, **Depends on** and **Done when**, as in PLAN-hopper.md. Tick each item as soon as it is done and verified. Checklists nest: a parent is ticked only when every item under it is. If an item is only partly done, leave it unticked and note what's left.
 
@@ -63,9 +64,9 @@ Until the launch:
 - [x] **Heavy Data** (PLAN-REVIEWERS-1 step 8a): re-read its license text against Rules 1–3, and report to the owner. *(The ruling of 2026-09-28 stands, `heavy_data_reread`, 2026-11-12. It is outside October's catalog.)*
 - [ ] **Charter** (step 8a): propose a pinned license link for the owner's ruling. Its text is in the download (`config/license-texts.toml`). A new `texts` URL needs an L3 question and a store top-up, as Luciole's did.
   - [x] Proposed and ruled (2026-11-12, `charter_license_text`): X.Org's COPYING at font-bitstream-type1 1.0.4, the same words as the canonical Bitstream Charter text.
-  - [ ] `config/license-texts.toml`: that URL in `texts`, and no `page`.
+  - [ ] `config/license-texts.toml`: that URL in `texts`, and no `page` (#119).
 - [ ] **Nerd folders that hold only a README** (`K-nerd-readme-folders`, 2026-11-12): those builds link to the release page at the tag, not the folder (`src/tff_catalog/links.py`). That is 12 links at v3.5.1.
-- [ ] **The store top-up** (`store_topup_charter_nerd`), once both changes above are on `main`: `tff-catalog verify --date 2026-10-17 --refetch` for Charter's text and `tff-catalog links --date 2026-10-17` for the release page's check, every changed row diffed before the store commit and pushed.
+- [ ] **The store top-up** (`store_topup_charter_nerd`), once both changes above are on `main` (#119): `tff-catalog verify --date 2026-10-17 --refetch` for Charter's text and `tff-catalog links --date 2026-10-17` for the release page's check, every changed row diffed before the store commit and pushed. It must come before the launch run, which otherwise stops at export. On a scratch copy (2026-11-12) it added two rows, the X.Org text and the release page's check, and dropped 42 texts the switch's top-up had added, which the owner accepted (`store_topup_texts_rebuilt`); the replay changed only Charter's text and the 12 links.
 - [ ] **The font cache:** fill it before a replay (milestone-method.md, "Later: from the port's adversarial review"), so the launch run draws every specimen it can, reproducibly. Merienda's stays out, flagged under Milestone 2 step 5. *(Built in #118: a replay fills the cache from its own catalog and runs again. Checked locally with an empty cache: 120 specimens lacking after the first pass, none after the second, and a clean replay identical.)*
 
 **Done when:** each is merged, or ruled unchanged.
