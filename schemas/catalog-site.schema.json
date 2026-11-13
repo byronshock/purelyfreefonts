@@ -270,7 +270,7 @@
       }
     },
     "nerd_link": {
-      "description": "The page of a font's Nerd Font build (owner rulings of 2026-09-28 and 2026-09-29, TASK-2): the maker's own release page, or the build's folder in the Nerd Fonts repository at the current release tag. The label names the build (\"SauceCodePro Nerd Font\", \"Maple Mono NF\"); the page adds the destination.",
+      "description": "The page of a font's Nerd Font build (owner rulings of 2026-09-28 and 2026-09-29, TASK-2): the maker's own release page, or the build's folder in the Nerd Fonts repository at the current release tag, or that release's page when the folder holds only a README (owner ruling K-nerd-readme-folders, 2026-11-12). The label names the build (\"SauceCodePro Nerd Font\", \"Maple Mono NF\"); the page adds the destination.",
       "type": "object",
       "additionalProperties": false,
       "required": ["url", "label"],

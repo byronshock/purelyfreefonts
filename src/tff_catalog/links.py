@@ -557,7 +557,8 @@ def policy_problems(url: str, *, archived: bool = False, nerd: bool = False) -> 
 def is_nerd_folder(url: str) -> bool:
     """Whether ``url`` is a build folder of the Nerd Fonts repository,
     ``https://github.com/ryanoasis/nerd-fonts/tree/<ref>/patched-fonts/<folder>``, with
-    nothing after the folder: the one page of that repository a Nerd link may name."""
+    nothing after the folder: one of the two pages of that repository a Nerd link may name,
+    with a release's page (``is_nerd_page``)."""
     u = _split(url)
     if u is None or u.scheme != "https" or u.bare != "github.com" or u.query:
         return False
@@ -1546,7 +1547,7 @@ def to_check(row: CheckRow, *, archived: bool = False, nerd: bool = False) -> Li
     redirects, and the error when there was no answer. ``archived``: the link is an archived
     override's (``Link.archived``), so it and its redirect may be Wayback Machine captures.
     ``nerd``: the link is a Nerd Font build's (``Links.nerd``), so it and its redirect may be a
-    Nerd Fonts build folder (``policy_problems``)."""
+    Nerd Fonts build folder or release page (``policy_problems``, ``is_nerd_page``)."""
     problems = policy_problems(row.url, archived=archived, nerd=nerd)
     if row.error:
         problems.append(f"no answer: {row.error}")
@@ -1758,7 +1759,7 @@ def build_queue(
       link (question id -> why);
     - ``failed_checks``: links that failed the check, with the families using
       them ("<id>:primary", "<id>:designer", "<id>:nerd");
-    - ``nerd``: the Nerd Fonts ``release`` the build folders are linked at (null
+    - ``nerd``: the Nerd Fonts ``release`` the build folders and pages are linked at (null
       without one), and ``unlinked``: the families with some sign of a Nerd Font
       build but no link, with why (``nerd_builds``).
     """

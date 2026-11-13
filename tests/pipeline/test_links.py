@@ -1688,9 +1688,19 @@ def nerd_world() -> tuple[Universe, list[UniverseRecord], dict[str, Links], link
         ],
         "cascadia-code": [
             google,
-            nerd_rec("CascadiaCode", "Cascadia Code", "CaskaydiaCove", repo_release=False),
+            nerd_rec("CascadiaCode", "Cascadia Code", "CaskaydiaCove", repo_release=True),
             cask("font-cascadia-code-nf", "Cascadia Code NF", "microsoft/cascadia-code"),
             cask("font-delugia-complete", "Delugia Code", "adam7/delugia-code"),
+        ],
+        # A maker's build and a Nerd Fonts folder that holds only a README.
+        "cascadia-mono": [
+            rec(
+                "google_metadata",
+                "Cascadia Mono",
+                ("repository", "https://github.com/microsoft/cascadia-code"),
+            ),
+            nerd_rec("CascadiaMono", "Cascadia Mono", "CaskaydiaMono", repo_release=False),
+            cask("font-cascadia-mono-nf", "Cascadia Mono NF", "microsoft/cascadia-code"),
         ],
         "iosevka": [
             nerd_rec("Iosevka", "Iosevka", "Iosevka"),
@@ -1710,6 +1720,7 @@ def nerd_world() -> tuple[Universe, list[UniverseRecord], dict[str, Links], link
         "geist-mono": "Geist Mono",
         "maple-mono": "Maple Mono",
         "cascadia-code": "Cascadia Code",
+        "cascadia-mono": "Cascadia Mono",
         "iosevka": "Iosevka",
         "noto-sans": "Noto Sans",
         "noto-serif": "Noto Serif",
@@ -1728,6 +1739,7 @@ def nerd_world() -> tuple[Universe, list[UniverseRecord], dict[str, Links], link
         alias("font-maple-mono-nf", "brew-cask", "maple-mono", detail="nf"),
         alias("font-maple-mono-nl-nf", "brew-cask", "maple-mono", detail="nf"),
         alias("font-cascadia-code-nf", "brew-cask", "cascadia-code", detail="nf"),
+        alias("font-cascadia-mono-nf", "brew-cask", "cascadia-mono", detail="nf"),
         alias("font-delugia-complete", "brew-cask", "cascadia-code"),
         alias("font-delugia-mono", "brew-cask", "delugia-only"),
         alias("IosevkaTerm", "nerd-folder", "iosevka"),
@@ -1754,6 +1766,7 @@ def nerd_world() -> tuple[Universe, list[UniverseRecord], dict[str, Links], link
         "SourceCodePro",
         "GeistMono",
         "CascadiaCode",
+        "CascadiaMono",
         "Iosevka",
         "IosevkaTerm",
         "Noto",
@@ -1766,6 +1779,7 @@ def nerd_world() -> tuple[Universe, list[UniverseRecord], dict[str, Links], link
             "SourceCodePro": nerd_fact("SourceCodePro", "OFL-1.1-RFN"),
             "GeistMono": nerd_fact("GeistMono", "OFL-1.1-no-RFN"),
             "CascadiaCode": nerd_fact("CascadiaCode", "OFL-1.1-RFN"),
+            "CascadiaMono": nerd_fact("CascadiaMono", "OFL-1.1-RFN"),
             "Iosevka": nerd_fact("Iosevka", "OFL-1.1-no-RFN"),
             "Noto": nerd_fact("Noto", "OFL-1.1-no-RFN"),
             "BigBlueTerminal": nerd_fact("BigBlueTerminal", "CC-BY-SA-4.0"),
@@ -1823,12 +1837,17 @@ def test_each_family_gets_its_nerd_font_builds_page() -> None:
             "https://github.com/subframe7536/maple-font/releases",
             "Maple Mono NF",
         ),
-        # Both exist: the maker's own build wins, over a README-only folder too; Delugia, a
-        # third party's, counts for nothing.
+        # Both exist: the maker's own build wins; Delugia, a third party's, counts for nothing.
         "cascadia-code": (
             "maker",
             "https://github.com/microsoft/cascadia-code/releases",
             "Cascadia Code NF",
+        ),
+        # The maker's own build wins over a folder that holds only a README too.
+        "cascadia-mono": (
+            "maker",
+            "https://github.com/microsoft/cascadia-code/releases",
+            "Cascadia Mono NF",
         ),
         # A maker's release asset with no cask: "<family> NF".
         "monaspace-neon": (
