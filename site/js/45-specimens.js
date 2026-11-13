@@ -8,8 +8,15 @@
 // unmasked (data-state "failed") and the heading in view. The observer watches the li, not
 // the span: rows use content-visibility: auto, and a span in a skipped row has no box to
 // observe.
-// pause() stops new requests for Milestone 3 (M3-D10: a request for a specimen would reveal
-// which rows a comparison left on screen); resume() loads the rows that are near by then.
+// pause(holder) stops new requests (M3-D10: a request for a specimen would reveal which rows a
+// comparison left on screen) until every holder has resumed; resume(holder) lets go, and once
+// none holds, loads the rows that are near by then. The hook's pause and resume are one holder
+// (Ext's) and the hopper's another (Mine's), so neither lifts the other's: the hopper's, once a
+// list has loaded, holds until Forget. loadAll() asks for every preview not yet asked for,
+// whatever holds them: the hopper's list does, as it loads, so every row has its preview and
+// the requests are the same for every list (hopper_previews_all_at_once, 2026-11-03, amending
+// M3-D10 a). Pausing stops new probes, and each mask is resolved as it is set (load), so
+// drawing a row later asks for nothing either.
 const Specimens = (() => {
   // Top and bottom only: rows span the list's width.
   const MARGIN = '600px 0px';
@@ -24,12 +31,37 @@ const Specimens = (() => {
   const rows = Core.$$('li.font').filter((row) => spanOf(row) !== null);
 
   let observer = null;
-  let paused = false;
+  // Who holds the previews paused: any value, given to pause and again to resume.
+  const holders = new Set();
   // Rows that came near the screen while paused and haven't been seen leaving.
   const near = new Set();
 
-  // A CSS mask reports neither load nor error, so an image loads the file first; the mask
-  // then comes from the cache. crossOrigin matches the mask's own (CORS) request.
+  // A CSS mask reports neither load nor error, so an image loads the file first, and the mask
+  // takes the file the image holds. crossOrigin matches the mask's own (CORS) request.
+  // Chromium puts off the style of a row content-visibility skips (about a screen and a half
+  // away), so a mask set there would be resolved only when the row is drawn, by when the file
+  // may have left the browser's memory (the image collected, or DevTools' "Disable cache"
+  // switched on, which keeping the image doesn't survive): drawing the row would fetch it
+  // again, and with the cache off from the server, also while paused. So onload reads the
+  // mask back, which resolves it while the image still holds the file. It reads the prefixed
+  // name, which every engine with masks knows (Chromium before 120 knows no other, and reading
+  // a name an engine doesn't know resolves nothing). Chromium resolves no style off the
+  // document, so a span detached as its file arrives (Render took its row out, as a view or a
+  // list does) is read in the document, at the end of the body, for that moment, then put
+  // back where it was: nothing is drawn or announced in between.
+  const resolve = (span) => {
+    const read = () => getComputedStyle(span).getPropertyValue('-webkit-mask-image');
+    if (span.isConnected) {
+      read();
+      return;
+    }
+    const parent = span.parentNode;
+    const next = span.nextSibling;
+    document.body.append(span);
+    read();
+    parent.insertBefore(span, next);
+  };
+
   const load = (row) => {
     near.delete(row);
     if (observer) observer.unobserve(row);
@@ -45,6 +77,7 @@ const Specimens = (() => {
       span.style.setProperty('mask-image', value);
       span.dataset.state = 'set';
       span.closest('.font-title')?.classList.add('is-drawn');
+      resolve(span);
     };
     probe.onerror = () => {
       span.dataset.state = 'failed';
@@ -55,7 +88,7 @@ const Specimens = (() => {
   const seen = (entries) => {
     for (const { target, isIntersecting } of entries) {
       if (!isIntersecting) near.delete(target);
-      else if (paused) near.add(target);
+      else if (holders.size) near.add(target);
       else load(target);
     }
   };
@@ -71,17 +104,17 @@ const Specimens = (() => {
     }
   };
 
-  // Request no more specimens until resume(). Masks already set stay.
-  const pause = () => {
-    paused = true;
+  // Request no more specimens until `holder`, and every other holder, has resumed. Masks
+  // already set stay.
+  const pause = (holder) => {
+    holders.add(holder);
   };
 
-  // Load the rows near the screen now; the rest load as they come near. Each queued row is
-  // observed afresh, so the observer reports where it is now (it may have left, or been
-  // detached, since it was queued) rather than where it was.
-  const resume = () => {
-    if (!paused) return;
-    paused = false;
+  // `holder` lets go. Once none holds, load the rows near the screen now; the rest load as they
+  // come near. Each queued row is observed afresh, so the observer reports where it is now (it
+  // may have left, or been detached, since it was queued) rather than where it was.
+  const resume = (holder) => {
+    if (!holders.delete(holder) || holders.size) return;
     const queued = [...near];
     near.clear();
     if (!observer) return;
@@ -91,12 +124,21 @@ const Specimens = (() => {
     }
   };
 
+  // Load every preview not yet asked for, whatever holds the previews and wherever its row is
+  // (a list that loads: hopper_previews_all_at_once). The rows go in the server's own order,
+  // taken as the script ran, so the requests are the same whatever the list or the view
+  // holds, and tell nothing of either. A row that failed isn't asked for again.
+  const loadAll = () => {
+    for (const row of rows) load(row);
+  };
+
   return Object.freeze({
     start,
     pause,
     resume,
+    loadAll,
     get paused() {
-      return paused;
+      return holders.size > 0;
     },
   });
 })();

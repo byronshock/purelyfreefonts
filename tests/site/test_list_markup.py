@@ -101,6 +101,10 @@ class TreeBuilder(HTMLParser):
         self.current.children.append(text)
 
 
+# The hopper's form, exactly as the template writes it.
+HOPPER_FORM = {"id": "mine-form", "class": "mine-form", "autocomplete": "off"}
+
+
 def squash(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
@@ -158,7 +162,9 @@ def test_ids_are_unique_and_every_reference_resolves(dom):
 
 
 def test_no_inline_code_and_no_form(html):
-    assert "<form" not in html
+    # No form but the hopper's, there for autocomplete="off" (hopper_form_autocomplete_off).
+    assert html.count("<form") == 1
+    assert '<form id="mine-form" class="mine-form" autocomplete="off">' in html
     assert "<style" not in html
     assert not re.search(r"<script(?![^>]*\bsrc=)", html)
     assert not re.search(r"\sstyle\s*=", html)
@@ -343,9 +349,11 @@ def test_filters_ship_hidden_inside_search(dom):
     assert search is not None
     assert "hidden" in search.attrs
     assert search.attrs["aria-label"]
-    assert dom.find("form") is None
+    assert [f.attrs for f in dom.find_all("form")] == [HOPPER_FORM]
     for control in search.find_all("input") + search.find_all("select"):
         cid = control.attrs.get("id")
+        if "hidden" in control.attrs:
+            continue  # the hopper's file input: its button opens it (test_the_hopper_s_markup)
         wrapped = control.parent.tag == "label"
         labelled = cid and dom.find("label", for_=cid) is not None
         assert wrapped or labelled, f"{cid} has no label"
@@ -354,6 +362,155 @@ def test_filters_ship_hidden_inside_search(dom):
     note = dom.find("noscript")
     assert note is not None
     assert "Filters and search need JavaScript" in note.text
+
+
+def test_the_hopper_s_markup(dom):
+    """The hopper, "Your own list" (Milestone 3, slice 1; site/CONTRACT.md section 4): with
+    "Hide fonts that come with", in the panel's last group, "Fonts you don't have" (S7 of
+    hopper_layout_suggestions, 2026-11-01; inventory_on_list_page), with no named control, so
+    nothing in it reaches the address; read from top to bottom (hopper_steps_in_order), two
+    numbered steps, each heading naming its group, then what a list brings; a paste box the
+    browser leaves alone; and one closed <details> per system, its command exactly as
+    data.MINE_COMMANDS has it, "(not yet tested)" on macOS and Windows
+    (inventory_linux_tested_only). "Clear filters" comes first in the panel (S8)."""
+    more = dom.find("div", id="f-more")
+    order = [n.attrs.get("id") for n in more.elements()]
+    assert order[0] == "f-clear"
+    assert order[-1] == "f-have"
+    have = dom.find("fieldset", id="f-have")
+    assert have.elements()[0].tag == "legend"
+    assert squash(have.elements()[0].text) == "Fonts you don't have"
+    assert [n.attrs.get("id") for n in have.elements()[1:]] == ["f-system", "mine-form"]
+    # The select keeps its name, a hash key, outside the hopper (section 9).
+    assert dom.find("select", id="f-os").attrs["name"] == "hide"
+    # The hopper sits in a form of its own that never submits: no action, no submit button.
+    # It is there for autocomplete="off", which WebKit honours on a textarea or select only
+    # through their form (hopper_form_autocomplete_off, 2026-11-01).
+    form = dom.find("form", id="mine-form")
+    assert form.attrs == HOPPER_FORM
+    assert [n.attrs.get("id") for n in form.elements()] == ["mine"]
+    assert all(b.attrs.get("type") == "button" for b in form.find_all("button"))
+    assert form.find("input", type="submit") is None
+    mine = dom.find("fieldset", id="mine")
+    legend = mine.elements()[0]
+    assert (legend.tag, legend.classes, squash(legend.text)) == (
+        "legend",
+        ["visually-hidden"],
+        "Your own list",
+    )
+    # S6's shorter lead, inside the hopper: its "nothing is sent or saved" is the hopper's.
+    assert squash(mine.find("p", class_="mine-lead").text) == (
+        "Fonts already on your computer are left out of the list. Your list stays in this "
+        "tab: nothing is sent or saved."
+    )
+    assert [n.attrs["id"] for n in mine.iter() if "name" in n.attrs] == []
+    assert mine.find("form") is None
+    # Top to bottom: the lead, the two steps, then "Checking your list…", the error, the result.
+    parts = [(n.tag, n.attrs.get("id") or n.classes[0]) for n in mine.elements()[1:]]
+    assert parts == [
+        ("p", "mine-lead"),
+        ("ol", "mine-steps"),
+        ("p", "mine-busy"),
+        ("div", "mine-error"),
+        ("div", "mine-result"),
+    ]
+    # Each step a list item with no role, so the list stays a list of two; its heading first,
+    # naming the step's group (hopper_subheadings).
+    steps = mine.find("ol", class_="mine-steps").elements()
+    assert [(li.tag, "role" in li.attrs) for li in steps] == [("li", False), ("li", False)]
+    headings = [li.elements()[0] for li in steps]
+    assert [(h.tag, h.attrs["id"], h.classes, squash(h.text)) for h in headings] == [
+        ("p", "mine-how", ["mine-step"], "Make the list"),
+        ("p", "mine-give", ["mine-step"], "Drop or paste it"),
+    ]
+    make, give = (li.elements()[1:] for li in steps)
+    # "Make the list" folds once a list loads (S4): its boxes sit in a details, open, whose
+    # summary shows only then (27-mine.css).
+    assert [(n.tag, n.attrs.get("id"), "open" in n.attrs) for n in make] == [
+        ("details", "mine-make", True)
+    ]
+    folded = make[0].elements()
+    assert [n.tag for n in folded] == ["summary", "p", "div"]
+    assert squash(folded[0].text) == "How to make the list"
+    assert [n.classes[0] for n in folded[1:]] == ["mine-phone", "mine-oses"]
+    assert squash(folded[1].text) == "Make the list on a computer."
+    assert [n.classes[0] for n in give] == ["mine-give"]
+    assert (give[0].attrs["role"], give[0].attrs["aria-labelledby"]) == ("group", "mine-give")
+    inputs = [(n.tag, n.attrs.get("id") or n.attrs["for"]) for n in give[0].elements()]
+    assert inputs == [
+        ("div", "mine-drop"),
+        ("label", "mine-paste"),
+        ("textarea", "mine-paste"),
+        ("button", "mine-check"),
+    ]
+    drop = mine.find("div", id="mine-drop")
+    assert squash(drop.find("p", id="mine-drop-text").text) == "Drop fonts.txt here"
+    assert "is-read" not in drop.classes, "the receipt shows only once a file's list loads"
+    # Shown once a list loads: the summary, the Show menu and "Forget this list".
+    result = mine.find("div", id="mine-result")
+    assert "hidden" in result.attrs
+    assert squash(dom.find("label", for_="mine-show").text) == "Show"
+    # Not restored by a reload or Back (test_mine.py): nothing of a list is kept.
+    assert mine.find("select", id="mine-show").attrs.get("autocomplete") == "off"
+    options = mine.find("select", id="mine-show").find_all("option")
+    assert [(o.attrs["value"], squash(o.text), "selected" in o.attrs) for o in options] == [
+        ("missing", "Fonts you don't have", True),
+        ("all", "All fonts, yours marked", False),
+        ("only", "Only fonts you have", False),
+    ]
+    assert squash(mine.find("button", id="mine-forget").text) == "Forget this list"
+    for hidden in ("mine-busy", "mine-error", "mine-retry", "mine-near", "mine-warning"):
+        assert "hidden" in mine.find(id=hidden).attrs, hidden
+    # The ways in: a file, chosen with a button (its input is hidden), dropped, or pasted.
+    choose = mine.find("button", id="mine-choose")
+    assert (choose.attrs["type"], squash(choose.text)) == ("button", "Choose file")
+    file = mine.find("input", id="mine-file")
+    assert (file.attrs["type"], "hidden" in file.attrs) == ("file", True)
+    paste = mine.find("textarea", id="mine-paste")
+    assert squash(dom.find("label", for_="mine-paste").text) == "Or paste the list"
+    assert {k: paste.attrs.get(k) for k in ("spellcheck", "autocomplete")} == {
+        "spellcheck": "false",
+        "autocomplete": "off",
+    }
+    assert {k: paste.attrs.get(k) for k in ("autocorrect", "autocapitalize")} == {
+        "autocorrect": "off",
+        "autocapitalize": "off",
+    }
+    assert squash(mine.find("button", id="mine-check").text) == "Check"
+    # Make the list: one details per system, closed, each with a copy button.
+    group = mine.find("div", class_="mine-oses")
+    assert (group.attrs["role"], group.attrs["aria-labelledby"]) == ("group", "mine-how")
+    details = group.find_all("details")
+    assert [d.attrs["id"] for d in details] == [f"mine-os-{c['os']}" for c in data.MINE_COMMANDS]
+    for box, command in zip(details, data.MINE_COMMANDS, strict=True):
+        assert "open" not in box.attrs
+        summary = squash(box.find("summary").text)
+        tested = command["os"] == "linux"
+        assert summary == command["label"] + ("" if tested else " (not yet tested)")
+        assert command["tested"] is tested
+        code = box.find("code", id=f"mine-cmd-{command['os']}")
+        assert code.text == command["command"]
+        assert "fonts.txt" in code.text
+        assert "Desktop" not in code.text  # synced off the machine by iCloud and OneDrive
+        button = box.find("button", class_="mine-copy")
+        assert button.attrs["data-command"] == code.attrs["id"]
+        assert squash(button.text) == f"Copy the {command['label']} command"
+        assert button.find("span", class_="visually-hidden") is not None
+    commands = [c["command"] for c in data.MINE_COMMANDS]
+    assert commands == [
+        "fc-list : family | sort > ~/fonts.txt",
+        "system_profiler SPFontsDataType | grep 'Family:' | sort -u > ~/fonts.txt",
+        "Add-Type -AssemblyName System.Drawing; (New-Object System.Drawing.Text."
+        'InstalledFontCollection).Families.Name | Set-Content -Encoding UTF8 "$HOME\\fonts.txt"',
+    ]
+    # docs/owned-fonts.md gives the same commands, in its table (a "|" escaped there).
+    docs = (ROOT / "docs" / "owned-fonts.md").read_text(encoding="utf-8")
+    section = docs.split("## The commands on the site", 1)[1].split("\n## ", 1)[0]
+    for command in data.MINE_COMMANDS:
+        assert f"`{command['command'].replace('|', '\\|')}`" in section, command["os"]
+    # site_status_line (2026-09-29): fonts are "left out of the list", never hidden.
+    assert "hidden" not in squash(mine.text).lower()
+    assert "left out of the list" in squash(mine.text)
 
 
 def radios(search: Node, name: str) -> list[tuple[str, str, bool, str]]:
@@ -651,6 +808,169 @@ def test_showing_the_filters_does_not_move_the_list(browser, site_url, width):
         assert page.evaluate(where) == before
         assert page.is_visible("#f-q")
         assert page.is_visible("#f-rank")
+    finally:
+        context.close()
+
+
+# Every part of the hopper shown at once, as a script would show them, the drop zone's receipt
+# among them, and every command open.
+OPEN_HOPPER = """() => {
+  for (const id of ['mine-result', 'mine-near', 'mine-warning', 'mine-busy', 'mine-error',
+      'mine-retry']) document.getElementById(id).hidden = false;
+  document.getElementById('mine').classList.add('has-list');
+  document.getElementById('mine-drop').classList.add('is-read');
+  document.getElementById('mine-drop-text').textContent = 'File read: 4,332 font names.';
+  document.getElementById('mine-choose').textContent = 'Choose another file';
+  document.getElementById('mine-summary').textContent =
+    'Found 4,332 font names in a Linux list. You have 81 of the 540 fonts here, left out of the list.';
+  document.getElementById('mine-error-text').textContent =
+    'The font check didn\u2019t load. Check your connection, then try again.';
+  for (const box of document.querySelectorAll('#mine details')) box.open = true;
+  for (const note of document.querySelectorAll('#mine .mine-copied')) {
+    note.hidden = false;
+    note.textContent = 'Copied.';
+  }
+}"""
+# What of the hopper sticks out of the filter block, or out of its own box.
+HOPPER_OVERFLOW = """() => {
+  const edge = document.getElementById('filters').getBoundingClientRect();
+  const bad = [];
+  for (const el of document.querySelectorAll('#mine, #mine *')) {
+    const r = el.getBoundingClientRect();
+    if (!r.width) continue;
+    if (r.left < edge.left - 0.5 || r.right > edge.right + 0.5) bad.push(el.id || el.className || el.tagName);
+    if (el.matches('pre, textarea, select, p') && el.scrollWidth > el.clientWidth + 1) bad.push(el.id || el.tagName);
+  }
+  return bad;
+}"""
+
+
+@pytest.mark.parametrize("width", [320, 375, 800, 1280])
+@pytest.mark.parametrize("scheme", ["light", "dark"])
+def test_the_hopper_fits_its_panel_at_every_width(browser, site_url, width, scheme):
+    """Opened in full (a summary, an error, the receipt, every command), the hopper scrolls
+    nothing sideways, stays inside the filter block (the Windows command wraps), and every
+    target is at least 24 px; below 60rem it takes the panel's whole width."""
+    context, page = open_page(browser, site_url, width, color_scheme=scheme)
+    try:
+        page.evaluate(OPEN_PANEL, True)
+        page.evaluate(OPEN_HOPPER)
+        assert page.is_visible("#mine")
+        assert page.evaluate(SCROLL_WIDTH) <= width
+        assert page.evaluate(HOPPER_OVERFLOW) == []
+        assert page.evaluate(TARGETS) == []
+        summaries = page.evaluate(
+            "() => Array.from(document.querySelectorAll('#mine summary'),"
+            " (s) => s.getBoundingClientRect().height)"
+        )
+        assert min(summaries) >= 24
+        if width < 960:
+            mine = page.locator("#mine").bounding_box()
+            more = page.locator("#f-more").bounding_box()
+            # the panel's padding (--space-4) and border on each side; at most 40rem
+            assert mine["width"] >= min(more["width"] - 2 * (16 + 1), 640) - 1
+    finally:
+        context.close()
+
+
+# Where "Clear filters" sits against the panel and Category, and the panel's spacing rhythm.
+PANEL_RHYTHM = """() => {
+  const q = (s) => document.querySelector(s);
+  const box = (s) => q(s).getBoundingClientRect();
+  const style = (s) => getComputedStyle(q(s));
+  const more = q('#f-more');
+  const pad = parseFloat(getComputedStyle(more).paddingRight);
+  const have = style('#f-have');
+  return {
+    clearRight: Math.round(box('#f-more').right - pad - box('#f-clear').right),
+    clearAbove: Math.round(box('#f-cat').top - box('#f-clear').bottom),
+    groupGap: style('#f-cat').marginBottom,
+    stepGap: getComputedStyle(q('.mine-steps > li + li')).marginTop,
+    hairline: [have.borderTopWidth, have.borderTopStyle, have.paddingTop],
+    titleUnderLine: Math.round(box('#f-have > legend').top - box('#f-have').top),
+  };
+}"""
+
+
+@pytest.mark.parametrize("width", [375, 800, 1280])
+def test_clear_filters_comes_first_and_the_panel_keeps_one_rhythm(browser, site_url, width):
+    """S8 and S9 of hopper_layout_suggestions (2026-11-01): "Clear filters" first, on a line of
+    its own at the panel's right, above Category; 24 px between the panel's groups, 16 px
+    between the hopper's steps; a hairline over "Fonts you don't have", its title under the
+    line, not through it (the legend floats)."""
+    context, page = open_page(browser, site_url, width)
+    try:
+        page.evaluate(OPEN_PANEL, True)
+        rhythm = page.evaluate(PANEL_RHYTHM)
+        assert abs(rhythm["clearRight"]) <= 1, rhythm
+        assert rhythm["clearAbove"] >= 16, rhythm
+        assert (rhythm["groupGap"], rhythm["stepGap"]) == ("24px", "16px")
+        assert rhythm["hairline"] == ["1px", "solid", "24px"]
+        assert rhythm["titleUnderLine"] >= 24, rhythm
+    finally:
+        context.close()
+
+
+def test_the_own_system_check_reads_the_phone_line_s_query():
+    """S1 opens no system's box where "Make the list on a computer." shows: 55-mine.js tests the
+    very media query 27-mine.css shows that line under, a coarse pointer or a phone's width."""
+    js = (ROOT / "site" / "js" / "55-mine.js").read_text(encoding="utf-8")
+    css = (ROOT / "site" / "css" / "27-mine.css").read_text(encoding="utf-8")
+    query = re.search(r"const PHONE = '([^']+)';", js)
+    shown = re.search(r"@media ([^{]+)\{\s*\.mine-phone \{\s*display: block;", css)
+    assert query
+    assert shown
+    assert (
+        query.group(1)
+        == shown.group(1).strip()
+        == ("(pointer: coarse), not all and (min-width: 40rem)")
+    )
+
+
+# The hopper's levels of text: each part's computed size and weight, and the left edges of
+# the title and the step headings.
+HOPPER_TEXT = """() => {
+  const font = (el, pseudo) => {
+    const style = getComputedStyle(el, pseudo);
+    return [style.fontSize, style.fontWeight];
+  };
+  const q = (s) => document.querySelector(s);
+  return {
+    title: font(q('#f-have > legend')),
+    peer: font(q('#f-cat > legend')),
+    steps: Array.from(document.querySelectorAll('.mine-steps > li'), (li) =>
+      [font(li.querySelector('.mine-step')), font(li, '::marker')]),
+    labels: [font(q('label[for="f-os"]')), font(q('label[for="mine-paste"]')),
+      font(q('label[for="mine-show"]'))],
+    notes: [font(q('.mine-lead')), font(q('.mine-phone'))],
+    indent: q('#mine-how').getBoundingClientRect().left - q('#f-have > legend').getBoundingClientRect().left,
+    // A marker's style is computed even where none is drawn: the list's own style says whether
+    // the numbers show, and where.
+    numbers: [getComputedStyle(q('.mine-steps')).listStyleType,
+      getComputedStyle(q('.mine-steps')).listStylePosition,
+      ...Array.from(document.querySelectorAll('.mine-steps > li'), (li) => getComputedStyle(li).display)],
+  };
+}"""
+
+
+@pytest.mark.parametrize("width", [375, 1280])
+def test_the_hopper_s_levels_of_text(browser, site_url, width):
+    """The owner's ruling of 2026-11-01 (hopper_subheadings): the title, now its group's (S7), a
+    group title like the panel's others, 16 px, 600; the step headings a level under it, 14 px,
+    600, indented, after their number (the li's marker, 14 px, 600); the field labels, "Hide
+    fonts that come with" among them (S7), and the notes 14 px, 400. A rule that stopped
+    matching its element after a move would show here."""
+    context, page = open_page(browser, site_url, width)
+    try:
+        page.evaluate(OPEN_PANEL, True)
+        page.evaluate(OPEN_HOPPER)
+        text = page.evaluate(HOPPER_TEXT)
+        assert text["title"] == text["peer"] == ["16px", "600"]
+        assert text["steps"] == [[["14px", "600"], ["14px", "600"]]] * 2
+        assert text["labels"] == [["14px", "400"]] * 3
+        assert text["notes"] == [["14px", "400"]] * 2
+        assert text["indent"] >= 16, "the step headings sit under the title, indented"
+        assert text["numbers"] == ["decimal", "outside", "list-item", "list-item"]
     finally:
         context.close()
 

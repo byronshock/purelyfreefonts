@@ -337,11 +337,19 @@ def parse(html: str) -> Tags:
 RESOURCE_RELS = {"stylesheet", "icon", "apple-touch-icon", "preload", "modulepreload", "manifest"}
 
 
+# The one form a page may have: the hopper's, there for autocomplete="off" (WebKit honours it on a
+# textarea or select only through their form), never submitting.
+HOPPER_FORM = {"id": "mine-form", "class": "mine-form", "autocomplete": "off"}
+
+
 def csp_problems(html: str) -> list[str]:
-    """The CSP lint (M2-D3, ops/caddy/site.caddy): no inline code, no form, own files only."""
+    """The CSP lint (M2-D3, ops/caddy/site.caddy): no inline code, no form but the hopper's
+    (hopper_form_autocomplete_off, 2026-11-01), own files only."""
     page = parse(html)
     problems = []
     for tag, attrs in page.tags:
+        if tag == "form" and attrs == HOPPER_FORM:
+            continue
         if tag in {"style", "form", "iframe", "object", "embed", "base"}:
             problems.append(f"<{tag}>")
         problems += [f"<{tag} {a}=>" for a in attrs if a == "style" or a.startswith("on")]
@@ -606,6 +614,7 @@ def test_output_passes_the_csp_lint(tmp_path, catalog, mini_site):
         '<p style="color:red">x</p>',
         '<p onclick="x()">x</p>',
         "<form></form>",
+        '<form id="mine-form" class="mine-form"></form>',  # the hopper's, but autocomplete on
         '<link rel="prefetch" href="/x">',
         '<link rel="stylesheet" href="//cdn.example.com/a.css">',
         '<img src="https://example.com/a.png" alt="">',
