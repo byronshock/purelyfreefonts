@@ -998,7 +998,12 @@ esac""",
 esac""",
     "sudo": 'exit "${STUB_SUDO:-1}"',
     "diff": 'exit "${STUB_DIFF:-0}"',
-    "uv": "",
+    # tff-site fetch-fonts prints its counts; the replay's font-cache fill reads them.
+    "uv": """case "$*" in
+  *"tff-site fetch-fonts"*)
+    printf '%s\\n' "${STUB_FILLED-fetched 0, cached 0, failed 0}"
+    exit "${STUB_FILL_EXIT:-0}" ;;
+esac""",
 }
 
 
@@ -1179,11 +1184,99 @@ def test_step_refresh(tmp_path: Path) -> None:
         WRITE_FIT="true",
     )
     assert step.calls == [
-        f"uv run --locked tff-catalog -v refresh --date {OCT} --write-fit --from-snapshots {OCT}"
+        f"uv run --locked tff-catalog -v refresh --date {OCT} --write-fit --from-snapshots {OCT}",
+        "uv run --locked tff-site fetch-fonts --data build/catalog.json",
     ]
     # The schedule has no inputs: the expression gives false, or nothing at all.
     step = run_step("Refresh", tmp_path / "scheduled", WRITE_FIT="")
     assert "--write-fit" not in step.calls[0]
+
+
+def test_step_refresh_fills_the_font_cache_in_a_replay(tmp_path: Path) -> None:
+    """A replay never downloads, so its specimens come from the font cache alone: it fills
+    the cache from its own catalog and runs again unless the fill fetched nothing (the
+    switch's replay lacked 109 specimens). The second pass reads back any fit the first
+    wrote. The offline replay shares the cache, so a fill that stopped partway, having
+    cached files without saying so, still gets its second pass."""
+    first = (
+        f"uv run --locked tff-catalog -v refresh --date {OCT} --write-fit --from-snapshots {OCT}"
+    )
+    fill = "uv run --locked tff-site fetch-fonts --data build/catalog.json"
+    again = f"uv run --locked tff-catalog -v refresh --date {OCT} --from-snapshots {OCT}"
+    replay = {"RUN_DATE": str(OCT), "FROM_SNAPSHOTS": str(OCT), "WRITE_FIT": "true"}
+    warning = "::warning::some font files could not be fetched"
+
+    step = run_step(
+        "Refresh", tmp_path / "fetched", **replay, STUB_FILLED="fetched 3, cached 5, failed 0"
+    )
+    assert step.code == 0, step.out
+    assert step.calls == [first, fill, again]
+    assert "Font cache: fetched 3, cached 5, failed 0" in step.files["summary"]
+    assert "Replay with the filled font cache:" in step.files["summary"]
+    assert warning not in step.out
+
+    # Everything was cached already: one pass is enough.
+    step = run_step(
+        "Refresh", tmp_path / "cached", **replay, STUB_FILLED="fetched 0, cached 8, failed 0"
+    )
+    assert step.code == 0, step.out
+    assert step.calls == [first, fill]
+    assert "Replay with the filled font cache" not in step.files["summary"]
+
+    # A file that can't be had stays specimen_failed, as in a live run: a warning, and the
+    # files that did arrive are drawn.
+    step = run_step(
+        "Refresh",
+        tmp_path / "some-failed",
+        **replay,
+        STUB_FILLED="fetched 2, cached 5, failed 1",
+        STUB_FILL_EXIT="1",
+    )
+    assert step.code == 0, step.out
+    assert step.calls == [first, fill, again]
+    assert warning in step.out
+
+    # Failures, and nothing new in the cache: a warning, and one pass.
+    step = run_step(
+        "Refresh",
+        tmp_path / "none-new",
+        **replay,
+        STUB_FILLED="fetched 0, cached 7, failed 1",
+        STUB_FILL_EXIT="1",
+    )
+    assert step.code == 0, step.out
+    assert step.calls == [first, fill]
+    assert warning in step.out
+
+    # The command stopped with no counts: it may have cached files before it stopped, so
+    # the replay runs again, or the offline replay would draw what this run didn't.
+    step = run_step("Refresh", tmp_path / "broken", **replay, STUB_FILLED="", STUB_FILL_EXIT="2")
+    assert step.code == 0, step.out
+    assert step.calls == [first, fill, again]
+    assert warning in step.out
+    assert "Font cache: no summary (exit 2)" in step.files["summary"]
+
+    # A replay that writes no fit, as the launch run and ops/MONTHLY.md step 7 dispatch it,
+    # and a schedule-shaped one with no inputs: the fill doesn't depend on write_fit.
+    for write_fit in ("false", ""):
+        step = run_step(
+            "Refresh",
+            tmp_path / f"no-fit-{write_fit or 'empty'}",
+            **(replay | {"WRITE_FIT": write_fit}),
+            STUB_FILLED="fetched 4, cached 0, failed 0",
+        )
+        assert step.code == 0, step.out
+        assert step.calls == [again, fill, again]
+
+    # A live run downloads what its specimens need: no fill.
+    step = run_step(
+        "Refresh",
+        tmp_path / "live",
+        WRITE_FIT="false",
+        STUB_FILLED="fetched 9, cached 0, failed 0",
+    )
+    assert step.code == 0, step.out
+    assert step.called("uv run --locked tff-site") == []
 
 
 def test_only_a_dispatch_that_asks_writes_a_fit() -> None:

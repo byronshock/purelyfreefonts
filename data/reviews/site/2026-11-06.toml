@@ -1,0 +1,18 @@
+# Owner rulings of 2026-11-06 on the soft launch, asked in chat by the lead session as single-select questions, while
+# planning the launch after the owner's staging try ("I have tried it and feel that we are getting very close to launch.
+# I noticed nothing that irked me."). Ruled by the owner, Byron Shock; recorded by Claude.
+# Also in AUTHORITY.md (Releases; Soft launch; M2-D7) and PLAN-launch.md.
+
+[usability_round_1_after_launch]
+choice = "a"
+recommended = true
+value = "after_the_soft_launch"
+ruling = "Usability round 1 (docs/milestone-2.md step 13: a trial, then 5 sessions the owner recruits and guides) runs after the soft launch, on the live site, not before it on staging. This amends M2-D7, which put round 1 on the test site, and step 13's place: step 14 no longer depends on step 13."
+reason = "The soft launch isn't announced, so testers are about its only visitors, and Milestone 4's announcement still waits for the testing. Claude's follow-up, not part of the ruling: docs/usability-test.md is rewritten for the live site and the hopper before the owner approves the script. Of (a) after the soft launch (Claude's recommendation), (b) before the launch, as planned, and (c) a smaller round of 2 or 3 people first, the owner chose (a)."
+
+[launch_with_hopper]
+choice = "b"
+recommended = false
+value = "hopper_at_soft_launch"
+ruling = "The hopper, Milestone 3's slice 1 (#100), goes live with the soft launch. #100 and PR 5, the words (the privacy page's section on how the check works, and the About page), merge before it, and the launch's live checks include the hopper's privacy test. This amends the release order (Releases: the intermediate release without comparing) and confirms inventory_on_list_page (2026-10-21), which already had the hopper reach the live site with the soft launch. The rest of Milestone 3 still comes before Milestone 4's announcement: the macOS and Windows test runs (their commands stay marked \"not yet tested\"), the consented corpus and M3-D11's targets, WebKit in CI, near-match badges and \"Wrong match?\" links, and the Chromium button."
+reason = "The release order (AUTHORITY.md, Releases, item 1) kept the intermediate release without comparing, and PLAN-REVIEWERS-1 had the inventory check join the list page in Milestone 4, while inventory_on_list_page (data/reviews/site/2026-10-21.toml) had the hopper reach the live site with the soft launch; this question settled the two. Of (a) the list first and the hopper after (Claude's recommendation, as the release order says) and (b) launching with the hopper, the owner chose (b)."

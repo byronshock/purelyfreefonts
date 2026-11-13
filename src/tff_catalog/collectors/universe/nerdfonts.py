@@ -11,8 +11,10 @@ original has a Reserved Font Name: IBM Plex Mono -> BlexMono), ``folderName``
 ``font-<caskName>-nerd-font``), ``licenseId`` (the original font's license),
 ``RFN``, ``RFNException``, ``isMonospaced``, ``version`` and
 ``imagePreviewFontSource`` (an original font file under ``src/unpatched-fonts/``).
-``repoRelease`` is ignored: it says whether patched fonts are committed to the
-repository, not whether they are released.
+``repoRelease`` says whether the patched fonts are committed to the folder: when it
+is false, the folder at a release tag holds only a README and the fonts are only in
+the release's archives, so stage "links" links the release page instead (owner
+ruling ``K-nerd-readme-folders``, 2026-11-12). It is not whether they are released.
 
 **Fetch.** Pinned to a commit, in at most two requests:
 
@@ -54,7 +56,8 @@ twice keeps its first entry, with a warning):
   aliases ``patchedName`` and ``folderName``, each only when its match key
   differs from the family's and from the one before (so "CaskaydiaCove" for
   Cascadia Code, but nothing for Hack). Attrs: ``cask_name``,
-  ``patched_name`` and ``version``, as given.
+  ``patched_name`` and ``version``, as given, and ``repo_release`` when it is a
+  boolean.
 - a ``LicenseFact`` with ``raw`` = ``licenseId``, ``spdx`` = the same string
   only when it is a well-formed SPDX expression (the file's
   ``OFL-1.1-no-RFN or LGPL-2.1-only`` is not: lower-case operator), ``rfn``
@@ -437,6 +440,8 @@ def _attrs(entry: Mapping[str, Any]) -> tuple[tuple[str, Scalar], ...]:
             found[name] = text
     if (version := _text(entry.get("version"))) is not None:
         found["version"] = version
+    if type(repo_release := entry.get("repoRelease")) is bool:
+        found["repo_release"] = repo_release
     return attrs(**found)
 
 

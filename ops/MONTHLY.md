@@ -4,6 +4,12 @@ What the owner and Claude do by hand each month, in order. It starts from [metho
 
 **Where it stands.** No live refresh has been merged yet, and the schedule is off. Since 2026-10-16 (`refresh_collect_and_hold`) each month's live run is dispatched by hand and its pull request kept as an unmerged draft until Milestone 2's launch and the scoring-method port; the first was 2026-10-17. Its steps are steps 1 to 6 below, without the merge, and the review covers only the questions that don't depend on the method. Since 2026-10-19 (`staging_previews_held_runs`) a held run may also be previewed on staging, from a branch `preview/<date>` that is never merged ([milestone-refresh.md](../docs/milestone-refresh.md), "Collect and hold"). The first merged refresh, the schedule and the watchdog come after Milestone 2, in [docs/milestone-refresh.md](../docs/milestone-refresh.md) (`refresh_timing`). Until then `state/` holds the 2026-09-26 catalog as the published one, and staging shows it, or a held run's preview. A step marked **(after milestone-refresh.md)** doesn't exist until the step of that milestone named with it.
 
+*Amended 2026-11-06 (`launch_data_october`, AUTHORITY.md **Soft launch**):*
+- no refresh is dispatched except the launch run: 2026-10-17, run again by step 7 once the catalog-affecting changes the launch needs have landed (PLAN-launch.md step 2A);
+- the launch run merges before the soft launch, as the first merged refresh;
+- November's run starts by hand right after it merges, and its pull request is held until after the launch;
+- the schedule follows the launch.
+
 Local commands run from the project root, with the private snapshot store:
 
 ```sh
@@ -20,7 +26,7 @@ export TFF_STORE=~/Documents/code/trulyfreefonts-data TFF_STORE_PUSH=0
      gh run list --repo byronshock/purelyfreefonts --workflow refresh.yml --limit 1
      gh run watch <run id> --repo byronshock/purelyfreefonts
      ```
-   - To run a month again from the snapshots already in the store, with no fetching, add `-f from_snapshots=<YYYY-MM-DD>`.
+   - To run a month again from the snapshots already in the store, add `-f from_snapshots=<YYYY-MM-DD>`. The pipeline fetches no data; only the font files its specimens need and the font cache lacks are downloaded, each checked against its sha256, and the month is replayed again with them.
    - Dispatch only with `--ref main`: the data store's key is a secret of the environment `refresh`, which refuses every other branch ([SERVER.md](SERVER.md) item 27a).
 2. **If it fails (Claude).** The `report` job opens the issue "Monthly refresh failed", or comments on it (written; its first real run is in milestone-refresh.md step 1). Read the failed steps with `gh run view <run id> --repo byronshock/purelyfreefonts --log-failed`, fix the cause in a pull request, and once it is merged, run again with `from_snapshots` set to the failed run's date. The snapshots are in the store if the store check passed.
 3. **Let CI run on the refresh pull request (Claude).** The run opens or updates "Monthly refresh <date>" on the branch `refresh/monthly` and starts `ci.yml` there. GitHub holds the pull request's own CI run ("action_required"), and branch protection waits for it. Approve it, then check:

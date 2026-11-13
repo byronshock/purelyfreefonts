@@ -5,7 +5,7 @@ This checklist brings the owner's scoring-method rulings of 2026-09-30 and 2026-
 **How to read it.** *Who* says who does the work, *Needs* what must be finished first, and *Done when* what must be true to close a step. Tick each item as soon as it is done and verified; a parent is ticked only when every item under it is. If an item is only partly done, leave it unticked and note what's left.
 
 **Rules for every step:**
-- Each step is one pull request from `main`, merged by the owner. None changes `build/` or `state/`: only merging a refresh pull request does, and that waits for the soft launch (`refresh_timing`, `refresh_collect_and_hold`). Each keeps `validate --committed` and every CI check green on the committed 2026-09-26 catalog.
+- Each step is one pull request from `main`, merged by the owner. None changes `build/` or `state/`: only merging a refresh pull request does, and that waits for the soft launch (`refresh_timing`, `refresh_collect_and_hold`). *Amended 2026-11-06 (`launch_data_october`):* the first merge is the launch run's, before the soft launch. Each keeps `validate --committed` and every CI check green on the committed 2026-09-26 catalog.
 - **Private values (rulings T2, T4, and the scoring plan's leak rule).** No Google Fonts or Fonts Over Time value, and no estimate, share or fitted parameter of the model, goes into the repository, a log, a pull request, a test message or the public methodology. The fitted parameters live only in the private store. A step that adds method text gets the leak check of step 0.
 - The model's reference is the private workbench tff-stats; its plan's numbers stay there.
 
@@ -83,7 +83,7 @@ This checklist brings the owner's scoring-method rulings of 2026-09-30 and 2026-
 
 ### Step 15: Staging, and the owner's look
 - [x] `preview/2026-10-17` rebuilt from the new pull request, with the specimen pins (`preview_stopgap_pins`), CI passing, deployed; the browser checks done. *(5f04524: #88's scores, with the 109 specimens the GitHub replay couldn't draw drawn locally from the same font files (Merienda's stays out), and 118 stopgap pins. CI passed; deployed to staging, where the live test and the browser checks pass; production unchanged.)*
-- [ ] A summary for the owner (ranks only for Google and Fonts Over Time), then the October score review that `refresh_gate_review_now` deferred. *(The summary went to the owner on 2026-10-21; the review is still to come.)*
+- [x] A summary for the owner (ranks only for Google and Fonts Over Time), then the October score review that `refresh_gate_review_now` deferred. *(The summary went to the owner on 2026-10-21. 2026-11-06: the owner's looks at October's run on staging count as the review (`october_scores_reviewed`); his try of 2026-11-05: "I noticed nothing that irked me.")*
 
 ### Later: the drift flag (`q9_theta_cadence`)
 Not needed for this checklist. It needs months on the held fit, so it comes after the switch.
@@ -96,4 +96,4 @@ None of these changes October's scores. Each is fixed before it can.
 - [ ] Bundle packages in the model's terms: a bundle package counts as half a package with half its count, in every source (`de4_bundle_credit_half`). The model reads only mapped rows, which carry no bundle rows. Today no bundle row reaches a Projects frame, so nothing is affected.
 - [ ] An ecosyste.ms package that ecosyste.ms doesn't know reads as 0 dependents with a full bulk. Settle whether that is evidence or no coverage (`q3_coverage_mar`), before a known font hits it. In October it touched 11 fonts, none in the catalog.
 - [ ] The refresh's publish job should wait for the store push when the store bundle carries a model fit, so a pull request never names a fit the store lacks.
-- [ ] A replay from snapshots draws a specimen only from the font cache, since it never downloads: the switch run lacked 109. Fill the cache before a replay (`tff-site fetch-fonts`), so a held run's pull request has every specimen.
+- [ ] A replay from snapshots draws a specimen only from the font cache, since it never downloads: the switch run lacked 109. Fill the cache before a replay (`tff-site fetch-fonts`), so a held run's pull request has every specimen. *(Built on 2026-11-11 in refresh.yml: a replay fills the cache from its own `build/catalog.json`, each file checked against its sha256, and runs again if it fetched any. Locally, with an empty cache, the first pass lacked 120 specimens and the second none. Ticked once the launch run's pull request shows every specimen on GitHub.)*

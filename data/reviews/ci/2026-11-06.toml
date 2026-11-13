@@ -1,0 +1,18 @@
+# Owner rulings of 2026-11-06 on the soft launch's data and deploys, asked in chat by the lead session as single-select
+# questions, while planning the launch after the owner's staging try ("I have tried it and feel that we are getting very
+# close to launch. I noticed nothing that irked me."). Ruled by the owner, Byron Shock; recorded by Claude.
+# Also in AUTHORITY.md (Soft launch; Monthly data refresh) and PLAN-launch.md.
+
+[launch_data_october]
+choice = "a"
+recommended = true
+value = "october_run_before_launch"
+ruling = "The site launches with the run of 2026-10-17 on the new method, the data staging has shown since 2026-10-21, merged to main before the soft launch. Once the catalog-affecting changes the launch needs have landed, the run is re-run from main, as ops/MONTHLY.md step 7 says, and its pull request supersedes #88. This amends refresh_timing: the first live refresh now comes before the launch, as its data, not after it. It also ends sn_pro_fold_timing's wait, since the run's merge replaces the 2026-09-26 build/. No other refresh run is dispatched until it merges, because any run replaces refresh/monthly. November's run is then started by hand at once, and its pull request is held until after the launch."
+reason = "Asked when planning the launch: a deploy of main would show September's catalog on the old method in the new 1-to-100 display, which nobody has reviewed, while staging shows October's. Of (a) October's run, finishing #88 (Claude's recommendation), (b) a fresh November run, whose scores the owner hadn't seen, and (c) September's, as planned, the owner chose (a)."
+
+[deploys_actions_first]
+choice = "b"
+recommended = false
+value = "actions_before_launch"
+ruling = "GitHub Actions deploys (M2-D6 (b)) are set up before the soft launch. The owner sets up the deploy accounts (server stage B) and the deploy keys, which go in as each environment's secrets. Claude adds the environments production and staging, each with its branch rule, before any secret is added, and turns on deploys from main. The first Actions deploy goes to staging, from the branch staging, and never with main's September data. The launch is setting PRODUCTION_DEPLOYS to on, then merging the pull request that removes the stub from public/: its push deploys main to production."
+reason = "Of (a) deploying production from the laptop at first, with Actions deploys after the launch (Claude's recommendation), and (b) setting up Actions deploys first, the owner chose (b)."

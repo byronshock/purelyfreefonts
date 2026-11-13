@@ -1,0 +1,21 @@
+# Owner rulings of 2026-11-12, asked in chat by the lead session as single-select questions: the pre-launch check of
+# the linked Nerd builds (Milestone 2 step 14, nerd_icon_licenses) and the rest of the owner's staging try of the
+# hopper (PLAN-hopper.md step 4).
+# Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md (Soft launch), PLAN-hopper.md and
+# PLAN-launch.md.
+
+[nerd_builds_checked]
+choice = "a"
+recommended = true
+recommendation = "a"
+value = "all_65_stay_linked"
+ruling = "All 65 Nerd Font links of October's catalog stay; config/nerd-hidden.toml lists none. Checked at v3.5.1 (b894ea78) on 2026-11-11: every folder's license file read and hashed, the maker builds' (Cascadia Code and Mono, Maple Mono, the five Monaspace families) at their latest release, and the 14 icon sets, unchanged since 2026-09-28 and all passing. No build fails Rules 1-3. Monofur's build ships the author's 2000 freeware notice, but his 2018 email put the fonts under the OFL 1.1 (LIC-monofur, 2026-09-28), which allows a modified version such as a patched build. OpenDyslexic's build ships the Bitstream Vera License, and Roboto Mono's and Tinos's Apache 2.0, licenses the catalog already accepts."
+reason = "nerd_icon_licenses (2026-09-29): before the site launches, Claude confirms the license check of every linked build and its patched icon sets, and the marker is hidden for any build that fails. Of (a) keep all (Claude's recommendation) and (b) hide Monofur's build, the owner chose (a)."
+
+[hopper_try_in_final_try]
+choice = "a"
+recommended = true
+recommendation = "a"
+value = "fold_into_the_launch_candidate_try"
+ruling = "The rest of the owner's staging try of the hopper (PLAN-hopper.md step 4) folds into the final launch-candidate try on staging (PLAN-launch.md step 3): drop, choose and paste, each in Chromium and Firefox, and a look at whether the Show menu's default, \"Fonts you don't have\", reads oddly under a title of the same words (F3)."
+reason = "The owner tried part of the hopper on 2026-11-03 and 2026-11-05. Of (a) in the final try, which covers both browsers anyway (Claude's recommendation), and (b) now on staging, the owner chose (a)."

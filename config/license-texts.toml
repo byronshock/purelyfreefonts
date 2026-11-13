@@ -34,7 +34,8 @@
 #   reason     how it differs from the canonical texts
 #
 # Researched 2026-09-28; every URL below answered HTTP 200 that day (the pages, added
-# 2026-09-30, answered HTTP 200 on that day).
+# 2026-09-30, answered HTTP 200 on that day; Charter's text, changed on 2026-11-12, on that
+# day).
 
 schema = 1
 
@@ -205,9 +206,8 @@ reason = "The designer Andrey Makarov's own repository, moved from code.google.c
 [[family]]
 family = "charter"
 name = "Charter"
-texts = ["https://practicaltypography.com/fonts/Charter%20210112.zip#Charter%20210112/Charter%20license.txt"]
-page = "https://practicaltypography.com/charter.html"
-reason = "Matthew Butterick's Charter release (practicaltypography.com, the one Homebrew installs). Its 'Charter license.txt' says it is a copy of the Charter fonts Bitstream contributed to the X Consortium, then gives Bitstream's original notice word for word, the Bitstream-Charter license: use, copy, modify, sublicense, sell and redistribute 'for any purpose and without restriction'."
+texts = ["https://gitlab.freedesktop.org/xorg/font/bitstream-type1/-/raw/ef8ad9ed09f10ad8d14eaad4350fcd14e0376871/COPYING"]
+reason = "Matthew Butterick's Charter release (practicaltypography.com, the one Homebrew installs). Its 'Charter license.txt', inside the zip, says it is a copy of the Charter fonts Bitstream contributed to the X Consortium, then gives Bitstream's original notice word for word, the Bitstream-Charter license: use, copy, modify, sublicense, sell and redistribute 'for any purpose and without restriction'. The text read is that notice in X.Org's font-bitstream-type1 repository, pinned at the commit of its release 1.0.4, served as plain text, so the License link needs no page (owner ruling charter_license_text, 2026-11-12; it replaced the zip's file and practicaltypography.com/charter.html)."
 
 [[family]]
 family = "cozette"

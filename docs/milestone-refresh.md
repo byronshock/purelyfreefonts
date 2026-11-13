@@ -2,6 +2,13 @@
 
 This milestone runs the monthly refresh live for the first time and switches its schedule on, so the catalog updates itself each month. On 2026-09-30 the owner moved it out of Milestones 1 and 2 (`refresh_timing`, [AUTHORITY.md](../AUTHORITY.md)): it comes after Milestone 2's launch and before Milestone 3's owned-font tools. Until then the site shows the catalog of 2026-09-26, which `state/` holds as the first published run ([#31](https://github.com/byronshock/trulyfreefonts/pull/31)). Since 2026-10-19 staging may show a held run's preview instead ("Collect and hold" below). Its items were the rest of Milestone 1 step 19, one item each of Milestone 1 steps 3 and 14, and Milestone 2 step 16; the wording is theirs, with only the references updated.
 
+*Amended 2026-11-06 (`launch_data_october`, AUTHORITY.md **Soft launch**):*
+- the first live refresh is the launch run: 2026-10-17 re-run from `main` (ops/MONTHLY.md step 7) once the catalog-affecting changes the launch needs have landed;
+- its pull request supersedes #88 and merges before the soft launch, not after it;
+- no other run is dispatched until it merges, since any run replaces `refresh/monthly`;
+- November's run, started by hand right after it, is held until after the launch;
+- step 1's live run by hand and its npm check are then November's.
+
 **How to read it.** *Who* says who does the work, *Needs* what must be finished first, and *Done when* what must be true to close a step. Tick each item as soon as it is done and verified. If an item is only partly done, leave it unticked and note what's left.
 
 **This milestone is done when:**
@@ -34,12 +41,12 @@ This milestone runs the monthly refresh live for the first time and switches its
 ---
 
 ### Step 1: The first live refresh, and the schedule on
-**Who:** Claude runs it with `gh` (owner ruling CI1, 2026-09-26); the owner reviews and merges. **Needs:** Milestone 2's live site. Run it on or after the 3rd of a month, so the last month is complete.
+**Who:** Claude runs it with `gh` (owner ruling CI1, 2026-09-26); the owner reviews and merges. **Needs:** Milestone 2's live site. *(Amended 2026-11-06: the launch run comes first, before the live site; see above.)* Run it on or after the 3rd of a month, so the last month is complete.
 
 Already done in Milestone 1 step 19, on 2026-09-30: GitHub Actions may open pull requests; the data store's deploy key and `DATA_STORE_KEY` secret exist ([ops/SERVER.md](../ops/SERVER.md), section J); and run A, a replay of the 2026-09-26 snapshots on GitHub, opened #31, which filled `state/`.
 
 - [x] Move `DATA_STORE_KEY` into an environment that only `main` may use, as [ops/deploy/README.md](../ops/deploy/README.md) (item 4) asks: create the environment `refresh` with its deployment branches limited to `main`, set the secret there, delete the repository secret, and have `refresh.yml`'s `refresh` and `store` jobs name `environment: refresh`. On 2026-09-30 the key went in as a repository secret, because the workflow named no environment then; a repository secret can be read by the workflows of every branch in this repository, though never by a pull request from a fork. *(Done 2026-10-17: the environment `refresh` (deployments from `main` only) and a new key, [ops/SERVER.md](../ops/SERVER.md) item 27a; the two jobs name it ([#72](https://github.com/byronshock/purelyfreefonts/pull/72)); run [39092453229](https://github.com/byronshock/purelyfreefonts/actions/runs/39092453229) from `main` checked out the store with it; the repository secret is deleted.)*
-- [ ] Before the live run, land PLAN-REVIEWERS-1.md step 7d: `build/specimens` redrawn names-only, which removes the site build's trim of the committed specimens (7a, `specimen_trim_served`). Until then a refresh pull request that changes any file in `build/specimens` fails CI's required `test` job (`tests/site/test_trim.py`), and an unpinned specimen would be served with its sample line. The stopgap: pin each new file in `src/tff_site/trim.sha256` (with a `trim.SHIFTS` entry if it needs one) and record its cut in `tests/site/trimmed.sha256`, once `test_trim.py`'s font test shows the cut matches the font's names-only drawing.
+- [ ] *(Amended 2026-11-10, `launch_weight_after`: the launch run takes the stopgap below, and 7d comes after the soft launch, before the A–Z list.)* Before the live run, land PLAN-REVIEWERS-1.md step 7d: `build/specimens` redrawn names-only, which removes the site build's trim of the committed specimens (7a, `specimen_trim_served`). Until then a refresh pull request that changes any file in `build/specimens` fails CI's required `test` job (`tests/site/test_trim.py`), and an unpinned specimen would be served with its sample line. The stopgap: pin each new file in `src/tff_site/trim.sha256` (with a `trim.SHIFTS` entry if it needs one) and record its cut in `tests/site/trimmed.sha256`, once `test_trim.py`'s font test shows the cut matches the font's names-only drawing.
 - [ ] Run it live by hand (`gh workflow run refresh.yml --repo byronshock/purelyfreefonts --ref main`, with no `from_snapshots`) and check:
   - that the collectors work on GitHub's runners: rate limits, the GitHub API budget, and whether Google's endpoints respond;
   - that it opens or updates the pull request on the fixed branch `refresh/monthly` with `catalog.json`, `catalog-site.json`, `review.md`, the `state/` changes, and the alias rows and seeds the run added to `data/`, and that a hard failure fails the job and opens an issue instead (the `report` job, written but not yet run);
