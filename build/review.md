@@ -1509,7 +1509,7 @@ Store sources whose snapshots grew fast.
 
 Catalog fonts that may be previewed but have no image.
 
-None.
+- Merienda: left out by hand on this branch, as on staging: its names-only cut can't be pinned until step 7d's redraw (PLAN-launch.md step 2A)
 
 ## Numbering gaps
 

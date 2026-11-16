@@ -78626,7 +78626,9 @@
       "category": "handwriting",
       "family": "Merienda",
       "first_seen": "2026-09-26",
-      "flags": [],
+      "flags": [
+        "specimen_failed"
+      ],
       "font_file": {
         "format": "ttf",
         "sha256": "a91e4d88a50b4f80c7b1f31fe46e376eb87b72247d2a216f5e5be1881340deea",
@@ -78665,10 +78667,7 @@
         }
       },
       "preinstalled_on": [],
-      "preview": {
-        "path": "specimens/merienda.svg",
-        "sha256": "60c178b229cd0e2bdea4aa2ec69692cae9d9cddf7055c69219f86e5f5ce8daa3"
-      },
+      "preview": null,
       "preview_ok": true,
       "pulled_in_by": [],
       "ranks": {

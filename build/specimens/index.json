@@ -2281,13 +2281,6 @@
     "reason": null,
     "sha256": "41a01f59c78a4e5820f9ae476ab26fd7891a64d6b69d216368dac642f6f7b252"
   },
-  "merienda": {
-    "flags": [],
-    "key": "ea8bb1fb70a3473b5c936dffc798f07c907f4c3d6fad296386d7b48ad7727750",
-    "path": "specimens/merienda.svg",
-    "reason": null,
-    "sha256": "60c178b229cd0e2bdea4aa2ec69692cae9d9cddf7055c69219f86e5f5ce8daa3"
-  },
   "merriweather": {
     "flags": [],
     "key": "84d5ac8d3b4d235f3e9df899b985cd180ac4bc78f2266c024f9192fab4aed03d",
