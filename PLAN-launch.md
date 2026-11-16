@@ -6,16 +6,11 @@ This is the working checklist for Milestone 2's soft launch ([docs/milestone-2.m
 - production deploys from GitHub Actions, set up first (`deploys_actions_first`);
 - usability round 1 comes after the launch (`usability_round_1_after_launch`).
 
-**Status (2026-11-12):**
-- Production serves the "Coming soon." stub, and `main` holds September's catalog on the old method.
+**Status (2026-11-16):**
+- Production serves the "Coming soon." stub, and `main` holds September's catalog on the old method until the launch run merges.
 - Staging shows October's run with #100 (the hopper) and #115 (no early-version line).
-- #115 (no early-version line) and #116 (the redraw budget) are merged.
-- Open drafts:
-  - #88: October's run, which the launch run supersedes;
-  - #100: the hopper;
-  - #117: this plan's records;
-  - #118: the font cache (step 2A);
-  - #119: Charter's text and the README-only Nerd links (step 2A).
+- Merged: #115 (no early-version line), #116 (the redraw budget), #117 (this plan's records), #118 and #119 (step 2A), #100 (the hopper) and #120 (step 2A's ticks).
+- Open: #121, the launch run (step 2C), which supersedes #88 (closed 2026-11-16).
 
 **How to read each step:** **Who**, **Depends on** and **Done when**, as in PLAN-hopper.md. Tick each item as soon as it is done and verified. Checklists nest: a parent is ticked only when every item under it is. If an item is only partly done, leave it unticked and note what's left.
 
@@ -67,7 +62,7 @@ Until the launch:
   - [x] `config/license-texts.toml`: that URL in `texts`, and no `page` (#119, merged 2026-11-13).
 - [x] **Nerd folders that hold only a README** (`K-nerd-readme-folders`, 2026-11-12): those builds link to the release page at the tag, not the folder (`src/tff_catalog/links.py`). That is 12 links at v3.5.1. *(#119, merged 2026-11-13.)*
 - [x] **The store top-up** (`store_topup_charter_nerd`), once both changes above are on `main` (#119): `tff-catalog verify --date 2026-10-17 --refetch` for Charter's text and `tff-catalog links --date 2026-10-17` for the release page's check, every changed row diffed before the store commit and pushed. It must come before the launch run, which otherwise stops at export. On a scratch copy (2026-11-12) it added two rows, the X.Org text and the release page's check, and dropped 42 texts the switch's top-up had added, which the owner accepted (`store_topup_texts_rebuilt`); the replay changed only Charter's text and the 12 links. *(Done 2026-11-13 from `main` at 83eb564: store commit e91c89f, pushed. Every changed row matches the scratch test's byte for byte: the same two rows added and 43 removed. A replay of 2026-10-17 after it succeeds, with the same `build/` as the scratch test's apart from `code_commit`, and with a full local font cache no specimen missing.)*
-- [x] **The font cache:** fill it before a replay (milestone-method.md, "Later: from the port's adversarial review"), so the launch run draws every specimen it can, reproducibly. Merienda's stays out, flagged under Milestone 2 step 5. *(Built in #118: a replay fills the cache from its own catalog and runs again. Checked locally with an empty cache: 120 specimens lacking after the first pass, none after the second, and a clean replay identical. Merged 2026-11-13. milestone-method.md's item stays open until the launch run's pull request shows every specimen.)*
+- [x] **The font cache:** fill it before a replay (milestone-method.md, "Later: from the port's adversarial review"), so the launch run draws every specimen it can, reproducibly. Merienda's stays out, flagged under Milestone 2 step 5. *(Built in #118: a replay fills the cache from its own catalog and runs again. Checked locally with an empty cache: 120 specimens lacking after the first pass, none after the second, and a clean replay identical. Merged 2026-11-13. milestone-method.md's item stayed open until the launch run's pull request showed every specimen, which #121 did on 2026-11-16.)*
 
 **Done when:** each is merged, or ruled unchanged.
 
@@ -90,14 +85,15 @@ Until the launch:
 
 #### 2C. The launch run
 **Who:** Claude runs it and approves the held CI (ops/MONTHLY.md step 3); the owner merges. **Depends on:** 2A, #100.
-- [ ] Re-run 2026-10-17 from `main`, as ops/MONTHLY.md step 7 says. Its pull request supersedes #88, and the records cite its number.
+- [x] Re-run 2026-10-17 from `main`, as ops/MONTHLY.md step 7 says. Its pull request supersedes #88, and the records cite its number. *(2026-11-16: run 43831261024 at 75942ee, after #88 was closed, opened #121. It drew every specimen on GitHub, and its catalog and `state/` equal a local replay at the same commit byte for byte. Against staging's preview it changes only Charter's license text, the 12 Nerd release-page links and Merienda's specimen, below.)*
 - [ ] On its branch:
-  - [ ] Gentium Book: its entry, its two known answers, and `build/names.reviewed.toml`;
-  - [ ] the stopgap specimen pins (`src/tff_site/trim.sha256`, `tests/site/trimmed.sha256`), recomputed (`launch_weight_after`).
+  - [x] Gentium Book: its entry, its two known answers, and `build/names.reviewed.toml` (as on staging, `inventory_ambiguous_names`);
+  - [x] Merienda's specimen left out by hand, as on staging, since its cut can't be pinned (step 2A; noted under Milestone 2 step 5);
+  - [x] the stopgap specimen pins (`src/tff_site/trim.sha256`, `tests/site/trimmed.sha256`), recomputed (`launch_weight_after`): 562 served, each checked against its font, the same bytes as staging's.
 - [ ] Before it merges:
-  - [ ] `validate --committed`;
-  - [ ] the site built twice, byte-identical;
-  - [ ] `tff-site check`;
+  - [x] `validate --committed`;
+  - [x] the site built twice, byte-identical;
+  - [x] `tff-site check`;
   - [ ] the held CI green.
 - [ ] Merged. Then November's run, started by hand at once (docs/milestone-refresh.md step 1's live run and npm check), its pull request held until after the launch.
 

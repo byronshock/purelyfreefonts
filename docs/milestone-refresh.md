@@ -4,7 +4,7 @@ This milestone runs the monthly refresh live for the first time and switches its
 
 *Amended 2026-11-06 (`launch_data_october`, AUTHORITY.md **Soft launch**):*
 - the first live refresh is the launch run: 2026-10-17 re-run from `main` (ops/MONTHLY.md step 7) once the catalog-affecting changes the launch needs have landed;
-- its pull request supersedes #88 and merges before the soft launch, not after it;
+- its pull request, #121 (2026-11-16), supersedes #88 and merges before the soft launch, not after it;
 - no other run is dispatched until it merges, since any run replaces `refresh/monthly`;
 - November's run, started by hand right after it, is held until after the launch;
 - step 1's live run by hand and its npm check are then November's.
