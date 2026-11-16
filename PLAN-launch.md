@@ -77,14 +77,14 @@ Until the launch:
   - [x] Items 2 to 5 (2026-11-11, on #100's branch at 604ce2c): each checked against the code and tests. The count's M is now pinned with a list, and the privacy item notes `hopper_previews_all_at_once`.
   - [ ] Item 1, the owner's layout review: its last part is his try, which folds into step 3's final try (`hopper_try_in_final_try`).
 - [ ] **#100 merged,** before the launch run, so the run's CI checks the hopper on October's data.
-- [ ] **PR 5, the words** (the owner rules on the wording):
-  - [ ] privacy.md's "Coming next" becomes a section on how the check works:
+- [x] **PR 5, the words** (the owner rules on the wording): #122, ruled on 2026-11-16 (`pr5_privacy_section`, `pr5_preview_count`, `pr5_about_at_top`, `pr5_no_box_link`), each as Claude recommended.
+  - [x] privacy.md's "Coming next" becomes a section on how the check works, "Checking your own fonts":
     - nothing of the list leaves the device;
     - two fixed requests, the matcher and the match file;
-    - one batch of previews, its count computed by the build or not given;
+    - one batch of previews, its count computed by the build or not given (not given);
     - nothing stored;
-  - [ ] about.md's "What's next" changes to match.
-- [ ] **docs/milestone-4.md:** step 3's stale lines on the "Load previews" button and the one match-file request, fixed after #100 merges. The opening now notes the hopper (step 1); step 8 and Step 0 are revisited when Milestone 4 starts.
+  - [x] about.md's "What's next" changes to match: the hopper's line moves to the top, in the present tense.
+- [x] **docs/milestone-4.md:** step 3's stale lines on the "Load previews" button and the one match-file request, fixed after #100 merges. The opening now notes the hopper (step 1); step 8 and Step 0 are revisited when Milestone 4 starts.
 
 **Done when:** #100 and PR 5 are merged.
 

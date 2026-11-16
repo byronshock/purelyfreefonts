@@ -1,0 +1,35 @@
+# Owner rulings of 2026-11-16, asked in chat by the lead session as single-select questions: the hopper's words on
+# the privacy and About pages (Milestone 3 slice 1's PR 5, #122; PLAN-launch.md step 2B).
+# Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md (Soft launch) and PLAN-launch.md.
+
+[pr5_privacy_section]
+choice = "a"
+recommended = true
+recommendation = "a"
+value = "checking_your_own_fonts_as_drafted"
+ruling = "The privacy page's \"Coming next: your font list stays on your device\" becomes \"Checking your own fonts\", worded as drafted in #122: the list stays in the tab, and nothing from it is sent to us, to Cloudflare or to anyone else; when a list arrives the page asks for two files with fixed addresses, the code that reads lists and the file of font names it compares a list with, neither carrying anything from the list (inventory_matcher_on_demand); while a list is checked the page asks for no previews, then for every preview it hasn't shown yet, at once and in the list's order, the same files for any list (hopper_previews_all_at_once); nothing is saved, and \"Forget this list\" drops the list and its result, as closing or reloading the tab does. \"Check for yourself\" gains the hopper's Network-tab check, and the page description says the list stays on the device."
+reason = "Milestone 3 slice 1's PR 5 waited for the owner's rulings on its words. Of (a) as drafted (Claude's recommendation) and (b) the owner's own edits on #122, the owner chose (a)."
+
+[pr5_preview_count]
+choice = "a"
+recommended = true
+recommendation = "a"
+value = "no_number"
+ruling = "The privacy section gives no count of the previews that load once a list is checked: it says \"every preview it hasn't shown yet\"."
+reason = "PLAN-launch.md step 2B allowed a count computed by the build or none. The number asked for depends on how far the visitor had scrolled, so a fixed number would often be wrong. Of (a) no number (Claude's recommendation) and (b) a maximum computed at each build, the owner chose (a)."
+
+[pr5_about_at_top]
+choice = "a"
+recommended = true
+recommendation = "a"
+value = "present_tense_paragraph_at_the_top"
+ruling = "About's \"Hiding the fonts you already have\" leaves \"What's next\" and becomes a short present-tense paragraph after the opening, \"Leave out the fonts you already have\": \"Your own list\" takes a list of the fonts on the visitor's computer, made with one command, and leaves those fonts out; the check runs in the browser and the list never leaves the device, linking to the privacy section; the macOS and Windows commands are not yet tested. \"What's next\" keeps its other three items."
+reason = "The hopper went live on main with #100 and ships with the soft launch (launch_with_hopper). Of (a) at the top (Claude's recommendation) and (b) kept under \"What's next\", reworded, the owner chose (a)."
+
+[pr5_no_box_link]
+choice = "a"
+recommended = true
+recommendation = "a"
+value = "no_link_in_the_hopper_box"
+ruling = "The \"Your own list\" box keeps its line \"Your list stays in this tab: nothing is sent or saved.\" with no link to the privacy section."
+reason = "Every page's footer already links to the privacy page's Network-tab check, and the box stays as the owner reviewed it (PLAN-hopper.md). Of (a) no link (Claude's recommendation) and (b) a \"How it works\" link, the owner chose (a)."
