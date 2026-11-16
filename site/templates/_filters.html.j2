@@ -1,7 +1,7 @@
 {#-
   _filters.html.j2: the filter controls (M2-D4; site/CONTRACT.md, "The list page"). Native,
   labelled controls in fieldsets inside <search>, never a <form> (the CSP has form-action
-  'none'). Each control's name is its hash key and its value the key's value (CONTRACT
+  'none'), but for the hopper's, below. Each control's name is its hash key and its value the key's value (CONTRACT
   section 9). The block ships with `hidden`; the script removes it, and 25-filters.css
   reserves its space so that doesn't move the list. Below 60rem everything but search and
   rank sits behind #f-toggle, whose aria-expanded drives the disclosure. On phones (below
@@ -15,7 +15,33 @@
   no Spacing or license-group filter, "No credit required" shows only while some font needs
   credit, and the operating systems are one select. "Nerd Font available" follows the ruling
   of 2026-09-29 (nerd_filter); the rows it keeps carry the tag of the same name (nerd_tag,
-  2026-10-05). Sort sits in the list's header (_list.html.j2).
+  2026-10-05). Sort sits in the list's header (_list.html.j2). The panel's order follows Claude's
+  suggestions S7 and S8, which the owner took on 2026-11-01 (hopper_layout_suggestions, amending
+  filters_layout): "Clear filters" first; then Category, Features and License; then "Fonts you
+  don't have", which holds "Hide fonts that come with" and the hopper.
+
+  #mine, "Your own list" (a legend hidden from sight, inside #f-have, "Fonts you don't have":
+  hopper_title_dont_have, 2026-11-01), is the hopper (Milestone 3, slice 1; owner rulings of
+  2026-10-21 to 2026-10-23, inventory_on_list_page and inventory_slice_1_defaults): a
+  visitor's list, dropped anywhere on the page, chosen or pasted, takes the fonts they have out
+  of every view (55-mine.js). It reads from top to bottom (owner's site rulings of 2026-11-01,
+  hopper_steps_in_order and hopper_subheadings): two numbered steps, "Make the list" and "Drop
+  or paste it", each heading naming its group, then what the list brings: "Checking your
+  list…", an error, the result. None of its controls has a name, so none reaches the address,
+  and its paste box asks the browser not to spell-check, autocomplete, correct or capitalise
+  what it holds. The paste box and the Show menu have autocomplete="off", and so does the form
+  they sit in, #mine-form, so a reload or Back never restores what they held, and WebKit keeps
+  neither in its session history: Firefox restores a form control's value on reload, and all
+  three engines on Back, where the page isn't kept whole; Chromium and Firefox heed the
+  control's own autocomplete="off", WebKit only its form's on a textarea or select (owner's
+  site ruling of 2026-11-01, hopper_form_autocomplete_off). The form never submits: it has no
+  action and no submit button, Mine cancels a submit, and the CSP would block one.
+  "Make the list" gives each system's command (data.MINE_COMMANDS), with "(not yet tested)"
+  where nobody has run it yet (inventory_linux_tested_only); every box ships closed, the
+  script opens the visitor's own system's (S1), and the step folds into #mine-make's summary
+  once a list loads (S4). Once a file's list loads, the drop
+  zone says how many names it read (hopper_file_shown). Its words follow the ruling
+  site_status_line (2026-09-29): fonts are "left out of the list", never hidden.
 -#}
 <search id="filters" class="filters" aria-label="Filter fonts" hidden>
 <div class="filters-bar">
@@ -31,6 +57,7 @@
 <button type="button" id="f-toggle" class="filters-toggle" aria-expanded="false" aria-controls="f-more">Filters<span class="filters-count"></span></button>
 </div>
 <div id="f-more" class="filters-more">
+<button type="button" id="f-clear">Clear filters</button>
 <fieldset id="f-cat" class="pills">
 <legend>Category</legend>
 <label class="opt"><input type="radio" id="f-cat-all" name="cat" value="" checked> Any</label>
@@ -50,6 +77,8 @@
 <label class="opt"><input type="checkbox" id="f-hide-attr" name="hide" value="attr"> No credit required</label>
 </fieldset>
 {% endif %}
+<fieldset id="f-have" class="filters-have">
+<legend>Fonts you don't have</legend>
 <div id="f-system" class="filters-select">
 <label for="f-os">Hide fonts that come with</label>
 <select id="f-os" name="hide">
@@ -59,6 +88,62 @@
 {% endfor %}
 </select>
 </div>
-<button type="button" id="f-clear">Clear filters</button>
+<form id="mine-form" class="mine-form" autocomplete="off">
+<fieldset id="mine" class="mine">
+<legend class="visually-hidden">Your own list</legend>
+<p class="mine-lead">Fonts already on your computer are left out of the list. Your list stays in this tab: nothing is sent or saved.</p>
+<ol class="mine-steps">
+<li>
+<p id="mine-how" class="mine-step">Make the list</p>
+<details id="mine-make" class="mine-make" open>
+<summary>How to make the list</summary>
+<p class="mine-phone">Make the list on a computer.</p>
+<div class="mine-oses" role="group" aria-labelledby="mine-how">
+{% for cmd in list.mine_commands %}
+<details class="mine-os" id="mine-os-{{ cmd.os }}">
+<summary>{{ cmd.label }}{% if not cmd.tested %} (not yet tested){% endif %}</summary>
+<p>{{ cmd.where }}</p>
+<pre class="mine-cmd"><code id="mine-cmd-{{ cmd.os }}">{{ cmd.command }}</code></pre>
+<p class="mine-copy-row"><button type="button" class="mine-copy" data-command="mine-cmd-{{ cmd.os }}">Copy<span class="visually-hidden"> the {{ cmd.label }} command</span></button> <span class="mine-copied" hidden></span></p>
+<p>{{ cmd.after }}</p>
+</details>
+{% endfor %}
+</div>
+</details>
+</li>
+<li>
+<p id="mine-give" class="mine-step">Drop or paste it</p>
+<div class="mine-give" role="group" aria-labelledby="mine-give">
+<div id="mine-drop" class="mine-drop">
+<p id="mine-drop-text">Drop fonts.txt here</p>
+<button type="button" id="mine-choose">Choose file</button>
+<input type="file" id="mine-file" hidden>
+</div>
+<label for="mine-paste">Or paste the list</label>
+<textarea id="mine-paste" rows="3" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
+<button type="button" id="mine-check">Check</button>
+</div>
+</li>
+</ol>
+<p id="mine-busy" class="mine-busy" hidden>Checking your list…</p>
+<div id="mine-error" class="mine-error" hidden>
+<p id="mine-error-text"></p>
+<button type="button" id="mine-retry" hidden>Try again</button>
+</div>
+<div id="mine-result" class="mine-result" hidden>
+<p id="mine-summary" class="mine-summary"></p>
+<p id="mine-near" class="mine-more" hidden></p>
+<p id="mine-warning" class="mine-more" hidden></p>
+<label for="mine-show">Show</label>
+<select id="mine-show" autocomplete="off">
+<option value="missing" selected>Fonts you don't have</option>
+<option value="all">All fonts, yours marked</option>
+<option value="only">Only fonts you have</option>
+</select>
+<button type="button" id="mine-forget">Forget this list</button>
+</div>
+</fieldset>
+</form>
+</fieldset>
 </div>
 </search>

@@ -138,7 +138,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - [ ] Every visitor sees the paste path, desktop Chromium also "Check my fonts", and phones and tablets a note that the check needs a computer.
 - [ ] Without a list, the full ranked list shows as in Milestone 2; with one, the missing fonts in rank order, with the "Show fonts I have" toggle, near-match flags and Report links.
 - [ ] Remove `noindex` (meta tag and `X-Robots-Tag`) from the check, and list `/check/` in `sitemap.xml` if it stays separate. `local-fonts=(self)` moves with the check.
-- [ ] Update `/privacy`: the list is read in the page and never sent; the match-file request (if on demand, M3-D7); the "Load previews" button (M3-D10) and "Type your own text" (M2-D5), each loading only on a click; any storage keys M3-D13 allows.
+- [ ] Update `/privacy`: the list is read in the page and never sent; the match-file request (if on demand, M3-D7); the previews a list asks for all at once, the same files for every list (M3-D10, amended 2026-11-03, `hopper_previews_all_at_once`); "Type your own text" (M2-D5), loading only on a click; any storage keys M3-D13 allows.
 - [ ] The results link to the methodology page's "How the check works" (M3 step 6).
 - [ ] Deploy per M2-D6 (purging if M2-D11 needs it), then rerun the step 3 test and the matching suite on the live site.
 - [ ] AUTHORITY.md: "Current step" moves to the launch.

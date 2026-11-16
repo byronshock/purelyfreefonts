@@ -1,4 +1,7 @@
 # Owner rulings of 2026-11-03, ruled by the owner, Byron Shock; recorded by Claude.
+# hopper_previews_all_at_once: on the hopper's previews after a list, from the owner's staging try (preview/2026-10-17 at
+# ba2f627, #100 at 28aae7c), given in chat; Claude's plan for it was approved in plan mode, in the session that built it
+# (a4221ea). Also in AUTHORITY.md (Inventory tools) and docs/milestone-3.md (M3-D10 and step 8).
 # held_legend_to_tag: on the list's held marker, from the owner's look at staging (preview/2026-10-17 at f2f8c1c), asked in chat as a
 # single-select question. Also in AUTHORITY.md (Site (Milestone 2), "Scores instead of numbers").
 # On the wordmark, asked as single-select questions: wordmark_brush_102 and wordmark_size_brush_102 in the session in his typeface
@@ -6,6 +9,11 @@
 # AUTHORITY.md (Headline font).
 # early_line_removed: on the header's early-version line, raised by the owner in chat; where it should go was asked as a
 # single-select question, which he answered in his own words. Also in AUTHORITY.md (Site (Milestone 2), "Early-version line").
+
+[hopper_previews_all_at_once]
+value = "every_preview_once_a_list_loads"
+ruling = "Amends M3-D10 (a). Once a list loads, every preview not yet loaded is asked for at once, in the page's own order: the same files for every list, so they tell nothing of it, and every row has its preview. \"Forget this list\" lifts the hopper's pause on previews. M3-D10 (a)'s \"until the page is reloaded\" and its later \"Load previews\" button go."
+reason = "The owner's staging try: with a list loaded and then forgotten, a search for \"mono\" left Geist Mono, Roboto Mono and four more rows showing their text heading instead of a preview until a reload, since nothing lifted the hopper's pause, Forget included. The owner: \"Reloading fixed the problem, but I don't think users should have to reload.\" Claude's plan, to ask for every preview once a list loads and let Forget lift the pause, was approved."
 
 [held_legend_to_tag]
 value = "tag_in_place_of_legend"

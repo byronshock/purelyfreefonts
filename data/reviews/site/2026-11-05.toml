@@ -1,0 +1,17 @@
+# Owner rulings of 2026-11-05 on the hopper (Milestone 3, slice 1, PR 4, #100), after the owner's staging try (preview/2026-10-17 at
+# f78889f, which carries #100 at 65d9f0f), asked in chat as single-select questions. Ruled by the owner, Byron Shock; recorded by Claude.
+# Also in AUTHORITY.md (Inventory tools) and site/CONTRACT.md (section 4, the hopper).
+
+[hopper_clear_filters_resets_show]
+choice = "a"
+recommended = true
+value = "keep_as_built"
+ruling = "With a list loaded, \"Clear filters\" (#f-clear and #no-results-clear) also sets the Show menu back to its default, \"Fonts you don't have\", and keeps the list, as built. So it always gets a visitor out of an empty list, unless the visitor has every font the view shows, and the no-results text stays as it is: it names the Show menu when the menu leaves fonts out (\"Show: Only fonts you have\") and ends \"Loosen it, or clear the filters.\""
+reason = "The owner's staging try: \"I have tried it and feel that we are getting very close to launch. I noticed nothing that irked me.\" Claude then asked #100's open questions. With \"All fonts, yours marked\" chosen, clearing the filters makes the list shorter. Of (a) keeping that as built (Claude's recommendation) and (b) leaving the Show menu alone, with a no-results text that names the Show menu instead of suggesting Clear filters, which couldn't help there, the owner chose (a). That also settles #100's question on the no-results text, which only (b) would have needed."
+
+[hopper_auto_open_and_drop_ring]
+choice = "a"
+recommended = true
+value = "keep_both"
+ruling = "Kept as built: below 60rem a list arriving opens the Filters panel first (FiltersUI.open(), as a click on #f-toggle would), so its result or error comes into sight; and while a file is dragged over the page, html[data-dropping] draws a ring around the window, since a file may be dropped anywhere."
+reason = "Built in #100 and not reviewed by the owner before. Of (a) keeping both (Claude's recommendation), (b) the ring only, the result staying inside the closed panel on narrow screens until it is opened, (c) the auto-open only, and (d) neither, the owner chose (a)."
