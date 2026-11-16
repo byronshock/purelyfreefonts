@@ -71,7 +71,7 @@ Until the launch:
 - [ ] **#100's PR 4 items** (docs/milestone-3.md, slice 1): verified and ticked.
   - [x] Items 2 to 5 (2026-11-11, on #100's branch at 604ce2c): each checked against the code and tests. The count's M is now pinned with a list, and the privacy item notes `hopper_previews_all_at_once`.
   - [ ] Item 1, the owner's layout review: its last part is his try, which folds into step 3's final try (`hopper_try_in_final_try`).
-- [ ] **#100 merged,** before the launch run, so the run's CI checks the hopper on October's data.
+- [x] **#100 merged,** before the launch run, so the run's CI checks the hopper on October's data. *(2026-11-16, 89a6940; the launch run at 75942ee includes it.)*
 - [ ] **PR 5, the words** (the owner rules on the wording):
   - [ ] privacy.md's "Coming next" becomes a section on how the check works:
     - nothing of the list leaves the device;
@@ -86,7 +86,7 @@ Until the launch:
 #### 2C. The launch run
 **Who:** Claude runs it and approves the held CI (ops/MONTHLY.md step 3); the owner merges. **Depends on:** 2A, #100.
 - [x] Re-run 2026-10-17 from `main`, as ops/MONTHLY.md step 7 says. Its pull request supersedes #88, and the records cite its number. *(2026-11-16: run 43831261024 at 75942ee, after #88 was closed, opened #121. It drew every specimen on GitHub, and its catalog and `state/` equal a local replay at the same commit byte for byte. Against staging's preview it changes only Charter's license text, the 12 Nerd release-page links and Merienda's specimen, below.)*
-- [ ] On its branch:
+- [x] On its branch:
   - [x] Gentium Book: its entry, its two known answers, and `build/names.reviewed.toml` (as on staging, `inventory_ambiguous_names`);
   - [x] Merienda's specimen left out by hand, as on staging, since its cut can't be pinned (step 2A; noted under Milestone 2 step 5);
   - [x] the stopgap specimen pins (`src/tff_site/trim.sha256`, `tests/site/trimmed.sha256`), recomputed (`launch_weight_after`): 562 served, each checked against its font, the same bytes as staging's.

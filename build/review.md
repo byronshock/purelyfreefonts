@@ -20,7 +20,7 @@
 | dev_apps | 514 | 398 | 131 | 15 | 0 | 0 | 38 |
 | catalog | – | – | – | – | 117 | 59 | 0 |
 
-Flags: 1512 (entry 162, exit 103, move 419, license 615, rbo 5, share_jump 3, guard 3, pit 55, crosscheck 120, disagreement 20, term 6, growth 1).
+Flags: 1513 (entry 162, exit 103, move 419, license 615, rbo 5, share_jump 3, guard 3, pit 55, crosscheck 120, disagreement 20, term 6, growth 1, specimen 1).
 
 ## Entries
 
@@ -1509,7 +1509,7 @@ Store sources whose snapshots grew fast.
 
 Catalog fonts that may be previewed but have no image.
 
-- Merienda: left out by hand on this branch, as on staging: its names-only cut can't be pinned until step 7d's redraw (PLAN-launch.md step 2A)
+- Merienda: left out by hand on the launch run's branch (#121), as on staging: its names-only cut can't be pinned until step 7d's redraw (PLAN-launch.md step 2A)
 
 ## Numbering gaps
 
