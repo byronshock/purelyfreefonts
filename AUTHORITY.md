@@ -18,7 +18,7 @@ Compare the fonts a user already has installed with a ranked list of the most po
 After his staging try of 2026-11-05 ("I have tried it and feel that we are getting very close to launch. I noticed nothing that irked me."), the owner ruled how the soft launch goes, each asked as a single-select question. The working checklist is [PLAN-launch.md](PLAN-launch.md).
 
 - **The data** (`launch_data_october`): the site launches with the run of 2026-10-17 on the new method, which staging has shown since 2026-10-21.
-  - The run is re-run from `main` (ops/MONTHLY.md step 7) once the catalog-affecting changes the launch needs have landed. Its pull request supersedes #88 and merges before the launch, so the first live refresh comes before the launch, not after it.
+  - The run is re-run from `main` (ops/MONTHLY.md step 7) once the catalog-affecting changes the launch needs have landed. Its pull request, #121 (2026-11-16), supersedes #88 and merges before the launch, so the first live refresh comes before the launch, not after it.
   - No other refresh run starts until it merges. November's run then starts by hand, and is held until after the launch.
   - The owner's staging looks count as his review of the new scores (`october_scores_reviewed`). The owner took Claude's recommendation over a fresh November run and over September's catalog as planned.
 - **The hopper** (`launch_with_hopper`): Milestone 3's slice 1 (#100) goes live with the soft launch, with PR 5's words on the privacy and About pages. The launch's live checks include the hopper's privacy test.

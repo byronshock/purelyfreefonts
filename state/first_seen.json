@@ -89,7 +89,7 @@
     }
   },
   "adamina": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-09-07",
       "homebrew": "2025-09-25",
@@ -461,7 +461,7 @@
     }
   },
   "allison": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2021-07-02",
       "homebrew": "2025-09-25",
@@ -665,7 +665,7 @@
     }
   },
   "andada-pro": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2021-05-19",
       "homebrew": "2025-09-25",
@@ -719,6 +719,7 @@
   "annotation-mono": {
     "catalog": "2026-09-26",
     "sources": {
+      "arch": "2026-09-01",
       "homebrew": "2025-09-25",
       "nerd": "2026-08-01"
     }
@@ -798,7 +799,7 @@
     }
   },
   "anuphan": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2023-02-22",
       "homebrew": "2025-09-25",
@@ -807,7 +808,7 @@
     }
   },
   "anybody": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2022-03-02",
       "homebrew": "2025-09-25",
@@ -816,7 +817,7 @@
     }
   },
   "apfel-grotezk": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "npm_fontsource": "2025-04-03"
     }
@@ -831,7 +832,7 @@
     }
   },
   "arapey": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-11-02",
       "homebrew": "2025-09-25",
@@ -904,7 +905,7 @@
     }
   },
   "aref-ruqaa": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2016-06-20",
       "homebrew": "2025-09-25",
@@ -1185,7 +1186,7 @@
     }
   },
   "average-sans": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2012-10-26",
       "homebrew": "2025-09-25",
@@ -1203,7 +1204,7 @@
     }
   },
   "averia-libre": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2012-03-14",
       "homebrew": "2025-09-25",
@@ -1221,7 +1222,7 @@
     }
   },
   "averia-serif-libre": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2012-03-14",
       "homebrew": "2025-09-25",
@@ -1351,7 +1352,7 @@
     }
   },
   "balsamiq-sans": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2020-04-09",
       "homebrew": "2025-09-25",
@@ -1381,6 +1382,7 @@
   "barlow": {
     "catalog": "2026-09-26",
     "sources": {
+      "arch": "2025-11-01",
       "google": "2017-10-26",
       "homebrew": "2025-09-25",
       "npm_expo": "2025-04-03",
@@ -1390,6 +1392,7 @@
   "barlow-condensed": {
     "catalog": "2026-09-26",
     "sources": {
+      "arch": "2025-11-01",
       "google": "2017-10-26",
       "homebrew": "2025-09-25",
       "npm_expo": "2025-04-03",
@@ -1399,6 +1402,7 @@
   "barlow-semi-condensed": {
     "catalog": "2026-09-26",
     "sources": {
+      "arch": "2025-11-01",
       "google": "2017-10-26",
       "homebrew": "2025-09-25",
       "npm_expo": "2025-04-03",
@@ -1424,7 +1428,7 @@
     }
   },
   "basic": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-12-15",
       "homebrew": "2025-09-25",
@@ -1464,7 +1468,7 @@
     "sources": {
       "google": "2025-12-08",
       "homebrew": "2025-09-25",
-      "npm_expo": "2025-12-14",
+      "npm_expo": "2025-10-07",
       "npm_fontsource": "2025-10-12"
     }
   },
@@ -1473,7 +1477,7 @@
     "sources": {
       "google": "2025-12-08",
       "homebrew": "2025-09-25",
-      "npm_expo": "2025-12-14",
+      "npm_expo": "2025-10-07",
       "npm_fontsource": "2025-10-12"
     }
   },
@@ -1482,7 +1486,7 @@
     "sources": {
       "google": "2025-12-08",
       "homebrew": "2025-09-25",
-      "npm_expo": "2025-12-14",
+      "npm_expo": "2025-10-07",
       "npm_fontsource": "2025-10-12"
     }
   },
@@ -1542,7 +1546,7 @@
     }
   },
   "bellefair": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2017-06-28",
       "homebrew": "2025-09-25",
@@ -1692,7 +1696,7 @@
     }
   },
   "big-shoulders": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2025-02-05",
       "homebrew": "2025-09-25",
@@ -1852,7 +1856,7 @@
     }
   },
   "birthstone": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2021-08-06",
       "homebrew": "2025-09-25",
@@ -2117,7 +2121,7 @@
     }
   },
   "boogaloo": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-12-19",
       "homebrew": "2025-09-25",
@@ -2135,7 +2139,7 @@
     }
   },
   "bowlby-one": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-07-13",
       "homebrew": "2025-09-25",
@@ -2144,7 +2148,7 @@
     }
   },
   "bowlby-one-sc": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-07-06",
       "homebrew": "2025-09-25",
@@ -2214,7 +2218,7 @@
     }
   },
   "brygada-1918": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2021-01-27",
       "homebrew": "2025-09-25",
@@ -2223,7 +2227,7 @@
     }
   },
   "bubblegum-sans": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-11-23",
       "homebrew": "2025-09-25",
@@ -2301,7 +2305,7 @@
     }
   },
   "bungee-shade": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2016-06-15",
       "homebrew": "2025-09-25",
@@ -2694,7 +2698,7 @@
     }
   },
   "cedarville-cursive": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-06-08",
       "homebrew": "2025-09-25",
@@ -2730,7 +2734,7 @@
     }
   },
   "changa-one": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-11-30",
       "homebrew": "2025-09-25",
@@ -2916,7 +2920,10 @@
     "catalog": null,
     "sources": {
       "arch": "2026-03-01",
-      "homebrew": "2026-09-06"
+      "google": "2026-09-28",
+      "homebrew": "2026-09-06",
+      "npm_expo": "2026-10-07",
+      "npm_fontsource": "2026-10-11"
     }
   },
   "clear-sans": {
@@ -2935,7 +2942,7 @@
     }
   },
   "climate-crisis": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2022-09-30",
       "homebrew": "2025-09-25",
@@ -3034,7 +3041,7 @@
     }
   },
   "coming-soon": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-01-06",
       "homebrew": "2025-09-25",
@@ -3080,7 +3087,7 @@
     }
   },
   "concert-one": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-11-23",
       "homebrew": "2025-09-25",
@@ -3116,7 +3123,7 @@
     }
   },
   "cookie": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-10-12",
       "homebrew": "2025-09-25",
@@ -3329,7 +3336,7 @@
     }
   },
   "crete-round": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-12-19",
       "homebrew": "2025-09-25",
@@ -3411,7 +3418,7 @@
     }
   },
   "damion": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-04-27",
       "homebrew": "2025-09-25",
@@ -3474,7 +3481,7 @@
     }
   },
   "days-one": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-08-17",
       "homebrew": "2025-09-25",
@@ -3526,7 +3533,7 @@
     }
   },
   "delius": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-07-27",
       "homebrew": "2025-09-25",
@@ -3716,7 +3723,7 @@
     }
   },
   "doto": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2024-11-05",
       "homebrew": "2025-09-25",
@@ -3765,7 +3772,7 @@
     }
   },
   "dynapuff": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2022-05-18",
       "homebrew": "2025-09-25",
@@ -4194,6 +4201,7 @@
   "et-book": {
     "catalog": "2026-09-26",
     "sources": {
+      "arch": "2026-05-01",
       "homebrew": "2025-09-25"
     }
   },
@@ -4454,9 +4462,9 @@
     "catalog": "2026-09-26",
     "sources": {
       "google": "2026-05-12",
-      "homebrew": "2026-05-03",
-      "npm_expo": "2026-05-15",
-      "npm_fontsource": "2026-05-17"
+      "homebrew": "2025-10-16",
+      "npm_expo": "2025-04-22",
+      "npm_fontsource": "2025-04-21"
     }
   },
   "finlandica-text": {
@@ -4597,7 +4605,7 @@
     }
   },
   "forum": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-07-06",
       "homebrew": "2025-09-25",
@@ -4718,7 +4726,7 @@
     }
   },
   "fugaz-one": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-12-19",
       "homebrew": "2025-09-25",
@@ -4754,7 +4762,7 @@
     }
   },
   "fustat": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2024-06-04",
       "homebrew": "2025-09-25",
@@ -4921,7 +4929,7 @@
     }
   },
   "gentium-book-plus": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2022-05-18",
       "homebrew": "2025-09-25",
@@ -4975,7 +4983,7 @@
     }
   },
   "georama": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2020-07-01",
       "homebrew": "2025-09-25",
@@ -5011,7 +5019,7 @@
     }
   },
   "gfs-didot": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2010-09-21",
       "homebrew": "2025-09-25",
@@ -5101,7 +5109,7 @@
     }
   },
   "gloock": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2023-01-05",
       "homebrew": "2025-09-25",
@@ -5168,7 +5176,7 @@
     }
   },
   "goldman": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2020-07-21",
       "homebrew": "2025-09-25",
@@ -5244,7 +5252,7 @@
     }
   },
   "graduate": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2012-03-14",
       "homebrew": "2025-09-25",
@@ -5405,7 +5413,7 @@
     }
   },
   "halant": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2014-08-27",
       "homebrew": "2025-09-25",
@@ -5525,9 +5533,9 @@
     }
   },
   "hedvig-letters-serif": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
-      "google": "2023-11-20",
+      "google": "2023-10-24",
       "homebrew": "2025-09-25",
       "npm_expo": "2025-04-03",
       "npm_fontsource": "2025-04-03"
@@ -5552,7 +5560,7 @@
     }
   },
   "hepta-slab": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2018-09-19",
       "homebrew": "2025-09-25",
@@ -5666,7 +5674,7 @@
     }
   },
   "hubot-sans": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "github": "2022-11-09",
       "google": "2024-11-04",
@@ -5709,7 +5717,7 @@
     }
   },
   "ibarra-real-nova": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2019-11-04",
       "homebrew": "2025-09-25",
@@ -5830,7 +5838,7 @@
     }
   },
   "im-fell-english-sc": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2010-05-17",
       "homebrew": "2025-09-25",
@@ -5902,7 +5910,7 @@
     }
   },
   "inclusive-sans": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2023-08-04",
       "homebrew": "2025-09-25",
@@ -5964,7 +5972,7 @@
     }
   },
   "inknut-antiqua": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2015-05-20",
       "homebrew": "2025-09-25",
@@ -6134,7 +6142,10 @@
   "isometra": {
     "catalog": null,
     "sources": {
-      "homebrew": "2026-09-06"
+      "google": "2026-09-28",
+      "homebrew": "2026-09-06",
+      "npm_expo": "2026-10-07",
+      "npm_fontsource": "2026-10-11"
     }
   },
   "istok-web": {
@@ -6147,7 +6158,7 @@
     }
   },
   "italiana": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2012-03-14",
       "homebrew": "2025-09-25",
@@ -6156,7 +6167,7 @@
     }
   },
   "italianno": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-12-19",
       "homebrew": "2025-09-25",
@@ -6282,7 +6293,7 @@
     }
   },
   "jersey-10": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2024-04-10",
       "homebrew": "2025-09-25",
@@ -6300,7 +6311,7 @@
     }
   },
   "jersey-15": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2024-04-10",
       "homebrew": "2025-09-25",
@@ -6383,7 +6394,7 @@
     }
   },
   "jockey-one": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-10-26",
       "homebrew": "2025-09-25",
@@ -6523,7 +6534,7 @@
     }
   },
   "k2d": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2018-09-10",
       "homebrew": "2025-09-25",
@@ -6832,7 +6843,10 @@
   "kripa": {
     "catalog": null,
     "sources": {
-      "homebrew": "2026-09-06"
+      "google": "2026-09-28",
+      "homebrew": "2026-09-06",
+      "npm_expo": "2026-10-07",
+      "npm_fontsource": "2026-10-11"
     }
   },
   "kristi": {
@@ -6845,7 +6859,7 @@
     }
   },
   "krona-one": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2012-02-22",
       "homebrew": "2025-09-25",
@@ -6854,7 +6868,7 @@
     }
   },
   "krub": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2018-09-10",
       "homebrew": "2025-09-25",
@@ -6953,7 +6967,7 @@
     }
   },
   "lalezar": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2016-06-15",
       "homebrew": "2025-09-25",
@@ -7252,7 +7266,7 @@
     }
   },
   "libre-bodoni": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2022-04-13",
       "homebrew": "2025-09-25",
@@ -7263,7 +7277,9 @@
   "libre-caslon-condensed": {
     "catalog": null,
     "sources": {
+      "google": "2026-09-28",
       "homebrew": "2026-09-06",
+      "npm_expo": "2026-10-07",
       "npm_fontsource": "2025-04-03"
     }
   },
@@ -7342,7 +7358,7 @@
     }
   },
   "limelight": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-05-25",
       "homebrew": "2025-09-25",
@@ -7454,7 +7470,7 @@
     }
   },
   "londrina-solid": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2012-03-14",
       "homebrew": "2025-09-25",
@@ -7507,6 +7523,12 @@
       "npm_fontsource": "2025-04-03"
     }
   },
+  "luciole": {
+    "catalog": null,
+    "sources": {
+      "homebrew": "2026-07-30"
+    }
+  },
   "luckiest-guy": {
     "catalog": "2026-09-26",
     "sources": {
@@ -7553,7 +7575,7 @@
     }
   },
   "lustria": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2012-01-18",
       "homebrew": "2025-09-25",
@@ -7608,7 +7630,7 @@
     }
   },
   "mada": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2017-07-26",
       "homebrew": "2025-09-25",
@@ -7653,7 +7675,7 @@
     }
   },
   "major-mono-display": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2018-12-11",
       "homebrew": "2025-09-25",
@@ -7671,7 +7693,7 @@
     }
   },
   "mali": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2018-09-10",
       "homebrew": "2025-09-25",
@@ -7691,6 +7713,7 @@
   "manjari": {
     "catalog": null,
     "sources": {
+      "arch": "2025-12-01",
       "google": "2018-11-21",
       "homebrew": "2025-09-25",
       "npm_expo": "2025-04-03",
@@ -7752,7 +7775,7 @@
     }
   },
   "marcellus-sc": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2012-05-09",
       "homebrew": "2025-09-25",
@@ -7788,7 +7811,7 @@
     }
   },
   "markazi-text": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2018-06-05",
       "homebrew": "2025-09-25",
@@ -7985,7 +8008,7 @@
     }
   },
   "merienda": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2012-10-31",
       "homebrew": "2025-09-25",
@@ -8034,7 +8057,7 @@
     }
   },
   "metamorphous": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-12-07",
       "homebrew": "2025-09-25",
@@ -8196,7 +8219,7 @@
     }
   },
   "mitr": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2016-06-15",
       "homebrew": "2025-09-25",
@@ -8350,7 +8373,7 @@
     }
   },
   "monda": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2012-11-30",
       "homebrew": "2025-09-25",
@@ -8366,7 +8389,7 @@
     }
   },
   "monofett": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-05-04",
       "homebrew": "2025-09-25",
@@ -8576,7 +8599,7 @@
     }
   },
   "mr-dafoe": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-11-30",
       "homebrew": "2025-09-25",
@@ -8691,7 +8714,7 @@
     }
   },
   "nacelle": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "homebrew": "2025-09-25"
     }
@@ -8764,7 +8787,7 @@
     }
   },
   "neucha": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2010-09-21",
       "homebrew": "2025-09-25",
@@ -8773,7 +8796,7 @@
     }
   },
   "neuton": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-02-09",
       "homebrew": "2025-09-25",
@@ -8893,7 +8916,7 @@
     }
   },
   "nothing-you-could-do": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-05-11",
       "homebrew": "2025-09-25",
@@ -9316,7 +9339,7 @@
     }
   },
   "oooh-baby": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2021-11-26",
       "homebrew": "2025-09-25",
@@ -9353,7 +9376,7 @@
     }
   },
   "open-sauce-two": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "npm_fontsource": "2025-04-03"
     }
@@ -9488,6 +9511,12 @@
       "npm_fontsource": "2025-04-03"
     }
   },
+  "overused-grotesk": {
+    "catalog": "2026-10-17",
+    "sources": {
+      "homebrew": "2025-10-16"
+    }
+  },
   "ovo": {
     "catalog": null,
     "sources": {
@@ -9608,7 +9637,7 @@
     }
   },
   "parkinsans": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2024-11-18",
       "homebrew": "2025-09-25",
@@ -9689,7 +9718,7 @@
     }
   },
   "patua-one": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-12-19",
       "homebrew": "2025-09-25",
@@ -9707,7 +9736,7 @@
     }
   },
   "paytone-one": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-05-04",
       "homebrew": "2025-09-25",
@@ -9749,7 +9778,7 @@
     }
   },
   "petit-formal-script": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2012-09-07",
       "homebrew": "2025-09-25",
@@ -9785,7 +9814,7 @@
     }
   },
   "piazzolla": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2020-08-27",
       "homebrew": "2025-09-25",
@@ -9812,7 +9841,7 @@
     }
   },
   "pirata-one": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2012-10-31",
       "homebrew": "2025-09-25",
@@ -9863,7 +9892,7 @@
     }
   },
   "platypi": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2024-04-10",
       "homebrew": "2025-09-25",
@@ -9917,7 +9946,7 @@
     }
   },
   "playpen-sans": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2023-09-06",
       "homebrew": "2025-09-25",
@@ -10943,7 +10972,7 @@
     }
   },
   "pontano-sans": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2012-03-14",
       "homebrew": "2025-09-25",
@@ -11256,7 +11285,7 @@
     }
   },
   "quattrocento-sans": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2012-02-15",
       "homebrew": "2025-09-25",
@@ -11311,7 +11340,7 @@
     }
   },
   "racing-sans-one": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2012-08-13",
       "homebrew": "2025-09-25",
@@ -11501,6 +11530,48 @@
       "npm_fontsource": "2025-04-04"
     }
   },
+  "redaction": {
+    "catalog": "2026-10-17",
+    "sources": {
+      "npm_fontsource": "2025-04-22"
+    }
+  },
+  "redaction-10": {
+    "catalog": null,
+    "sources": {
+      "npm_fontsource": "2025-04-21"
+    }
+  },
+  "redaction-100": {
+    "catalog": null,
+    "sources": {
+      "npm_fontsource": "2025-04-21"
+    }
+  },
+  "redaction-20": {
+    "catalog": null,
+    "sources": {
+      "npm_fontsource": "2025-04-21"
+    }
+  },
+  "redaction-35": {
+    "catalog": null,
+    "sources": {
+      "npm_fontsource": "2025-04-21"
+    }
+  },
+  "redaction-50": {
+    "catalog": null,
+    "sources": {
+      "npm_fontsource": "2025-04-22"
+    }
+  },
+  "redaction-70": {
+    "catalog": "2026-10-17",
+    "sources": {
+      "npm_fontsource": "2025-04-22"
+    }
+  },
   "reddit-mono": {
     "catalog": "2026-09-26",
     "sources": {
@@ -11538,7 +11609,7 @@
     }
   },
   "reem-kufi": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2016-05-31",
       "homebrew": "2025-09-25",
@@ -11747,6 +11818,10 @@
       "npm_fontsource": "2025-04-03"
     }
   },
+  "ronzino": {
+    "catalog": "2026-10-17",
+    "sources": {}
+  },
   "ropa-sans": {
     "catalog": null,
     "sources": {
@@ -11783,6 +11858,10 @@
       "npm_fontsource": "2025-04-03"
     }
   },
+  "route-159": {
+    "catalog": "2026-10-17",
+    "sources": {}
+  },
   "rowdies": {
     "catalog": null,
     "sources": {
@@ -11793,7 +11872,7 @@
     }
   },
   "rozha-one": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2014-08-13",
       "homebrew": "2025-09-25",
@@ -12187,7 +12266,7 @@
     }
   },
   "saira-extra-condensed": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2017-07-31",
       "homebrew": "2025-09-25",
@@ -12209,7 +12288,7 @@
     "sources": {
       "google": "2026-04-02",
       "homebrew": "2025-09-25",
-      "npm_expo": "2026-04-07",
+      "npm_expo": "2025-04-24",
       "npm_fontsource": "2025-04-03"
     }
   },
@@ -12259,7 +12338,7 @@
     }
   },
   "sansita": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2016-12-04",
       "homebrew": "2025-09-25",
@@ -12380,7 +12459,7 @@
     }
   },
   "schoolbell": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-01-06",
       "homebrew": "2025-09-25",
@@ -12635,7 +12714,7 @@
     }
   },
   "sigmar-one": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-05-04",
       "homebrew": "2025-09-25",
@@ -12812,6 +12891,7 @@
     "catalog": "2026-09-26",
     "sources": {
       "google": "2026-01-27",
+      "homebrew": "2025-10-16",
       "npm_expo": "2026-02-03",
       "npm_fontsource": "2025-04-03"
     }
@@ -12889,7 +12969,7 @@
     }
   },
   "sofia-sans-extra-condensed": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "arch": "2026-08-01",
       "google": "2022-11-16",
@@ -13064,7 +13144,7 @@
     }
   },
   "special-gothic-expanded-one": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2025-04-07",
       "homebrew": "2025-09-25",
@@ -13191,7 +13271,7 @@
     }
   },
   "stack-sans-headline": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2025-11-03",
       "homebrew": "2025-10-12",
@@ -13349,7 +13429,7 @@
     }
   },
   "suez-one": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2016-03-31",
       "homebrew": "2025-09-25",
@@ -13505,7 +13585,7 @@
     }
   },
   "tangerine": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2010-06-08",
       "homebrew": "2025-09-25",
@@ -13577,7 +13657,7 @@
     }
   },
   "tektur": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2023-06-15",
       "homebrew": "2025-09-25",
@@ -13729,7 +13809,7 @@
     }
   },
   "tiktok-sans": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2025-04-28",
       "homebrew": "2025-09-25",
@@ -13808,7 +13888,7 @@
     }
   },
   "tiro-devanagari-hindi": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2022-05-25",
       "homebrew": "2025-09-25",
@@ -13898,7 +13978,7 @@
     }
   },
   "tomorrow": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2019-10-02",
       "homebrew": "2025-09-25",
@@ -14089,7 +14169,7 @@
     }
   },
   "uncial-antiqua": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2011-12-19",
       "homebrew": "2025-09-25",
@@ -14123,7 +14203,7 @@
     }
   },
   "unifrakturcook": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2010-12-07",
       "homebrew": "2025-09-25",
@@ -14556,6 +14636,12 @@
       "npm_fontsource": "2025-04-04"
     }
   },
+  "xmind": {
+    "catalog": null,
+    "sources": {
+      "homebrew": "2026-09-27"
+    }
+  },
   "yaldevi": {
     "catalog": null,
     "sources": {
@@ -14708,7 +14794,7 @@
     }
   },
   "zalando-sans-expanded": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2025-09-11",
       "homebrew": "2025-09-25",
@@ -14717,7 +14803,7 @@
     }
   },
   "zalando-sans-semiexpanded": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2025-09-11",
       "homebrew": "2025-09-25",
@@ -14741,7 +14827,7 @@
     }
   },
   "zen-dots": {
-    "catalog": null,
+    "catalog": "2026-10-17",
     "sources": {
       "google": "2021-03-11",
       "homebrew": "2025-09-25",

@@ -107,7 +107,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 - [x] Under M2-D5 (b), "Type your own text" loads the unchanged upstream file on request, after showing its size. The deploy fetches the files and checks `font_file.sha256`; they are never committed and get no CORS headers.
 
 **Done when:**
-- every `preview_ok` font has a specimen or a flag saying why not;
+- every `preview_ok` font has a specimen or a flag saying why not; *(On the launch run of 2026-10-17, Merienda is flagged `specimen_failed` by hand, as on staging since 2026-10-21: its name-line cut is 2 units shorter than its names-only drawing, so it can't be pinned (`tff_site.trim`) and would be served with its sample line. It gets its specimen with PLAN-REVIEWERS-1.md step 7d's names-only redraw, after the launch.)*
 - the budget check passes in CI;
 - the owner has checked the top 100 in light, dark and forced-colors modes.
 
