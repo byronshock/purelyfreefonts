@@ -6,11 +6,11 @@ This is the working checklist for Milestone 2's soft launch ([docs/milestone-2.m
 - production deploys from GitHub Actions, set up first (`deploys_actions_first`);
 - usability round 1 comes after the launch (`usability_round_1_after_launch`).
 
-**Status (2026-11-16):**
-- Production serves the "Coming soon." stub, and `main` holds September's catalog on the old method until the launch run merges.
-- Staging shows October's run with #100 (the hopper) and #115 (no early-version line).
-- Merged: #115 (no early-version line), #116 (the redraw budget), #117 (this plan's records), #118 and #119 (step 2A), #100 (the hopper) and #120 (step 2A's ticks).
-- Open: #121, the launch run (step 2C), which supersedes #88 (closed 2026-11-16).
+**Status (2026-11-20):**
+- Production serves the "Coming soon." stub. `main` holds October's run on the new method since the launch run merged (#121, 7444ee8).
+- Staging shows October's run with #100 (the hopper) and #115 (no early-version line), from the preview branch.
+- Merged: #115 (no early-version line), #116 (the redraw budget), #117 (this plan's records), #118 and #119 (step 2A), #100 (the hopper), #120 (step 2A's ticks) and #121 (the launch run, step 2C), which superseded #88.
+- Open: #122 (PR 5, step 2B), and November's run (step 2C), whose pull request is held until after the launch.
 
 **How to read each step:** **Who**, **Depends on** and **Done when**, as in PLAN-hopper.md. Tick each item as soon as it is done and verified. Checklists nest: a parent is ticked only when every item under it is. If an item is only partly done, leave it unticked and note what's left.
 
@@ -90,12 +90,12 @@ Until the launch:
   - [x] Gentium Book: its entry, its two known answers, and `build/names.reviewed.toml` (as on staging, `inventory_ambiguous_names`);
   - [x] Merienda's specimen left out by hand, as on staging, since its cut can't be pinned (step 2A; noted under Milestone 2 step 5);
   - [x] the stopgap specimen pins (`src/tff_site/trim.sha256`, `tests/site/trimmed.sha256`), recomputed (`launch_weight_after`): 562 served, each checked against its font, the same bytes as staging's.
-- [ ] Before it merges:
+- [x] Before it merges:
   - [x] `validate --committed`;
   - [x] the site built twice, byte-identical;
   - [x] `tff-site check`;
-  - [ ] the held CI green.
-- [ ] Merged. Then November's run, started by hand at once (docs/milestone-refresh.md step 1's live run and npm check), its pull request held until after the launch.
+  - [x] the held CI green. *(All 10 checks passed on its final head, bd1dde1.)*
+- [ ] Merged. Then November's run, started by hand at once (docs/milestone-refresh.md step 1's live run and npm check), its pull request held until after the launch. *(Merged 2026-11-20 as 7444ee8. November's run, [44835160086](https://github.com/byronshock/purelyfreefonts/actions/runs/44835160086), started from it the same day. Left: its pull request, held as a draft.)*
 
 **Done when:** the launch run is on `main`, and November's run has opened its held pull request.
 
