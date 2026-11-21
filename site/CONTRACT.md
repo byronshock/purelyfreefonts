@@ -502,7 +502,7 @@ Every file in `site/js/` is a part of one module or both. The rule, which the bu
 | `score_words` | object | the words around a score for screen readers: `before` ("Score "), `after` (" of 100"), `held` (", from one kind of source"); and `tag` ("Score from one kind of source"), the tag that ends a held row's tags |
 | `r` | object | one entry per view with `available: true`, keyed by rank key, below |
 
-**`bits`**: 1 monospace (`is_monospace`), 2 variable, 4 limited accents (`latin.coverage` basic), 8 attribution required, 16 unused (it was "not redistributable" until Rule 3 of 2026-09-30), 32 has a specimen, 64 "Type your own text" available, 128 comes with Windows, 256 macOS, 512 Linux, 1024 Android (from `preinstalled_on` systems' `os`, so 512 is any Linux system, though the row names each system: `comes_with_up_to_three`; a system with `os` `app`, an application's own bundle such as LibreOffice's, sets none; `pulled_in_by` doesn't count), 2048 new (flag `too_new`), 4096 pulled in by a package (`pulled_in_by` is not empty; no filter hides by it), 8192 a Nerd Font build (`links.nerd` is not null; "Nerd Font available" keeps only these, site ruling 2026-09-29). Category Monospace is exactly the fonts with bit 1.
+**`bits`**: 1 monospace (`is_monospace`), 2 variable, 4 limited accents (`latin.coverage` basic), 8 attribution required, 16 unused (it was "not redistributable" until Rule 3 of 2026-09-30), 32 has a specimen, 64 "Type your own text" available, 128 comes with Windows, 256 macOS, 512 Linux, 1024 Android (from `preinstalled_on` systems' `os`, so 512 is any Linux system, though the row's tag names the systems, up to three or else two and a count, and the details every one (section 3): `comes_with_up_to_three`; a system with `os` `app`, an application's own bundle such as LibreOffice's, sets none; `pulled_in_by` doesn't count), 2048 new (flag `too_new`), 4096 pulled in by a package (`pulled_in_by` is not empty; no filter hides by it), 8192 a Nerd Font build (`links.nerd` is not null; "Nerd Font available" keeps only these, site ruling 2026-09-29). Category Monospace is exactly the fonts with bit 1.
 
 **`r.<rank key>`:**
 
@@ -527,7 +527,7 @@ Every file in `site/js/` is a part of one module or both. The rule, which the bu
 | `run_date` | `run.date` |
 | `views` | the catalog's `views` in `config/site.toml`'s order, with each view's `label` and `measures` from it (section 1, `view_labels_short`), and `available: false` for a view it retires (Overall, `overall_retired`) |
 | `bands`, `sources`, `license_classes`, `nerd` | as in the catalog |
-| `systems` | the catalog's, best-known first in `tff_site.data.SYSTEM_ORDER` (`data.ordered_systems`; `comes_with_up_to_three`): the order in which the details' "Comes with" names every system that ships a font, as the row's tag does (section 3) |
+| `systems` | the catalog's, best-known first in `tff_site.data.SYSTEM_ORDER` (`data.ordered_systems`; `comes_with_up_to_three`): the order in which the details' "Comes with" names every system that ships a font, and the row's tag the first of them, up to three (section 3) |
 | `state_labels` | `{observed, censored, not_covered, too_new}` → label (`censored` → "below the floor") |
 | `why_labels` | `{no_deliberate_evidence, no_evidence, too_new}` → label |
 | `report` | `{issue_url, email}`: `https://github.com/byronshock/purelyfreefonts/issues/new?template=license.yml`, to which `Details` appends `&font_id=<id>&data_date=<run_date>`, and the fallback address for a `mailto:` link |
