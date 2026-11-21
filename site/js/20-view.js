@@ -83,27 +83,42 @@ const View = (() => {
     return kept;
   };
 
+  // Whether one font's `keys` (the search keys of its names, family first, joined by "|")
+  // hold `query`, a search key. A "|" in the query would match across two names; test each
+  // name on its own then.
+  const holds = (keys, query) =>
+    query.includes('|') ? keys.split('|').some((key) => key.includes(query)) : keys.includes(query);
+
+  // The search key of a font's own name: its keys up to the first "|".
+  const ownKey = (keys) => {
+    const bar = keys.indexOf('|');
+    return bar < 0 ? keys : keys.slice(0, bar);
+  };
+
+  // True when the search `q` (as typed) finds a listed font in some view, whatever the
+  // filters: false only for a search that names no font of the list, which Main then says in
+  // the owner's words (site rulings no_match_search, 2026-10-05, and
+  // why_not_listed_conversation, 2026-11-21). A search of spaces, hyphens or underscores only
+  // finds every font.
+  const finds = (q, index) => {
+    const query = Keys.searchKey(q);
+    return !query || index.keys.some((keys) => holds(keys, query));
+  };
+
   // The M2 filters and the search, as one test per font index. The index's `cat` is the site
   // category, so "monospace" holds every monospaced font (owner ruling of 2026-09-30).
-  const matcher = (state, index) => {
+  const matcher = (state, index, query) => {
     const { bits, cat, cats, keys } = index;
     const catIndex = state.cat ? cats.indexOf(state.cat) : -1;
     let hideMask = 0;
     for (const item of state.hide) hideMask |= HIDE_BITS[item] || 0;
-    const query = state.q ? Keys.searchKey(state.q) : '';
-    // A "|" in the query would match across two names; test each name on its own then.
-    const perName = query.includes('|');
     return (i) => {
       const b = bits[i];
       if (state.cat && cat[i] !== catIndex) return false;
       if (state.var && !(b & BIT.variable)) return false;
       if (state.nerd && !(b & BIT.nerd)) return false;
       if (b & hideMask) return false;
-      if (query) {
-        if (perName) return keys[i].split('|').some((key) => key.includes(query));
-        return keys[i].includes(query);
-      }
-      return true;
+      return !query || holds(keys[i], query);
     };
   };
 
@@ -135,7 +150,8 @@ const View = (() => {
     for (const i of index.by_name) if (u[i] === UNRANKED) sequence.push(i);
 
     // 2. The filters and the search.
-    const test = matcher(state, index);
+    const query = state.q ? Keys.searchKey(state.q) : '';
+    const test = matcher(state, index, query);
     let order = sequence.filter(test);
 
     // 3 and 6. External filters: those with affectsNumbering first, then the others. With
@@ -165,6 +181,18 @@ const View = (() => {
     }
     if (state.sort.endsWith('-desc')) order = order.slice().reverse();
 
+    // 7b. With a search on, the fonts whose own name holds it come first, then those found
+    // only through another name (a Nerd Font build, an old name), each part in the order
+    // above, in every sort: so "least popular" reverses each part, not the whole list (owner's
+    // site rulings search_name_first, 2026-10-05, and search_name_first_every_sort,
+    // 2026-11-21, which amends sort_header's true reverse for a search).
+    if (query) {
+      const own = [];
+      const other = [];
+      for (const i of order) (holds(ownKey(index.keys[i]), query) ? own : other).push(i);
+      order = own.concat(other);
+    }
+
     // 8. The result. Notes come from every filter, for every row shown.
     const labels = order.map(labelOf);
     const scores = order.map((i) => s[i]);
@@ -183,5 +211,5 @@ const View = (() => {
     return { order, labels, scores, held, words, dimmed, notes, shown: order.length, total, note };
   };
 
-  return Object.freeze({ compute, BIT, NOT_RANKED });
+  return Object.freeze({ compute, finds, BIT, NOT_RANKED });
 })();
