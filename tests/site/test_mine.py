@@ -998,7 +998,7 @@ def test_the_fonts_a_list_has_leave_every_view(
 
 
 def test_clear_filters_sets_the_show_menu_back_and_keeps_the_list(
-    guarded_context: Any, doc: dict[str, Any], table: owned.Table, first: str
+    guarded_context: Any, doc: dict[str, Any], table: owned.Table, first: str, families: list[str]
 ) -> None:
     guarded, page = open_list(guarded_context)
     before = shown(page)
@@ -1019,14 +1019,24 @@ def test_clear_filters_sets_the_show_menu_back_and_keeps_the_list(
     assert page.input_value("#mine-show") == "missing"
     assert_left_out(page, before, have, "missing")
     assert status(page).replace("\u00a0", "") == text_of(page, "#count")
-    # The no-results text names the menu, and its own Clear filters does the same.
+    # The no-results text names the menu, and its own Clear filters does the same. The search
+    # finds a listed font, though none the list has: a search that finds no listed font at all
+    # says so instead (no_match_search, why_not_listed_conversation; test_list.py).
     show(page, "only")
-    changed(page, lambda: page.fill("#f-q", "zzqx no such font"))
+    held = [
+        keys.search_key(name)
+        for font in doc["fonts"]
+        if font["id"] in have
+        for name in (font["family"], *(alias["name"] for alias in font["aliases"]))
+    ]
+    query = next(f for f in families if not any(keys.search_key(f) in k for k in held))
+    changed(page, lambda: page.fill("#f-q", query))
     page.wait_for_selector("#no-results:not([hidden])")
     assert text_of(page, "#no-results-text") == (
         "No fonts match these filters together: Show: Only fonts you have and Search fonts: "
-        "\u201czzqx no such font\u201d. Loosen one of them, or clear the filters."
+        f"\u201c{query}\u201d. Loosen one of them, or clear the filters."
     )
+    assert page.is_hidden("#no-results-why")
     changed(page, lambda: page.click("#no-results-clear"))
     assert page.input_value("#mine-show") == "missing"
     assert page.input_value("#f-q") == ""
@@ -1121,11 +1131,20 @@ def test_a_list_that_has_none_of_the_fonts_counts_as_no_filter_until_it_leaves_s
     assert text_of(page, "#f-toggle") == "Filters"
     changed(page, lambda: page.fill("#f-q", "zzqx no such font"))
     page.wait_for_selector("#no-results:not([hidden])")
-    assert text_of(page, "#no-results-text") == (
-        "No fonts match this filter: Search fonts: \u201czzqx no such font\u201d. Loosen it, or "
-        "clear the filters."
+    # A search that names no listed font says so in the owner's words, which name no filter
+    # (why_not_listed_conversation, test_list.py); filters that empty the view are named, and
+    # the menu is not among them.
+    assert (
+        text_of(page, "#no-results-text") == "No listed font matches \u201czzqx no such font\u201d."
     )
     changed(page, lambda: page.fill("#f-q", ""))
+    changed(page, lambda: page.select_option("#f-rank", "coding"))
+    changed(page, lambda: page.check("#f-cat-serif"))  # Coding holds monospaced fonts only
+    assert text_of(page, "#no-results-text") == (
+        "No fonts match this filter: Category: Serif. Loosen it, or clear the filters."
+    )
+    changed(page, lambda: page.select_option("#f-rank", data.DEFAULT_VIEW))
+    changed(page, lambda: page.check("#f-cat-all"))
     show(page, "only")
     assert shown(page) == []
     assert text_of(page, "#f-toggle") == "Filters (1)"

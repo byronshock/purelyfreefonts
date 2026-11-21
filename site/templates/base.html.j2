@@ -58,9 +58,14 @@
 {# The Blog link appears once a post is published (M2 step 7b: site.blog). #}
 {% set blog_link = [(site.blog.url, "Blog")] if site.blog else [] %}
 {# "How it works" leads to "How we measure popularity" (owner's site ruling of 2026-10-05, method_page_name). #}
-{% for href, label in [("/", "Fonts"), ("/methodology/", "How it works")] + blog_link + [("/about/", "About"), ("/privacy/", "Privacy")] %}
+{# Privacy is in the footer (owner's site ruling of 2026-11-21, tip_jar_privacy_to_footer). #}
+{% for href, label in [("/", "Fonts"), ("/methodology/", "How it works")] + blog_link + [("/about/", "About")] %}
 <li><a href="{{ href }}"{% if page.path == href %} aria-current="page"{% endif %}>{{ label }}</a></li>
 {% endfor %}
+{# "Tip Jar" ends the nav (owner's site rulings of 2026-10-05, tip_jar, and 2026-11-21, tip_jar_privacy_to_footer; ops/DONATIONS.md step 11): one plain link to Stripe's hosted page, no Stripe script, no cookie. A tip, never a donation. Its li keeps id="tip", so "#tip a" finds it. #}
+{% if site.tip_url %}
+<li id="tip"><a href="{{ site.tip_url }}">Tip Jar</a></li>
+{% endif %}
 </ul>
 </nav>
 {% endblock %}
@@ -75,15 +80,10 @@
 <p>Something wrong or missing? <a href="{{ site.feedback.issues_url }}">Report it on GitHub</a>, or email <a href="{{ site.feedback.mailto }}">{{ site.feedback.email }}</a>.</p>
 {% endblock %}
 </div>
-{# ops/DONATIONS.md step 11: one plain link to Stripe's hosted page; no Stripe script, no cookie. A tip, never a donation. #}
-{% block tip_link %}
-{% if site.tip_url %}
-<p class="tip" id="tip">Find the list useful? <a href="{{ site.tip_url }}">Leave a tip ($5 suggested)</a> on Stripe's payment page.</p>
-{% endif %}
-{% endblock %}
 {# The privacy line, on every page (owner's site ruling of 2026-10-07, privacy_line_in_footer); the Privacy page says how to check. #}
 <p class="footer-privacy">No cookies, no tracking, and the page loads only its own files. <a href="/privacy/#check-for-yourself">Check the Network tab</a>.</p>
-<p class="footer-meta">Data from {{ build.run_date }}. <a href="{{ site.repo_url }}">Source code on GitHub</a>.</p>
+{# The last line: the data date, the Privacy page, which left the nav (tip_jar_privacy_to_footer), and the source. #}
+<p class="footer-meta">Data from {{ build.run_date }}. <a href="/privacy/"{% if page.path == "/privacy/" %} aria-current="page"{% endif %}>Privacy</a>. <a href="{{ site.repo_url }}">Source code on GitHub</a>.</p>
 {% endblock %}
 </footer>
 </body>

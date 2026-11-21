@@ -6,11 +6,11 @@ This is the working checklist for Milestone 2's soft launch ([docs/milestone-2.m
 - production deploys from GitHub Actions, set up first (`deploys_actions_first`);
 - usability round 1 comes after the launch (`usability_round_1_after_launch`).
 
-**Status (2026-11-20):**
+**Status (2026-11-21):**
 - Production serves the "Coming soon." stub. `main` holds October's run on the new method since the launch run merged (#121, 7444ee8).
 - Staging shows October's run with #100 (the hopper) and #115 (no early-version line), from the preview branch.
-- Merged: #115 (no early-version line), #116 (the redraw budget), #117 (this plan's records), #118 and #119 (step 2A), #100 (the hopper), #120 (step 2A's ticks) and #121 (the launch run, step 2C), which superseded #88.
-- Open: #122 (PR 5, step 2B), and November's run (step 2C), whose pull request is held until after the launch.
+- Merged: #115 (no early-version line), #116 (the redraw budget), #117 (this plan's records), #118 and #119 (step 2A), #100 (the hopper), #120 (step 2A's ticks), #121 (the launch run, step 2C), which superseded #88, #122 (PR 5, step 2B) and #124 (step 2D's Caddy docs).
+- Open: step 2D's pull requests; and November's run (step 2C), which failed at `validate` on two alias rows (#123) and is replayed once #125 merges, its pull request held until after the launch.
 
 **How to read each step:** **Who**, **Depends on** and **Done when**, as in PLAN-hopper.md. Tick each item as soon as it is done and verified. Checklists nest: a parent is ticked only when every item under it is. If an item is only partly done, leave it unticked and note what's left.
 
@@ -101,18 +101,19 @@ Until the launch:
 
 #### 2D. Site-only changes
 **Who:** Claude; the owner rules where noted. **Depends on:** the launch run, so CI tests them on the launch data.
-- [ ] **Priority 1's wording** (PLAN-REVIEWERS-1 step 8b):
-  - [ ] About's "with no use restrictions";
+*The owner's answers of 2026-11-21* (`data/reviews/site/2026-11-21.toml`; AUTHORITY.md **Soft launch**), each Claude's recommendation: the nav is Fonts, How it works, About, Tip Jar, with Privacy in the footer (`tip_jar_privacy_to_footer`); "Comes with" names up to three systems, best-known first (`comes_with_up_to_three`, Q4's loose ends); About's note is Draft A, and the empty-search message links to it (`why_not_listed_conversation`); name matches come first in every sort (`search_name_first_every_sort`).
+- [ ] **Priority 1's wording** (PLAN-REVIEWERS-1 step 8b): *(2026-11-21: About's item done; left, the two methodology items, #126's.)*
+  - [x] About's "with no use restrictions"; *(2026-11-21: the second paragraph of the note's Draft A, `why_not_listed_conversation`; the issue forms' license rule says it too.)*
   - [ ] the methodology text without its "(owner ruling of …)" asides;
   - [ ] the sentence on where the measure is chosen.
 - [ ] **"Comes with" names the systems** (`comes_with_names_systems`), after single-select questions on Q4's two loose ends.
-- [ ] **Step 5's first part:**
-  - [ ] the Tip Jar link at the end of the header nav, and the footer's tip link removed. The one-row header is re-measured, with a question to the owner on the phone nav at 320 px;
-  - [ ] "No listed font matches '…'" when search alone finds nothing;
-  - [ ] name matches first in search (`search_name_first`);
-  - [ ] About's note rewritten to end with the tip pitch, its words OK'd by the owner.
-- [ ] **The docs:**
-  - [ ] ops/DONATIONS.md step 11, for the Tip Jar;
+- [x] **Step 5's first part:**
+  - [x] the Tip Jar link at the end of the header nav, and the footer's tip link removed. The one-row header is re-measured, with a question to the owner on the phone nav at 320 px; *(2026-11-21: the owner moved Privacy to the footer's last line, `tip_jar_privacy_to_footer`, so the nav is Fonts, How it works, About, Tip Jar, at most 277 px. Re-measured in Chromium and Firefox: one line at 320 px, one row from 320 to 1280 px, and 52rem kept. The first-screen and privacy tests pass in both.)*
+  - [x] "No listed font matches “…”." when search alone finds nothing, with the link to About's note (`why_not_listed_conversation`'s `no_match`);
+  - [x] name matches first in search (`search_name_first`), in every sort (`search_name_first_every_sort`);
+  - [x] About's note rewritten to end with the tip pitch, its words OK'd by the owner. *(2026-11-21: Draft A, word for word, chosen by the owner that day (`why_not_listed_conversation`). "The four rules above" links to the page's rules, the address is a mail link, and the last paragraph's "leave a tip" goes to the tip link, shown whenever the nav's Tip Jar is. The Privacy page's Tips section names both links.)*
+- [x] **The docs:**
+  - [x] ops/DONATIONS.md step 11, for the Tip Jar; *(Rewritten with nested items on 2026-11-21, and both items ticked that day: the Tip Jar, then About's pitch with the About note. Its Facts and Verification lines name both links.)*
   - [x] ops/deploy/README.md's item 6 and ops/SERVER.md's header-phase lines, which still word Caddy's phase B as pending. *(Reworded as done on 2026-09-30, #39, with docs/milestone-1-handoff.md's deploy row and docs/milestone-2.md step 14's "Depends on". The guards in deploy.yml and ops/deploy.sh stay.)*
 
 **Done when:** each is merged.

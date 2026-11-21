@@ -82,9 +82,9 @@ Each font row is 161 px tall.
 - **Branch:** from `origin/main` after the lead's #63, the mixed-case wordmark, which makes the header about 8 px taller on phones and 13 px on desktop. Measure with its header.
 - **Conflicts:** expected with the parked `claude/projects-default` in the list templates; the lead rebases it (`mobile_first_screen_now`).
 
-- [ ] **Off the front page, which stops after the lead:**
-  - [ ] the note "Why isn't my favorite free font here?" moves to the About page as it stands, at a stable anchor such as `/about/#why-not-listed` (`why_not_listed_to_about`). Its rewrite as a conversation ending with the tip pitch, and the empty-search message linking to it, stay in PLAN-REVIEWERS-1.md step 5.
-  - [ ] the privacy line, "No cookies, no tracking…", goes into the footer on every page, linking to the Privacy page (`privacy_line_in_footer`). Keep the Network-tab explanation on the Privacy page.
+- [x] **Off the front page, which stops after the lead:** *(Checked on 2026-11-21 in a build of the launch data, with PLAN-launch.md step 2D: above the list the front page has only the headline and the lead; the note ends `/about/` at `#why-not-listed`, rewritten since as the owner's Draft A (`why_not_listed_conversation`); and every page's footer has the privacy line, `p.footer-privacy`.)*
+  - [x] the note "Why isn't my favorite free font here?" moves to the About page as it stands, at a stable anchor such as `/about/#why-not-listed` (`why_not_listed_to_about`). Its rewrite as a conversation ending with the tip pitch, and the empty-search message linking to it, stay in PLAN-REVIEWERS-1.md step 5.
+  - [x] the privacy line, "No cookies, no tracking…", goes into the footer on every page, linking to the Privacy page (`privacy_line_in_footer`). Keep the Network-tab explanation on the Privacy page.
 - [ ] **On phones only** (below the 40rem breakpoint; wide screens unchanged):
   - [ ] the Rank selector's description (`#f-rank-measures`) is left out visually. It stays the select's accessible description.
   - [ ] the "Fonts" heading stays in the page for screen readers and headings navigation. The count, "Showing 500 of 500 fonts", sits in the sort row.

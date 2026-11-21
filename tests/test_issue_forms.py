@@ -4,7 +4,8 @@ Offline: checks the rules GitHub
 applies to issue forms that we rely on, plus our own: each form applies its
 own label, the license form keeps the field ids the details panel prefills
 (read from site/CONTRACT.md section 8, not restated here), the site's report
-link names a form that exists, and the chooser has blank issues off and an
+link names a form that exists, the license and missing-font forms state Rule 1
+as "with no use restrictions", and the chooser has blank issues off and an
 http(s) contact link naming the admin@ address (GitHub drops mailto: links).
 """
 
@@ -106,6 +107,16 @@ def test_form_is_valid_and_applies_its_label(name: str, label: str) -> None:
 def test_form_names_are_unique() -> None:
     names = [load(name)["name"] for name in FORMS]
     assert len(set(names)) == len(names)
+
+
+@pytest.mark.parametrize("name", ["license.yml", "missing-font.yml"])
+def test_the_license_rule_says_no_use_restrictions(name: str) -> None:
+    """Rule 1 in AUTHORITY.md's words, as About says it (site ruling of 2026-10-05,
+    note_no_use_restrictions; PLAN-REVIEWERS-1.md step 8b)."""
+    (intro,) = [el for el in load(name)["body"] if el["type"] == "markdown"]
+    text = intro["attributes"]["value"]
+    assert "any personal or commercial project, with no use restrictions." in text
+    assert "no limits on" not in text
 
 
 def test_details_report_link_opens_the_license_form() -> None:

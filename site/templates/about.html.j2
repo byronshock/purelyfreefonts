@@ -3,11 +3,17 @@
   by tff_site.pages (raw HTML off). Context: every page's, plus `heading` and `content`. No
   script: the page needs none. Styles: site/css/40-pages.css.
 
-  The page closes with "Why isn't my favorite free font here?", the owner's note word for word
-  (site rulings of 2026-09-29, why_not_listed), which moved here from the front page on
-  2026-10-07 (why_not_listed_to_about). It lives in this template rather than about.md for its
-  stable anchor, #why-not-listed, which the front page's empty-search message is to link to,
-  and its mailto link to site.feedback.email.
+  The page closes with the note "Why isn't my favorite free font here?" (site ruling of
+  2026-09-29, why_not_listed), which moved here from the front page on 2026-10-07
+  (why_not_listed_to_about). Its words are the owner's Draft A of 2026-11-21, four paragraphs
+  word for word (why_not_listed_conversation, data/reviews/site/2026-11-21.toml). It lives in
+  this template rather than about.md for its stable anchor, #why-not-listed, which the front
+  page's empty-search message links to, and for its links: "The four rules above" goes to the
+  rules, #which-fonts-are-listed, the id tff_site.pages gives about.md's "## Which fonts are
+  listed"; the address is a mailto link to site.feedback.email; and the last paragraph is the
+  tip pitch (funding_pitch, 2026-09-30; tip_jar, 2026-10-05), whose "leave a tip" is one plain
+  link to site.tip_url, like the nav's Tip Jar. That paragraph shows only when site.tip_url is
+  set, as the nav's link does.
 -#}
 {% extends "base.html.j2" %}
 {% block scripts %}{% endblock %}
@@ -16,6 +22,11 @@
 <h1>{{ heading }}</h1>
 {{ content }}
 <h2 id="why-not-listed">Why isn't my favorite free font here?</h2>
-<p>Not every font that's free to download is free to use in every way, and not every license fits this project. Some fonts are free only for personal projects or as a trial, or only if you never change or embed them. Others come with terms that can reach into the documents or products you make with them. This list includes only fonts whose licenses let anyone use them in any project, personal or commercial, with no limits on how they're used. Examples include the SIL Open Font License, Apache, MIT and public-domain dedications. Some of these fonts ask you to credit the designer, and we mark those. We read each font's own license text rather than trusting a label. Any font with a qualifying license is eligible to be listed. If you think one belongs here, email <a href="mailto:{{ site.feedback.email }}">{{ site.feedback.email }}</a> and ask us to consider it.</p>
+<p>Usually it's the license. Free to download isn't always free to use. Some fonts are free only for personal projects or as a trial, or only if you never change or embed them. Others come with terms that can reach into the documents or products you make with them.</p>
+<p>We list only fonts whose licenses let anyone use them in any project, personal or commercial, with no use restrictions. We read each font's own license text rather than trusting a label. <a href="#which-fonts-are-listed">The four rules above</a> give the details.</p>
+<p>Sometimes the license is fine, but the font is used less than the ones ranked here. Those fonts will be listed later, A–Z. If you think one belongs here now, email <a href="mailto:{{ site.feedback.email }}">{{ site.feedback.email }}</a> and ask us to consider it.</p>
+{% if site.tip_url %}
+<p>Checking every license takes time. If the list has helped you, please <a href="{{ site.tip_url }}">leave a tip</a>.</p>
+{% endif %}
 </article>
 {% endblock %}

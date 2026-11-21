@@ -124,18 +124,27 @@ const Main = (() => {
   const listed = (items) =>
     items.length < 2 ? items.join('') : `${items.slice(0, -1).join('; ')} and ${items.at(-1)}`;
 
-  // The no-results text: it names the filters that are on, so the visitor knows what to
-  // loosen (Milestone 2 step 3).
-  const noResultsText = (state) => {
-    const names = FiltersUI.describe(state);
-    if (!names.length) return 'No fonts to show.';
-    if (names.length === 1) {
-      return `No fonts match this filter: ${names[0]}. Loosen it, or clear the filters.`;
+  // The no-results text, and whether the link to About's note follows it. A search that finds
+  // no listed font, in any view, says so in the owner's words, the search trimmed inside the
+  // quotes, with the link, whatever else is on (owner's site rulings no_match_search,
+  // 2026-10-05, why_not_listed_to_about, 2026-10-07, and why_not_listed_conversation's
+  // no_match, 2026-11-21). The text goes in as text, never markup (Render, Core.text).
+  // Otherwise the text names the filters that are on, so the visitor knows what to loosen
+  // (Milestone 2 step 3).
+  const noResults = (state) => {
+    if (!View.finds(state.q, index)) {
+      return { message: `No listed font matches “${state.q.trim()}”.`, why: true };
     }
-    return (
+    const names = FiltersUI.describe(state);
+    if (!names.length) return { message: 'No fonts to show.', why: false };
+    if (names.length === 1) {
+      const message = `No fonts match this filter: ${names[0]}. Loosen it, or clear the filters.`;
+      return { message, why: false };
+    }
+    const message =
       `No fonts match these filters together: ${listed(names)}. ` +
-      'Loosen one of them, or clear the filters.'
-    );
+      'Loosen one of them, or clear the filters.';
+    return { message, why: false };
   };
 
   // Tell the 'change' listeners (Ext's, for Milestone 3) what the list now shows. An Ext
@@ -171,8 +180,8 @@ const Main = (() => {
     if (!index) return null;
     const state = State.get();
     result = View.compute(state, index, filters());
-    const message = result.shown === 0 ? noResultsText(state) : '';
-    const line = Render.apply(result, { message });
+    const { message, why } = result.shown === 0 ? noResults(state) : { message: '', why: false };
+    const line = Render.apply(result, { message, why });
     const body = message || (note ? `${line}. ${note}.` : line);
     const said = lead ? `${lead} ${body}` : body;
     if (announce === 'typing') Announce.typing(said);

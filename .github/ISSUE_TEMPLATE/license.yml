@@ -12,7 +12,7 @@ body:
       value: |
         **Reports are public:** anyone can read them, so please leave out anything private. No GitHub account? Email admin@purelyfreefonts.com instead.
 
-        A font is listed only if its license lets anyone use it in any personal or commercial project, with no limits on use. We check each report against the license text.
+        A font is listed only if its license lets anyone use it in any personal or commercial project, with no use restrictions. We check each report against the license text.
   - type: input
     id: font_id
     attributes:

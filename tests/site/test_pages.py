@@ -718,6 +718,11 @@ def test_privacy_page_mentions_tips_only_with_a_tip_link(tmp_path, monkeypatch):
     with_tip = parse(read(tmp_path / "tip", "privacy/index.html"))
     assert [hid for level, hid, _ in with_tip.headings if level == 2][-1] == "tips"
     assert "Stripe" in with_tip.plain
+    # Both tip links: the nav's Tip Jar and the pitch that ends About's note (check_about_note).
+    assert (
+        "The Tip Jar link at the top of each page, and the tip link that ends the About page's"
+        " note, go to Stripe's payment page." in with_tip.plain
+    )
     assert (
         {"tip", "tips"}
         <= set(with_tip.ids)
@@ -755,42 +760,81 @@ def test_about_page_states_the_rules(built):
 
 SITE_RULINGS = {
     day: tomllib.loads((ROOT / "data" / "reviews" / "site" / f"{day}.toml").read_text("utf-8"))
-    for day in ("2026-09-29", "2026-09-30", "2026-10-02")
+    for day in ("2026-11-21",)
 }
-# The note's sentence on credit and sharing, before and after 2026-09-30 (front_page_lead_sharing).
-NOTE_0929 = "Some of these fonts ask you to credit the designer, or don't let you pass the font files on, and we mark those."
-NOTE_0930 = "Some of these fonts ask you to credit the designer, and we mark those."
+# The note "Why isn't my favorite free font here?": the owner's Draft A of 2026-11-21, its
+# heading and four paragraphs word for word (why_not_listed_conversation).
+NOTE = SITE_RULINGS["2026-11-21"]["why_not_listed_conversation"]
 EMAIL_ADDRESS = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
 
 
-def test_the_about_page_closes_with_the_owners_note(site_dir, built):
-    """ "Why isn't my favorite free font here?", the owner's note, word for word (site rulings of
-    2026-09-29, why_not_listed), as later rulings changed it: its sentence on credit and sharing
-    (2026-09-30, front_page_lead_sharing) and its address (2026-10-02, contact_address). It
-    moved from the front page to the end of the About page as it stood (2026-10-07,
-    why_not_listed_to_about), at the stable anchor #why-not-listed, which the front page's
-    empty-search message is to link to."""
-    ruling = SITE_RULINGS["2026-09-29"]["why_not_listed"]
-    change = SITE_RULINGS["2026-09-30"]["front_page_lead_sharing"]["ruling"]
-    contact = SITE_RULINGS["2026-10-02"]["contact_address"]
-    assert NOTE_0929 in ruling["text"]
-    assert NOTE_0930 in change
-    (old_address,) = set(EMAIL_ADDRESS.findall(ruling["text"]))
-    address = contact["value"]
-    assert old_address in contact["ruling"]  # the address the 2026-10-02 ruling replaces
-    assert address == data.FEEDBACK_EMAIL != old_address
-    text = ruling["text"].replace(NOTE_0929, NOTE_0930).replace(old_address, address)
-    page = built["about/index.html"]
-    assert page.headings[-1] == (2, "why-not-listed", ruling["heading"])
-    html = read(site_dir, "about/index.html")
-    note = re.search(r'<h2 id="why-not-listed">[^<]*</h2>\n<p>(.*?)</p>\n</article>', html, re.S)
+def inline_text(html: str) -> str:
+    """The text of inline markup as it reads: tags dropped, white space squashed."""
+    return " ".join("".join(parse(html).text).split())
+
+
+def check_about_note(html: str, tip_url: str | None) -> None:
+    """The note closes /about/ (why_not_listed_to_about) under its heading, at the stable
+    anchor #why-not-listed, which the front page's empty-search message links to: one <p> for
+    each of the ruling's paragraphs, word for word, the last, the tip pitch, only with a tip
+    link (as the nav's Tip Jar). Its links, in order, each a plain <a href>: "The four rules
+    above" to the page's rules, the address as a mailto link to site.feedback.email, and the
+    pitch's "leave a tip" to the tip link (funding_pitch, tip_jar)."""
+    page = parse(html)
+    assert page.headings[-1] == (2, "why-not-listed", NOTE["heading"])
+    note = re.search(r'<h2 id="why-not-listed">[^<]*</h2>\n(.*?)</article>', html, re.S)
     assert note, "the note is the page's last part"
-    assert parse(note[1]).plain == text
-    assert re.findall(r'<a href="([^"]+)">', note[1]) == [f"mailto:{address}"]
-    # The front page no longer carries it, on any screen.
+    paragraphs = re.findall(r"<p>(.*?)</p>\n", note[1], re.S)
+    assert "".join(f"<p>{p}</p>\n" for p in paragraphs) == note[1], "the note is only its <p>s"
+    expected = NOTE["paragraphs"] if tip_url else NOTE["paragraphs"][:3]
+    assert len(NOTE["paragraphs"]) == 4
+    assert [inline_text(p) for p in paragraphs] == expected
+    # "The four rules above": the id tff_site.pages gives about.md's "## Which fonts are
+    # listed", whose four <h3>s are the rules.
+    (rules,) = [i for level, i, text in page.headings if text == "Which fonts are listed"]
+    assert rules in page.ids
+    levels = [level for level, _, _ in page.headings]
+    start = page.headings.index((2, rules, "Which fonts are listed")) + 1
+    end = levels.index(2, start)
+    assert levels[start:end] == [3, 3, 3, 3]
+    (address,) = set(EMAIL_ADDRESS.findall(" ".join(NOTE["paragraphs"])))
+    assert address == data.FEEDBACK_EMAIL  # build.site_context()'s site.feedback.email
+    links = [{"href": f"#{rules}"}, {"href": f"mailto:{address}"}]
+    links += [{"href": tip_url}] if tip_url else []
+    assert parse(note[1]).attrs("a") == links
+    linked = [inline_text(a) for a in re.findall(r"<a [^>]*>(.*?)</a>", note[1])]
+    assert linked == ["The four rules above", address, "leave a tip"][: len(links)]
+    stripe = [a for a in page.attrs("a") if "stripe" in (a.get("href") or "")]
+    assert stripe == ([{"href": tip_url}] * 2 if tip_url else [])  # the nav's Tip Jar and this
+
+
+def test_the_about_page_closes_with_the_owners_note(site_dir):
+    """ "Why isn't my favorite free font here?", the owner's note: Draft A of 2026-11-21, word
+    for word (why_not_listed_conversation), which rewrote the note of 2026-09-29
+    (why_not_listed) as a conversation that ends with the tip pitch (funding_pitch, tip_jar).
+    It moved from the front page to the end of the About page on 2026-10-07
+    (why_not_listed_to_about). This build has the tip link when build.TIP_URL is set (M2 step
+    8); without it, see the next test."""
+    check_about_note(read(site_dir, "about/index.html"), build.TIP_URL)
+    # The front page no longer carries it, on any screen: only the empty-search message's link
+    # to it, hidden until a search names no listed font (no_match_search; the words of
+    # why_not_listed_conversation).
     front = read(site_dir, "index.html")
-    assert ruling["heading"].replace("'", "&#39;") not in front
-    assert ruling["heading"] not in front
+    assert NOTE["heading"].replace("'", "&#39;") not in front
+    link = f'<a id="no-results-why" href="/about/#why-not-listed" hidden>{NOTE["heading"]}</a>'
+    assert front.count(NOTE["heading"]) == 1
+    assert link in front
+
+
+def test_the_about_note_has_no_tip_pitch_without_a_tip_link(tmp_path, monkeypatch):
+    """Without a tip link (build.TIP_URL None, as before M2 step 8), the note ends with its
+    third paragraph, as the nav ends without Tip Jar, and the page links nowhere on Stripe."""
+    sample = ROOT / "tests" / "fixtures" / "catalog-site.sample.json"
+    monkeypatch.setattr(build, "TIP_URL", None)
+    build.build(sample, tmp_path / "out", commit=COMMIT, font_files=False)
+    html = read(tmp_path / "out", "about/index.html")
+    check_about_note(html, None)
+    assert "stripe" not in html.lower()
 
 
 def test_not_found_page_uses_absolute_urls_only(built):

@@ -129,6 +129,7 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
   - This replaces the wording of `front_page_lead_sharing`.
 - [x] **Q4. "Comes with Linux".** (R round 1) **Settled by priority 1** (step 1a): the row names the systems. Open Sans carries the tag only because CachyOS and EndeavourOS ship it.
   - **Left for step 8's pull request:** how a long list shortens (Claude proposes after two systems, with the rest in the details), and what "Hide fonts that come with: Linux" hides, which Claude proposes stays any Linux system.
+  **Answered 2026-11-21** (`comes_with_up_to_three`, Claude's recommendation): up to three names, or else two and a count of the rest, best-known first; the details list every system; the Linux filter still hides a font any Linux system ships.
 - [x] **Q5. A search that finds nothing.** (C item 3; R design 4)
   **Answered 2026-10-05:** (a), as recommended (`no_match_search`).
   - **(a) Recommended:**
@@ -158,7 +159,7 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
   - Claude drafts the options; the owner picks.
 - [x] **Q7. The tip wording,** in the note and in the footer: keep "Leave a tip ($5 suggested)" (2026-09-26), or wording built on "coffee".
   **Answered 2026-10-05** (`tip_jar`):
-  - A "Tip Jar" link ends the header nav: Fonts, How it works, About, Privacy, Tip Jar.
+  - A "Tip Jar" link ends the header nav: Fonts, How it works, About, Privacy, Tip Jar. *Changed on 2026-11-21* (`tip_jar_privacy_to_footer`): Fonts, How it works, About, Tip Jar, with Privacy in the footer.
   - The note's pitch asks the reader to leave a tip, with no amount and no coffee wording; the Stripe page is prefilled with $5.
   - The footer's tip link is removed.
   - The phone nav then needs two lines or tighter spacing.
@@ -246,16 +247,16 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
 
 ### Step 5: When a font isn't here
 **Who:** Claude; the owner approves the wording. **Depends on:** Q5, Q7 and Q9 (answered); step 2 for the reasons.
-- [ ] **First part:**
-  - [ ] Move the note below the list, on wide screens and phones. The top of the front page becomes the headline, the lead, the privacy line, then the list. *(Replaced on 2026-10-07: the note moves to the About page and the privacy line to the footer, in [PLAN-REVIEWERS-2.md](PLAN-REVIEWERS-2.md) step 2, `why_not_listed_to_about`; the rewrite below happens on the About page, and the empty-search message links there.)*
-  - [ ] When search is the only filter and finds nothing, say "No listed font matches '…'" and show the note. Other empty results keep today's text.
-  - [ ] Rewrite the note as a conversation that ends with the tip pitch, asking the reader to leave a tip with no amount (`tip_jar`), under Funding as amended.
-  - [ ] Add the "Tip Jar" link at the end of the header nav, and remove the footer's tip link.
-  - [ ] **The header stays one row** (`wordmark_breakpoint`, 2026-10-04, in #55). The wordmark is 418 px wide from 760 px up, with the nav beside it, and 278 px below. The 760 px is today's nav, about 280 px: 16 + 418 + 24 + 280 + 16 = 754.
-    - "Tip Jar" and step 4's "How it works" widen the nav by roughly 80 px. Re-measure the widest single-row width, and move the breakpoint (`@media (max-width: 47.5rem)` in `site/css/10-base.css`) and its test (`tests/site/test_shell.py::test_the_wordmark_is_418_px_wide_from_760_px_and_278_below`) to match.
-    - On phones the nav has its own line under the wordmark. At 320 px it may no longer fit on one line. Before building, ask the owner how to keep it to one line: tighter spacing, a smaller nav text, or Privacy moving to the footer. A second line would go against `wordmark_breakpoint`.
-    - Check header height at 320 px and from 640 to 1280 px, in Chromium and Firefox, so a second row is caught.
-  - [ ] Search lists name matches first, then fonts matched only through another name (`search_name_first`).
+- [x] **First part:**
+  - [x] Move the note below the list, on wide screens and phones. The top of the front page becomes the headline, the lead, the privacy line, then the list. *(Replaced on 2026-10-07: the note moves to the About page and the privacy line to the footer, in [PLAN-REVIEWERS-2.md](PLAN-REVIEWERS-2.md) step 2, `why_not_listed_to_about`; the rewrite below happens on the About page, and the empty-search message links there.)* *(Done as replaced, checked on 2026-11-21 in a build of the launch data: above the list the front page has only the headline and the lead, with no note and no privacy line (`main` holds only the `h1`, `p.lead` and `div.layout`); the note ends `/about/` at `#why-not-listed`; and every page's footer has the privacy line, `p.footer-privacy`.)*
+  - [x] When the search alone finds no listed font, in any view and whatever else is on, say "No listed font matches “…”." and link to About's note, "Why isn't my favorite free font here?" (`no_match_search`, `why_not_listed_to_about`, and `why_not_listed_conversation`'s `no_match`). Other empty results keep today's text.
+  - [x] Rewrite the note as a conversation that ends with the tip pitch, asking the reader to leave a tip with no amount (`tip_jar`), under Funding as amended. *(2026-11-21, PLAN-launch.md step 2D: the owner's Draft A, word for word, four paragraphs whose last, "Checking every license takes time. If the list has helped you, please leave a tip.", links "leave a tip" to Stripe's payment page (`why_not_listed_conversation`).)*
+  - [x] Add the "Tip Jar" link at the end of the header nav, and remove the footer's tip link. *(2026-11-21, PLAN-launch.md step 2D: `li#tip` ends the nav, and Privacy moved to the footer's last line, `tip_jar_privacy_to_footer`.)*
+  - [x] **The header stays one row** (`wordmark_breakpoint`, 2026-10-04, in #55; `wordmark_breakpoint_scrollbar`, 2026-11-03). The wordmark is 465 px wide from 832 px (52rem) up, with the nav beside it, and 300 px below. Before the Tip Jar the widest nav was 281 px: 16 + 465 + 24 + 281 + 16 = 802.
+    - "Tip Jar" alone widened the nav to about 345 px, past the 832 px breakpoint and the 288 px a 320 px phone has for it (measured 2026-11-20). Asked how to keep one row, the owner moved Privacy to the footer (`tip_jar_privacy_to_footer`, 2026-11-21). Re-measured in Chromium and Firefox on 2026-11-21, the nav (Fonts, How it works, About, Tip Jar) is at most 277 px, with "How it works" bold on its own page: 16 + 465 + 24 + 277 + 16 = 798, 815 with a 17 px scrollbar, so `@media not all and (min-width: 52rem)` in `site/css/10-base.css` and `tests/site/test_shell.py::test_the_wordmark_is_465_px_wide_from_832_px_and_300_below` stay as they are.
+    - On phones the nav has its own line under the wordmark: one line at 320, 360, 375 and 390 px (11 px to spare at 320). It sits beside the 300 px wordmark from 633 px (631 in Chromium).
+    - Header height, the same in both browsers: 101.6 px at 320, 103.1 px from 332 px to the nav's move beside the wordmark, then 63.1 px to 831 px and 84 px from 832 to 1280 px; no second row, and no sideways scroll. `test_the_header_keeps_one_row_at_every_width` checks every 4 px.
+  - [x] Search lists name matches first, then fonts matched only through another name (`search_name_first`), each part in the chosen sort (`search_name_first_every_sort`).
 - [ ] **Second part** (after step 2):
   - [ ] Reasons and alternatives, per Q5, from a file loaded on the first empty search, outside the 100 KB.
   - [ ] M2's privacy test expects exactly that one fixed, same-origin request.
@@ -354,7 +355,7 @@ Long names are limited by width and grow less: about 1 phone row in 10 grows und
 - [x] **Charter's license link** points to a web page (`practicaltypography.com/charter.html`), unlike every other font's license text. Find the license text in its download and propose a pinned URL for the owner's ruling (gate K and L3). *(Proposed 2026-11-11: X.Org's COPYING at font-bitstream-type1 1.0.4, the same words as the canonical text. The owner took it on 2026-11-12 (`charter_license_text`), with the store topped up before the launch run; the change is PLAN-launch.md step 2A's.)*
 
 #### 8b: The wording (after the lead's branch)
-- [ ] Apply the wording of Q3 and Q8. The front-page lead's new sentence (`front_page_lead_counts`) lands with the Project default. The note's "with no use restrictions" and Q8's asides don't wait for the scoring change, but they do touch the templates.
+- [ ] Apply the wording of Q3 and Q8. The front-page lead's new sentence (`front_page_lead_counts`) lands with the Project default. The note's "with no use restrictions" and Q8's asides don't wait for the scoring change, but they do touch the templates. *(2026-11-21: Q3 is done. The lead's sentence is on the front page (#78), and About's note says "with no use restrictions" in its Draft A, as do the issue forms (PLAN-launch.md step 2D). Left: Q8's asides (`method_asides_rewrite`), in the methodology pull request, #126.)*
 - [ ] "Comes with" names the systems, as settled for Q4.
 - [ ] Fix How we rank's "Choose a rank at the top of the list": the select is in the sidebar on wide screens.
 
