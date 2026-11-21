@@ -356,7 +356,7 @@ Long names are limited by width and grow less: about 1 phone row in 10 grows und
 #### 8b: The wording (after the lead's branch)
 - [ ] Apply the wording of Q3 and Q8. The front-page lead's new sentence (`front_page_lead_counts`) lands with the Project default. The note's "with no use restrictions" and Q8's asides don't wait for the scoring change, but they do touch the templates.
 - [ ] "Comes with" names the systems, as settled for Q4.
-- [ ] Fix How we rank's "Choose a rank at the top of the list": the select is in the sidebar on wide screens.
+- [x] Fix How we rank's "Choose a rank at the top of the list": the select is in the sidebar on wide screens. *(2026-11-21: "Choose a measure in the menu by the search box.")*
 
 **Done when:** CI passes, and `tff-catalog links --check` passes.
 
