@@ -696,7 +696,7 @@ ttf-blackout,arch-pkg,blackout-midnight,bundle,3,hand,2026-09-28,claude:2026-09-
 ttf-blackout,arch-pkg,blackout-sunrise,bundle,3,hand,2026-09-28,claude:2026-09-28
 ttf-blackout,arch-pkg,blackout-two-am,bundle,3,hand,2026-09-28,claude:2026-09-28
 Borges Square Pixel,font-name,borges,build,static,name_tables,2026-09-28,claude:2026-09-28
-ttf-brill,arch-pkg,brill,package,,distro,2026-09-28,claude:2026-09-28
+ttf-brill,arch-pkg,,ineligible,unlisted,hand,2026-09-28,claude:2026-11-21
 font-urw-base35,brew-cask,c059,bundle,11,hand,2026-09-28,owner:2026-09-28
 fonts-urw-base35,deb-pkg,c059,bundle,11,hand,2026-09-28,claude:2026-09-28
 gsfonts,deb-pkg,c059,bundle,11,hand,2026-09-28,claude:2026-09-28
@@ -3433,7 +3433,7 @@ tex-gyre-fonts,arch-pkg,tex-gyre-schola,bundle,9,hand,2026-09-28,claude:2026-09-
 fonts-texgyre,deb-pkg,tex-gyre-schola,bundle,9,hand,2026-09-28,claude:2026-09-28
 tex-gyre-fonts,arch-pkg,tex-gyre-termes,bundle,9,hand,2026-09-28,claude:2026-09-28
 fonts-texgyre,deb-pkg,tex-gyre-termes,bundle,9,hand,2026-09-28,claude:2026-09-28
-otf-edwin,arch-pkg,text-font-for-musical-scores,package,,distro,2026-09-28,claude:2026-09-28
+otf-edwin,arch-pkg,edwin,package,,distro,2026-09-28,claude:2026-11-21
 fonts-the-neue-black,deb-pkg,the-neue-black,package,,distro,2026-09-28,claude:2026-09-28
 fonts-the-neue-black,deb-src,the-neue-black,package,,distro,2026-09-28,claude:2026-09-28
 ttf-times-new-roman,arch-pkg,times-new-roman,package,,distro,2026-09-28,claude:2026-09-28
