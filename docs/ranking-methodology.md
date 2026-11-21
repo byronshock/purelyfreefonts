@@ -1,6 +1,6 @@
 # Ranking methodology
 
-**Status: revised 2026-10-20 for the scoring-method port** (first published 2026-09-29, Milestone 1 step 17). Two methods now run side by side: a measurement model scores the *Projects* and *Developers & apps* ranks, and the engine, the earlier method with interim desktop rules, scores the desktop views, *Coding* and *Rising*. The overall rank retired, and every view shows a new linear score. Each rank records its own method version; at the switch every rank took 2026-10-20. Revised 2026-10-23: GitHub and Nerd Fonts count toward the two-group gate while they stay out of every score (§6), and the desktop views and *Coding* took method version 2026-10-23. Catalogs built before the switch (method version 2026-09-29) followed the earlier text, which the repository's history keeps. Every hand-set number is in [`config/ranking.toml`](../config/ranking.toml); the model's fitted parameters are never published (§3). Labels such as D4, M5, T2 and q14 name the owner's decisions and rulings, which [AUTHORITY.md](../AUTHORITY.md) records with their dates. The rulings and their reasons are in [`data/reviews/`](../data/reviews/).
+**Status: revised 2026-10-20 for the scoring-method port** (first published 2026-09-29, Milestone 1 step 17). Two methods now run side by side: a measurement model scores the *Projects* and *Developers & apps* ranks, and the engine, the earlier method with interim desktop rules, scores the desktop views, *Coding* and *Rising*. The overall rank retired, and every view shows a new linear score. Each rank records its own method version; at the switch every rank took 2026-10-20. Revised 2026-10-23: GitHub and Nerd Fonts count toward the two-group gate while they stay out of every score (§6), and the desktop views and *Coding* took method version 2026-10-23. Catalogs built before the switch (method version 2026-09-29) followed the earlier text, which the repository's history keeps. Every hand-set number is in [`config/ranking.toml`](../config/ranking.toml); the model's fitted parameters are never published (§3). Labels such as D4, M5, T2 and q14 name the owner's decisions and rulings, which [AUTHORITY.md](../AUTHORITY.md) records with their dates. The rulings and their reasons are in [`data/reviews/`](../data/reviews/). Revised 2026-11-21: the parts the methodology page shows (§1, §5's two desktop views and §11) read as public text, without ruling labels or asides (`method_asides_rewrite`).
 
 ## 1. In plain words
 
@@ -12,15 +12,15 @@ The desktop ranks, *Coding* and *Rising* still use our earlier method, the engin
 
 In both methods, a source that doesn't carry a font at all (a Linux distribution with no package for it) is left out, not counted as zero. Fonts with little evidence are pulled toward the average tracked font. No font reaches the top 100 on one kind of evidence alone.
 
-The desktop rank comes in two versions, and both list the same fonts. **Installed (desktop)** counts every install. **Chosen (desktop)** leaves out the installs that Linux systems make on their own (fonts that come preinstalled, or that another program brings in), so those fonts are ranked on the installs people made themselves. No rank blends the desktop views with *Projects* any more: the overall rank retired, and the list opens on *Projects* (owner ruling of 2026-09-30).
+The desktop rank comes in two versions, and both list the same fonts. **Installed (desktop)** counts every install. **Chosen (desktop)** leaves out the installs that Linux systems make on their own (fonts that come preinstalled, or that another program brings in), so those fonts are ranked on the installs people made themselves. No rank blends the desktop views with *Projects* any more: the overall rank retired, and the list opens on *Projects*.
 
-The ranked catalog is the *Projects* top 500, plus each rank's top 100 (owner ruling of 2026-10-01, q13). Every other font that passes the license and Latin checks will be listed too, after the ranked ones, A–Z and without a rank, because past about #500 the evidence is too thin to put fonts in a useful order (owner ruling of 2026-09-29). That list comes after the site's launch (owner ruling of 2026-09-30).
+The ranked catalog is the *Projects* top 500, plus each rank's top 100. Every other font that passes the license and Latin checks will be listed too, after the ranked ones, A–Z and without a rank, because past about #500 the evidence is too thin to put fonts in a useful order. That list is still to come.
 
 **Principles:**
 
 - Filter first, then rank: an ineligible font never takes a rank or shifts one.
 - Absent is not unpopular.
-- Each raw source belongs to one survey, desktop or projects. The extra views reuse the same data.
+- Each source counts in one survey only: installs on desktop computers, or use in websites, code and apps. The other ranks reuse those sources; none adds one of its own.
 - In the engine, scores are rank-based, so a spike lifts a font to the top of one source and no further.
 - In the model, each source counts for as much as its measured noise allows, and a count that a font's other sources predict badly is flagged for review.
 
@@ -216,7 +216,7 @@ Both views use the sources below, scored by the engine. They differ only in how 
 
 In both views, affected fonts carry a tag naming the systems they come with or the packages that pull them in.
 
-Until desktop has a model of its own, the engine runs with interim rules (owner rulings of 2026-09-30). A young font's count is never scaled up to a full year. Arch's monthly samples are pooled into one. Debian counts only packages in the release's main archive. GitHub and Nerd Fonts release downloads are still collected, with no term in any score yet; they count toward the two-group gate only (owner ruling of 2026-10-23, §6).
+Until desktop has a model of its own, the engine runs with interim rules. A young font's count is never scaled up to a full year. Arch's monthly samples are pooled into one. Debian counts only packages in the release's main archive. GitHub and Nerd Fonts release downloads are still collected but add to no score yet; they count only toward the rule that no font reaches the top 100 on one kind of evidence alone.
 
 | Source | Weight | Handling |
 |---|---|---|
@@ -539,15 +539,15 @@ The monthly pull request asks the owner only to review what it flags: new aliase
 ## 11. Known biases
 
 - **Developer skew.** The desktop data comes from developers who leave telemetry on. About 59% of Homebrew font installs are Nerd builds. The 10 biggest plain casks come from 8 families, and 7 of those are coding fonts.
-- **Thin platform coverage.** There is no Windows source in v1: Chocolatey's terms forbid automated access, so it was dropped. Windows users, and designers who download zips, would show up only through GitHub's release counts, which are collected but in no score until they are revisited after six monthly snapshots; until then they count toward the two-group gate only.
+- **Thin platform coverage.** There is no Windows source yet: Chocolatey's terms forbid automated access, so it was dropped. Windows users, and designers who download zips, would show up only through GitHub's release counts, which are collected but in no score until they are revisited after six monthly snapshots; until then they count only toward the rule that no font reaches the top 100 on one kind of evidence alone.
 - **Defaults.** Installs driven by tool defaults count in both desktop views (Meslo via Powerlevel10k). Installs that Linux systems make automatically count fully in *Installed (desktop)*. In *Chosen (desktop)* they are left out, and those fonts are ranked on their other sources. The preinstalled list is kept by hand, and derivative distributions we don't parse leak through into *Chosen (desktop)*.
 - **Web data.**
   - Fonts Over Time crawls US homepages only, and half of them are startups.
   - The Almanac is yearly, covers only the top 100, and folds width cuts into their parents.
   - Google's views are weighted by traffic and can't see self-hosted fonts.
-  - Google's views also include the traffic of Google's own products, such as Google Sans and Arimo. The model doesn't correct for it, so Google's own fonts may rank a little high: when the owner ruled on this (2026-10-01), Google Sans ranked #71 on *Projects* under the model.
+  - Google's views also include the traffic of Google's own products, such as Google Sans and Arimo. The model doesn't correct for it, so Google's own fonts may rank a little high: when we checked (2026-10-01), Google Sans ranked #71 on *Projects* under the model.
   - CI runs inflate npm.
-- **Sources that move together.** The model counts each source as separate evidence of a font's popularity. A few pairs move together more than that allows: Google views and jsDelivr, ecosyste.ms and Expo, and the two Fonts Over Time terms. What they share counts a little more than it should. The owner accepted this, with this note (owner ruling of 2026-10-01). In the check behind that ruling, leaving jsDelivr out altogether barely changed the *Projects* order: 98 of the top 100 stayed, and the rank correlation (Spearman) was 0.9902.
+- **Sources that move together.** The model counts each source as separate evidence of a font's popularity. A few sources move together more than that allows: Google views with each of jsDelivr, ecosyste.ms and Expo, and Fonts Over Time's startup homepages with its other homepages, which the model counts separately. What they share counts a little more than it should. We accept this, and note it here. In a check (2026-10-01), leaving jsDelivr out altogether barely changed the *Projects* order: 98 of the top 100 stayed, and the rank correlation (Spearman) was 0.9902.
 - **Two methods.** The desktop ranks, *Coding* and *Rising* are still scored by the engine, and *Projects* and *Developers & apps* by the model. A score compares fonts within one rank, so the same score in two ranks doesn't mean the same thing.
 - **The ruler.** In the engine's ranks, Homebrew's installs are the ruler that puts the other sources on one scale, so Homebrew decides how popular each source's fonts count as a group. As a check, each run also ranks those fonts with Fontsource as the ruler.
 - **Not measured.** Print use is unmeasured, and the site itself will nudge installs.

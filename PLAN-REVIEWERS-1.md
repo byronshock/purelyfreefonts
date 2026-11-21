@@ -354,9 +354,9 @@ Long names are limited by width and grow less: about 1 phone row in 10 grows und
 - [x] **Charter's license link** points to a web page (`practicaltypography.com/charter.html`), unlike every other font's license text. Find the license text in its download and propose a pinned URL for the owner's ruling (gate K and L3). *(Proposed 2026-11-11: X.Org's COPYING at font-bitstream-type1 1.0.4, the same words as the canonical text. The owner took it on 2026-11-12 (`charter_license_text`), with the store topped up before the launch run; the change is PLAN-launch.md step 2A's.)*
 
 #### 8b: The wording (after the lead's branch)
-- [ ] Apply the wording of Q3 and Q8. The front-page lead's new sentence (`front_page_lead_counts`) lands with the Project default. The note's "with no use restrictions" and Q8's asides don't wait for the scoring change, but they do touch the templates.
+- [ ] Apply the wording of Q3 and Q8. The front-page lead's new sentence (`front_page_lead_counts`) lands with the Project default. The note's "with no use restrictions" and Q8's asides don't wait for the scoring change, but they do touch the templates. *(2026-11-21: the lead's sentence is in, with the Project default (803944f), and Q8's asides are rewritten (`method_asides_rewrite`). Left: About's "with no use restrictions" (`note_no_use_restrictions`), with the note's rewrite.)*
 - [ ] "Comes with" names the systems, as settled for Q4.
-- [ ] Fix How we rank's "Choose a rank at the top of the list": the select is in the sidebar on wide screens.
+- [x] Fix How we rank's "Choose a rank at the top of the list": the select is in the sidebar on wide screens. *(2026-11-21: "Choose a measure in the menu by the search box.")*
 
 **Done when:** CI passes, and `tff-catalog links --check` passes.
 

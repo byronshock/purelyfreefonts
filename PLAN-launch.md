@@ -103,8 +103,8 @@ Until the launch:
 **Who:** Claude; the owner rules where noted. **Depends on:** the launch run, so CI tests them on the launch data.
 - [ ] **Priority 1's wording** (PLAN-REVIEWERS-1 step 8b):
   - [ ] About's "with no use restrictions";
-  - [ ] the methodology text without its "(owner ruling of …)" asides;
-  - [ ] the sentence on where the measure is chosen.
+  - [x] the methodology text without its "(owner ruling of …)" asides; *(The parts the page copies from docs/ranking-methodology.md, §1, §5's two desktop views and §11, rewritten as public text, with a test on the parts and on the built page's `<main>`.)*
+  - [x] the sentence on where the measure is chosen. *("Choose a measure in the menu by the search box": it sits under the search box on wide screens and beside it on phones.)*
 - [ ] **"Comes with" names the systems** (`comes_with_names_systems`), after single-select questions on Q4's two loose ends.
 - [ ] **Step 5's first part:**
   - [ ] the Tip Jar link at the end of the header nav, and the footer's tip link removed. The one-row header is re-measured, with a question to the owner on the phone nav at 320 px;

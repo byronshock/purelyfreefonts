@@ -254,6 +254,29 @@ def test_methodology_parts_from_the_document():
     assert parts["biases"].startswith("- **Developer skew.**")
 
 
+# What marks text as internal: a ruling aside, a section sign, code, a ruling's label (D7, M5,
+# T2, q13), a version label (v1) or the document's own word for the two-kinds-of-evidence rule.
+INTERNAL = re.compile(
+    r"[Oo]wner|\b[Rr]ul(?:ings?|ed)\b|§|`|\b[A-Z]{1,2}\d+[a-z]?\b|\bq\d+[a-z]?\b|\bv\d\b|\b[Gg]ates?\b"
+)
+
+
+def test_methodology_parts_read_as_public_text():
+    """The parts the page copies from the document carry no internal asides or labels (site
+    ruling of 2026-10-05, method_asides_rewrite): AUTHORITY.md and data/reviews/ keep those."""
+    for name, part in pages.methodology_parts(methodology_text()).items():
+        assert INTERNAL.findall(part) == [], name
+
+
+def test_methodology_page_reads_as_public_text(site_dir):
+    """The same holds for everything in the built page's <main>, the template's own text and
+    the run's details included."""
+    html = read(site_dir, "methodology/index.html")
+    main = re.search(r"<main\b.*?</main>", html, re.S)
+    assert main, "the page has a <main>"
+    assert INTERNAL.findall(parse(main[0]).plain) == []
+
+
 BREAKS = {
     "no section 11": (r"^## 11\. .*$", "## Eleven", "'## 11.'"),
     "no section 5": (r"^## 5\. .*$", "## The rankings", "'## 5.'"),
