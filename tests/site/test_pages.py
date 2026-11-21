@@ -257,7 +257,7 @@ def test_methodology_parts_from_the_document():
 # What marks text as internal: a ruling aside, a section sign, code, a ruling's label (D7, M5,
 # T2, q13), a version label (v1) or the document's own word for the two-kinds-of-evidence rule.
 INTERNAL = re.compile(
-    r"owner|\brul(?:ings?|ed)\b|§|`|\b[A-Z]{1,2}\d+[a-z]?\b|\bq\d+\b|\bv\d\b|\bgates?\b"
+    r"[Oo]wner|\b[Rr]ul(?:ings?|ed)\b|§|`|\b[A-Z]{1,2}\d+[a-z]?\b|\bq\d+[a-z]?\b|\bv\d\b|\b[Gg]ates?\b"
 )
 
 
