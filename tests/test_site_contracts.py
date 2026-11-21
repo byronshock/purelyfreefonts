@@ -1407,10 +1407,13 @@ def test_base_template_renders_the_shell():
 
 
 def test_base_template_shows_the_tip_link_only_when_set():
+    """The Tip Jar link ends the header nav (owner's site rulings of 2026-10-05, tip_jar, and
+    2026-11-21, tip_jar_privacy_to_footer), on the li that "#tip a" finds."""
     url = "https://buy.stripe.com/test_link"
     html = render({**CONTEXT, "site": {**CONTEXT["site"], "tip_url": url}})
     assert ("a", {"href": url}) in parse(html)
-    assert 'id="tip"' in html
+    assert f'<li id="tip"><a href="{url}">Tip Jar</a></li>\n</ul>\n</nav>' in html
+    assert html.count(url) == 1
 
 
 def test_base_template_has_no_inline_code():

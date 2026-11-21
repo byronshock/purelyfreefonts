@@ -38,7 +38,10 @@ PINNED_FONTS = ROOT / "tests" / "fixtures" / "specimen-fonts.toml"
 TIP_URL = re.search(
     r"^\| Link \| `(https://buy\.stripe\.com/[^`]+)`", DONATIONS.read_text(encoding="utf-8"), re.M
 )[1]
-NAV = ["/", "/methodology/", "/about/", "/privacy/"]
+# The pages every build has, and the nav's own links: Privacy is in the footer, and "Tip Jar"
+# ends the nav (owner's site ruling of 2026-11-21, tip_jar_privacy_to_footer).
+PAGES = ["/", "/methodology/", "/about/", "/privacy/"]
+NAV = ["/", "/methodology/", "/about/"]
 VOID = frozenset(
     {
         "area",
@@ -278,10 +281,20 @@ def test_body_is_skip_link_header_main_footer():
     assert not [i for i in header.find_all("img") if "favicon" in i.attrs.get("src", "")]
 
 
-@pytest.mark.parametrize("path", [*NAV, "/404.html"])
-def test_nav_marks_only_the_current_page(path):
-    links = dom(render(path)).find("nav").find_all("a")
-    assert [a.attrs["href"] for a in links] == NAV
+@pytest.mark.parametrize("tip_url", [None, TIP_URL])
+@pytest.mark.parametrize("path", [*PAGES, "/404.html"])
+def test_nav_marks_only_the_current_page(path, tip_url):
+    """Fonts, How it works, About and, once the build sets the tip link, Tip Jar (owner's site
+    rulings of 2026-10-05, tip_jar, and 2026-11-21, tip_jar_privacy_to_footer). Tip Jar leaves
+    the site, so it is never the current page."""
+    links = dom(render(path, tip_url=tip_url)).find("nav").find_all("a")
+    tip = [(TIP_URL, "Tip Jar")] if tip_url else []
+    assert [(a.attrs["href"], a.text) for a in links] == [
+        ("/", "Fonts"),
+        ("/methodology/", "How it works"),
+        ("/about/", "About"),
+        *tip,
+    ]
     current = [a.attrs["href"] for a in links if a.attrs.get("aria-current") == "page"]
     assert current == ([path] if path in NAV else [])
 
@@ -291,7 +304,7 @@ def test_the_header_holds_only_the_wordmark_and_the_nav():
     "Early version. Coming next: free font inventory tools." any more (site_status_line,
     2026-09-29, which early_line_hidden_on_phones had already taken off phones). The header
     holds the wordmark and the Site navigation, nothing else, and no page has the line."""
-    for path in [*NAV, "/404.html"]:
+    for path in [*PAGES, "/404.html"]:
         page = dom(render(path))
         header = page.find("header")
         kids = [(e.tag, e.attrs.get("class")) for e in header.children]
@@ -314,17 +327,12 @@ PRIVACY_LINE = (
 def test_the_privacy_line_is_in_every_pages_footer(tip_url):
     """The owner's site ruling of 2026-10-07 (privacy_line_in_footer): the line that stood
     under the front page's lead is one short line in the footer of every page, after the
-    feedback spot and the tip link and before the data date, and its link leads to where the
-    Privacy page explains the check."""
-    for path in [*NAV, "/404.html"]:
+    feedback spot and before the data date, and its link leads to where the Privacy page
+    explains the check. The footer has no tip link (tip_jar, 2026-10-05)."""
+    for path in [*PAGES, "/404.html"]:
         footer = dom(render(path, tip_url=tip_url)).find("footer")
         classes = [n.attrs.get("class") for n in footer.children]
-        assert classes == [
-            "feedback",
-            *(["tip"] if tip_url else []),
-            "footer-privacy",
-            "footer-meta",
-        ]
+        assert classes == ["feedback", "footer-privacy", "footer-meta"]
         line = footer.find("p", class_="footer-privacy")
         assert " ".join(line.text.split()) == PRIVACY_LINE
         (link,) = line.find_all("a")
@@ -332,12 +340,26 @@ def test_the_privacy_line_is_in_every_pages_footer(tip_url):
         assert link.text == "Check the Network tab"
 
 
+@pytest.mark.parametrize("path", [*PAGES, "/404.html"])
+def test_the_footers_last_line_links_the_privacy_page(path):
+    """The owner's site ruling of 2026-11-21 (tip_jar_privacy_to_footer): Privacy leaves the
+    nav, and a plain "Privacy" link joins the footer's last line, between the data date and
+    the source link, marked as the current page on the Privacy page only."""
+    line = dom(render(path)).find("p", class_="footer-meta")
+    assert " ".join(line.text.split()) == "Data from 2026-09-25. Privacy. Source code on GitHub."
+    first, second = line.find_all("a")
+    assert first.text == "Privacy"
+    current = {"aria-current": "page"} if path == "/privacy/" else {}
+    assert first.attrs == {"href": "/privacy/", **current}
+    assert second.attrs == {"href": build.site_context()["repo_url"]}
+
+
 def test_one_feedback_spot_first_in_the_footer_the_same_on_every_page():
     """M2-D10 and WCAG 3.2.6: GitHub issue forms and an email link with a subject, in one
     place on every page."""
     context = build.site_context()["feedback"]
     spots = set()
-    for path in [*NAV, "/404.html"]:
+    for path in [*PAGES, "/404.html"]:
         doc = dom(render(path, canonical=path != "/404.html"))
         footer = doc.find("footer")
         assert footer.children[0].tag == "div"
@@ -353,20 +375,25 @@ def test_one_feedback_spot_first_in_the_footer_the_same_on_every_page():
     assert re.fullmatch(r"mailto:admin@purelyfreefonts\.com\?subject=[^&\s]+", context["mailto"])
 
 
-def test_tip_link_is_one_plain_link_called_a_tip():
-    """ops/DONATIONS.md step 11 and M2 step 8: one plain link to Stripe's hosted page, in the
-    footer after the feedback spot, no Stripe script, called a tip and never a donation."""
-    html = render(tip_url=TIP_URL)
+@pytest.mark.parametrize("path", [*PAGES, "/404.html"])
+def test_the_tip_jar_ends_the_nav(path):
+    """ops/DONATIONS.md step 11, M2 step 8 and the owner's site rulings of 2026-10-05 (tip_jar)
+    and 2026-11-21 (tip_jar_privacy_to_footer): one plain link to Stripe's hosted page, "Tip
+    Jar", the last item of the header nav, on an li whose id ("#tip a") the privacy tests and
+    the live check find; none in the footer, no Stripe script, and never a donation."""
+    html = render(path, tip_url=TIP_URL)
     doc = dom(html)
     stripe = [n for n in doc.iter() if "stripe" in " ".join(str(v) for v in n.attrs.values())]
     assert [(n.tag, n.attrs) for n in stripe] == [("a", {"href": TIP_URL})]
     link = stripe[0]
-    assert link.within("footer")
-    assert "tip" in link.text.lower()
+    assert link.text == "Tip Jar"
+    assert link.within("nav")
+    assert not link.within("footer")
+    last = doc.find("nav").find_all("li")[-1]
+    assert last.attrs == {"id": "tip"}
+    assert last.children == [link]
+    assert len([n for n in doc.iter() if n.attrs.get("id") == "tip"]) == 1
     assert "donat" not in html.lower()
-    footer = doc.find("footer")
-    order = [n.attrs.get("id") for n in footer.children]
-    assert order.index("feedback") < order.index("tip")
 
 
 def test_no_tip_link_until_the_build_sets_it():
@@ -632,20 +659,22 @@ SCROLLBAR = 17  # a classic scrollbar, about 15 to 17 px (Windows, some Linux se
 WIDTHS = sorted({*range(320, 1281, 4), PHONE - 1, PHONE, BREAKPOINT - 1, BREAKPOINT})
 
 
-@pytest.mark.parametrize("path", [*NAV, "/missing"])
+@pytest.mark.parametrize("path", [*PAGES, "/missing"])
 def test_the_header_keeps_one_row_at_every_width(browser, site_url, path):
     """#55's one-row rule (owner ruling of 2026-10-04, wordmark_breakpoint, kept for the Book
-    wordmark on 2026-10-14 and brush 102 on 2026-11-03), on each page, whose own nav link is
-    bold. From 832 px the 465 px wordmark and the nav share one row, with room for a
-    scrollbar; below it the 300 px one does, down to about 637 px, where the nav takes its own
-    line under the wordmark, still one line at 320 px, where the wordmark shrinks to fit. The
-    header has nothing else (early_line_removed, 2026-11-03). Every 4 px from 320 to 1280 px,
-    so a second row is caught: the header has one height per layout. And the widest one-row
-    headers, 16 + 465 + 24 + the nav + 16 and 16 + 300 + 24 + the nav + 16, fit the
-    breakpoint, less a scrollbar, and the phone one: a longer nav ("How
-    it works", 2026-10-05, or a "Tip Jar") moves the 52rem rule and this test. So does the Blog
-    link, which every build gets once a post is published (about 850 px, 867 with a
-    scrollbar); a draft that only staging shows (--drafts) isn't measured here."""
+    wordmark on 2026-10-14, brush 102 on 2026-11-03 and the Tip Jar on 2026-11-21), on each
+    page, whose own nav link is bold. From 832 px the 465 px wordmark and the nav share one
+    row, with room for a scrollbar; below it the 300 px one does, down to about 633 px, where
+    the nav takes its own line under the wordmark, still one line at 320 px, where the
+    wordmark shrinks to fit. The header has nothing else (early_line_removed, 2026-11-03).
+    Every 4 px from 320 to 1280 px, so a second row is caught: the header has one height per
+    layout. And the widest one-row headers, 16 + 465 + 24 + the nav + 16 and 16 + 300 + 24 +
+    the nav + 16, fit the breakpoint, less a scrollbar, and the phone one: 798 and 633 px with
+    the nav at 277 px (Firefox, on /methodology/, measured on 2026-11-21). "Tip Jar" fits only
+    because Privacy left the nav for the footer (tip_jar_privacy_to_footer); a longer nav
+    moves the 52rem rule and this test. So does the Blog link, which every build gets once a
+    post is published (about 846 px, 863 with a scrollbar, and a second line in the phone nav
+    below about 357 px); a draft that only staging shows (--drafts) isn't measured here."""
     context = browser.new_context(base_url=site_url, viewport={"width": 1280, "height": 800})
     try:
         page = context.new_page()
@@ -798,7 +827,8 @@ def test_skip_link_is_the_first_stop_and_moves_focus_to_main(guarded_context, pa
 def test_shell_tab_stops_show_the_ring_and_are_never_covered(guarded_context, site_dir, scheme):
     """2.4.7 and 2.4.11 for the header and footer: each stop has the 3 px ring and the
     element at its centre is the focused one. The nav has a Blog link once the site has a
-    blog (M2 step 7b)."""
+    blog (M2 step 7b), and ends with Tip Jar; Privacy is in the footer's last line
+    (tip_jar_privacy_to_footer, 2026-11-21)."""
     blog = ["Blog"] if (site_dir / "blog" / "index.html").is_file() else []
     guarded = guarded_context(viewport={"width": 1280, "height": 700}, color_scheme=scheme)
     page = guarded.new_page()
@@ -808,7 +838,9 @@ def test_shell_tab_stops_show_the_ring_and_are_never_covered(guarded_context, si
         page.keyboard.press("Tab")
         page.evaluate(FRAME)
         stop = page.evaluate(FOCUSED)
-        if stop is None or (seen and stop == seen[0]):
+        # Past the last stop focus leaves the page, comes back to the first stop, or (Firefox)
+        # stays on the last one.
+        if stop is None or (seen and stop in (seen[0], seen[-1])):
             break
         seen.append(stop)
         assert stop["hit"], stop
@@ -822,7 +854,11 @@ def test_shell_tab_stops_show_the_ring_and_are_never_covered(guarded_context, si
         "How it works",
         *blog,
         "About",
+        *(["Tip Jar"] if build.TIP_URL else []),
+    ]
+    assert [s["text"] for s in seen if s["where"] == "footer"][-2:] == [
         "Privacy",
+        "Source code on GitHub",
     ]
 
 

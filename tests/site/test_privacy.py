@@ -923,8 +923,9 @@ def test_neither_script_names_a_storage_or_request_api(site_dir: Path) -> None:
 
 
 def test_the_tip_link_is_one_plain_link_to_stripe(site_dir: Path, tip_url: str) -> None:
-    """ops/DONATIONS.md step 11: one plain link, no Stripe script, in the footer of every page.
-    A plain link: no ``ping`` (a request on click), no ``target`` or ``download``; ``rel`` and
+    """ops/DONATIONS.md step 11: one plain link, no Stripe script, at the end of every page's
+    header nav ("Tip Jar", owner's site rulings tip_jar and tip_jar_privacy_to_footer). A plain
+    link: no ``ping`` (a request on click), no ``target`` or ``download``; ``rel`` and
     ``referrerpolicy`` may only take things away."""
     plain = {"href", "class", "rel", "referrerpolicy"}
     for html in _html_files(site_dir):

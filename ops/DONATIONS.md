@@ -11,7 +11,7 @@ How the site's tip link is set up. The settled decisions are in [AUTHORITY.md](.
 | Amount | $5 suggested; visitors can change it, down to a $2 minimum |
 | Fees on $5 | Stripe about 2.9% + 30¢ for a US card, so about 45¢. You keep about $4.55. Cards from other countries cost a little more |
 | Payouts | Stripe pays out to the bank automatically |
-| On the site | One plain `<a>` link to Stripe's hosted page. No Stripe script, no API keys |
+| On the site | One plain `<a>` link to Stripe's hosted page, "Tip Jar" at the end of every page's header nav; step 11 adds a second, the pitch that ends About's note. No Stripe script, no API keys |
 | Tax | Automatic tax collection (Stripe Tax) off. If Stripe asks for a product tax category: **Nontaxable** (`txcd_00000000`). A tip buys nothing, since the list is free either way, and Stripe has no tax code for tips |
 | Wording | Call it a **tip**, not a donation. Stripe lets a sole proprietor take tips for a service provided (the list), but donations only for a charitable purpose ([Stripe's rules](https://support.stripe.com/questions/requirements-for-accepting-tips-or-donations)) |
 
@@ -36,7 +36,9 @@ Byron needs a checking account to accept Stripe payments.
 ### D. Site (Claude, with the filterable-list release)
 These steps wait for release 1 in [AUTHORITY.md](../AUTHORITY.md#releases). The current stub gets no link.
 - [x] 10. Put the link in the Facts table above.
-- [x] 11. Add one plain link to the footer of every page, worded **Leave a tip ($5 suggested)** (the owner's ruling of 2026-09-26): `<a href="https://buy.stripe.com/dRm00beFeaJ307651Qf7i00">Leave a tip ($5 suggested)</a>`. It loads no third-party script and sets no cookies, and the Caddyfile headers don't need to change.
+- [ ] 11. Plain links to Stripe's hosted page, `<a href="https://buy.stripe.com/dRm00beFeaJ307651Qf7i00">`, as the owner ruled on 2026-09-30 (`funding_pitch`), 2026-10-05 (`tip_jar`) and 2026-11-21 (`tip_jar_privacy_to_footer`). Stripe's page is prefilled with the $5 suggestion, so neither link names an amount. They load no third-party script and set no cookies, and the Caddyfile headers don't need to change. *(Until the Tip Jar, this step was one footer link on every page, worded "Leave a tip ($5 suggested)" (the owner's ruling of 2026-09-26), done on 2026-09-30; `tip_jar` removed it.)*
+  - [x] **Tip Jar**, the last link of every page's header nav: Fonts, How it works, About, Tip Jar. Privacy moved to the footer's last line to make room (`tip_jar_privacy_to_footer`). *(PLAN-launch.md step 2D, 2026-11-21.)*
+  - [ ] The pitch that ends About's note "Why isn't my favorite free font here?", with no amount and no coffee wording: "Checking every license takes time. If the list has helped you, please leave a tip." Its "leave a tip" is the link (`why_not_listed_conversation`).
 - [ ] 12. Deploy with the command in [SERVER.md](SERVER.md): `ops/deploy.sh production --commit <sha>` (M2-D6; since 2026-09-30 the site deploys as releases).
 
 ### E. After launch (Byron)
@@ -55,5 +57,5 @@ The owner's rulings of 2026-10-02 (AUTHORITY.md, **Name and domain**). Steps 2 a
 
 ## Verification
 - `curl -s https://purelyfreefonts.com/ | grep -o 'https://buy.stripe.com/[^"]*'` prints the link.
-- Clicking the link on the live site opens Stripe's payment page with $5 filled in.
+- Clicking **Tip Jar** in the live site's header opens Stripe's payment page with $5 filled in.
 - The Stripe Dashboard shows the account activated, payouts on, and two-step authentication on.

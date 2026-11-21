@@ -1,0 +1,39 @@
+# Owner rulings of 2026-11-21, asked in chat by the lead session as one batch of single-select questions: the open points of
+# PLAN-launch.md step 2D's site-only changes (PLAN-REVIEWERS-1.md steps 5 and 8b, Q4's two loose ends). Each was answered as Claude recommended.
+# Ruled by the owner, Byron Shock; recorded by Claude. Also in AUTHORITY.md (Soft launch) and PLAN-launch.md.
+
+[tip_jar_privacy_to_footer]
+choice = "a"
+recommended = true
+recommendation = "a"
+value = "privacy_to_footer"
+ruling = "The header nav is Fonts, How it works, About, Tip Jar: \"Tip Jar\" ends it, as tip_jar ruled, and Privacy leaves the nav for the footer, where a plain \"Privacy\" link joins its last line beside the privacy line, which already links to the Privacy page's check. The header keeps one row at every width, with today's 16 px nav text and breakpoints, and the phone nav keeps one line at 320 px. This changes tip_jar's nav list (Fonts, How it works, About, Privacy, Tip Jar)."
+reason = "\"Tip Jar\" widens the nav by about 64 px, to about 345 px: phones up to about 375 px wide could not fit it on one line, and from 832 to 866 px it no longer fit beside the large wordmark (wordmark_breakpoint). Measured in Chromium and Firefox on 2026-11-20. Of (a) Privacy to the footer (Claude's recommendation), (b) 13 px nav text below 720 px and (c) letting the nav wrap, the owner chose (a)."
+
+[comes_with_up_to_three]
+choice = "a"
+recommended = true
+order = ["Windows 11", "macOS", "Android", "Ubuntu", "Debian", "Fedora Workstation", "GNOME", "KDE Plasma", "CachyOS", "EndeavourOS", "Arch Linux", "LibreOffice"]
+recommendation = "a"
+value = "up_to_three_best_known_first"
+ruling = "A row's \"Comes with\" tag names up to three systems, or else two and a count of the rest (\"Comes with Ubuntu, Fedora Workstation and 4 more\"), best-known first, in the order of `order`. The font's details list every system in that order. \"Hide fonts that come with: Linux\" still hides a font that any Linux system ships. This settles Q4's two loose ends (PLAN-REVIEWERS-1.md) for comes_with_names_systems."
+reason = "On the launch data, 52 listed fonts carry the tag, and 11 of them have 3 to 6 systems. Of (a) up to three, best-known first (Claude's recommendation), (b) the same in the catalog's order, (c) every name with no count and (d) (a) plus a filter choice for each system, the owner chose (a)."
+
+[why_not_listed_conversation]
+choice = "a"
+recommended = true
+heading = "Why isn't my favorite free font here?"
+no_match = "No listed font matches “…”."
+paragraphs = ["Usually it's the license. Free to download isn't always free to use. Some fonts are free only for personal projects or as a trial, or only if you never change or embed them. Others come with terms that can reach into the documents or products you make with them.", "We list only fonts whose licenses let anyone use them in any project, personal or commercial, with no use restrictions. We read each font's own license text rather than trusting a label. The four rules above give the details.", "Sometimes the license is fine, but the font is used less than the ones ranked here. Those fonts will be listed later, A–Z. If you think one belongs here now, email admin@purelyfreefonts.com and ask us to consider it.", "Checking every license takes time. If the list has helped you, please leave a tip."]
+recommendation = "a"
+value = "usually_the_license"
+ruling = "About's note \"Why isn't my favorite free font here?\" becomes a short conversation in four paragraphs, word for word as `paragraphs` (Draft A). \"The four rules above\" links to the page's rules, the address is a mail link, and the last paragraph is the tip pitch, whose \"leave a tip\" links to Stripe's payment page with no amount and no coffee wording (tip_jar, funding_pitch). It says \"with no use restrictions\" (note_no_use_restrictions). A search that finds no listed font says `no_match`, with the search in the quotes, followed by the link \"Why isn't my favorite free font here?\" to the note (no_match_search)."
+reason = "Funding as amended on 2026-10-05 allows one short pitch at the end of the note, and step 1a of PLAN-REVIEWERS-1.md asked for a short conversation that ends with the tip link. Of Draft A (Claude's recommendation), Draft B (today's words in three paragraphs, plus a pitch) and Draft C (three short parts under bold questions), the owner chose Draft A."
+
+[search_name_first_every_sort]
+choice = "a"
+recommended = true
+recommendation = "a"
+value = "every_sort"
+ruling = "With a search on, fonts whose own name matches come first, then fonts found only through another name (search_name_first), in every sort: each group keeps the chosen sort, so \"least popular first\" reverses each group rather than the whole list."
+reason = "search_name_first said \"in score order\", which the default sort is. Of (a) in every sort (Claude's recommendation) and (b) only in the default sort, the owner chose (a). For a search, this amends sort_header's \"least popular first\" as the exact reverse of the list."

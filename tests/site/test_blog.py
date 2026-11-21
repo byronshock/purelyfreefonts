@@ -694,10 +694,14 @@ def test_every_page_links_the_blog_and_its_feed(site_dir):
 
 
 def test_the_nav_puts_blog_after_how_it_works(built):
+    """Fonts, How it works, Blog, About, then Tip Jar once the build sets the tip link
+    (tip_jar_privacy_to_footer, 2026-11-21: Privacy is in the footer)."""
     page = built["index"]
-    hrefs = [a["href"] for a in page.attrs("a") if a.get("href", "").startswith("/")]
+    hrefs = [a["href"] for a in page.attrs("a")]
     start = hrefs.index("/methodology/")
-    assert hrefs[start : start + 4] == ["/methodology/", "/blog/", "/about/", "/privacy/"]
+    tip = [build.TIP_URL] if build.TIP_URL else []
+    nav = ["/", "/methodology/", "/blog/", "/about/", *tip]
+    assert hrefs[start - 1 : start - 1 + len(nav)] == nav
     current = [a["href"] for a in page.attrs("a") if a.get("aria-current") == "page"]
     assert current == ["/blog/"]
     assert [a for a in built["post"].attrs("a") if a.get("aria-current")] == []
