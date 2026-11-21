@@ -45,6 +45,14 @@ After his staging try of 2026-11-05 ("I have tried it and feel that we are getti
 
 *(`data/reviews/l3/2026-11-12.toml`, `licenses/2026-11-12.toml`, `links/2026-11-12.toml`, `ci/2026-11-12.toml` and `site/2026-11-12.toml`)*
 
+**The hopper's words (2026-11-16),** Milestone 3 slice 1's PR 5 (#122), each Claude's recommendation:
+- **Privacy** (`pr5_privacy_section`): "Coming next" becomes "Checking your own fonts", as drafted. The list stays in the tab, and nothing from it is sent. A list brings two requests with fixed addresses, the matcher and the match file, and then every preview not yet shown, at once, the same files for any list. Nothing is saved, and "Forget this list" drops the list and its result. "Check for yourself" gains the hopper's Network-tab check.
+- **No count of previews** (`pr5_preview_count`): the section says "every preview it hasn't shown yet", since the number depends on how far the visitor had scrolled.
+- **About** (`pr5_about_at_top`): "Leave out the fonts you already have" leaves "What's next" for a short present-tense paragraph at the top, linking to the privacy section and saying the macOS and Windows commands are not yet tested.
+- **No link from the "Your own list" box** (`pr5_no_box_link`): its line stays as reviewed; every footer links to the Network-tab check.
+
+*(`data/reviews/site/2026-11-16.toml`)*
+
 ## Rules
 
 1. **Licenses.** A font qualifies only if its license allows use in **all personal and commercial projects**. A truly free font has **no use restrictions**. Display-only licenses are excluded, and so are personal-use-only, demo/trial and non-commercial licenses. *(2026-09-25)*

@@ -66,10 +66,11 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 **Parallel:** one agent per OS test list, and one for the spot check.
 
 ### Step 3: Final privacy check
+*Amended 2026-11-16, after the hopper (#100): a list brings two requests, the match file and the matcher module (`inventory_matcher_on_demand`, 2026-10-23), and then every preview not yet loaded (`hopper_previews_all_at_once`, 2026-11-03), so there is no "Load previews" button; the hopper's Show menu replaced "Show fonts I have".*
 **Who:** Claude; the owner does one network-tab check. **Depends on:** 1; M2-D9 (server logs); M3-D7 (match data loading), M3-D10 (previews after a comparison), M3-D13 (browser storage).
-- [ ] A request inventory lists each request's path and trigger: page load; the match file when a comparison starts (if M3-D7 loads it on demand); a "Load previews" or "Type your own text" click; a click on a report, download or tip link, the only cross-origin ones.
-- [ ] A Playwright test, extending M2 step 9's, pastes a test list in Chromium, Firefox and WebKit, then switches every rank and view, toggles "Show fonts I have" and scrolls each view. It fails on:
-  - any request after the paste, except a report, download, tip, "Load previews" or "Type your own text" click, or M3-D7's one match-file request, which carries no list data;
+- [ ] A request inventory lists each request's path and trigger: page load; the match file and the matcher module when a list arrives (M3-D7, `inventory_matcher_on_demand`); every preview not yet loaded, once the list is checked (`hopper_previews_all_at_once`); a "Type your own text" click; a click on a report, download or tip link, the only cross-origin ones.
+- [ ] A Playwright test, extending M2 step 9's, pastes a test list in Chromium, Firefox and WebKit, then switches every rank and view, every choice of the hopper's Show menu, and scrolls each view. It fails on:
+  - any request after the paste, except a report, download, tip or "Type your own text" click, the match file and the matcher module (`inventory_matcher_on_demand`), and the previews not yet loaded (`hopper_previews_all_at_once`), none of which carries list data;
   - any name from the list in a request or report link, except the installed name when its box is ticked;
   - any request to another host, or any cookie;
   - any browser storage beyond M3-D13's allowed keys.
