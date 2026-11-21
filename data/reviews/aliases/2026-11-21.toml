@@ -1,0 +1,16 @@
+# Claude's rulings of 2026-11-21, gate A, under the owner's delegation of 2026-09-28 (A_U_queues: exact name or package-name matches to one family, and rows the approved gate A rules already decide). Their rows in data/aliases.csv have reviewed_by claude:2026-11-21.
+# They fix the live run of 2026-11-20 (run 44835160086, issue #123), whose validate stage failed alias_target on these two rows: each sent an AUR package's counts to a family that only a Homebrew cask had named, and that cask changed between the 2026-10-17 and 2026-11-20 snapshots.
+
+[claude-brill-unlisted]
+by = "claude"
+notes = ["arch-pkg:ttf-brill -> ineligible (unlisted): was a package row to brill, a family only Homebrew's cask font-brill named (disabled on 2026-10-17, gone on 2026-11-20)"]
+title = "An AUR package whose family no source lists any more"
+ruling = "arch-pkg:ttf-brill gets an ineligible row (unlisted) in place of its package row to brill."
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues), applying pkg_rules (2) of 2026-09-28: a Latin font no catalog source lists gets an ineligible row, unlisted, as the Expo packages of Amatica SC, Droid Sans and Droid Serif did (expo_no_successor_unlisted). Homebrew removed font-brill, no other source names Brill, and no family of the 2026-11-20 universe carries it under another name, so there is nothing to retarget. Brill was not in the catalog."
+
+[claude-edwin-retitled]
+by = "claude"
+notes = ["arch-pkg:otf-edwin -> edwin: was a package row to text-font-for-musical-scores, the family minted from Homebrew's cask font-edwin while its title was \"Text font for musical scores\"; on 2026-11-20 the cask's title is \"Edwin\", which minted the family edwin"]
+title = "An AUR package follows its font to the family its cask's new title minted"
+ruling = "arch-pkg:otf-edwin's package row now names edwin instead of text-font-for-musical-scores."
+reason = "Claude, under the owner's delegation of 2026-09-28 (A_U_queues: a package-name match to one family). Homebrew retitled font-edwin (MuseScoreFonts/Edwin, the same download) from \"Text font for musical scores\" to \"Edwin\", so the run minted edwin and no source names the old id; a row whose family has gone must follow it, as a fold's rows do (alias_target). The old id came from the cask's description-like title, so the new one is kept rather than folded back. Neither family was in the catalog."
