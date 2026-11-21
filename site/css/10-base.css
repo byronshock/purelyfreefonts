@@ -242,13 +242,17 @@ input[type="radio"] {
    and up), so the capitals stand about 38 px tall, and 300 px below that, about 24.4 px (owner
    rulings of 2026-10-14 and 2026-11-03). Sized by width, the height following, so it scales
    down evenly where even 300 px won't fit (288 px at 320). The breakpoint is the widest
-   one-row header, the gutters, the wordmark, the gap and the nav: 16 + 465 + 24 + 281 + 16 =
-   802 px, with "How it works" bold on its own page (measured on 2026-11-03), plus room for a
-   classic scrollbar of up to about 17 px, which the media query counts as page width (so not
-   51rem, which would wrap the nav at 816 to 818 px); tests/site/test_shell.py re-measures it.
-   Below it the 300 px wordmark keeps the nav beside it down to 637 px, under the 640 px phone
-   breakpoint; 308 px, for capitals of 25, would not. That is without the Blog link: the first
-   published post makes the nav about 329 px, and the breakpoint about 867. */
+   one-row header, the gutters, the wordmark, the gap and the nav: 16 + 465 + 24 + 277 + 16 =
+   798 px, the nav being Fonts, How it works, About and Tip Jar (Privacy is in the footer:
+   tip_jar_privacy_to_footer, 2026-11-21), with "How it works" bold on its own page (Firefox,
+   measured on 2026-11-21), plus room for a classic scrollbar of up to about 17 px, which the
+   media query counts as page width (wordmark_breakpoint_scrollbar): 815 px. 52rem stays, as
+   ruled, with room for a scrollbar of up to 34 px; tests/site/test_shell.py re-measures it.
+   Below it the 300 px wordmark keeps the nav beside it down to 633 px, under the 640 px phone
+   breakpoint; 308 px, for capitals of 25, would not. On phones the nav is one line down to
+   320 px, with 11 px to spare. That is without the Blog link: the first published post makes
+   the nav about 325 px, the one-row header about 846 px (863 with a scrollbar), and wraps the
+   phone nav below about 357 px. */
 .site-name-mark {
   display: block;
   width: 29.0625rem;
@@ -304,8 +308,8 @@ main {
 }
 
 /* ---- Footer: the feedback spot first, in the same place on every page (3.2.6), then the
-   tip link, the privacy line (owner's site ruling of 2026-10-07, privacy_line_in_footer) and
-   the data date. */
+   privacy line (owner's site ruling of 2026-10-07, privacy_line_in_footer) and the last line:
+   the data date, the Privacy link (tip_jar_privacy_to_footer, 2026-11-21) and the source. */
 
 .site-footer {
   display: flex;
@@ -366,8 +370,7 @@ main {
 
 @media print {
   .skip-link,
-  .site-nav,
-  .tip {
+  .site-nav {
     display: none;
   }
 

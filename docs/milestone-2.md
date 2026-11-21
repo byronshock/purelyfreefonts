@@ -152,7 +152,7 @@ Tick each item as soon as it is done and verified. If an item is only partly don
 
 ### Step 8: Tip link
 **Who:** Claude. **Depends on:** 1. [ops/DONATIONS.md](../ops/DONATIONS.md) steps 1–10 are done; the live link is in its Facts table (2026-09-25).
-- [x] Do DONATIONS.md step 11, ticking it there: one plain footer link on every page, worded "Leave a tip ($5 suggested)" (the owner's ruling of 2026-09-26), no Stripe script or cookies, called a tip, not a donation. *(The words around the link wait for step 7's approval of the page text.)*
+- [x] Do DONATIONS.md step 11, ticking it there: one plain footer link on every page, worded "Leave a tip ($5 suggested)" (the owner's ruling of 2026-09-26), no Stripe script or cookies, called a tip, not a donation. *(The words around the link wait for step 7's approval of the page text.)* *(Replaced: "Tip Jar" ends the header nav and the footer link is gone (`tip_jar`, 2026-10-05), built in PLAN-launch.md step 2D with Privacy moved to the footer (`tip_jar_privacy_to_footer`, 2026-11-21). DONATIONS.md step 11 is reopened for it and for About's pitch.)*
 - [x] Step 9's test sees no Stripe request before a click; the headers need no change.
 
 **Done when:** DONATIONS.md's Verification lines pass on the test site, then on the live site at step 14.

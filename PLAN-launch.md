@@ -107,12 +107,12 @@ Until the launch:
   - [ ] the sentence on where the measure is chosen.
 - [ ] **"Comes with" names the systems** (`comes_with_names_systems`), after single-select questions on Q4's two loose ends.
 - [ ] **Step 5's first part:**
-  - [ ] the Tip Jar link at the end of the header nav, and the footer's tip link removed. The one-row header is re-measured, with a question to the owner on the phone nav at 320 px;
+  - [x] the Tip Jar link at the end of the header nav, and the footer's tip link removed. The one-row header is re-measured, with a question to the owner on the phone nav at 320 px; *(2026-11-21: the owner moved Privacy to the footer's last line, `tip_jar_privacy_to_footer`, so the nav is Fonts, How it works, About, Tip Jar, at most 277 px. Re-measured in Chromium and Firefox: one line at 320 px, one row from 320 to 1280 px, and 52rem kept. The first-screen and privacy tests pass in both.)*
   - [ ] "No listed font matches '…'" when search alone finds nothing;
   - [ ] name matches first in search (`search_name_first`);
   - [ ] About's note rewritten to end with the tip pitch, its words OK'd by the owner.
 - [ ] **The docs:**
-  - [ ] ops/DONATIONS.md step 11, for the Tip Jar;
+  - [ ] ops/DONATIONS.md step 11, for the Tip Jar; *(Rewritten with nested items on 2026-11-21, and its Tip Jar item ticked. Its other item, About's pitch, waits for the About note.)*
   - [ ] ops/deploy/README.md's item 6 and ops/SERVER.md's header-phase lines, which still word Caddy's phase B as pending.
 
 **Done when:** each is merged.
