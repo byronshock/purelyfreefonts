@@ -122,7 +122,7 @@ The `production` and `staging` environments don't exist yet (checked read-only o
    ```
 4. **Refresh (Milestone 1 step 19; milestone-refresh.md step 1).** `DATA_STORE_KEY` is a secret of the environment `refresh`, which takes deployments from `main` only, not a repository secret, which every branch's workflows can read *(set up 2026-10-17, [ops/SERVER.md](../SERVER.md) item 27a)*. So `refresh.yml` runs only from `main`: a dispatch from another branch fails at the environment. The same environment holds `STORE_BUNDLE_KEY`, which encrypts the store bundle the run uploads *(item 27b, `store_bundle_encrypted`, 2026-10-19)*. "Allow GitHub Actions to create and approve pull requests" (Settings → Actions → General) is on *(done 2026-09-30, item 26, under ruling CI1 of 2026-09-26)*.
 5. **Optional hardening.** Settings → Actions → General: "Require actions to be pinned to a full-length commit SHA" (every workflow already pins by SHA).
-6. **Before `PRODUCTION_DEPLOYS=on`:** Caddy header phase B must be live (step 6 below). Until `ops/Caddyfile` drops `header -Content-Security-Policy`, both deploy.yml and `ops/deploy.sh` refuse to build a production deploy.
+6. **Before `PRODUCTION_DEPLOYS=on`:** Caddy header phase B must be live (step 6 below). *(Live since 2026-09-30, #39: production sends the full CSP of `ops/caddy/site.caddy`.)* If `header -Content-Security-Policy` ever comes back into `ops/Caddyfile`, both deploy.yml and `ops/deploy.sh` refuse to build a production deploy.
 
 ## Moving the live site into releases (one time)
 
@@ -135,7 +135,7 @@ The stub in `public/` was a real directory. After the users exist and the stub's
 3. `ssh tff sudo mv -T --exchange /srv/trulyfreefonts/public.new /srv/trulyfreefonts/public` (atomic; `public.new` then holds the old directory). The `-T` matters: without it `mv` takes the directory `public` as a destination folder and fails.
 4. Check: `curl -s -H 'Accept: text/html' https://trulyfreefonts.com/ | grep 'Coming soon'` and `ssh tff readlink -f /srv/trulyfreefonts/public`
 5. `ssh tff 'sudo mv -T /srv/trulyfreefonts/public.new /root/public-stub-<date> && sudo chown root:root /srv/trulyfreefonts'` (the old stub is kept aside in `/root`, not deleted)
-6. Caddy phase B (design-m2 §4): delete the `header -Content-Security-Policy` line from the production block of `ops/Caddyfile`, merge, and run the deploy line at the top of the file. Check: `curl -sI https://trulyfreefonts.com/ | grep -i content-security-policy`. Production deploys of the list refuse to run until this is done.
+6. Caddy phase B (design-m2 §4): delete the `header -Content-Security-Policy` line from the production block of `ops/Caddyfile`, merge, and run the deploy line at the top of the file. Check: `curl -sI https://purelyfreefonts.com/ | grep -i content-security-policy` (the host was trulyfreefonts.com until the rename of 2026-10-02). *(Done 2026-09-30, #39; production deploys of the list refused to run until then.)*
 7. Replace the rsync line in ops/SERVER.md and DONATIONS.md step 12: after the migration, `rsync … public/` would write straight into a live release. *(Done 2026-09-30.)*
 
 ## Tests

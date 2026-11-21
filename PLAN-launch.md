@@ -113,7 +113,7 @@ Until the launch:
   - [ ] About's note rewritten to end with the tip pitch, its words OK'd by the owner.
 - [ ] **The docs:**
   - [ ] ops/DONATIONS.md step 11, for the Tip Jar;
-  - [ ] ops/deploy/README.md's item 6 and ops/SERVER.md's header-phase lines, which still word Caddy's phase B as pending.
+  - [x] ops/deploy/README.md's item 6 and ops/SERVER.md's header-phase lines, which still word Caddy's phase B as pending. *(Reworded as done on 2026-09-30, #39, with docs/milestone-1-handoff.md's deploy row and docs/milestone-2.md step 14's "Depends on". The guards in deploy.yml and ops/deploy.sh stay.)*
 
 **Done when:** each is merged.
 
