@@ -24,7 +24,7 @@ on:
   a, ``inventory_matcher_on_demand``, site/CONTRACT.md section 11);
 - anything else the page asked for during the list step (a preview asked for again, or after
   the first list's, among them), or either request made another way;
-- a request to Stripe (the sweep never clicks the tip link);
+- a request to Stripe (the sweep never clicks a tip link);
 - a cookie in the context, or a ``Set-Cookie`` on any response;
 - anything in ``storage_state(indexed_db=True)``, or anything the recorders saw: storage and
   cookie writes, IndexedDB, Cache Storage, service workers, ``cookieStore``, CSP violations;
@@ -47,7 +47,7 @@ cached, as in CI's browser jobs, so "Type your own text" is always swept), with 
 (``build.TIP_URL``, or the link in ops/DONATIONS.md until step 8 sets it), served by
 ``tff_site.serve`` with site.caddy's headers.
 
-Also here: the tip link is a plain link and the only way to Stripe; without JavaScript the pages
+Also here: the tip links are plain links and the only way to Stripe; without JavaScript the pages
 stay on this site too; the built files point nowhere else and the script names no storage API;
 the sweep visits every page the build writes; the sweep and the live checks
 (``tests/live/checks.py``) catch what they are for (a planted cookie, storage write, CSP
@@ -922,17 +922,22 @@ def test_neither_script_names_a_storage_or_request_api(site_dir: Path) -> None:
         assert [m.group(0) for m in storage.finditer(source)] == [], script.name
 
 
-def test_the_tip_link_is_one_plain_link_to_stripe(site_dir: Path, tip_url: str) -> None:
-    """ops/DONATIONS.md step 11: one plain link, no Stripe script, at the end of every page's
-    header nav ("Tip Jar", owner's site rulings tip_jar and tip_jar_privacy_to_footer). A plain
-    link: no ``ping`` (a request on click), no ``target`` or ``download``; ``rel`` and
-    ``referrerpolicy`` may only take things away."""
+def test_the_tip_links_are_plain_links_to_stripe(site_dir: Path, tip_url: str) -> None:
+    """ops/DONATIONS.md step 11: plain links, no Stripe script. Every page has one, "Tip Jar" at
+    the end of its header nav (owner's site rulings tip_jar and tip_jar_privacy_to_footer), and
+    /about/ a second, the tip pitch's "leave a tip" that ends its note "Why isn't my favorite
+    free font here?" (funding_pitch, why_not_listed_conversation). A plain link: no ``ping`` (a
+    request on click), no ``target`` or ``download``; ``rel`` and ``referrerpolicy`` may only
+    take things away."""
     plain = {"href", "class", "rel", "referrerpolicy"}
     for html in _html_files(site_dir):
+        rel = html.relative_to(site_dir).as_posix()
         found = checks.tags(html.read_bytes())
         links = [a for t, a in found if t == "a" and "stripe" in a.get("href", "")]
-        assert [a["href"] for a in links] == [tip_url], html.name
-        assert set(links[0]) <= plain, f"{html.name}: the tip link isn't plain: {links[0]}"
+        count = 2 if rel == "about/index.html" else 1
+        assert [a["href"] for a in links] == [tip_url] * count, rel
+        for link in links:
+            assert set(link) <= plain, f"{rel}: a tip link isn't plain: {link}"
         assert not [a for t, a in found if "stripe" in " ".join(a.values()) and t != "a"]
 
 

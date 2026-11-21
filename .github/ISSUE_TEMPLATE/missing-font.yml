@@ -14,7 +14,7 @@ body:
 
         Please search the list first, including the font's old names: "Source Sans Pro" finds Source Sans 3. A font is listed only if:
 
-        - its license lets anyone use it in any personal or commercial project, with no limits on use. Personal-use-only, demo, display-only and non-commercial licenses don't qualify, and neither do licenses that forbid modifying or embedding the font (such as the ITF Free Font License that many Fontshare fonts use), or copyleft licenses without a font exception (CC BY-SA, or the plain GPL, LGPL or AGPL);
+        - its license lets anyone use it in any personal or commercial project, with no use restrictions. Personal-use-only, demo, display-only and non-commercial licenses don't qualify, and neither do licenses that forbid modifying or embedding the font (such as the ITF Free Font License that many Fontshare fonts use), or copyleft licenses without a font exception (CC BY-SA, or the plain GPL, LGPL or AGPL);
         - it covers the Latin alphabet;
         - it is a font for text, not icons, emoji or symbols.
 
