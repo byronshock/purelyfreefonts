@@ -9,6 +9,8 @@ Purely Free Fonts is a ranked list of the most popular fonts whose licenses let 
 
 Every font links to its official download page. The list is free to use, with no ads and [no tracking](/privacy/).
 
+**Leave out the fonts you already have.** "Your own list", above the font list, takes a list of the fonts on your computer, made with one command, and leaves those fonts out. The check runs in your browser, and your list never leaves your device ([how it works](/privacy/#checking-your-own-fonts)). The commands for macOS and Windows are not yet tested.
+
 ## Which fonts are listed
 
 A font is listed only if it passes all four rules.
@@ -35,7 +37,6 @@ We check every license, but we can make mistakes. Before you rely on a font, rea
 
 ## What's next
 
-- **Hiding the fonts you already have.** The next release compares the list with the fonts on your computer and hides the ones you have. The check runs in your browser, and your font list never leaves your device.
 - **A monthly refresh.** The counts and ranks are updated every month.
 - **Rising (beta).** A rank of fonts that are gaining users, once there are 3 months of data.
 - **Every other qualifying font, A–Z.** The list ranks about the 500 most-used fonts, because past that the counts are too thin to put fonts in a useful order. Every other font that passes the four rules will be listed after them, A–Z and without a rank.
