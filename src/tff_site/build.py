@@ -84,8 +84,9 @@ DEFAULT_OUT = REPO_ROOT / "build" / "site"
 SITE_NAME = "Purely Free Fonts"
 BASE_URL = "https://purelyfreefonts.com"
 # The live Stripe Payment Link in ops/DONATIONS.md's Facts table (M2 step 8). The link ships
-# with the list release (AUTHORITY.md, Funding); None leaves the nav's Tip Jar link (li#tip)
-# and /privacy/'s Tips paragraph out.
+# with the list release (AUTHORITY.md, Funding); None leaves out the nav's Tip Jar link
+# (li#tip), the tip pitch that ends About's note (about.html.j2, #why-not-listed) and
+# /privacy/'s Tips paragraph.
 TIP_URL: str | None = "https://buy.stripe.com/dRm00beFeaJ307651Qf7i00"
 # Page text for the list page and the fallback 404 page (owner approval: M2 step 7). Some
 # fonts here need attribution, so the text claims "any personal or commercial use", as the
