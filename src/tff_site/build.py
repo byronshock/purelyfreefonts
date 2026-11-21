@@ -106,8 +106,9 @@ NOT_FOUND_PAGE = {
 }
 # Row badges (site/CONTRACT.md section 3), in this order. Kept short (owner ruling of
 # 2026-09-30, filters_layout): the category already says "Monospace", every font is
-# redistributable (Rule 3), "Comes with" names operating systems and apps only, and "Pulled
-# in by" is in the details panel.
+# redistributable (Rule 3), "Comes with" names up to three systems, or two and a count of
+# the rest, best-known first (comes_with_names_systems, comes_with_up_to_three), and
+# "Pulled in by" is in the details panel.
 BADGE_TEXT = {
     "variable": "Adjustable weight",  # owner ruling of 2026-09-30, variable_label
     "nerd": "Nerd Font available",  # owner's site ruling of 2026-10-05, nerd_tag
@@ -494,7 +495,7 @@ def _list_context(
 
 
 def _rows(doc: Mapping[str, Any], specimens: Mapping[str, Specimen]) -> list[dict[str, Any]]:
-    systems = {s["id"]: (i, s["label"], s["os"]) for i, s in enumerate(doc["systems"])}
+    systems = {s["id"]: (i, s["label"]) for i, s in enumerate(data.ordered_systems(doc["systems"]))}
     ordered = data.server_order(doc)
     rows = []
     for font, cell in zip(ordered, rank_cells(ordered), strict=True):
@@ -524,7 +525,7 @@ def _rows(doc: Mapping[str, Any], specimens: Mapping[str, Specimen]) -> list[dic
 
 
 def _badges(
-    font: Mapping[str, Any], systems: Mapping[str, tuple[int, str, str]]
+    font: Mapping[str, Any], systems: Mapping[str, tuple[int, str]]
 ) -> list[dict[str, str]]:
     shown = {
         "variable": font["formats"]["variable"],
@@ -533,7 +534,7 @@ def _badges(
         "attribution": font["license"]["attribution_required"],
         "new": "too_new" in font["flags"],
     }
-    details = {"preinstalled": ", ".join(comes_with(font, systems))}
+    details = {"preinstalled": comes_with(font, systems)}
     badges = []
     for key, text in BADGE_TEXT.items():
         if key in details:
@@ -544,18 +545,18 @@ def _badges(
     return badges
 
 
-def comes_with(font: Mapping[str, Any], systems: Mapping[str, tuple[int, str, str]]) -> list[str]:
-    """The row's "Comes with" names: each operating system that preinstalls the font once
-    (Windows, macOS, Linux, Android: every Linux distribution is "Linux"), then each app
-    (LibreOffice), in catalog order. The details panel lists every system."""
-    kinds = {systems[item["system"]][2] for item in font["preinstalled_on"]}
-    names = [label for os_id, label in data.OS_LABELS.items() if os_id in kinds]
-    others = sorted(
-        {item["system"] for item in font["preinstalled_on"]}
-        - {k for k, v in systems.items() if v[2] in data.OS_LABELS},
-        key=lambda s: systems[s][0],
-    )
-    return names + [systems[s][1] for s in others]
+def comes_with(font: Mapping[str, Any], systems: Mapping[str, tuple[int, str]]) -> str:
+    """The row's "Comes with" text: the label of each system that ships the font, in the
+    order of ``systems`` (place, label), which ``data.ordered_systems`` sets, best-known first.
+    Up to ``data.COMES_WITH_UP_TO`` (three) are named, as in "Ubuntu, CachyOS, EndeavourOS";
+    past that, two and a count of the rest: "Ubuntu, Fedora Workstation and 4 more". The
+    details panel names every one (comes_with_names_systems, comes_with_up_to_three)."""
+    ids = sorted({item["system"] for item in font["preinstalled_on"]}, key=lambda s: systems[s][0])
+    names = [systems[s][1] for s in ids]
+    if len(names) <= data.COMES_WITH_UP_TO:
+        return ", ".join(names)
+    named = data.COMES_WITH_UP_TO - 1
+    return f"{', '.join(names[:named])} and {len(names) - named} more"
 
 
 def _copy_specimens(

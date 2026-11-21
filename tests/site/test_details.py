@@ -791,8 +791,10 @@ def expected_panel(
         ["Font", f"{kinds} · {latin}"],
     ]
     if font["preinstalled_on"]:
-        names = ", ".join(systems[p["system"]] for p in font["preinstalled_on"])
-        essentials.append(["Comes with", names])
+        # Every system, best-known first (comes_with_up_to_three).
+        order = [s["id"] for s in data.ordered_systems(doc["systems"])]
+        ids = sorted((p["system"] for p in font["preinstalled_on"]), key=order.index)
+        essentials.append(["Comes with", ", ".join(systems[i] for i in ids)])
     if font["aliases"]:
         names = [
             f"{a['name']} (PostScript name)" if a["relation"] == "postscript" else a["name"]
@@ -962,6 +964,36 @@ def test_a_nerd_font_builds_link_and_legend(guarded_context, font_id):
     assert panel.get_by_text(DOC["nerd"]["marker"], exact=True).count() == 0
     assert panel.locator(f"[aria-label='{DOC['nerd']['label']}']").count() == 0
     assert panel.get_by_text(DOC["nerd"]["legend"]).count() == 0
+    guarded.assert_clean(page)
+
+
+def test_comes_with_names_every_system_best_known_first(guarded_context):
+    """comes_with_up_to_three (2026-11-21): the details' "Comes with" names every system that
+    ships the font, best-known first (data.SYSTEM_ORDER, then catalog order), as the row's
+    tag does, though the tag names at most three. The font is the one with the most systems
+    whose catalog order differs from that order: Noto Sans on the launch data; on the sample,
+    sample-sans-08, whose "fedora" has no place in the order."""
+    catalog = [s["id"] for s in DOC["systems"]]
+    labels = {s["id"]: s["label"] for s in DOC["systems"]}
+
+    def place(sid: str) -> tuple[int, int]:
+        known = data.SYSTEM_ORDER
+        return (known.index(sid) if sid in known else len(known), catalog.index(sid))
+
+    def best_known(font: dict[str, Any]) -> list[str]:
+        return sorted((p["system"] for p in font["preinstalled_on"]), key=place)
+
+    font = next(
+        f
+        for f in sorted(DOC["fonts"], key=lambda f: -len(f["preinstalled_on"]))
+        if best_known(f) != [p["system"] for p in f["preinstalled_on"]]
+    )
+    assert len(font["preinstalled_on"]) >= 3
+    guarded = guarded_context()
+    page = _open_page(guarded, f"/#font={font['id']}")
+    _wait_ready(page, font["id"])
+    got = dict(page.evaluate(READ_PANEL, font["id"])["essentials"])
+    assert got["Comes with"] == ", ".join(labels[i] for i in best_known(font))
     guarded.assert_clean(page)
 
 

@@ -105,7 +105,7 @@ Until the launch:
   - [ ] About's "with no use restrictions";
   - [ ] the methodology text without its "(owner ruling of …)" asides;
   - [ ] the sentence on where the measure is chosen.
-- [ ] **"Comes with" names the systems** (`comes_with_names_systems`), after single-select questions on Q4's two loose ends.
+- [x] **"Comes with" names the systems** (`comes_with_names_systems`), after single-select questions on Q4's two loose ends. *(Ruled on 2026-11-21, `comes_with_up_to_three`: up to three systems, or two and a count, best-known first; every system in the details; the Linux filter unchanged.)*
 - [ ] **Step 5's first part:**
   - [ ] the Tip Jar link at the end of the header nav, and the footer's tip link removed. The one-row header is re-measured, with a question to the owner on the phone nav at 320 px;
   - [ ] "No listed font matches '…'" when search alone finds nothing;

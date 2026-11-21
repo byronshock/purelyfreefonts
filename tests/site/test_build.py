@@ -760,9 +760,12 @@ def test_the_no_script_box_is_the_css_box():
 def test_row_badges_and_download_names():
     rows = {r["id"]: r for r in build._rows(SAMPLE, {})}
     badges = {i: [(b["key"], b["text"]) for b in r["badges"]] for i, r in rows.items()}
-    # Short badges (owner ruling of 2026-09-30, filters_layout): Linux distributions are
-    # "Linux", apps follow the systems, and "Pulled in by" is in the details panel only.
-    assert ("preinstalled", "Comes with Linux") in badges["sample-sans-08"]
+    # Short badges (owner ruling of 2026-09-30, filters_layout): "Comes with" names the
+    # systems (comes_with_names_systems), up to three, or two and a count of the rest, best-
+    # known first (comes_with_up_to_three); the sample's "fedora" has no place in
+    # data.SYSTEM_ORDER, so it comes last. "Pulled in by" is in the details panel only.
+    assert ("preinstalled", "Comes with Debian, GNOME, Fedora") in badges["sample-sans-08"]
+    assert ("preinstalled", "Comes with Windows 11") in badges["sample-mono-13"]
     assert not any(k == "pulled" for b in badges.values() for k, _ in b)
     assert ("new", "New") in badges["sample-sans-29"]
     assert ("attribution", "Credit required") in badges["sample-hand-16"]
@@ -946,17 +949,53 @@ def test_list_index_bits():
         assert bool(bits & data.BIT_TYPE_OWN) == (font["font_file"] is not None)
 
 
-def test_comes_with_names_each_system_once_then_apps():
-    systems = {
-        "libreoffice": (0, "LibreOffice", "app"),
-        "ubuntu": (1, "Ubuntu", "linux"),
-        "macos": (2, "macOS", "macos"),
-        "fedora-workstation": (3, "Fedora Workstation", "linux"),
-        "windows-11": (4, "Windows 11", "windows"),
-    }
-    font = {"preinstalled_on": [{"system": s} for s in systems]}
-    assert build.comes_with(font, systems) == ["Windows", "macOS", "Linux", "LibreOffice"]
-    assert build.comes_with({"preinstalled_on": []}, systems) == []
+def test_comes_with_names_systems_best_known_first_then_counts():
+    """Owner's site rulings comes_with_names_systems (2026-09-30) and comes_with_up_to_three
+    (2026-11-21): a row's tag names each system by its label, best-known first: up to three,
+    or else two and a count of the rest, so never "and 1 more", which is as long as the name
+    it hides. A system with no place in the order comes last."""
+    catalog = [
+        {"id": "libreoffice", "label": "LibreOffice", "os": "app"},
+        {"id": "cachyos", "label": "CachyOS", "os": "linux"},
+        {"id": "endeavouros", "label": "EndeavourOS", "os": "linux"},
+        {"id": "kde-plasma", "label": "KDE Plasma", "os": "linux"},
+        {"id": "new-distro", "label": "New Distro", "os": "linux"},
+        {"id": "ubuntu", "label": "Ubuntu", "os": "linux"},
+        {"id": "fedora-workstation", "label": "Fedora Workstation", "os": "linux"},
+        {"id": "windows-11", "label": "Windows 11", "os": "windows"},
+    ]
+    ordered = data.ordered_systems(catalog)
+    assert [s["id"] for s in ordered][-1] == "new-distro"
+    systems = {s["id"]: (i, s["label"]) for i, s in enumerate(ordered)}
+
+    def tag(*ids: str) -> str:
+        return build.comes_with({"preinstalled_on": [{"system": s} for s in ids]}, systems)
+
+    assert tag("cachyos", "endeavouros") == "CachyOS, EndeavourOS"  # Open Sans, 2026-09-30
+    assert tag("windows-11") == "Windows 11"
+    assert tag("endeavouros", "cachyos", "ubuntu") == "Ubuntu, CachyOS, EndeavourOS"
+    assert tag("endeavouros", "cachyos", "ubuntu", "libreoffice") == "Ubuntu, CachyOS and 2 more"
+    # The ruling's example (Noto Sans on the launch data).
+    noto_sans = ("cachyos", "endeavouros", "fedora-workstation", "kde-plasma", "ubuntu")
+    assert tag(*noto_sans, "libreoffice") == "Ubuntu, Fedora Workstation and 4 more"
+    assert tag("new-distro", "libreoffice") == "LibreOffice, New Distro"
+    assert tag() == ""
+
+
+def test_every_configured_system_has_its_place_in_the_ruled_order():
+    """comes_with_up_to_three (data/reviews/site/2026-11-21.toml) orders the systems by their
+    labels. Every system in config/preinstalled.toml and config/site.toml's package_systems
+    has a place in data.SYSTEM_ORDER, which names nothing else, once, and its ids' labels are
+    the ruling's order word for word. A new system fails here until the owner places it."""
+    pre = tomllib.loads((ROOT / "config" / "preinstalled.toml").read_text(encoding="utf-8"))
+    site = tomllib.loads((ROOT / "config" / "site.toml").read_text(encoding="utf-8"))
+    record = ROOT / "data" / "reviews" / "site" / "2026-11-21.toml"
+    ruled = tomllib.loads(record.read_text(encoding="utf-8"))["comes_with_up_to_three"]["order"]
+    labels = {sid: entry["label"] for sid, entry in site["package_systems"].items()}
+    labels |= {sid: entry["label"] for sid, entry in pre["systems"].items()}
+    assert len(set(data.SYSTEM_ORDER)) == len(data.SYSTEM_ORDER)
+    assert set(labels) == set(data.SYSTEM_ORDER)
+    assert [labels[sid] for sid in data.SYSTEM_ORDER] == ruled
 
 
 def test_an_apps_bundle_sets_no_os_bit():
@@ -978,8 +1017,12 @@ def test_details_format(tmp_path, catalog, mini_site):
     page = parse((out / "index.html").read_text(encoding="utf-8"))
     payload = load_json(out, next(a["data-details"] for t, a in page.tags if t == "ol"))
     doc = data.load(catalog[0])
-    for key in ("views", "bands", "sources", "systems", "license_classes"):
+    for key in ("views", "bands", "sources", "license_classes"):
         assert payload[key] == doc[key], key
+    # The catalog's systems, best-known first: the order "Comes with" names them in
+    # (comes_with_up_to_three).
+    assert payload["systems"] == data.ordered_systems(doc["systems"])
+    assert sorted(map(json.dumps, payload["systems"])) == sorted(map(json.dumps, doc["systems"]))
     assert "tiers" not in payload  # no_tiers_or_ranges
     assert payload["v"] == 2
     assert payload["run_date"] == doc["run"]["date"]

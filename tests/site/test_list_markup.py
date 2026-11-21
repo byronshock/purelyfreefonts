@@ -311,6 +311,23 @@ def test_each_row_has_its_parts(dom, doc):
         assert details.children == []
 
 
+def comes_with_reference(doc: dict, font: dict) -> str:
+    """The row's "Comes with" names (comes_with_names_systems, comes_with_up_to_three): each
+    system's label, best-known first (data.SYSTEM_ORDER, then catalog order); up to three, or
+    else the first two and a count of the rest."""
+    catalog = [s["id"] for s in doc["systems"]]
+    labels = {s["id"]: s["label"] for s in doc["systems"]}
+    known = list(data.SYSTEM_ORDER)
+    ids = sorted(
+        {p["system"] for p in font["preinstalled_on"]},
+        key=lambda s: (known.index(s) if s in known else len(known), catalog.index(s)),
+    )
+    names = [labels[s] for s in ids]
+    if len(names) <= 3:
+        return ", ".join(names)
+    return f"{names[0]}, {names[1]} and {len(names) - 2} more"
+
+
 def test_badges_follow_the_contract_order(dom, doc):
     fonts = {f["id"]: f for f in doc["fonts"]}
     seen: set[str] = set()
@@ -320,6 +337,7 @@ def test_badges_follow_the_contract_order(dom, doc):
         nerd = font["links"]["nerd"] is not None
         if badges is None:
             assert not nerd, "a Nerd Font build always has its tag"
+            assert not font["preinstalled_on"], "a font a system ships always has its tag"
             continue
         assert badges.attrs.get("role") == "list"
         assert badges.attrs["aria-label"] == "Tags"
@@ -336,6 +354,10 @@ def test_badges_follow_the_contract_order(dom, doc):
         assert ("attribution" in keys) == font["license"]["attribution_required"]
         # The owner's site ruling of 2026-10-05 (nerd_tag): a tag like "Adjustable weight".
         assert ("nerd" in keys) == nerd
+        assert ("preinstalled" in keys) == bool(font["preinstalled_on"])
+        if font["preinstalled_on"]:
+            tag = badges.find("li", data_badge="preinstalled")
+            assert squash(tag.text) == "Comes with " + comes_with_reference(doc, font)
         if nerd:
             tag = badges.find("li", data_badge="nerd")
             assert squash(tag.text) == "Nerd Font available"
