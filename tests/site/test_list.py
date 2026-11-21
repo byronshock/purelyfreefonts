@@ -629,9 +629,11 @@ def test_finds_tells_a_search_that_names_no_listed_font(parts: Parts, doc: dict[
     search finds a font when any of its names holds the search, in any view, whatever the
     filters."""
     family = doc["fonts"][0]["family"]
+    _, other_name, _ = _other_name_only(doc)
     cases = {
         family: True,
         family.upper(): True,
+        other_name: True,  # held by a font's other name only, never by a family
         "": True,
         " - ": True,  # spaces, hyphens and underscores only: every font
         "zzqqzzqq": False,
@@ -1347,6 +1349,33 @@ def _names_hold(doc: dict[str, Any], query: str) -> bool:
     )
 
 
+def _other_name_only(doc: dict[str, Any]) -> tuple[dict[str, Any], str, str]:
+    """A font of the default view, one of its other names (an alias) that no font's family
+    holds as the search reads it, and a category no font holding that name is in: a search
+    for the name finds the font only through it, and that category then empties the list."""
+    families = [search_key(font["family"]) for font in doc["fonts"]]
+    for font in data.server_order(doc):
+        if data.DEFAULT_VIEW not in font["ranks"]:
+            continue
+        for alias in font["aliases"]:
+            key = search_key(alias["name"])
+            if not key or any(key in family for family in families):
+                continue
+            holders = [
+                other
+                for other in doc["fonts"]
+                if any(
+                    key in search_key(name)
+                    for name in (other["family"], *(a["name"] for a in other["aliases"]))
+                )
+            ]
+            cats = {data.site_category(holder) for holder in holders}
+            empty = next((cat for cat in data.CATEGORIES if cat not in cats), None)
+            if empty:
+                return font, alias["name"], empty
+    raise AssertionError("no font of the default view has another name no family holds")
+
+
 def test_a_search_that_names_no_listed_font_says_so_and_links_to_the_note(
     guarded_context: Any, doc: dict[str, Any], views: list[str]
 ) -> None:
@@ -1355,7 +1384,8 @@ def test_a_search_that_names_no_listed_font_says_so_and_links_to_the_note(
     5's done-when: searching "Satoshi" or "Helvetica" says the ruling's no_match, the search
     trimmed inside its quotes, then links to About's note by its heading, in any view and
     whatever else is on. The search is set as text, never markup. Other empty results keep
-    their text and hide the link, a listed font outside the view (Coding) among them."""
+    their text and hide the link, a listed font outside the view (Coding) among them, and a
+    listed font found only through another name that a filter leaves out."""
     for query in ("Satoshi", "Helvetica"):
         assert not _names_hold(doc, query), query
     guarded, page = open_list(guarded_context, "#q=Satoshi")
@@ -1381,6 +1411,20 @@ def test_a_search_that_names_no_listed_font_says_so_and_links_to_the_note(
     page.click("#no-results-clear")
     assert page.is_hidden("#no-results")
     assert page.is_hidden("#no-results-why")
+    # A name no family holds, only another name of a listed font: that font is listed, so a
+    # category it isn't in empties the list with the filters named, and no link.
+    font, other_name, cat = _other_name_only(doc)
+    page.fill("#f-q", other_name)
+    assert font["id"] in [row[0] for row in rows(page)]
+    page.check(f"#f-cat-{cat}")
+    assert rows(page) == []
+    assert page.text_content("#no-results-text") == (
+        f"No fonts match these filters together: Category: {data.CATEGORY_LABELS[cat]} and "
+        f"Search fonts: “{other_name}”. Loosen one of them, or clear the filters."
+    )
+    assert page.is_hidden("#no-results-why")
+    page.click("#no-results-clear")
+    assert page.is_hidden("#no-results")
     if "coding" in views:
         mono_names = [
             search_key(name)

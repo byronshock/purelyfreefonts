@@ -555,7 +555,7 @@ key   = "rank" / "cat" / "var" / "nerd" / "hide" / "q" / "sort" / "font"
 | `nerd` | `1`: "Nerd Font available", fonts with a Nerd Font build only | off |
 | `hide` | any of `limited` (shown as "Accented letters"), `attr` ("No credit required"), and at most one of `windows`, `macos`, `linux`, `android`, in this order; a second system is dropped | nothing hidden |
 | `q` | search text, at most 100 characters | empty |
-| `sort` | `rank-desc` (the whole rank order reversed, unranked fonts first), `name` (A–Z) or `name-desc` (Z–A) | `rank` (most popular first) |
+| `sort` | `rank-desc` (the whole rank order reversed, unranked fonts first), `name` (A–Z) or `name-desc` (Z–A); with a search on, the fonts whose own name holds it come first, then those found only through another name, each part in the sort's order, so `rank-desc` reverses each part rather than the whole list (section 5, step 7: `search_name_first_every_sort`) | `rank` (most popular first) |
 | `font` | a font id: its details panel is open | none |
 
 - **Writing:** keys in the table's order, defaults left out; the default view is the empty hash, restored with `history.replaceState(null, '', location.pathname + location.search)`. Discrete changes use `pushState`; search typing uses `replaceState`, debounced 300 ms.
