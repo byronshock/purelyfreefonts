@@ -6,11 +6,11 @@ This is the working checklist for Milestone 2's soft launch ([docs/milestone-2.m
 - production deploys from GitHub Actions, set up first (`deploys_actions_first`);
 - usability round 1 comes after the launch (`usability_round_1_after_launch`).
 
-**Status (2026-11-16):**
-- Production serves the "Coming soon." stub, and `main` holds September's catalog on the old method until the launch run merges.
-- Staging shows October's run with #100 (the hopper) and #115 (no early-version line).
-- Merged: #115 (no early-version line), #116 (the redraw budget), #117 (this plan's records), #118 and #119 (step 2A), #100 (the hopper) and #120 (step 2A's ticks).
-- Open: #121, the launch run (step 2C), which supersedes #88 (closed 2026-11-16).
+**Status (2026-11-21):**
+- Production serves the "Coming soon." stub. `main` holds October's run on the new method since the launch run merged (#121, 7444ee8).
+- Staging shows October's run with #100 (the hopper) and #115 (no early-version line), from the preview branch.
+- Merged: #115 (no early-version line), #116 (the redraw budget), #117 (this plan's records), #118 and #119 (step 2A), #100 (the hopper), #120 (step 2A's ticks), #121 (the launch run, step 2C), which superseded #88, #122 (PR 5, step 2B) and #124 (step 2D's Caddy docs).
+- Open: step 2D's pull requests; and November's run (step 2C), which failed at `validate` on two alias rows (#123) and is replayed once #125 merges, its pull request held until after the launch.
 
 **How to read each step:** **Who**, **Depends on** and **Done when**, as in PLAN-hopper.md. Tick each item as soon as it is done and verified. Checklists nest: a parent is ticked only when every item under it is. If an item is only partly done, leave it unticked and note what's left.
 
@@ -72,14 +72,14 @@ Until the launch:
   - [x] Items 2 to 5 (2026-11-11, on #100's branch at 604ce2c): each checked against the code and tests. The count's M is now pinned with a list, and the privacy item notes `hopper_previews_all_at_once`.
   - [ ] Item 1, the owner's layout review: its last part is his try, which folds into step 3's final try (`hopper_try_in_final_try`).
 - [x] **#100 merged,** before the launch run, so the run's CI checks the hopper on October's data. *(2026-11-16, 89a6940; the launch run at 75942ee includes it.)*
-- [ ] **PR 5, the words** (the owner rules on the wording):
-  - [ ] privacy.md's "Coming next" becomes a section on how the check works:
+- [x] **PR 5, the words** (the owner rules on the wording): #122, ruled on 2026-11-16 (`pr5_privacy_section`, `pr5_preview_count`, `pr5_about_at_top`, `pr5_no_box_link`), each as Claude recommended.
+  - [x] privacy.md's "Coming next" becomes a section on how the check works, "Checking your own fonts":
     - nothing of the list leaves the device;
     - two fixed requests, the matcher and the match file;
-    - one batch of previews, its count computed by the build or not given;
+    - one batch of previews, its count computed by the build or not given (not given);
     - nothing stored;
-  - [ ] about.md's "What's next" changes to match.
-- [ ] **docs/milestone-4.md:** step 3's stale lines on the "Load previews" button and the one match-file request, fixed after #100 merges. The opening now notes the hopper (step 1); step 8 and Step 0 are revisited when Milestone 4 starts.
+  - [x] about.md's "What's next" changes to match: the hopper's line moves to the top, in the present tense.
+- [x] **docs/milestone-4.md:** step 3's stale lines on the "Load previews" button and the one match-file request, fixed after #100 merges. The opening now notes the hopper (step 1); step 8 and Step 0 are revisited when Milestone 4 starts.
 
 **Done when:** #100 and PR 5 are merged.
 
@@ -90,17 +90,18 @@ Until the launch:
   - [x] Gentium Book: its entry, its two known answers, and `build/names.reviewed.toml` (as on staging, `inventory_ambiguous_names`);
   - [x] Merienda's specimen left out by hand, as on staging, since its cut can't be pinned (step 2A; noted under Milestone 2 step 5);
   - [x] the stopgap specimen pins (`src/tff_site/trim.sha256`, `tests/site/trimmed.sha256`), recomputed (`launch_weight_after`): 562 served, each checked against its font, the same bytes as staging's.
-- [ ] Before it merges:
+- [x] Before it merges:
   - [x] `validate --committed`;
   - [x] the site built twice, byte-identical;
   - [x] `tff-site check`;
-  - [ ] the held CI green.
-- [ ] Merged. Then November's run, started by hand at once (docs/milestone-refresh.md step 1's live run and npm check), its pull request held until after the launch.
+  - [x] the held CI green. *(All 10 checks passed on its final head, bd1dde1.)*
+- [ ] Merged. Then November's run, started by hand at once (docs/milestone-refresh.md step 1's live run and npm check), its pull request held until after the launch. *(Merged 2026-11-20 as 7444ee8. November's run, [44835160086](https://github.com/byronshock/purelyfreefonts/actions/runs/44835160086), started from it the same day. Left: its pull request, held as a draft.)*
 
 **Done when:** the launch run is on `main`, and November's run has opened its held pull request.
 
 #### 2D. Site-only changes
 **Who:** Claude; the owner rules where noted. **Depends on:** the launch run, so CI tests them on the launch data.
+*The owner's answers of 2026-11-21* (`data/reviews/site/2026-11-21.toml`; AUTHORITY.md **Soft launch**), each Claude's recommendation: the nav is Fonts, How it works, About, Tip Jar, with Privacy in the footer (`tip_jar_privacy_to_footer`); "Comes with" names up to three systems, best-known first (`comes_with_up_to_three`, Q4's loose ends); About's note is Draft A, and the empty-search message links to it (`why_not_listed_conversation`); name matches come first in every sort (`search_name_first_every_sort`).
 - [ ] **Priority 1's wording** (PLAN-REVIEWERS-1 step 8b):
   - [ ] About's "with no use restrictions";
   - [ ] the methodology text without its "(owner ruling of …)" asides;
@@ -113,7 +114,7 @@ Until the launch:
   - [ ] About's note rewritten to end with the tip pitch, its words OK'd by the owner.
 - [ ] **The docs:**
   - [ ] ops/DONATIONS.md step 11, for the Tip Jar;
-  - [ ] ops/deploy/README.md's item 6 and ops/SERVER.md's header-phase lines, which still word Caddy's phase B as pending.
+  - [x] ops/deploy/README.md's item 6 and ops/SERVER.md's header-phase lines, which still word Caddy's phase B as pending. *(Reworded as done on 2026-09-30, #39, with docs/milestone-1-handoff.md's deploy row and docs/milestone-2.md step 14's "Depends on". The guards in deploy.yml and ops/deploy.sh stay.)*
 
 **Done when:** each is merged.
 

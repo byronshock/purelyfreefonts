@@ -55,7 +55,7 @@ PAGES = {
             "check-for-yourself",
             "what-our-server-logs",
             "what-cloudflare-sees",
-            "coming-next-your-font-list-stays-on-your-device",
+            "checking-your-own-fonts",
         ],
     ),
     "about/index.html": (
