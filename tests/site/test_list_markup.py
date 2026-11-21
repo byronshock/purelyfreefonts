@@ -676,7 +676,12 @@ def test_the_front_page_stops_after_the_lead(dom):
     assert squash(main.find("h1").text) == "The most popular purely free fonts"
     for gone in ("why", "why-wide", "why-fold", "privacy-note"):
         assert dom.find(class_=gone) is None, gone
-    assert "Why isn't my favorite free font here?" not in squash(main.text)
+    # Only the empty-search message's link to the note, hidden until a search names no listed
+    # font (no_match_search).
+    assert squash(main.text).count("Why isn't my favorite free font here?") == 1
+    why = main.find(id="no-results-why")
+    assert "hidden" in why.attrs
+    assert squash(why.text) == "Why isn't my favorite free font here?"
     assert "Check the Network tab" not in squash(main.text)
     # The lead, in the owner's wording of 2026-09-30 but for its ranking sentence (above).
     lead = main.find("p", class_="lead")
@@ -698,6 +703,11 @@ def test_count_and_no_results(dom, doc):
     no_results = dom.find(id="no-results")
     assert "hidden" in no_results.attrs
     assert no_results.find("button", id="no-results-clear") is not None
+    # The link to About's note follows the text in its paragraph, hidden until a search names
+    # no listed font (no_match_search, why_not_listed_to_about).
+    why = no_results.find("a", id="no-results-why")
+    assert (why.attrs["href"], "hidden" in why.attrs) == ("/about/#why-not-listed", True)
+    assert why.parent is no_results.find(id="no-results-text").parent
     status = dom.find(id="status")
     assert status.attrs["role"] == "status"
     assert status.children == []

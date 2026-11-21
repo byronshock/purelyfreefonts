@@ -248,14 +248,14 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
 **Who:** Claude; the owner approves the wording. **Depends on:** Q5, Q7 and Q9 (answered); step 2 for the reasons.
 - [ ] **First part:**
   - [ ] Move the note below the list, on wide screens and phones. The top of the front page becomes the headline, the lead, the privacy line, then the list. *(Replaced on 2026-10-07: the note moves to the About page and the privacy line to the footer, in [PLAN-REVIEWERS-2.md](PLAN-REVIEWERS-2.md) step 2, `why_not_listed_to_about`; the rewrite below happens on the About page, and the empty-search message links there.)*
-  - [ ] When search is the only filter and finds nothing, say "No listed font matches '…'" and show the note. Other empty results keep today's text.
+  - [x] When the search alone finds no listed font, in any view and whatever else is on, say "No listed font matches “…”." and link to About's note, "Why isn't my favorite free font here?" (`no_match_search`, `why_not_listed_to_about`, and `why_not_listed_conversation`'s `no_match`). Other empty results keep today's text.
   - [ ] Rewrite the note as a conversation that ends with the tip pitch, asking the reader to leave a tip with no amount (`tip_jar`), under Funding as amended.
   - [ ] Add the "Tip Jar" link at the end of the header nav, and remove the footer's tip link.
   - [ ] **The header stays one row** (`wordmark_breakpoint`, 2026-10-04, in #55). The wordmark is 418 px wide from 760 px up, with the nav beside it, and 278 px below. The 760 px is today's nav, about 280 px: 16 + 418 + 24 + 280 + 16 = 754.
     - "Tip Jar" and step 4's "How it works" widen the nav by roughly 80 px. Re-measure the widest single-row width, and move the breakpoint (`@media (max-width: 47.5rem)` in `site/css/10-base.css`) and its test (`tests/site/test_shell.py::test_the_wordmark_is_418_px_wide_from_760_px_and_278_below`) to match.
     - On phones the nav has its own line under the wordmark. At 320 px it may no longer fit on one line. Before building, ask the owner how to keep it to one line: tighter spacing, a smaller nav text, or Privacy moving to the footer. A second line would go against `wordmark_breakpoint`.
     - Check header height at 320 px and from 640 to 1280 px, in Chromium and Firefox, so a second row is caught.
-  - [ ] Search lists name matches first, then fonts matched only through another name (`search_name_first`).
+  - [x] Search lists name matches first, then fonts matched only through another name (`search_name_first`), each part in the chosen sort (`search_name_first_every_sort`).
 - [ ] **Second part** (after step 2):
   - [ ] Reasons and alternatives, per Q5, from a file loaded on the first empty search, outside the 100 KB.
   - [ ] M2's privacy test expects exactly that one fixed, same-origin request.

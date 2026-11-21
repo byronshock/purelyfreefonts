@@ -22,6 +22,7 @@ import hashlib
 import json
 import math
 import re
+import tomllib
 from collections.abc import Iterator
 from dataclasses import dataclass, field
 from decimal import Decimal
@@ -80,6 +81,18 @@ FAILED_NOTE = "Filters and search didn\u2019t load. Check your connection, then 
 NOT_RANKED = "Not ranked: "
 HELD = ", from one kind of source"
 HELD_TAG = "Score from one kind of source"
+# The owner's words of 2026-11-21 (why_not_listed_conversation): a search that finds no listed
+# font says `no_match`, the search in its quotes, then links to About's note by its heading.
+NOTE_RULING = tomllib.loads(
+    (ROOT / "data" / "reviews" / "site" / "2026-11-21.toml").read_text(encoding="utf-8")
+)["why_not_listed_conversation"]
+WHY_LINK = NOTE_RULING["heading"]
+
+
+def no_match(query: str) -> str:
+    """The ruled message for a search that finds no listed font, ``query`` as shown."""
+    assert NOTE_RULING["no_match"].count("\u2026") == 1
+    return NOTE_RULING["no_match"].replace("\u2026", query)
 
 
 # ---------------------------------------------------------------------------- the oracle
@@ -100,7 +113,9 @@ def oracle(doc: dict[str, Any], state: dict[str, Any]) -> tuple[list[str], list[
     place) then unranked ones by name, the filters and search, and each rank cell's text:
     "Score 83 of 100", which no filter changes, plus ", from one kind of source" for a held
     font outside Developers & apps (owner rulings score_display, score_held_fonts,
-    held_marker_style and held_marker_dev_apps), or "Not ranked: <reason>".
+    held_marker_style and held_marker_dev_apps), or "Not ranked: <reason>". The sort order
+    comes next, and with a search on, the fonts whose own name holds it come first, each part
+    in that order, in every sort (search_name_first, search_name_first_every_sort).
     """
     rank = state.get("rank", data.DEFAULT_VIEW)
     universe = [f for f in data.server_order(doc) if rank in f["ranks"]]
@@ -127,6 +142,13 @@ def oracle(doc: dict[str, Any], state: dict[str, Any]) -> tuple[list[str], list[
         pairs.sort(key=lambda pair: names[pair[0]])
     if sort.endswith("-desc"):  # a true reverse (owner ruling of 2026-09-30, sort_header)
         pairs.reverse()
+    # Name matches first, in every sort (search_name_first, search_name_first_every_sort): the
+    # fonts whose own name holds the search, then those found only through another name, each
+    # part in the order above (a stable sort), so a "-desc" sort reverses each part.
+    query = search_key(state.get("q", ""))
+    if query:
+        own = {f["id"] for f in shown if query in search_key(f["family"])}
+        pairs.sort(key=lambda pair: pair[0] not in own)
     return [p[0] for p in pairs], [p[1] for p in pairs], len(universe)
 
 
@@ -472,14 +494,20 @@ def test_view_matches_the_oracle_for_every_rank_and_filter(
         " r.dimmed.every((d) => d === false), r.notes.every((n) => n === null)]; });",
         states,
     )
+    family = {f["id"]: search_key(f["family"]) for f in doc["fonts"]}
     for state, (ids, labels, total, shown, undimmed, unnoted) in zip(states, got, strict=True):
         want_ids, want_labels, want_total = oracle(doc, state)
         assert (ids, labels, total) == (want_ids, want_labels, want_total), state
         assert shown == len(ids), state
         assert undimmed, state
         assert unnoted, state
-        if state["sort"] == "rank":
-            assert scores_descend(labels), state
+        if state["sort"] == "rank":  # each part best first: name matches, then the rest
+            query = search_key(state.get("q", ""))
+            own = [query in family[i] for i in ids]
+            assert own == sorted(own, reverse=True), state
+            k = own.count(True)
+            assert scores_descend(labels[:k]), state
+            assert scores_descend(labels[k:]), state
 
 
 def test_coding_lists_monospace_fonts_only(
@@ -561,6 +589,56 @@ def test_search_by_alias_and_accents(parts: Parts, sample: dict[str, Any]) -> No
         ".order.map((i) => index.ids[i]));",
         list(cases),
     )
+    assert dict(zip(cases, got, strict=True)) == cases
+
+
+def test_search_lists_name_matches_first_in_every_order(parts: Parts, doc: dict[str, Any]) -> None:
+    """The owner's site rulings search_name_first (2026-10-05) and search_name_first_every_sort
+    (2026-11-21): with a search on, the fonts whose own name holds it come first, then those
+    found only through another name, each part in the chosen sort. So "least popular" reverses
+    each part rather than the whole list, and "mono" lists Ubuntu after the monospace
+    families, not among them through "Ubuntu Nerd Font Mono"."""
+    assert not _names_hold(doc, "zqx")
+    named = copy.deepcopy(doc)
+    # The default view's three best fonts, best first: only the second holds "zqx" in its own
+    # name; the others hold it through a Nerd Font build and an old name.
+    best, second, third = data.server_order(named)[:3]
+    best["aliases"] = [*best["aliases"], {"name": "Zqx Nerd Font Mono", "relation": "build"}]
+    second["family"] = "Zqx Sans"
+    third["aliases"] = [*third["aliases"], {"name": "Old Zqx", "relation": "rename"}]
+    other = data.list_index(named, commit=FAKE_COMMIT)
+    sorts = ["rank", "rank-desc", "name", "name-desc"]
+    got = parts.run(
+        "return arg.sorts.map((sort) => P.View.compute(P.State.coerce({ q: 'zqx', sort }),"
+        " arg.index, []).order.map((i) => arg.index.ids[i]));",
+        {"sorts": sorts, "index": other},
+    )
+    order = dict(zip(sorts, got, strict=True))
+    for sort, ids in order.items():
+        assert ids == oracle(named, {"q": "zqx", "sort": sort})[0], sort
+    assert order["rank"] == [second["id"], best["id"], third["id"]]
+    # Each part reversed, not the whole list (that would put the third best first).
+    assert order["rank-desc"] == [second["id"], third["id"], best["id"]]
+    by_name = sorted((best, third), key=data.name_order)
+    assert order["name"] == [second["id"], *(f["id"] for f in by_name)]
+    assert order["name-desc"] == [second["id"], *(f["id"] for f in reversed(by_name))]
+
+
+def test_finds_tells_a_search_that_names_no_listed_font(parts: Parts, doc: dict[str, Any]) -> None:
+    """View.finds, for the no-results text (no_match_search, why_not_listed_conversation): a
+    search finds a font when any of its names holds the search, in any view, whatever the
+    filters."""
+    family = doc["fonts"][0]["family"]
+    cases = {
+        family: True,
+        family.upper(): True,
+        "": True,
+        " - ": True,  # spaces, hyphens and underscores only: every font
+        "zzqqzzqq": False,
+        "Helvetica": _names_hold(doc, "Helvetica"),  # False on the sample and the catalog
+        "sample|sans": False,  # a "|" never matches across two names
+    }
+    got = parts.run("return arg.map((q) => P.View.finds(q, index));", list(cases))
     assert dict(zip(cases, got, strict=True)) == cases
 
 
@@ -1259,6 +1337,81 @@ def test_no_results_names_the_category_filter_on_coding(
     guarded.assert_clean(page)
 
 
+def _names_hold(doc: dict[str, Any], query: str) -> bool:
+    """True when some font's family or alias holds ``query``, as the search reads it."""
+    key = search_key(query)
+    return any(
+        key in search_key(name)
+        for font in doc["fonts"]
+        for name in (font["family"], *(alias["name"] for alias in font["aliases"]))
+    )
+
+
+def test_a_search_that_names_no_listed_font_says_so_and_links_to_the_note(
+    guarded_context: Any, doc: dict[str, Any], views: list[str]
+) -> None:
+    """The owner's site rulings no_match_search (2026-10-05), why_not_listed_to_about
+    (2026-10-07) and why_not_listed_conversation (2026-11-21), and PLAN-REVIEWERS-1.md step
+    5's done-when: searching "Satoshi" or "Helvetica" says the ruling's no_match, the search
+    trimmed inside its quotes, then links to About's note by its heading, in any view and
+    whatever else is on. The search is set as text, never markup. Other empty results keep
+    their text and hide the link, a listed font outside the view (Coding) among them."""
+    for query in ("Satoshi", "Helvetica"):
+        assert not _names_hold(doc, query), query
+    guarded, page = open_list(guarded_context, "#q=Satoshi")
+    assert rows(page) == []
+    assert page.text_content("#no-results-text") == no_match("Satoshi")
+    assert page.is_visible("#no-results-why")
+    assert page.get_attribute("#no-results-why", "href") == "/about/#why-not-listed"
+    assert page.text_content("#no-results-why") == WHY_LINK
+    assert status(page) == ""  # the first view is silent
+
+    page.fill("#f-q", "  Helvetica ")
+    message = no_match("Helvetica")
+    assert page.text_content("#no-results-text") == message
+    said = f"() => document.getElementById('status').textContent === {json.dumps(message)}"
+    page.wait_for_function(said)
+    page.fill("#f-q", "<b>x</b>&amp;")
+    assert page.text_content("#no-results-text") == no_match("<b>x</b>&amp;")
+    assert page.evaluate("document.getElementById('no-results-text').children.length") == 0
+    page.check("#f-var")  # another filter on too: still no listed font matches
+    assert page.text_content("#no-results-text") == no_match("<b>x</b>&amp;")
+    assert page.is_visible("#no-results-why")
+
+    page.click("#no-results-clear")
+    assert page.is_hidden("#no-results")
+    assert page.is_hidden("#no-results-why")
+    if "coding" in views:
+        mono_names = [
+            search_key(name)
+            for font in doc["fonts"]
+            if font["is_monospace"]
+            for name in (font["family"], *(alias["name"] for alias in font["aliases"]))
+        ]
+        proportional = next(
+            f["family"]
+            for f in doc["fonts"]
+            if not f["is_monospace"]
+            and not any(search_key(f["family"]) in name for name in mono_names)
+        )
+        page.select_option("#f-rank", "coding")
+        page.check("#f-cat-serif")  # empty: Coding holds monospaced fonts only
+        assert "Category: Serif" in page.text_content("#no-results-text")
+        assert page.is_hidden("#no-results-why")
+        page.fill("#f-q", "Satoshi")  # in Coding too, with a filter on
+        assert page.text_content("#no-results-text") == no_match("Satoshi")
+        assert page.is_visible("#no-results-why")
+        page.click("#f-cat-all")
+        page.fill("#f-q", proportional)  # listed, though not in Coding
+        assert rows(page) == []
+        assert page.text_content("#no-results-text") == (
+            f"No fonts match this filter: Search fonts: \u201c{proportional}\u201d. "
+            "Loosen it, or clear the filters."
+        )
+        assert page.is_hidden("#no-results-why")
+    guarded.assert_clean(page)
+
+
 def test_clear_filters_keeps_the_rank_and_sort_order(
     guarded_context: Any, doc: dict[str, Any], views: list[str]
 ) -> None:
@@ -1329,9 +1482,10 @@ def test_the_live_region_is_polite_coalesced_and_never_repeats_silently(
     assert not oracle(doc, {"q": nothing})[0]
     page.locator("#f-q").press_sequentially(nothing)
     page.wait_for_function(
-        "() => document.getElementById('status').textContent.startsWith('No fonts')"
+        "() => document.getElementById('status').textContent.startsWith('No listed font')"
     )
     assert status(page) == page.text_content("#no-results-text")
+    assert status(page) == no_match(nothing)  # why_not_listed_conversation
     guarded.assert_clean(page)
 
 

@@ -108,8 +108,8 @@ Until the launch:
 - [ ] **"Comes with" names the systems** (`comes_with_names_systems`), after single-select questions on Q4's two loose ends.
 - [ ] **Step 5's first part:**
   - [ ] the Tip Jar link at the end of the header nav, and the footer's tip link removed. The one-row header is re-measured, with a question to the owner on the phone nav at 320 px;
-  - [ ] "No listed font matches '…'" when search alone finds nothing;
-  - [ ] name matches first in search (`search_name_first`);
+  - [x] "No listed font matches “…”." when search alone finds nothing, with the link to About's note (`why_not_listed_conversation`'s `no_match`);
+  - [x] name matches first in search (`search_name_first`), in every sort (`search_name_first_every_sort`);
   - [ ] About's note rewritten to end with the tip pitch, its words OK'd by the owner.
 - [ ] **The docs:**
   - [ ] ops/DONATIONS.md step 11, for the Tip Jar;

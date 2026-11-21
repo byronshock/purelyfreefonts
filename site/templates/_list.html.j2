@@ -17,6 +17,10 @@
   match file and data-matcher its parser and matcher, a script module of their own. No page
   preloads either: the script loads both only once a visitor's list arrives (M3-D7 a,
   inventory_slice_1_defaults, inventory_matcher_on_demand; site/CONTRACT.md section 11).
+  #no-results-why, the link to About's note "Why isn't my favorite free font here?", ships
+  hidden and follows the no-results text only when a search names no listed font (owner's
+  site rulings no_match_search, why_not_listed_to_about and why_not_listed_conversation, of
+  2026-10-05, 2026-10-07 and 2026-11-21). It links to the note's stable anchor only.
 -#}
 <div class="layout">
 {% include "_filters.html.j2" %}
@@ -28,7 +32,7 @@
 <p id="view-note" class="view-note" hidden></p>
 <div id="status" class="visually-hidden" role="status"></div>
 <div id="no-results" class="no-results" hidden>
-<p id="no-results-text">No fonts match these filters. Try loosening some of them.</p>
+<p><span id="no-results-text">No fonts match these filters. Try loosening some of them.</span> <a id="no-results-why" href="/about/#why-not-listed" hidden>Why isn't my favorite free font here?</a></p>
 <button type="button" id="no-results-clear">Clear filters</button>
 </div>
 <div id="list-sort" class="list-sort" role="group" aria-label="Sort the list" hidden>
