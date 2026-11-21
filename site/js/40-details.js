@@ -415,10 +415,15 @@ const Details = (() => {
     return (id) => systems.get(id) || id;
   };
 
+  // Every system that ships the font, in the payload's order (data.ordered_systems: the
+  // best-known first, as the row's tag names them; comes_with_up_to_three). A system the
+  // payload lacks goes last; the sort is stable.
   const comesWith = (payload, font) => {
     if (!font.preinstalled_on.length) return false;
-    const name = systemName(payload);
-    return ['Comes with', font.preinstalled_on.map((p) => name(p.system)).join(', ')];
+    const order = (payload.systems || []).map((s) => s.id);
+    const place = (id) => (order.includes(id) ? order.indexOf(id) : order.length);
+    const ids = font.preinstalled_on.map((p) => p.system).sort((a, b) => place(a) - place(b));
+    return ['Comes with', ids.map(systemName(payload)).join(', ')];
   };
 
   const aliasNames = (font) =>

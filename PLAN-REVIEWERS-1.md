@@ -129,6 +129,7 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
   - This replaces the wording of `front_page_lead_sharing`.
 - [x] **Q4. "Comes with Linux".** (R round 1) **Settled by priority 1** (step 1a): the row names the systems. Open Sans carries the tag only because CachyOS and EndeavourOS ship it.
   - **Left for step 8's pull request:** how a long list shortens (Claude proposes after two systems, with the rest in the details), and what "Hide fonts that come with: Linux" hides, which Claude proposes stays any Linux system.
+  **Answered 2026-11-21** (`comes_with_up_to_three`, Claude's recommendation): up to three names, or else two and a count of the rest, best-known first; the details list every system; the Linux filter still hides a font any Linux system ships.
 - [x] **Q5. A search that finds nothing.** (C item 3; R design 4)
   **Answered 2026-10-05:** (a), as recommended (`no_match_search`).
   - **(a) Recommended:**
@@ -158,7 +159,7 @@ Priorities 1 and 2, and steps 4 and 6, land before usability round 1, so testers
   - Claude drafts the options; the owner picks.
 - [x] **Q7. The tip wording,** in the note and in the footer: keep "Leave a tip ($5 suggested)" (2026-09-26), or wording built on "coffee".
   **Answered 2026-10-05** (`tip_jar`):
-  - A "Tip Jar" link ends the header nav: Fonts, How it works, About, Privacy, Tip Jar.
+  - A "Tip Jar" link ends the header nav: Fonts, How it works, About, Privacy, Tip Jar. *Changed on 2026-11-21* (`tip_jar_privacy_to_footer`): Fonts, How it works, About, Tip Jar, with Privacy in the footer.
   - The note's pitch asks the reader to leave a tip, with no amount and no coffee wording; the Stripe page is prefilled with $5.
   - The footer's tip link is removed.
   - The phone nav then needs two lines or tighter spacing.
@@ -355,7 +356,7 @@ Long names are limited by width and grow less: about 1 phone row in 10 grows und
 
 #### 8b: The wording (after the lead's branch)
 - [ ] Apply the wording of Q3 and Q8. The front-page lead's new sentence (`front_page_lead_counts`) lands with the Project default. The note's "with no use restrictions" and Q8's asides don't wait for the scoring change, but they do touch the templates.
-- [ ] "Comes with" names the systems, as settled for Q4.
+- [x] "Comes with" names the systems, as settled for Q4 (`comes_with_up_to_three`, 2026-11-21).
 - [ ] Fix How we rank's "Choose a rank at the top of the list": the select is in the sidebar on wide screens.
 
 **Done when:** CI passes, and `tff-catalog links --check` passes.

@@ -102,6 +102,32 @@ CATEGORY_LABELS = {
 CATEGORIES = tuple(CATEGORY_LABELS)
 # Operating-system families for "Hide fonts that come with …", with their page labels.
 OS_LABELS = {"windows": "Windows", "macos": "macOS", "linux": "Linux", "android": "Android"}
+# The order "Comes with" names a font's systems in, on the row and in the details: the
+# best-known first, so a shortened tag keeps the names most readers know (owner's site
+# ruling of 2026-11-21, comes_with_up_to_three, whose `order` gives these systems by their
+# labels: Windows 11, macOS, Android, Ubuntu, Debian, Fedora Workstation, GNOME, KDE Plasma,
+# CachyOS, EndeavourOS, Arch Linux, LibreOffice). A system not listed follows them in catalog
+# order; tests/site/test_build.py holds every system in config/preinstalled.toml and
+# config/site.toml to a place here, and the labels to the ruling's order.
+SYSTEM_ORDER = (
+    "windows-11",
+    "macos",
+    "android",
+    "ubuntu",
+    "debian",
+    "fedora-workstation",
+    "gnome",
+    "kde-plasma",
+    "cachyos",
+    "endeavouros",
+    "arch",
+    "libreoffice",
+)
+# A row's "Comes with" names up to this many systems; past it, one fewer and a count of the
+# rest ("Comes with Ubuntu, Fedora Workstation and 4 more"), so the count is never "and 1
+# more", which is as long as the name it hides. The details name every one
+# (comes_with_up_to_three).
+COMES_WITH_UP_TO = 3
 # The hopper's "Make the list" (Milestone 3, slice 1; docs/owned-fonts.md, "The commands
 # on the site"): one command per system, each writing fonts.txt in the home folder, not the
 # Desktop, which iCloud and OneDrive sync off the machine. Only Linux's has run on a real
@@ -412,7 +438,7 @@ def details(doc: Mapping[str, Any], *, font_assets: Mapping[str, str]) -> dict[s
         "views": doc["views"],
         "bands": doc["bands"],
         "sources": doc["sources"],
-        "systems": doc["systems"],
+        "systems": ordered_systems(doc["systems"]),
         "license_classes": doc["license_classes"],
         "nerd": doc["nerd"],
         "state_labels": dict(STATE_LABELS),
@@ -448,6 +474,12 @@ def has_specimen(font: Mapping[str, Any]) -> bool:
     """True when the font has a rendered specimen (a preview that isn't the placeholder)."""
     preview = font["preview"]
     return preview is not None and preview["sha256"] != PLACEHOLDER_SHA256
+
+
+def ordered_systems(systems: Iterable[Mapping[str, Any]]) -> list[Mapping[str, Any]]:
+    """The catalog's ``systems`` in ``SYSTEM_ORDER``, any others after them in catalog order."""
+    place = {sid: i for i, sid in enumerate(SYSTEM_ORDER)}
+    return sorted(systems, key=lambda s: place.get(s["id"], len(place)))
 
 
 def font_bits(font: Mapping[str, Any], system_os: Mapping[str, str]) -> int:

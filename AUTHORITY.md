@@ -53,6 +53,14 @@ After his staging try of 2026-11-05 ("I have tried it and feel that we are getti
 
 *(`data/reviews/site/2026-11-16.toml`)*
 
+**Step 2D's open points (2026-11-21),** PLAN-launch.md step 2D, asked as one batch, each Claude's recommendation:
+- **The header** (`tip_jar_privacy_to_footer`): the nav is Fonts, How it works, About, Tip Jar. Privacy leaves it for a plain link on the footer's last line, beside the privacy line, so the header keeps one row at every width and the phone nav one line at 320 px. This changes `tip_jar`'s nav list, which had Privacy before Tip Jar.
+- **"Comes with"** (`comes_with_up_to_three`): a row names up to three systems, or else two and a count of the rest, best-known first: Windows 11, macOS, Android, Ubuntu, Debian, Fedora Workstation, GNOME, KDE Plasma, CachyOS, EndeavourOS, Arch Linux, then LibreOffice. The details list every system in that order, and "Hide fonts that come with: Linux" still hides a font any Linux system ships. This settles Q4's two loose ends.
+- **About's note** (`why_not_listed_conversation`): Draft A, four short paragraphs that end with the tip pitch, word for word in the rulings file. A search that finds no listed font says "No listed font matches “…”." and links to it.
+- **Search order** (`search_name_first_every_sort`): name matches come first in every sort, and each group keeps the chosen sort.
+
+*(`data/reviews/site/2026-11-21.toml`)*
+
 ## Rules
 
 1. **Licenses.** A font qualifies only if its license allows use in **all personal and commercial projects**. A truly free font has **no use restrictions**. Display-only licenses are excluded, and so are personal-use-only, demo/trial and non-commercial licenses. *(2026-09-25)*
@@ -407,7 +415,7 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
 
   **Sort** (by rank or by name) moves to the list header, beside the count. *Changed the same day* (`sort_header`): sorting is a row of buttons over the list, one over the rank column and one over the names. Each is a bordered button with two stacked arrows and, on the column in use, the order's words ("best first" or "least used first", "A–Z" or "Z–A"). Clicking the button in use reverses its order, and clicking the other sorts by it in its usual order. Reversing the rank is a true reverse, with the unranked fonts first: that was the owner's choice, where Claude had recommended keeping them last. The header sits over the rank numbers until the score bars replace them. The order's words take a second, smaller line inside the button, so the Rank button fits over the 96px rank column and Name starts over the names (`sort_two_lines`, Claude's recommendation, after the audit found Name 34px off). *Changed on 2026-10-05:* the order's words are "most popular first" and "least popular first" (`sort_words_popular`; **First reviews of the test site**, below).
 
-  **Rows:** the badges get shorter. "Comes with" names only the operating systems and apps, "Pulled in by" appears only in the details panel, and there are no "Monospace" or "Not redistributable" badges. *Changed on 2026-09-30:* "Comes with" names the systems, such as "Comes with CachyOS, EndeavourOS", not just "Linux" (`comes_with_names_systems`; **First reviews of the test site**, below).
+  **Rows:** the badges get shorter. "Comes with" names only the operating systems and apps, "Pulled in by" appears only in the details panel, and there are no "Monospace" or "Not redistributable" badges. *Changed on 2026-09-30:* "Comes with" names the systems, such as "Comes with CachyOS, EndeavourOS", not just "Linux" (`comes_with_names_systems`; **First reviews of the test site**, below). *Settled on 2026-11-21:* up to three names, or two and a count of the rest, best-known first (`comes_with_up_to_three`).
 
   **Old links:** links that use the retired `spacing`, `lic` or `redist` keys still open; `spacing=monospaced` becomes the Monospace category.
 
@@ -432,7 +440,7 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
     - *Amended on 2026-10-05* (`step7_list_first`): the list part of priority 2 lands first, right after the plan's pull request (#56), in three pull requests: bigger names-only specimens, the NF column and legend, and Download as the button. Step 8's parts that touch no template go alongside. The template work of steps 8 and 5 waits for the parked Project-default branch.
   - **Layout:**
     - the filter sidebar stays in view on wide screens (`filters_sticky`, the owner's words: "Obviously we should have a fixed sidebar on large screens");
-    - "Why isn't my favorite free font here?" comes after the fonts, as a short conversation with the reader that ends with the tip pitch, and also appears when a search finds nothing (`why_not_listed_after_list`, the owner's idea). *Moved on 2026-10-07* to the About page, with the empty-search message linking to it (`why_not_listed_to_about`);
+    - "Why isn't my favorite free font here?" comes after the fonts, as a short conversation with the reader that ends with the tip pitch, and also appears when a search finds nothing (`why_not_listed_after_list`, the owner's idea). *Moved on 2026-10-07* to the About page, with the empty-search message linking to it (`why_not_listed_to_about`). *Rewritten on 2026-11-21* as Draft A (`why_not_listed_conversation`);
     - on phones a row merges lines, so about five fonts fit on a screen (`phone_rows_merged`). *Amended the same day* (`phone_rows_trim`): main already fits about five rows per phone screen, so Download becomes the button and a few pixels of row margin go, but category and license aren't merged;
     - "Download from …" gets the button style, and Details the quieter one (`download_button`).
   - **Words:**
@@ -460,8 +468,8 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
       - the details panel drops its "NF" box before the Nerd Font build link, whose text names the build (`details_nerd_box_dropped`); a find-in-page match shows the hidden heading's text over the drawn name while active (`find_highlight_accepted`).
       - *2026-10-06:* the details' Nerd Font link gets a visible "Nerd Font:" lead-in (`details_nerd_lead_in`); on phones five rows per screen holds in the default view, while the Coding view and the Nerd filter fit four (`phone_rows_four_in_coding`). Recorded in `data/reviews/site/2026-10-06.toml`.
   - **Search:**
-    - when a search finds no listed font, the list says "No listed font matches '…'" and shows the note; later, once names.json's reasons are cleaned up, it also gives the reason and free fonts with the same letter widths (`no_match_search`);
-    - fonts whose own name matches come first (`search_name_first`).
+    - when a search finds no listed font, the list says "No listed font matches '…'" and shows the note; later, once names.json's reasons are cleaned up, it also gives the reason and free fonts with the same letter widths (`no_match_search`). *Worded on 2026-11-21:* "No listed font matches “…”." and a link to the note on the About page (`why_not_listed_conversation`);
+    - fonts whose own name matches come first (`search_name_first`), in every sort since 2026-11-21 (`search_name_first_every_sort`).
   - **Page weight** (priority 3):
     - Brotli, with CI's page budget measuring the Brotli size (`brotli`);
     - every row stays in the front page's HTML (`rows_all_in_html`, the owner's choice; Claude had recommended the top 100 rows plus a static `/all/` page).
@@ -583,7 +591,7 @@ Answers to the Milestone 2, Step 0 decisions in `docs/milestone-2.md` ([pull req
 
 ## Funding
 
-- A donation button on the site, and nothing more: no donation strategy or fundraising work. By the owner's reckoning the site costs nothing except their time. *(2026-09-25)* *Amended on 2026-09-30 and 2026-10-05:* also one short pitch, at the end of the note "Why isn't my favorite free font here?", asking the reader to leave a tip with no amount in the text, and a "Tip Jar" link at the end of the header nav. Both go to the Stripe Payment Link, prefilled with the $5 suggestion (`funding_pitch`, `tip_jar`; **First reviews of the test site**, below).
+- A donation button on the site, and nothing more: no donation strategy or fundraising work. By the owner's reckoning the site costs nothing except their time. *(2026-09-25)* *Amended on 2026-09-30 and 2026-10-05:* also one short pitch, at the end of the note "Why isn't my favorite free font here?", asking the reader to leave a tip with no amount in the text, and a "Tip Jar" link at the end of the header nav. Both go to the Stripe Payment Link, prefilled with the $5 suggestion (`funding_pitch`, `tip_jar`; **First reviews of the test site**, below). *Changed on 2026-11-21:* the nav is Fonts, How it works, About, Tip Jar, with Privacy in the footer (`tip_jar_privacy_to_footer`); the note's words are Draft A (`why_not_listed_conversation`).
 - **Provider.** A Stripe Payment Link where visitors choose the amount, with $5 suggested. No code and no Ko-fi. The link goes on the site with the intermediate release (the filterable list), not on the current stub. Checklist in [ops/DONATIONS.md](ops/DONATIONS.md). *(2026-09-25)*
 
 ## Current step
