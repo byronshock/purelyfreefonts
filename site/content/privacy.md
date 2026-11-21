@@ -1,8 +1,8 @@
 ---
 title: Privacy
 description: >-
-  No cookies, no analytics, nothing stored in your browser and nothing loaded from other
-  sites. How to check, and what the server and Cloudflare log.
+  No cookies, no analytics, nothing stored and nothing loaded from other sites. How to
+  check, what is logged, and why your font list stays on your device.
 ---
 
 Purely Free Fonts doesn't track you. The pages set no cookies, run no analytics, store nothing in your browser and load nothing from any other site.
@@ -22,6 +22,8 @@ Open your browser's developer tools on any page here, choose the **Network** tab
 - **Firefox:** press Ctrl+Shift+E (Cmd+Option+E on a Mac). Or open the menu, choose More tools, then Web Developer Tools, then the Network tab.
 - **Chrome and Edge:** press Ctrl+Shift+I (Cmd+Option+I on a Mac). Or open the menu, choose More tools, then Developer tools, then the Network tab.
 - **Safari:** first turn on Settings, Advanced, "Show features for web developers". Then choose Develop, Show Web Inspector (Cmd+Option+I), then the Network tab.
+
+To check your own fonts the same way, keep the Network tab open and give the page your list (see [Checking your own fonts](#checking-your-own-fonts)). The only new requests are the two files of the check and the font previews, all from purelyfreefonts.com, and none of them carries anything from your list.
 
 To see that nothing is stored, open the **Storage** tab (Firefox and Safari) or the **Application** tab (Chrome and Edge). Cookies, local storage and session storage should all be empty for purelyfreefonts.com.
 
@@ -51,6 +53,11 @@ Cloudflare features that would add to what your browser runs or sends are turned
 
 Our server also marks every page "no-transform", which tells Cloudflare not to change a page on its way to you, even if one of those features were turned back on. The [header settings are on GitHub]({{ site_caddy_url }}) too.
 
-## Coming next: your font list stays on your device
+## Checking your own fonts
 
-The next release will let you inventory the free fonts you have and discover new ones. Your list of fonts will never leave your device: it won't be sent to us, to Cloudflare or to anyone else.
+"Your own list", above the font list, leaves out the fonts you already have. You make a list of the fonts on your computer with one command, then drop it on the page, choose the file or paste the list. Then:
+
+- **Your list stays on your device.** It is read and compared in your browser, in this tab. Nothing from it is sent to us, to Cloudflare or to anyone else.
+- **Two files, the same for everyone.** When your list arrives, the page asks our server for two files: the code that reads lists and the file of font names it compares yours with. Their addresses are fixed, and neither request carries anything from your list.
+- **Then the rest of the previews, all at once.** While your list is being checked, the page asks for no font previews. Once it is checked, the page asks for every preview it hasn't shown yet, in the list's own order. Those are the same files whatever your list holds, so they tell us nothing about it.
+- **Nothing is saved.** Your list and its result are kept only in this tab, never in cookies or browser storage. "Forget this list" drops them, and so does closing or reloading the tab.
