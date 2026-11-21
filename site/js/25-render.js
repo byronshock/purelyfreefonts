@@ -20,6 +20,7 @@ const Render = (() => {
   let count = null;
   let noResults = null;
   let noResultsText = null;
+  let noResultsWhy = null;
   let viewNote = null;
 
   // Bind to #list and the rows by font index (rows[i] is font i's li.font). The labels and
@@ -42,6 +43,7 @@ const Render = (() => {
     count = document.getElementById('count');
     noResults = document.getElementById('no-results');
     noResultsText = document.getElementById('no-results-text');
+    noResultsWhy = document.getElementById('no-results-why');
     viewNote = document.getElementById('view-note');
   };
   // Draw a .rank cell as _row.html.j2 does: the score with its words for screen readers and
@@ -199,8 +201,9 @@ const Render = (() => {
   };
 
   // Put a View result on the page. `message` is the no-results text (used when nothing is
-  // shown). Returns the count line.
-  const apply = (result, { message = '' } = {}) => {
+  // shown), and `why` shows the link to About's note "Why isn't my favorite free font here?"
+  // after it (why_not_listed_to_about). Returns the count line.
+  const apply = (result, { message = '', why = false } = {}) => {
     const active = document.activeElement;
     const activeRow = active && list.contains(active) ? active.closest('li.font') : null;
     const activeIndex = activeRow ? rows.indexOf(activeRow) : -1;
@@ -259,6 +262,7 @@ const Render = (() => {
     if (noResults) {
       const empty = result.shown === 0;
       if (empty && noResultsText) Core.text(noResultsText, message);
+      if (empty && noResultsWhy) Core.setHidden(noResultsWhy, !why);
       // The clear button is about to vanish: move focus before it does.
       if (!empty && noResults.contains(document.activeElement)) {
         const first = result.order.length

@@ -787,10 +787,13 @@ def test_the_about_page_closes_with_the_owners_note(site_dir, built):
     assert note, "the note is the page's last part"
     assert parse(note[1]).plain == text
     assert re.findall(r'<a href="([^"]+)">', note[1]) == [f"mailto:{address}"]
-    # The front page no longer carries it, on any screen.
+    # The front page no longer carries it, on any screen: only the empty-search message's link
+    # to it, hidden until a search names no listed font (no_match_search).
     front = read(site_dir, "index.html")
     assert ruling["heading"].replace("'", "&#39;") not in front
-    assert ruling["heading"] not in front
+    link = f'<a id="no-results-why" href="/about/#why-not-listed" hidden>{ruling["heading"]}</a>'
+    assert front.count(ruling["heading"]) == 1
+    assert link in front
 
 
 def test_not_found_page_uses_absolute_urls_only(built):

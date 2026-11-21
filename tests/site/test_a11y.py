@@ -77,6 +77,9 @@ VIEWPORTS = {"375": PHONE, "1280": DESKTOP}
 # monospaced fonts, which are all in Category Monospace: site/CONTRACT.md section 4).
 FILTERS_HASH = "#cat=sans-serif&hide=limited,windows"
 NO_RESULTS_HASH = "#rank=coding&cat=serif"
+# A search that names no listed font: its message links to About's note (no_match_search,
+# why_not_listed_conversation).
+NO_MATCH_HASH = "#q=zzqqzzqq"
 # WCAG 1.4.12's test values.
 TEXT_SPACING_CSS = """
 * { line-height: 1.5 !important; letter-spacing: 0.12em !important;
@@ -327,8 +330,9 @@ def list_state(page: Any, state: str) -> None:
         panel_id = toggle.get_attribute("aria-controls")
         page.wait_for_selector(f"#{panel_id}[data-state='ready']")
         assert page.locator(f"#{panel_id}").is_visible()
-    elif state == "no-results":
+    elif state in ("no-results", "no-match"):
         wait_for(page, "!document.getElementById('no-results').hidden")
+        assert page.locator("#no-results-why").is_visible() == (state == "no-match")
 
 
 # The hopper's tint (S5) is gone and its fade done, so axe never measures a summary mid-fade.
@@ -383,6 +387,7 @@ LIST_STATES = {
     "filters-open": f"/{FILTERS_HASH}",
     "details": "/",
     "no-results": f"/{NO_RESULTS_HASH}",
+    "no-match": f"/{NO_MATCH_HASH}",
 }
 
 
@@ -654,7 +659,7 @@ def test_axe_every_page(guarded_context: Any, name: str, scheme: str, viewport: 
 @pytest.mark.real_catalog(state="details", viewport="1280")
 @pytest.mark.parametrize("viewport", VIEWPORTS)
 @pytest.mark.parametrize("scheme", SCHEMES)
-@pytest.mark.parametrize("state", ["filters", "filters-open", "details", "no-results"])
+@pytest.mark.parametrize("state", ["filters", "filters-open", "details", "no-results", "no-match"])
 def test_axe_list_states(guarded_context: Any, state: str, scheme: str, viewport: str) -> None:
     if state == "filters-open" and viewport != "375":
         pytest.skip("the Filters button shows only on narrow screens")
@@ -1047,7 +1052,7 @@ def test_reflow_pages(guarded_context: Any, name: str, width: int) -> None:
 
 @pytest.mark.sample_only
 @pytest.mark.parametrize("width", [320, 640])
-@pytest.mark.parametrize("state", ["filters-open", "details", "no-results"])
+@pytest.mark.parametrize("state", ["filters-open", "details", "no-results", "no-match"])
 def test_reflow_list_states(guarded_context: Any, state: str, width: int) -> None:
     guarded, page = open_page(
         guarded_context, LIST_STATES[state], viewport={"width": width, "height": 700}
@@ -1086,7 +1091,7 @@ def test_text_spacing_pages(guarded_context: Any, name: str, viewport: str) -> N
 
 @pytest.mark.sample_only
 @pytest.mark.parametrize("viewport", VIEWPORTS)
-@pytest.mark.parametrize("state", ["filters-open", "details", "no-results"])
+@pytest.mark.parametrize("state", ["filters-open", "details", "no-results", "no-match"])
 def test_text_spacing_list_states(guarded_context: Any, state: str, viewport: str) -> None:
     if state == "filters-open" and viewport != "375":
         pytest.skip("the Filters button shows only on narrow screens")
